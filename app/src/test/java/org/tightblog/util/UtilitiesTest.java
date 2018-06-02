@@ -27,6 +27,8 @@ import org.springframework.mobile.device.DeviceType;
 import org.springframework.mobile.device.DeviceUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -65,6 +67,19 @@ public class UtilitiesTest {
         assertEquals("A bc  345", Utilities.replaceNonAlphanumeric("A?bc!#345", ' '));
         assertEquals("A-bc--345", Utilities.replaceNonAlphanumeric("A?bc!#345", '-'));
         assertEquals("A bc345", Utilities.replaceNonAlphanumeric("A?bc''345", ' '));
+    }
+
+    @Test
+    public void testApiValueToFormSubmissionValue() throws IOException {
+        String convertLinesStart = "paragraph1\n\nparagraph2\nline2\nline3\n\nparagraph3";
+        String convertLinesFormatted = "paragraph1\r\n\r\nparagraph2\r\nline2\r\nline3\r\n\r\nparagraph3\r\n";
+
+        // reformat
+        ByteArrayInputStream stream = new ByteArrayInputStream(convertLinesStart.getBytes());
+        String output = Utilities.apiValueToFormSubmissionValue(stream);
+
+        // make sure it turned out how we planned
+        assertEquals(convertLinesFormatted, output);
     }
 
     @Test

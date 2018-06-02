@@ -73,7 +73,7 @@ var templatePageUrl = "<c:url value='/tb-ui/app/authoring/templates'/>?weblogId=
 
         <p>{{ctrl.metadata.sharedThemeMap[ctrl.selectedTheme].description}}</p>
         <p>
-            <img ng-src="{{ctrl.metadata.relativeSiteURL}}{{ctrl.metadata.sharedThemeMap[ctrl.selectedTheme].previewPath}}"/>
+            <img ng-src="{{ctrl.metadata.absoluteSiteURL}}{{ctrl.metadata.sharedThemeMap[ctrl.selectedTheme].previewPath}}"/>
         </p>
         <p>
             <fmt:message key="themeEdit.previewDescription" />

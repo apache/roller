@@ -335,8 +335,8 @@ public class WeblogEntryController {
             wesc.setMaxResults(20);
             wesc.setStatus(pubStatus);
             List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
-            List<WeblogEntry> recentEntries = entries.stream().map(r -> new WeblogEntry(r.getTitle(),
-                    urlStrategy.getEntryEditURL(weblog.getId(), r.getId(), true))).collect(Collectors.toList());
+            List<WeblogEntry> recentEntries = entries.stream().map(e -> new WeblogEntry(e.getTitle(),
+                    urlStrategy.getEntryEditURL(e))).collect(Collectors.toList());
             response.setStatus(HttpServletResponse.SC_OK);
             return recentEntries;
         } else if (WeblogRole.POST.equals(minimumRole) &&
@@ -359,7 +359,7 @@ public class WeblogEntryController {
                 Weblog weblog = entry.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
                     entry.setCommentsUrl(urlStrategy.getCommentManagementURL(weblog.getId(), entry.getId()));
-                    entry.setPermalink(urlStrategy.getWeblogEntryURL(entry, true));
+                    entry.setPermalink(urlStrategy.getWeblogEntryURL(entry));
                     entry.setPreviewUrl(urlStrategy.getWeblogEntryDraftPreviewURL(entry));
 
                     if (entry.getPubTime() != null) {

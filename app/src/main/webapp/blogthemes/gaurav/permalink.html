@@ -109,9 +109,9 @@
                                     <div class="form-group col-lg-12">
                                        <script th:src="${url.site + '/scripts/clientSideInclude.js'}"></script>
                                        <div id="commentAuthenticator"></div>
-                                       <input type="submit" th:formaction="${url.entryCommentPreview(entry.anchor)}" class="btn btn-primary"
+                                       <input type="submit" th:formaction="${url.entryCommentPreview(entry)}" class="btn btn-primary"
                                                name="post" th:value="${utils.msg('macro.weblog.postpreview')}">
-                                       <input type="submit" th:formaction="${url.entryComment(entry.anchor)}" class="btn btn-success"
+                                       <input type="submit" th:formaction="${url.entryComment(entry)}" class="btn btn-success"
                                                name="post" th:value="${utils.msg('macro.weblog.post')}">
                                     </div>
                                 </div>
@@ -152,7 +152,7 @@
 				<div class="well">
 					<p class="details">
 					This is just one entry in the weblog <b th:utext="${model.weblog.name}">xxx</b>.
-					Why don't you <a th:href="${url.home}">visit the main page</a> of the weblog?</p>
+					Why don't you <a th:href="${url.weblogHome}">visit the main page</a> of the weblog?</p>
 				</div>
 				<div class="well">
 					<h3>Related entries</h3>

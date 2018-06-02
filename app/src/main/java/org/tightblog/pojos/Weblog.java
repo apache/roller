@@ -398,16 +398,10 @@ public class Weblog {
         setLastModified(Instant.now());
     }
 
-    // Used in templates
-    @Transient
-    public String getURL() {
-        return WebloggerContext.getUrlStrategy().getWeblogURL(this, false);
-    }
-
-    // Used in a few JSP's
+    // Used in templates and a few JSP's
     @Transient
     public String getAbsoluteURL() {
-        return WebloggerContext.getUrlStrategy().getWeblogURL(this, true);
+        return WebloggerContext.getUrlStrategy().getWeblogURL(this);
     }
 
     public String getAnalyticsCode() {
@@ -581,5 +575,5 @@ public class Weblog {
         return hashCode;
     }
 
-    public static final Comparator<Weblog> HANDLE_COMPARATOR = Comparator.comparing(Weblog::getHandle);
+    static final Comparator<Weblog> HANDLE_COMPARATOR = Comparator.comparing(Weblog::getHandle);
 }

@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title th:utext="${model.weblog.name}">xxx</title>
-        <link rel="shortcut icon" th:href="${url.absoluteSite + '/favicon.ico'}">
+        <link rel="shortcut icon" th:href="${url.site + '/favicon.ico'}">
         <link rel="stylesheet" th:href="${url.page('_css.css')}">
         <!--/* replace/insert within a fragment seems to work only with th:block */-->
         <th:block th:replace="fragments :: AutoDiscoveryLinks"></th:block>
@@ -18,8 +18,8 @@
                 <tr>
                     <td class="bannerLeft"></td>
                     <td class="bannerRight">
-                        <a th:href="${url.absoluteSite}" th:text="${utils.msg('navigationBar.homePage')}">xxx</a> |
-                        <a th:href="${url.absoluteSite + '/tb-ui/app/home'}">Main Menu</a> |
+                        <a th:href="${url.site}" th:text="${utils.msg('navigationBar.homePage')}">xxx</a> |
+                        <a th:href="${url.site + '/tb-ui/app/home'}">Main Menu</a> |
                         <th:block th:switch="${model.isUserAuthenticated()}">
                             <th:block th:case="${false}">
                                 <a th:href="${url.login}">Login</a> |
@@ -37,7 +37,7 @@
            th:text="${utils.truncateText(entry.title, 50, 50, '...')}">
         </a><br />
         <p class="entryDetails">
-            <a th:href="${utils.escapeHTML(entry.weblog.URL)}" th:utext="${entry.weblog.name}">xxx</a>
+            <a th:href="${utils.escapeHTML(url.weblogHome(entry.weblog))}" th:utext="${entry.weblog.name}">xxx</a>
             <span th:if="${entry.getTags().size() > 0}" th:text="${entry.getTagsAsString() + ' |'}">xxx</span>
             <span th:text="${entry.category.name + ' |'}">xxx</span>
             <span th:if="${entry.pubTime != null}" th:text="${utils.formatDate(entry.pubTime, utils.msg('macro.weblog.datepattern')) + ' |'}">xxx</span>

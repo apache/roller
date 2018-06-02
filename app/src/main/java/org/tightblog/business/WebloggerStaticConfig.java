@@ -41,8 +41,7 @@ public final class WebloggerStaticConfig {
 
     private static Properties config;
 
-    // special case for our context urls
-    private static String relativeContextURL;
+    // special case for our application URL
     private static String absoluteContextURL;
 
     // no, you may not instantiate this class :p
@@ -191,19 +190,6 @@ public final class WebloggerStaticConfig {
      */
     public static String getAbsoluteContextURL() {
         return absoluteContextURL;
-    }
-
-    /**
-     * Special method which sets the non-persisted relative url to this site.
-     * <p>
-     * This property is *not* persisted in any way.
-     */
-    public static void setRelativeContextURL(String url) {
-        relativeContextURL = url;
-    }
-
-    public static String getRelativeContextURL() {
-        return relativeContextURL;
     }
 
     /**

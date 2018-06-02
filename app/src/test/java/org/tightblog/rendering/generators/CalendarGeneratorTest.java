@@ -60,13 +60,13 @@ public class CalendarGeneratorTest {
     private void initializeDateToWeblogEntryMap() {
         WeblogEntry weblogEntry1a = new WeblogEntry();
         weblogEntry1a.setTitle("A short title");
-        when(mockUrlStrategy.getWeblogEntryURL(weblogEntry1a, true)).thenReturn("my url 1a");
+        when(mockUrlStrategy.getWeblogEntryURL(weblogEntry1a)).thenReturn("my url 1a");
         WeblogEntry weblogEntry1b = new WeblogEntry();
         weblogEntry1b.setTitle("A very long title to ensure it is longer than 43 characters");
-        when(mockUrlStrategy.getWeblogEntryURL(weblogEntry1b, true)).thenReturn("my url 1b");
+        when(mockUrlStrategy.getWeblogEntryURL(weblogEntry1b)).thenReturn("my url 1b");
         WeblogEntry weblogEntry2 = new WeblogEntry();
         weblogEntry2.setTitle("Blog entry on different day");
-        when(mockUrlStrategy.getWeblogEntryURL(weblogEntry2, true)).thenReturn("my url 2");
+        when(mockUrlStrategy.getWeblogEntryURL(weblogEntry2)).thenReturn("my url 2");
 
         LocalDate localDate1 = LocalDate.of(1858, 10, 14);
         LocalDate localDate2 = LocalDate.of(1858, 11, 21);
@@ -86,7 +86,7 @@ public class CalendarGeneratorTest {
         wpr.setCategory("stamps");
 
         when(mockUrlStrategy.getWeblogCollectionURL(weblog, "stamps", "18581014",
-                null, -1, false)).thenReturn("WeblogCollectionURL");
+                null, -1)).thenReturn("WeblogCollectionURL");
 
         CalendarData data = calendarGenerator.getCalendarData(wpr, false);
         assertEquals("October 1858", data.getCalendarTitle());
@@ -158,13 +158,13 @@ public class CalendarGeneratorTest {
 
         LocalDate localDate = LocalDate.of(1858, 10, 14);
         when(mockUrlStrategy.getWeblogCollectionURL(weblog, "stamps", "185810",
-                null, -1, false)).thenReturn("getWeblogCollectionURL");
+                null, -1)).thenReturn("getWeblogCollectionURL");
         test1 = calendarGenerator.computeMonthUrl(wpr, localDate);
         assertEquals("getWeblogCollectionURL", test1);
 
         wpr.setCustomPageName("my custom page");
-        when(mockUrlStrategy.getCustomPageURL(weblog, "my custom page", "185810",
-                false)).thenReturn("getCustomPageURL");
+        when(mockUrlStrategy.getCustomPageURL(weblog, "my custom page", "185810"))
+                .thenReturn("getCustomPageURL");
         test1 = calendarGenerator.computeMonthUrl(wpr, localDate);
         assertEquals("getCustomPageURL", test1);
 

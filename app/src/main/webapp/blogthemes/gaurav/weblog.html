@@ -3,7 +3,7 @@
 <head>
 	<span th:replace="${model.getTemplateIdByName('common_html_head')}"></span>
 	<title th:utext="${model.weblog.name + ': ' + model.weblog.tagline}">xxx</title>
-    <link rel="shortcut icon" th:href="${url.absoluteSite + '/favicon.ico'}">
+    <link rel="shortcut icon" th:href="${url.site + '/favicon.ico'}">
     <span th:replace="fragments :: AutoDiscoveryLinks"></span>
     <meta th:if="${model.addNoIndexDirective}" name="robots" content="noindex">
     <span th:utext="${model.analyticsTrackingCode}" th:remove="tag"></span>
@@ -59,9 +59,9 @@
 					<p>Click the link below to subscribe via your favorite feed reader:</p>
 
 					<div id="subscribe">
-						<a th:href="${url.atomFeed}">
+						<a th:href="${url.atomFeedURL}">
 							<img th:src="${url.themeResource('gaurav', 'icons/feed-icon-28x28.png')}" title="RSS/Atom feed icon" alt="RSS/Atom feed icon" /></a>&nbsp;
-						<a th:href="${url.atomFeed}">Subscribe to this blog</a>
+						<a th:href="${url.atomFeedURL}">Subscribe to this blog</a>
 					</div>
 				</div>
 				<div class="well">

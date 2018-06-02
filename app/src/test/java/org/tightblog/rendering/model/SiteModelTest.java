@@ -39,7 +39,7 @@ public class SiteModelTest {
         Weblog weblog = new Weblog();
         wpr.setWeblog(weblog);
         URLStrategy mockUrlStrategy = mock(URLStrategy.class);
-        when(mockUrlStrategy.getCustomPageURL(weblog, "bar/bar2", null, false))
+        when(mockUrlStrategy.getCustomPageURL(weblog, "bar/bar2", null))
                 .thenReturn("https://foo.com");
 
         SiteModel siteModel = new SiteModel();

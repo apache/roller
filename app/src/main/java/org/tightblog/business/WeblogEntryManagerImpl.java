@@ -325,7 +325,7 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
 
         if (criteria.isCalculatePermalinks()) {
             results = results.stream()
-                    .peek(we -> we.setPermalink(urlStrategy.getWeblogEntryURL(we, true)))
+                    .peek(we -> we.setPermalink(urlStrategy.getWeblogEntryURL(we)))
                     .collect(Collectors.toList());
         }
 

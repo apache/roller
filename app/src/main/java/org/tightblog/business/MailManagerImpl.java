@@ -151,7 +151,7 @@ public class MailManagerImpl implements MailManager {
             return;
         }
 
-        String loginURL = urlStrategy.getLoginURL(true);
+        String loginURL = urlStrategy.getLoginURL();
 
         Context ctx = new Context();
         ctx.setVariable("emailType", "RegistrationApprovedNotice");
@@ -219,7 +219,7 @@ public class MailManagerImpl implements MailManager {
             return;
         }
 
-        String entryEditURL =  urlStrategy.getEntryEditURL(entry.getWeblog().getId(), entry.getId(), true);
+        String entryEditURL = urlStrategy.getEntryEditURL(entry);
 
         Context ctx = new Context(entry.getWeblog().getLocaleInstance());
         ctx.setVariable("emailType", "PendingEntryNotice");
@@ -369,7 +369,7 @@ public class MailManagerImpl implements MailManager {
         String commentURL = urlStrategy.getWeblogCommentsURL(entry);
         ctx.setVariable("commentURL", commentURL);
         if (subscriber != null) {
-            ctx.setVariable("unsubscribeURL", urlStrategy.getCommentNotificationUnsubscribeUrl(subscriber.getValue()));
+            ctx.setVariable("unsubscribeURL", urlStrategy.getCommentNotificationUnsubscribeURL(subscriber.getValue()));
         }
         return ctx;
     }

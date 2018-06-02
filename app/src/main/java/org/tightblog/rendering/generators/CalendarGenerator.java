@@ -104,7 +104,7 @@ public class CalendarGenerator {
         data.setNextMonthLink(computeMonthUrl(pageRequest, firstDayOfMonthOfWeblogEntry(temp)));
 
         data.setHomeLink(urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(), pageRequest.getCategory(),
-                null, null, -1, false));
+                null, null, -1));
 
         // Weeks start on different days depending on locale (Sat, Sun, Mon)
         DayOfWeek firstDayOfWeek = WeekFields.of(locale).getFirstDayOfWeek();
@@ -134,7 +134,7 @@ public class CalendarGenerator {
                     if (dateToEntryMap.containsKey(dayPointer)) {
                         String dateString = Utilities.YMD_FORMATTER.format(dayPointer);
                         String link = urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(),
-                                pageRequest.getCategory(), dateString, null, -1, false);
+                                pageRequest.getCategory(), dateString, null, -1);
                         dayIter.setLink(link);
                         if (includeBlogEntryData) {
                             dayIter.setEntries(getCalendarEntries(dayPointer, dateToEntryMap));
@@ -172,10 +172,9 @@ public class CalendarGenerator {
 
             if (pageRequest.getCustomPageName() == null) {
                 result = urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(), pageRequest.getCategory(),
-                        dateString, null, -1, false);
+                        dateString, null, -1);
             } else {
-                result = urlStrategy.getCustomPageURL(pageRequest.getWeblog(), pageRequest.getCustomPageName(), dateString,
-                        false);
+                result = urlStrategy.getCustomPageURL(pageRequest.getWeblog(), pageRequest.getCustomPageName(), dateString);
             }
         }
 
@@ -189,7 +188,7 @@ public class CalendarGenerator {
         if (entries != null) {
             for (WeblogEntry entry : entries) {
                 CalendarData.BlogEntry newEntry = new CalendarData.BlogEntry();
-                newEntry.setLink(urlStrategy.getWeblogEntryURL(entry, true));
+                newEntry.setLink(urlStrategy.getWeblogEntryURL(entry));
 
                 String title = entry.getTitle().trim();
                 if (title.length() > 43) {

@@ -22,13 +22,13 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:th="http://www.thymeleaf.org" th:with="pager = ${model.weblogEntriesPager}">
     <title type="html" th:utext="${utils.escapeXML(model.weblog.name)}">xxx</title>
     <subtitle type="html" th:utext="${utils.escapeXML(model.weblog.tagline)}">xxx</subtitle>
-    <id th:utext="${url.atomFeed}">xxx</id>
-    <link th:if="${model.siteWideFeed}" rel="alternate" type="text/html" th:href="${url.absoluteSite}"/>
-    <link th:unless="${model.siteWideFeed}" rel="alternate" type="text/html" th:href="${url.home}"/>
+    <id th:utext="${url.atomFeedURL}">xxx</id>
+    <link th:if="${model.siteWideFeed}" rel="alternate" type="text/html" th:href="${url.site}"/>
+    <link th:unless="${model.siteWideFeed}" rel="alternate" type="text/html" th:href="${url.weblogHome}"/>
 
     <link rel="self" type="application/atom+xml"
           th:href="${model.tag != null ? url.getAtomFeedByTag(model.tag) :
-                   (model.categoryName != null ? url.getAtomFeedByCategory(model.categoryName) : url.atomFeed)}"/>
+                   (model.categoryName != null ? url.getAtomFeedURLForCategory(model.categoryName) : url.atomFeedURL)}"/>
 
     <updated th:utext="${utils.formatIsoOffsetDateTime(model.lastUpdated)}">xxx</updated>
     <generator uri="https://github.com/gmazza/tightblog" th:attr="version=${utils.systemVersion}">TightBlog</generator>

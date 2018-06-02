@@ -51,8 +51,8 @@ public class AkismetCommentValidatorTest {
     @Test
     public void testCreateAkismetCallBody() {
         URLStrategy mockUrlStrategy = mock(URLStrategy.class);
-        when(mockUrlStrategy.getWeblogURL(weblog, true)).thenReturn("http://www.foo.com");
-        when(mockUrlStrategy.getWeblogEntryURL(entry, true)).thenReturn("http://www.foo.com/entry/bar");
+        when(mockUrlStrategy.getWeblogURL(weblog)).thenReturn("http://www.foo.com");
+        when(mockUrlStrategy.getWeblogEntryURL(entry)).thenReturn("http://www.foo.com/entry/bar");
 
         AkismetCommentValidator validator = new AkismetCommentValidator(mockUrlStrategy, "ignored");
 

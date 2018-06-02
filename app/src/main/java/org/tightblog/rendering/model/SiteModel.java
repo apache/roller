@@ -125,7 +125,7 @@ public class SiteModel implements Model {
     public WeblogListGenerator.WeblogListData getWeblogListData(Character letter, int length) {
         Template weblogPage = pageRequest.getTemplate();
         String pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
-        String baseUrl = urlStrategy.getCustomPageURL(pageRequest.getWeblog(), pageLink, null, false);
+        String baseUrl = urlStrategy.getCustomPageURL(pageRequest.getWeblog(), pageLink, null);
 
         return weblogListGenerator.getWeblogsByLetter(baseUrl, letter, pageRequest.getPageNum(), length);
     }

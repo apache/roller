@@ -15,7 +15,7 @@
     <name>TightBlog</name>
     <description>
         TightBlog is an open source blog server built with open source Java
-        libraries including Spring MVC, Thymeleaf, ROME and EclipseLink.
+        libraries including Spring MVC, Thymeleaf and EclipseLink.
     </description>
     <url>https://github.com/gmazza/tightblog</url>
 

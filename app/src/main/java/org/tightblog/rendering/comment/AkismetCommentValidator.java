@@ -88,11 +88,11 @@ public class AkismetCommentValidator implements CommentValidator {
     String createAPIRequestBody(WeblogEntryComment comment) {
         WeblogEntry entry = comment.getWeblogEntry();
 
-        String apiCall = "blog=" + urlStrategy.getWeblogURL(entry.getWeblog(), true);
+        String apiCall = "blog=" + urlStrategy.getWeblogURL(entry.getWeblog());
         apiCall += "&user_ip=" + comment.getRemoteHost();
         apiCall += "&user_agent=" + comment.getUserAgent();
         apiCall += "&referrer=" + comment.getReferrer();
-        apiCall += "&permalink=" + urlStrategy.getWeblogEntryURL(entry, true);
+        apiCall += "&permalink=" + urlStrategy.getWeblogEntryURL(entry);
         apiCall += "&comment_type=comment&comment_author=" + comment.getName();
         apiCall += "&comment_author_email=" + comment.getEmail();
         apiCall += "&comment_author_url=" + comment.getUrl();

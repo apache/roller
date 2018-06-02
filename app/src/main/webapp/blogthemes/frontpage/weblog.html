@@ -24,7 +24,7 @@
                <td class="menuTabSelected">
                   <div class="menu-tr">
                      <div class="menu-tl">
-                        &nbsp;&nbsp;<a th:href="${url.home}">Recent Entries</a>&nbsp;&nbsp;
+                        &nbsp;&nbsp;<a th:href="${url.weblogHome}">Recent Entries</a>&nbsp;&nbsp;
                      </div>
                   </div>
                </td>	
@@ -83,7 +83,7 @@
                                     
             <br />
             <a th:href="${url.getAtomFeed()}" title="Combined Atom feed for site.">
-            <img th:src="${url.absoluteSite + '/images/feed-icon-12x12.gif'}" border="0" alt="Combined Atom feed for site."/>
+            <img th:src="${url.site + '/images/feed-icon-12x12.gif'}" border="0" alt="Combined Atom feed for site."/>
             </a>
             Right-click, copy link and paste into your newsfeed reader
 

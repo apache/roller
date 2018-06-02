@@ -26,8 +26,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.URLStrategyImpl;
 import org.tightblog.business.URLStrategy;
-import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.rendering.requests.WeblogRequest;
@@ -37,29 +35,21 @@ import java.util.Map;
 /**
  * Provides access to URL building functionality.
  * <p>
- * NOTE: we purposely go against the standard getter/setter bean standard
- * for methods that take arguments so that users get a consistent way to
- * access those methods in their templates. i.e.
+ * NOTE: We purposely go against the standard getter/setter bean standard
+ * for several methods that take arguments so that template designers get a more
+ * consistent way to access those methods in their templates. e.g.
  * <p>
- * $url.category("foo") instead of $url.getCategory("foo")
+ * $url.login and $url.category("foo") instead of $url.getCategory("foo")
  */
 @Component("urlModel")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class URLModel implements Model {
 
-    protected Weblog weblog;
-
-    @Autowired
-    private WeblogEntryManager weblogEntryManager;
+    private Weblog weblog;
+    private boolean preview;
 
     @Autowired
     protected URLStrategy urlStrategy;
-
-    private boolean preview;
-
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
@@ -92,133 +82,105 @@ public class URLModel implements Model {
         if (preview) {
             this.urlStrategy = new URLStrategyImpl(weblog.getTheme(), weblog.isUsedForThemePreview());
         }
-
     }
 
-    /**
-     * Relative URL of weblogger, e.g. /tightblog
-     */
     public String getSite() {
-        return WebloggerStaticConfig.getRelativeContextURL();
+        return urlStrategy.getHomeURL();
     }
 
-    /**
-     * Absolute URL of weblogger, e.g. http://localhost:8080/tightblog
-     */
-    public String getAbsoluteSite() {
-        return WebloggerStaticConfig.getAbsoluteContextURL();
-    }
-
-    /**
-     * URL for logging in
-     */
     public String getLogin() {
-        return urlStrategy.getLoginURL(false);
+        return urlStrategy.getLoginURL();
     }
 
-    /**
-     * URL for logging out
-     */
     public String getLogout() {
-        return urlStrategy.getLogoutURL(false);
+        return urlStrategy.getLogoutURL();
     }
 
-    /**
-     * URL for registering
-     */
     public String getRegister() {
-        return urlStrategy.getRegisterURL(false);
+        return urlStrategy.getRegisterURL();
     }
 
-    public String getCommentAuthenticator() {
-        return getSite() + "/tb-ui/rendering/comment/authform";
+    public String getWeblogHome() {
+        return urlStrategy.getWeblogURL(weblog);
     }
 
-    public String themeResource(String theme, String filePath) {
-        return getSite() + "/blogthemes/" + theme + "/" + filePath;
+    public String getWeblogHome(Weblog blog) {
+        return urlStrategy.getWeblogURL(blog);
     }
 
-    public String getHome() {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, null, null, -1, true);
+    public String category(String catName) {
+        return urlStrategy.getWeblogCollectionURL(weblog, catName, null, null, -1);
+    }
+
+    public String tag(String tag) {
+        return urlStrategy.getWeblogCollectionURL(weblog, null, null, tag, -1);
+    }
+
+    public String date(String date) {
+        return urlStrategy.getWeblogCollectionURL(weblog, null, date, null, -1);
     }
 
     public String entry(WeblogEntry entry) {
-        return urlStrategy.getWeblogEntryURL(entry, true);
+        return urlStrategy.getWeblogEntryURL(entry);
     }
 
-    public String entryComment(String anchor) {
-        return urlStrategy.getWeblogEntryCommentURL(weblog, anchor, false);
+    public String getCreateEntry() {
+        return urlStrategy.getEntryAddURL(weblog.getId());
     }
 
-    public String entryCommentPreview(String anchor) {
-        return urlStrategy.getWeblogEntryCommentURL(weblog, anchor, true);
+    public String editEntry(WeblogEntry entry) {
+        if (entry != null) {
+            return urlStrategy.getEntryEditURL(entry);
+        }
+        return null;
     }
 
     public String comment(WeblogEntry entry, String timeStamp) {
         return urlStrategy.getWeblogCommentURL(entry, timeStamp);
     }
 
+    public String entryComment(WeblogEntry entry) {
+        return urlStrategy.getWeblogEntryCommentURL(entry, false);
+    }
+
+    public String entryCommentPreview(WeblogEntry entry) {
+        return urlStrategy.getWeblogEntryCommentURL(entry, true);
+    }
+
+    public String getCommentAuthenticator() {
+        return urlStrategy.getCommentAuthenticatorURL();
+    }
+
     public String comments(WeblogEntry entry) {
         return urlStrategy.getWeblogCommentsURL(entry);
     }
 
-    public String category(String catName) {
-        return urlStrategy.getWeblogCollectionURL(weblog, catName, null, null, -1, true);
-    }
-
-    public String tag(String tag) {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, null, tag, -1, true);
-    }
-
-    public String date(String date) {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, date, null, -1, true);
-    }
-
     public String getSearch() {
-        return urlStrategy.getWeblogSearchURL(weblog, null, null, -1, false);
+        return urlStrategy.getWeblogSearchURL(weblog, null, null, -1);
     }
 
     public String page(String pageLink) {
-        return urlStrategy.getCustomPageURL(weblog, pageLink, null, true);
+        return urlStrategy.getCustomPageURL(weblog, pageLink, null);
     }
 
-    public String getAtomFeed() {
-        return urlStrategy.getWeblogFeedURL(weblog, null, null);
+    public String themeResource(String theme, String filePath) {
+        return urlStrategy.getThemeResourceURL(theme, filePath);
     }
 
-    public String getAtomFeedByCategory(String category) {
-        return urlStrategy.getWeblogFeedURL(weblog, category, null);
+    public String getWeblogConfigURL() {
+        return urlStrategy.getWeblogConfigURL(weblog.getId());
     }
 
-    public String getAtomFeedByTag(String tag) {
-        return urlStrategy.getWeblogFeedURL(weblog, null, tag);
+    public String getAtomFeedURL() {
+        return urlStrategy.getAtomFeedURL(weblog);
     }
 
-
-    /**
-     * URL for editing a weblog entry
-     */
-    public String editEntry(String anchor) {
-        // need to determine entryId from anchor
-        WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, anchor);
-        if (entry != null) {
-            return urlStrategy.getEntryEditURL(weblog.getId(), entry.getId(), false);
-        }
-        return null;
+    public String getAtomFeedURLForCategory(String category) {
+        return urlStrategy.getAtomFeedURLForCategory(weblog, category);
     }
 
-    /**
-     * URL for creating a new weblog entry
-     */
-    public String getCreateEntry() {
-        return urlStrategy.getEntryAddURL(weblog.getId(), false);
-    }
-
-    /**
-     * URL for editing weblog settings
-     */
-    public String getEditSettings() {
-        return urlStrategy.getWeblogConfigURL(weblog.getId(), false);
+    public String getAtomFeedURLForTag(String tag) {
+        return urlStrategy.getAtomFeedURLForTag(weblog, tag);
     }
 
 }

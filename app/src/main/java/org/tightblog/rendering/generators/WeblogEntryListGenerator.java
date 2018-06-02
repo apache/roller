@@ -76,12 +76,12 @@ public class WeblogEntryListGenerator {
         I18nMessages messageUtils = I18nMessages.getMessages(viewLocale);
 
         if (page > 0) {
-            data.nextLink = urlStrategy.getWeblogSearchURL(weblog, query, category, page - 1, false);
+            data.nextLink = urlStrategy.getWeblogSearchURL(weblog, query, category, page - 1);
             data.nextLabel = messageUtils.getString("weblogEntriesPager.newer");
         }
 
         if (moreResults) {
-            data.prevLink = urlStrategy.getWeblogSearchURL(weblog, query, category, page + 1, false);
+            data.prevLink = urlStrategy.getWeblogSearchURL(weblog, query, category, page + 1);
             data.prevLabel = messageUtils.getString("weblogEntriesPager.older");
         }
 
@@ -108,7 +108,7 @@ public class WeblogEntryListGenerator {
                 // make sure that entry is published and not to future
                 WeblogEntry nextEntry = weblogEntryManager.getNextPublishedEntry(currEntry);
                 if (nextEntry != null && nextEntry.getPubTime().isBefore(Instant.now())) {
-                    data.nextLink = urlStrategy.getWeblogEntryURL(nextEntry, true);
+                    data.nextLink = urlStrategy.getWeblogEntryURL(nextEntry);
                     String title = Utilities.truncateText(nextEntry.getTitle(), 15, 20, "...");
                     data.nextLabel = messageUtils.getString("weblogEntriesPager.single.next", new Object[]{title});
                 }
@@ -116,7 +116,7 @@ public class WeblogEntryListGenerator {
                 // make sure that entry is published and not to future
                 WeblogEntry prevEntry = weblogEntryManager.getPreviousPublishedEntry(currEntry);
                 if (prevEntry != null) {
-                    data.prevLink = urlStrategy.getWeblogEntryURL(prevEntry, true);
+                    data.prevLink = urlStrategy.getWeblogEntryURL(prevEntry);
                     String title = Utilities.truncateText(prevEntry.getTitle(), 15, 20, "...");
                     data.prevLabel = messageUtils.getString("weblogEntriesPager.single.prev", new Object[]{title});
                 }
@@ -205,13 +205,13 @@ public class WeblogEntryListGenerator {
         I18nMessages messageUtils = I18nMessages.getMessages(weblog.getLocaleInstance());
         if (page > 0) {
             data.nextLink = urlStrategy.getWeblogCollectionURL(weblog, catName, dateString, tag,
-                    page - 1, false);
+                    page - 1);
             data.nextLabel = messageUtils.getString("weblogEntriesPager.newer");
         }
 
         if (moreResults) {
             data.prevLink = urlStrategy.getWeblogCollectionURL(weblog, catName, dateString, tag,
-                    page + 1, false);
+                    page + 1);
             data.prevLabel = messageUtils.getString("weblogEntriesPager.older");
         }
 

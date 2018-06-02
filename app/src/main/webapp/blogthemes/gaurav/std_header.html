@@ -19,13 +19,13 @@
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse navbar-ex1-collapse">
 			<ul class="nav navbar-nav">
-				<li><a th:href="${url.home}">Home</a></li>
+				<li><a th:href="${url.weblogHome}">Home</a></li>
                 <th:block th:if="${model.weblog.getWeblogCategories().size() > 1}">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Categories <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li th:class="${(model.categoryName == null && model.permalink == null)}? 'selected'">
-                                <a th:href="${url.home}" th:utext="${utils.msg('generic.all')}">xxx</a>
+                                <a th:href="${url.weblogHome}" th:utext="${utils.msg('generic.all')}">xxx</a>
                             </li>
                             <li th:each="cat : ${model.weblog.weblogCategories}"
                                 th:class="${model.categoryName == cat.name || (model.permalink && model.weblogEntry.category.name == cat.name)}? 'selected'">
@@ -42,7 +42,7 @@
                         <a th:href="${url.createEntry}"><span th:text="${utils.msg('navigationBar.newEntry')}">xxx</span></a>
                     </li>
                     <li th:if="${model.isUserBlogOwner()}">
-                        <a th:href="${url.editSettings}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
+                        <a th:href="${url.weblogConfigURL}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
                     </li>
                 </th:block>
                 <th:block th:switch="${model.isUserAuthenticated()}">

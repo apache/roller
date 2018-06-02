@@ -49,38 +49,30 @@ public class URLStrategyImpl implements URLStrategy {
         this.isThemePreview = isThemePreview;
     }
 
-    private String getRootURL(boolean absolute) {
-        if (absolute) {
-            return WebloggerStaticConfig.getAbsoluteContextURL();
-        } else {
-            return WebloggerStaticConfig.getRelativeContextURL();
-        }
+    @Override
+    public String getLoginURL() {
+        return WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/login-redirect";
     }
 
     @Override
-    public String getLoginURL(boolean absolute) {
-        return getRootURL(absolute) + "/tb-ui/app/login-redirect";
+    public String getLogoutURL() {
+        return WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/logout";
     }
 
     @Override
-    public String getLogoutURL(boolean absolute) {
-        return getRootURL(absolute) + "/tb-ui/app/logout";
+    public String getRegisterURL() {
+        return WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/register";
     }
 
     @Override
-    public String getRegisterURL(boolean absolute) {
-        return getRootURL(absolute) + "/tb-ui/app/register";
-    }
-
-    @Override
-    public String getCommentNotificationUnsubscribeUrl(String commentId) {
-        return getRootURL(true) + "/tb-ui/app/unsubscribe?commentId=" + commentId;
+    public String getCommentNotificationUnsubscribeURL(String commentId) {
+        return WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/unsubscribe?commentId=" + commentId;
     }
 
     @Override
     public String getActionURL(String action, String namespace, Weblog weblog,
                                Map<String, String> parameters) {
-        String url = getRootURL(true) + namespace + "/" + action;
+        String url = WebloggerStaticConfig.getAbsoluteContextURL() + namespace + "/" + action;
 
         // add weblog handle parameter, if provided
         Map<String, String> params = new HashMap<>();
@@ -95,25 +87,25 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getEntryAddURL(String weblogId, boolean absolute) {
-        String url = getRootURL(absolute) + "/tb-ui/app/authoring/entryAdd";
+    public String getEntryAddURL(String weblogId) {
+        String url = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/authoring/entryAdd";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", weblogId);
         return url + Utilities.getQueryString(params);
     }
 
     @Override
-    public String getEntryEditURL(String weblogId, String entryId, boolean absolute) {
-        String url = getRootURL(absolute) + "/tb-ui/app/authoring/entryEdit";
+    public String getEntryEditURL(WeblogEntry entry) {
+        String url = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/authoring/entryEdit";
         Map<String, String> params = new HashMap<>();
-        params.put("weblogId", weblogId);
-        params.put("entryId", entryId);
+        params.put("weblogId", entry.getWeblog().getId());
+        params.put("entryId", entry.getId());
         return url + Utilities.getQueryString(params);
     }
 
     @Override
     public String getCommentManagementURL(String weblogId, String entryId) {
-        String url = getRootURL(true) + "/tb-ui/app/authoring/comments";
+        String url = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/authoring/comments";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", weblogId);
         params.put("entryId", entryId);
@@ -121,36 +113,40 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getWeblogConfigURL(String weblogHandle, boolean absolute) {
-        String url = getRootURL(absolute) + "/tb-ui/app/authoring/weblogConfig";
+    public String getWeblogConfigURL(String weblogHandle) {
+        String url = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/authoring/weblogConfig";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", weblogHandle);
         return url + Utilities.getQueryString(params);
     }
 
     @Override
-    public String getWeblogURL(Weblog weblog, boolean absolute) {
-        String url = getWeblogRootURL(weblog, absolute);
+    public String getWeblogURL(Weblog weblog) {
+        String url = getWeblogRootURL(weblog);
         Map<String, String> params = new HashMap<>();
         return url + Utilities.getQueryString(params);
     }
 
     @Override
     public String getWeblogEntryDraftPreviewURL(WeblogEntry entry) {
-        String url = getRootURL(true) + PREVIEW_URL_SEGMENT + entry.getWeblog().getHandle() + "/";
+        String url = WebloggerStaticConfig.getAbsoluteContextURL() + PREVIEW_URL_SEGMENT + entry.getWeblog().getHandle() + "/";
         url += "entry/" + Utilities.encode(entry.getAnchor());
         return url;
     }
 
     @Override
-    public String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor, boolean isPreview) {
-        return getWeblogURL(weblog, true) + "entrycomment/"
-                + Utilities.encode(entryAnchor) + (isPreview ? "?preview=true" : "");
+    public String getWeblogEntryCommentURL(WeblogEntry entry, boolean isPreview) {
+        String url = "";
+        if (entry != null) {
+            url = getWeblogURL(entry.getWeblog()) + "entrycomment/"
+                    + Utilities.encode(entry.getAnchor()) + (isPreview ? "?preview=true" : "");
+        }
+        return url;
     }
 
     @Override
     public String getMediaFileURL(Weblog weblog, String fileAnchor) {
-        return getWeblogURL(weblog, true) + "mediafile/" + Utilities.encode(fileAnchor);
+        return getWeblogURL(weblog) + "mediafile/" + Utilities.encode(fileAnchor);
     }
 
     @Override
@@ -160,49 +156,58 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getWeblogCommentsURL(WeblogEntry entry) {
-        return getWeblogEntryURL(entry, true) + "#comments";
+        return getWeblogEntryURL(entry) + "#comments";
     }
 
     @Override
     public String getWeblogCommentURL(WeblogEntry entry, String timeStamp) {
-        return getWeblogEntryURL(entry, true) + "#comment-" + timeStamp;
+        return getWeblogEntryURL(entry) + "#comment-" + timeStamp;
     }
 
     @Override
-    public String getWeblogFeedURL(Weblog weblog, String category, String tag) {
-        String url = getWeblogURL(weblog, true) + "feed";
+    public String getAtomFeedURL(Weblog weblog) {
+        return getWeblogURL(weblog) + "feed";
+    }
 
+    @Override
+    public String getAtomFeedURLForCategory(Weblog weblog, String category) {
+        String url = getAtomFeedURL(weblog);
         if (category != null && category.trim().length() > 0) {
             url += "/category/" + Utilities.encode(category);
-        } else if (tag != null && tag.trim().length() > 0) {
+        }
+        return url;
+    }
+
+    @Override
+    public String getAtomFeedURLForTag(Weblog weblog, String tag) {
+        String url = getAtomFeedURL(weblog);
+        if (tag != null && tag.trim().length() > 0) {
             url += "/tag/" + Utilities.encode(tag);
         }
-
         return url;
     }
 
     /* Weblog URL before any params added */
-    private String getWeblogRootURL(Weblog weblog, boolean absolute) {
+    private String getWeblogRootURL(Weblog weblog) {
         if (previewTheme == null) {
-            return getRootURL(absolute) + "/" + weblog.getHandle() + "/";
+            return WebloggerStaticConfig.getAbsoluteContextURL() + "/" + weblog.getHandle() + "/";
         } else {
-            return getRootURL(absolute) + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
+            return WebloggerStaticConfig.getAbsoluteContextURL() + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         }
     }
 
     @Override
-    public String getWeblogEntryURL(WeblogEntry entry, boolean absolute) {
-        String url = getWeblogRootURL(entry.getWeblog(), absolute) + "entry/" + Utilities.encode(entry.getAnchor());
+    public String getWeblogEntryURL(WeblogEntry entry) {
+        String url = getWeblogRootURL(entry.getWeblog()) + "entry/" + Utilities.encode(entry.getAnchor());
         Map<String, String> params = new HashMap<>();
         addThemeOverrideIfPresent(params);
         return url + Utilities.getQueryString(params);
     }
 
     @Override
-    public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, String tag,
-                                         int pageNum, boolean absolute) {
+    public String getWeblogCollectionURL(Weblog weblog, String category, String dateString, String tag, int pageNum) {
 
-        String pathinfo = getWeblogRootURL(weblog, absolute);
+        String pathinfo = getWeblogRootURL(weblog);
         Map<String, String> params = new HashMap<>();
 
         if (category != null && dateString == null) {
@@ -232,8 +237,8 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getCustomPageURL(Weblog weblog, String pageLink, String dateString, boolean absolute) {
-        String url = getWeblogRootURL(weblog, absolute);
+    public String getCustomPageURL(Weblog weblog, String pageLink, String dateString) {
+        String url = getWeblogRootURL(weblog);
         Map<String, String> params = new HashMap<>();
 
         if (pageLink != null && pageLink.length() > 0) {
@@ -249,8 +254,8 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getWeblogSearchURL(Weblog weblog, String query, String category, int pageNum, boolean absolute) {
-        String url = getWeblogURL(weblog, absolute) + "search";
+    public String getWeblogSearchURL(Weblog weblog, String query, String category, int pageNum) {
+        String url = getWeblogURL(weblog) + "search";
 
         Map<String, String> params = new HashMap<>();
         if (query != null) {
@@ -275,4 +280,18 @@ public class URLStrategyImpl implements URLStrategy {
         }
     }
 
+    @Override
+    public String getHomeURL() {
+        return WebloggerStaticConfig.getAbsoluteContextURL();
+    }
+
+    @Override
+    public String getCommentAuthenticatorURL() {
+        return WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/rendering/comment/authform";
+    }
+
+    @Override
+    public String getThemeResourceURL(String theme, String filePath) {
+        return WebloggerStaticConfig.getAbsoluteContextURL() + "/blogthemes/" + theme + "/" + filePath;
+    }
 }

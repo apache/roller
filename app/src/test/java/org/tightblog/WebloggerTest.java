@@ -270,8 +270,7 @@ public abstract class WebloggerTest {
         WeblogEntry entry = new WeblogEntry();
         entry.setAnchor(anchor);
         entry.setWeblog(weblog == null ? new Weblog() : weblog);
-        entry.setPubTime(pubTime == null ? Instant.now().minus(2,
-                ChronoUnit.DAYS) : pubTime);
+        entry.setPubTime(pubTime == null ? Instant.now().minus(2, ChronoUnit.DAYS) : pubTime);
         return entry;
     }
 

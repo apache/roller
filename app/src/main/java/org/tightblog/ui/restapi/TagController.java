@@ -82,7 +82,7 @@ public class TagController {
             data.tags = new ArrayList<>();
             data.tags.addAll(rawEntries.stream().peek(re -> re.setWeblog(null))
                     .peek(re -> re.setViewUrl(
-                            urlStrategy.getWeblogCollectionURL(weblog, null, null, re.getName(), 0, true)))
+                            urlStrategy.getWeblogCollectionURL(weblog, null, null, re.getName(), 0)))
                     .collect(Collectors.toList()));
 
             if (rawEntries.size() > ITEMS_PER_PAGE) {

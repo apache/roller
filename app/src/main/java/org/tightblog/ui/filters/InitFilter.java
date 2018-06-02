@@ -50,16 +50,10 @@ public class InitFilter implements Filter {
         if (!initialized) {
             HttpServletRequest request = (HttpServletRequest) req;
 
-            // determine absolute and relative url paths to the app
-            String relPath = request.getContextPath();
+            // determine absolute path for the app
             String absPath = this.getAbsoluteUrl(request);
-
-            // set them in our config
             WebloggerStaticConfig.setAbsoluteContextURL(absPath);
-            WebloggerStaticConfig.setRelativeContextURL(relPath);
-
-            log.debug("relPath = {}", relPath);
-            log.debug("absPath = {}", absPath);
+            log.info("Installation absolute path is {} (can be overridden via site.absoluteurl property)", absPath);
             this.initialized = true;
         }
 
@@ -90,6 +84,7 @@ public class InitFilter implements Filter {
         String definedAbsoluteURL = WebloggerStaticConfig.getProperty("site.absoluteurl", "");
 
         if (definedAbsoluteURL.length() > 0) {
+            log.info("site.absoluteurl override of {} provided", definedAbsoluteURL);
             return definedAbsoluteURL;
         }
 

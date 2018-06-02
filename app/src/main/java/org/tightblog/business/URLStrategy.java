@@ -37,17 +37,22 @@ public interface URLStrategy {
     /**
      * Url to login page.
      */
-    String getLoginURL(boolean absolute);
+    String getLoginURL();
 
     /**
      * Url to logout page.
      */
-    String getLogoutURL(boolean absolute);
+    String getLogoutURL();
 
     /**
      * Url to register page.
      */
-    String getRegisterURL(boolean absolute);
+    String getRegisterURL();
+
+    /**
+     * Url to home page of blog server (normally default blog).
+     */
+    String getHomeURL();
 
     /**
      * Get a url to a UI action in a given namespace, optionally specifying a weblog object
@@ -58,12 +63,12 @@ public interface URLStrategy {
     /**
      * Get a url to add a new weblog entry.
      */
-    String getEntryAddURL(String weblogId, boolean absolute);
+    String getEntryAddURL(String weblogId);
 
     /**
      * Get a url to edit a specific weblog entry.
      */
-    String getEntryEditURL(String weblogId, String entryId, boolean absolute);
+    String getEntryEditURL(WeblogEntry entry);
 
     /**
      * Get a url for the comments for a specific weblog entry.
@@ -71,19 +76,24 @@ public interface URLStrategy {
     String getCommentManagementURL(String weblogId, String entryId);
 
     /**
+     * Get the url for what the comment authentication form submits to.
+     */
+    String getCommentAuthenticatorURL();
+
+    /**
      * Get a url to weblog config page.
      */
-    String getWeblogConfigURL(String weblogHandle, boolean absolute);
+    String getWeblogConfigURL(String weblogHandle);
 
     /**
      * Get root url for a given weblog.
      */
-    String getWeblogURL(Weblog weblog, boolean absolute);
+    String getWeblogURL(Weblog weblog);
 
     /**
      * Get url for a single weblog entry on a given weblog.
      */
-    String getWeblogEntryURL(WeblogEntry entry, boolean absolute);
+    String getWeblogEntryURL(WeblogEntry entry);
 
     /**
      * Get the url for previewing a draft of a given blog entry.
@@ -92,11 +102,10 @@ public interface URLStrategy {
 
     /**
      * Get the POST url for a weblog entry comment.
-     * @param weblog weblog where comment is being placed
-     * @param entryAnchor weblog entry anchor where comment is being placed
+     * @param entry weblog entry where comment is being placed
      * @param isPreview true if commenter wishes to preview (not yet submit) comment
      */
-    String getWeblogEntryCommentURL(Weblog weblog, String entryAnchor, boolean isPreview);
+    String getWeblogEntryCommentURL(WeblogEntry entry, boolean isPreview);
 
     /**
      * Get url for a single weblog entry comments on a given weblog.
@@ -122,13 +131,17 @@ public interface URLStrategy {
     /**
      * Get url for a collection of entries on a given weblog.
      */
-    String getWeblogCollectionURL(Weblog weblog, String category, String dateString, String tag,
-                                  int pageNum, boolean absolute);
+    String getWeblogCollectionURL(Weblog weblog, String category, String dateString, String tag, int pageNum);
+
+    /**
+     * Get a url for a static resource (image, stylesheet) in a shared (bundled) theme
+     */
+    String getThemeResourceURL(String theme, String filePath);
 
     /**
      * TightBlog, in its template section, allows for creation of custom external
      * pages, HTML-generating templates containing arbitrary content that can be
-     * viewed via a specific link ourside of the normal pages for a blog, e.g.,
+     * viewed via a specific link outside of the normal pages for a blog, e.g.,
      * "http://www.foo.com/myblog/page/MyPage.html."
      * @param weblog weblog containing the custom external page.
      * @param pageLink the page link (in the example above MyPage.html) defined by
@@ -137,26 +150,33 @@ public interface URLStrategy {
      * @param dateString Desired date (YYYYMM or YYYYMMDD format) parameter for the page,
      *                   useful e.g. a calendar on a blog archive page where the YYYYMM
      *                   indicates the calendar month to display
-     * @param absolute if true, full URL, if false, URL relative to the blog's home
-     *                 page.
      * @return URL, absolute or relative, for the given pageLink.
      */
-    String getCustomPageURL(Weblog weblog, String pageLink, String dateString, boolean absolute);
+    String getCustomPageURL(Weblog weblog, String pageLink, String dateString);
 
     /**
      * Get url for a feed on a given weblog.
      */
-    String getWeblogFeedURL(Weblog weblog, String category, String tag);
+    String getAtomFeedURL(Weblog weblog);
+
+    /**
+     * Get url for a feed on a given weblog category.
+     */
+    String getAtomFeedURLForCategory(Weblog weblog, String category);
+
+    /**
+     * Get url for a feed on a given tag for a weblog.
+     */
+    String getAtomFeedURLForTag(Weblog weblog, String tag);
 
     /**
      * Get url to search endpoint on a given weblog.
      */
-    String getWeblogSearchURL(Weblog weblog, String query, String category, int pageNum, boolean absolute);
+    String getWeblogSearchURL(Weblog weblog, String query, String category, int pageNum);
 
     /**
      * Generate the URL that commenters who selected "notify me" for future comments for an entry can
      * use to unsubscribe from further comments.
      */
-    String getCommentNotificationUnsubscribeUrl(String commentId);
-
+    String getCommentNotificationUnsubscribeURL(String commentId);
 }

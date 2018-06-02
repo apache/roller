@@ -126,7 +126,7 @@
         </select>
         <div style="height:400px">
             <p>{{ctrl.metadata.sharedThemeMap[ctrl.weblog.theme].description}}</p>
-            <img ng-src="{{ctrl.metadata.relativeSiteURL}}{{ctrl.metadata.sharedThemeMap[ctrl.weblog.theme].previewPath}}"></img>
+            <img ng-src="{{ctrl.metadata.absoluteSiteURL}}{{ctrl.metadata.sharedThemeMap[ctrl.weblog.theme].previewPath}}"></img>
         </div>
         </td>
         <td class="description"><fmt:message key="weblogConfig.tip.theme"/></td>

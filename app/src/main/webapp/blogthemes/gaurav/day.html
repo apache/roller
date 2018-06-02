@@ -38,7 +38,7 @@
 
             <th:block th:if="${model.isUserBlogPublisher()}">
                 &nbsp;|&nbsp;
-                <a th:href="${url.editEntry(entry.anchor)}" th:utext="${utils.msg('generic.edit')}">xxx</a>
+                <a th:href="${url.editEntry(entry)}" th:utext="${utils.msg('generic.edit')}">xxx</a>
             </th:block>
         </p>
 

@@ -8,7 +8,7 @@
 	<th:block th:if="${model.resultCount > 0}">
 		<style>span.searchword { background-color:yellow; }</style>
 		<script>
-		    searchhi_config = {ignore_site : '[(${url.absoluteSite})]'};
+		    searchhi_config = {ignore_site : '[(${url.site})]'};
 		</script>
 		<script type="application/x-javascript" th:src="${url.themeResource('gaurav', 'js/searchhi.js')}"></script>
 		<script>

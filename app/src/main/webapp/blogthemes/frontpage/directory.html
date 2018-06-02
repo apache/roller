@@ -24,7 +24,7 @@
                <td class="menuTabUnselected">
                   <div class="menu-tr">
                      <div class="menu-tl">
-                        &nbsp;&nbsp;<a th:href="${url.home}">Recent Entries</a>&nbsp;&nbsp;
+                        &nbsp;&nbsp;<a th:href="${url.weblogHome}">Recent Entries</a>&nbsp;&nbsp;
                      </div>
                   </div>
                </td>	
@@ -74,7 +74,7 @@
                                 <tbody>
                                 <tr th:each="item : ${weblogListData.weblogs}">
                                     <th scope="row" class="name">
-                                        <a th:href="${url.absoluteSite + '/' + item.handle}" th:utext="${item.handle}">xxx</a>
+                                        <a th:href="${url.site + '/' + item.handle}" th:utext="${item.handle}">xxx</a>
                                     </th>
                                     <td class="description" th:utext="${item.name}">xxx</td>
                                     <td class="description" th:utext="${item.creatorScreenName}">xxx</td>

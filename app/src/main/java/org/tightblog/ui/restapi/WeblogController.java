@@ -278,8 +278,6 @@ public class WeblogController {
 
         metadata.absoluteSiteURL = WebloggerStaticConfig.getAbsoluteContextURL();
 
-        metadata.relativeSiteURL = WebloggerStaticConfig.getRelativeContextURL();
-
         metadata.usersOverrideAnalyticsCode =
                 persistenceStrategy.getWebloggerProperties().isUsersOverrideAnalyticsCode();
 
@@ -324,7 +322,6 @@ public class WeblogController {
         Map<String, String> commentOptions;
         Map<String, String> commentDayOptions;
 
-        String relativeSiteURL;
         String absoluteSiteURL;
         boolean usersOverrideAnalyticsCode;
         boolean usersCommentNotifications;
@@ -347,10 +344,6 @@ public class WeblogController {
 
         public Map<String, String> getCommentDayOptions() {
             return commentDayOptions;
-        }
-
-        public String getRelativeSiteURL() {
-            return relativeSiteURL;
         }
 
         public String getAbsoluteSiteURL() {
