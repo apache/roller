@@ -21,13 +21,13 @@ public enum GlobalRole {
     // For pages that don't need authenticated users (initial install, user registration, login, etc.)
     NOAUTHNEEDED(0),
     // For users missing Google Authenticator secret and system requires multifactor authentication
-    MISSING_MFA_SECRET(0),
+    MISSING_MFA_SECRET(1),
     // Users can edit weblogs for which they have permission
-    BLOGGER(1),
+    BLOGGER(2),
     // Users can create new blogs
-    BLOGCREATOR(2),
+    BLOGCREATOR(3),
     // Blog server admin rights: server settings, user management, etc.
-    ADMIN(3);
+    ADMIN(4);
 
     private int weight;
 
