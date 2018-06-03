@@ -1,5 +1,6 @@
 package org.tightblog.ui.restapi;
 
+import org.springframework.context.MessageSource;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
@@ -15,7 +16,6 @@ import org.tightblog.pojos.WeblogEntryComment.ApprovalStatus;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.util.HTMLSanitizer;
-import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
@@ -100,6 +100,9 @@ public class CommentController {
         mailManager = manager;
     }
 
+    @Autowired
+    private MessageSource messages;
+
     @RequestMapping(value = "/{weblogId}/page/{page}", method = RequestMethod.POST)
     public CommentData getWeblogComments(@PathVariable String weblogId, @PathVariable int page,
                                          @RequestParam(required = false) String entryId,
@@ -157,12 +160,11 @@ public class CommentController {
     }
 
     @RequestMapping(value = "/{weblogId}/searchfields", method = RequestMethod.GET)
-    public CommentSearchFields getCommentSearchFields(@PathVariable String weblogId, Principal principal,
+    public CommentSearchFields getCommentSearchFields(@PathVariable String weblogId, Principal principal, Locale locale,
                                                               HttpServletResponse response) {
 
         // Get user permissions and locale
         User user = userManager.getEnabledUserByUserName(principal.getName());
-        I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
 
         Weblog weblog = weblogManager.getWeblog(weblogId);
 
@@ -171,12 +173,11 @@ public class CommentController {
 
             // status options
             fields.statusOptions = new LinkedHashMap<>();
-            fields.statusOptions.put("", messages.getString("generic.all"));
-            fields.statusOptions.put("PENDING", messages.getString("comments.onlyPending"));
-            fields.statusOptions.put("APPROVED", messages.getString("comments.onlyApproved"));
-            fields.statusOptions.put("DISAPPROVED", messages.getString("comments.onlyDisapproved"));
-            fields.statusOptions.put("SPAM", messages.getString("comments.onlySpam"));
-
+            fields.statusOptions.put("", messages.getMessage("generic.all", null, locale));
+            fields.statusOptions.put("PENDING", messages.getMessage("comments.onlyPending", null, locale));
+            fields.statusOptions.put("APPROVED", messages.getMessage("comments.onlyApproved", null, locale));
+            fields.statusOptions.put("DISAPPROVED", messages.getMessage("comments.onlyDisapproved", null, locale));
+            fields.statusOptions.put("SPAM", messages.getMessage("comments.onlySpam", null, locale));
             return fields;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

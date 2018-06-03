@@ -111,18 +111,8 @@
       <td class="description"><fmt:message key="userAdmin.tip.email" /></td>
   </tr>
 
-  <tr>
-      <td class="label"><label for="locale"><fmt:message key="userSettings.locale" /></label></td>
-      <td class="field">
-          <select id="locale" ng-model="ctrl.userBeingEdited.locale" size="1">
-              <option ng-repeat="(key, value) in ctrl.metadata.locales" value="{{key}}">{{value}}</option>
-          </select>
-      </td>
-      <td class="description"><fmt:message key="userRegister.tip.locale"/></td>
-  </tr>
-
     <tr>
-        <td class="label"><label for="passwordText"><fmt:message key="userSettings.password"/></label></td>
+       <td class="label"><label for="passwordText"><fmt:message key="userSettings.password"/></label></td>
         <td class="field">
             <input id="passwordText" type="password" size="20" ng-model="ctrl.userCredentials.passwordText" minlength="8" maxlength="20">
         </td>

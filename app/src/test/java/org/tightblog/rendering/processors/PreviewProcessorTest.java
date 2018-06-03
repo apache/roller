@@ -37,7 +37,6 @@ import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
-import org.tightblog.util.WebloggerException;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -120,7 +119,7 @@ public class PreviewProcessorTest {
             sharedTheme.setSiteWide(false);
             when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
             processor = Mockito.spy(processor);
-        } catch (IOException | WebloggerException e) {
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -174,7 +173,7 @@ public class PreviewProcessorTest {
     }
 
     @Test
-    public void testCorrectTemplatesChosen() throws IOException, WebloggerException {
+    public void testCorrectTemplatesChosen() throws IOException {
         // Custom External retrieved
         pageRequest.setCustomPageName("mycustompage");
         SharedTemplate sharedTemplate = new SharedTemplate();
@@ -254,7 +253,7 @@ public class PreviewProcessorTest {
     }
 
     @Test
-    public void testModelSetCorrectlyFilled() throws IOException, WebloggerException {
+    public void testModelSetCorrectlyFilled() throws IOException {
         Set<Model> previewModelSet = new HashSet<>();
         previewModelSet.add(new PageModel());
         when(mockApplicationContext.getBean(eq("previewModelSet"), eq(Set.class))).thenReturn(previewModelSet);

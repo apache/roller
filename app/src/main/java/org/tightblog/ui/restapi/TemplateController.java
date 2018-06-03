@@ -22,6 +22,7 @@ package org.tightblog.ui.restapi;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.MessageSource;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.JPAPersistenceStrategy;
@@ -33,7 +34,6 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WeblogTheme;
-import org.tightblog.util.I18nMessages;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,14 +58,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 @RestController
 public class TemplateController {
 
     private static Logger log = LoggerFactory.getLogger(TemplateController.class);
-
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
 
     @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
@@ -95,16 +92,17 @@ public class TemplateController {
         this.themeManager = themeManager;
     }
 
+    @Autowired
+    private MessageSource messages;
+
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/templates", method = RequestMethod.GET)
     public WeblogTemplateData getWeblogTemplates(@PathVariable String id, Principal principal,
-                                                 HttpServletResponse response) {
+                                                 Locale locale, HttpServletResponse response) {
 
         Weblog weblog = weblogManager.getWeblog(id);
         User user = userManager.getEnabledUserByUserName(principal.getName());
 
         if (weblog != null && user != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
-            I18nMessages messages = user.getI18NMessages();
-
             WeblogTemplateData wtd = new WeblogTemplateData();
 
             WeblogTheme theme = new WeblogTheme(weblogManager, weblog,
@@ -124,7 +122,7 @@ public class TemplateController {
 
             availableRoles.forEach(role -> wtd.availableTemplateRoles.put(role.getName(), role.getReadableName()));
             availableRoles.forEach(role -> wtd.templateRoleDescriptions.put(role.getName(),
-                    messages.getString(role.getDescriptionProperty())));
+                    messages.getMessage(role.getDescriptionProperty(), null, locale)));
             return wtd;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -220,16 +218,13 @@ public class TemplateController {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates", method = RequestMethod.POST)
     public ResponseEntity postTemplate(@PathVariable String weblogId, @Valid @RequestBody WeblogTemplate templateData,
-                                      Principal p) throws ServletException {
+                                      Principal p, Locale locale) throws ServletException {
         try {
-
             boolean createNew = false;
             WeblogTemplate templateToSave = weblogManager.getTemplate(templateData.getId());
 
             // Check user permissions
             User user = userManager.getEnabledUserByUserName(p.getName());
-            I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
-
             Weblog weblog = (templateToSave == null) ? weblogManager.getWeblog(weblogId) : templateToSave.getWeblog();
 
             if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
@@ -264,7 +259,7 @@ public class TemplateController {
 
                 templateToSave.setLastModified(Instant.now());
 
-                ValidationError maybeError = advancedValidate(templateToSave, createNew);
+                ValidationError maybeError = advancedValidate(templateToSave, createNew, locale);
                 if (maybeError != null) {
                     return ResponseEntity.badRequest().body(maybeError);
                 }
@@ -274,39 +269,43 @@ public class TemplateController {
 
                 return ResponseEntity.ok(templateToSave.getId());
             } else {
-                return ResponseEntity.status(403).body(messages.getString("error.title.403"));
+                return ResponseEntity.status(403).body(messages.getMessage("error.title.403", null,
+                        locale));
             }
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }
     }
 
-    private ValidationError advancedValidate(WeblogTemplate templateToCheck, boolean initialSave) {
+    private ValidationError advancedValidate(WeblogTemplate templateToCheck, boolean initialSave, Locale locale) {
         BindException be = new BindException(templateToCheck, "new data object");
 
         // make sure relative path exists if required
         if (!initialSave && templateToCheck.getRole().isAccessibleViaUrl()) {
             if (StringUtils.isEmpty(templateToCheck.getRelativePath())) {
-                be.addError(new ObjectError("WeblogTemplate", bundle.getString("templateEdit.error.relativePathRequired")));
+                be.addError(new ObjectError("WeblogTemplate",
+                        messages.getMessage("templateEdit.error.relativePathRequired", null, locale)));
             } else {
                 WeblogTemplate test = weblogManager.getTemplateByPath(templateToCheck.getWeblog(),
                         templateToCheck.getRelativePath());
                 if (test != null && !test.getId().equals(templateToCheck.getId())) {
-                    be.addError(new ObjectError("WeblogTemplate", bundle.getString("templates.error.pathAlreadyExists")));
+                    be.addError(new ObjectError("WeblogTemplate",
+                            messages.getMessage("templates.error.pathAlreadyExists", null, locale)));
                 }
             }
         }
 
         WeblogTemplate template = weblogManager.getTemplateByName(templateToCheck.getWeblog(), templateToCheck.getName());
         if (template != null && !template.getId().equals(templateToCheck.getId())) {
-            be.addError(new ObjectError("WeblogTemplate", bundle.getString("templates.error.nameAlreadyExists")));
+            be.addError(new ObjectError("WeblogTemplate", messages.getMessage("templates.error.nameAlreadyExists",
+                null, locale)));
         }
 
         if (templateToCheck.getRole().isSingleton()) {
             template = weblogManager.getTemplateByAction(templateToCheck.getWeblog(), templateToCheck.getRole());
             if (template != null && !template.getId().equals(templateToCheck.getId())) {
                 be.addError(new ObjectError("WeblogTemplate",
-                        bundle.getString("templates.error.singletonActionAlreadyExists")));
+                        messages.getMessage("templates.error.singletonActionAlreadyExists", null, locale)));
             }
         }
 

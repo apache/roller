@@ -19,8 +19,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 <%@ page isErrorPage="true" %>
 
-<fmt:setBundle basename="ApplicationResources" />
-
 <h2><fmt:message key="denied.title" /></h2>
 
 <fmt:message key="denied.prompt" />

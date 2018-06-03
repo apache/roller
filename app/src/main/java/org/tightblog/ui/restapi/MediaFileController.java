@@ -1,6 +1,7 @@
 package org.tightblog.ui.restapi;
 
 import com.fasterxml.jackson.databind.node.TextNode;
+import org.springframework.context.MessageSource;
 import org.tightblog.business.MediaFileManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
@@ -10,7 +11,6 @@ import org.tightblog.pojos.MediaFile;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
-import org.tightblog.util.I18nMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +68,9 @@ public class MediaFileController {
         this.persistenceStrategy = persistenceStrategy;
     }
 
+    @Autowired
+    private MessageSource messages;
+
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/mediadirectories", method = RequestMethod.GET)
     public List<MediaDirectory> getMediaDirectories(@PathVariable String id, Principal p, HttpServletResponse response) {
         Weblog weblog = weblogManager.getWeblog(id);
@@ -121,7 +124,8 @@ public class MediaFileController {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/mediafiles", method = RequestMethod.POST, consumes = {"multipart/form-data"})
     public ResponseEntity postMediaFile(Principal p, @Valid @RequestPart("mediaFileData") MediaFile mediaFileData,
-                                          @RequestPart(name = "uploadFile", required = false) MultipartFile uploadedFile)
+                                        Locale locale,
+                                        @RequestPart(name = "uploadFile", required = false) MultipartFile uploadedFile)
             throws ServletException {
 
         MediaFile mf = mediaFileManager.getMediaFile(mediaFileData.getId());
@@ -129,7 +133,6 @@ public class MediaFileController {
 
         // Check user permissions
         User user = userManager.getEnabledUserByUserName(p.getName());
-        I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
 
         if (newMediaFile) {
             if (uploadedFile == null) {
@@ -151,12 +154,14 @@ public class MediaFileController {
 
         if (user == null || mf.getDirectory() == null
                 || !userManager.checkWeblogRole(user, mf.getDirectory().getWeblog(), WeblogRole.POST)) {
-            return ResponseEntity.status(403).body(messages.getString("error.title.403"));
+            return ResponseEntity.status(403).body(messages.getMessage("error.title.403", null,
+                    locale));
         }
 
         MediaFile fileWithSameName = mf.getDirectory().getMediaFile(mediaFileData.getName());
         if (fileWithSameName != null && !fileWithSameName.getId().equals(mediaFileData.getId())) {
-            return ResponseEntity.badRequest().body(messages.getString("mediaFile.error.duplicateName"));
+            return ResponseEntity.badRequest().body(messages.getMessage("mediaFile.error.duplicateName",
+                    null, locale));
         }
 
         // update media file with new metadata
@@ -180,7 +185,8 @@ public class MediaFileController {
 
             if (errors.size() > 0) {
                 Map.Entry<String, List<String>> msg = errors.entrySet().iterator().next();
-                return ResponseEntity.badRequest().body(messages.getString(msg.getKey(), msg.getValue().toArray()));
+                return ResponseEntity.badRequest().body(messages.getMessage(msg.getKey(), msg.getValue().toArray(),
+                        locale));
             }
 
             return ResponseEntity.ok(mf);
@@ -192,11 +198,9 @@ public class MediaFileController {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/mediadirectories", method = RequestMethod.PUT)
     public ResponseEntity addMediaDirectory(@PathVariable String weblogId, @RequestBody TextNode directoryName,
-                                    Principal p, HttpServletResponse response) throws ServletException {
+                                    Principal p, Locale locale, HttpServletResponse response)
+            throws ServletException {
         try {
-            User user = userManager.getEnabledUserByUserName(p.getName());
-            I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
-
             Weblog weblog = weblogManager.getWeblog(weblogId);
             if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
                 try {
@@ -204,10 +208,10 @@ public class MediaFileController {
                     response.setStatus(HttpServletResponse.SC_OK);
                     return ResponseEntity.ok(newDir.getId());
                 } catch (IllegalArgumentException e) {
-                    return ResponseEntity.badRequest().body(messages.getString(e.getMessage()));
+                    return ResponseEntity.badRequest().body(messages.getMessage(e.getMessage(), null, locale));
                 }
             } else {
-                return ResponseEntity.status(403).body(messages.getString("error.title.403"));
+                return ResponseEntity.status(403).body(messages.getMessage("error.title.403", null, locale));
             }
         } catch (Exception e) {
             throw new ServletException(e.getMessage());

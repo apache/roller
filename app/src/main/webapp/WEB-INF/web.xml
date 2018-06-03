@@ -13,6 +13,7 @@
         <param-value>classpath:spring-app.xml, classpath*:tightblog-custom.xml</param-value>
     </context-param>
 
+    <!-- Used by fmt: tags in JSPs, defines resource bundle instead of needing fmt:setBundle tag in each JSP -->
     <context-param>
         <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
         <param-value>ApplicationResources</param-value>

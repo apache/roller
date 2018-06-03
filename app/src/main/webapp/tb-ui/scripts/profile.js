@@ -2,7 +2,6 @@ tightblogApp.controller('PageController', ['$http',
     function PageController($http) {
         var self = this;
         this.userBeingEdited = {
-           "locale" : "en"
         };
         this.userCredentials = {};
         this.errorObj = {};

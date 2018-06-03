@@ -22,6 +22,7 @@ package org.tightblog.rendering.processors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.springframework.context.MessageSource;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
@@ -40,7 +41,6 @@ import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.util.HTMLSanitizer;
-import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
@@ -61,7 +61,6 @@ import java.io.PrintWriter;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -154,6 +153,13 @@ public class CommentProcessor extends AbstractProcessor {
         this.commentValidators = commentValidators;
     }
 
+    @Autowired
+    private MessageSource messages;
+
+    public void setMessages(MessageSource messages) {
+        this.messages = messages;
+    }
+
     /**
      * Here we handle incoming comment postings.
      */
@@ -196,8 +202,6 @@ public class CommentProcessor extends AbstractProcessor {
             incomingRequest.setBlogger(userManager.getEnabledUserByUserName(incomingRequest.getAuthenticatedUser()));
         }
 
-        I18nMessages messageUtils = getI18nMessages(weblog.getLocaleInstance());
-
         WeblogEntryComment incomingComment = createCommentFromRequest(request, incomingRequest, props.getCommentHtmlPolicy());
 
         log.debug("Incoming comment: {}", incomingComment.toString());
@@ -219,7 +223,8 @@ public class CommentProcessor extends AbstractProcessor {
         if (errorProperty != null) {
             // return error due to bad input
             incomingComment.setStatus(ApprovalStatus.INVALID);
-            incomingComment.setSubmitResponseMessage(messageUtils.getString(errorProperty, errorValue));
+            incomingComment.setSubmitResponseMessage(messages.getMessage(errorProperty, new Object[]{errorValue},
+                    request.getLocale()));
         } else if (!incomingComment.isPreview()) {
             // Otherwise next check comment for spam
             boolean ownComment = userManager.checkWeblogRole(incomingRequest.getBlogger(), weblog,
@@ -253,7 +258,8 @@ public class CommentProcessor extends AbstractProcessor {
                 commentStatusKey = "commentServlet.submittedToModerator";
             }
 
-            incomingComment.setSubmitResponseMessage(messageUtils.getString(commentStatusKey));
+            incomingComment.setSubmitResponseMessage(messages.getMessage(commentStatusKey, null,
+                    request.getLocale()));
 
             // Don't save spam if evaluated as blatant or if blog server configured to ignore all spam.
             if (!ValidationResult.BLATANT_SPAM.equals(valResult) &&
@@ -295,10 +301,6 @@ public class CommentProcessor extends AbstractProcessor {
         request.setAttribute("commentForm", incomingComment);
         RequestDispatcher dispatcher = request.getRequestDispatcher(dispatchUrl);
         dispatcher.forward(request, response);
-    }
-
-    I18nMessages getI18nMessages(Locale locale) {
-        return I18nMessages.getMessages(locale);
     }
 
     String validateComment(WeblogEntryComment incomingComment) {
@@ -388,14 +390,14 @@ public class CommentProcessor extends AbstractProcessor {
         out.println(commentAuthenticator == null ? "" : commentAuthenticator.getHtml(request));
     }
 
-    ValidationResult runSpamCheckers(WeblogEntryComment comment, Map<String, List<String>> messages) {
+    ValidationResult runSpamCheckers(WeblogEntryComment comment, Map<String, List<String>> validationMessages) {
         boolean spamDetected = false;
 
         ValidationResult singleResponse;
         if (commentValidators.size() > 0) {
             for (CommentValidator val : commentValidators) {
                 log.debug("Invoking comment validator {}", val.getClass().getName());
-                singleResponse = val.validate(comment, messages);
+                singleResponse = val.validate(comment, validationMessages);
                 if (ValidationResult.BLATANT_SPAM.equals(singleResponse)) {
                     return ValidationResult.BLATANT_SPAM;
                 } else if (ValidationResult.SPAM.equals(singleResponse)) {

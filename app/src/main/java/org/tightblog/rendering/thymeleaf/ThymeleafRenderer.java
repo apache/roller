@@ -25,7 +25,6 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.tightblog.pojos.Template;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.util.Utilities;
-import org.tightblog.util.WebloggerException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -43,7 +42,7 @@ public class ThymeleafRenderer {
         this.templateEngine = templateEngine;
     }
 
-    public CachedContent render(Template template, Map<String, Object> model) throws IOException, WebloggerException {
+    public CachedContent render(Template template, Map<String, Object> model) throws IOException {
         CachedContent rendererOutput = new CachedContent(template.getRole());
 
         try (ByteArrayOutputStream outStream = new ByteArrayOutputStream(Utilities.TWENTYFOUR_KB_IN_BYTES);

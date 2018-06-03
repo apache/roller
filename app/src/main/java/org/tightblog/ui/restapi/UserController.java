@@ -22,6 +22,7 @@ package org.tightblog.ui.restapi;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.MessageSource;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
@@ -34,7 +35,6 @@ import org.tightblog.pojos.UserStatus;
 import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
-import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
@@ -59,13 +59,11 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -75,8 +73,6 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private static Logger log = LoggerFactory.getLogger(UserController.class);
-
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
 
     private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$";
 
@@ -109,6 +105,9 @@ public class UserController {
     public void setMailManager(MailManager manager) {
         mailManager = manager;
     }
+
+    @Autowired
+    private MessageSource messages;
 
     public UserController() {
         pattern = Pattern.compile(PASSWORD_PATTERN);
@@ -231,9 +230,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/tb-ui/register/rest/registeruser", method = RequestMethod.POST)
-    public ResponseEntity registerUser(@Valid @RequestBody UserData newData, HttpServletResponse response)
+    public ResponseEntity registerUser(@Valid @RequestBody UserData newData, Locale locale, HttpServletResponse response)
             throws ServletException {
-        ValidationError maybeError = advancedValidate(null, newData, true);
+        ValidationError maybeError = advancedValidate(null, newData, true, locale);
         if (maybeError != null) {
             return ResponseEntity.badRequest().body(maybeError);
         }
@@ -271,12 +270,12 @@ public class UserController {
 
     @RequestMapping(value = "/tb-ui/authoring/rest/userprofile/{id}", method = RequestMethod.POST)
     public ResponseEntity updateUserProfile(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
-                                            HttpServletResponse response) throws ServletException {
+                                            Locale locale, HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
         User authenticatedUser = userManager.getEnabledUserByUserName(p.getName());
 
         if (user != null && user.getId().equals(authenticatedUser.getId())) {
-            ValidationError maybeError = advancedValidate(null, newData, false);
+            ValidationError maybeError = advancedValidate(null, newData, false, locale);
             if (maybeError != null) {
                 return ResponseEntity.badRequest().body(maybeError);
             }
@@ -288,9 +287,9 @@ public class UserController {
 
     @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}", method = RequestMethod.PUT)
     public ResponseEntity updateUser(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
-                                     HttpServletResponse response) throws ServletException {
+                                     Locale locale, HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
-        ValidationError maybeError = advancedValidate(user, newData, false);
+        ValidationError maybeError = advancedValidate(user, newData, false, locale);
         if (maybeError != null) {
             return ResponseEntity.badRequest().body(maybeError);
         }
@@ -339,7 +338,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/memberupdate", method = RequestMethod.POST)
-    public ResponseEntity updateWeblogMembership(@PathVariable String weblogId, Principal p,
+    public ResponseEntity updateWeblogMembership(@PathVariable String weblogId, Principal p, Locale locale,
                                                  @RequestBody List<UserWeblogRole> roles)
             throws ServletException {
 
@@ -353,7 +352,7 @@ public class UserController {
                     .filter(r -> !r.isPending())
                     .collect(Collectors.toList());
             if (owners.size() < 1) {
-                return ResponseEntity.badRequest().body(user.getI18NMessages().getString("members.oneAdminRequired"));
+                return ResponseEntity.badRequest().body(messages.getMessage("members.oneAdminRequired", null, locale));
             }
 
             // one iteration for each line (user) in the members table
@@ -366,7 +365,7 @@ public class UserController {
                 }
             }
             persistenceStrategy.flush();
-            String msg = user.getI18NMessages().getString("members.membersChanged");
+            String msg = messages.getMessage("members.membersChanged", null, locale);
             return ResponseEntity.ok(msg);
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -379,7 +378,7 @@ public class UserController {
             if (user != null) {
                 user.setScreenName(newData.user.getScreenName().trim());
                 user.setEmailAddress(newData.user.getEmailAddress().trim());
-                user.setLocale(newData.user.getLocale());
+
                 if (!UserStatus.ENABLED.equals(user.getStatus()) && StringUtils.isNotEmpty(newData.user.getActivationCode())) {
                     user.setActivationCode(newData.user.getActivationCode());
                 }
@@ -429,21 +428,23 @@ public class UserController {
         }
     }
 
-    private ValidationError advancedValidate(User currentUser, UserData data, boolean isAdd) {
+    private ValidationError advancedValidate(User currentUser, UserData data, boolean isAdd, Locale locale) {
         BindException be = new BindException(data, "new data object");
 
         UserSearchCriteria usc1 = new UserSearchCriteria();
         usc1.setUserName(data.user.getUserName());
         List<User> users = userManager.getUsers(usc1);
         if (users.size() > 1 || (users.size() == 1 && !users.get(0).getId().equals(data.user.getId()))) {
-            be.addError(new ObjectError("User object", bundle.getString("error.add.user.userNameInUse")));
+            be.addError(new ObjectError("User object", messages.getMessage("error.add.user.userNameInUse",
+                    null, locale)));
         }
 
         UserSearchCriteria usc2 = new UserSearchCriteria();
         usc2.setScreenName(data.user.getScreenName());
         users = userManager.getUsers(usc2);
         if (users.size() > 1 || (users.size() == 1 && !users.get(0).getId().equals(data.user.getId()))) {
-            be.addError(new ObjectError("User object", bundle.getString("error.add.user.screenNameInUse")));
+            be.addError(new ObjectError("User object", messages.getMessage("error.add.user.screenNameInUse",
+                    null, locale)));
         }
 
         if (currentUser != null) {
@@ -453,20 +454,20 @@ public class UserController {
                     case ENABLED:
                         if (data.getUser().getStatus() != UserStatus.DISABLED) {
                             be.addError(new ObjectError("User object",
-                                    bundle.getString("error.useradmin.enabled.only.disabled")));
+                                    messages.getMessage("error.useradmin.enabled.only.disabled", null, locale)));
                         }
                         break;
                     case DISABLED:
                         if (data.getUser().getStatus() != UserStatus.ENABLED) {
                             be.addError(new ObjectError("User object",
-                                    bundle.getString("error.useradmin.disabled.only.enabled")));
+                                    messages.getMessage("error.useradmin.disabled.only.enabled", null, locale)));
                         }
                         break;
                     case REGISTERED:
                     case EMAILVERIFIED:
                         if (data.getUser().getStatus() != UserStatus.ENABLED) {
                             be.addError(new ObjectError("User object",
-                                    bundle.getString("error.useradmin.nonenabled.only.enabled")));
+                                    messages.getMessage("error.useradmin.nonenabled.only.enabled", null, locale)));
                         }
                         break;
                     default:
@@ -477,21 +478,25 @@ public class UserController {
         String maybePassword = data.credentials.getPasswordText();
         if (!StringUtils.isEmpty(maybePassword)) {
             if (!maybePassword.equals(data.credentials.getPasswordConfirm())) {
-                be.addError(new ObjectError("User object", bundle.getString("error.add.user.passwordConfirmFail")));
+                be.addError(new ObjectError("User object",
+                        messages.getMessage("error.add.user.passwordConfirmFail", null, locale)));
             } else {
                 if (!pattern.matcher(maybePassword).matches()) {
-                    be.addError(new ObjectError("User object", bundle.getString("error.add.user.passwordComplexityFail")));
+                    be.addError(new ObjectError("User object",
+                            messages.getMessage("error.add.user.passwordComplexityFail", null, locale)));
                 }
             }
         } else {
             if (!StringUtils.isEmpty(data.credentials.getPasswordConfirm())) {
                 // confirm provided but password field itself not filled out
-                be.addError(new ObjectError("User object", bundle.getString("error.add.user.passwordConfirmFail")));
+                be.addError(new ObjectError("User object",
+                        messages.getMessage("error.add.user.passwordConfirmFail", null, locale)));
             }
         }
 
         if (isAdd && StringUtils.isEmpty(data.credentials.getPasswordText())) {
-            be.addError(new ObjectError("User object", bundle.getString("error.add.user.missingPassword")));
+            be.addError(new ObjectError("User object",
+                    messages.getMessage("error.add.user.missingPassword", null, locale)));
         }
 
         return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
@@ -525,7 +530,7 @@ public class UserController {
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/user/{userId}/role/{role}/invite",
             method = RequestMethod.POST)
     public ResponseEntity inviteUser(@PathVariable String weblogId, @PathVariable String userId,
-                                     @PathVariable WeblogRole role, Principal p) {
+                                     @PathVariable WeblogRole role, Principal p, Locale locale) {
 
         Weblog weblog = weblogManager.getWeblog(weblogId);
         User invitee = userManager.getUser(userId);
@@ -534,16 +539,15 @@ public class UserController {
         if (weblog != null && invitee != null && invitor != null &&
                 userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
 
-            I18nMessages messages = invitor.getI18NMessages();
             UserWeblogRole roleChk = userManager.getWeblogRoleIncludingPending(invitee, weblog);
             if (roleChk != null) {
-                return ResponseEntity.badRequest().body(messages.getString(roleChk.isPending() ?
-                        "members.userAlreadyInvited" : "members.userAlreadyMember"));
+                return ResponseEntity.badRequest().body(messages.getMessage(roleChk.isPending() ?
+                        "members.userAlreadyInvited" : "members.userAlreadyMember", null, locale));
             }
             userManager.grantWeblogRole(invitee, weblog, role, true);
             persistenceStrategy.flush();
             mailManager.sendWeblogInvitation(invitee, weblog);
-            return ResponseEntity.ok(messages.getString("members.userInvited"));
+            return ResponseEntity.ok(messages.getMessage("members.userInvited", null, locale));
         } else {
             return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).build();
         }
@@ -577,12 +581,6 @@ public class UserController {
     @RequestMapping(value = "/tb-ui/register/rest/useradminmetadata", method = RequestMethod.GET)
     public UserAdminMetadata getUserAdminMetadata() {
         UserAdminMetadata metadata = new UserAdminMetadata();
-
-        List<Locale> locales = Arrays.asList(Locale.getAvailableLocales());
-
-        metadata.locales = locales.stream()
-                .sorted(Comparator.comparing(Locale::getDisplayName))
-                .collect(Utilities.toLinkedHashMap(Locale::toString, Locale::getDisplayName));
 
         metadata.userStatuses = Arrays.stream(UserStatus.values())
                 .collect(Utilities.toLinkedHashMap(UserStatus::name, UserStatus::name));

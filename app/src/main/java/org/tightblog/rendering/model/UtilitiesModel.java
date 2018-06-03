@@ -24,13 +24,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.requests.WeblogRequest;
-import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
 
 import java.time.LocalDateTime;
@@ -48,7 +48,8 @@ import java.util.Map;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class UtilitiesModel implements Model {
     private ZoneId zoneId;
-    private I18nMessages messages;
+
+    private Locale locale;
 
     @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
@@ -56,6 +57,9 @@ public class UtilitiesModel implements Model {
     public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
         this.persistenceStrategy = strategy;
     }
+
+    @Autowired
+    private MessageSource messages;
 
     /**
      * Template context name to be used for model
@@ -71,9 +75,8 @@ public class UtilitiesModel implements Model {
     @Override
     public void init(Map<String, Object> initData) {
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
-        zoneId = (weblogRequest == null) ? ZoneId.systemDefault() : weblogRequest.getWeblog().getZoneId();
-        messages = I18nMessages.getMessages(
-                (weblogRequest == null) ? Locale.ENGLISH : weblogRequest.getWeblog().getLocaleInstance());
+        locale = weblogRequest.getWeblog().getLocaleInstance();
+        zoneId = weblogRequest.getWeblog().getZoneId();
     }
 
     /**
@@ -81,7 +84,7 @@ public class UtilitiesModel implements Model {
      */
     public String msg(String key) {
         try {
-            return messages.getString(key);
+            return messages.getMessage(key, null, locale);
         } catch (NullPointerException e) {
             return "???" + key + "???";
         }
@@ -91,7 +94,8 @@ public class UtilitiesModel implements Model {
      * Return parameterized message string
      */
     public String msg(String key, Object... args) {
-        return messages.getString(key, args);
+        return messages.getMessage(key, args, locale);
+
     }
 
     public String autoformat(String s) {

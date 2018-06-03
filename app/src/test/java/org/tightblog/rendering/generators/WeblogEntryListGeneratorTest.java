@@ -16,9 +16,11 @@
 package org.tightblog.rendering.generators;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.tightblog.WebloggerTest;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.WeblogEntryManager;
@@ -48,18 +50,26 @@ import static org.mockito.Mockito.when;
 
 public class WeblogEntryListGeneratorTest {
 
-    private WeblogEntryManager mockWEM = mock(WeblogEntryManager.class);
-    private URLStrategy mockUrlStrategy = mock(URLStrategy.class);
+    private static ResourceBundleMessageSource messages;
     private WeblogEntryListGenerator generator;
     private Weblog weblog;
+    private WeblogEntryManager mockWEM = mock(WeblogEntryManager.class);
+    private URLStrategy mockUrlStrategy = mock(URLStrategy.class);
     private Instant now = Instant.now();
     private Instant yesterday = now.minus(1, ChronoUnit.DAYS);
     private LocalDate nowLD = LocalDate.from(now.atZone(ZoneId.systemDefault()));
     private LocalDate yesterdayLD = LocalDate.from(yesterday.atZone(ZoneId.systemDefault()));
 
+    @BeforeClass
+    public static void initializeOnce() {
+        messages = new ResourceBundleMessageSource();
+        messages.setBasename("ApplicationResources");
+    }
+
     @Before
     public void initialize() {
         generator = new WeblogEntryListGenerator();
+        generator.setMessages(messages);
         generator.setUrlStrategy(mockUrlStrategy);
         generator.setWeblogEntryManager(mockWEM);
         weblog = new Weblog();

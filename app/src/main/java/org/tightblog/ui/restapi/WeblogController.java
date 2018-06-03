@@ -29,6 +29,7 @@ import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.MessageSource;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.WeblogEntryManager;
@@ -41,7 +42,6 @@ import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogRole;
-import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
@@ -107,6 +107,9 @@ public class WeblogController {
 
     public WeblogController() {
     }
+
+    @Autowired
+    private MessageSource messages;
 
     @RequestMapping(value = "/tb-ui/authoring/rest/loggedin", method = RequestMethod.GET)
     public boolean loggedIn() {
@@ -269,11 +272,7 @@ public class WeblogController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblogconfig/metadata", method = RequestMethod.GET)
-    public WeblogConfigMetadata getWeblogConfigMetadata(Principal principal) {
-        // Get user permissions and locale
-        User user = userManager.getEnabledUserByUserName(principal.getName());
-        I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
-
+    public WeblogConfigMetadata getWeblogConfigMetadata(Locale locale) {
         WeblogConfigMetadata metadata = new WeblogConfigMetadata();
 
         metadata.absoluteSiteURL = WebloggerStaticConfig.getAbsoluteContextURL();
@@ -289,7 +288,7 @@ public class WeblogController {
 
         metadata.editFormats = Arrays.stream(Weblog.EditFormat.values())
                 .collect(Utilities.toLinkedHashMap(Weblog.EditFormat::name,
-                        eF -> messages.getString(eF.getDescriptionKey())));
+                        eF -> messages.getMessage(eF.getDescriptionKey(), null, locale)));
 
         metadata.locales = Arrays.stream(Locale.getAvailableLocales())
                 .sorted(Comparator.comparing(Locale::getDisplayName))
@@ -305,11 +304,11 @@ public class WeblogController {
         metadata.commentOptions = Arrays.stream(WebloggerProperties.CommentPolicy.values())
                 .filter(co -> co.getLevel() <= globalCommentPolicy.getLevel())
                 .collect(Utilities.toLinkedHashMap(WebloggerProperties.CommentPolicy::name,
-                        co -> messages.getString(co.getWeblogDescription())));
+                        co -> messages.getMessage(co.getWeblogDescription(), null, locale)));
 
         metadata.commentDayOptions = Arrays.stream(WeblogEntry.CommentDayOption.values())
                 .collect(Utilities.toLinkedHashMap(cdo -> Integer.toString(cdo.getDays()),
-                        cdo -> messages.getString(cdo.getDescriptionKey())));
+                        cdo -> messages.getMessage(cdo.getDescriptionKey(), null, locale)));
 
         return metadata;
     }

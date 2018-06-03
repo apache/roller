@@ -16,6 +16,7 @@
 package org.tightblog.rendering.generators;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.WeblogEntryManager;
@@ -24,7 +25,6 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
 
 import java.time.Instant;
@@ -57,6 +57,13 @@ public class WeblogEntryListGenerator {
         this.urlStrategy = urlStrategy;
     }
 
+    @Autowired
+    private MessageSource messages;
+
+    public void setMessages(MessageSource messages) {
+        this.messages = messages;
+    }
+
     public WeblogEntryListData getSearchPager(WeblogPageRequest pageRequest, Map<LocalDate, List<WeblogEntry>> entries,
                                               boolean moreResults) {
 
@@ -72,29 +79,23 @@ public class WeblogEntryListGenerator {
         int page = pageRequest.getPageNum();
 
         // get a message utils instance to handle i18n of messages
-        Locale viewLocale = weblog.getLocaleInstance();
-        I18nMessages messageUtils = I18nMessages.getMessages(viewLocale);
+        Locale viewLocale = weblog != null ? weblog.getLocaleInstance() : Locale.getDefault();
 
         if (page > 0) {
             data.nextLink = urlStrategy.getWeblogSearchURL(weblog, query, category, page - 1);
-            data.nextLabel = messageUtils.getString("weblogEntriesPager.newer");
+            data.nextLabel = messages.getMessage("weblogEntriesPager.newer", null, viewLocale);
         }
 
         if (moreResults) {
             data.prevLink = urlStrategy.getWeblogSearchURL(weblog, query, category, page + 1);
-            data.prevLabel = messageUtils.getString("weblogEntriesPager.older");
+            data.prevLabel = messages.getMessage("weblogEntriesPager.older", null, viewLocale);
         }
 
         return data;
     }
 
     public WeblogEntryListData getPermalinkPager(Weblog weblog, String entryAnchor, Boolean canShowDraftEntries) {
-
         WeblogEntryListData data = new WeblogEntryListData();
-
-        // get a message utils instance to handle i18n of messages
-        Locale viewLocale = weblog.getLocaleInstance();
-        I18nMessages messageUtils = I18nMessages.getMessages(viewLocale);
 
         WeblogEntry currEntry = weblogEntryManager.getWeblogEntryByAnchor(weblog, entryAnchor);
         if (currEntry != null) {
@@ -110,7 +111,8 @@ public class WeblogEntryListGenerator {
                 if (nextEntry != null && nextEntry.getPubTime().isBefore(Instant.now())) {
                     data.nextLink = urlStrategy.getWeblogEntryURL(nextEntry);
                     String title = Utilities.truncateText(nextEntry.getTitle(), 15, 20, "...");
-                    data.nextLabel = messageUtils.getString("weblogEntriesPager.single.next", new Object[]{title});
+                    data.nextLabel = messages.getMessage("weblogEntriesPager.single.next", new Object[]{title},
+                            weblog.getLocaleInstance());
                 }
 
                 // make sure that entry is published and not to future
@@ -118,7 +120,8 @@ public class WeblogEntryListGenerator {
                 if (prevEntry != null) {
                     data.prevLink = urlStrategy.getWeblogEntryURL(prevEntry);
                     String title = Utilities.truncateText(prevEntry.getTitle(), 15, 20, "...");
-                    data.prevLabel = messageUtils.getString("weblogEntriesPager.single.prev", new Object[]{title});
+                    data.prevLabel = messages.getMessage("weblogEntriesPager.single.prev", new Object[]{title},
+                            weblog.getLocaleInstance());
                 }
             }
         }
@@ -202,17 +205,16 @@ public class WeblogEntryListGenerator {
             }
         }
 
-        I18nMessages messageUtils = I18nMessages.getMessages(weblog.getLocaleInstance());
         if (page > 0) {
             data.nextLink = urlStrategy.getWeblogCollectionURL(weblog, catName, dateString, tag,
                     page - 1);
-            data.nextLabel = messageUtils.getString("weblogEntriesPager.newer");
+            data.nextLabel = messages.getMessage("weblogEntriesPager.newer", null, weblog.getLocaleInstance());
         }
 
         if (moreResults) {
             data.prevLink = urlStrategy.getWeblogCollectionURL(weblog, catName, dateString, tag,
                     page + 1);
-            data.prevLabel = messageUtils.getString("weblogEntriesPager.older");
+            data.prevLabel = messages.getMessage("weblogEntriesPager.older", null, weblog.getLocaleInstance());
         }
 
         return data;

@@ -17,6 +17,8 @@ package org.tightblog.ui.security;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jboss.aerogear.security.otp.Totp;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -25,9 +27,6 @@ import org.tightblog.business.UserManager;
 import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.business.WebloggerStaticConfig.MFAOption;
 import org.tightblog.pojos.UserCredentials;
-import org.tightblog.util.I18nMessages;
-
-import java.util.Locale;
 
 public class MultiFactorAuthenticationProvider extends DaoAuthenticationProvider {
 
@@ -37,7 +36,12 @@ public class MultiFactorAuthenticationProvider extends DaoAuthenticationProvider
         this.userManager = userManager;
     }
 
-    private I18nMessages messages = I18nMessages.getMessages(Locale.getDefault());
+    @Autowired
+    private MessageSource messages;
+
+    public void setMessages(MessageSource messages) {
+        this.messages = messages;
+    }
 
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
@@ -53,7 +57,7 @@ public class MultiFactorAuthenticationProvider extends DaoAuthenticationProvider
             if (creds.getMfaSecret() != null) {
                 Totp totp = new Totp(creds.getMfaSecret());
                 if (!isValidLong(verificationCode) || !totp.verify(verificationCode)) {
-                    throw new InvalidVerificationCodeException(messages.getString("login.invalidAuthenticatorCode"));
+                    throw new InvalidVerificationCodeException("Google Authenticator code invalid");
                 }
             }
         }

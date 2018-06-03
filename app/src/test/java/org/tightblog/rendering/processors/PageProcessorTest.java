@@ -44,7 +44,6 @@ import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
-import org.tightblog.util.WebloggerException;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -169,7 +168,7 @@ public class PageProcessorTest {
     }
 
     @Test
-    public void testRenderingProcessing() throws IOException, WebloggerException {
+    public void testRenderingProcessing() throws IOException {
         initializeMocks();
 
         // test null template returns 404
@@ -276,7 +275,7 @@ public class PageProcessorTest {
     }
 
     @Test
-    public void testModelSetCorrectlyFilled() throws IOException, WebloggerException {
+    public void testModelSetCorrectlyFilled() throws IOException {
         initializeMocks();
         Set<Model> pageModelSet = new HashSet<>();
         pageModelSet.add(new PageModel());
@@ -323,7 +322,7 @@ public class PageProcessorTest {
     }
 
     @Test
-    public void testCommentFormsSkipCache() throws IOException, WebloggerException {
+    public void testCommentFormsSkipCache() throws IOException {
         initializeMocks();
         WeblogEntryComment wec = new WeblogEntryComment();
         when(mockRequest.getAttribute("commentForm")).thenReturn(wec);

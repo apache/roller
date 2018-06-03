@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Locale;
 
 @Component
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -37,7 +36,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
     private UserManager userManager;
 
     public CustomAuthenticationSuccessHandler() {
-        /* userReferer works in conjuction with CustomAccessDeniedHandlerImpl, so non-AJAX CSRF exceptions
+        /* useReferer works in conjuction with CustomAccessDeniedHandlerImpl, so non-AJAX CSRF exceptions
         can redirect back to appropriate page after re-authentication */
         setUseReferer(true);
     }
@@ -50,18 +49,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
         UserDetails springUser = (UserDetails) authPrincipal;
         User user = userManager.getEnabledUserByUserName(springUser.getUsername());
-
-        // Normal login sets the users locale via /tb-ui/app/login-redirect, below is for the case where the
-        // user's session has expired (and login-redirect is usually not triggered).
-        //
-        // The Locale.getAvailableLocales() used to populate the locale list uses underscore separators (en_US)
-        // while forLanguageTag() requires the BCP 47 style hyphens (en-US).  For now, just replacing the
-        // separator, should be sufficient for our purposes.
-        Locale locale = Locale.forLanguageTag(user.getLocale().replace('_', '-'));
-        request.getSession().setAttribute("WW_TRANS_I18N_LOCALE", locale);
-
         super.onAuthenticationSuccess(request, response, authentication);
-
         user.setLastLogin(Instant.now());
         userManager.saveUser(user);
     }

@@ -20,9 +20,7 @@
  */
 package org.tightblog.pojos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.tightblog.util.I18nMessages;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 import org.tightblog.util.Utilities;
@@ -36,10 +34,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 import java.time.Instant;
-import java.util.Locale;
 import java.util.Objects;
 
 @Entity
@@ -76,11 +72,8 @@ public class User {
     @Email(message = "{error.add.user.badEmail}")
     private String emailAddress;
     private Instant dateCreated;
-    private String locale;
     private String activationCode;
     private Instant lastLogin;
-
-    private I18nMessages i18NMessages;
 
     public User() {
     }
@@ -162,30 +155,12 @@ public class User {
         this.lastLogin = lastLogin;
     }
 
-    public String getLocale() {
-        return this.locale;
-    }
-
-    public void setLocale(String locale) {
-        this.locale = locale;
-    }
-
     public String getActivationCode() {
         return activationCode;
     }
 
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
-    }
-
-    @Transient
-    @JsonIgnore
-    public I18nMessages getI18NMessages() {
-        if (i18NMessages == null) {
-            Locale userLocale = (getLocale() == null) ? Locale.getDefault() : Locale.forLanguageTag(getLocale());
-            i18NMessages = I18nMessages.getMessages(userLocale);
-        }
-        return i18NMessages;
     }
 
     public String toString() {

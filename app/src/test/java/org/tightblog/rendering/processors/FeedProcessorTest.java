@@ -29,7 +29,6 @@ import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
-import org.tightblog.util.WebloggerException;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -145,7 +144,7 @@ public class FeedProcessorTest {
     }
 
     @Test
-    public void testRenderedFeedReturned() throws IOException, WebloggerException {
+    public void testRenderedFeedReturned() throws IOException {
         initializeMocks();
         Instant threeDaysAgo = Instant.now().minus(3, ChronoUnit.DAYS);
         weblog.setLastModified(threeDaysAgo);

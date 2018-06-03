@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.context.MessageSource;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
@@ -38,7 +39,6 @@ import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.util.HTMLSanitizer;
-import org.tightblog.util.I18nMessages;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -65,7 +65,7 @@ public class CommentProcessorTest {
     private WebloggerProperties properties;
     private CommentProcessor processor;
     private WeblogPageRequest commentRequest;
-    private I18nMessages mockMessageUtils;
+    private MessageSource mockMessageSource;
     private WeblogManager mockWM;
     private WeblogEntryManager mockWEM;
     private UserManager mockUM;
@@ -73,6 +73,7 @@ public class CommentProcessorTest {
     @Before
     public void initialize() {
         mockRequest = mock(HttpServletRequest.class);
+        when(mockRequest.getLocale()).thenReturn(Locale.GERMAN);
         mockResponse = mock(HttpServletResponse.class);
         mockRequestDispatcher = mock(RequestDispatcher.class);
         when(mockRequest.getRequestDispatcher(anyString())).thenReturn(mockRequestDispatcher);
@@ -86,13 +87,14 @@ public class CommentProcessorTest {
         mockWM = mock(WeblogManager.class);
         mockWEM = mock(WeblogEntryManager.class);
         mockUM = mock(UserManager.class);
+        mockMessageSource = mock(MessageSource.class);
         processor = new CommentProcessor();
         processor.setPersistenceStrategy(mockJPA);
         processor.setWeblogPageRequestCreator(wprCreator);
         processor.setWeblogManager(mockWM);
         processor.setWeblogEntryManager(mockWEM);
         processor.setUserManager(mockUM);
-        mockMessageUtils = mock(I18nMessages.class);
+        processor.setMessages(mockMessageSource);
     }
 
     @Test
@@ -155,7 +157,6 @@ public class CommentProcessorTest {
         WeblogEntryComment incomingComment = new WeblogEntryComment();
         // doReturn.when vs. when.theReturn wrt spies: https://stackoverflow.com/a/29394497/1207540
         Mockito.doReturn(incomingComment).when(processor).createCommentFromRequest(eq(mockRequest), eq(commentRequest), any());
-        Mockito.doReturn(mockMessageUtils).when(processor).getI18nMessages(any(Locale.class));
 
         try {
             // will return disabled if comments not allowed
@@ -189,10 +190,10 @@ public class CommentProcessorTest {
     private void verifyForwardDueToValidationError(WeblogEntryComment incomingComment, String errorProperty,
                                                    String errorValue)
             throws ServletException, IOException {
-        Mockito.clearInvocations(mockMessageUtils, mockRequest, mockRequestDispatcher);
+        Mockito.clearInvocations(mockMessageSource, mockRequest, mockRequestDispatcher);
         processor.postComment(mockRequest, mockResponse);
         assertTrue(incomingComment.isInvalid());
-        verify(mockMessageUtils).getString(errorProperty, errorValue);
+        verify(mockMessageSource).getMessage(errorProperty, new Object[] {errorValue}, Locale.GERMAN);
         verify(mockRequest).setAttribute("commentForm", incomingComment);
         verify(mockRequest).getRequestDispatcher(PageProcessor.PATH + "/myhandle/entry/myblogentry");
         verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
@@ -286,7 +287,6 @@ public class CommentProcessorTest {
         WeblogEntryComment incomingComment = new WeblogEntryComment();
         incomingComment.setPreview(false);
         Mockito.doReturn(incomingComment).when(processor).createCommentFromRequest(eq(mockRequest), eq(commentRequest), any());
-        Mockito.doReturn(mockMessageUtils).when(processor).getI18nMessages(any(Locale.class));
         Mockito.doReturn(null).when(processor).validateComment(incomingComment);
 
         try {
@@ -367,10 +367,10 @@ public class CommentProcessorTest {
     private void verifyForwardAfterSpamChecking(WeblogEntryComment incomingComment, ApprovalStatus status,
                                                    String commentStatusKey)
             throws ServletException, IOException {
-        Mockito.clearInvocations(mockMessageUtils, mockRequestDispatcher);
+        Mockito.clearInvocations(mockMessageSource, mockRequestDispatcher);
         processor.postComment(mockRequest, mockResponse);
         assertEquals(status, incomingComment.getStatus());
-        verify(mockMessageUtils).getString(commentStatusKey);
+        verify(mockMessageSource).getMessage(commentStatusKey, null, Locale.GERMAN);
         verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
     }
 

@@ -22,6 +22,7 @@ package org.tightblog.business;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.GlobalRole;
@@ -34,7 +35,6 @@ import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
-import org.tightblog.util.I18nMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailAuthenticationException;
@@ -48,13 +48,10 @@ import javax.mail.MessagingException;
 import javax.mail.SendFailedException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 @Component("mailManager")
@@ -83,6 +80,9 @@ public class MailManagerImpl implements MailManager {
     @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
 
+    @Autowired
+    private MessageSource messages;
+
     private boolean isMailEnabled() {
         return WebloggerStaticConfig.getBooleanProperty("mail.enabled");
     }
@@ -104,10 +104,7 @@ public class MailManagerImpl implements MailManager {
         ctx.setVariable("activationURL", activationURL);
         String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
 
-        ResourceBundle resources = ResourceBundle.getBundle(
-                "ApplicationResources", Locale.forLanguageTag(user.getLocale()));
-
-        String subject = resources.getString("user.account.activation.mail.subject");
+        String subject = messages.getMessage("user.account.activation.mail.subject", null, null);
         String[] to = new String[]{user.getEmailAddress()};
         sendMessage(null, to, null, subject, message);
     }
@@ -121,26 +118,24 @@ public class MailManagerImpl implements MailManager {
         String userAdminURL = urlStrategy.getActionURL("userAdmin", "/tb-ui/app/admin",
                 null, null);
 
+        // build list of reviewers (website users with author permission)
+        UserSearchCriteria criteria = new UserSearchCriteria();
+        criteria.setStatus(UserStatus.ENABLED);
+        criteria.setGlobalRole(GlobalRole.ADMIN);
+
+        List<User> admins = userManager.getUsers(criteria);
+        List<String> adminEmails = admins.stream().map(User::getEmailAddress).collect(Collectors.toList());
+        String[] to = adminEmails.toArray(new String[adminEmails.size()]);
+
+        String subject = messages.getMessage("mailMessage.approveRegistrationSubject",
+                new Object[] {user.getScreenName()}, null);
+
         Context ctx = new Context();
         ctx.setVariable("emailType", "RegistrationApprovalRequest");
         ctx.setVariable("screenName", user.getScreenName());
         ctx.setVariable("emailAddress", user.getEmailAddress());
         ctx.setVariable("userAdminURL", userAdminURL);
-
         String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
-
-        UserSearchCriteria criteria = new UserSearchCriteria();
-        criteria.setStatus(UserStatus.ENABLED);
-        criteria.setGlobalRole(GlobalRole.ADMIN);
-        List<User> admins = userManager.getUsers(criteria);
-
-        // build list of reviewers (website users with author permission)
-        List<String> adminEmails = admins.stream().map(User::getEmailAddress).collect(Collectors.toList());
-        String[] to = adminEmails.toArray(new String[adminEmails.size()]);
-
-        ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
-        String subject = MessageFormat.format(resources.getString("mailMessage.approveRegistrationSubject"),
-                user.getScreenName());
 
         sendMessage(null, to, null, subject, message);
     }
@@ -151,22 +146,17 @@ public class MailManagerImpl implements MailManager {
             return;
         }
 
-        String loginURL = urlStrategy.getLoginURL();
+        String[] to = new String[]{user.getEmailAddress()};
+        String subject = messages.getMessage("mailMessage.registrationApprovedSubject",
+                new Object[] {user.getScreenName()}, null);
 
         Context ctx = new Context();
         ctx.setVariable("emailType", "RegistrationApprovedNotice");
         ctx.setVariable("screenName", user.getScreenName());
         ctx.setVariable("userName", user.getUserName());
-        ctx.setVariable("loginURL", loginURL);
-
+        ctx.setVariable("loginURL", urlStrategy.getLoginURL());
         String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
 
-        ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources",
-                Locale.forLanguageTag(user.getLocale()));
-        String subject = MessageFormat.format(resources.getString("mailMessage.registrationApprovedSubject"),
-                user.getScreenName());
-
-        String[] to = new String[]{user.getEmailAddress()};
         sendMessage(null, to, null, subject, message);
     }
 
@@ -176,15 +166,14 @@ public class MailManagerImpl implements MailManager {
             return;
         }
 
+        String[] to = new String[]{user.getEmailAddress()};
+        String subject = messages.getMessage("mailMessage.registrationRejectedSubject", null, null);
+
         Context ctx = new Context();
         ctx.setVariable("emailType", "RegistrationRejectedNotice");
         ctx.setVariable("screenName", user.getScreenName());
         String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
 
-        ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources");
-        String subject = resources.getString("mailMessage.registrationRejectedSubject");
-
-        String[] to = new String[]{user.getEmailAddress()};
         sendMessage(null, to, null, subject, message);
     }
 
@@ -194,22 +183,20 @@ public class MailManagerImpl implements MailManager {
             return;
         }
 
-        String loginURL = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/home";
+        String from = weblog.getCreator().getEmailAddress();
+        String[] to = new String[]{user.getEmailAddress()};
+        String subject = messages.getMessage("members.inviteMemberEmailSubject",
+                new Object[] {weblog.getName(), weblog.getHandle()}, weblog.getLocaleInstance());
+
         Context ctx = new Context();
         ctx.setVariable("emailType", "WeblogInvitation");
         ctx.setVariable("weblogName", weblog.getName());
         ctx.setVariable("weblogHandle", weblog.getHandle());
         ctx.setVariable("userName", user.getUserName());
+        String loginURL = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/home";
         ctx.setVariable("loginURL", loginURL);
         String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
 
-        ResourceBundle resources = ResourceBundle.getBundle("ApplicationResources",
-                weblog.getLocaleInstance());
-        String subject = MessageFormat.format(resources.getString("members.inviteMemberEmailSubject"),
-                weblog.getName(), weblog.getHandle());
-
-        String from = weblog.getCreator().getEmailAddress();
-        String[] to = new String[]{user.getEmailAddress()};
         sendMessage(from, to, new String[]{from}, subject, message);
     }
 
@@ -219,21 +206,11 @@ public class MailManagerImpl implements MailManager {
             return;
         }
 
-        String entryEditURL = urlStrategy.getEntryEditURL(entry);
+        String from = entry.getCreator().getEmailAddress();
 
-        Context ctx = new Context(entry.getWeblog().getLocaleInstance());
-        ctx.setVariable("emailType", "PendingEntryNotice");
-        ctx.setVariable("entryTitle", entry.getTitle());
-        ctx.setVariable("screenName", entry.getCreator().getScreenName());
-        ctx.setVariable("editURL", entryEditURL);
-
-        String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
-
-        // get list of enabled admins and publishers to send notice to
+        // build list of reviewers (website users with at least publish role)
         List<User> weblogUsers = weblogManager.getWeblogUsers(entry.getWeblog());
         List<String> reviewers = new ArrayList<>();
-
-        // build list of reviewers (website users with author permission)
         weblogUsers.forEach(user -> {
             if (userManager.checkWeblogRole(user, entry.getWeblog(), WeblogRole.POST) &&
                     user.getEmailAddress() != null) {
@@ -241,33 +218,37 @@ public class MailManagerImpl implements MailManager {
             }
         });
 
-        ResourceBundle resources = ResourceBundle.getBundle(
-                "ApplicationResources", entry.getWeblog().getLocaleInstance());
-
-        String subject = MessageFormat.format(resources.getString("weblogEntry.pendingEntrySubject"),
-               entry.getWeblog().getName(), entry.getWeblog().getHandle());
-        String from = entry.getCreator().getEmailAddress();
         String[] to = reviewers.toArray(new String[reviewers.size()]);
+        String subject = messages.getMessage("weblogEntry.pendingEntrySubject",
+               new Object[] {entry.getWeblog().getName(), entry.getWeblog().getHandle()},
+                entry.getWeblog().getLocaleInstance());
+
+        Context ctx = new Context(entry.getWeblog().getLocaleInstance());
+        ctx.setVariable("emailType", "PendingEntryNotice");
+        ctx.setVariable("entryTitle", entry.getTitle());
+        ctx.setVariable("screenName", entry.getCreator().getScreenName());
+        String entryEditURL = urlStrategy.getEntryEditURL(entry);
+        ctx.setVariable("editURL", entryEditURL);
+        String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
 
         sendMessage(from, to, new String[]{from}, subject, message);
     }
 
     @Override
-    public void sendPendingCommentNotice(WeblogEntryComment comment, Map<String, List<String>> messages) {
+    public void sendPendingCommentNotice(WeblogEntryComment comment, Map<String, List<String>> commentNotes) {
         if (!isMailEnabled() || comment.isApproved()) {
             return;
         }
 
         WeblogEntry entry = comment.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
-        I18nMessages resources = I18nMessages.getMessages(weblog.getLocaleInstance());
         User user = entry.getCreator();
 
         Context ctx = new Context(weblog.getLocaleInstance());
         ctx.setVariable("comment", comment);
         String commentURL = urlStrategy.getWeblogCommentsURL(entry);
         ctx.setVariable("commentURL", commentURL);
-        ctx.setVariable("messages", messages);
+        ctx.setVariable("messages", commentNotes);
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("bean.entryId", entry.getId());
@@ -276,7 +257,7 @@ public class MailManagerImpl implements MailManager {
 
         String msg = standardTemplateEngine.process("emails/PendingCommentNotice", ctx);
 
-        String subject = resources.getString("email.comment.moderate.title") + ": ";
+        String subject = messages.getMessage("email.comment.moderate.title", null, weblog.getLocaleInstance());
         subject += entry.getTitle();
 
         List<UserWeblogRole> bloggerList = userManager.getWeblogRoles(weblog);
@@ -303,7 +284,6 @@ public class MailManagerImpl implements MailManager {
 
         WeblogEntry entry = comment.getWeblogEntry();
         Weblog weblog = entry.getWeblog();
-        I18nMessages resources = I18nMessages.getMessages(weblog.getLocaleInstance());
         User user = entry.getCreator();
 
         // build list of email addresses to send notification to
@@ -329,9 +309,10 @@ public class MailManagerImpl implements MailManager {
             }
         }
 
-        String subject = resources.getString("email.comment.title") + ": " + entry.getTitle();
-
         String from = user.getEmailAddress();
+
+        String subject = messages.getMessage("email.comment.title", new Object[] {entry.getTitle()},
+                weblog.getLocaleInstance());
 
         // send message to blog members (same email for everyone)
         if (weblog.getEmailComments() &&
@@ -380,27 +361,25 @@ public class MailManagerImpl implements MailManager {
             return;
         }
 
-        I18nMessages resources = I18nMessages.getMessages(
-                comments.get(0).getWeblogEntry().getWeblog().getLocaleInstance());
-
         for (WeblogEntryComment comment : comments) {
             // Send email notifications because a new comment has been approved
             sendNewPublishedCommentNotification(comment);
             // Send approval notification to author of approved comment
-            sendYourCommentWasApprovedNotification(comment, resources);
+            sendYourCommentWasApprovedNotification(comment);
         }
     }
 
-    private void sendYourCommentWasApprovedNotification(WeblogEntryComment wec, I18nMessages resources) {
+    private void sendYourCommentWasApprovedNotification(WeblogEntryComment wec) {
         WeblogEntry entry = wec.getWeblogEntry();
 
         Context ctx = new Context();
         ctx.setVariable("emailType", "CommentApproved");
-        ctx.setVariable("commentURL", urlStrategy.getWeblogCommentsURL(entry));
+        ctx.setVariable("commentURL", urlStrategy.getWeblogCommentURL(entry, wec.getTimestamp()));
         String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
 
         // send message to author of approved comment
-        String subject = resources.getString("email.comment.commentApproved");
+        String subject = messages.getMessage("email.comment.commentApproved", null,
+                entry.getWeblog().getLocaleInstance());
         sendMessage(null, new String[]{wec.getEmail()}, null, subject, message);
     }
 

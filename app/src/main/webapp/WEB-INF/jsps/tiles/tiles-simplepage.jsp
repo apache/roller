@@ -22,7 +22,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <link rel="shortcut icon" href="${pageContext.request.contextPath}/favicon.ico">
-        <title>TightBlog: <c:out value="${pageTitle}" /></title>
+        <title>TightBlog: <fmt:message key="${pageTitleKey}"/></title>
         <tiles:insertAttribute name="head" />
     </head>
     <c:set var="useAngular"><tiles:getAsString name="useAngularHeader"/></c:set>
@@ -35,7 +35,7 @@
         <div id="content">
             <div id="nosidebar_maincontent_wrap">
                 <div id="maincontent">
-                    <h1><c:out value="${pageTitle}"/></h1>
+                    <h1><fmt:message key="${pageTitleKey}"/></h1>
                     <tiles:insertAttribute name="content" />
                 </div>
             </div>

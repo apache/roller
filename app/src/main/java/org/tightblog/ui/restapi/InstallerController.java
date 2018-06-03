@@ -30,12 +30,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
+import org.springframework.context.MessageSource;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.WebloggerStaticConfig;
-import org.tightblog.util.I18nMessages;
 import org.tightblog.util.SQLScriptRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +58,6 @@ import javax.sql.DataSource;
 public class InstallerController {
 
     private static Logger log = LoggerFactory.getLogger(InstallerController.class);
-    private I18nMessages defaultMessages = I18nMessages.getMessages(Locale.getDefault());
 
     @Autowired
     private DataSource tbDataSource;
@@ -67,6 +65,9 @@ public class InstallerController {
     public void setTbDataSource(DataSource tbDataSource) {
         this.tbDataSource = tbDataSource;
     }
+
+    @Autowired
+    private MessageSource messages;
 
     public enum StartupStatus {
         databaseError(true, "installer.databaseConnectionError"),
@@ -102,8 +103,8 @@ public class InstallerController {
         }
 
         Map<String, Object> map = initializeMap();
-        List<String> messages = new ArrayList<>();
-        map.put("messages", messages);
+        List<String> messageList = new ArrayList<>();
+        map.put("messages", messageList);
 
         // is database accessible?
         try {
@@ -112,11 +113,11 @@ public class InstallerController {
             map.put("databaseProductName", testcon.getMetaData().getDatabaseProductName());
             testcon.close();
         } catch (Exception e) {
-            log.error(defaultMessages.getString("installer.databaseConnectionError"));
+            log.error(messages.getMessage("installer.databaseConnectionError", null, null));
             map.put("status", StartupStatus.databaseError);
             map.put("rootCauseException", e.getCause());
             map.put("rootCauseStackTrace", getRootCauseStackTrace(e.getCause()));
-            messages.add(e.getMessage());
+            messageList.add(e.getMessage());
             return new ModelAndView(".install", map);
         }
 
@@ -142,8 +143,8 @@ public class InstallerController {
             return null;
         }
         Map<String, Object> map = initializeMap();
-        List<String> messages = new ArrayList<>(100);
-        map.put("messages", messages);
+        List<String> messageList = new ArrayList<>(100);
+        map.put("messages", messageList);
 
         SQLScriptRunner runner = null;
 
@@ -151,15 +152,15 @@ public class InstallerController {
 
         try (Connection conn = tbDataSource.getConnection()) {
             scriptPath = "/" + conn.getMetaData().getDatabaseProductName().toLowerCase() + "-createdb.sql";
-            messages.add("Running database script: " + scriptPath);
+            messageList.add("Running database script: " + scriptPath);
             runner = new SQLScriptRunner(scriptPath, true);
             runner.runScript(conn, true);
-            messages.addAll(runner.getMessages());
+            messageList.addAll(runner.getMessages());
             map.put("status", StartupStatus.needsBootstrapping);
         } catch (Exception ex) {
-            messages.add("ERROR processing database script " + scriptPath);
+            messageList.add("ERROR processing database script " + scriptPath);
             if (runner != null) {
-                messages.addAll(runner.getMessages());
+                messageList.addAll(runner.getMessages());
             }
             map.put("status", StartupStatus.databaseCreateError);
         }
@@ -198,7 +199,7 @@ public class InstallerController {
 
     private Map<String, Object> initializeMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("pageTitle", defaultMessages.getString("install.pageTitle"));
+        map.put("pageTitleKey", "install.pageTitle");
         return map;
     }
 

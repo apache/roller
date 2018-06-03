@@ -105,16 +105,6 @@
   </tr>
 
   <tr>
-      <td class="label"><label for="locale"><fmt:message key="userSettings.locale" /></label></td>
-      <td class="field">
-          <select id="locale" ng-model="ctrl.userBeingEdited.locale" size="1">
-              <option ng-repeat="(key, value) in ctrl.metadata.locales" value="{{key}}">{{value}}</option>
-          </select>
-      </td>
-      <td class="description"><fmt:message key="userAdmin.tip.locale" /></td>
-  </tr>
-
-  <tr>
       <td class="label"><label for="userStatus"><fmt:message key="userAdmin.userStatus" /></label></td>
       <td class="field">
           <select id="userStatus" ng-model="ctrl.userBeingEdited.status" size="1">

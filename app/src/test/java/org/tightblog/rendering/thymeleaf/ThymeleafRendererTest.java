@@ -30,7 +30,6 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.rendering.cache.CachedContent;
-import org.tightblog.util.WebloggerException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -65,7 +64,7 @@ public class ThymeleafRendererTest {
     }
 
     @Test
-    public void testSuccessfulRendering() throws IOException, WebloggerException {
+    public void testSuccessfulRendering() throws IOException {
         ArgumentCaptor<Context> contextCaptor = ArgumentCaptor.forClass(Context.class);
         doNothing().when(renderer).runTemplateEngine(eq("mytestid"), contextCaptor.capture(), any());
 
@@ -79,7 +78,7 @@ public class ThymeleafRendererTest {
     }
 
     @Test
-    public void testContextVariablesForErrorPage() throws IOException, WebloggerException {
+    public void testContextVariablesForErrorPage() throws IOException {
         SpelEvaluationException see = new SpelEvaluationException(SpelMessage.CANNOT_INDEX_INTO_NULL_VALUE);
         TemplateProcessingException tpe = new TemplateProcessingException("TPE Message", see);
         ParseException pe = new ParseException("ParseException Message", tpe);

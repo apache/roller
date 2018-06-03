@@ -20,28 +20,24 @@
  */
 package org.tightblog.ui.restapi;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.tightblog.business.UserManager;
+import org.springframework.context.MessageSource;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.search.IndexManager;
-import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.comment.BlacklistCommentValidator;
 import org.tightblog.util.HTMLSanitizer;
-import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,14 +55,15 @@ import javax.validation.Valid;
 
 /**
  * Controller for weblogger backend tasks, e.g., cache and system runtime configuration.
+ * For message resolution, Locale is not used for Admin actions to force messages to English
+ * (Only sysadmins have access to this functionality and keeping message strings to one
+ * language helps in searching issues on the Web.)
  */
 @RestController
 @RequestMapping(path = "/tb-ui/admin/rest/server")
 public class AdminController {
 
     private static Logger log = LoggerFactory.getLogger(WeblogController.class);
-
-    private I18nMessages messages = I18nMessages.getMessages(Locale.getDefault());
 
     @Autowired
     private Set<LazyExpiringCache> cacheSet;
@@ -90,13 +87,6 @@ public class AdminController {
     }
 
     @Autowired
-    private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    @Autowired
     private BlacklistCommentValidator blacklistCommentValidator;
 
     public void setBlacklistCommentValidator(BlacklistCommentValidator blacklistCommentValidator) {
@@ -113,6 +103,9 @@ public class AdminController {
         this.persistenceStrategy = strategy;
     }
 
+    @Autowired
+    private MessageSource messages;
+
     @RequestMapping(value = "/caches", method = RequestMethod.GET)
     public Map<String, LazyExpiringCache> getCacheData() throws ServletException {
         Map<String, LazyExpiringCache> cacheMap = new HashMap<>();
@@ -121,22 +114,24 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/cache/{cacheName}/clear", method = RequestMethod.POST)
-    public ResponseEntity<String> emptyOneCache(@PathVariable String cacheName) throws ServletException {
+    public ResponseEntity<String> emptyOneCache(@PathVariable String cacheName)
+            throws ServletException {
         Optional<LazyExpiringCache> maybeCache = cacheSet.stream()
                 .filter(c -> c.getCacheHandlerId().equalsIgnoreCase(cacheName)).findFirst();
         maybeCache.ifPresent(LazyExpiringCache::invalidateAll);
-        return ResponseEntity.ok(messages.getString("cachedData.message.cache.cleared", cacheName));
+        return ResponseEntity.ok(messages.getMessage("cachedData.message.cache.cleared",
+                new Object[] {cacheName}, null));
     }
 
     @RequestMapping(value = "/resethitcount", method = RequestMethod.POST)
     public ResponseEntity<String> resetHitCount() {
         try {
             weblogManager.resetAllHitCounts();
-            return ResponseEntity.ok(messages.getString("cachedData.message.reset"));
+            return ResponseEntity.ok(messages.getMessage("cachedData.message.reset", null, null));
         } catch (Exception ex) {
             log.error("Error resetting weblog hit count - {}", ex);
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).
-                    body(messages.getString("generic.error.check.logs"));
+                    body(messages.getMessage("generic.error.check.logs", null, null));
         }
     }
 
@@ -163,15 +158,15 @@ public class AdminController {
             Weblog weblog = weblogManager.getWeblogByHandle(handle);
             if (weblog != null) {
                 indexManager.updateIndex(weblog, false);
-                return ResponseEntity.ok(messages.getString("cachedData.message.indexed", handle));
+                return ResponseEntity.ok(messages.getMessage("cachedData.message.indexed", new Object[]{handle}, null));
             } else {
                 return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).
-                        body(messages.getString("generic.error.check.logs"));
+                        body(messages.getMessage("generic.error.check.logs", null, null));
             }
         } catch (Exception ex) {
             log.error("Error doing index rebuild", ex);
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).
-                    body(messages.getString("generic.error.check.logs"));
+                    body(messages.getMessage("generic.error.check.logs", null, null));
         }
     }
 
@@ -181,9 +176,7 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/webloggerproperties", method = RequestMethod.POST)
-    public ResponseEntity updateProperties(Principal p, @Valid @RequestBody WebloggerProperties properties) {
-        User user = userManager.getEnabledUserByUserName(p.getName());
-        I18nMessages userMessages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
+    public ResponseEntity updateProperties(@Valid @RequestBody WebloggerProperties properties) {
 
         // maintain last weblog change
         WebloggerProperties oldProperties = persistenceStrategy.load(WebloggerProperties.class, "1");
@@ -191,14 +184,11 @@ public class AdminController {
         persistenceStrategy.merge(properties);
         persistenceStrategy.flush();
         blacklistCommentValidator.setGlobalCommentFilter(properties.getCommentSpamFilter());
-        return ResponseEntity.ok(userMessages.getString("generic.changes.saved"));
+        return ResponseEntity.ok(messages.getMessage("generic.changes.saved", null, null));
     }
 
     @RequestMapping(value = "/globalconfigmetadata", method = RequestMethod.GET)
-    public GlobalConfigMetadata getGlobalConfigMetadata(Principal principal, HttpServletResponse response) {
-
-        User user = userManager.getEnabledUserByUserName(principal.getName());
-        I18nMessages userMessages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
+    public GlobalConfigMetadata getGlobalConfigMetadata(HttpServletResponse response) {
 
         GlobalConfigMetadata gcm = new GlobalConfigMetadata();
 
@@ -210,22 +200,22 @@ public class AdminController {
 
         gcm.registrationOptions = Arrays.stream(WebloggerProperties.RegistrationPolicy.values())
                 .collect(Utilities.toLinkedHashMap(WebloggerProperties.RegistrationPolicy::name,
-                    e -> userMessages.getString(e.getDescription())));
+                    e -> messages.getMessage(e.getDescription(), null, null)));
 
         gcm.blogHtmlLevels = Arrays.stream(HTMLSanitizer.Level.values())
                 .filter(r -> !r.equals(HTMLSanitizer.Level.NONE))
                 .collect(Utilities.toLinkedHashMap(HTMLSanitizer.Level::name,
-                    e -> userMessages.getString(e.getDescription())));
+                    e -> messages.getMessage(e.getDescription(), null, null)));
 
         gcm.commentHtmlLevels = Arrays.stream(HTMLSanitizer.Level.values())
                 .filter(r -> !r.equals(HTMLSanitizer.Level.NONE))
                 .filter(r -> r.getSanitizingLevel() <= HTMLSanitizer.Level.BASIC_IMAGES.getSanitizingLevel())
                 .collect(Utilities.toLinkedHashMap(HTMLSanitizer.Level::name,
-                    e -> userMessages.getString(e.getDescription())));
+                    e -> messages.getMessage(e.getDescription(), null, null)));
 
         gcm.commentOptions = Arrays.stream(WebloggerProperties.CommentPolicy.values())
                 .collect(Utilities.toLinkedHashMap(WebloggerProperties.CommentPolicy::name,
-                    e -> userMessages.getString(e.getSiteDescription())));
+                    e -> messages.getMessage(e.getSiteDescription(), null, null)));
 
         return gcm;
     }

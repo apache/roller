@@ -20,7 +20,9 @@
  */
 package org.tightblog.rendering.comment;
 
-import org.tightblog.util.I18nMessages;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +33,17 @@ import java.util.Random;
 /**
  * Asks the commenter to answer a simple math question.
  */
+@Component
 public class MathCommentAuthenticator implements CommentAuthenticator {
 
     private static Logger log = LoggerFactory.getLogger(MathCommentAuthenticator.class);
+
+    @Autowired
+    private MessageSource messages;
+
+    public void setMessages(MessageSource messages) {
+        this.messages = messages;
+    }
 
     public String getHtml(HttpServletRequest request) {
 
@@ -59,9 +69,8 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
         Integer value1o = (Integer) request.getSession().getAttribute("mathValue1");
         Integer value2o = (Integer) request.getSession().getAttribute("mathValue2");
 
-        I18nMessages messages = I18nMessages.getMessages(request.getLocale());
         String str = "<p>";
-        str += messages.getString("comments.mathAuthenticatorQuestion");
+        str += messages.getMessage("comments.mathAuthenticatorQuestion", null, request.getLocale());
         str += "</p><p>" + value1o + " + " + value2o;
         str += " = <input name='answer' value='";
         str += answer + "' required></p>";

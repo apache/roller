@@ -12,7 +12,6 @@ create table weblogger_user (
     emailaddress    varchar(255) not null,
     global_role     varchar(16) not null,
     status          varchar(20) not null,
-    locale          varchar(20),
     datecreated     $TIMESTAMP_SQL_TYPE not null,
     lastlogin       $TIMESTAMP_SQL_TYPE,
     activationcode	varchar(48),

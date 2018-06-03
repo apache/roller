@@ -15,8 +15,10 @@
 */
 package org.tightblog.rendering.comment;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,6 +29,16 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class MathCommentAuthenticatorTest {
+
+    private static MathCommentAuthenticator mathCommentAuthenticator;
+
+    @BeforeClass
+    public static void initialize() {
+        mathCommentAuthenticator = new MathCommentAuthenticator();
+        ResourceBundleMessageSource messages = new ResourceBundleMessageSource();
+        messages.setBasename("ApplicationResources");
+        mathCommentAuthenticator.setMessages(messages);
+    }
 
     private HttpServletRequest createMockRequest(HttpSession mockSession) {
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
@@ -47,8 +59,7 @@ public class MathCommentAuthenticatorTest {
 
         when(mockSession.getAttribute("mathValue1")).thenReturn(5);
         when(mockSession.getAttribute("mathValue2")).thenReturn(57);
-        MathCommentAuthenticator mca = new MathCommentAuthenticator();
-        String actual = mca.getHtml(mockRequest);
+        String actual = mathCommentAuthenticator.getHtml(mockRequest);
 
         // check that for new test, sum is equal to two random values generated
         verify(mockSession).setAttribute(eq("mathValue1"), firstValCaptor.capture());
@@ -70,8 +81,7 @@ public class MathCommentAuthenticatorTest {
         when(mockSession.getAttribute("mathValue1")).thenReturn(8);
         when(mockSession.getAttribute("mathValue2")).thenReturn(37);
         when(mockRequest.getParameter("answer")).thenReturn("42");
-        MathCommentAuthenticator mca = new MathCommentAuthenticator();
-        String actual = mca.getHtml(mockRequest);
+        String actual = mathCommentAuthenticator.getHtml(mockRequest);
         String expected =
                 "<p>Please answer this simple math question</p><p>8 + 37 = <input name='answer' value='42' required></p>";
         assertEquals(expected, actual);
@@ -83,8 +93,7 @@ public class MathCommentAuthenticatorTest {
         HttpServletRequest mockRequest = createMockRequest(mockSession);
         when(mockRequest.getParameter("answer")).thenReturn("82");
         when(mockSession.getAttribute("mathAnswer")).thenReturn(82);
-        MathCommentAuthenticator mca = new MathCommentAuthenticator();
-        boolean actual = mca.authenticate(mockRequest);
+        boolean actual = mathCommentAuthenticator.authenticate(mockRequest);
         assertTrue("Authenticate didn't pass with correct answer", actual);
     }
 
@@ -92,8 +101,7 @@ public class MathCommentAuthenticatorTest {
     public void authenticateFailNoAnswer() throws Exception {
         HttpSession mockSession = mock(HttpSession.class);
         HttpServletRequest mockRequest = createMockRequest(mockSession);
-        MathCommentAuthenticator mca = new MathCommentAuthenticator();
-        boolean actual = mca.authenticate(mockRequest);
+        boolean actual = mathCommentAuthenticator.authenticate(mockRequest);
         assertFalse(actual);
     }
 
@@ -103,8 +111,7 @@ public class MathCommentAuthenticatorTest {
         HttpServletRequest mockRequest = createMockRequest(mockSession);
         when(mockRequest.getParameter("answer")).thenReturn("82");
         when(mockSession.getAttribute("mathAnswer")).thenReturn(84);
-        MathCommentAuthenticator mca = new MathCommentAuthenticator();
-        boolean actual = mca.authenticate(mockRequest);
+        boolean actual = mathCommentAuthenticator.authenticate(mockRequest);
         assertFalse("Authenticate didn't fail with incorrect answer", actual);
     }
 }

@@ -1,5 +1,6 @@
 package org.tightblog.ui.restapi;
 
+import org.springframework.context.MessageSource;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.JPAPersistenceStrategy;
@@ -11,7 +12,6 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WeblogTheme;
-import org.tightblog.util.I18nMessages;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 public class ThemeController {
@@ -61,17 +62,20 @@ public class ThemeController {
         this.persistenceStrategy = persistenceStrategy;
     }
 
+    @Autowired
+    private MessageSource messages;
+
     @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/switchtheme/{newThemeId}", method = RequestMethod.POST)
-    public ResponseEntity switchTheme(@PathVariable String weblogId, @PathVariable String newThemeId, Principal p) {
+    public ResponseEntity switchTheme(@PathVariable String weblogId, @PathVariable String newThemeId, Principal p,
+                                      Locale locale) {
 
         Weblog weblog = weblogManager.getWeblog(weblogId);
         SharedTheme newTheme = themeManager.getSharedTheme(newThemeId);
         User user = userManager.getEnabledUserByUserName(p.getName());
-        I18nMessages messages = user.getI18NMessages();
 
         if (weblog != null && newTheme != null) {
-            if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-                ValidationError maybeError = advancedValidate(weblog, newTheme, messages);
+            if (userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
+                ValidationError maybeError = advancedValidate(weblog, newTheme, locale);
                 if (maybeError != null) {
                     return ResponseEntity.badRequest().body(maybeError);
                 }
@@ -94,7 +98,8 @@ public class ThemeController {
                 persistenceStrategy.flush();
 
                 // Theme set to..
-                String msg = messages.getString("themeEdit.setTheme.success", newTheme.getName());
+                String msg = messages.getMessage("themeEdit.setTheme.success", new Object[] {newTheme.getName()},
+                        locale);
 
                 return ResponseEntity.ok(msg);
             } else {
@@ -106,7 +111,7 @@ public class ThemeController {
 
     }
 
-    private ValidationError advancedValidate(Weblog weblog, SharedTheme newTheme, I18nMessages messages) {
+    private ValidationError advancedValidate(Weblog weblog, SharedTheme newTheme, Locale locale) {
         BindException be = new BindException(weblog, "new data object");
 
         WeblogTheme oldTheme = new WeblogTheme(weblogManager, weblog, themeManager.getSharedTheme(weblog.getTheme()));
@@ -114,16 +119,16 @@ public class ThemeController {
         oldTheme.getTemplates().stream().filter(
                 old -> old.getDerivation() == Template.TemplateDerivation.SPECIFICBLOG).forEach(old -> {
                     if (old.getRole().isSingleton() && newTheme.getTemplateByAction(old.getRole()) != null) {
-                        be.addError(new ObjectError("Weblog object", messages.getString("themeEdit.conflicting.singleton.role",
-                                old.getRole().getReadableName())));
+                        be.addError(new ObjectError("Weblog object", messages.getMessage("themeEdit.conflicting.singleton.role",
+                                new Object[]{old.getRole().getReadableName()}, locale)));
                     } else if (newTheme.getTemplateByName(old.getName()) != null) {
-                        be.addError(new ObjectError("Weblog object", messages.getString("themeEdit.conflicting.name",
-                                old.getName())));
+                        be.addError(new ObjectError("Weblog object", messages.getMessage("themeEdit.conflicting.name",
+                                new Object[]{old.getName()}, locale)));
                     } else {
                         String maybePath = old.getRelativePath();
                         if (maybePath != null && newTheme.getTemplateByPath(maybePath) != null) {
-                            be.addError(new ObjectError("Weblog object", messages.getString("themeEdit.conflicting.link",
-                                    old.getRelativePath())));
+                            be.addError(new ObjectError("Weblog object", messages.getMessage("themeEdit.conflicting.link",
+                                    new Object[]{old.getRelativePath()}, locale)));
                         }
                     }
         });

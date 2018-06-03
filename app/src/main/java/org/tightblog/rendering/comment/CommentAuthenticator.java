@@ -21,8 +21,10 @@ package org.tightblog.rendering.comment;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Interface for comment authentication plugin.
- */
+ * If configured, the Comment Authenticator is the first-round test a non-logged in commentor must do before his
+ * comment is accepted (e.g., answer a math question to confirm not a robot.) After passing this test, the comment
+ * still needs to go through comment validation (possibly marking it as spam) as well as comment approval.
+*/
 public interface CommentAuthenticator {
 
     /**

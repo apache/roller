@@ -124,7 +124,6 @@ public abstract class WebloggerTest {
         testUser.setGlobalRole(GlobalRole.BLOGGER);
         testUser.setScreenName(userName);
         testUser.setEmailAddress("TestUser@dev.null");
-        testUser.setLocale("en_US");
         testUser.setDateCreated(Instant.now());
         testUser.setStatus(UserStatus.ENABLED);
         userManager.saveUser(testUser);

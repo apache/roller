@@ -132,6 +132,7 @@
     <beans:bean id="dbAuthProvider" class="org.tightblog.ui.security.MultiFactorAuthenticationProvider">
         <beans:property name="userDetailsService" ref="customUserDetailsService"/>
         <beans:property name="userManager" ref="userManager"/>
+        <beans:property name="messages" ref="messageSource"/>
         <beans:property name="passwordEncoder">
             <beans:bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
         </beans:property>
@@ -285,15 +286,6 @@
             </beans:list>
         </beans:property>
     </beans:bean>
-
-    <!-- The Comment Authenticator is the first-round test a commentor must do before his comment is accepted
-         (answer a math question to confirm not a robot, or be already authenticated for example.)
-         After authentication, the comment still needs to go through comment validation (possibly marking it
-         as spam) as well as (if configured for the blog) comment approval.
-
-         Comment out below bean to disable this check.
-    -->
-    <beans:bean id="commentAuthenticator" class="org.tightblog.rendering.comment.MathCommentAuthenticator"/>
 
     <!-- Restricted handles that may not represent blogs:  Used by the RequestMappingFilter to quickly toss-out non-blog URLs.
         These will correspond to the top folder names in the webapp folder, except the already blocked META- and WEB-INF folders.

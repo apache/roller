@@ -17,6 +17,7 @@
 package org.tightblog.ui.restapi;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.MessageSource;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
@@ -35,7 +36,6 @@ import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
-import org.tightblog.util.I18nMessages;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
@@ -133,6 +133,9 @@ public class WeblogEntryController {
         mailManager = manager;
     }
 
+    @Autowired
+    private MessageSource messages;
+
     @RequestMapping(value = "/{weblogId}/page/{page}", method = RequestMethod.POST)
     public WeblogEntryData getWeblogEntries(@PathVariable String weblogId, @PathVariable int page,
                                               @RequestBody WeblogEntrySearchCriteria criteria, Principal principal,
@@ -182,12 +185,10 @@ public class WeblogEntryController {
 
     @RequestMapping(value = "/{weblogId}/searchfields", method = RequestMethod.GET)
     public WeblogEntrySearchFields getWeblogEntrySearchFields(@PathVariable String weblogId, Principal principal,
-                                                              HttpServletResponse response) {
+                                                              HttpServletResponse response, Locale locale) {
 
         // Get user permissions and locale
         User user = userManager.getEnabledUserByUserName(principal.getName());
-        I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
-
         Weblog weblog = weblogManager.getWeblog(weblogId);
 
         if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.POST)) {
@@ -203,18 +204,17 @@ public class WeblogEntryController {
             // sort by options
             fields.sortByOptions = new LinkedHashMap<>();
             fields.sortByOptions.put(WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME.name(),
-                    messages.getString("entries.label.pubTime"));
+                    messages.getMessage("entries.label.pubTime", null, locale));
             fields.sortByOptions.put(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.name(),
-                    messages.getString("entries.label.updateTime"));
+                    messages.getMessage("entries.label.updateTime", null, locale));
 
             // status options
             fields.statusOptions = new LinkedHashMap<>();
-            fields.statusOptions.put("", messages.getString("entries.label.allEntries"));
-            fields.statusOptions.put("DRAFT", messages.getString("entries.label.draftOnly"));
-            fields.statusOptions.put("PUBLISHED", messages.getString("entries.label.publishedOnly"));
-            fields.statusOptions.put("PENDING", messages.getString("entries.label.pendingOnly"));
-            fields.statusOptions.put("SCHEDULED", messages.getString("entries.label.scheduledOnly"));
-
+            fields.statusOptions.put("", messages.getMessage("entries.label.allEntries", null, locale));
+            fields.statusOptions.put("DRAFT", messages.getMessage("entries.label.draftOnly", null, locale));
+            fields.statusOptions.put("PUBLISHED", messages.getMessage("entries.label.publishedOnly", null, locale));
+            fields.statusOptions.put("PENDING", messages.getMessage("entries.label.pendingOnly", null, locale));
+            fields.statusOptions.put("SCHEDULED", messages.getMessage("entries.label.scheduledOnly", null, locale));
             return fields;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -388,12 +388,10 @@ public class WeblogEntryController {
 
     @RequestMapping(value = "/{weblogId}/entryeditmetadata", method = RequestMethod.GET)
     public EntryEditMetadata getEntryEditMetadata(@PathVariable String weblogId, Principal principal,
-                                                              HttpServletResponse response) {
+                                                              Locale locale, HttpServletResponse response) {
 
         // Get user permissions and locale
         User user = userManager.getEnabledUserByUserName(principal.getName());
-        I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
-
         Weblog weblog = weblogManager.getWeblog(weblogId);
 
         if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.EDIT_DRAFT)) {
@@ -414,13 +412,13 @@ public class WeblogEntryController {
             fields.timezone = weblog.getTimeZone();
 
             for (Weblog.EditFormat format : Weblog.EditFormat.values()) {
-                fields.editFormatDescriptions.put(format, messages.getString(format.getDescriptionKey()));
+                fields.editFormatDescriptions.put(format, messages.getMessage(format.getDescriptionKey(), null, locale));
             }
 
             // comment day options
             fields.commentDayOptions = Arrays.stream(WeblogEntry.CommentDayOption.values())
                     .collect(Utilities.toLinkedHashMap(cdo -> Integer.toString(cdo.getDays()),
-                            cdo -> messages.getString(cdo.getDescriptionKey())));
+                            cdo -> messages.getMessage(cdo.getDescriptionKey(), null, locale)));
 
             return fields;
         } else {
@@ -479,7 +477,7 @@ public class WeblogEntryController {
     // submit for review
     @RequestMapping(value = "/{weblogId}/entries", method = RequestMethod.POST)
     public ResponseEntity postEntry(@PathVariable String weblogId, @Valid @RequestBody WeblogEntry entryData,
-                                       Principal p) throws ServletException {
+                                       Locale locale, Principal p) throws ServletException {
 
         try {
 
@@ -492,8 +490,6 @@ public class WeblogEntryController {
 
             // Check user permissions
             User user = userManager.getEnabledUserByUserName(p.getName());
-            I18nMessages messages = (user == null) ? I18nMessages.getMessages(Locale.getDefault()) : user.getI18NMessages();
-
             Weblog weblog = (entry == null) ? weblogManager.getWeblog(weblogId) : entry.getWeblog();
 
             WeblogRole necessaryRole = (PubStatus.PENDING.equals(entryData.getStatus()) ||
@@ -544,7 +540,8 @@ public class WeblogEntryController {
                         enclosure = weblogEntryManager.generateEnclosure(entry.getEnclosureUrl());
                     } catch (IllegalArgumentException e) {
                         BindException be = new BindException(entry, "new data object");
-                        be.addError(new ObjectError("Enclosure URL", messages.getString(e.getMessage())));
+                        be.addError(new ObjectError("Enclosure URL", messages.getMessage(e.getMessage(), null,
+                                locale)));
                         return ResponseEntity.badRequest().body(ValidationError.fromBindingErrors(be));
                     }
 
@@ -579,25 +576,25 @@ public class WeblogEntryController {
 
                 switch (entry.getStatus()) {
                     case DRAFT:
-                        ssr.message = messages.getString("entryEdit.draftSaved");
+                        ssr.message = messages.getMessage("entryEdit.draftSaved", null, locale);
                         break;
                     case PUBLISHED:
-                        ssr.message = messages.getString("entryEdit.publishedEntry");
+                        ssr.message = messages.getMessage("entryEdit.publishedEntry", null, locale);
                         break;
                     case SCHEDULED:
-                        ssr.message = messages.getString("entryEdit.scheduledEntry",
-                                DateTimeFormatter.ISO_DATE_TIME.withZone(entry.getWeblog().getZoneId())
-                                        .format(entry.getPubTime()));
+                        ssr.message = messages.getMessage("entryEdit.scheduledEntry",
+                                new Object[] {DateTimeFormatter.ISO_DATE_TIME.withZone(entry.getWeblog().getZoneId())
+                                        .format(entry.getPubTime())}, null, locale);
                         break;
                     case PENDING:
-                        ssr.message = messages.getString("entryEdit.submittedForReview");
+                        ssr.message = messages.getMessage("entryEdit.submittedForReview", null, locale);
                         break;
                     default:
                 }
 
                 return ResponseEntity.ok(ssr);
             } else {
-                return ResponseEntity.status(403).body(messages.getString("error.title.403"));
+                return ResponseEntity.status(403).body(messages.getMessage("error.title.403", null, locale));
             }
         } catch (Exception e) {
             throw new ServletException(e.getMessage());

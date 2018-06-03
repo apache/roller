@@ -16,6 +16,7 @@
 package org.tightblog.ui.restapi;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.WebAttributes;
 import org.tightblog.business.JPAPersistenceStrategy;
@@ -35,7 +36,6 @@ import org.tightblog.pojos.WeblogRole;
 import org.tightblog.ui.menu.Menu;
 import org.tightblog.ui.menu.MenuHelper;
 import org.tightblog.ui.security.MultiFactorAuthenticationProvider.InvalidVerificationCodeException;
-import org.tightblog.util.I18nMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +49,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 @Controller
@@ -98,7 +97,8 @@ public class UIController {
         this.menuHelper = menuHelper;
     }
 
-    private I18nMessages defaultMessages = I18nMessages.getMessages(Locale.getDefault());
+    @Autowired
+    private MessageSource messages;
 
     @RequestMapping(value = "/login")
     public ModelAndView login(@RequestParam(required = false) String activationCode,
@@ -106,15 +106,14 @@ public class UIController {
                               HttpServletRequest request) {
 
         Map<String, Object> myMap = new HashMap<>();
-        myMap.put("pageTitle", defaultMessages.getString("login.title"));
 
         if (Boolean.TRUE.equals(error)) {
             Object maybeError = request.getSession().getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
             String errorMessage;
             if (maybeError instanceof InvalidVerificationCodeException) {
-                errorMessage = ((InvalidVerificationCodeException) maybeError).getMessage();
+                errorMessage = messages.getMessage("login.invalidAuthenticatorCode", null, request.getLocale());
             } else {
-                errorMessage = defaultMessages.getString("error.password.mismatch");
+                errorMessage = messages.getMessage("error.password.mismatch", null, request.getLocale());
             }
             myMap.put("actionError", errorMessage);
         } else if (activationCode != null) {
@@ -126,11 +125,13 @@ public class UIController {
                 User user = users.get(0);
                 user.setActivationCode(null);
                 user.setStatus(UserStatus.EMAILVERIFIED);
-                myMap.put("actionMessage", defaultMessages.getString("welcome.user.account.need.approval"));
+                myMap.put("actionMessage", messages.getMessage("welcome.user.account.need.approval", null,
+                        request.getLocale()));
                 userManager.saveUser(user);
                 mailManager.sendRegistrationApprovalRequest(user);
             } else {
-                myMap.put("actionError", defaultMessages.getString("error.activate.user.invalidActivationCode"));
+                myMap.put("actionError", messages.getMessage("error.activate.user.invalidActivationCode", null,
+                        request.getLocale()));
             }
 
         }
@@ -172,14 +173,14 @@ public class UIController {
             if (MFAOption.REQUIRED.equals(WebloggerStaticConfig.getMFAOption()) &&
                     ((UsernamePasswordAuthenticationToken) principal).getAuthorities().stream().anyMatch(
                             role -> GlobalRole.MISSING_MFA_SECRET.name().equals(role.getAuthority()))) {
-                response.sendRedirect(request.getContextPath() + "/tb-ui/app/scanCode?request_locale=" + user.getLocale());
+                response.sendRedirect(request.getContextPath() + "/tb-ui/app/scanCode");
             } else if (!GlobalRole.ADMIN.equals(user.getGlobalRole())) {
-                response.sendRedirect(request.getContextPath() + "/tb-ui/app/home?request_locale=" + user.getLocale());
+                response.sendRedirect(request.getContextPath() + "/tb-ui/app/home");
             } else {
                 List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
 
                 if (roles.size() > 0) {
-                    response.sendRedirect(request.getContextPath() + "/tb-ui/app/home?request_locale=" + user.getLocale());
+                    response.sendRedirect(request.getContextPath() + "/tb-ui/app/home");
                 } else {
                     // admin has no blog yet, possibly initial setup.
                     response.sendRedirect(request.getContextPath() + "/tb-ui/app/admin/globalConfig");
@@ -394,11 +395,7 @@ public class UIController {
         map.put("authenticatedUser", user);
         map.put("actionWeblog", weblog);
         map.put("userIsAdmin", user != null && GlobalRole.ADMIN.equals(user.getGlobalRole()));
-        if (user != null) {
-            map.putIfAbsent("pageTitle", user.getI18NMessages().getString(actionName + ".title"));
-        } else {
-            map.putIfAbsent("pageTitle", defaultMessages.getString(actionName + ".title"));
-        }
+        map.put("pageTitleKey", actionName + ".title");
         map.put("mfaUse", WebloggerStaticConfig.getMFAOption());
         map.put("registrationPolicy", persistenceStrategy.getWebloggerProperties().getRegistrationPolicy());
         return new ModelAndView("." + actionName, map);

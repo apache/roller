@@ -54,7 +54,6 @@ public class UserTest extends WebloggerTest {
         testUser.setUserName("testuser");
         testUser.setScreenName("Test User Screen Name");
         testUser.setEmailAddress("TestUser@dev.null");
-        testUser.setLocale("en_US");
         testUser.setDateCreated(Instant.now());
         testUser.setStatus(UserStatus.ENABLED);
         testUser.setGlobalRole(GlobalRole.BLOGGER);
