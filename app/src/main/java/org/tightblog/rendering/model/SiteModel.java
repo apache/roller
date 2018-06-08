@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.Template;
+import org.tightblog.pojos.Weblog;
 import org.tightblog.rendering.generators.WeblogListGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
@@ -139,4 +140,9 @@ public class SiteModel implements Model {
     public List<WeblogListGenerator.WeblogData> getHotWeblogs(int length) {
         return weblogListGenerator.getHotWeblogs(length);
     }
+
+    public String getWeblogHome(Weblog blog) {
+        return urlStrategy.getWeblogURL(blog);
+    }
+
 }

@@ -33,14 +33,14 @@
         </div>
     </div>
     <div th:fragment="EntryBlock" class="entry">
-        <a class="entryTitle" th:href="${utils.escapeHTML(url.entry(entry))}"
+        <a class="entryTitle" th:href="${url.getURL(entry)}"
            th:text="${utils.truncateText(entry.title, 50, 50, '...')}">
         </a><br />
         <p class="entryDetails">
-            <a th:href="${utils.escapeHTML(url.weblogHome(entry.weblog))}" th:utext="${entry.weblog.name}">xxx</a>
+            <a th:href="${site.getWeblogHome(entry.weblog)}" th:utext="${entry.weblog.name}">xxx</a>
             <span th:if="${entry.getTags().size() > 0}" th:text="${entry.getTagsAsString() + ' |'}">xxx</span>
             <span th:text="${entry.category.name + ' |'}">xxx</span>
-            <span th:if="${entry.pubTime != null}" th:text="${utils.formatDate(entry.pubTime, utils.msg('macro.weblog.datepattern')) + ' |'}">xxx</span>
+            <span th:if="${entry.pubTime != null}" th:text="${utils.formatTemporal(entry.pubTime, utils.msg('macro.weblog.datepattern')) + ' |'}">xxx</span>
             <span th:if="${entry.pubTime == null}" th:text="${utils.msg('macro.weblog.unpublished') + ' |'}">xxx</span>
             <span th:text="${'By ' + entry.creator.screenName}">xxx</span>
             <br/>

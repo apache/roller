@@ -36,10 +36,10 @@
                     <div th:replace="fragments :: WeblogEntryCommentForm"></div>
                 </div>
 				<ul class="pager" th:with="pager = ${model.getWeblogEntriesPager()}">
-	        		<li th:if="${utils.isNotEmpty(pager.prevLink)}" class="previous">
+	        		<li th:if="${!#strings.isEmpty(pager.prevLink)}" class="previous">
 	        		    <a th:href="${pager.prevLink}" th:utext="${'← ' + pager.prevLabel}">xxx</a>
 	        		</li>
-                    <li th:if=${utils.isNotEmpty(pager.nextLink)} class="next">
+                    <li th:if=${!#strings.isEmpty(pager.nextLink)} class="next">
                         <a th:href="${pager.nextLink}" th:utext="${pager.nextLabel + ' →'}">xxx</a>
                     </li>
 				</ul>
@@ -72,7 +72,7 @@
 							   see a count of entries, click a tag to see the most recent posts with the tag.</p>
                            <div id="tagcloud">
                               <a th:each="tag : ${myTags}" th:class="${'tag s' + tag.intensity}"
-                                th:href="${url.tag(tag.name)}" th:title="${tag.total}" th:utext="${tag.name + ' '}">xxx</a>
+                                th:href="${url.getEntriesURLForTag(tag.name)}" th:title="${tag.total}" th:utext="${tag.name + ' '}">xxx</a>
                            </div>
                        </th:block>
                     </th:block>

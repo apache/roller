@@ -23,7 +23,7 @@
 
     <div class="box"><h2 class="box sidebox">last 20</h2>
         <th:block th:each="recentEntry : ${model.getRecentWeblogEntries(null, 20)}">
-            <a th:href="${url.entry(recentEntry)}" th:utext="${recentEntry.title}">xxx</a><br>
+            <a th:href="${url.getURL(recentEntry)}" th:utext="${recentEntry.title}">xxx</a><br>
         </th:block>
     </div>
 

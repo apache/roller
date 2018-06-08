@@ -29,10 +29,10 @@
                 <div th:replace="fragments :: WeblogEntriesPager"></div>
 
 				<ul class="pager" th:with="pager = ${model.getWeblogEntriesPager()}">
-	        		<li th:if="${utils.isNotEmpty(pager.prevLink)}" class="previous">
+	        		<li th:if="${!#strings.isEmpty(pager.prevLink)}" class="previous">
 	        		    <a th:href="${pager.prevLink}" th:utext="${'← ' + pager.prevLabel}">xxx</a>
 	        		</li>
-                    <li th:if=${utils.isNotEmpty(pager.nextLink)} class="next">
+                    <li th:if=${!#strings.isEmpty(pager.nextLink)} class="next">
                         <a th:href="${pager.nextLink}" th:utext="${pager.nextLabel + ' →'}">xxx</a>
                     </li>
 				</ul>
@@ -55,10 +55,10 @@
                                     <p th:utext="${comment.content}">xxx</p>
                                     <p class="comment-details">
                                     <span th:utext="${utils.msg('macro.weblog.postedby')}">xxx</span>
-                                        <a rel="nofollow" th:href="${comment.url}" th:remove="${utils.isEmpty(comment.url)} ? 'tag' : 'none'">
+                                        <a rel="nofollow" th:href="${comment.url}" th:remove="${#strings.isEmpty(comment.url)} ? 'tag' : 'none'">
                                             <b th:utext="${comment.name}">xxx</b>
                                         </a>
-                                    <span th:utext="${utils.msg('macro.weblog.on') + ' ' + utils.formatDateTime(comment.postTime, utils.msg('macro.weblog.datetimepattern'))}">xxx</span>
+                                    <span th:utext="${utils.msg('macro.weblog.on') + ' ' + utils.formatTemporal(comment.postTime, utils.msg('macro.weblog.datetimepattern'))}">xxx</span>
                                     <a th:href="${url.comment(entry, comment.timestamp)}"
                                        class="entrypermalink" th:title="${utils.msg('macro.weblog.commentpermalink.title')}">#</a>
                                     </p>
@@ -75,8 +75,8 @@
                             <h3 class="panel-title">Leave a Comment</h3>
                         </div>
                         <div class="panel-body">
-                            <div th:if="${!utils.isEmpty(cform.submitResponseMessage)}"
-                                  th:class="${'alert ' + (cform.invalid ? 'alert-danger' : (!utils.isEmpty(cform.submitResponseMessage) ? 'alert-success' : ''))}"
+                            <div th:if="${!#strings.isEmpty(cform.submitResponseMessage)}"
+                                  th:class="${'alert ' + (cform.invalid ? 'alert-danger' : (!#strings.isEmpty(cform.submitResponseMessage) ? 'alert-success' : ''))}"
                                   th:utext="${cform.submitResponseMessage}">xxx</div>
 
                             <form method="post" focus="name" name="commentForm">
@@ -139,12 +139,12 @@
 						<tr>
 						  <td><img th:src="${url.themeResource('gaurav', 'icons/delicious.gif')}"
 						         alt="del.icio.us" height="16" width="16" />
-						      <a th:href="${'http://del.icio.us/post?url=' + url.entry(model.weblogEntry)}"
+						      <a th:href="${'http://del.icio.us/post?url=' + url.getURL(model.weblogEntry)}"
 						         title="bookmark it in del.icio.us">Bookmark it</a></td>
 
 						  <td><img th:src="${url.themeResource('gaurav', 'icons/digman.gif')}"
 						          alt="submit to dig digg.com" height="14" width="16" />
-						      <a th:href="${'http://www.digg.com/submit?url=' + url.entry(model.weblogEntry) + '&amp;phase=2'}" title="submit it to digg">
+						      <a th:href="${'http://www.digg.com/submit?url=' + url.getURL(model.weblogEntry) + '&amp;phase=2'}" title="submit it to digg">
 						          Digg it</a></td>
 						</tr>
 					</tbody></table>
@@ -158,7 +158,7 @@
 					<h3>Related entries</h3>
 					<ul>
 					    <li th:each="recentEntry : ${model.getRecentWeblogEntries(model.weblogEntry.category.name, 20)}" class="entryLink">
-					        <a th:href="${url.entry(recentEntry)}" th:utext="${recentEntry.title}">xxx</a>
+					        <a th:href="${url.getURL(recentEntry)}" th:utext="${recentEntry.title}">xxx</a>
 					    </li>
 					</ul>
 				</div>

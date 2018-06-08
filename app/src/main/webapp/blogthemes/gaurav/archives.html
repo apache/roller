@@ -45,7 +45,7 @@
 				<div class="well">
 				  <h3>Most recent posts</h3>
 				  <ul th:each="recentEntry : ${model.getRecentWeblogEntries(null, 30)}">
-				      <li class="entryLink"><a th:href="${url.entry(recentEntry)}" th:utext="${recentEntry.title}">xxx</a></li>
+				      <li class="entryLink"><a th:href="${url.getURL(recentEntry)}" th:utext="${recentEntry.title}">xxx</a></li>
 				  </ul>
 				</div>	
 			</div> <!-- close sidebar_content -->

@@ -1,7 +1,7 @@
 <div th:class="${model.permalink}? 'daybox'">
     <div th:each="entry : ${model.weblogEntriesPager.getEntries().get(day)}" class="entryBox" th:id="${utils.encode(entry.anchor)}">
         <h2 class="entryTitle">
-            <a th:remove="${model.permalink}? 'tag' : 'none'" th:href="${url.entry(entry)}" th:utext="${entry.title}">xxx</a>
+            <a th:remove="${model.permalink}? 'tag' : 'none'" th:href="${url.getURL(entry)}" th:utext="${entry.title}">xxx</a>
         </h2>
 
         <p class="lead">by <span style="text-transform: capitalize;" th:utext="${entry.creator.screenName}">xxx</span></p>
@@ -9,8 +9,8 @@
         <hr>
           <p>
               <i class="icon-time"></i>
-              <span th:utext="${'Posted on ' + utils.formatDate(day, utils.msg('macro.weblog.datepattern'))
-                + ' at ' + (entry.pubTime != null ? utils.formatDate(entry.pubTime, utils.msg('macro.weblog.timepattern'))
+              <span th:utext="${'Posted on ' + utils.formatTemporal(day, utils.msg('macro.weblog.datepattern'))
+                + ' at ' + (entry.pubTime != null ? utils.formatTemporal(entry.pubTime, utils.msg('macro.weblog.timepattern'))
                 : utils.msg('macro.weblog.unpublished'))
                 + ' in ' + entry.category.name}">xxx</span>
           </p>
@@ -20,10 +20,10 @@
             <th:block th:switch="${model.permalink}">
                 <p th:case="${true}" th:utext="${model.getTransformedText(entry)}">xxx</p>
                 <th:block th:case="${false}">
-                    <th:block th:switch="${utils.isNotEmpty(entry.summary)}">
+                    <th:block th:switch="${!#strings.isEmpty(entry.summary)}">
                         <th:block th:case="${true}">
                             <p th:utext="${entry.summary}">xxx</p>
-                            <a class="btn btn-primary" th:href="${url.entry(entry)}">Read More <i class="icon-angle-right"></i></a>
+                            <a class="btn btn-primary" th:href="${url.getURL(entry)}">Read More <i class="icon-angle-right"></i></a>
                         </th:block>
                         <p th:case="${false}" th:utext="${model.getTransformedText(entry)}">xxx</p>
                     </th:block>
@@ -43,7 +43,7 @@
         </p>
 
         <p th:if="${entry.tags.size() > 0}" class="entryInfo" style="clear: right">
-            Tags: <a th:each="tag : ${entry.tags}" class="tagLink" th:href="${url.tag(tag.name)}" th:utext="${tag.name}">xxx</a>
+            Tags: <a th:each="tag : ${entry.tags}" class="tagLink" th:href="${url.getEntriesURLForTag(tag.name)}" th:utext="${tag.name}">xxx</a>
         </p>
     </div>
     <hr>

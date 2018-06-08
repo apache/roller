@@ -20,30 +20,30 @@
 */-->
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xmlns:th="http://www.thymeleaf.org" th:with="pager = ${model.weblogEntriesPager}">
-    <title type="html" th:utext="${utils.escapeXML(model.weblog.name)}">xxx</title>
-    <subtitle type="html" th:utext="${utils.escapeXML(model.weblog.tagline)}">xxx</subtitle>
+    <title type="html" th:utext="${#strings.escapeXml(model.weblog.name)}">xxx</title>
+    <subtitle type="html" th:utext="${#strings.escapeXml(model.weblog.tagline)}">xxx</subtitle>
     <id th:utext="${url.atomFeedURL}">xxx</id>
     <link th:if="${model.siteWideFeed}" rel="alternate" type="text/html" th:href="${url.site}"/>
     <link th:unless="${model.siteWideFeed}" rel="alternate" type="text/html" th:href="${url.weblogHome}"/>
 
     <link rel="self" type="application/atom+xml"
-          th:href="${model.tag != null ? url.getAtomFeedByTag(model.tag) :
+          th:href="${model.tag != null ? url.getAtomFeedURLForTag(model.tag) :
                    (model.categoryName != null ? url.getAtomFeedURLForCategory(model.categoryName) : url.atomFeedURL)}"/>
 
     <updated th:utext="${utils.formatIsoOffsetDateTime(model.lastUpdated)}">xxx</updated>
     <generator uri="https://github.com/gmazza/tightblog" th:attr="version=${utils.systemVersion}">TightBlog</generator>
     <entry th:each="entry : ${pager.entriesAsList}">
-        <id th:utext="${url.entry(entry)}">xxx</id>
-        <title type="html" th:utext="${utils.escapeXML(entry.title)}">xxx</title>
+        <id th:utext="${url.getURL(entry)}">xxx</id>
+        <title type="html" th:utext="${#strings.escapeXml(entry.title)}">xxx</title>
         <author><name th:utext="${entry.creator.screenName}">xxx</name></author>
-        <link rel="alternate" type="text/html" th:href="${url.entry(entry)}"/>
+        <link rel="alternate" type="text/html" th:href="${url.getURL(entry)}"/>
         <published th:utext="${utils.formatIsoOffsetDateTime(entry.pubTime)}">xxx</published>
         <updated th:utext="${utils.formatIsoOffsetDateTime(entry.updateTime)}">xxx</updated>
-        <category th:attr="term=${utils.escapeXML(entry.category.name)}" th:label="${utils.escapeXML(entry.category.name)}" />
-        <category th:each="tag : ${entry.tags}" th:attr="term=${utils.escapeXML(tag.name)}" scheme="http://tightblog.org/ns/tags/" />
-        <summary th:if="${utils.isNotEmpty(entry.summary)}" type="html" th:utext="${utils.escapeXML(model.getTransformedSummary(entry))}">xxx</summary>
-        <content th:if="${utils.isNotEmpty(entry.text)}" type="html" th:utext="${utils.escapeXML(model.getTransformedText(entry))}">xxx</content>
+        <category th:attr="term=${#strings.escapeXml(entry.category.name)}" th:label="${#strings.escapeXml(entry.category.name)}" />
+        <category th:each="tag : ${entry.tags}" th:attr="term=${#strings.escapeXml(tag.name)}" scheme="http://tightblog.org/ns/tags/" />
+        <summary th:if="${!#strings.isEmpty(entry.summary)}" type="html" th:utext="${#strings.escapeXml(model.getTransformedSummary(entry))}">xxx</summary>
+        <content th:if="${!#strings.isEmpty(entry.text)}" type="html" th:utext="${#strings.escapeXml(model.getTransformedText(entry))}">xxx</content>
         <link th:if="${entry.enclosureUrl != null && entry.enclosureLength != null && entry.enclosureType != null}"
-              rel="enclosure" th:type="$entry.enclosureType" th:attr="length=${entry.enclosureLength}" th:href="${utils.escapeXML(entry.enclosureUrl)}"/>
+              rel="enclosure" th:type="$entry.enclosureType" th:attr="length=${entry.enclosureLength}" th:href="${#strings.escapeXml(entry.enclosureUrl)}"/>
     </entry>
 </feed>

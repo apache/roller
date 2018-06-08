@@ -20,8 +20,6 @@
  */
 package org.tightblog.rendering.model;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.MessageSource;
@@ -33,7 +31,6 @@ import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.requests.WeblogRequest;
 import org.tightblog.util.Utilities;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
@@ -98,10 +95,6 @@ public class UtilitiesModel implements Model {
 
     }
 
-    public String autoformat(String s) {
-        return StringUtils.replace(s, "\n", "<br/>");
-    }
-
     public boolean getCommentEmailNotify() {
         WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
         return props.isUsersCommentNotifications();
@@ -111,32 +104,11 @@ public class UtilitiesModel implements Model {
         return WebloggerStaticConfig.getProperty("weblogger.version", "Unknown");
     }
 
-    //-------------------------------------------------------------- Date utils
-
-    /**
-     * Return date for current time.
-     */
-    public static LocalDateTime getNow() {
-        return LocalDateTime.now();
-    }
-
     /**
      * Format Temporal object (e.g., LocalDate, LocalTime, or LocalDateTime) using provided
-     * DateTimeFormatter-supported format string.  Will not parse timezones.
+     * DateTimeFormatter-supported format string.
      */
-    public String formatDate(Temporal dt, String fmt) {
-        if (dt == null || fmt == null) {
-            return fmt;
-        }
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(fmt).withZone(zoneId);
-        return dtf.format(dt);
-    }
-
-    /**
-     * Format LocalDateTime or LocalTime object using provided DateTimeFormatter-supported
-     * format string. This variant needed when desired to output a timezone.
-     */
-    public String formatDateTime(Temporal dt, String fmt) {
+    public String formatTemporal(Temporal dt, String fmt) {
         if (dt == null || fmt == null) {
             return fmt;
         }
@@ -151,29 +123,6 @@ public class UtilitiesModel implements Model {
      */
     public String formatIsoOffsetDateTime(Temporal dt) {
         return DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(zoneId).format(dt);
-    }
-
-    //------------------------------------------------------------ String utils
-
-    // isEmpty = empty (size = 0) or null
-    public boolean isEmpty(String str) {
-        return StringUtils.isEmpty(str);
-    }
-
-    public boolean isNotEmpty(String str) {
-        return StringUtils.isNotEmpty(str);
-    }
-
-    public String left(String str, int length) {
-        return StringUtils.left(str, length);
-    }
-
-    public String escapeHTML(String str) {
-        return StringEscapeUtils.escapeHtml4(str);
-    }
-
-    public String escapeXML(String str) {
-        return StringEscapeUtils.escapeXml10(str);
     }
 
     /**
@@ -192,5 +141,4 @@ public class UtilitiesModel implements Model {
     public final String encode(String s) {
         return (s == null) ? null : Utilities.encode(s);
     }
-
 }

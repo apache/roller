@@ -4,15 +4,15 @@
     <!--/* usage of th:block instead of div & remove tag did not work */-->
     <div th:fragment="AutoDiscoveryLinks" th:remove="tag">
         <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  th:href="${url.atomFeedURL}" />
-        <link th:if="${model.tag}" rel="alternate" type="application/atom+xml" th:title="${'Entries tagged ' + model.tag + ' (Atom)'}"  th:href="${url.getAtomFeedByTag(model.tag)}"/>
+        <link th:if="${model.tag}" rel="alternate" type="application/atom+xml" th:title="${'Entries tagged ' + model.tag + ' (Atom)'}"  th:href="${url.getAtomFeedURLForTag(model.tag)}"/>
         <link th:if="${model.categoryName}" rel="alternate" type="application/atom+xml" th:title="${'Entries for category ' + model.categoryName + ' (Atom)'}" th:href="${url.getAtomFeedURLForCategory(model.categoryName)}"/>
     </div>
     <div th:fragment="MetaDescription" th:remove="tag">
-        <th:block th:switch="${model.weblogEntry != null && utils.isNotEmpty(model.weblogEntry.searchDescription)}">
+        <th:block th:switch="${model.weblogEntry != null && !#strings.isEmpty(model.weblogEntry.searchDescription)}">
             <!-- need to test below line -->
             <meta th:case="${true}" name="description" th:content="${model.weblogEntry.searchDescription}">
             <th:block th:case="${false}">
-                <th:block th:if="${utils.isNotEmpty(model.weblog.about)}">
+                <th:block th:if="${!#strings.isEmpty(model.weblog.about)}">
                     <meta name="description" th:content="${model.weblog.about}">
                 </th:block>
             </th:block>
@@ -35,7 +35,7 @@
             <tr th:each="week : ${cal.weeks}">
                 <td th:each="day : ${week.days}" th:class="${day.dayNum == null ? 'hCalendarDayNotInMonth' : (day.today ? 'hCalendarDayCurrent' : 'hCalendarDay')}">
                     <th:block th:if="${day.dayNum}">
-                        <a th:remove="${utils.isEmpty(day.link) ? 'tag' : 'none'}" th:href="${day.link}"><div th:class="hCalendarDayTitle" th:text="${day.dayNum}"></div></a>
+                        <a th:remove="${#strings.isEmpty(day.link) ? 'tag' : 'none'}" th:href="${day.link}"><div th:class="hCalendarDayTitle" th:text="${day.dayNum}"></div></a>
                         <th:block th:if="${big}">
                             <a th:each="entry : ${day.entries}" th:href="${entry.link}"><div th:class="bCalendarDayContent" th:text="${entry.title}"></div></a>
                         </th:block>
@@ -56,7 +56,7 @@
             </li>
             <li th:each="cat : ${model.weblog.weblogCategories}"
                 th:class="${model.categoryName == cat.name || (model.permalink && model.weblogEntry.category.name == cat.name)}? 'selected'">
-                <a th:href="${url.category(cat.name)}" th:text="${cat.name}">category name</a>
+                <a th:href="${url.getEntriesURLForCategory(cat.name)}" th:text="${cat.name}">category name</a>
             </li>
         </ul>
     </div>
@@ -143,11 +143,11 @@
                         <p class="comment-details">
                             <span th:utext="${utils.msg('macro.weblog.postedby')}"></span>
 
-                            <a rel="nofollow" th:href="${comment.url}" th:remove="${utils.isEmpty(comment.url) ? 'tag' : 'none'}">
+                            <a rel="nofollow" th:href="${comment.url}" th:remove="${#strings.isEmpty(comment.url) ? 'tag' : 'none'}">
                                 <b th:text="${comment.name}">xxx</b>
                             </a>
 
-                            <span th:utext="${utils.msg('macro.weblog.on') + ' ' + utils.formatDateTime(comment.postTime, utils.msg('macro.weblog.datetimepattern'))}"></span>
+                            <span th:utext="${utils.msg('macro.weblog.on') + ' ' + utils.formatTemporal(comment.postTime, utils.msg('macro.weblog.datetimepattern'))}"></span>
 
                             <a th:href="${url.comment(entry, comment.timestamp)}"
                                class="entrypermalink" title="${utils.msg('macro.weblog.commentpermalink.title')}">#</a>
@@ -164,7 +164,7 @@
 
             <th:block th:switch="${model.canSubmitNewComments(entry)}">
                 <th:block th:case="${true}">
-                    <span th:class="${cform.invalid ? 'error' : (!utils.isEmpty(cform.submitResponseMessage) ? 'status' : null)}"
+                    <span th:class="${cform.invalid ? 'error' : (!#strings.isEmpty(cform.submitResponseMessage) ? 'status' : null)}"
                           th:utext="${cform.submitResponseMessage}">xxx</span>
 
                     <form method="post" focus="name" name="commentForm">

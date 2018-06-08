@@ -1,23 +1,23 @@
 <div class="box" xmlns:th="http://www.thymeleaf.org">
 
     <h2 class="box" th:with="entries=${model.weblogEntriesPager.getEntries().get(day)}">
-        <a th:href="${entries != null && entries.size() > 0 ? url.entry(entries[0])
-            : url.date($utils.formatDate($day, $utils.msg('macro.weblog.datelinkpattern')))}">
+        <a th:href="${entries != null && entries.size() > 0 ? url.getURL(entries[0])
+            : url.getEntriesURLForDate($utils.formatTemporal($day, $utils.msg('macro.weblog.datelinkpattern')))}">
             <img class="daypermalink" border="0"
                  th:src="${url.site + '/images/permalink.gif'}"
                  th:title="${utils.msg('macro.weblog.daypermalink.title')}"
-                 th:alt="${url.date(utils.formatDate(day, 'yyyyMMdd'))}"/></a>
-            <span th:text="${utils.formatDate(day, utils.msg('macro.weblog.datepattern'))}"></span>
+                 th:alt="${url.getEntriesURLForDate(utils.formatTemporal(day, 'yyyyMMdd'))}"/></a>
+            <span th:text="${utils.formatTemporal(day, utils.msg('macro.weblog.datepattern'))}"></span>
     </h2>
 
     <div class="entryBox" th:each="entry : ${model.weblogEntriesPager.getEntries().get(day)}" th:id="${utils.encode(entry.anchor)}">
         <p class="entryTitle" th:utext="${entry.title}">xxx</p>
-        <p class="entryContent" th:switch="${model.permalink || utils.isEmpty(entry.summary)}">
+        <p class="entryContent" th:switch="${model.permalink || #strings.isEmpty(entry.summary)}">
             <span th:case="${true}" th:utext="${model.getTransformedText(entry)}"></span>
-            <span th:case="${false}" th:utext="${model.getTransformedSummary(entry) utils.msg('macro.weblog.readMoreLink', [url.entry(entry)])"></span>
+            <span th:case="${false}" th:utext="${model.getTransformedSummary(entry) + ' ' + utils.msg('macro.weblog.readMoreLink', url.getURL(entry))}"></span>
         </p>
         <p class="entryInfo">
-            Posted <span th:if="${entry.pubTime != null}">at <a th:href="${url.entry(entry)}" th:utext="${utils.formatDateTime(entry.pubTime, utils.msg('macro.weblog.timedatepattern'))}">xxx</a></span>
+            Posted <span th:if="${entry.pubTime != null}">at <a th:href="${url.getURL(entry)}" th:utext="${utils.formatTemporal(entry.pubTime, utils.msg('macro.weblog.timedatepattern'))}">xxx</a></span>
             by <span th:utext="${entry.creator.screenName}">xxx</span> in <span class="category" th:utext="${entry.category.name}">xxx</span>
             <span th:if="${model.isUserBlogPublisher()}">
                 |&nbsp;<a th:href="${url.editEntry(entry)}" th:utext="${utils.msg('generic.edit')}">xxx</a>

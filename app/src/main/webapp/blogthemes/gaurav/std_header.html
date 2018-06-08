@@ -29,7 +29,7 @@
                             </li>
                             <li th:each="cat : ${model.weblog.weblogCategories}"
                                 th:class="${model.categoryName == cat.name || (model.permalink && model.weblogEntry.category.name == cat.name)}? 'selected'">
-                                <a th:href="${url.category(cat.name)}" th:text="${cat.name}">category name</a>
+                                <a th:href="${url.getEntriesURLForCategory(cat.name)}" th:text="${cat.name}">category name</a>
                             </li>
                         </ul>
                     </li>

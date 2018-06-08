@@ -34,12 +34,6 @@ import java.util.Map;
 
 /**
  * Provides access to URL building functionality.
- * <p>
- * NOTE: We purposely go against the standard getter/setter bean standard
- * for several methods that take arguments so that template designers get a more
- * consistent way to access those methods in their templates. e.g.
- * <p>
- * $url.login and $url.category("foo") instead of $url.getCategory("foo")
  */
 @Component("urlModel")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -104,23 +98,19 @@ public class URLModel implements Model {
         return urlStrategy.getWeblogURL(weblog);
     }
 
-    public String getWeblogHome(Weblog blog) {
-        return urlStrategy.getWeblogURL(blog);
-    }
-
-    public String category(String catName) {
+    public String getEntriesURLForCategory(String catName) {
         return urlStrategy.getWeblogCollectionURL(weblog, catName, null, null, -1);
     }
 
-    public String tag(String tag) {
+    public String getEntriesURLForTag(String tag) {
         return urlStrategy.getWeblogCollectionURL(weblog, null, null, tag, -1);
     }
 
-    public String date(String date) {
+    public String getEntriesURLForDate(String date) {
         return urlStrategy.getWeblogCollectionURL(weblog, null, date, null, -1);
     }
 
-    public String entry(WeblogEntry entry) {
+    public String getURL(WeblogEntry entry) {
         return urlStrategy.getWeblogEntryURL(entry);
     }
 
@@ -182,5 +172,4 @@ public class URLModel implements Model {
     public String getAtomFeedURLForTag(String tag) {
         return urlStrategy.getAtomFeedURLForTag(weblog, tag);
     }
-
 }
