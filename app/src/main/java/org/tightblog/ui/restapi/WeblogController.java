@@ -272,7 +272,9 @@ public class WeblogController {
     }
 
     @RequestMapping(value = "/tb-ui/authoring/rest/weblogconfig/metadata", method = RequestMethod.GET)
-    public WeblogConfigMetadata getWeblogConfigMetadata(Locale locale) {
+    public WeblogConfigMetadata getWeblogConfigMetadata(Locale locale, Principal p) {
+        User user = userManager.getEnabledUserByUserName(p.getName());
+
         WeblogConfigMetadata metadata = new WeblogConfigMetadata();
 
         metadata.absoluteSiteURL = WebloggerStaticConfig.getAbsoluteContextURL();
@@ -284,6 +286,9 @@ public class WeblogController {
                 persistenceStrategy.getWebloggerProperties().isUsersCommentNotifications();
 
         metadata.sharedThemeMap = themeManager.getEnabledSharedThemesList().stream()
+                // Remove sitewide theme options for non-admins, if desired admin can create a sitewide blog
+                // and assign a non-admin user ownership of it on the members page.
+                .filter(theme -> !theme.isSiteWide() || user.hasEffectiveGlobalRole(GlobalRole.ADMIN))
                 .collect(Utilities.toLinkedHashMap(SharedTheme::getId, st -> st));
 
         metadata.editFormats = Arrays.stream(Weblog.EditFormat.values())

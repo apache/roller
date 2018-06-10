@@ -25,7 +25,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title><fmt:message key="errorPage.title" /></title>
 
-        <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/styles/roller.css"/>' />
+        <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/styles/tightblog.css"/>' />
     </head>
     <body>
         <div style="padding: 15px 25px 25px 25px">

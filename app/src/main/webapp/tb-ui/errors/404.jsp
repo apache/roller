@@ -24,7 +24,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title><fmt:message key="error.title.404" /></title>
-        <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/styles/roller.css"/>' />
+        <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/styles/tightblog.css"/>' />
     </head>
     <body>
         

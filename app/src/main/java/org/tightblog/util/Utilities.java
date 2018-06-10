@@ -48,6 +48,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -67,9 +68,11 @@ public final class Utilities {
     private static Logger log = LoggerFactory.getLogger(Utilities.class);
 
     public static final DateTimeFormatter YM_FORMATTER = DateTimeFormatter.ofPattern(Utilities.FORMAT_6CHARS);
-    public static final DateTimeFormatter YMD_FORMATTER = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS);
-    public static final String FORMAT_6CHARS = "yyyyMM";
-    public static final String FORMAT_8CHARS = "yyyyMMdd";
+    public static final DateTimeFormatter YMD_FORMATTER = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS)
+            .withResolverStyle(ResolverStyle.STRICT);
+    // uuuu instead of yyyy needed for date validation around leap years (https://stackoverflow.com/a/32825874/1207540)
+    private static final String FORMAT_6CHARS = "uuuuMM";
+    private static final String FORMAT_8CHARS = "uuuuMMdd";
     public static final int EIGHT_KB_IN_BYTES = 8192;
     public static final int TWENTYFOUR_KB_IN_BYTES = 24576;
     public static final int ONE_MB_IN_BYTES = 1024 * 1024;
@@ -245,8 +248,8 @@ public final class Utilities {
         for (char c : charArray) {
 
             // fast-path exclusions quotes and commas are obvious
-            // 34 = double-quote, 44 = comma
-            if (c == 34 || c == 44) {
+            // 34 = double-quote, 39 = apostrophe, 44 = comma
+            if (c == 34 || c == 44 || c == 39) {
                 continue;
             }
 

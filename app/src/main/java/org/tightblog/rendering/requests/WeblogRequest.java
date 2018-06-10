@@ -95,36 +95,27 @@ public class WeblogRequest {
         String path = sreq.getPathInfo();
         log.debug("parsing path {}", path);
 
-        // first, cleanup extra slashes and extract the weblog handle
+        // first extract the weblog handle
         if (path != null && path.trim().length() > 1) {
 
             // strip off the leading slash
             path = path.substring(1);
 
-            // strip off trailing slash if needed
-            if (path.endsWith("/")) {
-                path = path.substring(0, path.length() - 1);
-            }
-
             String[] pathElements = path.split("/", 2);
-            if (pathElements[0].trim().length() > 0) {
-                wreq.weblogHandle = pathElements[0];
-            } else {
-                // no weblogHandle in path info
-                throw new IllegalArgumentException("Not a weblog request, " + sreq.getRequestURL());
-            }
+
+            wreq.weblogHandle = pathElements[0];
 
             // if there is more left of the path info then hold onto it
             if (pathElements.length == 2) {
                 wreq.extraPathInfo = pathElements[1];
             }
-        }
 
-        // Page number for a specific window of results (e.g., Atom feed or entries under a category)
-        if (sreq.getParameter("page") != null) {
-            try {
-                wreq.pageNum = Integer.parseInt(sreq.getParameter("page"));
-            } catch (NumberFormatException ignored) {
+            // Page number for a specific window of results (e.g., Atom feed or entries under a category)
+            if (sreq.getParameter("page") != null) {
+                try {
+                    wreq.pageNum = Integer.parseInt(sreq.getParameter("page"));
+                } catch (NumberFormatException ignored) {
+                }
             }
         }
 

@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 /**
  * Represents a request for a TightBlog weblog page
@@ -79,56 +81,48 @@ public class WeblogPageRequest extends WeblogRequest {
          * /search?q=xyz[&cat=Sports] - search on xyz (optionally under given category)
          * /page/<pagelink> - custom page
          * path info may be null, which indicates the weblog homepage
+         *
+         * If invalid or incomplete values given, processing will ignore the values (as if not provided)
          */
         if (extraPathInfo != null && extraPathInfo.trim().length() > 0) {
 
-            String[] pathElements = extraPathInfo.split("/", 4);
+            // potential 5th item is unused below but split out so not part of the 4th element
+            String[] pathElements = extraPathInfo.split("/", 5);
 
             // the first part of the path always represents the context
             this.context = pathElements[0];
 
             // now check the rest of the path and extract other details
-            if ("category".equals(this.context) && (pathElements.length == 2 || pathElements.length == 4)) {
-                this.category = Utilities.decode(pathElements[1]);
-
-                if (pathElements.length == 4) {
-                    if ("tag".equals(pathElements[2])) {
-                        tag = pathElements[3];
-                    } else {
-                        throw new IllegalArgumentException("Invalid path: " + extraPathInfo);
-                    }
-                }
-            } else if (pathElements.length == 2) {
+            if (pathElements.length >= 2) {
                 if ("entry".equals(this.context)) {
                     this.weblogEntryAnchor = Utilities.decode(pathElements[1]);
+                } else if ("category".equals(this.context)) {
+                        this.category = Utilities.decode(pathElements[1]);
+
+                        if (pathElements.length >= 4 && "tag".equals(pathElements[2])) {
+                            tag = pathElements[3];
+                        }
                 } else if ("date".equals(this.context)) {
-                    if (this.isValidDateString(pathElements[1])) {
+                    if (isValidDateString(pathElements[1])) {
                         this.weblogDate = pathElements[1];
-                        // discourage date-based URLs from appearing in search engine results
-                        // (encourages appearance of blog home URL or permalinks instead)
-                        noIndex = true;
-                    } else {
-                        throw new IllegalArgumentException("Invalid date found for request: "
-                                + extraPathInfo);
                     }
+                    // discourage date-based URLs from appearing in search engine results
+                    // (encourages appearance of blog home URL or permalinks instead)
+                    noIndex = true;
                 } else if ("page".equals(this.context)) {
                     this.customPageName = pathElements[1];
 
                     // Custom pages may have a date parameter, e.g., the month to display on a blog archive page
                     String date = getRequestParameter("date");
-                    if (this.isValidDateString(date)) {
+                    if (isValidDateString(date)) {
                         this.weblogDate = date;
                     }
                 } else if ("tag".equals(this.context)) {
                     tag = pathElements[1];
-                } else {
-                    throw new IllegalArgumentException("Context \"" + this.context + "\" not supported");
                 }
-            } else if ("search".equals(this.context) && pathElements.length == 1) {
+            } else if ("search".equals(this.context)) {
                 this.query = getRequestParameter("q");
                 this.category = Utilities.decode(getRequestParameter("cat"));
-            } else {
-                throw new IllegalArgumentException("Invalid page request: " + extraPathInfo);
             }
         }
 
@@ -140,10 +134,21 @@ public class WeblogPageRequest extends WeblogRequest {
         log.debug(toString());
     }
 
-    private boolean isValidDateString(String dateString) {
-        // string must be all numeric and 6 or 8 characters
-        return dateString != null && StringUtils.isNumeric(dateString) && (dateString
-                .length() == 6 || dateString.length() == 8);
+    static boolean isValidDateString(String dateString) {
+        boolean valid = false;
+
+        if (StringUtils.isNumeric(dateString) && (dateString.length() == 6 || dateString.length() == 8)) {
+            try {
+                if (dateString.length() == 6) {
+                    LocalDate.parse(dateString + "01", Utilities.YMD_FORMATTER);
+                } else {
+                    LocalDate.parse(dateString, Utilities.YMD_FORMATTER);
+                }
+                valid = true;
+            } catch (DateTimeParseException ignored) {
+            }
+        }
+        return valid;
     }
 
     public String getContext() {

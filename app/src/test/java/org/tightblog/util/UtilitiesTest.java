@@ -102,6 +102,21 @@ public class UtilitiesTest {
     }
 
     @Test
+    public void testTruncateText() {
+        String test = "Florida Georgia Alabama";
+        assertEquals(test, Utilities.truncateText(test, test.length() - 10, test.length(), "..."));
+        assertEquals("Florida Georgia...", Utilities.truncateText(test, 8, 17, "..."));
+        assertEquals("Florida Georgia...", Utilities.truncateText(test, 8, 17, "..."));
+        assertEquals("Florida Geor---", Utilities.truncateText(test, 11, 12, "---"));
+        assertEquals("Florida...", Utilities.truncateText(test, 4, 12, "..."));
+    }
+
+    @Test
+    public void testNormalizeTag() {
+        assertEquals("a879b-c", Utilities.normalizeTag(" A8,79 \" B-'c ", null));
+    }
+
+    @Test
     public void testGetQueryString() {
         Map<String, String> params = new LinkedHashMap<>();
         assertEquals("", Utilities.getQueryString(params));

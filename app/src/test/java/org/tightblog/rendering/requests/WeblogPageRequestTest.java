@@ -90,15 +90,12 @@ public class WeblogPageRequestTest {
     }
 
     @Test
-    public void testIllegalArgumentExceptionWithInvalidCategoryRequest() {
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/category/stamps/stamps2");
+    public void testExtraPathsIgnored() {
+        when(mockRequest.getPathInfo()).thenReturn("/myblog/category/stamps/coins");
         WeblogPageRequest.Creator creator = new WeblogPageRequest.Creator();
-        try {
-            creator.create(mockRequest);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            assertEquals(ex.getMessage(), "Invalid page request: category/stamps/stamps2");
-        }
+        WeblogPageRequest request = creator.create(mockRequest);
+        assertEquals(request.getWeblogHandle(), "myblog");
+        assertEquals(request.getCategory(), "stamps");
     }
 
     @Test
@@ -150,15 +147,12 @@ public class WeblogPageRequestTest {
     }
 
     @Test
-    public void testIllegalArgumentExceptionWithInvalidDatePage() {
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/date/201804023");
+    public void testInvalidDatesIgnored() {
+        when(mockRequest.getPathInfo()).thenReturn("/myblog/date/20181946");
         WeblogPageRequest.Creator creator = new WeblogPageRequest.Creator();
-        try {
-            creator.create(mockRequest);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            assertEquals(ex.getMessage(), "Invalid date found for request: date/201804023");
-        }
+        WeblogPageRequest request = creator.create(mockRequest);
+        assertEquals("myblog", request.getWeblogHandle());
+        assertNull(request.getWeblogDate());
     }
 
     @Test
@@ -195,6 +189,18 @@ public class WeblogPageRequestTest {
         assertNull(wpr.getWeblogDate());
         assertNull(wpr.getTag());
         assertEquals("definitives", wpr.getQuery());
+    }
+
+    @Test
+    public void testIsValidDateString() {
+        assertTrue(WeblogPageRequest.isValidDateString("20160229"));
+        assertFalse(WeblogPageRequest.isValidDateString("20170229"));
+        assertTrue(WeblogPageRequest.isValidDateString("201805"));
+        assertFalse(WeblogPageRequest.isValidDateString("201815"));
+        assertFalse(WeblogPageRequest.isValidDateString("20180547"));
+        assertFalse(WeblogPageRequest.isValidDateString("2018"));
+        assertFalse(WeblogPageRequest.isValidDateString("201805011"));
+        assertFalse(WeblogPageRequest.isValidDateString("pumpkin"));
     }
 
 }

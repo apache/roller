@@ -98,12 +98,12 @@ public class URLModel implements Model {
         return urlStrategy.getWeblogURL(weblog);
     }
 
-    public String getEntriesURLForCategory(String catName) {
-        return urlStrategy.getWeblogCollectionURL(weblog, catName, null, null, -1);
+    public String getEntriesURLForCategory(String category) {
+        return urlStrategy.getWeblogCollectionURL(weblog, category, null, null, -1);
     }
 
-    public String getEntriesURLForTag(String tag) {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, null, tag, -1);
+    public String getEntriesURLForTag(String tag, String category) {
+        return urlStrategy.getWeblogCollectionURL(weblog, category, null, tag, -1);
     }
 
     public String getEntriesURLForDate(String date) {

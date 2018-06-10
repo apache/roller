@@ -245,7 +245,7 @@ public class PageProcessor extends AbstractProcessor {
             }
 
         } catch (Exception e) {
-            log.error("Error during rendering for page {}", incomingRequest.getTemplate().getId(), e);
+            log.error("Error during rendering for {}", incomingRequest, e);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }

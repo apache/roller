@@ -9,7 +9,7 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 <link rel="stylesheet" media="all" href="<c:url value='/tb-ui/yui3/cssbase/cssbase-min.css'/>" />
 
 <link rel="stylesheet" media="all" href="<c:url value='/tb-ui/styles/layout.css'/>" />
-<link rel="stylesheet" media="all" href="<c:url value='/tb-ui/styles/roller.css'/>" />
+<link rel="stylesheet" media="all" href="<c:url value='/tb-ui/styles/tightblog.css'/>" />
 <link rel="stylesheet" media="all" href="<c:url value='/tb-ui/styles/menu.css'/>" />
 
 <link rel="stylesheet" media="all" href="<c:url value='/tb-ui/theme/colors.css'/>" />

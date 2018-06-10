@@ -57,17 +57,4 @@ public class WeblogRequestTest {
         assertEquals(24, wr.getPageNum());
     }
 
-    @Test
-    public void testIllegalArgumentExceptionWithNoWeblog() {
-        when(mockRequest.getRequestURL()).thenReturn(
-                new StringBuffer("http://mytesturl/abc"));
-        when(mockRequest.getPathInfo()).thenReturn("//category/categoryname/tag/tagname");
-        WeblogRequest.Creator creator = new WeblogRequest.Creator();
-        try {
-            WeblogRequest wr = creator.create(mockRequest);
-            fail();
-        } catch (IllegalArgumentException ex) {
-            assertEquals(ex.getMessage(), "Not a weblog request, http://mytesturl/abc");
-        }
-    }
 }

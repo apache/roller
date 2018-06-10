@@ -46,8 +46,6 @@ public class SharedTheme {
     private String previewImagePath;
 
     // Site-wide blogs provide aggregated data from all weblogs to this weblog
-    // For better caching performance don't use a siteWide blog unless using this
-    // extra data.
     private Boolean siteWide = false;
     private Instant lastModified;
     private boolean enabled = true;
