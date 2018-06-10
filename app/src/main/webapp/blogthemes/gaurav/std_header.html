@@ -8,7 +8,7 @@
 				<span class="icon-bar"></span>
 			</button>
       		<div class="visible-xs">
-				<form id="searchForm" method="get" th:action="${url.search}" class="form-inline">
+				<form id="searchForm" method="get" th:action="${url.getSearchURL()}" class="form-inline">
 					<input type="text" class="form-control input-sm" id="q" name="q" maxlength="255"
 					    pattern=".*\S+.*" required placeholder="Search..." value="">
 					<button type="submit" id="search-btn" class="btn"><i class="icon-search"></i></button>
@@ -35,28 +35,28 @@
                     </li>
                 </th:block>
                 <li th:each="page : ${model.templates}" th:if="${page.role.name == 'CUSTOM_EXTERNAL'}" th:class="${model.weblogPage != null && page.id == model.weblogPage.id} ? 'active'">
-                    <a th:href='${url.page(page.relativePath)}' th:text="${page.name}">xxx</a>
+                    <a th:href='${url.getCustomPageURL(page.relativePath)}' th:text="${page.name}">xxx</a>
                 </li>
                 <th:block th:if="${model.isUserBlogPublisher()}">
                     <li>
-                        <a th:href="${url.createEntry}"><span th:text="${utils.msg('navigationBar.newEntry')}">xxx</span></a>
+                        <a th:href="${url.getNewEntryURL()}"><span th:text="${utils.msg('navigationBar.newEntry')}">xxx</span></a>
                     </li>
                     <li th:if="${model.isUserBlogOwner()}">
-                        <a th:href="${url.weblogConfigURL}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
+                        <a th:href="${url.getConfigURL()}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
                     </li>
                 </th:block>
                 <th:block th:switch="${model.isUserAuthenticated()}">
                     <li th:case="${true}">
-                        <a th:href="${url.logout}"><span th:text="${utils.msg('navigationBar.logout')}">xxx</span></a>
+                        <a th:href="${url.getLogoutURL()}"><span th:text="${utils.msg('navigationBar.logout')}">xxx</span></a>
                     </li>
                     <li th:case="${false}">
-                        <a th:href="${url.login}"><span th:text="${utils.msg('navigationBar.login')}">xxx</span></a>
+                        <a th:href="${url.getLoginURL()}"><span th:text="${utils.msg('navigationBar.login')}">xxx</span></a>
                     </li>
                 </th:block>
 			</ul>
 			<ul class="nav navbar-nav navbar-right hidden-xs">
 				<li>
-                    <form id="searchForm" method="get" th:action="${url.search}" class="form-inline">
+                    <form id="searchForm" method="get" th:action="${url.getSearchURL()}" class="form-inline">
                         <input type="text" class="form-control input-sm" id="q" name="q" maxlength="255"
                                placeholder="Search..." value="" pattern=".*\S+.*" required/>
 						<button type="submit" id="search-btn" class="btn"><i class="icon-search"></i></button>

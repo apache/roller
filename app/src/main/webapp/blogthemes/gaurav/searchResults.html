@@ -8,9 +8,9 @@
 	<th:block th:if="${model.resultCount > 0}">
 		<style>span.searchword { background-color:yellow; }</style>
 		<script>
-		    searchhi_config = {ignore_site : '[(${url.site})]'};
+		    searchhi_config = {ignore_site : '[(${url.getSiteHome()})]'};
 		</script>
-		<script type="application/x-javascript" th:src="${url.themeResource('gaurav', 'js/searchhi.js')}"></script>
+		<script type="application/x-javascript" th:src="${url.getThemeResourceURL('gaurav', 'js/searchhi.js')}"></script>
 		<script>
 			function loadSearchHighlight() {
 				searchhi.highlightWord(document.getElementById("search_results"), '[(${model.searchTerm})]');
@@ -63,7 +63,7 @@
 				<div class="well">
 					<h3>Advanced Search</h3>
 					<p>You can refine your search and/or search within one weblog category</p>
-					<form class="form-inline" role="form" method="get" th:action="${url.search}">
+					<form class="form-inline" role="form" method="get" th:action="${url.getSearchURL()}">
 						<div class="form-group" role="form">
 							<input type="text" id="q" class="form-control" name="q" size="8" maxlength="255" required th:value="${model.searchTerm}"/>
 						</div>

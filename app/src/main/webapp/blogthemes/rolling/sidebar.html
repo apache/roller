@@ -31,7 +31,7 @@
         <ul class="rEntriesList">
             <li th:each="comment : ${model.getRecentComments(10)}" class="recentcomments">
                 - <a th:href="${comment.url}" th:remove="${comment.url == '' ? 'tag' : 'none'}" th:utext="${comment.name}"></a>
-                on <a th:href="${url.comment(comment.weblogEntry, comment.timestamp)}"
+                on <a th:href="${url.getCommentURL(comment.weblogEntry, comment.timestamp)}"
                       th:utext="${comment.weblogEntry.title}"></a><li/>
         </ul>
     </div>

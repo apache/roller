@@ -59,7 +59,7 @@
                                             <b th:utext="${comment.name}">xxx</b>
                                         </a>
                                     <span th:utext="${utils.msg('macro.weblog.on') + ' ' + utils.formatTemporal(comment.postTime, utils.msg('macro.weblog.datetimepattern'))}">xxx</span>
-                                    <a th:href="${url.comment(entry, comment.timestamp)}"
+                                    <a th:href="${url.getCommentURL(entry, comment.timestamp)}"
                                        class="entrypermalink" th:title="${utils.msg('macro.weblog.commentpermalink.title')}">#</a>
                                     </p>
                                 </div>
@@ -107,17 +107,17 @@
                                     </div>
 
                                     <div class="form-group col-lg-12">
-                                       <script th:src="${url.site + '/scripts/clientSideInclude.js'}"></script>
+                                       <script th:src="${url.getSiteHome() + '/scripts/clientSideInclude.js'}"></script>
                                        <div id="commentAuthenticator"></div>
-                                       <input type="submit" th:formaction="${url.entryCommentPreview(entry)}" class="btn btn-primary"
+                                       <input type="submit" th:formaction="${url.getWeblogEntryPreviewCommentURL(entry)}" class="btn btn-primary"
                                                name="post" th:value="${utils.msg('macro.weblog.postpreview')}">
-                                       <input type="submit" th:formaction="${url.entryComment(entry)}" class="btn btn-success"
+                                       <input type="submit" th:formaction="${url.getWeblogEntryPostCommentURL(entry)}" class="btn btn-success"
                                                name="post" th:value="${utils.msg('macro.weblog.post')}">
                                     </div>
                                 </div>
                             </form>
                             <script>
-                                clientSideInclude('commentAuthenticator', '[(${url.commentAuthenticator})]');
+                                clientSideInclude('commentAuthenticator', '[(${url.getCommentAuthenticatorURL()})]');
                             </script>
                         </div>
                     </div>
@@ -137,12 +137,12 @@
 
 					<table><tbody>
 						<tr>
-						  <td><img th:src="${url.themeResource('gaurav', 'icons/delicious.gif')}"
+						  <td><img th:src="${url.getThemeResourceURL('gaurav', 'icons/delicious.gif')}"
 						         alt="del.icio.us" height="16" width="16" />
 						      <a th:href="${'http://del.icio.us/post?url=' + url.getURL(model.weblogEntry)}"
 						         title="bookmark it in del.icio.us">Bookmark it</a></td>
 
-						  <td><img th:src="${url.themeResource('gaurav', 'icons/digman.gif')}"
+						  <td><img th:src="${url.getThemeResourceURL('gaurav', 'icons/digman.gif')}"
 						          alt="submit to dig digg.com" height="14" width="16" />
 						      <a th:href="${'http://www.digg.com/submit?url=' + url.getURL(model.weblogEntry) + '&amp;phase=2'}" title="submit it to digg">
 						          Digg it</a></td>

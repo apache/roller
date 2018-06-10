@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="shortcut icon" th:href="${url.site + '/favicon.ico'}">
+    <link rel="shortcut icon" th:href="${url.getSiteHome() + '/favicon.ico'}">
     <meta th:if="${model.addNoIndexDirective}" name="robots" content="noindex">
-    <link rel="stylesheet" th:href='${url.page("basic-custom.css")}'/>
-    <link rel="stylesheet" th:href='${url.page("bigcalendar.css")}'/>
+    <link rel="stylesheet" th:href='${url.getCustomPageURL("basic-custom.css")}'/>
+    <link rel="stylesheet" th:href='${url.getCustomPageURL("bigcalendar.css")}'/>
     <title th:utext="${model.weblog.name + ':' + model.weblogPage.name}">Weblog Name - Title Bar</title>
     <span th:replace="fragments :: AutoDiscoveryLinks"></span>
     <span th:utext="${model.analyticsTrackingCode}" th:remove="tag"></span>

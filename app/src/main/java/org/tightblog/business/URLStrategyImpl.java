@@ -87,7 +87,7 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getEntryAddURL(String weblogId) {
+    public String getNewEntryURL(String weblogId) {
         String url = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/authoring/entryAdd";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", weblogId);
@@ -135,7 +135,7 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getWeblogEntryCommentURL(WeblogEntry entry, boolean isPreview) {
+    public String getWeblogEntryPostCommentURL(WeblogEntry entry, boolean isPreview) {
         String url = "";
         if (entry != null) {
             url = getWeblogURL(entry.getWeblog()) + "entrycomment/"
@@ -155,12 +155,12 @@ public class URLStrategyImpl implements URLStrategy {
     }
 
     @Override
-    public String getWeblogCommentsURL(WeblogEntry entry) {
+    public String getWeblogEntryCommentsURL(WeblogEntry entry) {
         return getWeblogEntryURL(entry) + "#comments";
     }
 
     @Override
-    public String getWeblogCommentURL(WeblogEntry entry, String timeStamp) {
+    public String getCommentURL(WeblogEntry entry, String timeStamp) {
         return getWeblogEntryURL(entry) + "#comment-" + timeStamp;
     }
 

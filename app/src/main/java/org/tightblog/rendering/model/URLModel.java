@@ -78,19 +78,19 @@ public class URLModel implements Model {
         }
     }
 
-    public String getSite() {
+    public String getSiteHome() {
         return urlStrategy.getHomeURL();
     }
 
-    public String getLogin() {
+    public String getLoginURL() {
         return urlStrategy.getLoginURL();
     }
 
-    public String getLogout() {
+    public String getLogoutURL() {
         return urlStrategy.getLogoutURL();
     }
 
-    public String getRegister() {
+    public String getRegisterURL() {
         return urlStrategy.getRegisterURL();
     }
 
@@ -114,50 +114,50 @@ public class URLModel implements Model {
         return urlStrategy.getWeblogEntryURL(entry);
     }
 
-    public String getCreateEntry() {
-        return urlStrategy.getEntryAddURL(weblog.getId());
+    public String getNewEntryURL() {
+        return urlStrategy.getNewEntryURL(weblog.getId());
     }
 
-    public String editEntry(WeblogEntry entry) {
+    public String getEntryEditURL(WeblogEntry entry) {
         if (entry != null) {
             return urlStrategy.getEntryEditURL(entry);
         }
         return null;
     }
 
-    public String comment(WeblogEntry entry, String timeStamp) {
-        return urlStrategy.getWeblogCommentURL(entry, timeStamp);
+    public String getCommentURL(WeblogEntry entry, String timeStamp) {
+        return urlStrategy.getCommentURL(entry, timeStamp);
     }
 
-    public String entryComment(WeblogEntry entry) {
-        return urlStrategy.getWeblogEntryCommentURL(entry, false);
+    public String getWeblogEntryPostCommentURL(WeblogEntry entry) {
+        return urlStrategy.getWeblogEntryPostCommentURL(entry, false);
     }
 
-    public String entryCommentPreview(WeblogEntry entry) {
-        return urlStrategy.getWeblogEntryCommentURL(entry, true);
+    public String getWeblogEntryPreviewCommentURL(WeblogEntry entry) {
+        return urlStrategy.getWeblogEntryPostCommentURL(entry, true);
     }
 
-    public String getCommentAuthenticator() {
+    public String getCommentAuthenticatorURL() {
         return urlStrategy.getCommentAuthenticatorURL();
     }
 
-    public String comments(WeblogEntry entry) {
-        return urlStrategy.getWeblogCommentsURL(entry);
+    public String getCommentsURL(WeblogEntry entry) {
+        return urlStrategy.getWeblogEntryCommentsURL(entry);
     }
 
-    public String getSearch() {
+    public String getSearchURL() {
         return urlStrategy.getWeblogSearchURL(weblog, null, null, -1);
     }
 
-    public String page(String pageLink) {
+    public String getCustomPageURL(String pageLink) {
         return urlStrategy.getCustomPageURL(weblog, pageLink, null);
     }
 
-    public String themeResource(String theme, String filePath) {
+    public String getThemeResourceURL(String theme, String filePath) {
         return urlStrategy.getThemeResourceURL(theme, filePath);
     }
 
-    public String getWeblogConfigURL() {
+    public String getConfigURL() {
         return urlStrategy.getWeblogConfigURL(weblog.getId());
     }
 

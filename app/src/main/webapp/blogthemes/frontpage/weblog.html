@@ -32,7 +32,7 @@
                <td class="menuTabUnselected">
                   <div class="menu-tr">
                      <div class="menu-tl">
-                        &nbsp;&nbsp;<a th:href="${url.page('directory')}">Weblog Directory</a>&nbsp;&nbsp;
+                        &nbsp;&nbsp;<a th:href="${url.getCustomPageURL('directory')}">Weblog Directory</a>&nbsp;&nbsp;
                      </div>
                   </div>
                </td>	    
@@ -83,7 +83,7 @@
                                     
             <br />
             <a th:href="${url.getAtomFeedURL()}" title="Combined Atom feed for site.">
-            <img th:src="${url.site + '/images/feed-icon-12x12.gif'}" border="0" alt="Combined Atom feed for site."/>
+            <img th:src="${url.getSiteHome() + '/images/feed-icon-12x12.gif'}" border="0" alt="Combined Atom feed for site."/>
             </a>
             Right-click, copy link and paste into your newsfeed reader
 
@@ -119,7 +119,7 @@
             <div class="sidebarBody">  
                 <ul>
                    <li th:each="blog : ${site.getHotWeblogs(maxResults)}">
-                       <a th:href="${url.site + '/' + blog.handle}" th:utext="${blog.name}">xxx</a> | <span th:utext="${blog.hitsToday}">xxx</span>
+                       <a th:href="${url.getSiteHome() + '/' + blog.handle}" th:utext="${blog.name}">xxx</a> | <span th:utext="${blog.hitsToday}">xxx</span>
                    </li>
                 </ul>
                 <br />		

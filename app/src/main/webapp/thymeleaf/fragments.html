@@ -9,7 +9,6 @@
     </div>
     <div th:fragment="MetaDescription" th:remove="tag">
         <th:block th:switch="${model.weblogEntry != null && !#strings.isEmpty(model.weblogEntry.searchDescription)}">
-            <!-- need to test below line -->
             <meta th:case="${true}" name="description" th:content="${model.weblogEntry.searchDescription}">
             <th:block th:case="${false}">
                 <th:block th:if="${!#strings.isEmpty(model.weblog.about)}">
@@ -79,7 +78,7 @@
         </ul>
     </div>
     <div th:fragment="WeblogSearchForm" th:remove="tag">
-        <form id="searchForm" method="get" th:action="${url.search}" style="margin: 0; padding: 0">
+        <form id="searchForm" method="get" th:action="${url.getSearchURL()}" style="margin: 0; padding: 0">
             <p>
                 <input type="text" id="q" name="q" size="10" class="text small" maxlength="255"
                        th:value="${model.searchResults ? model.searchTerm : ''}" pattern=".*\S+.*" required/>
@@ -97,32 +96,32 @@
     <div th:fragment="PageMenu(addExternalPages)" th:remove="tag">
         <ul class="rNavigationBar">
             <li class="rNavItem">
-                <a th:href="${url.site}"><span th:utext="${utils.msg('navigationBar.homePage')}"></span></a>
+                <a th:href="${url.getSiteHome()}"><span th:utext="${utils.msg('navigationBar.homePage')}"></span></a>
             </li>
             <li class="rNavItem">
                 <a th:href="${url.weblogHome}"><span>Weblog</span></a>
             </li>
             <th:block th:if="${addExternalPages}">
                 <li th:each="page : ${model.templates}" th:if="${page.role.name == 'CUSTOM_EXTERNAL'}" class="rNavItem">
-                    <a th:remove="${model.weblogPage != null && page.id == model.weblogPage.id ? 'tag' : 'none'}" th:href="${url.page(page.relativePath)}">
+                    <a th:remove="${model.weblogPage != null && page.id == model.weblogPage.id ? 'tag' : 'none'}" th:href="${url.getCustomPageURL(page.relativePath)}">
                         <span th:text="${page.name}">xxx</span>
                     </a>
                 </li>
             </th:block>
             <th:block th:if="${model.isUserBlogPublisher()}">
                 <li class="rNavItem">
-                    <a th:href="${url.createEntry}"><span th:text="${utils.msg('navigationBar.newEntry')}">xxx</span></a>
+                    <a th:href="${url.getNewEntryURL()}"><span th:text="${utils.msg('navigationBar.newEntry')}">xxx</span></a>
                 </li>
                 <li th:if="${model.isUserBlogOwner()}" class="rNavItem">
-                    <a th:href="${url.weblogConfigURL}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
+                    <a th:href="${url.getConfigURL()}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
                 </li>
             </th:block>
             <th:block th:switch="${model.isUserAuthenticated()}">
                 <li th:case="${true}" class="rNavItem">
-                    <a th:href="${url.logout}"><span th:text="${utils.msg('navigationBar.logout')}">xxx</span></a>
+                    <a th:href="${url.getLogoutURL()}"><span th:text="${utils.msg('navigationBar.logout')}">xxx</span></a>
                 </li>
                 <li th:case="${false}" class="rNavItem">
-                    <a th:href="${url.login}" target="_blank"><span th:text="${utils.msg('navigationBar.login')}">xxx</span></a>
+                    <a th:href="${url.getLoginURL()}" target="_blank"><span th:text="${utils.msg('navigationBar.login')}">xxx</span></a>
                 </li>
             </th:block>
         </ul>
@@ -149,7 +148,7 @@
 
                             <span th:utext="${utils.msg('macro.weblog.on') + ' ' + utils.formatTemporal(comment.postTime, utils.msg('macro.weblog.datetimepattern'))}"></span>
 
-                            <a th:href="${url.comment(entry, comment.timestamp)}"
+                            <a th:href="${url.getCommentURL(entry, comment.timestamp)}"
                                class="entrypermalink" title="${utils.msg('macro.weblog.commentpermalink.title')}">#</a>
                         </p>
 
@@ -190,20 +189,20 @@
                                 <textarea name="content" class="textarea large" cols="40" rows="10" maxlength="2000" th:utext="${cform.content}" required>xxx</textarea>
                             </li>
                             <li class="info">
-                                <script th:src="${url.site + '/scripts/clientSideInclude.js'}"></script>
+                                <script th:src="${url.getSiteHome() + '/scripts/clientSideInclude.js'}"></script>
                                 <div id="commentAuthenticator"></div>
                             </li>
                             <li>
-                                <input type="submit" th:formaction="${url.entryCommentPreview(entry)}" class="button"
+                                <input type="submit" th:formaction="${url.getWeblogEntryPreviewCommentURL(entry)}" class="button"
                                        name="post" th:value="${utils.msg('macro.weblog.postpreview')}">
-                                <input type="submit" th:formaction="${url.entryComment(entry)}" class="button"
+                                <input type="submit" th:formaction="${url.getWeblogEntryPostCommentURL(entry)}" class="button"
                                        name="post" th:value="${utils.msg('macro.weblog.post')}">
                             </li>
                         </ul>
 
                     </form>
                     <script>
-                        clientSideInclude('commentAuthenticator', '[(${url.commentAuthenticator})]');
+                        clientSideInclude('commentAuthenticator', '[(${url.getCommentAuthenticatorURL()})]');
                     </script>
                 </th:block>
                 <span th:case="${false}" class="status" th:utext="${utils.msg('comments.disabled')}">xxx</span>
@@ -212,7 +211,7 @@
     </div>
     <div th:fragment="WeblogSearchAgainForm" id="searchAgain">
         <span th:utext="${utils.msg('macro.weblog.searchhits', model.searchTerm, T(Math).max(model.resultCount, 0))}">xxx</span>
-        <form method="get" th:action="${url.search}" style="margin: 5px">
+        <form method="get" th:action="${url.getSearchURL()}" style="margin: 5px">
             <input type="text" id="q" name="q" class="text medium" maxlength="255" th:value="${model.searchTerm}"
                    style="padding-left: 1px" required><br>
             <select th:unless="${site != null || model.weblog.weblogCategories.size() <= 1}" name="cat" class="select">

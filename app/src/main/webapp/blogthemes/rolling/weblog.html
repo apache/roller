@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="shortcut icon" th:href="${url.site + '/favicon.ico'}">
+    <link rel="shortcut icon" th:href="${url.getSiteHome() + '/favicon.ico'}">
     <meta th:if="${model.addNoIndexDirective}" name="robots" content="noindex">
-    <link rel="stylesheet" th:href='${url.page("basic-custom.css")}'/>
+    <link rel="stylesheet" th:href='${url.getCustomPageURL("basic-custom.css")}'/>
     <th:block th:switch="${model.searchResults}">
         <title th:case="${true}" th:utext="${'Search Results for ' + model.searchTerm + ': ' + model.weblog.name}">xxx</title>
         <th:block th:case="${false}">

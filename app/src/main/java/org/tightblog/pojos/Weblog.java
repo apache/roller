@@ -559,7 +559,7 @@ public class Weblog {
 
     @Override
     public String toString() {
-        return "Weblog: id=" + id + ", handle=" + handle + ", name=" + name;
+        return String.format("Weblog: handle=%s, name=%s, id=%s", handle, name, id);
     }
 
     @Override

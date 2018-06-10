@@ -33,12 +33,12 @@
 
         <p class="entryInfo" style="clear: right" th:with="commentCount = ${entry.commentCount}">
             <th:block th:if="${model.canSubmitNewComments(entry) || commentCount > 0}">
-                <a th:href="${url.comments(entry)}" class="commentslink" th:utext="${utils.msg('macro.weblog.comments') + '[' + commentCount + ']'}">xxx</a>
+                <a th:href="${url.getCommentsURL(entry)}" class="commentslink" th:utext="${utils.msg('macro.weblog.comments') + '[' + commentCount + ']'}">xxx</a>
             </th:block>
 
             <th:block th:if="${model.isUserBlogPublisher()}">
                 &nbsp;|&nbsp;
-                <a th:href="${url.editEntry(entry)}" th:utext="${utils.msg('generic.edit')}">xxx</a>
+                <a th:href="${url.getEntryEditURL(entry)}" th:utext="${utils.msg('generic.edit')}">xxx</a>
             </th:block>
         </p>
 

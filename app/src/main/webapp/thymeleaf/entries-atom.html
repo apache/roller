@@ -23,7 +23,7 @@
     <title type="html" th:utext="${#strings.escapeXml(model.weblog.name)}">xxx</title>
     <subtitle type="html" th:utext="${#strings.escapeXml(model.weblog.tagline)}">xxx</subtitle>
     <id th:utext="${url.atomFeedURL}">xxx</id>
-    <link th:if="${model.siteWideFeed}" rel="alternate" type="text/html" th:href="${url.site}"/>
+    <link th:if="${model.siteWideFeed}" rel="alternate" type="text/html" th:href="${url.getSiteHome()}"/>
     <link th:unless="${model.siteWideFeed}" rel="alternate" type="text/html" th:href="${url.weblogHome}"/>
 
     <link rel="self" type="application/atom+xml"

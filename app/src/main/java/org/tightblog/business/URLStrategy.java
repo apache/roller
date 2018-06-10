@@ -63,7 +63,7 @@ public interface URLStrategy {
     /**
      * Get a url to add a new weblog entry.
      */
-    String getEntryAddURL(String weblogId);
+    String getNewEntryURL(String weblogId);
 
     /**
      * Get a url to edit a specific weblog entry.
@@ -105,18 +105,20 @@ public interface URLStrategy {
      * @param entry weblog entry where comment is being placed
      * @param isPreview true if commenter wishes to preview (not yet submit) comment
      */
-    String getWeblogEntryCommentURL(WeblogEntry entry, boolean isPreview);
+    String getWeblogEntryPostCommentURL(WeblogEntry entry, boolean isPreview);
 
     /**
-     * Get url for a single weblog entry comments on a given weblog.
+     * Get url for the comments section of a single weblog entry
      * @param entry entry whose comments it is desired to view
      */
-    String getWeblogCommentsURL(WeblogEntry entry);
+    String getWeblogEntryCommentsURL(WeblogEntry entry);
 
     /**
-     * Get url for a single weblog entry comment on a given weblog.
+     * Get url for a single weblog entry comment
+     * @param entry entry whose comments it is desired to view
+     * @param timeStamp timestamp of comment (used to identify comment desired)
      */
-    String getWeblogCommentURL(WeblogEntry entry, String timeStamp);
+    String getCommentURL(WeblogEntry entry, String timeStamp);
 
     /**
      * Get url for a single mediafile on a given weblog.

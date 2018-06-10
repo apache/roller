@@ -5,8 +5,8 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title th:utext="${model.weblog.name}">xxx</title>
-        <link rel="shortcut icon" th:href="${url.site + '/favicon.ico'}">
-        <link rel="stylesheet" th:href="${url.page('_css.css')}">
+        <link rel="shortcut icon" th:href="${url.getSiteHome() + '/favicon.ico'}">
+        <link rel="stylesheet" th:href="${url.getCustomPageURL('_css.css')}">
         <!--/* replace/insert within a fragment seems to work only with th:block */-->
         <th:block th:replace="fragments :: AutoDiscoveryLinks"></th:block>
     </th:block>
@@ -18,14 +18,14 @@
                 <tr>
                     <td class="bannerLeft"></td>
                     <td class="bannerRight">
-                        <a th:href="${url.site}" th:text="${utils.msg('navigationBar.homePage')}">xxx</a> |
-                        <a th:href="${url.site + '/tb-ui/app/home'}">Main Menu</a> |
+                        <a th:href="${url.getSiteHome()}" th:text="${utils.msg('navigationBar.homePage')}">xxx</a> |
+                        <a th:href="${url.getSiteHome() + '/tb-ui/app/home'}">Main Menu</a> |
                         <th:block th:switch="${model.isUserAuthenticated()}">
                             <th:block th:case="${false}">
-                                <a th:href="${url.login}">Login</a> |
-                                <a th:href="${url.register}">Register</a>
+                                <a th:href="${url.getLoginURL()}">Login</a> |
+                                <a th:href="${url.getRegisterURL()}">Register</a>
                             </th:block>
-                            <a th:case="${true}" th:href="${url.logout}">Logout</a>
+                            <a th:case="${true}" th:href="${url.getLogoutURL()}">Logout</a>
                         </th:block>
                     </td>
                 </tr>

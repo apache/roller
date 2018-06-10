@@ -246,7 +246,7 @@ public class MailManagerImpl implements MailManager {
 
         Context ctx = new Context(weblog.getLocaleInstance());
         ctx.setVariable("comment", comment);
-        String commentURL = urlStrategy.getWeblogCommentsURL(entry);
+        String commentURL = urlStrategy.getWeblogEntryCommentsURL(entry);
         ctx.setVariable("commentURL", commentURL);
         ctx.setVariable("messages", commentNotes);
 
@@ -347,7 +347,7 @@ public class MailManagerImpl implements MailManager {
 
         Context ctx = new Context(weblog.getLocaleInstance());
         ctx.setVariable("comment", comment);
-        String commentURL = urlStrategy.getWeblogCommentsURL(entry);
+        String commentURL = urlStrategy.getWeblogEntryCommentsURL(entry);
         ctx.setVariable("commentURL", commentURL);
         if (subscriber != null) {
             ctx.setVariable("unsubscribeURL", urlStrategy.getCommentNotificationUnsubscribeURL(subscriber.getValue()));
@@ -374,7 +374,7 @@ public class MailManagerImpl implements MailManager {
 
         Context ctx = new Context();
         ctx.setVariable("emailType", "CommentApproved");
-        ctx.setVariable("commentURL", urlStrategy.getWeblogCommentURL(entry, wec.getTimestamp()));
+        ctx.setVariable("commentURL", urlStrategy.getCommentURL(entry, wec.getTimestamp()));
         String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
 
         // send message to author of approved comment
