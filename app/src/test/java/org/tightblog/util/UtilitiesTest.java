@@ -33,6 +33,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -48,6 +49,24 @@ public class UtilitiesTest {
         String expect = "a bold sentence with a link";
         String result = Utilities.removeHTML(test);
         assertEquals(expect, result);
+    }
+
+    @Test
+    public void testToLinkedHashMap() {
+        // test that
+        Map<String, String> blogHtmlLevels;
+        blogHtmlLevels = Arrays.stream(HTMLSanitizer.Level.values())
+                .collect(Utilities.toLinkedHashMap(HTMLSanitizer.Level::name, e -> "abc"));
+
+        int index = 0;
+        // .values() returns order as declared:
+        // https://docs.oracle.com/javase/specs/jls/se7/html/jls-8.html#jls-8.9.2
+        HTMLSanitizer.Level[] levels = HTMLSanitizer.Level.values();
+
+        for (String levelInMap : blogHtmlLevels.keySet()) {
+            assertEquals(levels[index].name(), levelInMap);
+            index++;
+        }
     }
 
     @Test
