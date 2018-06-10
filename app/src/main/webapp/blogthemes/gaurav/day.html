@@ -1,5 +1,5 @@
 <div th:class="${model.permalink}? 'daybox'">
-    <div th:each="entry : ${model.weblogEntriesPager.getEntries().get(day)}" class="entryBox" th:id="${utils.encode(entry.anchor)}">
+    <div th:each="entry : ${model.weblogEntriesPager.getEntries().get(day)}" class="entryBox" th:id="${entry.anchor}">
         <h2 class="entryTitle">
             <a th:remove="${model.permalink}? 'tag' : 'none'" th:href="${url.getURL(entry)}" th:utext="${entry.title}">xxx</a>
         </h2>

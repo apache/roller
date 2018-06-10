@@ -131,14 +131,4 @@ public class UtilitiesModel implements Model {
     public String truncateText(String str, int lower, int upper, String appendToEnd) {
         return Utilities.truncateText(str, lower, upper, appendToEnd);
     }
-
-    /**
-     * URL encoding.
-     *
-     * @param s a string to be URL-encoded
-     * @return URL encoding of s using character encoding UTF-8; null if s is null.
-     */
-    public final String encode(String s) {
-        return (s == null) ? null : Utilities.encode(s);
-    }
 }

@@ -10,7 +10,7 @@
             <span th:text="${utils.formatTemporal(day, utils.msg('macro.weblog.datepattern'))}"></span>
     </h2>
 
-    <div class="entryBox" th:each="entry : ${model.weblogEntriesPager.getEntries().get(day)}" th:id="${utils.encode(entry.anchor)}">
+    <div class="entryBox" th:each="entry : ${model.weblogEntriesPager.getEntries().get(day)}" th:id="${entry.anchor}">
         <p class="entryTitle" th:utext="${entry.title}">xxx</p>
         <p class="entryContent" th:switch="${model.permalink || #strings.isEmpty(entry.summary)}">
             <span th:case="${true}" th:utext="${model.getTransformedText(entry)}"></span>
