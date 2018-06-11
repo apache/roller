@@ -18,6 +18,9 @@ package org.tightblog.ui.restapi;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
@@ -47,7 +50,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -136,7 +138,7 @@ public class WeblogEntryController {
     @Autowired
     private MessageSource messages;
 
-    @RequestMapping(value = "/{weblogId}/page/{page}", method = RequestMethod.POST)
+    @PostMapping(value = "/{weblogId}/page/{page}")
     public WeblogEntryData getWeblogEntries(@PathVariable String weblogId, @PathVariable int page,
                                               @RequestBody WeblogEntrySearchCriteria criteria, Principal principal,
                                               HttpServletResponse response) {
@@ -183,7 +185,7 @@ public class WeblogEntryController {
         }
     }
 
-    @RequestMapping(value = "/{weblogId}/searchfields", method = RequestMethod.GET)
+    @GetMapping(value = "/{weblogId}/searchfields")
     public WeblogEntrySearchFields getWeblogEntrySearchFields(@PathVariable String weblogId, Principal principal,
                                                               HttpServletResponse response, Locale locale) {
 
@@ -242,7 +244,7 @@ public class WeblogEntryController {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/{id}")
     public void deleteWeblogEntry(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
 
@@ -278,7 +280,7 @@ public class WeblogEntryController {
         }
     }
 
-    @RequestMapping(value = "/{id}/tagdata", method = RequestMethod.GET)
+    @GetMapping(value = "/{id}/tagdata")
     public WeblogTagData getWeblogTagData(@PathVariable String id, @RequestParam("prefix") String prefix)
             throws ServletException {
 
@@ -321,7 +323,7 @@ public class WeblogEntryController {
         }
     }
 
-    @RequestMapping(value = "/{weblogId}/recententries/{pubStatus}", method = RequestMethod.GET)
+    @GetMapping(value = "/{weblogId}/recententries/{pubStatus}")
     private List<WeblogEntry> getRecentEntries(@PathVariable String weblogId,
                                                          @PathVariable WeblogEntry.PubStatus pubStatus,
                                                Principal p, HttpServletResponse response) {
@@ -350,7 +352,7 @@ public class WeblogEntryController {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/{id}")
     public WeblogEntry getWeblogEntry(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
         try {
@@ -386,7 +388,7 @@ public class WeblogEntryController {
         return null;
     }
 
-    @RequestMapping(value = "/{weblogId}/entryeditmetadata", method = RequestMethod.GET)
+    @GetMapping(value = "/{weblogId}/entryeditmetadata")
     public EntryEditMetadata getEntryEditMetadata(@PathVariable String weblogId, Principal principal,
                                                               Locale locale, HttpServletResponse response) {
 
@@ -475,7 +477,7 @@ public class WeblogEntryController {
     // publish
     // save
     // submit for review
-    @RequestMapping(value = "/{weblogId}/entries", method = RequestMethod.POST)
+    @PostMapping(value = "/{weblogId}/entries")
     public ResponseEntity postEntry(@PathVariable String weblogId, @Valid @RequestBody WeblogEntry entryData,
                                        Locale locale, Principal p) throws ServletException {
 

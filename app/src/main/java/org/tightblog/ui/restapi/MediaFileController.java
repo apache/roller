@@ -2,6 +2,10 @@ package org.tightblog.ui.restapi;
 
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.springframework.context.MessageSource;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.business.MediaFileManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
@@ -17,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,7 +73,7 @@ public class MediaFileController {
     @Autowired
     private MessageSource messages;
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/mediadirectories", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}/mediadirectories")
     public List<MediaDirectory> getMediaDirectories(@PathVariable String id, Principal p, HttpServletResponse response) {
         Weblog weblog = weblogManager.getWeblog(id);
         if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
@@ -91,7 +93,7 @@ public class MediaFileController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/mediadirectories/{id}/files", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/mediadirectories/{id}/files")
     public List<MediaFile> getMediaDirectoryContents(@PathVariable String id, Principal p, HttpServletResponse response) {
         MediaDirectory md = mediaFileManager.getMediaDirectory(id);
         boolean permitted = md != null
@@ -108,7 +110,7 @@ public class MediaFileController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/mediafile/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/mediafile/{id}")
     public MediaFile getMediaFile(@PathVariable String id, Principal p, HttpServletResponse response) {
         MediaFile mf = mediaFileManager.getMediaFile(id);
         boolean permitted = mf != null
@@ -122,7 +124,7 @@ public class MediaFileController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/mediafiles", method = RequestMethod.POST, consumes = {"multipart/form-data"})
+    @PostMapping(value = "/tb-ui/authoring/rest/mediafiles", consumes = {"multipart/form-data"})
     public ResponseEntity postMediaFile(Principal p, @Valid @RequestPart("mediaFileData") MediaFile mediaFileData,
                                         Locale locale,
                                         @RequestPart(name = "uploadFile", required = false) MultipartFile uploadedFile)
@@ -196,7 +198,7 @@ public class MediaFileController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/mediadirectories", method = RequestMethod.PUT)
+    @PutMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/mediadirectories")
     public ResponseEntity addMediaDirectory(@PathVariable String weblogId, @RequestBody TextNode directoryName,
                                     Principal p, Locale locale, HttpServletResponse response)
             throws ServletException {
@@ -218,7 +220,7 @@ public class MediaFileController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/mediadirectory/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/tb-ui/authoring/rest/mediadirectory/{id}")
     public void deleteMediaDirectory(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
 
@@ -242,7 +244,7 @@ public class MediaFileController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/mediafiles/weblog/{weblogId}", method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/authoring/rest/mediafiles/weblog/{weblogId}")
     public void deleteMediaFiles(@PathVariable String weblogId, @RequestBody List<String> fileIdsToDelete,
                                  Principal p, HttpServletResponse response)
             throws ServletException {
@@ -276,8 +278,7 @@ public class MediaFileController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/mediafiles/weblog/{weblogId}/todirectory/{directoryId}",
-            method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/authoring/rest/mediafiles/weblog/{weblogId}/todirectory/{directoryId}")
     public void moveMediaFiles(@PathVariable String weblogId, @PathVariable String directoryId,
                                @RequestBody List<String> fileIdsToMove,
                                Principal p, HttpServletResponse response)

@@ -25,6 +25,9 @@ import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.JPAPersistenceStrategy;
@@ -34,8 +37,6 @@ import org.tightblog.pojos.WeblogRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -72,7 +73,7 @@ public class CategoryController {
         this.persistenceStrategy = persistenceStrategy;
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/category/{id}", method = RequestMethod.PUT)
+    @PutMapping(value = "/tb-ui/authoring/rest/category/{id}")
     public void updateCategory(@PathVariable String id, @RequestBody WeblogCategory updatedCategory, Principal p,
                                HttpServletResponse response) throws ServletException {
         try {
@@ -101,7 +102,7 @@ public class CategoryController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/categories", method = RequestMethod.PUT)
+    @PutMapping(value = "/tb-ui/authoring/rest/categories")
     public void addCategory(@RequestParam(name = "weblogId") String weblogId, @RequestBody WeblogCategory newCategory,
                             Principal p, HttpServletResponse response) throws ServletException {
         try {
@@ -124,7 +125,7 @@ public class CategoryController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/categories", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/categories")
     public List<WeblogCategory> getWeblogCategories(@RequestParam(name = "weblogId") String weblogId,
                                                     @RequestParam(required = false) String skipCategoryId) {
         return weblogManager.getWeblogCategories(weblogManager.getWeblog(weblogId))
@@ -134,7 +135,7 @@ public class CategoryController {
                 .collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/category/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/tb-ui/authoring/rest/category/{id}")
     public void removeCategory(@PathVariable String id, @RequestParam(required = false) String targetCategoryId,
                                Principal p, HttpServletResponse response)
             throws ServletException {

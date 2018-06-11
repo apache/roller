@@ -21,6 +21,9 @@
 
 package org.tightblog.ui.restapi;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.JPAPersistenceStrategy;
@@ -30,8 +33,6 @@ import org.tightblog.pojos.WeblogRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -72,7 +73,7 @@ public class BlogrollController {
         this.userManager = userManager;
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/bookmarks", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}/bookmarks")
     public List<WeblogBookmark> getWeblogBookmarks(@PathVariable String id, HttpServletResponse response) {
         Weblog weblog = weblogManager.getWeblog(id);
         if (weblog != null) {
@@ -86,7 +87,7 @@ public class BlogrollController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/bookmark/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/tb-ui/authoring/rest/bookmark/{id}")
     public void deleteBookmark(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
 
@@ -110,7 +111,7 @@ public class BlogrollController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/bookmark/{id}", method = RequestMethod.PUT)
+    @PutMapping(value = "/tb-ui/authoring/rest/bookmark/{id}")
     public void updateBookmark(@PathVariable String id, @RequestBody WeblogBookmark newData, Principal p,
                                HttpServletResponse response) throws ServletException {
         try {
@@ -140,7 +141,7 @@ public class BlogrollController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/bookmarks", method = RequestMethod.PUT)
+    @PutMapping(value = "/tb-ui/authoring/rest/bookmarks")
     public void addBookmark(@RequestParam(name = "weblogId") String weblogId, @RequestBody WeblogBookmark newData, Principal p,
                             HttpServletResponse response) throws ServletException {
         try {

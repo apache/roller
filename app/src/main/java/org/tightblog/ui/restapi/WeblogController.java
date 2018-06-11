@@ -30,6 +30,9 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.WeblogEntryManager;
@@ -53,8 +56,6 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.pojos.WebloggerProperties;
 
@@ -111,12 +112,12 @@ public class WeblogController {
     @Autowired
     private MessageSource messages;
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/loggedin", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/loggedin")
     public boolean loggedIn() {
         return true;
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
     public Weblog getWeblogData(@PathVariable String id, Principal p, HttpServletResponse response) throws ServletException {
         ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
         if (maybeError == null) {
@@ -127,7 +128,7 @@ public class WeblogController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblogs", method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/authoring/rest/weblogs")
     public ResponseEntity addWeblog(@Valid @RequestBody Weblog newData, Principal p, HttpServletResponse response)
             throws ServletException {
 
@@ -151,7 +152,7 @@ public class WeblogController {
         return saveWeblog(weblog, newData, response, true);
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}", method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
     public ResponseEntity updateWeblog(@PathVariable String id, @Valid @RequestBody Weblog newData, Principal p,
                                        HttpServletResponse response) throws ServletException {
         ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
@@ -227,7 +228,7 @@ public class WeblogController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
     public void deleteWeblog(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
         ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
@@ -271,7 +272,7 @@ public class WeblogController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblogconfig/metadata", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/weblogconfig/metadata")
     public WeblogConfigMetadata getWeblogConfigMetadata(Locale locale, Principal p) {
         User user = userManager.getEnabledUserByUserName(p.getName());
 

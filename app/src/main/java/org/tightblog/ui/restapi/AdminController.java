@@ -30,6 +30,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.context.MessageSource;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.search.IndexManager;
@@ -46,7 +48,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
@@ -106,14 +107,14 @@ public class AdminController {
     @Autowired
     private MessageSource messages;
 
-    @RequestMapping(value = "/caches", method = RequestMethod.GET)
+    @GetMapping(value = "/caches")
     public Map<String, LazyExpiringCache> getCacheData() throws ServletException {
         Map<String, LazyExpiringCache> cacheMap = new HashMap<>();
         cacheSet.forEach(c -> cacheMap.put(c.getCacheHandlerId(), c));
         return cacheMap;
     }
 
-    @RequestMapping(value = "/cache/{cacheName}/clear", method = RequestMethod.POST)
+    @PostMapping(value = "/cache/{cacheName}/clear")
     public ResponseEntity<String> emptyOneCache(@PathVariable String cacheName)
             throws ServletException {
         Optional<LazyExpiringCache> maybeCache = cacheSet.stream()
@@ -123,7 +124,7 @@ public class AdminController {
                 new Object[] {cacheName}, null));
     }
 
-    @RequestMapping(value = "/resethitcount", method = RequestMethod.POST)
+    @PostMapping(value = "/resethitcount")
     public ResponseEntity<String> resetHitCount() {
         try {
             weblogManager.resetAllHitCounts();
@@ -135,7 +136,7 @@ public class AdminController {
         }
     }
 
-    @RequestMapping(value = "/webloglist", method = RequestMethod.GET)
+    @GetMapping(value = "/webloglist")
     public List<String> getWeblogHandles(HttpServletResponse response) throws ServletException {
         try {
             List<String> weblogHandles = new ArrayList<>();
@@ -152,7 +153,7 @@ public class AdminController {
         }
     }
 
-    @RequestMapping(value = "/weblog/{handle}/rebuildindex", method = RequestMethod.POST)
+    @PostMapping(value = "/weblog/{handle}/rebuildindex")
     public ResponseEntity<String> rebuildIndex(@PathVariable String handle) {
         try {
             Weblog weblog = weblogManager.getWeblogByHandle(handle);
@@ -170,12 +171,12 @@ public class AdminController {
         }
     }
 
-    @RequestMapping(value = "/webloggerproperties", method = RequestMethod.GET)
+    @GetMapping(value = "/webloggerproperties")
     public WebloggerProperties getWebloggerProperties(HttpServletResponse response) throws ServletException {
         return persistenceStrategy.load(WebloggerProperties.class, "1");
     }
 
-    @RequestMapping(value = "/webloggerproperties", method = RequestMethod.POST)
+    @PostMapping(value = "/webloggerproperties")
     public ResponseEntity updateProperties(@Valid @RequestBody WebloggerProperties properties) {
 
         // maintain last weblog change
@@ -187,7 +188,7 @@ public class AdminController {
         return ResponseEntity.ok(messages.getMessage("generic.changes.saved", null, null));
     }
 
-    @RequestMapping(value = "/globalconfigmetadata", method = RequestMethod.GET)
+    @GetMapping(value = "/globalconfigmetadata")
     public GlobalConfigMetadata getGlobalConfigMetadata(HttpServletResponse response) {
 
         GlobalConfigMetadata gcm = new GlobalConfigMetadata();

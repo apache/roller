@@ -23,6 +23,9 @@ package org.tightblog.ui.restapi;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
@@ -46,8 +49,6 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.pojos.WebloggerProperties;
 
@@ -113,20 +114,20 @@ public class UserController {
         pattern = Pattern.compile(PASSWORD_PATTERN);
     }
 
-    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/userlist", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/admin/rest/useradmin/userlist")
     public Map<String, String> getUserEditList() throws ServletException {
         UserSearchCriteria usc = new UserSearchCriteria();
         return createUserMap(userManager.getUsers(usc));
     }
 
-    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval")
     public List<User> getRegistrationsNeedingApproval() throws ServletException {
         UserSearchCriteria usc = new UserSearchCriteria();
         usc.setStatus(UserStatus.EMAILVERIFIED);
         return userManager.getUsers(usc);
     }
 
-    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval/{id}/approve", method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval/{id}/approve")
     public void approveRegistration(@PathVariable String id, HttpServletResponse response) {
         User acceptedUser = userManager.getUser(id);
         if (acceptedUser != null) {
@@ -141,7 +142,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval/{id}/reject", method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval/{id}/reject")
     public void rejectRegistration(@PathVariable String id, HttpServletResponse response) {
         User rejectedUser = userManager.getUser(id);
         if (rejectedUser != null) {
@@ -154,7 +155,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/potentialmembers", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/potentialmembers")
     public Map<String, String> getPotentialNewBlogMembers(@PathVariable String weblogId, Principal p,
                                                           HttpServletResponse response)
             throws ServletException {
@@ -200,7 +201,7 @@ public class UserController {
         return sortedMap;
     }
 
-    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}")
     public UserData getUserData(@PathVariable String id, HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
 
@@ -216,7 +217,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/userprofile/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/userprofile/{id}")
     public User getProfileData(@PathVariable String id, Principal p, HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
         User authenticatedUser = userManager.getEnabledUserByUserName(p.getName());
@@ -229,7 +230,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/register/rest/registeruser", method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/register/rest/registeruser")
     public ResponseEntity registerUser(@Valid @RequestBody UserData newData, Locale locale, HttpServletResponse response)
             throws ServletException {
         ValidationError maybeError = advancedValidate(null, newData, true, locale);
@@ -268,7 +269,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/userprofile/{id}", method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/authoring/rest/userprofile/{id}")
     public ResponseEntity updateUserProfile(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
                                             Locale locale, HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
@@ -285,7 +286,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}", method = RequestMethod.PUT)
+    @PutMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}")
     public ResponseEntity updateUser(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
                                      Locale locale, HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
@@ -323,7 +324,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/members", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/members")
     public List<UserWeblogRole> getWeblogMembers(@PathVariable String weblogId, Principal p, HttpServletResponse response)
             throws ServletException {
 
@@ -337,7 +338,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/memberupdate", method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/memberupdate")
     public ResponseEntity updateWeblogMembership(@PathVariable String weblogId, Principal p, Locale locale,
                                                  @RequestBody List<UserWeblogRole> roles)
             throws ServletException {
@@ -502,7 +503,7 @@ public class UserController {
         return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
     }
 
-    @RequestMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}/weblogs", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}/weblogs")
     public List<UserWeblogRole> getUsersWeblogs(@PathVariable String id, HttpServletResponse response) throws ServletException {
         User user = userManager.getUser(id);
         if (user == null) {
@@ -516,7 +517,7 @@ public class UserController {
         return uwrs;
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/loggedinuser/weblogs", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/loggedinuser/weblogs")
     public List<UserWeblogRole> getLoggedInUsersWeblogs(Principal p, HttpServletResponse response)
             throws ServletException {
         User user = userManager.getEnabledUserByUserName(p.getName());
@@ -527,8 +528,7 @@ public class UserController {
         return getUsersWeblogs(user.getId(), response);
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/user/{userId}/role/{role}/invite",
-            method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/user/{userId}/role/{role}/invite")
     public ResponseEntity inviteUser(@PathVariable String weblogId, @PathVariable String userId,
                                      @PathVariable WeblogRole role, Principal p, Locale locale) {
 
@@ -554,7 +554,7 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/attach", method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/attach")
     public void acceptWeblogInvitation(@PathVariable String id, Principal p, HttpServletResponse response) {
         UserWeblogRole uwr = userManager.getUserWeblogRole(id);
         if (uwr != null && uwr.getUser().getUserName().equals(p.getName())) {
@@ -566,7 +566,7 @@ public class UserController {
         persistenceStrategy.flush();
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/detach", method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/detach")
     public void resignFromWeblog(@PathVariable String id, Principal p, HttpServletResponse response) {
         UserWeblogRole uwr = userManager.getUserWeblogRole(id);
         if (uwr != null && uwr.getUser().getUserName().equals(p.getName())) {
@@ -578,7 +578,7 @@ public class UserController {
         persistenceStrategy.flush();
     }
 
-    @RequestMapping(value = "/tb-ui/register/rest/useradminmetadata", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/register/rest/useradminmetadata")
     public UserAdminMetadata getUserAdminMetadata() {
         UserAdminMetadata metadata = new UserAdminMetadata();
 

@@ -15,6 +15,9 @@
  */
 package org.tightblog.ui.restapi;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
@@ -26,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
@@ -67,7 +69,7 @@ public class TagController {
         this.urlStrategy = urlStrategy;
     }
 
-    @RequestMapping(value = "/{weblogId}/page/{page}", method = RequestMethod.GET)
+    @GetMapping(value = "/{weblogId}/page/{page}")
     public TagData getTags(@PathVariable String weblogId, @PathVariable int page,
                            Principal principal, HttpServletResponse response) {
 
@@ -111,7 +113,7 @@ public class TagController {
         }
     }
 
-    @RequestMapping(value = "/weblog/{weblogId}/tagname/{tagName}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/weblog/{weblogId}/tagname/{tagName}")
     public void deleteTag(@PathVariable String weblogId, @PathVariable String tagName, Principal p,
                           HttpServletResponse response) throws ServletException {
 
@@ -129,8 +131,7 @@ public class TagController {
         }
     }
 
-    @RequestMapping(value = "/weblog/{weblogId}/add/currenttag/{currentTagName}/newtag/{newTagName}",
-            method = RequestMethod.POST)
+    @PostMapping(value = "/weblog/{weblogId}/add/currenttag/{currentTagName}/newtag/{newTagName}")
     public Map<String, Integer> addTag(@PathVariable String weblogId, @PathVariable String currentTagName,
                                        @PathVariable String newTagName, Principal p, HttpServletResponse response)
             throws ServletException {
@@ -138,8 +139,7 @@ public class TagController {
         return changeTags(weblogId, currentTagName, newTagName, p, response, true);
     }
 
-    @RequestMapping(value = "/weblog/{weblogId}/rename/currenttag/{currentTagName}/newtag/{newTagName}",
-            method = RequestMethod.POST)
+    @PostMapping(value = "/weblog/{weblogId}/rename/currenttag/{currentTagName}/newtag/{newTagName}")
     public Map<String, Integer> renameTag(@PathVariable String weblogId, @PathVariable String currentTagName,
                                        @PathVariable String newTagName, Principal p, HttpServletResponse response)
             throws ServletException {

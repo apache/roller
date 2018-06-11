@@ -23,6 +23,9 @@ package org.tightblog.ui.restapi;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.JPAPersistenceStrategy;
@@ -43,8 +46,6 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletException;
@@ -95,7 +96,7 @@ public class TemplateController {
     @Autowired
     private MessageSource messages;
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{id}/templates", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}/templates")
     public WeblogTemplateData getWeblogTemplates(@PathVariable String id, Principal principal,
                                                  Locale locale, HttpServletResponse response) {
 
@@ -153,7 +154,7 @@ public class TemplateController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/template/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/tb-ui/authoring/rest/template/{id}")
     public void deleteTemplate(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
 
@@ -176,7 +177,7 @@ public class TemplateController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/template/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/template/{id}")
     public WeblogTemplate getWeblogTemplate(@PathVariable String id, Principal p, HttpServletResponse response) {
 
         WeblogTemplate template = weblogManager.getTemplate(id);
@@ -197,7 +198,7 @@ public class TemplateController {
     // need to add / at end of URL due to template name possibly having a period in it (e.g., basic-custom.css).
     // none of other solutions (http://stackoverflow.com/questions/16332092/spring-mvc-pathvariable-with-dot-is-getting-truncated)
     // seemed to work.
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templatename/{templateName}/", method = RequestMethod.GET)
+    @GetMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templatename/{templateName}/")
     public WeblogTemplate getWeblogTemplateByName(@PathVariable String weblogId, @PathVariable String templateName, Principal p,
                                                   HttpServletResponse response) {
 
@@ -216,7 +217,7 @@ public class TemplateController {
         }
     }
 
-    @RequestMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates", method = RequestMethod.POST)
+    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates")
     public ResponseEntity postTemplate(@PathVariable String weblogId, @Valid @RequestBody WeblogTemplate templateData,
                                       Principal p, Locale locale) throws ServletException {
         try {

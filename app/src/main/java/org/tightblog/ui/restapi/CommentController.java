@@ -1,6 +1,10 @@
 package org.tightblog.ui.restapi;
 
 import org.springframework.context.MessageSource;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
@@ -25,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -103,7 +106,7 @@ public class CommentController {
     @Autowired
     private MessageSource messages;
 
-    @RequestMapping(value = "/{weblogId}/page/{page}", method = RequestMethod.POST)
+    @PostMapping(value = "/{weblogId}/page/{page}")
     public CommentData getWeblogComments(@PathVariable String weblogId, @PathVariable int page,
                                          @RequestParam(required = false) String entryId,
                                          @RequestBody CommentSearchCriteria criteria,
@@ -159,7 +162,7 @@ public class CommentController {
         }
     }
 
-    @RequestMapping(value = "/{weblogId}/searchfields", method = RequestMethod.GET)
+    @GetMapping(value = "/{weblogId}/searchfields")
     public CommentSearchFields getCommentSearchFields(@PathVariable String weblogId, Principal principal, Locale locale,
                                                               HttpServletResponse response) {
 
@@ -195,7 +198,7 @@ public class CommentController {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/{id}")
     public void deleteComment(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
 
@@ -225,14 +228,14 @@ public class CommentController {
         }
     }
 
-    @RequestMapping(value = "/{id}/approve", method = RequestMethod.POST)
+    @PostMapping(value = "/{id}/approve")
     private void approveComment(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
 
         changeApprovalStatus(id, p, response, WeblogEntryComment.ApprovalStatus.APPROVED);
     }
 
-    @RequestMapping(value = "/{id}/hide", method = RequestMethod.POST)
+    @PostMapping(value = "/{id}/hide")
     private void hideComment(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
 
@@ -271,7 +274,7 @@ public class CommentController {
         }
     }
 
-    @RequestMapping(value = "/{id}/content", method = RequestMethod.PUT)
+    @PutMapping(value = "/{id}/content")
     public WeblogEntryComment updateComment(@PathVariable String id, Principal p, HttpServletRequest request,
                                      HttpServletResponse response)
             throws ServletException {
