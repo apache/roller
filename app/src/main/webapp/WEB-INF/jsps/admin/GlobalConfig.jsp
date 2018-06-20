@@ -22,7 +22,7 @@
 
 <p class="subtitle"><fmt:message key="globalConfig.subtitle" /></p>
 <script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.min.js"></script>
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";

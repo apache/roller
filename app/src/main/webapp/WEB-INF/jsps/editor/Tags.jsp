@@ -17,7 +17,7 @@
 <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src="<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>
 <script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.min.js"></script>
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
@@ -68,17 +68,21 @@
 
     <tr>
         <th width="20%"><fmt:message key="tags.column.tag" /></th>
-        <th width="10%"><fmt:message key="tags.column.count" /></th>
-        <th width="16%"></th>
-        <th width="16%"></th>
-        <th width="16%"></th>
-        <th width="16%"></th>
+        <th width="10%"><fmt:message key="categories.column.count" /></th>
+        <th width="10%"><fmt:message key="categories.column.firstEntry" /></th>
+        <th width="10%"><fmt:message key="categories.column.lastEntry" /></th>
+        <th width="14%"></th>
+        <th width="10%"></th>
+        <th width="10%"></th>
+        <th width="10%"></th>
     </tr>
 
     <tr ng-repeat="tag in ctrl.tagData.tags" ng-class-even="'altrow'" ng-cloak>
 
         <td>{{tag.name}}</td>
         <td>{{tag.total}}</td>
+        <td>{{ctrl.formatDate(tag.firstEntry)}}</td>
+        <td>{{ctrl.formatDate(tag.lastEntry)}}</td>
 
         <td>
             <a ng-href='{{tag.viewUrl}}' target="_blank"><fmt:message key="tags.column.view" /></a>

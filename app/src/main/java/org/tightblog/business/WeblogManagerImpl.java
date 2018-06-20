@@ -45,12 +45,14 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 @Component("weblogManager")
@@ -372,10 +374,6 @@ public class WeblogManagerImpl implements WeblogManager {
         List<UserWeblogRole> roles = userManager.getWeblogRoles(weblog);
         for (UserWeblogRole role : roles) {
             User user = role.getUser();
-            if (user == null) {
-                log.error("ERROR user is null, userId: {}", role.getUser().getId());
-                continue;
-            }
             if (UserStatus.ENABLED.equals(user.getStatus())) {
                 users.add(user);
             }
@@ -682,23 +680,9 @@ public class WeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public List<WeblogCategory> getWeblogCategories(Weblog weblog) {
-        if (weblog == null) {
-            throw new IllegalArgumentException("weblog is null");
-        }
-
-        TypedQuery<WeblogCategory> q = strategy.getNamedQuery(
-                "WeblogCategory.getByWeblog", WeblogCategory.class);
-        q.setParameter(1, weblog);
-        return q.getResultList();
-    }
-
-    @Override
     public WeblogCategory getWeblogCategory(String id) {
         return this.strategy.load(WeblogCategory.class, id);
     }
-
-    //--------------------------------------------- WeblogCategory Queries
 
     @Override
     public WeblogCategory getWeblogCategoryByName(Weblog weblog, String categoryName) {
@@ -712,6 +696,121 @@ public class WeblogManagerImpl implements WeblogManager {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    @Override
+    public List<WeblogCategory> getWeblogCategories(Weblog weblog) {
+        if (weblog == null) {
+            throw new IllegalArgumentException("weblog is null");
+        }
+
+        TypedQuery<WeblogCategory> q = strategy.getNamedQuery(
+                "WeblogCategory.getByWeblog", WeblogCategory.class);
+        q.setParameter(1, weblog);
+        List<WeblogCategory> categories = q.getResultList();
+
+        // obtain usage stats
+        String queryString = "SELECT new org.tightblog.business.WeblogManagerImpl.CategoryStats(we.category, " +
+                "min(we.pubTime), max(we.pubTime), count(we)) " +
+                "FROM WeblogEntry we WHERE we.weblog.id = ?1 GROUP BY we.category";
+        TypedQuery<CategoryStats> query = strategy.getDynamicQuery(queryString, CategoryStats.class);
+        query.setParameter(1, weblog.getId());
+
+        List<CategoryStats> stats = query.getResultList();
+
+        for (CategoryStats stat : stats) {
+            Optional<WeblogCategory> category = categories.stream().filter(
+                    r -> r.getId().equals(stat.category.getId())).findFirst();
+            if (category.isPresent()) {
+                WeblogCategory cat = category.get();
+                cat.setNumEntries(stat.numEntries);
+                cat.setFirstEntry(stat.firstEntry);
+                cat.setLastEntry(stat.lastEntry);
+            }
+        }
+        return categories;
+    }
+
+    public static class CategoryStats {
+        public CategoryStats(WeblogCategory category, Instant firstEntry, Instant lastEntry, Long numEntries) {
+            this.category = category;
+            this.numEntries = numEntries.intValue();
+            this.firstEntry = firstEntry.atZone(category.getWeblog().getZoneId()).toLocalDate();
+            this.lastEntry = lastEntry.atZone(category.getWeblog().getZoneId()).toLocalDate();
+        }
+
+        WeblogCategory category;
+        private int numEntries;
+        private LocalDate firstEntry;
+        private LocalDate lastEntry;
+    }
+
+    @Override
+    public List<WeblogEntryTagAggregate> getTags(Weblog weblog, String sortBy, String startsWith, int offset, int limit) {
+        boolean sortByName = !"count".equals(sortBy);
+
+        List<Object> params = new ArrayList<>();
+        int size = 0;
+
+        StringBuilder queryString = new StringBuilder();
+        queryString.append("SELECT wtag.name, COUNT(wtag), MIN(we.pubTime), MAX(we.pubTime) " +
+                "FROM WeblogEntryTag wtag, WeblogEntry we WHERE wtag.weblogEntry.id = we.id");
+
+        if (weblog != null) {
+            params.add(size++, weblog.getId());
+            queryString.append(" AND wtag.weblog.id = ?").append(size);
+        }
+
+        if (startsWith != null && startsWith.length() > 0) {
+            params.add(size++, startsWith + '%');
+            queryString.append(" AND wtag.name LIKE ?").append(size);
+        }
+
+        if (sortByName) {
+            sortBy = "wtag.name";
+        } else {
+            sortBy = "COUNT(wtag) DESC";
+        }
+
+        queryString.append(" GROUP BY wtag.name ORDER BY ").append(sortBy);
+
+        TypedQuery<WeblogEntryTagAggregate> query =
+                strategy.getDynamicQuery(queryString.toString(), WeblogEntryTagAggregate.class);
+
+        for (int i = 0; i < params.size(); i++) {
+            query.setParameter(i + 1, params.get(i));
+        }
+        if (offset != 0) {
+            query.setFirstResult(offset);
+        }
+        if (limit != -1) {
+            query.setMaxResults(limit);
+        }
+        List queryResults = query.getResultList();
+
+        List<WeblogEntryTagAggregate> results = new ArrayList<>();
+        if (queryResults != null) {
+            for (Object obj : queryResults) {
+                Object[] row = (Object[]) obj;
+                WeblogEntryTagAggregate ce = new WeblogEntryTagAggregate();
+                ce.setName((String) row[0]);
+                // The JPA query retrieves SUM(w.total) always as long
+                ce.setTotal(((Long) row[1]).intValue());
+                if (weblog != null) {
+                    ce.setFirstEntry(((Instant) row[2]).atZone(weblog.getZoneId()).toLocalDate());
+                    ce.setLastEntry(((Instant) row[3]).atZone(weblog.getZoneId()).toLocalDate());
+                }
+                results.add(ce);
+            }
+        }
+
+        if (sortByName) {
+            results.sort(WeblogEntryTagAggregate.NAME_COMPARATOR);
+        } else {
+            results.sort(WeblogEntryTagAggregate.COUNT_COMPARATOR);
+        }
+
+        return results;
     }
 
     @Override
@@ -736,95 +835,6 @@ public class WeblogManagerImpl implements WeblogManager {
         }
 
         return tagAggs;
-    }
-
-    @Override
-    public List<WeblogEntryTagAggregate> getTags(Weblog weblog, String sortBy, String startsWith, int offset, int limit) {
-        boolean sortByName = !"count".equals(sortBy);
-
-        List<Object> params = new ArrayList<>();
-        int size = 0;
-
-        StringBuilder queryString = new StringBuilder();
-        queryString.append("SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE 1 = 1");
-
-        if (weblog != null) {
-            params.add(size++, weblog.getId());
-            queryString.append(" AND w.weblog.id = ?").append(size);
-        }
-
-        if (startsWith != null && startsWith.length() > 0) {
-            params.add(size++, startsWith + '%');
-            queryString.append(" AND w.name LIKE ?").append(size);
-        }
-
-        if (sortByName) {
-            sortBy = "w.name";
-        } else {
-            sortBy = "SUM(w.total) DESC";
-        }
-        queryString.append(" GROUP BY w.name ORDER BY ").append(sortBy);
-
-        TypedQuery<WeblogEntryTagAggregate> query =
-                strategy.getDynamicQuery(queryString.toString(), WeblogEntryTagAggregate.class);
-
-        for (int i = 0; i < params.size(); i++) {
-            query.setParameter(i + 1, params.get(i));
-        }
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (limit != -1) {
-            query.setMaxResults(limit);
-        }
-        List queryResults = query.getResultList();
-
-        List<WeblogEntryTagAggregate> results = new ArrayList<>();
-        if (queryResults != null) {
-            for (Object obj : queryResults) {
-                Object[] row = (Object[]) obj;
-                WeblogEntryTagAggregate ce = new WeblogEntryTagAggregate();
-                ce.setName((String) row[0]);
-                // The JPA query retrieves SUM(w.total) always as long
-                ce.setTotal(((Long) row[1]).intValue());
-                results.add(ce);
-            }
-        }
-
-        if (sortByName) {
-            results.sort(WeblogEntryTagAggregate.NAME_COMPARATOR);
-        } else {
-            results.sort(WeblogEntryTagAggregate.COUNT_COMPARATOR);
-        }
-
-        return results;
-    }
-
-    @Override
-    public boolean getTagExists(Weblog weblog, String tag) {
-        if (tag == null) {
-            return false;
-        }
-
-        List<Object> params = new ArrayList<>(2);
-        StringBuilder queryString = new StringBuilder();
-        queryString.append("SELECT DISTINCT w.name ");
-        queryString.append("FROM WeblogEntryTagAggregate w WHERE w.name = ?1");
-        params.add(tag);
-
-        if (weblog != null) {
-            queryString.append(" AND w.weblog = ?2");
-            params.add(weblog);
-        }
-
-        TypedQuery<String> q = strategy.getDynamicQuery(queryString.toString(), String.class);
-        for (int j = 0; j < params.size(); j++) {
-            q.setParameter(j + 1, params.get(j));
-        }
-        List<String> results = q.getResultList();
-
-        // OK if at least one article matches the tag
-        return results != null && results.size() > 0;
     }
 
     @Override

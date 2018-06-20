@@ -50,6 +50,14 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.itemToEdit = {};
     this.showUpdateErrorMessage = false;
 
+    this.formatDate = function(inDate) {
+        if (inDate) {
+            return inDate[0] + '-' + ("00" + inDate[1]).slice(-2) + '-' + ("00" + inDate[2]).slice(-2);
+        } else {
+            return '';
+        }
+    }
+
     this.setDeleteItem = function(item) {
         this.targetCategoryId = null;
         this.itemToDelete = item;

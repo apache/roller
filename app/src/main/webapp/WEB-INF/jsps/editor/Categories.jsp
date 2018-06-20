@@ -22,7 +22,7 @@
 <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
 <script src="<c:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.min.js"></script>
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
@@ -30,7 +30,7 @@
         confirmLabel: '<fmt:message key="generic.confirm"/>',
         saveLabel: '<fmt:message key="generic.save"/>',
         cancelLabel: '<fmt:message key="generic.cancel"/>',
-        editTitle: '<fmt:message key="generic.edit"/>',
+        editTitle: '<fmt:message key="generic.rename"/>',
         addTitle: '<fmt:message key="categories.add.title"/>'
     };
     var actionWeblogId = "<c:out value='${param.weblogId}'/>";
@@ -54,14 +54,20 @@
     <table class="rollertable">
         <thead>
         <tr>
-            <th width="25%"><fmt:message key="generic.name"/></th>
-            <th width="7%"><fmt:message key="generic.edit"/></th>
-            <th width="7%"><fmt:message key="categories.remove"/></th>
+            <th width="20%"><fmt:message key="categories.column.category"/></th>
+            <th width="20%"><fmt:message key="categories.column.count"/></th>
+            <th width="20%"><fmt:message key="categories.column.firstEntry"/></th>
+            <th width="20%"><fmt:message key="categories.column.lastEntry"/></th>
+            <th width="10%"><fmt:message key="generic.rename"/></th>
+            <th width="10%"><fmt:message key="generic.delete"/></th>
         </tr>
       </thead>
       <tbody ng-cloak>
           <tr ng-repeat="item in ctrl.items | orderBy:'position'" ng-class-even="'altrow'">
               <td>{{item.name}}</td>
+              <td>{{item.numEntries}}</td>
+              <td>{{ctrl.formatDate(item.firstEntry)}}</td>
+              <td>{{ctrl.formatDate(item.lastEntry)}}</td>
               <td align="center">
                 <a edit-dialog="edit-dialog" ng-click="ctrl.setEditItem(item)">
                     <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon"

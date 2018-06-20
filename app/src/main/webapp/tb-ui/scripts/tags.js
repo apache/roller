@@ -63,6 +63,14 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.urlRoot = contextPath + '/tb-ui/authoring/rest/tags/';
     this.resultsMap = {};
 
+    this.formatDate = function(inDate) {
+        if (inDate) {
+            return inDate[0] + '-' + ("00" + inDate[1]).slice(-2) + '-' + ("00" + inDate[2]).slice(-2);
+        } else {
+            return '';
+        }
+    }
+
     this.deleteTag = function(tagName) {
         $http.delete(this.urlRoot + 'weblog/' + weblogId + '/tagname/' + tagName).then(
           function(response) {

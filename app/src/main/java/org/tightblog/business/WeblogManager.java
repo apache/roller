@@ -246,6 +246,7 @@ public interface WeblogManager {
 
     /**
      * Get WeblogCategory objects for a weblog.
+     * @param weblog weblog whose categories are desired
      */
     List<WeblogCategory> getWeblogCategories(Weblog weblog);
 
@@ -271,18 +272,6 @@ public interface WeblogManager {
      * @return List of tags matching the criteria.
      */
     List<WeblogEntryTagAggregate> getTags(Weblog website, String sortBy, String startsWith, int offset, int limit);
-
-    /**
-     * Does the specified tag exist?  Optionally confined to a specific weblog.
-     * <p/>
-     * This checks if the Weblog (or all weblogs) has at least one blog entry with
-     * the given tag.
-     *
-     * @param weblog The weblog to confine the check to.
-     * @param tag    The tag to search for.
-     * @return True if the tag exists, false otherwise.
-     */
-    boolean getTagExists(Weblog weblog, String tag);
 
     /**
      * Remove all tags with a given name from a weblog's entries

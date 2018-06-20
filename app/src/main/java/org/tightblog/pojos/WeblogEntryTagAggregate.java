@@ -23,20 +23,12 @@ package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import java.time.LocalDate;
 import java.util.Comparator;
 
 /**
- * Tag aggregate data, "stored" as a view.
+ * Collector for tag aggregate data
  */
-@Entity
-@Table(name = "weblog_entry_tag_agg")
 public class WeblogEntryTagAggregate {
 
     private String name;
@@ -44,17 +36,14 @@ public class WeblogEntryTagAggregate {
     private int total;
     private int intensity;
 
-    // temporary non-persisted fields used for forms
+    // temporary non-persisted fields
     private String viewUrl;
+    private LocalDate firstEntry;
+    private LocalDate lastEntry;
 
     public WeblogEntryTagAggregate() {
     }
 
-    //------------------------------------------------------- Simple properties
-
-    @ManyToOne
-    @JoinColumn(name = "weblogid", nullable = true)
-    @Id
     public Weblog getWeblog() {
         return this.weblog;
     }
@@ -63,8 +52,6 @@ public class WeblogEntryTagAggregate {
         this.weblog = weblog;
     }
 
-    @Basic(optional = false)
-    @Id
     public String getName() {
         return this.name;
     }
@@ -73,7 +60,6 @@ public class WeblogEntryTagAggregate {
         this.name = name;
     }
 
-    @Basic(optional = false)
     public int getTotal() {
         return this.total;
     }
@@ -82,7 +68,6 @@ public class WeblogEntryTagAggregate {
         this.total = total;
     }
 
-    @Transient
     @JsonIgnore
     public int getIntensity() {
         return intensity;
@@ -92,7 +77,6 @@ public class WeblogEntryTagAggregate {
         this.intensity = intensity;
     }
 
-    @Transient
     public String getViewUrl() {
         return viewUrl;
     }
@@ -105,12 +89,28 @@ public class WeblogEntryTagAggregate {
         return "WeblogEntryTagAggregate: weblog=" + weblog.getHandle() + ", name=" + name + ", count=" + getTotal();
     }
 
+    public LocalDate getFirstEntry() {
+        return firstEntry;
+    }
+
+    public void setFirstEntry(LocalDate firstEntry) {
+        this.firstEntry = firstEntry;
+    }
+
+    public LocalDate getLastEntry() {
+        return lastEntry;
+    }
+
+    public void setLastEntry(LocalDate lastEntry) {
+        this.lastEntry = lastEntry;
+    }
+
     public static final Comparator<WeblogEntryTagAggregate> NAME_COMPARATOR = (weta1, weta2) ->
             weta1.getName().compareToIgnoreCase(weta2.getName());
 
     public static final Comparator<WeblogEntryTagAggregate> COUNT_COMPARATOR = (weta1, weta2) -> {
         // higher numbers first for counts
-        int compVal = Integer.valueOf(weta2.getTotal()).compareTo(weta1.getTotal());
+        int compVal = Integer.compare(weta2.getTotal(), weta1.getTotal());
 
         // still alpha order if tied
         if (compVal == 0) {

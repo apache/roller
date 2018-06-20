@@ -185,29 +185,6 @@ public class MediaFile implements Comparable<MediaFile> {
         return getDirectory().getName();
     }
 
-    /**
-     * Returns underlying file in the file system.
-     *
-     * @return input stream of file
-     */
-/*
-    @Transient
-    @JsonIgnore
-    public InputStream getInputStream() {
-        if (is != null) {
-            return is;
-        } else if (content != null) {
-            try {
-                return new FileInputStream(content);
-            } catch (FileNotFoundException ex) {
-                // should never happen, rethrow as runtime exception
-                throw new RuntimeException("Error constructing input stream", ex);
-            }
-        }
-        return null;
-    }
-*/
-
     @Transient
     public File getContent() {
         return content;

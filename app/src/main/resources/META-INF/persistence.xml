@@ -15,7 +15,6 @@
     <class>org.tightblog.pojos.WeblogEntry</class>
     <class>org.tightblog.pojos.WeblogEntryComment</class>
     <class>org.tightblog.pojos.WeblogEntryTag</class>
-    <class>org.tightblog.pojos.WeblogEntryTagAggregate</class>
     <class>org.tightblog.pojos.UserWeblogRole</class>
     <class>org.tightblog.pojos.WeblogTemplate</class>
     <class>org.tightblog.pojos.WebloggerProperties</class>

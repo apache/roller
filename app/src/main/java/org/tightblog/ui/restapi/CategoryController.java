@@ -126,11 +126,9 @@ public class CategoryController {
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/categories")
-    public List<WeblogCategory> getWeblogCategories(@RequestParam(name = "weblogId") String weblogId,
-                                                    @RequestParam(required = false) String skipCategoryId) {
+    public List<WeblogCategory> getWeblogCategories(@RequestParam(name = "weblogId") String weblogId) {
         return weblogManager.getWeblogCategories(weblogManager.getWeblog(weblogId))
                 .stream()
-                .filter(cat -> !cat.getId().equals(skipCategoryId))
                 .peek(cat -> cat.setWeblog(null))
                 .collect(Collectors.toList());
     }

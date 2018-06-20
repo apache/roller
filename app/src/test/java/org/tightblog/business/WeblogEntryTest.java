@@ -54,7 +54,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 
-
 /**
  * Test WeblogEntry related business operations.
  */
@@ -428,51 +427,6 @@ public class WeblogEntryTest extends WebloggerTest {
             t.printStackTrace(pw);
             log.info(sw.toString());
         }
-    }
-
-    @Test
-    public void testTagsExist() throws Exception {
-        testWeblog = getManagedWeblog(testWeblog);
-        testUser = getManagedUser(testUser);
-        Weblog weblog = setupWeblog("tagsExistWeblog1", testUser);
-        String wid = weblog.getId();
-        
-        // setup some test entries to use
-        WeblogEntry entry = setupWeblogEntry("tagsExistEntry1", testWeblog, testUser);
-        String id1 = entry.getId();
-        addTag(entry, "blahTag");
-        addTag(entry, "fooTag");
-        weblogEntryManager.saveWeblogEntry(entry);
-
-        WeblogEntry entry2 = setupWeblogEntry("tagsExistEntry2", weblog, testUser);
-        String id2 = entry2.getId();
-        addTag(entry2, "aaaTag");
-        addTag(entry2, "bbbTag");
-        weblogEntryManager.saveWeblogEntry(entry2);
-        endSession(true);
-        
-        // we'll need these
-        String tag1 = "nonExistTag";
-        String tag2 = "blahtag";
-        
-        // test site-wide
-        assertTrue(weblogManager.getTagExists(null, tag2));
-        assertFalse(weblogManager.getTagExists(null, tag1));
-        
-        // test weblog specific
-        testWeblog = getManagedWeblog(testWeblog);
-        weblog = getManagedWeblog(weblog);
-        assertTrue(weblogManager.getTagExists(testWeblog, tag2));
-        assertFalse(weblogManager.getTagExists(testWeblog, tag1));
-        assertFalse(weblogManager.getTagExists(weblog, tag2));
-        
-        // teardown our test data
-        teardownWeblogEntry(id1);
-        teardownWeblogEntry(id2);
-        endSession(true);
-
-        teardownWeblog(wid);
-        endSession(true);
     }
 
     @Test
