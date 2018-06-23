@@ -153,6 +153,11 @@
 
     <session-config>
         <session-timeout>45</session-timeout>
+        <cookie-config>
+            <secure>true</secure>
+            <http-only>true</http-only>
+            <tracking-mode>COOKIE</tracking-mode>
+        </cookie-config>
     </session-config>
 
     <welcome-file-list>
