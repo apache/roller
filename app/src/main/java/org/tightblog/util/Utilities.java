@@ -248,8 +248,9 @@ public final class Utilities {
         for (char c : charArray) {
 
             // fast-path exclusions quotes and commas are obvious
-            // 34 = double-quote, 39 = apostrophe, 44 = comma
-            if (c == 34 || c == 44 || c == 39) {
+            // percent sign and forward slashes problematic in URLs and frequently blocked by servers
+            // 34 = ", 37 = %, 39 = ', 44 = comma, 47 = /
+            if (c == 34 || c == 37 || c == 39 || c == 44 || c == 47) {
                 continue;
             }
 
@@ -309,22 +310,7 @@ public final class Utilities {
         return decodedStr;
     }
 
-    /**
-     * URL encode a path string using UTF-8. The path separator '/' will not be encoded
-     */
-    public static String encodePath(String path) {
-        int i = path.indexOf('/');
-        StringBuilder sb = new StringBuilder();
-        while (i != -1) {
-            sb.append(encode(path.substring(0, i))).append('/');
-            path = path.substring(i + 1);
-            i = path.indexOf('/');
-        }
-        sb.append(encode(path));
-        return sb.toString();
-    }
-
-    public static Object jaxbUnmarshall(String xsdPath, String xmlPath, boolean xmlFromFileSystem,
+    public static Object jaxbUnmarshall(String xsdPath, String xmlPath, boolean useClassloader,
                                         Class... classesToBeBound) {
 
         try {
@@ -333,10 +319,10 @@ public final class Utilities {
                     Utilities.class.getResourceAsStream(xsdPath)));
 
             InputStream is;
-            if (xmlFromFileSystem) {
-                is = new FileInputStream(xmlPath);
-            } else {
+            if (useClassloader) {
                 is = Utilities.class.getResourceAsStream(xmlPath);
+            } else {
+                is = new FileInputStream(xmlPath);
             }
             JAXBContext jaxbContext = JAXBContext.newInstance(classesToBeBound);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -375,7 +361,7 @@ public final class Utilities {
         LocalDate ret = null;
 
         try {
-            if (dateString != null && StringUtils.isNumeric(dateString)) {
+            if (StringUtils.isNumeric(dateString)) {
                 if (dateString.length() == 8) {
                     ret = LocalDate.parse(dateString, Utilities.YMD_FORMATTER);
                 } else if (dateString.length() == 6) {

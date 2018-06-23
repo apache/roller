@@ -215,7 +215,7 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
         log.debug("Parsing theme descriptor for {}", themePath);
 
         SharedTheme sharedTheme = (SharedTheme) Utilities.jaxbUnmarshall(
-                "/theme.xsd", themePath + File.separator + "theme.xml", true, SharedTheme.class);
+                "/theme.xsd", themePath + File.separator + "theme.xml", false, SharedTheme.class);
         sharedTheme.setThemeDir(themePath);
 
         log.debug("Loading Theme {}", sharedTheme.getName());

@@ -211,14 +211,14 @@ public class URLStrategyImpl implements URLStrategy {
         Map<String, String> params = new HashMap<>();
 
         if (category != null && dateString == null) {
-            pathinfo += "category/" + Utilities.encodePath(category);
+            pathinfo += "category/" + Utilities.encode(category);
             if (tag != null) {
-                pathinfo += "/tag/" + Utilities.encodePath(tag);
+                pathinfo += "/tag/" + Utilities.encode(tag);
             }
         } else if (dateString != null && category == null) {
             pathinfo += "date/" + dateString;
         } else if (tag != null) {
-            pathinfo += "tag/" + Utilities.encodePath(tag);
+            pathinfo += "tag/" + Utilities.encode(tag);
         } else {
             if (dateString != null) {
                 params.put("date", dateString);

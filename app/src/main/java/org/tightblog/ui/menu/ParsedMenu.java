@@ -60,7 +60,7 @@ public class ParsedMenu {
     /**
      * A parsed "tab" from an xml defined menu config.
      */
-    protected static class ParsedTab {
+    public static class ParsedTab {
         private String titleKey;
         private GlobalRole requiredGlobalRole;
         private WeblogRole requiredWeblogRole;
@@ -121,7 +121,7 @@ public class ParsedMenu {
     /**
      * An individual clickable menu item underneath a ParsedTab.
      */
-    protected static class ParsedTabItem {
+    public static class ParsedTabItem {
         private String titleKey;
         private String action;
         private String actionPath;

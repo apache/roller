@@ -74,16 +74,19 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.updateItem = function() {
         this.messageClear();
         if (this.itemToEdit.name) {
-            $http.put(contextPath + (this.itemToEdit.id ? '/tb-ui/authoring/rest/category/' + this.itemToEdit.id
-                : '/tb-ui/authoring/rest/categories?weblogId=' + actionWeblogId),
-                JSON.stringify(this.itemToEdit)).then(
-              function(response) {
-                 $("#edit-dialog").dialog("close");
-                 self.itemToEdit = {};
-                 self.loadItems();
-              },
-              self.commonErrorResponse
-            )
+            this.itemToEdit.name = this.itemToEdit.name.replace(/[,%"/]/g,'');
+            if (this.itemToEdit.name) {
+                $http.put(contextPath + (this.itemToEdit.id ? '/tb-ui/authoring/rest/category/' + this.itemToEdit.id
+                    : '/tb-ui/authoring/rest/categories?weblogId=' + actionWeblogId),
+                    JSON.stringify(this.itemToEdit)).then(
+                  function(response) {
+                     $("#edit-dialog").dialog("close");
+                     self.itemToEdit = {};
+                     self.loadItems();
+                  },
+                  self.commonErrorResponse
+                )
+            }
         }
     }
 

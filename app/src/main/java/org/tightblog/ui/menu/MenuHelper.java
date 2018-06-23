@@ -66,11 +66,11 @@ public final class MenuHelper {
     private Cache<String, Menu> menuCache;
 
     @XmlRootElement(name = "menus")
-    private static class MenuListHolder {
+    public static class MenuListHolder {
         private List<ParsedMenu> menuList = new ArrayList<>(2);
 
         @XmlElements(@XmlElement(name = "menu"))
-        List<ParsedMenu> getMenuList() {
+        public List<ParsedMenu> getMenuList() {
             return menuList;
         }
 
@@ -93,7 +93,7 @@ public final class MenuHelper {
             MenuListHolder menus = (MenuListHolder) Utilities.jaxbUnmarshall(
                     "/menus/menus.xsd",
                     "/menus/menus.xml",
-                    false,
+                    true,
                     MenuListHolder.class);
 
             for (ParsedMenu menu : menus.getMenuList()) {
