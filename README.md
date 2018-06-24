@@ -37,8 +37,7 @@ The top-level TightBlog directory consists of two folders:
 * etc:                    Utility scripts and screenshots for documentation
 
 To obtain the source code:
-* Development branch:  git clone git@github.com:gmazza/tightblog.git
-* Release 3.0.x branch: https://github.com/gmazza/tightblog/tree/release3.0.0
+* 3.0.x branch (current): git clone git@github.com:gmazza/tightblog.git
 * Release 2.0.x branch: https://github.com/gmazza/tightblog/tree/release2.0.4
 * source for a specific release: https://github.com/gmazza/tightblog/releases
 
