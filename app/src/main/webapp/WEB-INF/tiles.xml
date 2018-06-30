@@ -53,7 +53,17 @@
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>
-    
+
+    <definition name=".tiles-loginpage" template="/WEB-INF/jsps/tiles/tiles-loginpage.jsp">
+        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
+        <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
+        <put-attribute name="content"      value="${content}" />
+        <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
+    </definition>
+
     <definition name=".tiles-installpage" template="/WEB-INF/jsps/tiles/tiles-installpage.jsp">
         <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
@@ -88,7 +98,7 @@
     
         
     <!-- core pages (and associates) -->
-    <definition name=".Login" extends=".tiles-simplepage" >
+    <definition name=".Login" extends=".tiles-loginpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Login.jsp" />
         <put-attribute name="styles"  value="/WEB-INF/jsps/core/Login-css.jsp" />
     </definition>

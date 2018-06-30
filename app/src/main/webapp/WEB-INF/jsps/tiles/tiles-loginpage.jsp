@@ -33,19 +33,15 @@
 <tiles:insertAttribute name="bannerStatus"/>
 
 <div class="row">
-    <div class="col-md-2"></div>
+    <div class="col-md-4"></div>
 
-    <div class="col-md-8">
+    <div class="col-md-4">
         <h1 class="roller-page-title"><s:property value="pageTitle"/></h1>
         <tiles:insertAttribute name="messages"/>
-        <div class="panel">
-            <div class="panel-body">
-                <tiles:insertAttribute name="content"/>
-            </div>
-        </div>
+        <tiles:insertAttribute name="content"/>
     </div>
 
-    <div class="col-md-2"></div>
+    <div class="col-md-4"></div>
 </div>
 
 </body>

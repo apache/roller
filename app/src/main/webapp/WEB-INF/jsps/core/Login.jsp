@@ -33,20 +33,23 @@
     }
 %>
 
-<div class="container">
-
     <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
 
-        <form method="post" id="loginOpenIDForm" class="form-signin"
+
+        <form method="post" id="loginOpenIDForm" class="form-horizontal"
               action="/roller/roller_j_openid_security_check" onsubmit="saveOpenidIdentifier(this)">
 
-            <h2 class="form-signin-heading"><s:text name="loginPage.openIdPrompt"/></h2>
+            <div class="form-group">
+                <legend><s:text name="loginPage.openIdPrompt"/></legend>
+            </div>
 
-            <label for="openid_identifier" class="sr-only"><s:text name="loginPage.openID"/></label>
-            <input class="form-control" type="text" name="openid_identifier" id="openid_identifier"/>
+            <div class="form-group">
+                <label for="openid_identifier"><s:text name="loginPage.openID"/></label>
+                <input class="form-control" type="text" name="openid_identifier" id="openid_identifier"/>
+            </div>
 
-            <button type="submit" name="submit" id="submit" class="btn btn-lg btn-primary btn-block"
-                    value="<s:text name='loginPage.loginOpenID'/>"></button>
+            <button type="submit" name="submit" id="submit" class="btn btn-primary"
+                value="<s:text name='loginPage.loginOpenID'/>"></button>
 
         </form>
 
@@ -54,45 +57,49 @@
 
     <s:if test="authMethod != 'OPENID'">
 
+        <form method="post" id="loginForm" class="form-horizontal"
+              action="<c:url value="<%= securityCheckUrl %>"/>" onsubmit="saveUsername(this)">
 
-        <form method="post" id="loginForm" class="form-signin"
-              action="<c:url value="<%= securityCheckUrl %>"/>"
-              onsubmit="saveUsername(this)">
+            <div class="form-group">
+                <s:if test="authMethod == 'DB_OPENID'">
+                    <legend><s:text name="loginPage.openIdHybridPrompt"/></legend>
+                </s:if>
 
-            <s:if test="authMethod == 'DB_OPENID'">
-                <h2 class="form-signin-heading"><s:text name="loginPage.openIdHybridPrompt"/></h2>
-            </s:if>
+                <s:else>
+                    <legend><s:text name="loginPage.prompt"/></legend>
+                </s:else>
+            </div>
 
-            <s:else>
-                <h2 class="form-signin-heading"><s:text name="loginPage.prompt"/></h2>
-            </s:else>
+            <div class="form-group">
+                <label for="j_username" > <s:text name="loginPage.userName"/> </label>
+                <input type="text" class="form-control" name="j_username" id="j_username" placeholder="Username"/>
+            </div>
 
-            <label for="j_username" class="sr-only"> <s:text name="loginPage.userName"/> </label>
-            <input type="text" class="form-control" name="j_username" id="j_username" placeholder="Username"/>
-
-            <label for="j_password" class="sr-only"> <s:text name="loginPage.password"/> </label>
-            <input type="password" class="form-control" name="j_password" id="j_password" placeholder="Password"/>
+            <div class="form-group">
+                <label for="j_password" > <s:text name="loginPage.password"/> </label>
+                <input type="password" class="form-control" name="j_password" id="j_password" placeholder="Password"/>
+            </div>
 
             <c:if test="${rememberMeEnabled}">
-                <label>
+                <div class="form-group">
                     <input type="checkbox" name="_spring_security_remember_me" id="_spring_security_remember_me"/>
-                    <s:text name="loginPage.rememberMe"/>
-                </label>
+                    <label for="_spring_security_remember_me" > <s:text name="loginPage.rememberMe"/> </label>
+                </div>
             </c:if>
 
-            <button class="btn btn-lg btn-primary btn-block" type="submit" name="login" id="login">
-                <s:text name='loginPage.login'/>
-            </button>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit" name="login" id="login">
+                    <s:text name='loginPage.login'/>
+                </button>
 
-            <button class="btn btn-lg btn-primary btn-block" type="reset" name="reset" id="reset"
-                    onclick="document.getElementById('j_username').focus()">
-                <s:text name='loginPage.reset'/>
-            </button>
+                <button class="btn" type="reset" name="reset" id="reset"
+                        onclick="document.getElementById('j_username').focus()">
+                    <s:text name='loginPage.reset'/>
+                </button>
+            </div>
 
         </form>
     </s:if>
-
-</div>
 
 <script>
     <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
