@@ -1,5 +1,5 @@
 Welcome to TightBlog! This project started off in May 2015 as a fork of the Apache Roller project, of which I contributed for about 2 1/2 years 
-before deciding to go my own way due to differing ideas of what would make the best blogging product.  As of 23 June 2018, <a href="https://github.com/gmazza/tightblog/releases">Release 3.0</a> is available.
+before deciding to go my own way due to differing ideas of what would make the best blogging product.  As of 30 June 2018, <a href="https://github.com/gmazza/tightblog/releases">Release 3.0.1</a> is available.
 
 TightBlog strives to be the cleanest and simplest implementation of a Java based blog server, suitable either for direct use or
 incorporation, as an Apache-licensed open source project, into larger projects.  Specifically, its goal is to satisfy all the needs of 80% of bloggers while
@@ -30,11 +30,6 @@ In addition to the removal of older seldom used functionality many new helpful a
 * The blog template engine (used for customized themes) now uses modern Thymeleaf 3.0 instead of Apache Velocity.
 * All emails sent are in HTML format and customizable by modifying the Thymeleaf templates in the webapp/thymeleaf/emails folder.
 * Login Multifactor Authentication (MFA) with Google Authenticator support added (Admin setting provided to either require it for all bloggers--the default--or have it disabled).
-
-The top-level TightBlog directory consists of two folders:
-
-* app:                    TightBlog application - WAR application meant for deployment on a servlet container
-* etc:                    Utility scripts and screenshots for documentation
 
 To obtain the source code:
 * 3.0.x branch (current): git clone git@github.com:gmazza/tightblog.git
