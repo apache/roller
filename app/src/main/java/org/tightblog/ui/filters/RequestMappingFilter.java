@@ -98,25 +98,38 @@ public class RequestMappingFilter implements Filter {
         // figure out potential weblog handle
         String pathInfo = null;
 
-        if (servlet != null && servlet.trim().length() > 1) {
-            String contextPath = request.getContextPath();
-            if (contextPath != null) {
-                servlet = servlet.substring(contextPath.length());
-            }
+        /* Following if block checks if the root URL for the web application is being accessed, if so
+           returns false to activate the welcome-file-list in the web.xml (which is used to forward to
+           the default front-page blog defined for the installation.)
 
-            if (servlet.length() == 0) {
-                // rely on defined front-page blog
+           In determining whether the root URL is being accessed, both cases where the application is the
+           default one for the servlet container (e.g., https://www.example.com/) and where it is not
+           (e.g., https://www.example.com/tightblog) are covered.
+        */
+        if (servlet != null) {
+            if (servlet.trim().length() > 1) {
+                String contextPath = request.getContextPath();
+                if (contextPath != null) {
+                    servlet = servlet.substring(contextPath.length());
+                }
+
+                if (servlet.length() == 0) {
+                    // Application not default one for servlet container, continue to default blog
+                    return false;
+                } else {
+                    // strip off the leading slash
+                    servlet = servlet.substring(1);
+                }
+
+                if (servlet.indexOf('/') != -1) {
+                    weblogHandle = servlet.substring(0, servlet.indexOf('/'));
+                    pathInfo = servlet.substring(servlet.indexOf('/') + 1);
+                } else {
+                    weblogHandle = servlet;
+                }
+            } else {
+                // Application is default one for servlet container, continue to default blog
                 return false;
-            } else {
-                // strip off the leading slash
-                servlet = servlet.substring(1);
-            }
-
-            if (servlet.indexOf('/') != -1) {
-                weblogHandle = servlet.substring(0, servlet.indexOf('/'));
-                pathInfo = servlet.substring(servlet.indexOf('/') + 1);
-            } else {
-                weblogHandle = servlet;
             }
         }
 

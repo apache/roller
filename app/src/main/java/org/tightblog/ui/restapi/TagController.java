@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/tb-ui/authoring/rest/tags")
 public class TagController {
 
-    private static Logger log = LoggerFactory.getLogger(WeblogController.class);
+    private static Logger log = LoggerFactory.getLogger(TagController.class);
 
     // number of entries to show per page
     private static final int ITEMS_PER_PAGE = 30;

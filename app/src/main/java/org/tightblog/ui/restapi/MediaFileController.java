@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 @RestController
 public class MediaFileController {
 
-    private static Logger log = LoggerFactory.getLogger(WeblogController.class);
+    private static Logger log = LoggerFactory.getLogger(MediaFileController.class);
 
     @Autowired
     private WeblogManager weblogManager;

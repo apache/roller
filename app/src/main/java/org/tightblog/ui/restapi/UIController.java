@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -202,7 +201,7 @@ public class UIController {
     }
 
     @RequestMapping(value = "/get-default-blog")
-    public void getDefaultBlog(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void getDefaultBlog(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Weblog defaultBlog = persistenceStrategy.getWebloggerProperties().getMainBlog();
         String path;
 
@@ -218,7 +217,8 @@ public class UIController {
             }
         }
 
-        response.sendRedirect(request.getContextPath() + path);
+        String redirect = request.getContextPath() + path;
+        response.sendRedirect(redirect);
     }
 
     @RequestMapping(value = "/admin/cachedData")

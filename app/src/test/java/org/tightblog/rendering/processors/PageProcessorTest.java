@@ -65,7 +65,7 @@ import static org.mockito.Mockito.*;
 
 public class PageProcessorTest {
 
-    private static Logger log = LoggerFactory.getLogger(PageProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(PageProcessorTest.class);
 
     private PageProcessor processor;
     private HttpServletRequest mockRequest;

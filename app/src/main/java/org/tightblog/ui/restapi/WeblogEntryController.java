@@ -76,7 +76,7 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/tb-ui/authoring/rest/weblogentries")
 public class WeblogEntryController {
 
-    private static Logger log = LoggerFactory.getLogger(WeblogController.class);
+    private static Logger log = LoggerFactory.getLogger(WeblogEntryController.class);
 
     private static DateTimeFormatter pubDateFormat = DateTimeFormatter.ofPattern("M/d/yyyy");
 

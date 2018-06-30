@@ -31,7 +31,7 @@ import java.util.Locale;
 @RestController
 public class ThemeController {
 
-    private static Logger log = LoggerFactory.getLogger(WeblogController.class);
+    private static Logger log = LoggerFactory.getLogger(ThemeController.class);
 
     @Autowired
     private ThemeManager themeManager;

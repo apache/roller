@@ -64,7 +64,7 @@ import javax.validation.Valid;
 @RequestMapping(path = "/tb-ui/admin/rest/server")
 public class AdminController {
 
-    private static Logger log = LoggerFactory.getLogger(WeblogController.class);
+    private static Logger log = LoggerFactory.getLogger(AdminController.class);
 
     @Autowired
     private Set<LazyExpiringCache> cacheSet;

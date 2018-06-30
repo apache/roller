@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/tb-ui/authoring/rest/comments")
 public class CommentController {
 
-    private static Logger log = LoggerFactory.getLogger(WeblogController.class);
+    private static Logger log = LoggerFactory.getLogger(CommentController.class);
 
     // number of comments to show per page
     private static final int ITEMS_PER_PAGE = 30;
