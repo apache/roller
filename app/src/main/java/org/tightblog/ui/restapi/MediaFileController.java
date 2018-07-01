@@ -183,7 +183,7 @@ public class MediaFileController {
                 mf.setCreator(user);
             }
 
-            mediaFileManager.storeMediaFile(mf, uploadedFile.getInputStream(), errors);
+            mediaFileManager.storeMediaFile(mf, uploadedFile == null ? null : uploadedFile.getInputStream(), errors);
 
             if (errors.size() > 0) {
                 Map.Entry<String, List<String>> msg = errors.entrySet().iterator().next();

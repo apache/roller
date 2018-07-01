@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -146,7 +147,11 @@ public class PageProcessor extends AbstractProcessor {
                 : weblog.getLastModified();
 
         // Respond with 304 Not Modified if it is not modified.
-        if (lastModified.toEpochMilli() <= getBrowserCacheExpireDate(request)) {
+        // DB stores last modified in millis, browser if-modified-since in seconds, so need to truncate millis from the former.
+        long inDb = lastModified.truncatedTo(ChronoUnit.SECONDS).toEpochMilli();
+        long inBrowser = getBrowserCacheExpireDate(request);
+
+        if (inDb <= inBrowser) {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }

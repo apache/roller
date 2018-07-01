@@ -39,6 +39,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Serves media files uploaded by users.
@@ -109,8 +110,11 @@ public class MediaFileProcessor extends AbstractProcessor {
             return;
         }
 
-        // Respond with 304 Not Modified if it is not modified.
-        if (mediaFile.getLastUpdated().toEpochMilli() <= getBrowserCacheExpireDate(request)) {
+        // DB stores last modified in millis, browser if-modified-since in seconds, so need to truncate millis from the former.
+        long inDb = mediaFile.getLastUpdated().truncatedTo(ChronoUnit.SECONDS).toEpochMilli();
+        long inBrowser = getBrowserCacheExpireDate(request);
+
+        if (inDb <= inBrowser) {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
