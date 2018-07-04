@@ -56,9 +56,9 @@ public class WeblogFeedRequest extends WeblogRequest {
 
             if (pathElements.length == 3) {
                 if ("category".equals(pathElements[1])) {
-                    weblogCategoryName = Utilities.decode(pathElements[2].replace("+", "%2B"));
+                    weblogCategoryName = Utilities.decode(pathElements[2]);
                 } else if ("tag".equals(pathElements[1])) {
-                    tag = Utilities.decode(pathElements[2].toLowerCase().replace("+", "%2B"));
+                    tag = Utilities.decode(pathElements[2]);
                 }
             }
         }

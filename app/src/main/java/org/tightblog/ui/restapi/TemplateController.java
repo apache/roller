@@ -59,6 +59,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 public class TemplateController {
@@ -115,7 +116,9 @@ public class TemplateController {
             wtd.templates = pages;
 
             // build list of action types that may be added
-            List<Template.ComponentType> availableRoles = new ArrayList<>(Arrays.asList(Template.ComponentType.values()));
+            List<Template.ComponentType> availableRoles = Arrays.stream(Template.ComponentType.values()).
+                    filter(Template.ComponentType::isBlogComponent).
+                    collect(Collectors.toList());
 
             // remove from above list any already existing for the theme
             pages.stream().filter(p -> p.getRole().isSingleton()).forEach(p ->

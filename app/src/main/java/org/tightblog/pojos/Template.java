@@ -42,18 +42,19 @@ public interface Template {
     @XmlEnum
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     enum ComponentType {
-        @XmlEnumValue("weblog")WEBLOG("Weblog", "text/html", true, true, "template.weblog.description"),
-        @XmlEnumValue("permalink")PERMALINK("Permalink", "text/html", true, true, "template.permalink.description"),
-        @XmlEnumValue("searchResults")SEARCH_RESULTS("Search Results", "text/html", true, true, "template.search.description"),
-        @XmlEnumValue("stylesheet")STYLESHEET("Stylesheet", "text/css", false, false, "template.stylesheet.description"),
+        @XmlEnumValue("weblog")WEBLOG("Weblog", "text/html", true, true, true, "template.weblog.description"),
+        @XmlEnumValue("permalink")PERMALINK("Permalink", "text/html", true, true, true, "template.permalink.description"),
+        @XmlEnumValue("searchResults")SEARCH_RESULTS("Search Results", "text/html", true, true, true,
+                "template.search.description"),
+        @XmlEnumValue("stylesheet")STYLESHEET("Stylesheet", "text/css", false, false, true, "template.stylesheet.description"),
         @XmlEnumValue("javascript")JAVASCRIPT("JavaScript file", "application/javascript", false, false,
-                "template.javascript.description"),
+                true, "template.javascript.description"),
         @XmlEnumValue("atomFeed")ATOMFEED("Atom Feed", "application/atom+xml; charset=utf-8", false, true,
-                "template.atomFeed.description"),
+                false, "template.atomFeed.description"),
         @XmlEnumValue("customInternal")CUSTOM_INTERNAL("Custom internal", "text/html", false, false,
-                "template.customInternal.description"),
+                true, "template.customInternal.description"),
         @XmlEnumValue("customExternal")CUSTOM_EXTERNAL("Custom external", "text/html", false, true,
-                "template.customExternal.description");
+                true, "template.customExternal.description");
 
         // fromObject() allows for enum deserialization (used with front-end template saves)
         // see https://github.com/FasterXML/jackson-databind/issues/158#issuecomment-13092598
@@ -72,12 +73,15 @@ public interface Template {
 
         private final boolean incrementsHitCount;
 
+        private final boolean blogComponent;
+
         ComponentType(String readableName, String contentType, boolean singleton, boolean incrementsHitCount,
-                      String descriptionProperty) {
+                      boolean blogComponent, String descriptionProperty) {
             this.readableName = readableName;
             this.contentType = contentType;
             this.singleton = singleton;
             this.incrementsHitCount = incrementsHitCount;
+            this.blogComponent = blogComponent;
             this.descriptionProperty = descriptionProperty;
         }
 
@@ -103,6 +107,10 @@ public interface Template {
 
         public boolean isIncrementsHitCount() {
             return incrementsHitCount;
+        }
+
+        public boolean isBlogComponent() {
+            return blogComponent;
         }
 
         // so JSON will serialize name
