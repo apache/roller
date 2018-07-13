@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.tightblog</groupId>
         <artifactId>tightblog-project</artifactId>
-        <version>3.0.3</version>
+        <version>3.0.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -489,7 +489,7 @@
                             <port>4224</port>
                             <sources>
                                 <script>
-                                    <sourceFile>${pom.basedir}/target/classes/dbscripts/derby-createdb.sql</sourceFile>
+                                    <sourceFile>${pom.basedir}/target/classes/dbscripts/apachederby-createdb.sql</sourceFile>
                                 </script>
                             </sources>
                         </configuration>

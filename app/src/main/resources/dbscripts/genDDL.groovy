@@ -43,7 +43,7 @@ def genScript = { String dbName, String foreignKeyIndex, String textType,
 }
 
 // source for foreignKeyIndex val: https://db.apache.org/derby/docs/10.4/ref/rrefsqlj13590.html
-genScript("derby", "true", "clob(102400)",
+genScript("apachederby", "true", "clob(102400)",
         "smallint default 0", "smallint default 1",
         "timestamp", "timestamp default current_timestamp")
 
@@ -57,7 +57,3 @@ genScript("postgresql", "false", "text",
         "boolean default false", "boolean default true",
         "timestamp(3) with time zone", "timestamp(3) default now()")
 
-// source for foreignKeyIndex val: http://hsqldb.org/doc/guide/ch02.html#N10318
-genScript("hsql", "true", "longvarchar",
-        "bit default 0", "bit default 1",
-        "timestamp(3)", "timestamp(3) default 'now'")

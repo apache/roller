@@ -32,10 +32,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.jdbc.datasource.init.ScriptException;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.business.WebloggerStaticConfig;
-import org.tightblog.util.SQLScriptRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,22 +149,20 @@ public class InstallerController {
         List<String> messageList = new ArrayList<>(100);
         map.put("messages", messageList);
 
-        SQLScriptRunner runner = null;
-
         String scriptPath = "";
-
         try (Connection conn = tbDataSource.getConnection()) {
-            scriptPath = "/" + conn.getMetaData().getDatabaseProductName().toLowerCase() + "-createdb.sql";
+            scriptPath = "/dbscripts/" +
+                    StringUtils.deleteWhitespace(conn.getMetaData().getDatabaseProductName().toLowerCase()) +
+                    "-createdb.sql";
             messageList.add("Running database script: " + scriptPath);
-            runner = new SQLScriptRunner(scriptPath, true);
-            runner.runScript(conn, true);
-            messageList.addAll(runner.getMessages());
+            ClassPathResource script = new ClassPathResource(scriptPath);
+            ResourceDatabasePopulator populator = new ResourceDatabasePopulator(false, true, null, script);
+            populator.populate(conn);
+            messageList.add("Script ran without error");
             map.put("status", StartupStatus.needsBootstrapping);
-        } catch (Exception ex) {
+        } catch (ScriptException | SQLException ex) {
             messageList.add("ERROR processing database script " + scriptPath);
-            if (runner != null) {
-                messageList.addAll(runner.getMessages());
-            }
+            messageList.add(ex.getMessage());
             map.put("status", StartupStatus.databaseCreateError);
         }
 
