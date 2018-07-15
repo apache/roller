@@ -169,9 +169,9 @@
             <td class="description"></td>
         </tr>
         <tr>
-            <td class="label"><fmt:message key="globalConfig.maxDirSize" /></td>
+            <td class="label"><fmt:message key="globalConfig.maxFileUploadsSizeMb" /></td>
             <td class="field"><input type="number" ng-model="ctrl.webloggerProps.maxFileUploadsSizeMb" size='35'></td>
-            <td class="description"><fmt:message key="globalConfig.tip.maxDirSize"/></td>
+            <td class="description"><fmt:message key="globalConfig.tip.maxFileUploadsSizeMb"/></td>
         </tr>
 
 </table>

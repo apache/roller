@@ -24,7 +24,7 @@
             <td class="bannerLeft">
 
                 <c:if test="${authenticatedUser != null}">
-                    <fmt:message key="mainPage.loggedInAs" /> <c:out value="${authenticatedUser.userName}"/>
+                    <fmt:message key="mainPage.loggedInAs" /> <c:out value="${authenticatedUser.screenName}"/>
                 </c:if>
 
 
