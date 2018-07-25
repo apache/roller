@@ -300,11 +300,10 @@ public class WeblogEntry {
 
     /**
      * <p>Update time is the last time that an weblog entry was saved in the
-     * Roller weblog editor or via web services API (XML-RPC or Atom).</p>
+     * weblog editor.</p>
      * <p>
-     * <p>Roller stores time using the timeZone of the server itself. When
-     * times are displayed  in a user's weblog they must be translated
-     * to the user's timeZone.</p>
+     * <p>TightBlog stores time using UTC. When times are displayed in a user's weblog
+     * they must be translated to the weblog's time zone.</p>
      */
     @Basic(optional = false)
     public Instant getUpdateTime() {

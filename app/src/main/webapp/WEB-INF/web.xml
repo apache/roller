@@ -211,18 +211,6 @@
         <web-resource-collection>
             <web-resource-name>HTTPS resources</web-resource-name>
             <url-pattern>/*</url-pattern>
-            <!-- Comment-out above, uncomment below to require SSL just on
-                 log-in and blogging UI pages, not the rendered blog pages
-                 that blog visitors read.  SSL (https://) may still be used
-                 as URLs for the blog pages, just not required.  Note with
-                 this method blog entry comments and comment metadata (name and
-                 email address, etc.) will be sent in cleartext unless commenter
-                 switches to the https:// URL.
-            -->
-            <!--url-pattern>/roller_j_security_check</url-pattern>
-            <url-pattern>/tb-ui/app/*</url-pattern>
-            <url-pattern>/tb-ui/admin/*</url-pattern>
-            <url-pattern>/tb-ui/authoring/*</url-pattern-->
         </web-resource-collection>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>

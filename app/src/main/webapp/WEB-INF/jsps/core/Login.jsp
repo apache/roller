@@ -46,7 +46,7 @@
 </c:choose>
 
 <form method="post" id="loginForm"
-      action="<c:url value='/roller_j_security_check'/>">
+      action="<c:url value='/tb_j_security_check'/>">
 
     <sec:csrfInput/>
 

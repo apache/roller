@@ -56,7 +56,7 @@ public class JPAPersistenceStrategy {
     private final ThreadLocal<EntityManager> threadLocalEntityManager = new ThreadLocal<>();
 
     /**
-     * The EntityManagerFactory for this Roller instance.
+     * The EntityManagerFactory for this TightBlog instance.
      */
     private EntityManagerFactory emf;
 

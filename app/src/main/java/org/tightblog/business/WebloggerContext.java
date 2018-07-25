@@ -80,7 +80,7 @@ public class WebloggerContext extends ContextLoaderListener {
     }
 
     /**
-     * Bootstrap the Roller Weblogger business tier.
+     * Bootstrap the Weblogger business tier.
      * <p>
      * There are two possible application contexts, the web-level defined in web.xml
      * (activated when running the WAR) and the unit tests configured in WebloggerTest

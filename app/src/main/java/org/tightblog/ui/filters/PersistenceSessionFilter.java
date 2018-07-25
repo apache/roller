@@ -52,7 +52,7 @@ public class PersistenceSessionFilter implements Filter {
     }
 
     /**
-     * Release Roller persistence session at end of request processing.
+     * Release persistence session at end of request processing.
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {

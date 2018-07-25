@@ -35,7 +35,7 @@
         <!-- every 4 hours -->
         <task:scheduled ref="weblogManager" method="promoteScheduledEntries" cron="0 0 0/4 * * *"/>
         <!-- every 15 mins -->
-        <task:scheduled ref="weblogManager" method="updateHitCounters" cron="0 0/15 * * * *"/>
+        <task:scheduled ref="weblogManager" method="updateHitCounters" cron="0 0/20 * * * *"/>
     </task:scheduled-tasks>
 
 </beans:beans>

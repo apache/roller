@@ -103,7 +103,7 @@
         <security:form-login login-page="/tb-ui/app/login"
                              authentication-failure-url="/tb-ui/app/login?error=true"
                              authentication-details-source-ref="customWebAuthenticationDetailsSource"
-                             login-processing-url="/roller_j_security_check"
+                             login-processing-url="/tb_j_security_check"
                              authentication-success-handler-ref="customAuthenticationSuccessHandler" />
 
         <security:access-denied-handler ref="customAccessDeniedHandlerImpl"/>
@@ -211,8 +211,6 @@
 
     <beans:bean id="previewPageModel" parent="pageModel" class="org.tightblog.rendering.model.PageModel" scope="prototype">
         <beans:property name="preview" value="true"/>
-        <!-- urlStrategy is manually constructed with the shared theme being previewed -->
-        <beans:property name="urlStrategy"><beans:null/></beans:property>
     </beans:bean>
 
     <beans:bean id="previewUrlModel" parent="urlModel" class="org.tightblog.rendering.model.URLModel" scope="prototype">

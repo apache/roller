@@ -175,7 +175,7 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
 
     /**
      * This is a convenience method which loads all the theme data from themes
-     * stored on the filesystem in the roller webapp /themes/ directory.
+     * stored on the filesystem in the webapp/blogthemes/ directory.
      */
     private Map<String, SharedTheme> loadAllThemesFromDisk() {
 
