@@ -90,7 +90,7 @@ public class IndexManagerImpl implements IndexManager {
 
     /**
      * Creates a new lucene index manager. This should only be created once.
-     * Creating the index manager more than once will definately result in
+     * Creating the index manager more than once will definitely result in
      * errors. The preferred way of getting an index is through the
      * RollerContext.
      * 
