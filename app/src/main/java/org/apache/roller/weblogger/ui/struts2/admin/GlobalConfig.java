@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
@@ -161,9 +161,6 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             updProp = getProperties().get(propName);
             incomingProp = this.getParameter(updProp.getName());
 
-            log.debug("Checking property [" + propName + "]");
-            log.debug("Request value is [" + incomingProp + "]");
-
             PropertyDef propertyDef = globalConfigDef.getPropertyDef( propName );
             if ( propertyDef == null) {
                 // we're only processing defined properties, i.e. ones shown in the UI
@@ -175,6 +172,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
                 try {
                     Boolean.parseBoolean(incomingProp);
                     updProp.setValue(incomingProp);
+                    log.debug("Set boolean " + propName + " = " + incomingProp);
                 } catch ( Exception nfe ) {
                     String propDesc = bundle.getString( propertyDef.getKey() );
                     addError("ConfigForm.invalidBooleanProperty",
@@ -186,6 +184,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
                 try {
                     Integer.parseInt(incomingProp);
                     updProp.setValue(incomingProp);
+                    log.debug("Set integer " + propName + " = " + incomingProp);
                 } catch ( NumberFormatException nfe ) {
                     String propDesc = bundle.getString( propertyDef.getKey() );
                     addError("ConfigForm.invalidIntegerProperty",
@@ -197,6 +196,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
                 try {
                     Float.parseFloat(incomingProp);
                     updProp.setValue(incomingProp);
+                    log.debug("Set float " + propName + " = " + incomingProp);
                 } catch ( NumberFormatException nfe ) {
                     String propDesc = bundle.getString( propertyDef.getKey() );
                     addError("ConfigForm.invalidFloatProperty",
@@ -205,6 +205,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
 
             } else if ( incomingProp != null ){
                 updProp.setValue( incomingProp.trim() );
+                log.debug("Set something " + propName + " = " + incomingProp);
 
             } else if ( propertyDef.getName().equals("users.comments.plugins") ) {
                 // not a problem
@@ -252,7 +253,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             log.debug("Parameter map:");
 
             for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
-                log.debug(entry.getKey() + " = " + entry.getValue());
+                log.debug(entry.getKey() + " = " + Utilities.stringArrayToString(entry.getValue(),","));
             }
         }
     }
@@ -274,6 +275,9 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
 
     public void setProperties(Map<String, RuntimeConfigProperty> properties) {
         this.properties = properties;
+        for (Map.Entry<String, RuntimeConfigProperty> entry : properties.entrySet()) {
+            log.debug("Got " + entry.getKey() + " = " + entry.getValue().getValue());
+        }
     }
 
     public ConfigDef getGlobalConfigDef() {
