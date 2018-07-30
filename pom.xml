@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.tightblog</groupId>
     <artifactId>tightblog-project</artifactId>
-    <version>3.0.5</version>
+    <version>3.1</version>
     <packaging>pom</packaging>
 
     <prerequisites>
@@ -56,14 +56,6 @@
                     <configuration>
                         <downloadSources>true</downloadSources>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <!-- 9.3 series supports Java 8: https://www.eclipse.org/jetty/about.html -->
-                    <!-- Need to await 9.3.23 version before upgrading:
-                         https://github.com/eclipse/jetty.project/issues/1892#issuecomment-351393569 -->
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.3.17.v20170317</version>
                 </plugin>
                 <plugin>
                     <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>

@@ -79,20 +79,14 @@ public class JPAPersistenceStrategy {
             }
         }
 
-        boolean usingJNDI = "jndi".equals(WebloggerStaticConfig.getProperty("database.configurationType"));
-        if (usingJNDI) {
-            emfProps.setProperty("javax.persistence.nonJtaDataSource",
-                    WebloggerStaticConfig.getProperty("database.jndi.name"));
-        } else {
-            emfProps.setProperty("javax.persistence.jdbc.driver",
-                    WebloggerStaticConfig.getProperty("database.jdbc.driverClass"));
-            emfProps.setProperty("javax.persistence.jdbc.url",
-                    WebloggerStaticConfig.getProperty("database.jdbc.connectionURL"));
-            emfProps.setProperty("javax.persistence.jdbc.user",
-                    WebloggerStaticConfig.getProperty("database.jdbc.username"));
-            emfProps.setProperty("javax.persistence.jdbc.password",
-                    WebloggerStaticConfig.getProperty("database.jdbc.password"));
-        }
+        emfProps.setProperty("javax.persistence.jdbc.driver",
+                WebloggerStaticConfig.getProperty("database.jdbc.driverClass"));
+        emfProps.setProperty("javax.persistence.jdbc.url",
+                WebloggerStaticConfig.getProperty("database.jdbc.connectionURL"));
+        emfProps.setProperty("javax.persistence.jdbc.user",
+                WebloggerStaticConfig.getProperty("database.jdbc.username"));
+        emfProps.setProperty("javax.persistence.jdbc.password",
+                WebloggerStaticConfig.getProperty("database.jdbc.password"));
 
         this.emf = Persistence.createEntityManagerFactory("TightBlogPU", emfProps);
     }

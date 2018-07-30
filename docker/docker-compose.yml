@@ -1,0 +1,41 @@
+# Compose file reference: https://docs.docker.com/compose/compose-file/
+# NOTE: Before running, make sure you created web/ssl.crt and web/ssl.key files (see web/Dockerfile for more info)
+version: "3"
+services:
+    tightblog-web:
+      build:
+          context: ..
+          dockerfile: ./docker/web/Dockerfile
+      environment:
+# defining CATALINA_BASE so log4j2.xml log file location resolves properly
+        CATALINA_BASE: /usr/local/tomcat
+      ports:
+# Allows for viewing Tomcat apps on host at standard port 80, http://localhost
+        - "80:8080"
+# TightBlog configured in web.xml to require SSL, can view on host at https://localhost/tightblog
+        - "443:8443"
+      links:
+        - tightblog-db
+      volumes:
+# TightBlog uses a named volume to store media images and the blog search index
+# Subfolders for both are configured in the web/tightblog-custom.properties file.
+        - tightblog-data:/tightblog-data
+    tightblog-db:
+      image: postgres:9.4
+      environment:
+        POSTGRES_USER: scott
+        POSTGRES_PASSWORD: tiger
+        POSTGRES_DB: pgsqlTightBlog
+        # fix for https://github.com/laradock/laradock/issues/919#issue-227105188
+        PGDATA: =/tmp
+      expose:
+        - "5432"
+      ports:
+  # Optional, allows one to view the PostgresQL database at port 5434 with a SQL client running on the host
+        - "5434:5432"
+      volumes:
+        - tightblog-data:/var/lib/postgresql/data
+
+volumes:
+    tightblog-data:
+

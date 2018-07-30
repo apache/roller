@@ -6,7 +6,6 @@
 
     <display-name>TightBlog Weblogger</display-name>
 
-
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <!-- Non-Spring MVC config only (app beans, security): https://stackoverflow.com/a/16458969/1207540 -->
@@ -178,23 +177,6 @@
         <error-code>404</error-code>
         <location>/tb-ui/errors/404.jsp</location>
     </error-page>
-
-    <!-- jndi resources -->
-    <!-- See install guide and/or webapp/META-INF/context.xml-example for JNDI Config info -->
-    <!-- Uncomment below if configuring DB via JNDI instead of tightblog-custom.properties -->
-    <!--resource-ref>
-        <res-ref-name>jdbc/tightblogdb</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>      
-        <mapped-name>jdbc/tightblog</mapped-name>
-    </resource-ref-->
-
-    <resource-ref>
-        <res-ref-name>mail/Session</res-ref-name>
-        <res-type>javax.mail.Session</res-type>
-        <res-auth>Container</res-auth>
-        <mapped-name>Session</mapped-name>
-    </resource-ref>
 
     <!--
          Specifies the pages which must run on SSL.  Default below uses SSL

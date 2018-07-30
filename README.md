@@ -43,11 +43,14 @@ To obtain the source code:
 To build the application (app/target/tightblog.war) with Maven and Java 8:
   `mvn clean install` from the TightBlog root.
 
-It's *very* quick and simple to try out TightBlog locally, to determine if this is a product you would like to blog with
-before proceeding with an actual install.  After building the distribution via `mvn clean install`, navigate to the `app` folder and run `mvn jetty:run`,
-and view http://localhost:8080/tightblog from a browser.  From there you can register an account, create a sample blog and some entries,
-create and view comments, modify templates, etc., everything you can do with production TightBlog.  Each time it is run,
-"mvn jetty:run" creates a new in-memory temporary database that exists until you Ctrl-Z out of the terminal window running this command.
-(Note for simplicity the default does not demo Google Authenticator MFA, if desired modify the test/tightblog-jettyrun.properties as given in its comments to activate.)
+The Docker images defined in the docker subdirectory of this project can be used to test TightBlog locally before deploying.  First build
+the project to generate the tightblog WAR.  As TightBlog requires SSL, next provide a certificate & key for the Tomcat
+image as explained in the web Dockerfile.  Then from the docker folder, running "docker-compose up" should result in a TightBlog available
+from your local machine at https://localhost/tightblog.  Should you need to change the docker-compose.yml or the web Dockerfile, be sure
+to run "docker-compose build" for the images to be regenerated.  Note for simplicity the default does not demo Google Authenticator MFA,
+if desired modify the docker/web/tightblog-custom.properties to activate. Emailing is also not configured.
 
-For actual installations on Tomcat or other servlet container, please read the <a href="https://github.com/gmazza/tightblog/wiki">Install pages</a> on the TightBlog Wiki.
+Caution: The Docker images have not seen production use and are currently meant just for quick demoing for evaluation purposes.  In a
+production environment tightening of the Tomcat and PostgresQL images provided (changing passwords, removing sample applications
+provided by Tomcat, etc.) would be advisable, best to check online sources for details.  For actual production installations on Tomcat
+or other servlet container, please read the <a href="https://github.com/gmazza/tightblog/wiki">Install pages</a> on the TightBlog Wiki.
