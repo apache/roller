@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 /**
  * Test WeblogRole related business operations.
  */
-public class WeblogRoleTest extends WebloggerTest {
+public class WeblogRoleTestIT extends WebloggerTest {
     private User testUser;
     private Weblog testWeblog;
 

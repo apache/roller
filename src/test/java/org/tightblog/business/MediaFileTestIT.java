@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  * Test media file related business operations.
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MediaFileTest extends WebloggerTest {
+public class MediaFileTestIT extends WebloggerTest {
 
     private User testUser;
     private Weblog testWeblog;

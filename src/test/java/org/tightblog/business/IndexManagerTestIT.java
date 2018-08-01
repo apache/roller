@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
 /**
  * Test Search Manager business layer operations.
  */
-public class IndexManagerTest extends WebloggerTest {
+public class IndexManagerTestIT extends WebloggerTest {
 
     private User testUser;
     private Weblog testWeblog;

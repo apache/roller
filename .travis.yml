@@ -1,1 +1,5 @@
 language: java
+script: mvn integration-test
+
+services:
+  - docker

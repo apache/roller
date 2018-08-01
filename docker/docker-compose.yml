@@ -21,7 +21,7 @@ services:
 # Subfolders for both are configured in the web/tightblog-custom.properties file.
         - tightblog-data:/tightblog-data
     tightblog-db:
-      image: postgres:9.4
+      image: postgres:9.5.4
       environment:
         POSTGRES_USER: scott
         POSTGRES_PASSWORD: tiger

@@ -57,9 +57,9 @@ import static org.junit.Assert.*;
 /**
  * Test WeblogEntry related business operations.
  */
-public class WeblogEntryTest extends WebloggerTest {
+public class WeblogEntryTestIT extends WebloggerTest {
 
-    private static Logger log = LoggerFactory.getLogger(WeblogEntryTest.class);
+    private static Logger log = LoggerFactory.getLogger(WeblogEntryTestIT.class);
     
     User testUser;
     Weblog testWeblog;

@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
 /**
  * Test Comment related business operations.
  */
-public class CommentTest extends WebloggerTest {
+public class CommentTestIT extends WebloggerTest {
     private User testUser;
     private Weblog testWeblog;
     private WeblogEntry testEntry;

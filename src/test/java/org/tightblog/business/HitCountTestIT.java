@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 /**
  * Test HitCount related business operations.
  */
-public class HitCountTest extends WebloggerTest {
+public class HitCountTestIT extends WebloggerTest {
     
     User testUser;
     Weblog testWeblog;

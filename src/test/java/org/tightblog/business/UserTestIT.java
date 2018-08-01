@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 /**
  * Test User related business operations.
  */
-public class UserTest extends WebloggerTest {
+public class UserTestIT extends WebloggerTest {
 
     @Before
     public void setUp() throws Exception {

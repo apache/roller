@@ -37,7 +37,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class WeblogStatsTest extends WebloggerTest {
+public class WeblogStatsTestIT extends WebloggerTest {
     private User user1;
     private User user2;
     private Weblog website1;

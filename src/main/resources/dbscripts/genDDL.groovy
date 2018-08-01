@@ -33,8 +33,8 @@ def genScript = { String dbName, String foreignKeyIndex, String textType,
     context.put("TIMESTAMP_SQL_TYPE_DEFNOW", timestampNow)
 
     try {
-        Template template = Velocity.getTemplate("app/src/main/resources/dbscripts/createdb.vm")
-        PrintWriter pw = new PrintWriter("app/src/main/resources/dbscripts/$dbName-createdb.sql")
+        Template template = Velocity.getTemplate("src/main/resources/dbscripts/createdb.vm")
+        PrintWriter pw = new PrintWriter("src/main/resources/dbscripts/$dbName-createdb.sql")
         template.merge(context, pw)
         pw.flush()
     } catch(Exception e) {

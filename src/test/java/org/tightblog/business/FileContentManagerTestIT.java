@@ -40,9 +40,9 @@ import static org.junit.Assert.*;
 /**
  * Test File Management business layer operations.
  */
-public class FileContentManagerTest extends WebloggerTest {
+public class FileContentManagerTestIT extends WebloggerTest {
 
-    private static Logger log = LoggerFactory.getLogger(FileContentManagerTest.class);
+    private static Logger log = LoggerFactory.getLogger(FileContentManagerTestIT.class);
 
     User testUser;
     Weblog testWeblog;

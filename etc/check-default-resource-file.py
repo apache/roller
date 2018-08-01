@@ -38,7 +38,7 @@ from contextlib import closing
 import sys
 
 def prop_names():
-    rfile = open("../app/src/main/resources/ApplicationResources.properties")
+    rfile = open("../src/main/resources/ApplicationResources.properties")
     prop_pattern = re.compile('^([a-zA-Z]+(\.[a-zA-Z]+)*)=.*')
     for line in rfile:
         m = prop_pattern.match(line)

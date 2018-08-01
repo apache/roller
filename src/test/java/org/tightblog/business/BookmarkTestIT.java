@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 /**
  * Test Weblogger Bookmark Management.
  */
-public class BookmarkTest extends WebloggerTest {
+public class BookmarkTestIT extends WebloggerTest {
     User testUser;
     Weblog testWeblog;
 

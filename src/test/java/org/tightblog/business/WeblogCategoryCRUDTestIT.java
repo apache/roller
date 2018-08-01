@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class WeblogCategoryCRUDTest extends WebloggerTest {
+public class WeblogCategoryCRUDTestIT extends WebloggerTest {
 
     User testUser;
     Weblog testWeblog;
