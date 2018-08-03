@@ -9,6 +9,6 @@ ADD http://central.maven.org/maven2/org/postgresql/postgresql/42.2.4/postgresql-
 # Note self-signed certificates bring up browser warnings, getting a key from a certificate authority instead is preferred
 COPY ./docker/web/server.xml ./docker/web/ssl.crt ./docker/web/ssl.key /usr/local/tomcat/conf/
 COPY ./docker/web/tightblog-custom.properties /usr/local/tomcat/lib/
-COPY ./app/target/tightblog.war /usr/local/tomcat/webapps/tightblog.war
+COPY ./build/libs/tightblog*.war /usr/local/tomcat/webapps/tightblog.war
 
 CMD ["catalina.sh", "run"]

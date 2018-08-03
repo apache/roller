@@ -1,0 +1,214 @@
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.2.3'
+    }
+}
+
+plugins {
+    id 'com.bmuschko.docker-remote-api' version '3.2.3'
+}
+
+apply plugin: 'war'
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'checkstyle'
+apply plugin: 'groovy'
+apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
+
+group = 'org.tightblog'
+version = '3.1.1'
+
+description = """TightBlog"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+repositories {
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+sourceSets {
+    test {
+        java {
+            srcDir 'src/test/java'
+            exclude '**/*IT.java'
+        }
+    }
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/test/java')
+            include '**/*IT.java'
+        }
+        resources.srcDir file('src/test/resources')
+    }
+}
+
+def itDatabasePort = 32794
+def buildNumber = Instant.now().getEpochSecond()
+
+task createDDLScripts (dependsOn: 'classes', type: JavaExec) {
+    main = 'genDDL'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+processResources {
+    filesMatching(['tightblog.properties', 'tightblog-custom.properties']) {
+        expand(version: version,
+               buildNumber: buildNumber,
+               itDatabasePort: itDatabasePort,
+               buildDir: buildDir
+        )
+    }
+}
+
+processTestResources {
+    filesMatching(['tightblog.properties', 'tightblog-custom.properties']) {
+        expand(version: version,
+                buildNumber: buildNumber,
+                itDatabasePort: itDatabasePort,
+                buildDir: buildDir
+        )
+    }
+}
+
+processIntegrationTestResources {
+    filesMatching(['tightblog.properties', 'tightblog-custom.properties']) {
+        expand(version: version,
+                buildNumber: buildNumber,
+                itDatabasePort: itDatabasePort,
+                buildDir: buildDir
+        )
+    }
+}
+
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
+import com.bmuschko.gradle.docker.tasks.container.extras.DockerWaitHealthyContainer
+
+import java.time.Instant
+
+// https://bmuschko.com/blog/dockerized-spring-boot-app/
+task buildImage(type: DockerBuildImage) {
+    inputDir = file('src/test/resources')
+    tag = "tightblog/it-database123:latest"
+}
+
+// variant of https://bmuschko.com/blog/docker-integration-testing/
+task createContainer(type: DockerCreateContainer) {
+    dependsOn buildImage
+    targetImageId { buildImage.getImageId() }
+    portBindings = [itDatabasePort + ':5432']
+}
+
+task startContainer(type: DockerStartContainer) {
+    dependsOn createContainer
+    targetContainerId { createContainer.getContainerId() }
+}
+
+task startAndWaitOnHealthyContainer(type: DockerWaitHealthyContainer) {
+    dependsOn startContainer
+    timeout = 60
+    targetContainerId { createContainer.getContainerId() }
+}
+
+task stopContainer(type: DockerStopContainer) {
+    targetContainerId { createContainer.getContainerId() }
+}
+
+task integrationTest(type: Test) {
+    dependsOn startAndWaitOnHealthyContainer
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+    mustRunAfter test
+    finalizedBy stopContainer
+}
+
+war.dependsOn createDDLScripts
+check.dependsOn integrationTest
+
+
+checkstyle {
+    toolVersion = "8.9"
+    config = resources.text.fromFile('checkstyle.xml', 'UTF-8')
+    showViolations = true
+    ignoreFailures = false
+}
+
+dependencies {
+    compile localGroovy()
+    compile group: 'org.eclipse.persistence', name: 'org.eclipse.persistence.jpa', version:'2.7.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version:'2.11.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version:'2.11.0'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version:'4.5.6'
+    compile group: 'org.hibernate', name: 'hibernate-validator', version:'5.4.1.Final'
+    compile group: 'org.hibernate', name: 'hibernate-validator-cdi', version:'5.4.1.Final'
+    compile group: 'org.glassfish', name: 'javax.el', version:'3.0.1-b10'
+    compile group: 'com.github.ben-manes.caffeine', name: 'caffeine', version:'2.6.2'
+    compile group: 'org.jsoup', name: 'jsoup', version:'1.11.3'
+    compile group: 'com.atlassian.commonmark', name: 'commonmark', version:'0.11.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-jcl', version:'2.11.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version:'2.11.0'
+    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version:'7.4.0'
+    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version:'7.4.0'
+    compile group: 'org.apache.tiles', name: 'tiles-jsp', version:'3.0.8'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.7'
+    compile group: 'org.apache.commons', name: 'commons-text', version:'1.4'
+    compile group: 'commons-fileupload', name: 'commons-fileupload', version:'1.3.3'
+    compile(group: 'org.springframework', name: 'spring-web', version:'5.0.8.RELEASE') {
+exclude(module: 'aopalliance')
+    }
+    compile group: 'org.springframework', name: 'spring-context', version:'5.0.8.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context-support', version:'5.0.8.RELEASE'
+    compile group: 'org.springframework', name: 'spring-webmvc', version:'5.0.8.RELEASE'
+    compile group: 'org.springframework', name: 'spring-jdbc', version:'5.0.8.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-config', version:'5.0.7.RELEASE'
+    compile group: 'org.springframework.mobile', name: 'spring-mobile-device', version:'1.1.5.RELEASE'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version:'2.9.6'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.9.6'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version:'2.9.6'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version:'2.9.6'
+    compile(group: 'org.springframework.security', name: 'spring-security-taglibs', version:'5.0.7.RELEASE') {
+exclude(module: 'spring-web')
+    }
+    compile(group: 'org.springframework.security', name: 'spring-security-acl', version:'5.0.7.RELEASE') {
+exclude(module: 'spring-jdbc')
+    }
+    compile group: 'org.jboss.aerogear', name: 'aerogear-otp-java', version:'1.0.0'
+    compile group: 'javax.servlet', name: 'jstl', version:'1.2'
+    compile group: 'commons-validator', name: 'commons-validator', version:'1.6'
+    compile group: 'commons-httpclient', name: 'commons-httpclient', version:'3.1'
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version:'1.9.3'
+    compile group: 'commons-codec', name: 'commons-codec', version:'1.11'
+    compile(group: 'org.thymeleaf', name: 'thymeleaf', version:'3.0.9.RELEASE') {
+exclude(module: 'ognl')
+    }
+    compile group: 'org.thymeleaf', name: 'thymeleaf-spring4', version:'3.0.9.RELEASE'
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-web', version:'2.11.0'
+    testCompile group: 'org.springframework', name: 'spring-test', version:'5.0.8.RELEASE'
+    testCompile group: 'org.postgresql', name: 'postgresql', version:'42.2.4'
+    testCompile group: 'junit', name: 'junit', version:'4.12'
+    testCompile group: 'org.mockito', name: 'mockito-core', version:'2.20.1'
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
+    providedCompile group: 'javax.mail', name: 'javax.mail-api', version:'1.6.1'
+    providedCompile group: 'javax.servlet.jsp', name: 'jsp-api', version:'2.2'
+    compile group: 'org.apache.velocity', name: 'velocity-engine-core', version:'2.0'
+}

@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dbscripts
-
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.Template
 import org.apache.velocity.app.Velocity

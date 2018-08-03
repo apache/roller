@@ -1,5 +1,5 @@
 Welcome to TightBlog! This project started off in May 2015 as a fork of the Apache Roller project, of which I contributed for about 2 1/2 years 
-before deciding to go my own way due to differing ideas of what would make the best blogging product.  As of 30 July 2018, <a href="https://github.com/gmazza/tightblog/releases">Release 3.1</a> is available.
+before deciding to go my own way due to differing ideas of what would make the best blogging product.  As of 3 August 2018, <a href="https://github.com/gmazza/tightblog/releases">Release 3.1.1</a> is available.
 
 Screen shots for the TightBlog UI are [here](https://github.com/gmazza/tightblog/wiki/Screenshots), the twelve-table database model is
 [here](https://github.com/gmazza/tightblog/blob/master/app/src/main/resources/dbscripts/createdb.vm), see also [my blog](https://glenmazza.net/blog/) for an example
@@ -40,8 +40,8 @@ To obtain the source code:
 * Release 2.0.x branch: https://github.com/gmazza/tightblog/tree/release2.0.4
 * source for a specific release: https://github.com/gmazza/tightblog/releases
 
-To build the application (app/target/tightblog.war) with Maven and Java 8:
-  `mvn clean install` from the TightBlog root.
+To build the application (app/target/tightblog.war) with Gradle and Java 8:
+  `gradle clean build` from the TightBlog root.
 
 The Docker images defined in the docker subdirectory of this project can be used to test TightBlog locally before deploying.  First build
 the project to generate the tightblog WAR.  As TightBlog requires SSL, next provide a certificate & key for the Tomcat
