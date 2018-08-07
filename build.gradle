@@ -15,7 +15,6 @@ plugins {
 
 apply plugin: 'war'
 apply plugin: 'java'
-apply plugin: 'maven'
 apply plugin: 'checkstyle'
 apply plugin: 'groovy'
 apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
@@ -53,44 +52,55 @@ sourceSets {
     }
 }
 
-def itDatabasePort = 32794
-def buildNumber = Instant.now().getEpochSecond()
+static def standardCompile(options) {
+    options.compilerArgs += ["-proc:none"]
+}
+
+compileGroovy {
+    standardCompile(options)
+}
+
+compileJava {
+    standardCompile(options)
+}
+
+compileTestJava {
+    standardCompile(options)
+}
+
+compileIntegrationTestJava {
+    standardCompile(options)
+}
 
 task createDDLScripts (dependsOn: 'classes', type: JavaExec) {
     main = 'genDDL'
     classpath = sourceSets.main.runtimeClasspath
 }
 
-processResources {
-    filesMatching(['tightblog.properties', 'tightblog-custom.properties']) {
+project.ext.buildNumber = Instant.now().getEpochSecond()
+project.ext.itDatabasePort = 32794
+
+def standardProcessResources(obj) {
+    obj.filesMatching(['tightblog.properties', 'tightblog-custom.properties']) {
         expand(version: version,
-               buildNumber: buildNumber,
-               itDatabasePort: itDatabasePort,
-               buildDir: buildDir
+                buildNumber: buildNumber,
+                itDatabasePort: itDatabasePort,
+                buildDir: buildDir
         )
     }
+}
+
+processResources {
+    standardProcessResources(processResources)
 }
 
 processTestResources {
-    filesMatching(['tightblog.properties', 'tightblog-custom.properties']) {
-        expand(version: version,
-                buildNumber: buildNumber,
-                itDatabasePort: itDatabasePort,
-                buildDir: buildDir
-        )
-    }
+    standardProcessResources(processTestResources)
 }
 
 processIntegrationTestResources {
-    filesMatching(['tightblog.properties', 'tightblog-custom.properties']) {
-        expand(version: version,
-                buildNumber: buildNumber,
-                itDatabasePort: itDatabasePort,
-                buildDir: buildDir
-        )
-    }
+    standardProcessResources(processIntegrationTestResources)
 }
-
 
 configurations {
     integrationTestCompile.extendsFrom testCompile
@@ -210,5 +220,6 @@ exclude(module: 'ognl')
     providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
     providedCompile group: 'javax.mail', name: 'javax.mail-api', version:'1.6.1'
     providedCompile group: 'javax.servlet.jsp', name: 'jsp-api', version:'2.2'
-    compile group: 'org.apache.velocity', name: 'velocity-engine-core', version:'2.0'
+// velocity used only when running Groovy task during build
+    providedCompile group: 'org.apache.velocity', name: 'velocity-engine-core', version:'2.0'
 }
