@@ -21,7 +21,7 @@
 <p><s:text name="configForm.prompt"/></p>
 
 
-<s:form action="globalConfig!save" theme="bootstrap" cssClass="form-vertical">
+<s:form action="globalConfig!save" theme="bootstrap" cssClass="form-horizontal">
 
     <s:hidden name="salt"/>
 
