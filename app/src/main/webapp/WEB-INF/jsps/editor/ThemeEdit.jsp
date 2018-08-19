@@ -75,6 +75,10 @@
                 </s:else>
             </p>
 
+        </div>
+
+        <div id="themeChooser" style="display:none;">
+
             <%-- theme selector with preview image --%>
             <p><s:text name="themeEditor.selectTheme"/></p>
             <p>
@@ -87,47 +91,27 @@
 
         </div>
 
-        <div id="sharedChangeProposed" style="display:none;">
+        <div id="sharedChangeToShared" style="display:none;">
 
-            <div id="sharedChangeToShared" style="display:none;">
-
-                <%-- Preview and Update buttons --%>
-                <p> <s:text name="themeEditor.previewDescription"/> </p>
-                <input type="button" name="themePreview" class="btn" style="margin-bottom:1em"
-                    value="<s:text name='themeEditor.preview' />"
-                    onclick="fullPreview($('#themeSelector').get(0))"/>
-
-                <s:submit cssClass="btn btn-default" value="%{getText('themeEditor.save')}"/>
-
+            <div class="alert-warning" style="margin-top:3em; margin-bottom:2em; padding: 1em">
+                <s:text name="themeEditor.proposedSharedThemeChange"/>
             </div>
-
-            <div id="sharedChangeToCustom" style="display:none;">
-
-                <%-- Update button --%>
-                <s:submit cssClass="btn btn-default" value="%{getText('themeEditor.save')}"/>
-
-            </div>
-        </div>
-
-    <%-- ********************************************************************************************************* --%>
-
-        <div id="customNoChange" style="display:none;">
-
-            <p class="lead"><s:text name="themeEditor.youAreUsingACustomTheme"/></p>
-
-        </div>
-
-        <div id="customChangeProposed" style="display:none;">
-
-            <p class="lead"><s:text name="themeEditor.youAreUsingACustomTheme"/></p>
-
-            <div class="alert-warning"><s:text name="themeEditor.proposedChangeToShared"/></div>
 
             <%-- Preview and Update buttons --%>
             <p> <s:text name="themeEditor.previewDescription"/> </p>
-            <input type="button" name="themePreview" class="btn" style="margin-bottom:1em"
+            <input type="button" name="themePreview" class="btn"
                 value="<s:text name='themeEditor.preview' />"
                 onclick="fullPreview($('#themeSelector').get(0))"/>
+
+            <s:submit cssClass="btn btn-default" value="%{getText('themeEditor.save')}"/>
+
+        </div>
+
+        <div id="sharedChangeToCustom" style="display:none;">
+
+            <div class="alert-warning" style="margin-top:3em; margin-bottom:2em; padding: 1em">
+                <s:text name="themeEditor.proposedSharedChangeToCustom"/>
+            </div>
 
             <s:if test="firstCustomization">
                 <p>
@@ -139,6 +123,29 @@
                 <p><s:text name="themeEditor.existingTemplatesWarning"/></p>
                 <s:checkbox name="importTheme" label="%{getText('themeEditor.importAndOverwriteTemplates')}"/>
             </s:else>
+
+            <%-- Update button --%>
+            <s:submit cssClass="btn btn-default" value="%{getText('themeEditor.save')}"/>
+
+        </div>
+
+    <%-- ********************************************************************************************************* --%>
+
+        <div id="customNoChange" style="display:none;">
+            <p class="lead"><s:text name="themeEditor.youAreUsingACustomTheme"/></p>
+        </div>
+
+        <div id="customChangeToShared" style="display:none;">
+
+            <div class="alert-warning" style="margin-top:3em; margin-bottom:2em; padding: 1em">
+                <s:text name="themeEditor.proposedChangeToShared"/>
+            </div>
+
+            <%-- Preview and Update buttons --%>
+            <p> <s:text name="themeEditor.previewDescription"/> </p>
+            <input type="button" name="themePreview" class="btn" style="margin-bottom:2em"
+                value="<s:text name='themeEditor.preview' />"
+                onclick="fullPreview($('#themeSelector').get(0))"/>
 
             <s:submit cssClass="btn btn-default" value="%{getText('themeEditor.save')}"/>
 
@@ -157,35 +164,38 @@
 
         <s:if test="customTheme">
         originalType = "custom"
-        updateThemeTypeChooser($('#customRadio'));
+        updateView($('#customRadio'));
         previewImage('<s:property value="themes[0].id"/>');
         </s:if>
 
         <s:else>
         originalType = "shared"
-        updateThemeTypeChooser($('#sharedRadio'));
+        updateView($('#sharedRadio'));
         previewImage('<s:property value="themeId"/>');
         </s:else>
     });
 
     function proposeThemeTypeChange(selected) {
+
         if (selected[0].value === 'shared') {
             proposedChangeType = "shared"
+
+            themeSelector = $('#themeSelector')[0]
+            index = themeSelector.selectedIndex;
+            previewImage(themeSelector.options[index].value)
+
         } else {
             proposedChangeType = "custom"
         }
-        updateThemeTypeChooser(selected)
+        updateView(selected)
     }
 
     function proposeSharedThemeChange(themeId) {
         proposedThemeId = themeId;
-        if ( proposedThemeId !== originalThemeId ) {
-            $('#sharedChangeProposed').show();
-            $('#sharedChangeToShared').show();
-            $('#sharedChangeToCustom').hide();
+        if ( originalType !== "custom" && proposedThemeId !== originalThemeId ) {
         }
         previewImage(themeId)
-
+        updateView($('sharedRadio'))
     }
 
     function previewImage(themeId) {
@@ -204,24 +214,31 @@
             + selector.options[selected].value);
     }
 
-    function updateThemeTypeChooser(selected) {
+    function updateView(selected) {
 
         if (selected[0].value === 'shared') {
 
             $('#sharedChooser').addClass("panel-success");
             $('#customChooser').removeClass("panel-success");
 
-            if ( proposedChangeType === "" || proposedChangeType !== originalType ) {
-                $('#sharedChangeProposed').show();
-                $('#customNoChange').hide();
-                $('#customChangeProposed').hide();
+            $('#themeChooser').show();
+
+            $('#customNoChange').hide();
+            $('#customChangeToShared').hide();
+
+            if ( proposedThemeId === "") {
+                $('#sharedChangeToShared').hide();
+                $('#sharedChangeToCustom').hide();
+
+            } else if ( proposedThemeId != originalThemeId ) {
 
                 if ( originalType === "shared" ) {
                     $('#sharedChangeToShared').show();
                     $('#sharedChangeToCustom').hide();
                 }  else {
-                    $('#sharedChangeToCustom').show();
+                    $('#customChangeToShared').show();
                     $('#sharedChangeToShared').hide();
+                    $('#sharedChangeToCustom').hide();
                 }
             }
 
@@ -230,15 +247,16 @@
             $('#customChooser').addClass("panel-success");
             $('#sharedChooser').removeClass("panel-success");
 
-            $('#sharedChangeProposed').hide();
-            $('#sharedNoChange').hide();
+            $('#themeChooser').hide();
 
-            if ( proposedChangeType === "" || proposedChangeType === originalType ) {
-                $('#customNoChange').show();
-                $('#customChangeProposed').hide();
-            } else {
-                $('#customChangeProposed').show();
+            $('#sharedNoChange').hide();
+            $('#customChangeToShared').hide();
+
+            if ( proposedChangeType !== "" || proposedChangeType !== originalType ) {
+                $('#sharedChangeToCustom').show();
                 $('#customNoChange').hide();
+            } else {
+                $('#customNoChange').show();
             }
 
         }

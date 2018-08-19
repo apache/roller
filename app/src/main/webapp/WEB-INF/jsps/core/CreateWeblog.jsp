@@ -16,9 +16,6 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
-<script src="<s:url value='/webjars/angular/1.2.29/angular.min.js' />"></script>
-
 
 <p class="subtitle"><s:text name="createWebsite.prompt"/></p>
 
@@ -89,15 +86,15 @@
     document.forms[0].elements[0].focus();
 
     angular.module('themeSelectModule', [])
-            .controller('themeController', ['$scope', function ($scope) {
-                $.ajax({
-                    url: "<s:property value='siteURL' />/roller-ui/authoring/themedata", async: false,
-                    success: function (data) {
-                        $scope.themes = data;
-                    }
-                });
-                $scope.selectedTheme = $scope.themes[0];
-            }]);
+        .controller('themeController', ['$scope', function ($scope) {
+            $.ajax({
+                url: "<s:property value='siteURL' />/roller-ui/authoring/themedata", async: false,
+                success: function (data) {
+                    $scope.themes = data;
+                }
+            });
+            $scope.selectedTheme = $scope.themes[0];
+        }]);
 
 
     var saveButton;

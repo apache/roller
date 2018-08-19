@@ -292,3 +292,13 @@ div.image-controls select,
 div.image-controls input {
     display: inline;
 }
+
+#sharedChooser, #customChooser {
+    height: 7em;
+}
+
+.equal{
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+}

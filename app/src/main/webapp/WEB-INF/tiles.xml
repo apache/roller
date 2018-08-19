@@ -23,7 +23,7 @@
     
     <definition name=".tiles-mainmenupage" template="/WEB-INF/jsps/tiles/tiles-mainmenupage.jsp">
         <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
-        <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="head"        value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
@@ -186,7 +186,7 @@
     </definition>
     
     <definition name=".GlobalCommentManagement" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Comments.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CommentsSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
@@ -222,76 +222,76 @@
 
     <!-- weblog editor pages (and associates) -->
     <definition name=".MediaFileAdd" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAdd.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
     <definition name=".MediaFileEdit" extends=".tiles-popuppage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
     </definition>
 
     <definition name=".MediaFileAddExternalInclude" extends=".tiles-popuppage-only-content" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddExternalInclude.jsp" />
     </definition>
 
     <definition name=".MediaFileImageChooser" extends=".tiles-popuppage-only-content" >
-        <put-attribute name="head"     value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head"     value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content"  value="/WEB-INF/jsps/editor/MediaFileImageChooser.jsp" />
         <put-attribute name="messages" value="/WEB-INF/jsps/tiles/messages.jsp" />
     </definition>
 
     <definition name=".MediaFileImageDimension" extends=".tiles-popuppage-only-content" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileImageDimension.jsp" />
     </definition>
     
     <definition name=".MediaFileSearchInclude" extends=".tiles-popuppage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileSearch.jsp" />
     </definition>
 
     <definition name=".MediaFileAddInclude" extends=".tiles-popuppage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAdd.jsp" />
     </definition>
 
     <definition name=".MediaFileAddSuccessInclude" extends=".tiles-popuppage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccessInclude.jsp" />
     </definition>
     
     <definition name=".MediaFileEditSuccess" extends=".tiles-popuppage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEditSuccess.jsp" />
     </definition>
 
     <definition name=".MediaFileView" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileView.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
     <definition name=".MediaFileAddSuccess" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccess.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
     <definition name=".TabularView" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/TabularView.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
     <definition name=".EntryEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryEdit.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
@@ -303,14 +303,14 @@
     </definition>
 
     <definition name=".Entries" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Entries.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntriesSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
     <definition name=".Comments" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Comments.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CommentsSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
@@ -348,7 +348,7 @@
     </definition>
     
     <definition name=".ThemeEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/ThemeEdit.jsp" />
     </definition>
     
