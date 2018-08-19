@@ -62,14 +62,10 @@
     <div class="form-group" ng-app="themeSelectModule" ng-controller="themeController">
         <label class="col-sm-3 control-label" for="createWeblog_bean_timeZone">Timezone</label>
         <div class="col-sm-9 controls">
-            <select id="themeSelector" name="bean.theme" size="1"
-                    ng-model="selectedTheme"
-                    ng-options="theme as theme.name for theme in themes track by theme.id">
-            </select>
-            <br>
-            <br>
-            <p>{{ selectedTheme.description }}</p>
-            <img src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
+            <s:select name="bean.theme" size="1" list="themes" listKey="id" listValue="name"
+                      onchange="previewImage(this[selectedIndex].value)"/>
+            <p id="themedescription"></p>
+            <img id="themeThumbnail" src='' />
         </div>
     </div>
 
@@ -85,23 +81,18 @@
 
     document.forms[0].elements[0].focus();
 
-    angular.module('themeSelectModule', [])
-        .controller('themeController', ['$scope', function ($scope) {
-            $.ajax({
-                url: "<s:property value='siteURL' />/roller-ui/authoring/themedata", async: false,
-                success: function (data) {
-                    $scope.themes = data;
-                }
-            });
-            $scope.selectedTheme = $scope.themes[0];
-        }]);
-
-
     var saveButton;
 
     $( document ).ready(function() {
+
         saveButton = $("#createWeblog_0");
-        formChanged();
+
+        <s:if test="bean.theme == null">
+        previewImage('<s:property value="themes[0].id"/>');
+        </s:if>
+        <s:else>
+        previewImage('<s:property value="bean.theme"/>');
+        </s:else>
     });
 
     function formChanged() {
@@ -127,7 +118,6 @@
             saveButton.attr("disabled", true);
             saveButton.addClass("btn-danger");
         }
-
     }
 
     function validateEmail(email) {
@@ -144,10 +134,17 @@
         } else {
             previewSpan.replaceChild(n2, n1);
         }
-        formChanged();
     }
 
-    formChanged();
+    function previewImage(themeId) {
+        $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themedata",
+            data: {theme:themeId}, success: function(data) {
+                $('#themedescription').html(data.description);
+                $('#themeThumbnail').attr('src','<s:property value="siteURL" />' + data.previewPath);
+            }
+        });
+        formChanged();
+    }
 
 </script>
 
