@@ -317,19 +317,15 @@ public class ThemeManagerImpl implements ThemeManager {
 					justName = resourcePath;
 
 				} else {
-					justPath = resourcePath.substring(0,
-							resourcePath.lastIndexOf('/'));
+					justPath = resourcePath.substring(0, resourcePath.lastIndexOf('/'));
 					if (!justPath.startsWith("/")) {
                         justPath = "/" + justPath;
                     }
-					justName = resourcePath.substring(resourcePath
-							.lastIndexOf('/') + 1);
-					mdir = fileMgr.getMediaFileDirectoryByName(weblog,
-							justPath);
+					justName = resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
+					mdir = fileMgr.getMediaFileDirectoryByName(weblog, justPath);
 					if (mdir == null) {
 						log.debug("    Creating directory: " + justPath);
-						mdir = fileMgr.createMediaFileDirectory(weblog,
-								justPath);
+						mdir = fileMgr.createMediaFileDirectory(weblog, justPath);
 						roller.flush();
 					}
 				}
@@ -354,7 +350,7 @@ public class ThemeManagerImpl implements ThemeManager {
 				log.debug("    Saving file: " + justName);
 				log.debug("    Saving in directory = " + mf.getDirectory());
 				RollerMessages errors = new RollerMessages();
-				fileMgr.createMediaFile(weblog, mf, errors);
+				fileMgr.createThemeMediaFile(weblog, mf, errors);
 				try {
 					resource.getInputStream().close();
 				} catch (IOException ex) {

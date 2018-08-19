@@ -53,6 +53,13 @@ public interface MediaFileManager {
             RollerMessages errors) throws WebloggerException;
 
     /**
+     * Create theme media file.
+     * Same as createMediaFile() except no checks are done for uploads disabled, etc.
+     */
+    void createThemeMediaFile(Weblog weblog, MediaFile mediaFile,
+            RollerMessages errors) throws WebloggerException;
+
+    /**
      * Update metadata for a media file
      */
     void updateMediaFile(Weblog weblog, MediaFile mediaFile)

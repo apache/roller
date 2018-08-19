@@ -293,12 +293,19 @@ div.image-controls input {
     display: inline;
 }
 
-#sharedChooser, #customChooser {
-    height: 7em;
-}
 
-.equal{
-    display: -ms-flexbox;
-    display: -webkit-flex;
+
+/* theme edit */
+
+.row-display-flex {
     display: flex;
 }
+.row-display-flex > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+#sharedChooser, #customChooser {
+    height: 10em;
+}
+
