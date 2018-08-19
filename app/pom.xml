@@ -33,7 +33,6 @@ limitations under the License.
     <packaging>war</packaging>
 
     <properties>
-        <angular.version>1.2.29</angular.version>
         <ant.version>1.10.1</ant.version>
         <commons-validator.version>1.6</commons-validator.version>
         <commons-beanutils.version>1.9.3</commons-beanutils.version>
@@ -182,6 +181,24 @@ limitations under the License.
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-tiles-plugin</artifactId>
             <version>${struts.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>3.3.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery-ui</artifactId>
+            <version>1.12.1</version>
         </dependency>
 
         <dependency>
@@ -399,18 +416,11 @@ limitations under the License.
         </dependency>
 
         <dependency>
-            <groupId>org.webjars.npm</groupId>
-            <artifactId>angular</artifactId>
-            <version>${angular.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth-provider</artifactId>
             <scope>compile</scope>
             <version>${oauth-core.version}</version>
         </dependency>
-
 
         <!-- Test deps -->
 

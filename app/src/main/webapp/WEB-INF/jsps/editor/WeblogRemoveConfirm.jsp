@@ -34,6 +34,7 @@
 
 <div class="row">
     <div class="col-md-2">
+
         <s:form action="weblogRemove!remove" theme="bootstrap" cssClass="form-horizontal">
             <s:hidden name="salt" />
             <s:hidden name="weblog" value="%{actionWeblog.handle}" />
@@ -42,6 +43,7 @@
 
     </div>
     <div class="col-md-2">
+
         <s:form action="weblogConfig" method="post" theme="bootstrap" cssClass="form-horizontal">
             <s:hidden name="salt" />
             <s:hidden name="weblog" value="%{actionWeblog.handle}" />

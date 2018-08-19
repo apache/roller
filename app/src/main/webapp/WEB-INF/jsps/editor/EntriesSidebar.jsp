@@ -17,10 +17,6 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>'/>
-<script src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
-
-
 <h3><s:text name="weblogEntryQuery.sidebarTitle"/></h3>
 <hr size="1" noshade="noshade"/>
 
