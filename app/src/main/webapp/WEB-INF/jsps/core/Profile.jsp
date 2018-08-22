@@ -51,7 +51,7 @@
 
     <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OPENID'">
         <s:password label="%{getText('userSettings.password')}"
-                    tooltip="%{getText('userRegister.tip.password')}"
+                    tooltip="%{getText('userSettings.tip.password')}"
                     onchange="formChanged()" onkeyup="formChanged()"
                     name="bean.passwordText" size="20" maxlength="20"/>
 
