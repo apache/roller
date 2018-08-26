@@ -30,7 +30,10 @@
 
 <tiles:insertAttribute name="bannerStatus"/>
 
+<tilesx:useAttribute name="sidebar">
+
 <div class="row">
+
     <div class="col-md-8 roller-column-left">
         <div class="panel panel-default">
             <div class="panel-body">
@@ -40,6 +43,7 @@
             </div>
         </div>
     </div>
+
     <div class="col-md-4 roller-column-right">
         <div class="panel panel-default">
             <div class="panel-body">
@@ -48,12 +52,17 @@
                 </s:if>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <tiles:insertAttribute name="sidebar"/>
+
+        <c:if test="${sidebar == '/WEB-INF/jsps/tiles/empty.jsp'}">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <tiles:insertAttribute name="sidebar"/>
+                </div>
             </div>
-        </div>
+        </c:if>
+
     </div>
+
 </div>
 
 <footer class="footer">

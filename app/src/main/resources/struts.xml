@@ -282,6 +282,7 @@
         <global-allowed-methods>
             add,
             cancel,
+            copyStylesheet,
             createNewDirectory,
             execute,
             delete,

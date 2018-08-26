@@ -32,8 +32,8 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
-public class CustomTemplateRenditionTest extends TestCase{
-    public static Log log = LogFactory.getLog(WeblogPageTest.class);
+public class CustomTemplateRenditionTest extends TestCase {
+    public static Log log = LogFactory.getLog(CustomTemplateRenditionTest.class);
 
        User testUser = null;
        Weblog testWeblog = null;
