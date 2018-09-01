@@ -35,7 +35,7 @@ public class RomeFeedFetcherTest extends TestCase {
     
     public static Log log = LogFactory.getLog(RomeFeedFetcherTest.class);
     
-    String feed_url = "http://rollerweblogger.org/roller/feed/entries/atom";
+    String feed_url = "https://rollerweblogger.org/roller/feed/entries/atom";
     
     
     protected void setUp() throws Exception {

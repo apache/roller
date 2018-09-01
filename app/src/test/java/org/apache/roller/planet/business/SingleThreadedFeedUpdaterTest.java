@@ -35,7 +35,7 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
     
     private Subscription testSub = null;
     
-    private String feed_url = "http://rollerweblogger.org/roller/feed/entries/atom";
+    private String feed_url = "https://rollerweblogger.org/roller/feed/entries/atom";
     
     
     protected void setUp() throws Exception {
