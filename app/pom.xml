@@ -94,12 +94,6 @@ limitations under the License.
             <artifactId>mail</artifactId>
             <version>${java-mail.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Eclipselink JPA is the default JPA implementation used by
