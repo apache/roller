@@ -63,6 +63,9 @@ public class InstallerController {
     private static Logger log = LoggerFactory.getLogger(InstallerController.class);
 
     @Autowired
+    ServletContext context;
+
+    @Autowired
     private DataSource tbDataSource;
 
     public void setTbDataSource(DataSource tbDataSource) {
@@ -180,8 +183,7 @@ public class InstallerController {
 
         try {
             // trigger bootstrapping process
-            ServletContext sc = WebloggerContext.getServletContext();
-            ApplicationContext ac = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
+            ApplicationContext ac = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
 
             WebloggerContext.bootstrap(ac);
             log.info("EXITING - Bootstrap successful, forwarding to weblogger");

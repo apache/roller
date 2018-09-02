@@ -22,25 +22,22 @@ package org.tightblog.business;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.tightblog.pojos.WebloggerProperties;
 
 import javax.annotation.PreDestroy;
-import javax.naming.NamingException;
 import javax.persistence.Cache;
 import javax.persistence.CacheRetrieveMode;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.FlushModeType;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Responsible for the lowest-level interaction with the JPA API.
@@ -58,37 +55,10 @@ public class JPAPersistenceStrategy {
     /**
      * The EntityManagerFactory for this TightBlog instance.
      */
-    private EntityManagerFactory emf;
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
 
-    /**
-     * Construct by finding JPA EntityManagerFactory.
-     */
-    protected JPAPersistenceStrategy() throws NamingException {
-
-        // Add all JPA, OpenJPA, HibernateJPA, etc. properties found
-        Properties emfProps = new Properties();
-        Enumeration keys = WebloggerStaticConfig.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String) keys.nextElement();
-            if (key.startsWith("javax.persistence.") ||
-                    key.startsWith("eclipselink.") ||
-                    key.startsWith("hibernate.")) {
-                String value = WebloggerStaticConfig.getProperty(key);
-                log.info("{}: {}", key, value);
-                emfProps.setProperty(key, value);
-            }
-        }
-
-        emfProps.setProperty("javax.persistence.jdbc.driver",
-                WebloggerStaticConfig.getProperty("database.jdbc.driverClass"));
-        emfProps.setProperty("javax.persistence.jdbc.url",
-                WebloggerStaticConfig.getProperty("database.jdbc.connectionURL"));
-        emfProps.setProperty("javax.persistence.jdbc.user",
-                WebloggerStaticConfig.getProperty("database.jdbc.username"));
-        emfProps.setProperty("javax.persistence.jdbc.password",
-                WebloggerStaticConfig.getProperty("database.jdbc.password"));
-
-        this.emf = Persistence.createEntityManagerFactory("TightBlogPU", emfProps);
+    protected JPAPersistenceStrategy() {
     }
 
     /**
@@ -151,7 +121,7 @@ public class JPAPersistenceStrategy {
      * @param id    the id of the object to evict from cache
      */
     public void evict(Class clazz, String id) {
-        Cache cache = emf.getCache();
+        Cache cache = entityManagerFactory.getCache();
         cache.evict(clazz, id);
     }
 
@@ -254,7 +224,7 @@ public class JPAPersistenceStrategy {
     private EntityManager getThreadLocalEntityManager() {
         EntityManager em = threadLocalEntityManager.get();
         if (em == null) {
-            em = emf.createEntityManager();
+            em = entityManagerFactory.createEntityManager();
             threadLocalEntityManager.set(em);
         }
         return em;
@@ -330,8 +300,8 @@ public class JPAPersistenceStrategy {
     public void shutdown() {
         log.info("DB shutdown");
         release();
-        if (emf != null) {
-            emf.close();
+        if (entityManagerFactory != null) {
+            entityManagerFactory.close();
         }
     }
 

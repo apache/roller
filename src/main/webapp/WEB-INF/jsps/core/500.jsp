@@ -1,6 +1,6 @@
 <%--
   Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  The ASF licenses this file to You
+   contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -15,24 +15,17 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<!doctype html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title><fmt:message key="error.title.403" /></title>
-    </head>
-    <body>
-        
-        <h2 class="error"><fmt:message key="error.title.403" /></h2>
-        
+    <div style="padding: 15px 25px 25px 25px">
+        <h2 class="error"><fmt:message key="errorPage.title" /></h2>
+
         <c:set var="status_code" value="${requestScope['javax.servlet.error.status_code']}" />
         <c:set var="message"     value="${requestScope['javax.servlet.error.message']}" />
         <c:set var="type"        value="${requestScope['javax.servlet.error.type']}" />
-        
+        <c:set var="exception"   value="${requestScope['javax.servlet.error.exception']}" />
+
         <table width="80%" border="1px" style="border-collapse: collapse;">
             <tr>
                 <td width="20%">Status Code</td>
@@ -48,11 +41,7 @@
             </tr>
             <tr>
                 <td width="20%">Exception</td>
-                <td><fmt:message key="error.text.403" /></td>
+                <td><fmt:message key="errorPage.message" /></td>
             </tr>
         </table>
-        
-        <br />
-        <br />
-    </body>
-</html>
+    </div>

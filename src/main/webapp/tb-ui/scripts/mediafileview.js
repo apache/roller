@@ -81,6 +81,8 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
           if (directoryId) {
             self.directoryToView = directoryId;
             self.directoryToMoveTo = directoryId;
+          } else if (self.directoryToView) {
+            self.directoryToMoveTo = self.directoryToView;
           } else {
             self.directoryToView = self.mediaDirectories[0].id;
             self.directoryToMoveTo = self.mediaDirectories[0].id;

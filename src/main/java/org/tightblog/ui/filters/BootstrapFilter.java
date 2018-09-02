@@ -20,6 +20,7 @@
  */
 package org.tightblog.ui.filters;
 
+import org.springframework.stereotype.Component;
 import org.tightblog.business.WebloggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ import java.io.IOException;
 /**
  * Redirects clients to install page when app is not bootstrapped, otherwise does nothing.
  */
+@Component
 public class BootstrapFilter implements Filter {
 
     private static Logger log = LoggerFactory.getLogger(BootstrapFilter.class);

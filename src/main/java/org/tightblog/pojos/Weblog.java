@@ -26,7 +26,7 @@ import org.tightblog.pojos.WebloggerProperties.CommentPolicy;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.rendering.comment.BlacklistCommentValidator;
 import org.tightblog.util.Utilities;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;

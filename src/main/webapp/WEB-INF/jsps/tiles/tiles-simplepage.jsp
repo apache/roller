@@ -31,7 +31,7 @@
         <div id="banner">
             <tiles:insertAttribute name="bannerStatus" />
         </div>
-        
+
         <div id="content">
             <div id="nosidebar_maincontent_wrap">
                 <div id="maincontent">
@@ -40,7 +40,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="footer">
             <tiles:insertAttribute name="footer" />
         </div>

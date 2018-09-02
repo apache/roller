@@ -21,7 +21,7 @@
 package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;

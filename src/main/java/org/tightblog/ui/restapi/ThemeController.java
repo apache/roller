@@ -64,7 +64,7 @@ public class ThemeController {
     @Autowired
     private MessageSource messages;
 
-    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/switchtheme/{newThemeId}")
+    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/switchtheme/{newThemeId}", produces = "text/plain")
     public ResponseEntity switchTheme(@PathVariable String weblogId, @PathVariable String newThemeId, Principal p,
                                       Locale locale) {
 

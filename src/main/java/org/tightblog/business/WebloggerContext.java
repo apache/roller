@@ -27,9 +27,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-
 /**
  * Subclass of Spring's ContextLoaderListener (http://stackoverflow.com/a/11817368/1207540)
  * used to initialize and configure the Spring web application context.  Also maintains
@@ -43,14 +40,6 @@ public class WebloggerContext extends ContextLoaderListener {
     private static WeblogEntryManager weblogEntryManager;
 
     private static URLStrategy urlStrategy;
-
-    private static ServletContext servletContext;
-
-    @Override
-    public void contextInitialized(ServletContextEvent sce) {
-        WebloggerContext.servletContext = sce.getServletContext();
-        super.contextInitialized(sce);
-    }
 
     /**
      * True if bootstrap process has been completed, false otherwise.
@@ -73,10 +62,6 @@ public class WebloggerContext extends ContextLoaderListener {
         }
 
         return urlStrategy;
-    }
-
-    public static ServletContext getServletContext() {
-        return servletContext;
     }
 
     /**

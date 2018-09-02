@@ -95,7 +95,7 @@ public class FileContentManagerTestIT extends WebloggerTest {
         assertNull("Non-existent file retrieved", test);
 
         // store a file
-        InputStream is = getClass().getResourceAsStream("/log4j2-test.xml");
+        InputStream is = getClass().getResourceAsStream("/log4j2-spring.xml");
         fileContentManager.saveFileContent(testWeblog, "bookmarks-file-id", is);
 
         // make sure file was stored successfully

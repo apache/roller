@@ -23,6 +23,7 @@ package org.tightblog.ui.restapi;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -220,7 +221,8 @@ public class TemplateController {
         }
     }
 
-    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates")
+    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates", consumes = { "application/json" },
+            produces = { "text/plain", "application/json" })
     public ResponseEntity postTemplate(@PathVariable String weblogId, @Valid @RequestBody WeblogTemplate templateData,
                                       Principal p, Locale locale) throws ServletException {
         try {
@@ -271,7 +273,7 @@ public class TemplateController {
                 weblogManager.saveTemplate(templateToSave);
                 persistenceStrategy.flush();
 
-                return ResponseEntity.ok(templateToSave.getId());
+                return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(templateToSave.getId());
             } else {
                 return ResponseEntity.status(403).body(messages.getMessage("error.title.403", null,
                         locale));

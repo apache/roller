@@ -114,7 +114,7 @@ public class AdminController {
         return cacheMap;
     }
 
-    @PostMapping(value = "/cache/{cacheName}/clear")
+    @PostMapping(value = "/cache/{cacheName}/clear", produces = "text/plain")
     public ResponseEntity<String> emptyOneCache(@PathVariable String cacheName)
             throws ServletException {
         Optional<LazyExpiringCache> maybeCache = cacheSet.stream()
@@ -124,7 +124,7 @@ public class AdminController {
                 new Object[] {cacheName}, null));
     }
 
-    @PostMapping(value = "/resethitcount")
+    @PostMapping(value = "/resethitcount", produces = "text/plain")
     public ResponseEntity<String> resetHitCount() {
         try {
             weblogManager.resetAllHitCounts();
@@ -153,7 +153,7 @@ public class AdminController {
         }
     }
 
-    @PostMapping(value = "/weblog/{handle}/rebuildindex")
+    @PostMapping(value = "/weblog/{handle}/rebuildindex", produces = "text/plain")
     public ResponseEntity<String> rebuildIndex(@PathVariable String handle) {
         try {
             Weblog weblog = weblogManager.getWeblogByHandle(handle);
@@ -176,7 +176,7 @@ public class AdminController {
         return persistenceStrategy.load(WebloggerProperties.class, "1");
     }
 
-    @PostMapping(value = "/webloggerproperties")
+    @PostMapping(value = "/webloggerproperties", produces = "text/plain")
     public ResponseEntity updateProperties(@Valid @RequestBody WebloggerProperties properties) {
 
         // maintain last weblog change

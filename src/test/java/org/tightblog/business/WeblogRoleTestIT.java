@@ -21,6 +21,7 @@
 package org.tightblog.business;
 
 import java.util.List;
+
 import org.tightblog.WebloggerTest;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;

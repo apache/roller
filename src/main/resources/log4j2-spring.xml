@@ -5,15 +5,10 @@
         <Console name="Console">
             <PatternLayout pattern="%d [%thread] %level{length=2} %logger{1.1.} - %msg%n"/>
         </Console>
-        <File name="TightBlogFileAppender" fileName="${env:CATALINA_BASE}/logs/tightblog.log">
-            <PatternLayout>
-                <Pattern>%d [%thread] %level{length=2} %logger{1.1.} - %msg%n</Pattern>
-            </PatternLayout>
-        </File>
     </Appenders>
     <Loggers>
-        <Root level="error">
-            <AppenderRef ref="TightBlogFileAppender"/>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
         </Root>
         <Logger name="org.tightblog" level="info"/>
         <Logger name="org.apache.tiles" level="error"/>

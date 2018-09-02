@@ -338,7 +338,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/memberupdate")
+    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/memberupdate", produces = "text/plain")
     public ResponseEntity updateWeblogMembership(@PathVariable String weblogId, Principal p, Locale locale,
                                                  @RequestBody List<UserWeblogRole> roles)
             throws ServletException {
@@ -404,12 +404,14 @@ public class UserController {
                 try {
                     userManager.saveUser(user);
                     // reset password if set
-                    if (!StringUtils.isEmpty(newData.credentials.getPasswordText())) {
-                        userManager.updateCredentials(user.getId(), newData.credentials.getPasswordText());
-                    }
-                    // reset MFA secret if requested
-                    if (newData.credentials.isEraseMfaSecret()) {
-                        userManager.eraseMFASecret(user.getId());
+                    if (newData.credentials != null) {
+                        if (!StringUtils.isEmpty(newData.credentials.getPasswordText())) {
+                            userManager.updateCredentials(user.getId(), newData.credentials.getPasswordText());
+                        }
+                        // reset MFA secret if requested
+                        if (newData.credentials.isEraseMfaSecret()) {
+                            userManager.eraseMFASecret(user.getId());
+                        }
                     }
                     response.setStatus(HttpServletResponse.SC_OK);
                 } catch (RollbackException e) {
@@ -476,28 +478,30 @@ public class UserController {
             }
         }
 
-        String maybePassword = data.credentials.getPasswordText();
-        if (!StringUtils.isEmpty(maybePassword)) {
-            if (!maybePassword.equals(data.credentials.getPasswordConfirm())) {
-                be.addError(new ObjectError("User object",
-                        messages.getMessage("error.add.user.passwordConfirmFail", null, locale)));
-            } else {
-                if (!pattern.matcher(maybePassword).matches()) {
+        if (data.credentials != null) {
+            String maybePassword = data.credentials.getPasswordText();
+            if (!StringUtils.isEmpty(maybePassword)) {
+                if (!maybePassword.equals(data.credentials.getPasswordConfirm())) {
                     be.addError(new ObjectError("User object",
-                            messages.getMessage("error.add.user.passwordComplexityFail", null, locale)));
+                            messages.getMessage("error.add.user.passwordConfirmFail", null, locale)));
+                } else {
+                    if (!pattern.matcher(maybePassword).matches()) {
+                        be.addError(new ObjectError("User object",
+                                messages.getMessage("error.add.user.passwordComplexityFail", null, locale)));
+                    }
+                }
+            } else {
+                if (!StringUtils.isEmpty(data.credentials.getPasswordConfirm())) {
+                    // confirm provided but password field itself not filled out
+                    be.addError(new ObjectError("User object",
+                            messages.getMessage("error.add.user.passwordConfirmFail", null, locale)));
                 }
             }
-        } else {
-            if (!StringUtils.isEmpty(data.credentials.getPasswordConfirm())) {
-                // confirm provided but password field itself not filled out
-                be.addError(new ObjectError("User object",
-                        messages.getMessage("error.add.user.passwordConfirmFail", null, locale)));
-            }
-        }
 
-        if (isAdd && StringUtils.isEmpty(data.credentials.getPasswordText())) {
-            be.addError(new ObjectError("User object",
-                    messages.getMessage("error.add.user.missingPassword", null, locale)));
+            if (isAdd && StringUtils.isEmpty(data.credentials.getPasswordText())) {
+                be.addError(new ObjectError("User object",
+                        messages.getMessage("error.add.user.missingPassword", null, locale)));
+            }
         }
 
         return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
@@ -528,7 +532,7 @@ public class UserController {
         return getUsersWeblogs(user.getId(), response);
     }
 
-    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/user/{userId}/role/{role}/invite")
+    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/user/{userId}/role/{role}/invite", produces = "text/plain")
     public ResponseEntity inviteUser(@PathVariable String weblogId, @PathVariable String userId,
                                      @PathVariable WeblogRole role, Principal p, Locale locale) {
 

@@ -92,7 +92,9 @@ public class WeblogRequest {
             wreq.authenticatedUser = principal.getName();
         }
 
-        String path = sreq.getPathInfo();
+        // servlet path: /tb-ui/rendering/(page|feed|mediafile|comment|search)/aaa[/bbb]
+        String path = sreq.getServletPath();
+
         log.debug("parsing path {}", path);
 
         // first extract the weblog handle
@@ -101,13 +103,13 @@ public class WeblogRequest {
             // strip off the leading slash
             path = path.substring(1);
 
-            String[] pathElements = path.split("/", 2);
+            String[] pathElements = path.split("/", 5);
 
-            wreq.weblogHandle = pathElements[0];
+            wreq.weblogHandle = pathElements[3];
 
             // if there is more left of the path info then hold onto it
-            if (pathElements.length == 2) {
-                wreq.extraPathInfo = pathElements[1];
+            if (pathElements.length == 5) {
+                wreq.extraPathInfo = pathElements[4];
             }
 
             // Page number for a specific window of results (e.g., Atom feed or entries under a category)

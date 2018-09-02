@@ -198,7 +198,7 @@ public class MediaFileController {
         }
     }
 
-    @PutMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/mediadirectories")
+    @PutMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/mediadirectories", produces = "text/plain")
     public ResponseEntity addMediaDirectory(@PathVariable String weblogId, @RequestBody TextNode directoryName,
                                     Principal p, Locale locale, HttpServletResponse response)
             throws ServletException {

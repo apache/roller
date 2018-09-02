@@ -1,5 +1,5 @@
 Welcome to TightBlog! This project started off in May 2015 as a fork of the Apache Roller project, of which I contributed for about 2 1/2 years 
-before deciding to go my own way due to differing ideas of what would make the best blogging product.  As of 3 August 2018, <a href="https://github.com/gmazza/tightblog/releases">Release 3.1.1</a> is available.
+before deciding to go my own way due to differing ideas of what would make the best blogging product.  As of 2 September 2018, <a href="https://github.com/gmazza/tightblog/releases">Release 3.2</a> is available.
 
 Screen shots for the TightBlog UI are [here](https://github.com/gmazza/tightblog/wiki/Screenshots), the twelve-table database model is
 [here](https://github.com/gmazza/tightblog/blob/master/app/src/main/resources/dbscripts/createdb.vm), see also [my blog](https://glenmazza.net/blog/) for an example
@@ -9,7 +9,7 @@ TightBlog strives to be the cleanest and simplest implementation of a Java based
 incorporation, as an Apache-licensed open source project, into larger projects.  Specifically, its goal is to satisfy all the needs of 80% of bloggers while
 avoiding seldom-requested functionality that creates maintenance burdens, distracting one from core functionality and hence doing more harm than good.
 
-This more realistic goal--along with adopting the Spring framework, REST, AngularJS and other code modernizations--has allowed TightBlog to slim down considerably from its parent, as can be seen in the following chart:
+This more realistic goal--along with adopting Spring Boot, REST, AngularJS and other code modernizations--has allowed TightBlog to slim down considerably from its parent, as can be seen in the following chart:
 
 |Product|Released|Database Tables|Java Source Files|JSP Files|Lines Of Code|
 |-----|-----|-----|-----|-----|-----|

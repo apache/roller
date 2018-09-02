@@ -50,6 +50,12 @@
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>
 
+    <definition name=".tiles-errorpage" template="/WEB-INF/jsps/tiles/tiles-errorpage.jsp">
+        <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="content"      value="${content}" />
+        <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
+    </definition>
+
     <definition name=".tiles-popuppage" template="/WEB-INF/jsps/tiles/tiles-popuppage.jsp">
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content"      value="${content}" />
@@ -57,8 +63,20 @@
 
     <!-- error pages -->
     <definition name=".denied" extends=".tiles-no-nav-page" >
-        <put-attribute name="content" value="/tb-ui/errors/denied.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/core/denied.jsp" />
         <put-attribute name="titleRight" value="denied.title"/>
+    </definition>
+
+    <definition name=".403Page" extends=".tiles-errorpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/403.jsp" />
+    </definition>
+
+    <definition name=".404Page" extends=".tiles-errorpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/404.jsp" />
+    </definition>
+
+    <definition name=".500Page" extends=".tiles-errorpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/500.jsp" />
     </definition>
 
     <!-- core pages (and associates) -->

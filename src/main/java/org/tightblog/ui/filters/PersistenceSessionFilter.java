@@ -39,7 +39,7 @@ import java.io.IOException;
  * Sole responsibility is to ensure that each request's database
  * persistence session is released at end of the request.
  */
-@Component("persistenceSessionFilter")
+@Component
 public class PersistenceSessionFilter implements Filter {
 
     private static Logger log = LoggerFactory.getLogger(PersistenceSessionFilter.class);

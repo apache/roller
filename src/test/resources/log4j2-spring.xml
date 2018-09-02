@@ -2,7 +2,7 @@
 <Configuration status="warn">
     <Appenders>
         <!-- Pattern options: http://logging.apache.org/log4j/2.x/manual/layouts.html#PatternLayout -->
-        <File name="TightBlogTestFileAppender" fileName="target/tightblog-test.log">
+        <File name="TightBlogTestFileAppender" fileName="build/tmp/tightblog-test.log">
             <PatternLayout>
                 <Pattern>%d [%thread] %level{length=2} %logger{1.1.} - %msg%n</Pattern>
             </PatternLayout>
@@ -13,7 +13,6 @@
             <AppenderRef ref="TightBlogTestFileAppender"/>
         </Root>
         <Logger name="org.tightblog" level="debug"/>
-        <!--Logger name="org.tightblog.business" level="debug"/-->
         <Logger name="org.apache.tiles" level="error"/>
         <Logger name="org.springframework" level="warn"/>
         <Logger name="org.hibernate" level="error"/>

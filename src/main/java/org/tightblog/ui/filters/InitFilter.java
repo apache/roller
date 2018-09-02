@@ -20,6 +20,7 @@
  */
 package org.tightblog.ui.filters;
 
+import org.springframework.stereotype.Component;
 import org.tightblog.business.WebloggerStaticConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ import java.io.IOException;
  * extract a few pieces of information about the environment we are running in
  * when the first request is sent.
  */
+@Component("initFilter")
 public class InitFilter implements Filter {
 
     private static Logger log = LoggerFactory.getLogger(InitFilter.class);

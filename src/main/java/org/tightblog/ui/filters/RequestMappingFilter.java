@@ -20,6 +20,7 @@
  */
 package org.tightblog.ui.filters;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tightblog.rendering.processors.CommentProcessor;
 import org.tightblog.rendering.processors.FeedProcessor;
@@ -29,7 +30,6 @@ import org.tightblog.rendering.processors.SearchProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -47,18 +47,20 @@ import java.util.regex.Pattern;
  * Handles weblog specific URLs for the form /<weblog handle>/*
  * Re-forwards requests to the appropriate processor based on the URL.
  */
-@Component("requestMappingFilter")
+@Component
 public class RequestMappingFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestMappingFilter.class);
 
     private static final Pattern TRAILING_SLASHES = Pattern.compile("/+$");
 
-    @Resource
+    @Value("#{'${invalid.weblog.handles}'.split(',')}")
     private Set<String> invalidWeblogHandles;
 
     void setInvalidWeblogHandles(Set<String> invalidWeblogHandles) {
-        this.invalidWeblogHandles = invalidWeblogHandles;
+        if (invalidWeblogHandles != null) {
+            this.invalidWeblogHandles = invalidWeblogHandles;
+        }
     }
 
     @Override
@@ -102,9 +104,9 @@ public class RequestMappingFilter implements Filter {
            returns false to activate the welcome-file-list in the web.xml (which is used to forward to
            the default front-page blog defined for the installation.)
 
-           In determining whether the root URL is being accessed, both cases where the application is the
+           In determining whether the root URL is being accessed, cases where the application is the
            default one for the servlet container (e.g., https://www.example.com/) and where it is not
-           (e.g., https://www.example.com/tightblog) are covered.
+           (e.g., https://www.example.com/tightblog) are both covered.
         */
         if (servlet != null) {
             if (servlet.trim().length() > 1) {
@@ -114,7 +116,7 @@ public class RequestMappingFilter implements Filter {
                 }
 
                 if (servlet.length() == 0) {
-                    // Application not default one for servlet container, continue to default blog
+                    // Application default one for servlet container, continue to default blog
                     return false;
                 } else {
                     // strip off the leading slash
@@ -134,7 +136,8 @@ public class RequestMappingFilter implements Filter {
         }
 
         // Skip if weblog handle is actually referring to a static folder under webapp (i.e., not a weblog request)
-        if (invalidWeblogHandles.contains(weblogHandle)) {
+        final String test = weblogHandle;
+        if (test != null && invalidWeblogHandles != null && invalidWeblogHandles.stream().anyMatch(test::equalsIgnoreCase)) {
             LOG.debug("SKIPPED {}", weblogHandle);
             return false;
         }
