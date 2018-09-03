@@ -28,19 +28,19 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
 <%-- Main blogroll/folder management interface, a checkbox-table with some buttons  --%>
 
-<p class="subtitle"> <s:text name="bookmarksForm.subtitle" > <s:param value="weblog" /> </s:text> </p>
+<p class="subtitle"><s:text name="bookmarksForm.subtitle"> <s:param value="weblog"/> </s:text></p>
 
 <s:if test="folder.name == 'default'">
-    <p class="pagetip"> <s:text name="bookmarksForm.rootPrompt" /> </p>
+    <p class="pagetip"><s:text name="bookmarksForm.rootPrompt"/></p>
 </s:if>
 
 
 <%-- table of blogroll links with selection checkboxes, wrapped in a form --%>
 
 <s:form action="bookmarks!delete" theme="bootstrap" cssClass="form-horizontal">
-	<s:hidden name="salt" />
-    <s:hidden name="weblog" />
-    <s:hidden name="folderId" />
+    <s:hidden name="salt"/>
+    <s:hidden name="weblog"/>
+    <s:hidden name="folderId"/>
 
     <%-- for default blogroll, show page "tip" and read-only folder name --%>
 
@@ -51,7 +51,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 <s:text name="bookmarksForm.blogrollName"/>
             </label>
             <div class="col-sm-9 controls">
-                <div class="form-control"> <s:text name="%{folder.name}"/> </div>
+                <div class="form-control"><s:text name="%{folder.name}"/></div>
             </div>
         </div>
 
@@ -72,17 +72,17 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 <input style="width:55%; float:left" type="text" name="folder.name"
                        value="<s:text name='%{folder.name}'/>" id="bookmarks_folder_name" class="form-control"
                        onchange="nameChanged()"
-                       onkeyup="nameChanged()" />
+                       onkeyup="nameChanged()"/>
                 <button type="button" id="rename_button"
                         class="btn btn-success" style="float:left; margin-left:1em;"
                         onclick="renameFolder(); return false;"
-                        onsubmit="return false;" >
+                        onsubmit="return false;">
                     <s:text name="generic.rename"/>
                 </button>
                 <button type="button" id="rename_cancel"
                         class="btn btn-default" style="float:left; margin-left:1em;"
                         onclick="cancelRenameFolder(); return false;"
-                        onsubmit="return false;" >
+                        onsubmit="return false;">
                     <s:text name="generic.cancel"/>
                 </button>
             </div>
@@ -93,7 +93,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     <%-- allow user to select the bookmark folder to view --%>
 
     <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name"
-        label="%{getText('bookmarksForm.switchTo')}" onchange="viewChanged()" onmouseup="viewChanged()"/>
+              label="%{getText('bookmarksForm.switchTo')}" onchange="viewChanged()" onmouseup="viewChanged()"/>
 
     <table class="rollertable table table-striped">
 
@@ -101,72 +101,72 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
             <th width="5%">
                 <input name="control" type="checkbox"
                        onclick="toggleFunctionAll(this.checked); selectionChanged()"
-                title="<s:text name="bookmarksForm.selectAllLabel"/>"/>
+                       title="<s:text name="bookmarksForm.selectAllLabel"/>"/>
             </th>
-            <th class="rollertable" width="25%"><s:text name="generic.name" /></th>
-            <th class="rollertable" width="70%"><s:text name="bookmarksForm.url" /></th>
-            <th class="rollertable" width="5%"><s:text name="generic.edit" /></th>
+            <th class="rollertable" width="25%"><s:text name="generic.name"/></th>
+            <th class="rollertable" width="70%"><s:text name="bookmarksForm.url"/></th>
+            <th class="rollertable" width="5%"><s:text name="generic.edit"/></th>
         </tr>
-        
+
         <s:if test="folder.bookmarks.size > 0">
-        
-        <%-- Bookmarks --%>
-        <s:iterator var="bookmark" value="folder.bookmarks" status="rowstatus">
-            <s:if test="#rowstatus.odd == true">
-                <tr class="rollertable_odd">
-            </s:if>
-            <s:else>
-                <tr class="rollertable_even">
-            </s:else>
-                
+
+            <%-- Bookmarks --%>
+            <s:iterator var="bookmark" value="folder.bookmarks" status="rowstatus">
+                <s:if test="#rowstatus.odd == true">
+                    <tr class="rollertable_odd">
+                </s:if>
+                <s:else>
+                    <tr class="rollertable_even">
+                </s:else>
+
                 <td class="rollertable center" style="vertical-align:middle">
                     <input type="checkbox" name="selectedBookmarks" onchange="selectionChanged()"
-                        title="<s:text name="bookmarksForm.selectOneLabel"><s:param value="#bookmark.name"/></s:text>"
-                        value="<s:property value="#bookmark.id"/>" />
+                           title="<s:text name="bookmarksForm.selectOneLabel"><s:param value="#bookmark.name"/></s:text>"
+                           value="<s:property value="#bookmark.id"/>"/>
                 </td>
-                
+
                 <td>
-                    <str:truncateNicely lower="40" upper="50" >
-                        <s:property value="#bookmark.name" />
+                    <str:truncateNicely lower="40" upper="50">
+                        <s:property value="#bookmark.name"/>
                     </str:truncateNicely>
                 </td>
-                
+
                 <td>
-                    <s:if test="#bookmark.url != null" >
-                        <a href='<s:property value="#bookmark.url" />' target='_blank' >
-                            <str:truncateNicely lower="70" upper="90" >
-                                <s:property value="#bookmark.url" />
+                    <s:if test="#bookmark.url != null">
+                        <a href='<s:property value="#bookmark.url" />' target='_blank'>
+                            <str:truncateNicely lower="70" upper="90">
+                                <s:property value="#bookmark.url"/>
                             </str:truncateNicely>
                             <span class="glyphicon glyphicon-play-circle"></span>
                         </a>
                     </s:if>
 
                 </td>
-                
+
                 <td align="center">
 
                     <a href="#" onclick="editBookmark(
-                            '<s:property value="#bookmark.id" />',
+                            '<s:property value="#bookmark.id"/>',
                             '<s:property value="#bookmark.name"/>',
                             '<s:property value="#bookmark.url"/>',
                             '<s:property value="#bookmark.feedUrl"/>',
                             '<s:property value="#bookmark.description"/>',
-                            '<s:property value="#bookmark.image" />' )">
+                            '<s:property value="#bookmark.image"/>' )">
                         <span class="glyphicon glyphicon-edit"></span>
                     </a>
 
                 </td>
-                
-            </tr>
 
-        </s:iterator>
-        
+                </tr>
+
+            </s:iterator>
+
         </s:if>
 
         <s:else>
             <tr>
                 <td style="vertical-align:middle; padding-top: 1em;" colspan="7">
-                    <s:text name="bookmarksForm.noresults" />
+                    <s:text name="bookmarksForm.noresults"/>
                 </td>
             </tr>
         </s:else>
@@ -193,16 +193,16 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     <s:if test="folder.bookmarks.size > 0">
         <%-- Delete-selected button --%>
         <input id="delete_selected" value="<s:text name="bookmarksForm.delete"/>" type="button"
-            class="btn btn-danger" style="float:left;"
-            onclick="confirmDeleteSelected();return false;"/>
+               class="btn btn-danger" style="float:left;"
+               onclick="confirmDeleteSelected();return false;"/>
     </s:if>
 
     <s:if test="folder.name != 'default'">
         <%-- Delete the whole blogroll --%>
         <s:submit value="%{getText('bookmarksForm.deleteFolder')}" theme="simple"
-            cssClass="btn btn-danger" cssStyle="float:right; clear:left; margin-top:2em"
-            action="bookmarks!deleteFolder"
-            onclick="confirmDeleteFolder();return false;"/>
+                  cssClass="btn btn-danger" cssStyle="float:right; clear:left; margin-top:2em"
+                  action="bookmarks!deleteFolder"
+                  onclick="confirmDeleteFolder();return false;"/>
 
     </s:if>
 
@@ -223,56 +223,52 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     var viewSelector;
     var moveToSelector;
 
-    $( document ).ready(function() {
+    $(document).ready(function () {
 
         originalName = $("#bookmarks_folder_name:first").val();
 
-        if ( !originalName ) {
+        if (!originalName) {
             originalName = 'default';
         }
 
-        renameButton         = $("#rename_button:first");
-        renameCancel         = $("#rename_cancel:first");
+        renameButton = $("#rename_button:first");
+        renameCancel = $("#rename_cancel:first");
         deleteSelectedButton = $("#delete_selected:first");
-        moveSelectedButton   = $("#move_selected:first");
-        viewSelector         = $("#bookmarks_viewFolderId:first");
-        moveToSelector       = $("#bookmarks_targetFolderId:first");
+        moveSelectedButton = $("#move_selected:first");
+        viewSelector = $("#bookmarks_viewFolderId:first");
+        moveToSelector = $("#bookmarks_targetFolderId:first");
 
         nameChanged();
         selectionChanged();
 
         // add the "New Blogroll" option to blogroll selectors
-        viewSelector.append(
-                new Option('<s:text name="bookmarksForm.newBlogroll"/>', "new_blogroll" ));
-        //moveToSelector.append(
-                //new Option( '<s:text name="bookmarksForm.newBlogroll"/>', "new_blogroll" ));
+        viewSelector.append(new Option('<s:text name="bookmarksForm.newBlogroll"/>', "new_blogroll"));
     });
-
 
 
     function selectionChanged() {
         var checked = false;
         var selected = $("[name=selectedBookmarks]");
-        for ( var i in selected ) {
-            if ( selected[i].checked ) {
+        for (var i in selected) {
+            if (selected[i].checked) {
                 checked = true;
                 break;
             }
         }
-        if ( checked ) {
-            deleteSelectedButton.attr("disabled", false );
+        if (checked) {
+            deleteSelectedButton.attr("disabled", false);
             deleteSelectedButton.addClass("btn-danger");
 
-            moveSelectedButton.attr("disabled", false );
+            moveSelectedButton.attr("disabled", false);
             moveSelectedButton.addClass("btn-warning");
 
             moveToSelector.attr("disabled", false);
 
         } else {
-            deleteSelectedButton.attr("disabled", true );
+            deleteSelectedButton.attr("disabled", true);
             deleteSelectedButton.removeClass("btn-danger");
 
-            moveSelectedButton.attr("disabled", true );
+            moveSelectedButton.attr("disabled", true);
             moveSelectedButton.removeClass("btn-warning");
 
             moveToSelector.attr("disabled", true);
@@ -281,17 +277,17 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     function nameChanged() {
         var newName = $("#bookmarks_folder_name:first").val();
-        if ( newName && newName != originalName && newName.trim().length > 0 ) {
-            renameButton.attr("disabled", false );
+        if (newName && newName != originalName && newName.trim().length > 0) {
+            renameButton.attr("disabled", false);
             renameButton.addClass("btn-success");
 
-            renameCancel.attr("disabled", false );
+            renameCancel.attr("disabled", false);
 
         } else {
-            renameButton.attr("disabled", true );
+            renameButton.attr("disabled", true);
             renameButton.removeClass("btn-success");
 
-            renameCancel.attr("disabled", true );
+            renameCancel.attr("disabled", true);
         }
     }
 
@@ -328,8 +324,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         });
     }
 
-    function cancelRenameFolder( event ) {
-        $("#bookmarks_folder_name:first").val( originalName );
+    function cancelRenameFolder(event) {
+        $("#bookmarks_folder_name:first").val(originalName);
         nameChanged();
     }
 
@@ -342,14 +338,14 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     }
 
     function confirmDeleteFolder() {
-        $('#boomarks_delete_folder_folderId').val( $('#bookmarks_folderId:first').val() );
-        $('#deleteBlogrollName').html('<s:text name="%{folder.name}"/>');
+        $('#boomarks_delete_folder_folderId').val($('#bookmarks_folderId:first').val());
+        $('#deleteBlogrollName').html('<s:property value="%{folder.name}"/>');
         $('#delete-blogroll-modal').modal({show: true});
     }
 
     function onMoveToFolder() {
         var bookmarksForm = $("#bookmarks")[0];
-        bookmarksForm.action = "bookmarks!move.rol";
+       bookmarksForm.action = "bookmarks!move.rol";
         bookmarksForm.submit();
     }
 
@@ -358,7 +354,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         var bookmarksForm = $("#bookmarks")[0];
         var folderEditForm = $("#folderEditForm")[0];
 
-        if ( "new_blogroll" == bookmarksForm.viewFolderId.value ) {
+        if ("new_blogroll" == bookmarksForm.viewFolderId.value) {
             newBlogroll();
 
         } else {
@@ -370,17 +366,17 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     function newBlogroll() {
 
-      // user selected New Blogroll option, show the add/edit blogroll modal
-      $('#blogroll-edit-title').html('<s:text name="bookmarksForm.addBlogroll.title" />');
+        // user selected New Blogroll option, show the add/edit blogroll modal
+        $('#blogroll-edit-title').html('<s:text name="bookmarksForm.addBlogroll.title" />');
 
-      folderEditForm.action = "folderAdd!save.rol";
-      folderEditForm.actionName.value = "folderAdd";
+        folderEditForm.action = "folderAdd!save.rol";
+        folderEditForm.actionName.value = "folderAdd";
 
-      // disable save button until valid name is entered
+        // disable save button until valid name is entered
 
-      $('#addedit-bookmarkfolder-modal').modal({show: true});
+        $('#addedit-bookmarkfolder-modal').modal({show: true});
 
-      onBlogrollFormChanged();
+        onBlogrollFormChanged();
     }
 
 </script>
@@ -401,18 +397,18 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
             </div>
 
             <div class="modal-body">
-                <s:form action="blogroll" id="folderEditForm" theme="bootstrap" cssClass="form-horizontal">
-                    <s:hidden name="salt" />
-                    <s:hidden name="actionName" />
-                    <s:hidden name="weblog" />
-                    <s:hidden name="bean.id" />
+                <s:form action="folderEdit" id="folderEditForm" theme="bootstrap" cssClass="form-horizontal">
+                    <s:hidden name="salt"/>
+                    <s:hidden name="actionName"/>
+                    <s:hidden name="weblog"/>
+                    <s:hidden name="bean.id"/>
 
                     <%-- action needed here because we are using AJAX to post this form --%>
                     <s:hidden name="action:folderEdit!save" value="save"/>
 
                     <s:textfield name="bean.name" label="%{getText('generic.name')}" maxlength="255"
-                        onchange="onBlogrollFormChanged()"
-                        onkeyup ="onBlogrollFormChanged()"
+                                 onchange="onBlogrollFormChanged()"
+                                 onkeyup="onBlogrollFormChanged()"
                     />
                 </s:form>
             </div> <!-- modal-body-->
@@ -439,18 +435,18 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     function onBlogrollFormChanged() {
 
-      var saveBlogrollButton = $('#save_blogroll:first');
+        var saveBlogrollButton = $('#save_blogroll:first');
 
-      var name = $('#folderEditForm_bean_name:first').val().trim();
+        var name = $('#folderEditForm_bean_name:first').val().trim();
 
-      if (name.length > 0) {
-        saveBlogrollButton.attr("disabled", false);
-        console.log("Button enabled!");
+        if (name.length > 0) {
+            saveBlogrollButton.attr("disabled", false);
+            console.log("Button enabled!");
 
-      } else {
-        saveBlogrollButton.attr("disabled", true);
-        console.log("Button disabled!");
-      }
+        } else {
+            saveBlogrollButton.attr("disabled", true);
+            console.log("Button disabled!");
+        }
 
     }
 
@@ -490,8 +486,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
                 // kludge get folderId from response header send back by Struts action
                 var newFolderId = response.getResponseHeader('folderId');
-                viewSelector.append( new Option('', newFolderId ));
-                $("#bookmarks_viewFolderId").val( newFolderId );
+                viewSelector.append(new Option('', newFolderId));
+                $("#bookmarks_viewFolderId").val(newFolderId);
 
                 var bookmarksForm = $("#bookmarks")[0];
                 bookmarksForm.action = "bookmarks!view.rol";
@@ -519,7 +515,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
             <div class="modal-header">
                 <h3>
-                    <s:text name="bookmarksForm.delete.confirm" />
+                    <s:text name="bookmarksForm.delete.confirm"/>
                 </h3>
             </div>
 
@@ -530,11 +526,11 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
                 <div class="modal-footer">
                     <button type="button" class="btn" value="%{getText('generic.yes')}" onclick="deleteSelected()">
-                        <s:text name="generic.yes" />
+                        <s:text name="generic.yes"/>
                     </button>
                     &nbsp;
                     <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">
-                        <s:text name="generic.no" />
+                        <s:text name="generic.no"/>
                     </button>
                 </div>
             </s:form>
@@ -561,7 +557,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 </h3>
             </div>
 
-            <s:form id="boomarks_delete_folder" action="bookmarks!deleteFolder" theme="bootstrap" cssClass="form-horizontal">
+            <s:form id="boomarks_delete_folder" action="bookmarks!deleteFolder" theme="bootstrap"
+                    cssClass="form-horizontal">
                 <s:hidden name="salt"/>
                 <s:hidden name="weblog"/>
                 <s:hidden name="folderId"/>
@@ -574,7 +571,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 <div class="modal-footer">
                     <s:submit cssClass="btn" value="%{getText('generic.yes')}"/>&nbsp;
                     <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">
-                        <s:text name="generic.no" />
+                        <s:text name="generic.no"/>
                     </button>
                 </div>
 
@@ -608,72 +605,75 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 </s:else>
 
                 <h3>
-                    <s:text name="%{#subtitleKey}" > </s:text> <span id="subtitle_folder_name"></span>
+                    <s:text name="%{#subtitleKey}"> </s:text> <span id="subtitle_folder_name"></span>
                 </h3>
 
                 <div id="bookmark_required_fields" role="alert" class="alert">
-                    <s:text name="bookmarkForm.requiredFields" />
+                    <s:text name="bookmarkForm.requiredFields"/>
                 </div>
 
-            </div> <%-- modal header --%>
+            </div>
+            <%-- modal header --%>
 
-                <div class="modal-body">
+            <div class="modal-body">
 
-                    <s:form action="bookmark" theme="bootstrap" cssClass="form-horizontal">
-                        <s:hidden name="salt" />
-                        <s:hidden name="weblog" />
-                            <%--
-                                Edit action uses folderId for redirection back to proper bookmarks folder on cancel
-                                (as configured in struts.xml); add action also, plus to know which folder to put new
-                                bookmark in.
-                            --%>
-                        <s:hidden name="folderId" />
-                        <s:hidden name="bean.id" />
+                <s:form action="bookmarkEdit" theme="bootstrap" cssClass="form-horizontal">
+                    <s:hidden name="salt"/>
+                    <s:hidden name="weblog"/>
+                    <%--
+                        Edit action uses folderId for redirection back to proper bookmarks folder on cancel
+                        (as configured in struts.xml); add action also, plus to know which folder to put new
+                        bookmark in.
+                    --%>
+                    <s:hidden name="folderId"/>
+                    <s:hidden name="bean.id"/>
 
-                        <s:textfield name="bean.name" maxlength="255"
-                                     onchange="onBookmarkFormChanged()"
-                                     onkeyup ="onBookmarkFormChanged()"
-                                     label="%{getText('generic.name')}" />
+                    <s:textfield name="bean.name" maxlength="255"
+                                 onchange="onBookmarkFormChanged()"
+                                 onkeyup="onBookmarkFormChanged()"
+                                 label="%{getText('generic.name')}"/>
 
-                        <s:textfield name="bean.url" maxlength="255"
-                                     onchange="onBookmarkFormChanged()"
-                                     onkeyup ="onBookmarkFormChanged()"
-                                     label="%{getText('bookmarkForm.url')}" />
+                    <s:textfield name="bean.url" maxlength="255"
+                                 onchange="onBookmarkFormChanged()"
+                                 onkeyup="onBookmarkFormChanged()"
+                                 label="%{getText('bookmarkForm.url')}"/>
 
-                        <s:textfield name="bean.feedUrl" maxlength="255"
-                                     onchange="onBookmarkFormChanged()"
-                                     onkeyup ="onBookmarkFormChanged()"
-                                     label="%{getText('bookmarkForm.rssUrl')}" />
+                    <s:textfield name="bean.feedUrl" maxlength="255"
+                                 onchange="onBookmarkFormChanged()"
+                                 onkeyup="onBookmarkFormChanged()"
+                                 label="%{getText('bookmarkForm.rssUrl')}"/>
 
-                        <s:textfield name="bean.description" maxlength="255"
-                                     onchange="onBookmarkFormChanged()"
-                                     onkeyup ="onBookmarkFormChanged()"
-                                     label="%{getText('generic.description')}" />
+                    <s:textfield name="bean.description" maxlength="255"
+                                 onchange="onBookmarkFormChanged()"
+                                 onkeyup="onBookmarkFormChanged()"
+                                 label="%{getText('generic.description')}"/>
 
-                        <s:textfield name="bean.image" maxlength="255"
-                                     onchange="onBookmarkFormChanged()"
-                                     onkeyup ="onBookmarkFormChanged()"
-                                     label="%{getText('bookmarkForm.image')}" />
-                    </s:form>
+                    <s:textfield name="bean.image" maxlength="255"
+                                 onchange="onBookmarkFormChanged()"
+                                 onkeyup="onBookmarkFormChanged()"
+                                 label="%{getText('bookmarkForm.image')}"/>
+                </s:form>
 
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-footer">
+                    <p id="feedback-area-edit"></p>
+                    <button type="button" id="save_bookmark" onclick="saveBookmark()" class="btn btn-primary">
+                        <s:text name="generic.save"/>
+                    </button>
+                    <button type="button" class="btn" data-dismiss="modal">
+                        <s:text name="generic.cancel"/>
+                    </button>
                 </div>
-
-                <div class="modal-body">
-                    <div class="modal-footer">
-                        <p id="feedback-area-edit"></p>
-                        <button type="button" id="save_bookmark" onclick="saveBookmark()" class="btn btn-primary">
-                            <s:text name="generic.save"/>
-                        </button>
-                        <button type="button" class="btn" data-dismiss="modal">
-                            <s:text name="generic.cancel"/>
-                        </button>
-                    </div>
-                </div>
+            </div>
 
 
-        </div> <%-- modal content --%>
+        </div>
+        <%-- modal content --%>
 
-    </div> <%-- modal dialog --%>
+    </div>
+    <%-- modal dialog --%>
 
 </div> <%-- modal --%>
 
@@ -687,7 +687,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     function addBookmark() {
 
         var saveBookmarkButton = $('#save_bookmark:first');
-        saveBookmarkButton.attr("disabled", true );
+        saveBookmarkButton.attr("disabled", true);
 
         var elem = $('#bookmark_required_fields:first');
         elem.html('<s:text name="bookmarkForm.requiredFields" />');
@@ -709,7 +709,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     function editBookmark(id, name, url, feedUrl, description, image) {
 
         var saveBookmarkButton = $('#save_bookmark:first');
-        saveBookmarkButton.attr("disabled", true );
+        saveBookmarkButton.attr("disabled", true);
 
         var elem = $('#bookmark_required_fields:first');
         elem.html('<s:text name="bookmarkForm.requiredFields" />');
@@ -735,27 +735,27 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         var saveBookmarkButton = $('#save_bookmark:first');
 
-        var name    = $('#bookmark_bean_name:first').val().trim();
-        var url     = $('#bookmark_bean_url:first').val().trim();
-        var image   = $('#bookmark_bean_image:first').val().trim();
+        var name = $('#bookmark_bean_name:first').val().trim();
+        var url = $('#bookmark_bean_url:first').val().trim();
+        var image = $('#bookmark_bean_image:first').val().trim();
         var feedUrl = $('#bookmark_bean_feedUrl:first').val().trim();
 
         var badUrls = [];
 
-        if ( url.length > 0 ) {
-            if ( !isValidUrl(url) ) {
+        if (url.length > 0) {
+            if (!isValidUrl(url)) {
                 badUrls.push("Bookmark URL")
             }
         }
 
-        if ( image.length > 0 ) {
-            if ( !isValidUrl(image) ) {
+        if (image.length > 0) {
+            if (!isValidUrl(image)) {
                 badUrls.push("Image URL")
             }
         }
 
-        if ( feedUrl.length > 0 ) {
-            if ( !isValidUrl(feedUrl) ) {
+        if (feedUrl.length > 0) {
+            if (!isValidUrl(feedUrl)) {
                 badUrls.push("Newsfeed URL")
             }
         }
@@ -763,7 +763,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         var elem = $('#bookmark_required_fields:first');
         var message = '';
 
-        if ( name.length > 0 && url.length > 0 && badUrls.length == 0 ) {
+        if (name.length > 0 && url.length > 0 && badUrls.length == 0) {
             saveBookmarkButton.attr("disabled", false);
 
             message = '<s:text name="generic.looksGood" />';
@@ -775,15 +775,15 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         } else {
             saveBookmarkButton.attr("disabled", true);
 
-            if ( name.length == 0 || url.length == 0 ) {
+            if (name.length == 0 || url.length == 0) {
                 message = '<s:text name="bookmarkForm.required" />';
             }
-            if ( badUrls.length > 0 ) {
+            if (badUrls.length > 0) {
                 message = '<s:text name="bookmarkForm.badUrls" />';
                 var sep = " ";
-                for ( i in badUrls ) {
+                for (i in badUrls) {
                     message = message + sep + badUrls[i];
-                    sep  = ", ";
+                    sep = ", ";
                 }
             }
             elem.removeClass("alert-info");
@@ -793,8 +793,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         }
     }
 
-    function isValidUrl( url ) {
-        if(/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url)) {
+    function isValidUrl(url) {
+        if (/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url)) {
             return true;
         } else {
             return false;

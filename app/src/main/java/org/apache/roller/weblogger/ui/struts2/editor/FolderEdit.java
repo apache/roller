@@ -140,7 +140,7 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
 
     public void myValidate() {
         // make sure new name is not a duplicate of an existing folder
-        if((isAdd() || !folder.getName().equals(getBean().getName()))) {
+        if ( isAdd() || !getBean().getName().equals(folder.getName()) ) {
             if (folder.getWeblog().hasBookmarkFolder(getBean().getName())) {
                 addError("folderForm.error.duplicateName", getBean().getName());
             }
