@@ -55,7 +55,7 @@ limitations under the License.
         <slf4j.version>1.7.25</slf4j.version>
         <spring.version>4.1.4.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
-        <struts.version>2.5.16</struts.version>
+        <struts.version>2.5.17</struts.version>
         <velocity.version>1.7</velocity.version>
         <webjars.version>1.5</webjars.version>
         <ws-commons-util.version>1.0.2</ws-commons-util.version>
@@ -93,12 +93,6 @@ limitations under the License.
             <artifactId>mail</artifactId>
             <version>${java-mail.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Eclipselink JPA is the default JPA implementation used by
