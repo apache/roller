@@ -29,14 +29,7 @@ import org.springframework.mobile.device.DeviceType;
 import org.springframework.mobile.device.DeviceUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -308,36 +301,6 @@ public final class Utilities {
         } catch (UnsupportedEncodingException ignored) {
         }
         return decodedStr;
-    }
-
-    public static Object jaxbUnmarshall(String xsdPath, String xmlPath, boolean useClassloader,
-                                        Class... classesToBeBound) {
-
-        try {
-            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = sf.newSchema(new StreamSource(
-                    Utilities.class.getResourceAsStream(xsdPath)));
-
-            InputStream is;
-            if (useClassloader) {
-                is = Utilities.class.getResourceAsStream(xmlPath);
-            } else {
-                is = new FileInputStream(xmlPath);
-            }
-            JAXBContext jaxbContext = JAXBContext.newInstance(classesToBeBound);
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            jaxbUnmarshaller.setSchema(schema);
-            jaxbUnmarshaller.setEventHandler(event -> {
-                log.error("Parsing error: " +
-                        event.getMessage() + "; Line #" +
-                        event.getLocator().getLineNumber() + "; Column #" +
-                        event.getLocator().getColumnNumber());
-                return false;
-            });
-            return jaxbUnmarshaller.unmarshal(is);
-        } catch (Exception ex) {
-            throw new IllegalArgumentException("JAXB Unmarshalling Error", ex);
-        }
     }
 
     public static DeviceType getDeviceType(HttpServletRequest request) {

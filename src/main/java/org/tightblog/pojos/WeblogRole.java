@@ -15,6 +15,8 @@
 */
 package org.tightblog.pojos;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 // Blog-specific roles for a User
 public enum WeblogRole {
     // For non-blog related pages (initial install, user registration, login, etc.)
@@ -38,5 +40,10 @@ public enum WeblogRole {
 
     WeblogRole(int weight) {
         this.weight = weight;
+    }
+
+    @JsonCreator
+    public static WeblogRole forValue(String value) {
+        return WeblogRole.valueOf(value);
     }
 }

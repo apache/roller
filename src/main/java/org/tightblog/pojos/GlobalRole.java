@@ -15,6 +15,8 @@
 */
 package org.tightblog.pojos;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 // GlobalRole defines system-wide roles as opposed to individual blog permissions
 // Each role includes the roles of those of lower weight as defined in this enum
 public enum GlobalRole {
@@ -38,4 +40,10 @@ public enum GlobalRole {
     GlobalRole(int weight) {
         this.weight = weight;
     }
+
+    @JsonCreator
+    public static GlobalRole forValue(String value) {
+        return GlobalRole.valueOf(value);
+    }
+
 }

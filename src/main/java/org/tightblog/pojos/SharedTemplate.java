@@ -20,7 +20,6 @@
  */
 package org.tightblog.pojos;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import java.time.Instant;
 
 /**
@@ -99,7 +98,6 @@ public class SharedTemplate implements Template {
         return role;
     }
 
-    @XmlAttribute
     public void setRole(ComponentType role) {
         this.role = role;
     }
@@ -117,5 +115,10 @@ public class SharedTemplate implements Template {
     @Override
     public void setTemplate(String template) {
         this.template = template;
+    }
+
+    // type used during JSON deserialization to determine the ComponentType (role)
+    public void setType(String type) {
+        role = ComponentType.valueOf(type.toUpperCase());
     }
 }

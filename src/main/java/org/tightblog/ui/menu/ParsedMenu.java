@@ -23,10 +23,6 @@ package org.tightblog.ui.menu;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.WeblogRole;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlElements;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +35,6 @@ public class ParsedMenu {
     private String id;
     private List<ParsedTab> tabs = new ArrayList<>();
 
-    @XmlAttribute
     public String getId() {
         return id;
     }
@@ -48,7 +43,6 @@ public class ParsedMenu {
         this.id = id;
     }
 
-    @XmlElements(@XmlElement(name = "tab"))
     public List<ParsedTab> getTabs() {
         return tabs;
     }
@@ -62,8 +56,8 @@ public class ParsedMenu {
      */
     public static class ParsedTab {
         private String titleKey;
-        private GlobalRole requiredGlobalRole;
-        private WeblogRole requiredWeblogRole;
+        private GlobalRole globalRole;
+        private WeblogRole weblogRole;
         private String enabledProperty;
         private List<ParsedTabItem> tabItems = new ArrayList<>();
 
@@ -71,7 +65,6 @@ public class ParsedMenu {
             this.tabItems.add(item);
         }
 
-        @XmlAttribute
         public String getTitleKey() {
             return titleKey;
         }
@@ -80,25 +73,22 @@ public class ParsedMenu {
             this.titleKey = titleKey;
         }
 
-        @XmlAttribute(name = "globalRole")
-        public GlobalRole getRequiredGlobalRole() {
-            return requiredGlobalRole;
+        public GlobalRole getGlobalRole() {
+            return globalRole;
         }
 
-        public void setRequiredGlobalRole(GlobalRole role) {
-            this.requiredGlobalRole = role;
+        public void setGlobalRole(GlobalRole role) {
+            this.globalRole = role;
         }
 
-        @XmlAttribute(name = "weblogRole")
-        public WeblogRole getRequiredWeblogRole() {
-            return requiredWeblogRole;
+        public WeblogRole getWeblogRole() {
+            return weblogRole;
         }
 
-        public void setRequiredWeblogRole(WeblogRole role) {
-            this.requiredWeblogRole = role;
+        public void setWeblogRole(WeblogRole role) {
+            this.weblogRole = role;
         }
 
-        @XmlAttribute
         public String getEnabledProperty() {
             return enabledProperty;
         }
@@ -107,7 +97,6 @@ public class ParsedMenu {
             this.enabledProperty = enabledProperty;
         }
 
-        @XmlElements(@XmlElement(name = "tabItem"))
         public List<ParsedTabItem> getTabItems() {
             return tabItems;
         }
@@ -126,11 +115,10 @@ public class ParsedMenu {
         private String action;
         private String actionPath;
         private Set<String> subActions;
-        private GlobalRole requiredGlobalRole;
-        private WeblogRole requiredWeblogRole;
+        private GlobalRole globalRole;
+        private WeblogRole weblogRole;
         private String enabledProperty;
 
-        @XmlAttribute
         public String getTitleKey() {
             return titleKey;
         }
@@ -139,7 +127,6 @@ public class ParsedMenu {
             this.titleKey = titleKey;
         }
 
-        @XmlAttribute
         public String getAction() {
             return action;
         }
@@ -148,7 +135,6 @@ public class ParsedMenu {
             this.action = action;
         }
 
-        @XmlAttribute
         public String getActionPath() {
             return actionPath;
         }
@@ -157,8 +143,6 @@ public class ParsedMenu {
             this.actionPath = actionPath;
         }
 
-        @XmlElementWrapper(name = "subactions")
-        @XmlElement(name = "subaction")
         public Set<String> getSubActions() {
             return subActions;
         }
@@ -167,25 +151,22 @@ public class ParsedMenu {
             this.subActions = subActions;
         }
 
-        @XmlAttribute(name = "globalRole")
-        public GlobalRole getRequiredGlobalRole() {
-            return requiredGlobalRole;
+        public GlobalRole getGlobalRole() {
+            return globalRole;
         }
 
-        public void setRequiredGlobalRole(GlobalRole requiredGlobalRole) {
-            this.requiredGlobalRole = requiredGlobalRole;
+        public void setGlobalRole(GlobalRole globalRole) {
+            this.globalRole = globalRole;
         }
 
-        @XmlAttribute(name = "weblogRole")
-        public WeblogRole getRequiredWeblogRole() {
-            return requiredWeblogRole;
+        public WeblogRole getWeblogRole() {
+            return weblogRole;
         }
 
-        public void setRequiredWeblogRole(WeblogRole requiredWeblogRole) {
-            this.requiredWeblogRole = requiredWeblogRole;
+        public void setWeblogRole(WeblogRole weblogRole) {
+            this.weblogRole = weblogRole;
         }
 
-        @XmlAttribute
         public String getEnabledProperty() {
             return enabledProperty;
         }

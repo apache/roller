@@ -24,9 +24,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlType;
 import java.time.Instant;
 import java.util.Map;
 
@@ -38,28 +35,26 @@ import java.util.Map;
  */
 public interface Template {
 
-    @XmlType
-    @XmlEnum
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     enum ComponentType {
-        @XmlEnumValue("weblog")WEBLOG("Weblog", "text/html", true, true, true, "template.weblog.description"),
-        @XmlEnumValue("permalink")PERMALINK("Permalink", "text/html", true, true, true, "template.permalink.description"),
-        @XmlEnumValue("searchResults")SEARCH_RESULTS("Search Results", "text/html", true, true, true,
+        WEBLOG("Weblog", "text/html", true, true, true, "template.weblog.description"),
+        PERMALINK("Permalink", "text/html", true, true, true, "template.permalink.description"),
+        SEARCH_RESULTS("Search Results", "text/html", true, true, true,
                 "template.search.description"),
-        @XmlEnumValue("stylesheet")STYLESHEET("Stylesheet", "text/css", false, false, true, "template.stylesheet.description"),
-        @XmlEnumValue("javascript")JAVASCRIPT("JavaScript file", "application/javascript", false, false,
+        STYLESHEET("Stylesheet", "text/css", false, false, true, "template.stylesheet.description"),
+        JAVASCRIPT("JavaScript file", "application/javascript", false, false,
                 true, "template.javascript.description"),
-        @XmlEnumValue("atomFeed")ATOMFEED("Atom Feed", "application/atom+xml; charset=utf-8", false, true,
+        ATOMFEED("Atom Feed", "application/atom+xml; charset=utf-8", false, true,
                 false, "template.atomFeed.description"),
-        @XmlEnumValue("customInternal")CUSTOM_INTERNAL("Custom internal", "text/html", false, false,
+        CUSTOM_INTERNAL("Custom internal", "text/html", false, false,
                 true, "template.customInternal.description"),
-        @XmlEnumValue("customExternal")CUSTOM_EXTERNAL("Custom external", "text/html", false, true,
+        CUSTOM_EXTERNAL("Custom external", "text/html", false, true,
                 true, "template.customExternal.description");
 
         // fromObject() allows for enum deserialization (used with front-end template saves)
         // see https://github.com/FasterXML/jackson-databind/issues/158#issuecomment-13092598
         @JsonCreator
-        public static ComponentType fromObject(Map<String, Object> data) { // or can use JsonNode, or custom POJO
+        public static ComponentType fromObject(Map<String, Object> data) {
             return ComponentType.valueOf((String) data.get("name"));
         }
 

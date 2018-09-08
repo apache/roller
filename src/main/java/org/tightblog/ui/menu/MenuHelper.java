@@ -20,6 +20,8 @@
  */
 package org.tightblog.ui.menu;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +32,10 @@ import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.ui.menu.Menu.MenuTab;
 import org.tightblog.ui.menu.Menu.MenuTabItem;
-import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,25 +56,14 @@ public final class MenuHelper {
     @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
         this.persistenceStrategy = strategy;
     }
 
     private Cache<String, Menu> menuCache;
-
-    @XmlRootElement(name = "menus")
-    public static class MenuListHolder {
-        private List<ParsedMenu> menuList = new ArrayList<>(2);
-
-        @XmlElements(@XmlElement(name = "menu"))
-        public List<ParsedMenu> getMenuList() {
-            return menuList;
-        }
-
-        public void setMenuList(List<ParsedMenu> list) {
-            this.menuList = list;
-        }
-    }
 
     public MenuHelper() {
         menuCache = Caffeine.newBuilder()
@@ -88,15 +74,12 @@ public final class MenuHelper {
 
     @PostConstruct
     void init() {
-        // parse and cache menus so we can efficiently reuse them
+        // parse and cache menus
         try {
-            MenuListHolder menus = (MenuListHolder) Utilities.jaxbUnmarshall(
-                    "/menus/menus.xsd",
-                    "/menus/menus.xml",
-                    true,
-                    MenuListHolder.class);
+            List<ParsedMenu> menus = objectMapper.readValue(MenuHelper.class.getResourceAsStream("/menus.json"),
+                    new TypeReference<List<ParsedMenu>>() { });
 
-            for (ParsedMenu menu : menus.getMenuList()) {
+            for (ParsedMenu menu : menus) {
                 menuMap.put(menu.getId(), menu);
 
                 for (ParsedMenu.ParsedTab tab : menu.getTabs()) {
@@ -115,7 +98,6 @@ public final class MenuHelper {
         } catch (Exception ex) {
             log.error("Error parsing menu configs", ex);
         }
-
     }
 
     /**
@@ -169,8 +151,8 @@ public final class MenuHelper {
                 includeTab = getBooleanProperty(configTab.getEnabledProperty());
             }
 
-            if (!includeTab || userGlobalRole.getWeight() < configTab.getRequiredGlobalRole().getWeight() ||
-                    !checkWeblogRole(userWeblogRole, configTab.getRequiredWeblogRole())) {
+            if (!includeTab || userGlobalRole.getWeight() < configTab.getGlobalRole().getWeight() ||
+                    !checkWeblogRole(userWeblogRole, configTab.getWeblogRole())) {
                 continue;
             }
 
@@ -191,14 +173,14 @@ public final class MenuHelper {
 
                 // disabled and global role check
                 if (!includeItem ||
-                        (tabItem.getRequiredGlobalRole() != null &&
-                                userGlobalRole.getWeight() < configTab.getRequiredGlobalRole().getWeight())) {
+                        (tabItem.getGlobalRole() != null &&
+                                userGlobalRole.getWeight() < configTab.getGlobalRole().getWeight())) {
                     continue;
                 }
 
                 // weblog role check
-                if (tabItem.getRequiredWeblogRole() != null &&
-                        !checkWeblogRole(userWeblogRole, tabItem.getRequiredWeblogRole())) {
+                if (tabItem.getWeblogRole() != null &&
+                        !checkWeblogRole(userWeblogRole, tabItem.getWeblogRole())) {
                     continue;
                 }
 

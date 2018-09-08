@@ -17,7 +17,9 @@ package org.tightblog.rendering.processors;
 
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -82,6 +84,9 @@ public class PageProcessorTest {
     private ThemeManager mockThemeManager;
     private ApplicationContext mockApplicationContext;
 
+    @Captor
+    ArgumentCaptor<Map<String, Object>> stringObjectMapCaptor;
+
     // not done as a @before as not all tests need these mocks
     private void initializeMocks() {
         JPAPersistenceStrategy mockStrategy = mock(JPAPersistenceStrategy.class);
@@ -118,6 +123,7 @@ public class PageProcessorTest {
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
         processor = Mockito.spy(processor);
         processor.setStrategy(mockStrategy);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
@@ -304,9 +310,8 @@ public class PageProcessorTest {
         processor.handleRequest(mockRequest, mockResponse);
 
         // set up captors on thymeleafRenderer.render()
-        ArgumentCaptor<Map<String, Object>> modelCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(mockRenderer).render(eq(sharedTemplate), modelCaptor.capture());
-        Map<String, Object> results = modelCaptor.getValue();
+        verify(mockRenderer).render(eq(sharedTemplate), stringObjectMapCaptor.capture());
+        Map<String, Object> results = stringObjectMapCaptor.getValue();
         assertTrue(results.containsKey("model"));
         assertTrue(results.containsKey("site"));
 
@@ -314,9 +319,9 @@ public class PageProcessorTest {
         // testing that non-sitewide themes just get "model" added to the rendering map.
         sharedTheme.setSiteWide(false);
         processor.handleRequest(mockRequest, mockResponse);
-        verify(mockRenderer).render(eq(sharedTemplate), modelCaptor.capture());
+        verify(mockRenderer).render(eq(sharedTemplate), stringObjectMapCaptor.capture());
 
-        results = modelCaptor.getValue();
+        results = stringObjectMapCaptor.getValue();
         assertTrue(results.containsKey("model"));
         assertFalse(results.containsKey("site"));
     }

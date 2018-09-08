@@ -73,7 +73,7 @@ public class IndexManagerImpl implements IndexManager {
 
     private ExecutorService serviceScheduler;
 
-    private boolean searchEnabled = true;
+    private boolean searchEnabled;
     private boolean indexComments;
     private File indexConsistencyMarker;
     private String indexDir;
@@ -200,8 +200,8 @@ public class IndexManagerImpl implements IndexManager {
     @Override
     public Analyzer getAnalyzer() {
         try {
-            return (Analyzer) Class.forName(luceneAnalyzerName).newInstance();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            return (Analyzer) Class.forName(luceneAnalyzerName).getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
             log.error("Cannot instantiate class {}", luceneAnalyzerName, e);
         }
         return null;

@@ -48,6 +48,7 @@ public class CalendarGeneratorTest {
 
     @Before
     public void initialize() {
+        Locale.setDefault(Locale.US);
         calendarGenerator = new CalendarGenerator();
         mockUrlStrategy = mock(URLStrategy.class);
         WeblogEntryManager mockWeblogEntryManager = mock(WeblogEntryManager.class);
@@ -79,7 +80,7 @@ public class CalendarGeneratorTest {
     public void testGetCalendarData() {
         initializeDateToWeblogEntryMap();
         Weblog weblog = new Weblog();
-        weblog.setLocale("EN_US");
+        weblog.setLocale("en-US");
         WeblogPageRequest wpr = new WeblogPageRequest();
         wpr.setWeblogDate("18581014");
         wpr.setWeblog(weblog);

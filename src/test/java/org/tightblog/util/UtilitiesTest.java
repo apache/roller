@@ -25,10 +25,6 @@ import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DevicePlatform;
 import org.springframework.mobile.device.DeviceType;
 import org.springframework.mobile.device.DeviceUtils;
-import org.tightblog.pojos.GlobalRole;
-import org.tightblog.pojos.WeblogRole;
-import org.tightblog.ui.menu.MenuHelper;
-import org.tightblog.ui.menu.ParsedMenu;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
@@ -39,7 +35,6 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -143,27 +138,6 @@ public class UtilitiesTest {
     public void testDecode() {
         String decodePath = Utilities.decode("abc%3Fdef+%26ghi%27jkl");
         assertEquals("abc?def &ghi'jkl", decodePath);
-    }
-
-    @Test
-    public void testJaxbUnmarshall() {
-        MenuHelper.MenuListHolder menus = (MenuHelper.MenuListHolder) Utilities.jaxbUnmarshall(
-                "/menus/menus.xsd",
-                "/menus/menus.xml",
-                true,
-                MenuHelper.MenuListHolder.class);
-        List<ParsedMenu> parsedMenus = menus.getMenuList();
-        assertEquals(2, parsedMenus.size());
-        assertEquals("userAdmin",
-                parsedMenus.get(0).getTabs().get(0).getTabItems().get(1).getAction());
-        assertEquals("/tb-ui/app/admin/",
-                parsedMenus.get(0).getTabs().get(0).getTabItems().get(1).getActionPath());
-        assertEquals("userAdmin.title",
-                parsedMenus.get(0).getTabs().get(0).getTabItems().get(1).getTitleKey());
-        assertEquals(GlobalRole.ADMIN,
-                parsedMenus.get(0).getTabs().get(0).getRequiredGlobalRole());
-        assertEquals(WeblogRole.OWNER,
-                parsedMenus.get(1).getTabs().get(1).getRequiredWeblogRole());
     }
 
     private abstract static class TestDevice implements Device {

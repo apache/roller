@@ -20,6 +20,7 @@
  */
 package org.tightblog.business;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +32,6 @@ import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WeblogTheme;
-import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ServletContextAware;
@@ -63,6 +63,9 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
     private static Logger log = LoggerFactory.getLogger(ThemeManagerImpl.class);
 
     private ServletContext servletContext;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     static {
         // TODO: figure out why PNG is missing from Java MIME types
@@ -203,6 +206,8 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
                 } catch (Exception unexpected) {
                     // shouldn't happen, so let's learn why it did
                     log.error("Unable to process theme '{}'", themeName, unexpected);
+                    System.out.println("Unable to process theme " + themeName + " error: " + unexpected.getMessage());
+                    unexpected.printStackTrace(System.out);
                 }
             }
         }
@@ -210,26 +215,26 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
         return sharedThemeMap;
     }
 
-    private SharedTheme loadThemeData(String themeName) {
+    private SharedTheme loadThemeData(String themeName) throws Exception {
         String themePath = this.themeDir + File.separator + themeName;
         log.debug("Parsing theme descriptor for {}", themePath);
 
-        SharedTheme sharedTheme = (SharedTheme) Utilities.jaxbUnmarshall(
-                "/theme.xsd", themePath + File.separator + "theme.xml", false, SharedTheme.class);
-        sharedTheme.setThemeDir(themePath);
+        String themeJson = themePath + File.separator + "theme.json";
+        log.debug("Loading Theme JSON at path {}", themeJson);
 
-        log.debug("Loading Theme {}", sharedTheme.getName());
+        SharedTheme sharedTheme = objectMapper.readValue(new FileInputStream(themeJson), SharedTheme.class);
+        sharedTheme.setThemeDir(themePath);
 
         // load resource representing preview image
         File previewFile = new File(sharedTheme.getThemeDir() + File.separator + sharedTheme.getPreviewImagePath());
         if (!previewFile.exists() || !previewFile.canRead()) {
-            log.warn("Couldn't read theme [{}] preview image file [{}]", sharedTheme.getName(),
+            log.warn("Couldn't read theme [{}] thumbnail at path [{}]", sharedTheme.getName(),
                     sharedTheme.getPreviewImagePath());
         }
 
         // create the templates based on the theme descriptor data
         boolean hasWeblogTemplate = false;
-        for (SharedTemplate template : sharedTheme.getTempTemplates()) {
+        for (SharedTemplate template : sharedTheme.getTemplates()) {
 
             // one and only one template with action "weblog" allowed
             if (ComponentType.WEBLOG.equals(template.getRole())) {
@@ -246,16 +251,12 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
 
             // this template ID used by template resolvers to retrieve the template.
             template.setId(sharedTheme.getId() + ":" + template.getName());
-
-            // add it to the theme
-            sharedTheme.addTemplate(template);
         }
 
         if (!hasWeblogTemplate) {
             throw new IllegalStateException("Theme " + sharedTheme.getName() + " has no template with 'weblog' action");
         }
 
-        sharedTheme.getTempTemplates().clear();
         return sharedTheme;
     }
 

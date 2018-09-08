@@ -70,7 +70,7 @@ public class FilterConfig {
 
     @Bean
     public FilterRegistrationBean springSecurityFilter(@Qualifier("springSecurityFilterChain") Filter filter) {
-        FilterRegistrationBean bean = new FilterRegistrationBean();
+        FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
         bean.setFilter(filter);
         bean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.FORWARD);
         bean.setOrder(4);

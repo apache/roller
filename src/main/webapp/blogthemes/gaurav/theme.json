@@ -1,0 +1,54 @@
+{
+  "id": "gaurav",
+  "name": "Gaurav",
+  "description": "Responsive Bootstrap-based theme originally by Gaurav Saini.",
+  "previewImagePath": "images/theme-gaurav.png",
+  "templates": [
+    {
+      "type": "weblog",
+      "name": "Weblog",
+      "contentsFile": "weblog.html"
+    },
+    {
+      "type": "permalink",
+      "name": "Permalink",
+      "contentsFile": "permalink.html"
+    },
+    {
+      "type": "search_results",
+      "name": "SearchResults",
+      "contentsFile": "searchResults.html"
+    },
+    {
+      "type": "custom_internal",
+      "name": "day",
+      "description": "One day's worth of entries",
+      "contentsFile": "day.html"
+    },
+    {
+      "type": "custom_external",
+      "name": "Archives",
+      "description": "Calendar browser and links to latest entries",
+      "relativePath": "archives",
+      "contentsFile": "archives.html"
+    },
+    {
+      "type": "custom_internal",
+      "name": "common_html_head",
+      "description": "Common contents of HTML head section",
+      "contentsFile": "common_html_head.html"
+    },
+    {
+      "type": "custom_internal",
+      "name": "standard_header",
+      "description": "Displayed in header of each page",
+      "contentsFile": "std_header.html"
+    },
+    {
+      "type": "custom_internal",
+      "name": "standard_footer",
+      "description": "For footer of each page",
+      "contentsFile": "std_footer.html"
+    }
+  ]
+}

@@ -1,9 +1,8 @@
 #** 
-createdb.vm: Velocity template that generates vendor-specific database scripts
-DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+createdb.vm: Velocity template used by genDDL.groovy to generate multiple vendor-specific database scripts
+Don't run this directly on a DB, it's not a database creation script but a template for generating same.
 **#
--- Run this script to create the TightBlog database tables in your database.
--- *****************************************************
+-- Below script creates the TightBlog tables for database $DB_NAME
 
 create table weblogger_user (
     id              varchar(48) not null primary key,
@@ -238,9 +237,6 @@ alter table weblogger_properties add constraint wp_weblogid_fk
 
 -- initial row, relying on per-column defaults.
 insert into weblogger_properties(id, database_version) values ('1', 200);
-
-
--- MEDIA BLOGGING
 
 create table media_directory (
     id               varchar(48) not null primary key,

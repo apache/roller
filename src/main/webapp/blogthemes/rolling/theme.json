@@ -1,0 +1,44 @@
+{
+  "id": "rolling",
+  "name": "Rolling",
+  "description": "Offers wide margins for blogging programming language source code.",
+  "previewImagePath": "rolling-sample.png",
+  "templates": [
+    {
+      "type": "stylesheet",
+      "name": "basic-custom.css",
+      "description": "Stylesheet for Basic theme",
+      "relativePath": "basic-custom.css",
+      "contentsFile": "basic-custom.css"
+    },
+    {
+      "type": "weblog",
+      "name": "Weblog",
+      "contentsFile": "weblog.html"
+    },
+    {
+      "type": "custom_internal",
+      "name": "day",
+      "contentsFile": "day.html"
+    },
+    {
+      "type": "custom_internal",
+      "name": "sidebar",
+      "contentsFile": "sidebar.html"
+    },
+    {
+      "type": "stylesheet",
+      "name": "bigcalendar.css",
+      "description": "Stylesheet for Archives calendar",
+      "relativePath": "bigcalendar.css",
+      "contentsFile": "bigcalendar.css"
+    },
+    {
+      "type": "custom_external",
+      "name": "Archives",
+      "description": "Calendar browser and links to latest entries",
+      "relativePath": "archives",
+      "contentsFile": "archives.html"
+    }
+  ]
+}

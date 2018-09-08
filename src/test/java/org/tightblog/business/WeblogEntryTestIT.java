@@ -210,8 +210,8 @@ public class WeblogEntryTestIT extends WebloggerTest {
         // get all entries in date range
         WeblogEntrySearchCriteria wesc3 = new WeblogEntrySearchCriteria();
         wesc3.setWeblog(testWeblog);
-        wesc3.setStartDate(entry2.getPubTime());
-        wesc3.setEndDate(entry2.getPubTime());
+        wesc3.setStartDate(entry2.getPubTime().minus(5, ChronoUnit.MINUTES));
+        wesc3.setEndDate(entry2.getPubTime().plus(5, ChronoUnit.MINUTES));
         entries = weblogEntryManager.getWeblogEntries(wesc3);
         assertNotNull(entries);
         assertEquals(1, entries.size());
@@ -295,7 +295,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
     }
 
     @Test
-    public void testCreateAnEntryWithTagsShortcut() throws Exception {
+    public void testCreateAnEntryWithTagsShortcut() {
         try {
             WeblogEntry entry;
             testWeblog = getManagedWeblog(testWeblog);
@@ -392,7 +392,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
     }
 
     @Test
-    public void testRemoveTagsViaShortcut() throws Exception {
+    public void testRemoveTagsViaShortcut() {
         try {
             // setup some test entries to use
             testWeblog = getManagedWeblog(testWeblog);
@@ -430,7 +430,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
     }
 
     @Test
-    public void testGetEntriesByTag() throws Exception {
+    public void testGetEntriesByTag() {
         try {
             // setup some test entries to use
             testWeblog = getManagedWeblog(testWeblog);
@@ -519,13 +519,13 @@ public class WeblogEntryTestIT extends WebloggerTest {
         entry = weblogEntryManager.getWeblogEntry(id, false);
         Set<String> tagNames = entry.getTags().stream()
                 .map(WeblogEntryTag::getName)
-                .collect(Collectors.toCollection(HashSet<String>::new));
+                .collect(Collectors.toCollection(HashSet::new));
 
         assertEquals(3, entry.getTags().size());
         assertEquals(3, tagNames.size());
-        assertEquals(true, tagNames.contains("testwillstaytag"));
-        assertEquals(true, tagNames.contains("testnewtag"));
-        assertEquals(true, tagNames.contains("testnewtag3"));
+        assertTrue(tagNames.contains("testwillstaytag"));
+        assertTrue(tagNames.contains("testnewtag"));
+        assertTrue(tagNames.contains("testnewtag3"));
 
         // teardown our test entry
         teardownWeblogEntry(id);
@@ -783,7 +783,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
         assertEquals(testEntry, entry);
         assertEquals(entry.getEnclosureUrl(), "http://podcast-schmodcast.com");
         assertEquals(entry.getEnclosureType(), "application/drivel");
-        assertEquals(entry.getEnclosureLength(), new Long(2141592654L));
+        assertEquals(entry.getEnclosureLength(), Long.valueOf(2141592654L));
         
         // update a weblog entry
         entry.setTitle("testtest");

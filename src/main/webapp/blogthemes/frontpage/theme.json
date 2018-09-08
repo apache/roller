@@ -1,0 +1,32 @@
+{
+  "id": "frontpage",
+  "name": "Frontpage",
+  "description": "Not a standard blog template; meant only as a front page accumulator of all blogs hosted by this server.",
+  "siteWide": "true",
+  "previewImagePath": "frontpage-sample.png",
+  "templates": [
+    {
+      "type": "weblog",
+      "name": "Weblog",
+      "contentsFile": "weblog.html"
+    },
+    {
+      "type": "custom_external",
+      "name": "directory",
+      "description": "weblog directory",
+      "relativePath": "directory",
+      "contentsFile": "directory.html"
+    },
+    {
+      "type": "custom_internal",
+      "name": "blogfrags",
+      "contentsFile": "blogfrags.html"
+    },
+    {
+      "type": "stylesheet",
+      "name": "_css",
+      "contentsFile": "_css.css",
+      "relativePath": "_css.css"
+    }
+  ]
+}

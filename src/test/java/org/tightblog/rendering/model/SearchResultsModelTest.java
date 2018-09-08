@@ -25,6 +25,8 @@ import org.apache.lucene.search.TopFieldDocs;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.MockitoAnnotations;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.search.FieldConstants;
@@ -67,6 +69,9 @@ public class SearchResultsModelTest {
     private WeblogPageRequest pageRequest;
     private Weblog weblog;
 
+    @Captor
+    ArgumentCaptor<Map<LocalDate, List<WeblogEntry>>> dateEntryMapCaptor;
+
     @Before
     public void initialize() {
         mockGenerator = mock(WeblogEntryListGenerator.class);
@@ -92,15 +97,15 @@ public class SearchResultsModelTest {
         searchResultsModel.setThemeManager(mockThemeManager);
         searchResultsModel.setIndexManager(mockIndexManager);
         searchResultsModel.init(initData);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
     public void testEmptyPagerIfNoQuery() {
         pageRequest.setQuery(null);
         searchResultsModel.getWeblogEntriesPager();
-        ArgumentCaptor<Map<LocalDate, List<WeblogEntry>>> entriesCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(mockGenerator).getSearchPager(any(), entriesCaptor.capture(), eq(false));
-        Map<LocalDate, List<WeblogEntry>> results = entriesCaptor.getValue();
+        verify(mockGenerator).getSearchPager(any(), dateEntryMapCaptor.capture(), eq(false));
+        Map<LocalDate, List<WeblogEntry>> results = dateEntryMapCaptor.getValue();
         assertEquals(0, results.size());
     }
 
@@ -148,9 +153,8 @@ public class SearchResultsModelTest {
         }).when(mockIndexManager).executeIndexOperationNow(any(SearchTask.class));
 
         searchResultsModel.getWeblogEntriesPager();
-        ArgumentCaptor<Map<LocalDate, List<WeblogEntry>>> entriesCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(mockGenerator).getSearchPager(any(), entriesCaptor.capture(), eq(false));
-        Map<LocalDate, List<WeblogEntry>> results = entriesCaptor.getValue();
+        verify(mockGenerator).getSearchPager(any(), dateEntryMapCaptor.capture(), eq(false));
+        Map<LocalDate, List<WeblogEntry>> results = dateEntryMapCaptor.getValue();
         LocalDate expectedDate = now.atZone(ZoneId.systemDefault()).toLocalDate();
         assertEquals(1, results.size());
         assertEquals(2, results.get(expectedDate).size());

@@ -22,9 +22,6 @@ package org.tightblog.pojos;
 
 import org.tightblog.pojos.Template.ComponentType;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,7 +33,6 @@ import java.util.Set;
  * used mostly to contain all the templates for a theme, but does contain other
  * theme related attributes such as name, last modified date, etc.
  */
-@XmlRootElement(name = "sharedtheme")
 public class SharedTheme {
 
     private String id;
@@ -50,13 +46,7 @@ public class SharedTheme {
     private Instant lastModified;
     private boolean enabled = true;
 
-    // JAXB loads here; ThemeManagerImpl moves them to the three maps.
-    @XmlElements(@XmlElement(name = "template"))
-    private Set<SharedTemplate> tempTemplates = new HashSet<>();
-
-    public Set<SharedTemplate> getTempTemplates() {
-        return tempTemplates;
-    }
+    private Set<SharedTemplate> templates = new HashSet<>();
 
     // the filesystem directory where we should read this theme from
     private String themeDir;
@@ -117,17 +107,21 @@ public class SharedTheme {
         this.siteWide = siteWide;
     }
 
-    /**
-     * Get the name-keyed map of all templates associated with this Theme.
-     */
-    public Map<String, Template> getTemplatesByName() {
-        return templatesByName;
+    public Set<SharedTemplate> getTemplates() {
+        return templates;
     }
 
     public void setTemplates(Set<SharedTemplate> templates) {
         for (SharedTemplate t : templates) {
             addTemplate(t);
         }
+    }
+
+    /**
+     * Get the name-keyed map of all templates associated with this Theme.
+     */
+    public Map<String, Template> getTemplatesByName() {
+        return templatesByName;
     }
 
     public String getThemeDir() {
@@ -182,6 +176,7 @@ public class SharedTheme {
      * Set the value for a given template name.
      */
     public void addTemplate(SharedTemplate template) {
+        this.templates.add(template);
         this.templatesByName.put(template.getName(), template);
         this.templatesByLink.put(template.getRelativePath(), template);
         if (template.getRole().isSingleton()) {
