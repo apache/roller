@@ -11,7 +11,6 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 
 <script src="<s:url value='/webjars/jquery/3.3.1/jquery.min.js' />"></script>
 
-<link href="<s:url value='/webjars/jquery-ui/1.12.1/jquery-ui.theme.css' />" rel="stylesheet" />
 <script src="<s:url value='/webjars/jquery-ui/1.12.1/jquery-ui.min.js' />"></script>
 
 <link href="<s:url value='/webjars/bootstrap/3.3.7/css/bootstrap.min.css' />" rel="stylesheet" />

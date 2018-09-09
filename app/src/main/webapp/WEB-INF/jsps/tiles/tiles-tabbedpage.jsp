@@ -54,6 +54,7 @@
         </div>
 
         <c:if test="${sidebar != '/WEB-INF/jsps/tiles/empty.jsp'}">
+            <s:property value="sidebar" />
             <div class="panel panel-default">
                 <div class="panel-body">
                     <tiles:insertAttribute name="sidebar"/>

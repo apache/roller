@@ -43,30 +43,31 @@
     <s:if test="template.required || bean.mobile">
         <%-- Cannot edit name of a reqired template --%>
         <s:textfield name="bean.name"
-            label="%{getText('generic.name')}" size="50" readonly="true" cssStyle="background: #e5e5e5"/>
+                     label="%{getText('generic.name')}" size="50" readonly="true" cssStyle="background: #e5e5e5"/>
     </s:if>
     <s:else>
         <s:textfield name="bean.name"
-            label="%{getText('generic.name')}" size="50"/>
+                     label="%{getText('generic.name')}" size="50"/>
     </s:else>
 
     <s:textfield name="bean.action" label="%{getText('pageForm.action')}" size="50"
-        readonly="true" cssStyle="background: #e5e5e5"/>
+                 readonly="true" cssStyle="background: #e5e5e5"/>
 
     <s:if test="!template.required && template.custom">
 
         <%-- allow setting the path for a custom template --%>
         <s:textfield name="bean.link"
-            label="%{getText('pageForm.link')}" size="50" onkeyup="updatePageURLDisplay()"/>
+                     label="%{getText('pageForm.link')}" size="50" onkeyup="updatePageURLDisplay()"/>
 
         <%-- show preview of the full URL that will result from that path --%>
 
         <div id="no_link" class="alert-danger" style="display: none; margin-top:3em; margin-bottom:2em; padding: 1em">
-            <s:text name="pageForm.noUrl" />
+            <s:text name="pageForm.noUrl"/>
         </div>
 
-        <div id="good_link" class="alert-success" style="display: none; margin-top:3em; margin-bottom:2em; padding: 1em">
-            <s:text name="pageForm.resultingUrlWillBe" />
+        <div id="good_link" class="alert-success"
+             style="display: none; margin-top:3em; margin-bottom:2em; padding: 1em">
+            <s:text name="pageForm.resultingUrlWillBe"/>
             <s:property value="actionWeblog.absoluteURL"/>page/
             <span id="linkPreview" style="color:red"><s:property value="bean.link"/></span>
             <s:if test="template.link != null">
@@ -79,7 +80,7 @@
     <s:if test="template.required">
         <%-- Required templates have a description--%>
         <s:textarea name="bean.description" label="%{getText('generic.description')}"
-            cols="50" rows="2" readonly="true" cssStyle="background: #e5e5e5"/>
+                    cols="50" rows="2" readonly="true" cssStyle="background: #e5e5e5"/>
     </s:if>
     <s:else>
         <s:textarea name="bean.description" label="%{getText('generic.description')}" cols="50" rows="2"/>
@@ -126,10 +127,7 @@
 
     <s:submit value="%{getText('generic.save')}" cssClass="btn btn-default"/>
     <input type="button" value='<s:text name="generic.done"/>' class="button btn"
-           onclick="window.location='
-               <s:url action="templates">
-                   <s:param name="weblog" value="%{weblog}"/>
-               </s:url>'"/>
+           onclick="window.location='<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>'"/>
 
     <%-- ================================================================== --%>
     <%-- Advanced settings inside a control toggle --%>
@@ -154,20 +152,20 @@
                 <div class="panel-body">
 
                     <s:select name="bean.templateLanguage" list="templateLanguages" size="1"
-                              label="%{getText('pageForm.templateLanguage')}" />
+                              label="%{getText('pageForm.templateLanguage')}"/>
 
                     <s:checkbox name="bean.hidden"
-                                label="%{getText('pageForm.hidden')}" tooltip="%{getText('pageForm.hidden.tip')}" />
+                                label="%{getText('pageForm.hidden')}" tooltip="%{getText('pageForm.hidden.tip')}"/>
 
                     <s:checkbox name="bean.navbar"
-                                label="%{getText('pageForm.navbar')}" tooltip="%{getText('pageForm.navbar.tip')}" />
+                                label="%{getText('pageForm.navbar')}" tooltip="%{getText('pageForm.navbar.tip')}"/>
 
                     <s:checkbox name="bean.autoContentType"
-                                label="%{getText('pageForm.useAutoContentType')}" />
+                                label="%{getText('pageForm.useAutoContentType')}"/>
 
                     <div id="manual-content-type-control-group" style="display:none">
                         <s:textfield name="bean.manualContentType"
-                                    label="%{getText('pageForm.useManualContentType')}" />
+                                     label="%{getText('pageForm.useManualContentType')}"/>
                     </div>
 
                 </div>
@@ -183,28 +181,25 @@
 
     var weblogURL = '<s:property value="actionWeblog.absoluteURL" />';
     var originalLink = '<s:property value="bean.link" />';
-    var type = '<s:property value="bean.type" /> ';
+    var type = '<s:property value="bean.type" />';
 
     $(document).ready(function () {
 
         $("#template-code-tabs").tabs();
 
         showContentTypeField();
-        $("#template_bean_autoContentType").change(function(e){
+        $("#template_bean_autoContentType").click(function(e) {
             showContentTypeField();
         });
+    });
 
-        $("#__checkbox_template_bean_autoContentType").change(function(e){
-            showContentTypeField();
-        });
-
-        // Update page URL when user changes link
-        function updatePageURLDisplay() {
-            var link = $("#template_bean_link").val();
-            if ( link !== "" ) {
-                $("#no_link").hide();
-                $("#good_link").show();
-                $("#linkPreview").html( link );
+    // Update page URL when user changes link
+    function updatePageURLDisplay() {
+        var link = $("#template_bean_link").val();
+        if (link !== "") {
+            $("#no_link").hide();
+            $("#good_link").show();
+            $("#linkPreview").html(link);
         } else {
             $("#good_link").hide();
             $("#no_link").show();
@@ -221,7 +216,8 @@
     }
 
     function showContentTypeField() {
-        if ( $("#template_bean_autoContentType").val() == "true" ) {
+        var checked = $("#template_bean_autoContentType").prop("checked");
+        if ( checked ) {
             $("#manual-content-type-control-group").hide();
         } else {
             $("#manual-content-type-control-group").show();
