@@ -104,6 +104,7 @@
     <s:text name="stylesheetEdit.customThemeNoStylesheet" />
 </s:else>
 
+
 <script type="text/javascript">
 
     function revertStylesheet() {

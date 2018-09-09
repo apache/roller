@@ -50,6 +50,10 @@ table {
     transition: opacity 1.25s linear;
 }
 
+.glyphicon-info-sign {
+    margin-right: 0.5em;
+}
+
 /* main menu */
 
 .mm_subtable_label {
@@ -139,9 +143,6 @@ td.pendingcomment {
     background: #ffcccc;
     border: 1px gray solid;
 }
-.rollertable label.checkboxLabel {
-    display: none;
-}
 table.innertable {
     border-collapse: collapse;
     width: 100%;
@@ -149,9 +150,6 @@ table.innertable {
 }
 table.innertable tbody td {
     padding: 0;
-}
-table.rollertable .innertable td {
-    border: none;
 }
 table.innertable td.viewbody {
     padding: 5px;

@@ -26,7 +26,7 @@ package org.apache.roller.weblogger.pojos;
  */
 public interface ThemeTemplate extends Template {
 
-    public enum ComponentType {
+    enum ComponentType {
         WEBLOG("Weblog"),
         PERMALINK("Permalink"),
         SEARCH("Search"),

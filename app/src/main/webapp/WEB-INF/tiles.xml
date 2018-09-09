@@ -297,11 +297,6 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
-    <definition name=".EntryRemove" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryRemove.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
-    </definition>
-
     <definition name=".Entries" extends=".tiles-tabbedpage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Entries.jsp" />
@@ -367,17 +362,7 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/TemplateEdit.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
-    
-    <definition name=".TemplateRemove" extends=".tiles-tabbedpage"  >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/TemplateRemove.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
-    </definition>
-    
-    <definition name=".TemplatesRemove" extends=".tiles-tabbedpage"  >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/TemplatesRemove.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
-    </definition>
-    
+
     <definition name=".Members" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Members.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MembersSidebar.jsp" />

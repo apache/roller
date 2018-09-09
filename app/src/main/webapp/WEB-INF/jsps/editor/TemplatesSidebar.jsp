@@ -29,7 +29,7 @@
 
     <s:if test="!availableActions.isEmpty">
         <s:text name="pagesForm.action"/>
-        <s:select name="newTmplAction" size="1" list="availableActions"/>
+        <s:select name="newTmplAction" list="availableActions"/>
     </s:if>
 
     <s:submit class="btn" value="%{getText('pagesForm.add')}"/>

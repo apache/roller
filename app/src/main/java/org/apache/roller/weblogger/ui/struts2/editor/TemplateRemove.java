@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -28,6 +29,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 
@@ -37,72 +39,67 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 // TODO: make this work @AllowedMethods({"execute","remove","cancel"})
 public class TemplateRemove extends UIAction {
 
-	private static Log log = LogFactory.getLog(TemplateRemove.class);
+    private static Log log = LogFactory.getLog(TemplateRemove.class);
 
-	// id of template to remove
-	private String removeId = null;
+    // id of template to remove
+    private String removeId = null;
 
-	// template object that we will remove
-	private WeblogTemplate template = null;
+    // template object that we will remove
+    private WeblogTemplate template = null;
 
-	public TemplateRemove() {
-		this.actionName = "templateRemove";
-		this.desiredMenu = "editor";
-		this.pageTitle = "editPages.title.removeOK";
-	}
+    public TemplateRemove() {
+        this.actionName = "templateRemove";
+        this.desiredMenu = "editor";
+        this.pageTitle = "editPages.title.removeOK";
+    }
 
-	public void myPrepare() {
-		if (getRemoveId() != null) {
+    public void myPrepare() {
+        if (StringUtils.isNotEmpty(getRemoveId())) {
             try {
-                setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
-                        .getTemplate(getRemoveId()));
+                setTemplate(
+                    WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(getRemoveId()));
             } catch (WebloggerException ex) {
-                log.error("Error looking up template by id - " + getRemoveId(),
-                        ex);
+                log.error("Error looking up template by id - " + getRemoveId(), ex);
                 addError("editPages.remove.notFound", getRemoveId());
             }
         }
-	}
+    }
 
-	/**
-	 * Display the remove template confirmation.
-	 */
-	public String execute() {
-		return "confirm";
-	}
+    /**
+     * Display the remove template confirmation.
+     */
+    public String execute() {
+        return "confirm";
+    }
 
-	/**
-	 * Remove a new template.
-	 */
-	public String remove() {
+    /**
+     * Remove a new template.
+     */
+    public String remove() {
 
-		if (getTemplate() != null) {
+        if (getTemplate() != null) {
             try {
                 if (!getTemplate().isRequired()
-                        || !WeblogTheme.CUSTOM.equals(getActionWeblog()
-                        .getEditorTheme())) {
+                    || !WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
 
-                    WeblogManager mgr = WebloggerFactory.getWeblogger()
-                            .getWeblogManager();
+                    WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
 
                     // if weblog template remove custom style sheet also
-                    if (getTemplate().getName().equals(
-                            WeblogTemplate.DEFAULT_PAGE)) {
+                    if (getTemplate().getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
 
                         Weblog weblog = getActionWeblog();
 
-                        ThemeTemplate stylesheet = getActionWeblog().getTheme()
-                                .getStylesheet();
+                        ThemeTemplate stylesheet = getActionWeblog().getTheme().getStylesheet();
 
                         // Delete style sheet if the same name
                         if (stylesheet != null
-                                && getActionWeblog().getTheme().getStylesheet() != null
-                                && stylesheet.getLink().equals(
-                                getActionWeblog().getTheme()
-                                        .getStylesheet().getLink())) {
+                            && getActionWeblog().getTheme().getStylesheet() != null
+                            && stylesheet.getLink().equals(
+                            getActionWeblog().getTheme().getStylesheet().getLink())) {
+
                             // Same so OK to delete
-                            WeblogTemplate css = mgr.getTemplateByLink(
-                                    getActionWeblog(), stylesheet.getLink());
+                            WeblogTemplate css =
+                                mgr.getTemplateByLink(getActionWeblog(), stylesheet.getLink());
 
                             if (css != null) {
                                 mgr.removeTemplate(css);
@@ -126,32 +123,28 @@ public class TemplateRemove extends UIAction {
             }
         }
 
-		return "confirm";
-	}
-	
-    /**
-     * Cancel.
-     * 
-     * @return the string
-     */
+        return "confirm";
+    }
+
+
     public String cancel() {
         return CANCEL;
     }
 
-	public String getRemoveId() {
-		return removeId;
-	}
+    public String getRemoveId() {
+        return removeId;
+    }
 
-	public void setRemoveId(String removeId) {
-		this.removeId = removeId;
-	}
+    public void setRemoveId(String removeId) {
+        this.removeId = removeId;
+    }
 
-	public WeblogTemplate getTemplate() {
-		return template;
-	}
+    public WeblogTemplate getTemplate() {
+        return template;
+    }
 
-	public void setTemplate(WeblogTemplate template) {
-		this.template = template;
-	}
+    public void setTemplate(WeblogTemplate template) {
+        this.template = template;
+    }
 
 }

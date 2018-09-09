@@ -30,12 +30,12 @@
     <p><s:text name="pagesForm.themesReminder"><s:param value="actionWeblog.editorTheme"/></s:text></p>
 </s:if>
 
-<s:form action="templatesRemove" theme="bootstrap" cssClass="form-horizontal">
+<s:form action="templateRemove!remove" theme="bootstrap" cssClass="form-horizontal">
     <s:hidden name="salt"/>
     <s:hidden name="weblog" value="%{actionWeblog.handle}"/>
+    <s:hidden name="removeId" id="removeId"/>
 
-    <%-- table of pages --%>
-    <table class="rollertable table table-striped">
+    <table class="table table-striped"> <%-- of weblog templates --%>
 
         <s:if test="!templates.isEmpty">
 
@@ -73,7 +73,11 @@
                                 <s:param name="weblog" value="actionWeblog.handle"/>
                                 <s:param name="removeId" value="#p.id"/>
                             </s:url>
-                            <s:a href="%{removeUrl}"> <span class="glyphicon glyphicon-remove"></span> </s:a>
+                            <a href="#" onclick=
+                                    "confirmTemplateDelete('<s:property value="#p.id"/>', '<s:property value="#p.name"/>' )">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </a>
+
                         </s:if>
                         <s:else>
                             <span class="glyphicon glyphicon-lock"></span>
@@ -94,3 +98,14 @@
     </table>
 
 </s:form>
+
+
+<script>
+    function confirmTemplateDelete(templateId, templateName) {
+        $('#removeId').val(templateId);
+        if (window.confirm('<s:text name="pageRemove.confirm"/>: \'' + templateName + '\'?')) {
+            document.templateRemove.action = "<s:url action='templateRemove!remove' />";
+            document.templateRemove.submit();
+        }
+    }
+</script>

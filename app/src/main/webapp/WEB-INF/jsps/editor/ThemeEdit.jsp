@@ -36,7 +36,7 @@
                 <div class="panel-body" id="sharedChooser">
                     <h3>
                         <input id="sharedRadio" type="radio" name="themeType" value="shared"
-                               <s:if test="!customTheme">checked</s:if> onclick="proposeThemeTypeChange($(this))"/>&nbsp;
+                            <s:if test="!customTheme">checked</s:if> onclick="proposeThemeTypeChange($(this))"/>&nbsp;
                         <s:text name="themeEditor.sharedTheme"/>
                     </h3>
                     <s:text name="themeEditor.sharedThemeDescription"/>
@@ -49,7 +49,7 @@
                 <div class="panel-body" id="customChooser">
                     <h3>
                         <input id="customRadio" type="radio" name="themeType" value="custom"
-                               <s:if test="customTheme">checked</s:if> onclick="proposeThemeTypeChange($(this))"/>&nbsp;
+                            <s:if test="customTheme">checked</s:if> onclick="proposeThemeTypeChange($(this))"/>&nbsp;
                         <s:text name="themeEditor.customTheme"/>
                     </h3>
                     <s:text name="themeEditor.customThemeDescription"/>

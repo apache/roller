@@ -164,8 +164,7 @@
                 <div class="panel-heading">
 
                     <h4 class="panel-title">
-                        <a class="collapsed" data-toggle="collapse" data-target="#collapsePlugins" 
-                            href="#">
+                        <a class="collapsed" data-toggle="collapse" data-target="#collapsePlugins" href="#">
                             <s:text name="weblogEdit.pluginsToApply"/> </a>
                     </h4>
 
