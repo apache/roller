@@ -1,0 +1,247 @@
+
+-- Below script creates the TightBlog tables for database mysql
+
+create table weblogger_user (
+    id              varchar(48) not null primary key,
+    username        varchar(48) not null,
+    screenname      varchar(48) not null,
+    emailaddress    varchar(255) not null,
+    global_role     varchar(16) not null,
+    status          varchar(20) not null,
+    datecreated     datetime(3) not null,
+    lastlogin       datetime(3),
+    activationcode	varchar(48),
+    mfa_secret      varchar(96),
+    encr_password   varchar(255)
+);
+alter table weblogger_user add constraint wu_username_uq unique (username);
+
+alter table weblogger_user add constraint wu_screenname_uq unique (screenname);
+
+create table weblog (
+    id                varchar(48) not null primary key,
+    name              varchar(255) not null,
+    handle            varchar(255) not null,
+    tagline           varchar(255),
+    about             varchar(255),
+    locale            varchar(20),
+    timezone          varchar(50),
+    visible           tinyint(1) default 1 not null,
+    theme             varchar(255) not null,
+    entriesperpage    integer default 15 not null,
+    editformat        varchar(20) not null,
+    creatorid         varchar(48) not null,
+    datecreated       datetime(3) not null,
+    lastmodified      datetime(3) not null,
+    allowcomments     varchar(20) not null,
+    emailcomments     tinyint(1) default 1 not null,
+    commentdays       integer default 7 not null,
+    analyticscode     text,
+    blacklist         text,
+    hitstoday	      integer default 0 not null
+);
+create index ws_visible_idx on weblog(visible);
+alter table weblog add constraint wlog_handle_uq unique (handle);
+
+alter table weblog add constraint wlog_creatorid_fk
+    foreign key ( creatorid ) references weblogger_user( id ) ;
+
+create table user_weblog_role (
+   id              varchar(48) not null primary key,
+   userid          varchar(48) not null,
+   weblogid        varchar(48) not null,
+   weblog_role     varchar(48) not null,
+   pending         tinyint(1) default 1 not null
+);
+
+alter table user_weblog_role add constraint uwr_userid_fk
+    foreign key ( userid ) references weblogger_user( id ) ;
+
+alter table user_weblog_role add constraint uwr_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
+
+
+create table weblog_template (
+    id              varchar(48) not null primary key,
+    weblogid        varchar(48) not null,
+    role            varchar(20) not null,
+    name            varchar(255) not null,
+    relative_path   varchar(255),
+    description     varchar(255),
+    template        text not null,
+    updatetime      datetime(3) not null
+);
+create index wt_name_idx on weblog_template(name);
+create index wt_link_idx on weblog_template(relative_path);
+
+alter table weblog_template add constraint wt_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
+
+alter table weblog_template add constraint wt_name_uq unique (weblogid, name);
+
+
+create table blogroll_link (
+    id               varchar(48) not null primary key,
+    weblogid         varchar(48) not null,
+    name             varchar(128) not null,
+    url              varchar(128) not null,
+    description      varchar(128),
+    position         integer not null
+);
+
+alter table blogroll_link add constraint bl_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
+
+alter table blogroll_link add constraint bl_name_uq unique (weblogid, name);
+
+
+create table weblog_category (
+    id               varchar(48) not null primary key,
+    name             varchar(255) not null,
+    weblogid         varchar(48) not null,
+    position         integer not null
+);
+
+alter table weblog_category add constraint wc_name_uq unique (weblogid, name);
+
+alter table weblog_category add constraint wc_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
+
+
+create table weblog_entry (
+    id              varchar(48)  not null primary key,
+    anchor          varchar(255)  not null,
+    creatorid       varchar(48) not null,
+    title           varchar(255)  not null,
+    text            text not null,
+    pubtime         datetime(3),
+    updatetime      datetime(3) not null,
+    weblogid        varchar(48)  not null,
+    categoryid      varchar(48)  not null,
+    editformat      varchar(20) not null,
+    commentdays     integer default 7 not null,
+    status          varchar(20) not null,
+    summary         text,
+    notes           text,
+    search_description varchar(255),
+    enclosure_url   varchar(255),
+    enclosure_type  varchar(48),
+    enclosure_length integer
+);
+
+alter table weblog_entry add constraint we_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
+
+alter table weblog_entry add constraint we_categoryid_fk
+    foreign key ( categoryid ) references weblog_category( id ) ;
+
+alter table weblog_entry add constraint we_creatorid_fk
+    foreign key ( creatorid ) references weblogger_user( id ) ;
+
+create index we_status_idx on weblog_entry(status);
+create index we_combo1_idx on weblog_entry(status, pubtime, weblogid);
+create index we_combo2_idx on weblog_entry(weblogid, pubtime, status);
+
+-- weblogid available via entryid but duplicated for performance purposes
+create table weblog_entry_tag (
+    id              varchar(48)   not null primary key,
+    weblogid        varchar(48)   not null,
+    entryid         varchar(48)   not null,
+    name            varchar(255)  not null
+);
+
+alter table weblog_entry_tag add constraint wtag_name_uq unique (weblogid, entryid, name);
+
+alter table weblog_entry_tag add constraint wtag_entryid_fk
+    foreign key ( entryid ) references weblog_entry( id ) ;
+
+-- below index for single-blog tag clouds
+create index wtag_tagsearch_idx on weblog_entry_tag( weblogid, name, entryid );
+
+create table weblog_entry_comment (
+    id         varchar(48) not null primary key,
+    entryid    varchar(48) not null,
+    status     varchar(20) not null,
+    bloggerid  varchar(48),
+    name       varchar(255) not null,
+    email      varchar(255) not null,
+    notify     tinyint(1) default 0 not null,
+    content    text,
+    posttime   datetime(3) not null,
+    url        varchar(255),
+    remotehost varchar(128),
+    referrer   varchar(255),
+    useragent  varchar(255)
+);
+
+alter table weblog_entry_comment add constraint co_entryid_fk
+    foreign key ( entryid ) references weblog_entry( id ) ;
+
+
+alter table weblog_entry_comment add constraint co_userid_fk
+    foreign key ( bloggerid ) references weblogger_user( id ) ;
+
+create index co_status_idx on weblog_entry_comment( status );
+
+-- for server-wide properties that can be adjusted (in the Admin UI) during runtime
+create table weblogger_properties (
+    id                     varchar(48) not null primary key,
+    database_version       integer not null,
+    main_blog_id           varchar(48),
+    registration_policy    varchar(24) default 'DISABLED' not null,
+    users_create_blogs     tinyint(1) default 1 not null,
+    blog_html_policy       varchar(24) default 'RELAXED' not null,
+    users_customize_themes tinyint(1) default 1 not null,
+    newsfeed_items_page    integer default 30 not null,
+    default_analytics_code text,
+    users_override_analytics_code tinyint(1) default 1 not null,
+    comment_policy         varchar(24) default 'MUSTMODERATE' not null,
+    comment_html_policy    varchar(24) default 'BASIC' not null,
+    autodelete_spam        tinyint(1) default 0 not null,
+    users_comment_notifications tinyint(1) default 1 not null,
+    comment_spam_filter    text,
+    users_upload_media_files tinyint(1) default 1 not null,
+    allowed_file_extensions varchar(255),
+    disallowed_file_extensions varchar(255) default 'exe',
+    max_file_size_mb       integer default 3 not null,
+    max_file_uploads_size_mb integer default 20 not null,
+    last_weblog_change     datetime(3) default CURRENT_TIMESTAMP(3) not null
+);
+
+alter table weblogger_properties add constraint wp_weblogid_fk
+    foreign key (main_blog_id) references weblog( id ) ;
+
+-- initial row, relying on per-column defaults.
+insert into weblogger_properties(id, database_version) values ('1', 200);
+
+create table media_directory (
+    id               varchar(48) not null primary key,
+    weblogid         varchar(48) not null,
+    name             varchar(255) not null
+);
+
+alter table media_directory add constraint md_weblogid_fk
+    foreign key ( weblogid ) references weblog( id ) ;
+
+create table media_file (
+    id              varchar(48) not null primary key,
+    directoryid     varchar(48) not null,
+    name            varchar(255) not null,
+    content_type    varchar(50) not null,
+    alt_attr        varchar(255),
+    title_attr      varchar(255),
+    anchor          varchar(255),
+    notes           varchar(255),
+    width           integer,
+    height          integer,
+    size_in_bytes   integer,
+    creatorid       varchar(48) not null,
+    date_uploaded   datetime(3) not null,
+    last_updated    datetime(3) not null
+);
+
+alter table media_file add constraint mf_directoryid_fk
+    foreign key (directoryid) references media_directory(id) ;
+
+alter table media_file add constraint mf_creatorid_fk
+    foreign key (creatorid) references weblogger_user( id ) ;

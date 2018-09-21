@@ -1,0 +1,16 @@
+apply plugin: 'groovy'
+
+repositories {
+	mavenCentral()
+}
+
+task genDDL (type: JavaExec) {
+	main = 'genDDL'
+	classpath = sourceSets.main.runtimeClasspath
+}
+
+dependencies {
+	compile localGroovy()
+    // velocity used only when running Groovy task during build
+    compile('org.apache.velocity:velocity-engine-core:2.0')
+}

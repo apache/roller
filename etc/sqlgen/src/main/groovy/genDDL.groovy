@@ -15,10 +15,12 @@
  */
 /**
  Groovy script runs the createdb.vm Velocity template to generate database-specific table
- creation scripts for TightBlog.
+ creation scripts for TightBlog, placing the generated files in its resources/dbscripts folder.
 
- Run "gradle createDDLScripts" from project root folder whenever the database script createdb.vm changes,
- allowing for the database-specific scripts in the same folder to get updated.
+ The TightBlog distribution will always have the  
+
+ Run "gradle createDDLScripts" to activate whenever the database script createdb.vm changes,
+ to provide TightBlog has the updated scripts.
  */
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.Template
@@ -39,8 +41,8 @@ def genScript = { String dbName, String foreignKeyIndex, String textType,
     context.put("DB_NAME", dbName)
 
     try {
-        Template template = Velocity.getTemplate("src/main/resources/dbscripts/createdb.vm")
-        PrintWriter pw = new PrintWriter("src/main/resources/dbscripts/$dbName-createdb.sql")
+        Template template = Velocity.getTemplate("src/main/resources/createdb.vm")
+        PrintWriter pw = new PrintWriter("../../src/main/resources/dbscripts/$dbName-createdb.sql")
         template.merge(context, pw)
         pw.flush()
     } catch(Exception e) {

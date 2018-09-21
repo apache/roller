@@ -1,27 +1,26 @@
-Welcome to TightBlog! This project started off in May 2015 as a fork of the Apache Roller project, of which I contributed for about 2 1/2 years 
-before deciding to go my own way due to differing ideas of what would make the best blogging product.  As of 14 September 2018, <a href="https://github.com/gmazza/tightblog/releases">Release 3.3.1</a> is available.
+Welcome to TightBlog, a greatly modernized & streamlined bottom-to-(nearly)-top rewrite of Apache Roller, with much
+out-of-date and seldom used functionality removed and much new functionality added in as well.  I started this fork in 
+May 2015 after contributing for about 2 1/2 years on Roller.  As of 21 September 2018, 
+<a href="https://github.com/gmazza/tightblog/releases">Release 3.3.2</a> is available.
 
 Screen shots for the TightBlog UI are [here](https://github.com/gmazza/tightblog/wiki/Screenshots), the twelve-table database model is
 [here](https://github.com/gmazza/tightblog/blob/master/app/src/main/resources/dbscripts/createdb.vm), see also [my blog](https://glenmazza.net/blog/) for an example
 of a TightBlog-powered blog.  TightBlog ships with three blog themes, for which bloggers may use directly, modify them per-blog, or create their own themes from scratch.
 
-TightBlog strives to be the cleanest and simplest implementation of a Java based blog server, suitable either for direct use or
-incorporation, as an Apache-licensed open source project, into larger projects.  Specifically, its goal is to satisfy all the needs of 80% of bloggers while
-avoiding seldom-requested functionality that creates maintenance burdens, distracting one from core functionality and hence doing more harm than good.
-
-This more realistic goal--along with adopting Spring Boot, REST, AngularJS and other code modernizations--has allowed TightBlog to slim down considerably from its parent, as can be seen in the following chart:
+The table below shows the streamlining TightBlog has gone through in its first three releases since forking.  Switching to Gradle,
+Spring Boot, Spring REST API, AngularJS and other code modernizations has also made the code much more pleasant to work with
+and easier to understand.
 
 |Product|Released|Database Tables|Java Source Files|JSP Files|Lines Of Code|
 |-----|-----|-----|-----|-----|-----|
 |Apache Roller 5.1.2|1 Mar 2015|33|493|96|95.7K|
 |TightBlog 1.0|17 July 2016|17|187|55|48.5K|
 |TightBlog 2.0|4 June 2017|14|151|37|43.7K|
-|TightBlog 2.0.4|12 Febuary 2018|13|146|37|42.9K|
 |TightBlog 3.0|23 June 2018|12|119|37|35.8K|
 
 (Lines of code--LOC--based on <a href="https://www.openhub.net/p/tightblog">OpenHub</a> stats.  Java source file count does not include unit test classes, however LOC do.)
 
-In addition to the removal of older seldom used functionality many new helpful and modern features have been added:
+Some newer functionality in TightBlog not in Roller:
 
 * Bloggers may blog using <a href="http://commonmark.org/">CommonMark</a> in addition to standard HTML and Rich Text Editors.
 * Blog entries have a "notes" field for the blogger to store anything helpful in maintaining the article.
@@ -36,12 +35,11 @@ In addition to the removal of older seldom used functionality many new helpful a
 * Login Multifactor Authentication (MFA) with Google Authenticator support added (Admin setting provided to either require it for all bloggers--the default--or have it disabled).
 
 To obtain the source code:
-* 3.0.x branch (current): git clone git@github.com:gmazza/tightblog.git
-* Release 2.0.x branch: https://github.com/gmazza/tightblog/tree/release2.0.4
+* 3.x branch (current): git clone git@github.com:gmazza/tightblog.git
 * source for a specific release: https://github.com/gmazza/tightblog/releases
 
-To build the application (app/target/tightblog.war) with Gradle and Java 8:
-  `gradle clean build` from the TightBlog root.
+To build the application (build/libs/tightblog-x.y.z.war) with Gradle and Java 10+:
+  `./gradlew clean build` from the TightBlog root.
 
 The Docker images defined in the docker subdirectory of this project can be used to test TightBlog locally before deploying.  First build
 the project to generate the tightblog WAR.  As TightBlog requires SSL, next provide a certificate & key for the Tomcat
@@ -50,7 +48,8 @@ from your local machine at https://localhost/tightblog.  Should you need to chan
 to run "docker-compose build" for the images to be regenerated.  Note for simplicity the default does not demo Google Authenticator MFA,
 if desired modify the docker/web/tightblog-custom.properties to activate. Emailing is also not configured.
 
-Caution: The Docker images have not seen production use and are currently meant just for quick demoing for evaluation purposes.  In a
-production environment tightening of the Tomcat and PostgresQL images provided (changing passwords, removing sample applications
-provided by Tomcat, etc.) would be advisable, best to check online sources for details.  For actual production installations on Tomcat
-or other servlet container, please read the <a href="https://github.com/gmazza/tightblog/wiki">Install pages</a> on the TightBlog Wiki.
+Caution: The Docker images have not seen production use and are currently meant for evaluation purposes.  Presumably more 
+tightening of the Tomcat and PostgresQL images would be needed for production use, best to check online sources 
+for securing these products should you choose to use these images for your blog.  For installations 
+on standalone Tomcat or other servlet container, please read the <a href="https://github.com/gmazza/tightblog/wiki">Install pages</a>
+on the TightBlog Wiki.

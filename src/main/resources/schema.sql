@@ -1,6 +1,10 @@
 
--- Run this script to create the TightBlog database tables in your database.
--- *****************************************************
+-- Below script creates the TightBlog tables for database apachederby
+
+create table hello_glen (
+    id              varchar(48) not null primary key,
+    username        varchar(48) not null
+);
 
 create table weblogger_user (
     id              varchar(48) not null primary key,
@@ -9,8 +13,8 @@ create table weblogger_user (
     emailaddress    varchar(255) not null,
     global_role     varchar(16) not null,
     status          varchar(20) not null,
-    datecreated     timestamp(3) with time zone not null,
-    lastlogin       timestamp(3) with time zone,
+    datecreated     timestamp not null,
+    lastlogin       timestamp,
     activationcode	varchar(48),
     mfa_secret      varchar(96),
     encr_password   varchar(255)
@@ -27,18 +31,18 @@ create table weblog (
     about             varchar(255),
     locale            varchar(20),
     timezone          varchar(50),
-    visible           boolean default true not null,
+    visible           smallint default 1 not null,
     theme             varchar(255) not null,
     entriesperpage    integer default 15 not null,
     editformat        varchar(20) not null,
     creatorid         varchar(48) not null,
-    datecreated       timestamp(3) with time zone not null,
-    lastmodified      timestamp(3) with time zone not null,
+    datecreated       timestamp not null,
+    lastmodified      timestamp not null,
     allowcomments     varchar(20) not null,
-    emailcomments     boolean default true not null,
+    emailcomments     smallint default 1 not null,
     commentdays       integer default 7 not null,
-    analyticscode     text,
-    blacklist         text,
+    analyticscode     clob(102400),
+    blacklist         clob(102400),
     hitstoday	      integer default 0 not null
 );
 create index ws_visible_idx on weblog(visible);
@@ -52,7 +56,7 @@ create table user_weblog_role (
    userid          varchar(48) not null,
    weblogid        varchar(48) not null,
    weblog_role     varchar(48) not null,
-   pending         boolean default true not null
+   pending         smallint default 1 not null
 );
 
 alter table user_weblog_role add constraint uwr_userid_fk
@@ -69,8 +73,8 @@ create table weblog_template (
     name            varchar(255) not null,
     relative_path   varchar(255),
     description     varchar(255),
-    template        text not null,
-    updatetime      timestamp(3) with time zone not null
+    template        clob(102400) not null,
+    updatetime      timestamp not null
 );
 create index wt_name_idx on weblog_template(name);
 create index wt_link_idx on weblog_template(relative_path);
@@ -80,7 +84,6 @@ alter table weblog_template add constraint wt_weblogid_fk
 
 alter table weblog_template add constraint wt_name_uq unique (weblogid, name);
 
-    create index wt_weblogid_idx on weblog_template(weblogid);
 
 create table blogroll_link (
     id               varchar(48) not null primary key,
@@ -96,7 +99,6 @@ alter table blogroll_link add constraint bl_weblogid_fk
 
 alter table blogroll_link add constraint bl_name_uq unique (weblogid, name);
 
-    create index bl_weblogid_idx on blogroll_link( weblogid );
 
 create table weblog_category (
     id               varchar(48) not null primary key,
@@ -110,23 +112,22 @@ alter table weblog_category add constraint wc_name_uq unique (weblogid, name);
 alter table weblog_category add constraint wc_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
 
-    create index wc_weblogid_idx on weblog_category( weblogid );
 
 create table weblog_entry (
     id              varchar(48)  not null primary key,
     anchor          varchar(255)  not null,
     creatorid       varchar(48) not null,
     title           varchar(255)  not null,
-    text            text not null,
-    pubtime         timestamp(3) with time zone,
-    updatetime      timestamp(3) with time zone not null,
+    text            clob(102400) not null,
+    pubtime         timestamp,
+    updatetime      timestamp not null,
     weblogid        varchar(48)  not null,
     categoryid      varchar(48)  not null,
     editformat      varchar(20) not null,
     commentdays     integer default 7 not null,
     status          varchar(20) not null,
-    summary         text,
-    notes           text,
+    summary         clob(102400),
+    notes           clob(102400),
     search_description varchar(255),
     enclosure_url   varchar(255),
     enclosure_type  varchar(48),
@@ -135,15 +136,12 @@ create table weblog_entry (
 
 alter table weblog_entry add constraint we_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
-    create index we_weblogid_idx on weblog_entry( weblogid );
 
 alter table weblog_entry add constraint we_categoryid_fk
     foreign key ( categoryid ) references weblog_category( id ) ;
-    create index we_categoryid_idx on weblog_entry( categoryid );
 
 alter table weblog_entry add constraint we_creatorid_fk
     foreign key ( creatorid ) references weblogger_user( id ) ;
-    create index we_creator_idx on weblog_entry(creatorid);
 
 create index we_status_idx on weblog_entry(status);
 create index we_combo1_idx on weblog_entry(status, pubtime, weblogid);
@@ -172,9 +170,9 @@ create table weblog_entry_comment (
     bloggerid  varchar(48),
     name       varchar(255) not null,
     email      varchar(255) not null,
-    notify     boolean default false not null,
-    content    text,
-    posttime   timestamp(3) with time zone not null,
+    notify     smallint default 0 not null,
+    content    clob(102400),
+    posttime   timestamp not null,
     url        varchar(255),
     remotehost varchar(128),
     referrer   varchar(255),
@@ -184,7 +182,6 @@ create table weblog_entry_comment (
 alter table weblog_entry_comment add constraint co_entryid_fk
     foreign key ( entryid ) references weblog_entry( id ) ;
 
-    create index co_entryid_idx on weblog_entry_comment( entryid );
 
 alter table weblog_entry_comment add constraint co_userid_fk
     foreign key ( bloggerid ) references weblogger_user( id ) ;
@@ -197,23 +194,23 @@ create table weblogger_properties (
     database_version       integer not null,
     main_blog_id           varchar(48),
     registration_policy    varchar(24) default 'DISABLED' not null,
-    users_create_blogs     boolean default true not null,
+    users_create_blogs     smallint default 1 not null,
     blog_html_policy       varchar(24) default 'RELAXED' not null,
-    users_customize_themes boolean default true not null,
+    users_customize_themes smallint default 1 not null,
     newsfeed_items_page    integer default 30 not null,
-    default_analytics_code text,
-    users_override_analytics_code boolean default true not null,
+    default_analytics_code clob(102400),
+    users_override_analytics_code smallint default 1 not null,
     comment_policy         varchar(24) default 'MUSTMODERATE' not null,
     comment_html_policy    varchar(24) default 'BASIC' not null,
-    autodelete_spam        boolean default false not null,
-    users_comment_notifications boolean default true not null,
-    comment_spam_filter    text,
-    users_upload_media_files boolean default true not null,
+    autodelete_spam        smallint default 0 not null,
+    users_comment_notifications smallint default 1 not null,
+    comment_spam_filter    clob(102400),
+    users_upload_media_files smallint default 1 not null,
     allowed_file_extensions varchar(255),
     disallowed_file_extensions varchar(255) default 'exe',
     max_file_size_mb       integer default 3 not null,
     max_file_uploads_size_mb integer default 20 not null,
-    last_weblog_change     timestamp(3) default now() not null
+    last_weblog_change     timestamp default current_timestamp not null
 );
 
 alter table weblogger_properties add constraint wp_weblogid_fk
@@ -221,9 +218,6 @@ alter table weblogger_properties add constraint wp_weblogid_fk
 
 -- initial row, relying on per-column defaults.
 insert into weblogger_properties(id, database_version) values ('1', 200);
-
-
--- MEDIA BLOGGING
 
 create table media_directory (
     id               varchar(48) not null primary key,
@@ -247,8 +241,8 @@ create table media_file (
     height          integer,
     size_in_bytes   integer,
     creatorid       varchar(48) not null,
-    date_uploaded   timestamp(3) with time zone not null,
-    last_updated    timestamp(3) with time zone not null
+    date_uploaded   timestamp not null,
+    last_updated    timestamp not null
 );
 
 alter table media_file add constraint mf_directoryid_fk
