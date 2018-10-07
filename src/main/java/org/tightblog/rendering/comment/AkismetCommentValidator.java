@@ -21,7 +21,6 @@
 package org.tightblog.rendering.comment;
 
 import org.tightblog.business.URLStrategy;
-import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.slf4j.Logger;
@@ -107,8 +106,7 @@ public class AkismetCommentValidator implements CommentValidator {
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
 
-            conn.setRequestProperty("User_Agent", "TightBlog " + WebloggerStaticConfig.getProperty("weblogger.version",
-                    "Unknown"));
+            conn.setRequestProperty("User_Agent", "TightBlog");
             conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8");
             conn.setRequestProperty("Content-length", Integer.toString(apiRequestBody.length()));
 

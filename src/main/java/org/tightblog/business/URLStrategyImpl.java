@@ -20,7 +20,10 @@
  */
 package org.tightblog.business;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.util.Utilities;
@@ -32,6 +35,7 @@ import java.util.Map;
  * Standard implementation of the URLStrategy interface.
  */
 @Component("urlStrategy")
+@EnableConfigurationProperties(DynamicProperties.class)
 public class URLStrategyImpl implements URLStrategy {
 
     private final String previewTheme;
@@ -40,39 +44,43 @@ public class URLStrategyImpl implements URLStrategy {
 
     private boolean isThemePreview;
 
+    @Autowired
+    private DynamicProperties dp;
+
     public URLStrategyImpl() {
         previewTheme = null;
     }
 
-    public URLStrategyImpl(String previewTheme, boolean isThemePreview) {
+    public URLStrategyImpl(String previewTheme, boolean isThemePreview, DynamicProperties dynamicProperties) {
         this.previewTheme = previewTheme;
         this.isThemePreview = isThemePreview;
+        this.dp = dynamicProperties;
     }
 
     @Override
     public String getLoginURL() {
-        return WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/login-redirect";
+        return dp.getAbsoluteUrl() + "/tb-ui/app/login-redirect";
     }
 
     @Override
     public String getLogoutURL() {
-        return WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/logout";
+        return dp.getAbsoluteUrl() + "/tb-ui/app/logout";
     }
 
     @Override
     public String getRegisterURL() {
-        return WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/register";
+        return dp.getAbsoluteUrl() + "/tb-ui/app/register";
     }
 
     @Override
     public String getCommentNotificationUnsubscribeURL(String commentId) {
-        return WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/unsubscribe?commentId=" + commentId;
+        return dp.getAbsoluteUrl() + "/tb-ui/app/unsubscribe?commentId=" + commentId;
     }
 
     @Override
     public String getActionURL(String action, String namespace, Weblog weblog,
                                Map<String, String> parameters) {
-        String url = WebloggerStaticConfig.getAbsoluteContextURL() + namespace + "/" + action;
+        String url = dp.getAbsoluteUrl() + namespace + "/" + action;
 
         // add weblog handle parameter, if provided
         Map<String, String> params = new HashMap<>();
@@ -88,7 +96,7 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getNewEntryURL(String weblogId) {
-        String url = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/authoring/entryAdd";
+        String url = dp.getAbsoluteUrl() + "/tb-ui/app/authoring/entryAdd";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", weblogId);
         return url + Utilities.getQueryString(params);
@@ -96,7 +104,7 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getEntryEditURL(WeblogEntry entry) {
-        String url = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/authoring/entryEdit";
+        String url = dp.getAbsoluteUrl() + "/tb-ui/app/authoring/entryEdit";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", entry.getWeblog().getId());
         params.put("entryId", entry.getId());
@@ -105,7 +113,7 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getCommentManagementURL(String weblogId, String entryId) {
-        String url = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/authoring/comments";
+        String url = dp.getAbsoluteUrl() + "/tb-ui/app/authoring/comments";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", weblogId);
         params.put("entryId", entryId);
@@ -114,7 +122,7 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getWeblogConfigURL(String weblogHandle) {
-        String url = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/authoring/weblogConfig";
+        String url = dp.getAbsoluteUrl() + "/tb-ui/app/authoring/weblogConfig";
         Map<String, String> params = new HashMap<>();
         params.put("weblogId", weblogHandle);
         return url + Utilities.getQueryString(params);
@@ -129,7 +137,7 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getWeblogEntryDraftPreviewURL(WeblogEntry entry) {
-        String url = WebloggerStaticConfig.getAbsoluteContextURL() + PREVIEW_URL_SEGMENT + entry.getWeblog().getHandle() + "/";
+        String url = dp.getAbsoluteUrl() + PREVIEW_URL_SEGMENT + entry.getWeblog().getHandle() + "/";
         url += "entry/" + Utilities.encode(entry.getAnchor());
         return url;
     }
@@ -190,9 +198,9 @@ public class URLStrategyImpl implements URLStrategy {
     /* Weblog URL before any params added */
     private String getWeblogRootURL(Weblog weblog) {
         if (previewTheme == null) {
-            return WebloggerStaticConfig.getAbsoluteContextURL() + "/" + weblog.getHandle() + "/";
+            return dp.getAbsoluteUrl() + "/" + weblog.getHandle() + "/";
         } else {
-            return WebloggerStaticConfig.getAbsoluteContextURL() + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
+            return dp.getAbsoluteUrl() + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
         }
     }
 
@@ -282,16 +290,16 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getHomeURL() {
-        return WebloggerStaticConfig.getAbsoluteContextURL();
+        return dp.getAbsoluteUrl();
     }
 
     @Override
     public String getCommentAuthenticatorURL() {
-        return WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/rendering/comment/authform";
+        return dp.getAbsoluteUrl() + "/tb-ui/rendering/comment/authform";
     }
 
     @Override
     public String getThemeResourceURL(String theme, String filePath) {
-        return WebloggerStaticConfig.getAbsoluteContextURL() + "/blogthemes/" + theme + "/" + filePath;
+        return dp.getAbsoluteUrl() + "/blogthemes/" + theme + "/" + filePath;
     }
 }

@@ -22,10 +22,12 @@ package org.tightblog.rendering.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.URLStrategyImpl;
 import org.tightblog.business.URLStrategy;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.rendering.requests.WeblogRequest;
@@ -37,6 +39,7 @@ import java.util.Map;
  */
 @Component("urlModel")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@EnableConfigurationProperties(DynamicProperties.class)
 public class URLModel implements Model {
 
     private Weblog weblog;
@@ -44,6 +47,9 @@ public class URLModel implements Model {
 
     @Autowired
     protected URLStrategy urlStrategy;
+
+    @Autowired
+    private DynamicProperties dp;
 
     public void setUrlStrategy(URLStrategy urlStrategy) {
         this.urlStrategy = urlStrategy;
@@ -74,7 +80,7 @@ public class URLModel implements Model {
         this.weblog = weblogRequest.getWeblog();
 
         if (preview) {
-            this.urlStrategy = new URLStrategyImpl(weblog.getTheme(), weblog.isUsedForThemePreview());
+            this.urlStrategy = new URLStrategyImpl(weblog.getTheme(), weblog.isUsedForThemePreview(), dp);
         }
     }
 

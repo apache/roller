@@ -124,7 +124,7 @@
       <td class="description"><fmt:message key="userAdmin.tip.globalRole" /></td>
   </tr>
 
-  <c:if test='${mfaUse == "REQUIRED"}'>
+  <c:if test='${mfaEnabled}'>
       <tr>
           <td class="label"><label for="hasMfaSecret"><fmt:message key="userAdmin.hasMfaSecret" /></label></td>
           <td class="field">

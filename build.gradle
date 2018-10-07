@@ -17,7 +17,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'org.tightblog'
-version = '3.3.1'
+version = '3.4'
 sourceCompatibility = 1.10
 targetCompatibility = 1.10
 tasks.withType(JavaCompile) {
@@ -68,7 +68,6 @@ def standardProcessResources(obj) {
     obj.filesMatching(['tightblog.properties', 'tightblog-custom.properties']) {
         expand(version: version,
                buildNumber: buildNumber,
-               catalinaBase: System.getenv("CATALINA_BASE"),
                buildDir: buildDir
         )
     }
@@ -120,16 +119,13 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-mail')
 	compile('org.springframework.boot:spring-boot-starter-log4j2')
-    compile(group: 'org.springframework.security', name: 'spring-security-taglibs', version:'5.0.7.RELEASE') {
-        exclude(module: 'spring-web')
-    }
+    compile('org.springframework.security:spring-security-taglibs:5.1.0.RELEASE')
+	compile('org.springframework.mobile:spring-mobile-device:1.1.5.RELEASE')
 	compile('org.apache.commons:commons-lang3:3.7')
 	compile('org.apache.commons:commons-text:1.4')
 	compile('javax.servlet:jstl:1.2')
 	compile('org.apache.tiles:tiles-jsp:3.0.8')
-	compile('org.springframework.boot:spring-boot-starter-log4j2')
 	compile('commons-validator:commons-validator:1.6')
-	compile('org.springframework.mobile:spring-mobile-device:1.1.5.RELEASE')
 	compile('org.apache.lucene:lucene-analyzers-common:7.4.0')
 	compile('org.apache.lucene:lucene-queryparser:7.4.0')
 	compile('org.jsoup:jsoup:1.11.3')
@@ -140,8 +136,14 @@ dependencies {
 	compile('commons-fileupload:commons-fileupload:1.3.3')
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testRuntime 'org.apache.derby:derby:10.14.2.0'
-	testRuntime 'org.apache.derby:derbyclient:10.14.2.0'
+
+	compile 'org.apache.derby:derbyclient:10.14.2.0'
+	runtime 'org.apache.derby:derby:10.14.2.0'
+
+	// PostgreSQL JDBC jar, can remove if using other databases.
+	runtime('org.postgresql:postgresql')
 
 	providedCompile('org.apache.tomcat.embed:tomcat-embed-jasper:9.0.11')
+	// https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-create-a-deployable-war-file
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 }

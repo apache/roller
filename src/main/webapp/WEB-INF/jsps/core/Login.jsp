@@ -37,7 +37,7 @@
 </c:if>
 
 <c:choose>
-    <c:when test='${mfaUse == "REQUIRED"}'>
+    <c:when test='${mfaEnabled}'>
         <p><fmt:message key="login.prompt.totp" /></p>
     </c:when>
     <c:otherwise>
@@ -66,7 +66,7 @@
             </td>
         </tr>
 
-        <c:if test='${mfaUse == "REQUIRED"}'>
+        <c:if test='${mfaEnabled}'>
             <tr>
                 <td width="20%" align="right"><fmt:message key="login.totpCode" /></td>
                 <td width="80%">

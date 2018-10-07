@@ -25,9 +25,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.JPAPersistenceStrategy;
-import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.ui.menu.Menu.MenuTab;
@@ -52,6 +52,9 @@ public final class MenuHelper {
 
     private static Map<String, ParsedMenu> menuMap = new HashMap<>(2);
     private static Map<String, String> actionToMenuIdMap = new HashMap<>(25);
+
+    @Autowired
+    private Environment env;
 
     @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
@@ -230,7 +233,7 @@ public final class MenuHelper {
         if ("themes.customtheme.allowed".equals(propertyName)) {
             return persistenceStrategy.getWebloggerProperties().isUsersCustomizeThemes();
         }
-        return WebloggerStaticConfig.getBooleanProperty(propertyName);
+        return "true".equalsIgnoreCase(env.getProperty(propertyName));
     }
 
     /**

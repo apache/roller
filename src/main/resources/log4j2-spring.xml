@@ -14,5 +14,9 @@
         <Logger name="org.apache.tiles" level="error"/>
         <Logger name="org.springframework" level="warn"/>
         <Logger name="org.hibernate" level="info"/>
+        <!-- Suppress annoying Derby JAR warnings when running embedded Tomcat
+            https://stackoverflow.com/a/49198928/1207540
+        -->
+        <Logger name="org.apache.tomcat.util.scan.StandardJarScanner" level="error"/>
     </Loggers>
 </Configuration>

@@ -118,7 +118,7 @@
     </beans:bean>
 
     <beans:bean id="blogTemplateResolver" class="org.tightblog.rendering.thymeleaf.ThemeTemplateResolver">
-        <beans:property name="templateMode" value="HTML5"/>
+        <beans:property name="templateMode" value="HTML"/>
         <beans:property name="order" value="1"/>
         <beans:property name="checkExistence" value="true"/>
         <!-- we want changes to blog templates to propagate immediately: https://stackoverflow.com/a/28530365 -->
@@ -128,7 +128,7 @@
     </beans:bean>
 
     <beans:bean id="standardTemplateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
-        <beans:property name="templateMode" value="HTML5"/>
+        <beans:property name="templateMode" value="HTML"/>
         <beans:property name="prefix" value="/thymeleaf/" />
         <beans:property name="suffix" value=".html" />
         <beans:property name="order" value="2"/>

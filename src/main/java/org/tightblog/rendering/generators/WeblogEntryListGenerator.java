@@ -16,11 +16,11 @@
 package org.tightblog.rendering.generators;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntrySearchCriteria;
@@ -59,6 +59,9 @@ public class WeblogEntryListGenerator {
 
     @Autowired
     private MessageSource messages;
+
+    @Value("${site.pages.maxEntries:30}")
+    private int maxEntriesPerPage;
 
     public void setMessages(MessageSource messages) {
         this.messages = messages;
@@ -138,10 +141,9 @@ public class WeblogEntryListGenerator {
 
         if (maxEntries < 0) {
             // make sure offset, maxEntries, and page are valid
-            int maxLength = WebloggerStaticConfig.getIntProperty("site.pages.maxEntries", 30);
             maxEntries = weblog.getEntriesPerPage();
-            if (maxEntries > maxLength) {
-                maxEntries = maxLength;
+            if (maxEntries > maxEntriesPerPage) {
+                maxEntries = maxEntriesPerPage;
             }
         }
 

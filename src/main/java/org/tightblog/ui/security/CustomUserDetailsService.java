@@ -22,17 +22,16 @@ package org.tightblog.ui.security;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WebloggerContext;
-import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.UserCredentials;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.tightblog.business.WebloggerStaticConfig.MFAOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +46,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserManager userManager;
+
+    @Value("${mfa.enabled}")
+    private boolean mfaEnabled;
 
     /**
      * @throws UsernameNotFoundException, DataAccessException
@@ -71,8 +73,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // If MFA required & user hasn't a secret for Google Authenticator, limit role
         // to PRE_AUTH_USER (intended to limit user to QR code scan page.)
-        if (MFAOption.REQUIRED.equals(WebloggerStaticConfig.getMFAOption())
-                && StringUtils.isBlank(creds.getMfaSecret())) {
+        if (mfaEnabled && StringUtils.isBlank(creds.getMfaSecret())) {
             targetGlobalRole = GlobalRole.MISSING_MFA_SECRET;
         } else {
             targetGlobalRole = creds.getGlobalRole();

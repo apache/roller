@@ -86,7 +86,8 @@ public class WebloggerContext extends ContextLoaderListener {
         indexManager.initialize();
 
         log.info("TightBlog Weblogger successfully bootstrapped");
-        log.info("   Version: {}", WebloggerStaticConfig.getProperty("weblogger.version", "Unknown"));
-        log.info("   Revision: {}", WebloggerStaticConfig.getProperty("weblogger.revision", "Unknown"));
+        log.info("   Version: {}", context.getEnvironment().getProperty("weblogger.version", "Unknown"));
+        log.info("   Revision: {}", context.getEnvironment().getProperty("weblogger.revision", "Unknown"));
     }
+
 }

@@ -20,10 +20,15 @@
  */
 package org.tightblog.ui.filters;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.WebloggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tightblog.config.DynamicProperties;
+import org.tightblog.util.Utilities;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -37,12 +42,19 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * Redirects clients to install page when app is not bootstrapped, otherwise does nothing.
+ * Used during app startup, determines base site URL if not specified via property
+ * and checks if initial application installation is necessary.
  */
 @Component
+@EnableConfigurationProperties(DynamicProperties.class)
 public class BootstrapFilter implements Filter {
 
     private static Logger log = LoggerFactory.getLogger(BootstrapFilter.class);
+
+    @Autowired
+    private DynamicProperties dp;
+
+    private boolean siteUrlInitialized;
 
     private ServletContext context;
 
@@ -54,6 +66,19 @@ public class BootstrapFilter implements Filter {
             throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) req;
+
+        if (!siteUrlInitialized) {
+            // determine absolute path for the app
+            if (StringUtils.isBlank(dp.getAbsoluteUrl())) {
+                String absPath = Utilities.determineSiteUrl(request);
+                dp.setAbsoluteUrl(absPath);
+                log.info("Base site URL used to create links calculated to be {}, if desired " +
+                        "use site.absoluteUrl property to override", absPath);
+            } else {
+                log.info("Base site URL of {} set via site.absoluteUrl property", dp.getAbsoluteUrl());
+            }
+            this.siteUrlInitialized = true;
+        }
 
         if (!WebloggerContext.isBootstrapped() && !isInstallUrl(request.getRequestURI())) {
             log.debug("Forwarding to install page");

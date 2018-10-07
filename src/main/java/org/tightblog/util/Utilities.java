@@ -47,6 +47,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,8 @@ public final class Utilities {
     }
 
     private static Logger log = LoggerFactory.getLogger(Utilities.class);
+
+    private static final Pattern TRAILING_SLASHES = Pattern.compile("/+$");
 
     public static final DateTimeFormatter YM_FORMATTER = DateTimeFormatter.ofPattern(Utilities.FORMAT_6CHARS);
     public static final DateTimeFormatter YMD_FORMATTER = DateTimeFormatter.ofPattern(Utilities.FORMAT_8CHARS)
@@ -342,5 +345,40 @@ public final class Utilities {
         }
 
         return ret;
+    }
+
+    /**
+     * This method can be used to determine the base site URL used (e.g. http://www.mycompany.com/tightblog)
+     * for constructing blog links based on an incoming HTTP request string.  Method is intended for use
+     * when the site.absoluteUrl property is not provided.
+     */
+    public static String determineSiteUrl(HttpServletRequest request) {
+        String requestURLString = request.getRequestURL().toString();
+
+        // if the uri is only "/" then we are basically done
+        if ("/".equals(request.getRequestURI())) {
+            log.debug("requestURI is only '/'. fullUrl: {}", requestURLString);
+            return TRAILING_SLASHES.matcher(requestURLString).replaceAll("");
+        }
+
+        String url;
+
+        // find first "/" starting after hostname is specified
+        int index = requestURLString.indexOf('/', requestURLString.indexOf(request.getServerName()));
+
+        if (index != -1) {
+            // extract just the part leading up to uri
+            url = requestURLString.substring(0, index);
+        } else {
+            url = requestURLString.trim();
+        }
+
+        // then just add on the context path
+        url += request.getContextPath();
+
+        // make certain that we don't end with a /
+        url = TRAILING_SLASHES.matcher(url).replaceAll("");
+
+        return url;
     }
 }

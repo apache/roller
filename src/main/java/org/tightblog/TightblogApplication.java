@@ -25,10 +25,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @SpringBootApplication
 @PropertySources({
     @PropertySource(value = "classpath:tightblog.properties"),
-    @PropertySource(value = "classpath:tightblog-custom.properties", ignoreResourceNotFound = true)
+    @PropertySource(value = "classpath:tightblog-custom.properties", ignoreResourceNotFound = true),
+    // optional JVM-property override (i.e., -Dtightblog.custom.config=XXX)
+    @PropertySource(value = "file:${tightblog.custom.config}", ignoreResourceNotFound = true)
 })
 // https://stackoverflow.com/a/32087621
 @EnableWebSecurity
+// extending SBSI to make deployable as a WAR file
 public class TightblogApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

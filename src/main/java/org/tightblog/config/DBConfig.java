@@ -24,17 +24,15 @@ import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.transaction.jta.JtaTransactionManager;
-import org.tightblog.business.WebloggerStaticConfig;
 
 import javax.sql.DataSource;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 @Configuration
 public class DBConfig extends JpaBaseConfiguration {
@@ -43,6 +41,9 @@ public class DBConfig extends JpaBaseConfiguration {
 
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private Environment environment;
 
     protected DBConfig(DataSource dataSource, JpaProperties properties,
                                        ObjectProvider<JtaTransactionManager> jtaTransactionManagerProvider,
@@ -59,7 +60,19 @@ public class DBConfig extends JpaBaseConfiguration {
     protected Map<String, Object> getVendorProperties() {
 
         // Turn off dynamic weaving to disable LTW (Load Time Weaving) lookup in static weaving mode
-        return Collections.singletonMap("eclipselink.weaving", "false");
+        Map<String, Object> vendorProperties = new HashMap<>();
+        vendorProperties.put("eclipselink.weaving", "false");
+        vendorProperties.put("eclipselink.persistence-context.flush-mode", "auto");
+
+        String val = environment.getProperty("eclipselink.logging.file");
+        if (val != null) {
+            vendorProperties.put("eclipselink.logging.file", val);
+        }
+        val = environment.getProperty("eclipselink.logging.level");
+        if (val != null) {
+            vendorProperties.put("eclipselink.logging.level", val);
+        }
+        return vendorProperties;
     }
 
     @Autowired
@@ -70,24 +83,7 @@ public class DBConfig extends JpaBaseConfiguration {
         lEMF.setDataSource(dataSource);
         lEMF.setPersistenceUnitName("TightBlogPU");
         lEMF.setPersistenceXmlLocation("persistence.xml");
-        lEMF.setJpaProperties(additionalProperties());
         return lEMF;
-    }
-
-    private Properties additionalProperties() {
-        Properties emfProps = new Properties();
-        Enumeration keys = WebloggerStaticConfig.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String) keys.nextElement();
-            if (key.startsWith("javax.persistence.") ||
-                    key.startsWith("eclipselink.") ||
-                    key.startsWith("hibernate.")) {
-                String value = WebloggerStaticConfig.getProperty(key);
-                log.info("{}: {}", key, value);
-                emfProps.setProperty(key, value);
-            }
-        }
-        return emfProps;
     }
 
 }

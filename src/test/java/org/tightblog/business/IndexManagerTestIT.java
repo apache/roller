@@ -23,6 +23,7 @@ package org.tightblog.business;
 import java.time.Instant;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.tightblog.WebloggerTest;
 import org.tightblog.business.search.tasks.IndexEntryTask;
 import org.tightblog.business.search.tasks.SearchTask;
@@ -37,8 +38,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.annotation.Resource;
-
 import static org.junit.Assert.*;
 
 
@@ -50,12 +49,8 @@ public class IndexManagerTestIT extends WebloggerTest {
     private User testUser;
     private Weblog testWeblog;
 
-    @Resource
+    @Autowired
     private IndexManager indexManager;
-
-    public void setIndexManager(IndexManager indexManager) {
-        this.indexManager = indexManager;
-    }
 
     /**
      * All tests in this suite require a user and a weblog.

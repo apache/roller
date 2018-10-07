@@ -18,14 +18,13 @@ package org.tightblog.ui.security;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jboss.aerogear.security.otp.Totp;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.tightblog.business.UserManager;
-import org.tightblog.business.WebloggerStaticConfig;
-import org.tightblog.business.WebloggerStaticConfig.MFAOption;
 import org.tightblog.pojos.UserCredentials;
 
 public class MultiFactorAuthenticationProvider extends DaoAuthenticationProvider {
@@ -43,13 +42,16 @@ public class MultiFactorAuthenticationProvider extends DaoAuthenticationProvider
         this.messages = messages;
     }
 
+    @Value("${mfa.enabled}")
+    private boolean mfaEnabled;
+
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
         // check username & password first
         Authentication result = super.authenticate(auth);
 
         // if here, username & password were correct, so check validation code if we're using MFA
-        if (MFAOption.REQUIRED.equals(WebloggerStaticConfig.getMFAOption())) {
+        if (mfaEnabled) {
             String verificationCode = ((CustomWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
 
             UserCredentials creds = userManager.getCredentialsByUserName(auth.getName());

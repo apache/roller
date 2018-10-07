@@ -33,12 +33,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.jdbc.datasource.init.ScriptException;
 import org.tightblog.business.WebloggerContext;
-import org.tightblog.business.WebloggerStaticConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +74,9 @@ public class InstallerController {
 
     @Autowired
     private MessageSource messages;
+
+    @Value("${tightblog.database.expected.version:0}")
+    private int expectedDatabaseVersion;
 
     public enum StartupStatus {
         databaseError(true, "installer.databaseConnectionError"),
@@ -219,7 +222,6 @@ public class InstallerController {
             }
 
             // OK, exists -- does the database schema match that used by the application?
-            int applicationVersion = WebloggerStaticConfig.getIntProperty("tightblog.database.expected.version", 0);
             int dbversion = -1;
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(
@@ -229,9 +231,9 @@ public class InstallerController {
                 dbversion = Integer.parseInt(rs.getString(1));
             }
 
-            if (dbversion != applicationVersion) {
+            if (dbversion != expectedDatabaseVersion) {
                 log.warn("TightBlog DB version {} incompatible with application version {}", dbversion,
-                        applicationVersion);
+                        expectedDatabaseVersion);
                 return StartupStatus.databaseVersionError;
             }
         } catch (Exception e) {

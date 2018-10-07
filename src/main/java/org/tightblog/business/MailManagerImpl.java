@@ -22,8 +22,11 @@ package org.tightblog.business;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
@@ -55,6 +58,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component("mailManager")
+@EnableConfigurationProperties(DynamicProperties.class)
 public class MailManagerImpl implements MailManager {
 
     private static Logger log = LoggerFactory.getLogger(MailManagerImpl.class);
@@ -83,19 +87,19 @@ public class MailManagerImpl implements MailManager {
     @Autowired
     private MessageSource messages;
 
-    private boolean isMailEnabled() {
-        return WebloggerStaticConfig.getBooleanProperty("mail.enabled");
-    }
+    @Value("${mail.enabled:false}")
+    private boolean mailEnabled;
+
+    @Autowired
+    private DynamicProperties dp;
 
     @Override
     public void sendUserActivationEmail(User user) throws MessagingException {
-        if (!isMailEnabled()) {
+        if (!mailEnabled) {
             return;
         }
 
-        String rootURL = WebloggerStaticConfig.getAbsoluteContextURL();
-
-        String activationURL = rootURL + "/tb-ui/app/login?activationCode=" +
+        String activationURL = dp.getAbsoluteUrl() + "/tb-ui/app/login?activationCode=" +
                 user.getActivationCode();
 
         Context ctx = new Context();
@@ -111,7 +115,7 @@ public class MailManagerImpl implements MailManager {
 
     @Override
     public void sendRegistrationApprovalRequest(User user) {
-        if (!isMailEnabled()) {
+        if (!mailEnabled) {
             return;
         }
 
@@ -142,7 +146,7 @@ public class MailManagerImpl implements MailManager {
 
     @Override
     public void sendRegistrationApprovedNotice(User user) {
-        if (!isMailEnabled()) {
+        if (!mailEnabled) {
             return;
         }
 
@@ -162,7 +166,7 @@ public class MailManagerImpl implements MailManager {
 
     @Override
     public void sendRegistrationRejectedNotice(User user) {
-        if (!isMailEnabled()) {
+        if (!mailEnabled) {
             return;
         }
 
@@ -179,7 +183,7 @@ public class MailManagerImpl implements MailManager {
 
     @Override
     public void sendWeblogInvitation(User user, Weblog weblog) {
-        if (!isMailEnabled()) {
+        if (!mailEnabled) {
             return;
         }
 
@@ -193,7 +197,7 @@ public class MailManagerImpl implements MailManager {
         ctx.setVariable("weblogName", weblog.getName());
         ctx.setVariable("weblogHandle", weblog.getHandle());
         ctx.setVariable("userName", user.getUserName());
-        String loginURL = WebloggerStaticConfig.getAbsoluteContextURL() + "/tb-ui/app/home";
+        String loginURL = dp.getAbsoluteUrl() + "/tb-ui/app/home";
         ctx.setVariable("loginURL", loginURL);
         String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
 
@@ -202,7 +206,7 @@ public class MailManagerImpl implements MailManager {
 
     @Override
     public void sendPendingEntryNotice(WeblogEntry entry) {
-        if (!isMailEnabled()) {
+        if (!mailEnabled) {
             return;
         }
 
@@ -236,7 +240,7 @@ public class MailManagerImpl implements MailManager {
 
     @Override
     public void sendPendingCommentNotice(WeblogEntryComment comment, Map<String, List<String>> commentNotes) {
-        if (!isMailEnabled() || comment.isApproved()) {
+        if (!mailEnabled || comment.isApproved()) {
             return;
         }
 
@@ -276,7 +280,7 @@ public class MailManagerImpl implements MailManager {
 
     @Override
     public void sendNewPublishedCommentNotification(WeblogEntryComment comment) {
-        if (!isMailEnabled() ||
+        if (!mailEnabled ||
                 !persistenceStrategy.getWebloggerProperties().isUsersCommentNotifications() ||
                 !comment.isApproved()) {
             return;
@@ -357,7 +361,7 @@ public class MailManagerImpl implements MailManager {
 
     @Override
     public void sendYourCommentWasApprovedNotifications(List<WeblogEntryComment> comments) {
-        if (!isMailEnabled() || comments == null || comments.size() < 1) {
+        if (!mailEnabled || comments == null || comments.size() < 1) {
             return;
         }
 

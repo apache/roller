@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.business.search.tasks.AbstractTask;
 import org.tightblog.business.search.tasks.IndexEntryTask;
 import org.tightblog.business.search.tasks.IndexWeblogTask;
@@ -74,9 +73,13 @@ public class IndexManagerImpl implements IndexManager {
     private ExecutorService serviceScheduler;
 
     private boolean searchEnabled;
+
     private boolean indexComments;
+
     private File indexConsistencyMarker;
+
     private String indexDir;
+
     private boolean inconsistentAtStartup;
     private ReadWriteLock rwl = new ReentrantReadWriteLock();
 
@@ -85,31 +88,31 @@ public class IndexManagerImpl implements IndexManager {
      * Creating the index manager more than once will definitely result in
      * errors.
      */
-    protected IndexManagerImpl() {
-        searchEnabled = WebloggerStaticConfig.getBooleanProperty("search.enabled");
-        if (searchEnabled) {
-            indexComments = WebloggerStaticConfig.getBooleanProperty("search.include.comments");
+    public IndexManagerImpl(@Value("${search.include.comments:true}") boolean indexComments,
+                            @Value("${search.enabled:false}") boolean searchEnabled,
+                            @Value("${search.index.dir:#{null}}") String indexDir) {
+
+        this.indexComments = indexComments;
+        this.searchEnabled = searchEnabled;
+        this.indexDir = indexDir;
+
+        if (!searchEnabled) {
+            indexComments = false;
         }
 
         log.info("Lucene search enabled: {} {}", searchEnabled,
                 searchEnabled ? "(If not using internal search capability, can increase performance by disabling in" +
                         " TightBlog properties file)" : "(Can be activated in TightBlog properties file)");
+
         if (searchEnabled) {
             log.info("Include comment text as part of blog search? {}", indexComments);
-        }
 
-        if (searchEnabled) {
             serviceScheduler = Executors.newCachedThreadPool();
-            // we also need to know what our index directory is
-            // Note: system property expansion is now handled by WebloggerStaticConfig
-            String searchIndexDir = WebloggerStaticConfig.getProperty("search.index.dir");
 
-            if (searchIndexDir == null) {
+            if (indexDir == null) {
                 throw new IllegalStateException("Check tightblog properties file -- If search.enabled = true, " +
                         "search.index.dir must also be provided.");
             }
-
-            this.indexDir = searchIndexDir.replace('/', File.separatorChar);
 
             String test = indexDir + File.separator + ".index-inconsistent";
             indexConsistencyMarker = new File(test);
@@ -126,7 +129,7 @@ public class IndexManagerImpl implements IndexManager {
     public void initialize() {
 
         // only initialize the index if search is enabled
-        if (this.searchEnabled) {
+        if (searchEnabled) {
             try {
                 // If inconsistency marker exists, delete index
                 if (indexConsistencyMarker.exists()) {

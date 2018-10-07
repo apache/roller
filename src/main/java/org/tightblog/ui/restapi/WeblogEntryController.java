@@ -17,6 +17,7 @@
 package org.tightblog.ui.restapi;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,6 @@ import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.AtomEnclosure;
@@ -84,7 +84,8 @@ public class WeblogEntryController {
     private static final int ITEMS_PER_PAGE = 30;
 
     // Max Tags to show for autocomplete
-    private static final int MAX_TAGS = WebloggerStaticConfig.getIntProperty("services.tagdata.max", 20);
+    @Value("${max.autocomplete.tags:20}")
+    private int maxAutocompleteTags;
 
     @Autowired
     private UserManager userManager;
@@ -288,7 +289,7 @@ public class WeblogEntryController {
 
         try {
             Weblog weblog = weblogManager.getWeblog(id);
-            tags = weblogManager.getTags(weblog, null, prefix, 0, MAX_TAGS);
+            tags = weblogManager.getTags(weblog, null, prefix, 0, maxAutocompleteTags);
 
             WeblogTagData wtd = new WeblogTagData();
             wtd.setPrefix(prefix);

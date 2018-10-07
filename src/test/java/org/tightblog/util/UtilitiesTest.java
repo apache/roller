@@ -25,6 +25,7 @@ import org.springframework.mobile.device.Device;
 import org.springframework.mobile.device.DevicePlatform;
 import org.springframework.mobile.device.DeviceType;
 import org.springframework.mobile.device.DeviceUtils;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
@@ -42,6 +43,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class UtilitiesTest {
+
+    private static final String SERVER_NAME = "tightblog.example.com";
 
     @Test
     public void testRemoveHTML() {
@@ -229,5 +232,57 @@ public class UtilitiesTest {
             assertEquals(now, Utilities.parseURLDate("201804247"));
             assertEquals(now, Utilities.parseURLDate("2018a0424"));
         }
+    }
+
+    @Test
+    public void determineSiteUrlWithPort() {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setScheme("https");
+        mockRequest.setServerName(SERVER_NAME);
+        mockRequest.setServerPort(8443);
+        mockRequest.setContextPath("");
+        mockRequest.setRequestURI("/");
+
+        String absoluteUrl = Utilities.determineSiteUrl(mockRequest);
+        assertEquals("https://tightblog.example.com:8443", absoluteUrl);
+    }
+
+    @Test
+    public void determineSiteUrlNoPort() {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setScheme("https");
+        mockRequest.setServerName(SERVER_NAME);
+        mockRequest.setServerPort(443);
+        mockRequest.setContextPath("");
+        mockRequest.setRequestURI("/");
+
+        String absoluteUrl = Utilities.determineSiteUrl(mockRequest);
+        assertEquals("https://tightblog.example.com", absoluteUrl);
+    }
+
+    @Test
+    public void determineSiteUrlNonRootApp() {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setScheme("https");
+        mockRequest.setServerName(SERVER_NAME);
+        mockRequest.setServerPort(443);
+        mockRequest.setContextPath("/tightblog");
+        mockRequest.setRequestURI("/tightblog/");
+
+        String absoluteUrl = Utilities.determineSiteUrl(mockRequest);
+        assertEquals("https://tightblog.example.com/tightblog", absoluteUrl);
+    }
+
+    @Test
+    public void determineSiteUrlNonRootWithPermalink() {
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        mockRequest.setScheme("https");
+        mockRequest.setServerName(SERVER_NAME);
+        mockRequest.setServerPort(443);
+        mockRequest.setContextPath("/tightblog");
+        mockRequest.setRequestURI("/tightblog/handle/entry/title");
+
+        String absoluteUrl = Utilities.determineSiteUrl(mockRequest);
+        assertEquals("https://tightblog.example.com/tightblog", absoluteUrl);
     }
 }

@@ -16,6 +16,7 @@
 package org.tightblog.ui.restapi;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.WebAttributes;
@@ -24,8 +25,6 @@ import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.WebloggerStaticConfig;
-import org.tightblog.business.WebloggerStaticConfig.MFAOption;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserSearchCriteria;
@@ -99,6 +98,15 @@ public class UIController {
     @Autowired
     private MessageSource messages;
 
+    @Value("${mfa.enabled:true}")
+    private boolean mfaEnabled;
+
+    @Value("${weblogger.version}")
+    private String tightblogVersion;
+
+    @Value("${weblogger.revision}")
+    private String tightblogRevision;
+
     @RequestMapping(value = "/login")
     public ModelAndView login(@RequestParam(required = false) String activationCode,
                               @RequestParam(required = false) Boolean error,
@@ -169,8 +177,7 @@ public class UIController {
         } else {
             User user = userManager.getEnabledUserByUserName(principal.getName());
 
-            if (MFAOption.REQUIRED.equals(WebloggerStaticConfig.getMFAOption()) &&
-                    ((UsernamePasswordAuthenticationToken) principal).getAuthorities().stream().anyMatch(
+            if (mfaEnabled && ((UsernamePasswordAuthenticationToken) principal).getAuthorities().stream().anyMatch(
                             role -> GlobalRole.MISSING_MFA_SECRET.name().equals(role.getAuthority()))) {
                 response.sendRedirect(request.getContextPath() + "/tb-ui/app/scanCode");
             } else if (!GlobalRole.ADMIN.equals(user.getGlobalRole())) {
@@ -396,7 +403,9 @@ public class UIController {
         map.put("actionWeblog", weblog);
         map.put("userIsAdmin", user != null && GlobalRole.ADMIN.equals(user.getGlobalRole()));
         map.put("pageTitleKey", actionName + ".title");
-        map.put("mfaUse", WebloggerStaticConfig.getMFAOption());
+        map.put("mfaEnabled", mfaEnabled);
+        map.put("tightblogVersion", tightblogVersion);
+        map.put("tightblogRevision", tightblogRevision);
         map.put("registrationPolicy", persistenceStrategy.getWebloggerProperties().getRegistrationPolicy());
         return new ModelAndView("." + actionName, map);
     }

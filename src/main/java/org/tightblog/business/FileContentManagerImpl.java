@@ -35,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WebloggerProperties;
@@ -55,18 +56,16 @@ public class FileContentManagerImpl implements FileContentManager {
 
     private String storageDir;
 
-    public FileContentManagerImpl() {
+    public FileContentManagerImpl(@Value("${mediafiles.storage.dir}") String storageDir) {
+        this.storageDir = storageDir;
 
-        String inStorageDir = WebloggerStaticConfig.getProperty("mediafiles.storage.dir");
         // Note: System property expansion is now handled by WebloggerStaticConfig.
-        if (inStorageDir == null || inStorageDir.trim().length() < 1) {
-            inStorageDir = System.getProperty("user.home") + File.separator + "tightblog_data" + File.separator +
-                    "mediafiles";
+        if (StringUtils.isEmpty(this.storageDir)) {
+            this.storageDir = System.getProperty("user.home") + File.separator + "tightblog_data" + File.separator + "mediafiles";
         }
-        if (!inStorageDir.endsWith(File.separator)) {
-            inStorageDir += File.separator;
+        if (!this.storageDir.endsWith(File.separator)) {
+            this.storageDir += File.separator;
         }
-        this.storageDir = inStorageDir.replace('/', File.separatorChar);
     }
 
     @Override

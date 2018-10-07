@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.tightblog.WebloggerTest;
 import org.tightblog.pojos.MediaDirectory;
 import org.tightblog.pojos.MediaFile;
@@ -50,6 +51,9 @@ public class MediaFileTestIT extends WebloggerTest {
     private Weblog testWeblog;
 
     private static final String TEST_IMAGE = "/hawk.jpg";
+
+    @Value("${mediafiles.storage.dir}")
+    private String mediafileDir;
 
     @Resource
     private MediaFileManager mediaFileManager;
@@ -204,8 +208,7 @@ public class MediaFileTestIT extends WebloggerTest {
         MediaFile mediaFile2 = mediaFileManager.getMediaFile(id);
         assertNull(mediaFile2);
 
-        String uploadsDirName = WebloggerStaticConfig.getProperty("mediafiles.storage.dir");
-        File flag = new File(uploadsDirName + File.separator + "migration-status.properties");
+        File flag = new File(mediafileDir + File.separator + "migration-status.properties");
         flag.delete();
     }
 

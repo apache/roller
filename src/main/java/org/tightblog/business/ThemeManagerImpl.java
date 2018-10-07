@@ -21,9 +21,8 @@
 package org.tightblog.business;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tightblog.pojos.SharedTemplate;
 import org.tightblog.pojos.SharedTheme;
@@ -40,16 +39,15 @@ import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Base implementation of a ThemeManager.
@@ -81,15 +79,11 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
     @Autowired
     private WeblogManager weblogManager;
 
-    // directory where themes are kept, override required when running tests (no servlet then)
-    @Value("${themes.dir:#{null}}")
-    private String themeDir;
-
     // map of themes in format (theme id, Theme)
-    private Map<String, SharedTheme> themeMap;
+    private Map<String, SharedTheme> themeMap = new HashMap<>();
 
     // list of themes
-    private List<SharedTheme> themeList;
+    private List<SharedTheme> themeList = new ArrayList<>();
 
     @Override
     public void setServletContext(ServletContext servletContext) {
@@ -102,33 +96,28 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
     @Override
     @PostConstruct
     public void initialize() {
-        log.info("Initializing Theme Manager");
-        if (themeDir == null) {
-            // default theme location
-            themeDir = servletContext.getRealPath("/blogthemes");
-        }
+        String blogThemePath = "/blogthemes";
 
-        if (!StringUtils.isEmpty(themeDir)) {
-            // chop off trailing slash if it exists
-            if (themeDir.endsWith("/")) {
-                themeDir = themeDir.substring(0, themeDir.length() - 1);
+        Set<String> paths = servletContext.getResourcePaths(blogThemePath);
+
+        if (paths != null && paths.size() > 0) {
+            log.info("{} shared blog themes detected, loading...", paths.size());
+            for (String path : paths) {
+                try {
+                    SharedTheme theme = loadThemeData(path);
+                    themeMap.put(theme.getId(), theme);
+                } catch (Exception unexpected) {
+                    // shouldn't happen, so let's learn why it did
+                    log.error("Exception processing theme {}, will be skipped", path, unexpected);
+                }
             }
-
-            // make sure it exists and is readable
-            File themeDirFile = new File(themeDir);
-            if (!themeDirFile.exists() || !themeDirFile.isDirectory() || !themeDirFile.canRead()) {
-                throw new RuntimeException("couldn't access theme dir [" + themeDir + "]");
-            }
-        }
-
-        if (themeDir != null) {
-            // load all themes from disk and cache them
-            themeMap = loadAllThemesFromDisk();
 
             // for convenience create an alphabetized list also
             themeList = new ArrayList<>(this.themeMap.values());
             themeList.sort(Comparator.comparing(SharedTheme::getName));
-            log.info("Successfully loaded {} themes from disk.", this.themeMap.size());
+            log.info("Successfully loaded {} shared blog themes.", themeList.size());
+        } else {
+            log.info("No shared blog themes detected at path {}, none will be loaded", blogThemePath);
         }
     }
 
@@ -152,7 +141,6 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
             log.warn("Unable to find shared theme {}", weblog.getTheme());
         }
 
-        // TODO: if theme is not found should we provide default theme?
         return weblogTheme;
     }
 
@@ -176,124 +164,71 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
         return weblogTemplate;
     }
 
-    /**
-     * This is a convenience method which loads all the theme data from themes
-     * stored on the filesystem in the webapp/blogthemes/ directory.
-     */
-    private Map<String, SharedTheme> loadAllThemesFromDisk() {
+    private SharedTheme loadThemeData(String themePath) throws Exception {
+        SharedTheme sharedTheme = null;
+        String themeJson = themePath + "theme.json";
 
-        Map<String, SharedTheme> sharedThemeMap = new HashMap<>();
+        try (InputStream is = servletContext.getResourceAsStream(themeJson)) {
+            if (is != null) {
+                sharedTheme = objectMapper.readValue(is, SharedTheme.class);
+                sharedTheme.setThemeDir(themePath);
 
-        // first, get a list of the themes available
-        File themesdir = new File(this.themeDir);
-        FilenameFilter filter = (dir, name) -> {
-            File file = new File(dir.getAbsolutePath() + File.separator + name);
-            return file.isDirectory() && !file.getName().startsWith(".");
-        };
-        String[] themenames = themesdir.list(filter);
+                // load resource representing preview image
+                String previewFilePath = sharedTheme.getThemeDir() + sharedTheme.getPreviewImagePath();
 
-        if (themenames == null) {
-            log.warn("No shared weblog themes found! Looking in location: " + themeDir);
-        } else {
-            log.info("Loading themes from " + themesdir.getAbsolutePath() + "...");
-
-            // now go through each theme and load it into a Theme object
-            for (String themeName : themenames) {
-                try {
-                    SharedTheme theme = loadThemeData(themeName);
-                    sharedThemeMap.put(theme.getId(), theme);
-                    log.info("Loaded theme '{}'", themeName);
-                } catch (Exception unexpected) {
-                    // shouldn't happen, so let's learn why it did
-                    log.error("Unable to process theme '{}'", themeName, unexpected);
-                    System.out.println("Unable to process theme " + themeName + " error: " + unexpected.getMessage());
-                    unexpected.printStackTrace(System.out);
+                try (InputStream test = servletContext.getResourceAsStream(previewFilePath)) {
+                    if (test == null) {
+                        log.warn("Couldn't find theme [{}] thumbnail at path [{}]", sharedTheme.getName(), previewFilePath);
+                    }
                 }
-            }
-        }
 
-        return sharedThemeMap;
-    }
+                // create the templates based on the theme descriptor data
+                boolean hasWeblogTemplate = false;
+                for (SharedTemplate template : sharedTheme.getTemplates()) {
 
-    private SharedTheme loadThemeData(String themeName) throws Exception {
-        String themePath = this.themeDir + File.separator + themeName;
-        log.debug("Parsing theme descriptor for {}", themePath);
+                    // one and only one template with action "weblog" allowed
+                    if (ComponentType.WEBLOG.equals(template.getRole())) {
+                        if (hasWeblogTemplate) {
+                            throw new IllegalStateException("Theme has more than one template with action of 'weblog'");
+                        } else {
+                            hasWeblogTemplate = true;
+                        }
+                    }
 
-        String themeJson = themePath + File.separator + "theme.json";
-        log.debug("Loading Theme JSON at path {}", themeJson);
+                    if (!loadTemplateSource(sharedTheme.getThemeDir(), template)) {
+                        throw new IllegalStateException("Couldn't load template [" + template.getContentsFile() + "]");
+                    }
 
-        SharedTheme sharedTheme = objectMapper.readValue(new FileInputStream(themeJson), SharedTheme.class);
-        sharedTheme.setThemeDir(themePath);
-
-        // load resource representing preview image
-        File previewFile = new File(sharedTheme.getThemeDir() + File.separator + sharedTheme.getPreviewImagePath());
-        if (!previewFile.exists() || !previewFile.canRead()) {
-            log.warn("Couldn't read theme [{}] thumbnail at path [{}]", sharedTheme.getName(),
-                    sharedTheme.getPreviewImagePath());
-        }
-
-        // create the templates based on the theme descriptor data
-        boolean hasWeblogTemplate = false;
-        for (SharedTemplate template : sharedTheme.getTemplates()) {
-
-            // one and only one template with action "weblog" allowed
-            if (ComponentType.WEBLOG.equals(template.getRole())) {
-                if (hasWeblogTemplate) {
-                    throw new IllegalStateException("Theme has more than one template with action of 'weblog'");
-                } else {
-                    hasWeblogTemplate = true;
+                    // this template ID used by template resolvers to retrieve the template.
+                    template.setId(sharedTheme.getId() + ":" + template.getName());
                 }
+
+                if (!hasWeblogTemplate) {
+                    throw new IllegalStateException("Theme " + sharedTheme.getName() + " has no template with 'weblog' action");
+                }
+
+                log.info("Loaded shared theme {}", sharedTheme);
+            } else {
+                throw new IllegalStateException("Theme JSON " + themeJson + " not found");
             }
-
-            if (!loadTemplateSource(sharedTheme.getThemeDir(), template)) {
-                throw new IllegalStateException("Couldn't load template [" + template.getContentsFile() + "]");
-            }
-
-            // this template ID used by template resolvers to retrieve the template.
-            template.setId(sharedTheme.getId() + ":" + template.getName());
         }
-
-        if (!hasWeblogTemplate) {
-            throw new IllegalStateException("Theme " + sharedTheme.getName() + " has no template with 'weblog' action");
-        }
-
         return sharedTheme;
     }
 
-    private boolean loadTemplateSource(String loadThemeDir, SharedTemplate sharedTemplate) {
-        File templateFile = new File(loadThemeDir + File.separator + sharedTemplate.getContentsFile());
-        String contents = loadTemplateSource(templateFile);
+    private boolean loadTemplateSource(String loadThemeDir, SharedTemplate sharedTemplate) throws IOException {
+        String resourcePath = loadThemeDir + sharedTemplate.getContentsFile();
+        InputStream stream = servletContext.getResourceAsStream(resourcePath);
+        if (stream == null) {
+            return false;
+        }
+
+        String contents = IOUtils.toString(stream);
         if (contents == null) {
-            log.error("Couldn't load template file [{}]", templateFile);
+            log.error("Couldn't load template resource [{}]", resourcePath);
             sharedTemplate.setTemplate("");
         } else {
             sharedTemplate.setTemplate(contents);
         }
         return contents != null;
     }
-
-    /**
-     * Load a single template file as a string, returns null if can't read file.
-     */
-    private String loadTemplateSource(File templateFile) {
-        // Continue reading theme even if problem encountered with one file
-        if (!templateFile.exists() && !templateFile.canRead()) {
-            return null;
-        }
-
-        char[] chars;
-        int length;
-        try {
-            chars = new char[(int) templateFile.length()];
-            FileInputStream stream = new FileInputStream(templateFile);
-            InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
-            length = reader.read(chars);
-        } catch (Exception noprob) {
-            log.error("Exception reading theme template file [{}]", templateFile, noprob);
-            return null;
-        }
-
-        return new String(chars, 0, length);
-    }
-
 }

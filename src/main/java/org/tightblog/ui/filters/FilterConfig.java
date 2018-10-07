@@ -51,20 +51,11 @@ public class FilterConfig {
     }
 
     @Bean
-    public FilterRegistrationBean initFilterBean(@Autowired InitFilter initFilter) {
-        FilterRegistrationBean<InitFilter> bean = new FilterRegistrationBean<>();
-        bean.setFilter(initFilter);
-        bean.setDispatcherTypes(DispatcherType.REQUEST);
-        bean.setOrder(2);
-        return bean;
-    }
-
-    @Bean
     public FilterRegistrationBean multipartFilter() {
         FilterRegistrationBean<MultipartFilter> bean = new FilterRegistrationBean<>();
         bean.setFilter(new MultipartFilter());
         bean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.FORWARD);
-        bean.setOrder(3);
+        bean.setOrder(2);
         return bean;
     }
 
@@ -73,7 +64,7 @@ public class FilterConfig {
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
         bean.setFilter(filter);
         bean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.FORWARD);
-        bean.setOrder(4);
+        bean.setOrder(3);
         return bean;
     }
 
@@ -82,7 +73,7 @@ public class FilterConfig {
         FilterRegistrationBean<BootstrapFilter> bean = new FilterRegistrationBean<>();
         bean.setFilter(bootstrapFilter);
         bean.setDispatcherTypes(DispatcherType.REQUEST);
-        bean.setOrder(5);
+        bean.setOrder(4);
         return bean;
     }
 
@@ -91,7 +82,7 @@ public class FilterConfig {
         FilterRegistrationBean<PersistenceSessionFilter> bean = new FilterRegistrationBean<>();
         bean.setFilter(persistenceSessionFilter);
         bean.setDispatcherTypes(DispatcherType.REQUEST);
-        bean.setOrder(6);
+        bean.setOrder(5);
         return bean;
     }
 
@@ -100,7 +91,7 @@ public class FilterConfig {
         FilterRegistrationBean<RequestMappingFilter> bean = new FilterRegistrationBean<>();
         bean.setFilter(requestMappingFilter);
         bean.setDispatcherTypes(DispatcherType.REQUEST);
-        bean.setOrder(7);
+        bean.setOrder(6);
         return bean;
     }
 

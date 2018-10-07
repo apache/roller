@@ -29,6 +29,8 @@ import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,8 +38,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WebloggerStaticConfig;
 import org.tightblog.business.JPAPersistenceStrategy;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.pojos.SharedTheme;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.GlobalRole;
@@ -65,6 +67,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
+@EnableConfigurationProperties(DynamicProperties.class)
 public class WeblogController {
 
     private static Logger log = LoggerFactory.getLogger(WeblogController.class);
@@ -105,6 +108,12 @@ public class WeblogController {
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
     }
+
+    @Autowired
+    private DynamicProperties dp;
+
+    @Value("${site.pages.maxEntries:30}")
+    private int maxEntriesPerPage;
 
     public WeblogController() {
     }
@@ -188,9 +197,8 @@ public class WeblogController {
                 weblog.setTimeZone(newData.getTimeZone());
 
                 // make sure user didn't enter an invalid entry display count
-                int maxEntries = WebloggerStaticConfig.getIntProperty("site.pages.maxEntries", 30);
-                if (newData.getEntriesPerPage() > maxEntries) {
-                    newData.setEntriesPerPage(maxEntries);
+                if (newData.getEntriesPerPage() > maxEntriesPerPage) {
+                    newData.setEntriesPerPage(maxEntriesPerPage);
                 }
                 weblog.setEntriesPerPage(newData.getEntriesPerPage());
 
@@ -278,7 +286,7 @@ public class WeblogController {
 
         WeblogConfigMetadata metadata = new WeblogConfigMetadata();
 
-        metadata.absoluteSiteURL = WebloggerStaticConfig.getAbsoluteContextURL();
+        metadata.absoluteSiteURL = dp.getAbsoluteUrl();
 
         metadata.usersOverrideAnalyticsCode =
                 persistenceStrategy.getWebloggerProperties().isUsersOverrideAnalyticsCode();

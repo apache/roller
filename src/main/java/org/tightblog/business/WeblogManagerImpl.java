@@ -22,7 +22,9 @@ package org.tightblog.business;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.User;
@@ -53,6 +55,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 
 @Component("weblogManager")
@@ -74,6 +77,13 @@ public class WeblogManagerImpl implements WeblogManager {
 
     @Autowired
     private JPAPersistenceStrategy strategy;
+
+    @Value("#{'${newblog.blogroll}'.split(',')}")
+    private Set<String> newBlogBlogroll;
+
+    @Value("#{'${newblog.categories}'.split(',')}")
+    private Set<String> newBlogCategories;
+
 
     // Map of each weblog and its extra hit count that has had additional accesses since the
     // last scheduled updateHitCounters() call.
@@ -235,18 +245,9 @@ public class WeblogManagerImpl implements WeblogManager {
         // grant weblog creator OWNER permission
         userManager.grantWeblogRole(newWeblog.getCreator(), newWeblog, WeblogRole.OWNER, false);
 
-        String cats = WebloggerStaticConfig.getProperty("newuser.categories");
-        WeblogCategory firstCat = null;
-        if (cats != null) {
-            String[] splitcats = cats.split(",");
-            for (String split : splitcats) {
-                if (split.trim().length() == 0) {
-                    continue;
-                }
-                WeblogCategory c = new WeblogCategory(newWeblog, split);
-                if (firstCat == null) {
-                    firstCat = c;
-                }
+        if (!ObjectUtils.isEmpty(newBlogCategories)) {
+            for (String category : newBlogCategories) {
+                WeblogCategory c = new WeblogCategory(newWeblog, category);
                 newWeblog.addCategory(c);
                 this.strategy.store(c);
             }
@@ -255,10 +256,8 @@ public class WeblogManagerImpl implements WeblogManager {
         this.strategy.store(newWeblog);
 
         // add default bookmarks
-        String blogroll = WebloggerStaticConfig.getProperty("newuser.blogroll");
-        if (blogroll != null) {
-            String[] splitroll = blogroll.split(",");
-            for (String splitItem : splitroll) {
+        if (!ObjectUtils.isEmpty(newBlogBlogroll)) {
+            for (String splitItem : newBlogBlogroll) {
                 String[] rollitems = splitItem.split("\\|");
                 if (rollitems.length > 1) {
                     WeblogBookmark b = new WeblogBookmark(

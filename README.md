@@ -1,7 +1,7 @@
 Welcome to TightBlog, a greatly modernized & streamlined bottom-to-(nearly)-top rewrite of Apache Roller, with much
-out-of-date and seldom used functionality removed and much new functionality added in as well.  I started this fork in 
-May 2015 after contributing for about 2 1/2 years on Roller.  As of 21 September 2018, 
-<a href="https://github.com/gmazza/tightblog/releases">Release 3.3.2</a> is available.
+out-of-date and seldom used functionality removed and much new functionality added in.  I started this fork in 
+May 2015 after contributing for about 2 1/2 years on Roller.  As of 6 October 2018, 
+<a href="https://github.com/gmazza/tightblog/releases">Release 3.4</a> is available.
 
 Screen shots for the TightBlog UI are [here](https://github.com/gmazza/tightblog/wiki/Screenshots), the twelve-table database model is
 [here](https://github.com/gmazza/tightblog/blob/master/app/src/main/resources/dbscripts/createdb.vm), see also [my blog](https://glenmazza.net/blog/) for an example
@@ -20,7 +20,7 @@ and easier to understand.
 
 (Lines of code--LOC--based on <a href="https://www.openhub.net/p/tightblog">OpenHub</a> stats.  Java source file count does not include unit test classes, however LOC do.)
 
-Some newer functionality in TightBlog not in Roller:
+Some changes and new functionality added to TightBlog post-fork:
 
 * Bloggers may blog using <a href="http://commonmark.org/">CommonMark</a> in addition to standard HTML and Rich Text Editors.
 * Blog entries have a "notes" field for the blogger to store anything helpful in maintaining the article.
@@ -30,7 +30,7 @@ Some newer functionality in TightBlog not in Roller:
 * Commenters who request "notify me" to receive emails of future comments for a particular blog entry now receive a link at the bottom of the email to shut off future notifications
 * There is a new BLOGCREATOR global role separated from the earlier BLOGGER role.  While both roles allow a blogger full administration of his weblog (whether created by an admin for the blogger or the blogger himself) only users with the former role can create new weblogs.   
 * Commenters who are logged-in bloggers now have their blogger ID stored with the comment, simplifying comment entry and allowing for different styling of comments (e.g., different background color for comments made by the blogger on his own blog).
-* The blog template engine (used for customized themes) now uses modern Thymeleaf 3.0 instead of Apache Velocity.
+* The blog template engine (used for customized themes) now uses Thymeleaf instead of Apache Velocity.
 * All emails sent are in HTML format and customizable by modifying the Thymeleaf templates in the webapp/thymeleaf/emails folder.
 * Login Multifactor Authentication (MFA) with Google Authenticator support added (Admin setting provided to either require it for all bloggers--the default--or have it disabled).
 
@@ -40,16 +40,22 @@ To obtain the source code:
 
 To build the application (build/libs/tightblog-x.y.z.war) with Gradle and Java 10+:
   `./gradlew clean build` from the TightBlog root.
+  
+Deployment information:
 
-The Docker images defined in the docker subdirectory of this project can be used to test TightBlog locally before deploying.  First build
-the project to generate the tightblog WAR.  As TightBlog requires SSL, next provide a certificate & key for the Tomcat
-image as explained in the web Dockerfile.  Then from the docker folder, running "docker-compose up" should result in a TightBlog available
-from your local machine at https://localhost/tightblog.  Should you need to change the docker-compose.yml or the web Dockerfile, be sure
-to run "docker-compose build" for the images to be regenerated.  Note for simplicity the default does not demo Google Authenticator MFA,
-if desired modify the docker/web/tightblog-custom.properties to activate. Emailing is also not configured.
+Be sure to first build the application as stated above.  See <a href="https://github.com/gmazza/tightblog/wiki">Install pages</a>
+for general installation instructions.
+ 
+1. Deploy as a WAR on standalone Tomcat: covered in above installation instructions.
 
-Caution: The Docker images have not seen production use and are currently meant for evaluation purposes.  Presumably more 
-tightening of the Tomcat and PostgresQL images would be needed for production use, best to check online sources 
-for securing these products should you choose to use these images for your blog.  For installations 
-on standalone Tomcat or other servlet container, please read the <a href="https://github.com/gmazza/tightblog/wiki">Install pages</a>
-on the TightBlog Wiki.
+1. Deploy as a JAR using an in-memory database (non-production, demoing only).  Modify the
+resources/tightblog.properties to provide a Java keystore to support TightBlog's SSL (the
+file includes resources explaining the process.)  Then run "gradle bootRun" from a command-line
+and TightBlog will be available at https://localhost:8443/tightblog.  Note the in-memory database
+is deleted at each app shut-down.
+
+1. Deploy as a Docker container.  Modify the docker/web/tightblog-custom.properties to 
+add your keystore configuration and then from the docker folder run "docker-compose build"
+followed by "docker-compose up".  The application will be at https://localhost/tightblog.
+Note that while tested locally, the Docker setup has not yet seen production use so is best
+considered of Beta quality.
