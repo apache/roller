@@ -52,6 +52,7 @@ public class ExcessLinksCommentValidatorTest {
     @Test
     public void acceptCommentLessThanLimit() throws Exception {
         ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
+        validator.setLimit(3);
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent(generateCommentWithLinks(2));
         Map<String, List<String>> messageMap = new HashMap<>();
@@ -63,6 +64,7 @@ public class ExcessLinksCommentValidatorTest {
     @Test
     public void acceptCommentEqualToLimit() throws Exception {
         ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
+        validator.setLimit(3);
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent(generateCommentWithLinks(3));
         Map<String, List<String>> messageMap = new HashMap<>();
@@ -74,6 +76,7 @@ public class ExcessLinksCommentValidatorTest {
     @Test
     public void failCommentMoreThanLimit() throws Exception {
         ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
+        validator.setLimit(3);
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent(generateCommentWithLinks(4));
         Map<String, List<String>> messageMap = new HashMap<>();
@@ -87,4 +90,17 @@ public class ExcessLinksCommentValidatorTest {
         assertEquals("Message Map value isn't limit size", "3",
                 messageMap.get(expectedKey).get(0));
     }
+
+    @Test
+    public void validationIgnoredWithNegativeLimit() throws Exception {
+        ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
+        validator.setLimit(-1);
+        WeblogEntryComment wec = new WeblogEntryComment();
+        wec.setContent(generateCommentWithLinks(4));
+        Map<String, List<String>> messageMap = new HashMap<>();
+        ValidationResult result = validator.validate(wec, messageMap);
+        assertEquals("Validation wasn't skipped with negative limit", ValidationResult.NOT_SPAM, result);
+        assertEquals(0, messageMap.size());
+    }
+
 }

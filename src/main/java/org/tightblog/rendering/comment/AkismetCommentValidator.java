@@ -20,6 +20,10 @@
  */
 package org.tightblog.rendering.comment;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
@@ -37,7 +41,15 @@ import java.util.Map;
 
 /**
  * Check against Akismet service. Expects to a valid Akismet API key in the
- * Spring configuration ("apiKey") property.
+ * Spring configuration ("akismet.apiKey") property.  If no or blank API key
+ * provided, this validator skips all comment validation (declares all comments
+ * to be non-spam.)
+ *
+ * Akismet identifies some spam as "blatant" spam.  By configuring the akismet.delete.blatant.spam
+ * property to true, you may choose to have such super-spam automatically deleted without ever
+ * appearing in the moderation queue.
+ * see: https://blog.akismet.com/2014/04/23/theres-a-ninja-in-your-akismet/
+ *
  * You can get a free personal use key by registering as a user at wordpress.com.
  * See Akismet site for API details (https://akismet.com/development/api/#comment-check)
  * <p>
@@ -50,20 +62,16 @@ import java.util.Map;
  * curl --data "key=...your key...&blog=http://www.myblogurl.com/blog/" https://rest.akismet.com/1.1/verify-key
  * Returns "valid" if good, "invalid" otherwise.
  */
+@Component
 public class AkismetCommentValidator implements CommentValidator {
     private static Logger log = LoggerFactory.getLogger(AkismetCommentValidator.class);
+
     private String apiKey;
 
-    // All spam is marked as spam and sent to the moderation queue (even if
-    // moderation turned off.)
-    //
-    // Akismet identifies some spam as "blatant" spam.  By configuring to true,
-    // administrator may choose to have such super-spam automatically deleted
-    // without ever appearing in the moderation queue.
-    // see: https://blog.akismet.com/2014/04/23/theres-a-ninja-in-your-akismet/
+    @Value("${akismet.delete.blatant.spam:false}")
     private boolean deleteBlatantSpam;
 
-    public void setDeleteBlatantSpam(boolean deleteBlatantSpam) {
+    void setDeleteBlatantSpam(boolean deleteBlatantSpam) {
         this.deleteBlatantSpam = deleteBlatantSpam;
     }
 
@@ -74,7 +82,7 @@ public class AkismetCommentValidator implements CommentValidator {
     /**
      * Creates a new instance of AkismetCommentValidator
      */
-    public AkismetCommentValidator(URLStrategy urlStrategy, String apiKey) {
+    public AkismetCommentValidator(@Autowired URLStrategy urlStrategy, @Value("${akismet.apiKey:#{null}}") String apiKey) {
         this.urlStrategy = urlStrategy;
         this.apiKey = apiKey;
         this.akismetCaller = new AkismetCaller();
@@ -102,29 +110,31 @@ public class AkismetCommentValidator implements CommentValidator {
     static class AkismetCaller {
 
         ValidationResult makeAkismetCall(String apiKey, String apiRequestBody) throws IOException {
-            URL url = new URL("http://" + apiKey + ".rest.akismet.com/1.1/comment-check");
-            URLConnection conn = url.openConnection();
-            conn.setDoOutput(true);
+            if (!StringUtils.isBlank(apiKey)) {
+                URL url = new URL("http://" + apiKey + ".rest.akismet.com/1.1/comment-check");
+                URLConnection conn = url.openConnection();
+                conn.setDoOutput(true);
 
-            conn.setRequestProperty("User_Agent", "TightBlog");
-            conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8");
-            conn.setRequestProperty("Content-length", Integer.toString(apiRequestBody.length()));
+                conn.setRequestProperty("User_Agent", "TightBlog");
+                conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8");
+                conn.setRequestProperty("Content-length", Integer.toString(apiRequestBody.length()));
 
-            OutputStreamWriter osr = new OutputStreamWriter(conn.getOutputStream());
-            osr.write(apiRequestBody, 0, apiRequestBody.length());
-            osr.flush();
-            osr.close();
+                OutputStreamWriter osr = new OutputStreamWriter(conn.getOutputStream());
+                osr.write(apiRequestBody, 0, apiRequestBody.length());
+                osr.flush();
+                osr.close();
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String response = br.readLine();
-            if ("true".equals(response)) {
-                if ("discard".equalsIgnoreCase(conn.getHeaderField("X-akismet-pro-tip"))) {
-                    return ValidationResult.BLATANT_SPAM;
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String response = br.readLine();
+                if ("true".equals(response)) {
+                    if ("discard".equalsIgnoreCase(conn.getHeaderField("X-akismet-pro-tip"))) {
+                        return ValidationResult.BLATANT_SPAM;
+                    }
+                    return ValidationResult.SPAM;
                 }
-                return ValidationResult.SPAM;
-            } else {
-                return ValidationResult.NOT_SPAM;
             }
+
+            return ValidationResult.NOT_SPAM;
         }
     }
 

@@ -18,6 +18,8 @@
 
 package org.tightblog.rendering.comment;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.tightblog.pojos.WeblogEntryComment;
 
 import java.util.Collections;
@@ -27,11 +29,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Validates comment only if its number of links don't exceed the configured limit.
+ * Validates comment only if does not exceed number of links specified by the excessLinks.validator.limit
+ * property (default 3 if not provided). This validator can be disabled by setting this property to a value
+ * less than 0.
  */
+@Component
 public class ExcessLinksCommentValidator implements CommentValidator {
     private Pattern linkPattern = Pattern.compile("<a\\s*href\\s*=");
-    private int limit = 3;
+
+    @Value("${excessLinks.validator.limit:3}")
+    private int limit;
 
     public int getLimit() {
         return limit;
@@ -43,7 +50,7 @@ public class ExcessLinksCommentValidator implements CommentValidator {
 
     @Override
     public ValidationResult validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
-        if (comment.getContent() != null) {
+        if (limit >= 0 && comment.getContent() != null) {
             Matcher m = linkPattern.matcher(comment.getContent());
             int count = 0;
             while (m.find()) {

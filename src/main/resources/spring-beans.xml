@@ -222,23 +222,6 @@
         </beans:property>
     </beans:bean>
 
-    <!-- Comment Validators -->
-    <beans:bean id="commentValidatorList" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <beans:property name="sourceList">
-            <beans:list>
-                <beans:ref bean="blacklistCommentValidator"/>
-                <beans:bean class="org.tightblog.rendering.comment.ExcessLinksCommentValidator"/>
-                <beans:bean class="org.tightblog.rendering.comment.ExcessSizeCommentValidator"/>
-                <!--Akismet requires configuration of user key below, see top of this file for instructions -->
-                <!--beans:bean class="AkismetCommentValidator">
-                    <beans:constructor-arg ref="urlStrategy"/>
-                    <beans:constructor-arg name="apiKey" value="...your key here..."/>
-                    <beans:property name="deleteBlatantSpam" value="false"/>
-                </beans:bean-->
-            </beans:list>
-        </beans:property>
-    </beans:bean>
-
     <!-- Caches -->
     <beans:bean id="weblogPageCache" class="org.tightblog.rendering.cache.LazyExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.weblogpage"/>

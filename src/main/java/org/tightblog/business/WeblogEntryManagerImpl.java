@@ -205,17 +205,12 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         params.add(size++, WeblogEntry.PubStatus.PUBLISHED);
         whereClause.append(" AND e.status = ?").append(size);
 
+        params.add(size++, current.getPubTime());
         if (next) {
-            params.add(size++, current.getPubTime());
             whereClause.append(" AND e.pubTime >= ?").append(size);
-        } else {
-            params.add(size++, current.getPubTime());
-            whereClause.append(" AND e.pubTime <= ?").append(size);
-        }
-
-        if (next) {
             whereClause.append(" ORDER BY e.pubTime ASC, e.id ASC");
         } else {
+            whereClause.append(" AND e.pubTime <= ?").append(size);
             whereClause.append(" ORDER BY e.pubTime DESC, e.id DESC");
         }
 

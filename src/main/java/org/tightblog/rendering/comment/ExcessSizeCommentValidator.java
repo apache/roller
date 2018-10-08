@@ -17,6 +17,8 @@
  */
 package org.tightblog.rendering.comment;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.tightblog.pojos.WeblogEntryComment;
 
 import java.util.Collections;
@@ -24,10 +26,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Validates comment only if it does not exceed number of characters specified by the limit property.
+ * Validates comment only if it does not exceed number of characters specified by the excessSize.validator.limit
+ * property (default 1000 if not provided). This validator can be disabled by setting this property to a value
+ * less than 0.
  */
+@Component
 public class ExcessSizeCommentValidator implements CommentValidator {
-    private int limit = 1000;
+
+    @Value("${excessSize.validator.limit:1000}")
+    private int limit;
 
     public int getLimit() {
         return limit;
@@ -39,7 +46,7 @@ public class ExcessSizeCommentValidator implements CommentValidator {
 
     @Override
     public ValidationResult validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
-        if (comment.getContent() != null && comment.getContent().length() > limit) {
+        if (limit >= 0 && comment.getContent() != null && comment.getContent().length() > limit) {
             messages.put("comment.validator.excessSizeMessage",
                     Collections.singletonList(Integer.toString(limit)));
             return ValidationResult.SPAM;

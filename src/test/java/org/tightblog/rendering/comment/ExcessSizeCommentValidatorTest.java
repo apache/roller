@@ -28,10 +28,15 @@ import static org.junit.Assert.*;
 public class ExcessSizeCommentValidatorTest {
 
     @Test
-    public void checkDefaultThreshold() throws Exception {
+    public void validationIgnoredWithNegativeLimit() throws Exception {
         ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
-        int threshold = validator.getLimit();
-        assertEquals("default threshold not expected value", 1000, threshold);
+        validator.setLimit(-1);
+        WeblogEntryComment wec = new WeblogEntryComment();
+        wec.setContent("123456");
+        Map<String, List<String>> messageMap = new HashMap<>();
+        ValidationResult result = validator.validate(wec, messageMap);
+        assertEquals("Validator activated with negative limit", ValidationResult.NOT_SPAM, result);
+        assertEquals(0, messageMap.size());
     }
 
     @Test
