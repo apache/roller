@@ -25,6 +25,7 @@ import org.tightblog.business.MediaFileManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.MediaFile;
 import org.tightblog.pojos.Weblog;
+import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.requests.WeblogRequest;
 
 import javax.servlet.ServletOutputStream;
@@ -55,6 +56,7 @@ public class MediaFileProcessorTest {
     private WeblogRequest mediaFileRequest;
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
+    private LazyExpiringCache mockCache;
     private WeblogManager mockWM;
     private MediaFileManager mockMFM;
 
@@ -71,7 +73,9 @@ public class MediaFileProcessorTest {
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
         mediaFileRequest = new WeblogRequest();
         mediaFileRequest.setExtraPathInfo("abc");
+        mockCache = mock(LazyExpiringCache.class);
         processor = new MediaFileProcessor();
+        processor.setWeblogMediaCache(mockCache);
         WeblogRequest.Creator wprCreator = mock(WeblogRequest.Creator.class);
         when(wprCreator.create(mockRequest)).thenReturn(mediaFileRequest);
         processor.setWeblogRequestCreator(wprCreator);

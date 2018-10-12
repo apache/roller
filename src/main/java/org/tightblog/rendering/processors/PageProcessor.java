@@ -140,6 +140,8 @@ public class PageProcessor extends AbstractProcessor {
             incomingRequest.setWeblog(weblog);
         }
 
+        weblogPageCache.incrementIncomingRequests();
+
         // is this the site-wide weblog?
         incomingRequest.setSiteWide(themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide());
 
@@ -152,6 +154,7 @@ public class PageProcessor extends AbstractProcessor {
         long inBrowser = getBrowserCacheExpireDate(request);
 
         if (inDb <= inBrowser) {
+            weblogPageCache.incrementRequestsHandledBy304();
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }

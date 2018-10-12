@@ -24,6 +24,7 @@ import org.tightblog.business.MediaFileManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.MediaFile;
 import org.tightblog.pojos.Weblog;
+import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.requests.WeblogRequest;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
@@ -54,6 +55,13 @@ public class MediaFileProcessor extends AbstractProcessor {
     private static Logger log = LoggerFactory.getLogger(MediaFileProcessor.class);
 
     public static final String PATH = "/tb-ui/rendering/mediafile";
+
+    @Autowired
+    private LazyExpiringCache weblogMediaCache;
+
+    public void setWeblogMediaCache(LazyExpiringCache weblogMediaCache) {
+        this.weblogMediaCache = weblogMediaCache;
+    }
 
     @Autowired
     private WeblogManager weblogManager;
@@ -110,11 +118,14 @@ public class MediaFileProcessor extends AbstractProcessor {
             return;
         }
 
+        weblogMediaCache.incrementIncomingRequests();
+
         // DB stores last modified in millis, browser if-modified-since in seconds, so need to truncate millis from the former.
         long inDb = mediaFile.getLastUpdated().truncatedTo(ChronoUnit.SECONDS).toEpochMilli();
         long inBrowser = getBrowserCacheExpireDate(request);
 
         if (inDb <= inBrowser) {
+            weblogMediaCache.incrementRequestsHandledBy304();
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }

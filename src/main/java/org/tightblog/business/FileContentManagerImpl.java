@@ -81,6 +81,8 @@ public class FileContentManagerImpl implements FileContentManager {
                 log.warn("Invalid file id [" + fileId + "], path is a directory.");
                 resourceFile = null;
             }
+        } catch (FileNotFoundException e) {
+            log.warn("Problem retrieving file id [" + fileId + "]: {}", e.getMessage());
         } catch (IOException e) {
             log.warn("Problem retrieving file id [" + fileId + "]", e);
         }

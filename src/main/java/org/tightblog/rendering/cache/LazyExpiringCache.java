@@ -29,11 +29,32 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class LazyExpiringCache {
     private static Logger log = LoggerFactory.getLogger(LazyExpiringCache.class);
 
     private String cacheHandlerId;
+
+    private AtomicLong incomingRequests = new AtomicLong();
+
+    private AtomicLong requestsHandledBy304 = new AtomicLong();
+
+    public long getIncomingRequests() {
+        return incomingRequests.get();
+    }
+
+    public void incrementIncomingRequests() {
+        this.incomingRequests.incrementAndGet();
+    }
+
+    public long getRequestsHandledBy304() {
+        return requestsHandledBy304.get();
+    }
+
+    public void incrementRequestsHandledBy304() {
+        this.requestsHandledBy304.incrementAndGet();
+    }
 
     public String getCacheHandlerId() {
         return cacheHandlerId;
@@ -62,23 +83,23 @@ public class LazyExpiringCache {
     }
 
     public long getEstimatedSize() {
-        return contentCache.estimatedSize();
+        return contentCache == null ? 0 : contentCache.estimatedSize();
     }
 
-    public long getRequestCount() {
-        return contentCache.stats().requestCount();
+    public long getCacheRequestCount() {
+        return contentCache == null ? 0 : contentCache.stats().requestCount();
     }
 
-    public long getHitCount() {
-        return contentCache.stats().hitCount();
+    public long getCacheHitCount() {
+        return contentCache == null ? 0 : contentCache.stats().hitCount();
     }
 
-    public long getMissCount() {
-        return contentCache.stats().missCount();
+    public long getCacheMissCount() {
+        return contentCache == null ? 0 : contentCache.stats().missCount();
     }
 
-    public double getHitRate() {
-        return contentCache.stats().hitRate();
+    public double getCacheHitRate() {
+        return contentCache == null ? 0 : contentCache.stats().hitRate();
     }
 
     private long timeoutInMS;
