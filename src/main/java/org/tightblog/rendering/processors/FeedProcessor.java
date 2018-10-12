@@ -116,6 +116,8 @@ public class FeedProcessor extends AbstractProcessor {
             feedRequest.setWeblog(weblog);
         }
 
+        weblogFeedCache.incrementIncomingRequests();
+
         // Is this the site-wide weblog? If so, make a combined feed using all blogs...
         feedRequest.setSiteWide(themeManager.getSharedTheme(weblog.getTheme()).isSiteWide());
 
@@ -128,6 +130,7 @@ public class FeedProcessor extends AbstractProcessor {
         long inBrowser = getBrowserCacheExpireDate(request);
 
         if (inDb <= inBrowser) {
+            weblogFeedCache.incrementRequestsHandledBy304();
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }

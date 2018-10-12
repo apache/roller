@@ -235,13 +235,11 @@
         <beans:property name="timeoutSec" value="3600"/>
     </beans:bean>
 
-    <beans:bean id="cacheSet" class="org.springframework.beans.factory.config.SetFactoryBean">
-        <beans:property name="sourceSet">
-            <beans:set>
-                <beans:ref bean="weblogPageCache"/>
-                <beans:ref bean="weblogFeedCache"/>
-            </beans:set>
-        </beans:property>
+    <beans:bean id="weblogMediaCache" class="org.tightblog.rendering.cache.LazyExpiringCache">
+        <beans:property name="cacheHandlerId" value="cache.weblogmedia"/>
+        <!-- Media images aren't cached, cache kept for HTTP 304 stats only -->
+        <beans:property name="maxEntries" value="0"/>
+        <beans:property name="timeoutSec" value="3600"/>
     </beans:bean>
 
     <!-- JSR 349, resolution of validation messages in JPA entity beans -->

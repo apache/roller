@@ -56,14 +56,17 @@
 <table class="rollertable">
 <thead>
    <tr>
-        <th style="width:20%"><fmt:message key="generic.name"/></th>
-        <th style="width:10%"><fmt:message key="cachedData.maxEntries"/></th>
-        <th style="width:10%"><fmt:message key="cachedData.currentSize"/></th>
-        <th style="width:12%"><fmt:message key="cachedData.requestCount"/></th>
-        <th style="width:12%"><fmt:message key="cachedData.hits"/></th>
-        <th style="width:12%"><fmt:message key="cachedData.misses"/></th>
-        <th style="width:12%"><fmt:message key="cachedData.efficiency"/></th>
-        <th style="width:12%"></th>
+        <th style="width:10%"><fmt:message key="generic.name"/></th>
+        <th style="width:9%"><fmt:message key="cachedData.maxEntries"/></th>
+        <th style="width:9%"><fmt:message key="cachedData.currentSize"/></th>
+        <th style="width:9%"><fmt:message key="cachedData.incoming"/></th>
+        <th style="width:9%"><fmt:message key="cachedData.handledBy304"/></th>
+        <th style="width:9%"><fmt:message key="cachedData.cacheHits"/></th>
+        <th style="width:9%"><fmt:message key="cachedData.cacheMisses"/></th>
+        <th style="width:9%"><fmt:message key="cachedData.304Efficiency"/></th>
+        <th style="width:9%"><fmt:message key="cachedData.cacheEfficiency"/></th>
+        <th style="width:9%"><fmt:message key="cachedData.totalEfficiency"/></th>
+        <th style="width:9%"></th>
     </tr>
 </thead>
 <tbody id="tableBody" ng-cloak>
@@ -71,12 +74,15 @@
         <td>{{key}}</td>
         <td>{{item.maxEntries}}</td>
         <td>{{item.estimatedSize}}</td>
-        <td>{{item.requestCount}}</td>
-        <td>{{item.hitCount}}</td>
-        <td>{{item.missCount}}</td>
-        <td>{{item.hitRate | number:3}}</td>
+        <td>{{item.incomingRequests}}</td>
+        <td>{{item.requestsHandledBy304}}</td>
+        <td>{{item.cacheHitCount}}</td>
+        <td>{{item.cacheMissCount}}</td>
+        <td>{{item.incomingRequests > 0 ? (item.requestsHandledBy304 / item.incomingRequests | number:3) : ''}}</td>
+        <td>{{item.cacheRequestCount > 0 ? (item.cacheHitRate | number:3) : ''}}</td>
+        <td>{{item.incomingRequests > 0 ? ((item.requestsHandledBy304 + item.cacheHitCount) / item.incomingRequests | number:3) : ''}}</td>
         <td align="center">
-            <input type="button" value="<fmt:message key='cachedData.clear'/>" ng-click="ctrl.clearCache(key)"/>
+            <input type="button" value="<fmt:message key='cachedData.clear'/>" ng-click="ctrl.clearCache(key)" ng-disabled="item.maxEntries == 0"/>
         </td>
        </tr>
 </tbody>
