@@ -23,7 +23,6 @@ package org.tightblog.business;
 import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogBookmark;
 import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogTemplate;
@@ -192,28 +191,6 @@ public interface WeblogManager {
      * individual blog's hit counters
      */
     void updateHitCounters();
-
-    /**
-     * Save a Bookmark.
-     *
-     * @param bookmark The bookmark to be saved.
-     */
-    void saveBookmark(WeblogBookmark bookmark);
-
-    /**
-     * Remove a Bookmark.
-     *
-     * @param bookmark The bookmark to be removed.
-     */
-    void removeBookmark(WeblogBookmark bookmark);
-
-    /**
-     * Lookup a Bookmark by ID.
-     *
-     * @param id The id of the bookmark to lookup.
-     * @return BookmarkData The bookmark, or null if not found.
-     */
-    WeblogBookmark getBookmark(String id);
 
     /**
      * Save weblog category.

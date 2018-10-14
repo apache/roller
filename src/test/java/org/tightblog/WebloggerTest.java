@@ -36,6 +36,7 @@ import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WebloggerProperties;
 import org.junit.Before;
+import org.tightblog.repository.BlogrollLinkRepository;
 
 import javax.annotation.Resource;
 import java.time.Instant;
@@ -47,6 +48,9 @@ public abstract class WebloggerTest {
 
     @Autowired
     private ApplicationContext appContext;
+
+    @Autowired
+    protected BlogrollLinkRepository blogrollLinkRepository;
 
     @Resource
     protected WeblogManager weblogManager;
@@ -184,7 +188,6 @@ public abstract class WebloggerTest {
         }
         Weblog weblog = weblogManager.getWeblog(id);
         weblogManager.removeWeblog(weblog);
-        strategy.flush();
     }
 
     protected WeblogEntry setupWeblogEntry(String anchor, Weblog weblog, User user) throws Exception {

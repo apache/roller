@@ -1,6 +1,6 @@
 /*
 * Licensed to the Apache Software Foundation (ASF) under one or more
-*  contributor license agreements.  The ASF licenses this file to You
+* contributor license agreements.  The ASF licenses this file to You
 * under the Apache License, Version 2.0 (the "License"); you may not
 * use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -22,6 +22,8 @@ package org.tightblog.business;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+
 import org.tightblog.pojos.WeblogBookmark;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
@@ -76,7 +78,6 @@ public class BookmarkTestIT extends WebloggerTest {
         );
         testWeblog.addBookmark(bookmark1);
         bookmark1.calculatePosition();
-        weblogManager.saveBookmark(bookmark1);
 
         // Add another bookmark
         WeblogBookmark bookmark2 = new WeblogBookmark(
@@ -101,9 +102,10 @@ public class BookmarkTestIT extends WebloggerTest {
         bookmarkb = iter.next();
 
         // Remove one bookmark directly
-        weblogManager.removeBookmark(bookmarka);
+        testWeblog.getBookmarks().remove(bookmarka);
+        weblogManager.saveWeblog(testWeblog);
         endSession(true);
-        assertNull(weblogManager.getBookmark(bookmarka.getId()));
+        assertFalse(blogrollLinkRepository.findById(bookmarka.getId()).isPresent());
 
         // Weblog should now contain one bookmark
         testWeblog = getManagedWeblog(testWeblog);
@@ -119,7 +121,7 @@ public class BookmarkTestIT extends WebloggerTest {
         // Last bookmark should be gone
         testWeblog = getManagedWeblog(testWeblog);
         assertEquals(0, testWeblog.getBookmarks().size());
-        assertNull(weblogManager.getBookmark(bookmarkb.getId()));
+        assertFalse(blogrollLinkRepository.findById(bookmarkb.getId()).isPresent());
     }
 
     /**
@@ -133,22 +135,19 @@ public class BookmarkTestIT extends WebloggerTest {
         WeblogBookmark b1 = new WeblogBookmark(testWeblog, "b1", "http://example1.com", "testbookmark13"
         );
         testWeblog.addBookmark(b1);
-        weblogManager.saveBookmark(b1);
         WeblogBookmark b2 = new WeblogBookmark(testWeblog, "b2", "http://example2.com", "testbookmark14"
         );
         testWeblog.addBookmark(b2);
-        weblogManager.saveBookmark(b2);
         WeblogBookmark b3 = new WeblogBookmark(testWeblog, "b3", "http://example3.com", "testbookmark16"
         );
         testWeblog.addBookmark(b3);
-        weblogManager.saveBookmark(b3);
-        
+
         endSession(true);
         
         // test lookup by id
-        WeblogBookmark testBookmark = weblogManager.getBookmark(b1.getId());
-        assertNotNull(testBookmark);
-        assertEquals("b1", testBookmark.getName());
+        Optional<WeblogBookmark> testBookmark = blogrollLinkRepository.findById(b1.getId());
+        assertTrue(testBookmark.isPresent());
+        assertEquals("b1", testBookmark.get().getName());
 
         // test lookup of all bookmarks for a website
         Weblog testWeblog2 = weblogManager.getWeblog(testWeblog.getId());
@@ -156,4 +155,5 @@ public class BookmarkTestIT extends WebloggerTest {
         assertNotNull(allBookmarks);
         assertEquals(3, allBookmarks.size());
     }
+
 }

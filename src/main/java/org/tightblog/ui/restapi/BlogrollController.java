@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,6 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.tightblog.ui.restapi;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,12 +34,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.tightblog.repository.BlogrollLinkRepository;
 
 import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -49,7 +50,11 @@ import java.util.stream.Collectors;
 @RestController
 public class BlogrollController {
 
-    public BlogrollController() {
+    private BlogrollLinkRepository blogrollLinkRepository;
+
+    @Autowired
+    public BlogrollController(BlogrollLinkRepository blogrollLinkRepository) {
+        this.blogrollLinkRepository = blogrollLinkRepository;
     }
 
     @Autowired
@@ -92,13 +97,12 @@ public class BlogrollController {
             throws ServletException {
 
         try {
-            WeblogBookmark itemToRemove = weblogManager.getBookmark(id);
-            if (itemToRemove != null) {
-                Weblog weblog = itemToRemove.getWeblog();
+            Optional<WeblogBookmark> itemToRemove = blogrollLinkRepository.findById(id);
+            if (itemToRemove.isPresent()) {
+                Weblog weblog = itemToRemove.get().getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-
-                    weblogManager.removeBookmark(itemToRemove);
-                    persistenceStrategy.flush();
+                    weblog.getBookmarks().remove(itemToRemove.get());
+                    weblogManager.saveWeblog(weblog);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -115,26 +119,32 @@ public class BlogrollController {
     public void updateBookmark(@PathVariable String id, @RequestBody WeblogBookmark newData, Principal p,
                                HttpServletResponse response) throws ServletException {
         try {
-            WeblogBookmark bookmark = weblogManager.getBookmark(id);
+            WeblogBookmark bookmark = blogrollLinkRepository.getOne(id);
             if (bookmark != null) {
                 Weblog weblog = bookmark.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-                    bookmark.setName(newData.getName());
-                    bookmark.setUrl(newData.getUrl());
-                    bookmark.setDescription(newData.getDescription());
-                    try {
-                        weblogManager.saveBookmark(bookmark);
-                        persistenceStrategy.flush();
-                    } catch (RollbackException e) {
-                        response.setStatus(HttpServletResponse.SC_CONFLICT);
-                        return;
+                    Optional<WeblogBookmark> maybeBookmark = weblog.getBookmarks().stream()
+                            .filter(wb -> wb.getId().equals(bookmark.getId())).findFirst();
+                    if (maybeBookmark.isPresent()) {
+                        maybeBookmark.get().setName(newData.getName());
+                        maybeBookmark.get().setUrl(newData.getUrl());
+                        maybeBookmark.get().setDescription(newData.getDescription());
+                        try {
+                            weblogManager.saveWeblog(weblog);
+                        } catch (RollbackException e) {
+                            response.setStatus(HttpServletResponse.SC_CONFLICT);
+                            return;
+                        }
+                        response.setStatus(HttpServletResponse.SC_OK);
+                    } else {
+                        // should never happen
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     }
-                    response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 }
             } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             }
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
@@ -149,14 +159,13 @@ public class BlogrollController {
             if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
                 WeblogBookmark bookmark = new WeblogBookmark(weblog, newData.getName(),
                         newData.getUrl(), newData.getDescription());
+                weblog.addBookmark(bookmark);
                 try {
-                    weblogManager.saveBookmark(bookmark);
-                    persistenceStrategy.flush();
+                    weblogManager.saveWeblog(weblog);
                 } catch (RollbackException e) {
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
                     return;
                 }
-                persistenceStrategy.refresh(weblog);
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);

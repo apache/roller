@@ -92,7 +92,8 @@ public class WeblogManagerImpl implements WeblogManager {
     // cached mapping of weblogHandles -> weblogIds
     private Map<String, String> weblogHandleToIdMap = new Hashtable<>();
 
-    protected WeblogManagerImpl() {
+    @Autowired
+    public WeblogManagerImpl() {
     }
 
     @Override
@@ -104,6 +105,7 @@ public class WeblogManagerImpl implements WeblogManager {
         WebloggerProperties props = strategy.getWebloggerProperties();
         props.setLastWeblogChange(Instant.now());
         strategy.store(props);
+        strategy.flush();
     }
 
     @Override
@@ -522,25 +524,6 @@ public class WeblogManagerImpl implements WeblogManager {
             query.setMaxResults(length);
         }
         return query.getResultList();
-    }
-
-    @Override
-    public void saveBookmark(WeblogBookmark bookmark) {
-        bookmark.getWeblog().invalidateCache();
-        this.strategy.store(bookmark);
-    }
-
-    @Override
-    public WeblogBookmark getBookmark(String id) {
-        return strategy.load(WeblogBookmark.class, id);
-    }
-
-    @Override
-    public void removeBookmark(WeblogBookmark bookmark) {
-        Weblog weblog = bookmark.getWeblog();
-        weblog.getBookmarks().remove(bookmark);
-        weblog.invalidateCache();
-        this.strategy.remove(bookmark);
     }
 
     @Override

@@ -25,9 +25,12 @@ import org.springframework.boot.autoconfigure.transaction.TransactionManagerCust
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.sql.DataSource;
@@ -35,6 +38,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@EnableJpaRepositories(
+        basePackages = {"org.tightblog.repository"}
+)
 public class DBConfig extends JpaBaseConfiguration {
 
     private static Logger log = LoggerFactory.getLogger(DBConfig.class);
@@ -84,6 +90,13 @@ public class DBConfig extends JpaBaseConfiguration {
         lEMF.setPersistenceUnitName("TightBlogPU");
         lEMF.setPersistenceXmlLocation("persistence.xml");
         return lEMF;
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager() {
+        JpaTransactionManager tm = new JpaTransactionManager();
+        tm.setEntityManagerFactory(entityManagerFactory().getObject());
+        return tm;
     }
 
 }
