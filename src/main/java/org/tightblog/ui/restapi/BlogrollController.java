@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogBookmark;
 import org.tightblog.pojos.WeblogRole;
@@ -62,13 +61,6 @@ public class BlogrollController {
 
     public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
-    }
-
-    @Autowired
-    private JPAPersistenceStrategy persistenceStrategy;
-
-    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
-        this.persistenceStrategy = persistenceStrategy;
     }
 
     @Autowired

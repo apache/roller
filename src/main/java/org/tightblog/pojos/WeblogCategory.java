@@ -28,8 +28,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.LocalDate;
@@ -38,16 +36,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "weblog_category")
-@NamedQueries({
-        @NamedQuery(name = "WeblogCategory.getByWeblog",
-                query = "SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 order by w.position"),
-
-        @NamedQuery(name = "WeblogCategory.getByWeblog&Name",
-                query = "SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 AND w.name = ?2"),
-
-        @NamedQuery(name = "WeblogCategory.removeByWeblog",
-                query = "DELETE FROM WeblogCategory w WHERE w.weblog = ?1")
-})
 public class WeblogCategory implements Comparable<WeblogCategory> {
 
     // unique internal ID of object

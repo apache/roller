@@ -442,7 +442,7 @@ public class Weblog {
     }
 
     @OneToMany(targetEntity = WeblogCategory.class,
-            cascade = CascadeType.REMOVE, mappedBy = "weblog")
+            cascade = CascadeType.ALL, mappedBy = "weblog", orphanRemoval = true)
     @OrderBy("position")
     public List<WeblogCategory> getWeblogCategories() {
         return weblogCategories;
@@ -462,7 +462,7 @@ public class Weblog {
     }
 
     @OneToMany(targetEntity = WeblogBookmark.class,
-            cascade = {CascadeType.ALL}, mappedBy = "weblog", orphanRemoval = true)
+            cascade = CascadeType.ALL, mappedBy = "weblog", orphanRemoval = true)
     public List<WeblogBookmark> getBookmarks() {
         return bookmarks;
     }
@@ -472,7 +472,7 @@ public class Weblog {
     }
 
     @OneToMany(targetEntity = MediaDirectory.class,
-            cascade = {CascadeType.ALL}, mappedBy = "weblog")
+            cascade = CascadeType.ALL, mappedBy = "weblog")
     public List<MediaDirectory> getMediaDirectories() {
         return mediaDirectories;
     }

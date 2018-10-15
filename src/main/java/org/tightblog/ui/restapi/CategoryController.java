@@ -22,6 +22,7 @@ package org.tightblog.ui.restapi;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.pojos.WeblogRole;
@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.tightblog.repository.WeblogCategoryRepository;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -48,7 +49,11 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 public class CategoryController {
 
-    public CategoryController() {
+    private WeblogCategoryRepository weblogCategoryRepository;
+
+    @Autowired
+    public CategoryController(WeblogCategoryRepository weblogCategoryRepository) {
+        this.weblogCategoryRepository = weblogCategoryRepository;
     }
 
     @Autowired
@@ -65,26 +70,20 @@ public class CategoryController {
         this.weblogManager = weblogManager;
     }
 
-    @Autowired
-    private JPAPersistenceStrategy persistenceStrategy;
-
-    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
-        this.persistenceStrategy = persistenceStrategy;
-    }
-
     @PutMapping(value = "/tb-ui/authoring/rest/category/{id}")
     public void updateCategory(@PathVariable String id, @RequestBody WeblogCategory updatedCategory, Principal p,
                                HttpServletResponse response) throws ServletException {
         try {
-            WeblogCategory c = weblogManager.getWeblogCategory(id);
-            if (c != null) {
-                Weblog weblog = c.getWeblog();
+            Optional<WeblogCategory> c = weblogCategoryRepository.findById(id);
+            if (c.isPresent()) {
+                Weblog weblog = c.get().getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-                    if (!c.getName().equals(updatedCategory.getName())) {
-                        c.setName(updatedCategory.getName());
+                    if (!c.get().getName().equals(updatedCategory.getName())) {
+                        Optional<WeblogCategory> maybeWC = weblog.getWeblogCategories().stream()
+                                .filter(wc -> wc.getId().equals(c.get().getId())).findFirst();
+                        maybeWC.ifPresent(wc -> wc.setName(updatedCategory.getName()));
                         try {
-                            weblogManager.saveWeblogCategory(c);
-                            persistenceStrategy.flush();
+                            weblogManager.saveWeblog(weblog);
                             response.setStatus(HttpServletResponse.SC_OK);
                         } catch (IllegalArgumentException e) {
                             response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -109,9 +108,8 @@ public class CategoryController {
             if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
                 WeblogCategory wc = new WeblogCategory(weblog, newCategory.getName());
                 try {
-                    weblogManager.saveWeblogCategory(wc);
                     weblog.addCategory(wc);
-                    persistenceStrategy.flush();
+                    weblogManager.saveWeblog(weblog);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } catch (IllegalArgumentException e) {
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -138,21 +136,17 @@ public class CategoryController {
             throws ServletException {
 
         try {
-            WeblogCategory categoryToRemove = weblogManager.getWeblogCategory(id);
-            if (categoryToRemove != null) {
-                Weblog weblog = categoryToRemove.getWeblog();
+            Optional<WeblogCategory> categoryToRemove = weblogCategoryRepository.findById(id);
+            if (categoryToRemove.isPresent()) {
+                Weblog weblog = categoryToRemove.get().getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
 
-                    WeblogCategory targetCategory = targetCategoryId == null ?
-                            null : weblogManager.getWeblogCategory(targetCategoryId);
+                    Optional<WeblogCategory> targetCategory = targetCategoryId == null ?
+                            Optional.empty() : weblogCategoryRepository.findById(targetCategoryId);
 
-                    if (targetCategory != null) {
-                        weblogManager.moveWeblogCategoryContents(categoryToRemove, targetCategory);
-                        persistenceStrategy.flush();
-                    }
-
-                    weblogManager.removeWeblogCategory(categoryToRemove);
-                    persistenceStrategy.flush();
+                    targetCategory.ifPresent(tc -> weblogManager.moveWeblogCategoryContents(categoryToRemove.get(), tc));
+                    weblog.getWeblogCategories().remove(categoryToRemove.get());
+                    weblogManager.saveWeblog(weblog);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

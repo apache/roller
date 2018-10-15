@@ -86,7 +86,7 @@ public class IndexManagerTestIT extends WebloggerTest {
         wd1.setPubTime(Instant.now());
         wd1.setWeblog(getManagedWeblog(testWeblog));
 
-        WeblogCategory cat = weblogManager.getWeblogCategoryByName(testWeblog, "General");
+        WeblogCategory cat = weblogCategoryRepository.findByWeblogAndName(testWeblog, "General");
         wd1.setCategory(cat);
 
         weblogEntryManager.saveWeblogEntry(wd1);
@@ -109,7 +109,7 @@ public class IndexManagerTestIT extends WebloggerTest {
         wd2.setPubTime(Instant.now());
         wd2.setWeblog(getManagedWeblog(testWeblog));
 
-        cat = weblogManager.getWeblogCategoryByName(testWeblog, "General");
+        cat = weblogCategoryRepository.findByWeblogAndName(testWeblog, "General");
         wd2.setCategory(cat);
 
         weblogEntryManager.saveWeblogEntry(wd2);

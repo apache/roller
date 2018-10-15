@@ -42,6 +42,7 @@ import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WebloggerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tightblog.repository.WeblogCategoryRepository;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -62,6 +63,9 @@ import java.util.TreeMap;
 public class WeblogManagerImpl implements WeblogManager {
 
     private static Logger log = LoggerFactory.getLogger(WeblogManagerImpl.class);
+
+    @Autowired
+    private WeblogCategoryRepository weblogCategoryRepository;
 
     @Autowired
     private UserManager userManager;
@@ -153,15 +157,6 @@ public class WeblogManagerImpl implements WeblogManager {
             this.strategy.remove(template);
         }
 
-        // remove bookmarks
-        TypedQuery<WeblogBookmark> bookmarkQuery = strategy.getNamedQuery("Bookmark.getByWeblog",
-                WeblogBookmark.class);
-        bookmarkQuery.setParameter(1, weblog);
-        List<WeblogBookmark> bookmarks = bookmarkQuery.getResultList();
-        for (WeblogBookmark bookmark : bookmarks) {
-            this.strategy.remove(bookmark);
-        }
-
         // remove mediafile metadata
         // remove uploaded files
         mediaFileManager.removeAllFiles(weblog);
@@ -175,11 +170,6 @@ public class WeblogManagerImpl implements WeblogManager {
             weblogEntryManager.removeWeblogEntry(entry);
         }
         this.strategy.flush();
-
-        // delete all weblog categories
-        Query removeCategories = strategy.getNamedUpdate("WeblogCategory.removeByWeblog");
-        removeCategories.setParameter(1, weblog);
-        removeCategories.executeUpdate();
 
         // remove permissions
         for (UserWeblogRole role : userManager.getWeblogRolesIncludingPending(weblog)) {
@@ -491,7 +481,7 @@ public class WeblogManagerImpl implements WeblogManager {
         TypedQuery<Weblog> query = strategy.getNamedQuery(
                 "Weblog.getByLetterOrderByHandle", Weblog.class);
 
-        Character upperCase = Character.toUpperCase(letter);
+        char upperCase = Character.toUpperCase(letter);
 
         query.setParameter(1, upperCase + "%");
         if (offset != 0) {
@@ -617,33 +607,6 @@ public class WeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public void saveWeblogCategory(WeblogCategory cat) {
-        WeblogCategory test = getWeblogCategoryByName(cat.getWeblog(), cat.getName());
-
-        if (test != null && !test.getId().equals(cat.getId())) {
-            throw new IllegalArgumentException("Duplicate category name, cannot save category");
-        }
-        cat.getWeblog().invalidateCache();
-        this.strategy.store(cat);
-    }
-
-    @Override
-    public void removeWeblogCategory(WeblogCategory cat) {
-
-        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-        wesc.setWeblog(cat.getWeblog());
-        wesc.setCategoryName(cat.getName());
-
-        if (weblogEntryManager.getWeblogEntries(wesc).size() > 0) {
-            throw new IllegalStateException("Cannot remove category with entries");
-        }
-
-        cat.getWeblog().getWeblogCategories().remove(cat);
-        cat.getWeblog().invalidateCache();
-        this.strategy.remove(cat);
-    }
-
-    @Override
     public void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat) {
 
         // get all entries in category and subcats
@@ -662,34 +625,12 @@ public class WeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public WeblogCategory getWeblogCategory(String id) {
-        return this.strategy.load(WeblogCategory.class, id);
-    }
-
-    @Override
-    public WeblogCategory getWeblogCategoryByName(Weblog weblog, String categoryName) {
-        TypedQuery<WeblogCategory> q = strategy.getNamedQuery(
-                "WeblogCategory.getByWeblog&Name", WeblogCategory.class);
-        q.setParameter(1, weblog);
-        q.setParameter(2, categoryName);
-        q.setHint("javax.persistence.cache.storeMode", "REFRESH");
-        try {
-            return q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    @Override
     public List<WeblogCategory> getWeblogCategories(Weblog weblog) {
         if (weblog == null) {
             throw new IllegalArgumentException("weblog is null");
         }
 
-        TypedQuery<WeblogCategory> q = strategy.getNamedQuery(
-                "WeblogCategory.getByWeblog", WeblogCategory.class);
-        q.setParameter(1, weblog);
-        List<WeblogCategory> categories = q.getResultList();
+        List<WeblogCategory> categories = weblogCategoryRepository.findByWeblogOrderByPosition(weblog);
 
         // obtain usage stats
         String queryString = "SELECT new org.tightblog.business.WeblogManagerImpl.CategoryStats(we.category, " +

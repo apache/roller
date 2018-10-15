@@ -39,6 +39,7 @@ import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.repository.WeblogCategoryRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
@@ -70,6 +71,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -79,6 +81,13 @@ public class WeblogEntryController {
     private static Logger log = LoggerFactory.getLogger(WeblogEntryController.class);
 
     private static DateTimeFormatter pubDateFormat = DateTimeFormatter.ofPattern("M/d/yyyy");
+
+    private WeblogCategoryRepository weblogCategoryRepository;
+
+    @Autowired
+    public WeblogEntryController(WeblogCategoryRepository weblogCategoryRepository) {
+        this.weblogCategoryRepository = weblogCategoryRepository;
+    }
 
     // number of entries to show per page
     private static final int ITEMS_PER_PAGE = 30;
@@ -530,7 +539,12 @@ public class WeblogEntryController {
                 }
                 entry.setSearchDescription(entryData.getSearchDescription());
                 entry.setEnclosureUrl(entryData.getEnclosureUrl());
-                entry.setCategory(weblogManager.getWeblogCategory(entryData.getCategory().getId()));
+                Optional<WeblogCategory> maybeCategory = weblogCategoryRepository.findById(entryData.getCategory().getId());
+                if (maybeCategory.isPresent()) {
+                    entry.setCategory(maybeCategory.get());
+                } else {
+                    throw new IllegalArgumentException("Category is invalid.");
+                }
 
                 entry.setCommentDays(entryData.getCommentDays());
 

@@ -27,8 +27,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.util.Comparator;
 import java.util.Objects;
@@ -38,10 +36,6 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "blogroll_link")
-@NamedQueries({
-        @NamedQuery(name = "Bookmark.getByWeblog",
-                query = "SELECT b FROM WeblogBookmark b WHERE b.weblog = ?1 order by b.position")
-})
 public class WeblogBookmark implements Comparable<WeblogBookmark> {
 
     private String id = Utilities.generateUUID();

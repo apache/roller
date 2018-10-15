@@ -21,6 +21,8 @@
 package org.tightblog.business;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.tightblog.WebloggerTest;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.WeblogCategory;
@@ -72,37 +74,20 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
     }
 
     @Test
-    public void testHasCategory() throws Exception {
+    public void testHasCategory() {
         // check that root has category
         assertTrue(testWeblog.hasCategory(testCat.getName()));
     }
     
     @Test
-    public void testLookupCategoryById() throws Exception {
-        WeblogCategory cat = weblogManager.getWeblogCategory(testCat.getId());
-        assertNotNull(cat);
-        assertEquals(cat, testCat);
+    public void testLookupCategoryById() {
+        Optional<WeblogCategory> maybeCat = weblogCategoryRepository.findById(testCat.getId());
+        assertTrue(maybeCat.isPresent());
+        assertEquals(maybeCat.get(), testCat);
     }
 
     @Test
-    public void testLookupCategoryByName() throws Exception {
-        testWeblog = getManagedWeblog(testWeblog);
-        WeblogCategory cat = weblogManager.getWeblogCategoryByName(testWeblog, "catTest-cat1");
-        assertNotNull(cat);
-        assertEquals(cat, cat1);
-        
-        cat = weblogManager.getWeblogCategoryByName(testWeblog, "catTest-cat2");
-        assertNotNull(cat);
-        assertEquals(cat, cat2);
-        
-        // test lazy lookup, specifying just a name without slashes
-        cat = weblogManager.getWeblogCategoryByName(testWeblog, "catTest-cat1");
-        assertNotNull(cat);
-        assertEquals(cat, cat1);
-    }
-
-    @Test
-    public void testLookupAllCategoriesByWeblog() throws Exception {
+    public void testLookupAllCategoriesByWeblog() {
         testWeblog = getManagedWeblog(testWeblog);
         List cats = weblogManager.getWeblogCategories(testWeblog);
         assertNotNull(cats);
@@ -117,16 +102,11 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
         // add some categories and entries to test with
         WeblogCategory c1 = new WeblogCategory(testWeblog, "c1");
         testWeblog.addCategory(c1);
-        weblogManager.saveWeblogCategory(c1);
 
         WeblogCategory dest = new WeblogCategory(testWeblog, "dest");
         testWeblog.addCategory(dest);
-        weblogManager.saveWeblogCategory(dest);
 
         endSession(true);
-
-        c1 = weblogManager.getWeblogCategory(c1.getId());
-        dest = weblogManager.getWeblogCategory(dest.getId());
 
         testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
@@ -135,30 +115,34 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
         endSession(true);
 
         // need to query for cats again since session was closed
-        c1 = weblogManager.getWeblogCategory(c1.getId());
-        dest = weblogManager.getWeblogCategory(dest.getId());
+        Optional<WeblogCategory> fromCat = weblogCategoryRepository.findById(c1.getId());
+        Optional<WeblogCategory> toCat = weblogCategoryRepository.findById(dest.getId());
 
         // verify number of entries in each category
-        assertEquals(0, retrieveWeblogEntries(dest, false).size());
-        assertEquals(0, retrieveWeblogEntries(dest, true).size());
-        assertEquals(2, retrieveWeblogEntries(c1, false).size());
-        assertEquals(1, retrieveWeblogEntries(c1, true).size());
+        assertTrue(fromCat.isPresent());
+        assertTrue(toCat.isPresent());
+        assertEquals(0, retrieveWeblogEntries(toCat.get(), false).size());
+        assertEquals(0, retrieveWeblogEntries(toCat.get(), true).size());
+        assertEquals(2, retrieveWeblogEntries(fromCat.get(), false).size());
+        assertEquals(1, retrieveWeblogEntries(fromCat.get(), true).size());
 
         // move contents of source category c1 to destination category dest
         weblogManager.moveWeblogCategoryContents(c1, dest);
-        weblogManager.saveWeblogCategory(c1);
         endSession(true);
 
         // after move, verify number of entries in each category
-        dest = weblogManager.getWeblogCategory(dest.getId());
-        c1 = weblogManager.getWeblogCategory(c1.getId());
+        fromCat = weblogCategoryRepository.findById(c1.getId());
+        toCat = weblogCategoryRepository.findById(dest.getId());
+
+        assertTrue(fromCat.isPresent());
+        assertTrue(toCat.isPresent());
 
         // Hierarchy is flattened under dest
-        assertEquals(2, retrieveWeblogEntries(dest, false).size());
-        assertEquals(1, retrieveWeblogEntries(dest, true).size());
+        assertEquals(2, retrieveWeblogEntries(toCat.get(), false).size());
+        assertEquals(1, retrieveWeblogEntries(toCat.get(), true).size());
 
         // c1 category should be empty now
-        assertEquals(0, retrieveWeblogEntries(c1, false).size());
+        assertEquals(0, retrieveWeblogEntries(fromCat.get(), false).size());
     }
 
     private List<WeblogEntry> retrieveWeblogEntries(WeblogCategory category, boolean publishedOnly) {
@@ -171,17 +155,16 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
         return weblogEntryManager.getWeblogEntries(wesc);
     }
 
-    private WeblogCategory setupWeblogCategory(Weblog weblog, String name) throws Exception {
+    private WeblogCategory setupWeblogCategory(Weblog weblog, String name) {
         WeblogCategory testCategory = new WeblogCategory(weblog, name);
         weblog.addCategory(testCategory);
-        weblogManager.saveWeblogCategory(testCategory);
-        strategy.flush();
+        weblogManager.saveWeblog(weblog);
 
         // query for object
-        WeblogCategory cat = weblogManager.getWeblogCategory(testCategory.getId());
-        if (cat == null) {
+        Optional<WeblogCategory> maybeCat = weblogCategoryRepository.findById(testCategory.getId());
+        if (!maybeCat.isPresent()) {
             throw new IllegalStateException("error setting up weblog category");
         }
-        return cat;
+        return maybeCat.get();
     }
 }

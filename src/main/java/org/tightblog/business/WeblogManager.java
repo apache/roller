@@ -193,39 +193,15 @@ public interface WeblogManager {
     void updateHitCounters();
 
     /**
-     * Save weblog category.
+     * Get WeblogCategory objects for a weblog.
+     * @param weblog weblog whose categories are desired
      */
-    void saveWeblogCategory(WeblogCategory cat);
-
-    /**
-     * Remove weblog category.
-     */
-    void removeWeblogCategory(WeblogCategory cat);
-
-    /**
-     * Get category by id.
-     */
-    WeblogCategory getWeblogCategory(String id);
+    List<WeblogCategory> getWeblogCategories(Weblog weblog);
 
     /**
      * Recategorize all entries with one category to another.
      */
     void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat);
-
-    /**
-     * Get category specified by weblog and name.
-     *
-     * @param weblog       Weblog of WeblogCategory.
-     * @param categoryName Name of WeblogCategory
-     * @return WeblogCategory, or null if not found.
-     */
-    WeblogCategory getWeblogCategoryByName(Weblog weblog, String categoryName);
-
-    /**
-     * Get WeblogCategory objects for a weblog.
-     * @param weblog weblog whose categories are desired
-     */
-    List<WeblogCategory> getWeblogCategories(Weblog weblog);
 
     /**
      * Get list of WeblogEntryTagAggregate objects identifying the most used tags for a weblog.
