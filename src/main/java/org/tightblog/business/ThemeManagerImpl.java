@@ -34,6 +34,7 @@ import org.tightblog.pojos.WeblogTheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ServletContextAware;
+import org.tightblog.repository.WeblogTemplateRepository;
 
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
@@ -65,6 +66,9 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private WeblogTemplateRepository weblogTemplateRepository;
+
     static {
         // TODO: figure out why PNG is missing from Java MIME types
         FileTypeMap map = FileTypeMap.getDefaultFileTypeMap();
@@ -75,9 +79,6 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
             }
         }
     }
-
-    @Autowired
-    private WeblogManager weblogManager;
 
     // map of themes in format (theme id, Theme)
     private Map<String, SharedTheme> themeMap = new HashMap<>();
@@ -136,7 +137,7 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
 
         SharedTheme staticTheme = this.themeMap.get(weblog.getTheme());
         if (staticTheme != null) {
-            weblogTheme = new WeblogTheme(weblogManager, weblog, staticTheme);
+            weblogTheme = new WeblogTheme(weblogTemplateRepository, weblog, staticTheme);
         } else {
             log.warn("Unable to find shared theme {}", weblog.getTheme());
         }

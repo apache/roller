@@ -21,9 +21,9 @@
 
 package org.tightblog.pojos;
 
-import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.Template.TemplateDerivation;
+import org.tightblog.repository.WeblogTemplateRepository;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -39,12 +39,13 @@ import java.util.TreeMap;
  */
 public class WeblogTheme {
 
-    protected WeblogManager weblogManager;
+    protected WeblogTemplateRepository weblogTemplateRepository;
     protected Weblog weblog;
     private SharedTheme sharedTheme;
 
-    public WeblogTheme(WeblogManager manager, Weblog weblog, SharedTheme sharedTheme) {
-        this.weblogManager = manager;
+    public WeblogTheme(WeblogTemplateRepository weblogTemplateRepository,
+                       Weblog weblog, SharedTheme sharedTheme) {
+        this.weblogTemplateRepository = weblogTemplateRepository;
         this.weblog = weblog;
         this.sharedTheme = sharedTheme;
     }
@@ -82,7 +83,7 @@ public class WeblogTheme {
 
         // now, unless in preview mode, overwrite individual templates with blog-specific ones stored in the DB
         if (!weblog.isUsedForThemePreview()) {
-            for (WeblogTemplate template : weblogManager.getTemplates(this.weblog)) {
+            for (WeblogTemplate template : weblogTemplateRepository.findByWeblog(this.weblog)) {
                 if (pageMap.get(template.getName()) != null) {
                     // mark weblog template as an override
                     template.setDerivation(TemplateDerivation.OVERRIDDEN);
@@ -103,7 +104,7 @@ public class WeblogTheme {
         Template template = null;
 
         if (!weblog.isUsedForThemePreview()) {
-            template = weblogManager.getTemplateByAction(this.weblog, action);
+            template = weblogTemplateRepository.findByWeblogAndRole(this.weblog, action);
         }
         if (template == null) {
             template = sharedTheme.getTemplateByAction(action);
@@ -119,7 +120,7 @@ public class WeblogTheme {
         Template template = null;
 
         if (!weblog.isUsedForThemePreview()) {
-            template = weblogManager.getTemplateByName(this.weblog, name);
+            template = weblogTemplateRepository.findByWeblogAndName(this.weblog, name);
         }
         if (template == null) {
             template = sharedTheme.getTemplateByName(name);
@@ -135,7 +136,7 @@ public class WeblogTheme {
         Template template = null;
 
         if (!weblog.isUsedForThemePreview()) {
-            template = weblogManager.getTemplateByPath(this.weblog, path);
+            template = weblogTemplateRepository.findByWeblogAndRelativePath(this.weblog, path);
         }
         if (template == null) {
             template = sharedTheme.getTemplateByPath(path);

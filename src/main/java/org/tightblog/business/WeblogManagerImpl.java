@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.tightblog.business.search.IndexManager;
-import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserStatus;
 import org.tightblog.pojos.UserWeblogRole;
@@ -38,11 +37,11 @@ import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.tightblog.pojos.WeblogEntryTag;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
-import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WebloggerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tightblog.repository.WeblogCategoryRepository;
+import org.tightblog.repository.WeblogTemplateRepository;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -55,7 +54,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -66,6 +64,9 @@ public class WeblogManagerImpl implements WeblogManager {
 
     @Autowired
     private WeblogCategoryRepository weblogCategoryRepository;
+
+    @Autowired
+    private WeblogTemplateRepository weblogTemplateRepository;
 
     @Autowired
     private UserManager userManager;
@@ -147,15 +148,7 @@ public class WeblogManagerImpl implements WeblogManager {
             this.strategy.remove(tagData);
         }
 
-        // remove associated templates
-        TypedQuery<WeblogTemplate> templateQuery = strategy.getNamedQuery("WeblogTemplate.getByWeblog",
-                WeblogTemplate.class);
-        templateQuery.setParameter(1, weblog);
-        List<WeblogTemplate> templates = templateQuery.getResultList();
-
-        for (WeblogTemplate template : templates) {
-            this.strategy.remove(template);
-        }
+        weblogTemplateRepository.deleteByWeblog(weblog);
 
         // remove mediafile metadata
         // remove uploaded files
@@ -190,20 +183,6 @@ public class WeblogManagerImpl implements WeblogManager {
         // flush the changes before returning. This is required as there is a
         // circular dependency between WeblogCategory and Weblog
         this.strategy.flush();
-    }
-
-    @Override
-    public void saveTemplate(WeblogTemplate template) {
-        this.strategy.store(template);
-
-        // update weblog last modified date.  date updated by saveWeblog()
-        saveWeblog(template.getWeblog());
-    }
-
-    @Override
-    public void removeTemplate(WeblogTemplate template) {
-        this.strategy.remove(template);
-        saveWeblog(template.getWeblog());
     }
 
     @Override
@@ -370,94 +349,6 @@ public class WeblogManagerImpl implements WeblogManager {
             }
         }
         return users;
-    }
-
-    @Override
-    public WeblogTemplate getTemplate(String id) {
-        if (id == null) {
-            return null;
-        }
-        return this.strategy.load(WeblogTemplate.class, id);
-    }
-
-    /**
-     * Using JPA directly because Weblogger's Query API does too much memory allocation.
-     */
-    @Override
-    public WeblogTemplate getTemplateByPath(Weblog weblog, String path) {
-
-        if (weblog == null) {
-            throw new IllegalArgumentException("userName is null");
-        }
-
-        if (path == null) {
-            throw new IllegalArgumentException("path is null");
-        }
-
-        TypedQuery<WeblogTemplate> query = strategy.getNamedQuery("WeblogTemplate.getByWeblog&RelativePath",
-                WeblogTemplate.class);
-        query.setParameter(1, weblog);
-        query.setParameter(2, path);
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public WeblogTemplate getTemplateByAction(Weblog weblog, ComponentType action) {
-
-        if (weblog == null) {
-            throw new IllegalArgumentException("weblog is null");
-        }
-
-        if (action == null) {
-            throw new IllegalArgumentException("Action name is null");
-        }
-
-        TypedQuery<WeblogTemplate> query = strategy.getNamedQuery("WeblogTemplate.getByRole",
-                WeblogTemplate.class);
-        query.setParameter(1, weblog);
-        query.setParameter(2, action);
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public WeblogTemplate getTemplateByName(Weblog weblog, String templateName) {
-
-        if (weblog == null) {
-            throw new IllegalArgumentException("weblog is null");
-        }
-
-        if (templateName == null) {
-            throw new IllegalArgumentException("Template name is null");
-        }
-
-        TypedQuery<WeblogTemplate> query = strategy.getNamedQuery("WeblogTemplate.getByWeblog&Name",
-                WeblogTemplate.class);
-        query.setParameter(1, weblog);
-        query.setParameter(2, templateName);
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public List<WeblogTemplate> getTemplates(Weblog weblog) {
-        if (weblog == null) {
-            throw new IllegalArgumentException("weblog is null");
-        }
-        TypedQuery<WeblogTemplate> q = strategy.getNamedQuery(
-                "WeblogTemplate.getByWeblogOrderByName", WeblogTemplate.class);
-        q.setParameter(1, weblog);
-        return q.getResultList();
     }
 
     @Override
@@ -642,13 +533,12 @@ public class WeblogManagerImpl implements WeblogManager {
         List<CategoryStats> stats = query.getResultList();
 
         for (CategoryStats stat : stats) {
-            Optional<WeblogCategory> category = categories.stream().filter(
-                    r -> r.getId().equals(stat.category.getId())).findFirst();
-            if (category.isPresent()) {
-                WeblogCategory cat = category.get();
-                cat.setNumEntries(stat.numEntries);
-                cat.setFirstEntry(stat.firstEntry);
-                cat.setLastEntry(stat.lastEntry);
+            WeblogCategory category = categories.stream().filter(
+                    r -> r.getId().equals(stat.category.getId())).findFirst().orElse(null);
+            if (category != null) {
+                category.setNumEntries(stat.numEntries);
+                category.setFirstEntry(stat.firstEntry);
+                category.setLastEntry(stat.lastEntry);
             }
         }
         return categories;

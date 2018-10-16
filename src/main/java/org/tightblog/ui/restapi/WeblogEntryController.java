@@ -71,7 +71,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -539,9 +538,9 @@ public class WeblogEntryController {
                 }
                 entry.setSearchDescription(entryData.getSearchDescription());
                 entry.setEnclosureUrl(entryData.getEnclosureUrl());
-                Optional<WeblogCategory> maybeCategory = weblogCategoryRepository.findById(entryData.getCategory().getId());
-                if (maybeCategory.isPresent()) {
-                    entry.setCategory(maybeCategory.get());
+                WeblogCategory category = weblogCategoryRepository.findById(entryData.getCategory().getId()).orElse(null);
+                if (category != null) {
+                    entry.setCategory(category);
                 } else {
                     throw new IllegalArgumentException("Category is invalid.");
                 }

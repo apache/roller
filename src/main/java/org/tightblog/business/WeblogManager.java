@@ -20,12 +20,10 @@
  */
 package org.tightblog.business;
 
-import org.tightblog.pojos.Template.ComponentType;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
-import org.tightblog.pojos.WeblogTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -110,41 +108,6 @@ public interface WeblogManager {
      * @return analytics tracking code, empty string if none.
      */
     String getAnalyticsTrackingCode(Weblog weblog);
-
-    /**
-     * Store a custom weblog template.
-     */
-    void saveTemplate(WeblogTemplate template);
-
-    /**
-     * Remove a custom template.
-     */
-    void removeTemplate(WeblogTemplate template);
-
-    /**
-     * Get a custom template by its id.
-     */
-    WeblogTemplate getTemplate(String id);
-
-    /**
-     * Get a custom template by the action it supports.
-     */
-    WeblogTemplate getTemplateByAction(Weblog w, ComponentType a);
-
-    /**
-     * Get a custom template by its name.
-     */
-    WeblogTemplate getTemplateByName(Weblog w, String p);
-
-    /**
-     * Get a custom template by its relative path.
-     */
-    WeblogTemplate getTemplateByPath(Weblog w, String p);
-
-    /**
-     * Get all custom templates for a weblog
-     */
-    List<WeblogTemplate> getTemplates(Weblog w);
 
     /**
      * Get count of active weblogs, returning long type as that is what the

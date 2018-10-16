@@ -4,7 +4,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.SharedTheme;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.Template;
@@ -13,6 +12,7 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WeblogTheme;
+import org.tightblog.repository.WeblogTemplateRepository;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +32,13 @@ import java.util.Locale;
 public class ThemeController {
 
     private static Logger log = LoggerFactory.getLogger(ThemeController.class);
+
+    private WeblogTemplateRepository weblogTemplateRepository;
+
+    @Autowired
+    public ThemeController(WeblogTemplateRepository weblogTemplateRepository) {
+        this.weblogTemplateRepository = weblogTemplateRepository;
+    }
 
     @Autowired
     private ThemeManager themeManager;
@@ -55,13 +62,6 @@ public class ThemeController {
     }
 
     @Autowired
-    private JPAPersistenceStrategy persistenceStrategy;
-
-    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
-        this.persistenceStrategy = persistenceStrategy;
-    }
-
-    @Autowired
     private MessageSource messages;
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/switchtheme/{newThemeId}", produces = "text/plain")
@@ -80,11 +80,11 @@ public class ThemeController {
                 }
 
                 // Remove old template overrides
-                List<WeblogTemplate> oldTemplates = weblogManager.getTemplates(weblog);
+                List<WeblogTemplate> oldTemplates = weblogTemplateRepository.findByWeblog(weblog);
 
                 for (WeblogTemplate template : oldTemplates) {
                     if (template.getDerivation() == Template.TemplateDerivation.OVERRIDDEN) {
-                        weblogManager.removeTemplate(template);
+                        weblogTemplateRepository.delete(template);
                     }
                 }
 
@@ -92,9 +92,8 @@ public class ThemeController {
 
                 log.debug("Saving theme {} for weblog {}", newThemeId, weblog.getHandle());
 
-                // save updated weblog and flush
+                // save updated weblog so its cached pages will expire
                 weblogManager.saveWeblog(weblog);
-                persistenceStrategy.flush();
 
                 // Theme set to..
                 String msg = messages.getMessage("themeEdit.setTheme.success", new Object[] {newTheme.getName()},
@@ -113,7 +112,8 @@ public class ThemeController {
     private ValidationError advancedValidate(Weblog weblog, SharedTheme newTheme, Locale locale) {
         BindException be = new BindException(weblog, "new data object");
 
-        WeblogTheme oldTheme = new WeblogTheme(weblogManager, weblog, themeManager.getSharedTheme(weblog.getTheme()));
+        WeblogTheme oldTheme = new WeblogTheme(weblogTemplateRepository, weblog,
+                themeManager.getSharedTheme(weblog.getTheme()));
 
         oldTheme.getTemplates().stream().filter(
                 old -> old.getDerivation() == Template.TemplateDerivation.SPECIFICBLOG).forEach(old -> {

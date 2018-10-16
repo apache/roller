@@ -124,7 +124,7 @@
         <!-- we want changes to blog templates to propagate immediately: https://stackoverflow.com/a/28530365 -->
         <beans:property name="cacheable" value="false"/>
         <beans:property name="themeManager" ref="themeManager"/>
-        <beans:property name="weblogManager" ref="weblogManager"/>
+        <beans:property name="weblogTemplateRepository" ref="weblogTemplateRepository"/>
     </beans:bean>
 
     <beans:bean id="standardTemplateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">

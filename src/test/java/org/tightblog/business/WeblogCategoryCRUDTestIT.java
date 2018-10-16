@@ -86,9 +86,9 @@ public class WeblogCategoryCRUDTestIT extends WebloggerTest {
         endSession(true);
         
         // make sure category was added
-        Optional<WeblogCategory> maybeCat = weblogCategoryRepository.findById(newCat.getId());
-        assertTrue(maybeCat.isPresent());
-        assertEquals(newCat, maybeCat.get());
+        WeblogCategory catFromDb = weblogCategoryRepository.findById(newCat.getId()).orElse(null);
+        assertNotNull(catFromDb);
+        assertEquals(newCat, catFromDb);
         
         // make sure category count increased
         testWeblog = getManagedWeblog(testWeblog);
@@ -102,19 +102,19 @@ public class WeblogCategoryCRUDTestIT extends WebloggerTest {
         endSession(true);
 
         // verify category was updated
-        maybeCat = weblogCategoryRepository.findById(newCat.getId());
-        assertTrue(maybeCat.isPresent());
-        assertEquals("testtest", maybeCat.get().getName());
+        catFromDb = weblogCategoryRepository.findById(newCat.getId()).orElse(null);
+        assertNotNull(catFromDb);
+        assertEquals("testtest", catFromDb.getName());
         assertEquals(2, testWeblog.getWeblogCategories().size());
 
         // remove category
-        testWeblog.getWeblogCategories().remove(maybeCat.get());
+        testWeblog.getWeblogCategories().remove(catFromDb);
         weblogManager.saveWeblog(testWeblog);
         endSession(true);
 
         // make sure cat was removed
-        maybeCat = weblogCategoryRepository.findById(newCat.getId());
-        assertFalse(maybeCat.isPresent());
+        catFromDb = weblogCategoryRepository.findById(newCat.getId()).orElse(null);
+        assertNull(catFromDb);
         
         // make sure category count decreased
         testWeblog = getManagedWeblog(testWeblog);

@@ -43,8 +43,6 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
 
     private User testUser;
     private Weblog testWeblog;
-    private WeblogCategory cat1;
-    private WeblogCategory cat2;
     private WeblogCategory testCat;
 
     /**
@@ -57,8 +55,8 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
         testWeblog = setupWeblog("categoryTestWeblog", testUser);
 
         // setup several categories for testing
-        cat1 = setupWeblogCategory(testWeblog, "catTest-cat1");
-        cat2 = setupWeblogCategory(testWeblog, "catTest-cat2");
+        setupWeblogCategory(testWeblog, "catTest-cat1");
+        setupWeblogCategory(testWeblog, "catTest-cat2");
 
         // a simple test cat at the root level
         testCat = setupWeblogCategory(testWeblog, "catTest-testCat");
@@ -115,34 +113,34 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
         endSession(true);
 
         // need to query for cats again since session was closed
-        Optional<WeblogCategory> fromCat = weblogCategoryRepository.findById(c1.getId());
-        Optional<WeblogCategory> toCat = weblogCategoryRepository.findById(dest.getId());
+        WeblogCategory fromCat = weblogCategoryRepository.findById(c1.getId()).orElse(null);
+        WeblogCategory toCat = weblogCategoryRepository.findById(dest.getId()).orElse(null);
 
         // verify number of entries in each category
-        assertTrue(fromCat.isPresent());
-        assertTrue(toCat.isPresent());
-        assertEquals(0, retrieveWeblogEntries(toCat.get(), false).size());
-        assertEquals(0, retrieveWeblogEntries(toCat.get(), true).size());
-        assertEquals(2, retrieveWeblogEntries(fromCat.get(), false).size());
-        assertEquals(1, retrieveWeblogEntries(fromCat.get(), true).size());
+        assertNotNull(fromCat);
+        assertNotNull(toCat);
+        assertEquals(0, retrieveWeblogEntries(toCat, false).size());
+        assertEquals(0, retrieveWeblogEntries(toCat, true).size());
+        assertEquals(2, retrieveWeblogEntries(fromCat, false).size());
+        assertEquals(1, retrieveWeblogEntries(fromCat, true).size());
 
         // move contents of source category c1 to destination category dest
         weblogManager.moveWeblogCategoryContents(c1, dest);
         endSession(true);
 
         // after move, verify number of entries in each category
-        fromCat = weblogCategoryRepository.findById(c1.getId());
-        toCat = weblogCategoryRepository.findById(dest.getId());
+        fromCat = weblogCategoryRepository.findById(c1.getId()).orElse(null);
+        toCat = weblogCategoryRepository.findById(dest.getId()).orElse(null);
 
-        assertTrue(fromCat.isPresent());
-        assertTrue(toCat.isPresent());
+        assertNotNull(fromCat);
+        assertNotNull(toCat);
 
         // Hierarchy is flattened under dest
-        assertEquals(2, retrieveWeblogEntries(toCat.get(), false).size());
-        assertEquals(1, retrieveWeblogEntries(toCat.get(), true).size());
+        assertEquals(2, retrieveWeblogEntries(toCat, false).size());
+        assertEquals(1, retrieveWeblogEntries(toCat, true).size());
 
         // c1 category should be empty now
-        assertEquals(0, retrieveWeblogEntries(fromCat.get(), false).size());
+        assertEquals(0, retrieveWeblogEntries(fromCat, false).size());
     }
 
     private List<WeblogEntry> retrieveWeblogEntries(WeblogCategory category, boolean publishedOnly) {

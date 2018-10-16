@@ -74,13 +74,13 @@ public class CategoryController {
     public void updateCategory(@PathVariable String id, @RequestBody WeblogCategory updatedCategory, Principal p,
                                HttpServletResponse response) throws ServletException {
         try {
-            Optional<WeblogCategory> c = weblogCategoryRepository.findById(id);
-            if (c.isPresent()) {
-                Weblog weblog = c.get().getWeblog();
+            WeblogCategory c = weblogCategoryRepository.findById(id).orElse(null);
+            if (c != null) {
+                Weblog weblog = c.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-                    if (!c.get().getName().equals(updatedCategory.getName())) {
+                    if (!c.getName().equals(updatedCategory.getName())) {
                         Optional<WeblogCategory> maybeWC = weblog.getWeblogCategories().stream()
-                                .filter(wc -> wc.getId().equals(c.get().getId())).findFirst();
+                                .filter(wc -> wc.getId().equals(c.getId())).findFirst();
                         maybeWC.ifPresent(wc -> wc.setName(updatedCategory.getName()));
                         try {
                             weblogManager.saveWeblog(weblog);
@@ -136,16 +136,16 @@ public class CategoryController {
             throws ServletException {
 
         try {
-            Optional<WeblogCategory> categoryToRemove = weblogCategoryRepository.findById(id);
-            if (categoryToRemove.isPresent()) {
-                Weblog weblog = categoryToRemove.get().getWeblog();
+            WeblogCategory categoryToRemove = weblogCategoryRepository.findById(id).orElse(null);
+            if (categoryToRemove != null) {
+                Weblog weblog = categoryToRemove.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
 
                     Optional<WeblogCategory> targetCategory = targetCategoryId == null ?
                             Optional.empty() : weblogCategoryRepository.findById(targetCategoryId);
 
-                    targetCategory.ifPresent(tc -> weblogManager.moveWeblogCategoryContents(categoryToRemove.get(), tc));
-                    weblog.getWeblogCategories().remove(categoryToRemove.get());
+                    targetCategory.ifPresent(tc -> weblogManager.moveWeblogCategoryContents(categoryToRemove, tc));
+                    weblog.getWeblogCategories().remove(categoryToRemove);
                     weblogManager.saveWeblog(weblog);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {

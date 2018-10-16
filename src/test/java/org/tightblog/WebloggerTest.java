@@ -38,6 +38,7 @@ import org.tightblog.pojos.WebloggerProperties;
 import org.junit.Before;
 import org.tightblog.repository.BlogrollLinkRepository;
 import org.tightblog.repository.WeblogCategoryRepository;
+import org.tightblog.repository.WeblogTemplateRepository;
 
 import javax.annotation.Resource;
 import java.time.Instant;
@@ -55,6 +56,9 @@ public abstract class WebloggerTest {
 
     @Autowired
     protected WeblogCategoryRepository weblogCategoryRepository;
+
+    @Autowired
+    protected WeblogTemplateRepository weblogTemplateRepository;
 
     @Resource
     protected WeblogManager weblogManager;

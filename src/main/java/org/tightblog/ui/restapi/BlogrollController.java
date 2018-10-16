@@ -40,7 +40,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -89,11 +88,11 @@ public class BlogrollController {
             throws ServletException {
 
         try {
-            Optional<WeblogBookmark> itemToRemove = blogrollLinkRepository.findById(id);
-            if (itemToRemove.isPresent()) {
-                Weblog weblog = itemToRemove.get().getWeblog();
+            WeblogBookmark itemToRemove = blogrollLinkRepository.findById(id).orElse(null);
+            if (itemToRemove != null) {
+                Weblog weblog = itemToRemove.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-                    weblog.getBookmarks().remove(itemToRemove.get());
+                    weblog.getBookmarks().remove(itemToRemove);
                     weblogManager.saveWeblog(weblog);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
@@ -115,12 +114,12 @@ public class BlogrollController {
             if (bookmark != null) {
                 Weblog weblog = bookmark.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-                    Optional<WeblogBookmark> maybeBookmark = weblog.getBookmarks().stream()
-                            .filter(wb -> wb.getId().equals(bookmark.getId())).findFirst();
-                    if (maybeBookmark.isPresent()) {
-                        maybeBookmark.get().setName(newData.getName());
-                        maybeBookmark.get().setUrl(newData.getUrl());
-                        maybeBookmark.get().setDescription(newData.getDescription());
+                    WeblogBookmark bookmarkFromWeblog = weblog.getBookmarks().stream()
+                            .filter(wb -> wb.getId().equals(bookmark.getId())).findFirst().orElse(null);
+                    if (bookmarkFromWeblog != null) {
+                        bookmarkFromWeblog.setName(newData.getName());
+                        bookmarkFromWeblog.setUrl(newData.getUrl());
+                        bookmarkFromWeblog.setDescription(newData.getDescription());
                         try {
                             weblogManager.saveWeblog(weblog);
                         } catch (RollbackException e) {

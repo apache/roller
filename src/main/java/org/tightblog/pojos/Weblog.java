@@ -472,7 +472,7 @@ public class Weblog {
     }
 
     @OneToMany(targetEntity = MediaDirectory.class,
-            cascade = CascadeType.ALL, mappedBy = "weblog")
+            cascade = CascadeType.ALL, mappedBy = "weblog", orphanRemoval = true)
     public List<MediaDirectory> getMediaDirectories() {
         return mediaDirectories;
     }

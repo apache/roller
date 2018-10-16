@@ -21,10 +21,10 @@ import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;
 import org.thymeleaf.templateresource.StringTemplateResource;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.SharedTheme;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.Template;
+import org.tightblog.repository.WeblogTemplateRepository;
 
 import java.util.Map;
 
@@ -38,10 +38,10 @@ public class ThemeTemplateResolver extends AbstractConfigurableTemplateResolver 
         this.themeManager = themeManager;
     }
 
-    private WeblogManager weblogManager;
+    private WeblogTemplateRepository weblogTemplateRepository;
 
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
+    public void setWeblogTemplateRepository(WeblogTemplateRepository weblogTemplateRepository) {
+        this.weblogTemplateRepository = weblogTemplateRepository;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ThemeTemplateResolver extends AbstractConfigurableTemplateResolver 
             template = theme.getTemplateByName(sharedThemeParts[1]);
         } else {
             // weblog-only theme in database
-            template = weblogManager.getTemplate(resourceId);
+            template = weblogTemplateRepository.findById(resourceId).orElse(null);
         }
 
         if (template == null) {

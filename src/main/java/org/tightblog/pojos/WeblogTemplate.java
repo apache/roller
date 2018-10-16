@@ -32,8 +32,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.Instant;
@@ -47,18 +45,6 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "weblog_template")
-@NamedQueries({
-        @NamedQuery(name = "WeblogTemplate.getByWeblog",
-                query = "SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1"),
-        @NamedQuery(name = "WeblogTemplate.getByWeblogOrderByName",
-                query = "SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 ORDER BY w.name"),
-        @NamedQuery(name = "WeblogTemplate.getByWeblog&RelativePath",
-                query = "SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.relativePath = ?2"),
-        @NamedQuery(name = "WeblogTemplate.getByRole",
-                query = "SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.role = ?2"),
-        @NamedQuery(name = "WeblogTemplate.getByWeblog&Name",
-                query = "SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.name= ?2")
-})
 public class WeblogTemplate implements Template {
 
     // attributes

@@ -19,13 +19,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.thymeleaf.templateresource.StringTemplateResource;
 import org.tightblog.business.ThemeManager;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.SharedTemplate;
 import org.tightblog.pojos.SharedTheme;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.WeblogTemplate;
+import org.tightblog.repository.WeblogTemplateRepository;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -35,16 +36,16 @@ import static org.mockito.Mockito.when;
 public class ThemeTemplateResolverTest {
 
     private ThemeManager mockThemeManager;
-    private WeblogManager mockWeblogManager;
     private ThemeTemplateResolver themeTemplateResolver;
+    private WeblogTemplateRepository mockWeblogTemplateRepository;
 
     @Before
     public void initialize() {
         mockThemeManager = mock(ThemeManager.class);
-        mockWeblogManager = mock(WeblogManager.class);
+        mockWeblogTemplateRepository = mock(WeblogTemplateRepository.class);
         themeTemplateResolver = new ThemeTemplateResolver();
         themeTemplateResolver.setThemeManager(mockThemeManager);
-        themeTemplateResolver.setWeblogManager(mockWeblogManager);
+        themeTemplateResolver.setWeblogTemplateRepository(mockWeblogTemplateRepository);
     }
 
     @Test
@@ -74,7 +75,7 @@ public class ThemeTemplateResolverTest {
         weblogTemplate.setId("1234");
         weblogTemplate.setRole(Template.ComponentType.CUSTOM_EXTERNAL);
         weblogTemplate.setTemplate("weblog template contents");
-        when(mockWeblogManager.getTemplate("1234")).thenReturn(weblogTemplate);
+        when(mockWeblogTemplateRepository.findById("1234")).thenReturn(Optional.of(weblogTemplate));
         StringTemplateResource resource = (StringTemplateResource) themeTemplateResolver.computeTemplateResource(null,
                 null, "1234", null, null, null);
         assertEquals("weblog template contents", resource.getDescription());
