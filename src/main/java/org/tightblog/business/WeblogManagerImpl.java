@@ -41,6 +41,7 @@ import org.tightblog.pojos.WebloggerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tightblog.repository.WeblogCategoryRepository;
+import org.tightblog.repository.WeblogEntryTagRepository;
 import org.tightblog.repository.WeblogTemplateRepository;
 
 import javax.persistence.NoResultException;
@@ -64,6 +65,9 @@ public class WeblogManagerImpl implements WeblogManager {
 
     @Autowired
     private WeblogCategoryRepository weblogCategoryRepository;
+
+    @Autowired
+    private WeblogEntryTagRepository weblogEntryTagRepository;
 
     @Autowired
     private WeblogTemplateRepository weblogTemplateRepository;
@@ -134,26 +138,8 @@ public class WeblogManagerImpl implements WeblogManager {
      * convenience method for removing contents of a weblog.
      */
     private void removeWeblogContents(Weblog weblog) {
-
-        // remove tags
-        TypedQuery<WeblogEntryTag> tagQuery = strategy.getNamedQuery("WeblogEntryTag.getByWeblog",
-                WeblogEntryTag.class);
-        tagQuery.setParameter(1, weblog);
-        List<WeblogEntryTag> results = tagQuery.getResultList();
-
-        for (WeblogEntryTag tagData : results) {
-            if (tagData.getWeblogEntry() != null) {
-                tagData.getWeblogEntry().getTags().remove(tagData);
-            }
-            this.strategy.remove(tagData);
-        }
-
         weblogTemplateRepository.deleteByWeblog(weblog);
-
-        // remove mediafile metadata
-        // remove uploaded files
         mediaFileManager.removeAllFiles(weblog);
-        this.strategy.flush();
 
         // remove entries
         TypedQuery<WeblogEntry> refQuery = strategy.getNamedQuery("WeblogEntry.getByWeblog", WeblogEntry.class);
@@ -179,10 +165,6 @@ public class WeblogManagerImpl implements WeblogManager {
             props.setMainBlog(null);
             strategy.store(props);
         }
-
-        // flush the changes before returning. This is required as there is a
-        // circular dependency between WeblogCategory and Weblog
-        this.strategy.flush();
     }
 
     @Override
@@ -652,11 +634,9 @@ public class WeblogManagerImpl implements WeblogManager {
 
     @Override
     public void removeTag(Weblog weblog, String tagName) {
-        Query removeTag = strategy.getNamedUpdate("WeblogEntryTag.removeByWeblogAndTagName");
-        removeTag.setParameter(1, weblog);
-        removeTag.setParameter(2, tagName);
-        removeTag.executeUpdate();
+        weblogEntryTagRepository.deleteByWeblogAndName(weblog, tagName);
         weblog.invalidateCache();
+
         // clear JPA cache of weblog entries for a weblog, to ensure no old tag data
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(weblog);
@@ -673,17 +653,8 @@ public class WeblogManagerImpl implements WeblogManager {
         int updatedEntries = 0;
         int unchangedEntries = 0;
 
-        TypedQuery<WeblogEntryTag> currentTagQuery = strategy.getNamedQuery("WeblogEntryTag.getByWeblogAndName",
-                WeblogEntryTag.class);
-        currentTagQuery.setParameter(1, weblog);
-        currentTagQuery.setParameter(2, currentTagName);
-        List<WeblogEntryTag> currentResults = currentTagQuery.getResultList();
-
-        TypedQuery<String> alreadyHasNewTagQuery = strategy.getNamedQuery("WeblogEntryTag.getEntryIdByWeblogAndName",
-                String.class);
-        alreadyHasNewTagQuery.setParameter(1, weblog);
-        alreadyHasNewTagQuery.setParameter(2, newTagName);
-        List<String> alreadyEntryIdList = alreadyHasNewTagQuery.getResultList();
+        List<WeblogEntryTag> currentResults = weblogEntryTagRepository.findByWeblogAndName(weblog, currentTagName);
+        List<String> alreadyEntryIdList = weblogEntryTagRepository.getEntryIdByWeblogAndName(weblog, newTagName);
 
         for (WeblogEntryTag currentTag : currentResults) {
             if (alreadyEntryIdList.contains(currentTag.getWeblogEntry().getId())) {

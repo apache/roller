@@ -28,24 +28,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.util.Comparator;
 import java.util.Objects;
 
 @Entity
 @Table(name = "weblog_entry_tag")
-@NamedQueries({
-        @NamedQuery(name = "WeblogEntryTag.getByWeblog",
-                query = "SELECT w FROM WeblogEntryTag w WHERE w.weblog = ?1"),
-        @NamedQuery(name = "WeblogEntryTag.getByWeblogAndName",
-                query = "SELECT w FROM WeblogEntryTag w WHERE w.weblog = ?1 and w.name = ?2"),
-        @NamedQuery(name = "WeblogEntryTag.getEntryIdByWeblogAndName",
-                query = "SELECT w.weblogEntry.id FROM WeblogEntryTag w WHERE w.weblog = ?1 and w.name = ?2"),
-        @NamedQuery(name = "WeblogEntryTag.removeByWeblogAndTagName",
-                query = "DELETE FROM WeblogEntryTag w WHERE w.weblog = ?1 and w.name = ?2")
-})
 public class WeblogEntryTag implements Comparable<WeblogEntryTag> {
 
     private String id = Utilities.generateUUID();

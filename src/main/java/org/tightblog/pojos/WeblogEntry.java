@@ -337,7 +337,7 @@ public class WeblogEntry {
     }
 
     @OneToMany(targetEntity = WeblogEntryTag.class,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "weblogEntry", orphanRemoval = true)
+            cascade = CascadeType.ALL, mappedBy = "weblogEntry", orphanRemoval = true)
     @OrderBy("name")
     public Set<WeblogEntryTag> getTags() {
         return tagSet;
