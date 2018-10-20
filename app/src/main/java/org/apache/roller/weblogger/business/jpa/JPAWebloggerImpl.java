@@ -39,10 +39,13 @@ import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 
+import javax.enterprise.inject.Default;
+
 /**
  * A JPA specific implementation of the Weblogger business layer.
  */
 @com.google.inject.Singleton
+@Default
 public class JPAWebloggerImpl extends WebloggerImpl {
 
     // a persistence utility class

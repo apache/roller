@@ -18,24 +18,13 @@
 
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.weblogger.business.jpa.JPAWebloggerImpl;
-import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
+import org.apache.roller.weblogger.TestUtils;
+import org.junit.Test;
 
+public class SimpleTest {
 
-public class CdiWebloggerProvider implements WebloggerProvider {
-
-    Weblogger weblogger;
-
-    @Override
-    public void bootstrap() throws BootstrapException {
-        Weld weld = new Weld();
-        WeldContainer container = weld.initialize();
-        weblogger = container.select(JPAWebloggerImpl.class).get();
-    }
-
-    @Override
-    public Weblogger getWeblogger() {
-        return weblogger;
+    @Test
+    public void testSetupWeblogger() throws Exception {
+        TestUtils.setupWeblogger();
     }
 }

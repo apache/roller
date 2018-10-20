@@ -34,6 +34,8 @@ import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.PingConfig;
 
+import javax.enterprise.inject.Alternative;
+
 
 /**
  * The abstract version of the Weblogger implementation.
