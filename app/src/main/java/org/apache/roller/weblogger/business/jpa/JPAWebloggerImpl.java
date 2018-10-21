@@ -21,31 +21,19 @@ import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.PlanetURLStrategy;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.BookmarkManager;
-import org.apache.roller.weblogger.business.FileContentManager;
-import org.apache.roller.weblogger.business.OAuthManager;
-import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.PropertiesManager;
-import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WebloggerImpl;
-import org.apache.roller.weblogger.business.UserManager;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.runnable.ThreadManager;
+import org.apache.roller.weblogger.business.*;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
+import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-
-import javax.enterprise.inject.Default;
 
 /**
  * A JPA specific implementation of the Weblogger business layer.
  */
 @com.google.inject.Singleton
-@Default
 public class JPAWebloggerImpl extends WebloggerImpl {
 
     // a persistence utility class
