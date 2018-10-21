@@ -74,6 +74,31 @@ i
                     
                 </s:if>
 
+                <s:if test="actionWeblog == null">
+
+                    <s:set var="tabMenu" value="menu"/>
+                    <s:if test="#tabMenu != null">
+                        <s:iterator var="tab" value="#tabMenu.tabs">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                   aria-haspopup="true" aria-expanded="false">
+                                    <s:text name="%{#tab.key}"/> <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <s:iterator var="tabItem" value="#tab.items" status="stat">
+                                        <li>
+                                            <a href="<s:url action='%{#tabItem.action}' />">
+                                                <s:text name="%{#tabItem.key}"/>
+                                            </a>
+                                        </li>
+                                    </s:iterator>
+                                </ul>
+                            </li>
+                        </s:iterator>
+                    </s:if>
+
+                </s:if>
+
             </ul>
             
             <ul class="nav navbar-nav navbar-right">

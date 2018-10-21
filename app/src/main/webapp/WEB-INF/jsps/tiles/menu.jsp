@@ -20,8 +20,7 @@
 <s:set var="tabMenu" value="menu"/>
 <s:if test="#tabMenu != null">
 
-<<<<<<< HEAD
-    <%-- 
+    <%--
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div id="navbar" class="navbar-collapse collapse">

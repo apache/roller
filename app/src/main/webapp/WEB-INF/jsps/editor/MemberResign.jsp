@@ -18,20 +18,14 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <p>
-   <s:text name="yourWebsites.confirmResignation">
-       <s:param value="weblog" />
-   </s:text>
+    <s:text name="yourWebsites.confirmResignation">
+        <s:param value="weblog"/>
+    </s:text>
 </p>
 
-<table>
-<tr>
-<td>
-    <s:form action="memberResign!resign">
-		<s:hidden name="salt" />
-        <s:hidden name="weblog" />
-        <s:submit value="%{getText('generic.yes')}" />&nbsp;
-        <s:submit value="%{getText('generic.no')}" action="menu"/>
-    </s:form>
-</td>
-</tr>
-</table>
+<s:form action="memberResign!resign"  cssClass="form-horizontal">
+    <s:hidden name="salt"/>
+    <s:hidden name="weblog"/>
+    <s:submit value="%{getText('generic.yes')}" cssClass="form-horizontal"/>&nbsp;
+    <s:submit value="%{getText('generic.no')}" action="menu" cssClass="form-horizontal"/>
+</s:form>

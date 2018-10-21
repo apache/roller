@@ -26,19 +26,19 @@
 <p class="subtitle"><s:text name="inviteMember.subtitle" /></p>
 <p><s:text name="inviteMember.prompt" /></p>
 
-<s:form action="invite!save">
+<s:form action="invite!save" cssClass="form-horizontal">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
     
     <div class="formrow">
-       <label for="userName" class="formrow" />
+       <label for="userName" class="formrow">
            <s:text name="inviteMember.userName" /></label>
        <div>
            <input name="userName" id="userName" size="30" maxlength="30" 
                onfocus="onUserNameFocus(true)" onkeyup="onUserNameChange(true)" /><br />
        </div>
-    </div>    
-    
+    </div>
+
     <div class="formrow">
        <label class="formrow" />&nbsp;</label>
        <div>
@@ -58,8 +58,8 @@
     </div>  
          
     <br />      
-    <s:submit value="%{getText('inviteMember.button.save')}" />
-    <s:submit value="%{getText('generic.cancel')}" action="invite!cancel" />
+    <s:submit value="%{getText('inviteMember.button.save')}"  cssClass="btn btn-default"/>
+    <s:submit value="%{getText('generic.cancel')}" action="invite!cancel" cssClass="btn"/>
 
 </s:form>
 

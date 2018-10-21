@@ -307,3 +307,8 @@ div.image-controls input {
     height: 13em;
 }
 
+/* members */
+
+tr.rollertable_pending {
+    background: #ffffcc;
+}
