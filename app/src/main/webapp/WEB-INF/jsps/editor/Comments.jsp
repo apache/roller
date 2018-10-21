@@ -295,7 +295,7 @@
                                             <s:if test="#comment.content.length() > 1000">
                                                 <div class="bot" id="comment-<s:property value="#comment.id"/>">
                                                     <str:truncateNicely upper="1000" appendToEnd="...">
-                                                        <s:property value="#comment.content" escape="true"/>
+                                                        <s:property value="#comment.content" escapeHtml="true"/>
                                                     </str:truncateNicely>
                                                 </div>
                                                 <div id="link-<s:property value="#comment.id"/>">
@@ -307,7 +307,7 @@
                                             <s:else>
                                                 <span width="200px"
                                                       id="comment-<s:property value="#comment.id"/>"><s:property
-                                                        value="#comment.content" escape="true"/></span>
+                                                        value="#comment.content" escapeHtml="true"/></span>
                                             </s:else>
                                         </div>
 
