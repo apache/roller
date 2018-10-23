@@ -19,19 +19,21 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogCategory;
+import org.tightblog.pojos.WeblogEntry;
 
 import java.util.List;
 
 @Repository
 @Transactional("transactionManager")
-public interface WeblogCategoryRepository extends JpaRepository<WeblogCategory, String> {
+public interface WeblogEntryRepository extends JpaRepository<WeblogEntry, String> {
 
-    WeblogCategory findByWeblogAndName(Weblog weblog, String name);
+    List<WeblogEntry> findByWeblog(Weblog e);
 
-    List<WeblogCategory> findByWeblogOrderByPosition(Weblog weblog);
+    Long deleteByWeblog(Weblog weblog);
 
-    default WeblogCategory findByIdOrNull(String id) {
+    WeblogEntry findByWeblogAndAnchor(Weblog weblog, String anchor);
+
+    default WeblogEntry findByIdOrNull(String id) {
         return findById(id).orElse(null);
     }
 }

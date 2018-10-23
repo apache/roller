@@ -70,15 +70,13 @@ public class WeblogEntryTestIT extends WebloggerTest {
     public void setUp() throws Exception {
         super.setUp();
         testUser = setupUser("entryTestUser");
-        testWeblog = setupWeblog("entryTestWeblog", testUser);
-        endSession(true);
+        testWeblog = setupWeblog("entry-test-weblog", testUser);
     }
     
     @After
     public void tearDown() throws Exception {
         teardownWeblog(testWeblog.getId());
         teardownUser(testUser.getId());
-        endSession(true);
     }
 
     @Test
@@ -101,8 +99,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
         // create a weblog entry
         weblogEntryManager.saveWeblogEntry(testEntry);
         String id = testEntry.getId();
-        endSession(true);
-        
+
         // make sure entry was created
         entry = weblogEntryManager.getWeblogEntry(id, false);
         assertNotNull(entry);
@@ -111,8 +108,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
         // update a weblog entry
         entry.setTitle("testtest");
         weblogEntryManager.saveWeblogEntry(entry);
-        endSession(true);
-        
+
         // make sure entry was updated
         entry = weblogEntryManager.getWeblogEntry(id, false);
         assertNotNull(entry);
@@ -120,8 +116,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
         
         // delete a weblog entry
         weblogEntryManager.removeWeblogEntry(entry);
-        endSession(true);
-        
+
         // make sure entry was deleted
         entry = weblogEntryManager.getWeblogEntry(id, false);
         assertNull(entry);
@@ -134,7 +129,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
         Map entryMap;
 
         // setup some test entries to use
-        testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
         WeblogEntry entry1 = setupWeblogEntry("entry1", testWeblog, testUser);
         WeblogEntry entry2 = setupWeblogEntry("entry2", testWeblog, testUser);
@@ -159,10 +153,11 @@ public class WeblogEntryTestIT extends WebloggerTest {
         
         entry4.setPubTime(Instant.now().minus(1, ChronoUnit.DAYS));
         entry5.setPubTime(Instant.now().minus(1, ChronoUnit.HOURS));
-        
-        endSession(true);
-        
-        testWeblog = getManagedWeblog(testWeblog);
+
+        weblogEntryManager.saveWeblogEntry(entry4);
+        weblogEntryManager.saveWeblogEntry(entry5);
+
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         testUser = getManagedUser(testUser);
 
         entry1 = getManagedWeblogEntry(entry1);
@@ -178,18 +173,15 @@ public class WeblogEntryTestIT extends WebloggerTest {
         assertEquals(entry1.getSearchDescription(), "sample search description");
         
         // get entry by anchor
-        entry = weblogEntryManager.getWeblogEntryByAnchor(testWeblog, entry1.getAnchor());
+        entry = weblogEntryRepository.findByWeblogAndAnchor(testWeblog, entry1.getAnchor());
         assertNotNull(entry);
         assertEquals(entry1.getTitle(), entry.getTitle());
         
         // get all entries for weblog
-        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-        wesc.setWeblog(testWeblog);
-        entries = weblogEntryManager.getWeblogEntries(wesc);
+        entries = weblogEntryRepository.findByWeblog(testWeblog);
         assertNotNull(entries);
         assertEquals(5, entries.size());
-        assertEquals(entry3, entries.get(0));
-        
+
         // get all (non-future) PUBLISHED entries in category 
         WeblogEntrySearchCriteria wesc9 = new WeblogEntrySearchCriteria();
         wesc9.setWeblog(testWeblog);
@@ -260,21 +252,16 @@ public class WeblogEntryTestIT extends WebloggerTest {
         assertNotNull(entryMap);
         assertTrue(entryMap.keySet().size() > 1);
         
-        // teardown our test entries
         teardownWeblogEntry(entry1.getId());
         teardownWeblogEntry(entry2.getId());
         teardownWeblogEntry(entry3.getId());
-        endSession(true);
     }
 
     @Test
     public void testCreateAnchor() throws Exception {
-        // setup some test entries to use
-        testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
         WeblogEntry entry1 = setupWeblogEntry("entry1", testWeblog, testUser);
-        endSession(true);
-        
+
         // make sure createAnchor gives us a new anchor value
         entry1 = getManagedWeblogEntry(entry1);
         String anchor = weblogEntryManager.createAnchor(entry1);
@@ -282,23 +269,18 @@ public class WeblogEntryTestIT extends WebloggerTest {
         assertNotSame("entry1", anchor);
         
         // make sure we can create a new entry with specified anchor
-        testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
         WeblogEntry entry2 = setupWeblogEntry(anchor, testWeblog, testUser);
-        endSession(true);
         assertNotNull(entry2);
         
-        // teardown our test entries
         teardownWeblogEntry(entry1.getId());
         teardownWeblogEntry(entry2.getId());
-        endSession(true);
     }
 
     @Test
     public void testCreateAnEntryWithTagsShortcut() {
         try {
             WeblogEntry entry;
-            testWeblog = getManagedWeblog(testWeblog);
             testUser = getManagedUser(testUser);
 
             WeblogEntry testEntry = new WeblogEntry();
@@ -318,22 +300,17 @@ public class WeblogEntryTestIT extends WebloggerTest {
             // create a weblog entry
             weblogEntryManager.saveWeblogEntry(testEntry);
             String id = testEntry.getId();
-            endSession(true);
 
             // make sure entry was created
-            entry = weblogEntryManager.getWeblogEntry(id, false);
+            entry = weblogEntryRepository.findByIdOrNull(id);
             assertNotNull(entry);
             assertEquals(testEntry, entry);
             assertNotNull(entry.getTags());
             assertEquals(1, entry.getTags().size());
             assertEquals("testtag", (entry.getTags()
                     .iterator().next()).getName());
-            endSession(true);
 
-            // teardown our test entry
             teardownWeblogEntry(id);
-            endSession(true);
-        
         } catch (Throwable t) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw); 
@@ -345,82 +322,63 @@ public class WeblogEntryTestIT extends WebloggerTest {
     @Test
     public void testAddMultipleTags() throws Exception {
         // setup some test entries to use
-        testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
         addTag(entry, "testTag");
         addTag(entry, "whateverTag");
         String id = entry.getId();
         weblogEntryManager.saveWeblogEntry(entry);
-        endSession(true);
 
         entry = weblogEntryManager.getWeblogEntry(id, false);
         addTag(entry, "testTag2");
         weblogEntryManager.saveWeblogEntry(entry);
-        endSession(true);
 
         entry = weblogEntryManager.getWeblogEntry(id, false);
         assertEquals(3, entry.getTags().size());
 
-        // teardown our test entry
         teardownWeblogEntry(id);
-        endSession(true);
     }
 
     @Test
     public void testAddMultipleIdenticalTags() throws Exception {
         // setup some test entries to use
-        testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
         addTag(entry, "testTag");
         String id = entry.getId();
         weblogEntryManager.saveWeblogEntry(entry);
-        endSession(true);
 
         entry = weblogEntryManager.getWeblogEntry(id, false);
         addTag(entry, "testTag");
         weblogEntryManager.saveWeblogEntry(entry);
-        endSession(true);
 
         entry = weblogEntryManager.getWeblogEntry(id, false);
         assertEquals(1, entry.getTags().size());
 
-        // teardown our test entry
         teardownWeblogEntry(id);
-        endSession(true);
     }
 
     @Test
     public void testRemoveTagsViaShortcut() {
         try {
             // setup some test entries to use
-            testWeblog = getManagedWeblog(testWeblog);
             testUser = getManagedUser(testUser);
             WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
             addTag(entry, "testTag");
             addTag(entry, "testTag2");
             String id = entry.getId();
             weblogEntryManager.saveWeblogEntry(entry);
-            endSession(true);
 
-            entry = weblogEntryManager.getWeblogEntry(id, false);
+            entry = weblogEntryRepository.findByIdOrNull(id);
             assertEquals(2, entry.getTags().size());
-            endSession(true);
 
-            entry = weblogEntryManager.getWeblogEntry(id, false);
+            entry = weblogEntryRepository.findByIdOrNull(id);
             entry.setTags(Collections.emptySet());
             weblogEntryManager.saveWeblogEntry(entry);
-            endSession(true);
 
-            entry = weblogEntryManager.getWeblogEntry(id, false);
+            entry = weblogEntryRepository.findByIdOrNull(id);
             assertEquals(0, entry.getTags().size());
-            endSession(true);
-
-            // teardown our test entry
             teardownWeblogEntry(id);
-            endSession(true);
-            
         } catch (Throwable t) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw); 
@@ -433,15 +391,11 @@ public class WeblogEntryTestIT extends WebloggerTest {
     public void testGetEntriesByTag() {
         try {
             // setup some test entries to use
-            testWeblog = getManagedWeblog(testWeblog);
             testUser = getManagedUser(testUser);
             WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
             String id = entry.getId();
             addTag(entry, "testTag");
             weblogEntryManager.saveWeblogEntry(entry);
-            endSession(true);
-
-            testWeblog = getManagedWeblog(testWeblog);
 
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(testWeblog);
@@ -452,10 +406,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
             WeblogEntry testEntry = (WeblogEntry) results.iterator().next();
             assertEquals(entry, testEntry);
         
-            // teardown our test entry
             teardownWeblogEntry(id);
-            endSession(true);
-            
         } catch (Throwable t) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw); 
@@ -467,15 +418,12 @@ public class WeblogEntryTestIT extends WebloggerTest {
     @Test
     public void testRemoveEntryTagCascading() throws Exception {
         // setup some test entries to use
-        testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
         addTag(entry, "testTag");
         String id = entry.getId();
         weblogEntryManager.saveWeblogEntry(entry);
-        endSession(true);
 
-        testWeblog = getManagedWeblog(testWeblog);
         WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
         wesc.setWeblog(testWeblog);
         // tags are always saved lowercase (testTag -> testtag)
@@ -485,38 +433,30 @@ public class WeblogEntryTestIT extends WebloggerTest {
         WeblogEntry testEntry = (WeblogEntry) results.iterator().next();
         assertEquals(entry, testEntry);
 
-        // teardown our test entry
         teardownWeblogEntry(id);
-        endSession(true);
 
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         results = weblogEntryManager.getWeblogEntries(wesc);
         assertEquals(0, results.size());
-
-        // terminate
-        endSession(true);
     }
 
     @Test
     public void testUpdateTags() throws Exception {
         // setup some test entries to use
-        testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
         addTag(entry, "testWillStayTag");
         addTag(entry, "testTagWillBeRemoved");
         String id = entry.getId();
         weblogEntryManager.saveWeblogEntry(entry);
-        endSession(true);
 
-        entry = weblogEntryManager.getWeblogEntry(id, false);
+        entry = weblogEntryRepository.findByIdOrNull(id);
         assertEquals(2, entry.getTags().size());
 
         entry.updateTags(new HashSet<>(Arrays.asList("testwillstaytag testnewtag testnewtag3".split("\\s+"))));
         weblogEntryManager.saveWeblogEntry(entry);
-        endSession(true);
 
-        entry = weblogEntryManager.getWeblogEntry(id, false);
+        entry = weblogEntryRepository.findByIdOrNull(id);
         Set<String> tagNames = entry.getTags().stream()
                 .map(WeblogEntryTag::getName)
                 .collect(Collectors.toCollection(HashSet::new));
@@ -527,16 +467,13 @@ public class WeblogEntryTestIT extends WebloggerTest {
         assertTrue(tagNames.contains("testnewtag"));
         assertTrue(tagNames.contains("testnewtag3"));
 
-        // teardown our test entry
         teardownWeblogEntry(id);
-        endSession(true);
     }
 
     @Test
     public void testTagAggregates() throws Exception {
-        testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
-        Weblog testWeblog2 = setupWeblog("entryTestWeblog2", testUser);
+        Weblog testWeblog2 = setupWeblog("entry-test-weblog2", testUser);
 
         try {
             // let's make sure we are starting from scratch
@@ -565,9 +502,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
             addTag(entry, "three");
             weblogEntryManager.saveWeblogEntry(entry);
 
-            endSession(true);
-
-            testWeblog = getManagedWeblog(testWeblog);
             tags = weblogManager.getTags(testWeblog, null, null, 0, -1);
             assertEquals(3, tags.size());
 
@@ -585,15 +519,13 @@ public class WeblogEntryTestIT extends WebloggerTest {
             }
 
             // now add another entry in another blog
-            testWeblog2 = getManagedWeblog(testWeblog2);
+            testWeblog2 = weblogRepository.findByIdOrNull(testWeblog2.getId());
             testUser = getManagedUser(testUser);
             entry = setupWeblogEntry("entry3", testWeblog2, testUser);
             addTag(entry, "one");
             addTag(entry, "three");
             addTag(entry, "four");
             weblogEntryManager.saveWeblogEntry(entry);
-
-            endSession(true);
 
             // let's fetch "site" tags now
             tags = weblogManager.getTags(null, null, null, 0, -1);
@@ -613,16 +545,11 @@ public class WeblogEntryTestIT extends WebloggerTest {
                 assertEquals(expectedCount.intValue(), stat.getTotal());
             }
 
-            endSession(true);
-
-            testWeblog = getManagedWeblog(testWeblog);
+            testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
             entry = weblogEntryManager.getWeblogEntryByAnchor(testWeblog, "entry2");
             entry.updateTags(new HashSet<>(Arrays.asList("one three five".split("\\s+"))));
             weblogEntryManager.saveWeblogEntry(entry);
 
-            endSession(true);
-
-            testWeblog = getManagedWeblog(testWeblog);
             tags = weblogManager.getTags(testWeblog, null, null, 0, -1);
             assertEquals(4, tags.size());
 
@@ -661,8 +588,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
             }
 
             teardownWeblog(testWeblog2.getId());
-            endSession(true);
-
         } catch (Throwable t) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw); 
@@ -674,8 +599,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
 
     @Test
     public void testTagAggregatesCaseSensitivity() throws Exception {
-        Weblog testWeblog2 = setupWeblog("entryTestWeblog2", testUser);
-        testWeblog = getManagedWeblog(testWeblog);
+        Weblog testWeblog2 = setupWeblog("entry-test-weblog2", testUser);
         testUser = getManagedUser(testUser);
 
         // let's make sure we are starting from scratch
@@ -699,8 +623,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
         addTag(entry, "ONE");
         weblogEntryManager.saveWeblogEntry(entry);
 
-        endSession(true);
-
         tags = weblogManager.getTags(testWeblog, null, null, 0, -1);
         assertEquals(2, tags.size());
 
@@ -722,8 +644,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
         addTag(entry, "three");
         weblogEntryManager.saveWeblogEntry(entry);
         
-        endSession(true);
-        
         // let's fetch "site" tags now
         tags = weblogManager.getTags(null, null, null, 0, -1);
         assertEquals(3, tags.size());
@@ -741,11 +661,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
             assertEquals(expectedCount.intValue(), stat.getTotal());
         }
 
-        endSession(true);
-
-        // teardown our test blog 2
         teardownWeblog(testWeblog2.getId());
-        endSession(true);
     }
 
     @Test
@@ -768,15 +684,13 @@ public class WeblogEntryTestIT extends WebloggerTest {
         // create a weblog entry
         weblogEntryManager.saveWeblogEntry(testEntry);
         String id = testEntry.getId();
-        endSession(true);
 
         testEntry = getManagedWeblogEntry(testEntry);
         testEntry.setEnclosureUrl("http://podcast-schmodcast.com");
         testEntry.setEnclosureType("application/drivel");
         testEntry.setEnclosureLength(2141592654L);
-                    
-        endSession(true);
-        
+        weblogEntryManager.saveWeblogEntry(testEntry);
+
         // make sure entry was created
         entry = weblogEntryManager.getWeblogEntry(id, false);
         assertNotNull(entry);
@@ -788,8 +702,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
         // update a weblog entry
         entry.setTitle("testtest");
         weblogEntryManager.saveWeblogEntry(entry);
-        endSession(true);
-        
+
         // make sure entry was updated
         entry = weblogEntryManager.getWeblogEntry(id, false);
         assertNotNull(entry);
@@ -797,8 +710,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
         
         // delete a weblog entry
         weblogEntryManager.removeWeblogEntry(entry);
-        endSession(true);
-        
+
         // make sure entry was deleted
         entry = weblogEntryManager.getWeblogEntry(id, false);
         assertNull(entry);
@@ -829,11 +741,10 @@ public class WeblogEntryTestIT extends WebloggerTest {
         WeblogEntryComment comment3 = setupComment("comment3", entry3);
         WeblogEntryComment comment4 = setupComment("comment4", entry3);
         WeblogEntryComment comment5 = setupComment("comment5", entry3);
-        endSession(true);
 
         try {
-            blog1 = weblogManager.getWeblog(blog1.getId());
-            blog2 = weblogManager.getWeblog(blog2.getId());
+            blog1 = weblogRepository.findById(blog1.getId()).orElse(null);
+            blog2 = weblogRepository.findById(blog2.getId()).orElse(null);
 
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(blog1);
@@ -856,7 +767,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
             csc.setWeblog(null);
             assertEquals(5L, weblogEntryManager.getCommentCount(csc));
 
-            assertEquals(4L, weblogManager.getWeblogCount());
+            assertEquals(4L, weblogRepository.count());
             assertEquals(existingUserCount + 2L, userManager.getUserCount());
             
         } finally {
@@ -877,8 +788,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
             teardownWeblog(blog3.getId());
 
             teardownUser(user1.getId());
-            
-            endSession(true);
         }
     }
 

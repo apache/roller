@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 import org.tightblog.business.JPAPersistenceStrategy;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.SharedTheme;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.Template;
@@ -29,11 +28,13 @@ import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
@@ -58,7 +59,7 @@ public class FeedProcessorTest {
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
     private LazyExpiringCache mockCache;
-    private WeblogManager mockWM;
+    private WeblogRepository mockWR;
     private ThymeleafRenderer mockThymeleafRenderer;
 
     // not done as a @before as not all tests need these mocks
@@ -73,13 +74,13 @@ public class FeedProcessorTest {
         WeblogFeedRequest.Creator wfrCreator = mock(WeblogFeedRequest.Creator.class);
         feedRequest = new WeblogFeedRequest();
         when(wfrCreator.create(mockRequest)).thenReturn(feedRequest);
-        processor = new FeedProcessor();
+        mockWR = mock(WeblogRepository.class);
+        processor = new FeedProcessor(mockWR);
         processor.setWeblogFeedRequestCreator(wfrCreator);
         mockCache = mock(LazyExpiringCache.class);
         processor.setWeblogFeedCache(mockCache);
-        mockWM = mock(WeblogManager.class);
         weblog = new Weblog();
-        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
+        when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
         ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
         when(mockApplicationContext.getBean(eq("feedModelSet"), eq(Set.class)))
                 .thenReturn(new HashSet<>());
@@ -90,7 +91,6 @@ public class FeedProcessorTest {
         sharedTheme = new SharedTheme();
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
         processor.setThemeManager(mockThemeManager);
-        processor.setWeblogManager(mockWM);
         processor.setStrategy(mockStrategy);
     }
 
@@ -98,7 +98,7 @@ public class FeedProcessorTest {
     public void test404OnMissingWeblog() throws IOException {
         initializeMocks();
         feedRequest.setWeblogHandle("myhandle");
-        when(mockWM.getWeblogByHandle("myhandle", true)).thenReturn(null);
+        when(mockWR.findByHandleAndVisibleTrue("myhandle")).thenReturn(null);
         processor.getFeed(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }
@@ -127,7 +127,7 @@ public class FeedProcessorTest {
         weblog.setLastModified(twoDaysAgo);
 
         CachedContent cachedContent = new CachedContent(Template.ComponentType.ATOMFEED);
-        cachedContent.setContent("mytest1".getBytes("UTF-8"));
+        cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockCache.get(any(), any())).thenReturn(cachedContent);
 
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
@@ -153,7 +153,7 @@ public class FeedProcessorTest {
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
         CachedContent renderedContent = new CachedContent(Template.ComponentType.ATOMFEED);
-        renderedContent.setContent("mytest24".getBytes("UTF-8"));
+        renderedContent.setContent("mytest24".getBytes(StandardCharsets.UTF_8));
 
         when(mockThymeleafRenderer.render(any(), any())).thenReturn(renderedContent);
 

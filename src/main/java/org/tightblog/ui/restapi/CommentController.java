@@ -9,7 +9,6 @@ import org.tightblog.business.MailManager;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.CommentSearchCriteria;
@@ -19,6 +18,7 @@ import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogEntryComment.ApprovalStatus;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.Utilities;
 import org.jsoup.Jsoup;
@@ -54,18 +54,18 @@ public class CommentController {
     // number of comments to show per page
     private static final int ITEMS_PER_PAGE = 30;
 
+    private WeblogRepository weblogRepository;
+
+    @Autowired
+    public CommentController(WeblogRepository weblogRepository) {
+        this.weblogRepository = weblogRepository;
+    }
+
     @Autowired
     private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
     }
 
     @Autowired
@@ -112,7 +112,7 @@ public class CommentController {
                                          @RequestBody CommentSearchCriteria criteria,
                                          Principal principal, HttpServletResponse response) {
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
 
             CommentData data = new CommentData();
@@ -169,7 +169,7 @@ public class CommentController {
         // Get user permissions and locale
         User user = userManager.getEnabledUserByUserName(principal.getName());
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
 
         if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
             CommentSearchFields fields = new CommentSearchFields();

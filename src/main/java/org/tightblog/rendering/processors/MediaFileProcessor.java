@@ -21,11 +21,11 @@
 package org.tightblog.rendering.processors;
 
 import org.tightblog.business.MediaFileManager;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.MediaFile;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.requests.WeblogRequest;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,18 +56,13 @@ public class MediaFileProcessor extends AbstractProcessor {
 
     public static final String PATH = "/tb-ui/rendering/mediafile";
 
+    private WeblogRepository weblogRepository;
+
     @Autowired
     private LazyExpiringCache weblogMediaCache;
 
-    public void setWeblogMediaCache(LazyExpiringCache weblogMediaCache) {
+    void setWeblogMediaCache(LazyExpiringCache weblogMediaCache) {
         this.weblogMediaCache = weblogMediaCache;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
     }
 
     @Autowired
@@ -79,8 +74,9 @@ public class MediaFileProcessor extends AbstractProcessor {
 
     private WeblogRequest.Creator weblogRequestCreator;
 
-    MediaFileProcessor() {
+    MediaFileProcessor(WeblogRepository weblogRepository) {
         this.weblogRequestCreator = new WeblogRequest.Creator();
+        this.weblogRepository = weblogRepository;
     }
 
     void setWeblogRequestCreator(WeblogRequest.Creator creator) {
@@ -91,7 +87,7 @@ public class MediaFileProcessor extends AbstractProcessor {
     void getMediaFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogRequest incomingRequest = weblogRequestCreator.create(request);
 
-        Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
+        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

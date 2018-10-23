@@ -21,7 +21,6 @@
 package org.tightblog.rendering.processors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
@@ -34,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,14 +52,17 @@ public class SearchProcessor extends AbstractProcessor {
 
     public static final String PATH = "/tb-ui/rendering/search";
 
+    private WeblogRepository weblogRepository;
+
     private WeblogPageRequest.Creator weblogPageRequestCreator;
 
     void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
         this.weblogPageRequestCreator = creator;
     }
 
-    SearchProcessor() {
+    SearchProcessor(WeblogRepository weblogRepository) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
+        this.weblogRepository = weblogRepository;
     }
 
     @Autowired
@@ -68,13 +71,6 @@ public class SearchProcessor extends AbstractProcessor {
 
     void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
         this.thymeleafRenderer = thymeleafRenderer;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
     }
 
     @Autowired
@@ -88,7 +84,7 @@ public class SearchProcessor extends AbstractProcessor {
     void getSearchResults(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogPageRequest searchRequest = weblogPageRequestCreator.create(request);
 
-        Weblog weblog = weblogManager.getWeblogByHandle(searchRequest.getWeblogHandle(), true);
+        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(searchRequest.getWeblogHandle());
         if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

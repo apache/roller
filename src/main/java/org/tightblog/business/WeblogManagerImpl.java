@@ -23,6 +23,7 @@ package org.tightblog.business;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.tightblog.business.search.IndexManager;
@@ -40,19 +41,21 @@ import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tightblog.repository.UserWeblogRoleRepository;
 import org.tightblog.repository.WeblogCategoryRepository;
+import org.tightblog.repository.WeblogEntryCommentRepository;
+import org.tightblog.repository.WeblogEntryRepository;
 import org.tightblog.repository.WeblogEntryTagRepository;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WeblogTemplateRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,28 +66,18 @@ public class WeblogManagerImpl implements WeblogManager {
 
     private static Logger log = LoggerFactory.getLogger(WeblogManagerImpl.class);
 
-    @Autowired
+    private WeblogEntryRepository weblogEntryRepository;
+    private WeblogEntryCommentRepository weblogEntryCommentRepository;
     private WeblogCategoryRepository weblogCategoryRepository;
-
-    @Autowired
     private WeblogEntryTagRepository weblogEntryTagRepository;
-
-    @Autowired
     private WeblogTemplateRepository weblogTemplateRepository;
-
-    @Autowired
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
+    private UserWeblogRoleRepository userWeblogRoleRepository;
+    private WeblogRepository weblogRepository;
     private UserManager userManager;
-
-    @Autowired
     private WeblogEntryManager weblogEntryManager;
-
-    @Autowired
     private IndexManager indexManager;
-
-    @Autowired
     private MediaFileManager mediaFileManager;
-
-    @Autowired
     private JPAPersistenceStrategy strategy;
 
     @Value("#{'${newblog.blogroll}'.split(',')}")
@@ -93,122 +86,95 @@ public class WeblogManagerImpl implements WeblogManager {
     @Value("#{'${newblog.categories}'.split(',')}")
     private Set<String> newBlogCategories;
 
-
     // Map of each weblog and its extra hit count that has had additional accesses since the
     // last scheduled updateHitCounters() call.
     private Map<String, Long> hitsTally = Collections.synchronizedMap(new HashMap<>());
 
-    // cached mapping of weblogHandles -> weblogIds
-    private Map<String, String> weblogHandleToIdMap = new Hashtable<>();
-
     @Autowired
-    public WeblogManagerImpl() {
+    public WeblogManagerImpl(WeblogEntryRepository weblogEntryRepository,
+                             WeblogCategoryRepository weblogCategoryRepository,
+                             WeblogEntryTagRepository weblogEntryTagRepository,
+                             WeblogEntryCommentRepository weblogEntryCommentRepository,
+                             WeblogTemplateRepository weblogTemplateRepository,
+                             UserWeblogRoleRepository userWeblogRoleRepository,
+                             WebloggerPropertiesRepository webloggerPropertiesRepository,
+                             WeblogRepository weblogRepository,
+                             UserManager userManager, WeblogEntryManager weblogEntryManager, IndexManager indexManager,
+                             MediaFileManager mediaFileManager, JPAPersistenceStrategy strategy) {
+        this.weblogEntryRepository = weblogEntryRepository;
+        this.weblogEntryCommentRepository = weblogEntryCommentRepository;
+        this.weblogCategoryRepository = weblogCategoryRepository;
+        this.weblogEntryTagRepository = weblogEntryTagRepository;
+        this.weblogTemplateRepository = weblogTemplateRepository;
+        this.userWeblogRoleRepository = userWeblogRoleRepository;
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
+        this.weblogRepository = weblogRepository;
+        this.userManager = userManager;
+        this.weblogEntryManager = weblogEntryManager;
+        this.indexManager = indexManager;
+        this.mediaFileManager = mediaFileManager;
+        this.strategy = strategy;
     }
 
     @Override
     public void saveWeblog(Weblog weblog) {
         weblog.setLastModified(Instant.now());
-        strategy.merge(weblog);
+        weblogRepository.save(weblog);
 
-        // update last weblog change so any site weblog knows it needs to update
-        WebloggerProperties props = strategy.getWebloggerProperties();
+        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
         props.setLastWeblogChange(Instant.now());
-        strategy.store(props);
-        strategy.flush();
+        webloggerPropertiesRepository.saveAndFlush(props);
     }
 
     @Override
     public void removeWeblog(Weblog weblog) {
         // remove contents first, then remove weblog
-        removeWeblogContents(weblog);
-        strategy.remove(weblog);
-
-        // update last weblog change so any site weblog knows it needs to update
-        WebloggerProperties props = strategy.getWebloggerProperties();
-        props.setLastWeblogChange(Instant.now());
-        strategy.store(props);
-
-        strategy.flush();
-
-        // remove entry from cache mapping
-        weblogHandleToIdMap.remove(weblog.getHandle());
-    }
-
-    /**
-     * convenience method for removing contents of a weblog.
-     */
-    private void removeWeblogContents(Weblog weblog) {
         weblogTemplateRepository.deleteByWeblog(weblog);
         mediaFileManager.removeAllFiles(weblog);
 
-        // remove entries
-        TypedQuery<WeblogEntry> refQuery = strategy.getNamedQuery("WeblogEntry.getByWeblog", WeblogEntry.class);
-        refQuery.setParameter(1, weblog);
-        List<WeblogEntry> entries = refQuery.getResultList();
-        for (WeblogEntry entry : entries) {
-            weblogEntryManager.removeWeblogEntry(entry);
-        }
-        this.strategy.flush();
-
-        // remove permissions
-        for (UserWeblogRole role : userManager.getWeblogRolesIncludingPending(weblog)) {
-            userManager.revokeWeblogRole(role);
-        }
+        List<WeblogEntry> entryList = weblogEntryRepository.findByWeblog(weblog);
+        entryList.forEach(e -> weblogEntryCommentRepository.deleteByWeblogEntry(e));
+        weblogEntryRepository.deleteByWeblog(weblog);
+        weblogRepository.saveAndFlush(weblog);
+        userWeblogRoleRepository.deleteByWeblog(weblog);
 
         // remove indexing
         indexManager.updateIndex(weblog, true);
 
         // check if main blog, disconnect if it is
-        WebloggerProperties props = strategy.getWebloggerProperties();
+        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
         Weblog test = props.getMainBlog();
         if (test != null && test.getId().equals(weblog.getId())) {
             props.setMainBlog(null);
-            strategy.store(props);
+            webloggerPropertiesRepository.save(props);
         }
+        weblogRepository.delete(weblog);
+        props.setLastWeblogChange(Instant.now());
+        webloggerPropertiesRepository.saveAndFlush(props);
     }
 
     @Override
     public void addWeblog(Weblog newWeblog) {
-        this.strategy.store(newWeblog);
-        this.strategy.flush();
-        this.addWeblogContents(newWeblog);
-    }
+        weblogRepository.save(newWeblog);
 
-    @Override
-    public String getAnalyticsTrackingCode(Weblog weblog) {
-        WebloggerProperties props = strategy.getWebloggerProperties();
-
-        if (props.isUsersOverrideAnalyticsCode() &&
-                !StringUtils.isBlank(weblog.getAnalyticsCode())) {
-            return weblog.getAnalyticsCode();
-        } else {
-            return StringUtils.defaultIfEmpty(props.getDefaultAnalyticsCode(), "");
-        }
-    }
-
-    private void addWeblogContents(Weblog newWeblog) {
-
-        if (getWeblogCount() == 1) {
+        if (weblogRepository.count() == 1) {
             // first weblog, let's make it the frontpage one.
-            WebloggerProperties props = strategy.getWebloggerProperties();
+            WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
             props.setMainBlog(newWeblog);
-            this.strategy.store(props);
+            webloggerPropertiesRepository.save(props);
         }
 
         // grant weblog creator OWNER permission
         userManager.grantWeblogRole(newWeblog.getCreator(), newWeblog, WeblogRole.OWNER, false);
 
+        // add default categories and bookmarks
         if (!ObjectUtils.isEmpty(newBlogCategories)) {
             for (String category : newBlogCategories) {
                 WeblogCategory c = new WeblogCategory(newWeblog, category);
                 newWeblog.addCategory(c);
-                this.strategy.store(c);
             }
         }
 
-        this.strategy.store(newWeblog);
-
-        // add default bookmarks
         if (!ObjectUtils.isEmpty(newBlogBlogroll)) {
             for (String splitItem : newBlogBlogroll) {
                 String[] rollitems = splitItem.split("\\|");
@@ -219,72 +185,24 @@ public class WeblogManagerImpl implements WeblogManager {
                             rollitems[1].trim(), ""
                     );
                     newWeblog.addBookmark(b);
-                    this.strategy.store(b);
                 }
             }
         }
 
         // create initial media file directory named "default"
         mediaFileManager.createMediaDirectory(newWeblog, "default");
-
-        // flush so that all data up to this point can be available in db
-        this.strategy.flush();
-
+        weblogRepository.saveAndFlush(newWeblog);
     }
 
     @Override
-    public Weblog getWeblog(String id) {
-        return this.strategy.load(Weblog.class, id);
-    }
+    public String getAnalyticsTrackingCode(Weblog weblog) {
+        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
 
-    @Override
-    public Weblog getWeblogByHandle(String handle) {
-        return getWeblogByHandle(handle, Boolean.TRUE);
-    }
-
-    @Override
-    public Weblog getWeblogByHandle(String handle, Boolean visible) {
-
-        if (handle == null) {
-            throw new IllegalArgumentException("Handle cannot be null");
-        }
-
-        // check cache first
-        // NOTE: if we ever allow changing handles then this needs updating
-        if (weblogHandleToIdMap.containsKey(handle)) {
-            Weblog weblog = getWeblog(weblogHandleToIdMap.get(handle));
-
-            if (weblog != null) {
-                // only return weblog if enabled status matches
-                if (visible == null || visible.equals(weblog.getVisible())) {
-                    log.debug("weblogHandleToId CACHE HIT - {}", handle);
-                    return weblog;
-                }
-            } else {
-                // id no longer maps to an existing weblog, remove it from cache
-                weblogHandleToIdMap.remove(handle);
-            }
-        }
-
-        TypedQuery<Weblog> query = strategy.getNamedQuery("Weblog.getByHandle", Weblog.class);
-        query.setParameter(1, handle);
-        Weblog weblog;
-        try {
-            weblog = query.getSingleResult();
-        } catch (NoResultException e) {
-            weblog = null;
-        }
-
-        // add mapping to cache
-        if (weblog != null) {
-            log.trace("weblogHandleToId CACHE MISS - {}", handle);
-            weblogHandleToIdMap.put(weblog.getHandle(), weblog.getId());
-        }
-
-        if (weblog != null && (visible == null || visible.equals(weblog.getVisible()))) {
-            return weblog;
+        if (props.isUsersOverrideAnalyticsCode() &&
+                !StringUtils.isBlank(weblog.getAnalyticsCode())) {
+            return weblog.getAnalyticsCode();
         } else {
-            return null;
+            return StringUtils.defaultIfEmpty(props.getDefaultAnalyticsCode(), "");
         }
     }
 
@@ -337,14 +255,10 @@ public class WeblogManagerImpl implements WeblogManager {
     public Map<Character, Integer> getWeblogHandleLetterMap() {
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Map<Character, Integer> results = new TreeMap<>();
-        TypedQuery<Long> query = strategy.getNamedQuery(
-                "Weblog.getCountByHandleLike", Long.class);
         for (int i = 0; i < 26; i++) {
             char currentChar = lc.charAt(i);
-            query.setParameter(1, currentChar + "%");
-            List row = query.getResultList();
-            Long count = (Long) row.get(0);
-            results.put(currentChar, count.intValue());
+            int count = weblogRepository.getCountByHandle(currentChar + "%");
+            results.put(currentChar, count);
         }
         return results;
     }
@@ -354,39 +268,8 @@ public class WeblogManagerImpl implements WeblogManager {
         TypedQuery<Weblog> query = strategy.getNamedQuery(
                 "Weblog.getByLetterOrderByHandle", Weblog.class);
 
-        char upperCase = Character.toUpperCase(letter);
-
-        query.setParameter(1, upperCase + "%");
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (length != -1) {
-            query.setMaxResults(length);
-        }
-        return query.getResultList();
-    }
-
-    @Override
-    public long getWeblogCount() {
-        List<Long> results = strategy.getNamedQuery(
-                "Weblog.getCountAllDistinct", Long.class).getResultList();
-        return results.get(0);
-    }
-
-    @Override
-    public List<Weblog> getHotWeblogs(int offset, int length) {
-
-        TypedQuery<Weblog> query = strategy.getNamedQuery(
-                "Weblog.getByWeblog&DailyHitsGreaterThenZeroOrderByDailyHitsDesc", Weblog.class);
-
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-
-        if (length != -1) {
-            query.setMaxResults(length);
-        }
-        return query.getResultList();
+        String likeString = Character.toUpperCase(letter) + "%";
+        return weblogRepository.findByLetterOrderByHandle(likeString, PageRequest.of(offset, length));
     }
 
     @Override
@@ -441,15 +324,6 @@ public class WeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public void resetAllHitCounts() {
-        hitsTally.clear();
-        Query q = strategy.getNamedUpdate("Weblog.updateDailyHitCountZero");
-        q.executeUpdate();
-        strategy.flush();
-        log.info("daily hit counts reset");
-    }
-
-    @Override
     public void updateHitCounters() {
         if (hitsTally.size() > 0) {
             // Make a reference to the current queue
@@ -462,20 +336,15 @@ public class WeblogManagerImpl implements WeblogManager {
             long totalHitsProcessed = 0;
             Weblog weblog;
             for (Map.Entry<String, Long> entry : hitsTallyCopy.entrySet()) {
-                weblog = getWeblog(entry.getKey());
-                strategy.refresh(weblog);
-
+                weblog = weblogRepository.findById(entry.getKey()).orElse(null);
                 if (weblog != null) {
+                    strategy.refresh(weblog);
                     weblog.setHitsToday(weblog.getHitsToday() + entry.getValue().intValue());
-                    strategy.store(weblog);
+                    saveWeblog(weblog);
                     totalHitsProcessed += entry.getValue();
+                    log.info("Updated blog hits, {} total extra hits from {} blogs", totalHitsProcessed, hitsTallyCopy.size());
                 }
             }
-
-            // flush the results to the db
-            strategy.flush();
-
-            log.info("Updated blog hits, {} total extra hits from {} blogs", totalHitsProcessed, hitsTallyCopy.size());
         }
     }
 
@@ -493,7 +362,7 @@ public class WeblogManagerImpl implements WeblogManager {
         for (WeblogEntry entry : results) {
             entry.setCategory(destCat);
             entry.setWeblog(website);
-            this.strategy.store(entry);
+            weblogEntryRepository.saveAndFlush(entry);
         }
     }
 
@@ -637,10 +506,8 @@ public class WeblogManagerImpl implements WeblogManager {
         weblogEntryTagRepository.deleteByWeblogAndName(weblog, tagName);
         weblog.invalidateCache();
 
-        // clear JPA cache of weblog entries for a weblog, to ensure no old tag data
-        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-        wesc.setWeblog(weblog);
-        List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
+        // Clear JPA cache of weblog entries for a weblog, to ensure no old tag data  TODO: Still needed?
+        List<WeblogEntry> entries = weblogEntryRepository.findByWeblog(weblog);
         for (WeblogEntry entry : entries) {
             strategy.evict(WeblogEntry.class, entry.getId());
         }

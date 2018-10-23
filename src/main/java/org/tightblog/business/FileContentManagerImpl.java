@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;
 
 /**
@@ -51,12 +52,15 @@ public class FileContentManagerImpl implements FileContentManager {
 
     private static Logger log = LoggerFactory.getLogger(FileContentManagerImpl.class);
 
-    @Autowired
-    private JPAPersistenceStrategy persistenceStrategy;
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
 
     private String storageDir;
 
-    public FileContentManagerImpl(@Value("${mediafiles.storage.dir}") String storageDir) {
+    @Autowired
+    public FileContentManagerImpl(WebloggerPropertiesRepository webloggerPropertiesRepository,
+            @Value("${mediafiles.storage.dir}") String storageDir) {
+
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.storageDir = storageDir;
 
         // Note: System property expansion is now handled by WebloggerStaticConfig.
@@ -129,7 +133,7 @@ public class FileContentManagerImpl implements FileContentManager {
     public boolean canSave(Weblog weblog, String fileName, String contentType, long size,
                            Map<String, List<String>> messages) {
 
-        WebloggerProperties webloggerProperties = persistenceStrategy.getWebloggerProperties();
+        WebloggerProperties webloggerProperties = webloggerPropertiesRepository.findOrNull();
 
         // first check, is uploading enabled?
         if (!webloggerProperties.isUsersUploadMediaFiles()) {

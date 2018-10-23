@@ -56,9 +56,8 @@ public class CommentTestIT extends WebloggerTest {
 
         try {
             testUser = setupUser("commentTestUser");
-            testWeblog = setupWeblog("commentTestWeblog", testUser);
+            testWeblog = setupWeblog("commenttestweblog", testUser);
             testEntry = setupWeblogEntry("commentTestEntry", testWeblog, testUser);
-            endSession(true);
         } catch (Exception ex) {
             throw new Exception("Test setup failed", ex);
         }
@@ -70,7 +69,6 @@ public class CommentTestIT extends WebloggerTest {
             teardownWeblogEntry(testEntry.getId());
             teardownWeblog(testWeblog.getId());
             teardownUser(testUser.getId());
-            endSession(true);
         } catch (Exception ex) {
             throw new Exception("Test teardown failed", ex);
         }
@@ -96,8 +94,7 @@ public class CommentTestIT extends WebloggerTest {
         // create a comment
         weblogEntryManager.saveComment(comment, true);
         String id = comment.getId();
-        endSession(true);
-        
+
         // make sure comment was created
         comment = weblogEntryManager.getComment(id);
         assertNotNull(comment);
@@ -106,8 +103,7 @@ public class CommentTestIT extends WebloggerTest {
         // update a comment
         comment.setContent("testtest");
         weblogEntryManager.saveComment(comment, true);
-        endSession(true);
-        
+
         // make sure comment was updated
         comment = weblogEntryManager.getComment(id);
         assertNotNull(comment);
@@ -115,8 +111,7 @@ public class CommentTestIT extends WebloggerTest {
         
         // delete a comment
         weblogEntryManager.removeComment(comment);
-        endSession(true);
-        
+
         // make sure comment was deleted
         comment = weblogEntryManager.getComment(id);
         assertNull(comment);
@@ -135,8 +130,7 @@ public class CommentTestIT extends WebloggerTest {
         WeblogEntryComment comment1 = setupComment("comment1", testEntry);
         WeblogEntryComment comment2 = setupComment("comment2", testEntry);
         WeblogEntryComment comment3 = setupComment("comment3", testEntry);
-        endSession(true);
-        
+
         // get all comments
         CommentSearchCriteria csc = new CommentSearchCriteria();
         comments = weblogEntryManager.getComments(csc);
@@ -154,8 +148,7 @@ public class CommentTestIT extends WebloggerTest {
         comment3 = weblogEntryManager.getComment(comment3.getId());
         comment3.setStatus(WeblogEntryComment.ApprovalStatus.PENDING);
         weblogEntryManager.saveComment(comment3, false);
-        endSession(true);
-        
+
         // get pending comments
         csc.setEntry(null);
         csc.setStatus(WeblogEntryComment.ApprovalStatus.PENDING);
@@ -176,11 +169,9 @@ public class CommentTestIT extends WebloggerTest {
         assertNotNull(comments);
         assertEquals(2, comments.size());
         
-        // remove test comments
         teardownComment(comment1.getId());
         teardownComment(comment2.getId());
         teardownComment(comment3.getId());
-        endSession(true);
     }
     
     
@@ -192,47 +183,40 @@ public class CommentTestIT extends WebloggerTest {
      */
     @Test
     public void testCommentParentDeletes() throws Exception {
-        try {
+
             // first make sure we can delete an entry with comments
             User user = setupUser("commentParentDeleteUser");
-            Weblog weblog = setupWeblog("commentParentDelete", user);
+            Weblog weblog = setupWeblog("commentparentdelete", user);
             WeblogEntry entry = setupWeblogEntry("CommentParentDeletes1", weblog, user);
-            endSession(true);
 
             entry = getManagedWeblogEntry(entry);
             setupComment("comment1", entry);
             setupComment("comment2", entry);
             setupComment("comment3", entry);
-            endSession(true);
 
             // now deleting the entry should succeed and delete all comments
             RollbackException ex = null;
             try {
                 weblogEntryManager.removeWeblogEntry(getManagedWeblogEntry(entry));
-                endSession(true);
             } catch (RollbackException e) {
                 ex = e;
             }
             assertNull(ex);
 
             // now make sure we can delete a weblog with comments
-            weblog = getManagedWeblog(weblog);
+            weblog = weblogRepository.findByIdOrNull(weblog.getId());
             user = getManagedUser(user);
             entry = setupWeblogEntry("CommentParentDeletes2", weblog, user);
-            endSession(true);
 
             entry = getManagedWeblogEntry(entry);
             setupComment("comment1", entry);
             setupComment("comment2", entry);
             setupComment("comment3", entry);
-            endSession(true);
 
-            // now deleting the website should succeed 
+            // now deleting the weblog should succeed
             ex = null;
             try {
-                weblog = getManagedWeblog(weblog);
                 weblogManager.removeWeblog(weblog);
-                endSession(true);
             } catch (RollbackException e) {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
@@ -243,10 +227,6 @@ public class CommentTestIT extends WebloggerTest {
 
             // and delete test user as well
             userManager.removeUser(getManagedUser(user));
-            
-        } finally {
-            endSession(true);
-        }
     }
 
 }

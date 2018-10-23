@@ -24,7 +24,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationContext;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.SharedTemplate;
 import org.tightblog.pojos.SharedTheme;
 import org.tightblog.business.ThemeManager;
@@ -39,6 +38,7 @@ import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -73,7 +73,7 @@ public class PreviewProcessorTest {
     private HttpServletResponse mockResponse;
     private WeblogEntryManager mockWEM;
     private UserManager mockUM;
-    private WeblogManager mockWM;
+    private WeblogRepository mockWR;
     private ThymeleafRenderer mockRenderer;
     private ThemeManager mockThemeManager;
     private WeblogTheme mockTheme;
@@ -100,15 +100,14 @@ public class PreviewProcessorTest {
             mockWEM = mock(WeblogEntryManager.class);
             mockUM = mock(UserManager.class);
             when(mockUM.checkWeblogRole("bob", "bobsblog", WeblogRole.EDIT_DRAFT)).thenReturn(true);
-            processor = new PreviewProcessor();
+            mockWR = mock(WeblogRepository.class);
+            processor = new PreviewProcessor(mockWR);
             processor.setUserManager(mockUM);
             processor.setWeblogPageRequestCreator(wprCreator);
             processor.setWeblogEntryManager(mockWEM);
-            mockWM = mock(WeblogManager.class);
             weblog = new Weblog();
             weblog.setHandle("bobsblog");
-            when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
-            processor.setWeblogManager(mockWM);
+            when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
             mockRenderer = mock(ThymeleafRenderer.class);
             CachedContent cachedContent = new CachedContent(Template.ComponentType.JAVASCRIPT);
             when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
@@ -133,7 +132,7 @@ public class PreviewProcessorTest {
     @Test
     public void test404OnMissingWeblog() throws IOException {
         pageRequest.setWeblogHandle("myhandle");
-        when(mockWM.getWeblogByHandle("myhandle", true)).thenReturn(null);
+        when(mockWR.findByHandleAndVisibleTrue("myhandle")).thenReturn(null);
         processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }

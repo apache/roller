@@ -37,6 +37,7 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WeblogTheme;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WeblogTemplateRepository;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
@@ -67,10 +68,14 @@ public class TemplateController {
 
     private static Logger log = LoggerFactory.getLogger(TemplateController.class);
 
+    private WeblogRepository weblogRepository;
+
     private WeblogTemplateRepository weblogTemplateRepository;
 
     @Autowired
-    public TemplateController(WeblogTemplateRepository weblogTemplateRepository) {
+    public TemplateController(WeblogRepository weblogRepository,
+                              WeblogTemplateRepository weblogTemplateRepository) {
+        this.weblogRepository = weblogRepository;
         this.weblogTemplateRepository = weblogTemplateRepository;
     }
 
@@ -102,7 +107,7 @@ public class TemplateController {
     public WeblogTemplateData getWeblogTemplates(@PathVariable String id, Principal principal,
                                                  Locale locale, HttpServletResponse response) {
 
-        Weblog weblog = weblogManager.getWeblog(id);
+        Weblog weblog = weblogRepository.findById(id).orElse(null);
         User user = userManager.getEnabledUserByUserName(principal.getName());
 
         if (weblog != null && user != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
@@ -203,7 +208,7 @@ public class TemplateController {
     public WeblogTemplate getWeblogTemplateByName(@PathVariable String weblogId, @PathVariable String templateName, Principal p,
                                                   HttpServletResponse response) {
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         // First-time override of a shared template
         SharedTheme sharedTheme = themeManager.getSharedTheme(weblog.getTheme());
         Template sharedTemplate = sharedTheme.getTemplateByName(templateName);
@@ -228,7 +233,8 @@ public class TemplateController {
 
             // Check user permissions
             User user = userManager.getEnabledUserByUserName(p.getName());
-            Weblog weblog = (templateToSave == null) ? weblogManager.getWeblog(weblogId) : templateToSave.getWeblog();
+            Weblog weblog = (templateToSave == null) ? weblogRepository.findById(weblogId).orElse(null)
+                    : templateToSave.getWeblog();
 
             if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
 

@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.repository.BlogrollLinkRepository;
+import org.tightblog.repository.WeblogRepository;
 
 import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
@@ -48,10 +49,13 @@ import java.util.stream.Collectors;
 @RestController
 public class BlogrollController {
 
+    private WeblogRepository weblogRepository;
+
     private BlogrollLinkRepository blogrollLinkRepository;
 
     @Autowired
-    public BlogrollController(BlogrollLinkRepository blogrollLinkRepository) {
+    public BlogrollController(WeblogRepository weblogRepository, BlogrollLinkRepository blogrollLinkRepository) {
+        this.weblogRepository = weblogRepository;
         this.blogrollLinkRepository = blogrollLinkRepository;
     }
 
@@ -71,7 +75,7 @@ public class BlogrollController {
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}/bookmarks")
     public List<WeblogBookmark> getWeblogBookmarks(@PathVariable String id, HttpServletResponse response) {
-        Weblog weblog = weblogManager.getWeblog(id);
+        Weblog weblog = weblogRepository.findById(id).orElse(null);
         if (weblog != null) {
             return weblog.getBookmarks()
                     .stream()
@@ -146,7 +150,7 @@ public class BlogrollController {
     public void addBookmark(@RequestParam(name = "weblogId") String weblogId, @RequestBody WeblogBookmark newData, Principal p,
                             HttpServletResponse response) throws ServletException {
         try {
-            Weblog weblog = weblogManager.getWeblog(weblogId);
+            Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
             if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
                 WeblogBookmark bookmark = new WeblogBookmark(weblog, newData.getName(),
                         newData.getUrl(), newData.getDescription());

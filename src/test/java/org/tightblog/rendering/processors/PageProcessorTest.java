@@ -46,12 +46,14 @@ import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
@@ -80,6 +82,7 @@ public class PageProcessorTest {
 
     private LazyExpiringCache mockCache;
     private WeblogManager mockWM;
+    private WeblogRepository mockWR;
     private ThymeleafRenderer mockRenderer;
     private ThemeManager mockThemeManager;
     private ApplicationContext mockApplicationContext;
@@ -101,7 +104,8 @@ public class PageProcessorTest {
         pageRequest = new WeblogPageRequest();
         when(wprCreator.create(mockRequest)).thenReturn(pageRequest);
         mockWEM = mock(WeblogEntryManager.class);
-        processor = new PageProcessor();
+        mockWR = mock(WeblogRepository.class);
+        processor = new PageProcessor(mockWR);
         processor.setWeblogPageRequestCreator(wprCreator);
         processor.setWeblogEntryManager(mockWEM);
         mockCache = mock(LazyExpiringCache.class);
@@ -112,7 +116,7 @@ public class PageProcessorTest {
         mockWM = mock(WeblogManager.class);
         weblog = new Weblog();
         weblog.setLastModified(Instant.now().minus(2, ChronoUnit.DAYS));
-        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
+        when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
         processor.setWeblogManager(mockWM);
         mockRenderer = mock(ThymeleafRenderer.class);
         processor.setThymeleafRenderer(mockRenderer);
@@ -130,7 +134,7 @@ public class PageProcessorTest {
     public void test404OnMissingWeblog() throws IOException {
         initializeMocks();
         pageRequest.setWeblogHandle("myhandle");
-        when(mockWM.getWeblogByHandle("myhandle", true)).thenReturn(null);
+        when(mockWR.findByHandleAndVisibleTrue("myhandle")).thenReturn(null);
         processor.handleRequest(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }
@@ -156,7 +160,7 @@ public class PageProcessorTest {
         weblog.setLastModified(twoDaysAgo);
 
         CachedContent cachedContent = new CachedContent(ComponentType.WEBLOG);
-        cachedContent.setContent("mytest1".getBytes("UTF-8"));
+        cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockCache.get(any(), any())).thenReturn(cachedContent);
 
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
@@ -205,7 +209,7 @@ public class PageProcessorTest {
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
         CachedContent cachedContent = new CachedContent(ComponentType.CUSTOM_EXTERNAL);
-        cachedContent.setContent("mytest1".getBytes("UTF-8"));
+        cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 
         Mockito.clearInvocations(processor, mockResponse, mockWM);
@@ -297,7 +301,7 @@ public class PageProcessorTest {
         sharedTemplate.setRole(Template.ComponentType.CUSTOM_EXTERNAL);
 
         CachedContent cachedContent = new CachedContent(ComponentType.CUSTOM_EXTERNAL);
-        cachedContent.setContent("mytest1".getBytes("UTF-8"));
+        cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);

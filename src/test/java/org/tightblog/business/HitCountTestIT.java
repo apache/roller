@@ -20,9 +20,6 @@
  */
 package org.tightblog.business;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.tightblog.WebloggerTest;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
@@ -48,15 +45,13 @@ public class HitCountTestIT extends WebloggerTest {
     public void setUp() throws Exception {
         super.setUp();
         testUser = setupUser("hitCountTestUser");
-        testWeblog = setupWeblog("hitCountTestWeblog", testUser);
-        endSession(true);
+        testWeblog = setupWeblog("hitcounttestweblog", testUser);
     }
 
     @After
     public void tearDown() throws Exception {
         teardownWeblog(testWeblog.getId());
         teardownUser(testUser.getId());
-        endSession(true);
     }
 
     /**
@@ -64,14 +59,13 @@ public class HitCountTestIT extends WebloggerTest {
      */
     @Test
     public void testHitCountCRUD() throws Exception {
-        Weblog aWeblog = weblogManager.getWeblog(testWeblog.getId());
+        Weblog aWeblog = weblogRepository.findById(testWeblog.getId()).orElse(null);
         int oldHits = aWeblog.getHitsToday();
         aWeblog.setHitsToday(oldHits + 10);
         weblogManager.saveWeblog(aWeblog);
-        endSession(true);
-        
+
         // make sure it was stored
-        aWeblog = weblogManager.getWeblog(testWeblog.getId());
+        aWeblog = weblogRepository.findById(testWeblog.getId()).orElse(null);
         assertNotNull(aWeblog);
         assertEquals(aWeblog, testWeblog);
         assertEquals(oldHits + 10, aWeblog.getHitsToday());
@@ -79,13 +73,12 @@ public class HitCountTestIT extends WebloggerTest {
 
     @Test
     public void testIncrementHitCount() throws Exception {
-        Weblog aWeblog = getManagedWeblog(testWeblog);
+        Weblog aWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         aWeblog.setHitsToday(10);
         weblogManager.saveWeblog(aWeblog);
-        endSession(true);
-        
+
         // make sure it was created
-        aWeblog = getManagedWeblog(testWeblog);
+        aWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         assertNotNull(aWeblog);
         assertEquals(10, aWeblog.getHitsToday());
         
@@ -96,33 +89,32 @@ public class HitCountTestIT extends WebloggerTest {
         weblogManager.updateHitCounters();
 
         // make sure it was incremented properly
-        aWeblog = getManagedWeblog(testWeblog);
+        aWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         assertEquals(15, aWeblog.getHitsToday());
     }
 
     @Test
     public void testResetHitCounts() throws Exception {
         testUser = getManagedUser(testUser);
-        Weblog blog1 = setupWeblog("hitCntTest1", testUser);
-        Weblog blog2 = setupWeblog("hitCntTest2", testUser);
+        Weblog blog1 = setupWeblog("hit-cnt-test1", testUser);
+        Weblog blog2 = setupWeblog("hit-cnt-test2", testUser);
 
         blog1.setHitsToday(10);
         blog2.setHitsToday(20);
 
-        endSession(true);
-        
+        weblogManager.saveWeblog(blog1);
+        weblogManager.saveWeblog(blog2);
+
         try {
             // make sure data was properly initialized
-            int testCount;
             assertEquals(10, blog1.getHitsToday());
             assertEquals(20, blog2.getHitsToday());
 
             // reset all counts
-            weblogManager.resetAllHitCounts();
-            endSession(true);
+            weblogRepository.updateDailyHitCountZero();
 
-            blog1 = getManagedWeblog(blog1);
-            blog2 = getManagedWeblog(blog2);
+            blog1 = weblogRepository.findByIdOrNull(blog1.getId());
+            blog2 = weblogRepository.findByIdOrNull(blog2.getId());
 
             // make sure it reset all counts
             assertEquals(0, blog1.getHitsToday());
@@ -133,43 +125,6 @@ public class HitCountTestIT extends WebloggerTest {
             teardownWeblog(blog1.getId());
             teardownWeblog(blog2.getId());
         }
-    }
-
-    @Test
-    public void testHotWeblogs() throws Exception {
-        testUser = getManagedUser(testUser);
-        Weblog blog1 = setupWeblog("hitCntHotTest1", testUser);
-        Weblog blog2 = setupWeblog("hitCntHotTest2", testUser);
-        Weblog blog3 = setupWeblog("hitCntHotTest3", testUser);
-        
-        blog1.setHitsToday(10);
-        blog2.setHitsToday(20);
-        blog3.setHitsToday(30);
-
-        endSession(true);
-        
-        // make sure data was properly initialized
-        assertEquals(10, blog1.getHitsToday());
-        assertEquals(20, blog2.getHitsToday());
-        assertEquals(30, blog3.getHitsToday());
-        
-        // get hot weblogs
-        List<Weblog> hotBlogs = weblogManager.getHotWeblogs(0, 5);
-        assertNotNull(hotBlogs);
-        assertEquals(3, hotBlogs.size());
-        
-        // also check ordering and values
-        int hitCount;
-        Iterator<Weblog> it = hotBlogs.iterator();
-        for (int i = 3; it.hasNext(); i--) {
-            hitCount = it.next().getHitsToday();
-            assertEquals(i * 10, hitCount);
-        }
-        
-        // cleanup
-        teardownWeblog(blog1.getId());
-        teardownWeblog(blog2.getId());
-        teardownWeblog(blog3.getId());
     }
 
 }

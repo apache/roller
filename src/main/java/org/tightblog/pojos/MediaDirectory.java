@@ -100,7 +100,7 @@ public class MediaDirectory implements Comparable<MediaDirectory> {
     }
 
     @OneToMany(targetEntity = MediaFile.class,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "directory")
+            cascade = {CascadeType.ALL}, mappedBy = "directory")
     @OrderBy("name")
     @JsonIgnore
     public Set<MediaFile> getMediaFiles() {

@@ -23,7 +23,6 @@ package org.tightblog.rendering.processors;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.SharedTheme;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.Template;
@@ -40,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,6 +69,8 @@ public class PreviewProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(PreviewProcessor.class);
 
+    private WeblogRepository weblogRepository;
+
     @Autowired
     @Qualifier("blogRenderer")
     private ThymeleafRenderer thymeleafRenderer;
@@ -92,13 +94,6 @@ public class PreviewProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    private WeblogManager weblogManager;
-
-    void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    @Autowired
     private WeblogEntryManager weblogEntryManager;
 
     void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
@@ -107,8 +102,9 @@ public class PreviewProcessor extends AbstractProcessor {
 
     private WeblogPageRequest.Creator weblogPageRequestCreator;
 
-    PreviewProcessor() {
+    PreviewProcessor(WeblogRepository weblogRepository) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
+        this.weblogRepository = weblogRepository;
     }
 
     void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
@@ -119,7 +115,7 @@ public class PreviewProcessor extends AbstractProcessor {
     void getPreviewPage(HttpServletRequest request, HttpServletResponse response, Principal p) throws IOException {
         WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
 
-        Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
+        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

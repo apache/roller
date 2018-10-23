@@ -41,6 +41,7 @@ public class UserTestIT extends WebloggerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        userRepository.deleteAll();
     }
     
     /**
@@ -82,8 +83,7 @@ public class UserTestIT extends WebloggerTest {
 
         // remove test user
         userManager.removeUser(user);
-        endSession(true);
-        
+
         // make sure user no longer exists
         user = userManager.getEnabledUserByUserName(userName);
         assertNull(user);
@@ -98,12 +98,12 @@ public class UserTestIT extends WebloggerTest {
         User user1;
         User user2;
 
-        // add test user
+        // add test users
         User testUser = setupUser("usertestuser");
         User testUser2 = setupUser("disabledtestuser");
         testUser2.setStatus(UserStatus.DISABLED);
-        endSession(true);
-        
+        userRepository.saveAndFlush(testUser2);
+
         // lookup by username
         user1 = userManager.getEnabledUserByUserName(testUser.getUserName());
         assertNotNull(user1);
@@ -143,9 +143,7 @@ public class UserTestIT extends WebloggerTest {
         user1 = userManager.getEnabledUserByUserName(testUser.getUserName());
         assertNull(user1);
         
-        // remove test user
         teardownUser(testUser.getId());
-        endSession(true);
     }
     
     
@@ -158,8 +156,7 @@ public class UserTestIT extends WebloggerTest {
         
         // add test user
         User testUser = setupUser("roletestuser");
-        endSession(true);
-        
+
         user = userManager.getEnabledUserByUserName(testUser.getUserName());
         assertNotNull(user);
         
@@ -173,9 +170,7 @@ public class UserTestIT extends WebloggerTest {
         assertNotNull(user);
         assertTrue(user.getGlobalRole() == GlobalRole.BLOGCREATOR);
 
-        // remove test user
         teardownUser(testUser.getId());
-        endSession(true);
     }
 
 }

@@ -27,7 +27,6 @@ import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.JPAPersistenceStrategy;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
@@ -40,6 +39,7 @@ import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.Utilities;
 import org.jsoup.Jsoup;
@@ -88,8 +88,12 @@ public class CommentProcessor extends AbstractProcessor {
 
     private WeblogPageRequest.Creator weblogPageRequestCreator;
 
-    public CommentProcessor() {
+    private WeblogRepository weblogRepository;
+
+    @Autowired
+    public CommentProcessor(WeblogRepository weblogRepository) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
+        this.weblogRepository = weblogRepository;
     }
 
     void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
@@ -108,13 +112,6 @@ public class CommentProcessor extends AbstractProcessor {
 
     void setIndexManager(IndexManager indexManager) {
         this.indexManager = indexManager;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
     }
 
     @Autowired
@@ -176,7 +173,7 @@ public class CommentProcessor extends AbstractProcessor {
 
         WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
 
-        Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
+        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {
             log.info("Commenter attempted to leave comment for weblog with unknown handle: {}, returning 404",
                     incomingRequest.getWeblogHandle());

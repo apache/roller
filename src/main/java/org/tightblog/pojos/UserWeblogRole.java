@@ -30,8 +30,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.util.Objects;
 
@@ -40,22 +38,6 @@ import java.util.Objects;
  */
 @Entity(name = "UserWeblogRole")
 @Table(name = "user_weblog_role")
-@NamedQueries({
-        @NamedQuery(name = "UserWeblogRole.getByUserId",
-                query = "SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.pending <> TRUE"),
-        @NamedQuery(name = "UserWeblogRole.getByUserIdIncludingPending",
-                query = "SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1"),
-        @NamedQuery(name = "UserWeblogRole.getByWeblogId",
-                query = "SELECT p FROM UserWeblogRole p WHERE p.weblog.id = ?1 AND p.pending <> TRUE"),
-        @NamedQuery(name = "UserWeblogRole.getByWeblogId&Pending",
-                query = "SELECT p FROM UserWeblogRole p WHERE p.weblog.id = ?1 AND p.pending = TRUE"),
-        @NamedQuery(name = "UserWeblogRole.getByWeblogIdIncludingPending",
-                query = "SELECT p FROM UserWeblogRole p WHERE p.weblog.id = ?1"),
-        @NamedQuery(name = "UserWeblogRole.getByUserId&WeblogId",
-                query = "SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.weblog.id = ?2 AND p.pending <> true"),
-        @NamedQuery(name = "UserWeblogRole.getByUserId&WeblogIdIncludingPending",
-                query = "SELECT p FROM UserWeblogRole p WHERE p.user.id = ?1 AND p.weblog.id = ?2")
-})
 public class UserWeblogRole {
 
     private String id = Utilities.generateUUID();

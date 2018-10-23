@@ -37,8 +37,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -60,21 +58,6 @@ import java.util.TimeZone;
  */
 @Entity
 @Table(name = "weblog")
-@NamedQueries({
-        @NamedQuery(name = "Weblog.getByHandle",
-                query = "SELECT w FROM Weblog w WHERE w.handle = ?1"),
-        @NamedQuery(name = "Weblog.getByLetterOrderByHandle",
-                query = "SELECT w FROM Weblog w WHERE UPPER(w.handle) like ?1 ORDER BY w.handle"),
-        @NamedQuery(name = "Weblog.getCountAllDistinct",
-                query = "SELECT COUNT(w) FROM Weblog w"),
-        @NamedQuery(name = "Weblog.getCountByHandleLike",
-                query = "SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1"),
-        @NamedQuery(name = "Weblog.getByWeblog&DailyHitsGreaterThenZeroOrderByDailyHitsDesc",
-                query = "SELECT w FROM Weblog w WHERE w.visible = true AND w.hitsToday > 0 " +
-                        "ORDER BY w.hitsToday DESC"),
-        @NamedQuery(name = "Weblog.updateDailyHitCountZero",
-                query = "UPDATE Weblog w SET w.hitsToday = 0, w.lastModified = CURRENT_TIMESTAMP")
-})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Weblog {
 

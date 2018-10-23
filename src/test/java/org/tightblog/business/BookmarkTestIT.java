@@ -50,8 +50,7 @@ public class BookmarkTestIT extends WebloggerTest {
         
         try {
             testUser = setupUser("bkmrkTestUser");
-            testWeblog = setupWeblog("bkmrkTestWeblog", testUser);
-            endSession(true);
+            testWeblog = setupWeblog("bkmrktestweblog", testUser);
         } catch (Exception ex) {
             throw new Exception("Test setup failed", ex);
         }
@@ -62,7 +61,6 @@ public class BookmarkTestIT extends WebloggerTest {
         try {
             teardownWeblog(testWeblog.getId());
             teardownUser(testUser.getId());
-            endSession(true);
         } catch (Exception ex) {
             throw new Exception("Test teardown failed", ex);
         }
@@ -89,8 +87,7 @@ public class BookmarkTestIT extends WebloggerTest {
         bookmark2.calculatePosition();
         weblogManager.saveWeblog(testWeblog);
 
-        endSession(true);
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         WeblogBookmark bookmarka;
         WeblogBookmark bookmarkb;
 
@@ -104,11 +101,10 @@ public class BookmarkTestIT extends WebloggerTest {
         // Remove one bookmark directly
         testWeblog.getBookmarks().remove(bookmarka);
         weblogManager.saveWeblog(testWeblog);
-        endSession(true);
         assertFalse(blogrollLinkRepository.findById(bookmarka.getId()).isPresent());
 
         // Weblog should now contain one bookmark
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         assertNotNull(testWeblog);
         assertEquals(1, testWeblog.getBookmarks().size());
         assertEquals(bookmarkb.getId(), testWeblog.getBookmarks().get(0).getId());
@@ -116,10 +112,9 @@ public class BookmarkTestIT extends WebloggerTest {
         // Remove other bookmark via removing from weblog
         testWeblog.getBookmarks().remove(bookmarkb);
         weblogManager.saveWeblog(testWeblog);
-        endSession(true);
 
         // Last bookmark should be gone
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         assertEquals(0, testWeblog.getBookmarks().size());
         assertFalse(blogrollLinkRepository.findById(bookmarkb.getId()).isPresent());
     }
@@ -129,28 +124,25 @@ public class BookmarkTestIT extends WebloggerTest {
      */
     @Test
     public void testBookmarkLookups() throws Exception {
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
 
         // add some bookmarks
-        WeblogBookmark b1 = new WeblogBookmark(testWeblog, "b1", "http://example1.com", "testbookmark13"
-        );
+        WeblogBookmark b1 = new WeblogBookmark(testWeblog, "b1", "http://example1.com", "testbookmark13");
         testWeblog.addBookmark(b1);
-        WeblogBookmark b2 = new WeblogBookmark(testWeblog, "b2", "http://example2.com", "testbookmark14"
-        );
+        WeblogBookmark b2 = new WeblogBookmark(testWeblog, "b2", "http://example2.com", "testbookmark14");
         testWeblog.addBookmark(b2);
-        WeblogBookmark b3 = new WeblogBookmark(testWeblog, "b3", "http://example3.com", "testbookmark16"
-        );
+        WeblogBookmark b3 = new WeblogBookmark(testWeblog, "b3", "http://example3.com", "testbookmark16");
         testWeblog.addBookmark(b3);
 
-        endSession(true);
-        
+        weblogRepository.saveAndFlush(testWeblog);
+
         // test lookup by id
         Optional<WeblogBookmark> testBookmark = blogrollLinkRepository.findById(b1.getId());
         assertTrue(testBookmark.isPresent());
         assertEquals("b1", testBookmark.get().getName());
 
         // test lookup of all bookmarks for a website
-        Weblog testWeblog2 = weblogManager.getWeblog(testWeblog.getId());
+        Weblog testWeblog2 = weblogRepository.findById(testWeblog.getId()).orElse(null);
         List<WeblogBookmark> allBookmarks = testWeblog2.getBookmarks();
         assertNotNull(allBookmarks);
         assertEquals(3, allBookmarks.size());

@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.tightblog.rendering.model.Model;
 import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -50,7 +51,8 @@ public class AbstractProcessorTest {
         WeblogPageRequest req = new WeblogPageRequest();
         Map<String, Object> initData = new HashMap<>();
         initData.put("parsedRequest", req);
-        PageProcessor processor = new PageProcessor();
+        WeblogRepository mockWR = mock(WeblogRepository.class);
+        PageProcessor processor = new PageProcessor(mockWR);
         processor.setApplicationContext(mockContext);
         Map<String, Object> modelMap = processor.getModelMap("testBean", initData);
         assertEquals(pageModel, modelMap.get("model"));

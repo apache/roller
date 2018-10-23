@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +43,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path = "/tb-ui/authoring/rest/tags")
 public class TagController {
+
+    private WeblogRepository weblogRepository;
+
+    @Autowired
+    public TagController(WeblogRepository weblogRepository) {
+        this.weblogRepository = weblogRepository;
+    }
 
     private static Logger log = LoggerFactory.getLogger(TagController.class);
 
@@ -73,7 +81,7 @@ public class TagController {
     public TagData getTags(@PathVariable String weblogId, @PathVariable int page,
                            Principal principal, HttpServletResponse response) {
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
 
             TagData data = new TagData();
@@ -117,7 +125,7 @@ public class TagController {
     public void deleteTag(@PathVariable String weblogId, @PathVariable String tagName, Principal p,
                           HttpServletResponse response) throws ServletException {
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         try {
             if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
                 weblogManager.removeTag(weblog, tagName);
@@ -151,7 +159,7 @@ public class TagController {
                                             Principal p, HttpServletResponse response, boolean isAdd)
             throws ServletException {
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         try {
             if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
                 Map<String, Integer> results = weblogManager.addTag(weblog, currentTagName, newTagName);

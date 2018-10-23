@@ -12,6 +12,7 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WeblogTheme;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WeblogTemplateRepository;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
@@ -33,10 +34,13 @@ public class ThemeController {
 
     private static Logger log = LoggerFactory.getLogger(ThemeController.class);
 
+    private WeblogRepository weblogRepository;
+
     private WeblogTemplateRepository weblogTemplateRepository;
 
     @Autowired
-    public ThemeController(WeblogTemplateRepository weblogTemplateRepository) {
+    public ThemeController(WeblogRepository weblogRepository, WeblogTemplateRepository weblogTemplateRepository) {
+        this.weblogRepository = weblogRepository;
         this.weblogTemplateRepository = weblogTemplateRepository;
     }
 
@@ -68,7 +72,7 @@ public class ThemeController {
     public ResponseEntity switchTheme(@PathVariable String weblogId, @PathVariable String newThemeId, Principal p,
                                       Locale locale) {
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         SharedTheme newTheme = themeManager.getSharedTheme(newThemeId);
         User user = userManager.getEnabledUserByUserName(p.getName());
 

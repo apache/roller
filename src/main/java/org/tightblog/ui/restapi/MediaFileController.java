@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -41,6 +42,13 @@ import java.util.stream.Collectors;
 public class MediaFileController {
 
     private static Logger log = LoggerFactory.getLogger(MediaFileController.class);
+
+    private WeblogRepository weblogRepository;
+
+    @Autowired
+    public MediaFileController(WeblogRepository weblogRepository) {
+        this.weblogRepository = weblogRepository;
+    }
 
     @Autowired
     private WeblogManager weblogManager;
@@ -75,10 +83,10 @@ public class MediaFileController {
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}/mediadirectories")
     public List<MediaDirectory> getMediaDirectories(@PathVariable String id, Principal p, HttpServletResponse response) {
-        Weblog weblog = weblogManager.getWeblog(id);
+        Weblog weblog = weblogRepository.findById(id).orElse(null);
         if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
             List<MediaDirectory> temp =
-                    mediaFileManager.getMediaDirectories(weblogManager.getWeblog(id))
+                    mediaFileManager.getMediaDirectories(weblogRepository.findById(id).orElse(null))
                             .stream()
                             .peek(md -> {
                                 md.setMediaFiles(null);
@@ -203,7 +211,7 @@ public class MediaFileController {
                                     Principal p, Locale locale, HttpServletResponse response)
             throws ServletException {
         try {
-            Weblog weblog = weblogManager.getWeblog(weblogId);
+            Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
             if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
                 try {
                     MediaDirectory newDir = mediaFileManager.createMediaDirectory(weblog, directoryName.asText().trim());
@@ -229,8 +237,8 @@ public class MediaFileController {
             if (itemToRemove != null) {
                 Weblog weblog = itemToRemove.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-
-                    mediaFileManager.removeMediaDirectory(itemToRemove);
+                    weblog.getMediaDirectories().remove(itemToRemove);
+                    mediaFileManager.removeAllFiles(itemToRemove);
                     weblogManager.saveWeblog(weblog);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
@@ -251,7 +259,7 @@ public class MediaFileController {
 
         try {
             if (fileIdsToDelete != null && fileIdsToDelete.size() > 0) {
-                Weblog weblog = weblogManager.getWeblog(weblogId);
+                Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
                 if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
                     for (String fileId : fileIdsToDelete) {
                         MediaFile mediaFile = mediaFileManager.getMediaFile(fileId);
@@ -286,7 +294,7 @@ public class MediaFileController {
 
         try {
             if (fileIdsToMove != null && fileIdsToMove.size() > 0) {
-                Weblog weblog = weblogManager.getWeblog(weblogId);
+                Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
                 MediaDirectory targetDirectory = mediaFileManager.getMediaDirectory(directoryId);
                 if (weblog != null && targetDirectory != null && weblog.equals(targetDirectory.getWeblog()) &&
                         userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {

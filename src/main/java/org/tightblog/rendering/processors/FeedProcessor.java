@@ -22,13 +22,13 @@ package org.tightblog.rendering.processors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.tightblog.business.JPAPersistenceStrategy;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.SharedTemplate;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.Template;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
@@ -58,18 +58,13 @@ public class FeedProcessor extends AbstractProcessor {
 
     public static final String PATH = "/tb-ui/rendering/feed";
 
+    private WeblogRepository weblogRepository;
+
     @Autowired
     private LazyExpiringCache weblogFeedCache;
 
     void setWeblogFeedCache(LazyExpiringCache weblogFeedCache) {
         this.weblogFeedCache = weblogFeedCache;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
     }
 
     @Autowired
@@ -100,15 +95,17 @@ public class FeedProcessor extends AbstractProcessor {
         this.weblogFeedRequestCreator = creator;
     }
 
-    FeedProcessor() {
+    @Autowired
+    FeedProcessor(WeblogRepository weblogRepository) {
         this.weblogFeedRequestCreator = new WeblogFeedRequest.Creator();
+        this.weblogRepository = weblogRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogFeedRequest feedRequest = weblogFeedRequestCreator.create(request);
 
-        Weblog weblog = weblogManager.getWeblogByHandle(feedRequest.getWeblogHandle(), true);
+        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(feedRequest.getWeblogHandle());
         if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

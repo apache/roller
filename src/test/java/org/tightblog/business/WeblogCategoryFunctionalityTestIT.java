@@ -52,7 +52,7 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
     public void setUp() throws Exception {
         super.setUp();
         testUser = setupUser("categoryTestUser");
-        testWeblog = setupWeblog("categoryTestWeblog", testUser);
+        testWeblog = setupWeblog("category-test-weblog", testUser);
 
         // setup several categories for testing
         setupWeblogCategory(testWeblog, "catTest-cat1");
@@ -60,15 +60,12 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
 
         // a simple test cat at the root level
         testCat = setupWeblogCategory(testWeblog, "catTest-testCat");
-
-        endSession(true);
     }
     
     @After
     public void tearDown() throws Exception {
         teardownWeblog(testWeblog.getId());
         teardownUser(testUser.getId());
-        endSession(true);
     }
 
     @Test
@@ -86,7 +83,6 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
 
     @Test
     public void testLookupAllCategoriesByWeblog() {
-        testWeblog = getManagedWeblog(testWeblog);
         List cats = weblogManager.getWeblogCategories(testWeblog);
         assertNotNull(cats);
         assertEquals(4, cats.size());
@@ -94,7 +90,6 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
 
     @Test
     public void testMoveWeblogCategoryContents() throws Exception {
-        testWeblog = getManagedWeblog(testWeblog);
         testUser = getManagedUser(testUser);
 
         // add some categories and entries to test with
@@ -103,18 +98,16 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
 
         WeblogCategory dest = new WeblogCategory(testWeblog, "dest");
         testWeblog.addCategory(dest);
+        weblogManager.saveWeblog(testWeblog);
 
-        endSession(true);
-
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         testUser = getManagedUser(testUser);
         setupWeblogEntry("e1", c1, PubStatus.PUBLISHED, testWeblog, testUser);
         setupWeblogEntry("e2", c1, PubStatus.DRAFT, testWeblog, testUser);
-        endSession(true);
 
         // need to query for cats again since session was closed
-        WeblogCategory fromCat = weblogCategoryRepository.findById(c1.getId()).orElse(null);
-        WeblogCategory toCat = weblogCategoryRepository.findById(dest.getId()).orElse(null);
+        WeblogCategory fromCat = weblogCategoryRepository.findByIdOrNull(c1.getId());
+        WeblogCategory toCat = weblogCategoryRepository.findByIdOrNull(dest.getId());
 
         // verify number of entries in each category
         assertNotNull(fromCat);
@@ -126,11 +119,10 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
 
         // move contents of source category c1 to destination category dest
         weblogManager.moveWeblogCategoryContents(c1, dest);
-        endSession(true);
 
         // after move, verify number of entries in each category
-        fromCat = weblogCategoryRepository.findById(c1.getId()).orElse(null);
-        toCat = weblogCategoryRepository.findById(dest.getId()).orElse(null);
+        fromCat = weblogCategoryRepository.findByIdOrNull(c1.getId());
+        toCat = weblogCategoryRepository.findByIdOrNull(dest.getId());
 
         assertNotNull(fromCat);
         assertNotNull(toCat);
@@ -139,7 +131,7 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
         assertEquals(2, retrieveWeblogEntries(toCat, false).size());
         assertEquals(1, retrieveWeblogEntries(toCat, true).size());
 
-        // c1 category should be empty now
+        // c1 category should be empty
         assertEquals(0, retrieveWeblogEntries(fromCat, false).size());
     }
 

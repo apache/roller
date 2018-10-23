@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
@@ -38,6 +37,8 @@ import org.tightblog.pojos.UserStatus;
 import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
+import org.tightblog.repository.UserWeblogRoleRepository;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
@@ -75,43 +76,31 @@ public class UserController {
 
     private static Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$";
+    private static final Pattern PWD_PATTERN =
+            Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$");
 
-    private Pattern pattern;
+    private WeblogRepository weblogRepository;
 
-    @Autowired
     private UserManager userManager;
 
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
+    private UserWeblogRoleRepository userWeblogRoleRepository;
 
-    @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
 
-    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
-        this.persistenceStrategy = strategy;
-    }
-
-    @Autowired
     private MailManager mailManager;
 
-    public void setMailManager(MailManager manager) {
-        mailManager = manager;
-    }
-
-    @Autowired
     private MessageSource messages;
 
-    public UserController() {
-        pattern = Pattern.compile(PASSWORD_PATTERN);
+    @Autowired
+    public UserController(WeblogRepository weblogRepository, UserManager userManager,
+                          UserWeblogRoleRepository userWeblogRoleRepository, MessageSource messageSource,
+                          JPAPersistenceStrategy persistenceStrategy, MailManager mailManager) {
+        this.weblogRepository = weblogRepository;
+        this.userManager = userManager;
+        this.userWeblogRoleRepository = userWeblogRoleRepository;
+        this.persistenceStrategy = persistenceStrategy;
+        this.mailManager = mailManager;
+        this.messages = messageSource;
     }
 
     @GetMapping(value = "/tb-ui/admin/rest/useradmin/userlist")
@@ -160,7 +149,7 @@ public class UserController {
                                                           HttpServletResponse response)
             throws ServletException {
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
             // member list excludes inactive accounts
             UserSearchCriteria usc = new UserSearchCriteria();
@@ -328,7 +317,7 @@ public class UserController {
     public List<UserWeblogRole> getWeblogMembers(@PathVariable String weblogId, Principal p, HttpServletResponse response)
             throws ServletException {
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
             List<UserWeblogRole> uwrs = userManager.getWeblogRolesIncludingPending(weblog);
             return uwrs;
@@ -343,7 +332,7 @@ public class UserController {
                                                  @RequestBody List<UserWeblogRole> roles)
             throws ServletException {
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         User user = userManager.getEnabledUserByUserName(p.getName());
         if (user != null && weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
 
@@ -485,7 +474,7 @@ public class UserController {
                     be.addError(new ObjectError("User object",
                             messages.getMessage("error.add.user.passwordConfirmFail", null, locale)));
                 } else {
-                    if (!pattern.matcher(maybePassword).matches()) {
+                    if (!PWD_PATTERN.matcher(maybePassword).matches()) {
                         be.addError(new ObjectError("User object",
                                 messages.getMessage("error.add.user.passwordComplexityFail", null, locale)));
                     }
@@ -514,7 +503,7 @@ public class UserController {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
-        List<UserWeblogRole> uwrs = userManager.getWeblogRolesIncludingPending(user);
+        List<UserWeblogRole> uwrs = userWeblogRoleRepository.findByUser(user);
         for (UserWeblogRole uwr : uwrs) {
             uwr.setUser(null);
         }
@@ -536,7 +525,7 @@ public class UserController {
     public ResponseEntity inviteUser(@PathVariable String weblogId, @PathVariable String userId,
                                      @PathVariable WeblogRole role, Principal p, Locale locale) {
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         User invitee = userManager.getUser(userId);
         User invitor = userManager.getEnabledUserByUserName(p.getName());
 

@@ -50,9 +50,7 @@ import java.util.Objects;
         @NamedQuery(name = "User.getByEndDate&StartDateOrderByStartDateDesc",
                 query = "SELECT u FROM User u WHERE u.dateCreated < ?1 AND u.dateCreated > ?2 ORDER BY u.dateCreated DESC"),
         @NamedQuery(name = "User.getGlobalRole",
-                query = "SELECT u.globalRole FROM User u WHERE u.userName = ?1"),
-        @NamedQuery(name = "User.getCountEnabledDistinct",
-                query = "SELECT COUNT(u) FROM User u WHERE u.status = org.tightblog.pojos.UserStatus.ENABLED")
+                query = "SELECT u.globalRole FROM User u WHERE u.userName = ?1")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {

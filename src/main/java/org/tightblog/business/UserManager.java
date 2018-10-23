@@ -170,19 +170,9 @@ public interface UserManager {
     List<UserWeblogRole> getWeblogRoles(User user);
 
     /**
-     * Get all of user's WeblogRoles.
-     */
-    List<UserWeblogRole> getWeblogRolesIncludingPending(User user);
-
-    /**
      * Get all non-pending User WeblogRoles associated with a weblog.
      */
     List<UserWeblogRole> getWeblogRoles(Weblog weblog);
-
-    /**
-     * Get all pending User WeblogRoles associated with a weblog.
-     */
-    List<UserWeblogRole> getPendingWeblogRoles(Weblog weblog);
 
     /**
      * Get all User WeblogRoles (pending or actual) for a weblog.
@@ -204,7 +194,7 @@ public interface UserManager {
     /**
      * Erases a user's MFA secret, requiring them to re-register for a new
      * QR code upon re-login.
-     * @param user User to obtain QA code for
+     * @param userId User to obtain QA code for
      */
     void eraseMFASecret(String userId);
 }

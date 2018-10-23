@@ -18,7 +18,6 @@ package org.tightblog.rendering.processors;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.SharedTheme;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.Template;
@@ -28,6 +27,7 @@ import org.tightblog.pojos.WeblogTheme;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +48,7 @@ public class SearchProcessorTest {
     private Weblog weblog;
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
-    private WeblogManager mockWM;
+    private WeblogRepository mockWR;
     private WeblogTheme mockWeblogTheme;
     private ServletOutputStream mockSOS;
 
@@ -63,7 +63,7 @@ public class SearchProcessorTest {
         pageRequest = new WeblogPageRequest();
         when(wprCreator.create(mockRequest)).thenReturn(pageRequest);
 
-        mockWM = mock(WeblogManager.class);
+        mockWR = mock(WeblogRepository.class);
 
         SharedTheme sharedTheme = new SharedTheme();
         sharedTheme.setSiteWide(false);
@@ -81,21 +81,20 @@ public class SearchProcessorTest {
         when(mockThymeleafRenderer.render(any(), any()))
                 .thenReturn(new CachedContent(Template.ComponentType.WEBLOG));
 
-        processor = new SearchProcessor();
+        processor = new SearchProcessor(mockWR);
         processor.setApplicationContext(mockApplicationContext);
         processor.setWeblogPageRequestCreator(wprCreator);
-        processor.setWeblogManager(mockWM);
         processor.setThemeManager(mockThemeManager);
         processor.setThymeleafRenderer(mockThymeleafRenderer);
         weblog = new Weblog();
-        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
+        when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
     }
 
     @Test
     public void test404OnMissingWeblog() throws Exception {
         initializeMocks();
         pageRequest.setWeblogHandle("myhandle");
-        when(mockWM.getWeblogByHandle("myhandle", true)).thenReturn(null);
+        when(mockWR.findByHandleAndVisibleTrue("myhandle")).thenReturn(null);
         processor.getSearchResults(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }

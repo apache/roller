@@ -281,7 +281,7 @@
     <task:scheduled-tasks scheduler="blogTaskScheduler">
         <!-- uncomment/comment and configure frequency of each task as desired -->
         <!-- midnight every day -->
-        <task:scheduled ref="weblogManager" method="resetAllHitCounts" cron="0 0 0 * * *"/>
+        <task:scheduled ref="weblogRepository" method="updateDailyHitCountZero" cron="0 0 0 * * *"/>
         <!-- every 4 hours -->
         <task:scheduled ref="weblogManager" method="promoteScheduledEntries" cron="0 0 0/4 * * *"/>
         <!-- every 15 mins -->

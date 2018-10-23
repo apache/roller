@@ -44,38 +44,30 @@ public class WeblogCategoryCRUDTestIT extends WebloggerTest {
     public void setUp() throws Exception {
         super.setUp();
         testUser = setupUser("categoryCRUDTestUser");
-        testWeblog = setupWeblog("categoryCRUDTestWeblog", testUser);
-        endSession(true);
+        testWeblog = setupWeblog("category-crud-test-weblog", testUser);
     }
     
     @After
     public void tearDown() throws Exception {
         teardownWeblog(testWeblog.getId());
         teardownUser(testUser.getId());
-        endSession(true);
     }
-    
-    
+
     /**
      * Test WeblogCategory.equals() method.
      */
     @Test
     public void testWeblogCategoryEquality() {
-        testWeblog = getManagedWeblog(testWeblog);
-
         WeblogCategory testCat = new WeblogCategory(testWeblog, null);
         WeblogCategory testCat2 = new WeblogCategory(testWeblog, "root2");
         assertNotEquals(testCat2, testCat);
     }
-    
-    
+
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
     @Test
     public void testBasicCRUD() throws Exception {
-        // root category is always available
-        testWeblog = getManagedWeblog(testWeblog);
 
         // make sure we are starting with 1 categories
         assertEquals(1, testWeblog.getWeblogCategories().size());
@@ -83,15 +75,15 @@ public class WeblogCategoryCRUDTestIT extends WebloggerTest {
         // add a new category
         WeblogCategory newCat = new WeblogCategory(testWeblog, "catTestCategory");
         testWeblog.addCategory(newCat);
-        endSession(true);
-        
+        weblogRepository.saveAndFlush(testWeblog);
+
         // make sure category was added
         WeblogCategory catFromDb = weblogCategoryRepository.findById(newCat.getId()).orElse(null);
         assertNotNull(catFromDb);
         assertEquals(newCat, catFromDb);
         
         // make sure category count increased
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         assertEquals(2, testWeblog.getWeblogCategories().size());
 
         // update category
@@ -99,7 +91,7 @@ public class WeblogCategoryCRUDTestIT extends WebloggerTest {
                 .filter(wc -> wc.getId().equals(newCat.getId())).findFirst();
         assertTrue(maybeTest.isPresent());
         maybeTest.get().setName("testtest");
-        endSession(true);
+        weblogRepository.saveAndFlush(testWeblog);
 
         // verify category was updated
         catFromDb = weblogCategoryRepository.findById(newCat.getId()).orElse(null);
@@ -110,14 +102,13 @@ public class WeblogCategoryCRUDTestIT extends WebloggerTest {
         // remove category
         testWeblog.getWeblogCategories().remove(catFromDb);
         weblogManager.saveWeblog(testWeblog);
-        endSession(true);
 
         // make sure cat was removed
         catFromDb = weblogCategoryRepository.findById(newCat.getId()).orElse(null);
         assertNull(catFromDb);
         
         // make sure category count decreased
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         assertEquals(1, testWeblog.getWeblogCategories().size());
     }
     
@@ -127,17 +118,13 @@ public class WeblogCategoryCRUDTestIT extends WebloggerTest {
      */
     @Test
     public void testCategoryCascadingDelete() throws Exception {
-        // root category is always available
-        testWeblog = getManagedWeblog(testWeblog);
-
         // add a category above default one
         WeblogCategory testCat = new WeblogCategory(testWeblog, "SampleCategory");
         testWeblog.addCategory(testCat);
         weblogManager.saveWeblog(testWeblog);
-        endSession(true);
-        
+
         // check that testCat can be retrieved
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
 
         assertEquals(2, testWeblog.getWeblogCategories().size());
         testCat = testWeblog.getWeblogCategories().get(1);
@@ -145,12 +132,12 @@ public class WeblogCategoryCRUDTestIT extends WebloggerTest {
 
         // now delete category and subcats should be deleted by cascade
         testWeblog.getWeblogCategories().remove(testCat);
-        endSession(true);
-        
+        weblogManager.saveWeblog(testWeblog);
+
         // verify cascading delete succeeded
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         assertEquals(1, testWeblog.getWeblogCategories().size());
-        assertNull(weblogCategoryRepository.findByWeblogAndName(getManagedWeblog(testWeblog), "SampleCategory"));
+        assertNull(weblogCategoryRepository.findByWeblogAndName(testWeblog, "SampleCategory"));
     }
     
 }

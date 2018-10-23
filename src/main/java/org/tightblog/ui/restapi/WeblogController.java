@@ -47,6 +47,7 @@ import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogRole;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
@@ -115,7 +116,11 @@ public class WeblogController {
     @Value("${site.pages.maxEntries:30}")
     private int maxEntriesPerPage;
 
-    public WeblogController() {
+    private WeblogRepository weblogRepository;
+
+    @Autowired
+    public WeblogController(WeblogRepository weblogRepository) {
+        this.weblogRepository = weblogRepository;
     }
 
     @Autowired
@@ -130,7 +135,7 @@ public class WeblogController {
     public Weblog getWeblogData(@PathVariable String id, Principal p, HttpServletResponse response) throws ServletException {
         ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
         if (maybeError == null) {
-            return weblogManager.getWeblog(id);
+            return weblogRepository.findById(id).orElse(null);
         } else {
             response.setStatus(maybeError.getStatusCode().value());
             return null;
@@ -168,7 +173,7 @@ public class WeblogController {
         if (maybeError != null) {
             return maybeError;
         }
-        Weblog weblog = weblogManager.getWeblog(id);
+        Weblog weblog = weblogRepository.findById(id).orElse(null);
         ValidationError maybeValError = advancedValidate(newData, false);
         if (maybeValError != null) {
             return ResponseEntity.badRequest().body(maybeValError);
@@ -241,7 +246,7 @@ public class WeblogController {
             throws ServletException {
         ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
         if (maybeError == null) {
-            Weblog weblog = weblogManager.getWeblog(id);
+            Weblog weblog = weblogRepository.findById(id).orElse(null);
             try {
                 weblogManager.removeWeblog(weblog);
                 response.setStatus(HttpServletResponse.SC_OK);
@@ -259,7 +264,7 @@ public class WeblogController {
 
         // make sure handle isn't already taken
         if (isAdd) {
-            if (weblogManager.getWeblogByHandle(data.getHandle()) != null) {
+            if (weblogRepository.findByHandleAndVisibleTrue(data.getHandle()) != null) {
                 be.addError(new ObjectError("Weblog object", bundle.getString("weblogConfig.error.handleExists")));
             }
         }
@@ -268,7 +273,7 @@ public class WeblogController {
     }
 
     private ResponseEntity checkIfOwnerOfValidWeblog(String weblogId, Principal p) {
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         if (weblog != null) {
             if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
                 return null;

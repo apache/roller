@@ -58,11 +58,6 @@ public interface MediaFileManager {
     MediaFile getMediaFile(String id, boolean includeContent);
 
     /**
-     * Delete a media file
-     */
-    void removeMediaFile(Weblog weblog, MediaFile mediaFile);
-
-    /**
      * Create a media file directory with a given name.
      */
     MediaDirectory createMediaDirectory(Weblog weblog, String name);
@@ -71,11 +66,6 @@ public interface MediaFileManager {
      * Get media file directory by id
      */
     MediaDirectory getMediaDirectory(String id);
-
-    /**
-     * Get media file directory by its path
-     */
-    MediaDirectory getMediaDirectoryByName(Weblog weblog, String name);
 
     /**
      * Get the list of media file directories for the given weblog.
@@ -93,13 +83,17 @@ public interface MediaFileManager {
     void moveMediaFile(MediaFile mediaFile, MediaDirectory directory);
 
     /**
-     * Remove all media files associated with a weblog.
+     * Remove all media content (files and directories) associated with a weblog.
      */
     void removeAllFiles(Weblog weblog);
 
     /**
-     * Remove media file directory
+     * Delete a directory and all of its associated file contents
      */
-    void removeMediaDirectory(MediaDirectory mediaFileDir);
+    void removeAllFiles(MediaDirectory mediaFileDir);
 
+    /**
+     * Delete a media file and its associated file contents
+     */
+    void removeMediaFile(Weblog weblog, MediaFile mediaFile);
 }

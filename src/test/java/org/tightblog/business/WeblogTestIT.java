@@ -29,6 +29,7 @@ import org.tightblog.pojos.Weblog;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.tightblog.pojos.WeblogRole;
 
 import static org.junit.Assert.*;
 
@@ -45,13 +46,11 @@ public class WeblogTestIT extends WebloggerTest {
     public void setUp() throws Exception {
         super.setUp();
         testUser = setupUser("weblogTestUser");
-        endSession(true);
     }
 
     @After
     public void tearDown() throws Exception {
         teardownUser(testUser.getId());
-        endSession(true);
     }
 
     /**
@@ -75,35 +74,32 @@ public class WeblogTestIT extends WebloggerTest {
         testWeblog.setCreator(testUser);
 
         // make sure test weblog does not exist
-        weblog = weblogManager.getWeblogByHandle(testWeblog.getHandle());
+        weblog = weblogRepository.findByHandleAndVisibleTrue(testWeblog.getHandle());
         assertNull(weblog);
 
         // add test weblog
         weblogManager.addWeblog(testWeblog);
         String id = testWeblog.getId();
-        endSession(true);
 
         // make sure test weblog exists
-        weblog = weblogManager.getWeblog(id);
+        weblog = weblogRepository.findById(id).orElse(null);
         assertNotNull(weblog);
         assertEquals(testWeblog, weblog);
 
         // modify weblog and save
         weblog.setName("testtesttest");
         weblogManager.saveWeblog(weblog);
-        endSession(true);
 
         // make sure changes were saved
-        weblog = weblogManager.getWeblog(id);
+        weblog = weblogRepository.findById(id).orElse(null);
         assertNotNull(weblog);
         assertEquals("testtesttest", weblog.getName());
 
         // remove test weblog
         weblogManager.removeWeblog(weblog);
-        endSession(true);
 
         // make sure weblog no longer exists
-        weblog = weblogManager.getWeblog(id);
+        weblog = weblogRepository.findById(id).orElse(null);
         assertNull(weblog);
     }
     
@@ -116,42 +112,48 @@ public class WeblogTestIT extends WebloggerTest {
         Weblog testWeblog2 = null;
         try {
             Weblog weblog;
-            
+
+            // start with no permissions
+            userWeblogRoleRepository.deleteByUser(testUser);
+
+            List<UserWeblogRole> userRoles = userManager.getWeblogRoles(testUser);
+            assertEquals(0, userRoles.size());
+
             // add test weblogs
-            testWeblog1 = setupWeblog("testWeblog1", testUser);
-            testWeblog2 = setupWeblog("testWeblog2", testUser);
-            endSession(true);
-            
+            testWeblog1 = setupWeblog("test-weblog1", testUser);
+            testWeblog2 = setupWeblog("test-weblog2", testUser);
+
             // lookup by id
-            weblog = weblogManager.getWeblog(testWeblog1.getId());
+            weblog = weblogRepository.findById(testWeblog1.getId()).orElse(null);
             assertNotNull(weblog);
             assertEquals(testWeblog1.getHandle(), weblog.getHandle());
             
             // lookup by weblog handle
-            weblog = weblogManager.getWeblogByHandle(testWeblog1.getHandle());
+            weblog = weblogRepository.findByHandleAndVisibleTrue(testWeblog1.getHandle());
             assertNotNull(weblog);
             assertEquals(testWeblog1.getHandle(), weblog.getHandle());
             
             // make sure disabled weblogs are not returned
             weblog.setVisible(Boolean.FALSE);
             weblogManager.saveWeblog(weblog);
-            endSession(true);
-            weblog = weblogManager.getWeblogByHandle(testWeblog1.getHandle());
+            weblog = weblogRepository.findByHandleAndVisibleTrue(testWeblog1.getHandle());
             assertNull(weblog);
             
             // restore visible state
-            weblog = weblogManager.getWeblogByHandle(testWeblog1.getHandle(), Boolean.FALSE);
+            weblog = weblogRepository.findByHandle(testWeblog1.getHandle());
             weblog.setVisible(Boolean.TRUE);
             weblogManager.saveWeblog(weblog);
-            endSession(true);
-            weblog = weblogManager.getWeblogByHandle(testWeblog1.getHandle());
+            weblog = weblogRepository.findByHandleAndVisibleTrue(testWeblog1.getHandle());
             assertNotNull(weblog);
             
+            userManager.grantWeblogRole(testUser, testWeblog1, WeblogRole.EDIT_DRAFT, true);
+
             // get all weblogs for user
-            List<UserWeblogRole> userRoles = userManager.getWeblogRoles(testUser);
+            userRoles = userWeblogRoleRepository.findByUserAndPendingFalse(testUser);
+            assertEquals(1, userRoles.size());
+
+            userRoles = userWeblogRoleRepository.findByUser(testUser);
             assertEquals(2, userRoles.size());
-            weblog = userRoles.get(0).getWeblog();
-            assertNotNull(weblog);
 
         } finally {
             if (testWeblog1 != null) {
@@ -160,7 +162,6 @@ public class WeblogTestIT extends WebloggerTest {
             if (testWeblog2 != null) {
                 teardownWeblog(testWeblog2.getId());
             }
-            endSession(true);
         }
     }
 }

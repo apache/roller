@@ -52,27 +52,6 @@ public interface WeblogManager {
     void removeWeblog(Weblog weblog);
 
     /**
-     * Get weblog object by name.
-     */
-    Weblog getWeblog(String id);
-
-    /**
-     * Get weblog specified by handle (or null if enabled weblog not found).
-     *
-     * @param handle Handle of weblog
-     * @return Weblog instance or null if not found
-     */
-    Weblog getWeblogByHandle(String handle);
-
-    /**
-     * Get weblog specified by handle with option to return only enabled weblogs.
-     *
-     * @param handle Handle of weblog
-     * @return Weblog instance or null if not found
-     */
-    Weblog getWeblogByHandle(String handle, Boolean enabled);
-
-    /**
      * Get weblogs optionally restricted by user, enabled and active status.
      *
      * @param visible Get all with this visible state (or null or all)
@@ -108,31 +87,6 @@ public interface WeblogManager {
      * @return analytics tracking code, empty string if none.
      */
     String getAnalyticsTrackingCode(Weblog weblog);
-
-    /**
-     * Get count of active weblogs, returning long type as that is what the
-     * JPA COUNT aggregate returns (http://stackoverflow.com/a/3574441/1207540)
-     */
-    long getWeblogCount();
-
-    /**
-     * Return the day's most popular weblog objects as determined by blog hit count.
-     * <p>
-     * The results are pagable via the offset and length params.
-     * <p>
-     * The results are ordered by highest counts in descending order, and any
-     * weblogs which are not visible are not included.
-     *
-     * @param offset    What index in the results to begin from, positive number or 0 for beginning
-     * @param length    The number of results to return.
-     * @return A List of Weblogs, ranked by descending hit count.
-     */
-    List<Weblog> getHotWeblogs(int offset, int length);
-
-    /**
-     * Reset the hit counts for all weblogs.  This sets the counts back to 0.
-     */
-    void resetAllHitCounts();
 
     /**
      * Check for any scheduled weblog entries whose publication time has been

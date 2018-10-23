@@ -39,6 +39,7 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.comment.BlacklistCommentValidator;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
@@ -94,7 +95,11 @@ public class AdminController {
         this.blacklistCommentValidator = blacklistCommentValidator;
     }
 
-    public AdminController() {
+    private WeblogRepository weblogRepository;
+
+    @Autowired
+    public AdminController(WeblogRepository weblogRepository) {
+        this.weblogRepository = weblogRepository;
     }
 
     @Autowired
@@ -127,7 +132,8 @@ public class AdminController {
     @PostMapping(value = "/resethitcount", produces = "text/plain")
     public ResponseEntity<String> resetHitCount() {
         try {
-            weblogManager.resetAllHitCounts();
+            weblogRepository.updateDailyHitCountZero();
+            log.info("daily hit counts manually reset by administrator");
             return ResponseEntity.ok(messages.getMessage("cachedData.message.reset", null, null));
         } catch (Exception ex) {
             log.error("Error resetting weblog hit count - {}", ex);
@@ -156,7 +162,7 @@ public class AdminController {
     @PostMapping(value = "/weblog/{handle}/rebuildindex", produces = "text/plain")
     public ResponseEntity<String> rebuildIndex(@PathVariable String handle) {
         try {
-            Weblog weblog = weblogManager.getWeblogByHandle(handle);
+            Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(handle);
             if (weblog != null) {
                 indexManager.updateIndex(weblog, false);
                 return ResponseEntity.ok(messages.getMessage("cachedData.message.indexed", new Object[]{handle}, null));

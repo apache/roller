@@ -31,6 +31,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.sql.DataSource;
@@ -41,6 +42,7 @@ import java.util.Map;
 @EnableJpaRepositories(
         basePackages = {"org.tightblog.repository"}
 )
+@EnableTransactionManagement
 public class DBConfig extends JpaBaseConfiguration {
 
     private static Logger log = LoggerFactory.getLogger(DBConfig.class);

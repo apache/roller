@@ -16,9 +16,11 @@
 package org.tightblog.rendering.generators;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.Weblog;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.Utilities;
 
 import java.time.Instant;
@@ -30,16 +32,20 @@ import java.util.Map;
 @Component
 public class WeblogListGenerator {
 
-    @Autowired
     private WeblogManager weblogManager;
 
-    public void setWeblogManager(WeblogManager weblogManager) {
+    private WeblogRepository weblogRepository;
+
+    @Autowired
+    public WeblogListGenerator(WeblogManager weblogManager, WeblogRepository weblogRepository) {
         this.weblogManager = weblogManager;
+        this.weblogRepository = weblogRepository;
     }
 
     public List<WeblogData> getHotWeblogs(int length) {
         List<WeblogData> weblogDataList = new ArrayList<>();
-        List<Weblog> weblogs = weblogManager.getHotWeblogs(0, length);
+        List<Weblog> weblogs = weblogRepository.findByVisibleTrueAndHitsTodayGreaterThanOrderByHitsTodayDesc(0,
+                PageRequest.of(0, length));
         for (Weblog weblog : weblogs) {
             weblogDataList.add(weblogToWeblogData(weblog));
         }

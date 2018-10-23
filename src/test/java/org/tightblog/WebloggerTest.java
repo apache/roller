@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
@@ -34,13 +35,18 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.pojos.WebloggerProperties;
 import org.junit.Before;
 import org.tightblog.repository.BlogrollLinkRepository;
+import org.tightblog.repository.MediaDirectoryRepository;
+import org.tightblog.repository.UserRepository;
+import org.tightblog.repository.UserWeblogRoleRepository;
 import org.tightblog.repository.WeblogCategoryRepository;
+import org.tightblog.repository.WeblogEntryCommentRepository;
+import org.tightblog.repository.WeblogEntryRepository;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WeblogTemplateRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 
-import javax.annotation.Resource;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
@@ -58,42 +64,43 @@ public abstract class WebloggerTest {
     protected WeblogCategoryRepository weblogCategoryRepository;
 
     @Autowired
+    protected WeblogRepository weblogRepository;
+
+    @Autowired
+    protected WeblogEntryRepository weblogEntryRepository;
+
+    @Autowired
+    protected WeblogEntryCommentRepository weblogEntryCommentRepository;
+
+    @Autowired
     protected WeblogTemplateRepository weblogTemplateRepository;
 
-    @Resource
+    @Autowired
+    protected WebloggerPropertiesRepository webloggerPropertiesRepository;
+
+    @Autowired
+    protected UserRepository userRepository;
+
+    @Autowired
+    protected UserWeblogRoleRepository userWeblogRoleRepository;
+
+    @Autowired
     protected WeblogManager weblogManager;
 
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    @Resource
+    @Autowired
     protected WeblogEntryManager weblogEntryManager;
 
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
+    @Autowired
+    protected MediaDirectoryRepository mediaDirectoryRepository;
 
-    @Resource
+    @Autowired
     protected UserManager userManager;
 
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    @Resource
+    @Autowired
     protected JPAPersistenceStrategy strategy;
 
-    public void setJPAPersistenceStrategy(JPAPersistenceStrategy jpaStrategy) {
-        this.strategy = jpaStrategy;
-    }
-
-    @Resource
+    @Autowired
     protected URLStrategy urlStrategy;
-
-    public void setUrlStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
-    }
 
     @Before
     public void setUp() throws Exception {
@@ -116,20 +123,6 @@ public abstract class WebloggerTest {
         return weblogEntryManager.getWeblogEntry(weblogEntry.getId(), false);
     }
 
-    /**
-     * Convenience method that returns managed copy of given website.
-     */
-    protected Weblog getManagedWeblog(Weblog weblog) {
-        return weblogManager.getWeblog(weblog.getId());
-    }
-
-    protected void endSession(boolean flush) throws Exception {
-        if (flush) {
-            strategy.flush();
-        }
-        strategy.release();
-    }
-
     protected User setupUser(String userName) throws Exception {
         User testUser = new User();
         testUser.setUserName(userName.toLowerCase());
@@ -150,10 +143,10 @@ public abstract class WebloggerTest {
         return user;
     }
 
+    @Transactional
     protected void teardownUser(String userId) throws Exception {
-        User user = userManager.getUser(userId);
+        User user = userRepository.findByIdOrNull(userId);
         userManager.removeUser(user);
-        strategy.flush();
     }
 
     protected Weblog setupWeblog(String handle, User creator)
@@ -163,7 +156,7 @@ public abstract class WebloggerTest {
         Weblog testWeblog = new Weblog();
         testWeblog.setName("Test Weblog");
         testWeblog.setTagline("Test Weblog");
-        testWeblog.setHandle(handle.toLowerCase());
+        testWeblog.setHandle(handle);
         testWeblog.setEditFormat(Weblog.EditFormat.HTML);
         testWeblog.setBlacklist("");
         testWeblog.setTheme("basic");
@@ -176,11 +169,8 @@ public abstract class WebloggerTest {
         // add weblog
         weblogManager.addWeblog(testWeblog);
 
-        // flush to db
-        strategy.flush();
-
         // query for the new weblog and return it
-        Weblog weblog = weblogManager.getWeblogByHandle(handle.toLowerCase());
+        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(handle);
 
         if (weblog == null) {
             throw new IllegalStateException("error setting up weblog");
@@ -189,23 +179,18 @@ public abstract class WebloggerTest {
         return weblog;
     }
 
-    protected void teardownWeblog(String id) throws Exception {
-        WebloggerProperties props = strategy.getWebloggerProperties();
-        if (props.getMainBlog() != null && id.equals(props.getMainBlog().getId())) {
-            props.setMainBlog(null);
-        }
-        Weblog weblog = weblogManager.getWeblog(id);
+    protected void teardownWeblog(String id) {
+        Weblog weblog = weblogRepository.findByIdOrNull(id);
         weblogManager.removeWeblog(weblog);
     }
 
-    protected WeblogEntry setupWeblogEntry(String anchor, Weblog weblog, User user) throws Exception {
+    protected WeblogEntry setupWeblogEntry(String anchor, Weblog weblog, User user) {
         return setupWeblogEntry(anchor, weblog.getWeblogCategories()
                         .iterator().next(), WeblogEntry.PubStatus.PUBLISHED, weblog, user);
     }
 
     protected WeblogEntry setupWeblogEntry(String anchor, WeblogCategory cat,
-                                           WeblogEntry.PubStatus status, Weblog weblog, User user)
-            throws Exception {
+                                           WeblogEntry.PubStatus status, Weblog weblog, User user) {
 
         WeblogEntry testEntry = new WeblogEntry();
         testEntry.setTitle(anchor);
@@ -215,18 +200,15 @@ public abstract class WebloggerTest {
         testEntry.setPubTime(Instant.now());
         testEntry.setUpdateTime(Instant.now());
         testEntry.setStatus(status);
-        testEntry.setWeblog(getManagedWeblog(weblog));
+        testEntry.setWeblog(weblog);
         testEntry.setCreator(user);
         testEntry.setCategory(cat);
 
         // store entry
         weblogEntryManager.saveWeblogEntry(testEntry);
 
-        // flush to db
-        strategy.flush();
-
         // query for object
-        WeblogEntry entry = weblogEntryManager.getWeblogEntry(testEntry.getId(), false);
+        WeblogEntry entry = weblogEntryRepository.findByIdOrNull(testEntry.getId());
 
         if (entry == null) {
             throw new IllegalStateException("error setting up weblog entry");
@@ -235,10 +217,9 @@ public abstract class WebloggerTest {
         return entry;
     }
 
-    protected void teardownWeblogEntry(String id) throws Exception {
+    protected void teardownWeblogEntry(String id) {
         WeblogEntry entry = weblogEntryManager.getWeblogEntry(id, false);
         weblogEntryManager.removeWeblogEntry(entry);
-        strategy.flush();
     }
 
     protected WeblogEntryComment setupComment(String comment, WeblogEntry entry) throws Exception {
@@ -256,11 +237,8 @@ public abstract class WebloggerTest {
         // store testComment
         weblogEntryManager.saveComment(testComment, true);
 
-        // flush to db
-        strategy.flush();
-
         // query for object
-        WeblogEntryComment commentTest = weblogEntryManager.getComment(testComment.getId());
+        WeblogEntryComment commentTest = weblogEntryCommentRepository.findByIdOrNull(testComment.getId());
 
         if (commentTest == null) {
             throw new IllegalStateException("error setting up comment");
@@ -272,7 +250,6 @@ public abstract class WebloggerTest {
     protected void teardownComment(String id) throws Exception {
         WeblogEntryComment comment = weblogEntryManager.getComment(id);
         weblogEntryManager.removeComment(comment);
-        strategy.flush();
     }
 
     public static WeblogEntry genWeblogEntry(String anchor, Instant pubTime,

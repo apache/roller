@@ -24,7 +24,6 @@ import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserSearchCriteria;
@@ -32,6 +31,7 @@ import org.tightblog.pojos.UserStatus;
 import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.ui.menu.Menu;
 import org.tightblog.ui.menu.MenuHelper;
 import org.tightblog.ui.security.MultiFactorAuthenticationProvider.InvalidVerificationCodeException;
@@ -53,18 +53,13 @@ import java.util.Map;
 @RequestMapping(path = "/tb-ui/app")
 public class UIController {
 
+    private WeblogRepository weblogRepository;
+
     @Autowired
     private UserManager userManager;
 
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
     }
 
     @Autowired
@@ -93,6 +88,11 @@ public class UIController {
 
     public void setMenuHelper(MenuHelper menuHelper) {
         this.menuHelper = menuHelper;
+    }
+
+    @Autowired
+    public UIController(WeblogRepository weblogRepository) {
+        this.weblogRepository = weblogRepository;
     }
 
     @Autowired
@@ -358,7 +358,7 @@ public class UIController {
     private ModelAndView getBlogPage(Principal principal, Map<String, Object> map, String weblogId, String actionName,
                                      WeblogRole requiredRole) {
         User user = userManager.getEnabledUserByUserName(principal.getName());
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
 
         boolean isAdmin = user.hasEffectiveGlobalRole(GlobalRole.ADMIN);
         UserWeblogRole weblogRole = userManager.getWeblogRole(user, weblog);

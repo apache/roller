@@ -22,6 +22,7 @@ import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 
 import org.tightblog.rendering.generators.WeblogListGenerator.WeblogListData;
+import org.tightblog.repository.WeblogRepository;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -30,6 +31,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -42,12 +44,13 @@ public class WeblogListGeneratorTest {
     private Instant now = Instant.now();
     private Instant twoDaysAgo = now.minus(2, ChronoUnit.DAYS);
     private WeblogManager mockWeblogManager;
+    private WeblogRepository mockWeblogRepository;
 
     @Before
     public void initialize() {
         mockWeblogManager = mock(WeblogManager.class);
-        weblogListGenerator = new WeblogListGenerator();
-        weblogListGenerator.setWeblogManager(mockWeblogManager);
+        mockWeblogRepository = mock(WeblogRepository.class);
+        weblogListGenerator = new WeblogListGenerator(mockWeblogManager, mockWeblogRepository);
 
         User user1 = new User();
         user1.setScreenName("user1");
@@ -78,7 +81,8 @@ public class WeblogListGeneratorTest {
 
     @Test
     public void testGetHotWeblogs() {
-        when(mockWeblogManager.getHotWeblogs(0, 12)).thenReturn(weblogList);
+        when(mockWeblogRepository.findByVisibleTrueAndHitsTodayGreaterThanOrderByHitsTodayDesc(eq(0), any()))
+                .thenReturn(weblogList);
         List<WeblogListGenerator.WeblogData> weblogDataList = weblogListGenerator.getHotWeblogs(12);
         assertEquals(2, weblogDataList.size());
         WeblogListGenerator.WeblogData firstBlog = weblogDataList.get(0);

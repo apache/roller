@@ -111,7 +111,7 @@
             <property name="countEmpty" value="false" />
         </module>
         <module name="ParameterNumber">
-            <property name="max" value="10" />
+            <property name="max" value="15" />
             <property name="ignoreOverriddenMethods" value="true"/>
         </module>
 

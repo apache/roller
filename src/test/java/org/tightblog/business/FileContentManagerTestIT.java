@@ -58,21 +58,20 @@ public class FileContentManagerTestIT extends WebloggerTest {
     public void setUp() throws Exception {
         super.setUp();
         testUser = setupUser("FCMTestUserName1");
-        testWeblog = setupWeblog("FCMTest-handle1", testUser);
-        endSession(true);
+        testWeblog = setupWeblog("fcm-test-handle1", testUser);
     }
 
     @After
     public void tearDown() throws Exception {
-        WebloggerProperties props = strategy.getWebloggerProperties();
+
+        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
         props.setMaxFileUploadsSizeMb(30000);
         props.setDisallowedFileExtensions("");
         props.setAllowedFileExtensions("");
         props.setUsersUploadMediaFiles(true);
-        strategy.store(props);
+        webloggerPropertiesRepository.saveAndFlush(props);
         teardownWeblog(testWeblog.getId());
         teardownUser(testUser.getId());
-        endSession(true);
     }
 
     /**
@@ -80,12 +79,11 @@ public class FileContentManagerTestIT extends WebloggerTest {
      */
     @Test
     public void testFileCRUD() throws Exception {
-        WebloggerProperties props = strategy.getWebloggerProperties();
+        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
         props.setUsersUploadMediaFiles(true);
         props.setMaxFileUploadsSizeMb(1);
         props.setAllowedFileExtensions("opml");
-        strategy.store(props);
-        endSession(true);
+        webloggerPropertiesRepository.saveAndFlush(props);
 
         /* NOTE: upload dir for unit tests is set in tightblog-custom.properties */
 
@@ -118,13 +116,12 @@ public class FileContentManagerTestIT extends WebloggerTest {
      */
     @Test
     public void testCanSave() throws Exception {
-        WebloggerProperties props = strategy.getWebloggerProperties();
+        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
         props.setMaxFileSizeMb(1);
         props.setDisallowedFileExtensions("");
         props.setAllowedFileExtensions("");
         props.setUsersUploadMediaFiles(true);
-        strategy.store(props);
-        endSession(true);
+        webloggerPropertiesRepository.saveAndFlush(props);
 
         // file too big
         boolean canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 2500000, null);
@@ -135,8 +132,7 @@ public class FileContentManagerTestIT extends WebloggerTest {
         assertTrue(canSave);
 
         props.setDisallowedFileExtensions("gif");
-        strategy.merge(props);
-        endSession(true);
+        webloggerPropertiesRepository.saveAndFlush(props);
 
         // forbidden types check should fail
         canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 10, null);
@@ -148,8 +144,7 @@ public class FileContentManagerTestIT extends WebloggerTest {
 
         props.setUsersUploadMediaFiles(false);
         props.setDisallowedFileExtensions("");
-        strategy.merge(props);
-        endSession(true);
+        webloggerPropertiesRepository.saveAndFlush(props);
 
         // uploads disabled should fail
         canSave = fileContentManager.canSave(testWeblog, "test.gif", "text/plain", 10, null);

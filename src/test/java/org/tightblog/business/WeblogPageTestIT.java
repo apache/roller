@@ -50,8 +50,7 @@ public class WeblogPageTestIT extends WebloggerTest {
     public void setUp() throws Exception {
         super.setUp();
         testUser = setupUser("wtTestUser");
-        testWeblog = setupWeblog("wtTestWeblog", testUser);
-        endSession(true);
+        testWeblog = setupWeblog("wt-test-weblog", testUser);
 
         testPage = new WeblogTemplate();
         testPage.setRole(ComponentType.WEBLOG);
@@ -59,14 +58,13 @@ public class WeblogPageTestIT extends WebloggerTest {
         testPage.setDescription("Test Weblog Template");
         testPage.setRelativePath("testTemp");
         testPage.setLastModified(Instant.now());
-        testPage.setWeblog(getManagedWeblog(testWeblog));
+        testPage.setWeblog(testWeblog);
     }
     
     @After
     public void tearDown() throws Exception {
         teardownWeblog(testWeblog.getId());
         teardownUser(testUser.getId());
-        endSession(true);
         testPage = null;
     }
     
@@ -79,29 +77,25 @@ public class WeblogPageTestIT extends WebloggerTest {
         
         // create template
         weblogTemplateRepository.save(testPage);
-        endSession(true);
-        
+
         // check that create was successful
-        testWeblog = getManagedWeblog(testWeblog);
         template = weblogTemplateRepository.findByWeblogAndName(testWeblog, testPage.getName());
         assertNotNull(template);
 
         // update template
         template.setName("testtesttest");
         weblogTemplateRepository.save(template);
-        endSession(true);
-        
+
         // check that update was successful
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         template = weblogTemplateRepository.findByWeblogAndName(testWeblog, "testtesttest");
         assertNotNull(template);
 
         // delete template
         weblogTemplateRepository.delete(template);
-        endSession(true);
-        
+
         // check that delete was successful
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         template = weblogTemplateRepository.findByWeblogAndName(testWeblog, testPage.getName());
         assertNull(template);
     }
@@ -117,14 +111,13 @@ public class WeblogPageTestIT extends WebloggerTest {
         // create page
         weblogTemplateRepository.save(testPage);
         String id = testPage.getId();
-        endSession(true);
-        
+
         // lookup by id
         page = weblogTemplateRepository.findById(id).orElse(null);
         assertNotNull(page);
 
         // lookup by action
-        testWeblog = getManagedWeblog(testWeblog);
+        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         page = weblogTemplateRepository.findByWeblogAndRole(testWeblog, testPage.getRole());
         assertNotNull(page);
 
@@ -143,7 +136,6 @@ public class WeblogPageTestIT extends WebloggerTest {
         
         // delete page
         weblogTemplateRepository.delete(page);
-        endSession(true);
     }
     
 }

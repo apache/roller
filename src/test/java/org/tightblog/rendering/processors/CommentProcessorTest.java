@@ -24,7 +24,6 @@ import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
@@ -38,6 +37,7 @@ import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.HTMLSanitizer;
 
 import javax.servlet.RequestDispatcher;
@@ -66,7 +66,7 @@ public class CommentProcessorTest {
     private CommentProcessor processor;
     private WeblogPageRequest commentRequest;
     private MessageSource mockMessageSource;
-    private WeblogManager mockWM;
+    private WeblogRepository mockWR;
     private WeblogEntryManager mockWEM;
     private UserManager mockUM;
 
@@ -84,14 +84,13 @@ public class CommentProcessorTest {
         WeblogPageRequest.Creator wprCreator = mock(WeblogPageRequest.Creator.class);
         commentRequest = new WeblogPageRequest();
         when(wprCreator.create(any())).thenReturn(commentRequest);
-        mockWM = mock(WeblogManager.class);
+        mockWR = mock(WeblogRepository.class);
         mockWEM = mock(WeblogEntryManager.class);
         mockUM = mock(UserManager.class);
         mockMessageSource = mock(MessageSource.class);
-        processor = new CommentProcessor();
+        processor = new CommentProcessor(mockWR);
         processor.setPersistenceStrategy(mockJPA);
         processor.setWeblogPageRequestCreator(wprCreator);
-        processor.setWeblogManager(mockWM);
         processor.setWeblogEntryManager(mockWEM);
         processor.setUserManager(mockUM);
         processor.setMessages(mockMessageSource);
@@ -121,7 +120,7 @@ public class CommentProcessorTest {
 
     @Test
     public void postCommentReturn404IfWeblogEntryUnavailable() {
-        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(new Weblog());
+        when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(new Weblog());
 
         try {
             // entry null
@@ -151,7 +150,7 @@ public class CommentProcessorTest {
         entry.setAnchor("myblogentry");
         entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
 
-        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
+        when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
         when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
 
         WeblogEntryComment incomingComment = new WeblogEntryComment();
@@ -214,7 +213,7 @@ public class CommentProcessorTest {
         entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
         commentRequest.setWeblogEntry(entry);
 
-        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
+        when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
         when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
 
         commentRequest.setAuthenticatedUser("bob");
@@ -244,7 +243,7 @@ public class CommentProcessorTest {
         entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
         commentRequest.setWeblogEntry(entry);
 
-        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
+        when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
         when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
 
         // if no authenticated user, weblog page request's User object should not be populated
@@ -273,7 +272,7 @@ public class CommentProcessorTest {
         Weblog weblog = new Weblog();
         weblog.setLocale("en");
         weblog.setHandle("myhandle");
-        when(mockWM.getWeblogByHandle("myhandle", true)).thenReturn(weblog);
+        when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
         when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
         when(mockWEM.canSubmitNewComments(entry)).thenReturn(true);
 

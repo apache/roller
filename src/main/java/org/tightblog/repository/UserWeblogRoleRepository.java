@@ -18,20 +18,31 @@ package org.tightblog.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.tightblog.pojos.User;
+import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogCategory;
 
 import java.util.List;
 
 @Repository
 @Transactional("transactionManager")
-public interface WeblogCategoryRepository extends JpaRepository<WeblogCategory, String> {
+public interface UserWeblogRoleRepository extends JpaRepository<UserWeblogRole, String> {
 
-    WeblogCategory findByWeblogAndName(Weblog weblog, String name);
+    List<UserWeblogRole> findByUser(User user);
 
-    List<WeblogCategory> findByWeblogOrderByPosition(Weblog weblog);
+    List<UserWeblogRole> findByUserAndPendingFalse(User user);
 
-    default WeblogCategory findByIdOrNull(String id) {
-        return findById(id).orElse(null);
-    }
+    List<UserWeblogRole> findByWeblog(Weblog weblog);
+
+    List<UserWeblogRole> findByWeblogAndPendingTrue(Weblog weblog);
+
+    List<UserWeblogRole> findByWeblogAndPendingFalse(Weblog weblog);
+
+    UserWeblogRole findByUserAndWeblog(User user, Weblog weblog);
+
+    UserWeblogRole findByUserAndWeblogAndPendingFalse(User user, Weblog weblog);
+
+    Long deleteByUser(User user);
+
+    Long deleteByWeblog(Weblog weblog);
 }

@@ -21,6 +21,7 @@
 package org.tightblog.business;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,16 +60,16 @@ public class IndexManagerTestIT extends WebloggerTest {
     public void setUp() throws Exception {
         super.setUp();
         testUser = setupUser("entryTestUser");
-        testWeblog = setupWeblog("entryTestWeblog", testUser);
-        endSession(true);
-        Assert.assertEquals(1, weblogManager.getWeblogCount());
+        testWeblog = setupWeblog("entry-test-weblog", testUser);
+        // ensure exactly one weblog so downstream tests don't become inaccurate
+        List<Weblog> weblogList = weblogRepository.findAll();
+        weblogList.forEach(w -> Assert.assertEquals("entry-test-weblog", w.getHandle()));
     }
 
     @After
     public void tearDown() throws Exception {
         teardownWeblog(testWeblog.getId());
         teardownUser(testUser.getId());
-        endSession(true);
     }
 
     @Test
@@ -84,13 +85,12 @@ public class IndexManagerTestIT extends WebloggerTest {
         wd1.setStatus(PubStatus.PUBLISHED);
         wd1.setUpdateTime(Instant.now());
         wd1.setPubTime(Instant.now());
-        wd1.setWeblog(getManagedWeblog(testWeblog));
+        wd1.setWeblog(testWeblog);
 
         WeblogCategory cat = weblogCategoryRepository.findByWeblogAndName(testWeblog, "General");
         wd1.setCategory(cat);
 
         weblogEntryManager.saveWeblogEntry(wd1);
-        endSession(true);
         wd1 = getManagedWeblogEntry(wd1);
 
         indexManager.executeIndexOperationNow(
@@ -107,13 +107,12 @@ public class IndexManagerTestIT extends WebloggerTest {
         wd2.setCreator(testUser);
         wd2.setUpdateTime(Instant.now());
         wd2.setPubTime(Instant.now());
-        wd2.setWeblog(getManagedWeblog(testWeblog));
+        wd2.setWeblog(testWeblog);
 
         cat = weblogCategoryRepository.findByWeblogAndName(testWeblog, "General");
         wd2.setCategory(cat);
 
         weblogEntryManager.saveWeblogEntry(wd2);
-        endSession(true);
         wd2 = getManagedWeblogEntry(wd2);
 
         indexManager.executeIndexOperationNow(

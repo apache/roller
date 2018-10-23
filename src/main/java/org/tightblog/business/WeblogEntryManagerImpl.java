@@ -32,6 +32,9 @@ import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.repository.WeblogEntryCommentRepository;
+import org.tightblog.repository.WeblogEntryRepository;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.Utilities;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.node.Node;
@@ -66,27 +69,44 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
 
     private static Logger log = LoggerFactory.getLogger(WeblogEntryManagerImpl.class);
 
-    @Autowired
+    private WeblogRepository weblogRepository;
+
+    private WeblogEntryRepository weblogEntryRepository;
+
+    private WeblogEntryCommentRepository weblogEntryCommentRepository;
+
     private JPAPersistenceStrategy strategy;
 
-    @Autowired
     private URLStrategy urlStrategy;
+
+    @Autowired
+    public WeblogEntryManagerImpl(WeblogRepository weblogRepository, WeblogEntryRepository weblogEntryRepository,
+                                  WeblogEntryCommentRepository weblogEntryCommentRepository,
+                                  JPAPersistenceStrategy strategy, URLStrategy urlStrategy) {
+        this.weblogRepository = weblogRepository;
+        this.weblogEntryRepository = weblogEntryRepository;
+        this.weblogEntryCommentRepository = weblogEntryCommentRepository;
+        this.strategy = strategy;
+        this.urlStrategy = urlStrategy;
+    }
 
     // cached mapping of entryAnchors -> entryIds
     private Map<String, String> entryAnchorToIdMap = Collections.synchronizedMap(new HashMap<>());
 
     @Override
     public void saveComment(WeblogEntryComment comment, boolean refreshWeblog) {
+        weblogEntryCommentRepository.saveAndFlush(comment);
         if (refreshWeblog) {
             comment.getWeblogEntry().getWeblog().invalidateCache();
+            weblogRepository.saveAndFlush(comment.getWeblogEntry().getWeblog());
         }
-        this.strategy.store(comment);
     }
 
     @Override
     public void removeComment(WeblogEntryComment comment) {
+        weblogEntryCommentRepository.deleteById(comment.getId());
         comment.getWeblogEntry().getWeblog().invalidateCache();
-        this.strategy.remove(comment);
+        weblogRepository.saveAndFlush(comment.getWeblogEntry().getWeblog());
     }
 
     @Override
@@ -113,28 +133,16 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         // Store value object (creates new or updates existing)
         entry.setUpdateTime(Instant.now());
 
-        this.strategy.store(entry);
-        entry.getWeblog().invalidateCache();
-
-        if (entry.isPublished()) {
-            strategy.store(entry.getWeblog());
-        }
+        weblogEntryRepository.save(entry);
+        weblogRepository.saveAndFlush(entry.getWeblog());
     }
 
     @Override
     public void removeWeblogEntry(WeblogEntry entry) {
-        CommentSearchCriteria csc = new CommentSearchCriteria();
-        csc.setEntry(entry);
-
-        // remove comments
-        List<WeblogEntryComment> comments = getComments(csc);
-        for (WeblogEntryComment comment : comments) {
-            this.strategy.remove(comment);
-        }
-
-        // remove entry
-        this.strategy.remove(entry);
+        weblogEntryCommentRepository.deleteByWeblogEntry(entry);
+        weblogEntryRepository.delete(entry);
         entry.getWeblog().invalidateCache();
+        weblogRepository.saveAndFlush(entry.getWeblog());
 
         // remove entry from cache mapping
         this.entryAnchorToIdMap.remove(entry.getWeblog().getHandle() + ":" + entry.getAnchor());
@@ -535,12 +543,12 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
 
     @Override
     public WeblogEntryComment getComment(String id) {
-        return this.strategy.load(WeblogEntryComment.class, id);
+        return weblogEntryCommentRepository.findByIdOrNull(id);
     }
 
     @Override
     public WeblogEntry getWeblogEntry(String id, boolean bypassCache) {
-        return strategy.load(WeblogEntry.class, id, bypassCache);
+        return weblogEntryRepository.findByIdOrNull(id);
     }
 
     @Override

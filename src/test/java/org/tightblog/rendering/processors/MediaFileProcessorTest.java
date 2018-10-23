@@ -22,11 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tightblog.WebloggerTest;
 import org.tightblog.business.MediaFileManager;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.MediaFile;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.requests.WeblogRequest;
+import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +42,6 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -56,8 +55,7 @@ public class MediaFileProcessorTest {
     private WeblogRequest mediaFileRequest;
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
-    private LazyExpiringCache mockCache;
-    private WeblogManager mockWM;
+    private WeblogRepository mockWR;
     private MediaFileManager mockMFM;
 
     private static final String TEST_IMAGE = "/hawk.jpg";
@@ -73,17 +71,16 @@ public class MediaFileProcessorTest {
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
         mediaFileRequest = new WeblogRequest();
         mediaFileRequest.setExtraPathInfo("abc");
-        mockCache = mock(LazyExpiringCache.class);
-        processor = new MediaFileProcessor();
+        LazyExpiringCache mockCache = mock(LazyExpiringCache.class);
+        mockWR = mock(WeblogRepository.class);
+        processor = new MediaFileProcessor(mockWR);
         processor.setWeblogMediaCache(mockCache);
         WeblogRequest.Creator wprCreator = mock(WeblogRequest.Creator.class);
         when(wprCreator.create(mockRequest)).thenReturn(mediaFileRequest);
         processor.setWeblogRequestCreator(wprCreator);
-        mockWM = mock(WeblogManager.class);
         Weblog weblog = new Weblog();
         weblog.setHandle("myhandle");
-        when(mockWM.getWeblogByHandle(any(), eq(true))).thenReturn(weblog);
-        processor.setWeblogManager(mockWM);
+        when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
         mockMFM = mock(MediaFileManager.class);
         processor.setMediaFileManager(mockMFM);
     }
@@ -91,7 +88,7 @@ public class MediaFileProcessorTest {
     @Test
     public void test404OnMissingWeblog() throws IOException {
         mediaFileRequest.setWeblogHandle("myhandle");
-        when(mockWM.getWeblogByHandle("myhandle", true)).thenReturn(null);
+        when(mockWR.findByHandleAndVisibleTrue("myhandle")).thenReturn(null);
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }

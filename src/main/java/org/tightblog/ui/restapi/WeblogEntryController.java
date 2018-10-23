@@ -40,6 +40,7 @@ import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.repository.WeblogCategoryRepository;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
@@ -81,10 +82,13 @@ public class WeblogEntryController {
 
     private static DateTimeFormatter pubDateFormat = DateTimeFormatter.ofPattern("M/d/yyyy");
 
+    private WeblogRepository weblogRepository;
+
     private WeblogCategoryRepository weblogCategoryRepository;
 
     @Autowired
-    public WeblogEntryController(WeblogCategoryRepository weblogCategoryRepository) {
+    public WeblogEntryController(WeblogRepository weblogRepository, WeblogCategoryRepository weblogCategoryRepository) {
+        this.weblogRepository = weblogRepository;
         this.weblogCategoryRepository = weblogCategoryRepository;
     }
 
@@ -152,7 +156,7 @@ public class WeblogEntryController {
                                               @RequestBody WeblogEntrySearchCriteria criteria, Principal principal,
                                               HttpServletResponse response) {
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
 
             WeblogEntryData data = new WeblogEntryData();
@@ -200,7 +204,7 @@ public class WeblogEntryController {
 
         // Get user permissions and locale
         User user = userManager.getEnabledUserByUserName(principal.getName());
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
 
         if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.POST)) {
             WeblogEntrySearchFields fields = new WeblogEntrySearchFields();
@@ -274,7 +278,6 @@ public class WeblogEntryController {
 
                     // remove entry itself
                     weblogEntryManager.removeWeblogEntry(itemToRemove);
-                    persistenceStrategy.flush();
 
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
@@ -296,7 +299,7 @@ public class WeblogEntryController {
         List<WeblogEntryTagAggregate> tags;
 
         try {
-            Weblog weblog = weblogManager.getWeblog(id);
+            Weblog weblog = weblogRepository.findById(id).orElse(null);
             tags = weblogManager.getTags(weblog, null, prefix, 0, maxAutocompleteTags);
 
             WeblogTagData wtd = new WeblogTagData();
@@ -337,7 +340,7 @@ public class WeblogEntryController {
                                                          @PathVariable WeblogEntry.PubStatus pubStatus,
                                                Principal p, HttpServletResponse response) {
 
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         WeblogRole minimumRole = (pubStatus == PubStatus.DRAFT || pubStatus == PubStatus.PENDING) ?
                 WeblogRole.EDIT_DRAFT : WeblogRole.POST;
         if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), minimumRole)) {
@@ -403,7 +406,7 @@ public class WeblogEntryController {
 
         // Get user permissions and locale
         User user = userManager.getEnabledUserByUserName(principal.getName());
-        Weblog weblog = weblogManager.getWeblog(weblogId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
 
         if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.EDIT_DRAFT)) {
             EntryEditMetadata fields = new EntryEditMetadata();
@@ -501,7 +504,8 @@ public class WeblogEntryController {
 
             // Check user permissions
             User user = userManager.getEnabledUserByUserName(p.getName());
-            Weblog weblog = (entry == null) ? weblogManager.getWeblog(weblogId) : entry.getWeblog();
+            Weblog weblog = (entry == null) ? weblogRepository.findById(weblogId).orElse(null)
+                    : entry.getWeblog();
 
             WeblogRole necessaryRole = (PubStatus.PENDING.equals(entryData.getStatus()) ||
                     PubStatus.DRAFT.equals(entryData.getStatus())) ? WeblogRole.EDIT_DRAFT : WeblogRole.POST;

@@ -33,6 +33,7 @@ import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
@@ -69,6 +70,8 @@ public class PageProcessor extends AbstractProcessor {
     private static Logger log = LoggerFactory.getLogger(PageProcessor.class);
 
     public static final String PATH = "/tb-ui/rendering/page";
+
+    private WeblogRepository weblogRepository;
 
     @Autowired
     private LazyExpiringCache weblogPageCache;
@@ -115,8 +118,9 @@ public class PageProcessor extends AbstractProcessor {
 
     private WeblogPageRequest.Creator weblogPageRequestCreator;
 
-    PageProcessor() {
+    PageProcessor(WeblogRepository weblogRepository) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
+        this.weblogRepository = weblogRepository;
     }
 
     void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
@@ -132,7 +136,7 @@ public class PageProcessor extends AbstractProcessor {
     void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
 
-        Weblog weblog = weblogManager.getWeblogByHandle(incomingRequest.getWeblogHandle(), true);
+        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

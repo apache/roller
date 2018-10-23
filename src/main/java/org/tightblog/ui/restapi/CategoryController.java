@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.repository.WeblogCategoryRepository;
+import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -49,10 +50,13 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 public class CategoryController {
 
+    private WeblogRepository weblogRepository;
+
     private WeblogCategoryRepository weblogCategoryRepository;
 
     @Autowired
-    public CategoryController(WeblogCategoryRepository weblogCategoryRepository) {
+    public CategoryController(WeblogRepository weblogRepository, WeblogCategoryRepository weblogCategoryRepository) {
+        this.weblogRepository = weblogRepository;
         this.weblogCategoryRepository = weblogCategoryRepository;
     }
 
@@ -104,7 +108,7 @@ public class CategoryController {
     public void addCategory(@RequestParam(name = "weblogId") String weblogId, @RequestBody WeblogCategory newCategory,
                             Principal p, HttpServletResponse response) throws ServletException {
         try {
-            Weblog weblog = weblogManager.getWeblog(weblogId);
+            Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
             if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
                 WeblogCategory wc = new WeblogCategory(weblog, newCategory.getName());
                 try {
@@ -124,7 +128,7 @@ public class CategoryController {
 
     @GetMapping(value = "/tb-ui/authoring/rest/categories")
     public List<WeblogCategory> getWeblogCategories(@RequestParam(name = "weblogId") String weblogId) {
-        return weblogManager.getWeblogCategories(weblogManager.getWeblog(weblogId))
+        return weblogManager.getWeblogCategories(weblogRepository.findById(weblogId).orElse(null))
                 .stream()
                 .peek(cat -> cat.setWeblog(null))
                 .collect(Collectors.toList());
