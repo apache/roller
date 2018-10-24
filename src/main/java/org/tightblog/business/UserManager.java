@@ -21,8 +21,6 @@
 package org.tightblog.business;
 
 import org.tightblog.pojos.User;
-import org.tightblog.pojos.UserCredentials;
-import org.tightblog.pojos.UserSearchCriteria;
 import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
@@ -35,32 +33,11 @@ import java.util.List;
 public interface UserManager {
 
     /**
-     * Save a user.
-     *
-     * @param user User to be saved.
-     */
-    void saveUser(User user);
-
-    /**
      * Remove a user.
      *
      * @param user User to be removed.
      */
     void removeUser(User user);
-
-    /**
-     * Get count of enabled users, returning long type as that is what the
-     * JPA COUNT aggregate returns (http://stackoverflow.com/a/3574441/1207540)
-     */
-    long getUserCount();
-
-    /**
-     * Retrieve a user by its internal identifier id.
-     *
-     * @param id the id of the user to retrieve.
-     * @return the user object with specified id or null if not found
-     */
-    User getUser(String id);
 
     /**
      * Lookup an enabled user by UserName.
@@ -74,14 +51,6 @@ public interface UserManager {
     User getEnabledUserByUserName(String userName);
 
     /**
-     * Get user credentials by user name.  Only enabled users are retrievable.
-     *
-     * @param userName User Name of user to lookup.
-     * @return The user, or null if not found or not enabled.
-     */
-    UserCredentials getCredentialsByUserName(String userName);
-
-    /**
      * Update user password.  This method takes an unencrypted password
      * and will encrypt it prior to storing in database.
      *
@@ -89,14 +58,6 @@ public interface UserManager {
      * @param newPassword unencrypted password.
      */
     void updateCredentials(String userId, String newPassword);
-
-    /**
-     * Lookup users based on supplied criteria
-     *
-     * @param criteria UserSearchCriteria object indicating search parameters
-     * @return list of User objects matching desired criteria
-     */
-    List<User> getUsers(UserSearchCriteria criteria);
 
     /**
      * Check user's rights for a specified weblog
@@ -123,14 +84,6 @@ public interface UserManager {
     boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role);
 
     /**
-     * Retrieve a user by its internal identifier id.
-     *
-     * @param id the id of the user weblog role object to retrieve.
-     * @return the user object with specified id or null if not found
-     */
-    UserWeblogRole getUserWeblogRole(String id);
-
-    /**
      * Get user's WeblogRole within a weblog or null if none.
      *
      * @param user   User whose role is being checked
@@ -148,14 +101,6 @@ public interface UserManager {
      * @param pending Whether grantee approve the role before it becomes effective
      */
     void grantWeblogRole(User user, Weblog weblog, WeblogRole role, boolean pending);
-
-    /**
-     * Confirm user's participation with the specified weblog or throw exception if no pending invitation exists.
-     * (changes state of WeblogRole record to pending = false)
-     *
-     * @param userWeblogRole pending UserWeblogRole object containing user and weblog combination
-     */
-    void acceptWeblogInvitation(UserWeblogRole userWeblogRole);
 
     /**
      * Revoke from user his WeblogRole for a given weblog.
@@ -191,10 +136,4 @@ public interface UserManager {
      */
     String generateMFAQRUrl(User user);
 
-    /**
-     * Erases a user's MFA secret, requiring them to re-register for a new
-     * QR code upon re-login.
-     * @param userId User to obtain QA code for
-     */
-    void eraseMFASecret(String userId);
 }

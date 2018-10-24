@@ -26,23 +26,12 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "weblogger_user")
-@NamedQueries({
-        @NamedQuery(name = "UserCredentials.getByUserName",
-                query = "SELECT uc FROM UserCredentials uc, User u WHERE uc.userName= ?1 " +
-                        "AND u.id = uc.id AND u.status = org.tightblog.pojos.UserStatus.ENABLED"),
-        @NamedQuery(name = "UserCredentials.changePassword",
-                query = "UPDATE UserCredentials u SET u.password = ?1 WHERE u.id = ?2"),
-        @NamedQuery(name = "UserCredentials.eraseMfaCode",
-                query = "UPDATE UserCredentials u SET u.mfaSecret = null WHERE u.id = ?1")
-})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserCredentials {
 

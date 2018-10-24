@@ -61,7 +61,6 @@ public class WeblogTestIT extends WebloggerTest {
         Weblog weblog;
 
         Weblog testWeblog = new Weblog();
-        testUser = getManagedUser(testUser);
         testWeblog.setName("Test Weblog");
         testWeblog.setTagline("Test Weblog");
         testWeblog.setHandle("testweblog");

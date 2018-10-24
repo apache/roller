@@ -83,7 +83,7 @@
     </security:http>
 
     <security:authentication-manager>
-        <security:authentication-provider ref="dbAuthProvider"/>
+        <security:authentication-provider ref="multiFactorAuthenticationProvider"/>
     </security:authentication-manager>
 
     <!-- Using cookie instead of default session header for CSRF tokens as former appear easier to refresh for all app tabs -->
@@ -99,15 +99,6 @@
 
     <beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter">
         <beans:property name="rolePrefix" value=""/>
-    </beans:bean>
-
-    <beans:bean id="dbAuthProvider" class="org.tightblog.ui.security.MultiFactorAuthenticationProvider">
-        <beans:property name="userDetailsService" ref="customUserDetailsService"/>
-        <beans:property name="userManager" ref="userManager"/>
-        <beans:property name="messages" ref="messageSource"/>
-        <beans:property name="passwordEncoder">
-            <beans:bean class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
-        </beans:property>
     </beans:bean>
 
     <beans:bean id="tbDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">

@@ -26,11 +26,11 @@ import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
-import org.tightblog.pojos.UserSearchCriteria;
 import org.tightblog.pojos.UserStatus;
 import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
+import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.ui.menu.Menu;
 import org.tightblog.ui.menu.MenuHelper;
@@ -55,44 +55,30 @@ public class UIController {
 
     private WeblogRepository weblogRepository;
 
-    @Autowired
     private UserManager userManager;
 
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
+    private UserRepository userRepository;
 
-    @Autowired
     private WeblogEntryManager weblogEntryManager;
 
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
-    @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
 
-    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
-        this.persistenceStrategy = strategy;
-    }
-
-    @Autowired
     private MailManager mailManager;
 
-    public void setMailManager(MailManager manager) {
-        mailManager = manager;
-    }
-
-    @Autowired
     private MenuHelper menuHelper;
 
-    public void setMenuHelper(MenuHelper menuHelper) {
-        this.menuHelper = menuHelper;
-    }
-
     @Autowired
-    public UIController(WeblogRepository weblogRepository) {
+    public UIController(WeblogRepository weblogRepository, UserManager userManager, UserRepository userRepository,
+                        WeblogEntryManager weblogEntryManager, JPAPersistenceStrategy persistenceStrategy,
+                        MailManager mailManager, MenuHelper menuHelper, MessageSource messages) {
         this.weblogRepository = weblogRepository;
+        this.userManager = userManager;
+        this.userRepository = userRepository;
+        this.weblogEntryManager = weblogEntryManager;
+        this.persistenceStrategy = persistenceStrategy;
+        this.mailManager = mailManager;
+        this.menuHelper = menuHelper;
+        this.messages = messages;
     }
 
     @Autowired
@@ -124,17 +110,14 @@ public class UIController {
             }
             myMap.put("actionError", errorMessage);
         } else if (activationCode != null) {
-            UserSearchCriteria usc = new UserSearchCriteria();
-            usc.setActivationCode(activationCode);
-            List<User> users = userManager.getUsers(usc);
+            User user = userRepository.findByActivationCode(activationCode);
 
-            if (users.size() == 1) {
-                User user = users.get(0);
+            if (user != null) {
                 user.setActivationCode(null);
                 user.setStatus(UserStatus.EMAILVERIFIED);
                 myMap.put("actionMessage", messages.getMessage("welcome.user.account.need.approval", null,
                         request.getLocale()));
-                userManager.saveUser(user);
+                userRepository.saveAndFlush(user);
                 mailManager.sendRegistrationApprovalRequest(user);
             } else {
                 myMap.put("actionError", messages.getMessage("error.activate.user.invalidActivationCode", null,
@@ -216,7 +199,7 @@ public class UIController {
             path = '/' + defaultBlog.getHandle();
         } else {
             // new install?  Redirect to register or login page based on whether a user has already been created.
-            long userCount = userManager.getUserCount();
+            long userCount = userRepository.count();
             if (userCount == 0) {
                 path = "/tb-ui/app/register";
             } else {

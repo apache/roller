@@ -24,22 +24,25 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.tightblog.business.UserManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.tightblog.pojos.UserCredentials;
+import org.tightblog.repository.UserCredentialsRepository;
 
+@Component
 public class MultiFactorAuthenticationProvider extends DaoAuthenticationProvider {
 
-    private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
+    private UserCredentialsRepository userCredentialsRepository;
 
     @Autowired
-    private MessageSource messages;
-
-    public void setMessages(MessageSource messages) {
-        this.messages = messages;
+    public MultiFactorAuthenticationProvider(UserCredentialsRepository userCredentialsRepository,
+                                             UserDetailsService userDetailsService,
+                                             MessageSource messageSource) {
+        this.userCredentialsRepository = userCredentialsRepository;
+        setPasswordEncoder(new BCryptPasswordEncoder());
+        setUserDetailsService(userDetailsService);
+        setMessageSource(messageSource);
     }
 
     @Value("${mfa.enabled}")
@@ -54,7 +57,7 @@ public class MultiFactorAuthenticationProvider extends DaoAuthenticationProvider
         if (mfaEnabled) {
             String verificationCode = ((CustomWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
 
-            UserCredentials creds = userManager.getCredentialsByUserName(auth.getName());
+            UserCredentials creds = userCredentialsRepository.findByUserName(auth.getName());
 
             if (creds.getMfaSecret() != null) {
                 Totp totp = new Totp(creds.getMfaSecret());

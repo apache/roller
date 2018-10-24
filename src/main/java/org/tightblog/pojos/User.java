@@ -31,8 +31,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
 import java.time.Instant;
@@ -40,18 +38,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "weblogger_user")
-@NamedQueries({
-        @NamedQuery(name = "User.getByEnabled&EndDateOrderByStartDateDesc",
-                query = "SELECT u FROM User u WHERE u.status = ?1 AND u.dateCreated < ?2 ORDER BY u.dateCreated DESC"),
-        @NamedQuery(name = "User.getByEndDateOrderByStartDateDesc",
-                query = "SELECT u FROM User u WHERE u.dateCreated < ?1 ORDER BY u.dateCreated DESC"),
-        @NamedQuery(name = "User.getByUserName&Enabled",
-                query = "SELECT u FROM User u WHERE u.userName= ?1 AND u.status = org.tightblog.pojos.UserStatus.ENABLED"),
-        @NamedQuery(name = "User.getByEndDate&StartDateOrderByStartDateDesc",
-                query = "SELECT u FROM User u WHERE u.dateCreated < ?1 AND u.dateCreated > ?2 ORDER BY u.dateCreated DESC"),
-        @NamedQuery(name = "User.getGlobalRole",
-                query = "SELECT u.globalRole FROM User u WHERE u.userName = ?1")
-})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
     private String id = Utilities.generateUUID();

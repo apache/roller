@@ -17,11 +17,11 @@ package org.tightblog.ui.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.UserManager;
 import org.tightblog.pojos.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.tightblog.repository.UserRepository;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,10 +32,11 @@ import java.time.Instant;
 @Component
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    @Autowired
-    private UserManager userManager;
+    private UserRepository userRepository;
 
-    public CustomAuthenticationSuccessHandler() {
+    @Autowired
+    public CustomAuthenticationSuccessHandler(UserRepository userRepository) {
+        this.userRepository = userRepository;
         /* useReferer works in conjuction with CustomAccessDeniedHandlerImpl, so non-AJAX CSRF exceptions
         can redirect back to appropriate page after re-authentication */
         setUseReferer(true);
@@ -48,10 +49,10 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         Object authPrincipal = authentication.getPrincipal();
 
         UserDetails springUser = (UserDetails) authPrincipal;
-        User user = userManager.getEnabledUserByUserName(springUser.getUsername());
+        User user = userRepository.findEnabledByUserName(springUser.getUsername());
         super.onAuthenticationSuccess(request, response, authentication);
         user.setLastLogin(Instant.now());
-        userManager.saveUser(user);
+        userRepository.saveAndFlush(user);
     }
 
     @Override

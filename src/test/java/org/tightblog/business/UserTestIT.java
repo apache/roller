@@ -26,7 +26,6 @@ import java.util.List;
 import org.tightblog.WebloggerTest;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
-import org.tightblog.pojos.UserSearchCriteria;
 import org.tightblog.pojos.UserStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,7 +63,7 @@ public class UserTestIT extends WebloggerTest {
         assertNull(user);
         
         // add test user
-        userManager.saveUser(testUser);
+        userRepository.saveAndFlush(testUser);
         String userName = testUser.getUserName();
 
         // make sure test user exists
@@ -74,7 +73,7 @@ public class UserTestIT extends WebloggerTest {
         
         // modify user and save
         user.setScreenName("testtesttest");
-        userManager.saveUser(user);
+        userRepository.saveAndFlush(user);
 
         // make sure changes were saved
         user = userManager.getEnabledUserByUserName(userName);
@@ -116,31 +115,20 @@ public class UserTestIT extends WebloggerTest {
         assertEquals(testUser.getUserName(), user1.getUserName());
         
         // lookup by getUsers() - all users
-        UserSearchCriteria usc = new UserSearchCriteria();
-        usc.setOffset(0);
-        List<User> users = userManager.getUsers(usc);
+        List<User> users = userRepository.findAll();
         assertEquals(2, users.size());
 
         // lookup by getUsers() - enabled only
-        usc.setStatus(UserStatus.ENABLED);
-        users = userManager.getUsers(usc);
+        users = userRepository.findByStatusEnabled();
         assertEquals(1, users.size());
         user1 = users.get(0);
         assertNotNull(user1);
         assertEquals(testUser.getScreenName(), user1.getScreenName());
 
-        // lookup by getUsers() - disabled only
-        usc.setStatus(UserStatus.DISABLED);
-        users = userManager.getUsers(usc);
-        assertEquals(1, users.size());
-        user2 = users.get(0);
-        assertNotNull(user2);
-        assertEquals(testUser2.getScreenName(), user2.getScreenName());
-
         // make sure disable users are not returned
         user1.setStatus(UserStatus.DISABLED);
-        userManager.saveUser(user1);
-        user1 = userManager.getEnabledUserByUserName(testUser.getUserName());
+        userRepository.saveAndFlush(user1);
+        user1 = userRepository.findEnabledByUserName(testUser.getUserName());
         assertNull(user1);
         
         teardownUser(testUser.getId());
@@ -163,7 +151,7 @@ public class UserTestIT extends WebloggerTest {
         assertTrue(GlobalRole.BLOGGER.equals(user.getGlobalRole()));
 
         user.setGlobalRole(GlobalRole.BLOGCREATOR);
-        userManager.saveUser(user);
+        userRepository.saveAndFlush(user);
 
         // check that role was switched
         user = userManager.getEnabledUserByUserName(testUser.getUserName());

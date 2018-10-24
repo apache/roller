@@ -205,7 +205,6 @@ public class CommentTestIT extends WebloggerTest {
 
             // now make sure we can delete a weblog with comments
             weblog = weblogRepository.findByIdOrNull(weblog.getId());
-            user = getManagedUser(user);
             entry = setupWeblogEntry("CommentParentDeletes2", weblog, user);
 
             entry = getManagedWeblogEntry(entry);
@@ -226,7 +225,7 @@ public class CommentTestIT extends WebloggerTest {
             assertNull(ex);
 
             // and delete test user as well
-            userManager.removeUser(getManagedUser(user));
+            userManager.removeUser(user);
     }
 
 }

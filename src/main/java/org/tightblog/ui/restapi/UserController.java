@@ -32,11 +32,12 @@ import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserCredentials;
-import org.tightblog.pojos.UserSearchCriteria;
 import org.tightblog.pojos.UserStatus;
 import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
+import org.tightblog.repository.UserCredentialsRepository;
+import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.UserWeblogRoleRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.Utilities;
@@ -85,6 +86,10 @@ public class UserController {
 
     private UserWeblogRoleRepository userWeblogRoleRepository;
 
+    private UserRepository userRepository;
+
+    private UserCredentialsRepository userCredentialsRepository;
+
     private JPAPersistenceStrategy persistenceStrategy;
 
     private MailManager mailManager;
@@ -94,10 +99,13 @@ public class UserController {
     @Autowired
     public UserController(WeblogRepository weblogRepository, UserManager userManager,
                           UserWeblogRoleRepository userWeblogRoleRepository, MessageSource messageSource,
-                          JPAPersistenceStrategy persistenceStrategy, MailManager mailManager) {
+                          JPAPersistenceStrategy persistenceStrategy, MailManager mailManager,
+                          UserRepository userRepository, UserCredentialsRepository userCredentialsRepository) {
         this.weblogRepository = weblogRepository;
         this.userManager = userManager;
         this.userWeblogRoleRepository = userWeblogRoleRepository;
+        this.userRepository = userRepository;
+        this.userCredentialsRepository = userCredentialsRepository;
         this.persistenceStrategy = persistenceStrategy;
         this.mailManager = mailManager;
         this.messages = messageSource;
@@ -105,24 +113,21 @@ public class UserController {
 
     @GetMapping(value = "/tb-ui/admin/rest/useradmin/userlist")
     public Map<String, String> getUserEditList() throws ServletException {
-        UserSearchCriteria usc = new UserSearchCriteria();
-        return createUserMap(userManager.getUsers(usc));
+        return createUserMap(userRepository.findAll());
     }
 
     @GetMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval")
     public List<User> getRegistrationsNeedingApproval() throws ServletException {
-        UserSearchCriteria usc = new UserSearchCriteria();
-        usc.setStatus(UserStatus.EMAILVERIFIED);
-        return userManager.getUsers(usc);
+        return userRepository.findUsersToApprove();
     }
 
     @PostMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval/{id}/approve")
     public void approveRegistration(@PathVariable String id, HttpServletResponse response) {
-        User acceptedUser = userManager.getUser(id);
+        User acceptedUser = userRepository.findByIdOrNull(id);
         if (acceptedUser != null) {
             if (!UserStatus.ENABLED.equals(acceptedUser.getStatus())) {
                 acceptedUser.setStatus(UserStatus.ENABLED);
-                userManager.saveUser(acceptedUser);
+                userRepository.saveAndFlush(acceptedUser);
                 mailManager.sendRegistrationApprovedNotice(acceptedUser);
             }
             response.setStatus(HttpServletResponse.SC_OK);
@@ -133,7 +138,7 @@ public class UserController {
 
     @PostMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval/{id}/reject")
     public void rejectRegistration(@PathVariable String id, HttpServletResponse response) {
-        User rejectedUser = userManager.getUser(id);
+        User rejectedUser = userRepository.findByIdOrNull(id);
         if (rejectedUser != null) {
             mailManager.sendRegistrationRejectedNotice(rejectedUser);
             userManager.removeUser(rejectedUser);
@@ -152,10 +157,7 @@ public class UserController {
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
             // member list excludes inactive accounts
-            UserSearchCriteria usc = new UserSearchCriteria();
-            usc.setStatus(UserStatus.ENABLED);
-            usc.setOffset(0);
-            List<User> potentialUsers = userManager.getUsers(usc);
+            List<User> potentialUsers = userRepository.findByStatusEnabled();
 
             // filter out people already members
             ListIterator<User> potentialIter = potentialUsers.listIterator();
@@ -192,11 +194,11 @@ public class UserController {
 
     @GetMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}")
     public UserData getUserData(@PathVariable String id, HttpServletResponse response) throws ServletException {
-        User user = userManager.getUser(id);
+        User user = userRepository.findByIdOrNull(id);
 
         if (user != null) {
             UserData data = new UserData();
-            UserCredentials creds = userManager.getCredentialsByUserName(user.getUserName());
+            UserCredentials creds = userCredentialsRepository.findByUserName(user.getUserName());
             data.setUser(user);
             data.setCredentials(creds);
             return data;
@@ -208,7 +210,7 @@ public class UserController {
 
     @GetMapping(value = "/tb-ui/authoring/rest/userprofile/{id}")
     public User getProfileData(@PathVariable String id, Principal p, HttpServletResponse response) throws ServletException {
-        User user = userManager.getUser(id);
+        User user = userRepository.findByIdOrNull(id);
         User authenticatedUser = userManager.getEnabledUserByUserName(p.getName());
 
         if (user != null && user.getId().equals(authenticatedUser.getId())) {
@@ -227,7 +229,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(maybeError);
         }
 
-        long userCount = userManager.getUserCount();
+        long userCount = userRepository.count();
         WebloggerProperties.RegistrationPolicy option = persistenceStrategy.getWebloggerProperties().getRegistrationPolicy();
         if (userCount == 0 || !WebloggerProperties.RegistrationPolicy.DISABLED.equals(option)) {
             boolean mustActivate = userCount > 0;
@@ -261,7 +263,7 @@ public class UserController {
     @PostMapping(value = "/tb-ui/authoring/rest/userprofile/{id}")
     public ResponseEntity updateUserProfile(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
                                             Locale locale, HttpServletResponse response) throws ServletException {
-        User user = userManager.getUser(id);
+        User user = userRepository.findByIdOrNull(id);
         User authenticatedUser = userManager.getEnabledUserByUserName(p.getName());
 
         if (user != null && user.getId().equals(authenticatedUser.getId())) {
@@ -278,7 +280,7 @@ public class UserController {
     @PutMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}")
     public ResponseEntity updateUser(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
                                      Locale locale, HttpServletResponse response) throws ServletException {
-        User user = userManager.getUser(id);
+        User user = userRepository.findByIdOrNull(id);
         ValidationError maybeError = advancedValidate(user, newData, false, locale);
         if (maybeError != null) {
             return ResponseEntity.badRequest().body(maybeError);
@@ -375,7 +377,7 @@ public class UserController {
 
                 if (add) {
                     user.setStatus(newData.user.getStatus());
-                    if (userManager.getUserCount() == 0) {
+                    if (userRepository.count() == 0) {
                         // first person in is always an admin
                         user.setGlobalRole(GlobalRole.ADMIN);
                     } else {
@@ -391,7 +393,7 @@ public class UserController {
                 }
 
                 try {
-                    userManager.saveUser(user);
+                    userRepository.saveAndFlush(user);
                     // reset password if set
                     if (newData.credentials != null) {
                         if (!StringUtils.isEmpty(newData.credentials.getPasswordText())) {
@@ -399,7 +401,7 @@ public class UserController {
                         }
                         // reset MFA secret if requested
                         if (newData.credentials.isEraseMfaSecret()) {
-                            userManager.eraseMFASecret(user.getId());
+                            userCredentialsRepository.eraseMfaCode(user.getId());
                         }
                     }
                     response.setStatus(HttpServletResponse.SC_OK);
@@ -411,30 +413,26 @@ public class UserController {
             }
             UserData data = new UserData();
             data.setUser(user);
-            UserCredentials creds = userManager.getCredentialsByUserName(user.getUserName());
+            UserCredentials creds = userCredentialsRepository.findByUserName(user.getUserName());
             data.setCredentials(creds);
             return ResponseEntity.ok(data);
         } catch (Exception e) {
             log.error("Error updating user", e);
-            throw new ServletException(e.getMessage());
+            throw new ServletException(e);
         }
     }
 
     private ValidationError advancedValidate(User currentUser, UserData data, boolean isAdd, Locale locale) {
         BindException be = new BindException(data, "new data object");
 
-        UserSearchCriteria usc1 = new UserSearchCriteria();
-        usc1.setUserName(data.user.getUserName());
-        List<User> users = userManager.getUsers(usc1);
-        if (users.size() > 1 || (users.size() == 1 && !users.get(0).getId().equals(data.user.getId()))) {
+        User testHasUserName = userRepository.findByUserName(data.user.getUserName());
+        if (testHasUserName != null && !testHasUserName.getId().equals(data.user.getId())) {
             be.addError(new ObjectError("User object", messages.getMessage("error.add.user.userNameInUse",
                     null, locale)));
         }
 
-        UserSearchCriteria usc2 = new UserSearchCriteria();
-        usc2.setScreenName(data.user.getScreenName());
-        users = userManager.getUsers(usc2);
-        if (users.size() > 1 || (users.size() == 1 && !users.get(0).getId().equals(data.user.getId()))) {
+        User testHasScreenName = userRepository.findByScreenName(data.user.getScreenName());
+        if (testHasScreenName != null && !testHasScreenName.getId().equals(data.user.getId())) {
             be.addError(new ObjectError("User object", messages.getMessage("error.add.user.screenNameInUse",
                     null, locale)));
         }
@@ -498,7 +496,7 @@ public class UserController {
 
     @GetMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}/weblogs")
     public List<UserWeblogRole> getUsersWeblogs(@PathVariable String id, HttpServletResponse response) throws ServletException {
-        User user = userManager.getUser(id);
+        User user = userRepository.findByIdOrNull(id);
         if (user == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
@@ -526,7 +524,7 @@ public class UserController {
                                      @PathVariable WeblogRole role, Principal p, Locale locale) {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-        User invitee = userManager.getUser(userId);
+        User invitee = userRepository.findByIdOrNull(userId);
         User invitor = userManager.getEnabledUserByUserName(p.getName());
 
         if (weblog != null && invitee != null && invitor != null &&
@@ -549,9 +547,10 @@ public class UserController {
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/attach")
     public void acceptWeblogInvitation(@PathVariable String id, Principal p, HttpServletResponse response) {
-        UserWeblogRole uwr = userManager.getUserWeblogRole(id);
+        UserWeblogRole uwr = userWeblogRoleRepository.findByIdOrNull(id);
         if (uwr != null && uwr.getUser().getUserName().equals(p.getName())) {
-            userManager.acceptWeblogInvitation(uwr);
+            uwr.setPending(false);
+            userWeblogRoleRepository.saveAndFlush(uwr);
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -561,7 +560,7 @@ public class UserController {
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/detach")
     public void resignFromWeblog(@PathVariable String id, Principal p, HttpServletResponse response) {
-        UserWeblogRole uwr = userManager.getUserWeblogRole(id);
+        UserWeblogRole uwr = userWeblogRoleRepository.findByIdOrNull(id);
         if (uwr != null && uwr.getUser().getUserName().equals(p.getName())) {
             userManager.revokeWeblogRole(uwr);
             response.setStatus(HttpServletResponse.SC_OK);

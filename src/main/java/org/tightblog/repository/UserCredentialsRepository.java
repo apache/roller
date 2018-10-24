@@ -16,37 +16,25 @@
 package org.tightblog.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.tightblog.pojos.User;
-import org.tightblog.pojos.UserWeblogRole;
-import org.tightblog.pojos.Weblog;
-
-import java.util.List;
+import org.tightblog.pojos.UserCredentials;
 
 @Repository
 @Transactional("transactionManager")
-public interface UserWeblogRoleRepository extends JpaRepository<UserWeblogRole, String> {
+public interface UserCredentialsRepository extends JpaRepository<UserCredentials, String> {
 
-    List<UserWeblogRole> findByUser(User user);
+    @Query("SELECT uc FROM UserCredentials uc, User u WHERE uc.userName= ?1 " +
+            "AND u.id = uc.id AND u.status = org.tightblog.pojos.UserStatus.ENABLED")
+    UserCredentials findByUserName(String userName);
 
-    List<UserWeblogRole> findByUserAndPendingFalse(User user);
+    @Modifying
+    @Query("UPDATE UserCredentials u SET u.password = ?2 WHERE u.id = ?1")
+    int updatePassword(String userId, String newPassword);
 
-    List<UserWeblogRole> findByWeblog(Weblog weblog);
-
-    List<UserWeblogRole> findByWeblogAndPendingTrue(Weblog weblog);
-
-    List<UserWeblogRole> findByWeblogAndPendingFalse(Weblog weblog);
-
-    default UserWeblogRole findByIdOrNull(String id) {
-        return findById(id).orElse(null);
-    }
-
-    UserWeblogRole findByUserAndWeblog(User user, Weblog weblog);
-
-    UserWeblogRole findByUserAndWeblogAndPendingFalse(User user, Weblog weblog);
-
-    Long deleteByUser(User user);
-
-    Long deleteByWeblog(Weblog weblog);
+    @Modifying
+    @Query("UPDATE UserCredentials u SET u.mfaSecret = null WHERE u.id = ?1")
+    int eraseMfaCode(String userId);
 }

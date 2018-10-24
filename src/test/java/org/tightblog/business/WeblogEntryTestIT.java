@@ -129,7 +129,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
         Map entryMap;
 
         // setup some test entries to use
-        testUser = getManagedUser(testUser);
         WeblogEntry entry1 = setupWeblogEntry("entry1", testWeblog, testUser);
         WeblogEntry entry2 = setupWeblogEntry("entry2", testWeblog, testUser);
         WeblogEntry entry3 = setupWeblogEntry("entry3", testWeblog, testUser);
@@ -158,7 +157,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(entry5);
 
         testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
-        testUser = getManagedUser(testUser);
 
         entry1 = getManagedWeblogEntry(entry1);
         entry2 = getManagedWeblogEntry(entry2);
@@ -259,7 +257,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
 
     @Test
     public void testCreateAnchor() throws Exception {
-        testUser = getManagedUser(testUser);
         WeblogEntry entry1 = setupWeblogEntry("entry1", testWeblog, testUser);
 
         // make sure createAnchor gives us a new anchor value
@@ -269,7 +266,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
         assertNotSame("entry1", anchor);
         
         // make sure we can create a new entry with specified anchor
-        testUser = getManagedUser(testUser);
         WeblogEntry entry2 = setupWeblogEntry(anchor, testWeblog, testUser);
         assertNotNull(entry2);
         
@@ -281,8 +277,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
     public void testCreateAnEntryWithTagsShortcut() {
         try {
             WeblogEntry entry;
-            testUser = getManagedUser(testUser);
-
             WeblogEntry testEntry = new WeblogEntry();
             testEntry.setTitle("entryTestEntry");
             testEntry.setText("blah blah entry");
@@ -322,7 +316,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
     @Test
     public void testAddMultipleTags() throws Exception {
         // setup some test entries to use
-        testUser = getManagedUser(testUser);
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
         addTag(entry, "testTag");
         addTag(entry, "whateverTag");
@@ -342,7 +335,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
     @Test
     public void testAddMultipleIdenticalTags() throws Exception {
         // setup some test entries to use
-        testUser = getManagedUser(testUser);
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
         addTag(entry, "testTag");
         String id = entry.getId();
@@ -362,7 +354,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
     public void testRemoveTagsViaShortcut() {
         try {
             // setup some test entries to use
-            testUser = getManagedUser(testUser);
             WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
             addTag(entry, "testTag");
             addTag(entry, "testTag2");
@@ -391,7 +382,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
     public void testGetEntriesByTag() {
         try {
             // setup some test entries to use
-            testUser = getManagedUser(testUser);
             WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
             String id = entry.getId();
             addTag(entry, "testTag");
@@ -418,7 +408,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
     @Test
     public void testRemoveEntryTagCascading() throws Exception {
         // setup some test entries to use
-        testUser = getManagedUser(testUser);
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
         addTag(entry, "testTag");
         String id = entry.getId();
@@ -443,7 +432,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
     @Test
     public void testUpdateTags() throws Exception {
         // setup some test entries to use
-        testUser = getManagedUser(testUser);
         WeblogEntry entry = setupWeblogEntry("entry1", testWeblog, testUser);
         addTag(entry, "testWillStayTag");
         addTag(entry, "testTagWillBeRemoved");
@@ -472,7 +460,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
 
     @Test
     public void testTagAggregates() throws Exception {
-        testUser = getManagedUser(testUser);
         Weblog testWeblog2 = setupWeblog("entry-test-weblog2", testUser);
 
         try {
@@ -520,7 +507,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
 
             // now add another entry in another blog
             testWeblog2 = weblogRepository.findByIdOrNull(testWeblog2.getId());
-            testUser = getManagedUser(testUser);
             entry = setupWeblogEntry("entry3", testWeblog2, testUser);
             addTag(entry, "one");
             addTag(entry, "three");
@@ -600,7 +586,6 @@ public class WeblogEntryTestIT extends WebloggerTest {
     @Test
     public void testTagAggregatesCaseSensitivity() throws Exception {
         Weblog testWeblog2 = setupWeblog("entry-test-weblog2", testUser);
-        testUser = getManagedUser(testUser);
 
         // let's make sure we are starting from scratch
 
@@ -718,7 +703,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
 
     @Test
     public void testWeblogStats() throws Exception {
-        long existingUserCount = userManager.getUserCount() - 1;
+        long existingUserCount = userRepository.count() - 1;
         
         User user1 = setupUser("statuser1");
         Weblog blog1 = setupWeblog("statblog1", user1);
@@ -768,7 +753,7 @@ public class WeblogEntryTestIT extends WebloggerTest {
             assertEquals(5L, weblogEntryManager.getCommentCount(csc));
 
             assertEquals(4L, weblogRepository.count());
-            assertEquals(existingUserCount + 2L, userManager.getUserCount());
+            assertEquals(existingUserCount + 2L, userRepository.count());
             
         } finally {
             teardownComment(comment1.getId());

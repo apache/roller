@@ -44,7 +44,7 @@ public class WeblogRoleTestIT extends WebloggerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        testUser = setupUser("permsTestUser");
+        testUser = setupUser("roleTestUser");
         testWeblog = setupWeblog("role-test-weblog", testUser);
     }
 
@@ -65,7 +65,6 @@ public class WeblogRoleTestIT extends WebloggerTest {
         UserWeblogRole role;
          
         // delete weblog roles
-        testUser = getManagedUser(testUser);
         role = userManager.getWeblogRole(testUser, testWeblog);
         assertNotNull(role);
         userManager.revokeWeblogRole(role);
@@ -102,7 +101,6 @@ public class WeblogRoleTestIT extends WebloggerTest {
     public void testWeblogRoleLookups() throws Exception {
         // we need a second user for this test
         User user = setupUser("testWeblogRoleLookups");
-        user = getManagedUser(user);
 
         UserWeblogRole role;
         List<UserWeblogRole> roles;
@@ -110,7 +108,7 @@ public class WeblogRoleTestIT extends WebloggerTest {
         // get all weblog roles for a user
         roles = userWeblogRoleRepository.findByUser(user);
         assertEquals(0, roles.size());
-        roles = userManager.getWeblogRoles(getManagedUser(testUser));
+        roles = userManager.getWeblogRoles(testUser);
         assertEquals(1, roles.size());
         assertFalse(roles.get(0).isPending());
 
@@ -121,7 +119,6 @@ public class WeblogRoleTestIT extends WebloggerTest {
         userManager.grantWeblogRole(user, testWeblog, WeblogRole.POST, true);
 
         // confirm weblog role is pending
-        user = getManagedUser(user);
         assertTrue(userWeblogRoleRepository.findByUser(user).get(0).isPending());
 
         // get pending weblog roles for a weblog
@@ -129,12 +126,12 @@ public class WeblogRoleTestIT extends WebloggerTest {
         assertEquals(1, roles.size());
 
         // get weblog roles for a specific user/weblog
-        role = userManager.getWeblogRole(getManagedUser(testUser), testWeblog);
+        role = userManager.getWeblogRole(testUser, testWeblog);
         assertNotNull(role);
         assertSame(role.getWeblogRole(), WeblogRole.OWNER);
 
         // pending weblog roles should not be visible
-        role = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(getManagedUser(user), testWeblog);
+        role = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(user, testWeblog);
         assertNull(role);
 
         teardownUser(user.getId());
@@ -155,7 +152,8 @@ public class WeblogRoleTestIT extends WebloggerTest {
         assertTrue(uwrList.get(0).isPending());
 
         // accept invitation
-        userManager.acceptWeblogInvitation(uwrList.get(0));
+        uwrList.get(0).setPending(false);
+        userWeblogRoleRepository.saveAndFlush(uwrList.get(0));
 
         // re-query now that we have changed things
         user = userManager.getEnabledUserByUserName(user.getUserName());

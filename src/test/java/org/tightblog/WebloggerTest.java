@@ -110,13 +110,6 @@ public abstract class WebloggerTest {
     }
 
     /**
-     * Convenience method that returns managed copy of given user.
-     */
-    protected User getManagedUser(User user) {
-        return userManager.getEnabledUserByUserName(user.getUserName());
-    }
-
-    /**
      * Convenience method that returns managed copy of given WeblogEntry.
      */
     protected WeblogEntry getManagedWeblogEntry(WeblogEntry weblogEntry) {
@@ -131,7 +124,7 @@ public abstract class WebloggerTest {
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setDateCreated(Instant.now());
         testUser.setStatus(UserStatus.ENABLED);
-        userManager.saveUser(testUser);
+        userRepository.saveAndFlush(testUser);
 
         // query for the user to make sure we return the persisted object
         User user = userManager.getEnabledUserByUserName(userName.toLowerCase());

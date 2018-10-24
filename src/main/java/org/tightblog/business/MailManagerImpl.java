@@ -28,10 +28,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.pojos.CommentSearchCriteria;
-import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
-import org.tightblog.pojos.UserSearchCriteria;
-import org.tightblog.pojos.UserStatus;
 import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
@@ -45,6 +42,7 @@ import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.tightblog.repository.UserRepository;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -63,35 +61,36 @@ public class MailManagerImpl implements MailManager {
 
     private static Logger log = LoggerFactory.getLogger(MailManagerImpl.class);
 
-    @Autowired
     private UserManager userManager;
-
-    @Autowired
+    private UserRepository userRepository;
     private WeblogManager weblogManager;
-
-    @Autowired
     private WeblogEntryManager weblogEntryManager;
-
-    @Autowired
     private URLStrategy urlStrategy;
-
-    @Autowired
     private JavaMailSender mailSender;
-
-    @Autowired
     private SpringTemplateEngine standardTemplateEngine;
-
-    @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
-
-    @Autowired
     private MessageSource messages;
+    private DynamicProperties dp;
 
     @Value("${mail.enabled:false}")
     private boolean mailEnabled;
 
     @Autowired
-    private DynamicProperties dp;
+    public MailManagerImpl(UserManager userManager, UserRepository userRepository, WeblogManager weblogManager,
+                           WeblogEntryManager weblogEntryManager, URLStrategy urlStrategy, JavaMailSender mailSender,
+                           SpringTemplateEngine standardTemplateEngine, JPAPersistenceStrategy persistenceStrategy,
+                           MessageSource messages, DynamicProperties dp) {
+        this.userManager = userManager;
+        this.userRepository = userRepository;
+        this.weblogManager = weblogManager;
+        this.weblogEntryManager = weblogEntryManager;
+        this.urlStrategy = urlStrategy;
+        this.mailSender = mailSender;
+        this.standardTemplateEngine = standardTemplateEngine;
+        this.persistenceStrategy = persistenceStrategy;
+        this.messages = messages;
+        this.dp = dp;
+    }
 
     @Override
     public void sendUserActivationEmail(User user) throws MessagingException {
@@ -122,12 +121,8 @@ public class MailManagerImpl implements MailManager {
         String userAdminURL = urlStrategy.getActionURL("userAdmin", "/tb-ui/app/admin",
                 null, null);
 
-        // build list of reviewers (website users with author permission)
-        UserSearchCriteria criteria = new UserSearchCriteria();
-        criteria.setStatus(UserStatus.ENABLED);
-        criteria.setGlobalRole(GlobalRole.ADMIN);
-
-        List<User> admins = userManager.getUsers(criteria);
+        // send to blog server admins
+        List<User> admins = userRepository.findAdmins();
         List<String> adminEmails = admins.stream().map(User::getEmailAddress).collect(Collectors.toList());
         String[] to = adminEmails.toArray(new String[adminEmails.size()]);
 

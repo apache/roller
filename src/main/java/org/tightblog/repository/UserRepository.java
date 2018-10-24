@@ -20,13 +20,37 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.pojos.User;
+import org.tightblog.pojos.UserStatus;
+
+import java.util.Collections;
+import java.util.List;
 
 @Repository
 @Transactional("transactionManager")
 public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT u FROM User u WHERE u.userName= ?1 AND u.status = org.tightblog.pojos.UserStatus.ENABLED")
+    User findEnabledByUserName(String userName);
+
+    default List<User> findByStatusEnabled() {
+        return findByStatusIn(Collections.unmodifiableList(List.of(UserStatus.ENABLED)));
+    }
+
+    List<User> findByStatusIn(List<UserStatus> statuses);
+
+    @Query("SELECT u FROM User u WHERE u.globalRole=org.tightblog.pojos.GlobalRole.ADMIN " +
+            "AND u.status = org.tightblog.pojos.UserStatus.ENABLED")
+    List<User> findAdmins();
+
+    User findByActivationCode(String activationCode);
+
+    @Query("SELECT u FROM User u WHERE u.userName= ?1 AND u.status = org.tightblog.pojos.UserStatus.EMAILVERIFIED " +
+            "order by u.userName")
+    List<User> findUsersToApprove();
+
     User findByUserName(String userName);
+
+    User findByScreenName(String screenName);
 
     default User findByIdOrNull(String id) {
         return findById(id).orElse(null);

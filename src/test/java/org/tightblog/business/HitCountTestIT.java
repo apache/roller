@@ -95,7 +95,6 @@ public class HitCountTestIT extends WebloggerTest {
 
     @Test
     public void testResetHitCounts() throws Exception {
-        testUser = getManagedUser(testUser);
         Weblog blog1 = setupWeblog("hit-cnt-test1", testUser);
         Weblog blog2 = setupWeblog("hit-cnt-test2", testUser);
 

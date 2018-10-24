@@ -90,7 +90,6 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
 
     @Test
     public void testMoveWeblogCategoryContents() throws Exception {
-        testUser = getManagedUser(testUser);
 
         // add some categories and entries to test with
         WeblogCategory c1 = new WeblogCategory(testWeblog, "c1");
@@ -101,7 +100,6 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
         weblogManager.saveWeblog(testWeblog);
 
         testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
-        testUser = getManagedUser(testUser);
         setupWeblogEntry("e1", c1, PubStatus.PUBLISHED, testWeblog, testUser);
         setupWeblogEntry("e2", c1, PubStatus.DRAFT, testWeblog, testUser);
 
