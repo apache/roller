@@ -49,7 +49,6 @@ import java.io.InputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,13 +58,9 @@ import java.util.Set;
 public class MediaFileManagerImpl implements MediaFileManager {
 
     private FileContentManager fileContentManager;
-
     private MediaDirectoryRepository mediaDirectoryRepository;
-
     private MediaFileRepository mediaFileRepository;
-
     private WeblogRepository weblogRepository;
-
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
 
     private static Logger log = LoggerFactory.getLogger(MediaFileManagerImpl.class);
@@ -102,11 +97,6 @@ public class MediaFileManagerImpl implements MediaFileManager {
     }
 
     @Override
-    public void moveMediaFile(MediaFile mediaFile, MediaDirectory targetDirectory) {
-        moveMediaFiles(Collections.singletonList(mediaFile), targetDirectory);
-    }
-
-    @Override
     public MediaDirectory createMediaDirectory(Weblog weblog, String requestedName) {
         requestedName = requestedName.startsWith("/") ? requestedName.substring(1) : requestedName;
 
@@ -136,7 +126,7 @@ public class MediaFileManagerImpl implements MediaFileManager {
     }
 
     @Override
-    public void storeMediaFile(MediaFile mediaFile, InputStream updatedStream, Map<String, List<String>> errors)
+    public void saveMediaFile(MediaFile mediaFile, InputStream updatedStream, Map<String, List<String>> errors)
             throws IOException {
         Weblog weblog = mediaFile.getDirectory().getWeblog();
 
@@ -199,8 +189,8 @@ public class MediaFileManagerImpl implements MediaFileManager {
                 fileContentManager.saveFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId() + "_sm",
                         fis2);
 
-                mediaFile.setWidth(MAX_THUMBNAIL_WIDTH);
-                mediaFile.setHeight(MAX_THUMBNAIL_HEIGHT);
+                mediaFile.setWidth(MediaFile.MAX_THUMBNAIL_WIDTH);
+                mediaFile.setHeight(MediaFile.MAX_THUMBNAIL_HEIGHT);
             }
 
         } catch (Exception e) {
@@ -209,37 +199,22 @@ public class MediaFileManagerImpl implements MediaFileManager {
     }
 
     @Override
-    public MediaFile getMediaFile(String id) {
-        return getMediaFile(id, false);
-    }
-
-    @Override
-    public MediaFile getMediaFile(String id, boolean includeContent) {
+    public MediaFile getMediaFileWithContent(String id) {
         MediaFile mediaFile = mediaFileRepository.findByIdOrNull(id);
-        if (mediaFile != null && includeContent) {
-            File content = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(), id);
-            mediaFile.setContent(content);
 
-            File thumbnail = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(),
-                    id + "_sm");
-            mediaFile.setThumbnail(thumbnail);
-        }
+        File content = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(), id);
+        mediaFile.setContent(content);
+
+        File thumbnail = fileContentManager.getFileContent(mediaFile.getDirectory().getWeblog(),
+                id + "_sm");
+        mediaFile.setThumbnail(thumbnail);
+
         return mediaFile;
     }
 
     @Override
-    public MediaDirectory getMediaDirectory(String id) {
-        return mediaDirectoryRepository.findByIdOrNull(id);
-    }
-
-    @Override
-    public List<MediaDirectory> getMediaDirectories(Weblog weblog) {
-        return mediaDirectoryRepository.findByWeblog(weblog);
-    }
-
-    @Override
     public void removeAllFiles(Weblog weblog) {
-        List<MediaDirectory> list = getMediaDirectories(weblog);
+        List<MediaDirectory> list = mediaDirectoryRepository.findByWeblog(weblog);
 
         for (MediaDirectory directory : list) {
             removeAllFiles(directory);

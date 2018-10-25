@@ -50,26 +50,16 @@ import java.util.stream.Collectors;
 public class BlogrollController {
 
     private WeblogRepository weblogRepository;
-
     private BlogrollLinkRepository blogrollLinkRepository;
-
-    @Autowired
-    public BlogrollController(WeblogRepository weblogRepository, BlogrollLinkRepository blogrollLinkRepository) {
-        this.weblogRepository = weblogRepository;
-        this.blogrollLinkRepository = blogrollLinkRepository;
-    }
-
-    @Autowired
     private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    @Autowired
     private UserManager userManager;
 
-    public void setUserManager(UserManager userManager) {
+    @Autowired
+    public BlogrollController(WeblogRepository weblogRepository, BlogrollLinkRepository blogrollLinkRepository,
+                              WeblogManager weblogManager, UserManager userManager) {
+        this.weblogRepository = weblogRepository;
+        this.blogrollLinkRepository = blogrollLinkRepository;
+        this.weblogManager = weblogManager;
         this.userManager = userManager;
     }
 
@@ -95,7 +85,7 @@ public class BlogrollController {
             WeblogBookmark itemToRemove = blogrollLinkRepository.findById(id).orElse(null);
             if (itemToRemove != null) {
                 Weblog weblog = itemToRemove.getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                     weblog.getBookmarks().remove(itemToRemove);
                     weblogManager.saveWeblog(weblog);
                     response.setStatus(HttpServletResponse.SC_OK);
@@ -117,7 +107,7 @@ public class BlogrollController {
             WeblogBookmark bookmark = blogrollLinkRepository.getOne(id);
             if (bookmark != null) {
                 Weblog weblog = bookmark.getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                     WeblogBookmark bookmarkFromWeblog = weblog.getBookmarks().stream()
                             .filter(wb -> wb.getId().equals(bookmark.getId())).findFirst().orElse(null);
                     if (bookmarkFromWeblog != null) {
@@ -151,7 +141,7 @@ public class BlogrollController {
                             HttpServletResponse response) throws ServletException {
         try {
             Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                 WeblogBookmark bookmark = new WeblogBookmark(weblog, newData.getName(),
                         newData.getUrl(), newData.getDescription());
                 weblog.addBookmark(bookmark);

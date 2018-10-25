@@ -115,7 +115,7 @@ public class WeblogTestIT extends WebloggerTest {
             // start with no permissions
             userWeblogRoleRepository.deleteByUser(testUser);
 
-            List<UserWeblogRole> userRoles = userManager.getWeblogRoles(testUser);
+            List<UserWeblogRole> userRoles = userWeblogRoleRepository.findByUserAndPendingFalse(testUser);
             assertEquals(0, userRoles.size());
 
             // add test weblogs

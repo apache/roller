@@ -38,6 +38,7 @@ import org.tightblog.pojos.WeblogEntryComment;
 import org.junit.Before;
 import org.tightblog.repository.BlogrollLinkRepository;
 import org.tightblog.repository.MediaDirectoryRepository;
+import org.tightblog.repository.MediaFileRepository;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.UserWeblogRoleRepository;
 import org.tightblog.repository.WeblogCategoryRepository;
@@ -94,6 +95,9 @@ public abstract class WebloggerTest {
     protected MediaDirectoryRepository mediaDirectoryRepository;
 
     @Autowired
+    protected MediaFileRepository mediaFileRepository;
+
+    @Autowired
     protected UserManager userManager;
 
     @Autowired
@@ -127,7 +131,7 @@ public abstract class WebloggerTest {
         userRepository.saveAndFlush(testUser);
 
         // query for the user to make sure we return the persisted object
-        User user = userManager.getEnabledUserByUserName(userName.toLowerCase());
+        User user = userRepository.findEnabledByUserName(userName.toLowerCase());
 
         if (user == null) {
             throw new IllegalStateException("error inserting new user");

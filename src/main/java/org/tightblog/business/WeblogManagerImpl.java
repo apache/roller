@@ -241,7 +241,7 @@ public class WeblogManagerImpl implements WeblogManager {
     @Override
     public List<User> getWeblogUsers(Weblog weblog) {
         List<User> users = new ArrayList<>();
-        List<UserWeblogRole> roles = userManager.getWeblogRoles(weblog);
+        List<UserWeblogRole> roles = userWeblogRoleRepository.findByWeblogAndPendingFalse(weblog);
         for (UserWeblogRole role : roles) {
             User user = role.getUser();
             if (UserStatus.ENABLED.equals(user.getStatus())) {

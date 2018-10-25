@@ -21,7 +21,6 @@
 package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.tightblog.business.MediaFileManager;
 import org.tightblog.business.WebloggerContext;
 import javax.validation.constraints.NotBlank;
 import org.tightblog.util.Utilities;
@@ -48,6 +47,8 @@ import java.util.Objects;
 public class MediaFile implements Comparable<MediaFile> {
 
     public static final String THUMBNAIL_CONTENT_TYPE = "image/png";
+    public static final int MAX_THUMBNAIL_WIDTH = 120;
+    public static final int MAX_THUMBNAIL_HEIGHT = 120;
 
     private String id = Utilities.generateUUID();
     private int hashCode;
@@ -279,20 +280,20 @@ public class MediaFile implements Comparable<MediaFile> {
     }
 
     private void figureThumbnailSize() {
-        // image determine thumbnail size
+        // image determines thumbnail size
         int newWidth = getWidth();
         int newHeight = getHeight();
 
         if (getWidth() > getHeight()) {
-            if (getWidth() > MediaFileManager.MAX_THUMBNAIL_WIDTH) {
-                newHeight = (int) ((float) getHeight() * ((float) MediaFileManager.MAX_THUMBNAIL_WIDTH / (float) getWidth()));
-                newWidth = MediaFileManager.MAX_THUMBNAIL_WIDTH;
+            if (getWidth() > MAX_THUMBNAIL_WIDTH) {
+                newHeight = (int) ((float) getHeight() * ((float) MAX_THUMBNAIL_WIDTH / (float) getWidth()));
+                newWidth = MAX_THUMBNAIL_WIDTH;
             }
 
         } else {
-            if (getHeight() > MediaFileManager.MAX_THUMBNAIL_HEIGHT) {
-                newWidth = (int) ((float) getWidth() * ((float) MediaFileManager.MAX_THUMBNAIL_HEIGHT / (float) getHeight()));
-                newHeight = MediaFileManager.MAX_THUMBNAIL_HEIGHT;
+            if (getHeight() > MAX_THUMBNAIL_HEIGHT) {
+                newWidth = (int) ((float) getWidth() * ((float) MAX_THUMBNAIL_HEIGHT / (float) getHeight()));
+                newHeight = MAX_THUMBNAIL_HEIGHT;
             }
         }
         thumbnailHeight = newHeight;

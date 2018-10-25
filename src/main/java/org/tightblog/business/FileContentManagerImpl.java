@@ -340,7 +340,7 @@ public class FileContentManagerImpl implements FileContentManager {
         if (!file.exists()) {
             throw new FileNotFoundException("Invalid path [" + filePath + "], " + "file does not exist.");
         } else if (!file.canRead()) {
-            throw new IOException("Invalid path [" + filePath + "], " + "cannot read from path.");
+            throw new IOException("Invalid path [" + filePath + "], cannot read from it.");
         }
 
         // make sure someone isn't trying to sneak outside the uploads dir

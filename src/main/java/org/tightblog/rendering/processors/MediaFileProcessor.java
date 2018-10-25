@@ -104,7 +104,7 @@ public class MediaFileProcessor extends AbstractProcessor {
             }
             if (pathInfo.length() > 0) {
                 // at this stage, pathInfo is the resourceId
-                mediaFile = mediaFileManager.getMediaFile(pathInfo, true);
+                mediaFile = mediaFileManager.getMediaFileWithContent(pathInfo);
             }
         }
 

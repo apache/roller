@@ -81,19 +81,12 @@ public class UserController {
             Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$");
 
     private WeblogRepository weblogRepository;
-
     private UserManager userManager;
-
     private UserWeblogRoleRepository userWeblogRoleRepository;
-
     private UserRepository userRepository;
-
     private UserCredentialsRepository userCredentialsRepository;
-
     private JPAPersistenceStrategy persistenceStrategy;
-
     private MailManager mailManager;
-
     private MessageSource messages;
 
     @Autowired
@@ -155,13 +148,13 @@ public class UserController {
             throws ServletException {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
             // member list excludes inactive accounts
             List<User> potentialUsers = userRepository.findByStatusEnabled();
 
             // filter out people already members
             ListIterator<User> potentialIter = potentialUsers.listIterator();
-            List<UserWeblogRole> currentUserList = userManager.getWeblogRolesIncludingPending(weblog);
+            List<UserWeblogRole> currentUserList = userWeblogRoleRepository.findByWeblog(weblog);
             while (potentialIter.hasNext() && !currentUserList.isEmpty()) {
                 User su = potentialIter.next();
                 ListIterator<UserWeblogRole> alreadyIter = currentUserList.listIterator();
@@ -211,7 +204,7 @@ public class UserController {
     @GetMapping(value = "/tb-ui/authoring/rest/userprofile/{id}")
     public User getProfileData(@PathVariable String id, Principal p, HttpServletResponse response) throws ServletException {
         User user = userRepository.findByIdOrNull(id);
-        User authenticatedUser = userManager.getEnabledUserByUserName(p.getName());
+        User authenticatedUser = userRepository.findEnabledByUserName(p.getName());
 
         if (user != null && user.getId().equals(authenticatedUser.getId())) {
             return user;
@@ -264,7 +257,7 @@ public class UserController {
     public ResponseEntity updateUserProfile(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
                                             Locale locale, HttpServletResponse response) throws ServletException {
         User user = userRepository.findByIdOrNull(id);
-        User authenticatedUser = userManager.getEnabledUserByUserName(p.getName());
+        User authenticatedUser = userRepository.findEnabledByUserName(p.getName());
 
         if (user != null && user.getId().equals(authenticatedUser.getId())) {
             ValidationError maybeError = advancedValidate(null, newData, false, locale);
@@ -320,8 +313,8 @@ public class UserController {
             throws ServletException {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
-            List<UserWeblogRole> uwrs = userManager.getWeblogRolesIncludingPending(weblog);
+        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+            List<UserWeblogRole> uwrs = userWeblogRoleRepository.findByWeblog(weblog);
             return uwrs;
         } else {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -335,8 +328,8 @@ public class UserController {
             throws ServletException {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-        User user = userManager.getEnabledUserByUserName(p.getName());
-        if (user != null && weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+        User user = userRepository.findEnabledByUserName(p.getName());
+        if (user != null && weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
 
             // must remain at least one admin
             List<UserWeblogRole> owners = roles.stream()
@@ -350,7 +343,7 @@ public class UserController {
             // one iteration for each line (user) in the members table
             for (UserWeblogRole role : roles) {
                 if (WeblogRole.NOBLOGNEEDED.equals(role.getWeblogRole())) {
-                    userManager.revokeWeblogRole(role);
+                    userWeblogRoleRepository.delete(role);
                 } else {
                     userManager.grantWeblogRole(
                             role.getUser(), role.getWeblog(), role.getWeblogRole(), role.isPending());
@@ -511,7 +504,7 @@ public class UserController {
     @GetMapping(value = "/tb-ui/authoring/rest/loggedinuser/weblogs")
     public List<UserWeblogRole> getLoggedInUsersWeblogs(Principal p, HttpServletResponse response)
             throws ServletException {
-        User user = userManager.getEnabledUserByUserName(p.getName());
+        User user = userRepository.findEnabledByUserName(p.getName());
         if (user == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
@@ -525,12 +518,12 @@ public class UserController {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         User invitee = userRepository.findByIdOrNull(userId);
-        User invitor = userManager.getEnabledUserByUserName(p.getName());
+        User invitor = userRepository.findEnabledByUserName(p.getName());
 
         if (weblog != null && invitee != null && invitor != null &&
-                userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
 
-            UserWeblogRole roleChk = userManager.getWeblogRoleIncludingPending(invitee, weblog);
+            UserWeblogRole roleChk = userWeblogRoleRepository.findByUserAndWeblog(invitee, weblog);
             if (roleChk != null) {
                 return ResponseEntity.badRequest().body(messages.getMessage(roleChk.isPending() ?
                         "members.userAlreadyInvited" : "members.userAlreadyMember", null, locale));
@@ -562,7 +555,7 @@ public class UserController {
     public void resignFromWeblog(@PathVariable String id, Principal p, HttpServletResponse response) {
         UserWeblogRole uwr = userWeblogRoleRepository.findByIdOrNull(id);
         if (uwr != null && uwr.getUser().getUserName().equals(p.getName())) {
-            userManager.revokeWeblogRole(uwr);
+            userWeblogRoleRepository.delete(uwr);
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

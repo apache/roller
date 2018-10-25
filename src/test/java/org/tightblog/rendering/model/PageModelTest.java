@@ -57,6 +57,7 @@ public class PageModelTest {
     private WeblogPageRequest pageRequest;
     private Map<String, Object> initData;
     private WeblogManager mockWeblogManager;
+    private Weblog weblog;
 
     @Before
     public void initialize() {
@@ -71,7 +72,7 @@ public class PageModelTest {
         pageModel.setWeblogEntryManager(mockWeblogEntryManager);
         pageModel.setThemeManager(mockThemeManager);
         pageModel.setWeblogEntryListGenerator(mockGenerator);
-        Weblog weblog = new Weblog();
+        weblog = new Weblog();
         weblog.setHandle("testblog");
         weblog.setLocale("EN_US");
         pageRequest = new WeblogPageRequest();
@@ -209,18 +210,18 @@ public class PageModelTest {
 
         // authenticated user has neither role
         pageRequest.setAuthenticatedUser("bob");
-        when(mockUserManager.checkWeblogRole("bob", "testblog", WeblogRole.POST)).thenReturn(false);
-        when(mockUserManager.checkWeblogRole("bob", "testblog", WeblogRole.OWNER)).thenReturn(false);
+        when(mockUserManager.checkWeblogRole("bob", weblog, WeblogRole.POST)).thenReturn(false);
+        when(mockUserManager.checkWeblogRole("bob", weblog, WeblogRole.OWNER)).thenReturn(false);
         assertFalse(pageModel.isUserBlogOwner());
         assertFalse(pageModel.isUserBlogPublisher());
 
         // authenticated user has lower role
-        when(mockUserManager.checkWeblogRole("bob", "testblog", WeblogRole.POST)).thenReturn(true);
+        when(mockUserManager.checkWeblogRole("bob", weblog, WeblogRole.POST)).thenReturn(true);
         assertFalse(pageModel.isUserBlogOwner());
         assertTrue(pageModel.isUserBlogPublisher());
 
         // authenticated user has both roles
-        when(mockUserManager.checkWeblogRole("bob", "testblog", WeblogRole.OWNER)).thenReturn(true);
+        when(mockUserManager.checkWeblogRole("bob", weblog, WeblogRole.OWNER)).thenReturn(true);
         assertTrue(pageModel.isUserBlogOwner());
         assertTrue(pageModel.isUserBlogPublisher());
     }

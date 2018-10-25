@@ -39,6 +39,7 @@ import org.tightblog.pojos.WeblogEntrySearchCriteria;
 import org.tightblog.pojos.WeblogEntryTagAggregate;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogCategoryRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.Utilities;
@@ -83,13 +84,34 @@ public class WeblogEntryController {
     private static DateTimeFormatter pubDateFormat = DateTimeFormatter.ofPattern("M/d/yyyy");
 
     private WeblogRepository weblogRepository;
-
     private WeblogCategoryRepository weblogCategoryRepository;
+    private UserRepository userRepository;
+    private UserManager userManager;
+    private WeblogManager weblogManager;
+    private WeblogEntryManager weblogEntryManager;
+    private IndexManager indexManager;
+    private JPAPersistenceStrategy persistenceStrategy;
+    private URLStrategy urlStrategy;
+    private MailManager mailManager;
+    private MessageSource messages;
 
     @Autowired
-    public WeblogEntryController(WeblogRepository weblogRepository, WeblogCategoryRepository weblogCategoryRepository) {
+    public WeblogEntryController(WeblogRepository weblogRepository, WeblogCategoryRepository weblogCategoryRepository,
+                                 UserRepository userRepository, UserManager userManager, WeblogManager weblogManager,
+                                 WeblogEntryManager weblogEntryManager, IndexManager indexManager,
+                                 JPAPersistenceStrategy persistenceStrategy, URLStrategy urlStrategy,
+                                 MailManager mailManager, MessageSource messages) {
         this.weblogRepository = weblogRepository;
         this.weblogCategoryRepository = weblogCategoryRepository;
+        this.userRepository = userRepository;
+        this.userManager = userManager;
+        this.weblogManager = weblogManager;
+        this.weblogEntryManager = weblogEntryManager;
+        this.indexManager = indexManager;
+        this.persistenceStrategy = persistenceStrategy;
+        this.urlStrategy = urlStrategy;
+        this.mailManager = mailManager;
+        this.messages = messages;
     }
 
     // number of entries to show per page
@@ -99,65 +121,13 @@ public class WeblogEntryController {
     @Value("${max.autocomplete.tags:20}")
     private int maxAutocompleteTags;
 
-    @Autowired
-    private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    @Autowired
-    private WeblogEntryManager weblogEntryManager;
-
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
-    @Autowired
-    private IndexManager indexManager;
-
-    public void setIndexManager(IndexManager indexManager) {
-        this.indexManager = indexManager;
-    }
-
-    @Autowired
-    private JPAPersistenceStrategy persistenceStrategy;
-
-    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
-        this.persistenceStrategy = persistenceStrategy;
-    }
-
-    @Autowired
-    private URLStrategy urlStrategy;
-
-    public void setUrlStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
-    }
-
-    @Autowired
-    private MailManager mailManager;
-
-    public void setMailManager(MailManager manager) {
-        mailManager = manager;
-    }
-
-    @Autowired
-    private MessageSource messages;
-
     @PostMapping(value = "/{weblogId}/page/{page}")
     public WeblogEntryData getWeblogEntries(@PathVariable String weblogId, @PathVariable int page,
                                               @RequestBody WeblogEntrySearchCriteria criteria, Principal principal,
                                               HttpServletResponse response) {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog, WeblogRole.OWNER)) {
 
             WeblogEntryData data = new WeblogEntryData();
 
@@ -203,7 +173,7 @@ public class WeblogEntryController {
                                                               HttpServletResponse response, Locale locale) {
 
         // Get user permissions and locale
-        User user = userManager.getEnabledUserByUserName(principal.getName());
+        User user = userRepository.findEnabledByUserName(principal.getName());
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
 
         if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.POST)) {
@@ -265,7 +235,7 @@ public class WeblogEntryController {
             WeblogEntry itemToRemove = weblogEntryManager.getWeblogEntry(id, false);
             if (itemToRemove != null) {
                 Weblog weblog = itemToRemove.getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
+                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
                     // remove from search index
                     if (itemToRemove.isPublished()) {
                         indexManager.updateIndex(itemToRemove, true);
@@ -343,7 +313,7 @@ public class WeblogEntryController {
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         WeblogRole minimumRole = (pubStatus == PubStatus.DRAFT || pubStatus == PubStatus.PENDING) ?
                 WeblogRole.EDIT_DRAFT : WeblogRole.POST;
-        if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), minimumRole)) {
+        if (userManager.checkWeblogRole(p.getName(), weblog, minimumRole)) {
             WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
             wesc.setWeblog(weblog);
             wesc.setMaxResults(20);
@@ -354,7 +324,7 @@ public class WeblogEntryController {
             response.setStatus(HttpServletResponse.SC_OK);
             return recentEntries;
         } else if (WeblogRole.POST.equals(minimumRole) &&
-                userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
+                userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.EDIT_DRAFT)) {
             // contributors get empty array for certain pub statuses
             response.setStatus(HttpServletResponse.SC_OK);
             return new ArrayList<>();
@@ -371,7 +341,7 @@ public class WeblogEntryController {
             WeblogEntry entry = weblogEntryManager.getWeblogEntry(id, true);
             if (entry != null) {
                 Weblog weblog = entry.getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
+                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.EDIT_DRAFT)) {
                     entry.setCommentsUrl(urlStrategy.getCommentManagementURL(weblog.getId(), entry.getId()));
                     entry.setPermalink(urlStrategy.getWeblogEntryURL(entry));
                     entry.setPreviewUrl(urlStrategy.getWeblogEntryDraftPreviewURL(entry));
@@ -405,7 +375,7 @@ public class WeblogEntryController {
                                                               Locale locale, HttpServletResponse response) {
 
         // Get user permissions and locale
-        User user = userManager.getEnabledUserByUserName(principal.getName());
+        User user = userRepository.findEnabledByUserName(principal.getName());
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
 
         if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.EDIT_DRAFT)) {
@@ -503,7 +473,7 @@ public class WeblogEntryController {
             }
 
             // Check user permissions
-            User user = userManager.getEnabledUserByUserName(p.getName());
+            User user = userRepository.findEnabledByUserName(p.getName());
             Weblog weblog = (entry == null) ? weblogRepository.findById(weblogId).orElse(null)
                     : entry.getWeblog();
 

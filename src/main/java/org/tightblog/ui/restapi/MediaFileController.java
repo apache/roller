@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.tightblog.repository.MediaDirectoryRepository;
+import org.tightblog.repository.MediaFileRepository;
+import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.ServletException;
@@ -31,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -43,50 +47,39 @@ public class MediaFileController {
 
     private static Logger log = LoggerFactory.getLogger(MediaFileController.class);
 
+
     private WeblogRepository weblogRepository;
-
-    @Autowired
-    public MediaFileController(WeblogRepository weblogRepository) {
-        this.weblogRepository = weblogRepository;
-    }
-
-    @Autowired
+    private MediaDirectoryRepository mediaDirectoryRepository;
+    private MediaFileRepository mediaFileRepository;
     private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    @Autowired
     private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    @Autowired
+    private UserRepository userRepository;
     private MediaFileManager mediaFileManager;
-
-    public void setMediaFileManager(MediaFileManager mediaFileManager) {
-        this.mediaFileManager = mediaFileManager;
-    }
-
-    @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
-
-    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
-        this.persistenceStrategy = persistenceStrategy;
-    }
+    private MessageSource messages;
 
     @Autowired
-    private MessageSource messages;
+    public MediaFileController(WeblogRepository weblogRepository, MediaDirectoryRepository mediaDirectoryRepository,
+                               MediaFileRepository mediaFileRepository, WeblogManager weblogManager,
+                               UserManager userManager, UserRepository userRepository, MediaFileManager mediaFileManager,
+                               JPAPersistenceStrategy persistenceStrategy, MessageSource messages) {
+        this.weblogRepository = weblogRepository;
+        this.mediaDirectoryRepository = mediaDirectoryRepository;
+        this.mediaFileRepository = mediaFileRepository;
+        this.weblogManager = weblogManager;
+        this.userManager = userManager;
+        this.userRepository = userRepository;
+        this.mediaFileManager = mediaFileManager;
+        this.persistenceStrategy = persistenceStrategy;
+        this.messages = messages;
+    }
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}/mediadirectories")
     public List<MediaDirectory> getMediaDirectories(@PathVariable String id, Principal p, HttpServletResponse response) {
         Weblog weblog = weblogRepository.findById(id).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
+        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.EDIT_DRAFT)) {
             List<MediaDirectory> temp =
-                    mediaFileManager.getMediaDirectories(weblogRepository.findById(id).orElse(null))
+                    mediaDirectoryRepository.findByWeblog(weblogRepository.findById(id).orElse(null))
                             .stream()
                             .peek(md -> {
                                 md.setMediaFiles(null);
@@ -103,9 +96,9 @@ public class MediaFileController {
 
     @GetMapping(value = "/tb-ui/authoring/rest/mediadirectories/{id}/files")
     public List<MediaFile> getMediaDirectoryContents(@PathVariable String id, Principal p, HttpServletResponse response) {
-        MediaDirectory md = mediaFileManager.getMediaDirectory(id);
+        MediaDirectory md = mediaDirectoryRepository.findByIdOrNull(id);
         boolean permitted = md != null
-                && userManager.checkWeblogRole(p.getName(), md.getWeblog().getHandle(), WeblogRole.EDIT_DRAFT);
+                && userManager.checkWeblogRole(p.getName(), md.getWeblog(), WeblogRole.EDIT_DRAFT);
         if (permitted) {
             return md.getMediaFiles()
                     .stream()
@@ -120,9 +113,9 @@ public class MediaFileController {
 
     @GetMapping(value = "/tb-ui/authoring/rest/mediafile/{id}")
     public MediaFile getMediaFile(@PathVariable String id, Principal p, HttpServletResponse response) {
-        MediaFile mf = mediaFileManager.getMediaFile(id);
+        MediaFile mf = mediaFileRepository.findByIdOrNull(id);
         boolean permitted = mf != null
-                && userManager.checkWeblogRole(p.getName(), mf.getDirectory().getWeblog().getHandle(), WeblogRole.POST);
+                && userManager.checkWeblogRole(p.getName(), mf.getDirectory().getWeblog(), WeblogRole.POST);
         if (permitted) {
             mf.setCreator(null);
             return mf;
@@ -138,11 +131,11 @@ public class MediaFileController {
                                         @RequestPart(name = "uploadFile", required = false) MultipartFile uploadedFile)
             throws ServletException {
 
-        MediaFile mf = mediaFileManager.getMediaFile(mediaFileData.getId());
+        MediaFile mf = mediaFileRepository.findByIdOrNull(mediaFileData.getId());
         boolean newMediaFile = mf == null;
 
         // Check user permissions
-        User user = userManager.getEnabledUserByUserName(p.getName());
+        User user = userRepository.findEnabledByUserName(p.getName());
 
         if (newMediaFile) {
             if (uploadedFile == null) {
@@ -155,7 +148,7 @@ public class MediaFileController {
             if (mediaFileData.getDirectory() == null) {
                 return ResponseEntity.badRequest().body("Media Directory was not provided.");
             }
-            MediaDirectory dir = mediaFileManager.getMediaDirectory(mediaFileData.getDirectory().getId());
+            MediaDirectory dir = mediaDirectoryRepository.findByIdOrNull(mediaFileData.getDirectory().getId());
             if (dir == null) {
                 return ResponseEntity.badRequest().body("Specified media directory could not be found.");
             }
@@ -191,7 +184,7 @@ public class MediaFileController {
                 mf.setCreator(user);
             }
 
-            mediaFileManager.storeMediaFile(mf, uploadedFile == null ? null : uploadedFile.getInputStream(), errors);
+            mediaFileManager.saveMediaFile(mf, uploadedFile == null ? null : uploadedFile.getInputStream(), errors);
 
             if (errors.size() > 0) {
                 Map.Entry<String, List<String>> msg = errors.entrySet().iterator().next();
@@ -212,7 +205,7 @@ public class MediaFileController {
             throws ServletException {
         try {
             Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                 try {
                     MediaDirectory newDir = mediaFileManager.createMediaDirectory(weblog, directoryName.asText().trim());
                     response.setStatus(HttpServletResponse.SC_OK);
@@ -233,10 +226,10 @@ public class MediaFileController {
             throws ServletException {
 
         try {
-            MediaDirectory itemToRemove = mediaFileManager.getMediaDirectory(id);
+            MediaDirectory itemToRemove = mediaDirectoryRepository.findByIdOrNull(id);
             if (itemToRemove != null) {
                 Weblog weblog = itemToRemove.getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                     weblog.getMediaDirectories().remove(itemToRemove);
                     mediaFileManager.removeAllFiles(itemToRemove);
                     weblogManager.saveWeblog(weblog);
@@ -260,9 +253,9 @@ public class MediaFileController {
         try {
             if (fileIdsToDelete != null && fileIdsToDelete.size() > 0) {
                 Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-                if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                     for (String fileId : fileIdsToDelete) {
-                        MediaFile mediaFile = mediaFileManager.getMediaFile(fileId);
+                        MediaFile mediaFile = mediaFileRepository.findByIdOrNull(fileId);
                         if (mediaFile != null && weblog.equals(mediaFile.getDirectory().getWeblog())) {
                             mediaFileManager.removeMediaFile(weblog, mediaFile);
                         }
@@ -295,14 +288,14 @@ public class MediaFileController {
         try {
             if (fileIdsToMove != null && fileIdsToMove.size() > 0) {
                 Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-                MediaDirectory targetDirectory = mediaFileManager.getMediaDirectory(directoryId);
+                MediaDirectory targetDirectory = mediaDirectoryRepository.findByIdOrNull(directoryId);
                 if (weblog != null && targetDirectory != null && weblog.equals(targetDirectory.getWeblog()) &&
-                        userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                        userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
 
                     for (String fileId : fileIdsToMove) {
-                        MediaFile mediaFile = mediaFileManager.getMediaFile(fileId);
+                        MediaFile mediaFile = mediaFileRepository.findByIdOrNull(fileId);
                         if (mediaFile != null && weblog.equals(mediaFile.getDirectory().getWeblog())) {
-                            mediaFileManager.moveMediaFile(mediaFile, targetDirectory);
+                            mediaFileManager.moveMediaFiles(Collections.singletonList(mediaFile), targetDirectory);
                         }
                     }
                     persistenceStrategy.flush();

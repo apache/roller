@@ -45,10 +45,17 @@ import java.util.stream.Collectors;
 public class TagController {
 
     private WeblogRepository weblogRepository;
+    private UserManager userManager;
+    private WeblogManager weblogManager;
+    private URLStrategy urlStrategy;
 
     @Autowired
-    public TagController(WeblogRepository weblogRepository) {
+    public TagController(WeblogRepository weblogRepository, UserManager userManager, WeblogManager weblogManager,
+                         URLStrategy urlStrategy) {
         this.weblogRepository = weblogRepository;
+        this.userManager = userManager;
+        this.weblogManager = weblogManager;
+        this.urlStrategy = urlStrategy;
     }
 
     private static Logger log = LoggerFactory.getLogger(TagController.class);
@@ -56,33 +63,12 @@ public class TagController {
     // number of entries to show per page
     private static final int ITEMS_PER_PAGE = 30;
 
-    @Autowired
-    private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    @Autowired
-    private URLStrategy urlStrategy;
-
-    public void setUrlStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
-    }
-
     @GetMapping(value = "/{weblogId}/page/{page}")
     public TagData getTags(@PathVariable String weblogId, @PathVariable int page,
                            Principal principal, HttpServletResponse response) {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog, WeblogRole.OWNER)) {
 
             TagData data = new TagData();
 
@@ -127,7 +113,7 @@ public class TagController {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         try {
-            if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
+            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
                 weblogManager.removeTag(weblog, tagName);
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
@@ -161,7 +147,7 @@ public class TagController {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         try {
-            if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
+            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
                 Map<String, Integer> results = weblogManager.addTag(weblog, currentTagName, newTagName);
                 if (!isAdd) {
                     weblogManager.removeTag(weblog, currentTagName);

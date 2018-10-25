@@ -361,7 +361,7 @@ public class PageModel implements Model {
     }
 
     private boolean checkUserRights(WeblogRole role) {
-        return !preview && userManager.checkWeblogRole(pageRequest.getAuthenticatedUser(), getWeblog().getHandle(), role);
+        return !preview && userManager.checkWeblogRole(pageRequest.getAuthenticatedUser(), getWeblog(), role);
     }
 
     public CalendarData getCalendarData(boolean includeBlogEntryData) {

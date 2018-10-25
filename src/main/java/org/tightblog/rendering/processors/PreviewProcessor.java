@@ -124,7 +124,7 @@ public class PreviewProcessor extends AbstractProcessor {
         }
 
         // User must have access rights on blog being previewed
-        if (!userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.EDIT_DRAFT)) {
+        if (!userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.EDIT_DRAFT)) {
             log.warn("User {} attempting to preview blog {} without access rights, blocking", p.getName(),
                     weblog.getHandle());
             response.sendError(HttpServletResponse.SC_FORBIDDEN);

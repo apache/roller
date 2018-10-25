@@ -21,11 +21,8 @@
 package org.tightblog.business;
 
 import org.tightblog.pojos.User;
-import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
-
-import java.util.List;
 
 /**
  * Interface to User and WeblogRole management.
@@ -38,17 +35,6 @@ public interface UserManager {
      * @param user User to be removed.
      */
     void removeUser(User user);
-
-    /**
-     * Lookup an enabled user by UserName.
-     * <p>
-     * This lookup is restricted to 'enabled' users by default.  So this method
-     * will return null if the user is found but is not enabled.
-     *
-     * @param userName User Name of user to lookup.
-     * @return The user, or null if not found or not enabled.
-     */
-    User getEnabledUserByUserName(String userName);
 
     /**
      * Update user password.  This method takes an unencrypted password
@@ -65,32 +51,21 @@ public interface UserManager {
      * @param user   User whose role is being checked
      * @param weblog Target weblog of the role
      * @param role   Minimum WeblogRole being checked for
-     * @return true if user has WeblogRole or a more powerful one
+     * @return true if user is a global Admin, or has given WeblogRole or a more powerful one
      */
     boolean checkWeblogRole(User user, Weblog weblog, WeblogRole role);
 
     /**
      * Check user's rights given username and weblog handle.  Convenience
-     * overload for callers not having the User and/or Weblog objects.
+     * overload for callers having the weblog but not the user object.
      *
      * @param username     Username whose role is being checked
-     * @param weblogHandle target weblog handle of the role
-     * @param role         Minimum WeblogRole being checked for
-     * @return true if a user and weblog can be identified from the passed in username and weblogHandle
-     * and the user is either a global admin or has the role or more powerful for the Weblog.
-     * false otherwise, including the cases where the username and/or weblogHandle is an empty string
-     * or null.
-     */
-    boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role);
-
-    /**
-     * Get user's WeblogRole within a weblog or null if none.
-     *
-     * @param user   User whose role is being checked
      * @param weblog Target weblog of the role
-     * @return UserWeblogRole indicating user's role with weblog or null if no permission
+     * @param role         Minimum WeblogRole being checked for
+     * @return false if user cannot be identified from the passed in username,
+     * otherwise whatever checkWeblogRole(User, Weblog, WeblogRole) would return.
      */
-    UserWeblogRole getWeblogRole(User user, Weblog weblog);
+    boolean checkWeblogRole(String username, Weblog weblog, WeblogRole role);
 
     /**
      * Grant user specific WeblogRole for a weblog.
@@ -103,37 +78,9 @@ public interface UserManager {
     void grantWeblogRole(User user, Weblog weblog, WeblogRole role, boolean pending);
 
     /**
-     * Revoke from user his WeblogRole for a given weblog.
-     *
-     * @param userWeblogRole UserWeblogRole object containing user and weblog combination to remove
-     */
-    void revokeWeblogRole(UserWeblogRole userWeblogRole);
-
-    /**
-     * Get user's non-pending WeblogRoles.
-     */
-    List<UserWeblogRole> getWeblogRoles(User user);
-
-    /**
-     * Get all non-pending User WeblogRoles associated with a weblog.
-     */
-    List<UserWeblogRole> getWeblogRoles(Weblog weblog);
-
-    /**
-     * Get all User WeblogRoles (pending or actual) for a weblog.
-     */
-    List<UserWeblogRole> getWeblogRolesIncludingPending(Weblog weblog);
-
-    /**
-     * Get user's WeblogRole (pending or actual) for a weblog
-     */
-    UserWeblogRole getWeblogRoleIncludingPending(User user, Weblog weblog);
-
-    /**
      * Generate a URL for the user's Google Authenticator code (for MFA)
      * @param user User to obtain QA code for
      * @return url Image URL for the QR code
      */
     String generateMFAQRUrl(User user);
-
 }

@@ -67,50 +67,26 @@ public class AdminController {
 
     private static Logger log = LoggerFactory.getLogger(AdminController.class);
 
-    @Autowired
     private Set<LazyExpiringCache> cacheSet;
-
-    public void setCacheSet(Set<LazyExpiringCache> cacheSet) {
-        this.cacheSet = cacheSet;
-    }
-
-    @Autowired
     private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    @Autowired
     private IndexManager indexManager;
-
-    public void setIndexManager(IndexManager indexManager) {
-        this.indexManager = indexManager;
-    }
-
-    @Autowired
     private BlacklistCommentValidator blacklistCommentValidator;
-
-    public void setBlacklistCommentValidator(BlacklistCommentValidator blacklistCommentValidator) {
-        this.blacklistCommentValidator = blacklistCommentValidator;
-    }
-
     private WeblogRepository weblogRepository;
-
-    @Autowired
-    public AdminController(WeblogRepository weblogRepository) {
-        this.weblogRepository = weblogRepository;
-    }
-
-    @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
-
-    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
-        this.persistenceStrategy = strategy;
-    }
+    private MessageSource messages;
 
     @Autowired
-    private MessageSource messages;
+    public AdminController(Set<LazyExpiringCache> cacheSet, WeblogManager weblogManager, IndexManager indexManager,
+                           BlacklistCommentValidator blacklistCommentValidator, WeblogRepository weblogRepository,
+                           JPAPersistenceStrategy persistenceStrategy, MessageSource messages) {
+        this.cacheSet = cacheSet;
+        this.weblogManager = weblogManager;
+        this.indexManager = indexManager;
+        this.blacklistCommentValidator = blacklistCommentValidator;
+        this.weblogRepository = weblogRepository;
+        this.persistenceStrategy = persistenceStrategy;
+        this.messages = messages;
+    }
 
     @GetMapping(value = "/caches")
     public Map<String, LazyExpiringCache> getCacheData() throws ServletException {

@@ -98,10 +98,10 @@ public class MediaFileTestIT extends WebloggerTest {
         MediaDirectory newDirectory1 = mediaFileManager.createMediaDirectory(testWeblog, "test1");
         MediaDirectory newDirectory2 = mediaFileManager.createMediaDirectory(testWeblog, "test2");
 
-        MediaDirectory newDirectory1ById = mediaFileManager.getMediaDirectory(newDirectory1.getId());
+        MediaDirectory newDirectory1ById = mediaDirectoryRepository.findByIdOrNull(newDirectory1.getId());
         assertEquals(newDirectory1, newDirectory1ById);
 
-        MediaDirectory newDirectory2ById = mediaFileManager.getMediaDirectory(newDirectory2.getId());
+        MediaDirectory newDirectory2ById = mediaDirectoryRepository.findByIdOrNull(newDirectory2.getId());
         assertEquals("test2", newDirectory2ById.getName());
 
         // show throw error when creating directory that already exists
@@ -120,7 +120,7 @@ public class MediaFileTestIT extends WebloggerTest {
         mediaFileManager.createMediaDirectory(testWeblog, "dir1");
         mediaFileManager.createMediaDirectory(testWeblog, "dir2");
 
-        List<MediaDirectory> directories = mediaFileManager.getMediaDirectories(testWeblog);
+        List<MediaDirectory> directories = mediaDirectoryRepository.findByWeblog(testWeblog);
         assertNotNull(directories);
         assertEquals(3, directories.size());
         assertTrue(containsName(directories, "default"));
@@ -170,17 +170,17 @@ public class MediaFileTestIT extends WebloggerTest {
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setContentType("image/jpeg");
 
-        mediaFileManager.storeMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
+        mediaFileManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
         String id = mediaFile.getId();
         assertNotNull(id);
         assertNotNull(id.length() > 0);
 
-        MediaFile mediaFile1 = mediaFileManager.getMediaFile(id);
+        MediaFile mediaFile1 = mediaFileRepository.findByIdOrNull(id);
 
         assertEquals("test4.jpg", mediaFile1.getName());
         mediaFileManager.removeMediaFile(testWeblog, mediaFile1);
 
-        MediaFile mediaFile2 = mediaFileManager.getMediaFile(id);
+        MediaFile mediaFile2 = mediaFileRepository.findByIdOrNull(id);
         assertNull(mediaFile2);
 
         File flag = new File(mediafileDir + File.separator + "migration-status.properties");
@@ -193,7 +193,7 @@ public class MediaFileTestIT extends WebloggerTest {
     @Test
     public void teststoreMediaFile() throws Exception {
         MediaDirectory rootDirectory = mediaDirectoryRepository.findByWeblogAndName(testWeblog, "default");
-        rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
+        rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setCreator(testUser);
@@ -204,11 +204,11 @@ public class MediaFileTestIT extends WebloggerTest {
         mediaFile.setContentType("image/jpeg");
         rootDirectory.getMediaFiles().add(mediaFile);
 
-        mediaFileManager.storeMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
+        mediaFileManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
         assertNotNull(mediaFile.getId());
         assertTrue(mediaFile.getId().length() > 0);
 
-        MediaFile mediaFile1 = mediaFileManager.getMediaFile(mediaFile.getId());
+        MediaFile mediaFile1 = mediaFileRepository.findByIdOrNull(mediaFile.getId());
         assertEquals("test.jpg", mediaFile1.getName());
         assertEquals("This is a test image", mediaFile1.getNotes());
         assertEquals(2000, mediaFile1.getLength());
@@ -220,7 +220,7 @@ public class MediaFileTestIT extends WebloggerTest {
     @Test
     public void testUpdateMediaFile() throws Exception {
         MediaDirectory rootDirectory = mediaDirectoryRepository.findByWeblogAndName(testWeblog, "default");
-        rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
+        rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setCreator(testUser);
@@ -229,20 +229,20 @@ public class MediaFileTestIT extends WebloggerTest {
         mediaFile.setLength(3000);
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.storeMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
+        mediaFileManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
 
         rootDirectory.getMediaFiles().add(mediaFile);
         String id = mediaFile.getId();
         assertNotNull(id);
         assertNotNull(id.length() > 0);
 
-        MediaFile mediaFile1 = mediaFileManager.getMediaFile(id);
+        MediaFile mediaFile1 = mediaFileRepository.findByIdOrNull(id);
         mediaFile1.setName("updated.gif");
         mediaFile1.setNotes("updated desc");
         mediaFile1.setContentType("image/gif");
-        mediaFileManager.storeMediaFile(mediaFile1, null, null);
+        mediaFileManager.saveMediaFile(mediaFile1, null, null);
 
-        MediaFile mediaFile2 = mediaFileManager.getMediaFile(id);
+        MediaFile mediaFile2 = mediaFileRepository.findByIdOrNull(id);
         assertEquals("updated.gif", mediaFile2.getName());
         assertEquals("updated desc", mediaFile2.getNotes());
         assertEquals("image/gif", mediaFile2.getContentType());
@@ -266,7 +266,7 @@ public class MediaFileTestIT extends WebloggerTest {
         mediaFile.setNotes("This is a test image 6.1");
         mediaFile.setLength(4000);
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.storeMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
+        mediaFileManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setCreator(testUser);
@@ -275,9 +275,9 @@ public class MediaFileTestIT extends WebloggerTest {
         mediaFile2.setNotes("This is a test image 6.2");
         mediaFile2.setLength(4000);
         mediaFile2.setContentType("image/jpeg");
-        mediaFileManager.storeMediaFile(mediaFile2, getClass().getResourceAsStream(TEST_IMAGE), null);
+        mediaFileManager.saveMediaFile(mediaFile2, getClass().getResourceAsStream(TEST_IMAGE), null);
 
-        rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
+        rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
 
         List<MediaDirectory> childDirectories = testWeblog.getMediaDirectories();
         assertEquals(4, childDirectories.size());
@@ -290,7 +290,7 @@ public class MediaFileTestIT extends WebloggerTest {
         assertTrue(containsFileWithName(mediaFiles, "test6_1.jpg"));
         assertTrue(containsFileWithName(mediaFiles, "test6_2.jpg"));
 
-        rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
+        rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
         assertTrue(rootDirectory.hasMediaFile("test6_1.jpg"));
         assertTrue(rootDirectory.hasMediaFile("test6_2.jpg"));
     }
@@ -313,7 +313,7 @@ public class MediaFileTestIT extends WebloggerTest {
         mediaFile.setNotes("This is a test image 7.1");
         mediaFile.setLength(4000);
         mediaFile.setContentType("image/jpeg");
-        mediaFileManager.storeMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
+        mediaFileManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setCreator(testUser);
@@ -322,21 +322,20 @@ public class MediaFileTestIT extends WebloggerTest {
         mediaFile2.setNotes("This is a test image 7.2");
         mediaFile2.setLength(4000);
         mediaFile2.setContentType("image/jpeg");
-        mediaFileManager.storeMediaFile(mediaFile2, getClass().getResourceAsStream(TEST_IMAGE), null);
+        mediaFileManager.saveMediaFile(mediaFile2, getClass().getResourceAsStream(TEST_IMAGE), null);
 
-        rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
+        rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
 
         Set<MediaFile> mediaFiles = rootDirectory.getMediaFiles();
         assertEquals(2, mediaFiles.size());
         assertTrue(containsFileWithName(mediaFiles, "test7_1.jpg"));
         assertTrue(containsFileWithName(mediaFiles, "test7_2.jpg"));
 
-        MediaDirectory targetDirectory = mediaFileManager
-                .getMediaDirectory(dir1.getId());
+        MediaDirectory targetDirectory = mediaDirectoryRepository.findByIdOrNull(dir1.getId());
         mediaFileManager.moveMediaFiles(mediaFiles, targetDirectory);
 
-        rootDirectory = mediaFileManager.getMediaDirectory(rootDirectory.getId());
-        targetDirectory = mediaFileManager.getMediaDirectory(dir1.getId());
+        rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
+        targetDirectory = mediaDirectoryRepository.findByIdOrNull(dir1.getId());
 
         mediaFiles = targetDirectory.getMediaFiles();
         assertEquals(2, mediaFiles.size());
@@ -360,7 +359,7 @@ public class MediaFileTestIT extends WebloggerTest {
         assertEquals(4, directories.size());
 
         // Delete folder
-        MediaDirectory directoryById = mediaFileManager.getMediaDirectory(dir1.getId());
+        MediaDirectory directoryById = mediaDirectoryRepository.findByIdOrNull(dir1.getId());
         testWeblog.getMediaDirectories().remove(directoryById);
         mediaFileManager.removeAllFiles(directoryById);
         weblogRepository.saveAndFlush(testWeblog);

@@ -12,6 +12,7 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WeblogTheme;
+import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WeblogTemplateRepository;
 import org.tightblog.util.ValidationError;
@@ -35,38 +36,25 @@ public class ThemeController {
     private static Logger log = LoggerFactory.getLogger(ThemeController.class);
 
     private WeblogRepository weblogRepository;
-
     private WeblogTemplateRepository weblogTemplateRepository;
+    private UserRepository userRepository;
+    private ThemeManager themeManager;
+    private WeblogManager weblogManager;
+    private UserManager userManager;
+    private MessageSource messages;
 
     @Autowired
-    public ThemeController(WeblogRepository weblogRepository, WeblogTemplateRepository weblogTemplateRepository) {
+    public ThemeController(WeblogRepository weblogRepository, WeblogTemplateRepository weblogTemplateRepository,
+                           UserRepository userRepository, ThemeManager themeManager, WeblogManager weblogManager,
+                           UserManager userManager, MessageSource messages) {
         this.weblogRepository = weblogRepository;
         this.weblogTemplateRepository = weblogTemplateRepository;
-    }
-
-    @Autowired
-    private ThemeManager themeManager;
-
-    public void setThemeManager(ThemeManager themeManager) {
+        this.userRepository = userRepository;
         this.themeManager = themeManager;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
-    }
-
-    @Autowired
-    private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
+        this.messages = messages;
     }
-
-    @Autowired
-    private MessageSource messages;
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/switchtheme/{newThemeId}", produces = "text/plain")
     public ResponseEntity switchTheme(@PathVariable String weblogId, @PathVariable String newThemeId, Principal p,
@@ -74,7 +62,7 @@ public class ThemeController {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         SharedTheme newTheme = themeManager.getSharedTheme(newThemeId);
-        User user = userManager.getEnabledUserByUserName(p.getName());
+        User user = userRepository.findEnabledByUserName(p.getName());
 
         if (weblog != null && newTheme != null) {
             if (userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
@@ -138,5 +126,4 @@ public class ThemeController {
 
         return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
     }
-
 }

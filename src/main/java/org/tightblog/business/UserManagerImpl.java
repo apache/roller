@@ -34,25 +34,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.tightblog.repository.UserCredentialsRepository;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.UserWeblogRoleRepository;
-import org.tightblog.repository.WeblogRepository;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 @Component("userManager")
 public class UserManagerImpl implements UserManager {
 
     private UserRepository userRepository;
     private UserWeblogRoleRepository userWeblogRoleRepository;
-    private WeblogRepository weblogRepository;
     private UserCredentialsRepository userCredentialsRepository;
 
     @Autowired
     public UserManagerImpl(UserRepository userRepository, UserWeblogRoleRepository uwrRepository,
-                           WeblogRepository weblogRepository, UserCredentialsRepository userCredentialsRepository) {
+                           UserCredentialsRepository userCredentialsRepository) {
         this.userRepository = userRepository;
-        this.weblogRepository = weblogRepository;
         this.userWeblogRoleRepository = uwrRepository;
         this.userCredentialsRepository = userCredentialsRepository;
     }
@@ -71,20 +67,12 @@ public class UserManagerImpl implements UserManager {
     }
 
     @Override
-    public User getEnabledUserByUserName(String userName) {
-        return userRepository.findEnabledByUserName(userName);
-    }
-
-    @Override
-    public boolean checkWeblogRole(String username, String weblogHandle, WeblogRole role) {
-        boolean hasRole = false;
-
-        User userToCheck = getEnabledUserByUserName(username);
+    public boolean checkWeblogRole(String username, Weblog weblog, WeblogRole role) {
+        User userToCheck = userRepository.findEnabledByUserName(username);
         if (userToCheck != null) {
-            Weblog weblogToCheck = weblogRepository.findByHandle(weblogHandle);
-            hasRole = weblogToCheck != null && checkWeblogRole(userToCheck, weblogToCheck, role);
+            return checkWeblogRole(userToCheck, weblog, role);
         }
-        return hasRole;
+        return false;
     }
 
     @Override
@@ -95,7 +83,7 @@ public class UserManagerImpl implements UserManager {
             if (GlobalRole.ADMIN.equals(user.getGlobalRole())) {
                 hasRole = true;
             } else {
-                UserWeblogRole existingRole = getWeblogRole(user, weblog);
+                UserWeblogRole existingRole = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(user, weblog);
                 if (existingRole != null && existingRole.hasEffectiveWeblogRole(role)) {
                     hasRole = true;
                 }
@@ -115,36 +103,6 @@ public class UserManagerImpl implements UserManager {
         }
         roleCheck.setPending(pending);
         userWeblogRoleRepository.saveAndFlush(roleCheck);
-    }
-
-    @Override
-    public void revokeWeblogRole(UserWeblogRole roleToRevoke) {
-        userWeblogRoleRepository.delete(roleToRevoke);
-    }
-
-    @Override
-    public UserWeblogRole getWeblogRole(User user, Weblog weblog) {
-        return userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(user, weblog);
-    }
-
-    @Override
-    public UserWeblogRole getWeblogRoleIncludingPending(User user, Weblog weblog) {
-        return userWeblogRoleRepository.findByUserAndWeblog(user, weblog);
-    }
-
-    @Override
-    public List<UserWeblogRole> getWeblogRoles(User user) {
-        return userWeblogRoleRepository.findByUserAndPendingFalse(user);
-    }
-
-    @Override
-    public List<UserWeblogRole> getWeblogRoles(Weblog weblog) {
-        return userWeblogRoleRepository.findByWeblogAndPendingFalse(weblog);
-    }
-
-    @Override
-    public List<UserWeblogRole> getWeblogRolesIncludingPending(Weblog weblog) {
-        return userWeblogRoleRepository.findByWeblog(weblog);
     }
 
     @Override

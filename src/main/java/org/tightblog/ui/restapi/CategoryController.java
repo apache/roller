@@ -51,26 +51,16 @@ import javax.servlet.http.HttpServletResponse;
 public class CategoryController {
 
     private WeblogRepository weblogRepository;
-
     private WeblogCategoryRepository weblogCategoryRepository;
-
-    @Autowired
-    public CategoryController(WeblogRepository weblogRepository, WeblogCategoryRepository weblogCategoryRepository) {
-        this.weblogRepository = weblogRepository;
-        this.weblogCategoryRepository = weblogCategoryRepository;
-    }
-
-    @Autowired
     private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    @Autowired
     private WeblogManager weblogManager;
 
-    public void setWeblogManager(WeblogManager weblogManager) {
+    @Autowired
+    public CategoryController(WeblogRepository weblogRepository, WeblogCategoryRepository weblogCategoryRepository,
+                              UserManager userManager, WeblogManager weblogManager) {
+        this.weblogRepository = weblogRepository;
+        this.weblogCategoryRepository = weblogCategoryRepository;
+        this.userManager = userManager;
         this.weblogManager = weblogManager;
     }
 
@@ -81,7 +71,7 @@ public class CategoryController {
             WeblogCategory c = weblogCategoryRepository.findById(id).orElse(null);
             if (c != null) {
                 Weblog weblog = c.getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                     if (!c.getName().equals(updatedCategory.getName())) {
                         Optional<WeblogCategory> maybeWC = weblog.getWeblogCategories().stream()
                                 .filter(wc -> wc.getId().equals(c.getId())).findFirst();
@@ -109,7 +99,7 @@ public class CategoryController {
                             Principal p, HttpServletResponse response) throws ServletException {
         try {
             Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                 WeblogCategory wc = new WeblogCategory(weblog, newCategory.getName());
                 try {
                     weblog.addCategory(wc);
@@ -143,7 +133,7 @@ public class CategoryController {
             WeblogCategory categoryToRemove = weblogCategoryRepository.findById(id).orElse(null);
             if (categoryToRemove != null) {
                 Weblog weblog = categoryToRemove.getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
 
                     Optional<WeblogCategory> targetCategory = targetCategoryId == null ?
                             Optional.empty() : weblogCategoryRepository.findById(targetCategoryId);

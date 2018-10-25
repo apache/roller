@@ -99,14 +99,14 @@ public class PreviewProcessorTest {
             when(wprCreator.create(mockRequest)).thenReturn(pageRequest);
             mockWEM = mock(WeblogEntryManager.class);
             mockUM = mock(UserManager.class);
-            when(mockUM.checkWeblogRole("bob", "bobsblog", WeblogRole.EDIT_DRAFT)).thenReturn(true);
+            weblog = new Weblog();
+            weblog.setHandle("bobsblog");
+            when(mockUM.checkWeblogRole("bob", weblog, WeblogRole.EDIT_DRAFT)).thenReturn(true);
             mockWR = mock(WeblogRepository.class);
             processor = new PreviewProcessor(mockWR);
             processor.setUserManager(mockUM);
             processor.setWeblogPageRequestCreator(wprCreator);
             processor.setWeblogEntryManager(mockWEM);
-            weblog = new Weblog();
-            weblog.setHandle("bobsblog");
             when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
             mockRenderer = mock(ThymeleafRenderer.class);
             CachedContent cachedContent = new CachedContent(Template.ComponentType.JAVASCRIPT);
@@ -139,7 +139,7 @@ public class PreviewProcessorTest {
 
     @Test
     public void test403WithUnauthorizedUser() throws IOException {
-        when(mockUM.checkWeblogRole("bob", "bobsblog", WeblogRole.EDIT_DRAFT)).thenReturn(false);
+        when(mockUM.checkWeblogRole("bob", weblog, WeblogRole.EDIT_DRAFT)).thenReturn(false);
         processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
         verify(mockResponse).sendError(HttpServletResponse.SC_FORBIDDEN);
     }

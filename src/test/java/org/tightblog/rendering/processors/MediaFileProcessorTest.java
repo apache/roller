@@ -40,7 +40,6 @@ import java.time.temporal.ChronoUnit;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -97,20 +96,20 @@ public class MediaFileProcessorTest {
     public void test404OnNoPathInfo() throws IOException {
         mediaFileRequest.setExtraPathInfo(null);
         processor.getMediaFile(mockRequest, mockResponse);
-        verify(mockMFM, never()).getMediaFile(anyString(), anyBoolean());
+        verify(mockMFM, never()).getMediaFileWithContent(anyString());
         verify(mockResponse).sendError(SC_NOT_FOUND);
 
         Mockito.clearInvocations(mockResponse, mockMFM);
         mediaFileRequest.setExtraPathInfo("/");
         processor.getMediaFile(mockRequest, mockResponse);
-        verify(mockMFM, never()).getMediaFile(anyString(), anyBoolean());
+        verify(mockMFM, never()).getMediaFileWithContent(anyString());
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }
 
     @Test
     public void test404OnNoMediaFile() throws IOException {
         processor.getMediaFile(mockRequest, mockResponse);
-        verify(mockMFM).getMediaFile("abc", true);
+        verify(mockMFM).getMediaFileWithContent("abc");
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }
 
@@ -121,7 +120,7 @@ public class MediaFileProcessorTest {
         fourDayOldMF.setLastUpdated(now.minus(4, ChronoUnit.DAYS));
         when(mockRequest.getDateHeader(any())).thenReturn(now.minus(2,
                 ChronoUnit.DAYS).toEpochMilli());
-        when(mockMFM.getMediaFile(anyString(), anyBoolean())).thenReturn(fourDayOldMF);
+        when(mockMFM.getMediaFileWithContent(anyString())).thenReturn(fourDayOldMF);
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockRequest).getDateHeader("If-Modified-Since");
         verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
@@ -130,7 +129,7 @@ public class MediaFileProcessorTest {
     @Test
     public void testReturn404onFileNotFound() throws IOException {
         MediaFile mediaFile = new MediaFile();
-        when(mockMFM.getMediaFile(anyString(), anyBoolean())).thenReturn(mediaFile);
+        when(mockMFM.getMediaFileWithContent(anyString())).thenReturn(mediaFile);
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }
@@ -140,7 +139,7 @@ public class MediaFileProcessorTest {
         Instant now = Instant.now();
         MediaFile mediaFile = new MediaFile();
         mediaFile.setLastUpdated(now);
-        when(mockMFM.getMediaFile(anyString(), anyBoolean())).thenReturn(mediaFile);
+        when(mockMFM.getMediaFileWithContent(anyString())).thenReturn(mediaFile);
         File regularFile = new File(getClass().getResource(TEST_IMAGE).toURI());
         mediaFile.setContent(regularFile);
         mediaFile.setThumbnail(regularFile);
@@ -164,7 +163,7 @@ public class MediaFileProcessorTest {
         Instant now = Instant.now();
         MediaFile mediaFile = new MediaFile();
         mediaFile.setLastUpdated(now);
-        when(mockMFM.getMediaFile(anyString(), anyBoolean())).thenReturn(mediaFile);
+        when(mockMFM.getMediaFileWithContent(anyString())).thenReturn(mediaFile);
         File regularFile = new File(getClass().getResource(TEST_IMAGE).toURI());
         mediaFile.setContent(regularFile);
         WebloggerTest.logExpectedException(log, "IllegalArgumentException");

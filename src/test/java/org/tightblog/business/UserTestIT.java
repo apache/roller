@@ -59,7 +59,7 @@ public class UserTestIT extends WebloggerTest {
         testUser.setGlobalRole(GlobalRole.BLOGGER);
         
         // make sure test user does not exist
-        user = userManager.getEnabledUserByUserName(testUser.getUserName());
+        user = userRepository.findEnabledByUserName(testUser.getUserName());
         assertNull(user);
         
         // add test user
@@ -67,7 +67,7 @@ public class UserTestIT extends WebloggerTest {
         String userName = testUser.getUserName();
 
         // make sure test user exists
-        user = userManager.getEnabledUserByUserName(userName);
+        user = userRepository.findEnabledByUserName(userName);
         assertNotNull(user);
         assertEquals(testUser, user);
         
@@ -76,7 +76,7 @@ public class UserTestIT extends WebloggerTest {
         userRepository.saveAndFlush(user);
 
         // make sure changes were saved
-        user = userManager.getEnabledUserByUserName(userName);
+        user = userRepository.findEnabledByUserName(userName);
         assertNotNull(user);
         assertEquals("testtesttest", user.getScreenName());
 
@@ -84,7 +84,7 @@ public class UserTestIT extends WebloggerTest {
         userManager.removeUser(user);
 
         // make sure user no longer exists
-        user = userManager.getEnabledUserByUserName(userName);
+        user = userRepository.findEnabledByUserName(userName);
         assertNull(user);
     }
     
@@ -104,13 +104,13 @@ public class UserTestIT extends WebloggerTest {
         userRepository.saveAndFlush(testUser2);
 
         // lookup by username
-        user1 = userManager.getEnabledUserByUserName(testUser.getUserName());
+        user1 = userRepository.findEnabledByUserName(testUser.getUserName());
         assertNotNull(user1);
         assertEquals(testUser.getUserName(), user1.getUserName());
         
         // lookup by id
         String userName = user1.getUserName();
-        user1 = userManager.getEnabledUserByUserName(userName);
+        user1 = userRepository.findEnabledByUserName(userName);
         assertNotNull(user1);
         assertEquals(testUser.getUserName(), user1.getUserName());
         
@@ -145,7 +145,7 @@ public class UserTestIT extends WebloggerTest {
         // add test user
         User testUser = setupUser("roletestuser");
 
-        user = userManager.getEnabledUserByUserName(testUser.getUserName());
+        user = userRepository.findEnabledByUserName(testUser.getUserName());
         assertNotNull(user);
         
         assertTrue(GlobalRole.BLOGGER.equals(user.getGlobalRole()));
@@ -154,7 +154,7 @@ public class UserTestIT extends WebloggerTest {
         userRepository.saveAndFlush(user);
 
         // check that role was switched
-        user = userManager.getEnabledUserByUserName(testUser.getUserName());
+        user = userRepository.findEnabledByUserName(testUser.getUserName());
         assertNotNull(user);
         assertTrue(user.getGlobalRole() == GlobalRole.BLOGCREATOR);
 

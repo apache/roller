@@ -43,6 +43,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.tightblog.repository.UserRepository;
+import org.tightblog.repository.UserWeblogRoleRepository;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -63,6 +64,7 @@ public class MailManagerImpl implements MailManager {
 
     private UserManager userManager;
     private UserRepository userRepository;
+    private UserWeblogRoleRepository userWeblogRoleRepository;
     private WeblogManager weblogManager;
     private WeblogEntryManager weblogEntryManager;
     private URLStrategy urlStrategy;
@@ -76,12 +78,14 @@ public class MailManagerImpl implements MailManager {
     private boolean mailEnabled;
 
     @Autowired
-    public MailManagerImpl(UserManager userManager, UserRepository userRepository, WeblogManager weblogManager,
+    public MailManagerImpl(UserManager userManager, UserRepository userRepository,
+                           UserWeblogRoleRepository userWeblogRoleRepository, WeblogManager weblogManager,
                            WeblogEntryManager weblogEntryManager, URLStrategy urlStrategy, JavaMailSender mailSender,
                            SpringTemplateEngine standardTemplateEngine, JPAPersistenceStrategy persistenceStrategy,
                            MessageSource messages, DynamicProperties dp) {
         this.userManager = userManager;
         this.userRepository = userRepository;
+        this.userWeblogRoleRepository = userWeblogRoleRepository;
         this.weblogManager = weblogManager;
         this.weblogEntryManager = weblogEntryManager;
         this.urlStrategy = urlStrategy;
@@ -259,7 +263,7 @@ public class MailManagerImpl implements MailManager {
         String subject = messages.getMessage("email.comment.moderate.title", null, weblog.getLocaleInstance());
         subject += entry.getTitle();
 
-        List<UserWeblogRole> bloggerList = userManager.getWeblogRoles(weblog);
+        List<UserWeblogRole> bloggerList = userWeblogRoleRepository.findByWeblogAndPendingFalse(weblog);
 
         String[] sendToList = bloggerList.stream()
                 .map(UserWeblogRole::getUser)
@@ -317,7 +321,7 @@ public class MailManagerImpl implements MailManager {
         if (weblog.getEmailComments() &&
                 // if must moderate on, blogger(s) already got pending email, good enough.
                 !WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments())) {
-            List<UserWeblogRole> bloggerList = userManager.getWeblogRoles(weblog);
+            List<UserWeblogRole> bloggerList = userWeblogRoleRepository.findByWeblogAndPendingFalse(weblog);
 
             Context ctx = getPublishedCommentNotificationContext(comment, null);
             String msg = standardTemplateEngine.process("emails/NewCommentNotification", ctx);

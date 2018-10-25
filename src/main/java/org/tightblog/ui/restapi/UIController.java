@@ -31,6 +31,7 @@ import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.repository.UserRepository;
+import org.tightblog.repository.UserWeblogRoleRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.ui.menu.Menu;
 import org.tightblog.ui.menu.MenuHelper;
@@ -54,26 +55,23 @@ import java.util.Map;
 public class UIController {
 
     private WeblogRepository weblogRepository;
-
     private UserManager userManager;
-
     private UserRepository userRepository;
-
+    private UserWeblogRoleRepository userWeblogRoleRepository;
     private WeblogEntryManager weblogEntryManager;
-
     private JPAPersistenceStrategy persistenceStrategy;
-
     private MailManager mailManager;
-
     private MenuHelper menuHelper;
 
     @Autowired
     public UIController(WeblogRepository weblogRepository, UserManager userManager, UserRepository userRepository,
                         WeblogEntryManager weblogEntryManager, JPAPersistenceStrategy persistenceStrategy,
-                        MailManager mailManager, MenuHelper menuHelper, MessageSource messages) {
+                        UserWeblogRoleRepository userWeblogRoleRepository, MailManager mailManager,
+                        MenuHelper menuHelper, MessageSource messages) {
         this.weblogRepository = weblogRepository;
         this.userManager = userManager;
         this.userRepository = userRepository;
+        this.userWeblogRoleRepository = userWeblogRoleRepository;
         this.weblogEntryManager = weblogEntryManager;
         this.persistenceStrategy = persistenceStrategy;
         this.mailManager = mailManager;
@@ -158,7 +156,7 @@ public class UIController {
             // trigger call to login page
             response.sendRedirect(request.getContextPath() + "/tb-ui/app/home");
         } else {
-            User user = userManager.getEnabledUserByUserName(principal.getName());
+            User user = userRepository.findEnabledByUserName(principal.getName());
 
             if (mfaEnabled && ((UsernamePasswordAuthenticationToken) principal).getAuthorities().stream().anyMatch(
                             role -> GlobalRole.MISSING_MFA_SECRET.name().equals(role.getAuthority()))) {
@@ -166,7 +164,7 @@ public class UIController {
             } else if (!GlobalRole.ADMIN.equals(user.getGlobalRole())) {
                 response.sendRedirect(request.getContextPath() + "/tb-ui/app/home");
             } else {
-                List<UserWeblogRole> roles = userManager.getWeblogRoles(user);
+                List<UserWeblogRole> roles = userWeblogRoleRepository.findByUserAndPendingFalse(user);
 
                 if (roles.size() > 0) {
                     response.sendRedirect(request.getContextPath() + "/tb-ui/app/home");
@@ -182,7 +180,7 @@ public class UIController {
     public ModelAndView scanAuthenticatorSecret(Principal principal, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
-        User user = userManager.getEnabledUserByUserName(principal.getName());
+        User user = userRepository.findEnabledByUserName(principal.getName());
         String qrCode = userManager.generateMFAQRUrl(user);
         Map<String, Object> myMap = new HashMap<>();
         myMap.put("qrCode", qrCode);
@@ -340,11 +338,11 @@ public class UIController {
 
     private ModelAndView getBlogPage(Principal principal, Map<String, Object> map, String weblogId, String actionName,
                                      WeblogRole requiredRole) {
-        User user = userManager.getEnabledUserByUserName(principal.getName());
+        User user = userRepository.findEnabledByUserName(principal.getName());
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
 
         boolean isAdmin = user.hasEffectiveGlobalRole(GlobalRole.ADMIN);
-        UserWeblogRole weblogRole = userManager.getWeblogRole(user, weblog);
+        UserWeblogRole weblogRole = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(user, weblog);
         if (isAdmin || (weblogRole != null && weblogRole.hasEffectiveWeblogRole(requiredRole))) {
             if (map == null) {
                 map = new HashMap<>();
@@ -367,14 +365,14 @@ public class UIController {
     }
 
     private ModelAndView getAdminPage(Principal principal, String actionName) {
-        User user = userManager.getEnabledUserByUserName(principal.getName());
+        User user = userRepository.findEnabledByUserName(principal.getName());
         Map<String, Object> myMap = new HashMap<>();
         myMap.put("menu", getMenu(user, actionName, WeblogRole.NOBLOGNEEDED));
         return tightblogModelAndView(actionName, myMap, user, null);
     }
 
     private ModelAndView tightblogModelAndView(String actionName, Map<String, Object> map, Principal principal, Weblog weblog) {
-        User user = userManager.getEnabledUserByUserName(principal.getName());
+        User user = userRepository.findEnabledByUserName(principal.getName());
         return tightblogModelAndView(actionName, map, user, weblog);
     }
 

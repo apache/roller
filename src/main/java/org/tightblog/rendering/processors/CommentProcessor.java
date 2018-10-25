@@ -39,6 +39,7 @@ import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.Utilities;
@@ -87,13 +88,30 @@ public class CommentProcessor extends AbstractProcessor {
     private static final String EMAIL_ADDR_REGEXP = "^.*@.*[.].{2,}$";
 
     private WeblogPageRequest.Creator weblogPageRequestCreator;
-
     private WeblogRepository weblogRepository;
+    private UserRepository userRepository;
+    private IndexManager indexManager;
+    private WeblogEntryManager weblogEntryManager;
+    private UserManager userManager;
+    private JPAPersistenceStrategy persistenceStrategy;
+    private MailManager mailManager;
+    private MessageSource messages;
 
     @Autowired
-    public CommentProcessor(WeblogRepository weblogRepository) {
+    public CommentProcessor(WeblogRepository weblogRepository,
+                            UserRepository userRepository,
+                            IndexManager indexManager, WeblogEntryManager weblogEntryManager, UserManager userManager,
+                            JPAPersistenceStrategy persistenceStrategy, MailManager mailManager,
+                            MessageSource messages) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
         this.weblogRepository = weblogRepository;
+        this.userRepository = userRepository;
+        this.indexManager = indexManager;
+        this.weblogEntryManager = weblogEntryManager;
+        this.userManager = userManager;
+        this.persistenceStrategy = persistenceStrategy;
+        this.mailManager = mailManager;
+        this.messages = messages;
     }
 
     void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
@@ -108,53 +126,12 @@ public class CommentProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    private IndexManager indexManager;
-
-    void setIndexManager(IndexManager indexManager) {
-        this.indexManager = indexManager;
-    }
-
-    @Autowired
-    private WeblogEntryManager weblogEntryManager;
-
-    void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
-    @Autowired
-    private UserManager userManager;
-
-    void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    @Autowired
-    private JPAPersistenceStrategy persistenceStrategy;
-
-    void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
-        this.persistenceStrategy = persistenceStrategy;
-    }
-
-    @Autowired
-    private MailManager mailManager;
-
-    void setMailManager(MailManager manager) {
-        mailManager = manager;
-    }
-
-    @Autowired
     private List<CommentValidator> commentValidators;
 
     void setCommentValidators(List<CommentValidator> commentValidators) {
         this.commentValidators = commentValidators;
     }
 
-    @Autowired
-    private MessageSource messages;
-
-    public void setMessages(MessageSource messages) {
-        this.messages = messages;
-    }
 
     /**
      * Here we handle incoming comment postings.
@@ -195,7 +172,7 @@ public class CommentProcessor extends AbstractProcessor {
         }
 
         if (incomingRequest.getAuthenticatedUser() != null) {
-            incomingRequest.setBlogger(userManager.getEnabledUserByUserName(incomingRequest.getAuthenticatedUser()));
+            incomingRequest.setBlogger(userRepository.findEnabledByUserName(incomingRequest.getAuthenticatedUser()));
         }
 
         WeblogEntryComment incomingComment = createCommentFromRequest(request, incomingRequest, props.getCommentHtmlPolicy());

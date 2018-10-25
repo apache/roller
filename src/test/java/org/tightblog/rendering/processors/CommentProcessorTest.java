@@ -37,6 +37,7 @@ import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.HTMLSanitizer;
 
@@ -69,6 +70,9 @@ public class CommentProcessorTest {
     private WeblogRepository mockWR;
     private WeblogEntryManager mockWEM;
     private UserManager mockUM;
+    private UserRepository mockUR;
+    private IndexManager mockIM;
+    private MailManager mockMM = mock(MailManager.class);
 
     @Before
     public void initialize() {
@@ -84,16 +88,16 @@ public class CommentProcessorTest {
         WeblogPageRequest.Creator wprCreator = mock(WeblogPageRequest.Creator.class);
         commentRequest = new WeblogPageRequest();
         when(wprCreator.create(any())).thenReturn(commentRequest);
+        mockMM = mock(MailManager.class);
         mockWR = mock(WeblogRepository.class);
         mockWEM = mock(WeblogEntryManager.class);
         mockUM = mock(UserManager.class);
+        mockUR = mock(UserRepository.class);
+        mockIM = mock(IndexManager.class);
         mockMessageSource = mock(MessageSource.class);
-        processor = new CommentProcessor(mockWR);
-        processor.setPersistenceStrategy(mockJPA);
+        processor = new CommentProcessor(mockWR, mockUR, mockIM, mockWEM, mockUM,
+                mockJPA, mockMM, mockMessageSource);
         processor.setWeblogPageRequestCreator(wprCreator);
-        processor.setWeblogEntryManager(mockWEM);
-        processor.setUserManager(mockUM);
-        processor.setMessages(mockMessageSource);
     }
 
     @Test
@@ -219,7 +223,7 @@ public class CommentProcessorTest {
         commentRequest.setAuthenticatedUser("bob");
 
         User user = new User();
-        when(mockUM.getEnabledUserByUserName("bob")).thenReturn(user);
+        when(mockUR.findEnabledByUserName("bob")).thenReturn(user);
 
         // if authenticated user, weblog page request's User object should be populated
         processor.postComment(mockRequest, mockResponse);
@@ -275,13 +279,7 @@ public class CommentProcessorTest {
         when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
         when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
         when(mockWEM.canSubmitNewComments(entry)).thenReturn(true);
-
-        MailManager mockMM = mock(MailManager.class);
-        processor.setMailManager(mockMM);
-
-        IndexManager mockIM = mock(IndexManager.class);
         when(mockIM.isIndexComments()).thenReturn(true);
-        processor.setIndexManager(mockIM);
 
         WeblogEntryComment incomingComment = new WeblogEntryComment();
         incomingComment.setPreview(false);
@@ -426,7 +424,7 @@ public class CommentProcessorTest {
         comment.setUrl("http://www.bob.com");
 
         String response = processor.validateComment(comment);
-        assertTrue(response == null);
+        assertNull(response);
 
         comment.setUrl("ftp://www.myftpsite.com");
         response = processor.validateComment(comment);

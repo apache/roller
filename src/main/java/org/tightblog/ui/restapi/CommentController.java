@@ -18,6 +18,7 @@ import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.pojos.WeblogEntryComment.ApprovalStatus;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.Utilities;
@@ -55,56 +56,30 @@ public class CommentController {
     private static final int ITEMS_PER_PAGE = 30;
 
     private WeblogRepository weblogRepository;
-
-    @Autowired
-    public CommentController(WeblogRepository weblogRepository) {
-        this.weblogRepository = weblogRepository;
-    }
-
-    @Autowired
     private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    @Autowired
+    private UserRepository userRepository;
     private WeblogEntryManager weblogEntryManager;
-
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
-    @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
-
-    public void setPersistenceStrategy(JPAPersistenceStrategy persistenceStrategy) {
-        this.persistenceStrategy = persistenceStrategy;
-    }
-
-    @Autowired
     private IndexManager indexManager;
-
-    public void setIndexManager(IndexManager indexManager) {
-        this.indexManager = indexManager;
-    }
-
-    @Autowired
     private URLStrategy urlStrategy;
-
-    public void setUrlStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
-    }
-
-    @Autowired
     private MailManager mailManager;
-
-    public void setMailManager(MailManager manager) {
-        mailManager = manager;
-    }
+    private MessageSource messages;
 
     @Autowired
-    private MessageSource messages;
+    public CommentController(WeblogRepository weblogRepository, UserManager userManager, UserRepository userRepository,
+                             WeblogEntryManager weblogEntryManager, JPAPersistenceStrategy persistenceStrategy,
+                             IndexManager indexManager, URLStrategy urlStrategy, MailManager mailManager,
+                             MessageSource messages) {
+        this.weblogRepository = weblogRepository;
+        this.userManager = userManager;
+        this.userRepository = userRepository;
+        this.weblogEntryManager = weblogEntryManager;
+        this.persistenceStrategy = persistenceStrategy;
+        this.indexManager = indexManager;
+        this.urlStrategy = urlStrategy;
+        this.mailManager = mailManager;
+        this.messages = messages;
+    }
 
     @PostMapping(value = "/{weblogId}/page/{page}")
     public CommentData getWeblogComments(@PathVariable String weblogId, @PathVariable int page,
@@ -113,7 +88,7 @@ public class CommentController {
                                          Principal principal, HttpServletResponse response) {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog, WeblogRole.OWNER)) {
 
             CommentData data = new CommentData();
 
@@ -167,7 +142,7 @@ public class CommentController {
                                                               HttpServletResponse response) {
 
         // Get user permissions and locale
-        User user = userManager.getEnabledUserByUserName(principal.getName());
+        User user = userRepository.findEnabledByUserName(principal.getName());
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
 
@@ -206,7 +181,7 @@ public class CommentController {
             WeblogEntryComment itemToRemove = weblogEntryManager.getComment(id);
             if (itemToRemove != null) {
                 Weblog weblog = itemToRemove.getWeblogEntry().getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
+                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
                     weblogEntryManager.removeComment(itemToRemove);
                     indexManager.updateIndex(itemToRemove.getWeblogEntry(), false);
 
@@ -250,7 +225,7 @@ public class CommentController {
             WeblogEntryComment comment = weblogEntryManager.getComment(id);
             if (comment != null) {
                 Weblog weblog = comment.getWeblogEntry().getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST)) {
+                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
                     WeblogEntryComment.ApprovalStatus oldStatus = comment.getStatus();
                     comment.setStatus(status);
                     // send approval notification only first time, not after any subsequent hide and approves.
@@ -284,7 +259,7 @@ public class CommentController {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
                 // need post permission to edit comments
-                User authenticatedUser = userManager.getEnabledUserByUserName(p.getName());
+                User authenticatedUser = userRepository.findEnabledByUserName(p.getName());
                 Weblog weblog = wec.getWeblogEntry().getWeblog();
                 if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.POST)) {
                     String content = Utilities.apiValueToFormSubmissionValue(request.getInputStream());

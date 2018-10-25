@@ -37,6 +37,7 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WeblogTemplate;
 import org.tightblog.pojos.WeblogTheme;
+import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WeblogTemplateRepository;
 import org.tightblog.util.ValidationError;
@@ -69,46 +70,32 @@ public class TemplateController {
     private static Logger log = LoggerFactory.getLogger(TemplateController.class);
 
     private WeblogRepository weblogRepository;
-
     private WeblogTemplateRepository weblogTemplateRepository;
+    private UserRepository userRepository;
+    private UserManager userManager;
+    private WeblogManager weblogManager;
+    private ThemeManager themeManager;
+    private MessageSource messages;
 
     @Autowired
-    public TemplateController(WeblogRepository weblogRepository,
-                              WeblogTemplateRepository weblogTemplateRepository) {
+    public TemplateController(WeblogRepository weblogRepository, WeblogTemplateRepository weblogTemplateRepository,
+                              UserRepository userRepository, UserManager userManager, WeblogManager weblogManager,
+                              ThemeManager themeManager, MessageSource messages) {
         this.weblogRepository = weblogRepository;
         this.weblogTemplateRepository = weblogTemplateRepository;
-    }
-
-    @Autowired
-    private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
+        this.userRepository = userRepository;
         this.userManager = userManager;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
         this.weblogManager = weblogManager;
-    }
-
-    @Autowired
-    private ThemeManager themeManager;
-
-    public void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
+        this.messages = messages;
     }
-
-    @Autowired
-    private MessageSource messages;
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}/templates")
     public WeblogTemplateData getWeblogTemplates(@PathVariable String id, Principal principal,
                                                  Locale locale, HttpServletResponse response) {
 
         Weblog weblog = weblogRepository.findById(id).orElse(null);
-        User user = userManager.getEnabledUserByUserName(principal.getName());
+        User user = userRepository.findEnabledByUserName(principal.getName());
 
         if (weblog != null && user != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
             WeblogTemplateData wtd = new WeblogTemplateData();
@@ -167,7 +154,7 @@ public class TemplateController {
         try {
             WeblogTemplate template = weblogTemplateRepository.findById(id).orElse(null);
             if (template != null) {
-                if (userManager.checkWeblogRole(p.getName(), template.getWeblog().getHandle(), WeblogRole.OWNER)) {
+                if (userManager.checkWeblogRole(p.getName(), template.getWeblog(), WeblogRole.OWNER)) {
                     weblogTemplateRepository.delete(template);
                     weblogManager.saveWeblog(template.getWeblog());
                     response.setStatus(HttpServletResponse.SC_OK);
@@ -189,7 +176,7 @@ public class TemplateController {
         WeblogTemplate template = weblogTemplateRepository.findById(id).orElse(null);
 
         boolean permitted = template != null &&
-                userManager.checkWeblogRole(p.getName(), template.getWeblog().getHandle(), WeblogRole.POST);
+                userManager.checkWeblogRole(p.getName(), template.getWeblog(), WeblogRole.POST);
         if (permitted) {
             if (themeManager.getSharedTheme(template.getWeblog().getTheme()).getTemplateByName(template.getName()) != null) {
                 template.setDerivation(Template.TemplateDerivation.OVERRIDDEN);
@@ -214,7 +201,7 @@ public class TemplateController {
         Template sharedTemplate = sharedTheme.getTemplateByName(templateName);
 
         boolean permitted = sharedTemplate != null &&
-                userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.POST);
+                userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST);
         if (permitted) {
             return themeManager.createWeblogTemplate(weblog, sharedTemplate);
         } else {
@@ -232,7 +219,7 @@ public class TemplateController {
             WeblogTemplate templateToSave = weblogTemplateRepository.findById(templateData.getId()).orElse(null);
 
             // Check user permissions
-            User user = userManager.getEnabledUserByUserName(p.getName());
+            User user = userRepository.findEnabledByUserName(p.getName());
             Weblog weblog = (templateToSave == null) ? weblogRepository.findById(weblogId).orElse(null)
                     : templateToSave.getWeblog();
 

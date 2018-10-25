@@ -65,30 +65,30 @@ public class WeblogRoleTestIT extends WebloggerTest {
         UserWeblogRole role;
          
         // delete weblog roles
-        role = userManager.getWeblogRole(testUser, testWeblog);
+        role = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(testUser, testWeblog);
         assertNotNull(role);
-        userManager.revokeWeblogRole(role);
+        userWeblogRoleRepository.delete(role);
 
         // check that delete was successful
-        role = userManager.getWeblogRole(testUser, testWeblog);
+        role = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(testUser, testWeblog);
         assertNull(role);
         
         // create weblog roles
         userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.OWNER, false);
 
         // check that create was successful
-        role = userManager.getWeblogRole(testUser, testWeblog);
+        role = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(testUser, testWeblog);
         assertNotNull(role);
         assertSame(role.getWeblogRole(), WeblogRole.OWNER);
 
         // revoke role
-        userManager.revokeWeblogRole(role);
+        userWeblogRoleRepository.delete(role);
 
         // add only draft role
         userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.EDIT_DRAFT, false);
 
         // check that user has draft weblog role only
-        role = userManager.getWeblogRole(testUser, testWeblog);
+        role = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(testUser, testWeblog);
         assertNotNull(role);
         assertSame(role.getWeblogRole(), WeblogRole.EDIT_DRAFT);
     }
@@ -108,12 +108,12 @@ public class WeblogRoleTestIT extends WebloggerTest {
         // get all weblog roles for a user
         roles = userWeblogRoleRepository.findByUser(user);
         assertEquals(0, roles.size());
-        roles = userManager.getWeblogRoles(testUser);
+        roles = userWeblogRoleRepository.findByUserAndPendingFalse(testUser);
         assertEquals(1, roles.size());
         assertFalse(roles.get(0).isPending());
 
         // get all weblog roles for a weblog
-        roles = userManager.getWeblogRoles(testWeblog);
+        roles = userWeblogRoleRepository.findByWeblogAndPendingFalse(testWeblog);
         assertEquals(1, roles.size());
 
         userManager.grantWeblogRole(user, testWeblog, WeblogRole.POST, true);
@@ -126,7 +126,7 @@ public class WeblogRoleTestIT extends WebloggerTest {
         assertEquals(1, roles.size());
 
         // get weblog roles for a specific user/weblog
-        role = userManager.getWeblogRole(testUser, testWeblog);
+        role = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(testUser, testWeblog);
         assertNotNull(role);
         assertSame(role.getWeblogRole(), WeblogRole.OWNER);
 
@@ -156,16 +156,16 @@ public class WeblogRoleTestIT extends WebloggerTest {
         userWeblogRoleRepository.saveAndFlush(uwrList.get(0));
 
         // re-query now that we have changed things
-        user = userManager.getEnabledUserByUserName(user.getUserName());
+        user = userRepository.findEnabledByUserName(user.getUserName());
         testWeblog = weblogRepository.findByHandleAndVisibleTrue(testWeblog.getHandle());
 
         // assert that invitation list is empty
-        assertFalse(userManager.getWeblogRoles(user).get(0).isPending());
+        assertFalse(userWeblogRoleRepository.findByUserAndPendingFalse(user).get(0).isPending());
         assertTrue(userWeblogRoleRepository.findByWeblogAndPendingTrue(testWeblog).isEmpty());
 
         // assert that user is member of weblog
-        assertNotNull(userManager.getWeblogRole(user, testWeblog));
-        List<UserWeblogRole> userRoles = userManager.getWeblogRoles(user);
+        assertNotNull(userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(user, testWeblog));
+        List<UserWeblogRole> userRoles = userWeblogRoleRepository.findByUserAndPendingFalse(user);
         assertEquals(1, userRoles.size());
         assertEquals(testWeblog.getId(), userRoles.get(0).getWeblog().getId());
 
@@ -174,10 +174,10 @@ public class WeblogRoleTestIT extends WebloggerTest {
         assertEquals(2, users.size());
 
         // test user can be retired from website
-        UserWeblogRole uwr = userManager.getWeblogRole(user, testWeblog);
-        userManager.revokeWeblogRole(uwr);
+        UserWeblogRole uwr = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(user, testWeblog);
+        userWeblogRoleRepository.delete(uwr);
 
-        userRoles = userManager.getWeblogRoles(user);
+        userRoles = userWeblogRoleRepository.findByUserAndPendingFalse(user);
         assertEquals(0, userRoles.size());
 
         // cleanup the extra test user

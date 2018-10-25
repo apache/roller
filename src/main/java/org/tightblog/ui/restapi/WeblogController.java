@@ -47,6 +47,7 @@ import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogRole;
+import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
@@ -75,56 +76,34 @@ public class WeblogController {
 
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
 
-    @Autowired
     private WeblogEntryManager weblogEntryManager;
-
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
-    @Autowired
+    private UserRepository userRepository;
     private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    @Autowired
     private ThemeManager themeManager;
-
-    public void setThemeManager(ThemeManager themeManager) {
-        this.themeManager = themeManager;
-    }
-
-    @Autowired
     private JPAPersistenceStrategy persistenceStrategy;
-
-    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
-        this.persistenceStrategy = strategy;
-    }
-
-    @Autowired
     private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    @Autowired
     private DynamicProperties dp;
+    private WeblogRepository weblogRepository;
+    private MessageSource messages;
 
     @Value("${site.pages.maxEntries:30}")
     private int maxEntriesPerPage;
 
-    private WeblogRepository weblogRepository;
-
     @Autowired
-    public WeblogController(WeblogRepository weblogRepository) {
+    public WeblogController(WeblogEntryManager weblogEntryManager, UserRepository userRepository,
+                            WeblogManager weblogManager, ThemeManager themeManager,
+                            JPAPersistenceStrategy persistenceStrategy, UserManager userManager, DynamicProperties dp,
+                            WeblogRepository weblogRepository, MessageSource messages) {
+        this.weblogEntryManager = weblogEntryManager;
+        this.userRepository = userRepository;
+        this.weblogManager = weblogManager;
+        this.themeManager = themeManager;
+        this.persistenceStrategy = persistenceStrategy;
+        this.userManager = userManager;
+        this.dp = dp;
         this.weblogRepository = weblogRepository;
+        this.messages = messages;
     }
-
-    @Autowired
-    private MessageSource messages;
 
     @GetMapping(value = "/tb-ui/authoring/rest/loggedin")
     public boolean loggedIn() {
@@ -146,7 +125,7 @@ public class WeblogController {
     public ResponseEntity addWeblog(@Valid @RequestBody Weblog newData, Principal p, HttpServletResponse response)
             throws ServletException {
 
-        User user = userManager.getEnabledUserByUserName(p.getName());
+        User user = userRepository.findEnabledByUserName(p.getName());
 
         if (!user.hasEffectiveGlobalRole(GlobalRole.BLOGCREATOR)) {
             return ResponseEntity.status(403).body(bundle.getString("weblogConfig.createNotAuthorized"));
@@ -275,7 +254,7 @@ public class WeblogController {
     private ResponseEntity checkIfOwnerOfValidWeblog(String weblogId, Principal p) {
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         if (weblog != null) {
-            if (userManager.checkWeblogRole(p.getName(), weblog.getHandle(), WeblogRole.OWNER)) {
+            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                 return null;
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -287,7 +266,7 @@ public class WeblogController {
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblogconfig/metadata")
     public WeblogConfigMetadata getWeblogConfigMetadata(Locale locale, Principal p) {
-        User user = userManager.getEnabledUserByUserName(p.getName());
+        User user = userRepository.findEnabledByUserName(p.getName());
 
         WeblogConfigMetadata metadata = new WeblogConfigMetadata();
 

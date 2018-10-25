@@ -35,27 +35,19 @@ import java.util.Map;
  */
 public interface MediaFileManager {
 
-    int MAX_THUMBNAIL_WIDTH = 120;
-    int MAX_THUMBNAIL_HEIGHT = 120;
-
     /**
      * Update metadata for a media file and content.
      * @param mf - Media File to update
      * @param is - if non-null, file's contents will be replaced with the contents of this InputStream.
      * @param errors object to receive message bundle keys and argument values or null if not desired to receive them
      */
-    void storeMediaFile(MediaFile mf, InputStream is, Map<String, List<String>> errors) throws IOException;
-
-    /**
-     * Get media file metadata by file id, null if does not exist
-     */
-    MediaFile getMediaFile(String id);
+    void saveMediaFile(MediaFile mf, InputStream is, Map<String, List<String>> errors) throws IOException;
 
     /**
      * Get media file metadata optionally including the actual content
      * @return MediaFile object or null if unavailable/inaccessible.
      */
-    MediaFile getMediaFile(String id, boolean includeContent);
+    MediaFile getMediaFileWithContent(String id);
 
     /**
      * Create a media file directory with a given name.
@@ -63,24 +55,9 @@ public interface MediaFileManager {
     MediaDirectory createMediaDirectory(Weblog weblog, String name);
 
     /**
-     * Get media file directory by id
-     */
-    MediaDirectory getMediaDirectory(String id);
-
-    /**
-     * Get the list of media file directories for the given weblog.
-     */
-    List<MediaDirectory> getMediaDirectories(Weblog weblog);
-
-    /**
      * Move a set of media files to a new directory.
      */
     void moveMediaFiles(Collection<MediaFile> mediaFiles, MediaDirectory directory);
-
-    /**
-     * Move one media file to a new directory.
-     */
-    void moveMediaFile(MediaFile mediaFile, MediaDirectory directory);
 
     /**
      * Remove all media content (files and directories) associated with a weblog.
