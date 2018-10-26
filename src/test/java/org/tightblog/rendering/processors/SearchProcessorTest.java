@@ -81,11 +81,9 @@ public class SearchProcessorTest {
         when(mockThymeleafRenderer.render(any(), any()))
                 .thenReturn(new CachedContent(Template.ComponentType.WEBLOG));
 
-        processor = new SearchProcessor(mockWR);
+        processor = new SearchProcessor(mockWR, mockThymeleafRenderer, mockThemeManager);
         processor.setApplicationContext(mockApplicationContext);
         processor.setWeblogPageRequestCreator(wprCreator);
-        processor.setThemeManager(mockThemeManager);
-        processor.setThymeleafRenderer(mockThymeleafRenderer);
         weblog = new Weblog();
         when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
     }

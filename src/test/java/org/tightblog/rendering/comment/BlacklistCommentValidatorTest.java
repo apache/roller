@@ -16,7 +16,6 @@
 package org.tightblog.rendering.comment;
 
 import org.junit.Test;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
@@ -28,6 +27,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -47,15 +47,13 @@ public class BlacklistCommentValidatorTest {
     private BlacklistCommentValidator generateBlacklistValidator(String siteBlacklistStr) {
         WebloggerProperties properties = new WebloggerProperties();
         properties.setCommentSpamFilter(siteBlacklistStr);
-        JPAPersistenceStrategy mockStrategy = mock(JPAPersistenceStrategy.class);
-        when(mockStrategy.getWebloggerProperties()).thenReturn(properties);
-        BlacklistCommentValidator validator = new BlacklistCommentValidator();
-        validator.setStrategy(mockStrategy);
-        return validator;
+        WebloggerPropertiesRepository mockPropertiesRepository = mock(WebloggerPropertiesRepository.class);
+        when(mockPropertiesRepository.findOrNull()).thenReturn(properties);
+        return new BlacklistCommentValidator(mockPropertiesRepository);
     }
 
     @Test
-    public void acceptNullComment() throws Exception {
+    public void acceptNullComment() {
         BlacklistCommentValidator validator = generateBlacklistValidator("badsiteword");
         WeblogEntryComment wec = generateWeblogEntryComment("badweblogword");
         wec.setContent(null);
@@ -66,7 +64,7 @@ public class BlacklistCommentValidatorTest {
     }
 
     @Test
-    public void failBlacklistInCommentURL() throws Exception {
+    public void failBlacklistInCommentURL() {
         BlacklistCommentValidator validator = generateBlacklistValidator("badurl\\.com");
         WeblogEntryComment wec = generateWeblogEntryComment("");
         wec.setUrl("badurl.com");
@@ -79,7 +77,7 @@ public class BlacklistCommentValidatorTest {
     }
 
     @Test
-    public void failBlacklistInCommentEmailAddress() throws Exception {
+    public void failBlacklistInCommentEmailAddress() {
         BlacklistCommentValidator validator = generateBlacklistValidator("");
         WeblogEntryComment wec = generateWeblogEntryComment("badorg\\.com");
         wec.setEmail("abc@badorg.com");
@@ -88,7 +86,7 @@ public class BlacklistCommentValidatorTest {
     }
 
     @Test
-    public void failBlacklistInCommentName() throws Exception {
+    public void failBlacklistInCommentName() {
         String badPerson = "Bad Person";
         BlacklistCommentValidator validator = generateBlacklistValidator(badPerson);
         WeblogEntryComment wec = generateWeblogEntryComment("");
@@ -98,7 +96,7 @@ public class BlacklistCommentValidatorTest {
     }
 
     @Test
-    public void failBlacklistInCommentContent() throws Exception {
+    public void failBlacklistInCommentContent() {
         String badWord = "badword";
         BlacklistCommentValidator validator = generateBlacklistValidator("");
         WeblogEntryComment wec = generateWeblogEntryComment(badWord);
@@ -109,7 +107,7 @@ public class BlacklistCommentValidatorTest {
     }
 
     @Test
-    public void acceptNoBlacklistedWordInComment() throws Exception {
+    public void acceptNoBlacklistedWordInComment() {
         BlacklistCommentValidator validator = generateBlacklistValidator("badword");
         WeblogEntryComment wec = generateWeblogEntryComment("verybadword");
         wec.setName("Bob");

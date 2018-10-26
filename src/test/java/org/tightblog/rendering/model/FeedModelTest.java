@@ -17,11 +17,12 @@ package org.tightblog.rendering.model;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.tightblog.business.JPAPersistenceStrategy;
+import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -36,15 +37,18 @@ import static org.mockito.Mockito.when;
 public class FeedModelTest {
 
     private WebloggerProperties webloggerProperties;
+    private WeblogEntryListGenerator mockWeblogEntryListGenerator;
     private WeblogFeedRequest feedRequest;
     private FeedModel feedModel;
     private Weblog weblog;
 
     @Before
     public void initialize() {
-        JPAPersistenceStrategy jpaMock = mock(JPAPersistenceStrategy.class);
+        WeblogEntryManager mockWeblogEntryManager = mock(WeblogEntryManager.class);
+        mockWeblogEntryListGenerator = mock(WeblogEntryListGenerator.class);
+        WebloggerPropertiesRepository mockPropertiesRepository = mock(WebloggerPropertiesRepository.class);
         webloggerProperties = new WebloggerProperties();
-        when(jpaMock.getWebloggerProperties()).thenReturn(webloggerProperties);
+        when(mockPropertiesRepository.findOrNull()).thenReturn(webloggerProperties);
         feedRequest = new WeblogFeedRequest();
         weblog = new Weblog();
         feedRequest.setWeblog(weblog);
@@ -52,25 +56,23 @@ public class FeedModelTest {
         feedRequest.setTag("collectibles");
         feedRequest.setPageNum(16);
         feedRequest.setSiteWide(true);
-        feedModel = new FeedModel();
-        feedModel.setPersistenceStrategy(jpaMock);
+        feedModel = new FeedModel(feedRequest, mockPropertiesRepository, mockWeblogEntryListGenerator,
+                mockWeblogEntryManager);
         Map<String, Object> initVals = new HashMap<>();
         initVals.put("parsedRequest", feedRequest);
         feedModel.init(initVals);
     }
 
     @Test
-    public void getWeblogEntriesPager() throws Exception {
-        WeblogEntryListGenerator generator = mock(WeblogEntryListGenerator.class);
-        feedModel.setWeblogEntryListGenerator(generator);
+    public void getWeblogEntriesPager() {
         webloggerProperties.setNewsfeedItemsPage(21);
         feedModel.getWeblogEntriesPager();
-        verify(generator).getChronoPager(weblog, null, "stamps",
+        verify(mockWeblogEntryListGenerator).getChronoPager(weblog, null, "stamps",
                 "collectibles", 16, 21, true);
     }
 
     @Test
-    public void getLastUpdated() throws Exception {
+    public void getLastUpdated() {
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         Instant threeDaysAgo = Instant.now().minus(3, ChronoUnit.DAYS);
         weblog.setLastModified(twoDaysAgo);

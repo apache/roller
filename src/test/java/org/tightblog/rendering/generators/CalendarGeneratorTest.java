@@ -49,11 +49,9 @@ public class CalendarGeneratorTest {
     @Before
     public void initialize() {
         Locale.setDefault(Locale.US);
-        calendarGenerator = new CalendarGenerator();
         mockUrlStrategy = mock(URLStrategy.class);
         WeblogEntryManager mockWeblogEntryManager = mock(WeblogEntryManager.class);
-        calendarGenerator.setUrlStrategy(mockUrlStrategy);
-        calendarGenerator.setWeblogEntryManager(mockWeblogEntryManager);
+        calendarGenerator = new CalendarGenerator(mockWeblogEntryManager, mockUrlStrategy);
         dateToWeblogEntryMap = new HashMap<>();
         when(mockWeblogEntryManager.getDateToWeblogEntryMap(any())).thenReturn(dateToWeblogEntryMap);
     }

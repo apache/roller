@@ -62,12 +62,14 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
     private static Logger log = LoggerFactory.getLogger(ThemeManagerImpl.class);
 
     private ServletContext servletContext;
-
-    @Autowired
     private ObjectMapper objectMapper;
+    private WeblogTemplateRepository weblogTemplateRepository;
 
     @Autowired
-    private WeblogTemplateRepository weblogTemplateRepository;
+    public ThemeManagerImpl(ObjectMapper objectMapper, WeblogTemplateRepository weblogTemplateRepository) {
+        this.objectMapper = objectMapper;
+        this.weblogTemplateRepository = weblogTemplateRepository;
+    }
 
     static {
         // TODO: figure out why PNG is missing from Java MIME types
@@ -89,9 +91,6 @@ public class ThemeManagerImpl implements ThemeManager, ServletContextAware {
     @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
-    }
-
-    public ThemeManagerImpl() {
     }
 
     @Override

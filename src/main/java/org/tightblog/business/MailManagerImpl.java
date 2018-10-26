@@ -44,6 +44,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.UserWeblogRoleRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -70,8 +71,8 @@ public class MailManagerImpl implements MailManager {
     private URLStrategy urlStrategy;
     private JavaMailSender mailSender;
     private SpringTemplateEngine standardTemplateEngine;
-    private JPAPersistenceStrategy persistenceStrategy;
     private MessageSource messages;
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private DynamicProperties dp;
 
     @Value("${mail.enabled:false}")
@@ -81,17 +82,17 @@ public class MailManagerImpl implements MailManager {
     public MailManagerImpl(UserManager userManager, UserRepository userRepository,
                            UserWeblogRoleRepository userWeblogRoleRepository, WeblogManager weblogManager,
                            WeblogEntryManager weblogEntryManager, URLStrategy urlStrategy, JavaMailSender mailSender,
-                           SpringTemplateEngine standardTemplateEngine, JPAPersistenceStrategy persistenceStrategy,
-                           MessageSource messages, DynamicProperties dp) {
+                           SpringTemplateEngine standardTemplateEngine, MessageSource messages, DynamicProperties dp,
+                           WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.userManager = userManager;
         this.userRepository = userRepository;
         this.userWeblogRoleRepository = userWeblogRoleRepository;
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.weblogManager = weblogManager;
         this.weblogEntryManager = weblogEntryManager;
         this.urlStrategy = urlStrategy;
         this.mailSender = mailSender;
         this.standardTemplateEngine = standardTemplateEngine;
-        this.persistenceStrategy = persistenceStrategy;
         this.messages = messages;
         this.dp = dp;
     }
@@ -280,7 +281,7 @@ public class MailManagerImpl implements MailManager {
     @Override
     public void sendNewPublishedCommentNotification(WeblogEntryComment comment) {
         if (!mailEnabled ||
-                !persistenceStrategy.getWebloggerProperties().isUsersCommentNotifications() ||
+                !webloggerPropertiesRepository.findOrNull().isUsersCommentNotifications() ||
                 !comment.isApproved()) {
             return;
         }

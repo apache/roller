@@ -294,13 +294,10 @@ public class WeblogManagerImpl implements WeblogManager {
 
             if (scheduledEntries.size() > 0) {
                 // update last weblog change so any site weblog knows it needs to update
-                WebloggerProperties props = strategy.getWebloggerProperties();
+                WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
                 props.setLastWeblogChange(Instant.now());
-                strategy.store(props);
+                webloggerPropertiesRepository.saveAndFlush(props);
             }
-
-            // commit the changes
-            strategy.flush();
 
             // take a second pass to trigger reindexing
             // this is because we need the updated entries flushed first

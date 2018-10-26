@@ -22,11 +22,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WebloggerContext;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
@@ -100,12 +98,6 @@ public abstract class WebloggerTest {
     @Autowired
     protected UserManager userManager;
 
-    @Autowired
-    protected JPAPersistenceStrategy strategy;
-
-    @Autowired
-    protected URLStrategy urlStrategy;
-
     @Before
     public void setUp() throws Exception {
         if (!WebloggerContext.isBootstrapped()) {
@@ -141,7 +133,7 @@ public abstract class WebloggerTest {
     }
 
     @Transactional
-    protected void teardownUser(String userId) throws Exception {
+    protected void teardownUser(String userId) {
         User user = userRepository.findByIdOrNull(userId);
         userManager.removeUser(user);
     }
@@ -267,5 +259,4 @@ public abstract class WebloggerTest {
     public static void logExpectedException(Logger log, String exceptionType) {
         log.info("Test is expected to log a/an {}:", exceptionType);
     }
-
 }

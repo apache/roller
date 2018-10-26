@@ -71,40 +71,21 @@ public class PreviewProcessor extends AbstractProcessor {
 
     private WeblogRepository weblogRepository;
 
-    @Autowired
-    @Qualifier("blogRenderer")
     private ThymeleafRenderer thymeleafRenderer;
-
-    void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
-        this.thymeleafRenderer = thymeleafRenderer;
-    }
-
-    @Autowired
     protected ThemeManager themeManager;
-
-    void setThemeManager(ThemeManager themeManager) {
-        this.themeManager = themeManager;
-    }
-
-    @Autowired
     protected UserManager userManager;
-
-    void setUserManager(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    @Autowired
     private WeblogEntryManager weblogEntryManager;
-
-    void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
     private WeblogPageRequest.Creator weblogPageRequestCreator;
 
-    PreviewProcessor(WeblogRepository weblogRepository) {
+    @Autowired
+    PreviewProcessor(WeblogRepository weblogRepository, @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
+                            ThemeManager themeManager, UserManager userManager, WeblogEntryManager weblogEntryManager) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
         this.weblogRepository = weblogRepository;
+        this.thymeleafRenderer = thymeleafRenderer;
+        this.themeManager = themeManager;
+        this.userManager = userManager;
+        this.weblogEntryManager = weblogEntryManager;
     }
 
     void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {

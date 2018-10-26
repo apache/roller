@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.tightblog.pojos.WebloggerProperties;
 
 import javax.annotation.PreDestroy;
 import javax.persistence.Cache;
@@ -36,7 +35,6 @@ import javax.persistence.Query;
 import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,10 +53,11 @@ public class JPAPersistenceStrategy {
     /**
      * The EntityManagerFactory for this TightBlog instance.
      */
-    @Autowired
     private EntityManagerFactory entityManagerFactory;
 
-    protected JPAPersistenceStrategy() {
+    @Autowired
+    public JPAPersistenceStrategy(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     /**
@@ -183,16 +182,6 @@ public class JPAPersistenceStrategy {
     }
 
     /**
-     * Remove object from persistence storage.
-     *
-     * @param objsToRemove the persistent objects to remove
-     */
-    public void removeAll(List<?> objsToRemove) {
-        EntityManager em = getEntityManager(true);
-        objsToRemove.forEach(em::remove);
-    }
-
-    /**
      * Return true if a transaction is active on the current EntityManager.
      *
      * @param em the persistence manager
@@ -303,11 +292,5 @@ public class JPAPersistenceStrategy {
         if (entityManagerFactory != null) {
             entityManagerFactory.close();
         }
-    }
-
-    public WebloggerProperties getWebloggerProperties() {
-        // Eclipselink logging shows WebloggerProperties is cached (with the cached value
-        // updated when needed) so SQL queries don't occur with every call.
-        return load(WebloggerProperties.class, "1");
     }
 }

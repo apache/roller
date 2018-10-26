@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mobile.device.DeviceType;
 import org.tightblog.WebloggerTest;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.SharedTemplate;
@@ -47,6 +46,7 @@ import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -92,10 +92,10 @@ public class PageProcessorTest {
 
     // not done as a @before as not all tests need these mocks
     private void initializeMocks() {
-        JPAPersistenceStrategy mockStrategy = mock(JPAPersistenceStrategy.class);
+        WebloggerPropertiesRepository mockPropertiesRepository = mock(WebloggerPropertiesRepository.class);
         webloggerProperties = new WebloggerProperties();
-        when(mockStrategy.getWebloggerProperties()).thenReturn(webloggerProperties);
         webloggerProperties.setLastWeblogChange(Instant.now().minus(2, ChronoUnit.DAYS));
+        when(mockPropertiesRepository.findOrNull()).thenReturn(webloggerProperties);
         mockRequest = mock(HttpServletRequest.class);
         // default is page always needs refreshing
         when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().minus(7, ChronoUnit.DAYS).toEpochMilli());
@@ -105,28 +105,23 @@ public class PageProcessorTest {
         when(wprCreator.create(mockRequest)).thenReturn(pageRequest);
         mockWEM = mock(WeblogEntryManager.class);
         mockWR = mock(WeblogRepository.class);
-        processor = new PageProcessor(mockWR);
-        processor.setWeblogPageRequestCreator(wprCreator);
-        processor.setWeblogEntryManager(mockWEM);
         mockCache = mock(LazyExpiringCache.class);
+        mockWM = mock(WeblogManager.class);
+        mockRenderer = mock(ThymeleafRenderer.class);
+        mockThemeManager = mock(ThemeManager.class);
+        processor = new PageProcessor(mockWR, mockPropertiesRepository, mockCache, mockWM, mockWEM,
+                mockRenderer, mockThemeManager);
+        processor.setWeblogPageRequestCreator(wprCreator);
         mockApplicationContext = mock(ApplicationContext.class);
         when(mockApplicationContext.getBean(anyString(), eq(Set.class))).thenReturn(new HashSet());
         processor.setApplicationContext(mockApplicationContext);
-        processor.setWeblogPageCache(mockCache);
-        mockWM = mock(WeblogManager.class);
         weblog = new Weblog();
         weblog.setLastModified(Instant.now().minus(2, ChronoUnit.DAYS));
         when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
-        processor.setWeblogManager(mockWM);
-        mockRenderer = mock(ThymeleafRenderer.class);
-        processor.setThymeleafRenderer(mockRenderer);
-        mockThemeManager = mock(ThemeManager.class);
-        processor.setThemeManager(mockThemeManager);
         sharedTheme = new SharedTheme();
         sharedTheme.setSiteWide(false);
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
         processor = Mockito.spy(processor);
-        processor.setStrategy(mockStrategy);
         MockitoAnnotations.initMocks(this);
     }
 

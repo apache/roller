@@ -62,18 +62,16 @@ public class InstallerController {
 
     private static Logger log = LoggerFactory.getLogger(InstallerController.class);
 
-    @Autowired
     ServletContext context;
-
-    @Autowired
     private DataSource tbDataSource;
-
-    public void setTbDataSource(DataSource tbDataSource) {
-        this.tbDataSource = tbDataSource;
-    }
+    private MessageSource messages;
 
     @Autowired
-    private MessageSource messages;
+    public InstallerController(ServletContext context, DataSource tbDataSource, MessageSource messages) {
+        this.context = context;
+        this.tbDataSource = tbDataSource;
+        this.messages = messages;
+    }
 
     @Value("${tightblog.database.expected.version:0}")
     private int expectedDatabaseVersion;

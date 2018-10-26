@@ -53,30 +53,20 @@ public class SearchProcessor extends AbstractProcessor {
     public static final String PATH = "/tb-ui/rendering/search";
 
     private WeblogRepository weblogRepository;
-
+    private ThymeleafRenderer thymeleafRenderer;
+    private ThemeManager themeManager;
     private WeblogPageRequest.Creator weblogPageRequestCreator;
 
     void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
         this.weblogPageRequestCreator = creator;
     }
 
-    SearchProcessor(WeblogRepository weblogRepository) {
+    @Autowired
+    SearchProcessor(WeblogRepository weblogRepository,
+                           @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer, ThemeManager themeManager) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
         this.weblogRepository = weblogRepository;
-    }
-
-    @Autowired
-    @Qualifier("blogRenderer")
-    private ThymeleafRenderer thymeleafRenderer;
-
-    void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
         this.thymeleafRenderer = thymeleafRenderer;
-    }
-
-    @Autowired
-    private ThemeManager themeManager;
-
-    void setThemeManager(ThemeManager themeManager) {
         this.themeManager = themeManager;
     }
 

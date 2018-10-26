@@ -35,6 +35,7 @@ import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.repository.WeblogEntryCommentRepository;
 import org.tightblog.repository.WeblogEntryRepository;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.node.Node;
@@ -70,22 +71,21 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     private static Logger log = LoggerFactory.getLogger(WeblogEntryManagerImpl.class);
 
     private WeblogRepository weblogRepository;
-
     private WeblogEntryRepository weblogEntryRepository;
-
     private WeblogEntryCommentRepository weblogEntryCommentRepository;
-
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private JPAPersistenceStrategy strategy;
-
     private URLStrategy urlStrategy;
 
     @Autowired
     public WeblogEntryManagerImpl(WeblogRepository weblogRepository, WeblogEntryRepository weblogEntryRepository,
                                   WeblogEntryCommentRepository weblogEntryCommentRepository,
-                                  JPAPersistenceStrategy strategy, URLStrategy urlStrategy) {
+                                  JPAPersistenceStrategy strategy, URLStrategy urlStrategy,
+                                  WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogRepository = weblogRepository;
         this.weblogEntryRepository = weblogEntryRepository;
         this.weblogEntryCommentRepository = weblogEntryCommentRepository;
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.strategy = strategy;
         this.urlStrategy = urlStrategy;
     }
@@ -571,7 +571,8 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         if (!entry.isPublished()) {
             return false;
         }
-        if (WebloggerProperties.CommentPolicy.NONE.equals(strategy.getWebloggerProperties().getCommentPolicy())) {
+        if (WebloggerProperties.CommentPolicy.NONE.equals(
+                webloggerPropertiesRepository.findOrNull().getCommentPolicy())) {
             return false;
         }
         if (WebloggerProperties.CommentPolicy.NONE.equals(entry.getWeblog().getAllowComments())) {
@@ -631,7 +632,7 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         if (ret != null) {
-            WebloggerProperties props = strategy.getWebloggerProperties();
+            WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
             Whitelist whitelist = props.getBlogHtmlPolicy().getWhitelist();
 
             if (whitelist != null) {

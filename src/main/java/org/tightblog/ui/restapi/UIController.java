@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.WebAttributes;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
@@ -33,6 +32,7 @@ import org.tightblog.pojos.WeblogRole;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.UserWeblogRoleRepository;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.ui.menu.Menu;
 import org.tightblog.ui.menu.MenuHelper;
 import org.tightblog.ui.security.MultiFactorAuthenticationProvider.InvalidVerificationCodeException;
@@ -58,29 +58,27 @@ public class UIController {
     private UserManager userManager;
     private UserRepository userRepository;
     private UserWeblogRoleRepository userWeblogRoleRepository;
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private WeblogEntryManager weblogEntryManager;
-    private JPAPersistenceStrategy persistenceStrategy;
     private MailManager mailManager;
     private MenuHelper menuHelper;
+    private MessageSource messages;
 
     @Autowired
     public UIController(WeblogRepository weblogRepository, UserManager userManager, UserRepository userRepository,
-                        WeblogEntryManager weblogEntryManager, JPAPersistenceStrategy persistenceStrategy,
-                        UserWeblogRoleRepository userWeblogRoleRepository, MailManager mailManager,
-                        MenuHelper menuHelper, MessageSource messages) {
+                        WeblogEntryManager weblogEntryManager, UserWeblogRoleRepository userWeblogRoleRepository,
+                        MailManager mailManager, MenuHelper menuHelper, MessageSource messages,
+                        WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogRepository = weblogRepository;
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.userManager = userManager;
         this.userRepository = userRepository;
         this.userWeblogRoleRepository = userWeblogRoleRepository;
         this.weblogEntryManager = weblogEntryManager;
-        this.persistenceStrategy = persistenceStrategy;
         this.mailManager = mailManager;
         this.menuHelper = menuHelper;
         this.messages = messages;
     }
-
-    @Autowired
-    private MessageSource messages;
 
     @Value("${mfa.enabled:true}")
     private boolean mfaEnabled;
@@ -190,7 +188,7 @@ public class UIController {
 
     @RequestMapping(value = "/get-default-blog")
     public void getDefaultBlog(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Weblog defaultBlog = persistenceStrategy.getWebloggerProperties().getMainBlog();
+        Weblog defaultBlog = webloggerPropertiesRepository.findOrNull().getMainBlog();
         String path;
 
         if (defaultBlog != null) {
@@ -237,14 +235,14 @@ public class UIController {
     @RequestMapping(value = "/createWeblog")
     public ModelAndView createWeblog(Principal principal) {
         Map<String, Object> myMap = new HashMap<>();
-        myMap.put("globalCommentPolicy", persistenceStrategy.getWebloggerProperties().getCommentPolicy());
+        myMap.put("globalCommentPolicy", webloggerPropertiesRepository.findOrNull().getCommentPolicy());
         return tightblogModelAndView("createWeblog", myMap, principal, null);
     }
 
     @RequestMapping(value = "/authoring/weblogConfig")
     public ModelAndView weblogConfig(Principal principal, @RequestParam String weblogId) {
         Map<String, Object> myMap = new HashMap<>();
-        myMap.put("globalCommentPolicy", persistenceStrategy.getWebloggerProperties().getCommentPolicy());
+        myMap.put("globalCommentPolicy", webloggerPropertiesRepository.findOrNull().getCommentPolicy());
         return getBlogOwnerPage(principal, myMap, weblogId, "weblogConfig");
     }
 
@@ -360,7 +358,7 @@ public class UIController {
     @RequestMapping(value = "/home")
     public ModelAndView home(Principal principal) {
         Map<String, Object> myMap = new HashMap<>();
-        myMap.put("usersCustomizeThemes", persistenceStrategy.getWebloggerProperties().isUsersCustomizeThemes());
+        myMap.put("usersCustomizeThemes", webloggerPropertiesRepository.findOrNull().isUsersCustomizeThemes());
         return tightblogModelAndView("mainMenu", myMap, principal, null);
     }
 
@@ -387,7 +385,7 @@ public class UIController {
         map.put("mfaEnabled", mfaEnabled);
         map.put("tightblogVersion", tightblogVersion);
         map.put("tightblogRevision", tightblogRevision);
-        map.put("registrationPolicy", persistenceStrategy.getWebloggerProperties().getRegistrationPolicy());
+        map.put("registrationPolicy", webloggerPropertiesRepository.findOrNull().getRegistrationPolicy());
         return new ModelAndView("." + actionName, map);
     }
 

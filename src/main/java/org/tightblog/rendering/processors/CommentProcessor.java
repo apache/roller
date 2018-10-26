@@ -41,6 +41,7 @@ import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.Utilities;
 import org.jsoup.Jsoup;
@@ -89,6 +90,7 @@ public class CommentProcessor extends AbstractProcessor {
 
     private WeblogPageRequest.Creator weblogPageRequestCreator;
     private WeblogRepository weblogRepository;
+
     private UserRepository userRepository;
     private IndexManager indexManager;
     private WeblogEntryManager weblogEntryManager;
@@ -96,14 +98,16 @@ public class CommentProcessor extends AbstractProcessor {
     private JPAPersistenceStrategy persistenceStrategy;
     private MailManager mailManager;
     private MessageSource messages;
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
 
     @Autowired
     public CommentProcessor(WeblogRepository weblogRepository,
                             UserRepository userRepository,
                             IndexManager indexManager, WeblogEntryManager weblogEntryManager, UserManager userManager,
                             JPAPersistenceStrategy persistenceStrategy, MailManager mailManager,
-                            MessageSource messages) {
+                            MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.weblogRepository = weblogRepository;
         this.userRepository = userRepository;
         this.indexManager = indexManager;
@@ -139,7 +143,7 @@ public class CommentProcessor extends AbstractProcessor {
     @RequestMapping(path = "/**", method = RequestMethod.POST)
     void postComment(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
+        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
         WebloggerProperties.CommentPolicy commentOption = props.getCommentPolicy();
 
         if (WebloggerProperties.CommentPolicy.NONE.equals(commentOption)) {
@@ -243,9 +247,8 @@ public class CommentProcessor extends AbstractProcessor {
                 commentRequiresApproval |= ApprovalStatus.SPAM.equals(incomingComment.getStatus());
 
                 weblogEntryManager.saveComment(incomingComment, !commentRequiresApproval);
-                persistenceStrategy.getWebloggerProperties().setLastWeblogChange(Instant.now());
-                persistenceStrategy.store(persistenceStrategy.getWebloggerProperties());
-                persistenceStrategy.flush();
+                props.setLastWeblogChange(Instant.now());
+                webloggerPropertiesRepository.saveAndFlush(props);
 
                 if (commentRequiresApproval) {
                     mailManager.sendPendingCommentNotice(incomingComment, spamEvaluations);

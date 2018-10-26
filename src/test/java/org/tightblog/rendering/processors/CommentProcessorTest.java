@@ -39,6 +39,7 @@ import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.HTMLSanitizer;
 
 import javax.servlet.RequestDispatcher;
@@ -76,6 +77,7 @@ public class CommentProcessorTest {
 
     @Before
     public void initialize() {
+        WebloggerPropertiesRepository mockPropertiesRepository = mock(WebloggerPropertiesRepository.class);
         mockRequest = mock(HttpServletRequest.class);
         when(mockRequest.getLocale()).thenReturn(Locale.GERMAN);
         mockResponse = mock(HttpServletResponse.class);
@@ -84,7 +86,7 @@ public class CommentProcessorTest {
         JPAPersistenceStrategy mockJPA = mock(JPAPersistenceStrategy.class);
         properties = new WebloggerProperties();
         properties.setCommentHtmlPolicy(HTMLSanitizer.Level.LIMITED);
-        when(mockJPA.getWebloggerProperties()).thenReturn(properties);
+        when(mockPropertiesRepository.findOrNull()).thenReturn(properties);
         WeblogPageRequest.Creator wprCreator = mock(WeblogPageRequest.Creator.class);
         commentRequest = new WeblogPageRequest();
         when(wprCreator.create(any())).thenReturn(commentRequest);
@@ -96,7 +98,7 @@ public class CommentProcessorTest {
         mockIM = mock(IndexManager.class);
         mockMessageSource = mock(MessageSource.class);
         processor = new CommentProcessor(mockWR, mockUR, mockIM, mockWEM, mockUM,
-                mockJPA, mockMM, mockMessageSource);
+                mockJPA, mockMM, mockMessageSource, mockPropertiesRepository);
         processor.setWeblogPageRequestCreator(wprCreator);
     }
 

@@ -49,6 +49,7 @@ import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
@@ -85,6 +86,7 @@ public class WeblogController {
     private DynamicProperties dp;
     private WeblogRepository weblogRepository;
     private MessageSource messages;
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
 
     @Value("${site.pages.maxEntries:30}")
     private int maxEntriesPerPage;
@@ -93,8 +95,10 @@ public class WeblogController {
     public WeblogController(WeblogEntryManager weblogEntryManager, UserRepository userRepository,
                             WeblogManager weblogManager, ThemeManager themeManager,
                             JPAPersistenceStrategy persistenceStrategy, UserManager userManager, DynamicProperties dp,
-                            WeblogRepository weblogRepository, MessageSource messages) {
+                            WeblogRepository weblogRepository, MessageSource messages,
+                            WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogEntryManager = weblogEntryManager;
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.userRepository = userRepository;
         this.weblogManager = weblogManager;
         this.themeManager = themeManager;
@@ -273,10 +277,10 @@ public class WeblogController {
         metadata.absoluteSiteURL = dp.getAbsoluteUrl();
 
         metadata.usersOverrideAnalyticsCode =
-                persistenceStrategy.getWebloggerProperties().isUsersOverrideAnalyticsCode();
+                webloggerPropertiesRepository.findOrNull().isUsersOverrideAnalyticsCode();
 
         metadata.usersCommentNotifications =
-                persistenceStrategy.getWebloggerProperties().isUsersCommentNotifications();
+                webloggerPropertiesRepository.findOrNull().isUsersCommentNotifications();
 
         metadata.sharedThemeMap = themeManager.getEnabledSharedThemesList().stream()
                 // Remove sitewide theme options for non-admins, if desired admin can create a sitewide blog
@@ -297,7 +301,7 @@ public class WeblogController {
                 .collect(Utilities.toLinkedHashMap(tz -> tz, tz -> tz));
 
         WebloggerProperties.CommentPolicy globalCommentPolicy =
-                persistenceStrategy.getWebloggerProperties().getCommentPolicy();
+                webloggerPropertiesRepository.findOrNull().getCommentPolicy();
 
         metadata.commentOptions = Arrays.stream(WebloggerProperties.CommentPolicy.values())
                 .filter(co -> co.getLevel() <= globalCommentPolicy.getLevel())

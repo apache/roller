@@ -52,17 +52,12 @@ import java.util.ResourceBundle;
 @Component
 public class CalendarGenerator {
 
-    @Autowired
     protected WeblogEntryManager weblogEntryManager;
-
-    void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
-    @Autowired
     protected URLStrategy urlStrategy;
 
-    void setUrlStrategy(URLStrategy urlStrategy) {
+    @Autowired
+    public CalendarGenerator(WeblogEntryManager weblogEntryManager, URLStrategy urlStrategy) {
+        this.weblogEntryManager = weblogEntryManager;
         this.urlStrategy = urlStrategy;
     }
 

@@ -21,7 +21,6 @@
 package org.tightblog.rendering.processors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.SharedTemplate;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.Template;
@@ -29,6 +28,7 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
@@ -59,36 +59,10 @@ public class FeedProcessor extends AbstractProcessor {
     public static final String PATH = "/tb-ui/rendering/feed";
 
     private WeblogRepository weblogRepository;
-
-    @Autowired
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private LazyExpiringCache weblogFeedCache;
-
-    void setWeblogFeedCache(LazyExpiringCache weblogFeedCache) {
-        this.weblogFeedCache = weblogFeedCache;
-    }
-
-    @Autowired
-    @Qualifier("atomRenderer")
     private ThymeleafRenderer thymeleafRenderer;
-
-    void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
-        this.thymeleafRenderer = thymeleafRenderer;
-    }
-
-    @Autowired
     private ThemeManager themeManager;
-
-    void setThemeManager(ThemeManager themeManager) {
-        this.themeManager = themeManager;
-    }
-
-    @Autowired
-    protected JPAPersistenceStrategy strategy;
-
-    void setStrategy(JPAPersistenceStrategy strategy) {
-        this.strategy = strategy;
-    }
-
     private WeblogFeedRequest.Creator weblogFeedRequestCreator;
 
     void setWeblogFeedRequestCreator(WeblogFeedRequest.Creator creator) {
@@ -96,9 +70,15 @@ public class FeedProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    FeedProcessor(WeblogRepository weblogRepository) {
+    public FeedProcessor(WeblogRepository weblogRepository, WebloggerPropertiesRepository webloggerPropertiesRepository,
+                         LazyExpiringCache weblogFeedCache, @Qualifier("atomRenderer") ThymeleafRenderer thymeleafRenderer,
+                         ThemeManager themeManager) {
         this.weblogFeedRequestCreator = new WeblogFeedRequest.Creator();
         this.weblogRepository = weblogRepository;
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
+        this.weblogFeedCache = weblogFeedCache;
+        this.thymeleafRenderer = thymeleafRenderer;
+        this.themeManager = themeManager;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -119,7 +99,7 @@ public class FeedProcessor extends AbstractProcessor {
         feedRequest.setSiteWide(themeManager.getSharedTheme(weblog.getTheme()).isSiteWide());
 
         // determine the lastModified date for this content
-        Instant lastModified = (feedRequest.isSiteWide()) ? strategy.getWebloggerProperties().getLastWeblogChange()
+        Instant lastModified = (feedRequest.isSiteWide()) ? webloggerPropertiesRepository.findOrNull().getLastWeblogChange()
                 : weblog.getLastModified();
 
         // DB stores last modified in millis, browser if-modified-since in seconds, so need to truncate millis from the former.
@@ -195,7 +175,7 @@ public class FeedProcessor extends AbstractProcessor {
         // site wide feeds must be aware of the last update date of any weblog
         // as they get refreshed whenever any of blogs do.
         if (isSiteWide) {
-            key.append("/lastUpdate=").append(strategy.getWebloggerProperties().getLastWeblogChange().toEpochMilli());
+            key.append("/lastUpdate=").append(webloggerPropertiesRepository.findOrNull().getLastWeblogChange().toEpochMilli());
         }
 
         return key.toString();

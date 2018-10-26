@@ -21,6 +21,7 @@ import org.tightblog.rendering.model.Model;
 import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class AbstractProcessorTest {
     @Test
     public void testGetModelMap() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
+        WebloggerPropertiesRepository mockPropertiesRepository = mock(WebloggerPropertiesRepository.class);
         PageModel pageModel = new PageModel();
         Model mockModel = mock(Model.class);
         when(mockModel.getModelName()).thenReturn("mockModel");
@@ -52,7 +54,8 @@ public class AbstractProcessorTest {
         Map<String, Object> initData = new HashMap<>();
         initData.put("parsedRequest", req);
         WeblogRepository mockWR = mock(WeblogRepository.class);
-        PageProcessor processor = new PageProcessor(mockWR);
+        PageProcessor processor = new PageProcessor(mockWR, null, null,
+                null, null, null, null);
         processor.setApplicationContext(mockContext);
         Map<String, Object> modelMap = processor.getModelMap("testBean", initData);
         assertEquals(pageModel, modelMap.get("model"));

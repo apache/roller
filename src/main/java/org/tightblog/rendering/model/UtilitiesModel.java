@@ -26,9 +26,9 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.requests.WeblogRequest;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;
 
 import java.time.ZoneId;
@@ -49,10 +49,10 @@ public class UtilitiesModel implements Model {
     private Locale locale;
 
     @Autowired
-    private JPAPersistenceStrategy persistenceStrategy;
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
 
-    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
-        this.persistenceStrategy = strategy;
+    public void setWebloggerPropertiesRepository(WebloggerPropertiesRepository webloggerPropertiesRepository) {
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
     }
 
     @Autowired
@@ -99,7 +99,7 @@ public class UtilitiesModel implements Model {
     }
 
     public boolean getCommentEmailNotify() {
-        WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
+        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
         return props.isUsersCommentNotifications();
     }
 

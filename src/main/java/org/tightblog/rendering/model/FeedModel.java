@@ -24,13 +24,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import java.time.Instant;
 import java.util.Map;
@@ -43,26 +43,17 @@ import java.util.Map;
 public class FeedModel implements Model {
 
     private WeblogFeedRequest feedRequest;
-
-    @Autowired
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
     protected WeblogEntryListGenerator weblogEntryListGenerator;
-
-    public void setWeblogEntryListGenerator(WeblogEntryListGenerator weblogEntryListGenerator) {
-        this.weblogEntryListGenerator = weblogEntryListGenerator;
-    }
-
-    @Autowired
     protected WeblogEntryManager weblogEntryManager;
 
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
     @Autowired
-    private JPAPersistenceStrategy persistenceStrategy;
-
-    public void setPersistenceStrategy(JPAPersistenceStrategy strategy) {
-        this.persistenceStrategy = strategy;
+    public FeedModel(WeblogFeedRequest feedRequest, WebloggerPropertiesRepository webloggerPropertiesRepository,
+                     WeblogEntryListGenerator weblogEntryListGenerator, WeblogEntryManager weblogEntryManager) {
+        this.feedRequest = feedRequest;
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
+        this.weblogEntryListGenerator = weblogEntryListGenerator;
+        this.weblogEntryManager = weblogEntryManager;
     }
 
     /**
@@ -106,7 +97,7 @@ public class FeedModel implements Model {
                 null,
                 feedRequest.getWeblogCategoryName(), feedRequest.getTag(),
                 feedRequest.getPageNum(),
-                persistenceStrategy.getWebloggerProperties().getNewsfeedItemsPage(),
+                webloggerPropertiesRepository.findOrNull().getNewsfeedItemsPage(),
                 feedRequest.isSiteWide());
     }
 
@@ -123,7 +114,7 @@ public class FeedModel implements Model {
      */
     @SuppressWarnings("unused")
     public Instant getLastUpdated() {
-        return isSiteWideFeed() ? persistenceStrategy.getWebloggerProperties().getLastWeblogChange()
+        return isSiteWideFeed() ? webloggerPropertiesRepository.findOrNull().getLastWeblogChange()
                 : feedRequest.getWeblog().getLastModified();
     }
 

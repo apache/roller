@@ -68,10 +68,7 @@ public class WeblogEntryListGeneratorTest {
 
     @Before
     public void initialize() {
-        generator = new WeblogEntryListGenerator();
-        generator.setMessages(messages);
-        generator.setUrlStrategy(mockUrlStrategy);
-        generator.setWeblogEntryManager(mockWEM);
+        generator = new WeblogEntryListGenerator(mockWEM, mockUrlStrategy, messages);
         weblog = new Weblog();
         weblog.setLocale(Locale.ENGLISH.getLanguage());
     }

@@ -43,22 +43,16 @@ import java.util.stream.Collectors;
 @Component
 public class WeblogEntryListGenerator {
 
-    @Autowired
     private WeblogEntryManager weblogEntryManager;
-
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
-    @Autowired
     private URLStrategy urlStrategy;
-
-    public void setUrlStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
-    }
+    private MessageSource messages;
 
     @Autowired
-    private MessageSource messages;
+    public WeblogEntryListGenerator(WeblogEntryManager weblogEntryManager, URLStrategy urlStrategy, MessageSource messages) {
+        this.weblogEntryManager = weblogEntryManager;
+        this.urlStrategy = urlStrategy;
+        this.messages = messages;
+    }
 
     @Value("${site.pages.maxEntries:30}")
     private int maxEntriesPerPage;

@@ -72,16 +72,14 @@ public class MediaFileProcessorTest {
         mediaFileRequest.setExtraPathInfo("abc");
         LazyExpiringCache mockCache = mock(LazyExpiringCache.class);
         mockWR = mock(WeblogRepository.class);
-        processor = new MediaFileProcessor(mockWR);
-        processor.setWeblogMediaCache(mockCache);
+        mockMFM = mock(MediaFileManager.class);
+        processor = new MediaFileProcessor(mockWR, mockCache, mockMFM);
         WeblogRequest.Creator wprCreator = mock(WeblogRequest.Creator.class);
         when(wprCreator.create(mockRequest)).thenReturn(mediaFileRequest);
         processor.setWeblogRequestCreator(wprCreator);
         Weblog weblog = new Weblog();
         weblog.setHandle("myhandle");
         when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
-        mockMFM = mock(MediaFileManager.class);
-        processor.setMediaFileManager(mockMFM);
     }
 
     @Test

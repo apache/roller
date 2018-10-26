@@ -27,7 +27,6 @@ import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.AtomEnclosure;
 import org.tightblog.pojos.User;
@@ -42,6 +41,7 @@ import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogCategoryRepository;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
@@ -90,25 +90,25 @@ public class WeblogEntryController {
     private WeblogManager weblogManager;
     private WeblogEntryManager weblogEntryManager;
     private IndexManager indexManager;
-    private JPAPersistenceStrategy persistenceStrategy;
     private URLStrategy urlStrategy;
     private MailManager mailManager;
     private MessageSource messages;
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
 
     @Autowired
     public WeblogEntryController(WeblogRepository weblogRepository, WeblogCategoryRepository weblogCategoryRepository,
                                  UserRepository userRepository, UserManager userManager, WeblogManager weblogManager,
                                  WeblogEntryManager weblogEntryManager, IndexManager indexManager,
-                                 JPAPersistenceStrategy persistenceStrategy, URLStrategy urlStrategy,
-                                 MailManager mailManager, MessageSource messages) {
+                                 URLStrategy urlStrategy, MailManager mailManager, MessageSource messages,
+                                 WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogRepository = weblogRepository;
         this.weblogCategoryRepository = weblogCategoryRepository;
         this.userRepository = userRepository;
         this.userManager = userManager;
         this.weblogManager = weblogManager;
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.weblogEntryManager = weblogEntryManager;
         this.indexManager = indexManager;
-        this.persistenceStrategy = persistenceStrategy;
         this.urlStrategy = urlStrategy;
         this.mailManager = mailManager;
         this.messages = messages;
@@ -242,9 +242,9 @@ public class WeblogEntryController {
                     }
 
                     // update last weblog change so any site weblog knows it needs to update
-                    WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
+                    WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
                     props.setLastWeblogChange(Instant.now());
-                    persistenceStrategy.store(props);
+                    webloggerPropertiesRepository.saveAndFlush(props);
 
                     // remove entry itself
                     weblogEntryManager.removeWeblogEntry(itemToRemove);
@@ -389,7 +389,7 @@ public class WeblogEntryController {
 
             fields.author = userManager.checkWeblogRole(user, weblog, WeblogRole.POST);
             fields.commentingEnabled = !WebloggerProperties.CommentPolicy.NONE.equals(
-                    persistenceStrategy.getWebloggerProperties().getCommentPolicy()) &&
+                    webloggerPropertiesRepository.findOrNull().getCommentPolicy()) &&
                     !WebloggerProperties.CommentPolicy.NONE.equals(weblog.getAllowComments());
             fields.defaultCommentDays = weblog.getDefaultCommentDays();
             fields.defaultEditFormat = weblog.getEditFormat();
@@ -544,11 +544,9 @@ public class WeblogEntryController {
                 weblogEntryManager.saveWeblogEntry(entry);
 
                 // update last weblog change so any site weblog knows it needs to update
-                WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
+                WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
                 props.setLastWeblogChange(Instant.now());
-                persistenceStrategy.store(props);
-
-                persistenceStrategy.flush();
+                webloggerPropertiesRepository.saveAndFlush(props);
 
                 // notify search of the new entry
                 if (entry.isPublished()) {
@@ -619,8 +617,6 @@ public class WeblogEntryController {
                 log.error("Error calculating pubtime", e);
             }
         }
-
         return pubtime;
     }
-
 }

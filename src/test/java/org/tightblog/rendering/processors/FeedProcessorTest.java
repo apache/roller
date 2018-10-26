@@ -18,7 +18,6 @@ package org.tightblog.rendering.processors;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.SharedTheme;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.pojos.Template;
@@ -29,6 +28,7 @@ import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -64,9 +64,9 @@ public class FeedProcessorTest {
 
     // not done as a @before as not all tests need these mocks
     private void initializeMocks() {
-        JPAPersistenceStrategy mockStrategy = mock(JPAPersistenceStrategy.class);
+        WebloggerPropertiesRepository mockPropertiesRepository = mock(WebloggerPropertiesRepository.class);
         webloggerProperties = new WebloggerProperties();
-        when(mockStrategy.getWebloggerProperties()).thenReturn(webloggerProperties);
+        when(mockPropertiesRepository.findOrNull()).thenReturn(webloggerProperties);
         mockRequest = mock(HttpServletRequest.class);
         // default is page always needs refreshing
         when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().minus(7, ChronoUnit.DAYS).toEpochMilli());
@@ -75,23 +75,19 @@ public class FeedProcessorTest {
         feedRequest = new WeblogFeedRequest();
         when(wfrCreator.create(mockRequest)).thenReturn(feedRequest);
         mockWR = mock(WeblogRepository.class);
-        processor = new FeedProcessor(mockWR);
-        processor.setWeblogFeedRequestCreator(wfrCreator);
         mockCache = mock(LazyExpiringCache.class);
-        processor.setWeblogFeedCache(mockCache);
+        ThemeManager mockThemeManager = mock(ThemeManager.class);
+        sharedTheme = new SharedTheme();
+        when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
+        mockThymeleafRenderer = mock(ThymeleafRenderer.class);
+        processor = new FeedProcessor(mockWR, mockPropertiesRepository, mockCache, mockThymeleafRenderer, mockThemeManager);
+        processor.setWeblogFeedRequestCreator(wfrCreator);
         weblog = new Weblog();
         when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
         ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
         when(mockApplicationContext.getBean(eq("feedModelSet"), eq(Set.class)))
                 .thenReturn(new HashSet<>());
         processor.setApplicationContext(mockApplicationContext);
-        mockThymeleafRenderer = mock(ThymeleafRenderer.class);
-        processor.setThymeleafRenderer(mockThymeleafRenderer);
-        ThemeManager mockThemeManager = mock(ThemeManager.class);
-        sharedTheme = new SharedTheme();
-        when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
-        processor.setThemeManager(mockThemeManager);
-        processor.setStrategy(mockStrategy);
     }
 
     @Test

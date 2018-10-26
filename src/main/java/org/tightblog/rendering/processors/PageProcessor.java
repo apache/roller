@@ -22,7 +22,6 @@ package org.tightblog.rendering.processors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.business.ThemeManager;
@@ -34,6 +33,7 @@ import org.tightblog.pojos.WeblogEntryComment;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
@@ -72,55 +72,28 @@ public class PageProcessor extends AbstractProcessor {
     public static final String PATH = "/tb-ui/rendering/page";
 
     private WeblogRepository weblogRepository;
-
-    @Autowired
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private LazyExpiringCache weblogPageCache;
-
-    void setWeblogPageCache(LazyExpiringCache weblogPageCache) {
-        this.weblogPageCache = weblogPageCache;
-    }
-
-    @Autowired
     private WeblogManager weblogManager;
-
-    void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    @Autowired
     private WeblogEntryManager weblogEntryManager;
-
-    void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
-    @Autowired
-    @Qualifier("blogRenderer")
     private ThymeleafRenderer thymeleafRenderer;
-
-    void setThymeleafRenderer(ThymeleafRenderer thymeleafRenderer) {
-        this.thymeleafRenderer = thymeleafRenderer;
-    }
-
-    @Autowired
     protected ThemeManager themeManager;
-
-    void setThemeManager(ThemeManager themeManager) {
-        this.themeManager = themeManager;
-    }
-
-    @Autowired
-    protected JPAPersistenceStrategy strategy;
-
-    public void setStrategy(JPAPersistenceStrategy strategy) {
-        this.strategy = strategy;
-    }
-
     private WeblogPageRequest.Creator weblogPageRequestCreator;
 
-    PageProcessor(WeblogRepository weblogRepository) {
+    @Autowired
+    public PageProcessor(WeblogRepository weblogRepository, WebloggerPropertiesRepository webloggerPropertiesRepository,
+                         LazyExpiringCache weblogPageCache, WeblogManager weblogManager,
+                         WeblogEntryManager weblogEntryManager,
+                         @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
+                         ThemeManager themeManager) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
         this.weblogRepository = weblogRepository;
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
+        this.weblogPageCache = weblogPageCache;
+        this.weblogManager = weblogManager;
+        this.weblogEntryManager = weblogEntryManager;
+        this.thymeleafRenderer = thymeleafRenderer;
+        this.themeManager = themeManager;
     }
 
     void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
@@ -149,7 +122,7 @@ public class PageProcessor extends AbstractProcessor {
         // is this the site-wide weblog?
         incomingRequest.setSiteWide(themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide());
 
-        Instant lastModified = (incomingRequest.isSiteWide()) ? strategy.getWebloggerProperties().getLastWeblogChange()
+        Instant lastModified = (incomingRequest.isSiteWide()) ? webloggerPropertiesRepository.findOrNull().getLastWeblogChange()
                 : weblog.getLastModified();
 
         // Respond with 304 Not Modified if it is not modified.
@@ -312,10 +285,9 @@ public class PageProcessor extends AbstractProcessor {
         // as they get refreshed whenever any of blogs do.
         if (request.isSiteWide()) {
             key.append("/lastUpdate=").append(
-                    strategy.getWebloggerProperties().getLastWeblogChange().toEpochMilli());
+                    webloggerPropertiesRepository.findOrNull().getLastWeblogChange().toEpochMilli());
         }
 
         return key.toString();
     }
 }
-

@@ -57,26 +57,17 @@ public class MediaFileProcessor extends AbstractProcessor {
     public static final String PATH = "/tb-ui/rendering/mediafile";
 
     private WeblogRepository weblogRepository;
-
-    @Autowired
     private LazyExpiringCache weblogMediaCache;
-
-    void setWeblogMediaCache(LazyExpiringCache weblogMediaCache) {
-        this.weblogMediaCache = weblogMediaCache;
-    }
-
-    @Autowired
     private MediaFileManager mediaFileManager;
-
-    void setMediaFileManager(MediaFileManager mediaFileManager) {
-        this.mediaFileManager = mediaFileManager;
-    }
-
     private WeblogRequest.Creator weblogRequestCreator;
 
-    MediaFileProcessor(WeblogRepository weblogRepository) {
+    @Autowired
+    public MediaFileProcessor(WeblogRepository weblogRepository, LazyExpiringCache weblogMediaCache,
+                              MediaFileManager mediaFileManager) {
         this.weblogRequestCreator = new WeblogRequest.Creator();
         this.weblogRepository = weblogRepository;
+        this.weblogMediaCache = weblogMediaCache;
+        this.mediaFileManager = mediaFileManager;
     }
 
     void setWeblogRequestCreator(WeblogRequest.Creator creator) {

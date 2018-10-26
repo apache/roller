@@ -20,6 +20,7 @@ import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.Utilities;
 import org.jsoup.Jsoup;
@@ -56,6 +57,7 @@ public class CommentController {
     private static final int ITEMS_PER_PAGE = 30;
 
     private WeblogRepository weblogRepository;
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private UserManager userManager;
     private UserRepository userRepository;
     private WeblogEntryManager weblogEntryManager;
@@ -69,8 +71,9 @@ public class CommentController {
     public CommentController(WeblogRepository weblogRepository, UserManager userManager, UserRepository userRepository,
                              WeblogEntryManager weblogEntryManager, JPAPersistenceStrategy persistenceStrategy,
                              IndexManager indexManager, URLStrategy urlStrategy, MailManager mailManager,
-                             MessageSource messages) {
+                             MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogRepository = weblogRepository;
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.userManager = userManager;
         this.userRepository = userRepository;
         this.weblogEntryManager = weblogEntryManager;
@@ -186,10 +189,9 @@ public class CommentController {
                     indexManager.updateIndex(itemToRemove.getWeblogEntry(), false);
 
                     // update last weblog change so any site weblog knows it needs to update
-                    WebloggerProperties props = persistenceStrategy.getWebloggerProperties();
+                    WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
                     props.setLastWeblogChange(Instant.now());
-                    persistenceStrategy.store(props);
-                    persistenceStrategy.flush();
+                    webloggerPropertiesRepository.saveAndFlush(props);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -265,7 +267,7 @@ public class CommentController {
                     String content = Utilities.apiValueToFormSubmissionValue(request.getInputStream());
 
                     // Validate content
-                    HTMLSanitizer.Level sanitizerLevel = persistenceStrategy.getWebloggerProperties().getCommentHtmlPolicy();
+                    HTMLSanitizer.Level sanitizerLevel = webloggerPropertiesRepository.findOrNull().getCommentHtmlPolicy();
                     Whitelist commentHTMLWhitelist = sanitizerLevel.getWhitelist();
 
                     wec.setContent(Jsoup.clean(content, commentHTMLWhitelist));

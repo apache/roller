@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserCredentials;
@@ -40,6 +39,7 @@ import org.tightblog.repository.UserCredentialsRepository;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.UserWeblogRoleRepository;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.util.ValidationError;
 import org.slf4j.Logger;
@@ -85,21 +85,22 @@ public class UserController {
     private UserWeblogRoleRepository userWeblogRoleRepository;
     private UserRepository userRepository;
     private UserCredentialsRepository userCredentialsRepository;
-    private JPAPersistenceStrategy persistenceStrategy;
     private MailManager mailManager;
     private MessageSource messages;
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
 
     @Autowired
     public UserController(WeblogRepository weblogRepository, UserManager userManager,
                           UserWeblogRoleRepository userWeblogRoleRepository, MessageSource messageSource,
-                          JPAPersistenceStrategy persistenceStrategy, MailManager mailManager,
-                          UserRepository userRepository, UserCredentialsRepository userCredentialsRepository) {
+                          MailManager mailManager, UserRepository userRepository,
+                          UserCredentialsRepository userCredentialsRepository,
+                          WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogRepository = weblogRepository;
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.userManager = userManager;
         this.userWeblogRoleRepository = userWeblogRoleRepository;
         this.userRepository = userRepository;
         this.userCredentialsRepository = userCredentialsRepository;
-        this.persistenceStrategy = persistenceStrategy;
         this.mailManager = mailManager;
         this.messages = messageSource;
     }
@@ -135,7 +136,6 @@ public class UserController {
         if (rejectedUser != null) {
             mailManager.sendRegistrationRejectedNotice(rejectedUser);
             userManager.removeUser(rejectedUser);
-            persistenceStrategy.flush();
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -223,7 +223,7 @@ public class UserController {
         }
 
         long userCount = userRepository.count();
-        WebloggerProperties.RegistrationPolicy option = persistenceStrategy.getWebloggerProperties().getRegistrationPolicy();
+        WebloggerProperties.RegistrationPolicy option = webloggerPropertiesRepository.findOrNull().getRegistrationPolicy();
         if (userCount == 0 || !WebloggerProperties.RegistrationPolicy.DISABLED.equals(option)) {
             boolean mustActivate = userCount > 0;
             if (mustActivate) {
@@ -349,7 +349,6 @@ public class UserController {
                             role.getUser(), role.getWeblog(), role.getWeblogRole(), role.isPending());
                 }
             }
-            persistenceStrategy.flush();
             String msg = messages.getMessage("members.membersChanged", null, locale);
             return ResponseEntity.ok(msg);
         } else {
@@ -374,7 +373,7 @@ public class UserController {
                         // first person in is always an admin
                         user.setGlobalRole(GlobalRole.ADMIN);
                     } else {
-                        user.setGlobalRole(persistenceStrategy.getWebloggerProperties().isUsersCreateBlogs() ?
+                        user.setGlobalRole(webloggerPropertiesRepository.findOrNull().isUsersCreateBlogs() ?
                                 GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER);
                     }
                 } else {
@@ -529,7 +528,6 @@ public class UserController {
                         "members.userAlreadyInvited" : "members.userAlreadyMember", null, locale));
             }
             userManager.grantWeblogRole(invitee, weblog, role, true);
-            persistenceStrategy.flush();
             mailManager.sendWeblogInvitation(invitee, weblog);
             return ResponseEntity.ok(messages.getMessage("members.userInvited", null, locale));
         } else {
@@ -548,7 +546,6 @@ public class UserController {
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
-        persistenceStrategy.flush();
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/detach")
@@ -560,7 +557,6 @@ public class UserController {
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
-        persistenceStrategy.flush();
     }
 
     @GetMapping(value = "/tb-ui/register/rest/useradminmetadata")
