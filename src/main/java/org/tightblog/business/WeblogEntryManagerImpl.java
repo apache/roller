@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.pojos.AtomEnclosure;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.Weblog;
@@ -45,8 +46,6 @@ import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -58,7 +57,6 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -89,9 +87,6 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         this.strategy = strategy;
         this.urlStrategy = urlStrategy;
     }
-
-    // cached mapping of entryAnchors -> entryIds
-    private Map<String, String> entryAnchorToIdMap = Collections.synchronizedMap(new HashMap<>());
 
     @Override
     public void saveComment(WeblogEntryComment comment, boolean refreshWeblog) {
@@ -143,9 +138,6 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         weblogEntryRepository.delete(entry);
         entry.getWeblog().invalidateCache();
         weblogRepository.saveAndFlush(entry.getWeblog());
-
-        // remove entry from cache mapping
-        this.entryAnchorToIdMap.remove(entry.getWeblog().getHandle() + ":" + entry.getAnchor());
     }
 
     @Override
@@ -231,28 +223,21 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         return query.getResultList();
     }
 
-    private QueryData createEntryQueryString(WeblogEntrySearchCriteria criteria, boolean countOnly) {
+    private QueryData createEntryQueryString(WeblogEntrySearchCriteria criteria) {
         QueryData qd = new QueryData();
         int size = 0;
 
-        qd.queryString = "SELECT ".concat(countOnly ? "count(e)" : "e").concat(" FROM WeblogEntry e");
+        qd.queryString = "SELECT e FROM WeblogEntry e";
 
-        if (criteria.getTags() == null || criteria.getTags().size() == 0) {
+        if (criteria.getTag() == null) {
             qd.queryString += " WHERE 1=1 ";
         } else {
             // subquery to avoid this problem with Derby: http://stackoverflow.com/a/480536
             qd.queryString += " WHERE EXISTS ( Select 1 from WeblogEntryTag t " +
                     "where t.weblogEntry.id = e.id AND (";
 
-            boolean isFirst = true;
-            for (String tagName : criteria.getTags()) {
-                if (!isFirst) {
-                    qd.queryString += " OR ";
-                }
-                qd.params.add(size++, tagName);
-                qd.queryString += " t.name = ?" + size;
-                isFirst = false;
-            }
+            qd.params.add(size++, criteria.getTag());
+            qd.queryString += " t.name = ?" + size;
             qd.queryString += ")) ";
         }
 
@@ -297,20 +282,18 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
             qd.queryString += ") ";
         }
 
-        if (!countOnly) {
-            qd.queryString += " ORDER BY ";
-            qd.queryString += WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.equals(criteria.getSortBy()) ?
-                    " e.updateTime " : " e.pubTime ";
-            String sortOrder = WeblogEntrySearchCriteria.SortOrder.ASCENDING.equals(criteria.getSortOrder()) ? " ASC " : " DESC ";
-            qd.queryString += sortOrder + ", e.id " + sortOrder;
-        }
+        qd.queryString += " ORDER BY ";
+        qd.queryString += WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.equals(criteria.getSortBy()) ?
+                " e.updateTime " : " e.pubTime ";
+        String sortOrder = WeblogEntrySearchCriteria.SortOrder.ASCENDING.equals(criteria.getSortOrder()) ? " ASC " : " DESC ";
+        qd.queryString += sortOrder + ", e.id " + sortOrder;
 
         return qd;
     }
 
     @Override
     public List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria criteria) {
-        QueryData qd = createEntryQueryString(criteria, false);
+        QueryData qd = createEntryQueryString(criteria);
 
         TypedQuery<WeblogEntry> query = strategy.getDynamicQuery(qd.queryString, WeblogEntry.class);
         for (int i = 0; i < qd.params.size(); i++) {
@@ -336,62 +319,10 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
-    public long getEntryCount(WeblogEntrySearchCriteria wesc) {
-        QueryData cqd = createEntryQueryString(wesc, true);
-
-        TypedQuery<Long> query = strategy.getDynamicQuery(cqd.queryString, Long.class);
-
-        for (int i = 0; i < cqd.params.size(); i++) {
-            query.setParameter(i + 1, cqd.params.get(i));
-        }
-
-        return query.getResultList().get(0);
-    }
-
-    @Override
     public WeblogEntry getWeblogEntryByAnchor(Weblog weblog, String anchor) {
-
-        if (weblog == null) {
-            throw new IllegalArgumentException("Weblog is null");
-        }
-
-        if (anchor == null) {
-            throw new IllegalArgumentException("Anchor is null");
-        }
-
-        // mapping key is combo of weblog + anchor
-        String mappingKey = weblog.getHandle() + ":" + anchor;
-
-        // check cache first
-        // NOTE: if we ever allow changing anchors then this needs updating
-        if (this.entryAnchorToIdMap.containsKey(mappingKey)) {
-
-            WeblogEntry entry = this.getWeblogEntry(this.entryAnchorToIdMap.get(mappingKey), false);
-            if (entry != null) {
-                log.debug("entryAnchorToIdMap CACHE HIT - {}", mappingKey);
-                return entry;
-            } else {
-                // mapping hit with lookup miss?  mapping must be old, remove it
-                this.entryAnchorToIdMap.remove(mappingKey);
-            }
-        }
-
-        // cache failed, do lookup
-        TypedQuery<WeblogEntry> q = strategy.getNamedQuery(
-                "WeblogEntry.getByWeblog&AnchorOrderByPubTimeDesc", WeblogEntry.class);
-        q.setParameter(1, weblog);
-        q.setParameter(2, anchor);
-        WeblogEntry entry;
-        try {
-            entry = q.getSingleResult();
-        } catch (NoResultException e) {
-            entry = null;
-        }
-
-        // add mapping to cache
+        WeblogEntry entry = weblogEntryRepository.findByWeblogAndAnchor(weblog, anchor);
         if (entry != null) {
-            log.trace("entryAnchorToIdMap CACHE MISS - {}", mappingKey);
-            this.entryAnchorToIdMap.put(mappingKey, entry.getId());
+            entry.setCommentRepository(weblogEntryCommentRepository);
         }
         return entry;
     }
@@ -404,19 +335,12 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         int count = 0;
 
         while (true) {
-            if (count > 0) {
+            if (count++ > 0) {
                 name = base + count;
             }
-
-            TypedQuery<WeblogEntry> q = strategy.getNamedQuery("WeblogEntry.getByWeblog&Anchor", WeblogEntry.class);
-            q.setParameter(1, entry.getWeblog());
-            q.setParameter(2, name);
-            List results = q.getResultList();
-
-            if (results.size() < 1) {
+            WeblogEntry entryTest = weblogEntryRepository.findByWeblogAndAnchor(entry.getWeblog(), name);
+            if (entryTest == null) {
                 break;
-            } else {
-                count++;
             }
         }
         return name;
@@ -450,57 +374,55 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         return base;
     }
 
-    private QueryData createCommentQueryString(CommentSearchCriteria csc, boolean countOnly) {
+    private QueryData createCommentQueryString(CommentSearchCriteria csc) {
         QueryData cqd = new QueryData();
         int size = 0;
 
-        cqd.queryString = "SELECT ".concat(countOnly ? "count(c)" : "c").concat(" FROM WeblogEntryComment c");
+        cqd.queryString = "SELECT c FROM WeblogEntryComment c";
 
         StringBuilder whereClause = new StringBuilder();
         if (csc.getEntry() != null) {
             cqd.params.add(size++, csc.getEntry());
-            appendConjuctionToWhereclause(whereClause, "c.weblogEntry = ?").append(size);
+            appendConjuctionToWhereClause(whereClause, "c.weblogEntry = ?").append(size);
         } else {
             if (csc.getWeblog() != null) {
                 cqd.params.add(size++, csc.getWeblog());
-                appendConjuctionToWhereclause(whereClause, "c.weblogEntry.weblog = ?").append(size);
+                appendConjuctionToWhereClause(whereClause, "c.weblogEntry.weblog = ?").append(size);
             }
             if (csc.getCategoryName() != null) {
                 cqd.params.add(size++, csc.getCategoryName());
-                appendConjuctionToWhereclause(whereClause, "c.weblogEntry.category.name = ?").append(size);
+                appendConjuctionToWhereClause(whereClause, "c.weblogEntry.category.name = ?").append(size);
             }
         }
 
         if (csc.getSearchText() != null) {
             cqd.params.add(size++, "%" + csc.getSearchText().toUpperCase() + "%");
-            appendConjuctionToWhereclause(whereClause, "upper(c.content) LIKE ?").append(size);
+            appendConjuctionToWhereClause(whereClause, "upper(c.content) LIKE ?").append(size);
         }
 
         if (csc.getStartDate() != null) {
             cqd.params.add(size++, csc.getStartDate());
-            appendConjuctionToWhereclause(whereClause, "c.postTime >= ?").append(size);
+            appendConjuctionToWhereClause(whereClause, "c.postTime >= ?").append(size);
         }
 
         if (csc.getEndDate() != null) {
             cqd.params.add(size++, csc.getEndDate());
-            appendConjuctionToWhereclause(whereClause, "c.postTime <= ?").append(size);
+            appendConjuctionToWhereClause(whereClause, "c.postTime <= ?").append(size);
         }
 
         if (csc.getStatus() != null) {
             cqd.params.add(size++, csc.getStatus());
-            appendConjuctionToWhereclause(whereClause, "c.status = ?").append(size);
+            appendConjuctionToWhereClause(whereClause, "c.status = ?").append(size);
         }
 
         if (whereClause.length() != 0) {
             cqd.queryString += " WHERE " + whereClause.toString();
         }
 
-        if (!countOnly) {
-            if (csc.isReverseChrono()) {
-                cqd.queryString += " ORDER BY c.postTime DESC";
-            } else {
-                cqd.queryString += " ORDER BY c.postTime ASC";
-            }
+        if (csc.isReverseChrono()) {
+            cqd.queryString += " ORDER BY c.postTime DESC";
+        } else {
+            cqd.queryString += " ORDER BY c.postTime ASC";
         }
 
         return cqd;
@@ -512,8 +434,24 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
+    public Map<LocalDate, List<WeblogEntry>> getDateToWeblogEntryMap(WeblogEntrySearchCriteria wesc) {
+        Map<LocalDate, List<WeblogEntry>> map = new TreeMap<>(Collections.reverseOrder());
+
+        List<WeblogEntry> entries = getWeblogEntries(wesc);
+
+        for (WeblogEntry entry : entries) {
+            entry.setCommentRepository(weblogEntryCommentRepository);
+            LocalDate tmp = entry.getPubTime() == null ? LocalDate.now() :
+                    entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();
+            List<WeblogEntry> dayEntries = map.computeIfAbsent(tmp, k -> new ArrayList<>());
+            dayEntries.add(entry);
+        }
+        return map;
+    }
+
+    @Override
     public List<WeblogEntryComment> getComments(CommentSearchCriteria csc) {
-        QueryData cqd = createCommentQueryString(csc, false);
+        QueryData cqd = createCommentQueryString(csc);
 
         TypedQuery<WeblogEntryComment> query = strategy.getDynamicQuery(cqd.queryString, WeblogEntryComment.class);
         if (csc.getOffset() != 0) {
@@ -526,44 +464,6 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
             query.setParameter(i + 1, cqd.params.get(i));
         }
         return query.getResultList();
-    }
-
-    @Override
-    public long getCommentCount(CommentSearchCriteria csc) {
-        QueryData cqd = createCommentQueryString(csc, true);
-
-        TypedQuery<Long> query = strategy.getDynamicQuery(cqd.queryString, Long.class);
-
-        for (int i = 0; i < cqd.params.size(); i++) {
-            query.setParameter(i + 1, cqd.params.get(i));
-        }
-
-        return query.getResultList().get(0);
-    }
-
-    @Override
-    public WeblogEntryComment getComment(String id) {
-        return weblogEntryCommentRepository.findByIdOrNull(id);
-    }
-
-    @Override
-    public WeblogEntry getWeblogEntry(String id, boolean bypassCache) {
-        return weblogEntryRepository.findByIdOrNull(id);
-    }
-
-    @Override
-    public Map<LocalDate, List<WeblogEntry>> getDateToWeblogEntryMap(WeblogEntrySearchCriteria wesc) {
-        Map<LocalDate, List<WeblogEntry>> map = new TreeMap<>(Collections.reverseOrder());
-
-        List<WeblogEntry> entries = getWeblogEntries(wesc);
-
-        for (WeblogEntry entry : entries) {
-            LocalDate tmp = entry.getPubTime() == null ? LocalDate.now() :
-                    entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();
-            List<WeblogEntry> dayEntries = map.computeIfAbsent(tmp, k -> new ArrayList<>());
-            dayEntries.add(entry);
-        }
-        return map;
     }
 
     @Override
@@ -596,14 +496,6 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         return ret;
     }
 
-    @Override
-    public void applyCommentDefaultsToEntries(Weblog weblog) {
-        Query q = strategy.getNamedUpdate("WeblogEntry.updateCommentDaysByWeblog");
-        q.setParameter(1, weblog.getDefaultCommentDays());
-        q.setParameter(2, weblog);
-        q.executeUpdate();
-    }
-
     /**
      * Appends given expression to given whereClause. If whereClause already
      * has other conditions, an " AND " is also appended before appending
@@ -613,7 +505,7 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
      * @param expression  The given expression
      * @return the whereClause.
      */
-    private static StringBuilder appendConjuctionToWhereclause(StringBuilder whereClause, String expression) {
+    private static StringBuilder appendConjuctionToWhereClause(StringBuilder whereClause, String expression) {
         if (whereClause.length() != 0 && expression.length() != 0) {
             whereClause.append(" AND ");
         }
@@ -687,11 +579,12 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     }
 
     @Override
+    @Transactional
     public Pair<String, Boolean> stopNotificationsForCommenter(String commentId) {
         boolean found = false;
         String blogEntryTitle = null;
 
-        WeblogEntryComment commentWithUnsubscribingUser = strategy.load(WeblogEntryComment.class, commentId);
+        WeblogEntryComment commentWithUnsubscribingUser = weblogEntryCommentRepository.findByIdOrNull(commentId);
 
         if (commentWithUnsubscribingUser != null) {
             // get entry
@@ -699,18 +592,14 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
             blogEntryTitle = entry.getTitle();
 
             // turn off notify on all comments for this entry by user
-            List<WeblogEntryComment> comments = getComments(CommentSearchCriteria.builder(
-                    entry, false, false));
+            List<WeblogEntryComment> comments = weblogEntryCommentRepository.findByWeblogEntry(entry);
 
             for (WeblogEntryComment comment : comments) {
                 if (comment.getNotify() && comment.getEmail().equalsIgnoreCase(commentWithUnsubscribingUser.getEmail())) {
                     comment.setNotify(false);
-                    strategy.store(comment);
+                    weblogEntryCommentRepository.save(comment);
                     found = true;
                 }
-            }
-            if (found) {
-                strategy.flush();
             }
         }
         return Pair.of(blogEntryTitle, found);

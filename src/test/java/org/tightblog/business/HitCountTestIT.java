@@ -49,16 +49,16 @@ public class HitCountTestIT extends WebloggerTest {
     }
 
     @After
-    public void tearDown() throws Exception {
-        teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getId());
+    public void tearDown() {
+        weblogManager.removeWeblog(testWeblog);
+        userManager.removeUser(testUser);
     }
 
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
     @Test
-    public void testHitCountCRUD() throws Exception {
+    public void testHitCountCRUD() {
         Weblog aWeblog = weblogRepository.findById(testWeblog.getId()).orElse(null);
         int oldHits = aWeblog.getHitsToday();
         aWeblog.setHitsToday(oldHits + 10);
@@ -72,7 +72,7 @@ public class HitCountTestIT extends WebloggerTest {
     }
 
     @Test
-    public void testIncrementHitCount() throws Exception {
+    public void testIncrementHitCount() {
         Weblog aWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         aWeblog.setHitsToday(10);
         weblogManager.saveWeblog(aWeblog);
@@ -120,9 +120,8 @@ public class HitCountTestIT extends WebloggerTest {
             assertEquals(0, blog2.getHitsToday());
 
         } finally {
-            // cleanup
-            teardownWeblog(blog1.getId());
-            teardownWeblog(blog2.getId());
+            weblogManager.removeWeblog(blog1);
+            weblogManager.removeWeblog(blog2);
         }
     }
 

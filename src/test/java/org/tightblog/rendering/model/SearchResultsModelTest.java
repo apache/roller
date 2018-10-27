@@ -38,6 +38,7 @@ import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntry.PubStatus;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.repository.WeblogEntryRepository;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -63,6 +64,7 @@ public class SearchResultsModelTest {
     private SearchTask mockSearchTask;
     private IndexSearcher mockIndexSearcher;
     private WeblogEntryManager mockWeblogEntryManager;
+    private WeblogEntryRepository mockWeblogEntryRepository;
     private IndexManager mockIndexManager;
     private WeblogEntryListGenerator mockGenerator;
     private SearchResultsModel searchResultsModel;
@@ -83,6 +85,7 @@ public class SearchResultsModelTest {
         SharedTheme sharedTheme = new SharedTheme();
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
         mockWeblogEntryManager = mock(WeblogEntryManager.class);
+        mockWeblogEntryRepository = mock(WeblogEntryRepository.class);
         weblog = new Weblog();
         weblog.setHandle("testblog");
         weblog.setLocale("EN_US");
@@ -93,6 +96,7 @@ public class SearchResultsModelTest {
         initData.put("parsedRequest", pageRequest);
         searchResultsModel = new SearchResultsModel();
         searchResultsModel.setWeblogEntryManager(mockWeblogEntryManager);
+        searchResultsModel.setWeblogEntryRepository(mockWeblogEntryRepository);
         searchResultsModel.setWeblogEntryListGenerator(mockGenerator);
         searchResultsModel.setThemeManager(mockThemeManager);
         searchResultsModel.setIndexManager(mockIndexManager);
@@ -169,7 +173,7 @@ public class SearchResultsModelTest {
         entry.setAnchor(title + "Anchor");
         entry.setStatus(status);
         entry.setPubTime(pubTime);
-        when(mockWeblogEntryManager.getWeblogEntry(entry.getId(), false)).thenReturn(entry);
+        when(mockWeblogEntryRepository.findByIdOrNull(entry.getId())).thenReturn(entry);
         return entry;
     }
 

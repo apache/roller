@@ -37,8 +37,6 @@ public class WebloggerContext extends ContextLoaderListener {
 
     private static Logger log = LoggerFactory.getLogger(WebloggerContext.class);
 
-    private static WeblogEntryManager weblogEntryManager;
-
     private static URLStrategy urlStrategy;
 
     /**
@@ -46,14 +44,6 @@ public class WebloggerContext extends ContextLoaderListener {
      */
     public static boolean isBootstrapped() {
         return urlStrategy != null;
-    }
-
-    public static WeblogEntryManager getWeblogEntryManager() {
-        if (!isBootstrapped()) {
-            throw new IllegalStateException("TightBlog Weblogger has not been bootstrapped yet");
-        }
-
-        return weblogEntryManager;
     }
 
     public static URLStrategy getUrlStrategy() {
@@ -75,7 +65,6 @@ public class WebloggerContext extends ContextLoaderListener {
      */
     public static void bootstrap(ApplicationContext context) {
         try {
-            weblogEntryManager = context.getBean("weblogEntryManager", WeblogEntryManager.class);
             urlStrategy = context.getBean("urlStrategy", URLStrategy.class);
         } catch (BeansException e) {
             throw new RuntimeException("Error bootstrapping, exception message: " + e.getMessage(), e);
@@ -89,5 +78,4 @@ public class WebloggerContext extends ContextLoaderListener {
         log.info("   Version: {}", context.getEnvironment().getProperty("weblogger.version", "Unknown"));
         log.info("   Revision: {}", context.getEnvironment().getProperty("weblogger.revision", "Unknown"));
     }
-
 }

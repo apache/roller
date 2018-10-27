@@ -173,9 +173,7 @@ public class WeblogEntryListGenerator {
             wesc.setEndDate(endTime.atZone(ZoneId.systemDefault()).toInstant());
         }
         wesc.setCategoryName(catName);
-        if (tag != null) {
-            wesc.setTags(Collections.singleton(tag));
-        }
+        wesc.setTag(tag);
         wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
         wesc.setOffset(maxEntries * page);
         wesc.setMaxResults(maxEntries + 1);

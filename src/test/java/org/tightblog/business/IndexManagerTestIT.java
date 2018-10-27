@@ -67,9 +67,9 @@ public class IndexManagerTestIT extends WebloggerTest {
     }
 
     @After
-    public void tearDown() throws Exception {
-        teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getId());
+    public void tearDown() {
+        weblogManager.removeWeblog(testWeblog);
+        userManager.removeUser(testUser);
     }
 
     @Test
@@ -91,10 +91,10 @@ public class IndexManagerTestIT extends WebloggerTest {
         wd1.setCategory(cat);
 
         weblogEntryManager.saveWeblogEntry(wd1);
-        wd1 = getManagedWeblogEntry(wd1);
+        wd1 = weblogEntryRepository.findByIdOrNull(wd1.getId());
 
         indexManager.executeIndexOperationNow(
-                new IndexEntryTask(weblogEntryManager, indexManager, wd1, false));
+                new IndexEntryTask(weblogEntryRepository, indexManager, wd1, false));
 
         WeblogEntry wd2 = new WeblogEntry();
         wd2.setTitle("A Piece of the Action");
@@ -113,10 +113,10 @@ public class IndexManagerTestIT extends WebloggerTest {
         wd2.setCategory(cat);
 
         weblogEntryManager.saveWeblogEntry(wd2);
-        wd2 = getManagedWeblogEntry(wd2);
+        wd2 = weblogEntryRepository.findByIdOrNull(wd2.getId());
 
         indexManager.executeIndexOperationNow(
-            new IndexEntryTask(weblogEntryManager, indexManager, wd2, false));
+            new IndexEntryTask(weblogEntryRepository, indexManager, wd2, false));
 
         Thread.sleep(DateUtils.MILLIS_PER_SECOND);
 
@@ -131,9 +131,9 @@ public class IndexManagerTestIT extends WebloggerTest {
         assertEquals(1, search2.getResultsCount());
 
         // Clean up
-        IndexEntryTask t1 = new IndexEntryTask(weblogEntryManager, indexManager, wd1, true);
+        IndexEntryTask t1 = new IndexEntryTask(weblogEntryRepository, indexManager, wd1, true);
         indexManager.executeIndexOperationNow(t1);
-        IndexEntryTask t2 = new IndexEntryTask(weblogEntryManager, indexManager, wd2, true);
+        IndexEntryTask t2 = new IndexEntryTask(weblogEntryRepository, indexManager, wd2, true);
         indexManager.executeIndexOperationNow(t2);
 
         SearchTask search3 = new SearchTask(indexManager);

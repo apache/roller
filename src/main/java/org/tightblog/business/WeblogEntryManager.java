@@ -49,16 +49,6 @@ public interface WeblogEntryManager {
     void removeWeblogEntry(WeblogEntry entry);
 
     /**
-     * Get weblog entry by id.
-     */
-    WeblogEntry getWeblogEntry(String id, boolean bypassCache);
-
-    /**
-     * Get entry count based on specified WeblogEntrySearchCriteria
-     */
-    long getEntryCount(WeblogEntrySearchCriteria wesc);
-
-    /**
      * Get weblog entry by anchor.
      */
     WeblogEntry getWeblogEntryByAnchor(Weblog weblog, String anchor);
@@ -123,11 +113,6 @@ public interface WeblogEntryManager {
     void removeComment(WeblogEntryComment comment);
 
     /**
-     * Get comment by id.
-     */
-    WeblogEntryComment getComment(String id);
-
-    /**
      * Generic comments query method.
      *
      * @param csc CommentSearchCriteria object with fields indicating search criteria
@@ -145,16 +130,6 @@ public interface WeblogEntryManager {
      * @return true if additional comments may be made, false otherwise.
      */
     boolean canSubmitNewComments(WeblogEntry entry);
-
-    /**
-     * Apply comment default settings from website to all of website's entries.
-     */
-    void applyCommentDefaultsToEntries(Weblog weblog);
-
-    /**
-     * Get comment count based on specified CommentSearchCriteria
-     */
-    long getCommentCount(CommentSearchCriteria csc);
 
     /**
      * Process the blog text based on whether Commonmark and/or JSoup tag
@@ -186,5 +161,4 @@ public interface WeblogEntryManager {
      *         not found or blog entry not found.
      */
     Pair<String, Boolean> stopNotificationsForCommenter(String commentId);
-
 }

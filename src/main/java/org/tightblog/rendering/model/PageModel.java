@@ -42,6 +42,7 @@ import org.tightblog.rendering.generators.CalendarGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.repository.WeblogEntryCommentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,13 @@ public class PageModel implements Model {
 
     public void setWeblogEntryListGenerator(WeblogEntryListGenerator weblogEntryListGenerator) {
         this.weblogEntryListGenerator = weblogEntryListGenerator;
+    }
+
+    @Autowired
+    protected WeblogEntryCommentRepository commentRepository;
+
+    public void setCommentRepository(WeblogEntryCommentRepository commentRepository) {
+        this.commentRepository = commentRepository;
     }
 
     @Autowired

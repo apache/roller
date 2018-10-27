@@ -18,7 +18,6 @@
 package org.tightblog.pojos;
 
 import java.time.Instant;
-import java.util.Set;
 
 public class WeblogEntrySearchCriteria {
 
@@ -36,8 +35,8 @@ public class WeblogEntrySearchCriteria {
     private Instant endDate;
     // Category name or null for all categories.
     private String categoryName;
-    // If provided, set of tags to search blog entries for, just one needs to match to retrieve entry
-    private Set<String> tags;
+    // If provided, limit to entries having this tag
+    private String tag;
     // Publication status of the weblog entry (DRAFT, PUBLISHED, etc.)
     private WeblogEntry.PubStatus status;
     // Text appearing in the text or summary, or null for all
@@ -95,12 +94,12 @@ public class WeblogEntrySearchCriteria {
         this.categoryName = categoryName;
     }
 
-    public Set<String> getTags() {
-        return tags;
+    public String getTag() {
+        return tag;
     }
 
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public WeblogEntry.PubStatus getStatus() {

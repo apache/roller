@@ -47,7 +47,7 @@ public class UserTestIT extends WebloggerTest {
      * Test basic persistence operations ... Create, Update, Delete.
      */
     @Test
-    public void testUserCRUD() throws Exception {
+    public void testUserCRUD() {
         User user;
         
         User testUser = new User();
@@ -131,7 +131,7 @@ public class UserTestIT extends WebloggerTest {
         user1 = userRepository.findEnabledByUserName(testUser.getUserName());
         assertNull(user1);
         
-        teardownUser(testUser.getId());
+        userManager.removeUser(testUser);
     }
     
     
@@ -158,7 +158,7 @@ public class UserTestIT extends WebloggerTest {
         assertNotNull(user);
         assertTrue(user.getGlobalRole() == GlobalRole.BLOGCREATOR);
 
-        teardownUser(testUser.getId());
+        userManager.removeUser(testUser);
     }
 
 }

@@ -39,6 +39,7 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tightblog.repository.WeblogEntryRepository;
 
 import javax.annotation.PreDestroy;
 import java.io.File;
@@ -60,10 +61,10 @@ public class IndexManagerImpl implements IndexManager {
 
     private DirectoryReader reader;
 
-    @Autowired
     private WeblogEntryManager weblogEntryManager;
 
-    @Autowired
+    private WeblogEntryRepository weblogEntryRepository;
+
     @Value("${search.analyzer.class:org.apache.lucene.analysis.standard.StandardAnalyzer}")
     private String luceneAnalyzerName;
 
@@ -84,14 +85,17 @@ public class IndexManagerImpl implements IndexManager {
     private ReadWriteLock rwl = new ReentrantReadWriteLock();
 
     /**
-     * Creates a new lucene index manager. This should only be created once.
-     * Creating the index manager more than once will definitely result in
-     * errors.
+     * Creates a new Lucene index manager. Just one manager should be created per instance of Tightblog.
      */
-    public IndexManagerImpl(@Value("${search.include.comments:true}") boolean indexComments,
+    @Autowired
+    public IndexManagerImpl(
+            WeblogEntryManager weblogEntryManager, WeblogEntryRepository weblogEntryRepository,
+            @Value("${search.include.comments:true}") boolean indexComments,
                             @Value("${search.enabled:false}") boolean searchEnabled,
                             @Value("${search.index.dir:#{null}}") String indexDir) {
 
+        this.weblogEntryManager = weblogEntryManager;
+        this.weblogEntryRepository = weblogEntryRepository;
         this.indexComments = indexComments;
         this.searchEnabled = searchEnabled;
         this.indexDir = indexDir;
@@ -187,7 +191,7 @@ public class IndexManagerImpl implements IndexManager {
 
     @Override
     public void updateIndex(WeblogEntry entry, boolean remove) {
-        scheduleIndexOperation(new IndexEntryTask(weblogEntryManager, this, entry, remove));
+        scheduleIndexOperation(new IndexEntryTask(weblogEntryRepository, this, entry, remove));
     }
 
     @Override

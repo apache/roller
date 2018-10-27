@@ -20,18 +20,38 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
+import org.tightblog.pojos.WeblogEntryComment.ApprovalStatus;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
 @Transactional("transactionManager")
 public interface WeblogEntryCommentRepository extends JpaRepository<WeblogEntryComment, String> {
 
+    // method should be used with care as it returns all comments regardless of approval status
     List<WeblogEntryComment> findByWeblogEntry(WeblogEntry e);
 
-    Long deleteByWeblogEntry(WeblogEntry e);
+    default List<WeblogEntryComment> findByWeblogEntryAndStatusApproved(WeblogEntry entry) {
+        return findByWeblogEntryAndStatusInOrderByPostTimeAsc(entry,
+                Collections.unmodifiableList(List.of(ApprovalStatus.APPROVED)));
+    }
+
+    List<WeblogEntryComment> findByWeblogEntryAndStatusInOrderByPostTimeAsc(WeblogEntry entry,
+                                                                            List<ApprovalStatus> statuses);
+
+    int countByWeblogEntry(WeblogEntry e);
+
+    default int countByWeblogEntryAndStatusApproved(WeblogEntry entry) {
+        return countByWeblogEntryAndStatusIn(entry, Collections.unmodifiableList(List.of(ApprovalStatus.APPROVED)));
+    }
+
+    int countByWeblogEntryAndStatusIn(WeblogEntry entry, List<ApprovalStatus> statuses);
+
+    void deleteByWeblogEntry(WeblogEntry e);
 
     default WeblogEntryComment findByIdOrNull(String id) {
         return findById(id).orElse(null);
     }
+
 }

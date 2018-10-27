@@ -48,9 +48,9 @@ public class WeblogCategoryCRUDTestIT extends WebloggerTest {
     }
     
     @After
-    public void tearDown() throws Exception {
-        teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getId());
+    public void tearDown() {
+        weblogManager.removeWeblog(testWeblog);
+        userManager.removeUser(testUser);
     }
 
     /**
@@ -67,7 +67,7 @@ public class WeblogCategoryCRUDTestIT extends WebloggerTest {
      * Test basic persistence operations ... Create, Update, Delete.
      */
     @Test
-    public void testBasicCRUD() throws Exception {
+    public void testBasicCRUD() {
 
         // make sure we are starting with 1 categories
         assertEquals(1, testWeblog.getWeblogCategories().size());
@@ -117,7 +117,7 @@ public class WeblogCategoryCRUDTestIT extends WebloggerTest {
      * Make sure that deleting a category deletes all child categories.
      */
     @Test
-    public void testCategoryCascadingDelete() throws Exception {
+    public void testCategoryCascadingDelete() {
         // add a category above default one
         WeblogCategory testCat = new WeblogCategory(testWeblog, "SampleCategory");
         testWeblog.addCategory(testCat);

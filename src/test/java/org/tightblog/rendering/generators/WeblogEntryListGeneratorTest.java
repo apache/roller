@@ -219,7 +219,7 @@ public class WeblogEntryListGeneratorTest {
                 .minusNanos(1)
                 .atZone(ZoneId.systemDefault()).toInstant(), wesc.getEndDate());
         assertEquals("stamps", wesc.getCategoryName());
-        assertTrue(wesc.getTags().contains("airmail"));
+        assertEquals("airmail", wesc.getTag());
         assertEquals(pageNum * maxEntries, wesc.getOffset());
         assertEquals(WeblogEntry.PubStatus.PUBLISHED, wesc.getStatus());
         assertEquals(maxEntries + 1, wesc.getMaxResults());

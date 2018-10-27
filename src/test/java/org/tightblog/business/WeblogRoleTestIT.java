@@ -49,16 +49,16 @@ public class WeblogRoleTestIT extends WebloggerTest {
     }
 
     @After
-    public void tearDown() throws Exception {
-        teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getId());
+    public void tearDown() {
+        weblogManager.removeWeblog(testWeblog);
+        userManager.removeUser(testUser);
     }
 
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
     @Test
-    public void testUserWeblogRoleCRUD() throws Exception {
+    public void testUserWeblogRoleCRUD() {
         UserWeblogRole p1 = new UserWeblogRole(testUser, testWeblog, WeblogRole.POST);
         assertTrue(p1.getWeblogRole() == WeblogRole.POST);
 
@@ -134,7 +134,7 @@ public class WeblogRoleTestIT extends WebloggerTest {
         role = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(user, testWeblog);
         assertNull(role);
 
-        teardownUser(user.getId());
+        userManager.removeUser(user);
     }
 
 
@@ -180,8 +180,7 @@ public class WeblogRoleTestIT extends WebloggerTest {
         userRoles = userWeblogRoleRepository.findByUserAndPendingFalse(user);
         assertEquals(0, userRoles.size());
 
-        // cleanup the extra test user
-        teardownUser(user.getId());
+        userManager.removeUser(user);
     }
     
     
@@ -189,14 +188,13 @@ public class WeblogRoleTestIT extends WebloggerTest {
      * Tests weblog invitation process.
      */
     @Test
-    public void testGlobalAdminHasPostWeblogRoleCheck() throws Exception {
+    public void testGlobalAdminHasPostWeblogRoleCheck() {
         User adminUser = setupUser("adminUser");
         adminUser.setGlobalRole(GlobalRole.ADMIN);
 
         // because adminUser is a global admin, they should have POST perm
         assertTrue(userManager.checkWeblogRole(adminUser, testWeblog, WeblogRole.POST));
 
-        // cleanup the extra test user
-        teardownUser(adminUser.getId());
+        userManager.removeUser(adminUser);
     }
 }

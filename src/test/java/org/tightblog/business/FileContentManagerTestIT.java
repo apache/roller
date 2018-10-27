@@ -62,7 +62,7 @@ public class FileContentManagerTestIT extends WebloggerTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
 
         WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
         props.setMaxFileUploadsSizeMb(30000);
@@ -70,8 +70,8 @@ public class FileContentManagerTestIT extends WebloggerTest {
         props.setAllowedFileExtensions("");
         props.setUsersUploadMediaFiles(true);
         webloggerPropertiesRepository.saveAndFlush(props);
-        teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getId());
+        weblogManager.removeWeblog(testWeblog);
+        userManager.removeUser(testUser);
     }
 
     /**
@@ -115,7 +115,7 @@ public class FileContentManagerTestIT extends WebloggerTest {
      * This should test all conditions where a save should fail.
      */
     @Test
-    public void testCanSave() throws Exception {
+    public void testCanSave() {
         WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
         props.setMaxFileSizeMb(1);
         props.setDisallowedFileExtensions("");

@@ -16,6 +16,8 @@
 package org.tightblog.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.pojos.Weblog;
@@ -29,7 +31,13 @@ public interface WeblogEntryRepository extends JpaRepository<WeblogEntry, String
 
     List<WeblogEntry> findByWeblog(Weblog e);
 
-    Long deleteByWeblog(Weblog weblog);
+    void deleteByWeblog(Weblog weblog);
+
+    int countByWeblog(Weblog weblog);
+
+    @Modifying
+    @Query("UPDATE WeblogEntry e SET e.commentDays = ?2 WHERE e.weblog = ?1")
+    void applyDefaultCommentDaysToWeblogEntries(Weblog weblog, int commentDays);
 
     WeblogEntry findByWeblogAndAnchor(Weblog weblog, String anchor);
 

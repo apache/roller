@@ -22,12 +22,12 @@ package org.tightblog.business.search.tasks;
 
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.search.FieldConstants;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.WeblogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tightblog.repository.WeblogEntryRepository;
 
 import java.io.IOException;
 
@@ -38,7 +38,7 @@ public class IndexEntryTask extends AbstractIndexTask {
 
     private static Logger log = LoggerFactory.getLogger(IndexEntryTask.class);
     private WeblogEntry weblogEntry;
-    private WeblogEntryManager weblogEntryManager;
+    private WeblogEntryRepository weblogEntryRepository;
     private boolean deleteOnly;
 
     /**
@@ -46,10 +46,10 @@ public class IndexEntryTask extends AbstractIndexTask {
      * @param weblogEntry entry to index
      * @param deleteOnly If true just remove the weblog entry from the index.
      */
-    public IndexEntryTask(WeblogEntryManager wem, IndexManager mgr,
+    public IndexEntryTask(WeblogEntryRepository wer, IndexManager mgr,
                           WeblogEntry weblogEntry, boolean deleteOnly) {
         super(mgr);
-        this.weblogEntryManager = wem;
+        this.weblogEntryRepository = wer;
         this.weblogEntry = weblogEntry;
         this.deleteOnly = deleteOnly;
     }
@@ -65,7 +65,7 @@ public class IndexEntryTask extends AbstractIndexTask {
                     // since this task is normally run on a separate thread we must treat
                     // the weblog object passed in as a detached JPA entity object with
                     // potentially obsolete data, so requery for the object now
-                    this.weblogEntry = weblogEntryManager.getWeblogEntry(this.weblogEntry.getId(), false);
+                    this.weblogEntry = weblogEntryRepository.findByIdOrNull(this.weblogEntry.getId());
                     if (weblogEntry != null) {
                         writer.addDocument(getDocument(weblogEntry));
                     }

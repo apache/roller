@@ -66,9 +66,9 @@ public class CommentTestIT extends WebloggerTest {
     @After
     public void tearDown() throws Exception {
         try {
-            teardownWeblogEntry(testEntry.getId());
-            teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getId());
+            weblogEntryManager.removeWeblogEntry(testEntry);
+            weblogManager.removeWeblog(testWeblog);
+            userManager.removeUser(testUser);
         } catch (Exception ex) {
             throw new Exception("Test teardown failed", ex);
         }
@@ -79,7 +79,7 @@ public class CommentTestIT extends WebloggerTest {
      * Test basic persistence operations ... Create, Update, Delete
      */
     @Test
-    public void testCommentCRUD() throws Exception {
+    public void testCommentCRUD() {
 
         WeblogEntryComment comment = new WeblogEntryComment();
         comment.setName("test");
@@ -88,7 +88,7 @@ public class CommentTestIT extends WebloggerTest {
         comment.setRemoteHost("foofoo");
         comment.setContent("this is a test comment");
         comment.setPostTime(Instant.now());
-        comment.setWeblogEntry(getManagedWeblogEntry(testEntry));
+        comment.setWeblogEntry(testEntry);
         comment.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
         
         // create a comment
@@ -96,7 +96,7 @@ public class CommentTestIT extends WebloggerTest {
         String id = comment.getId();
 
         // make sure comment was created
-        comment = weblogEntryManager.getComment(id);
+        comment = weblogEntryCommentRepository.findByIdOrNull(id);
         assertNotNull(comment);
         assertEquals("this is a test comment", comment.getContent());
         
@@ -105,7 +105,7 @@ public class CommentTestIT extends WebloggerTest {
         weblogEntryManager.saveComment(comment, true);
 
         // make sure comment was updated
-        comment = weblogEntryManager.getComment(id);
+        comment = weblogEntryCommentRepository.findByIdOrNull(id);
         assertNotNull(comment);
         assertEquals("testtest", comment.getContent());
         
@@ -113,7 +113,7 @@ public class CommentTestIT extends WebloggerTest {
         weblogEntryManager.removeComment(comment);
 
         // make sure comment was deleted
-        comment = weblogEntryManager.getComment(id);
+        comment = weblogEntryCommentRepository.findByIdOrNull(id);
         assertNull(comment);
     }
     
@@ -126,7 +126,6 @@ public class CommentTestIT extends WebloggerTest {
         List comments;
         
         // we need some comments to play with
-        testEntry = getManagedWeblogEntry(testEntry);
         WeblogEntryComment comment1 = setupComment("comment1", testEntry);
         WeblogEntryComment comment2 = setupComment("comment2", testEntry);
         WeblogEntryComment comment3 = setupComment("comment3", testEntry);
@@ -138,14 +137,13 @@ public class CommentTestIT extends WebloggerTest {
         assertEquals(3, comments.size());
         
         // get all comments for entry
-        testEntry = getManagedWeblogEntry(testEntry);
         csc.setEntry(testEntry);
-        comments = weblogEntryManager.getComments(csc);
+        comments = weblogEntryCommentRepository.findByWeblogEntry(testEntry);
         assertNotNull(comments);
         assertEquals(3, comments.size());
         
         // make some changes
-        comment3 = weblogEntryManager.getComment(comment3.getId());
+        comment3 = weblogEntryCommentRepository.findByIdOrNull(comment3.getId());
         comment3.setStatus(WeblogEntryComment.ApprovalStatus.PENDING);
         weblogEntryManager.saveComment(comment3, false);
 
@@ -157,8 +155,7 @@ public class CommentTestIT extends WebloggerTest {
         assertEquals(1, comments.size());
         
         // get approved comments
-        csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
-        comments = weblogEntryManager.getComments(csc);
+        comments = weblogEntryCommentRepository.findByWeblogEntryAndStatusApproved(testEntry);
         assertNotNull(comments);
         assertEquals(2, comments.size());
         
@@ -169,12 +166,11 @@ public class CommentTestIT extends WebloggerTest {
         assertNotNull(comments);
         assertEquals(2, comments.size());
         
-        teardownComment(comment1.getId());
-        teardownComment(comment2.getId());
-        teardownComment(comment3.getId());
+        weblogEntryManager.removeComment(comment1);
+        weblogEntryManager.removeComment(comment2);
+        weblogEntryManager.removeComment(comment3);
     }
-    
-    
+
     /**
      * Test that when deleting parent objects of a comment that everything
      * down the chain is properly deleted as well.  i.e. deleting an entry
@@ -189,7 +185,6 @@ public class CommentTestIT extends WebloggerTest {
             Weblog weblog = setupWeblog("commentparentdelete", user);
             WeblogEntry entry = setupWeblogEntry("CommentParentDeletes1", weblog, user);
 
-            entry = getManagedWeblogEntry(entry);
             setupComment("comment1", entry);
             setupComment("comment2", entry);
             setupComment("comment3", entry);
@@ -197,7 +192,7 @@ public class CommentTestIT extends WebloggerTest {
             // now deleting the entry should succeed and delete all comments
             RollbackException ex = null;
             try {
-                weblogEntryManager.removeWeblogEntry(getManagedWeblogEntry(entry));
+                weblogEntryManager.removeWeblogEntry(entry);
             } catch (RollbackException e) {
                 ex = e;
             }
@@ -207,7 +202,6 @@ public class CommentTestIT extends WebloggerTest {
             weblog = weblogRepository.findByIdOrNull(weblog.getId());
             entry = setupWeblogEntry("CommentParentDeletes2", weblog, user);
 
-            entry = getManagedWeblogEntry(entry);
             setupComment("comment1", entry);
             setupComment("comment2", entry);
             setupComment("comment3", entry);

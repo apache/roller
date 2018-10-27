@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
@@ -105,14 +104,7 @@ public abstract class WebloggerTest {
         }
     }
 
-    /**
-     * Convenience method that returns managed copy of given WeblogEntry.
-     */
-    protected WeblogEntry getManagedWeblogEntry(WeblogEntry weblogEntry) {
-        return weblogEntryManager.getWeblogEntry(weblogEntry.getId(), false);
-    }
-
-    protected User setupUser(String userName) throws Exception {
+    protected User setupUser(String userName) {
         User testUser = new User();
         testUser.setUserName(userName.toLowerCase());
         testUser.setGlobalRole(GlobalRole.BLOGGER);
@@ -132,14 +124,7 @@ public abstract class WebloggerTest {
         return user;
     }
 
-    @Transactional
-    protected void teardownUser(String userId) {
-        User user = userRepository.findByIdOrNull(userId);
-        userManager.removeUser(user);
-    }
-
-    protected Weblog setupWeblog(String handle, User creator)
-            throws Exception {
+    protected Weblog setupWeblog(String handle, User creator) {
 
         Instant now = Instant.now();
         Weblog testWeblog = new Weblog();
@@ -166,11 +151,6 @@ public abstract class WebloggerTest {
         }
 
         return weblog;
-    }
-
-    protected void teardownWeblog(String id) {
-        Weblog weblog = weblogRepository.findByIdOrNull(id);
-        weblogManager.removeWeblog(weblog);
     }
 
     protected WeblogEntry setupWeblogEntry(String anchor, Weblog weblog, User user) {
@@ -206,12 +186,7 @@ public abstract class WebloggerTest {
         return entry;
     }
 
-    protected void teardownWeblogEntry(String id) {
-        WeblogEntry entry = weblogEntryManager.getWeblogEntry(id, false);
-        weblogEntryManager.removeWeblogEntry(entry);
-    }
-
-    protected WeblogEntryComment setupComment(String comment, WeblogEntry entry) throws Exception {
+    protected WeblogEntryComment setupComment(String comment, WeblogEntry entry) {
 
         WeblogEntryComment testComment = new WeblogEntryComment();
         testComment.setName("test");
@@ -220,7 +195,7 @@ public abstract class WebloggerTest {
         testComment.setRemoteHost("foofoo");
         testComment.setContent(comment);
         testComment.setPostTime(Instant.now());
-        testComment.setWeblogEntry(getManagedWeblogEntry(entry));
+        testComment.setWeblogEntry(entry);
         testComment.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
 
         // store testComment
@@ -234,11 +209,6 @@ public abstract class WebloggerTest {
         }
 
         return commentTest;
-    }
-
-    protected void teardownComment(String id) throws Exception {
-        WeblogEntryComment comment = weblogEntryManager.getComment(id);
-        weblogEntryManager.removeComment(comment);
     }
 
     public static WeblogEntry genWeblogEntry(String anchor, Instant pubTime,

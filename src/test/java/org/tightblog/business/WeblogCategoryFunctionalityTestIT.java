@@ -63,9 +63,9 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
     }
     
     @After
-    public void tearDown() throws Exception {
-        teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getId());
+    public void tearDown() {
+        weblogManager.removeWeblog(testWeblog);
+        userManager.removeUser(testUser);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class WeblogCategoryFunctionalityTestIT extends WebloggerTest {
     }
 
     @Test
-    public void testMoveWeblogCategoryContents() throws Exception {
+    public void testMoveWeblogCategoryContents() {
 
         // add some categories and entries to test with
         WeblogCategory c1 = new WeblogCategory(testWeblog, "c1");

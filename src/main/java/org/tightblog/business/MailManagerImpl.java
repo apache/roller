@@ -27,7 +27,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.tightblog.config.DynamicProperties;
-import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserWeblogRole;
 import org.tightblog.pojos.Weblog;
@@ -44,6 +43,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.UserWeblogRoleRepository;
+import org.tightblog.repository.WeblogEntryCommentRepository;
 import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import javax.mail.Message;
@@ -67,7 +67,7 @@ public class MailManagerImpl implements MailManager {
     private UserRepository userRepository;
     private UserWeblogRoleRepository userWeblogRoleRepository;
     private WeblogManager weblogManager;
-    private WeblogEntryManager weblogEntryManager;
+    private WeblogEntryCommentRepository weblogEntryCommentRepository;
     private URLStrategy urlStrategy;
     private JavaMailSender mailSender;
     private SpringTemplateEngine standardTemplateEngine;
@@ -81,15 +81,16 @@ public class MailManagerImpl implements MailManager {
     @Autowired
     public MailManagerImpl(UserManager userManager, UserRepository userRepository,
                            UserWeblogRoleRepository userWeblogRoleRepository, WeblogManager weblogManager,
-                           WeblogEntryManager weblogEntryManager, URLStrategy urlStrategy, JavaMailSender mailSender,
+                           URLStrategy urlStrategy, JavaMailSender mailSender,
                            SpringTemplateEngine standardTemplateEngine, MessageSource messages, DynamicProperties dp,
-                           WebloggerPropertiesRepository webloggerPropertiesRepository) {
+                           WebloggerPropertiesRepository webloggerPropertiesRepository,
+                           WeblogEntryCommentRepository weblogEntryCommentRepository) {
         this.userManager = userManager;
         this.userRepository = userRepository;
         this.userWeblogRoleRepository = userWeblogRoleRepository;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.weblogManager = weblogManager;
-        this.weblogEntryManager = weblogEntryManager;
+        this.weblogEntryCommentRepository = weblogEntryCommentRepository;
         this.urlStrategy = urlStrategy;
         this.mailSender = mailSender;
         this.standardTemplateEngine = standardTemplateEngine;
@@ -294,9 +295,8 @@ public class MailManagerImpl implements MailManager {
         Map<String, String> subscribers = new HashMap<>();
 
         // Get all the subscribers to this comment thread
-        List<WeblogEntryComment> priorComments = weblogEntryManager.getComments(
-                CommentSearchCriteria.builder(entry, true, false))
-                .stream()
+        List<WeblogEntryComment> priorComments =
+                weblogEntryCommentRepository.findByWeblogEntryAndStatusApproved(entry).stream()
                 // don't send a routing email to the person who made the comment.
                 .filter(pc -> !comment.getEmail().equalsIgnoreCase(pc.getEmail()))
                 .collect(Collectors.toList());

@@ -72,21 +72,21 @@ public class WeblogStatsTestIT extends WebloggerTest {
     }
 
     @After
-    public void tearDown() throws Exception {
-        teardownComment(comment11.getId());
-        teardownComment(comment12.getId());
-        teardownComment(comment13.getId());
-        teardownWeblog(website1.getId());
+    public void tearDown() {
+        weblogEntryManager.removeComment(comment11);
+        weblogEntryManager.removeComment(comment12);
+        weblogEntryManager.removeComment(comment13);
+        weblogEntryManager.removeComment(comment21);
 
-        teardownComment(comment21.getId());
-        teardownWeblog(website2.getId());
+        weblogManager.removeWeblog(website1);
+        weblogManager.removeWeblog(website2);
 
-        teardownUser(user1.getId());
-        teardownUser(user2.getId());
+        userManager.removeUser(user1);
+        userManager.removeUser(user2);
     }
 
     @Test
-    public void testGetWeblogLetterMap() throws Exception {
+    public void testGetWeblogLetterMap() {
         Map<Character, Integer> map = weblogManager.getWeblogHandleLetterMap();
         assertNotNull(map.get('A'));
         assertNotNull(map.get('B'));

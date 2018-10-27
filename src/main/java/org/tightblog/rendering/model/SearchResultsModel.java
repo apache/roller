@@ -36,6 +36,7 @@ import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tightblog.repository.WeblogEntryRepository;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -72,6 +73,13 @@ public class SearchResultsModel extends PageModel {
 
     void setIndexManager(IndexManager indexManager) {
         this.indexManager = indexManager;
+    }
+
+    @Autowired
+    private WeblogEntryRepository weblogEntryRepository;
+
+    public void setWeblogEntryRepository(WeblogEntryRepository weblogEntryRepository) {
+        this.weblogEntryRepository = weblogEntryRepository;
     }
 
     @Override
@@ -176,7 +184,7 @@ public class SearchResultsModel extends PageModel {
                 log.warn("IOException processing {}", hits[i].doc, e);
                 continue;
             }
-            entry = weblogEntryManager.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue(), false);
+            entry = weblogEntryRepository.findByIdOrNull(doc.getField(FieldConstants.ID).stringValue());
 
             if (entry != null && WeblogEntry.PubStatus.PUBLISHED.equals(entry.getStatus())) {
                 LocalDate pubDate = entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();

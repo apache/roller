@@ -37,8 +37,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.pojos.SharedTheme;
 import org.tightblog.business.ThemeManager;
@@ -48,6 +46,7 @@ import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.repository.UserRepository;
+import org.tightblog.repository.WeblogEntryRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;
@@ -64,7 +63,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.pojos.WebloggerProperties;
 
-import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -77,14 +75,13 @@ public class WeblogController {
 
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
 
-    private WeblogEntryManager weblogEntryManager;
     private UserRepository userRepository;
     private WeblogManager weblogManager;
     private ThemeManager themeManager;
-    private JPAPersistenceStrategy persistenceStrategy;
     private UserManager userManager;
     private DynamicProperties dp;
     private WeblogRepository weblogRepository;
+    private WeblogEntryRepository weblogEntryRepository;
     private MessageSource messages;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
 
@@ -92,20 +89,19 @@ public class WeblogController {
     private int maxEntriesPerPage;
 
     @Autowired
-    public WeblogController(WeblogEntryManager weblogEntryManager, UserRepository userRepository,
-                            WeblogManager weblogManager, ThemeManager themeManager,
-                            JPAPersistenceStrategy persistenceStrategy, UserManager userManager, DynamicProperties dp,
+    public WeblogController(UserRepository userRepository, WeblogManager weblogManager, ThemeManager themeManager,
+                            UserManager userManager, DynamicProperties dp,
                             WeblogRepository weblogRepository, MessageSource messages,
-                            WebloggerPropertiesRepository webloggerPropertiesRepository) {
-        this.weblogEntryManager = weblogEntryManager;
+                            WebloggerPropertiesRepository webloggerPropertiesRepository,
+                            WeblogEntryRepository weblogEntryRepository) {
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.userRepository = userRepository;
         this.weblogManager = weblogManager;
         this.themeManager = themeManager;
-        this.persistenceStrategy = persistenceStrategy;
         this.userManager = userManager;
         this.dp = dp;
         this.weblogRepository = weblogRepository;
+        this.weblogEntryRepository = weblogEntryRepository;
         this.messages = messages;
     }
 
@@ -203,17 +199,11 @@ public class WeblogController {
 
                 // ROL-1050: apply comment defaults to existing entries
                 if (newData.isApplyCommentDefaults()) {
-                    weblogEntryManager.applyCommentDefaultsToEntries(weblog);
+                    weblogEntryRepository.applyDefaultCommentDaysToWeblogEntries(weblog, weblog.getDefaultCommentDays());
                 }
 
                 // flush and clear cache
-                try {
-                    persistenceStrategy.flush();
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } catch (RollbackException ex) {
-                    log.error("Error updating weblog config", ex);
-                    return ResponseEntity.status(HttpServletResponse.SC_CONFLICT).body("Persistence Problem, check logs");
-                }
+                response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }

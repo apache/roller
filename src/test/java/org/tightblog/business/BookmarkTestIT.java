@@ -59,15 +59,15 @@ public class BookmarkTestIT extends WebloggerTest {
     @After
     public void tearDown() throws Exception {
         try {
-            teardownWeblog(testWeblog.getId());
-            teardownUser(testUser.getId());
+            weblogManager.removeWeblog(testWeblog);
+            userManager.removeUser(testUser);
         } catch (Exception ex) {
             throw new Exception("Test teardown failed", ex);
         }
     }
     
     @Test
-    public void testBookmarkCRUD() throws Exception {
+    public void testBookmarkCRUD() {
         // Add bookmark
         WeblogBookmark bookmark1 = new WeblogBookmark(
                 testWeblog,
@@ -123,7 +123,7 @@ public class BookmarkTestIT extends WebloggerTest {
      * Test all bookmark lookup methods.
      */
     @Test
-    public void testBookmarkLookups() throws Exception {
+    public void testBookmarkLookups() {
         testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
 
         // add some bookmarks

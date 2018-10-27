@@ -49,15 +49,15 @@ public class WeblogTestIT extends WebloggerTest {
     }
 
     @After
-    public void tearDown() throws Exception {
-        teardownUser(testUser.getId());
+    public void tearDown() {
+        userManager.removeUser(testUser);
     }
 
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
     @Test
-    public void testWeblogCRUD() throws Exception {
+    public void testWeblogCRUD() {
         Weblog weblog;
 
         Weblog testWeblog = new Weblog();
@@ -156,10 +156,10 @@ public class WeblogTestIT extends WebloggerTest {
 
         } finally {
             if (testWeblog1 != null) {
-                teardownWeblog(testWeblog1.getId());
+                weblogManager.removeWeblog(testWeblog1);
             }
             if (testWeblog2 != null) {
-                teardownWeblog(testWeblog2.getId());
+                weblogManager.removeWeblog(testWeblog2);
             }
         }
     }

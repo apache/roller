@@ -40,6 +40,7 @@ import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogCategoryRepository;
+import org.tightblog.repository.WeblogEntryRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;
@@ -84,6 +85,7 @@ public class WeblogEntryController {
     private static DateTimeFormatter pubDateFormat = DateTimeFormatter.ofPattern("M/d/yyyy");
 
     private WeblogRepository weblogRepository;
+    private WeblogEntryRepository weblogEntryRepository;
     private WeblogCategoryRepository weblogCategoryRepository;
     private UserRepository userRepository;
     private UserManager userManager;
@@ -100,8 +102,10 @@ public class WeblogEntryController {
                                  UserRepository userRepository, UserManager userManager, WeblogManager weblogManager,
                                  WeblogEntryManager weblogEntryManager, IndexManager indexManager,
                                  URLStrategy urlStrategy, MailManager mailManager, MessageSource messages,
-                                 WebloggerPropertiesRepository webloggerPropertiesRepository) {
+                                 WebloggerPropertiesRepository webloggerPropertiesRepository,
+                                 WeblogEntryRepository weblogEntryRepository) {
         this.weblogRepository = weblogRepository;
+        this.weblogEntryRepository = weblogEntryRepository;
         this.weblogCategoryRepository = weblogCategoryRepository;
         this.userRepository = userRepository;
         this.userManager = userManager;
@@ -232,7 +236,7 @@ public class WeblogEntryController {
             throws ServletException {
 
         try {
-            WeblogEntry itemToRemove = weblogEntryManager.getWeblogEntry(id, false);
+            WeblogEntry itemToRemove = weblogEntryRepository.findByIdOrNull(id);
             if (itemToRemove != null) {
                 Weblog weblog = itemToRemove.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
@@ -338,7 +342,7 @@ public class WeblogEntryController {
     public WeblogEntry getWeblogEntry(@PathVariable String id, Principal p, HttpServletResponse response)
             throws ServletException {
         try {
-            WeblogEntry entry = weblogEntryManager.getWeblogEntry(id, true);
+            WeblogEntry entry = weblogEntryRepository.findByIdOrNull(id);
             if (entry != null) {
                 Weblog weblog = entry.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.EDIT_DRAFT)) {
@@ -469,7 +473,7 @@ public class WeblogEntryController {
             WeblogEntry entry = null;
 
             if (entryData.getId() != null) {
-                entry = weblogEntryManager.getWeblogEntry(entryData.getId(), false);
+                entry = weblogEntryRepository.findByIdOrNull(entryData.getId());
             }
 
             // Check user permissions

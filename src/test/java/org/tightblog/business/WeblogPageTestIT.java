@@ -62,9 +62,9 @@ public class WeblogPageTestIT extends WebloggerTest {
     }
     
     @After
-    public void tearDown() throws Exception {
-        teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getId());
+    public void tearDown() {
+        weblogManager.removeWeblog(testWeblog);
+        userManager.removeUser(testUser);
         testPage = null;
     }
     
@@ -72,7 +72,7 @@ public class WeblogPageTestIT extends WebloggerTest {
      * Test basic persistence operations ... Create, Update, Delete
      */
     @Test
-    public void testTemplateCRUD() throws Exception {
+    public void testTemplateCRUD() {
         WeblogTemplate template;
         
         // create template
@@ -105,7 +105,7 @@ public class WeblogPageTestIT extends WebloggerTest {
      * Test lookup mechanisms ... id, name, link, weblog
      */
     @Test
-    public void testPermissionsLookups() throws Exception {
+    public void testPermissionsLookups() {
         WeblogTemplate page;
         
         // create page

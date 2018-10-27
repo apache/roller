@@ -21,8 +21,7 @@
 package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WebloggerContext;
+import org.tightblog.repository.WeblogEntryCommentRepository;
 import org.tightblog.util.Utilities;
 import javax.validation.constraints.NotBlank;
 
@@ -35,13 +34,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -54,16 +52,6 @@ import java.util.stream.Collectors;
  */
 @Entity
 @Table(name = "weblog_entry")
-@NamedQueries({
-        @NamedQuery(name = "WeblogEntry.getByWeblog&AnchorOrderByPubTimeDesc",
-                query = "SELECT w FROM WeblogEntry w WHERE w.weblog = ?1 AND w.anchor = ?2 ORDER BY w.pubTime DESC"),
-        @NamedQuery(name = "WeblogEntry.getByWeblog&Anchor",
-                query = "SELECT w FROM WeblogEntry w WHERE w.weblog = ?1 AND w.anchor = ?2"),
-        @NamedQuery(name = "WeblogEntry.getByWeblog",
-                query = "SELECT w FROM WeblogEntry w WHERE w.weblog = ?1"),
-        @NamedQuery(name = "WeblogEntry.updateCommentDaysByWeblog",
-                query = "UPDATE WeblogEntry e SET e.commentDays = ?1 WHERE e.weblog = ?2")
-})
 public class WeblogEntry {
 
     public enum PubStatus { DRAFT, PUBLISHED, PENDING, SCHEDULED }
@@ -123,7 +111,8 @@ public class WeblogEntry {
 
     private Set<WeblogEntryTag> tagSet = new HashSet<>();
 
-    // temporary non-persisted fields used for form entry
+    // temporary non-persisted fields used for form entry & retrieving associated data
+    private WeblogEntryCommentRepository commentRepository;
     private int hours;
     private int minutes;
 
@@ -389,23 +378,25 @@ public class WeblogEntry {
         this.tagsAsString = tagsAsString;
     }
 
+    public void setCommentRepository(WeblogEntryCommentRepository commentRepository) {
+        this.commentRepository = commentRepository;
+    }
+
     @Transient
     @JsonIgnore
     public List<WeblogEntryComment> getComments() {
-        WeblogEntryManager wmgr = WebloggerContext.getWeblogEntryManager();
-        return wmgr.getComments(CommentSearchCriteria.builder(this, true, false));
+        return commentRepository != null ? commentRepository.findByWeblogEntryAndStatusApproved(this)
+                : new ArrayList<>();
     }
 
     @Transient
-    public long getCommentCount() {
-        WeblogEntryManager wmgr = WebloggerContext.getWeblogEntryManager();
-        return wmgr.getCommentCount(CommentSearchCriteria.builder(this, true, true));
+    public int getCommentCount() {
+        return commentRepository != null ? commentRepository.countByWeblogEntryAndStatusApproved(this) : 0;
     }
 
     @Transient
-    public long getCommentCountIncludingUnapproved() {
-        WeblogEntryManager wmgr = WebloggerContext.getWeblogEntryManager();
-        return wmgr.getCommentCount(CommentSearchCriteria.builder(this, false, true));
+    public int getCommentCountIncludingUnapproved() {
+        return commentRepository != null ? commentRepository.countByWeblogEntry(this) : 0;
     }
 
     /**
@@ -484,7 +475,8 @@ public class WeblogEntry {
 
     @Override
     public String toString() {
-        return "WeblogEntry: id=" + id + ", weblog=" + weblog.getHandle() + ", anchor=" + anchor + ", pub time=" + pubTime;
+        return "WeblogEntry: id=" + id + ", weblog=" + ((weblog == null) ? "(null)" : weblog.getHandle()) +
+                ", anchor=" + anchor + ", pub time=" + pubTime;
     }
 
     @Override

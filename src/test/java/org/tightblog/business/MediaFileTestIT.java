@@ -70,16 +70,16 @@ public class MediaFileTestIT extends WebloggerTest {
     }
 
     @After
-    public void tearDown() throws Exception {
-        teardownWeblog(testWeblog.getId());
-        teardownUser(testUser.getId());
+    public void tearDown() {
+        weblogManager.removeWeblog(testWeblog);
+        userManager.removeUser(testUser);
     }
 
     /**
      * Test creation of directory by path
      */
     @Test
-    public void testCreateMediaDirectoryByPath() throws Exception {
+    public void testCreateMediaDirectoryByPath() {
 
         try {
             mediaFileManager.createMediaDirectory(testWeblog, "");
@@ -116,7 +116,7 @@ public class MediaFileTestIT extends WebloggerTest {
      * Test getting list of all directories for a given user.
      */
     @Test
-    public void testGetMediaDirectories() throws Exception {
+    public void testGetMediaDirectories() {
         mediaFileManager.createMediaDirectory(testWeblog, "dir1");
         mediaFileManager.createMediaDirectory(testWeblog, "dir2");
 

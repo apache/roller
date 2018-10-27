@@ -19,6 +19,8 @@ import org.tightblog.pojos.WeblogEntryComment.ApprovalStatus;
 import org.tightblog.pojos.WeblogRole;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.repository.UserRepository;
+import org.tightblog.repository.WeblogEntryCommentRepository;
+import org.tightblog.repository.WeblogEntryRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.HTMLSanitizer;
@@ -57,6 +59,8 @@ public class CommentController {
     private static final int ITEMS_PER_PAGE = 30;
 
     private WeblogRepository weblogRepository;
+    private WeblogEntryRepository weblogEntryRepository;
+    private WeblogEntryCommentRepository weblogEntryCommentRepository;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private UserManager userManager;
     private UserRepository userRepository;
@@ -71,8 +75,12 @@ public class CommentController {
     public CommentController(WeblogRepository weblogRepository, UserManager userManager, UserRepository userRepository,
                              WeblogEntryManager weblogEntryManager, JPAPersistenceStrategy persistenceStrategy,
                              IndexManager indexManager, URLStrategy urlStrategy, MailManager mailManager,
-                             MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository) {
+                             MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository,
+                             WeblogEntryRepository weblogEntryRepository,
+                             WeblogEntryCommentRepository weblogEntryCommentRepository) {
         this.weblogRepository = weblogRepository;
+        this.weblogEntryRepository = weblogEntryRepository;
+        this.weblogEntryCommentRepository = weblogEntryCommentRepository;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.userManager = userManager;
         this.userRepository = userRepository;
@@ -97,7 +105,7 @@ public class CommentController {
 
             criteria.setWeblog(weblog);
             if (entryId != null) {
-                criteria.setEntry(weblogEntryManager.getWeblogEntry(entryId, false));
+                criteria.setEntry(weblogEntryRepository.findByIdOrNull(entryId));
                 data.entryTitle = criteria.getEntry().getTitle();
             }
             criteria.setOffset(page * ITEMS_PER_PAGE);
@@ -181,7 +189,7 @@ public class CommentController {
             throws ServletException {
 
         try {
-            WeblogEntryComment itemToRemove = weblogEntryManager.getComment(id);
+            WeblogEntryComment itemToRemove = weblogEntryCommentRepository.findByIdOrNull(id);
             if (itemToRemove != null) {
                 Weblog weblog = itemToRemove.getWeblogEntry().getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
@@ -224,7 +232,7 @@ public class CommentController {
             throws ServletException {
 
         try {
-            WeblogEntryComment comment = weblogEntryManager.getComment(id);
+            WeblogEntryComment comment = weblogEntryCommentRepository.findByIdOrNull(id);
             if (comment != null) {
                 Weblog weblog = comment.getWeblogEntry().getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
@@ -256,7 +264,7 @@ public class CommentController {
                                      HttpServletResponse response)
             throws ServletException {
         try {
-            WeblogEntryComment wec = weblogEntryManager.getComment(id);
+            WeblogEntryComment wec = weblogEntryCommentRepository.findByIdOrNull(id);
             if (wec == null) {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
