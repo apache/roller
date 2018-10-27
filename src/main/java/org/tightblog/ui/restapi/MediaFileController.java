@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.business.MediaFileManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.pojos.MediaDirectory;
 import org.tightblog.pojos.MediaFile;
 import org.tightblog.pojos.User;
@@ -55,14 +54,13 @@ public class MediaFileController {
     private UserManager userManager;
     private UserRepository userRepository;
     private MediaFileManager mediaFileManager;
-    private JPAPersistenceStrategy persistenceStrategy;
     private MessageSource messages;
 
     @Autowired
     public MediaFileController(WeblogRepository weblogRepository, MediaDirectoryRepository mediaDirectoryRepository,
                                MediaFileRepository mediaFileRepository, WeblogManager weblogManager,
                                UserManager userManager, UserRepository userRepository, MediaFileManager mediaFileManager,
-                               JPAPersistenceStrategy persistenceStrategy, MessageSource messages) {
+                               MessageSource messages) {
         this.weblogRepository = weblogRepository;
         this.mediaDirectoryRepository = mediaDirectoryRepository;
         this.mediaFileRepository = mediaFileRepository;
@@ -70,7 +68,6 @@ public class MediaFileController {
         this.userManager = userManager;
         this.userRepository = userRepository;
         this.mediaFileManager = mediaFileManager;
-        this.persistenceStrategy = persistenceStrategy;
         this.messages = messages;
     }
 
@@ -261,12 +258,6 @@ public class MediaFileController {
                         }
                     }
                     weblogManager.saveWeblog(weblog);
-
-                    // flush changes
-                    persistenceStrategy.flush();
-                    // for some reason need to release to force a refresh of media directory.
-                    // TODO: still?
-                    persistenceStrategy.release();
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -298,7 +289,6 @@ public class MediaFileController {
                             mediaFileManager.moveMediaFiles(Collections.singletonList(mediaFile), targetDirectory);
                         }
                     }
-                    persistenceStrategy.flush();
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

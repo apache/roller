@@ -18,7 +18,6 @@ package org.tightblog.rendering.generators;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.util.Utilities;
@@ -32,13 +31,10 @@ import java.util.Map;
 @Component
 public class WeblogListGenerator {
 
-    private WeblogManager weblogManager;
-
     private WeblogRepository weblogRepository;
 
     @Autowired
-    public WeblogListGenerator(WeblogManager weblogManager, WeblogRepository weblogRepository) {
-        this.weblogManager = weblogManager;
+    public WeblogListGenerator(WeblogRepository weblogRepository) {
         this.weblogRepository = weblogRepository;
     }
 
@@ -57,9 +53,10 @@ public class WeblogListGenerator {
 
         List<Weblog> rawWeblogs;
         if (letter == null) {
-            rawWeblogs = weblogManager.getWeblogs(Boolean.TRUE, pageNum * length, length + 1);
+            rawWeblogs = weblogRepository.findByVisibleTrue(PageRequest.of(pageNum, length + 1));
         } else {
-            rawWeblogs = weblogManager.getWeblogsByLetter(letter, pageNum * length, length + 1);
+            rawWeblogs = weblogRepository.findByLetterOrderByHandle(letter,
+                    PageRequest.of(pageNum * length, length + 1));
         }
 
         List<WeblogData> weblogList = weblogListData.getWeblogs();

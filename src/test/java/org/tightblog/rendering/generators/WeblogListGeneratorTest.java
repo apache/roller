@@ -17,7 +17,7 @@ package org.tightblog.rendering.generators;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.tightblog.business.WeblogManager;
+import org.springframework.data.domain.PageRequest;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 
@@ -32,7 +32,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -43,14 +42,12 @@ public class WeblogListGeneratorTest {
     private List<Weblog> weblogList;
     private Instant now = Instant.now();
     private Instant twoDaysAgo = now.minus(2, ChronoUnit.DAYS);
-    private WeblogManager mockWeblogManager;
     private WeblogRepository mockWeblogRepository;
 
     @Before
     public void initialize() {
-        mockWeblogManager = mock(WeblogManager.class);
         mockWeblogRepository = mock(WeblogRepository.class);
-        weblogListGenerator = new WeblogListGenerator(mockWeblogManager, mockWeblogRepository);
+        weblogListGenerator = new WeblogListGenerator(mockWeblogRepository);
 
         User user1 = new User();
         user1.setScreenName("user1");
@@ -100,8 +97,9 @@ public class WeblogListGeneratorTest {
         List<Weblog> oneWeblogList = new ArrayList<>();
         oneWeblogList.add(weblogList.get(0));
 
-        when(mockWeblogManager.getWeblogsByLetter('M', 30, 11)).thenReturn(oneWeblogList);
-        when(mockWeblogManager.getWeblogs(eq(Boolean.TRUE), anyInt(), anyInt())).thenReturn(weblogList);
+        when(mockWeblogRepository.findByLetterOrderByHandle('M', PageRequest.of(30, 11)))
+                .thenReturn(oneWeblogList);
+        when(mockWeblogRepository.findByVisibleTrue(any())).thenReturn(weblogList);
 
         // test if letter and pageNum > 0 get one weblog and prev link
         WeblogListData data = weblogListGenerator.getWeblogsByLetter("http://www.foo.com", 'M',

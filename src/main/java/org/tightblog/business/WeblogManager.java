@@ -52,16 +52,6 @@ public interface WeblogManager {
     void removeWeblog(Weblog weblog);
 
     /**
-     * Get weblogs optionally restricted by user, enabled and active status.
-     *
-     * @param visible Get all with this visible state (or null or all)
-     * @param offset  Offset into results (for paging)
-     * @param length  Maximum number of results to return (for paging)
-     * @return List of Weblog objects.
-     */
-    List<Weblog> getWeblogs(Boolean visible, int offset, int length);
-
-    /**
      * Get users of a weblog.
      *
      * @param weblog      Weblog to retrieve users for
@@ -75,11 +65,6 @@ public interface WeblogManager {
      * names start with each letter.
      */
     Map<Character, Integer> getWeblogHandleLetterMap();
-
-    /**
-     * Get collection of weblogs whose handles begin with specified letter
-     */
-    List<Weblog> getWeblogsByLetter(char letter, int offset, int length);
 
     /**
      * Get the analytics tracking code to be used for the provided Weblog

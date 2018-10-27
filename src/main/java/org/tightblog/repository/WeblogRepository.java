@@ -33,6 +33,8 @@ public interface WeblogRepository extends JpaRepository<Weblog, String> {
 
     Weblog findByHandle(String handle);
 
+    List<Weblog> findByVisibleTrue(Pageable pageable);
+
     // return most popular weblogs based on today's hits
     List<Weblog> findByVisibleTrueAndHitsTodayGreaterThanOrderByHitsTodayDesc(int hitsToday, Pageable pageable);
 
@@ -42,11 +44,11 @@ public interface WeblogRepository extends JpaRepository<Weblog, String> {
         return findById(id).orElse(null);
     }
 
-    @Query("SELECT w FROM Weblog w WHERE UPPER(w.handle) like ?1 ORDER BY w.handle")
-    List<Weblog> findByLetterOrderByHandle(String likeClause, Pageable pageable);
+    @Query("SELECT w FROM Weblog w WHERE UPPER(w.handle) like %?1 ORDER BY w.handle")
+    List<Weblog> findByLetterOrderByHandle(char firstLetter, Pageable pageable);
 
-    @Query("SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1")
-    int getCountByHandle(String likeClause);
+    @Query("SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like %?1")
+    int getCountByHandle(char firstLetter);
 
     @Modifying
     @Query("UPDATE Weblog w SET w.hitsToday = 0, w.lastModified = CURRENT_TIMESTAMP")

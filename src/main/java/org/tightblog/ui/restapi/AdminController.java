@@ -30,16 +30,17 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.tightblog.business.WeblogManager;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.comment.BlacklistCommentValidator;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
@@ -68,23 +69,22 @@ public class AdminController {
     private static Logger log = LoggerFactory.getLogger(AdminController.class);
 
     private Set<LazyExpiringCache> cacheSet;
-    private WeblogManager weblogManager;
     private IndexManager indexManager;
     private BlacklistCommentValidator blacklistCommentValidator;
     private WeblogRepository weblogRepository;
-    private JPAPersistenceStrategy persistenceStrategy;
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private MessageSource messages;
 
     @Autowired
-    public AdminController(Set<LazyExpiringCache> cacheSet, WeblogManager weblogManager, IndexManager indexManager,
+    public AdminController(Set<LazyExpiringCache> cacheSet, IndexManager indexManager,
                            BlacklistCommentValidator blacklistCommentValidator, WeblogRepository weblogRepository,
-                           JPAPersistenceStrategy persistenceStrategy, MessageSource messages) {
+                           MessageSource messages,
+                           WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.cacheSet = cacheSet;
-        this.weblogManager = weblogManager;
         this.indexManager = indexManager;
         this.blacklistCommentValidator = blacklistCommentValidator;
         this.weblogRepository = weblogRepository;
-        this.persistenceStrategy = persistenceStrategy;
+        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.messages = messages;
     }
 
@@ -122,7 +122,7 @@ public class AdminController {
     public List<String> getWeblogHandles(HttpServletResponse response) throws ServletException {
         try {
             List<String> weblogHandles = new ArrayList<>();
-            List<Weblog> weblogs = weblogManager.getWeblogs(null, 0, -1);
+            Page<Weblog> weblogs = weblogRepository.findAll(Pageable.unpaged());
             for (Weblog weblog : weblogs) {
                 weblogHandles.add(weblog.getHandle());
             }
@@ -155,17 +155,16 @@ public class AdminController {
 
     @GetMapping(value = "/webloggerproperties")
     public WebloggerProperties getWebloggerProperties(HttpServletResponse response) throws ServletException {
-        return persistenceStrategy.load(WebloggerProperties.class, "1");
+        return webloggerPropertiesRepository.findOrNull();
     }
 
     @PostMapping(value = "/webloggerproperties", produces = "text/plain")
     public ResponseEntity updateProperties(@Valid @RequestBody WebloggerProperties properties) {
 
         // maintain last weblog change
-        WebloggerProperties oldProperties = persistenceStrategy.load(WebloggerProperties.class, "1");
+        WebloggerProperties oldProperties = webloggerPropertiesRepository.findOrNull();
         properties.setLastWeblogChange(oldProperties.getLastWeblogChange());
-        persistenceStrategy.merge(properties);
-        persistenceStrategy.flush();
+        webloggerPropertiesRepository.saveAndFlush(properties);
         blacklistCommentValidator.setGlobalCommentFilter(properties.getCommentSpamFilter());
         return ResponseEntity.ok(messages.getMessage("generic.changes.saved", null, null));
     }
@@ -175,7 +174,7 @@ public class AdminController {
 
         GlobalConfigMetadata gcm = new GlobalConfigMetadata();
 
-        List<Weblog> weblogs = weblogManager.getWeblogs(true, 0, -1);
+        Page<Weblog> weblogs = weblogRepository.findAll(Pageable.unpaged());
 
         gcm.weblogList = weblogs.stream()
                         .sorted(Comparator.comparing(Weblog::getHandle))

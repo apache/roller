@@ -23,7 +23,8 @@ package org.tightblog.business;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.tightblog.business.search.IndexManager;
@@ -207,41 +208,9 @@ public class WeblogManagerImpl implements WeblogManager {
     }
 
     @Override
-    public List<Weblog> getWeblogs(Boolean visible, int offset, int length) {
-
-        List<Object> params = new ArrayList<>();
-        int size = 0;
-        String queryString;
-        StringBuilder whereClause = new StringBuilder();
-
-        queryString = "SELECT w FROM Weblog w WHERE 1=1 ";
-
-        if (visible != null) {
-            whereClause.append(" AND ");
-            params.add(size++, visible);
-            whereClause.append(" w.visible = ?").append(size);
-        }
-
-        whereClause.append(" ORDER BY w.dateCreated DESC");
-
-        TypedQuery<Weblog> query = strategy.getDynamicQuery(queryString + whereClause.toString(), Weblog.class);
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (length != -1) {
-            query.setMaxResults(length);
-        }
-        for (int i = 0; i < params.size(); i++) {
-            query.setParameter(i + 1, params.get(i));
-        }
-
-        return query.getResultList();
-    }
-
-    @Override
     public List<User> getWeblogUsers(Weblog weblog) {
         List<User> users = new ArrayList<>();
-        List<UserWeblogRole> roles = userWeblogRoleRepository.findByWeblogAndPendingFalse(weblog);
+        Page<UserWeblogRole> roles = userWeblogRoleRepository.findAll(Pageable.unpaged());
         for (UserWeblogRole role : roles) {
             User user = role.getUser();
             if (UserStatus.ENABLED.equals(user.getStatus())) {
@@ -257,19 +226,10 @@ public class WeblogManagerImpl implements WeblogManager {
         Map<Character, Integer> results = new TreeMap<>();
         for (int i = 0; i < 26; i++) {
             char currentChar = lc.charAt(i);
-            int count = weblogRepository.getCountByHandle(currentChar + "%");
+            int count = weblogRepository.getCountByHandle(currentChar);
             results.put(currentChar, count);
         }
         return results;
-    }
-
-    @Override
-    public List<Weblog> getWeblogsByLetter(char letter, int offset, int length) {
-        TypedQuery<Weblog> query = strategy.getNamedQuery(
-                "Weblog.getByLetterOrderByHandle", Weblog.class);
-
-        String likeString = Character.toUpperCase(letter) + "%";
-        return weblogRepository.findByLetterOrderByHandle(likeString, PageRequest.of(offset, length));
     }
 
     @Override
@@ -335,7 +295,6 @@ public class WeblogManagerImpl implements WeblogManager {
             for (Map.Entry<String, Long> entry : hitsTallyCopy.entrySet()) {
                 weblog = weblogRepository.findById(entry.getKey()).orElse(null);
                 if (weblog != null) {
-                    strategy.refresh(weblog);
                     weblog.setHitsToday(weblog.getHitsToday() + entry.getValue().intValue());
                     saveWeblog(weblog);
                     totalHitsProcessed += entry.getValue();
@@ -525,7 +484,7 @@ public class WeblogManagerImpl implements WeblogManager {
                 unchangedEntries++;
             } else {
                 WeblogEntryTag newTag = new WeblogEntryTag(weblog, currentTag.getWeblogEntry(), newTagName);
-                strategy.store(newTag);
+                weblogEntryTagRepository.save(newTag);
                 // clear JPA cache, to ensure no old tag data
                 strategy.evict(WeblogEntry.class, currentTag.getWeblogEntry().getId());
                 updatedEntries++;

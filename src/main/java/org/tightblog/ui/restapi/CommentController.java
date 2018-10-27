@@ -9,7 +9,6 @@ import org.tightblog.business.MailManager;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.User;
@@ -65,7 +64,6 @@ public class CommentController {
     private UserManager userManager;
     private UserRepository userRepository;
     private WeblogEntryManager weblogEntryManager;
-    private JPAPersistenceStrategy persistenceStrategy;
     private IndexManager indexManager;
     private URLStrategy urlStrategy;
     private MailManager mailManager;
@@ -73,7 +71,7 @@ public class CommentController {
 
     @Autowired
     public CommentController(WeblogRepository weblogRepository, UserManager userManager, UserRepository userRepository,
-                             WeblogEntryManager weblogEntryManager, JPAPersistenceStrategy persistenceStrategy,
+                             WeblogEntryManager weblogEntryManager,
                              IndexManager indexManager, URLStrategy urlStrategy, MailManager mailManager,
                              MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository,
                              WeblogEntryRepository weblogEntryRepository,
@@ -85,7 +83,6 @@ public class CommentController {
         this.userManager = userManager;
         this.userRepository = userRepository;
         this.weblogEntryManager = weblogEntryManager;
-        this.persistenceStrategy = persistenceStrategy;
         this.indexManager = indexManager;
         this.urlStrategy = urlStrategy;
         this.mailManager = mailManager;
@@ -244,7 +241,6 @@ public class CommentController {
                         mailManager.sendYourCommentWasApprovedNotifications(Collections.singletonList(comment));
                     }
                     weblogEntryManager.saveComment(comment, true);
-                    persistenceStrategy.flush();
                     indexManager.updateIndex(comment.getWeblogEntry(), false);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
@@ -283,7 +279,6 @@ public class CommentController {
                     // don't update the posttime when updating the comment
                     wec.setPostTime(wec.getPostTime());
                     weblogEntryManager.saveComment(wec, true);
-                    persistenceStrategy.flush();
                     return wec;
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

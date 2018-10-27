@@ -27,15 +27,11 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
 import javax.persistence.Cache;
-import javax.persistence.CacheRetrieveMode;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.FlushModeType;
-import javax.persistence.Query;
 import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Responsible for the lowest-level interaction with the JPA API.
@@ -61,20 +57,6 @@ public class JPAPersistenceStrategy {
     }
 
     /**
-     * Refresh changes to the current object.
-     */
-    public void refresh(Object clazz) {
-        if (clazz == null) {
-            return;
-        }
-        try {
-            EntityManager em = getEntityManager(true);
-            em.refresh(clazz);
-        } catch (Exception ignored) {
-        }
-    }
-
-    /**
      * Flush changes to the datastore, commit transaction, release em.
      *
      * @throws RollbackException if the commit fails
@@ -82,34 +64,6 @@ public class JPAPersistenceStrategy {
     public void flush() throws RollbackException {
         EntityManager em = getEntityManager(true);
         em.getTransaction().commit();
-    }
-
-    /**
-     * Retrieve object, no transaction needed.
-     *
-     * @param clazz the class of object to retrieve
-     * @param id    the id of the object to retrieve
-     * @return the object retrieved
-     */
-    public <R> R load(Class<R> clazz, String id) {
-        return load(clazz, id, false);
-    }
-
-    /**
-     * Retrieve object without accessing cache, no transaction needed.
-     *
-     * @param clazz the class of object to retrieve
-     * @param id    the id of the object to retrieve
-     * @return the object retrieved
-     */
-    public <R> R load(Class<R> clazz, String id, boolean bypassCache) {
-        EntityManager em = getEntityManager(false);
-        if (bypassCache) {
-            Map<String, Object> props = new HashMap<>();
-            props.put("javax.persistence.cache.retrieveMode", CacheRetrieveMode.BYPASS);
-            return em.find(clazz, id, props);
-        }
-        return em.find(clazz, id);
     }
 
     /**
@@ -122,16 +76,6 @@ public class JPAPersistenceStrategy {
     public void evict(Class clazz, String id) {
         Cache cache = entityManagerFactory.getCache();
         cache.evict(clazz, id);
-    }
-
-    /**
-     * Retrieve managed version of object
-     *
-     * @return the object retrieved
-     */
-    public <R> R merge(R entity) {
-        EntityManager em = getEntityManager(false);
-        return em.merge(entity);
     }
 
     /**
@@ -220,22 +164,6 @@ public class JPAPersistenceStrategy {
     }
 
     /**
-     * Get named TypedQuery that won't commit changes to DB first (FlushModeType.COMMIT)
-     * FlushModeType.AUTO commits changes to DB prior to running statement
-     *
-     * @param queryName   the name of the query
-     * @param resultClass return type of query
-     */
-    public <T> TypedQuery<T> getNamedQuery(String queryName, Class<T> resultClass) {
-        EntityManager em = getEntityManager(false);
-        TypedQuery<T> q = em.createNamedQuery(queryName, resultClass);
-        // For performance, never flush/commit prior to running queries.
-        // TightBlog code assumes this behavior
-        q.setFlushMode(FlushModeType.COMMIT);
-        return q;
-    }
-
-    /**
      * Create TypedQuery from queryString that won't commit changes to DB first (FlushModeType.COMMIT)
      *
      * @param queryString the query
@@ -248,17 +176,6 @@ public class JPAPersistenceStrategy {
         // TightBlog code assumes this behavior
         q.setFlushMode(FlushModeType.COMMIT);
         return q;
-    }
-
-    /**
-     * Get named update query with default flush mode (usually FlushModeType.AUTO)
-     * FlushModeType.AUTO commits changes to DB prior to running statement
-     *
-     * @param queryName the name of the query
-     */
-    public Query getNamedUpdate(String queryName) {
-        EntityManager em = getEntityManager(true);
-        return em.createNamedQuery(queryName);
     }
 
     /**
