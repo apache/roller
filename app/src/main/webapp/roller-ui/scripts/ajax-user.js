@@ -15,18 +15,20 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
+
 // Used in: InviteMember.jsp, UserAdmin.jsp
 
 function createRequestObject() {
     var ro;
     var browser = navigator.appName;
-    if (browser == "Microsoft Internet Explorer") {
+    if (browser === "Microsoft Internet Explorer") {
         ro = new ActiveXObject("Microsoft.XMLHTTP");
     } else {
         ro = new XMLHttpRequest();
     }
     return ro;
 }
+
 var http = createRequestObject();
 var init = false;
 var isBusy = false;
@@ -38,8 +40,11 @@ function onUserNameFocus(enabled) {
         u = userURL;
         if (enabled != null) u = u + "&enabled=" + enabled;
         sendUserRequest(u);
+    } else {
+        userSubmitButton.disabled = true;
     }
 }
+
 function onUserNameChange(enabled) {
     u = userURL;
     if (enabled != null) u = u + "&enabled=" + enabled;
@@ -47,12 +52,17 @@ function onUserNameChange(enabled) {
     if (userName.value.length > 0) u = u + "&startsWith=" + userName.value;
     sendUserRequest(u);
 }
+
 function onUserSelected() {
     userList = document.getElementById("userList");
     user = userList.options[userList.options.selectedIndex];
     userName = document.getElementById("userName");
     userName.value = user.value;
+
+    userSubmitButton = document.getElementById("user-submit");
+    userSubmitButton.disabled = false;
 }
+
 function sendUserRequest(url) {
     if (isBusy) return;
     isBusy = true;
@@ -60,18 +70,18 @@ function sendUserRequest(url) {
     http.onreadystatechange = handleUserResponse;
     http.send(null);
 }
+
 function handleUserResponse() {
-    if (http.readyState == 4) {
+    if (http.readyState === 4) {
         userList = document.getElementById("userList");
         for (i = userList.options.length; i >= 0; i--) {
             userList.options[i] = null;
         }   
-        //userList.onchange = null;
-        data = http.responseText;  
-        if (data.indexOf("\n") != -1) {
+        data = http.responseText;
+        if (data.indexOf("\n") !== -1) {
             lines = data.split('\n');
             for (i = 0; i < lines.length; i++) {
-                if (lines[i].indexOf(',') != -1) {
+                if (lines[i].indexOf(',') !== -1) {
                    userArray = lines[i].split(',');
                    userList.options[userList.length] = 
                       new Option(userArray[0] + " (" + userArray[1] + ")", userArray[0]);

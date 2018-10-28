@@ -37,7 +37,7 @@
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="menu"         value="/WEB-INF/jsps/tiles/empty.jsp" />
-        <put-attribute name="sidemenu"     value="/WEB-INF/jsps/tiles/sidemenu.jsp" />
+        <put-attribute name="sidemenu"     value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="sidebar"      value="/WEB-INF/jsps/tiles/empty.jsp" />
@@ -173,10 +173,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/admin/GlobalConfig.jsp" />
     </definition>
     
-    <definition name=".FrontpageConfig" extends=".tiles-simplepage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/FrontpageConfig.jsp" />
-    </definition>
-    
     <definition name=".UserAdmin" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/UserAdmin.jsp" />
     </definition>
@@ -248,11 +244,6 @@
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileImageDimension.jsp" />
     </definition>
-    
-    <definition name=".MediaFileSearchInclude" extends=".tiles-popuppage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileSearch.jsp" />
-    </definition>
 
     <definition name=".MediaFileAddInclude" extends=".tiles-popuppage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
@@ -280,13 +271,6 @@
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccess.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/tiles/empty.jsp" />
-        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
-    </definition>
-
-    <definition name=".TabularView" extends=".tiles-tabbedpage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/TabularView.jsp" />
-        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
@@ -328,10 +312,6 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
-    <definition name=".Resources" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/Resources.jsp" />
-    </definition>
-    
     <!-- weblog admin pages (and associates) -->
     <definition name=".WeblogConfig" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/WeblogConfig.jsp" />

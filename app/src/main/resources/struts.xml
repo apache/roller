@@ -181,6 +181,7 @@
             disable,
             delete,
             deleteConfirm,
+            edit,
             enable,
             execute,
             firstSave,
@@ -201,6 +202,10 @@
             <result name="success" type="tiles">.UserAdmin</result>
             <result name="error" type="tiles">.UserAdmin</result>
             <result name="input" type="tiles">.UserAdmin</result>
+            <result name="edit" type="redirectAction">
+                <param name="actionName">modifyUser</param>
+                <param name="bean.userName">${bean.userName}</param>
+            </result>
         </action>
         
         <action name="createUser"

@@ -15,16 +15,17 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %> 
+<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+
 
 <%-- Titling, processing actions different between add and edit --%>
-<s:if test="actionName == 'modifyUser'">
-    <s:set var="subtitleKey">userAdmin.subtitle.editUser</s:set>
-    <s:set var="mainAction">modifyUser</s:set>
-</s:if>
-<s:else>
+<s:if test="actionName == 'createUser'">
     <s:set var="subtitleKey">userAdmin.subtitle.createNewUser</s:set>
     <s:set var="mainAction">createUser</s:set>
+</s:if>
+<s:else>
+    <s:set var="subtitleKey">userAdmin.subtitle.editUser</s:set>
+    <s:set var="mainAction">modifyUser</s:set>
 </s:else>
 
 <p class="subtitle">
@@ -38,116 +39,76 @@
         <s:text name="userAdmin.addInstructions"/>
     </s:if>
     <s:if test="authMethod == 'DB_OPENID'">
-        <p class="pagetip">
-            <s:text name="userAdmin.noPasswordForOpenID"/>
-        </p>
+         <s:text name="userAdmin.noPasswordForOpenID"/>
     </s:if>
 </p>
 
-<s:form>
+<s:form theme="bootstrap" cssClass="form-horizontal">
 	<s:hidden name="salt" />
     <s:if test="actionName == 'modifyUser'">
         <%-- bean for add does not have a bean id yet --%>
         <s:hidden name="bean.id" />
     </s:if>
 
-    <table class="formtable">
-        <tr>
-            <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
-            <td class="field">
-                <s:if test="actionName == 'modifyUser'">
-                    <s:textfield name="bean.userName" size="30" maxlength="30" readonly="true" cssStyle="background: #e5e5e5" />
-                </s:if>
-                <s:else>
-                    <s:textfield name="bean.userName" size="30" maxlength="30" />
-                </s:else>
-            </td>
-            <td class="description">
-                <s:if test="actionName == 'modifyUser'">
-                    <s:text name="userSettings.tip.username" />
-                </s:if>
-                <s:else>
-                    <s:text name="userAdmin.tip.userName" />
-                </s:else>
-            </td>
-        </tr>
-
-        <tr>
-            <td class="label"><label for="screenName" /><s:text name="userSettings.screenname" /></label></td>
-            <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" /></td>
-            <td class="description"><s:text name="userAdmin.tip.screenName" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="fullName" /><s:text name="userSettings.fullname" /></label></td>
-            <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="30" /></td>
-            <td class="description"><s:text name="userAdmin.tip.fullName" /></td>
-        </tr>
-        
-        <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OPENID'">
-            <tr>
-                <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
-                <td class="field"><s:password name="bean.password" size="20" maxlength="20" /></td>
-                <td class="description"><s:text name="userAdmin.tip.password" /></td>
-            </tr>
-        </s:if>
-
-        <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
-            <tr>
-                <td class="label"><label for="openIdUrl" /><s:text name="userSettings.openIdUrl" /></label></td>
-                <td class="field"><s:textfield name="bean.openIdUrl" size="40" maxlength="255" style="width:75%" id="f_openid_identifier" /></td>
-                <td class="description"><s:text name="userAdmin.tip.openIdUrl" /></td>
-            </tr>
-        </s:if>
-
-        <tr>
-            <td class="label"><label for="emailAddress" /><s:text name="userSettings.email" /></label></td>
-            <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="40" /></td>
-            <td class="description"><s:text name="userAdmin.tip.email" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="locale" /><s:text name="userSettings.locale" /></label></td>
-            <td class="field">
-                <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
-            </td>
-            <td class="description"><s:text name="userAdmin.tip.locale" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="timeZone" /><s:text name="userSettings.timeZone" /></label></td>
-            <td class="field">
-                <s:select name="bean.timeZone" size="1" list="timeZonesList" />
-            </td>
-            <td class="description"><s:text name="userAdmin.tip.timeZone" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="userEnabled" /><s:text name="userAdmin.enabled" /></label></td>
-            <td class="field">
-                <s:checkbox name="bean.enabled" />
-            </td>
-            <td class="description"><s:text name="userAdmin.tip.enabled" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="userAdmin" /><s:text name="userAdmin.userAdmin" /></label></td>
-            <td class="field">
-                <s:checkbox name="bean.administrator" />
-            </td>
-            <td class="description"><s:text name="userAdmin.tip.userAdmin" /></td>
-        </tr>
-        
-    </table>
-    
-    <br />
-    
     <s:if test="actionName == 'modifyUser'">
-        <p class="subtitle"><s:text name="userAdmin.userWeblogs" /></p>
+        <s:textfield name="bean.userName" size="30" maxlength="30"
+                label="%{getText('userSettings.username')}"
+                tooltip="%{getText('userSettings.tip.username')}"
+                readonly="true" cssStyle="background: #e5e5e5" />
+    </s:if>
+    <s:else>
+        <s:textfield name="bean.userName" size="30" maxlength="30"
+                label="%{getText('userSettings.username')}"
+                tooltip="%{getText('userAdmin.tip.username')}" />
+    </s:else>
+
+    <s:textfield name="bean.screenName" size="30" maxlength="30"
+                label="%{getText('userSettings.screenname')}"
+                tooltip="%{getText('userAdmin.tip.screenName')}" />
+
+    <s:textfield name="bean.fullName" size="30" maxlength="30"
+                 label="%{getText('userSettings.fullname')}"
+                 tooltip="%{getText('userAdmin.tip.fullName')}" />
+
+    <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OPENID'">
+        <s:password name="bean.password" size="30" maxlength="30"
+                     label="%{getText('userSettings.password')}"
+                     tooltip="%{getText('userAdmin.tip.password')}" />
+    </s:if>
+
+    <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
+        <s:textfield name="bean.openIdUrl" size="30" maxlength="255" id="f_openid_identifier"
+                     label="%{getText('userSettings.openIdUrl')}"
+                     tooltip="%{getText('userAdmin.tip.openIdUrl')}" />
+    </s:if>
+
+    <s:textfield name="bean.emailAddress" size="30" maxlength="30"
+                 label="%{getText('userSettings.email')}"
+                 tooltip="%{getText('userAdmin.tip.email')}" />
+
+    <s:select name="bean.locale" size="1" list="localesList" listValue="displayName"
+                 label="%{getText('userSettings.locale')}"
+                 tooltip="%{getText('userAdmin.tip.locale')}" />
+
+    <s:select name="bean.timeZone" size="1" list="timeZonesList"
+                 label="%{getText('userSettings.timeZone')}"
+                 tooltip="%{getText('userAdmin.tip.timeZone')}" />
+
+    <s:checkbox name="bean.enabled" size="30" maxlength="30"
+                 label="%{getText('userAdmin.enabled')}"
+                 tooltip="%{getText('userAdmin.tip.userEnabled')}" />
+
+    <s:checkbox name="bean.administrator" size="30" maxlength="30"
+                 label="%{getText('userAdmin.userAdmin')}"
+                 tooltip="%{getText('userAdmin.tip.userAdmin')}" />
+
+
+    <s:if test="actionName == 'modifyUser'">
+        <h2><s:text name="userAdmin.userWeblogs" /></h2>
 
         <s:if test="permissions != null && !permissions.isEmpty() > 0">
             <p><s:text name="userAdmin.userMemberOf" />:</p>
-            <table class="rollertable" style="width: 80%">
+            <table class="table" style="width: 80%">
                 <s:iterator var="perms" value="permissions">
                     <tr>
                         <td width="%30">
@@ -192,8 +153,8 @@
     <br />
 
     <div class="control">
-        <s:submit value="%{getText('generic.save')}" action="%{#mainAction}!save"/>
-        <s:submit value="%{getText('generic.cancel')}" action="modifyUser!cancel" />
+        <s:submit cssClass="btn btn-default" value="%{getText('generic.save')}" action="%{#mainAction}!save"/>
+        <s:submit cssClass="btn" value="%{getText('generic.cancel')}" action="modifyUser!cancel" />
     </div>
-    
+
 </s:form>

@@ -80,20 +80,25 @@ public class UserEdit extends UIAction {
 
     // prepare for action by loading user object we are modifying
     public void myPrepare() {
+
         if (isAdd()) {
-            // create new User
             user = new User();
+
         } else {
             try {
                 // load the user object we are modifying
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
-                if (bean.getId() != null) {
+                if ( !StringUtils.isEmpty( getBean().getId() ) ) {
+
                     // action came from CreateUser or return from ModifyUser
                     user = mgr.getUser(getBean().getId());
-                } else if (bean.getUserName() != null) {
+
+                } else if ( !StringUtils.isEmpty( bean.getUserName())) {
+
                     // action came from UserAdmin screen.
                     user = mgr.getUserByUserName(getBean().getUserName(), null);
                 }
+
             } catch (Exception e) {
                 log.error("Error looking up user (id/username) :" + bean.getId() + "/" + bean.getUserName(), e);
             }
