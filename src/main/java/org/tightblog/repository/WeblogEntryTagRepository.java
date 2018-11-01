@@ -30,9 +30,6 @@ public interface WeblogEntryTagRepository extends JpaRepository<WeblogEntryTag, 
 
     List<WeblogEntryTag> findByWeblogAndName(Weblog weblog, String name);
 
-    Long deleteByWeblogAndName(Weblog weblog, String name);
-
     @Query("SELECT w.weblogEntry.id FROM WeblogEntryTag w WHERE w.weblog = ?1 and w.name = ?2")
-    List<String> getEntryIdByWeblogAndName(Weblog weblog, String name);
-
+    List<String> getEntryIdsByWeblogAndName(Weblog weblog, String name);
 }

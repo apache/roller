@@ -46,6 +46,8 @@ import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -72,19 +74,20 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     private WeblogEntryRepository weblogEntryRepository;
     private WeblogEntryCommentRepository weblogEntryCommentRepository;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
-    private JPAPersistenceStrategy strategy;
     private URLStrategy urlStrategy;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public WeblogEntryManagerImpl(WeblogRepository weblogRepository, WeblogEntryRepository weblogEntryRepository,
                                   WeblogEntryCommentRepository weblogEntryCommentRepository,
-                                  JPAPersistenceStrategy strategy, URLStrategy urlStrategy,
+                                  URLStrategy urlStrategy,
                                   WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogRepository = weblogRepository;
         this.weblogEntryRepository = weblogEntryRepository;
         this.weblogEntryCommentRepository = weblogEntryCommentRepository;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
-        this.strategy = strategy;
         this.urlStrategy = urlStrategy;
     }
 
@@ -126,7 +129,9 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         // Store value object (creates new or updates existing)
-        entry.setUpdateTime(Instant.now());
+        Instant now = Instant.now();
+        entry.setUpdateTime(now);
+        entry.getWeblog().setLastModified(now);
 
         weblogEntryRepository.save(entry);
         weblogRepository.saveAndFlush(entry.getWeblog());
@@ -214,7 +219,7 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
             whereClause.append(" ORDER BY e.pubTime DESC, e.id DESC");
         }
 
-        query = strategy.getDynamicQuery(queryString + whereClause.toString(), WeblogEntry.class);
+        query = entityManager.createQuery(queryString + whereClause.toString(), WeblogEntry.class);
         for (int i = 0; i < params.size(); i++) {
             query.setParameter(i + 1, params.get(i));
         }
@@ -295,7 +300,7 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     public List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria criteria) {
         QueryData qd = createEntryQueryString(criteria);
 
-        TypedQuery<WeblogEntry> query = strategy.getDynamicQuery(qd.queryString, WeblogEntry.class);
+        TypedQuery<WeblogEntry> query = entityManager.createQuery(qd.queryString, WeblogEntry.class);
         for (int i = 0; i < qd.params.size(); i++) {
             query.setParameter(i + 1, qd.params.get(i));
         }
@@ -453,7 +458,7 @@ public class WeblogEntryManagerImpl implements WeblogEntryManager {
     public List<WeblogEntryComment> getComments(CommentSearchCriteria csc) {
         QueryData cqd = createCommentQueryString(csc);
 
-        TypedQuery<WeblogEntryComment> query = strategy.getDynamicQuery(cqd.queryString, WeblogEntryComment.class);
+        TypedQuery<WeblogEntryComment> query = entityManager.createQuery(cqd.queryString, WeblogEntryComment.class);
         if (csc.getOffset() != 0) {
             query.setFirstResult(csc.getOffset());
         }

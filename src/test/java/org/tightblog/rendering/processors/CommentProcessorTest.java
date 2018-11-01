@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
@@ -42,6 +41,7 @@ import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.HTMLSanitizer;
 
+import javax.persistence.EntityManager;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -83,7 +83,7 @@ public class CommentProcessorTest {
         mockResponse = mock(HttpServletResponse.class);
         mockRequestDispatcher = mock(RequestDispatcher.class);
         when(mockRequest.getRequestDispatcher(anyString())).thenReturn(mockRequestDispatcher);
-        JPAPersistenceStrategy mockJPA = mock(JPAPersistenceStrategy.class);
+        EntityManager mockEM = mock(EntityManager.class);
         properties = new WebloggerProperties();
         properties.setCommentHtmlPolicy(HTMLSanitizer.Level.LIMITED);
         when(mockPropertiesRepository.findOrNull()).thenReturn(properties);
@@ -98,7 +98,8 @@ public class CommentProcessorTest {
         mockIM = mock(IndexManager.class);
         mockMessageSource = mock(MessageSource.class);
         processor = new CommentProcessor(mockWR, mockUR, mockIM, mockWEM, mockUM,
-                mockJPA, mockMM, mockMessageSource, mockPropertiesRepository);
+                mockMM, mockMessageSource, mockPropertiesRepository);
+        processor.setEntityManager(mockEM);
         processor.setWeblogPageRequestCreator(wprCreator);
     }
 

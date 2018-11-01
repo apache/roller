@@ -26,7 +26,6 @@ import org.springframework.context.MessageSource;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.JPAPersistenceStrategy;
 import org.tightblog.business.search.IndexManager;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
@@ -53,6 +52,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -95,16 +96,22 @@ public class CommentProcessor extends AbstractProcessor {
     private IndexManager indexManager;
     private WeblogEntryManager weblogEntryManager;
     private UserManager userManager;
-    private JPAPersistenceStrategy persistenceStrategy;
     private MailManager mailManager;
     private MessageSource messages;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
+
+    private EntityManager entityManager;
+
+    @PersistenceContext
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @Autowired
     public CommentProcessor(WeblogRepository weblogRepository,
                             UserRepository userRepository,
                             IndexManager indexManager, WeblogEntryManager weblogEntryManager, UserManager userManager,
-                            JPAPersistenceStrategy persistenceStrategy, MailManager mailManager,
+                            MailManager mailManager,
                             MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
@@ -113,7 +120,6 @@ public class CommentProcessor extends AbstractProcessor {
         this.indexManager = indexManager;
         this.weblogEntryManager = weblogEntryManager;
         this.userManager = userManager;
-        this.persistenceStrategy = persistenceStrategy;
         this.mailManager = mailManager;
         this.messages = messages;
     }
@@ -263,7 +269,7 @@ public class CommentProcessor extends AbstractProcessor {
 
             // detach comment object in case of comment approvals, allows for comment to appear in comment list
             // (as a new JPA managed copy) and also provide status feedback (detached copy) on the comment entry form.
-            persistenceStrategy.detach(incomingComment);
+            entityManager.detach(incomingComment);
             // clear comment fields while retaining status field for rendering
             incomingComment.initializeFormFields();
         }

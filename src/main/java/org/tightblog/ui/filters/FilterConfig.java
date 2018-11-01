@@ -78,20 +78,11 @@ public class FilterConfig {
     }
 
     @Bean
-    public FilterRegistrationBean persistenceSessionFilterBean(@Autowired PersistenceSessionFilter persistenceSessionFilter) {
-        FilterRegistrationBean<PersistenceSessionFilter> bean = new FilterRegistrationBean<>();
-        bean.setFilter(persistenceSessionFilter);
-        bean.setDispatcherTypes(DispatcherType.REQUEST);
-        bean.setOrder(5);
-        return bean;
-    }
-
-    @Bean
     public FilterRegistrationBean requestMappingFilterBean(@Autowired RequestMappingFilter requestMappingFilter) {
         FilterRegistrationBean<RequestMappingFilter> bean = new FilterRegistrationBean<>();
         bean.setFilter(requestMappingFilter);
         bean.setDispatcherTypes(DispatcherType.REQUEST);
-        bean.setOrder(6);
+        bean.setOrder(5);
         return bean;
     }
 

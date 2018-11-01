@@ -51,6 +51,8 @@ import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WeblogTemplateRepository;
 import org.tightblog.repository.WebloggerPropertiesRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -79,7 +81,9 @@ public class WeblogManagerImpl implements WeblogManager {
     private WeblogEntryManager weblogEntryManager;
     private IndexManager indexManager;
     private MediaFileManager mediaFileManager;
-    private JPAPersistenceStrategy strategy;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Value("#{'${newblog.blogroll}'.split(',')}")
     private Set<String> newBlogBlogroll;
@@ -101,7 +105,7 @@ public class WeblogManagerImpl implements WeblogManager {
                              WebloggerPropertiesRepository webloggerPropertiesRepository,
                              WeblogRepository weblogRepository,
                              UserManager userManager, WeblogEntryManager weblogEntryManager, IndexManager indexManager,
-                             MediaFileManager mediaFileManager, JPAPersistenceStrategy strategy) {
+                             MediaFileManager mediaFileManager) {
         this.weblogEntryRepository = weblogEntryRepository;
         this.weblogEntryCommentRepository = weblogEntryCommentRepository;
         this.weblogCategoryRepository = weblogCategoryRepository;
@@ -114,7 +118,6 @@ public class WeblogManagerImpl implements WeblogManager {
         this.weblogEntryManager = weblogEntryManager;
         this.indexManager = indexManager;
         this.mediaFileManager = mediaFileManager;
-        this.strategy = strategy;
     }
 
     @Override
@@ -334,7 +337,7 @@ public class WeblogManagerImpl implements WeblogManager {
         String queryString = "SELECT new org.tightblog.business.WeblogManagerImpl.CategoryStats(we.category, " +
                 "min(we.pubTime), max(we.pubTime), count(we)) " +
                 "FROM WeblogEntry we WHERE we.weblog.id = ?1 GROUP BY we.category";
-        TypedQuery<CategoryStats> query = strategy.getDynamicQuery(queryString, CategoryStats.class);
+        TypedQuery<CategoryStats> query = entityManager.createQuery(queryString, CategoryStats.class);
         query.setParameter(1, weblog.getId());
 
         List<CategoryStats> stats = query.getResultList();
@@ -395,7 +398,7 @@ public class WeblogManagerImpl implements WeblogManager {
         queryString.append(" GROUP BY wtag.name ORDER BY ").append(sortBy);
 
         TypedQuery<WeblogEntryTagAggregate> query =
-                strategy.getDynamicQuery(queryString.toString(), WeblogEntryTagAggregate.class);
+                entityManager.createQuery(queryString.toString(), WeblogEntryTagAggregate.class);
 
         for (int i = 0; i < params.size(); i++) {
             query.setParameter(i + 1, params.get(i));
@@ -459,15 +462,19 @@ public class WeblogManagerImpl implements WeblogManager {
 
     @Override
     public void removeTag(Weblog weblog, String tagName) {
-        weblogEntryTagRepository.deleteByWeblogAndName(weblog, tagName);
-        weblog.invalidateCache();
+        List<WeblogEntryTag> currentResults = weblogEntryTagRepository.findByWeblogAndName(weblog, tagName);
 
-        // Clear JPA cache of weblog entries for a weblog, to ensure no old tag data  TODO: Still needed?
-        List<WeblogEntry> entries = weblogEntryRepository.findByWeblog(weblog);
-        for (WeblogEntry entry : entries) {
-            strategy.evict(WeblogEntry.class, entry.getId());
+        boolean updated = false;
+        for (WeblogEntryTag tag : currentResults) {
+            tag.getWeblogEntry().getTags().remove(tag);
+            weblogEntryRepository.save(tag.getWeblogEntry());
+            updated = true;
         }
-        strategy.flush();
+
+        if (updated) {
+            weblog.invalidateCache();
+            weblogRepository.saveAndFlush(weblog);
+        }
     }
 
     @Override
@@ -477,25 +484,24 @@ public class WeblogManagerImpl implements WeblogManager {
         int unchangedEntries = 0;
 
         List<WeblogEntryTag> currentResults = weblogEntryTagRepository.findByWeblogAndName(weblog, currentTagName);
-        List<String> alreadyEntryIdList = weblogEntryTagRepository.getEntryIdByWeblogAndName(weblog, newTagName);
+        List<String> alreadyEntryIdList = weblogEntryTagRepository.getEntryIdsByWeblogAndName(weblog, newTagName);
 
         for (WeblogEntryTag currentTag : currentResults) {
             if (alreadyEntryIdList.contains(currentTag.getWeblogEntry().getId())) {
                 unchangedEntries++;
             } else {
                 WeblogEntryTag newTag = new WeblogEntryTag(weblog, currentTag.getWeblogEntry(), newTagName);
-                weblogEntryTagRepository.save(newTag);
-                // clear JPA cache, to ensure no old tag data
-                strategy.evict(WeblogEntry.class, currentTag.getWeblogEntry().getId());
+                currentTag.getWeblogEntry().getTags().add(newTag);
+                weblogEntryRepository.save(currentTag.getWeblogEntry());
                 updatedEntries++;
             }
         }
 
         if (updatedEntries > 0) {
             weblog.invalidateCache();
+            weblogRepository.saveAndFlush(weblog);
         }
 
-        strategy.flush();
         resultsMap.put("updated", updatedEntries);
         resultsMap.put("unchanged", unchangedEntries);
         return resultsMap;
