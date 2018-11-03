@@ -26,7 +26,7 @@
     var weblogId = "<c:out value='${actionWeblog.id}'/>";
     var templateId = "<c:out value='${param.templateId}'/>";
     var templateName = "<c:out value='${param.templateName}'/>";
-    var weblogUrl = "<c:out value='${actionWeblog.absoluteURL}'/>";
+    var weblogUrl = "<c:out value='${actionWeblogURL}'/>";
     var msg = {
         deleteLabel: "<fmt:message key='generic.delete'/>",
         cancelLabel: "<fmt:message key='generic.cancel'/>"
@@ -80,7 +80,7 @@
         <td class="field">
             <input id="path" type="text" ng-model="ctrl.templateData.relativePath" size="50" maxlength="255"/>
             <br/>
-            <c:out value="${actionWeblog.absoluteURL}" />page/<span id="linkPreview" style="color:red">{{ctrl.templateData.relativePath}}</span>
+            <c:out value="${actionWeblogURL}"/>page/<span id="linkPreview" style="color:red">{{ctrl.templateData.relativePath}}</span>
             <span ng-if="ctrl.lastSavedRelativePath != null">
                 [<a id="launchLink" ng-click="ctrl.launchPage()"><fmt:message key="templateEdit.launch" /></a>]
             </span>

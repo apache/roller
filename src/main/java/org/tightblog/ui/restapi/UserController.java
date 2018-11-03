@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.business.MailManager;
+import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
@@ -88,12 +89,13 @@ public class UserController {
     private MailManager mailManager;
     private MessageSource messages;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
+    private URLStrategy urlStrategy;
 
     @Autowired
     public UserController(WeblogRepository weblogRepository, UserManager userManager,
                           UserWeblogRoleRepository userWeblogRoleRepository, MessageSource messageSource,
                           MailManager mailManager, UserRepository userRepository,
-                          UserCredentialsRepository userCredentialsRepository,
+                          UserCredentialsRepository userCredentialsRepository, URLStrategy urlStrategy,
                           WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogRepository = weblogRepository;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
@@ -101,6 +103,7 @@ public class UserController {
         this.userWeblogRoleRepository = userWeblogRoleRepository;
         this.userRepository = userRepository;
         this.userCredentialsRepository = userCredentialsRepository;
+        this.urlStrategy = urlStrategy;
         this.mailManager = mailManager;
         this.messages = messageSource;
     }
@@ -495,6 +498,7 @@ public class UserController {
         }
         List<UserWeblogRole> uwrs = userWeblogRoleRepository.findByUser(user);
         for (UserWeblogRole uwr : uwrs) {
+            uwr.getWeblog().setAbsoluteURL(urlStrategy.getWeblogURL(uwr.getWeblog()));
             uwr.setUser(null);
         }
         return uwrs;

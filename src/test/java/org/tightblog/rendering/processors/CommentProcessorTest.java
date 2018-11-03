@@ -23,7 +23,7 @@ import org.springframework.context.MessageSource;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.search.IndexManager;
+import org.tightblog.service.LuceneIndexer;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
@@ -72,7 +72,7 @@ public class CommentProcessorTest {
     private WeblogEntryManager mockWEM;
     private UserManager mockUM;
     private UserRepository mockUR;
-    private IndexManager mockIM;
+    private LuceneIndexer mockIM;
     private MailManager mockMM = mock(MailManager.class);
 
     @Before
@@ -95,7 +95,7 @@ public class CommentProcessorTest {
         mockWEM = mock(WeblogEntryManager.class);
         mockUM = mock(UserManager.class);
         mockUR = mock(UserRepository.class);
-        mockIM = mock(IndexManager.class);
+        mockIM = mock(LuceneIndexer.class);
         mockMessageSource = mock(MessageSource.class);
         processor = new CommentProcessor(mockWR, mockUR, mockIM, mockWEM, mockUM,
                 mockMM, mockMessageSource, mockPropertiesRepository);

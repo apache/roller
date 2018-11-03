@@ -18,13 +18,13 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.business.search.tasks;
+package org.tightblog.service.indexer;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.index.Term;
-import org.tightblog.business.search.IndexManager;
+import org.tightblog.service.LuceneIndexer;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -34,9 +34,9 @@ import java.io.StringReader;
  */
 public abstract class AbstractTask implements Runnable {
 
-    protected IndexManager manager;
+    protected LuceneIndexer manager;
 
-    AbstractTask(IndexManager manager) {
+    AbstractTask(LuceneIndexer manager) {
         this.manager = manager;
     }
 

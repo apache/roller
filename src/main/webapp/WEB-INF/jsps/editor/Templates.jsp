@@ -135,7 +135,7 @@ var actionWeblogId = "<c:out value='${param.weblogId}'/>";
 
             <td align="center" style="vertical-align:middle">
                 <span ng-if="tpl.role.accessibleViaUrl && tpl.relativePath != null && tpl.relativePath != ''">
-                    <a target="_blank" href="<c:out value='${actionWeblog.absoluteURL}'/>page/{{tpl.relativePath}}">
+                    <a target="_blank" href="<c:out value='${actionWeblogURL}'/>page/{{tpl.relativePath}}">
                       <img src='<c:url value="/images/world_go.png"/>' border="0" alt="icon"/>
                     </a>
                 </span>

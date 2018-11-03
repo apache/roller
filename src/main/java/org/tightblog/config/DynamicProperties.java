@@ -28,11 +28,27 @@ public class DynamicProperties {
      */
     private String absoluteUrl;
 
+    /**
+     * An indicator of whether the TightBlog database tables
+     * have been created and are ready for read/write usage.
+     * Helpful for startup tasks that require a functioning
+     * database before they may proceed.
+     */
+    private boolean databaseReady;
+
     public String getAbsoluteUrl() {
         return absoluteUrl;
     }
 
     public void setAbsoluteUrl(String absoluteUrl) {
         this.absoluteUrl = absoluteUrl;
+    }
+
+    public boolean isDatabaseReady() {
+        return databaseReady;
+    }
+
+    public void setDatabaseReady(boolean databaseReady) {
+        this.databaseReady = databaseReady;
     }
 }

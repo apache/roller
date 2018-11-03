@@ -35,10 +35,10 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.jdbc.datasource.init.ScriptException;
-import org.tightblog.business.WebloggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +47,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
+import org.tightblog.config.DynamicProperties;
+import org.tightblog.service.LuceneIndexer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -65,12 +67,20 @@ public class InstallerController {
     ServletContext context;
     private DataSource tbDataSource;
     private MessageSource messages;
+    private DynamicProperties dynamicProperties;
+    private Environment environment;
+    private LuceneIndexer luceneIndexer;
 
     @Autowired
-    public InstallerController(ServletContext context, DataSource tbDataSource, MessageSource messages) {
+    public InstallerController(ServletContext context, DataSource tbDataSource, MessageSource messages,
+                               LuceneIndexer luceneIndexer, DynamicProperties dynamicProperties,
+                               Environment environment) {
         this.context = context;
         this.tbDataSource = tbDataSource;
+        this.luceneIndexer = luceneIndexer;
         this.messages = messages;
+        this.dynamicProperties = dynamicProperties;
+        this.environment = environment;
     }
 
     @Value("${tightblog.database.expected.version:0}")
@@ -104,7 +114,7 @@ public class InstallerController {
 
     @RequestMapping(value = "/install")
     public ModelAndView install(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (WebloggerContext.isBootstrapped()) {
+        if (dynamicProperties.isDatabaseReady()) {
             response.sendRedirect(request.getContextPath() + "/");
             return null;
         }
@@ -145,7 +155,7 @@ public class InstallerController {
 
     @RequestMapping(value = "/create")
     public ModelAndView createDatabaseTables(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (WebloggerContext.isBootstrapped()) {
+        if (dynamicProperties.isDatabaseReady()) {
             response.sendRedirect(request.getContextPath() + "/");
             return null;
         }
@@ -175,7 +185,7 @@ public class InstallerController {
 
     @RequestMapping(value = "/bootstrap")
     public ModelAndView bootstrap(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (WebloggerContext.isBootstrapped()) {
+        if (dynamicProperties.isDatabaseReady()) {
             response.sendRedirect(request.getContextPath() + "/");
             return null;
         }
@@ -186,8 +196,12 @@ public class InstallerController {
             // trigger bootstrapping process
             ApplicationContext ac = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
 
-            WebloggerContext.bootstrap(ac);
-            log.info("EXITING - Bootstrap successful, forwarding to weblogger");
+            dynamicProperties.setDatabaseReady(true);
+            luceneIndexer.initialize();
+
+            log.info("TightBlog Weblogger successfully bootstrapped");
+            log.info("   Version: {}", environment.getProperty("weblogger.version", "Unknown"));
+            log.info("   Revision: {}", environment.getProperty("weblogger.revision", "Unknown"));
             String redirectPath = request.getContextPath();
             response.sendRedirect(redirectPath);
             return null;

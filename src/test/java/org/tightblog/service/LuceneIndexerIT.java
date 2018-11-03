@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.business;
+package org.tightblog.service;
 
 import java.time.Instant;
 import java.util.List;
@@ -26,9 +26,8 @@ import java.util.List;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tightblog.WebloggerTest;
-import org.tightblog.business.search.tasks.IndexEntryTask;
-import org.tightblog.business.search.tasks.SearchTask;
-import org.tightblog.business.search.IndexManager;
+import org.tightblog.service.indexer.IndexEntryTask;
+import org.tightblog.service.indexer.SearchTask;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntry.PubStatus;
@@ -45,13 +44,13 @@ import static org.junit.Assert.*;
 /**
  * Test Search Manager business layer operations.
  */
-public class IndexManagerTestIT extends WebloggerTest {
+public class LuceneIndexerIT extends WebloggerTest {
 
     private User testUser;
     private Weblog testWeblog;
 
     @Autowired
-    private IndexManager indexManager;
+    private LuceneIndexer luceneIndexer;
 
     /**
      * All tests in this suite require a user and a weblog.
@@ -93,8 +92,8 @@ public class IndexManagerTestIT extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(wd1);
         wd1 = weblogEntryRepository.findByIdOrNull(wd1.getId());
 
-        indexManager.executeIndexOperationNow(
-                new IndexEntryTask(weblogEntryRepository, indexManager, wd1, false));
+        luceneIndexer.executeIndexOperationNow(
+                new IndexEntryTask(weblogEntryRepository, luceneIndexer, wd1, false));
 
         WeblogEntry wd2 = new WeblogEntry();
         wd2.setTitle("A Piece of the Action");
@@ -115,30 +114,30 @@ public class IndexManagerTestIT extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(wd2);
         wd2 = weblogEntryRepository.findByIdOrNull(wd2.getId());
 
-        indexManager.executeIndexOperationNow(
-            new IndexEntryTask(weblogEntryRepository, indexManager, wd2, false));
+        luceneIndexer.executeIndexOperationNow(
+            new IndexEntryTask(weblogEntryRepository, luceneIndexer, wd2, false));
 
         Thread.sleep(DateUtils.MILLIS_PER_SECOND);
 
-        SearchTask search = new SearchTask(indexManager);
+        SearchTask search = new SearchTask(luceneIndexer);
         search.setTerm("Enterprise");
-        indexManager.executeIndexOperationNow(search);
+        luceneIndexer.executeIndexOperationNow(search);
         assertEquals(2, search.getResultsCount());
 
-        SearchTask search2 = new SearchTask(indexManager);
+        SearchTask search2 = new SearchTask(luceneIndexer);
         search2.setTerm("Tholian");
-        indexManager.executeIndexOperationNow(search2);
+        luceneIndexer.executeIndexOperationNow(search2);
         assertEquals(1, search2.getResultsCount());
 
         // Clean up
-        IndexEntryTask t1 = new IndexEntryTask(weblogEntryRepository, indexManager, wd1, true);
-        indexManager.executeIndexOperationNow(t1);
-        IndexEntryTask t2 = new IndexEntryTask(weblogEntryRepository, indexManager, wd2, true);
-        indexManager.executeIndexOperationNow(t2);
+        IndexEntryTask t1 = new IndexEntryTask(weblogEntryRepository, luceneIndexer, wd1, true);
+        luceneIndexer.executeIndexOperationNow(t1);
+        IndexEntryTask t2 = new IndexEntryTask(weblogEntryRepository, luceneIndexer, wd2, true);
+        luceneIndexer.executeIndexOperationNow(t2);
 
-        SearchTask search3 = new SearchTask(indexManager);
+        SearchTask search3 = new SearchTask(luceneIndexer);
         search3.setTerm("Enterprise");
-        indexManager.executeIndexOperationNow(search3);
+        luceneIndexer.executeIndexOperationNow(search3);
         assertEquals(0, search3.getResultsCount());
     }    
 }

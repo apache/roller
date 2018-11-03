@@ -27,7 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import org.tightblog.business.search.IndexManager;
+import org.tightblog.service.LuceneIndexer;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserStatus;
 import org.tightblog.pojos.UserWeblogRole;
@@ -79,7 +79,7 @@ public class WeblogManagerImpl implements WeblogManager {
     private WeblogRepository weblogRepository;
     private UserManager userManager;
     private WeblogEntryManager weblogEntryManager;
-    private IndexManager indexManager;
+    private LuceneIndexer luceneIndexer;
     private MediaFileManager mediaFileManager;
 
     @PersistenceContext
@@ -104,7 +104,7 @@ public class WeblogManagerImpl implements WeblogManager {
                              UserWeblogRoleRepository userWeblogRoleRepository,
                              WebloggerPropertiesRepository webloggerPropertiesRepository,
                              WeblogRepository weblogRepository,
-                             UserManager userManager, WeblogEntryManager weblogEntryManager, IndexManager indexManager,
+                             UserManager userManager, WeblogEntryManager weblogEntryManager, LuceneIndexer luceneIndexer,
                              MediaFileManager mediaFileManager) {
         this.weblogEntryRepository = weblogEntryRepository;
         this.weblogEntryCommentRepository = weblogEntryCommentRepository;
@@ -116,7 +116,7 @@ public class WeblogManagerImpl implements WeblogManager {
         this.weblogRepository = weblogRepository;
         this.userManager = userManager;
         this.weblogEntryManager = weblogEntryManager;
-        this.indexManager = indexManager;
+        this.luceneIndexer = luceneIndexer;
         this.mediaFileManager = mediaFileManager;
     }
 
@@ -143,7 +143,7 @@ public class WeblogManagerImpl implements WeblogManager {
         userWeblogRoleRepository.deleteByWeblog(weblog);
 
         // remove indexing
-        indexManager.updateIndex(weblog, true);
+        luceneIndexer.updateIndex(weblog, true);
 
         // check if main blog, disconnect if it is
         WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
@@ -266,7 +266,7 @@ public class WeblogManagerImpl implements WeblogManager {
             // this is because we need the updated entries flushed first
             for (WeblogEntry entry : scheduledEntries) {
                 // trigger search index on entry
-                indexManager.updateIndex(entry, false);
+                luceneIndexer.updateIndex(entry, false);
             }
 
         } catch (Exception e) {

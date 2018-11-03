@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.business.search;
+package org.tightblog.service.indexer;
 
 /**
  * Field constants for indexing blog entries and comments.
@@ -39,7 +39,7 @@ public final class FieldConstants {
     public static final String COMMENT_EMAIL = "email";
     public static final String COMMENT_NAME = "name";
     public static final String CONSTANT = "constant";
-    public static final String WEBSITE_HANDLE = "handle";
+    public static final String WEBLOG_HANDLE = "handle";
     // CONSTANT_V used to retrieve all documents; must be lowercase
     public static final String CONSTANT_V = "v";
 }

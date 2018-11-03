@@ -30,7 +30,7 @@
 
                 <c:if test="${actionWeblog != null}">
                     - <fmt:message key="mainPage.currentWebsite" />
-                    <b><a href='<c:out value="${actionWeblog.absoluteURL}" />'>
+                    <b><a href='<c:out value="${actionWeblogURL}" />'>
                             <c:out value="${actionWeblog.handle}" />
                     </a></b>
                 </c:if>

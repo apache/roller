@@ -21,6 +21,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.WebAttributes;
 import org.tightblog.business.MailManager;
+import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.pojos.GlobalRole;
@@ -63,18 +64,20 @@ public class UIController {
     private MailManager mailManager;
     private MenuHelper menuHelper;
     private MessageSource messages;
+    private URLStrategy urlStrategy;
 
     @Autowired
     public UIController(WeblogRepository weblogRepository, UserManager userManager, UserRepository userRepository,
                         WeblogEntryManager weblogEntryManager, UserWeblogRoleRepository userWeblogRoleRepository,
                         MailManager mailManager, MenuHelper menuHelper, MessageSource messages,
-                        WebloggerPropertiesRepository webloggerPropertiesRepository) {
+                        WebloggerPropertiesRepository webloggerPropertiesRepository, URLStrategy urlStrategy) {
         this.weblogRepository = weblogRepository;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.userManager = userManager;
         this.userRepository = userRepository;
         this.userWeblogRoleRepository = userWeblogRoleRepository;
         this.weblogEntryManager = weblogEntryManager;
+        this.urlStrategy = urlStrategy;
         this.mailManager = mailManager;
         this.menuHelper = menuHelper;
         this.messages = messages;
@@ -380,6 +383,9 @@ public class UIController {
         }
         map.put("authenticatedUser", user);
         map.put("actionWeblog", weblog);
+        if (weblog != null) {
+            map.put("actionWeblogURL", urlStrategy.getWeblogURL(weblog));
+        }
         map.put("userIsAdmin", user != null && GlobalRole.ADMIN.equals(user.getGlobalRole()));
         map.put("pageTitleKey", actionName + ".title");
         map.put("mfaEnabled", mfaEnabled);

@@ -130,9 +130,7 @@ public class URLStrategyImpl implements URLStrategy {
 
     @Override
     public String getWeblogURL(Weblog weblog) {
-        String url = getWeblogRootURL(weblog);
-        Map<String, String> params = new HashMap<>();
-        return url + Utilities.getQueryString(params);
+        return getWeblogRootURL(weblog);
     }
 
     @Override

@@ -29,9 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.search.FieldConstants;
-import org.tightblog.business.search.IndexManager;
-import org.tightblog.business.search.tasks.SearchTask;
+import org.tightblog.service.indexer.FieldConstants;
+import org.tightblog.service.LuceneIndexer;
+import org.tightblog.service.indexer.SearchTask;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.slf4j.Logger;
@@ -69,10 +69,10 @@ public class SearchResultsModel extends PageModel {
     private int limit;
 
     @Autowired
-    private IndexManager indexManager;
+    private LuceneIndexer luceneIndexer;
 
-    void setIndexManager(IndexManager indexManager) {
-        this.indexManager = indexManager;
+    void setLuceneIndexer(LuceneIndexer luceneIndexer) {
+        this.luceneIndexer = luceneIndexer;
     }
 
     @Autowired
@@ -120,7 +120,7 @@ public class SearchResultsModel extends PageModel {
             if (pageRequest.getQuery() != null) {
 
                 // setup the search
-                SearchTask searchTask = new SearchTask(indexManager);
+                SearchTask searchTask = new SearchTask(luceneIndexer);
                 searchTask.setTerm(pageRequest.getQuery());
 
                 if (!themeManager.getSharedTheme(pageRequest.getWeblog().getTheme()).isSiteWide()) {
@@ -132,7 +132,7 @@ public class SearchResultsModel extends PageModel {
                 }
 
                 // execute search
-                indexManager.executeIndexOperationNow(searchTask);
+                luceneIndexer.executeIndexOperationNow(searchTask);
 
                 // -1 indicates a parsing/IO error
                 if (searchTask.getResultsCount() >= 0) {

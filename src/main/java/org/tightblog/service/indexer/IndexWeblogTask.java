@@ -18,14 +18,13 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.business.search.tasks;
+package org.tightblog.service.indexer;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.search.FieldConstants;
-import org.tightblog.business.search.IndexManagerImpl;
+import org.tightblog.service.LuceneIndexer;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntry.PubStatus;
@@ -51,7 +50,7 @@ public class IndexWeblogTask extends AbstractIndexTask {
      * @param weblog The weblog to rebuild the index for, or null for all weblogs.
      * @param deleteOnly Remove the weblog(s) from the index.
      */
-    public IndexWeblogTask(IndexManagerImpl mgr, WeblogEntryManager wem,
+    public IndexWeblogTask(LuceneIndexer mgr, WeblogEntryManager wem,
                            Weblog weblog, boolean deleteOnly) {
         super(mgr);
         this.weblogEntryManager = wem;
@@ -76,7 +75,7 @@ public class IndexWeblogTask extends AbstractIndexTask {
 
                 // Delete all entries from given weblog(s)
                 if (weblog != null) {
-                    Term tWebsite = getTerm(FieldConstants.WEBSITE_HANDLE, weblog.getHandle());
+                    Term tWebsite = getTerm(FieldConstants.WEBLOG_HANDLE, weblog.getHandle());
 
                     if (tWebsite != null) {
                         writer.deleteDocuments(tWebsite);

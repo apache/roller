@@ -23,7 +23,6 @@ package org.tightblog.pojos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.tightblog.pojos.WebloggerProperties.CommentPolicy;
-import org.tightblog.business.WebloggerContext;
 import org.tightblog.rendering.comment.BlacklistCommentValidator;
 import org.tightblog.util.Utilities;
 import javax.validation.constraints.NotBlank;
@@ -94,6 +93,8 @@ public class Weblog {
     // is this weblog instance used for previewing a theme?
     private boolean usedForThemePreview;
     private Locale localeInstance;
+
+    private String absoluteURL;
 
     public enum EditFormat {
         HTML("weblogConfig.editFormat.html", true),
@@ -384,7 +385,11 @@ public class Weblog {
     // Used in templates and a few JSP's
     @Transient
     public String getAbsoluteURL() {
-        return WebloggerContext.getUrlStrategy().getWeblogURL(this);
+        return absoluteURL;
+    }
+
+    public void setAbsoluteURL(String absoluteURL) {
+        this.absoluteURL = absoluteURL;
     }
 
     public String getAnalyticsCode() {

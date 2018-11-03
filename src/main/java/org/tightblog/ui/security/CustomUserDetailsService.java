@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.WebloggerContext;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.UserCredentials;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,9 +47,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private UserCredentialsRepository userCredentialsRepository;
 
+    private DynamicProperties dynamicProperties;
+
     @Autowired
-    public CustomUserDetailsService(UserCredentialsRepository userCredentialsRepository) {
+    public CustomUserDetailsService(UserCredentialsRepository userCredentialsRepository,
+                                    DynamicProperties dynamicProperties) {
         this.userCredentialsRepository = userCredentialsRepository;
+        this.dynamicProperties = dynamicProperties;
     }
 
     @Value("${mfa.enabled}")
@@ -61,7 +65,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userName) {
 
-        if (!WebloggerContext.isBootstrapped()) {
+        if (!dynamicProperties.isDatabaseReady()) {
             // Should only happen in case of 1st time startup, setup required
             // Thowing a "soft" exception here allows setup to proceed
             throw new UsernameNotFoundException("User info not available yet.");

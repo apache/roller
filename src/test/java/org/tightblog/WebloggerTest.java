@@ -24,7 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.WebloggerContext;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.pojos.GlobalRole;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.UserStatus;
@@ -44,6 +44,7 @@ import org.tightblog.repository.WeblogEntryRepository;
 import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WeblogTemplateRepository;
 import org.tightblog.repository.WebloggerPropertiesRepository;
+import org.tightblog.service.LuceneIndexer;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -97,10 +98,17 @@ public abstract class WebloggerTest {
     @Autowired
     protected UserManager userManager;
 
+    @Autowired
+    private DynamicProperties dynamicProperties;
+
+    @Autowired
+    private LuceneIndexer luceneIndexer;
+
     @Before
     public void setUp() throws Exception {
-        if (!WebloggerContext.isBootstrapped()) {
-            WebloggerContext.bootstrap(appContext);
+        if (!dynamicProperties.isDatabaseReady()) {
+            dynamicProperties.setDatabaseReady(true);
+            luceneIndexer.initialize();
         }
     }
 

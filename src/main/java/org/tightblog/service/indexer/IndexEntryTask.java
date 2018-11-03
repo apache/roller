@@ -18,12 +18,11 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.business.search.tasks;
+package org.tightblog.service.indexer;
 
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.tightblog.business.search.FieldConstants;
-import org.tightblog.business.search.IndexManager;
+import org.tightblog.service.LuceneIndexer;
 import org.tightblog.pojos.WeblogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,7 @@ public class IndexEntryTask extends AbstractIndexTask {
      * @param weblogEntry entry to index
      * @param deleteOnly If true just remove the weblog entry from the index.
      */
-    public IndexEntryTask(WeblogEntryRepository wer, IndexManager mgr,
+    public IndexEntryTask(WeblogEntryRepository wer, LuceneIndexer mgr,
                           WeblogEntry weblogEntry, boolean deleteOnly) {
         super(mgr);
         this.weblogEntryRepository = wer;

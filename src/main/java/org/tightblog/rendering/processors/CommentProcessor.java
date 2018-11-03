@@ -26,7 +26,7 @@ import org.springframework.context.MessageSource;
 import org.tightblog.business.MailManager;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.search.IndexManager;
+import org.tightblog.service.LuceneIndexer;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
@@ -93,7 +93,7 @@ public class CommentProcessor extends AbstractProcessor {
     private WeblogRepository weblogRepository;
 
     private UserRepository userRepository;
-    private IndexManager indexManager;
+    private LuceneIndexer luceneIndexer;
     private WeblogEntryManager weblogEntryManager;
     private UserManager userManager;
     private MailManager mailManager;
@@ -110,14 +110,14 @@ public class CommentProcessor extends AbstractProcessor {
     @Autowired
     public CommentProcessor(WeblogRepository weblogRepository,
                             UserRepository userRepository,
-                            IndexManager indexManager, WeblogEntryManager weblogEntryManager, UserManager userManager,
+                            LuceneIndexer luceneIndexer, WeblogEntryManager weblogEntryManager, UserManager userManager,
                             MailManager mailManager,
                             MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.weblogRepository = weblogRepository;
         this.userRepository = userRepository;
-        this.indexManager = indexManager;
+        this.luceneIndexer = luceneIndexer;
         this.weblogEntryManager = weblogEntryManager;
         this.userManager = userManager;
         this.mailManager = mailManager;
@@ -261,8 +261,8 @@ public class CommentProcessor extends AbstractProcessor {
                 } else {
                     mailManager.sendNewPublishedCommentNotification(incomingComment);
 
-                    if (indexManager.isIndexComments()) {
-                        indexManager.updateIndex(incomingRequest.getWeblogEntry(), false);
+                    if (luceneIndexer.isIndexComments()) {
+                        luceneIndexer.updateIndex(incomingRequest.getWeblogEntry(), false);
                     }
                 }
             }

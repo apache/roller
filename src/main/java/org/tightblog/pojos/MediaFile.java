@@ -21,7 +21,6 @@
 package org.tightblog.pojos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.tightblog.business.WebloggerContext;
 import javax.validation.constraints.NotBlank;
 import org.tightblog.util.Utilities;
 
@@ -73,6 +72,9 @@ public class MediaFile implements Comparable<MediaFile> {
 
     private File content;
     private File thumbnail;
+
+    private String permalink;
+    private String thumbnailURL;
 
     public MediaFile() {
     }
@@ -217,8 +219,11 @@ public class MediaFile implements Comparable<MediaFile> {
      */
     @Transient
     public String getPermalink() {
-        return WebloggerContext.getUrlStrategy()
-                .getMediaFileURL(getDirectory().getWeblog(), this.getId());
+        return permalink;
+    }
+
+    public void setPermalink(String permalink) {
+        this.permalink = permalink;
     }
 
     /**
@@ -227,8 +232,11 @@ public class MediaFile implements Comparable<MediaFile> {
      */
     @Transient
     public String getThumbnailURL() {
-        return WebloggerContext.getUrlStrategy()
-                .getMediaFileThumbnailURL(getDirectory().getWeblog(), this.getId());
+        return thumbnailURL;
+    }
+
+    public void setThumbnailURL(String thumbnailURL) {
+        this.thumbnailURL = thumbnailURL;
     }
 
     @ManyToOne

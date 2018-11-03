@@ -34,7 +34,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.tightblog.business.search.IndexManager;
+import org.tightblog.service.LuceneIndexer;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WebloggerProperties;
 import org.tightblog.rendering.cache.LazyExpiringCache;
@@ -69,19 +69,19 @@ public class AdminController {
     private static Logger log = LoggerFactory.getLogger(AdminController.class);
 
     private Set<LazyExpiringCache> cacheSet;
-    private IndexManager indexManager;
+    private LuceneIndexer luceneIndexer;
     private BlacklistCommentValidator blacklistCommentValidator;
     private WeblogRepository weblogRepository;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private MessageSource messages;
 
     @Autowired
-    public AdminController(Set<LazyExpiringCache> cacheSet, IndexManager indexManager,
+    public AdminController(Set<LazyExpiringCache> cacheSet, LuceneIndexer luceneIndexer,
                            BlacklistCommentValidator blacklistCommentValidator, WeblogRepository weblogRepository,
                            MessageSource messages,
                            WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.cacheSet = cacheSet;
-        this.indexManager = indexManager;
+        this.luceneIndexer = luceneIndexer;
         this.blacklistCommentValidator = blacklistCommentValidator;
         this.weblogRepository = weblogRepository;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
@@ -140,7 +140,7 @@ public class AdminController {
         try {
             Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(handle);
             if (weblog != null) {
-                indexManager.updateIndex(weblog, false);
+                luceneIndexer.updateIndex(weblog, false);
                 return ResponseEntity.ok(messages.getMessage("cachedData.message.indexed", new Object[]{handle}, null));
             } else {
                 return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).

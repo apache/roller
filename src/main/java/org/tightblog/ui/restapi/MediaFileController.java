@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.business.MediaFileManager;
+import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogManager;
 import org.tightblog.pojos.MediaDirectory;
@@ -55,12 +56,13 @@ public class MediaFileController {
     private UserRepository userRepository;
     private MediaFileManager mediaFileManager;
     private MessageSource messages;
+    private URLStrategy urlStrategy;
 
     @Autowired
     public MediaFileController(WeblogRepository weblogRepository, MediaDirectoryRepository mediaDirectoryRepository,
                                MediaFileRepository mediaFileRepository, WeblogManager weblogManager,
                                UserManager userManager, UserRepository userRepository, MediaFileManager mediaFileManager,
-                               MessageSource messages) {
+                               URLStrategy urlStrategy, MessageSource messages) {
         this.weblogRepository = weblogRepository;
         this.mediaDirectoryRepository = mediaDirectoryRepository;
         this.mediaFileRepository = mediaFileRepository;
@@ -68,6 +70,7 @@ public class MediaFileController {
         this.userManager = userManager;
         this.userRepository = userRepository;
         this.mediaFileManager = mediaFileManager;
+        this.urlStrategy = urlStrategy;
         this.messages = messages;
     }
 
@@ -99,7 +102,12 @@ public class MediaFileController {
         if (permitted) {
             return md.getMediaFiles()
                     .stream()
-                    .peek(mf -> mf.setCreator(null))
+                    .peek(mf -> {
+                        mf.setCreator(null);
+                        mf.setPermalink(urlStrategy.getMediaFileURL(mf.getDirectory().getWeblog(), mf.getId()));
+                        mf.setThumbnailURL(urlStrategy.getMediaFileThumbnailURL(mf.getDirectory().getWeblog(),
+                                mf.getId()));
+                    })
                     .sorted(Comparator.comparing(MediaFile::getName))
                     .collect(Collectors.toList());
         } else {
@@ -115,6 +123,9 @@ public class MediaFileController {
                 && userManager.checkWeblogRole(p.getName(), mf.getDirectory().getWeblog(), WeblogRole.POST);
         if (permitted) {
             mf.setCreator(null);
+            mf.setPermalink(urlStrategy.getMediaFileURL(mf.getDirectory().getWeblog(), mf.getId()));
+            mf.setThumbnailURL(urlStrategy.getMediaFileThumbnailURL(mf.getDirectory().getWeblog(),
+                    mf.getId()));
             return mf;
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.business.search.tasks;
+package org.tightblog.service.indexer;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
@@ -30,8 +30,7 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.util.BytesRef;
-import org.tightblog.business.search.FieldConstants;
-import org.tightblog.business.search.IndexManager;
+import org.tightblog.service.LuceneIndexer;
 import org.tightblog.pojos.WeblogCategory;
 import org.tightblog.pojos.WeblogEntry;
 import org.tightblog.pojos.WeblogEntryComment;
@@ -48,7 +47,7 @@ public abstract class AbstractIndexTask extends AbstractTask {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractIndexTask.class);
 
-    AbstractIndexTask(IndexManager mgr) {
+    AbstractIndexTask(LuceneIndexer mgr) {
         super(mgr);
     }
 
@@ -88,7 +87,7 @@ public abstract class AbstractIndexTask extends AbstractTask {
         doc.add(new StringField(FieldConstants.ID, data.getId(), Field.Store.YES));
 
         // keyword
-        doc.add(new StringField(FieldConstants.WEBSITE_HANDLE, data.getWeblog().getHandle(),
+        doc.add(new StringField(FieldConstants.WEBLOG_HANDLE, data.getWeblog().getHandle(),
                 Field.Store.YES));
 
         // text, don't index deleted/disabled users of a group blog

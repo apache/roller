@@ -29,9 +29,9 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.tightblog.business.ThemeManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.search.FieldConstants;
-import org.tightblog.business.search.IndexManager;
-import org.tightblog.business.search.tasks.SearchTask;
+import org.tightblog.service.indexer.FieldConstants;
+import org.tightblog.service.LuceneIndexer;
+import org.tightblog.service.indexer.SearchTask;
 import org.tightblog.pojos.SharedTheme;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
@@ -63,9 +63,8 @@ public class SearchResultsModelTest {
 
     private SearchTask mockSearchTask;
     private IndexSearcher mockIndexSearcher;
-    private WeblogEntryManager mockWeblogEntryManager;
     private WeblogEntryRepository mockWeblogEntryRepository;
-    private IndexManager mockIndexManager;
+    private LuceneIndexer mockLuceneIndexer;
     private WeblogEntryListGenerator mockGenerator;
     private SearchResultsModel searchResultsModel;
     private WeblogPageRequest pageRequest;
@@ -81,10 +80,10 @@ public class SearchResultsModelTest {
         mockIndexSearcher = mock(IndexSearcher.class);
         when(mockSearchTask.getSearcher()).thenReturn(mockIndexSearcher);
         ThemeManager mockThemeManager = mock(ThemeManager.class);
-        mockIndexManager = mock(IndexManager.class);
+        mockLuceneIndexer = mock(LuceneIndexer.class);
         SharedTheme sharedTheme = new SharedTheme();
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
-        mockWeblogEntryManager = mock(WeblogEntryManager.class);
+        WeblogEntryManager mockWeblogEntryManager = mock(WeblogEntryManager.class);
         mockWeblogEntryRepository = mock(WeblogEntryRepository.class);
         weblog = new Weblog();
         weblog.setHandle("testblog");
@@ -99,7 +98,7 @@ public class SearchResultsModelTest {
         searchResultsModel.setWeblogEntryRepository(mockWeblogEntryRepository);
         searchResultsModel.setWeblogEntryListGenerator(mockGenerator);
         searchResultsModel.setThemeManager(mockThemeManager);
-        searchResultsModel.setIndexManager(mockIndexManager);
+        searchResultsModel.setLuceneIndexer(mockLuceneIndexer);
         searchResultsModel.init(initData);
         MockitoAnnotations.initMocks(this);
     }
@@ -119,7 +118,7 @@ public class SearchResultsModelTest {
         pageRequest.setCategory("collectibles");
         searchResultsModel.getWeblogEntriesPager();
         ArgumentCaptor<SearchTask> searchTaskCaptor = ArgumentCaptor.forClass(SearchTask.class);
-        verify(mockIndexManager).executeIndexOperationNow(searchTaskCaptor.capture());
+        verify(mockLuceneIndexer).executeIndexOperationNow(searchTaskCaptor.capture());
         SearchTask searchTask = searchTaskCaptor.getValue();
         assertEquals("stamps", searchTask.getTerm());
         assertEquals("testblog", searchTask.getWeblogHandle());
@@ -154,7 +153,7 @@ public class SearchResultsModelTest {
             searchTask.setResults(docs);
             searchTask.setSearcher(mockIndexSearcher);
             return null; // void method, so return null
-        }).when(mockIndexManager).executeIndexOperationNow(any(SearchTask.class));
+        }).when(mockLuceneIndexer).executeIndexOperationNow(any(SearchTask.class));
 
         searchResultsModel.getWeblogEntriesPager();
         verify(mockGenerator).getSearchPager(any(), dateEntryMapCaptor.capture(), eq(false));

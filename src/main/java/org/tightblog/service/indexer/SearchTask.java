@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.business.search.tasks;
+package org.tightblog.service.indexer;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
@@ -33,8 +33,7 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopFieldDocs;
-import org.tightblog.business.search.FieldConstants;
-import org.tightblog.business.search.IndexManager;
+import org.tightblog.service.LuceneIndexer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +61,7 @@ public class SearchTask extends AbstractTask {
     private String weblogHandle;
     private String category;
 
-    public SearchTask(IndexManager mgr) {
+    public SearchTask(LuceneIndexer mgr) {
         super(mgr);
     }
 
@@ -99,7 +98,7 @@ public class SearchTask extends AbstractTask {
                 // Create a query object out of our term
                 Query query = multiParser.parse(term);
 
-                Term tUsername = getTerm(FieldConstants.WEBSITE_HANDLE, weblogHandle);
+                Term tUsername = getTerm(FieldConstants.WEBLOG_HANDLE, weblogHandle);
 
                 if (tUsername != null) {
                     query = new BooleanQuery.Builder()

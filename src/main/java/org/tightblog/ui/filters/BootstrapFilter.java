@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.WebloggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tightblog.config.DynamicProperties;
@@ -80,7 +79,7 @@ public class BootstrapFilter implements Filter {
             this.siteUrlInitialized = true;
         }
 
-        if (!WebloggerContext.isBootstrapped() && !isInstallUrl(request.getRequestURI())) {
+        if (!dp.isDatabaseReady() && !isInstallUrl(request.getRequestURI())) {
             log.debug("Forwarding to install page");
             // install page will check database connectivity & schema status and bootstrap if all OK.
             RequestDispatcher rd = context.getRequestDispatcher("/tb-ui/install/install");

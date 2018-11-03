@@ -27,7 +27,7 @@ import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.business.WeblogManager;
-import org.tightblog.business.search.IndexManager;
+import org.tightblog.service.LuceneIndexer;
 import org.tightblog.pojos.AtomEnclosure;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
@@ -91,7 +91,7 @@ public class WeblogEntryController {
     private UserManager userManager;
     private WeblogManager weblogManager;
     private WeblogEntryManager weblogEntryManager;
-    private IndexManager indexManager;
+    private LuceneIndexer luceneIndexer;
     private URLStrategy urlStrategy;
     private MailManager mailManager;
     private MessageSource messages;
@@ -100,7 +100,7 @@ public class WeblogEntryController {
     @Autowired
     public WeblogEntryController(WeblogRepository weblogRepository, WeblogCategoryRepository weblogCategoryRepository,
                                  UserRepository userRepository, UserManager userManager, WeblogManager weblogManager,
-                                 WeblogEntryManager weblogEntryManager, IndexManager indexManager,
+                                 WeblogEntryManager weblogEntryManager, LuceneIndexer luceneIndexer,
                                  URLStrategy urlStrategy, MailManager mailManager, MessageSource messages,
                                  WebloggerPropertiesRepository webloggerPropertiesRepository,
                                  WeblogEntryRepository weblogEntryRepository) {
@@ -112,7 +112,7 @@ public class WeblogEntryController {
         this.weblogManager = weblogManager;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.weblogEntryManager = weblogEntryManager;
-        this.indexManager = indexManager;
+        this.luceneIndexer = luceneIndexer;
         this.urlStrategy = urlStrategy;
         this.mailManager = mailManager;
         this.messages = messages;
@@ -242,7 +242,7 @@ public class WeblogEntryController {
                 if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
                     // remove from search index
                     if (itemToRemove.isPublished()) {
-                        indexManager.updateIndex(itemToRemove, true);
+                        luceneIndexer.updateIndex(itemToRemove, true);
                     }
 
                     // update last weblog change so any site weblog knows it needs to update
@@ -554,9 +554,9 @@ public class WeblogEntryController {
 
                 // notify search of the new entry
                 if (entry.isPublished()) {
-                    indexManager.updateIndex(entry, false);
+                    luceneIndexer.updateIndex(entry, false);
                 } else if (!createNew) {
-                    indexManager.updateIndex(entry, true);
+                    luceneIndexer.updateIndex(entry, true);
                 }
 
                 if (PubStatus.PENDING.equals(entry.getStatus())) {

@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.business.search;
+package org.tightblog.service;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
@@ -32,9 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.search.tasks.AbstractTask;
-import org.tightblog.business.search.tasks.IndexEntryTask;
-import org.tightblog.business.search.tasks.IndexWeblogTask;
+import org.tightblog.service.indexer.AbstractTask;
+import org.tightblog.service.indexer.IndexEntryTask;
+import org.tightblog.service.indexer.IndexWeblogTask;
 import org.tightblog.pojos.Weblog;
 import org.tightblog.pojos.WeblogEntry;
 import org.slf4j.Logger;
@@ -51,18 +51,17 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Lucene implementation of IndexManager. This is the central entry point into
- * the Lucene searching API.
+ * Lucene indexer for blog articles, to supply blog search functionality.  Can be disabled with the
+ * searchEnabled property if no search functionality desired or if blogs instead rely on 3rd party
+ * search tools for this functionality.
  */
-@Component("indexManager")
-public class IndexManagerImpl implements IndexManager {
+@Component("luceneIndexer")
+public class LuceneIndexer {
 
-    private static Logger log = LoggerFactory.getLogger(IndexManagerImpl.class);
+    private static Logger log = LoggerFactory.getLogger(LuceneIndexer.class);
 
     private DirectoryReader reader;
-
     private WeblogEntryManager weblogEntryManager;
-
     private WeblogEntryRepository weblogEntryRepository;
 
     @Value("${search.analyzer.class:org.apache.lucene.analysis.standard.StandardAnalyzer}")
@@ -72,15 +71,10 @@ public class IndexManagerImpl implements IndexManager {
     private int maxTokenCount;
 
     private ExecutorService serviceScheduler;
-
     private boolean searchEnabled;
-
     private boolean indexComments;
-
     private File indexConsistencyMarker;
-
     private String indexDir;
-
     private boolean inconsistentAtStartup;
     private ReadWriteLock rwl = new ReentrantReadWriteLock();
 
@@ -88,11 +82,11 @@ public class IndexManagerImpl implements IndexManager {
      * Creates a new Lucene index manager. Just one manager should be created per instance of Tightblog.
      */
     @Autowired
-    public IndexManagerImpl(
+    public LuceneIndexer(
             WeblogEntryManager weblogEntryManager, WeblogEntryRepository weblogEntryRepository,
             @Value("${search.include.comments:true}") boolean indexComments,
-                            @Value("${search.enabled:false}") boolean searchEnabled,
-                            @Value("${search.index.dir:#{null}}") String indexDir) {
+            @Value("${search.enabled:false}") boolean searchEnabled,
+            @Value("${search.index.dir:#{null}}") String indexDir) {
 
         this.weblogEntryManager = weblogEntryManager;
         this.weblogEntryRepository = weblogEntryRepository;
@@ -124,12 +118,16 @@ public class IndexManagerImpl implements IndexManager {
         }
     }
 
-    @Override
+    /**
+     * Are comments to be indexed and used for search results?
+     */
     public boolean isIndexComments() {
         return indexComments;
     }
 
-    @Override
+    /**
+     * Initialize the Lucene indexer.
+     */
     public void initialize() {
 
         // only initialize the index if search is enabled
@@ -162,7 +160,7 @@ public class IndexManagerImpl implements IndexManager {
                     createIndex(getFSDirectory(true));
                     rebuildWeblogIndex();
                 } else {
-                    log.info("Lucene search index already available and ready for use.");
+                    log.info("Lucene search index now available and ready for use.");
                     if (!indexConsistencyMarker.createNewFile()) {
                         throw new IOException("Could not create index consistency marker " +
                                 indexConsistencyMarker.getAbsolutePath() + " (file permission rights?)");
@@ -179,22 +177,34 @@ public class IndexManagerImpl implements IndexManager {
 
     }
 
-    @Override
+    /**
+     * Update all weblog indexes
+     */
     public void rebuildWeblogIndex() {
         scheduleIndexOperation(new IndexWeblogTask(this, weblogEntryManager, null, false));
     }
 
-    @Override
+    /**
+     * Update a single weblog index
+     * @param weblog Weblog to update.
+     * @param remove If true, remove the weblog from the index.  If false, adds/updates weblog.
+     */
     public void updateIndex(Weblog weblog, boolean remove) {
         scheduleIndexOperation(new IndexWeblogTask(this, weblogEntryManager, weblog, remove));
     }
 
-    @Override
+    /**
+     * Update a single weblog entry
+     * @param entry Weblog entry to update.
+     * @param remove If true, remove the weblog entry from the index.  If false, adds/updates weblog entry.
+     */
     public void updateIndex(WeblogEntry entry, boolean remove) {
         scheduleIndexOperation(new IndexEntryTask(weblogEntryRepository, this, entry, remove));
     }
 
-    @Override
+    /**
+     * Retrieve common ReadWriteLock for indexing and searching
+     */
     public ReadWriteLock getReadWriteLock() {
         return rwl;
     }
@@ -204,7 +214,6 @@ public class IndexManagerImpl implements IndexManager {
      *
      * @return Analyzer to be used in manipulating the database.
      */
-    @Override
     public Analyzer getAnalyzer() {
         try {
             return (Analyzer) Class.forName(luceneAnalyzerName).getDeclaredConstructor().newInstance();
@@ -214,19 +223,16 @@ public class IndexManagerImpl implements IndexManager {
         return null;
     }
 
-    @Override
+    /**
+     * Get maximum number of tokens to parse out of anything being indexed
+     */
     public int getMaxTokenCount() {
         return maxTokenCount;
     }
 
-    private void scheduleIndexOperation(final AbstractTask op) {
-        if (this.searchEnabled) {
-            log.debug("Starting scheduled index task: {}", op.getClass().getName());
-            serviceScheduler.submit(op);
-        }
-    }
-
-    @Override
+    /**
+     * Execute task immediately
+     */
     public void executeIndexOperationNow(final AbstractTask op) {
         if (this.searchEnabled) {
             log.debug("Executing index task now: {}", op.getClass().getName());
@@ -234,16 +240,9 @@ public class IndexManagerImpl implements IndexManager {
         }
     }
 
-    private synchronized void closeReader() {
-        try {
-            if (reader != null) {
-                reader.close();
-            }
-        } catch (IOException ignored) {
-        }
-    }
-
-    @Override
+    /**
+     * Retrieve Lucene Directory reader to perform searches
+     */
     public synchronized IndexReader getDirectoryReader() {
         try {
             DirectoryReader newReader = DirectoryReader.openIfChanged(reader);
@@ -262,9 +261,24 @@ public class IndexManagerImpl implements IndexManager {
      *
      * @return Directory The directory containing the index, or null if error.
      */
-    @Override
     public Directory getIndexDirectory() {
         return getFSDirectory(false);
+    }
+
+    private void scheduleIndexOperation(final AbstractTask op) {
+        if (this.searchEnabled) {
+            log.debug("Starting scheduled index task: {}", op.getClass().getName());
+            serviceScheduler.submit(op);
+        }
+    }
+
+    private synchronized void closeReader() {
+        try {
+            if (reader != null) {
+                reader.close();
+            }
+        } catch (IOException ignored) {
+        }
     }
 
     private Directory getFSDirectory(boolean delete) {

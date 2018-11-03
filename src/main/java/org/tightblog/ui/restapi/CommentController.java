@@ -9,7 +9,7 @@ import org.tightblog.business.MailManager;
 import org.tightblog.business.URLStrategy;
 import org.tightblog.business.UserManager;
 import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.search.IndexManager;
+import org.tightblog.service.LuceneIndexer;
 import org.tightblog.pojos.CommentSearchCriteria;
 import org.tightblog.pojos.User;
 import org.tightblog.pojos.Weblog;
@@ -64,7 +64,7 @@ public class CommentController {
     private UserManager userManager;
     private UserRepository userRepository;
     private WeblogEntryManager weblogEntryManager;
-    private IndexManager indexManager;
+    private LuceneIndexer luceneIndexer;
     private URLStrategy urlStrategy;
     private MailManager mailManager;
     private MessageSource messages;
@@ -72,7 +72,7 @@ public class CommentController {
     @Autowired
     public CommentController(WeblogRepository weblogRepository, UserManager userManager, UserRepository userRepository,
                              WeblogEntryManager weblogEntryManager,
-                             IndexManager indexManager, URLStrategy urlStrategy, MailManager mailManager,
+                             LuceneIndexer luceneIndexer, URLStrategy urlStrategy, MailManager mailManager,
                              MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository,
                              WeblogEntryRepository weblogEntryRepository,
                              WeblogEntryCommentRepository weblogEntryCommentRepository) {
@@ -83,7 +83,7 @@ public class CommentController {
         this.userManager = userManager;
         this.userRepository = userRepository;
         this.weblogEntryManager = weblogEntryManager;
-        this.indexManager = indexManager;
+        this.luceneIndexer = luceneIndexer;
         this.urlStrategy = urlStrategy;
         this.mailManager = mailManager;
         this.messages = messages;
@@ -191,7 +191,7 @@ public class CommentController {
                 Weblog weblog = itemToRemove.getWeblogEntry().getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
                     weblogEntryManager.removeComment(itemToRemove);
-                    indexManager.updateIndex(itemToRemove.getWeblogEntry(), false);
+                    luceneIndexer.updateIndex(itemToRemove.getWeblogEntry(), false);
 
                     // update last weblog change so any site weblog knows it needs to update
                     WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
@@ -241,7 +241,7 @@ public class CommentController {
                         mailManager.sendYourCommentWasApprovedNotifications(Collections.singletonList(comment));
                     }
                     weblogEntryManager.saveComment(comment, true);
-                    indexManager.updateIndex(comment.getWeblogEntry(), false);
+                    luceneIndexer.updateIndex(comment.getWeblogEntry(), false);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
