@@ -21,8 +21,8 @@
 package org.tightblog.rendering.requests;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tightblog.pojos.Template;
-import org.tightblog.pojos.WeblogEntry;
+import org.tightblog.domain.Template;
+import org.tightblog.domain.WeblogEntry;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -21,9 +21,9 @@
 package org.tightblog.rendering.processors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.tightblog.business.ThemeManager;
-import org.tightblog.pojos.Template;
-import org.tightblog.pojos.Weblog;
+import org.tightblog.service.ThemeManager;
+import org.tightblog.domain.Template;
+import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.rendering.cache.CachedContent;

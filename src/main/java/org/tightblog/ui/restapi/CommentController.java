@@ -5,18 +5,18 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.tightblog.business.MailManager;
-import org.tightblog.business.URLStrategy;
-import org.tightblog.business.UserManager;
-import org.tightblog.business.WeblogEntryManager;
+import org.tightblog.service.EmailService;
+import org.tightblog.service.URLService;
+import org.tightblog.service.UserManager;
+import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.LuceneIndexer;
-import org.tightblog.pojos.CommentSearchCriteria;
-import org.tightblog.pojos.User;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.pojos.WeblogEntryComment.ApprovalStatus;
-import org.tightblog.pojos.WeblogRole;
-import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.domain.CommentSearchCriteria;
+import org.tightblog.domain.User;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntryComment.ApprovalStatus;
+import org.tightblog.domain.WeblogRole;
+import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogEntryCommentRepository;
 import org.tightblog.repository.WeblogEntryRepository;
@@ -65,14 +65,14 @@ public class CommentController {
     private UserRepository userRepository;
     private WeblogEntryManager weblogEntryManager;
     private LuceneIndexer luceneIndexer;
-    private URLStrategy urlStrategy;
-    private MailManager mailManager;
+    private URLService urlService;
+    private EmailService emailService;
     private MessageSource messages;
 
     @Autowired
     public CommentController(WeblogRepository weblogRepository, UserManager userManager, UserRepository userRepository,
                              WeblogEntryManager weblogEntryManager,
-                             LuceneIndexer luceneIndexer, URLStrategy urlStrategy, MailManager mailManager,
+                             LuceneIndexer luceneIndexer, URLService urlService, EmailService emailService,
                              MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository,
                              WeblogEntryRepository weblogEntryRepository,
                              WeblogEntryCommentRepository weblogEntryCommentRepository) {
@@ -84,8 +84,8 @@ public class CommentController {
         this.userRepository = userRepository;
         this.weblogEntryManager = weblogEntryManager;
         this.luceneIndexer = luceneIndexer;
-        this.urlStrategy = urlStrategy;
-        this.mailManager = mailManager;
+        this.urlService = urlService;
+        this.emailService = emailService;
         this.messages = messages;
     }
 
@@ -112,7 +112,7 @@ public class CommentController {
             data.comments = new ArrayList<>();
             data.comments.addAll(rawComments.stream()
                     .peek(c -> c.getWeblogEntry().setPermalink(
-                            urlStrategy.getWeblogEntryURL(c.getWeblogEntry())))
+                            urlService.getWeblogEntryURL(c.getWeblogEntry())))
                     .collect(Collectors.toList()));
 
             if (rawComments.size() > ITEMS_PER_PAGE) {
@@ -238,7 +238,7 @@ public class CommentController {
                     // send approval notification only first time, not after any subsequent hide and approves.
                     if ((oldStatus == ApprovalStatus.PENDING || oldStatus == ApprovalStatus.SPAM) &&
                             status == ApprovalStatus.APPROVED) {
-                        mailManager.sendYourCommentWasApprovedNotifications(Collections.singletonList(comment));
+                        emailService.sendYourCommentWasApprovedNotifications(Collections.singletonList(comment));
                     }
                     weblogEntryManager.saveComment(comment, true);
                     luceneIndexer.updateIndex(comment.getWeblogEntry(), false);

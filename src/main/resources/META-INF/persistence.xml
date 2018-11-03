@@ -5,19 +5,19 @@
          Avoiding DB configuration here to allow the same persistence.xml to be used between
          testing and prod (which have different DB configuration)
     -->
-    <class>org.tightblog.pojos.MediaFile</class>
-    <class>org.tightblog.pojos.MediaDirectory</class>
-    <class>org.tightblog.pojos.User</class>
-    <class>org.tightblog.pojos.UserCredentials</class>
-    <class>org.tightblog.pojos.Weblog</class>
-    <class>org.tightblog.pojos.WeblogBookmark</class>
-    <class>org.tightblog.pojos.WeblogCategory</class>
-    <class>org.tightblog.pojos.WeblogEntry</class>
-    <class>org.tightblog.pojos.WeblogEntryComment</class>
-    <class>org.tightblog.pojos.WeblogEntryTag</class>
-    <class>org.tightblog.pojos.UserWeblogRole</class>
-    <class>org.tightblog.pojos.WeblogTemplate</class>
-    <class>org.tightblog.pojos.WebloggerProperties</class>
+    <class>org.tightblog.domain.MediaFile</class>
+    <class>org.tightblog.domain.MediaDirectory</class>
+    <class>org.tightblog.domain.User</class>
+    <class>org.tightblog.domain.UserCredentials</class>
+    <class>org.tightblog.domain.Weblog</class>
+    <class>org.tightblog.domain.WeblogBookmark</class>
+    <class>org.tightblog.domain.WeblogCategory</class>
+    <class>org.tightblog.domain.WeblogEntry</class>
+    <class>org.tightblog.domain.WeblogEntryComment</class>
+    <class>org.tightblog.domain.WeblogEntryTag</class>
+    <class>org.tightblog.domain.UserWeblogRole</class>
+    <class>org.tightblog.domain.WeblogTemplate</class>
+    <class>org.tightblog.domain.WebloggerProperties</class>
     <class>org.tightblog.util.InstantConverter</class>
   </persistence-unit>
 </persistence>

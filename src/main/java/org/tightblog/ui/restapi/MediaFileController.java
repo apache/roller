@@ -6,15 +6,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.tightblog.business.MediaFileManager;
-import org.tightblog.business.URLStrategy;
-import org.tightblog.business.UserManager;
-import org.tightblog.business.WeblogManager;
-import org.tightblog.pojos.MediaDirectory;
-import org.tightblog.pojos.MediaFile;
-import org.tightblog.pojos.User;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogRole;
+import org.tightblog.service.MediaManager;
+import org.tightblog.service.URLService;
+import org.tightblog.service.UserManager;
+import org.tightblog.service.WeblogManager;
+import org.tightblog.domain.MediaDirectory;
+import org.tightblog.domain.MediaFile;
+import org.tightblog.domain.User;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,23 +54,23 @@ public class MediaFileController {
     private WeblogManager weblogManager;
     private UserManager userManager;
     private UserRepository userRepository;
-    private MediaFileManager mediaFileManager;
+    private MediaManager mediaManager;
     private MessageSource messages;
-    private URLStrategy urlStrategy;
+    private URLService urlService;
 
     @Autowired
     public MediaFileController(WeblogRepository weblogRepository, MediaDirectoryRepository mediaDirectoryRepository,
                                MediaFileRepository mediaFileRepository, WeblogManager weblogManager,
-                               UserManager userManager, UserRepository userRepository, MediaFileManager mediaFileManager,
-                               URLStrategy urlStrategy, MessageSource messages) {
+                               UserManager userManager, UserRepository userRepository, MediaManager mediaManager,
+                               URLService urlService, MessageSource messages) {
         this.weblogRepository = weblogRepository;
         this.mediaDirectoryRepository = mediaDirectoryRepository;
         this.mediaFileRepository = mediaFileRepository;
         this.weblogManager = weblogManager;
         this.userManager = userManager;
         this.userRepository = userRepository;
-        this.mediaFileManager = mediaFileManager;
-        this.urlStrategy = urlStrategy;
+        this.mediaManager = mediaManager;
+        this.urlService = urlService;
         this.messages = messages;
     }
 
@@ -104,8 +104,8 @@ public class MediaFileController {
                     .stream()
                     .peek(mf -> {
                         mf.setCreator(null);
-                        mf.setPermalink(urlStrategy.getMediaFileURL(mf.getDirectory().getWeblog(), mf.getId()));
-                        mf.setThumbnailURL(urlStrategy.getMediaFileThumbnailURL(mf.getDirectory().getWeblog(),
+                        mf.setPermalink(urlService.getMediaFileURL(mf.getDirectory().getWeblog(), mf.getId()));
+                        mf.setThumbnailURL(urlService.getMediaFileThumbnailURL(mf.getDirectory().getWeblog(),
                                 mf.getId()));
                     })
                     .sorted(Comparator.comparing(MediaFile::getName))
@@ -123,8 +123,8 @@ public class MediaFileController {
                 && userManager.checkWeblogRole(p.getName(), mf.getDirectory().getWeblog(), WeblogRole.POST);
         if (permitted) {
             mf.setCreator(null);
-            mf.setPermalink(urlStrategy.getMediaFileURL(mf.getDirectory().getWeblog(), mf.getId()));
-            mf.setThumbnailURL(urlStrategy.getMediaFileThumbnailURL(mf.getDirectory().getWeblog(),
+            mf.setPermalink(urlService.getMediaFileURL(mf.getDirectory().getWeblog(), mf.getId()));
+            mf.setThumbnailURL(urlService.getMediaFileThumbnailURL(mf.getDirectory().getWeblog(),
                     mf.getId()));
             return mf;
         } else {
@@ -192,7 +192,7 @@ public class MediaFileController {
                 mf.setCreator(user);
             }
 
-            mediaFileManager.saveMediaFile(mf, uploadedFile == null ? null : uploadedFile.getInputStream(), errors);
+            mediaManager.saveMediaFile(mf, uploadedFile == null ? null : uploadedFile.getInputStream(), errors);
 
             if (errors.size() > 0) {
                 Map.Entry<String, List<String>> msg = errors.entrySet().iterator().next();
@@ -215,7 +215,7 @@ public class MediaFileController {
             Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
             if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                 try {
-                    MediaDirectory newDir = mediaFileManager.createMediaDirectory(weblog, directoryName.asText().trim());
+                    MediaDirectory newDir = mediaManager.createMediaDirectory(weblog, directoryName.asText().trim());
                     response.setStatus(HttpServletResponse.SC_OK);
                     return ResponseEntity.ok(newDir.getId());
                 } catch (IllegalArgumentException e) {
@@ -239,7 +239,7 @@ public class MediaFileController {
                 Weblog weblog = itemToRemove.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                     weblog.getMediaDirectories().remove(itemToRemove);
-                    mediaFileManager.removeAllFiles(itemToRemove);
+                    mediaManager.removeAllFiles(itemToRemove);
                     weblogManager.saveWeblog(weblog);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
@@ -265,7 +265,7 @@ public class MediaFileController {
                     for (String fileId : fileIdsToDelete) {
                         MediaFile mediaFile = mediaFileRepository.findByIdOrNull(fileId);
                         if (mediaFile != null && weblog.equals(mediaFile.getDirectory().getWeblog())) {
-                            mediaFileManager.removeMediaFile(weblog, mediaFile);
+                            mediaManager.removeMediaFile(weblog, mediaFile);
                         }
                     }
                     weblogManager.saveWeblog(weblog);
@@ -297,7 +297,7 @@ public class MediaFileController {
                     for (String fileId : fileIdsToMove) {
                         MediaFile mediaFile = mediaFileRepository.findByIdOrNull(fileId);
                         if (mediaFile != null && weblog.equals(mediaFile.getDirectory().getWeblog())) {
-                            mediaFileManager.moveMediaFiles(Collections.singletonList(mediaFile), targetDirectory);
+                            mediaManager.moveMediaFiles(Collections.singletonList(mediaFile), targetDirectory);
                         }
                     }
                     response.setStatus(HttpServletResponse.SC_OK);

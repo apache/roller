@@ -22,7 +22,7 @@ import org.thymeleaf.context.IContext;
 import org.thymeleaf.exceptions.TemplateInputException;
 import org.thymeleaf.exceptions.TemplateProcessingException;
 import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.tightblog.pojos.Template;
+import org.tightblog.domain.Template;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.util.Utilities;
 

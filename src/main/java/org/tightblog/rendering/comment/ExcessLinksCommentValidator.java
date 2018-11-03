@@ -20,7 +20,7 @@ package org.tightblog.rendering.comment;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.tightblog.pojos.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntryComment;
 
 import java.util.Collections;
 import java.util.List;

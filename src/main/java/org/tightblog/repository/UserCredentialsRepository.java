@@ -20,14 +20,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.tightblog.pojos.UserCredentials;
+import org.tightblog.domain.UserCredentials;
 
 @Repository
 @Transactional("transactionManager")
 public interface UserCredentialsRepository extends JpaRepository<UserCredentials, String> {
 
     @Query("SELECT uc FROM UserCredentials uc, User u WHERE uc.userName= ?1 " +
-            "AND u.id = uc.id AND u.status = org.tightblog.pojos.UserStatus.ENABLED")
+            "AND u.id = uc.id AND u.status = org.tightblog.domain.UserStatus.ENABLED")
     UserCredentials findByUserName(String userName);
 
     @Modifying

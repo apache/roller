@@ -21,9 +21,9 @@ import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;
 import org.thymeleaf.templateresource.StringTemplateResource;
-import org.tightblog.pojos.SharedTheme;
-import org.tightblog.business.ThemeManager;
-import org.tightblog.pojos.Template;
+import org.tightblog.domain.SharedTheme;
+import org.tightblog.service.ThemeManager;
+import org.tightblog.domain.Template;
 import org.tightblog.repository.WeblogTemplateRepository;
 
 import java.util.Map;

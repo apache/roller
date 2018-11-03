@@ -20,18 +20,18 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
-import org.tightblog.business.MailManager;
-import org.tightblog.business.UserManager;
-import org.tightblog.business.WeblogEntryManager;
+import org.tightblog.service.EmailService;
+import org.tightblog.service.UserManager;
+import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.LuceneIndexer;
-import org.tightblog.pojos.User;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.pojos.WeblogEntryComment.ApprovalStatus;
-import org.tightblog.pojos.WeblogRole;
-import org.tightblog.pojos.WebloggerProperties;
-import org.tightblog.pojos.WebloggerProperties.CommentPolicy;
+import org.tightblog.domain.User;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntryComment.ApprovalStatus;
+import org.tightblog.domain.WeblogRole;
+import org.tightblog.domain.WebloggerProperties;
+import org.tightblog.domain.WebloggerProperties.CommentPolicy;
 import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
@@ -73,7 +73,7 @@ public class CommentProcessorTest {
     private UserManager mockUM;
     private UserRepository mockUR;
     private LuceneIndexer mockIM;
-    private MailManager mockMM = mock(MailManager.class);
+    private EmailService mockMM = mock(EmailService.class);
 
     @Before
     public void initialize() {
@@ -90,7 +90,7 @@ public class CommentProcessorTest {
         WeblogPageRequest.Creator wprCreator = mock(WeblogPageRequest.Creator.class);
         commentRequest = new WeblogPageRequest();
         when(wprCreator.create(any())).thenReturn(commentRequest);
-        mockMM = mock(MailManager.class);
+        mockMM = mock(EmailService.class);
         mockWR = mock(WeblogRepository.class);
         mockWEM = mock(WeblogEntryManager.class);
         mockUM = mock(UserManager.class);

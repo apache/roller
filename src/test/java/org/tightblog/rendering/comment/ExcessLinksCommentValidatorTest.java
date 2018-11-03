@@ -16,7 +16,7 @@
 package org.tightblog.rendering.comment;
 
 import org.junit.Test;
-import org.tightblog.pojos.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntryComment;
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 
 import java.util.HashMap;

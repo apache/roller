@@ -17,7 +17,7 @@ package org.tightblog.rendering.cache;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.tightblog.pojos.Template;
+import org.tightblog.domain.Template;
 
 import java.time.Instant;
 

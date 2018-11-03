@@ -25,8 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import java.util.ArrayList;

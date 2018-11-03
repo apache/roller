@@ -22,12 +22,12 @@ package org.tightblog.rendering.generators;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.URLStrategy;
-import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.pojos.CalendarData;
-import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.pojos.WeblogEntry.PubStatus;
-import org.tightblog.pojos.WeblogEntrySearchCriteria;
+import org.tightblog.service.URLService;
+import org.tightblog.service.WeblogEntryManager;
+import org.tightblog.domain.CalendarData;
+import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogEntry.PubStatus;
+import org.tightblog.domain.WeblogEntrySearchCriteria;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.util.Utilities;
 
@@ -53,12 +53,12 @@ import java.util.ResourceBundle;
 public class CalendarGenerator {
 
     protected WeblogEntryManager weblogEntryManager;
-    protected URLStrategy urlStrategy;
+    protected URLService urlService;
 
     @Autowired
-    public CalendarGenerator(WeblogEntryManager weblogEntryManager, URLStrategy urlStrategy) {
+    public CalendarGenerator(WeblogEntryManager weblogEntryManager, URLService urlService) {
         this.weblogEntryManager = weblogEntryManager;
-        this.urlStrategy = urlStrategy;
+        this.urlService = urlService;
     }
 
     public CalendarData getCalendarData(WeblogPageRequest pageRequest, boolean includeBlogEntryData) {
@@ -98,7 +98,7 @@ public class CalendarGenerator {
                 endTime.plusNanos(1), true);
         data.setNextMonthLink(computeMonthUrl(pageRequest, firstDayOfMonthOfWeblogEntry(temp)));
 
-        data.setHomeLink(urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(), pageRequest.getCategory(),
+        data.setHomeLink(urlService.getWeblogCollectionURL(pageRequest.getWeblog(), pageRequest.getCategory(),
                 null, null, -1));
 
         // Weeks start on different days depending on locale (Sat, Sun, Mon)
@@ -128,7 +128,7 @@ public class CalendarGenerator {
 
                     if (dateToEntryMap.containsKey(dayPointer)) {
                         String dateString = Utilities.YMD_FORMATTER.format(dayPointer);
-                        String link = urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(),
+                        String link = urlService.getWeblogCollectionURL(pageRequest.getWeblog(),
                                 pageRequest.getCategory(), dateString, null, -1);
                         dayIter.setLink(link);
                         if (includeBlogEntryData) {
@@ -166,10 +166,10 @@ public class CalendarGenerator {
             String dateString = Utilities.YM_FORMATTER.format(day);
 
             if (pageRequest.getCustomPageName() == null) {
-                result = urlStrategy.getWeblogCollectionURL(pageRequest.getWeblog(), pageRequest.getCategory(),
+                result = urlService.getWeblogCollectionURL(pageRequest.getWeblog(), pageRequest.getCategory(),
                         dateString, null, -1);
             } else {
-                result = urlStrategy.getCustomPageURL(pageRequest.getWeblog(), pageRequest.getCustomPageName(), dateString);
+                result = urlService.getCustomPageURL(pageRequest.getWeblog(), pageRequest.getCustomPageName(), dateString);
             }
         }
 
@@ -183,7 +183,7 @@ public class CalendarGenerator {
         if (entries != null) {
             for (WeblogEntry entry : entries) {
                 CalendarData.BlogEntry newEntry = new CalendarData.BlogEntry();
-                newEntry.setLink(urlStrategy.getWeblogEntryURL(entry));
+                newEntry.setLink(urlService.getWeblogEntryURL(entry));
 
                 String title = entry.getTitle().trim();
                 if (title.length() > 43) {

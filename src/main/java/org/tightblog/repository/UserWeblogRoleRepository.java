@@ -18,9 +18,9 @@ package org.tightblog.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.tightblog.pojos.User;
-import org.tightblog.pojos.UserWeblogRole;
-import org.tightblog.pojos.Weblog;
+import org.tightblog.domain.User;
+import org.tightblog.domain.UserWeblogRole;
+import org.tightblog.domain.Weblog;
 
 import java.util.List;
 

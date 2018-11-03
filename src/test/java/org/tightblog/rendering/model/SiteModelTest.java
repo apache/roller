@@ -16,9 +16,9 @@
 package org.tightblog.rendering.model;
 
 import org.junit.Test;
-import org.tightblog.business.URLStrategy;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogTemplate;
+import org.tightblog.service.URLService;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogTemplate;
 import org.tightblog.rendering.generators.WeblogListGenerator;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 
@@ -38,13 +38,13 @@ public class SiteModelTest {
         wpr.setPageNum(5);
         Weblog weblog = new Weblog();
         wpr.setWeblog(weblog);
-        URLStrategy mockUrlStrategy = mock(URLStrategy.class);
-        when(mockUrlStrategy.getCustomPageURL(weblog, "bar/bar2", null))
+        URLService mockUrlService = mock(URLService.class);
+        when(mockUrlService.getCustomPageURL(weblog, "bar/bar2", null))
                 .thenReturn("https://foo.com");
 
         SiteModel siteModel = new SiteModel();
         siteModel.setWeblogListGenerator(mockWeblogListGenerator);
-        siteModel.setUrlStrategy(mockUrlStrategy);
+        siteModel.setUrlService(mockUrlService);
         siteModel.setPageRequest(wpr);
 
         siteModel.getWeblogListData('R', 24);

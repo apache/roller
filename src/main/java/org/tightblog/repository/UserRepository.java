@@ -19,8 +19,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.tightblog.pojos.User;
-import org.tightblog.pojos.UserStatus;
+import org.tightblog.domain.User;
+import org.tightblog.domain.UserStatus;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
 @Transactional("transactionManager")
 public interface UserRepository extends JpaRepository<User, String> {
 
-    @Query("SELECT u FROM User u WHERE u.userName= ?1 AND u.status = org.tightblog.pojos.UserStatus.ENABLED")
+    @Query("SELECT u FROM User u WHERE u.userName= ?1 AND u.status = org.tightblog.domain.UserStatus.ENABLED")
     User findEnabledByUserName(String userName);
 
     default List<User> findByStatusEnabled() {
@@ -38,13 +38,13 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     List<User> findByStatusIn(List<UserStatus> statuses);
 
-    @Query("SELECT u FROM User u WHERE u.globalRole=org.tightblog.pojos.GlobalRole.ADMIN " +
-            "AND u.status = org.tightblog.pojos.UserStatus.ENABLED")
+    @Query("SELECT u FROM User u WHERE u.globalRole=org.tightblog.domain.GlobalRole.ADMIN " +
+            "AND u.status = org.tightblog.domain.UserStatus.ENABLED")
     List<User> findAdmins();
 
     User findByActivationCode(String activationCode);
 
-    @Query("SELECT u FROM User u WHERE u.userName= ?1 AND u.status = org.tightblog.pojos.UserStatus.EMAILVERIFIED " +
+    @Query("SELECT u FROM User u WHERE u.userName= ?1 AND u.status = org.tightblog.domain.UserStatus.EMAILVERIFIED " +
             "order by u.userName")
     List<User> findUsersToApprove();
 

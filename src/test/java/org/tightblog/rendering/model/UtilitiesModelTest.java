@@ -16,7 +16,7 @@
 package org.tightblog.rendering.model;
 
 import org.junit.Test;
-import org.tightblog.pojos.Weblog;
+import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.requests.WeblogRequest;
 
 import java.time.ZoneId;

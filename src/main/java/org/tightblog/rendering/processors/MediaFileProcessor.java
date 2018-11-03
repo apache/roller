@@ -20,9 +20,9 @@
  */
 package org.tightblog.rendering.processors;
 
-import org.tightblog.business.MediaFileManager;
-import org.tightblog.pojos.MediaFile;
-import org.tightblog.pojos.Weblog;
+import org.tightblog.service.MediaManager;
+import org.tightblog.domain.MediaFile;
+import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.requests.WeblogRequest;
 import org.tightblog.repository.WeblogRepository;
@@ -58,16 +58,16 @@ public class MediaFileProcessor extends AbstractProcessor {
 
     private WeblogRepository weblogRepository;
     private LazyExpiringCache weblogMediaCache;
-    private MediaFileManager mediaFileManager;
+    private MediaManager mediaManager;
     private WeblogRequest.Creator weblogRequestCreator;
 
     @Autowired
     public MediaFileProcessor(WeblogRepository weblogRepository, LazyExpiringCache weblogMediaCache,
-                              MediaFileManager mediaFileManager) {
+                              MediaManager mediaManager) {
         this.weblogRequestCreator = new WeblogRequest.Creator();
         this.weblogRepository = weblogRepository;
         this.weblogMediaCache = weblogMediaCache;
-        this.mediaFileManager = mediaFileManager;
+        this.mediaManager = mediaManager;
     }
 
     void setWeblogRequestCreator(WeblogRequest.Creator creator) {
@@ -95,7 +95,7 @@ public class MediaFileProcessor extends AbstractProcessor {
             }
             if (pathInfo.length() > 0) {
                 // at this stage, pathInfo is the resourceId
-                mediaFile = mediaFileManager.getMediaFileWithContent(pathInfo);
+                mediaFile = mediaManager.getMediaFileWithContent(pathInfo);
             }
         }
 

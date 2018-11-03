@@ -27,7 +27,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.tightblog.pojos.UserCredentials;
+import org.tightblog.domain.UserCredentials;
 import org.tightblog.repository.UserCredentialsRepository;
 
 @Component

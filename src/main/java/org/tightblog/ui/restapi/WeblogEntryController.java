@@ -22,22 +22,22 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.tightblog.business.MailManager;
-import org.tightblog.business.URLStrategy;
-import org.tightblog.business.UserManager;
-import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.business.WeblogManager;
+import org.tightblog.service.EmailService;
+import org.tightblog.service.URLService;
+import org.tightblog.service.UserManager;
+import org.tightblog.service.WeblogEntryManager;
+import org.tightblog.service.WeblogManager;
 import org.tightblog.service.LuceneIndexer;
-import org.tightblog.pojos.AtomEnclosure;
-import org.tightblog.pojos.User;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogCategory;
-import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.pojos.WeblogEntry.PubStatus;
-import org.tightblog.pojos.WeblogEntrySearchCriteria;
-import org.tightblog.pojos.WeblogEntryTagAggregate;
-import org.tightblog.pojos.WeblogRole;
-import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.domain.AtomEnclosure;
+import org.tightblog.domain.User;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogCategory;
+import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogEntry.PubStatus;
+import org.tightblog.domain.WeblogEntrySearchCriteria;
+import org.tightblog.domain.WeblogEntryTagAggregate;
+import org.tightblog.domain.WeblogRole;
+import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogCategoryRepository;
 import org.tightblog.repository.WeblogEntryRepository;
@@ -92,8 +92,8 @@ public class WeblogEntryController {
     private WeblogManager weblogManager;
     private WeblogEntryManager weblogEntryManager;
     private LuceneIndexer luceneIndexer;
-    private URLStrategy urlStrategy;
-    private MailManager mailManager;
+    private URLService urlService;
+    private EmailService emailService;
     private MessageSource messages;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
 
@@ -101,7 +101,7 @@ public class WeblogEntryController {
     public WeblogEntryController(WeblogRepository weblogRepository, WeblogCategoryRepository weblogCategoryRepository,
                                  UserRepository userRepository, UserManager userManager, WeblogManager weblogManager,
                                  WeblogEntryManager weblogEntryManager, LuceneIndexer luceneIndexer,
-                                 URLStrategy urlStrategy, MailManager mailManager, MessageSource messages,
+                                 URLService urlService, EmailService emailService, MessageSource messages,
                                  WebloggerPropertiesRepository webloggerPropertiesRepository,
                                  WeblogEntryRepository weblogEntryRepository) {
         this.weblogRepository = weblogRepository;
@@ -113,8 +113,8 @@ public class WeblogEntryController {
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.weblogEntryManager = weblogEntryManager;
         this.luceneIndexer = luceneIndexer;
-        this.urlStrategy = urlStrategy;
-        this.mailManager = mailManager;
+        this.urlService = urlService;
+        this.emailService = emailService;
         this.messages = messages;
     }
 
@@ -324,7 +324,7 @@ public class WeblogEntryController {
             wesc.setStatus(pubStatus);
             List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
             List<WeblogEntry> recentEntries = entries.stream().map(e -> new WeblogEntry(e.getTitle(),
-                    urlStrategy.getEntryEditURL(e))).collect(Collectors.toList());
+                    urlService.getEntryEditURL(e))).collect(Collectors.toList());
             response.setStatus(HttpServletResponse.SC_OK);
             return recentEntries;
         } else if (WeblogRole.POST.equals(minimumRole) &&
@@ -346,9 +346,9 @@ public class WeblogEntryController {
             if (entry != null) {
                 Weblog weblog = entry.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.EDIT_DRAFT)) {
-                    entry.setCommentsUrl(urlStrategy.getCommentManagementURL(weblog.getId(), entry.getId()));
-                    entry.setPermalink(urlStrategy.getWeblogEntryURL(entry));
-                    entry.setPreviewUrl(urlStrategy.getWeblogEntryDraftPreviewURL(entry));
+                    entry.setCommentsUrl(urlService.getCommentManagementURL(weblog.getId(), entry.getId()));
+                    entry.setPermalink(urlService.getWeblogEntryURL(entry));
+                    entry.setPreviewUrl(urlService.getWeblogEntryDraftPreviewURL(entry));
 
                     if (entry.getPubTime() != null) {
                         log.debug("entry pubtime is {}", entry.getPubTime());
@@ -560,7 +560,7 @@ public class WeblogEntryController {
                 }
 
                 if (PubStatus.PENDING.equals(entry.getStatus())) {
-                    mailManager.sendPendingEntryNotice(entry);
+                    emailService.sendPendingEntryNotice(entry);
                 }
 
                 SuccessfulSaveResponse ssr = new SuccessfulSaveResponse();

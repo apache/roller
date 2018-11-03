@@ -24,10 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.URLStrategy;
-import org.tightblog.business.WeblogManager;
-import org.tightblog.pojos.Template;
-import org.tightblog.pojos.Weblog;
+import org.tightblog.service.URLService;
+import org.tightblog.service.WeblogManager;
+import org.tightblog.domain.Template;
+import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.generators.WeblogListGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
@@ -57,10 +57,10 @@ public class SiteModel implements Model {
     }
 
     @Autowired
-    private URLStrategy urlStrategy;
+    private URLService urlService;
 
-    public void setUrlStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
+    public void setUrlService(URLService urlService) {
+        this.urlService = urlService;
     }
 
     @Autowired
@@ -126,7 +126,7 @@ public class SiteModel implements Model {
     public WeblogListGenerator.WeblogListData getWeblogListData(Character letter, int length) {
         Template weblogPage = pageRequest.getTemplate();
         String pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
-        String baseUrl = urlStrategy.getCustomPageURL(pageRequest.getWeblog(), pageLink, null);
+        String baseUrl = urlService.getCustomPageURL(pageRequest.getWeblog(), pageLink, null);
 
         return weblogListGenerator.getWeblogsByLetter(baseUrl, letter, pageRequest.getPageNum(), length);
     }
@@ -142,7 +142,7 @@ public class SiteModel implements Model {
     }
 
     public String getWeblogHome(Weblog blog) {
-        return urlStrategy.getWeblogURL(blog);
+        return urlService.getWeblogURL(blog);
     }
 
 }

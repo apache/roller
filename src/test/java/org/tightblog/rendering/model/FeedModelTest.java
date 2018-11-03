@@ -17,9 +17,9 @@ package org.tightblog.rendering.model;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.service.WeblogEntryManager;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
 import org.tightblog.repository.WebloggerPropertiesRepository;

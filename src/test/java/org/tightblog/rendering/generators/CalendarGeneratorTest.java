@@ -17,11 +17,11 @@ package org.tightblog.rendering.generators;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.tightblog.business.URLStrategy;
-import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.pojos.CalendarData;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntry;
+import org.tightblog.service.URLService;
+import org.tightblog.service.WeblogEntryManager;
+import org.tightblog.domain.CalendarData;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntry;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.util.Utilities;
 
@@ -43,15 +43,15 @@ import static org.mockito.Mockito.when;
 public class CalendarGeneratorTest {
 
     private CalendarGenerator calendarGenerator;
-    private URLStrategy mockUrlStrategy;
+    private URLService mockUrlService;
     private Map<LocalDate, List<WeblogEntry>> dateToWeblogEntryMap;
 
     @Before
     public void initialize() {
         Locale.setDefault(Locale.US);
-        mockUrlStrategy = mock(URLStrategy.class);
+        mockUrlService = mock(URLService.class);
         WeblogEntryManager mockWeblogEntryManager = mock(WeblogEntryManager.class);
-        calendarGenerator = new CalendarGenerator(mockWeblogEntryManager, mockUrlStrategy);
+        calendarGenerator = new CalendarGenerator(mockWeblogEntryManager, mockUrlService);
         dateToWeblogEntryMap = new HashMap<>();
         when(mockWeblogEntryManager.getDateToWeblogEntryMap(any())).thenReturn(dateToWeblogEntryMap);
     }
@@ -59,13 +59,13 @@ public class CalendarGeneratorTest {
     private void initializeDateToWeblogEntryMap() {
         WeblogEntry weblogEntry1a = new WeblogEntry();
         weblogEntry1a.setTitle("A short title");
-        when(mockUrlStrategy.getWeblogEntryURL(weblogEntry1a)).thenReturn("my url 1a");
+        when(mockUrlService.getWeblogEntryURL(weblogEntry1a)).thenReturn("my url 1a");
         WeblogEntry weblogEntry1b = new WeblogEntry();
         weblogEntry1b.setTitle("A very long title to ensure it is longer than 43 characters");
-        when(mockUrlStrategy.getWeblogEntryURL(weblogEntry1b)).thenReturn("my url 1b");
+        when(mockUrlService.getWeblogEntryURL(weblogEntry1b)).thenReturn("my url 1b");
         WeblogEntry weblogEntry2 = new WeblogEntry();
         weblogEntry2.setTitle("Blog entry on different day");
-        when(mockUrlStrategy.getWeblogEntryURL(weblogEntry2)).thenReturn("my url 2");
+        when(mockUrlService.getWeblogEntryURL(weblogEntry2)).thenReturn("my url 2");
 
         LocalDate localDate1 = LocalDate.of(1858, 10, 14);
         LocalDate localDate2 = LocalDate.of(1858, 11, 21);
@@ -84,7 +84,7 @@ public class CalendarGeneratorTest {
         wpr.setWeblog(weblog);
         wpr.setCategory("stamps");
 
-        when(mockUrlStrategy.getWeblogCollectionURL(weblog, "stamps", "18581014",
+        when(mockUrlService.getWeblogCollectionURL(weblog, "stamps", "18581014",
                 null, -1)).thenReturn("WeblogCollectionURL");
 
         CalendarData data = calendarGenerator.getCalendarData(wpr, false);
@@ -156,13 +156,13 @@ public class CalendarGeneratorTest {
         assertNull(test1);
 
         LocalDate localDate = LocalDate.of(1858, 10, 14);
-        when(mockUrlStrategy.getWeblogCollectionURL(weblog, "stamps", "185810",
+        when(mockUrlService.getWeblogCollectionURL(weblog, "stamps", "185810",
                 null, -1)).thenReturn("getWeblogCollectionURL");
         test1 = calendarGenerator.computeMonthUrl(wpr, localDate);
         assertEquals("getWeblogCollectionURL", test1);
 
         wpr.setCustomPageName("my custom page");
-        when(mockUrlStrategy.getCustomPageURL(weblog, "my custom page", "185810"))
+        when(mockUrlService.getCustomPageURL(weblog, "my custom page", "185810"))
                 .thenReturn("getCustomPageURL");
         test1 = calendarGenerator.computeMonthUrl(wpr, localDate);
         assertEquals("getCustomPageURL", test1);

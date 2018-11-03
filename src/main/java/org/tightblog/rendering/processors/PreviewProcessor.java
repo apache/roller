@@ -21,15 +21,15 @@
 package org.tightblog.rendering.processors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.tightblog.business.UserManager;
-import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.pojos.SharedTheme;
-import org.tightblog.business.ThemeManager;
-import org.tightblog.pojos.Template;
-import org.tightblog.pojos.Template.ComponentType;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.pojos.WeblogRole;
+import org.tightblog.service.UserManager;
+import org.tightblog.service.WeblogEntryManager;
+import org.tightblog.domain.SharedTheme;
+import org.tightblog.service.ThemeManager;
+import org.tightblog.domain.Template;
+import org.tightblog.domain.Template.ComponentType;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogRole;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.rendering.cache.CachedContent;

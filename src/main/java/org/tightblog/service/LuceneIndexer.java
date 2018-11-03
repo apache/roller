@@ -31,12 +31,11 @@ import org.apache.lucene.store.FSDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.WeblogEntryManager;
 import org.tightblog.service.indexer.AbstractTask;
 import org.tightblog.service.indexer.IndexEntryTask;
 import org.tightblog.service.indexer.IndexWeblogTask;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntry;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tightblog.repository.WeblogEntryRepository;
@@ -55,7 +54,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * searchEnabled property if no search functionality desired or if blogs instead rely on 3rd party
  * search tools for this functionality.
  */
-@Component("luceneIndexer")
+@Component
 public class LuceneIndexer {
 
     private static Logger log = LoggerFactory.getLogger(LuceneIndexer.class);

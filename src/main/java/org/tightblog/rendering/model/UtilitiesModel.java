@@ -26,7 +26,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.rendering.requests.WeblogRequest;
 import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;

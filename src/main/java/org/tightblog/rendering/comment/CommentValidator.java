@@ -18,7 +18,7 @@
 
 package org.tightblog.rendering.comment;
 
-import org.tightblog.pojos.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntryComment;
 
 import java.util.List;
 import java.util.Map;

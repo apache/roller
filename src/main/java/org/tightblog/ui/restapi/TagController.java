@@ -18,12 +18,12 @@ package org.tightblog.ui.restapi;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.tightblog.business.URLStrategy;
-import org.tightblog.business.UserManager;
-import org.tightblog.business.WeblogManager;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntryTagAggregate;
-import org.tightblog.pojos.WeblogRole;
+import org.tightblog.service.URLService;
+import org.tightblog.service.UserManager;
+import org.tightblog.service.WeblogManager;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntryTagAggregate;
+import org.tightblog.domain.WeblogRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,15 +47,15 @@ public class TagController {
     private WeblogRepository weblogRepository;
     private UserManager userManager;
     private WeblogManager weblogManager;
-    private URLStrategy urlStrategy;
+    private URLService urlService;
 
     @Autowired
     public TagController(WeblogRepository weblogRepository, UserManager userManager, WeblogManager weblogManager,
-                         URLStrategy urlStrategy) {
+                         URLService urlService) {
         this.weblogRepository = weblogRepository;
         this.userManager = userManager;
         this.weblogManager = weblogManager;
-        this.urlStrategy = urlStrategy;
+        this.urlService = urlService;
     }
 
     private static Logger log = LoggerFactory.getLogger(TagController.class);
@@ -78,7 +78,7 @@ public class TagController {
             data.tags = new ArrayList<>();
             data.tags.addAll(rawEntries.stream().peek(re -> re.setWeblog(null))
                     .peek(re -> re.setViewUrl(
-                            urlStrategy.getWeblogCollectionURL(weblog, null, null, re.getName(), 0)))
+                            urlService.getWeblogCollectionURL(weblog, null, null, re.getName(), 0)))
                     .collect(Collectors.toList()));
 
             if (rawEntries.size() > ITEMS_PER_PAGE) {

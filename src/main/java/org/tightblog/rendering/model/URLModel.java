@@ -25,11 +25,10 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.URLStrategyImpl;
-import org.tightblog.business.URLStrategy;
+import org.tightblog.service.URLService;
 import org.tightblog.config.DynamicProperties;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntry;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntry;
 import org.tightblog.rendering.requests.WeblogRequest;
 
 import java.util.Map;
@@ -46,13 +45,13 @@ public class URLModel implements Model {
     private boolean preview;
 
     @Autowired
-    protected URLStrategy urlStrategy;
+    protected URLService urlService;
 
     @Autowired
     private DynamicProperties dp;
 
-    public void setUrlStrategy(URLStrategy urlStrategy) {
-        this.urlStrategy = urlStrategy;
+    public void setUrlService(URLService urlService) {
+        this.urlService = urlService;
     }
 
     public URLModel() {
@@ -80,102 +79,102 @@ public class URLModel implements Model {
         this.weblog = weblogRequest.getWeblog();
 
         if (preview) {
-            this.urlStrategy = new URLStrategyImpl(weblog.getTheme(), weblog.isUsedForThemePreview(), dp);
+            this.urlService = new URLService(weblog.getTheme(), weblog.isUsedForThemePreview(), dp);
         }
     }
 
     public String getSiteHome() {
-        return urlStrategy.getHomeURL();
+        return urlService.getHomeURL();
     }
 
     public String getLoginURL() {
-        return urlStrategy.getLoginURL();
+        return urlService.getLoginURL();
     }
 
     public String getLogoutURL() {
-        return urlStrategy.getLogoutURL();
+        return urlService.getLogoutURL();
     }
 
     public String getRegisterURL() {
-        return urlStrategy.getRegisterURL();
+        return urlService.getRegisterURL();
     }
 
     public String getWeblogHome() {
-        return urlStrategy.getWeblogURL(weblog);
+        return urlService.getWeblogURL(weblog);
     }
 
     public String getEntriesURLForCategory(String category) {
-        return urlStrategy.getWeblogCollectionURL(weblog, category, null, null, -1);
+        return urlService.getWeblogCollectionURL(weblog, category, null, null, -1);
     }
 
     public String getEntriesURLForTag(String tag, String category) {
-        return urlStrategy.getWeblogCollectionURL(weblog, category, null, tag, -1);
+        return urlService.getWeblogCollectionURL(weblog, category, null, tag, -1);
     }
 
     public String getEntriesURLForDate(String date) {
-        return urlStrategy.getWeblogCollectionURL(weblog, null, date, null, -1);
+        return urlService.getWeblogCollectionURL(weblog, null, date, null, -1);
     }
 
     public String getURL(WeblogEntry entry) {
-        return urlStrategy.getWeblogEntryURL(entry);
+        return urlService.getWeblogEntryURL(entry);
     }
 
     public String getNewEntryURL() {
-        return urlStrategy.getNewEntryURL(weblog.getId());
+        return urlService.getNewEntryURL(weblog.getId());
     }
 
     public String getEntryEditURL(WeblogEntry entry) {
         if (entry != null) {
-            return urlStrategy.getEntryEditURL(entry);
+            return urlService.getEntryEditURL(entry);
         }
         return null;
     }
 
     public String getCommentURL(WeblogEntry entry, String timeStamp) {
-        return urlStrategy.getCommentURL(entry, timeStamp);
+        return urlService.getCommentURL(entry, timeStamp);
     }
 
     public String getWeblogEntryPostCommentURL(WeblogEntry entry) {
-        return urlStrategy.getWeblogEntryPostCommentURL(entry, false);
+        return urlService.getWeblogEntryPostCommentURL(entry, false);
     }
 
     public String getWeblogEntryPreviewCommentURL(WeblogEntry entry) {
-        return urlStrategy.getWeblogEntryPostCommentURL(entry, true);
+        return urlService.getWeblogEntryPostCommentURL(entry, true);
     }
 
     public String getCommentAuthenticatorURL() {
-        return urlStrategy.getCommentAuthenticatorURL();
+        return urlService.getCommentAuthenticatorURL();
     }
 
     public String getCommentsURL(WeblogEntry entry) {
-        return urlStrategy.getWeblogEntryCommentsURL(entry);
+        return urlService.getWeblogEntryCommentsURL(entry);
     }
 
     public String getSearchURL() {
-        return urlStrategy.getWeblogSearchURL(weblog, null, null, -1);
+        return urlService.getWeblogSearchURL(weblog, null, null, -1);
     }
 
     public String getCustomPageURL(String pageLink) {
-        return urlStrategy.getCustomPageURL(weblog, pageLink, null);
+        return urlService.getCustomPageURL(weblog, pageLink, null);
     }
 
     public String getThemeResourceURL(String theme, String filePath) {
-        return urlStrategy.getThemeResourceURL(theme, filePath);
+        return urlService.getThemeResourceURL(theme, filePath);
     }
 
     public String getConfigURL() {
-        return urlStrategy.getWeblogConfigURL(weblog.getId());
+        return urlService.getWeblogConfigURL(weblog.getId());
     }
 
     public String getAtomFeedURL() {
-        return urlStrategy.getAtomFeedURL(weblog);
+        return urlService.getAtomFeedURL(weblog);
     }
 
     public String getAtomFeedURLForCategory(String category) {
-        return urlStrategy.getAtomFeedURLForCategory(weblog, category);
+        return urlService.getAtomFeedURLForCategory(weblog, category);
     }
 
     public String getAtomFeedURLForTag(String tag) {
-        return urlStrategy.getAtomFeedURLForTag(weblog, tag);
+        return urlService.getAtomFeedURLForTag(weblog, tag);
     }
 }

@@ -18,9 +18,9 @@ package org.tightblog.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.pojos.WeblogEntryComment.ApprovalStatus;
+import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntryComment.ApprovalStatus;
 
 import java.util.Collections;
 import java.util.List;

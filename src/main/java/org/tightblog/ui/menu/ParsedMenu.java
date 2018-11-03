@@ -20,8 +20,8 @@
  */
 package org.tightblog.ui.menu;
 
-import org.tightblog.pojos.GlobalRole;
-import org.tightblog.pojos.WeblogRole;
+import org.tightblog.domain.GlobalRole;
+import org.tightblog.domain.WeblogRole;
 
 import java.util.ArrayList;
 import java.util.List;

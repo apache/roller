@@ -18,8 +18,8 @@ package org.tightblog.rendering.generators;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.PageRequest;
-import org.tightblog.pojos.User;
-import org.tightblog.pojos.Weblog;
+import org.tightblog.domain.User;
+import org.tightblog.domain.Weblog;
 
 import org.tightblog.rendering.generators.WeblogListGenerator.WeblogListData;
 import org.tightblog.repository.WeblogRepository;

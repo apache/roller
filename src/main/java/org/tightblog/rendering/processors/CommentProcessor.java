@@ -23,17 +23,17 @@ package org.tightblog.rendering.processors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.context.MessageSource;
-import org.tightblog.business.MailManager;
-import org.tightblog.business.UserManager;
-import org.tightblog.business.WeblogEntryManager;
+import org.tightblog.service.EmailService;
+import org.tightblog.service.UserManager;
+import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.LuceneIndexer;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.pojos.WeblogEntryComment.ApprovalStatus;
-import org.tightblog.pojos.WeblogRole;
-import org.tightblog.pojos.WebloggerProperties;
-import org.tightblog.pojos.WebloggerProperties.CommentPolicy;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntryComment.ApprovalStatus;
+import org.tightblog.domain.WeblogRole;
+import org.tightblog.domain.WebloggerProperties;
+import org.tightblog.domain.WebloggerProperties.CommentPolicy;
 import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
@@ -96,7 +96,7 @@ public class CommentProcessor extends AbstractProcessor {
     private LuceneIndexer luceneIndexer;
     private WeblogEntryManager weblogEntryManager;
     private UserManager userManager;
-    private MailManager mailManager;
+    private EmailService emailService;
     private MessageSource messages;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
 
@@ -111,7 +111,7 @@ public class CommentProcessor extends AbstractProcessor {
     public CommentProcessor(WeblogRepository weblogRepository,
                             UserRepository userRepository,
                             LuceneIndexer luceneIndexer, WeblogEntryManager weblogEntryManager, UserManager userManager,
-                            MailManager mailManager,
+                            EmailService emailService,
                             MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
@@ -120,7 +120,7 @@ public class CommentProcessor extends AbstractProcessor {
         this.luceneIndexer = luceneIndexer;
         this.weblogEntryManager = weblogEntryManager;
         this.userManager = userManager;
-        this.mailManager = mailManager;
+        this.emailService = emailService;
         this.messages = messages;
     }
 
@@ -257,9 +257,9 @@ public class CommentProcessor extends AbstractProcessor {
                 webloggerPropertiesRepository.saveAndFlush(props);
 
                 if (commentRequiresApproval) {
-                    mailManager.sendPendingCommentNotice(incomingComment, spamEvaluations);
+                    emailService.sendPendingCommentNotice(incomingComment, spamEvaluations);
                 } else {
-                    mailManager.sendNewPublishedCommentNotification(incomingComment);
+                    emailService.sendNewPublishedCommentNotification(incomingComment);
 
                     if (luceneIndexer.isIndexComments()) {
                         luceneIndexer.updateIndex(incomingRequest.getWeblogEntry(), false);

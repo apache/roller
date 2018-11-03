@@ -22,12 +22,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.tightblog.WebloggerTest;
-import org.tightblog.business.URLStrategy;
-import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.pojos.WeblogEntry.PubStatus;
-import org.tightblog.pojos.WeblogEntrySearchCriteria;
+import org.tightblog.service.URLService;
+import org.tightblog.service.WeblogEntryManager;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogEntry.PubStatus;
+import org.tightblog.domain.WeblogEntrySearchCriteria;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 
@@ -54,7 +54,7 @@ public class WeblogEntryListGeneratorTest {
     private WeblogEntryListGenerator generator;
     private Weblog weblog;
     private WeblogEntryManager mockWEM = mock(WeblogEntryManager.class);
-    private URLStrategy mockUrlStrategy = mock(URLStrategy.class);
+    private URLService mockUrlService = mock(URLService.class);
     private Instant now = Instant.now();
     private Instant yesterday = now.minus(1, ChronoUnit.DAYS);
     private LocalDate nowLD = LocalDate.from(now.atZone(ZoneId.systemDefault()));
@@ -68,7 +68,7 @@ public class WeblogEntryListGeneratorTest {
 
     @Before
     public void initialize() {
-        generator = new WeblogEntryListGenerator(mockWEM, mockUrlStrategy, messages);
+        generator = new WeblogEntryListGenerator(mockWEM, mockUrlService, messages);
         weblog = new Weblog();
         weblog.setLocale(Locale.ENGLISH.getLanguage());
     }
@@ -82,9 +82,9 @@ public class WeblogEntryListGeneratorTest {
         wpr.setPageNum(10);
         Map<LocalDate, List<WeblogEntry>> entryMap = createSampleEntriesMap();
 
-        when(mockUrlStrategy.getWeblogSearchURL(wpr.getWeblog(), wpr.getQuery(), wpr.getCategory(),
+        when(mockUrlService.getWeblogSearchURL(wpr.getWeblog(), wpr.getQuery(), wpr.getCategory(),
                 9)).thenReturn("nextUrl");
-        when(mockUrlStrategy.getWeblogSearchURL(wpr.getWeblog(), wpr.getQuery(), wpr.getCategory(),
+        when(mockUrlService.getWeblogSearchURL(wpr.getWeblog(), wpr.getQuery(), wpr.getCategory(),
                 11)).thenReturn("prevUrl");
 
         WeblogEntryListData data = generator.getSearchPager(wpr, entryMap, true);
@@ -122,8 +122,8 @@ public class WeblogEntryListGeneratorTest {
         when(mockWEM.getWeblogEntryByAnchor(weblog, "day1story1")).thenReturn(we1);
         when(mockWEM.getNextPublishedEntry(we1)).thenReturn(weNext);
         when(mockWEM.getPreviousPublishedEntry(we1)).thenReturn(wePrev);
-        when(mockUrlStrategy.getWeblogEntryURL(weNext)).thenReturn("nextUrl");
-        when(mockUrlStrategy.getWeblogEntryURL(wePrev)).thenReturn("prevUrl");
+        when(mockUrlService.getWeblogEntryURL(weNext)).thenReturn("nextUrl");
+        when(mockUrlService.getWeblogEntryURL(wePrev)).thenReturn("prevUrl");
 
         WeblogEntryListData data = generator.getPermalinkPager(weblog, "day1story1", true);
         assertEquals(1, data.getEntries().size());
@@ -187,9 +187,9 @@ public class WeblogEntryListGeneratorTest {
         Map<LocalDate, List<WeblogEntry>> entryMap = createSampleEntriesMap();
 
         when(mockWEM.getDateToWeblogEntryMap(any())).thenReturn(entryMap);
-        when(mockUrlStrategy.getWeblogCollectionURL(weblog, catName, dateString,
+        when(mockUrlService.getWeblogCollectionURL(weblog, catName, dateString,
                 tag, pageNum - 1)).thenReturn("nextUrl");
-        when(mockUrlStrategy.getWeblogCollectionURL(weblog, catName, dateString,
+        when(mockUrlService.getWeblogCollectionURL(weblog, catName, dateString,
                 tag, pageNum + 1)).thenReturn("prevUrl");
 
         WeblogEntryListData data = generator.getChronoPager(weblog, dateString,

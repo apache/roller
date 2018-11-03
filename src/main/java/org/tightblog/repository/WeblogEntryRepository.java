@@ -20,8 +20,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntry;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntry;
 
 import java.util.List;
 

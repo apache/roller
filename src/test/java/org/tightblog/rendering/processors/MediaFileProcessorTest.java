@@ -21,9 +21,9 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tightblog.WebloggerTest;
-import org.tightblog.business.MediaFileManager;
-import org.tightblog.pojos.MediaFile;
-import org.tightblog.pojos.Weblog;
+import org.tightblog.service.MediaManager;
+import org.tightblog.domain.MediaFile;
+import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.requests.WeblogRequest;
 import org.tightblog.repository.WeblogRepository;
@@ -55,7 +55,7 @@ public class MediaFileProcessorTest {
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
     private WeblogRepository mockWR;
-    private MediaFileManager mockMFM;
+    private MediaManager mockMFM;
 
     private static final String TEST_IMAGE = "/hawk.jpg";
 
@@ -72,7 +72,7 @@ public class MediaFileProcessorTest {
         mediaFileRequest.setExtraPathInfo("abc");
         LazyExpiringCache mockCache = mock(LazyExpiringCache.class);
         mockWR = mock(WeblogRepository.class);
-        mockMFM = mock(MediaFileManager.class);
+        mockMFM = mock(MediaManager.class);
         processor = new MediaFileProcessor(mockWR, mockCache, mockMFM);
         WeblogRequest.Creator wprCreator = mock(WeblogRequest.Creator.class);
         when(wprCreator.create(mockRequest)).thenReturn(mediaFileRequest);

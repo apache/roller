@@ -24,9 +24,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.tightblog.business.URLStrategy;
-import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.pojos.WeblogEntryComment;
+import org.tightblog.service.URLService;
+import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogEntryComment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,15 +75,15 @@ public class AkismetCommentValidator implements CommentValidator {
         this.deleteBlatantSpam = deleteBlatantSpam;
     }
 
-    private URLStrategy urlStrategy;
+    private URLService urlService;
 
     private AkismetCaller akismetCaller;
 
     /**
      * Creates a new instance of AkismetCommentValidator
      */
-    public AkismetCommentValidator(@Autowired URLStrategy urlStrategy, @Value("${akismet.apiKey:#{null}}") String apiKey) {
-        this.urlStrategy = urlStrategy;
+    public AkismetCommentValidator(@Autowired URLService urlService, @Value("${akismet.apiKey:#{null}}") String apiKey) {
+        this.urlService = urlService;
         this.apiKey = apiKey;
         this.akismetCaller = new AkismetCaller();
     }
@@ -95,11 +95,11 @@ public class AkismetCommentValidator implements CommentValidator {
     String createAPIRequestBody(WeblogEntryComment comment) {
         WeblogEntry entry = comment.getWeblogEntry();
 
-        String apiCall = "blog=" + urlStrategy.getWeblogURL(entry.getWeblog());
+        String apiCall = "blog=" + urlService.getWeblogURL(entry.getWeblog());
         apiCall += "&user_ip=" + comment.getRemoteHost();
         apiCall += "&user_agent=" + comment.getUserAgent();
         apiCall += "&referrer=" + comment.getReferrer();
-        apiCall += "&permalink=" + urlStrategy.getWeblogEntryURL(entry);
+        apiCall += "&permalink=" + urlService.getWeblogEntryURL(entry);
         apiCall += "&comment_type=comment&comment_author=" + comment.getName();
         apiCall += "&comment_author_email=" + comment.getEmail();
         apiCall += "&comment_author_url=" + comment.getUrl();

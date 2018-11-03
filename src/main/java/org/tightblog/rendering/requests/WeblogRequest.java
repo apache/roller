@@ -22,8 +22,8 @@ package org.tightblog.rendering.requests;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.tightblog.pojos.User;
-import org.tightblog.pojos.Weblog;
+import org.tightblog.domain.User;
+import org.tightblog.domain.Weblog;
 import org.tightblog.util.Utilities;
 import org.springframework.mobile.device.DeviceType;
 import org.slf4j.Logger;

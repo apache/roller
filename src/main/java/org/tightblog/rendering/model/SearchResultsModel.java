@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import org.tightblog.service.indexer.FieldConstants;
 import org.tightblog.service.LuceneIndexer;
 import org.tightblog.service.indexer.SearchTask;
-import org.tightblog.pojos.WeblogEntry;
+import org.tightblog.domain.WeblogEntry;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -18,8 +18,8 @@ package org.tightblog.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.tightblog.pojos.MediaDirectory;
-import org.tightblog.pojos.MediaFile;
+import org.tightblog.domain.MediaDirectory;
+import org.tightblog.domain.MediaFile;
 
 import java.util.List;
 

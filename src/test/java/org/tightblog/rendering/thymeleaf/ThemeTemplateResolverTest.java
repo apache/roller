@@ -18,11 +18,11 @@ package org.tightblog.rendering.thymeleaf;
 import org.junit.Before;
 import org.junit.Test;
 import org.thymeleaf.templateresource.StringTemplateResource;
-import org.tightblog.business.ThemeManager;
-import org.tightblog.pojos.SharedTemplate;
-import org.tightblog.pojos.SharedTheme;
-import org.tightblog.pojos.Template;
-import org.tightblog.pojos.WeblogTemplate;
+import org.tightblog.service.ThemeManager;
+import org.tightblog.domain.SharedTemplate;
+import org.tightblog.domain.SharedTheme;
+import org.tightblog.domain.Template;
+import org.tightblog.domain.WeblogTemplate;
 import org.tightblog.repository.WeblogTemplateRepository;
 
 import java.io.IOException;

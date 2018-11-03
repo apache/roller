@@ -16,10 +16,10 @@
 package org.tightblog.rendering.comment;
 
 import org.junit.Test;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.pojos.WeblogEntryComment;
-import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WebloggerProperties;
 
 import java.util.HashMap;
 import java.util.List;

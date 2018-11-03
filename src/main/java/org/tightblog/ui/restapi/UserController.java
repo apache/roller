@@ -26,16 +26,16 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.tightblog.business.MailManager;
-import org.tightblog.business.URLStrategy;
-import org.tightblog.business.UserManager;
-import org.tightblog.pojos.GlobalRole;
-import org.tightblog.pojos.User;
-import org.tightblog.pojos.UserCredentials;
-import org.tightblog.pojos.UserStatus;
-import org.tightblog.pojos.UserWeblogRole;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogRole;
+import org.tightblog.service.EmailService;
+import org.tightblog.service.URLService;
+import org.tightblog.service.UserManager;
+import org.tightblog.domain.GlobalRole;
+import org.tightblog.domain.User;
+import org.tightblog.domain.UserCredentials;
+import org.tightblog.domain.UserStatus;
+import org.tightblog.domain.UserWeblogRole;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogRole;
 import org.tightblog.repository.UserCredentialsRepository;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.UserWeblogRoleRepository;
@@ -53,7 +53,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.tightblog.pojos.WebloggerProperties;
+import org.tightblog.domain.WebloggerProperties;
 
 import javax.mail.MessagingException;
 import javax.persistence.RollbackException;
@@ -86,16 +86,16 @@ public class UserController {
     private UserWeblogRoleRepository userWeblogRoleRepository;
     private UserRepository userRepository;
     private UserCredentialsRepository userCredentialsRepository;
-    private MailManager mailManager;
+    private EmailService emailService;
     private MessageSource messages;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
-    private URLStrategy urlStrategy;
+    private URLService urlService;
 
     @Autowired
     public UserController(WeblogRepository weblogRepository, UserManager userManager,
                           UserWeblogRoleRepository userWeblogRoleRepository, MessageSource messageSource,
-                          MailManager mailManager, UserRepository userRepository,
-                          UserCredentialsRepository userCredentialsRepository, URLStrategy urlStrategy,
+                          EmailService emailService, UserRepository userRepository,
+                          UserCredentialsRepository userCredentialsRepository, URLService urlService,
                           WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogRepository = weblogRepository;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
@@ -103,8 +103,8 @@ public class UserController {
         this.userWeblogRoleRepository = userWeblogRoleRepository;
         this.userRepository = userRepository;
         this.userCredentialsRepository = userCredentialsRepository;
-        this.urlStrategy = urlStrategy;
-        this.mailManager = mailManager;
+        this.urlService = urlService;
+        this.emailService = emailService;
         this.messages = messageSource;
     }
 
@@ -125,7 +125,7 @@ public class UserController {
             if (!UserStatus.ENABLED.equals(acceptedUser.getStatus())) {
                 acceptedUser.setStatus(UserStatus.ENABLED);
                 userRepository.saveAndFlush(acceptedUser);
-                mailManager.sendRegistrationApprovedNotice(acceptedUser);
+                emailService.sendRegistrationApprovedNotice(acceptedUser);
             }
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
@@ -137,7 +137,7 @@ public class UserController {
     public void rejectRegistration(@PathVariable String id, HttpServletResponse response) {
         User rejectedUser = userRepository.findByIdOrNull(id);
         if (rejectedUser != null) {
-            mailManager.sendRegistrationRejectedNotice(rejectedUser);
+            emailService.sendRegistrationRejectedNotice(rejectedUser);
             userManager.removeUser(rejectedUser);
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
@@ -246,7 +246,7 @@ public class UserController {
             if (re.getStatusCode() == HttpStatus.OK && mustActivate) {
                 try {
                     UserData data = (UserData) re.getBody();
-                    mailManager.sendUserActivationEmail(data.getUser());
+                    emailService.sendUserActivationEmail(data.getUser());
                 } catch (MessagingException ignored) {
                 }
             }
@@ -498,7 +498,7 @@ public class UserController {
         }
         List<UserWeblogRole> uwrs = userWeblogRoleRepository.findByUser(user);
         for (UserWeblogRole uwr : uwrs) {
-            uwr.getWeblog().setAbsoluteURL(urlStrategy.getWeblogURL(uwr.getWeblog()));
+            uwr.getWeblog().setAbsoluteURL(urlService.getWeblogURL(uwr.getWeblog()));
             uwr.setUser(null);
         }
         return uwrs;
@@ -532,7 +532,7 @@ public class UserController {
                         "members.userAlreadyInvited" : "members.userAlreadyMember", null, locale));
             }
             userManager.grantWeblogRole(invitee, weblog, role, true);
-            mailManager.sendWeblogInvitation(invitee, weblog);
+            emailService.sendWeblogInvitation(invitee, weblog);
             return ResponseEntity.ok(messages.getMessage("members.userInvited", null, locale));
         } else {
             return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).build();

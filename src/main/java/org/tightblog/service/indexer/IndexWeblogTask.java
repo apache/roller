@@ -23,12 +23,12 @@ package org.tightblog.service.indexer;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.tightblog.business.WeblogEntryManager;
+import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.LuceneIndexer;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.pojos.WeblogEntry.PubStatus;
-import org.tightblog.pojos.WeblogEntrySearchCriteria;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogEntry.PubStatus;
+import org.tightblog.domain.WeblogEntrySearchCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

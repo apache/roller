@@ -20,7 +20,7 @@
  */
 package org.tightblog.rendering.cache;
 
-import org.tightblog.pojos.Template.ComponentType;
+import org.tightblog.domain.Template.ComponentType;
 
 /**
  * A utility class for storing content that can be cached for subsequent retrieval

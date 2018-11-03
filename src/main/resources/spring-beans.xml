@@ -160,8 +160,8 @@
 
     <beans:bean id="previewUrlModel" parent="urlModel" class="org.tightblog.rendering.model.URLModel" scope="prototype">
         <beans:property name="preview" value="true"/>
-        <!-- urlStrategy is manually constructed with the shared theme being previewed -->
-        <beans:property name="urlStrategy"><beans:null/></beans:property>
+        <!-- urlService is manually constructed with the shared theme being previewed -->
+        <beans:property name="urlService"><beans:null/></beans:property>
     </beans:bean>
 
     <beans:bean id="pageModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">

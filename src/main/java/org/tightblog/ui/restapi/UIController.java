@@ -20,16 +20,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.WebAttributes;
-import org.tightblog.business.MailManager;
-import org.tightblog.business.URLStrategy;
-import org.tightblog.business.UserManager;
-import org.tightblog.business.WeblogEntryManager;
-import org.tightblog.pojos.GlobalRole;
-import org.tightblog.pojos.User;
-import org.tightblog.pojos.UserStatus;
-import org.tightblog.pojos.UserWeblogRole;
-import org.tightblog.pojos.Weblog;
-import org.tightblog.pojos.WeblogRole;
+import org.tightblog.service.EmailService;
+import org.tightblog.service.URLService;
+import org.tightblog.service.UserManager;
+import org.tightblog.service.WeblogEntryManager;
+import org.tightblog.domain.GlobalRole;
+import org.tightblog.domain.User;
+import org.tightblog.domain.UserStatus;
+import org.tightblog.domain.UserWeblogRole;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogRole;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.UserWeblogRoleRepository;
 import org.tightblog.repository.WeblogRepository;
@@ -61,24 +61,24 @@ public class UIController {
     private UserWeblogRoleRepository userWeblogRoleRepository;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private WeblogEntryManager weblogEntryManager;
-    private MailManager mailManager;
+    private EmailService emailService;
     private MenuHelper menuHelper;
     private MessageSource messages;
-    private URLStrategy urlStrategy;
+    private URLService urlService;
 
     @Autowired
     public UIController(WeblogRepository weblogRepository, UserManager userManager, UserRepository userRepository,
                         WeblogEntryManager weblogEntryManager, UserWeblogRoleRepository userWeblogRoleRepository,
-                        MailManager mailManager, MenuHelper menuHelper, MessageSource messages,
-                        WebloggerPropertiesRepository webloggerPropertiesRepository, URLStrategy urlStrategy) {
+                        EmailService emailService, MenuHelper menuHelper, MessageSource messages,
+                        WebloggerPropertiesRepository webloggerPropertiesRepository, URLService urlService) {
         this.weblogRepository = weblogRepository;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.userManager = userManager;
         this.userRepository = userRepository;
         this.userWeblogRoleRepository = userWeblogRoleRepository;
         this.weblogEntryManager = weblogEntryManager;
-        this.urlStrategy = urlStrategy;
-        this.mailManager = mailManager;
+        this.urlService = urlService;
+        this.emailService = emailService;
         this.menuHelper = menuHelper;
         this.messages = messages;
     }
@@ -117,7 +117,7 @@ public class UIController {
                 myMap.put("actionMessage", messages.getMessage("welcome.user.account.need.approval", null,
                         request.getLocale()));
                 userRepository.saveAndFlush(user);
-                mailManager.sendRegistrationApprovalRequest(user);
+                emailService.sendRegistrationApprovalRequest(user);
             } else {
                 myMap.put("actionError", messages.getMessage("error.activate.user.invalidActivationCode", null,
                         request.getLocale()));
@@ -384,7 +384,7 @@ public class UIController {
         map.put("authenticatedUser", user);
         map.put("actionWeblog", weblog);
         if (weblog != null) {
-            map.put("actionWeblogURL", urlStrategy.getWeblogURL(weblog));
+            map.put("actionWeblogURL", urlService.getWeblogURL(weblog));
         }
         map.put("userIsAdmin", user != null && GlobalRole.ADMIN.equals(user.getGlobalRole()));
         map.put("pageTitleKey", actionName + ".title");

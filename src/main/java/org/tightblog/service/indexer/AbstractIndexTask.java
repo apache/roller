@@ -31,9 +31,9 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.util.BytesRef;
 import org.tightblog.service.LuceneIndexer;
-import org.tightblog.pojos.WeblogCategory;
-import org.tightblog.pojos.WeblogEntry;
-import org.tightblog.pojos.WeblogEntryComment;
+import org.tightblog.domain.WeblogCategory;
+import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogEntryComment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
