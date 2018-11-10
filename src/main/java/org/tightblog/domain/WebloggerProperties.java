@@ -47,7 +47,7 @@ public class WebloggerProperties {
         this.id = id;
     }
 
-    // see tightblog.properties file, tightblog.database.expected.version value for explanation
+    // see application.properties file, tightblog.database.expected.version value for explanation
     @Column(name = "database_version")
     public int getDatabaseVersion() {
         return databaseVersion;

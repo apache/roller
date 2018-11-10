@@ -17,7 +17,7 @@ services:
         - tightblog-db
       volumes:
 # TightBlog uses a named volume to store media images and the blog search index
-# Subfolders for both are configured in the web/tightblog-custom.properties file.
+# Subfolders for both are configured in the web/application-tbcustom.properties file.
         - tightblog-data:/tightblog-data
       depends_on:
         - "tightblog-db"

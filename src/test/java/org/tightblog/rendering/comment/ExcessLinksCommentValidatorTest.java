@@ -39,7 +39,7 @@ public class ExcessLinksCommentValidatorTest {
     }
 
     @Test
-    public void acceptNullComment() throws Exception {
+    public void acceptNullComment() {
         ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
         WeblogEntryComment wec = new WeblogEntryComment();
         wec.setContent(null);
@@ -50,7 +50,7 @@ public class ExcessLinksCommentValidatorTest {
     }
 
     @Test
-    public void acceptCommentLessThanLimit() throws Exception {
+    public void acceptCommentLessThanLimit() {
         ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
         validator.setLimit(3);
         WeblogEntryComment wec = new WeblogEntryComment();
@@ -62,7 +62,7 @@ public class ExcessLinksCommentValidatorTest {
     }
 
     @Test
-    public void acceptCommentEqualToLimit() throws Exception {
+    public void acceptCommentEqualToLimit() {
         ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
         validator.setLimit(3);
         WeblogEntryComment wec = new WeblogEntryComment();
@@ -74,7 +74,7 @@ public class ExcessLinksCommentValidatorTest {
     }
 
     @Test
-    public void failCommentMoreThanLimit() throws Exception {
+    public void failCommentMoreThanLimit() {
         ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
         validator.setLimit(3);
         WeblogEntryComment wec = new WeblogEntryComment();
@@ -92,7 +92,7 @@ public class ExcessLinksCommentValidatorTest {
     }
 
     @Test
-    public void validationIgnoredWithNegativeLimit() throws Exception {
+    public void validationIgnoredWithNegativeLimit() {
         ExcessLinksCommentValidator validator = new ExcessLinksCommentValidator();
         validator.setLimit(-1);
         WeblogEntryComment wec = new WeblogEntryComment();

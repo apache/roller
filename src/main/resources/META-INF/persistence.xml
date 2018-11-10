@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
   <persistence-unit name="TightBlogPU" transaction-type="RESOURCE_LOCAL">
-    <!-- DB configuration done in tightblog-custom.properties (see Install guide)
-         Avoiding DB configuration here to allow the same persistence.xml to be used between
-         testing and prod (which have different DB configuration)
-    -->
     <class>org.tightblog.domain.MediaFile</class>
     <class>org.tightblog.domain.MediaDirectory</class>
     <class>org.tightblog.domain.User</class>

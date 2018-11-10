@@ -85,7 +85,7 @@ public class FileServiceIT extends WebloggerTest {
         props.setAllowedFileExtensions("opml");
         webloggerPropertiesRepository.saveAndFlush(props);
 
-        /* NOTE: upload dir for unit tests is set in tightblog-custom.properties */
+        /* NOTE: upload dir for unit tests is set in application-tbcustom.properties in test/resources */
 
         // File should not exist initially
         WebloggerTest.logExpectedException(log, "FileNotFoundException");

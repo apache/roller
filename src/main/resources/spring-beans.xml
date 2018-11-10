@@ -27,13 +27,13 @@
           http://www.springframework.org/schema/util
           http://www.springframework.org/schema/util/spring-util-4.3.xsd
           http://www.springframework.org/schema/security
-          http://www.springframework.org/schema/security/spring-security-4.2.xsd
+          http://www.springframework.org/schema/security/spring-security.xsd
           http://www.springframework.org/schema/task
           http://www.springframework.org/schema/task/spring-task-4.2.xsd
           ">
     <!-- Any of these values can be overridden and maintained outside of the WAR by placing in a separate
          tightblog-custom.xml file in the servlet container's library folder, e.g. for Tomcat its lib folder
-         (same place where tightblog-custom.properties is kept.) -->
+         (same place where application-tbcustom.properties is kept.) -->
 
     <!-- Have JSR-250 annotations (PostConstruct, PreDestroy) honored by Spring -->
     <beans:bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>

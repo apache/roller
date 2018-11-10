@@ -156,7 +156,7 @@ public class RequestMappingFilterTest {
     }
 
     @Test
-    public void testCalculateForwardUrl() throws Exception {
+    public void testCalculateForwardUrl() {
         RequestMappingFilter filter = new RequestMappingFilter();
 
         String pageTest1 = filter.calculateForwardUrl(mockRequest, "handle", null, "data");
@@ -196,7 +196,7 @@ public class RequestMappingFilterTest {
     }
 
     @Test
-    public void testGenerateForwardUrl() throws Exception {
+    public void testGenerateForwardUrl() {
         RequestMappingFilter filter = new RequestMappingFilter();
         assertEquals("proc/handle", filter.generateForwardUrl("proc", "handle", null, null));
         assertEquals("proc/handle/context", filter.generateForwardUrl("proc", "handle", "context", null));

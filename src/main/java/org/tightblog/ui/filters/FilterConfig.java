@@ -20,8 +20,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.PropertySources;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.multipart.support.MultipartFilter;
 
@@ -30,10 +28,6 @@ import javax.servlet.Filter;
 import java.util.HashMap;
 import java.util.Map;
 
-@PropertySources({
-        @PropertySource(value = "classpath:tightblog.properties"),
-        @PropertySource(value = "classpath:tightblog-custom.properties", ignoreResourceNotFound = true)
-})
 @Configuration
 public class FilterConfig {
 

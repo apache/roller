@@ -93,9 +93,8 @@ public class UserManagerIT extends WebloggerTest {
      * Test lookup mechanisms.
      */
     @Test
-    public void testUserLookups() throws Exception {
+    public void testUserLookups() {
         User user1;
-        User user2;
 
         // add test users
         User testUser = setupUser("usertestuser");
@@ -139,20 +138,19 @@ public class UserManagerIT extends WebloggerTest {
      * Test basic user role persistence ... Add, Remove
      */
     @Test
-    public void testRoleCRUD() throws Exception {
+    public void testRoleCRUD() {
         User user;
         User testUser = setupUser("roletestuser");
         user = userRepository.findEnabledByUserName(testUser.getUserName());
         assertNotNull(user);
-        assertTrue(GlobalRole.BLOGGER.equals(user.getGlobalRole()));
+        assertEquals(GlobalRole.BLOGGER, user.getGlobalRole());
         user.setGlobalRole(GlobalRole.BLOGCREATOR);
         userRepository.saveAndFlush(user);
 
         // check that role was switched
         user = userRepository.findEnabledByUserName(testUser.getUserName());
         assertNotNull(user);
-        assertTrue(user.getGlobalRole() == GlobalRole.BLOGCREATOR);
+        assertEquals(GlobalRole.BLOGCREATOR, user.getGlobalRole());
         userManager.removeUser(testUser);
     }
-
 }

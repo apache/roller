@@ -122,7 +122,7 @@ public class WeblogEntryManagerCommentIT extends WebloggerTest {
      * Test lookup mechanisms ... 
      */
     @Test
-    public void testCommentLookups() throws Exception {
+    public void testCommentLookups() {
         List comments;
         
         // we need some comments to play with
@@ -178,7 +178,7 @@ public class WeblogEntryManagerCommentIT extends WebloggerTest {
      * delete all comments, etc.
      */
     @Test
-    public void testCommentParentDeletes() throws Exception {
+    public void testCommentParentDeletes() {
 
             // first make sure we can delete an entry with comments
             User user = setupUser("commentParentDeleteUser");

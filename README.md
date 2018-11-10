@@ -49,12 +49,12 @@ for general installation instructions.
 1. Deploy as a WAR on standalone Tomcat: covered in above installation instructions.
 
 1. Deploy as a JAR using an in-memory database (non-production, demoing only).  Modify the
-resources/tightblog.properties to provide a Java keystore to support TightBlog's SSL (the
-file includes resources explaining the process.)  Then run "gradle bootRun" from a command-line
+resources/application.properties to provide a Java keystore to support TightBlog's SSL (the
+file contains instructions for same.)  Then run "gradle bootRun" from a command-line
 and TightBlog will be available at https://localhost:8443/tightblog.  Note the in-memory database
 is deleted at each app shut-down.
 
-1. Deploy as a Docker container.  Modify the docker/web/tightblog-custom.properties to 
+1. Deploy as a Docker container.  Modify the docker/web/application-tbcustom.properties to 
 add your keystore configuration and then from the docker folder run "docker-compose build"
 followed by "docker-compose up".  The application will be at https://localhost/tightblog.
 Note that while tested locally, the Docker setup has not yet seen production use so is best

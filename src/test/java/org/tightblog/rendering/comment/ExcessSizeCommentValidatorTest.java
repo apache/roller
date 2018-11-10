@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 public class ExcessSizeCommentValidatorTest {
 
     @Test
-    public void validationIgnoredWithNegativeLimit() throws Exception {
+    public void validationIgnoredWithNegativeLimit() {
         ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
         validator.setLimit(-1);
         WeblogEntryComment wec = new WeblogEntryComment();
@@ -40,7 +40,7 @@ public class ExcessSizeCommentValidatorTest {
     }
 
     @Test
-    public void acceptNullComment() throws Exception {
+    public void acceptNullComment() {
         ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
         validator.setLimit(10);
         WeblogEntryComment wec = new WeblogEntryComment();
@@ -52,7 +52,7 @@ public class ExcessSizeCommentValidatorTest {
     }
 
     @Test
-    public void acceptCommentLessThanLimit() throws Exception {
+    public void acceptCommentLessThanLimit() {
         ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
         validator.setLimit(7);
         WeblogEntryComment wec = new WeblogEntryComment();
@@ -64,7 +64,7 @@ public class ExcessSizeCommentValidatorTest {
     }
 
     @Test
-    public void acceptCommentEqualToLimit() throws Exception {
+    public void acceptCommentEqualToLimit() {
         ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
         validator.setLimit(6);
         WeblogEntryComment wec = new WeblogEntryComment();
@@ -76,7 +76,7 @@ public class ExcessSizeCommentValidatorTest {
     }
 
     @Test
-    public void failCommentMoreThanLimit() throws Exception {
+    public void failCommentMoreThanLimit() {
         ExcessSizeCommentValidator validator = new ExcessSizeCommentValidator();
         int limitLength = 5;
         validator.setLimit(limitLength);

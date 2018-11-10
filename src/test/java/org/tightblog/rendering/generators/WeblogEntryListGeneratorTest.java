@@ -110,7 +110,7 @@ public class WeblogEntryListGeneratorTest {
     }
 
     @Test
-    public void getPermalinkPager() throws Exception {
+    public void getPermalinkPager() {
         // Showing SCHEDULED entries allowed with canShowDraftEntries = false
         WeblogEntry we1 = WebloggerTest.genWeblogEntry("day1story1", now, weblog);
         we1.setStatus(PubStatus.SCHEDULED);
@@ -176,7 +176,7 @@ public class WeblogEntryListGeneratorTest {
     }
 
     @Test
-    public void getChronoPager() throws Exception {
+    public void getChronoPager() {
         String dateString = "20180110";
         String catName = "stamps";
         String tag = "airmail";

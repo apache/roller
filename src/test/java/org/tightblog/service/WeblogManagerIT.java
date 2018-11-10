@@ -113,7 +113,7 @@ public class WeblogManagerIT extends WebloggerTest {
      * Test lookup mechanisms.
      */
     @Test
-    public void testWeblogLookups() throws Exception {
+    public void testWeblogLookups() {
         Weblog testWeblog1 = null;
         Weblog testWeblog2 = null;
         try {
@@ -211,7 +211,7 @@ public class WeblogManagerIT extends WebloggerTest {
     }
 
     @Test
-    public void testResetHitCounts() throws Exception {
+    public void testResetHitCounts() {
         Weblog blog1 = setupWeblog("hit-cnt-test1", testUser);
         Weblog blog2 = setupWeblog("hit-cnt-test2", testUser);
 

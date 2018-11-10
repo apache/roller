@@ -50,7 +50,7 @@ public class MathCommentAuthenticatorTest {
     }
 
     @Test
-    public void getHtmlNewTest() throws Exception {
+    public void getHtmlNewTest() {
         HttpSession mockSession = mock(HttpSession.class);
         HttpServletRequest mockRequest = createMockRequest(mockSession);
 
@@ -74,7 +74,7 @@ public class MathCommentAuthenticatorTest {
     }
 
     @Test
-    public void getHtmlAlreadyAnsweredTest() throws Exception {
+    public void getHtmlAlreadyAnsweredTest() {
         HttpSession mockSession = mock(HttpSession.class);
         HttpServletRequest mockRequest = createMockRequest(mockSession);
 
@@ -89,7 +89,7 @@ public class MathCommentAuthenticatorTest {
     }
 
     @Test
-    public void authenticatePass() throws Exception {
+    public void authenticatePass() {
         HttpSession mockSession = mock(HttpSession.class);
         HttpServletRequest mockRequest = createMockRequest(mockSession);
         when(mockRequest.getParameter("answer")).thenReturn("82");
@@ -99,7 +99,7 @@ public class MathCommentAuthenticatorTest {
     }
 
     @Test
-    public void authenticateFailNoAnswer() throws Exception {
+    public void authenticateFailNoAnswer() {
         HttpSession mockSession = mock(HttpSession.class);
         HttpServletRequest mockRequest = createMockRequest(mockSession);
         boolean actual = mathCommentAuthenticator.authenticate(mockRequest);
@@ -107,7 +107,7 @@ public class MathCommentAuthenticatorTest {
     }
 
     @Test
-    public void authenticateFailAnswerIncorrect() throws Exception {
+    public void authenticateFailAnswerIncorrect() {
         HttpSession mockSession = mock(HttpSession.class);
         HttpServletRequest mockRequest = createMockRequest(mockSession);
         when(mockRequest.getParameter("answer")).thenReturn("82");

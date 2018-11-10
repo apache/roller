@@ -98,7 +98,7 @@ public class UserManagerWeblogRoleIT extends WebloggerTest {
      * Test lookup mechanisms.
      */
     @Test
-    public void testWeblogRoleLookups() throws Exception {
+    public void testWeblogRoleLookups() {
         // we need a second user for this test
         User user = setupUser("testWeblogRoleLookups");
 
@@ -142,7 +142,7 @@ public class UserManagerWeblogRoleIT extends WebloggerTest {
      * Tests weblog invitation process.
      */
     @Test
-    public void testInvitations() throws Exception {
+    public void testInvitations() {
         // we need a second user for this test
         User user = setupUser("testInvitations");
 
