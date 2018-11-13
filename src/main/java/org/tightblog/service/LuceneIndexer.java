@@ -74,7 +74,6 @@ public class LuceneIndexer {
     private boolean indexComments;
     private File indexConsistencyMarker;
     private String indexDir;
-    private boolean inconsistentAtStartup;
     private ReadWriteLock rwl = new ReentrantReadWriteLock();
 
     /**
@@ -131,45 +130,52 @@ public class LuceneIndexer {
 
         // only initialize the index if search is enabled
         if (searchEnabled) {
+            boolean indexNeedsCreating = false;
+
             try {
-                // If inconsistency marker exists, delete index
+                // existing indexConsistencyMarker means this.shutdown() wasn't called at last app shutdown
                 if (indexConsistencyMarker.exists()) {
                     log.info("Index was not closed properly with last shutdown; will be rebuilt");
-                    inconsistentAtStartup = true;
+                    indexNeedsCreating = true;
                 } else {
-                    File makeIndexDir = new File(indexDir);
-                    if (!makeIndexDir.exists()) {
-                        if (makeIndexDir.mkdirs()) {
-                            inconsistentAtStartup = true;
-                            log.info("Index folder path {} created", makeIndexDir.getAbsolutePath());
+                    // see if index directory exists, if not create
+                    File testIndexDir = new File(indexDir);
+                    if (!testIndexDir.exists()) {
+                        if (testIndexDir.mkdirs()) {
+                            indexNeedsCreating = true;
+                            log.info("Index folder path {} created", testIndexDir.getAbsolutePath());
                         } else {
-                            throw new IOException("Folder path " + makeIndexDir.getAbsolutePath() + " could not be " +
+                            throw new IOException("Folder path " + testIndexDir.getAbsolutePath() + " could not be " +
                                     "created (file permission rights?)");
+                        }
+                    } else {
+                        // OK, index directory exists, see if Lucene index exists within it
+                        if (!DirectoryReader.indexExists(getIndexDirectory())) {
+                            log.info("Lucene index not detected, will create");
+                            indexNeedsCreating = true;
+                        } else {
+                            log.info("Lucene search index already available and ready for use.");
                         }
                     }
                 }
 
-                if (!inconsistentAtStartup && !DirectoryReader.indexExists(getIndexDirectory())) {
-                    log.info("Lucene index not detected, will create");
-                    inconsistentAtStartup = true;
-                }
-
-                if (inconsistentAtStartup) {
+                if (indexNeedsCreating) {
                     log.info("Generating Lucene index in the background...");
+                    // deletes index consistency marker if it exists
                     createIndex(getFSDirectory(true));
-                    rebuildWeblogIndex();
-                } else {
-                    log.info("Lucene search index now available and ready for use.");
+
+                    // create index consistency marker for next app shutdown
                     if (!indexConsistencyMarker.createNewFile()) {
                         throw new IOException("Could not create index consistency marker " +
                                 indexConsistencyMarker.getAbsolutePath() + " (file permission rights?)");
                     }
+                    rebuildWeblogIndex();
                 }
 
                 reader = DirectoryReader.open(getIndexDirectory());
 
             } catch (IOException e) {
-                log.error("Searching is deactivated, could not create index", e);
+                log.error("Could not create index, searching will be deactivated.", e);
                 searchEnabled = false;
             }
         }
@@ -310,9 +316,10 @@ public class LuceneIndexer {
             if (analyzer != null) {
                 IndexWriterConfig config = new IndexWriterConfig(new LimitTokenCountAnalyzer(analyzer, maxTokens));
 
-                // constructor makes directory available for indexing
-                try (IndexWriter writer = new IndexWriter(dir, config)) {
-                    writer.close();
+                // constructor alone makes directory available for indexing
+                //CHECKSTYLE.OFF: EmptyBlock
+                try (IndexWriter ignored = new IndexWriter(dir, config)) {
+                //CHECKSTYLE.ON: EmptyBlock
                 } catch (IOException e) {
                     log.error("Error creating index", e);
                 }

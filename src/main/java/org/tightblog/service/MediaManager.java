@@ -217,12 +217,14 @@ public class MediaManager {
     public MediaFile getMediaFileWithContent(String id) {
         MediaFile mediaFile = mediaFileRepository.findByIdOrNull(id);
 
-        File content = fileService.getFileContent(mediaFile.getDirectory().getWeblog(), id);
-        mediaFile.setContent(content);
+        if (mediaFile != null) {
+            File content = fileService.getFileContent(mediaFile.getDirectory().getWeblog(), id);
+            mediaFile.setContent(content);
 
-        File thumbnail = fileService.getFileContent(mediaFile.getDirectory().getWeblog(),
-                id + "_sm");
-        mediaFile.setThumbnail(thumbnail);
+            File thumbnail = fileService.getFileContent(mediaFile.getDirectory().getWeblog(),
+                    id + "_sm");
+            mediaFile.setThumbnail(thumbnail);
+        }
 
         return mediaFile;
     }

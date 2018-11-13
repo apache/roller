@@ -93,7 +93,7 @@ public class FileServiceIT extends WebloggerTest {
         assertNull("Non-existent file retrieved", test);
 
         // store a file
-        InputStream is = getClass().getResourceAsStream("/log4j2-spring.xml");
+        InputStream is = getClass().getResourceAsStream("/hawk.jpg");
         fileService.saveFileContent(testWeblog, "bookmarks-file-id", is);
 
         // make sure file was stored successfully

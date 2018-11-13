@@ -42,10 +42,8 @@ import org.springframework.jdbc.datasource.init.ScriptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.service.LuceneIndexer;
@@ -194,14 +192,12 @@ public class InstallerController {
 
         try {
             // trigger bootstrapping process
-            ApplicationContext ac = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
-
             dynamicProperties.setDatabaseReady(true);
             luceneIndexer.initialize();
 
-            log.info("TightBlog Weblogger successfully bootstrapped");
-            log.info("   Version: {}", environment.getProperty("weblogger.version", "Unknown"));
-            log.info("   Revision: {}", environment.getProperty("weblogger.revision", "Unknown"));
+            log.info("TightBlog Weblogger (Version: {}, Revision {}) startup successful",
+                environment.getProperty("weblogger.version", "Unknown"),
+                environment.getProperty("weblogger.revision", "Unknown"));
             String redirectPath = request.getContextPath();
             response.sendRedirect(redirectPath);
             return null;
@@ -229,7 +225,7 @@ public class InstallerController {
         try (Connection conn = tbDataSource.getConnection()) {
 
             // does the schema already exist?  -- check a couple of tables to find out
-            if (!tableExists(conn, "weblog") || !tableExists(conn, "weblogger_user")) {
+            if (tableMissing(conn, "weblog") || tableMissing(conn, "weblogger_user")) {
                 return StartupStatus.tablesMissing;
             }
 
@@ -271,14 +267,14 @@ public class InstallerController {
     /**
      * Return true if named table exists in database.
      */
-    private boolean tableExists(Connection con, String tableName) throws SQLException {
+    private boolean tableMissing(Connection con, String tableName) throws SQLException {
         ResultSet rs = con.getMetaData().getTables(null, null, "%", null);
         while (rs.next()) {
-            if (tableName.equalsIgnoreCase(rs.getString("TABLE_NAME").toLowerCase())) {
-                return true;
+            if (tableName.equalsIgnoreCase(rs.getString("TABLE_NAME"))) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
 }
