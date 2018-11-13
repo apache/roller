@@ -21,6 +21,8 @@
 package org.tightblog.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.FetchType;
 import javax.validation.constraints.NotBlank;
 import org.tightblog.util.Utilities;
 
@@ -123,7 +125,7 @@ public class WeblogTemplate implements Template {
         lastModified = newtime;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "weblogid", nullable = false)
     public Weblog getWeblog() {
         return this.weblog;

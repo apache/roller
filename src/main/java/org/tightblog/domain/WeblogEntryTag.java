@@ -25,6 +25,7 @@ import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -66,7 +67,7 @@ public class WeblogEntryTag implements Comparable<WeblogEntryTag> {
     /**
      * ID of weblog that this tag refers to.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "weblogid", nullable = false)
     @JsonIgnore
     public Weblog getWeblog() {
@@ -77,7 +78,7 @@ public class WeblogEntryTag implements Comparable<WeblogEntryTag> {
         this.weblog = website;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "entryid", nullable = false)
     @JsonIgnore
     public WeblogEntry getWeblogEntry() {

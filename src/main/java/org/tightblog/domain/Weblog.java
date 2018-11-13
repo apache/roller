@@ -25,6 +25,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.tightblog.domain.WebloggerProperties.CommentPolicy;
 import org.tightblog.rendering.comment.BlacklistCommentValidator;
 import org.tightblog.util.Utilities;
+
+import javax.persistence.FetchType;
 import javax.validation.constraints.NotBlank;
 
 import javax.persistence.Basic;
@@ -214,7 +216,7 @@ public class Weblog {
         this.tagline = tagline;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creatorid", nullable = false)
     @JsonIgnore
     public User getCreator() {
