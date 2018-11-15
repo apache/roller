@@ -111,7 +111,6 @@ form ul{ position: relative; list-style: none; width: 100%; }
 form li{ line-height: 2em; margin: 0; padding: 1px 1px 6px 9px; }
 form li.focused{ background-color: #fff7c0 !important; }
 form li p{ font-size: 9px; line-height: 13px; color: #444; }
-form li{ display: inline-block; }
 form[id] li{ display: block; }
 form li div{ display: inline-block; }
 form[id] li div{ display: inline; }
