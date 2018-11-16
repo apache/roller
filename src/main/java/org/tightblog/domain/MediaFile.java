@@ -22,7 +22,6 @@ package org.tightblog.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.persistence.FetchType;
 import javax.validation.constraints.NotBlank;
 import org.tightblog.util.Utilities;
 
@@ -241,7 +240,7 @@ public class MediaFile implements Comparable<MediaFile> {
         this.thumbnailURL = thumbnailURL;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "creatorid", nullable = false)
     public User getCreator() {
         return creator;

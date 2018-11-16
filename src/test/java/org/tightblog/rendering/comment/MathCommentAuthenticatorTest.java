@@ -37,7 +37,7 @@ public class MathCommentAuthenticatorTest {
         Locale.setDefault(Locale.US);
         mathCommentAuthenticator = new MathCommentAuthenticator();
         ResourceBundleMessageSource messages = new ResourceBundleMessageSource();
-        messages.setBasename("ApplicationResources");
+        messages.setBasename("messages/messages");
         mathCommentAuthenticator.setMessages(messages);
     }
 

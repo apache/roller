@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
@@ -72,8 +71,6 @@ import javax.validation.Valid;
 public class WeblogController {
 
     private static Logger log = LoggerFactory.getLogger(WeblogController.class);
-
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
 
     private UserRepository userRepository;
     private WeblogManager weblogManager;
@@ -128,7 +125,8 @@ public class WeblogController {
         User user = userRepository.findEnabledByUserName(p.getName());
 
         if (!user.hasEffectiveGlobalRole(GlobalRole.BLOGCREATOR)) {
-            return ResponseEntity.status(403).body(bundle.getString("weblogConfig.createNotAuthorized"));
+            return ResponseEntity.status(403).body(messages.getMessage("weblogConfig.createNotAuthorized", null,
+                    Locale.getDefault()));
         }
 
         ValidationError maybeError = advancedValidate(newData, true);
@@ -238,7 +236,8 @@ public class WeblogController {
         // make sure handle isn't already taken
         if (isAdd) {
             if (weblogRepository.findByHandleAndVisibleTrue(data.getHandle()) != null) {
-                be.addError(new ObjectError("Weblog object", bundle.getString("weblogConfig.error.handleExists")));
+                be.addError(new ObjectError("Weblog object", messages.getMessage("weblogConfig.error.handleExists",
+                        null, Locale.getDefault())));
             }
         }
 

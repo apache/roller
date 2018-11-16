@@ -25,7 +25,6 @@ import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -102,7 +101,7 @@ public class WeblogCategory implements Comparable<WeblogCategory> {
         this.position = position;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "weblogid", nullable = false)
     public Weblog getWeblog() {
         return weblog;

@@ -21,6 +21,7 @@
 package org.tightblog.rendering.generators;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.tightblog.service.URLService;
 import org.tightblog.service.WeblogEntryManager;
@@ -43,7 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
  * Data generator for a blog calendar containing links to days with blog entries,
@@ -54,11 +54,13 @@ public class CalendarGenerator {
 
     protected WeblogEntryManager weblogEntryManager;
     protected URLService urlService;
+    private MessageSource messages;
 
     @Autowired
-    public CalendarGenerator(WeblogEntryManager weblogEntryManager, URLService urlService) {
+    public CalendarGenerator(WeblogEntryManager weblogEntryManager, URLService urlService, MessageSource messages) {
         this.weblogEntryManager = weblogEntryManager;
         this.urlService = urlService;
+        this.messages = messages;
     }
 
     public CalendarData getCalendarData(WeblogPageRequest pageRequest, boolean includeBlogEntryData) {
@@ -80,9 +82,9 @@ public class CalendarGenerator {
 
         // get Resource Bundle
         Locale locale = pageRequest.getWeblog().getLocaleInstance();
-        ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources", locale);
         // formatter for Month-Year title of calendar
-        DateTimeFormatter formatTitle = DateTimeFormatter.ofPattern(bundle.getString("calendar.dateFormat"), locale)
+        DateTimeFormatter formatTitle = DateTimeFormatter.ofPattern(
+                messages.getMessage("calendar.dateFormat", null, locale), locale)
                 .withZone(pageRequest.getWeblog().getZoneId());
 
         CalendarData data = new CalendarData();

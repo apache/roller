@@ -24,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.tightblog.repository.WeblogEntryCommentRepository;
 import org.tightblog.util.Utilities;
 
-import javax.persistence.FetchType;
 import javax.validation.constraints.NotBlank;
 
 import javax.persistence.Basic;
@@ -162,7 +161,7 @@ public class WeblogEntry {
         this.weblog = weblog;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "creatorid", nullable = false)
     public User getCreator() {
         return creator;

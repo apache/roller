@@ -27,7 +27,6 @@ import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -90,7 +89,7 @@ public class WeblogEntryComment {
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "entryid", nullable = false)
     public WeblogEntry getWeblogEntry() {
         return weblogEntry;
@@ -100,7 +99,7 @@ public class WeblogEntryComment {
         weblogEntry = entry;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "bloggerid")
     public User getBlogger() {
         return blogger;

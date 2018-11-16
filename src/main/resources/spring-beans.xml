@@ -240,14 +240,6 @@
         </beans:property>
     </beans:bean>
 
-    <beans:bean name="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <beans:property name="basenames">
-            <beans:list>
-                <beans:value>ApplicationResources</beans:value>
-            </beans:list>
-        </beans:property>
-    </beans:bean>
-
     <!-- Overriding the default Spring JSON converter so Jackson will strip off the nanoseconds portion when it
          serializes java.time.Instant objects.  Makes conversion and date display much easier on the browser side.
          See: http://stackoverflow.com/q/37999762/1207540

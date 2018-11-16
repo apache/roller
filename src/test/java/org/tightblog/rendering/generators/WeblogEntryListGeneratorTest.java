@@ -63,7 +63,7 @@ public class WeblogEntryListGeneratorTest {
     @BeforeClass
     public static void initializeOnce() {
         messages = new ResourceBundleMessageSource();
-        messages.setBasename("ApplicationResources");
+        messages.setBasename("messages/messages");
     }
 
     @Before
