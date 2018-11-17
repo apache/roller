@@ -45,6 +45,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -97,6 +98,7 @@ public class FeedProcessorTest {
         when(mockWR.findByHandleAndVisibleTrue("myhandle")).thenReturn(null);
         processor.getFeed(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
+        verify(mockCache, never()).incrementIncomingRequests();
     }
 
     @Test
@@ -114,6 +116,8 @@ public class FeedProcessorTest {
         processor.getFeed(mockRequest, mockResponse);
         verify(mockRequest).getDateHeader(any());
         verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        verify(mockCache).incrementIncomingRequests();
+        verify(mockCache).incrementRequestsHandledBy304();
     }
 
     @Test
@@ -137,6 +141,8 @@ public class FeedProcessorTest {
         verify(mockResponse).setDateHeader("Last-Modified", twoDaysAgo.toEpochMilli());
         verify(mockResponse).setHeader("Cache-Control", "no-cache");
         verify(mockSOS).write("mytest1".getBytes());
+        verify(mockCache).incrementIncomingRequests();
+        verify(mockCache, never()).incrementRequestsHandledBy304();
     }
 
     @Test
@@ -161,6 +167,8 @@ public class FeedProcessorTest {
         verify(mockResponse).setDateHeader("Last-Modified", threeDaysAgo.toEpochMilli());
         verify(mockResponse).setHeader("Cache-Control", "no-cache");
         verify(mockSOS).write("mytest24".getBytes());
+        verify(mockCache).incrementIncomingRequests();
+        verify(mockCache, never()).incrementRequestsHandledBy304();
     }
 
     @Test

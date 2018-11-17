@@ -225,7 +225,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
     @Override
     public String toString() {
-        return String.format("WeblogPageRequest: context=%s anchor=%s date=%s category=%s tag=%s template=%s query=%s",
+        return String.format("WeblogPageRequest: context=%s anchor=%s date=%s category=%s tag=%s customPageName=%s query=%s",
                 context, weblogEntryAnchor, weblogDate, category, tag, customPageName, query);
     }
 }

@@ -132,6 +132,7 @@ public class PageProcessorTest {
         when(mockWR.findByHandleAndVisibleTrue("myhandle")).thenReturn(null);
         processor.handleRequest(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
+        verify(mockCache, never()).incrementIncomingRequests();
     }
 
     @Test
@@ -145,6 +146,8 @@ public class PageProcessorTest {
         processor.handleRequest(mockRequest, mockResponse);
         verify(mockRequest).getDateHeader(any());
         verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        verify(mockCache).incrementIncomingRequests();
+        verify(mockCache).incrementRequestsHandledBy304();
     }
 
     @Test
@@ -169,15 +172,15 @@ public class PageProcessorTest {
         verify(mockResponse).setContentLength(7);
         verify(mockResponse).setDateHeader("Last-Modified", twoDaysAgo.toEpochMilli());
         verify(mockResponse).setHeader("Cache-Control", "no-cache");
+        verify(mockCache).incrementIncomingRequests();
+        verify(mockCache, never()).incrementRequestsHandledBy304();
         verify(mockSOS).write("mytest1".getBytes());
     }
 
     @Test
-    public void testRenderingProcessing() throws IOException {
+    public void testNonExistentTemplateRequestReturns404() throws IOException {
         initializeMocks();
 
-        // test null template returns 404
-        pageRequest.setCustomPageName("mytemplate");
         WeblogTheme mockTheme = mock(WeblogTheme.class);
         when(mockThemeManager.getWeblogTheme(weblog)).thenReturn(mockTheme);
         when(mockTheme.getTemplateByPath(any())).thenReturn(null);
@@ -185,20 +188,45 @@ public class PageProcessorTest {
         assertNull(pageRequest.getTemplate());
         verify(mockResponse).sendError(SC_NOT_FOUND);
 
+        verify(mockCache).incrementIncomingRequests();
+        verify(mockCache, never()).incrementRequestsHandledBy304();
+        verify(mockCache, never()).put(anyString(), any());
+    }
+
+    @Test
+    public void testCustomInternalTemplateRequestReturns404() throws IOException {
+        initializeMocks();
+
+        WeblogTheme mockTheme = mock(WeblogTheme.class);
+        when(mockThemeManager.getWeblogTheme(weblog)).thenReturn(mockTheme);
+
         // test custom internal template returns 404
         WeblogTemplate wt = new WeblogTemplate();
         wt.setRole(ComponentType.CUSTOM_INTERNAL);
         when(mockTheme.getTemplateByPath(any())).thenReturn(wt);
 
-        Mockito.clearInvocations(processor, mockResponse);
         processor.handleRequest(mockRequest, mockResponse);
         assertNull(pageRequest.getTemplate());
         verify(mockResponse).sendError(SC_NOT_FOUND);
         // CUSTOM_INTERNAL has incrementHitCounts = false
         verify(mockWM, never()).incrementHitCount(weblog);
 
-        // test page template & rendering called
+        verify(mockCache).incrementIncomingRequests();
+        verify(mockCache, never()).incrementRequestsHandledBy304();
+        verify(mockCache, never()).put(anyString(), any());
+    }
+
+    @Test
+    public void testUncachedPageRendering() throws IOException {
+        initializeMocks();
+
+        pageRequest.setCustomPageName("mytemplate");
+        WeblogTheme mockTheme = mock(WeblogTheme.class);
+        when(mockThemeManager.getWeblogTheme(weblog)).thenReturn(mockTheme);
+
+        WeblogTemplate wt = new WeblogTemplate();
         wt.setRole(ComponentType.CUSTOM_EXTERNAL);
+        when(mockTheme.getTemplateByPath(any())).thenReturn(wt);
 
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
@@ -207,11 +235,12 @@ public class PageProcessorTest {
         cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 
-        Mockito.clearInvocations(processor, mockResponse, mockWM);
         processor.handleRequest(mockRequest, mockResponse);
-        assertEquals(pageRequest.getTemplate(), wt);
+        assertEquals(wt, pageRequest.getTemplate());
         // CUSTOM_EXTERNAL has incrementHitCounts = true
         verify(mockWM).incrementHitCount(weblog);
+        verify(mockCache).incrementIncomingRequests();
+        verify(mockCache, never()).incrementRequestsHandledBy304();
         verify(mockCache).put(anyString(), any());
         verify(mockRenderer).render(eq(pageRequest.getTemplate()), any());
         verify(mockResponse).setContentType(ComponentType.CUSTOM_EXTERNAL.getContentType());

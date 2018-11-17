@@ -148,7 +148,6 @@ public class PageProcessor extends AbstractProcessor {
         if (commentForm == null) {
             cacheKey = generateKey(incomingRequest);
             rendererOutput = weblogPageCache.get(cacheKey, lastModified);
-            log.trace((rendererOutput != null ? "HIT" : "MISS") + " {}", cacheKey);
         }
 
         try {
