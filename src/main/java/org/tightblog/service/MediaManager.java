@@ -127,7 +127,7 @@ public class MediaManager {
             }
             weblog.getMediaDirectories().add(newDirectory);
             weblogRepository.saveAndFlush(weblog);
-            log.debug("Created new Directory {}", requestedName);
+            log.debug("Created media directory '{}' for weblog {}", requestedName, weblog.getHandle());
         }
         return newDirectory;
     }

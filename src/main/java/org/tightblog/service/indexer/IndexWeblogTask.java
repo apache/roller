@@ -108,9 +108,9 @@ public class IndexWeblogTask extends AbstractIndexTask {
         double length = (end.toEpochMilli() - start.toEpochMilli()) / (double) DateUtils.MILLIS_PER_SECOND;
 
         if (weblog == null) {
-            log.info("Completed updating index for all weblogs in {} secs", length);
+            log.info("Indexed all weblogs in {} secs", length);
         } else {
-            log.info("Completed updating index for weblog: '{}' in {} seconds", weblog.getHandle(), length);
+            log.info("Indexed weblog '{}' in {} secs", weblog.getHandle(), length);
         }
     }
 }

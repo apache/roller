@@ -240,7 +240,7 @@ public class LuceneIndexer {
      */
     public void executeIndexOperationNow(final AbstractTask op) {
         if (this.searchEnabled) {
-            log.debug("Executing index task now: {}", op.getClass().getName());
+            log.debug("Executing {}", op.getClass().getName());
             op.run();
         }
     }
@@ -272,7 +272,7 @@ public class LuceneIndexer {
 
     private void scheduleIndexOperation(final AbstractTask op) {
         if (this.searchEnabled) {
-            log.debug("Starting scheduled index task: {}", op.getClass().getName());
+            log.debug("Starting scheduled {}", op.getClass().getName());
             serviceScheduler.submit(op);
         }
     }

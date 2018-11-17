@@ -226,7 +226,7 @@ public class ThemeManager implements ServletContextAware {
                     throw new IllegalStateException("Theme " + sharedTheme.getName() + " has no template with 'weblog' action");
                 }
 
-                log.info("Loaded shared theme {}", sharedTheme);
+                log.info("Loaded {}", sharedTheme);
             } else {
                 throw new IllegalStateException("Theme JSON " + themeJson + " not found");
             }

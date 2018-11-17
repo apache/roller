@@ -127,7 +127,7 @@ public class FileService {
                 bos.write(buffer, 0, bytesRead);
             }
             bos.flush();
-            log.debug("The file has been written to [{}]", saveFile.getAbsolutePath());
+            log.info("File saved: [{}]", saveFile.getAbsolutePath());
         } catch (Exception e) {
             throw new IOException("ERROR uploading file", e);
         }
@@ -157,11 +157,11 @@ public class FileService {
      * @param weblog      The weblog we are working on.
      * @param fileName    name of the file to be saved
      * @param contentType content type of the file
-     * @param size        size of the file in bytes.
+     * @param fileSize        size of the file in bytes.
      * @param messages    output parameter for resource bundle messages, or null if not necessary to receive them
      * @return true if the file can be saved, false otherwise.
      */
-    public boolean canSave(Weblog weblog, String fileName, String contentType, long size,
+    public boolean canSave(Weblog weblog, String fileName, String contentType, long fileSize,
                            Map<String, List<String>> messages) {
 
         WebloggerProperties webloggerProperties = webloggerPropertiesRepository.findOrNull();
@@ -176,8 +176,8 @@ public class FileService {
 
         // second check, does upload exceed max size for file?
         int maxFileMB = webloggerProperties.getMaxFileSizeMb();
-        log.debug("Max allowed file size (MB) = {}, attempted size = {}", maxFileMB, size);
-        if (size > maxFileMB * Utilities.ONE_MB_IN_BYTES) {
+        log.debug("File size = {}, Max allowed = {}MB", fileSize, maxFileMB);
+        if (fileSize > maxFileMB * Utilities.ONE_MB_IN_BYTES) {
             if (messages != null) {
                 messages.put("error.upload.filemax", Arrays.asList(fileName, Integer.toString(maxFileMB)));
             }
@@ -187,12 +187,12 @@ public class FileService {
         // third check, does file cause weblog to exceed quota?
         int maxDirMB = webloggerProperties.getMaxFileUploadsSizeMb();
         long maxDirBytes = (long) (Utilities.ONE_MB_IN_BYTES * maxDirMB);
-        log.debug("Max allowed dir size (MB) = {}, attempted file size = {}", maxDirBytes, size);
         try {
             File storageDirectory = this.getRealFile(weblog, null);
             long userDirSize = getDirSize(storageDirectory);
-            log.debug("max userDirSize = {}", userDirSize);
-            if (userDirSize + size > maxDirBytes) {
+            log.debug("File size = {}, current dir space taken = {}, max allowed = {}MB",
+                    fileSize, userDirSize, maxDirMB);
+            if (userDirSize + fileSize > maxDirBytes) {
                 if (messages != null) {
                     messages.put("error.upload.dirmax", Collections.singletonList(Integer.toString(maxDirMB)));
                 }
