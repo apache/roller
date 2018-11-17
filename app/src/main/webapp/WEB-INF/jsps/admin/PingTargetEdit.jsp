@@ -27,33 +27,52 @@
     <s:set var="subtitleKey">pingTargetAdd.subtitle</s:set>
 </s:else>
 
-<p class="subtitle">
-<s:text name="%{#subtitleKey}"/>
-</p>
+<p class="subtitle"> <s:text name="%{#subtitleKey}"/> </p>
 
-<s:form>
-	<s:hidden name="salt" />
-    <s:if test="actionName == 'commonPingTargetEdit'">
-        <%-- bean for add does not have a bean id yet --%>
-        <s:hidden name="bean.id" />
-    </s:if>
+<s:form theme="bootstrap" cssClass="form-horizontal">
+    <s:hidden name="salt"/>
 
-    <div class="formrow">
-       <label for="name" class="formrow"><s:text name="generic.name" /></label>
-       <s:textfield name="bean.name" size="30" maxlength="30" style="width:50%"/>
-    </div>
+    <s:if test="actionName == 'commonPingTargetEdit'"> <s:hidden name="bean.id"/> </s:if>
 
-    <div class="formrow">
-       <label for="pingUrl" class="formrow"><s:text name="pingTarget.pingUrl" /></label>
-       <s:textfield name="bean.pingUrl" size="100" maxlength="255" style="width:50%"/>
-    </div>
+    <s:textfield name="bean.name" size="30" maxlength="30" style="width:50%"
+        onchange="validate()" onkeyup="validate()"
+        label="%{getText('generic.name')}" />
 
-    <p/>
+    <s:textfield name="bean.pingUrl" size="100" maxlength="255" style="width:50%"
+        onchange="validate()" onkeyup="validate()"
+        label="%{getText('pingTarget.pingUrl')}" />
 
-    <div class="formrow">
-       <label for="" class="formrow">&nbsp;</label>
-       <s:submit value="%{getText('generic.save')}" action="%{#mainAction}!save"/>
-       <s:submit value="%{getText('generic.cancel')}" action="commonPingTargets" />
-    </div>
+    <s:submit id="save-button" cssClass="btn btn-default"
+        value="%{getText('generic.save')}" action="%{#mainAction}!save"/>
+
+    <s:submit cssClass="btn" value="%{getText('generic.cancel')}" action="commonPingTargets"/>
 
 </s:form>
+
+<script type="application/javascript">
+
+    function validate() {
+        var savePingTargetButton = $('#save-button:first');
+        var name = $('#commonPingTargetAdd_bean_name:first').val().trim();
+        var url = $('#commonPingTargetAdd_bean_pingUrl:first').val().trim();
+        if ( name.length > 0 && url.length > 0 && isValidUrl(url) ) {
+            savePingTargetButton.attr("disabled", false);
+        } else {
+            savePingTargetButton.attr("disabled", true);
+        }
+    }
+
+    function isValidUrl(url) {
+        if (/^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    $( document ).ready(function() {
+        var savePingTargetButton = $('#save-button:first');
+        savePingTargetButton.attr("disabled", true);
+    });
+
+</script>

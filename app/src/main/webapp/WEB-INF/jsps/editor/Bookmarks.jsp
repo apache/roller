@@ -112,50 +112,45 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
             <%-- Bookmarks --%>
             <s:iterator var="bookmark" value="folder.bookmarks" status="rowstatus">
-                <s:if test="#rowstatus.odd == true">
-                    <tr class="rollertable_odd">
-                </s:if>
-                <s:else>
-                    <tr class="rollertable_even">
-                </s:else>
+                <tr class="rollertable_odd">
 
-                <td class="rollertable center" style="vertical-align:middle">
-                    <input type="checkbox" name="selectedBookmarks" onchange="selectionChanged()"
-                           title="<s:text name="bookmarksForm.selectOneLabel"><s:param value="#bookmark.name"/></s:text>"
-                           value="<s:property value="#bookmark.id"/>"/>
-                </td>
+                    <td class="rollertable center" style="vertical-align:middle">
+                        <input type="checkbox" name="selectedBookmarks" onchange="selectionChanged()"
+                               title="<s:text name="bookmarksForm.selectOneLabel"><s:param value="#bookmark.name"/></s:text>"
+                               value="<s:property value="#bookmark.id"/>"/>
+                    </td>
 
-                <td>
-                    <str:truncateNicely lower="40" upper="50">
-                        <s:property value="#bookmark.name"/>
-                    </str:truncateNicely>
-                </td>
+                    <td>
+                        <str:truncateNicely lower="40" upper="50">
+                            <s:property value="#bookmark.name"/>
+                        </str:truncateNicely>
+                    </td>
 
-                <td>
-                    <s:if test="#bookmark.url != null">
-                        <a href='<s:property value="#bookmark.url" />' target='_blank'>
-                            <str:truncateNicely lower="70" upper="90">
-                                <s:property value="#bookmark.url"/>
-                            </str:truncateNicely>
-                            <span class="glyphicon glyphicon-play-circle"></span>
+                    <td>
+                        <s:if test="#bookmark.url != null">
+                            <a href='<s:property value="#bookmark.url" />' target='_blank'>
+                                <str:truncateNicely lower="70" upper="90">
+                                    <s:property value="#bookmark.url"/>
+                                </str:truncateNicely>
+                                <span class="glyphicon glyphicon-play-circle"></span>
+                            </a>
+                        </s:if>
+
+                    </td>
+
+                    <td align="center">
+
+                        <a href="#" onclick="editBookmark(
+                                '<s:property value="#bookmark.id"/>',
+                                '<s:property value="#bookmark.name"/>',
+                                '<s:property value="#bookmark.url"/>',
+                                '<s:property value="#bookmark.feedUrl"/>',
+                                '<s:property value="#bookmark.description"/>',
+                                '<s:property value="#bookmark.image"/>' )">
+                            <span class="glyphicon glyphicon-edit"></span>
                         </a>
-                    </s:if>
 
-                </td>
-
-                <td align="center">
-
-                    <a href="#" onclick="editBookmark(
-                            '<s:property value="#bookmark.id"/>',
-                            '<s:property value="#bookmark.name"/>',
-                            '<s:property value="#bookmark.url"/>',
-                            '<s:property value="#bookmark.feedUrl"/>',
-                            '<s:property value="#bookmark.description"/>',
-                            '<s:property value="#bookmark.image"/>' )">
-                        <span class="glyphicon glyphicon-edit"></span>
-                    </a>
-
-                </td>
+                    </td>
 
                 </tr>
 
@@ -277,7 +272,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     function nameChanged() {
         var newName = $("#bookmarks_folder_name:first").val();
-        if (newName && newName != originalName && newName.trim().length > 0) {
+        if (newName && newName !== originalName && newName.trim().length > 0) {
             renameButton.attr("disabled", false);
             renameButton.addClass("btn-success");
 
@@ -345,7 +340,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     function onMoveToFolder() {
         var bookmarksForm = $("#bookmarks")[0];
-       bookmarksForm.action = "bookmarks!move.rol";
+        bookmarksForm.action = "bookmarks!move.rol";
         bookmarksForm.submit();
     }
 
@@ -354,7 +349,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         var bookmarksForm = $("#bookmarks")[0];
         var folderEditForm = $("#folderEditForm")[0];
 
-        if ("new_blogroll" == bookmarksForm.viewFolderId.value) {
+        if ("new_blogroll" === bookmarksForm.viewFolderId.value) {
             newBlogroll();
 
         } else {
@@ -458,7 +453,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         var feedbackAreaBlogrollEdit = $("#feedback-area-blogroll-edit");
 
         // if name is empty reject and show error message
-        if ($("#folderEditForm_bean_name").val().trim() == "") {
+        if ($("#folderEditForm_bean_name").val().trim() === "") {
             feedbackAreaBlogrollEdit.html('<s:text name="bookmarksForm.blogroll.requiredFields" />');
             feedbackAreaBlogrollEdit.css("color", "red");
             return;
@@ -763,7 +758,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         var elem = $('#bookmark_required_fields:first');
         var message = '';
 
-        if (name.length > 0 && url.length > 0 && badUrls.length == 0) {
+        if (name.length > 0 && url.length > 0 && badUrls.length === 0) {
             saveBookmarkButton.attr("disabled", false);
 
             message = '<s:text name="generic.looksGood" />';
@@ -775,7 +770,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         } else {
             saveBookmarkButton.attr("disabled", true);
 
-            if (name.length == 0 || url.length == 0) {
+            if (name.length === 0 || url.length === 0) {
                 message = '<s:text name="bookmarkForm.required" />';
             }
             if (badUrls.length > 0) {
