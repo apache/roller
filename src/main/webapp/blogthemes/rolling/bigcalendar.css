@@ -22,7 +22,7 @@
   padding: 3px 0px 3px 0px;
 }
 
-.hCalendarTableBig .hCalendarDayTitle {
+.hCalendarTableBig {
   position: relative;
   left: 0;
   top: 0;
@@ -45,7 +45,7 @@
   width: 12%;
 }
 
-.hCalendarTableBig TD.hCalendarDayCurrent {
+.hCalendarTableBig TD.hCalendarDay.Current {
   vertical-align: top;
   border: dashed 1px #aaaaaa;
   background-color: #ffffff;
@@ -53,7 +53,7 @@
   width: 12%;
 }
 
-.hCalendarTableBig TD.hCalendarDayNotInMonth {
+.hCalendarTableBig TD.hCalendarDay.NotInMonth {
   vertical-align: top;
   border: dashed 1px #aaaaaa;
   background-color: #ffffff;
@@ -61,7 +61,7 @@
   width: 12%;
 }
 
-.hCalendarTableBig .hCalendarDayNameRow {
+.hCalendarTableBig .hCalendarDay.NameRow {
   border: dashed 1px #aaaaaa;
   background-color: #ffffff;
   margin: 2px;

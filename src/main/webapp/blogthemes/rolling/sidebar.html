@@ -22,17 +22,17 @@
     </div></div>
 
     <div class="box"><h2 class="box sidebox">last 20</h2>
-        <th:block th:each="recentEntry : ${model.getRecentWeblogEntries(null, 20)}">
-            <a th:href="${url.getURL(recentEntry)}" th:utext="${recentEntry.title}">xxx</a><br>
-        </th:block>
+        <ul class="sideboxList" th:each="recentEntry : ${model.getRecentWeblogEntries(null, 20)}">
+            <li class="sideboxListItem"><a th:href="${url.getURL(recentEntry)}" th:utext="${recentEntry.title}">xxx</a></li>
+        </ul>
     </div>
 
     <div class="box"><h2 class="box sidebox">recent $0.02</h2>
-        <ul class="rEntriesList">
-            <li th:each="comment : ${model.getRecentComments(10)}" class="recentcomments">
+        <ul class="sideboxList">
+            <li th:each="comment : ${model.getRecentComments(10)}" class="sideboxListItem">
                 - <a th:href="${comment.url}" th:remove="${comment.url == '' ? 'tag' : 'none'}" th:utext="${comment.name}"></a>
                 on <a th:href="${url.getCommentURL(comment.weblogEntry, comment.timestamp)}"
-                      th:utext="${comment.weblogEntry.title}"></a><li/>
+                      th:utext="${comment.weblogEntry.title}"></a></li>
         </ul>
     </div>
 

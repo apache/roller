@@ -16,7 +16,7 @@
             <span th:case="${true}" th:utext="${model.getTransformedText(entry)}"></span>
             <span th:case="${false}" th:utext="${model.getTransformedSummary(entry) + ' ' + utils.msg('macro.weblog.readMoreLink', url.getURL(entry))}"></span>
         </p>
-        <p class="entryInfo">
+        <p class="entryPubInfo">
             Posted <span th:if="${entry.pubTime != null}">at <a th:href="${url.getURL(entry)}" th:utext="${utils.formatTemporal(entry.pubTime, utils.msg('macro.weblog.timedatepattern'))}">xxx</a></span>
             by <span th:utext="${entry.creator.screenName}">xxx</span> in <span class="category" th:utext="${entry.category.name}">xxx</span>
             <th:block th:if="${entry.getTags() != null && entry.getTags().size() > 0}">

@@ -32,9 +32,9 @@
                 <th th:each="dayOfWeekName : ${cal.dayOfWeekNames}" class="hCalendarDayNameRow" align="center" th:text="${dayOfWeekName}">xxx</th>
             </tr>
             <tr th:each="week : ${cal.weeks}">
-                <td th:each="day : ${week.days}" th:class="${day.dayNum == null ? 'hCalendarDayNotInMonth' : (day.today ? 'hCalendarDayCurrent' : 'hCalendarDay')}">
+                <td th:each="day : ${week.days}" class="hCalendarDay" th:classappend="${day.dayNum == null ? 'NotInMonth' : (day.today ? 'Current' : '')}">
                     <th:block th:if="${day.dayNum}">
-                        <a th:remove="${#strings.isEmpty(day.link) ? 'tag' : 'none'}" th:href="${day.link}"><div th:class="hCalendarDayTitle" th:text="${day.dayNum}"></div></a>
+                        <a th:remove="${#strings.isEmpty(day.link) ? 'tag' : 'none'}" th:href="${day.link}"><div class="hCalendarDay" th:text="${day.dayNum}"></div></a>
                         <th:block th:if="${big}">
                             <a th:each="entry : ${day.entries}" th:href="${entry.link}"><div th:class="bCalendarDayContent" th:text="${entry.title}"></div></a>
                         </th:block>
@@ -70,9 +70,11 @@
               th:insert="${model.getTemplateIdByName('day')}">
     </th:block>
     <div th:fragment="AtomFeedsList" th:remove="tag">
-        <ul class="rFeeds">
-            <li><a th:href="${url.atomFeedURL}" th:utext="${utils.msg('generic.all')}">xxx</a></li>
-            <li th:each="cat : ${model.weblog.weblogCategories}">
+        <ul class="sideboxList">
+            <li class="sideboxListItem rssItem">
+                <a th:href="${url.atomFeedURL}" th:utext="${utils.msg('generic.all')}">xxx</a>
+            </li>
+            <li class="sideboxListItem rssItem" th:each="cat : ${model.weblog.weblogCategories}">
                 <a th:href="${url.getAtomFeedURLForCategory(cat.name)}" th:utext="${cat.name}">xxx</a>
             </li>
         </ul>
@@ -87,40 +89,40 @@
         </form>
     </div>
     <div th:fragment="Blogroll" th:remove="tag">
-        <ul class="rFolder">
-            <li th:each="link : ${model.weblog.getBookmarks()}" class="rFolderItem">
+        <ul class="sideboxList">
+            <li th:each="link : ${model.weblog.getBookmarks()}" class="sideboxListItem">
                 <a th:href="${link.url}" th:title="${link.description}" th:utext="${link.name}">xxx</a>
             </li>
         </ul>
     </div>
     <div th:fragment="PageMenu(addExternalPages)" th:remove="tag">
-        <ul class="rNavigationBar">
-            <li class="rNavItem">
+        <ul class="sideboxList">
+            <li class="sideboxListItem">
                 <a th:href="${url.getSiteHome()}"><span th:utext="${utils.msg('navigationBar.homePage')}"></span></a>
             </li>
-            <li class="rNavItem">
+            <li class="sideboxListItem">
                 <a th:href="${url.weblogHome}"><span>Weblog</span></a>
             </li>
             <th:block th:if="${addExternalPages}">
-                <li th:each="page : ${model.templates}" th:if="${page.role.name == 'CUSTOM_EXTERNAL'}" class="rNavItem">
+                <li th:each="page : ${model.templates}" th:if="${page.role.name == 'CUSTOM_EXTERNAL'}" class="sideboxListItem">
                     <a th:remove="${model.weblogPage != null && page.id == model.weblogPage.id ? 'tag' : 'none'}" th:href="${url.getCustomPageURL(page.relativePath)}">
                         <span th:text="${page.name}">xxx</span>
                     </a>
                 </li>
             </th:block>
             <th:block th:if="${model.isUserBlogPublisher()}">
-                <li class="rNavItem">
+                <li class="sideboxListItem">
                     <a th:href="${url.getNewEntryURL()}"><span th:text="${utils.msg('navigationBar.newEntry')}">xxx</span></a>
                 </li>
-                <li th:if="${model.isUserBlogOwner()}" class="rNavItem">
+                <li th:if="${model.isUserBlogOwner()}" class="sideboxListItem">
                     <a th:href="${url.getConfigURL()}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
                 </li>
             </th:block>
             <th:block th:switch="${model.isUserAuthenticated()}">
-                <li th:case="${true}" class="rNavItem">
+                <li th:case="${true}" class="sideboxListItem">
                     <a th:href="${url.getLogoutURL()}"><span th:text="${utils.msg('navigationBar.logout')}">xxx</span></a>
                 </li>
-                <li th:case="${false}" class="rNavItem">
+                <li th:case="${false}" class="sideboxListItem">
                     <a th:href="${url.getLoginURL()}" target="_blank"><span th:text="${utils.msg('navigationBar.login')}">xxx</span></a>
                 </li>
             </th:block>

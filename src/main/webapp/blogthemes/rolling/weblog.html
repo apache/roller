@@ -28,7 +28,7 @@
         </center>
     </div>
 
-    <div th:switch="${model.searchResults}" class="next-previous">
+    <div th:switch="${model.searchResults}" class="next-previous-links">
         <span th:case="${false}" th:replace="fragments :: PreviousNextPager"></span>
         <th:block th:case="${true}">
             <div th:replace="fragments :: WeblogSearchAgainForm"></div>

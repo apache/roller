@@ -1,14 +1,11 @@
-/*-------------------------------------------------------------
-Base styles
---------------------------------------------------------------*/
-
 body {
-    background: white;
-    font-family:"Lucida Grande", lucida, Geneva, Arial, sans-serif;
+  font-family: verdana, sans-serif;
 }
-.img {
-    border: 0px;
-    margin: 0px;
+
+.next-previous-links {
+    font-size: 80%;
+    text-align: center;
+    padding: .5em 0 .5em 0;
 }
 
 /* entries ----------------------------------------------- */
@@ -17,75 +14,73 @@ body {
     font-weight: bold;
     font-size: 130%;
 }
-.entryInfo {
+
+.entryPubInfo {
     font-size: 80%;
     color: #999;
 }
-div.dayTitle {
-    font-size: 120%;
-    font-weight:bold;
-    padding: .5em 0 0 0;
-}
-div.next-previous {
-    font-size: 80%;
-    text-align: center;
-    padding: .5em 0 .5em 0;
 
-}
+/* sidemenu items ----------------------------------------------- */
 
-/* category chooser ----------------------------------------------- */
-
-.category-chooser {
-    margin: -50%;
-    width:100%;
-}
 .rCategory li {
     font-size: 80%;
     display: inline;
     list-style-type: none;
     padding-right: 20px;
 }
+
 li.selected {
     font-weight: bold;
 }
 
-/* other lists ----------------------------------------------- */
-
-ul.rNavigationBar, ul.rMenu, ul.rFolder, ul.rFeeds, ul.rReferersList, ul.rEntriesList {
-    list-style-type: none;
-    padding: 0;
+ul.sideboxList {
     margin: 0;
-    font-size: 80%;
+    padding-left: 0;
+    font-size: medium;
+    list-style-type: none;
 }
-ul.rFeeds li {
-    background-image: url([(${url.getSiteHome()})]/images/feed-icon-12x12.gif);
-    background-repeat: no-repeat;
-    background-position: 0 .2em;
-    padding-left: 1.4em;
-    line-height: 1.5em;
+
+li.sideboxListItem {
 }
+
+li.rssItem::before {
+    content: url([(${url.getSiteHome()})]/images/feed-icon-12x12.gif);
+}
+
 
 /* calendar ----------------------------------------------- */
 
 .hCalendarDay{
     text-align : center;
-    font-size: small;
+    font-size : small;
 }
+
+td.hCalendarDay.Current {
+    font-weight : bolder;
+}
+
 th.hCalendarDayNameRow {
     text-align : center;
+    font-weight : bolder;
     font-size : small;
-    font-weight : bold;
 }
-td.hCalendarDayCurrent {
-    text-align : center;
-    font-size  : small;
-    font-weight: bold;
+
+.hCalendarTable {
+  text-align : center;
 }
-td.hCalendarDayLinked {
-    text-align : center;
-    font-size  : small;
-    font-weight: bold;
+
+.hCalendarDay.NotInMonth {
+  font-size : x-small;
+  background-color: white;
+  color: gray;
 }
+
+.hCalendarNextPrev {
+  font-size : x-small;
+  text-align : center;
+  font-style : italic;
+}
+
 
 /* comments ----------------------------------------------- */
 
@@ -93,57 +88,9 @@ p.comment-details {
     font-size: 80%;
     color: #999;
 }
-.comments-syntax-indicator {
-    font-weight: bold;
-}
-.comments-syntax-indicator span.enabled {
-    background: transparent;
-    color: green;
-    font-style: italic;
-}
-.comments-syntax-indicator span.disabled {
-    background: transparent;
-    color: red;
-    font-style: italic;
-}
 
 form ul{ position: relative; list-style: none; width: 100%; }
-form li{ line-height: 2em; margin: 0; padding: 1px 1px 6px 9px; }
-form li.focused{ background-color: #fff7c0 !important; }
-form li p{ font-size: 9px; line-height: 13px; color: #444; }
-form[id] li{ display: block; }
-form li div{ display: inline-block; }
-form[id] li div{ display: inline; }
-form .left{ float: left !important; margin: 0; }
-form .right{ float: right !important; margin: 0; }
-form .clear{ clear: both; }
-form li div p{ margin: 0 0 5px 0; }
-form div.left{ margin-right: 2px !important; }
-form div.left[class]{ margin-right: 4px !important; }
-form div.left img{ margin: 0 0 -2px 0; }
-form h2{ font-size: 1.8em; clear: left; }
-form .info{ display: inline-block; margin: 0 0 10px 0; padding: 0 0 4px 0; border-bottom: 1px dotted #ccc !important;}
-form .info[class]{ display: block; }
-form .info p{ font-size: 1em; line-height: 1.3em; margin: 0 0 8px 0; }
-textarea.textarea{margin-bottom: 1px;}
-textarea.textarea[class]{font-family: "Lucida Grande", Tahoma, "Trebuchet MS", Verdana, sans-serif;}
-select.select{ padding: 1px 0 0 0; margin: 1px 0 3px 0; }
-select.select[class]{ margin: 0; padding: 1px 0 1px 0; }
-form .small{ width: 70px; }
-form .medium{ width: 170px; }
-form .large, form textarea.textarea{ width: 340px; }
-form .tags{ width: 320px; }
-form textarea.small{ height: 5.5em; }
-form textarea.medium{ height: 10em; }
-form textarea.large{ height: 20em; }
-.choices input{ width: 200px; margin-right: 3px; }
-.choices ol{ margin: 10px 0 0 0; }
-.choices[class] ol{ margin: 0 !important; }
-.choices img{ margin: 0 0 1px 0; }
-fieldset ol li{ display: list-item !important; margin: 0 5px 2px 3px !important; padding: 0 !important; list-style: inside decimal; }
-input.button, button { width: 6em; padding: 2px 2px 0 0; /* fix for IE */ }
-/* revert to normal for Firefox */
-li>input.button, li>button, input.button>input.button, button>button { padding: 2px; }
+
 label.desc{
     margin: 4px 0 3px 0;
     border: 0;
@@ -153,6 +100,7 @@ label.desc{
     display: block;
     font-weight: bold;
 }
+
 input.text, input.number, input.url, input.email, input.password, input.file,
 textarea.textarea, select.select{
     font-size: 1.2em;
@@ -163,7 +111,7 @@ textarea.textarea, select.select{
     color: #333;
 }
 input.text, input.number, input.url, input.email, input.password, input.file{ padding: 2px; }
-input.currency{ text-align: right; }
+
 input.checkbox, input.radio{
     display: block;
     line-height: 1.4em;
@@ -171,7 +119,7 @@ input.checkbox, input.radio{
     width: 13px;
     height: 13px;
 }
-input.focus, textarea.focus { background: #ffd; color: #000; }
+
 label.choice{
     display: block;
     line-height: 1.4em;
@@ -181,32 +129,25 @@ label.choice{
     width: 80%;
 }
 
-/*-------------------------------------------------------------
-Rolling base styles h1, h2 color old: #3068A6
---------------------------------------------------------------*/
-
 p {
   font-family: verdana, sans-serif;
   font-size: small;
   color: black;
-  color : #000000;
 }
+
 h1, h2 {
     color: #0074D9;
 }
-body {
-  font-family: verdana, sans-serif;
-  font-size: small;
-  color: black;
-  background-color: white;
-}
+
 a {
   text-decoration: none;
 }
+
 a:link {
   color: blue;
   font-weight: medium;
 }
+
 a:visited {
   color: purple;
   font-weight: medium;
@@ -215,13 +156,6 @@ a:visited {
 a:hover {
   text-decoration: underline overline;
 }
-img {
-  border: 0px;
-  margin: 0px;
-}
-img.photo {
-   padding: 12px;
-}
 
 #MainColumn {
   margin-top:      5px;
@@ -229,12 +163,14 @@ img.photo {
   margin-bottom:   5px;
   margin-right:  245px;
 }
+
 #SideBar {
   position: absolute;
   top:     0px;
   right:  10px;
   width: 220px;
 }
+
 #ArchivesColumn {
 	position: absolute;
 	z-index: 2;
@@ -242,92 +178,9 @@ img.photo {
 	left: 93px;
         width: 80%
 }
-#LinksColumn {
-	position: absolute;
-	z-index: 2;
-	top: 0px;
-	left: 93px;
-        width: 80%
-}
 
-.dateStamp {
-  color : gray;
-  font-size: small;
-}
 .daypermalink {
   border-style : none;
-}
-
-.rFolder {
-  font-size: medium;
-  font-weight: bolder;
-}
-.rBookmarkTd {
-  font-size: small;
-  vertical-align: top;
-  font-weight: normal;
-}
-.rBookmark {
-  margin-left: 10px;
-  font-size: small
-  font-weight: normal;
-}
-.rBookmark0 {
-  margin-left: 10px;
-  font-size: small
-  font-weight: normal;
-}
-.rBookmark1 {
-  margin-left: 10px;
-  font-size: small;
-  font-weight: bold;
-}
-.rBookmark2 {
-  margin-left: 10px;
-  font-weight: bold;
-  font-size: large
-}
-.rBookmark3 {
-  margin-left: 10px;
-  font-size: x-large
-}
-
-.hCalendarTable {
-  text-align : center;
-}
-.hCalendarTitle {
-  text-align : center;
-  font-weight : bolder;
-  font-size: large;
-}
-.hCalendarDayNameRow {
-  text-align : center;
-  font-weight : bolder;
-  font-size : x-small;
-}
-.hCalendarDay {
-  text-align : center;
-  font-size : x-small;
-}
-.hCalendarDayCurrent {
-  text-align : center;
-  font-size : x-small;
-  font-weight : bolder ;
-}
-.hCalendarDayLinked {
-  font-size : x-small;
-  font-weight : bolder ;
-  text-align : center;
-}
-.hCalendarDayNotInMonth {
-  font-size : x-small;
-  background-color: white;
-  color: gray;
-}
-.hCalendarNextPrev {
-  font-size : x-small;
-  text-align : center;
-  font-style : italic;
 }
 
 div.box, .comments, .comments-form {
@@ -335,6 +188,15 @@ div.box, .comments, .comments-form {
   border: dashed 1px gray;
   padding: 2px;
 }
+
+h2 {
+  border-left-width: 15px;
+  border-right-width: 15px;
+  border-top-width: 15px;
+  margin: 2px;
+  padding: 4px;
+}
+
 h2.box, .comments-head {
   font-size: medium;
   font-weight : bolder;
@@ -344,6 +206,7 @@ h2.box, .comments-head {
   background-color : #0074D9;
   color : white;
 }
+
 h2.daybox {
   text-align : left;
   font-size: medium;
@@ -354,45 +217,15 @@ h2.daybox {
   background-color : #0074D9;
   color : white;
 }
-h2 {
-  border-left-width: 15px;
-  border-right-width: 15px;
-  border-top-width: 15px;
-  margin: 2px;
-  padding: 4px;
-}
 
-
-.rChosenCategory {
-    font-weight: bolder;
+h2.sidebox {
+   background-color: #0074D9
 }
-.rUnchosenCategory {
-    font-size: medium;
-}
-
-ul.rReferersList {
-  list-style: none;
-  margin-left: 0;
-  padding-left: 0;
-  font-size : x-small;
-}
-li.rReferersListItem {
-  list-style: none;
-  margin-left: 0;
-  padding-left: 0;
-  font-size : x-small;
-}
-
-/*-------------------------------------------------------------
-Overrides
---------------------------------------------------------------*/
 
 pre {
     font-size: 10pt;
     overflow: auto;
-/*  w-w: b-w for IE only, so pre does not go into right margin */
     word-wrap: break-word;
-/*    width: 760px; */
 }
 
 code {
@@ -400,71 +233,12 @@ code {
 }
 
 pre.code {
-    background-color: #FFF8DC;
-}
-
-pre.code2 {
     background-color: #f8f8ff;
     font-family: 'Bitstream Vera Sans Mono', 'Courier', monospace;
     margin: 0 !important;
     border: none !important;
     padding: .25em .5em .5em .5em !important;
 }
-
-pre.output {
-    background-color: #f8f8ff;
-}
-
-h2.box {
-   background-color: #0074D9
-}
-
-h2.sidebox {
-   background-color: #0074D9
-}
-
-table.translate {
-    /* t r b l */
-    margin:10px 0px 0px 7px;
-}
-
-ul.rEntriesList {
-    list-style-type: none;
-    padding: 0;
-    margin-left: 5px;
-}
-
-li.recentposts, li.recentcomments {
-    font-size: x-small;
-}
-
-ul.rFolder {
-    margin-left: 0;
-    padding-left: 0;
-}
-
-.rBookmark0 {
-  margin-left: 5px;
-}
-
-div.rNavigationBar {
-  margin-left: 5px;
-}
-
-li pre {
-/*   width: 710px; */
-    word-wrap: break-word;
-}
-
-table.topiclist pre {
-    background-color: #FFF8DC;
-}
-
-div.userinput {
-    background-color: #f8f8ff;
-}
-
-/* div.size300 pre.prettyprint, div.gist pre { */
 
 div.size300 pre.prettyprint, div.size300 div.gist div.file-data {
     height:300px
@@ -484,30 +258,4 @@ div.size450 pre.prettyprint, div.size450 div.gist div.file-data {
 
 div.size500 pre.prettyprint, div.size500 div.gist div.file-data {
     height:500px
-}
-
-table.topiclist {
-	border-width: 1px 1px 1px 1px;
-	border-spacing: 2px;
-	border-style: solid solid solid solid;
-	border-color: gray gray gray gray;
-	border-collapse: separate;
-	background-color: white;
-}
-table.topiclist th {
-	border-width: 1px 1px 1px 1px;
-	padding: 1px 1px 1px 1px;
-	border-style: hidden hidden hidden hidden;
-	border-color: gray gray gray gray;
-	background-color: rgb(250, 240, 230);
-	-moz-border-radius: 0px 0px 0px 0px;
-}
-table.topiclist td {
-        valign: top;
-	border-width: 1px 1px 1px 1px;
-	padding: 1px 1px 1px 1px;
-	border-style: hidden hidden hidden hidden;
-	border-color: gray gray gray gray;
-	background-color: rgb(250, 240, 230);
-	-moz-border-radius: 0px 0px 0px 0px;
 }
