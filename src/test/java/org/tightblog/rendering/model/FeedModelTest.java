@@ -56,7 +56,7 @@ public class FeedModelTest {
         feedRequest.setTag("collectibles");
         feedRequest.setPageNum(16);
         feedRequest.setSiteWide(true);
-        feedModel = new FeedModel(feedRequest, mockPropertiesRepository, mockWeblogEntryListGenerator,
+        feedModel = new FeedModel(mockPropertiesRepository, mockWeblogEntryListGenerator,
                 mockWeblogEntryManager);
         Map<String, Object> initVals = new HashMap<>();
         initVals.put("parsedRequest", feedRequest);

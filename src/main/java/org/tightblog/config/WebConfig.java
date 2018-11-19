@@ -24,6 +24,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
+import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.tightblog.rendering.thymeleaf.ThemeTemplateResolver;
+import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -49,13 +58,55 @@ public class WebConfig implements WebMvcConfigurer {
         return tconf;
     }
 
+    // To process resources in the webapp/thymeleaf folder: Atom feeds,
+    // common blog theme elements, emails, etc.
     @Bean
-    public DeviceResolverHandlerInterceptor deviceResolverHandlerInterceptor() {
-        return new DeviceResolverHandlerInterceptor();
+    public SpringResourceTemplateResolver standardTemplateResolver() {
+        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
+        resolver.setTemplateMode(TemplateMode.HTML);
+        resolver.setPrefix("/thymeleaf/");
+        resolver.setSuffix(".html");
+        // 1 reserved for the ThemeTemplateResolver (blog theme-specific templates)
+        resolver.setOrder(2);
+        // not modifiable, so can cache
+        resolver.setCacheable(true);
+        return resolver;
+    }
+
+    @Bean
+    public SpringTemplateEngine blogTemplateEngine(ThemeTemplateResolver themeTemplateResolver,
+                                                   SpringResourceTemplateResolver standardTemplateResolver) {
+        SpringTemplateEngine engine = new SpringTemplateEngine();
+        Set<ITemplateResolver> templateResolvers = new HashSet<>();
+        templateResolvers.add(themeTemplateResolver);
+        templateResolvers.add(standardTemplateResolver);
+        engine.setTemplateResolvers(templateResolvers);
+        return engine;
+    }
+
+    @Bean
+    public SpringTemplateEngine standardTemplateEngine(SpringResourceTemplateResolver standardTemplateResolver) {
+        SpringTemplateEngine engine = new SpringTemplateEngine();
+        engine.setTemplateResolver(standardTemplateResolver);
+        return engine;
+    }
+
+    @Bean
+    public ThymeleafRenderer blogRenderer(SpringTemplateEngine blogTemplateEngine) {
+        ThymeleafRenderer tr = new ThymeleafRenderer();
+        tr.setTemplateEngine(blogTemplateEngine);
+        return tr;
+    }
+
+    @Bean
+    public ThymeleafRenderer atomRenderer(SpringTemplateEngine standardTemplateEngine) {
+        ThymeleafRenderer tr = new ThymeleafRenderer();
+        tr.setTemplateEngine(standardTemplateEngine);
+        return tr;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(deviceResolverHandlerInterceptor());
+        registry.addInterceptor(new DeviceResolverHandlerInterceptor());
     }
 }

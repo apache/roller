@@ -17,7 +17,10 @@ package org.tightblog.rendering.thymeleaf;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.IEngineConfiguration;
+import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;
 import org.thymeleaf.templateresource.StringTemplateResource;
@@ -28,20 +31,23 @@ import org.tightblog.repository.WeblogTemplateRepository;
 
 import java.util.Map;
 
+@Component
 public class ThemeTemplateResolver extends AbstractConfigurableTemplateResolver {
 
     private static Logger logger = LoggerFactory.getLogger(ThemeTemplateResolver.class);
 
     private ThemeManager themeManager;
-
-    public void setThemeManager(ThemeManager themeManager) {
-        this.themeManager = themeManager;
-    }
-
     private WeblogTemplateRepository weblogTemplateRepository;
 
-    public void setWeblogTemplateRepository(WeblogTemplateRepository weblogTemplateRepository) {
+    @Autowired
+    public ThemeTemplateResolver(ThemeManager themeManager, WeblogTemplateRepository weblogTemplateRepository) {
+        this.themeManager = themeManager;
         this.weblogTemplateRepository = weblogTemplateRepository;
+        setTemplateMode(TemplateMode.HTML);
+        setOrder(1);
+        setCheckExistence(true);
+        // Have changes to blog templates to propagate immediately: https://stackoverflow.com/a/28530365
+        setCacheable(false);
     }
 
     @Override

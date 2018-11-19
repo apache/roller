@@ -21,7 +21,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.context.IContext;
 import org.thymeleaf.exceptions.TemplateInputException;
 import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.tightblog.domain.Template;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.util.Utilities;

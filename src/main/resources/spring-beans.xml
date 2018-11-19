@@ -108,50 +108,9 @@
         <beans:property name="password" value="${spring.datasource.password:#{null}}" />
     </beans:bean>
 
-    <beans:bean id="blogTemplateResolver" class="org.tightblog.rendering.thymeleaf.ThemeTemplateResolver">
-        <beans:property name="templateMode" value="HTML"/>
-        <beans:property name="order" value="1"/>
-        <beans:property name="checkExistence" value="true"/>
-        <!-- we want changes to blog templates to propagate immediately: https://stackoverflow.com/a/28530365 -->
-        <beans:property name="cacheable" value="false"/>
-        <beans:property name="themeManager" ref="themeManager"/>
-        <beans:property name="weblogTemplateRepository" ref="weblogTemplateRepository"/>
-    </beans:bean>
-
-    <beans:bean id="standardTemplateResolver" class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
-        <beans:property name="templateMode" value="HTML"/>
-        <beans:property name="prefix" value="/thymeleaf/" />
-        <beans:property name="suffix" value=".html" />
-        <beans:property name="order" value="2"/>
-        <!-- templates here can't be modified via UI, so good to cache -->
-        <beans:property name="cacheable" value="true"/>
-    </beans:bean>
-
-    <beans:bean id="blogTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
-        <beans:property name="templateResolvers">
-            <beans:set>
-                <!-- resolution order defined by resolver 'order' attributes -->
-                <beans:ref bean="blogTemplateResolver"/>
-                <beans:ref bean="standardTemplateResolver"/>
-            </beans:set>
-        </beans:property>
-    </beans:bean>
-
-    <beans:bean id="standardTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
-        <beans:property name="templateResolver" ref="standardTemplateResolver" />
-    </beans:bean>
-
     <beans:bean id="filterMultipartResolver"
                 class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <beans:property name="maxUploadSize" value="-1" />
-    </beans:bean>
-
-    <beans:bean id="blogRenderer" class="org.tightblog.rendering.thymeleaf.ThymeleafRenderer">
-        <beans:property name="templateEngine" ref="blogTemplateEngine"/>
-    </beans:bean>
-
-    <beans:bean id="atomRenderer" class="org.tightblog.rendering.thymeleaf.ThymeleafRenderer">
-        <beans:property name="templateEngine" ref="standardTemplateEngine"/>
     </beans:bean>
 
     <beans:bean id="previewPageModel" parent="pageModel" class="org.tightblog.rendering.model.PageModel" scope="prototype">

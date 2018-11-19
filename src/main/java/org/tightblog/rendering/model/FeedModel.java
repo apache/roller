@@ -48,9 +48,8 @@ public class FeedModel implements Model {
     protected WeblogEntryManager weblogEntryManager;
 
     @Autowired
-    public FeedModel(WeblogFeedRequest feedRequest, WebloggerPropertiesRepository webloggerPropertiesRepository,
+    public FeedModel(WebloggerPropertiesRepository webloggerPropertiesRepository,
                      WeblogEntryListGenerator weblogEntryListGenerator, WeblogEntryManager weblogEntryManager) {
-        this.feedRequest = feedRequest;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.weblogEntryListGenerator = weblogEntryListGenerator;
         this.weblogEntryManager = weblogEntryManager;

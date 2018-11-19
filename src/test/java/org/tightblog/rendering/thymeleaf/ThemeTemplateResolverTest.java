@@ -25,7 +25,6 @@ import org.tightblog.domain.Template;
 import org.tightblog.domain.WeblogTemplate;
 import org.tightblog.repository.WeblogTemplateRepository;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -43,9 +42,7 @@ public class ThemeTemplateResolverTest {
     public void initialize() {
         mockThemeManager = mock(ThemeManager.class);
         mockWeblogTemplateRepository = mock(WeblogTemplateRepository.class);
-        themeTemplateResolver = new ThemeTemplateResolver();
-        themeTemplateResolver.setThemeManager(mockThemeManager);
-        themeTemplateResolver.setWeblogTemplateRepository(mockWeblogTemplateRepository);
+        themeTemplateResolver = new ThemeTemplateResolver(mockThemeManager, mockWeblogTemplateRepository);
     }
 
     @Test
@@ -55,7 +52,7 @@ public class ThemeTemplateResolverTest {
     }
 
     @Test
-    public void testReturnSharedTheme() throws IOException {
+    public void testReturnSharedTheme() {
         SharedTheme sharedTheme = new SharedTheme();
         sharedTheme.setId("foo");
         SharedTemplate sharedTemplate = new SharedTemplate();
