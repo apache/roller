@@ -19,7 +19,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
     <div style="padding: 15px 25px 25px 25px">
-        <h2 class="error"><fmt:message key="errorPage.title" /></h2>
+        <h2 class="errorTitle"><fmt:message key="errorPage.title" /></h2>
 
         <c:set var="status_code" value="${requestScope['javax.servlet.error.status_code']}" />
         <c:set var="message"     value="${requestScope['javax.servlet.error.message']}" />

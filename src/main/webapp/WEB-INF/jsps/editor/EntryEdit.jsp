@@ -20,7 +20,6 @@
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 <link rel="stylesheet" href="//cdn.quilljs.com/0.20.1/quill.snow.css">
 
 <script src="<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />"></script>

@@ -24,10 +24,10 @@
     <c:choose>
         <c:when test="${tab.selected}">
             <c:set var="selectedTab" value="${tab}"/>
-            <td class="menuTabSelected">
+            <td class="menuTab menuTabSelected">
         </c:when>
         <c:otherwise>
-            <td class="menuTabUnselected">
+            <td class="menuTab menuTabUnselected">
         </c:otherwise>
     </c:choose>
     <div class="menu-tr">

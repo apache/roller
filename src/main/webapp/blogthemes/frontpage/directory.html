@@ -21,7 +21,7 @@
             <p class="subtitle" th:utext="${model.weblog.tagline}">xxx</p>
 
             <table class="menuTabTable" cellspacing="0"><tbody><tr>
-               <td class="menuTabUnselected">
+               <td class="menuTab menuTabUnselected">
                   <div class="menu-tr">
                      <div class="menu-tl">
                         &nbsp;&nbsp;<a th:href="${url.weblogHome}">Recent Entries</a>&nbsp;&nbsp;
@@ -29,7 +29,7 @@
                   </div>
                </td>	
                <td class="menuTabSeparator"></td>
-               <td class="menuTabSelected">
+               <td class="menuTab menuTabSelected">
                   <div class="menu-tr">
                      <div class="menu-tl">
                         &nbsp;&nbsp;<a th:href="${url.getCustomPageURL('directory')}">Weblog Directory</a>&nbsp;&nbsp;

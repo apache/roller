@@ -19,7 +19,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
 
 
-<h2 class="error"><fmt:message key="error.title.403" /></h2>
+<h2 class="errorTitle"><fmt:message key="error.title.403" /></h2>
 
 <c:set var="status_code" value="${requestScope['javax.servlet.error.status_code']}" />
 <c:set var="message"     value="${requestScope['javax.servlet.error.message']}" />

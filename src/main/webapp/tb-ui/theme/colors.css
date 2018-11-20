@@ -21,12 +21,6 @@
 /* ------------------------------------------------------------------------ */
 /* add colors and images to tightblog.css */
 
-#logobackground {
-    background: #ad3431 !important;
-}
-.bannerBox {
-    background: url("two-banner.gif") repeat-x top;
-}
 .bannerStatusBox {
     background: #ad3431;
     color: white;
@@ -51,9 +45,6 @@ h3 {
     color: #ad3537;
     font-weight: bold;
 }
-.fakelink {
-    color: #ad3537;
-}
 a:link {
     color: #ad3537;
 }
@@ -69,66 +60,19 @@ table.rollertable th {
 table.rollertable td {
     border: 1px solid #c6ab74;
 }
-a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
-   color: #ad3537;
-}
-div.centerTitle {
-    background: #c6ab74;
-}
 div.control {
     background: #c6ab74;
 }
 div.controlToggle {
     background: url("two-togglegrey.gif") repeat-x top;
 }
-div.entriesBox {
-   background: #f1ebdf;
-}
-div.entryTitleBox {
-   color: white;
-   background: #c6ab74;
-}
-div.entryBox {
-   border-bottom: 1px #c8af7b solid;
-}
-div.entryTitleBox {
-   font-size: medium;
-}
-a.entryTitle, a:active.entryTitle, a:visited.entryTitle {
-   color: #ad3537;
-   font-size: medium;
-   font-weight: bold;
-}
-div.yourWeblogBox {
-   border-top: 1px #c6ab74 solid;
-}
-input.searchButton {
-    color: white;
-    background: #ad3431;
-}
-.sidebarBodyHead {
-    background: #ad3431;
-    color: white;
-}
-.searchSidebarBodyHead h3 {
-    color: black;
-}
-.sidebarBodyHead h3 {
-    color: white;
-}
 .sidebarFade, div.sidebarBody {
     background: #f1ebdf;
     color: #666666;
 }
-.searchSidebarHead {
-    background: #f1ebdf;
-}
-.searchSidebarBody {
-    background: #f1ebdf;
-}
 
 /* ------------------------------------------------------------------------ */
-/* add colors and iamges to menu.css */
+/* add colors and images to menu.css */
 
 td.menuTabSelected {
     background: url("menutab-sel.gif") repeat-x;
@@ -140,12 +84,10 @@ td.menuTabUnselected {
     background-color: #c6ab74;
     color: black;
 }
-td.menuTabSelected a:link, td.menuTabSelected a:visited, td.menuTabSelected a:hover, td.menuTabSelected a:active {
+td.menuTab a:link, td.menuTab a:visited, td.menuTab a:hover, td.menuTab a:active {
     color: black;
 }
-td.menuTabUnselected a:link, td.menuTabUnselected a:visited, td.menuTabUnselected a:hover, td.menuTabUnselected a:active {
-    color: black;
-}
+
 a.menuItemSelected:link, a.menuItemSelected:visited, a.menuItemSelected:hover, a.menuItemSelected:active {
     color: black;
 }
@@ -160,35 +102,4 @@ span.mm_weblog_name {
 }
 td.mm_table_actions {
     background: #fff4d4;
-}
-
-/* RTE editor  */
-
-.rteBack tbody tr td, .rteBack tr td, .rteDiv, .rteBack .rteImageLowered, .rteImage:active, .rteImageRaised, .rteImage:hover, .rteImageSm, .rteImage {
-	background: #f1ebdf;
-}
-.rteImage {
-	border: 1px solid #d0cabc;
-}
-.rteImageSm {
-	border: 1px solid #d0cabc;
-}
-.rteDiv {
-    border: 1px solid #d0cabc;
-}
-
-.htmlarea .toolbar {
-  background: #f1ebdf;
-}
-
-.htmlarea .toolbar .button {
-  background: #f1ebdf;
-}
-
-.htmlarea .toolbar a.buttonDisabled:hover {
-  background: #f1ebdf;
-}
-
-.htmlarea .statusBar {
-  background: #f1ebdf;
 }
