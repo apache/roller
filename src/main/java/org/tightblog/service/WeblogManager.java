@@ -174,7 +174,7 @@ public class WeblogManager {
         }
 
         // grant weblog creator OWNER permission
-        userManager.grantWeblogRole(newWeblog.getCreator(), newWeblog, WeblogRole.OWNER, false);
+        userManager.grantWeblogRole(newWeblog.getCreator(), newWeblog, WeblogRole.OWNER);
 
         // add default categories and bookmarks
         if (!ObjectUtils.isEmpty(newBlogCategories)) {

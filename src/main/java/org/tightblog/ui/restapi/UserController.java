@@ -55,7 +55,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.domain.WebloggerProperties;
 
-import javax.mail.MessagingException;
 import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -244,11 +243,8 @@ public class UserController {
             ResponseEntity re = saveUser(user, newData, null, response, true);
 
             if (re.getStatusCode() == HttpStatus.OK && mustActivate) {
-                try {
-                    UserData data = (UserData) re.getBody();
-                    emailService.sendUserActivationEmail(data.getUser());
-                } catch (MessagingException ignored) {
-                }
+                UserData data = (UserData) re.getBody();
+                emailService.sendUserActivationEmail(data.getUser());
             }
             return re;
         } else {
@@ -332,12 +328,11 @@ public class UserController {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
         User user = userRepository.findEnabledByUserName(p.getName());
-        if (user != null && weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+        if (user != null && weblog != null && user.hasEffectiveGlobalRole(GlobalRole.ADMIN)) {
 
             // must remain at least one admin
             List<UserWeblogRole> owners = roles.stream()
                     .filter(r -> r.getWeblogRole().equals(WeblogRole.OWNER))
-                    .filter(r -> !r.isPending())
                     .collect(Collectors.toList());
             if (owners.size() < 1) {
                 return ResponseEntity.badRequest().body(messages.getMessage("members.oneAdminRequired", null, locale));
@@ -349,7 +344,7 @@ public class UserController {
                     userWeblogRoleRepository.delete(role);
                 } else {
                     userManager.grantWeblogRole(
-                            role.getUser(), role.getWeblog(), role.getWeblogRole(), role.isPending());
+                            role.getUser(), role.getWeblog(), role.getWeblogRole());
                 }
             }
             String msg = messages.getMessage("members.membersChanged", null, locale);
@@ -515,36 +510,35 @@ public class UserController {
         return getUsersWeblogs(user.getId(), response);
     }
 
-    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/user/{userId}/role/{role}/invite", produces = "text/plain")
-    public ResponseEntity inviteUser(@PathVariable String weblogId, @PathVariable String userId,
+    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/user/{userId}/role/{role}/attach", produces = "text/plain")
+    public ResponseEntity addUserToWeblog(@PathVariable String weblogId, @PathVariable String userId,
                                      @PathVariable WeblogRole role, Principal p, Locale locale) {
 
+        User requestor = userRepository.findEnabledByUserName(p.getName());
+        User newMember = userRepository.findByIdOrNull(userId);
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-        User invitee = userRepository.findByIdOrNull(userId);
-        User invitor = userRepository.findEnabledByUserName(p.getName());
 
-        if (weblog != null && invitee != null && invitor != null &&
-                userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+        if (weblog != null && newMember != null && requestor != null &&
+                requestor.hasEffectiveGlobalRole(GlobalRole.ADMIN)) {
 
-            UserWeblogRole roleChk = userWeblogRoleRepository.findByUserAndWeblog(invitee, weblog);
+            UserWeblogRole roleChk = userWeblogRoleRepository.findByUserAndWeblog(newMember, weblog);
             if (roleChk != null) {
-                return ResponseEntity.badRequest().body(messages.getMessage(roleChk.isPending() ?
-                        "members.userAlreadyInvited" : "members.userAlreadyMember", null, locale));
+                return ResponseEntity.badRequest().body(messages.getMessage(
+                        "members.userAlreadyMember", null, locale));
             }
-            userManager.grantWeblogRole(invitee, weblog, role, true);
-            emailService.sendWeblogInvitation(invitee, weblog);
-            return ResponseEntity.ok(messages.getMessage("members.userInvited", null, locale));
+            userManager.grantWeblogRole(newMember, weblog, role);
+            return ResponseEntity.ok(messages.getMessage("members.userAdded", null, locale));
         } else {
             return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).build();
         }
-
     }
 
-    @PostMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/attach")
-    public void acceptWeblogInvitation(@PathVariable String id, Principal p, HttpServletResponse response) {
+    @PostMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/emails/{emailComments}")
+    public void setEmailCommentsForWeblog(@PathVariable String id, @PathVariable boolean emailComments, Principal p,
+                                       HttpServletResponse response) {
         UserWeblogRole uwr = userWeblogRoleRepository.findByIdOrNull(id);
         if (uwr != null && uwr.getUser().getUserName().equals(p.getName())) {
-            uwr.setPending(false);
+            uwr.setEmailComments(emailComments);
             userWeblogRoleRepository.saveAndFlush(uwr);
             response.setStatus(HttpServletResponse.SC_OK);
         } else {

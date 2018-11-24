@@ -72,7 +72,6 @@ public class Weblog {
     private EditFormat editFormat = EditFormat.HTML;
     private String blacklist;
     private CommentPolicy allowComments = CommentPolicy.MUSTMODERATE;
-    private Boolean emailComments = Boolean.FALSE;
     @NotBlank(message = "{weblogConfig.error.themeNull}")
     private String theme;
     private String locale;
@@ -148,7 +147,6 @@ public class Weblog {
         this.setEditFormat(other.getEditFormat());
         this.setBlacklist(other.getBlacklist());
         this.setAllowComments(other.getAllowComments());
-        this.setEmailComments(other.getEmailComments());
         this.setTheme(other.getTheme());
         this.setLocale(other.getLocale());
         this.setTimeZone(other.getTimeZone());
@@ -268,15 +266,6 @@ public class Weblog {
 
     public void setDefaultCommentDays(int defaultCommentDays) {
         this.defaultCommentDays = defaultCommentDays;
-    }
-
-    @Basic(optional = false)
-    public Boolean getEmailComments() {
-        return this.emailComments;
-    }
-
-    public void setEmailComments(Boolean emailComments) {
-        this.emailComments = emailComments;
     }
 
     public String getTheme() {

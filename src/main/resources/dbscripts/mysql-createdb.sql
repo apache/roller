@@ -34,7 +34,6 @@ create table weblog (
     datecreated       datetime(3) not null,
     lastmodified      datetime(3) not null,
     allowcomments     varchar(20) not null,
-    emailcomments     tinyint(1) default 1 not null,
     commentdays       integer default 7 not null,
     analyticscode     text,
     blacklist         text,
@@ -51,7 +50,7 @@ create table user_weblog_role (
    userid          varchar(48) not null,
    weblogid        varchar(48) not null,
    weblog_role     varchar(48) not null,
-   pending         tinyint(1) default 1 not null
+   email_comments  tinyint(1) default 1 not null
 );
 
 alter table user_weblog_role add constraint uwr_userid_fk

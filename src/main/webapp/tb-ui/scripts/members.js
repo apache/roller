@@ -20,17 +20,17 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
       })
     }
 
-    this.inviteUser = function() {
-      if (!self.userToInvite || !self.inviteeRole) {
+    this.addUserToWeblog = function() {
+      if (!self.userToAdd || !self.userToAddRole) {
         return;
       }
-      $http.post(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/user/' + self.userToInvite +
-        '/role/' + self.inviteeRole + '/invite').then(
+      $http.post(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/user/' + self.userToAdd +
+        '/role/' + self.userToAddRole + '/attach').then(
         function(response) {
           $('#errorMessageDiv').hide();
           $('#successMessageDiv').show();
-          self.userToInvite = '';
-          self.inviteeRole = '';
+          self.userToAdd = '';
+          self.userToAddRole = '';
           self.loadMembers();
         },
         function(response) {
@@ -45,12 +45,12 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     }
 
     this.loadPotentialMembers = function() {
-      self.userToInvite = null;
+      self.userToAdd = null;
       $http.get(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/potentialmembers').then(function(response) {
         self.potentialMembers = response.data;
         if (Object.keys(self.potentialMembers).length > 0) {
           for (first in self.potentialMembers) {
-             self.userToInvite = first;
+             self.userToAdd = first;
              break;
           }
         }

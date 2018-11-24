@@ -155,6 +155,7 @@ public class WeblogController {
         if (maybeValError != null) {
             return ResponseEntity.badRequest().body(maybeValError);
         }
+
         return saveWeblog(weblog, newData, response, false);
     }
 
@@ -174,7 +175,6 @@ public class WeblogController {
                 weblog.setEntriesPerPage(newData.getEntriesPerPage());
                 weblog.setBlacklist(newData.getBlacklist());
                 weblog.setAllowComments(newData.getAllowComments());
-                weblog.setEmailComments(newData.getEmailComments());
                 weblog.setLocale(newData.getLocale());
                 weblog.setTimeZone(newData.getTimeZone());
 
@@ -191,6 +191,7 @@ public class WeblogController {
                 // save config
                 if (newWeblog) {
                     weblogManager.addWeblog(weblog);
+                    log.info("New weblog {} created by user {}", weblog, weblog.getCreator());
                 } else {
                     weblogManager.saveWeblog(weblog);
                 }
@@ -200,8 +201,6 @@ public class WeblogController {
                     weblogEntryRepository.applyDefaultCommentDaysToWeblogEntries(weblog, weblog.getDefaultCommentDays());
                 }
 
-                // flush and clear cache
-                response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }

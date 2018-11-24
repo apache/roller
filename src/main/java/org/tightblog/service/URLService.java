@@ -98,7 +98,7 @@ public class URLService {
      * Get a url to a UI action in a given namespace, optionally specifying a weblog object
      * if that is needed by the action.
      */
-    public String getActionURL(String action, String namespace, Weblog weblog,
+    public String getActionURL(String namespace, String action, Weblog weblog,
                                Map<String, String> parameters) {
         String url = dp.getAbsoluteUrl() + namespace + "/" + action;
 

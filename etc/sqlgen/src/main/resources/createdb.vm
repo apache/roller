@@ -37,7 +37,6 @@ create table weblog (
     datecreated       $TIMESTAMP_SQL_TYPE not null,
     lastmodified      $TIMESTAMP_SQL_TYPE not null,
     allowcomments     varchar(20) not null,
-    emailcomments     $BOOLEAN_SQL_TYPE_TRUE not null,
     commentdays       integer default 7 not null,
     analyticscode     $TEXT_SQL_TYPE,
     blacklist         $TEXT_SQL_TYPE,
@@ -54,7 +53,7 @@ create table user_weblog_role (
    userid          varchar(48) not null,
    weblogid        varchar(48) not null,
    weblog_role     varchar(48) not null,
-   pending         $BOOLEAN_SQL_TYPE_TRUE not null
+   email_comments  $BOOLEAN_SQL_TYPE_TRUE not null
 );
 
 alter table user_weblog_role add constraint uwr_userid_fk

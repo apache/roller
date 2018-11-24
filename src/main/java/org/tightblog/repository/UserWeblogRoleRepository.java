@@ -30,21 +30,15 @@ public interface UserWeblogRoleRepository extends JpaRepository<UserWeblogRole, 
 
     List<UserWeblogRole> findByUser(User user);
 
-    List<UserWeblogRole> findByUserAndPendingFalse(User user);
-
     List<UserWeblogRole> findByWeblog(Weblog weblog);
 
-    List<UserWeblogRole> findByWeblogAndPendingTrue(Weblog weblog);
-
-    List<UserWeblogRole> findByWeblogAndPendingFalse(Weblog weblog);
+    List<UserWeblogRole> findByWeblogAndEmailCommentsTrue(Weblog weblog);
 
     default UserWeblogRole findByIdOrNull(String id) {
         return findById(id).orElse(null);
     }
 
     UserWeblogRole findByUserAndWeblog(User user, Weblog weblog);
-
-    UserWeblogRole findByUserAndWeblogAndPendingFalse(User user, Weblog weblog);
 
     Long deleteByUser(User user);
 

@@ -165,7 +165,7 @@ public class UIController {
             } else if (!GlobalRole.ADMIN.equals(user.getGlobalRole())) {
                 response.sendRedirect(request.getContextPath() + "/tb-ui/app/home");
             } else {
-                List<UserWeblogRole> roles = userWeblogRoleRepository.findByUserAndPendingFalse(user);
+                List<UserWeblogRole> roles = userWeblogRoleRepository.findByUser(user);
 
                 if (roles.size() > 0) {
                     response.sendRedirect(request.getContextPath() + "/tb-ui/app/home");
@@ -343,7 +343,7 @@ public class UIController {
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
 
         boolean isAdmin = user.hasEffectiveGlobalRole(GlobalRole.ADMIN);
-        UserWeblogRole weblogRole = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(user, weblog);
+        UserWeblogRole weblogRole = userWeblogRoleRepository.findByUserAndWeblog(user, weblog);
         if (isAdmin || (weblogRole != null && weblogRole.hasEffectiveWeblogRole(requiredRole))) {
             if (map == null) {
                 map = new HashMap<>();

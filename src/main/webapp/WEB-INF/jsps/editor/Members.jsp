@@ -46,10 +46,10 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
             <div class="sidebarBody">
             <div class="sidebarInner">
             <h3>
-                <fmt:message key="members.permissionsHelpTitle" />
+                <fmt:message key="members.roleDefinitionsTitle" />
             </h3>
             <hr size="1" noshade="noshade" />
-            <fmt:message key="members.permissionHelp" />
+            <fmt:message key="members.roleDefinitions" />
 		    <br />
 		    <br />
         </div>
@@ -68,73 +68,78 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
     </c:if>
   </div>
 
-    <div style="text-align: right; padding-bottom: 6px;">
-        <span class="pendingCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <fmt:message key="comments.pending" />&nbsp;
-    </div>
-
-    <table class="rollertable">
-        <thead>
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
           <tr>
-             <th width="20%"><fmt:message key="members.userName" /></th>
-             <th width="20%"><fmt:message key="members.owner" /></th>
-             <th width="20%"><fmt:message key="members.publisher" /></th>
-             <th width="20%"><fmt:message key="members.contributor" /></th>
-             <th width="20%"><fmt:message key="members.remove" /></th>
+             <th scope="col" width="20%"><fmt:message key="members.userName" /></th>
+             <th scope="col" width="20%"><fmt:message key="members.owner" /></th>
+             <th scope="col" width="20%"><fmt:message key="members.publisher" /></th>
+             <th scope="col" width="20%"><fmt:message key="members.contributor" /></th>
+             <th scope="col" width="20%"><fmt:message key="members.remove" /></th>
           </tr>
         </thead>
         <tbody ng-cloak>
-            <tr ng-repeat="role in ctrl.roles" id="{{role.user.id}}" ng-class="{rollertable_pending: role.pending}">
+            <tr ng-repeat="role in ctrl.roles" id="{{role.user.id}}" ng-class="{pending_member: role.pending}">
                 <td>
                   <img src='<c:url value="/images/user.png"/>' border="0" alt="icon" />
                   {{role.user.userName}}
                 </td>
                 <td>
-                  <input type="radio" ng-model="role.weblogRole" value='OWNER'>
+                  <input type="radio" ng-model="role.weblogRole" value='OWNER'
+                        <c:if test="${!userIsAdmin}">disabled</c:if>
+                  >
                 </td>
                 <td>
-                  <input type="radio" ng-model="role.weblogRole" value='POST'>
+                  <input type="radio" ng-model="role.weblogRole" value='POST'
+                        <c:if test="${!userIsAdmin}">disabled</c:if>
+                  >
                 </td>
                 <td>
-                  <input type="radio" ng-model="role.weblogRole" value='EDIT_DRAFT'>
+                  <input type="radio" ng-model="role.weblogRole" value='EDIT_DRAFT'
+                        <c:if test="${!userIsAdmin}">disabled</c:if>
+                  >
                 </td>
                 <td>
-                  <input type="radio" ng-model="role.weblogRole" value='NOBLOGNEEDED'/>
+                  <input type="radio" ng-model="role.weblogRole" value='NOBLOGNEEDED'
+                        <c:if test="${!userIsAdmin}">disabled</c:if>
+                  >
                 </td>
            </tr>
        </tbody>
     </table>
-    <br />
+    <c:if test="${userIsAdmin}">
+        <br />
 
-    <div class="control">
-       <input ng-click="ctrl.updateRoles()" type="button" value="<fmt:message key='generic.save'/>" />
-    </div>
+            <div class="control">
+               <input ng-click="ctrl.updateRoles()" type="button" value="<fmt:message key='generic.save'/>" />
+            </div>
 
-<br>
-<br>
+            <br>
+            <br>
 
-  <div ng-hide="ctrl.userToInvite" ng-cloak>
-       <fmt:message key="members.nobodyToInvite" />
-  </div>
+          <div ng-hide="ctrl.userToAdd" ng-cloak>
+               <fmt:message key="members.nobodyToAdd" />
+          </div>
 
-  <div ng-show="ctrl.userToInvite" ng-cloak>
+          <div ng-show="ctrl.userToAdd" ng-cloak>
 
-      <p><fmt:message key="members.inviteMemberPrompt" /></p>
+              <p><fmt:message key="members.addMemberPrompt" /></p>
 
-      <select ng-model="ctrl.userToInvite" size="1" required>
-        <option ng-repeat="(key, value) in ctrl.potentialMembers" value="{{key}}">{{value}}</option>
-      </select>
+              <select ng-model="ctrl.userToAdd" size="1" required>
+                <option ng-repeat="(key, value) in ctrl.potentialMembers" value="{{key}}">{{value}}</option>
+              </select>
 
-      <fmt:message key="members.permissions" />:
+              <fmt:message key="members.roles" />:
 
-      <input type="radio" ng-model="ctrl.inviteeRole" value="OWNER"  />
-      <fmt:message key="members.owner" />
+              <input type="radio" ng-model="ctrl.userToAddRole" value="OWNER"  />
+              <fmt:message key="members.owner" />
 
-      <input type="radio" ng-model="ctrl.inviteeRole" value="POST" />
-      <fmt:message key="members.publisher" />
+              <input type="radio" ng-model="ctrl.userToAddRole" value="POST" />
+              <fmt:message key="members.publisher" />
 
-      <input type="radio" ng-model="ctrl.inviteeRole" value="EDIT_DRAFT" checked />
-      <fmt:message key="members.contributor" /><br><br>
+              <input type="radio" ng-model="ctrl.userToAddRole" value="EDIT_DRAFT" checked />
+              <fmt:message key="members.contributor" /><br><br>
 
-      <input ng-click="ctrl.inviteUser()" type="button" value="<fmt:message key='members.inviteMember'/>"/>
-  </div>
+              <input ng-click="ctrl.addUserToWeblog()" type="button" value="<fmt:message key='generic.add'/>"/>
+          </div>
+      </c:if>

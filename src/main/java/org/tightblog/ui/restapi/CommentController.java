@@ -96,7 +96,7 @@ public class CommentController {
                                          Principal principal, HttpServletResponse response) {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog, WeblogRole.OWNER)) {
+        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog, WeblogRole.POST)) {
 
             CommentData data = new CommentData();
 

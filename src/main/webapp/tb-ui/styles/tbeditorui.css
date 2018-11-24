@@ -271,22 +271,22 @@ table.innertable tr .viewbody .bot {
 .rollertable .altrow td {
     background: #EEEEEE;
 }
-.rollertable_pending td {
-    border: 1px solid #ccc;
-    background: #ffffcc;
-    color: black;
-    vertical-align: top;
+.pendingCommentBox {
+    background: khaki;
+    border: 1px gray solid;
+}
+.pendingcomment {
+    background: khaki;
 }
 tr.actionrow {
     background: #e5e5e5;
 }
-.pendingCommentBox {
-    background: #ffffcc;
-    border: 1px gray solid;
-}
 .spamCommentBox {
     background: #ffcccc;
     border: 1px gray solid;
+}
+.spamcomment {
+    background: #ffcccc;
 }
 .draftEntryBox {
     background: #ffffcc;
@@ -388,7 +388,7 @@ td.mm_table_actions {
     padding-left: 4px;
 }
 td.mm_subtable_label {
-    width: 105px;
+    width: 160px;
     vertical-align: top;
     font-weight: bold;
 }

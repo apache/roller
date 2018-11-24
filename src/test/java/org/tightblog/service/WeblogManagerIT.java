@@ -122,7 +122,7 @@ public class WeblogManagerIT extends WebloggerTest {
             // start with no permissions
             userWeblogRoleRepository.deleteByUser(testUser);
 
-            List<UserWeblogRole> userRoles = userWeblogRoleRepository.findByUserAndPendingFalse(testUser);
+            List<UserWeblogRole> userRoles = userWeblogRoleRepository.findByUser(testUser);
             assertEquals(0, userRoles.size());
 
             // add test weblogs
@@ -152,12 +152,9 @@ public class WeblogManagerIT extends WebloggerTest {
             weblog = weblogRepository.findByHandleAndVisibleTrue(testWeblog1.getHandle());
             assertNotNull(weblog);
             
-            userManager.grantWeblogRole(testUser, testWeblog1, WeblogRole.EDIT_DRAFT, true);
+            userManager.grantWeblogRole(testUser, testWeblog1, WeblogRole.EDIT_DRAFT);
 
             // get all weblogs for user
-            userRoles = userWeblogRoleRepository.findByUserAndPendingFalse(testUser);
-            assertEquals(1, userRoles.size());
-
             userRoles = userWeblogRoleRepository.findByUser(testUser);
             assertEquals(2, userRoles.size());
 

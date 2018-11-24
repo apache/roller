@@ -74,8 +74,6 @@ public class EmailService {
     private MessageSource messages;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private DynamicProperties dp;
-
-    @Value("${mail.enabled:false}")
     private boolean mailEnabled;
 
     @Autowired
@@ -84,7 +82,8 @@ public class EmailService {
                         URLService urlService, JavaMailSender mailSender,
                         SpringTemplateEngine standardTemplateEngine, MessageSource messages, DynamicProperties dp,
                         WebloggerPropertiesRepository webloggerPropertiesRepository,
-                        WeblogEntryCommentRepository weblogEntryCommentRepository) {
+                        WeblogEntryCommentRepository weblogEntryCommentRepository,
+                        @Value("${mail.enabled:false}") boolean mailEnabled) {
         this.userManager = userManager;
         this.userRepository = userRepository;
         this.userWeblogRoleRepository = userWeblogRoleRepository;
@@ -96,6 +95,7 @@ public class EmailService {
         this.standardTemplateEngine = standardTemplateEngine;
         this.messages = messages;
         this.dp = dp;
+        this.mailEnabled = mailEnabled;
     }
 
     /**
@@ -105,8 +105,10 @@ public class EmailService {
      *
      * @param user user to send activation email to.
      */
-    public void sendUserActivationEmail(User user) throws MessagingException {
+    public void sendUserActivationEmail(User user) {
         if (!mailEnabled) {
+            log.warn("Cannot send user activation email to {} because mail.enabled=false; either enable" +
+                    " or have a blog server admin activate account from User Admin page.", user);
             return;
         }
 
@@ -135,13 +137,12 @@ public class EmailService {
             return;
         }
 
-        String userAdminURL = urlService.getActionURL("userAdmin", "/tb-ui/app/admin",
+        String userAdminURL = urlService.getActionURL("/tb-ui/app/admin", "userAdmin",
                 null, null);
 
         // send to blog server admins
         List<User> admins = userRepository.findAdmins();
-        List<String> adminEmails = admins.stream().map(User::getEmailAddress).collect(Collectors.toList());
-        String[] to = adminEmails.toArray(new String[adminEmails.size()]);
+        String[] to = admins.stream().map(User::getEmailAddress).toArray(String[]::new);
 
         String subject = messages.getMessage("mailMessage.approveRegistrationSubject",
                 new Object[] {user.getScreenName()}, null);
@@ -203,34 +204,6 @@ public class EmailService {
     }
 
     /**
-     * Send a user an invitation to join a weblog
-     *
-     * @param user   user being invited
-     * @param weblog weblog being invited to.
-     */
-    public void sendWeblogInvitation(User user, Weblog weblog) {
-        if (!mailEnabled) {
-            return;
-        }
-
-        String from = weblog.getCreator().getEmailAddress();
-        String[] to = new String[]{user.getEmailAddress()};
-        String subject = messages.getMessage("members.inviteMemberEmailSubject",
-                new Object[] {weblog.getName(), weblog.getHandle()}, weblog.getLocaleInstance());
-
-        Context ctx = new Context();
-        ctx.setVariable("emailType", "WeblogInvitation");
-        ctx.setVariable("weblogName", weblog.getName());
-        ctx.setVariable("weblogHandle", weblog.getHandle());
-        ctx.setVariable("userName", user.getUserName());
-        String loginURL = dp.getAbsoluteUrl() + "/tb-ui/app/home";
-        ctx.setVariable("loginURL", loginURL);
-        String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
-
-        sendMessage(from, to, new String[]{from}, subject, message);
-    }
-
-    /**
      * Sends email to owners and publishers of a blog whenever someone with draft rights
      * submits a blog entry for review.
      *
@@ -253,7 +226,7 @@ public class EmailService {
             }
         });
 
-        String[] to = reviewers.toArray(new String[reviewers.size()]);
+        String[] to = reviewers.toArray(new String[0]);
         String subject = messages.getMessage("weblogEntry.pendingEntrySubject",
                new Object[] {entry.getWeblog().getName(), entry.getWeblog().getHandle()},
                 entry.getWeblog().getLocaleInstance());
@@ -293,15 +266,18 @@ public class EmailService {
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("bean.entryId", entry.getId());
-        String manageURL = urlService.getActionURL("comments", "/tb-ui/app/authoring", weblog, parameters);
+        String manageURL = urlService.getActionURL("/tb-ui/app/authoring", "comments", weblog, parameters);
         ctx.setVariable("manageURL", manageURL);
+
+        String homeURL = urlService.getActionURL("/tb-ui/app", "home", null, null);
+        ctx.setVariable("homeURL", homeURL);
 
         String msg = standardTemplateEngine.process("emails/PendingCommentNotice", ctx);
 
         String subject = messages.getMessage("email.comment.moderate.title", null, weblog.getLocaleInstance());
         subject += entry.getTitle();
 
-        List<UserWeblogRole> bloggerList = userWeblogRoleRepository.findByWeblogAndPendingFalse(weblog);
+        List<UserWeblogRole> bloggerList = userWeblogRoleRepository.findByWeblogAndEmailCommentsTrue(weblog);
 
         String[] sendToList = bloggerList.stream()
                 .map(UserWeblogRole::getUser)
@@ -309,10 +285,7 @@ public class EmailService {
                 .collect(Collectors.toList()).toArray(new String[bloggerList.size()]);
 
         String from = user.getEmailAddress();
-
-        if (comment.isPending() || weblog.getEmailComments()) {
-            sendMessage(from, sendToList, null, subject, msg);
-        }
+        sendMessage(from, sendToList, null, subject, msg);
     }
 
     /**
@@ -360,10 +333,9 @@ public class EmailService {
                 weblog.getLocaleInstance());
 
         // send message to blog members (same email for everyone)
-        if (weblog.getEmailComments() &&
-                // if must moderate on, blogger(s) already got pending email, good enough.
+        if (// if must moderate on, blogger(s) already got pending email, good enough.
                 !WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments())) {
-            List<UserWeblogRole> bloggerList = userWeblogRoleRepository.findByWeblogAndPendingFalse(weblog);
+            List<UserWeblogRole> bloggerList = userWeblogRoleRepository.findByWeblogAndEmailCommentsTrue(weblog);
 
             Context ctx = getPublishedCommentNotificationContext(comment, null);
             String msg = standardTemplateEngine.process("emails/NewCommentNotification", ctx);

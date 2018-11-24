@@ -44,8 +44,8 @@
 
 <div id="pendingList">
    <span ng-repeat="item in ctrl.pendingList" style='color:red'>New registration request: {{item.screenName}} ({{item.emailAddress}}):
-   <input ng-click="ctrl.approveUser(item.id)" type="button" value="<fmt:message key='mainMenu.accept' />">
-   <input ng-click="ctrl.declineUser(item.id)" type="button" value="<fmt:message key='mainMenu.decline' />"><br></span>
+   <input ng-click="ctrl.approveUser(item.id)" type="button" value="<fmt:message key='userAdmin.accept' />">
+   <input ng-click="ctrl.declineUser(item.id)" type="button" value="<fmt:message key='userAdmin.decline' />"><br></span>
 </div>
 
 <p class="subtitle"><fmt:message key="userAdmin.subtitle" /></p>
@@ -101,7 +101,7 @@
       <td class="label"><label for="passwordConfirm"><fmt:message key="userSettings.passwordConfirm" /></label></td>
       <td class="field">
       <input id="passwordConfirm" type="password" size="20" ng-model="ctrl.userCredentials.passwordConfirm" minlength="8" maxlength="20"></td>
-      <td class="description"><fmt:message key="userRegister.tip.passwordConfirm" /></td>
+      <td class="description"><fmt:message key="userAdmin.tip.passwordConfirm" /></td>
   </tr>
 
   <tr>

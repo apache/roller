@@ -112,7 +112,7 @@ public class UserManager {
             if (GlobalRole.ADMIN.equals(user.getGlobalRole())) {
                 hasRole = true;
             } else {
-                UserWeblogRole existingRole = userWeblogRoleRepository.findByUserAndWeblogAndPendingFalse(user, weblog);
+                UserWeblogRole existingRole = userWeblogRoleRepository.findByUserAndWeblog(user, weblog);
                 if (existingRole != null && existingRole.hasEffectiveWeblogRole(role)) {
                     hasRole = true;
                 }
@@ -127,17 +127,16 @@ public class UserManager {
      * @param user    User to grant weblog role to
      * @param weblog  Weblog being granted access to
      * @param role    WeblogRole to grant
-     * @param pending Whether grantee approve the role before it becomes effective
      */
-    public void grantWeblogRole(User user, Weblog weblog, WeblogRole role, boolean pending) {
+    public void grantWeblogRole(User user, Weblog weblog, WeblogRole role) {
         UserWeblogRole roleCheck = userWeblogRoleRepository.findByUserAndWeblog(user, weblog);
 
         if (roleCheck != null) {
             roleCheck.setWeblogRole(role);
         } else {
             roleCheck = new UserWeblogRole(user, weblog, role);
+            roleCheck.setEmailComments(true);
         }
-        roleCheck.setPending(pending);
         userWeblogRoleRepository.saveAndFlush(roleCheck);
     }
 

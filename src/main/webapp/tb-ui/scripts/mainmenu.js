@@ -8,7 +8,7 @@ $(function() {
       {
         text: msg.yesLabel,
         click: function() {
-          angular.element('#ngapp-div').scope().ctrl.updateRole(encodeURIComponent($(this).data('roleId')), 'detach');
+          angular.element('#ngapp-div').scope().ctrl.resignFromBlog(encodeURIComponent($(this).data('roleId')));
           angular.element('#ngapp-div').scope().$apply();
           $(this).dialog("close");
         },
@@ -26,16 +26,16 @@ $(function() {
 tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
 
-    this.acceptBlog = function(role) {
-        this.updateRole(role.id, 'attach');
+    this.toggleEmails = function(role) {
+        $http.post(contextPath + '/tb-ui/authoring/rest/weblogrole/' + role.id + '/emails/' + role.emailComments).then(
+          function(response) {
+          },
+          self.commonErrorResponse
+        )
     }
 
-    this.declineBlog = function(role) {
-        this.updateRole(role.id, 'detach');
-    }
-
-    this.updateRole = function(roleId, command) {
-        $http.post(contextPath + '/tb-ui/authoring/rest/weblogrole/' + roleId + '/' + command).then(
+    this.resignFromBlog = function(roleId) {
+        $http.post(contextPath + '/tb-ui/authoring/rest/weblogrole/' + roleId + '/detach').then(
           function(response) {
              self.loadItems();
           },

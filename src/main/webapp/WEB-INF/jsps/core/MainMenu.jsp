@@ -45,14 +45,7 @@ var msg= {
     </span>
 
     <div>
-      <div ng-repeat="role in ctrl.roles | filter:{ pending: 'true' }">
-         <span>
-           <fmt:message key="mainMenu.youAreInvited"/>: {{role.weblog.handle}}
-           <input type="button" value="<fmt:message key='mainMenu.accept' />" ng-click="ctrl.acceptBlog(role)">
-           <input type="button" value="<fmt:message key='mainMenu.decline' />"  ng-click="ctrl.declineBlog(role)">
-         </span>
-      </div>
-      <div ng-repeat="role in ctrl.roles | filter:{ pending: 'false' }">
+      <div ng-repeat="role in ctrl.roles">
         <span class="mm_weblog_name"><img src='<c:url value="/images/folder.png"/>' />&nbsp;{{role.weblog.name}}</span>
 
         <table class="mm_table" width="100%" cellpadding="0" cellspacing="0">
@@ -67,6 +60,11 @@ var msg= {
                    </tr>
 
                    <tr>
+                       <td class="mm_subtable_label"><fmt:message key='generic.description' /></td>
+                       <td>{{role.weblog.about}}</td>
+                   </tr>
+
+                   <tr>
                        <td class="mm_subtable_label"><fmt:message key='generic.role'/></td>
                        <td ng-switch on="role.weblogRole">
                           <span ng-switch-when="OWNER">OWNER</span>
@@ -76,8 +74,8 @@ var msg= {
                    </tr>
 
                    <tr>
-                       <td class="mm_subtable_label"><fmt:message key='generic.description' /></td>
-                       <td>{{role.weblog.about}}</td>
+                       <td class="mm_subtable_label"><fmt:message key='mainMenu.emailComments' /></td>
+                       <td><input type="checkbox" ng-model="role.emailComments" ng-change="ctrl.toggleEmails(role)"></td>
                    </tr>
 
                    <tr>

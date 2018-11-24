@@ -148,7 +148,7 @@ public class User {
     }
 
     public String toString() {
-        return "User: id=" + id + ", userName=" + userName + ", status=" + status;
+        return "User: id=" + id + ", screenName=" + screenName + ", email=" + emailAddress + ", status=" + status;
     }
 
     @Override

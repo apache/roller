@@ -13,9 +13,6 @@
 <div th:fragment="RegistrationRejectedNotice" th:remove="tag">
     <span th:utext="#{mailMessage.registrationRejectedContent(${screenName})}">xxx</span>
 </div>
-<div th:fragment="WeblogInvitation" th:remove="tag">
-    <span th:utext="#{members.inviteMemberEmailContent(${weblogName}, ${weblogHandle}, ${userName}, ${loginURL})}">xxx</span>
-</div>
 <div th:fragment="PendingEntryNotice" th:remove="tag">
     <span th:utext="#{weblogEntry.pendingEntryContent(${screenName}, ${entryTitle}, ${editURL})}">xxx</span>
 </div>

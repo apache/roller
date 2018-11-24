@@ -44,7 +44,7 @@ public class UserWeblogRole {
     private int hashCode;
     private User user;
     private Weblog weblog;
-    private boolean pending;
+    private boolean emailComments;
     private WeblogRole weblogRole;
 
     public UserWeblogRole() {
@@ -100,12 +100,13 @@ public class UserWeblogRole {
     }
 
     @Basic(optional = false)
-    public boolean isPending() {
-        return pending;
+    @Column(name = "email_comments")
+    public boolean isEmailComments() {
+        return emailComments;
     }
 
-    public void setPending(boolean pending) {
-        this.pending = pending;
+    public void setEmailComments(boolean emailComments) {
+        this.emailComments = emailComments;
     }
 
     public String toString() {

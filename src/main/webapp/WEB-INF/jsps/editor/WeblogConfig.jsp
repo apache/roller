@@ -195,11 +195,6 @@
     </td>
     </tr>
 
-    <tr ng-if="ctrl.metadata.usersCommentNotifications">
-        <td class="label"><fmt:message key="weblogConfig.emailComments"/></td>
-        <td class="field"><input type="checkbox" ng-model="ctrl.weblog.emailComments"></td>
-    </tr>
-
     <tr>
     <td class="label"><fmt:message key="weblogConfig.defaultCommentDays"/></td>
     <td class="field">
