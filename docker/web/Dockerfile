@@ -1,4 +1,4 @@
-FROM openjdk:10-jdk
+FROM openjdk:11-jdk
 
 COPY docker/web/application-tbcustom.properties application-tbcustom.properties
 
