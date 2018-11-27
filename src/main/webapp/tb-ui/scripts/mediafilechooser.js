@@ -6,6 +6,9 @@ tightblogApp.controller('PageController', ['$http', '$window', function PageCont
          function(response) {
             self.directories = response.data;
             self.selectedDirectory = self.directories[0].id;
+            if (self.directories.length == 1) {
+                self.loadImages();
+            }
          },
          self.commonErrorResponse
       );

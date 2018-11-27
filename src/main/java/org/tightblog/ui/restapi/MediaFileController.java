@@ -238,8 +238,8 @@ public class MediaFileController {
             if (itemToRemove != null) {
                 Weblog weblog = itemToRemove.getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-                    weblog.getMediaDirectories().remove(itemToRemove);
                     mediaManager.removeAllFiles(itemToRemove);
+                    weblog.getMediaDirectories().remove(itemToRemove);
                     weblogManager.saveWeblog(weblog);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {

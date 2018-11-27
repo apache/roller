@@ -34,15 +34,17 @@
 <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/app/authoring/mediaFileChooser'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
 <%-- Drop-down box to choose media directory --%>
-<select ng-model="ctrl.selectedDirectory" size="1" required>
-   <option ng-repeat="item in ctrl.directories" value="{{item.id}}">{{item.name}}</option>
-</select>
+<div ng-show="ctrl.directories.length > 1" ng-cloak>
+    <select ng-model="ctrl.selectedDirectory" size="1" required>
+       <option ng-repeat="item in ctrl.directories" value="{{item.id}}">{{item.name}}</option>
+    </select>
 
-<input type="button" ng-click="ctrl.loadImages()" style="margin:4px" value='<fmt:message key="generic.view" />'/>
+    <input type="button" ng-click="ctrl.loadImages()" style="margin:4px" value='<fmt:message key="generic.view" />'/>
 
-<p class="pagetip">
-    <fmt:message key="mediaFileChooser.pageTip" />
-</p>
+    <p class="pagetip">
+        <fmt:message key="mediaFileChooser.pageTip" />
+    </p>
+</div>
 
 <%-- Media file contents for selected folder --%>
 <div width="720px" height="500px">
