@@ -136,6 +136,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
       $http.delete(contextPath + '/tb-ui/authoring/rest/mediadirectory/' + self.directoryToView).then(
         function(response) {
           self.successMessage = msg.folderDeleteSuccess;
+          self.directoryToView = null;
           self.loadMediaDirectories();
         },
         self.commonErrorResponse
