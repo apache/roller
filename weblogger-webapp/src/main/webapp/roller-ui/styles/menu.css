@@ -1,0 +1,100 @@
+/*
+* Licensed to the Apache Software Foundation (ASF) under one or more
+*  contributor license agreements.  The ASF licenses this file to You
+* under the Apache License, Version 2.0 (the "License"); you may not
+* use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.  For additional information regarding
+* copyright in this work, please see the NOTICE file in the top level
+* directory of this distribution.
+*/
+/* ======================================================================
+menu.css: CSS layout and styles for Roller tabbed menu
+====================================================================== */
+
+/* page title just above menu */
+
+/* rounded corners */
+
+div.menu-tl {
+    margin: 0px; 
+    padding: 0px; 
+    height: 100%;
+    width: 100%;
+    background: url("../images/menutab-tl.gif") no-repeat top left;   
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    display: table;
+}
+div.menu-tr {
+    margin: 0px; 
+    padding: 0px; 
+    height: 100%;
+    width: 100%;
+    background: url("../images/menutab-tr.gif") no-repeat top right;    
+    background-repeat: no-repeat;
+}
+
+td div.menu-tr div.menu-tl a {
+   display: table-cell;
+   vertical-align: middle;
+   padding: 3px 5px 0px 5px;
+}
+
+/* ----------------------------------------------------------------------
+Menu tab table (the tabs)
+---------------------------------------------------------------------- */
+
+.menuTabTable {
+    height: 25px;
+    _height: 21px; /* for IE */
+    margin: 0px; 
+    padding: 0px; 
+}
+td.menuTabSeparator {
+    width: 4px;
+}  
+td.menuTabSelected {
+    margin: 0px; 
+    padding: 0px; 
+    font-weight: bold;
+    vertical-align: top;
+}
+td.menuTabUnselected {
+    margin: 0px; 
+    padding: 0px; 
+    vertical-align: top;
+}
+
+/* ----------------------------------------------------------------------
+Menu item table (the bar below the tabs)
+---------------------------------------------------------------------- */
+
+.menuItemTable {
+    padding-right: 0px;
+    padding-bottom: 0px;
+    width: 100%;
+    padding-top: 0px;
+    height: 25px;
+}
+.menuItemSelected {
+    padding-right: 1px;
+    padding-left: 1px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    font-weight: bold;
+}
+.menuItemUnselected {
+    padding: 0px 1px 0px 1px; /* TRBL */
+}
+
+.menuItemTable td {
+    vertical-align: middle;
+}

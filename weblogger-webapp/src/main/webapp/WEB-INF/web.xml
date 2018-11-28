@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" 
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    
+    <display-name>Roller Weblogger</display-name>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/security.xml</param-value>
+    </context-param>
+
+    <filter>
+        <filter-name>struts2</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
+    </filter>
+
+    <!-- This is really strange, but for some reason it's needed to prevent
+         some problems with the file uploads not working intermittently -->
+    <filter>
+        <filter-name>struts2-cleanup</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.ActionContextCleanUp</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>securityFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetBeanName</param-name>
+            <param-value>springSecurityFilterChain</param-value>
+        </init-param>
+    </filter>
+
+    <filter>
+        <filter-name>DebugFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.DebugFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>PersistenceSessionFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.PersistenceSessionFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>BootstrapFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.BootstrapFilter</filter-class>
+    </filter>
+
+    <!--
+    Most app servers support compression, if yours doesn't then use this one,
+    but don't forget to uncomment the mapping below too.
+    <filter>
+        <filter-name>CompressionFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.CompressionFilter</filter-class>
+    </filter>
+    -->
+
+    <filter>
+        <filter-name>RequestMappingFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.rendering.filters.RequestMappingFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>InitFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.InitFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>IPBanFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.IPBanFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>SchemeEnforcementFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.SchemeEnforcementFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>CharEncodingFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.CharEncodingFilter</filter-class>
+    </filter>
+
+	<filter>
+		<filter-name>LoadSaltFilter</filter-name>
+		<filter-class>org.apache.roller.weblogger.ui.core.filters.LoadSaltFilter</filter-class>
+	</filter>
+
+	<filter>
+		<filter-name>ValidateSaltFilter</filter-name>
+		<filter-class>org.apache.roller.weblogger.ui.core.filters.ValidateSaltFilter</filter-class>
+	</filter>
+
+    <!-- ******************************************
+         Filter mappings - order IS important here.
+         ****************************************** -->
+
+    <!--
+     NOTE: Wherever "dispatcher" elements are specified in the filter mappings, they are
+     required for Servlet API 2.4 containers, such as Tomcat 5+ and Resin 3+, but should be
+     commented out for Servlet API 2.3 containers, like Tomcat 4.x and Resin 2.x.
+    -->
+
+    <!-- This filter ensures that the request encoding is set to UTF-8 before any
+     other processing forces request parsing using a default encoding.
+    Note: Any filters preceding this one MUST not cause request parsing. -->
+    <filter-mapping>
+        <filter-name>CharEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
+    <!-- Ip Banning is mapped for comment and trackbacks only.
+    Note: this filter does nothing if an ip ban list is not configured. -->
+    <filter-mapping>
+        <filter-name>IPBanFilter</filter-name>
+        <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>IPBanFilter</filter-name>
+        <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
+    <!-- Scheme enforcement.  Only here until we get Acegi scheme enforcement working -->
+    <filter-mapping>
+        <filter-name>SchemeEnforcementFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <!-- Acegi Security filters - controls secure access to different parts of Roller -->
+    <filter-mapping>
+        <filter-name>securityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>BootstrapFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <!-- Map everything to the PersistenceSessionFilter.
+    NOTE: Any filters preceding this one MUST NOT use persistence sessions.-->
+    <filter-mapping>
+        <filter-name>PersistenceSessionFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <!-- Init filter.  performs some initialization on first request -->
+    <filter-mapping>
+        <filter-name>InitFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+	<filter-mapping>
+		<filter-name>LoadSaltFilter</filter-name>
+		<url-pattern>/roller-ui/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>ValidateSaltFilter</filter-name>
+		<url-pattern>/roller-ui/*</url-pattern>
+	</filter-mapping>
+
+    <!-- Request mapping.  this is what allows the urls to work -->
+    <filter-mapping>
+        <filter-name>RequestMappingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <!--
+    Most app servers support compression, if yours doesn't then use this one,
+    but don't forget to uncomment the filter definition above too.
+    <filter-mapping>
+        <filter-name>CompressionFilter</filter-name>
+        <url-pattern>/roller-ui/rendering/page/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>CompressionFilter</filter-name>
+        <url-pattern>/roller-ui/rendering/feed/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    -->
+
+    <!-- Struts2 -->
+    <filter-mapping>
+        <filter-name>struts2-cleanup</filter-name>
+        <url-pattern>*.rol</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>struts2</filter-name>
+        <url-pattern>*.rol</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
+
+    <!-- Context Listeners -->
+    <listener>
+        <listener-class>org.apache.roller.weblogger.ui.core.RollerSession</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.apache.roller.weblogger.ui.core.RollerContext</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.apache.tiles.web.startup.TilesListener</listener-class>
+    </listener>
+
+
+    <!-- Servlet Definitions -->
+    <servlet>
+        <servlet-name>PageServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PageServlet</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>FeedServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.FeedServlet</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ResourceServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.ResourceServlet</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>MediaResourceServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.MediaResourceServlet</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>SearchServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.SearchServlet</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>OpenSearchServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.webservices.opensearch.OpenSearchServlet</servlet-class>
+        <load-on-startup>10</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CommentServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.CommentServlet</servlet-class>
+        <load-on-startup>7</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>TrackbackServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.TrackbackServlet</servlet-class>
+        <load-on-startup>7</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>RSDServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.RSDServlet</servlet-class>
+        <load-on-startup>7</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>PlanetFeedServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PlanetFeedServlet</servlet-class>
+        <load-on-startup>7</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CommentAuthenticatorServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.CommentAuthenticatorServlet</servlet-class>
+        <load-on-startup>7</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>PreviewServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PreviewServlet</servlet-class>
+        <load-on-startup>9</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>PreviewResourceServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PreviewResourceServlet</servlet-class>
+        <load-on-startup>9</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>PreviewThemeImageServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.PreviewThemeImageServlet</servlet-class>
+        <load-on-startup>9</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>RedirectServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.rendering.velocity.deprecated.RedirectServlet</servlet-class>
+        <load-on-startup>9</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>StrutsRedirectServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.struts2.util.StrutsRedirectServlet</servlet-class>
+        <load-on-startup>9</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>AtomServlet</servlet-name>
+        <servlet-class>com.sun.syndication.propono.atom.server.AtomServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CommentDataServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.struts2.ajax.CommentDataServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>UserDataServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.ui.struts2.ajax.UserDataServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>AdminServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.webservices.adminprotocol.AdminServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>TagDataServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.webservices.tagdata.TagDataServlet</servlet-class>
+    </servlet>
+
+
+    <servlet>
+        <servlet-name>XmlRpcServlet</servlet-name>
+        <servlet-class>org.apache.xmlrpc.webserver.XmlRpcServlet</servlet-class>
+        <init-param>
+            <description>
+                Sets, whether the servlet supports vendor extensions for XML-RPC.
+            </description>
+            <param-name>enabledForExtensions</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+
+    <!-- BEGIN OAUTH -->
+
+    <servlet>
+        <servlet-name>RequestTokenServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.webservices.oauth.RequestTokenServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>AuthorizationServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.webservices.oauth.AuthorizationServlet</servlet-class>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>AccessTokenServlet</servlet-name>
+        <servlet-class>org.apache.roller.weblogger.webservices.oauth.AccessTokenServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>RequestTokenServlet</servlet-name>
+        <url-pattern>/roller-services/oauth/requestToken</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AuthorizationServlet</servlet-name>
+        <url-pattern>/roller-services/oauth/authorize</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AccessTokenServlet</servlet-name>
+        <url-pattern>/roller-services/oauth/accessToken</url-pattern>
+    </servlet-mapping>
+
+    <!-- END OAUTH -->
+
+    <!-- Rendering Servlets -->
+    <servlet-mapping>
+        <servlet-name>PageServlet</servlet-name>
+        <url-pattern>/roller-ui/rendering/page/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>FeedServlet</servlet-name>
+        <url-pattern>/roller-ui/rendering/feed/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ResourceServlet</servlet-name>
+        <url-pattern>/roller-ui/rendering/resources/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>MediaResourceServlet</servlet-name>
+        <url-pattern>/roller-ui/rendering/media-resources/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>CommentServlet</servlet-name>
+        <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>TrackbackServlet</servlet-name>
+        <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RSDServlet</servlet-name>
+        <url-pattern>/roller-ui/rendering/rsd/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SearchServlet</servlet-name>
+        <url-pattern>/roller-ui/rendering/search/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PlanetFeedServlet</servlet-name>
+        <url-pattern>/planetrss/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CommentAuthenticatorServlet</servlet-name>
+        <url-pattern>/CommentAuthenticatorServlet</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- Preview Servlets -->
+    <servlet-mapping>
+        <servlet-name>PreviewServlet</servlet-name>
+        <url-pattern>/roller-ui/authoring/preview/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PreviewResourceServlet</servlet-name>
+        <url-pattern>/roller-ui/authoring/previewresource/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PreviewThemeImageServlet</servlet-name>
+        <url-pattern>/roller-ui/authoring/previewtheme</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- Servlets for supporting Ajax -->
+    <servlet-mapping>
+        <servlet-name>CommentDataServlet</servlet-name>
+        <url-pattern>/roller-ui/authoring/commentdata/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>UserDataServlet</servlet-name>
+        <url-pattern>/roller-ui/authoring/userdata/*</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- Web Service Servlets -->
+    <servlet-mapping>
+        <servlet-name>XmlRpcServlet</servlet-name>
+        <url-pattern>/roller-services/xmlrpc</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AtomServlet</servlet-name>
+        <url-pattern>/roller-services/app/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AdminServlet</servlet-name>
+        <url-pattern>/roller-services/rap/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>TagDataServlet</servlet-name>
+        <url-pattern>/roller-services/tagdata/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>OpenSearchServlet</servlet-name>
+        <url-pattern>/roller-services/opensearch/*</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- Redirect Support for pre-3.0 urls -->
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/language/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/comments/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/resources/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/rsd/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/flavor/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/rss/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/atom/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/page/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/search/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/xmlrpc/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/editor/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectServlet</servlet-name>
+        <url-pattern>/admin/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Redirect support for some old struts1 urls -->
+    <servlet-mapping>
+        <servlet-name>StrutsRedirectServlet</servlet-name>
+        <url-pattern>/roller-ui/yourWebsites.do</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>StrutsRedirectServlet</servlet-name>
+        <url-pattern>/roller-ui/authoring/commentManagement.do</url-pattern>
+    </servlet-mapping>
+
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <welcome-file-list>
+        <welcome-file>home.jsp</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/roller-ui/errors/error.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>403</error-code>
+        <location>/roller-ui/errors/403.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/roller-ui/errors/404.jsp</location>
+    </error-page>
+
+
+    <!-- jndi resources -->
+    <resource-ref>
+        <res-ref-name>jdbc/rollerdb</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>      
+        <mapped-name>jdbc/roller</mapped-name>
+    </resource-ref>
+
+    <resource-ref>
+        <res-ref-name>mail/Session</res-ref-name>
+        <res-type>javax.mail.Session</res-type>
+        <res-auth>Container</res-auth>
+        <mapped-name>Session</mapped-name>
+    </resource-ref>
+
+</web-app>
+<!-- BEGIN: example config. for using Container Managed Authentication
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Weblog admin and editor resources</web-resource-name>
+            <url-pattern>/roller-ui/createWeblog.rol</url-pattern>
+            <url-pattern>/roller-ui/authoring/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>weblog-admin</role-name>
+            <role-name>weblog-user</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Weblog admin and editor HTTPS resources</web-resource-name>
+            <url-pattern>/roller-ui/login-redirect.jsp</url-pattern>
+            <url-pattern>/roller-ui/login-redirect.rol</url-pattern>
+            <url-pattern>/roller-ui/authoring/userdata</url-pattern>
+            <url-pattern>/roller-ui/authoring/membersInvite.rol</url-pattern>
+            <url-pattern>/roller-ui/authoring/membersInvite!save.rol</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>weblog-admin</role-name>
+            <role-name>weblog-user</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Global Admin resources</web-resource-name>
+            <url-pattern>/roller-ui/admin/*</url-pattern>
+            <url-pattern>/rewrite-status.rol</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>weblog-admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Gobal Admin HTTPS resources</web-resource-name>
+            <url-pattern>/roller-ui/admin/userAdmin.rol</url-pattern>
+            <url-pattern>/roller-ui/admin/createUser.rol</url-pattern>
+            <url-pattern>/roller-ui/admin/createUser!save.rol</url-pattern>
+            <url-pattern>/roller-ui/admin/modifyUser.rol</url-pattern>
+            <url-pattern>/roller-ui/admin/modifyUser!save.rol</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>weblog-admin</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>editor res</web-resource-name>
+            <url-pattern>/roller-ui/menu.rol</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>weblog-user</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Editor HTTPS resources</web-resource-name>
+            <url-pattern>/roller-ui/profile.rol</url-pattern>
+            <url-pattern>/roller-ui/profile!save.rol</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>weblog-user</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>HTTPS resources</web-resource-name>
+            <url-pattern>/roller-ui/login.rol</url-pattern>
+            <url-pattern>/roller-ui/register.rol</url-pattern>
+            <url-pattern>/roller-ui/register!save.rol</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>Roller_UserRealm</realm-name>
+        <form-login-config>
+            <form-login-page>/roller-ui/login.rol</form-login-page>
+            <form-error-page>/roller-ui/login.rol?error=true</form-error-page>
+        </form-login-config>
+    </login-config>
+
+    <security-role>
+        <role-name>weblog-admin</role-name>
+    </security-role>
+
+    <security-role>
+        <role-name>weblog-user</role-name>
+    </security-role>
+
+    END: example config. for using Container Managed Authentication -->

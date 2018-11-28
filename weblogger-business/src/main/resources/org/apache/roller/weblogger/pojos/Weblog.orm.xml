@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+	<description>Persistence Metadata for Roller</description>
+	<persistence-unit-metadata>
+		<persistence-unit-defaults>
+			<access>PROPERTY</access>
+		</persistence-unit-defaults>
+	</persistence-unit-metadata>
+	<package>org.apache.roller.weblogger.pojos</package>
+	<entity metadata-complete="true" name="Weblog" class="org.apache.roller.weblogger.pojos.Weblog">
+		<table name="website"/>
+		<named-query name="Weblog.getByHandle">
+			<query>SELECT w FROM Weblog w WHERE w.handle = ?1</query>
+		</named-query>
+		<named-query name="Weblog.getByHandleOrderByHandle">
+			<query>SELECT w FROM Weblog w WHERE w.handle = ?1 ORDER BY w.handle</query>
+		</named-query>
+		<named-query name="Weblog.getByLetterOrderByHandle">
+			<query>SELECT w FROM Weblog w WHERE UPPER(w.handle) like ?1 ORDER BY w.handle</query>
+		</named-query>
+		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;Enabled&amp;ActiveOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+                                                  AND w.enabled = ?3 AND w.active = ?4
+                                                ORDER BY w.dateCreated DESC</query>
+		</named-query>
+		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;EnabledOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+                                                 AND w.enabled = ?3
+                                               ORDER BY w.dateCreated DESC</query>
+		</named-query>
+		<named-query name="Weblog.getByEndDate&amp;StartDateOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+                                               ORDER BY w.dateCreated DESC</query>
+		</named-query>
+		<named-query name="Weblog.getByEndDateOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
+                                               ORDER BY w.dateCreated DESC</query>
+		</named-query>
+		<!--
+        <named-query name="Weblog.getByEndDate&amp;StartDate&amp;Enabled&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+                                                 AND w.enabled = ?3
+                                                 AND EXISTS (SELECT p from WeblogPermission p where
+                                                         p.weblog = w
+                                                         AND p.user = ?4
+                                                         AND p.pending = ?5 )
+                                               ORDER BY w.dateCreated DESC</query>
+		</named-query>
+        -->
+		<named-query name="Weblog.getByEndDate&amp;StartDate&amp;ActiveOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1 AND w.dateCreated &gt; ?2
+                                                 AND w.active = ?3
+                                               ORDER BY w.dateCreated DESC</query>
+		</named-query>
+		<!--
+        <named-query name="Weblog.getByEndDate&amp;Enabled&amp;Active&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
+                                                AND w.enabled = ?2 AND w.active = ?3
+                                                AND EXISTS (SELECT p from WeblogPermission p where
+                                                           p.weblog = w
+                                                           AND p.user = ?4
+                                                           AND p.pending = ?5 )
+                                             ORDER BY w.dateCreated DESC</query>
+		</named-query>
+        -->
+		<named-query name="Weblog.getByEndDate&amp;Enabled&amp;ActiveOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
+                                                 AND w.enabled = ?2 AND w.active = ?3
+                                               ORDER BY w.dateCreated DESC</query>
+		</named-query>
+		<named-query name="Weblog.getByEndDate&amp;EnabledOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
+                                                 AND w.enabled = ?2
+                                               ORDER BY w.dateCreated DESC</query>
+		</named-query>
+
+		<named-query name="Weblog.getByEndDate&amp;ActiveOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
+                                                 AND w.active = ?2
+                                               ORDER BY w.dateCreated DESC</query>
+		</named-query>
+		<!--
+        <named-query name="Weblog.getByEndDate&amp;Permissions.user&amp;Permissions.pendingOrderByDateCreatedDesc">
+			<query>SELECT w FROM Weblog w WHERE w.dateCreated &lt; ?1
+                                                AND EXISTS (SELECT p from WeblogPermission p where
+                                                        p.weblog = w
+                                                        AND p.user = ?2
+                                                        AND p.pending = ?3 )
+                                              ORDER BY w.dateCreated DESC</query>
+		</named-query>
+        -->
+		<named-query name="Weblog.getCountAllDistinct">
+			<!-- DISTINCT is not required here -->
+            <query>SELECT COUNT(w) FROM Weblog w</query>
+		</named-query>
+		<named-query name="Weblog.getCountByHandleLike">
+			<query>SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like ?1</query>
+		</named-query>
+		<attributes>
+			<id name="id">
+				<column name="id"/>
+			</id>
+			<basic name="handle">
+				<column name="handle" insertable="true" updatable="true" unique="true"/>
+			</basic>
+			<basic name="about">
+				<column name="about" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="iconPath">
+				<column name="icon" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="name">
+				<column name="name" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="description">
+				<column name="description" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="defaultPageId">
+				<column name="defaultpageid" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="weblogDayPageId">
+				<column name="weblogdayid" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="enableBloggerApi">
+				<column name="enablebloggerapi" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="editorPage">
+				<column name="editorpage" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="blacklist">
+				<column name="blacklist" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="allowComments">
+				<column name="allowcomments" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="defaultAllowComments">
+				<column name="defaultallowcomments" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="defaultCommentDays">
+				<column name="defaultcommentdays" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="moderateComments">
+				<column name="commentmod" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="emailComments">
+				<column name="emailcomments" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="emailFromAddress">
+				<column name="emailfromaddress" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="emailAddress">
+				<column name="emailaddress" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="editorTheme">
+				<column name="editortheme" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="locale">
+				<column name="locale" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="timeZone">
+				<column name="timeZone" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="dateCreated">
+				<column name="datecreated" insertable="true" updatable="true" unique="false"/>
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="defaultPlugins">
+				<column name="defaultplugins" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="entryDisplayCount">
+				<column name="displaycnt" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="enabled">
+				<column name="isenabled" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="active">
+				<column name="isactive" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="creatorUserName">
+				<column name="creator" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="lastModified">
+				<column name="lastmodified" insertable="true" updatable="true" unique="false"/>
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="enableMultiLang">
+				<column name="enablemultilang" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="showAllLangs">
+				<column name="showalllangs" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="pageModels">
+				<column name="pagemodels" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<basic name="customStylesheetPath">
+				<column name="customstylesheet" insertable="true" updatable="true" unique="false"/>
+			</basic>
+			<many-to-one name="bloggerCategory" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory">
+				<join-column name="bloggercatid" insertable="true" updatable="true"/>
+			</many-to-one>
+			<many-to-one name="defaultCategory" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory">
+				<join-column name="defaultcatid" insertable="true" updatable="true"/>
+			</many-to-one>
+
+			<transient name="theme"/>
+			<transient name="creator"/>
+			<transient name="defaultPage"/>
+			<transient name="absoluteURL"/>
+			<transient name="adminUserCount"/>
+			<transient name="commentCount"/>
+			<transient name="commentModerationRequired"/>
+			<transient name="todaysHits"/>
+			<transient name="todaysReferrers"/>
+			<transient name="uRL"/>
+			<transient name="URL"/>
+			<transient name="userCount"/>
+			<transient name="entryCount"/>
+            <transient name="initializedPlugins"/>
+            <transient name="weblogCategories"/>
+            <transient name="localeInstance"/>
+            <transient name="timeZoneInstance" />
+		</attributes>
+	</entity>
+</entity-mappings>

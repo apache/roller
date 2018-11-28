@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+<Configure id='wac' class="org.mortbay.jetty.webapp.WebAppContext">
+    
+    <!-- Dummy values to allow Jetty to run via Maven build process -->
+    
+    <New id="ds" class="org.mortbay.jetty.plus.naming.Resource">
+        <Arg>
+            <Ref id="wac"/>
+        </Arg>
+        <Arg>jdbc/rollerdb</Arg>
+        <Arg>
+            <New class="org.apache.derby.jdbc.EmbeddedDataSource">
+                <Set name="databaseName">rollerdb</Set>
+                <Set name="createDatabase">create</Set>
+            </New>
+        </Arg> 
+    </New>
+    
+    <New id="mail" class="org.mortbay.jetty.plus.naming.Resource">
+        <Arg>
+            <Ref id="wac"/>
+        </Arg>
+        <Arg>mail/Session</Arg>
+        <Arg>
+            <New class="org.mortbay.naming.factories.MailSessionReference">
+                <Set name="properties">
+                    <New class="java.util.Properties">
+                        <Put name="mail.smtp.host">mail</Put>
+                        <Put name="mail.debug">true</Put>
+                    </New>
+                </Set>
+            </New>
+        </Arg>
+    </New>
+
+</Configure>

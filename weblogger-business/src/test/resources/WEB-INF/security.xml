@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+-->
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
+
+    <http auto-config="true" lowercase-comparisons="true" access-decision-manager-ref="accessDecisionManager">
+        <intercept-url pattern="/images/**" filters="none"/>
+        <intercept-url pattern="/scripts/**" filters="none"/>
+        <intercept-url pattern="/styles/**" filters="none"/>
+        <intercept-url pattern="/roller-ui/login-redirect**" access="admin,editor"/>
+        <intercept-url pattern="/roller-ui/profile**" access="admin,editor"/>
+        <intercept-url pattern="/roller-ui/createWeblog**" access="admin,editor"/>
+        <intercept-url pattern="/roller-ui/menu**" access="admin,editor"/>
+        <intercept-url pattern="/roller-ui/authoring/**" access="admin,editor"/>
+        <intercept-url pattern="/roller-ui/admin/**" access="admin"/>
+        <intercept-url pattern="/rewrite-status*" access="admin"/>
+
+        <!-- Uncomment the following for LDAP/SSO configuration -->
+        <!--intercept-url pattern="/roller-ui/user.do*" access="register"/-->
+
+        <form-login login-page="/roller-ui/login.rol" authentication-failure-url="/roller-ui/login.rol?error=true" 
+        	login-processing-url="/roller_j_security_check"/>
+        <remember-me user-service-ref="rollerUserService" key="715F2448-3176-11DD-ABC6-9CD955D89593"/>
+    </http>
+
+    <authentication-provider user-service-ref="rollerUserService"/>
+
+    <!-- Read users from Mock Roller API -->
+    <beans:bean id="rollerUserService" class="org.apache.roller.weblogger.ui.MockAcegiUserDetailsService"/>
+
+	<!-- It may be possible to get rid of the following two beans in a future version of Spring Security. -->
+	<!-- See http://jira.springframework.org/browse/SEC-840 for more information. -->
+    <beans:bean id="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
+        <beans:property name="allowIfAllAbstainDecisions" value="false"/>
+        <beans:property name="decisionVoters">
+            <beans:list>
+                <beans:ref local="roleVoter"/>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+
+    <beans:bean id="roleVoter" class="org.springframework.security.vote.RoleVoter">
+        <beans:property name="rolePrefix" value=""/>
+    </beans:bean>
+    
+</beans:beans>

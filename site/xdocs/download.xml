@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<!--
+Copyright 1999-2007 The Apache Software Foundation
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<document>
+  <properties>
+    <author email="apache.AT.apache.DOT.org">The Apache Software Foundation</author>
+    <title>Apache Roller - Downloads</title>
+  </properties>
+<body>
+
+
+<section><title>Download a Release of Apache Roller</title>
+    <p>
+        Use the links below to download a release of Apache Roller from one of 
+        our mirrors. You can <a href="#verify">verify the integrity</a> of the 
+        downloaded files using signatures downloaded from our main distribution 
+    directory.
+    </p>
+</section>
+
+
+<section><title>Preferred Mirror</title>
+    <p>
+        [if-any logo]
+        <a href="[link]">
+            <img align="right" src="[logo]" border="0" alt="logo"></img>
+        </a>
+        [end]
+        The currently selected mirror is <b>[preferred]</b>.  If you 
+        encounter a problem with this mirror, please select another mirror.  
+        If all mirrors are failing, there are <i>backup</i> mirrors (at 
+        the end of the mirrors list) that should be available.
+    </p>
+
+    <form action="[location]" method="get" id="SelectMirror">
+        Other mirrors:
+        <select name="Preferred">
+            [if-any http]
+               [for http]
+                  <option value="[http]">[http]</option>
+               [end]
+            [end]
+            [if-any ftp]
+               [for ftp]
+                  <option value="[ftp]">[ftp]</option>
+               [end]
+            [end]
+        </select>
+        <input type="submit" value="Change"></input>
+    </form>
+
+    <p>
+        You may also consult the <a href=
+            "http://www.apache.org/mirrors/">complete list of mirrors.</a>
+    </p>
+</section>
+
+
+<section><title>Roller 5.0.0</title>
+    <a name="roller50"></a>
+
+    <p>Roller 5.0.0 is the &quot;best available&quot; version of Roller. Check the
+    <a href="http://cwiki.apache.org/confluence/display/ROLLER/What%27s+new+in+Roller+5.0">
+    What's New in Roller 5.0 </a> page to learn more about the features and 
+    changes in this release and the <a href=
+    "http://s.apache.org/zI">Release Notes</a> to learn what changes were made in the 5.0.0 release.</p>
+    
+    <ul>
+        <li>Roller Web Application (what you need to run Roller)
+            <ul>
+                <li>
+                    <a href="[preferred]/roller/roller-5/v5.0.0/bin/roller-weblogger-5.0.0-for-tomcat.zip">roller-weblogger-5.0.0-for-tomcat.zip</a> (31mb)
+                    [<a href="[preferred]/roller/roller-5/v5.0.0/bin/roller-weblogger-5.0.0-for-tomcat.zip.asc">ASC</a>]
+                </li>
+                <li>
+                    <a href="[preferred]/roller/roller-5/v5.0.0/bin/roller-weblogger-5.0.0-for-javaee.zip">roller-weblogger-5.0.0-for-javaee.zip (for all other Java servers)</a> (28mb)
+                    [<a href="[preferred]/roller/roller-5/v5.0.0/bin/roller-weblogger-5.0.0-for-javaee.zip.asc">ASC</a>]
+                </li>
+            </ul>
+        </li>
+        <li>Roller Documentation
+            <ul>
+                <li>
+                    <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+5.0+Release+Notes">Release Notes</a> (on the Wiki)
+                </li>
+                <li>
+                    <a href="[preferred]/roller/roller-5/v5.0.0/docs/roller-install-guide.pdf">Install Guide</a> (1.5M PDF)
+                </li>
+                <li>
+                    <a href="[preferred]/roller/roller-5/v5.0.0/docs/roller-user-guide.pdf">User Guide</a> (595K PDF)
+                </li>
+                <li>
+                    <a href="[preferred]/roller/roller-5/v5.0.0/docs/roller-template-guide.pdf">Template Guide</a> (447K PDF)
+                </li>
+            </ul>
+        </li>
+        <li>Roller Source (what you need to build Roller from source)
+            <ul>
+                <li>
+                    <a href="[preferred]/roller/roller-5/v5.0.0/src/roller-weblogger-5.0.0-source.zip">roller-weblogger-5.0.0-source.zip</a> (21mb)
+                    [<a href="[preferred]/roller/roller-5/v5.0.0/src/roller-weblogger-5.0.0-source.zip.asc">ASC</a>]
+                </li>
+            </ul>
+        </li>
+    </ul>
+</section>
+
+
+<section><title>Verify the integrity of the files</title>
+
+<a name="verify"></a>
+
+        We recommend that you verify the integrity of the
+        downloaded files using the PGP or MD5 signatures.
+
+
+    <p>
+        The PGP signatures can be verified using PGP or GPG.
+        First download the
+        <a href="http://www.apache.org/dist/roller/KEYS">KEYS</a>
+        as well as the
+        <code>asc</code>
+        signature file for the particular
+        distribution.
+        Make sure you get these files from the
+        <a href="http://www.apache.org/dist/roller/">main distribution
+            directory,</a>
+        rather than from a mirror.
+        Then verify the signatures using
+    </p>
+
+    <p>
+        <code>
+            % pgpk -a KEYS
+            <br></br>
+            % pgpv ${filename}.tar.gz.asc
+            <br></br>
+        </code>
+        <em>or</em>
+        <br></br>
+        <code>
+            % pgp -ka KEYS
+            <br></br>
+            % pgp ${filename}.tar.gz.asc
+            <br></br>
+        </code>
+        <em>or</em>
+        <br></br>
+        <code>
+            % gpg --import KEYS
+            <br></br>
+            % gpg --verify ${filename}.tar.gz.asc
+        </code>
+    </p>
+
+    <p>
+        Alternatively, you can verify the MD5 signature on the files.
+        A Unix program called
+        <code>md5</code>
+        or
+        <code>md5sum</code>
+        is
+        included in many Unix distributions.
+        It is also available as part of
+        <a href="http://www.gnu.org/software/textutils/textutils.html">
+            GNU Textutils.</a>
+        Windows users can get binary md5 programs from
+        <a href="http://www.fourmilab.ch/md5/">here,</a>
+        <a href="http://www.pc-tools.net/win32/freeware/console/">
+            here,</a>
+        or
+        <a href="http://www.slavasoft.com/fsum/">here.</a>
+    </p>
+
+</section>
+
+</body>
+</document>

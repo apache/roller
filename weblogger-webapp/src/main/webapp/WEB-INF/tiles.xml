@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+-->
+<!DOCTYPE tiles-definitions PUBLIC 
+   "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN" 
+   "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+<tiles-definitions>
+    
+    <definition name=".tiles-mainmenupage" template="/WEB-INF/jsps/tiles/tiles-mainmenupage.jsp">
+        <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
+        <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
+        <put-attribute name="content"      value="${content}" />
+        <put-attribute name="sidebar"      value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
+    </definition>
+    
+    <definition name=".tiles-tabbedpage" template="/WEB-INF/jsps/tiles/tiles-tabbedpage.jsp">
+        <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
+        <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="menu"         value="/WEB-INF/jsps/tiles/menu.jsp" />
+        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
+        <put-attribute name="content"      value="${content}" />
+        <put-attribute name="sidebar"      value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
+    </definition>
+    
+    <definition name=".tiles-simplepage" template="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
+        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
+        <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
+        <put-attribute name="content"      value="${content}" />
+        <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
+    </definition>
+    
+    <definition name=".tiles-installpage" template="/WEB-INF/jsps/tiles/tiles-installpage.jsp">
+        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
+        <put-attribute name="content"      value="${content}" />
+        <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
+    </definition>
+    
+    <definition name=".tiles-errorpage" template="/WEB-INF/jsps/tiles/tiles-errorpage.jsp">
+        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
+        <put-attribute name="content"      value="${content}" />
+        <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
+    </definition>
+    
+    <definition name=".tiles-popuppage" template="/WEB-INF/jsps/tiles/tiles-popuppage.jsp">
+        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
+        <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="content"      value="${content}" />
+       
+    </definition>
+    <definition name=".tiles-popuppage-only-content" template="/WEB-INF/jsps/tiles/tiles-popuppage.jsp">       
+        <put-attribute name="content"      value="${content}" />
+    </definition>
+    
+    <!-- error pages -->
+    <definition name=".denied" extends=".tiles-errorpage" >
+        <put-attribute name="content" value="/roller-ui/errors/denied.jsp" />
+    </definition>
+    
+        
+    <!-- core pages (and associates) -->
+    <definition name=".Login" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/Login.jsp" />
+    </definition>
+    
+    <definition name=".Register" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/Register.jsp" />
+    </definition>
+    
+    <definition name=".RegisterDisabled" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/RegisterDisabled.jsp" />
+    </definition>
+    
+    <definition name=".Welcome" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/Welcome.jsp" />
+    </definition>
+    
+    <definition name=".Profile" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/Profile.jsp" />
+    </definition>
+
+    <definition name=".OAuthKeys" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/OAuthKeys.jsp" />
+    </definition>
+
+    <definition name=".OAuthAuthorize" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/OAuthAuthorize.jsp" />
+    </definition>
+
+    <definition name=".CreateWeblog" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/CreateWeblog.jsp" />
+    </definition>
+    
+    <definition name=".MainMenu" extends=".tiles-mainmenupage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/MainMenu.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/core/MainMenuSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+    
+    
+        <!-- setup pages -->
+    <definition name=".Setup" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/Setup.jsp" />
+    </definition>
+    
+    <definition name=".CreateDatabase" extends=".tiles-installpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/CreateDatabase.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
+    </definition>
+
+    <definition name=".UpgradeDatabase" extends=".tiles-installpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/UpgradeDatabase.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
+    </definition>
+    
+    <definition name=".DatabaseError" extends=".tiles-installpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/DatabaseError.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
+    </definition>
+    
+    <definition name=".Bootstrap" extends=".tiles-installpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/core/UnknownError.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="banner" value="/WEB-INF/jsps/tiles/bannerInstallation.jsp" />
+    </definition>
+    
+
+    <!-- global admin pages (and associates) -->
+    <definition name=".GlobalConfig" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/GlobalConfig.jsp" />
+    </definition>
+    
+    <definition name=".FrontpageConfig" extends=".tiles-simplepage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/FrontpageConfig.jsp" />
+    </definition>
+    
+    <definition name=".UserAdmin" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/UserAdmin.jsp" />
+    </definition>
+    
+    <definition name=".CreateUser" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/CreateUser.jsp" />
+    </definition>
+    
+    <definition name=".ModifyUser" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/ModifyUser.jsp" />
+    </definition>
+    
+    <definition name=".GlobalCommentManagement" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/GlobalCommentManagement.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/admin/GlobalCommentManagementSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-checkboxlistFix.jsp" />
+    </definition>
+    
+    <definition name=".CommonPingTargets" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/CommonPingTargets.jsp" />
+    </definition>
+    
+    <definition name=".CommonPingTargetConfirm" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/CommonPingTargetConfirm.jsp" />
+    </definition>
+    
+    <definition name=".CommonPingTargetAdd" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/CommonPingTargetAdd.jsp" />
+    </definition>
+    
+    <definition name=".CommonPingTargetEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/CommonPingTargetEdit.jsp" />
+    </definition>
+    
+    <definition name=".CacheInfo" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/CacheInfo.jsp" />
+    </definition>
+    
+    <definition name=".PlanetConfig" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetConfig.jsp" />
+    </definition>
+    
+    <definition name=".PlanetSubscriptions" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetSubscriptions.jsp" />
+    </definition>
+    
+    <definition name=".PlanetGroups" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetGroups.jsp" />
+    </definition>
+    
+    
+    <!-- weblog editor pages (and associates) -->
+    <definition name=".EntryAdd" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryAdd.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+
+    <definition name=".MediaFileAdd" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAdd.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+
+    <definition name=".MediaFileEdit" extends=".tiles-popuppage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
+    </definition>
+
+    <definition name=".MediaFileAddExternalInclude" extends=".tiles-popuppage-only-content" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddExternalInclude.jsp" />
+    </definition>
+
+    <definition name=".MediaFileImageChooser" extends=".tiles-popuppage-only-content" >
+        <put-attribute name="head"     value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content"  value="/WEB-INF/jsps/editor/MediaFileImageChooser.jsp" />
+        <put-attribute name="messages" value="/WEB-INF/jsps/tiles/messages.jsp" />
+    </definition>
+
+    <definition name=".MediaFileImageDimension" extends=".tiles-popuppage-only-content" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileImageDimension.jsp" />
+    </definition>
+    
+
+    <definition name=".MediaFileSearchInclude" extends=".tiles-popuppage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileSearch.jsp" />
+    </definition>
+
+    <definition name=".MediaFileAddInclude" extends=".tiles-popuppage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAdd.jsp" />
+    </definition>
+
+    <definition name=".MediaFileAddSuccessInclude" extends=".tiles-popuppage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccessInclude.jsp" />
+    </definition>
+    
+    <definition name=".MediaFileEditSuccess" extends=".tiles-popuppage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEditSuccess.jsp" />
+    </definition>
+
+    <definition name=".MediaFileView" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileView.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+
+    <definition name=".MediaFileHierarchicalView" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileHierarchicalView.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+
+    <definition name=".MediaFileAddSuccess" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccess.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+
+    <definition name=".TabularView" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/TabularView.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+    
+    <definition name=".EntryEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryEdit.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntrySidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+    
+    <definition name=".EntryRemove" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/EntryRemove.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".Entries" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/Entries.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/EntriesSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+    
+    <definition name=".Comments" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/Comments.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CommentsSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-checkboxlistFix.jsp" />
+    </definition>
+    
+    <definition name=".Categories" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/Categories.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CategoriesSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+    
+    <definition name=".CategoryAdd" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/CategoryAdd.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".CategoryEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/CategoryEdit.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".CategoryRemove" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/CategoryRemove.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".Bookmarks" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/Bookmarks.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/BookmarksSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+    
+    <definition name=".BookmarkAdd" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/BookmarkAdd.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".BookmarkEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/BookmarkEdit.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".BookmarksImport" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/BookmarksImport.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".FolderAdd" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/FolderAdd.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".FolderEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/FolderEdit.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".Resources" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/Resources.jsp" />
+    </definition>
+    
+    <definition name=".Referrers" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/Referrers.jsp" />
+    </definition>
+
+    <definition name=".WeblogExport" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/WeblogExport.jsp" />
+    </definition>
+
+    <!-- weblog admin pages (and associates) -->
+    <definition name=".WeblogConfig" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/WeblogConfig.jsp" />
+    </definition>
+    
+    <definition name=".WeblogRemoveConfirm" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/WeblogRemoveConfirm.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".ThemeEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head-ajax.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/ThemeEdit.jsp" />
+    </definition>
+    
+    <definition name=".StylesheetEdit" extends=".tiles-tabbedpage"  >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/StylesheetEdit.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".StylesheetEditError" extends=".tiles-tabbedpage"  >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/StylesheetEditError.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".Templates" extends=".tiles-tabbedpage"  >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/Templates.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/TemplatesSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+    
+    <definition name=".TemplateEdit" extends=".tiles-tabbedpage"  >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/TemplateEdit.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".TemplateRemove" extends=".tiles-tabbedpage"  >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/TemplateRemove.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".Members" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/Members.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MembersSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-sidebar.jsp" />
+    </definition>
+    
+    <definition name=".MembersInvite" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MembersInvite.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/css-nosidebar.jsp" />
+    </definition>
+    
+    <definition name=".Pings" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/Pings.jsp" />
+    </definition>
+    
+    <definition name=".CustomPingTargets" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/CustomPingTargets.jsp" />
+    </definition>
+    
+    <definition name=".CustomPingTargetConfirm" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/CustomPingTargetConfirm.jsp" />
+    </definition>
+    
+    <definition name=".CustomPingTargetAdd" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/CustomPingTargetAdd.jsp" />
+    </definition>
+    
+    <definition name=".CustomPingTargetEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/CustomPingTargetEdit.jsp" />
+    </definition>
+    
+    <definition name=".Maintenance" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/Maintenance.jsp" />
+    </definition>
+    
+</tiles-definitions>

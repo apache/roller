@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    
+    <package>org.apache.roller.weblogger.pojos</package>
+    
+    <entity metadata-complete="true" name="TaskLock" class="org.apache.roller.weblogger.pojos.TaskLock">
+        <table name="roller_tasklock"/>
+        
+        <named-query name="TaskLock.getByName">
+            <query>SELECT t FROM TaskLock t WHERE t.name = ?1</query>
+        </named-query>
+        
+        <named-query name="TaskLock.updateClient&amp;Timeacquired&amp;Timeleased&amp;LastRunByName&amp;Timeacquired">
+            <query> UPDATE TaskLock t SET t.clientId=?1, t.timeAquired= CURRENT_TIMESTAMP, t.timeLeased= ?2, t.lastRun= ?3 WHERE t.name=?4 AND t.timeAquired=?5 AND ?6 &lt; CURRENT_TIMESTAMP</query>
+        </named-query>
+        
+        <named-query name="TaskLock.updateTimeLeasedByName&amp;Client">
+            <query>UPDATE TaskLock t SET t.timeLeased=?1 WHERE t.name=?2 AND t.clientId=?3</query>
+        </named-query>
+        
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="name">
+                <column name="name" insertable="true" updatable="true" unique="true"/>
+            </basic>
+            <basic name="timeAquired">
+                <column name="timeacquired" insertable="true" updatable="true" unique="false"/>
+                <temporal>TIMESTAMP</temporal>
+            </basic>
+            <basic name="lastRun">
+                <column name="lastrun" insertable="true" updatable="true" unique="false"/>
+                <temporal>TIMESTAMP</temporal>
+            </basic>
+            <basic name="timeLeased">
+                <column name="timeleased" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="clientId">
+                <column name="client" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            
+            <transient name="leaseExpiration"/>
+                        
+        </attributes>
+    </entity>
+</entity-mappings>

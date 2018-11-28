@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.planet.pojos</package>
+    <entity metadata-complete="true" name="PlanetGroup" class="org.apache.roller.planet.pojos.PlanetGroup">
+        <table name="rag_group"/>
+        <named-query name="PlanetGroup.getByHandle">
+            <query>SELECT p FROM PlanetGroup p WHERE p.handle = ?1</query>
+        </named-query>
+        <named-query name="PlanetGroup.getByPlanetAndHandle">
+            <query>SELECT p FROM PlanetGroup p WHERE p.planet.handle = ?1 and p.handle = ?2</query>
+        </named-query>
+        <named-query name="PlanetGroup.getByPlanet">
+            <query>SELECT p FROM PlanetGroup p WHERE p.planet.handle = ?1</query>
+        </named-query>
+        <named-query name="PlanetGroup.getWithPlanetNull">
+            <query>SELECT p FROM PlanetGroup p WHERE p.planet IS NULL</query>
+        </named-query>
+        <named-query name="PlanetGroup.getAll">
+            <query>SELECT p FROM PlanetGroup p</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="categoryRestriction">
+                <column name="cat_restriction" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="description">
+                <column name="description" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="handle">
+                <column name="handle" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="maxFeedEntries">
+                <column name="max_feed_entries" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="maxPageEntries">
+                <column name="max_page_entries" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="title">
+                <column name="title" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <many-to-one name="planet" target-entity="org.apache.roller.planet.pojos.Planet">
+				<join-column name="planet_id" insertable="true" updatable="true" nullable="true"/>
+			</many-to-one>
+            <many-to-many name="subscriptions"
+                          target-entity="org.apache.roller.planet.pojos.Subscription"
+                          mapped-by="groups"/>
+            <transient name="categoryRestrictionAsArray"/>
+            <transient name="recentEntries"/>
+        </attributes>
+    </entity>
+</entity-mappings>

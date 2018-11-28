@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.weblogger.pojos</package>
+    <entity metadata-complete="true" name="User" class="org.apache.roller.weblogger.pojos.User">
+        <table name="rolleruser"/>
+        <named-query name="User.getAll">
+            <query>SELECT u FROM User u</query>
+        </named-query>
+        <named-query name="User.getByEnabled">
+            <query>SELECT u FROM User u WHERE u.enabled = ?1</query>
+        </named-query>
+        <named-query name="User.getUserByActivationCode">
+            <query>SELECT u FROM User u WHERE u.activationCode = ?1</query>
+        </named-query>
+        <named-query name="User.getByEnabled&amp;EndDateOrderByStartDateDesc">
+            <query>SELECT u FROM User u WHERE u.enabled = ?1 AND u.dateCreated &lt; ?2 ORDER BY u.dateCreated DESC</query>
+        </named-query>
+        <named-query name="User.getByEnabled&amp;EndDate&amp;StartDate">
+            <query>SELECT u FROM User u WHERE u.enabled = ?1 AND u.dateCreated &lt; ?2 AND u.dateCreated &gt; ?3</query>
+        </named-query>
+        <named-query name="User.getByEnabled&amp;EndDate&amp;StartDateOrderByStartDateDesc">
+            <query>SELECT u FROM User u WHERE u.enabled = ?1 AND u.dateCreated &lt; ?2 AND u.dateCreated &gt; ?3 ORDER BY u.dateCreated DESC</query>
+        </named-query>
+        <!-- <named-query name="User.getByEnabled&amp;Permissions.website">
+            <query>SELECT u FROM User u JOIN u.permissions p WHERE u.enabled = ?1 AND p.weblog = ?2</query>
+        </named-query> -->
+        <named-query name="User.getByEnabled&amp;UserNameOrEmailAddressStartsWith">
+            <query>SELECT u FROM User u WHERE u.enabled = ?1 AND (u.userName LIKE ?2 OR u.emailAddress LIKE ?3)</query>
+        </named-query>
+        <named-query name="User.getByEndDateOrderByStartDateDesc">
+            <query>SELECT u FROM User u WHERE u.dateCreated &lt; ?1 ORDER BY u.dateCreated DESC</query>
+        </named-query>
+        <named-query name="User.getByUserName">
+            <query>SELECT u FROM User u WHERE u.userName= ?1</query>
+        </named-query>
+        <named-query name="User.getByUserName&amp;Enabled">
+            <query>SELECT u FROM User u WHERE u.userName= ?1 AND u.enabled = ?2</query>
+        </named-query>
+        <named-query name="User.getByUserNameOrEmailAddressStartsWith">
+            <query>SELECT u FROM User u WHERE u.userName LIKE ?1 OR u.emailAddress LIKE ?1</query>
+        </named-query>
+        <named-query name="User.getByUserNameOrderByUserName">
+            <query>SELECT u FROM User u WHERE u.userName= ?1 ORDER BY u.userName</query>
+        </named-query>
+        <!-- <named-query name="User.getByPermissions.website">
+            <query>SELECT u FROM User u JOIN u.permissions p WHERE p.weblog = ?1</query>
+        </named-query>
+        <named-query name="User.getByPermissions.website&amp;Enabled&amp;EndDate&amp;StartDate">
+            <query>SELECT u FROM User u JOIN u.permissions p WHERE p.weblog = ?1 AND u.enabled = ?2 AND u.dateCreated &lt; ?3 AND u.dateCreated &gt; ?4</query>
+        </named-query>
+        <named-query name="User.getByPermissions.website&amp;EndDate&amp;StartDate">
+            <query>SELECT u FROM User u JOIN u.permissions p WHERE p.weblog = ?1 AND u.dateCreated &lt; ?2 AND u.dateCreated &gt; ?3</query>
+        </named-query> -->
+        <named-query name="User.getByEndDate&amp;StartDateOrderByStartDateDesc">
+            <query>SELECT u FROM User u WHERE u.dateCreated &lt; ?1 AND u.dateCreated &gt; ?2 ORDER BY u.dateCreated DESC</query>
+        </named-query>
+        <named-query name="User.getCountByUserNameLike">
+            <query>SELECT COUNT(u) FROM User u WHERE UPPER(u.userName) LIKE ?1</query>
+        </named-query>
+        <named-query name="User.getCountEnabledDistinct">
+            <!--
+            DISTINCT is not required for this query as no duplicate User would be retrieved
+            -->
+            <query>SELECT COUNT(u) FROM User u WHERE u.enabled = ?1</query>
+        </named-query>  
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="enabled">
+                <column name="isenabled" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="userName">
+                <column name="username" insertable="true" updatable="true" unique="true"/>
+            </basic>
+            <basic name="screenName">
+                <column name="screenname" insertable="true" updatable="true" unique="true"/>
+            </basic>
+            <basic name="activationCode">
+                <column name="activationcode" insertable="true" updatable="true" unique="true"/>
+            </basic>
+            <basic name="password">
+                <column name="passphrase" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="fullName">
+                <column name="fullname" insertable="true" updatable="true" unique="true"/>
+            </basic>
+            <basic name="emailAddress">
+                <column name="emailaddress" insertable="true" updatable="true" unique="true"/>
+            </basic>
+            <basic name="dateCreated">
+                <column name="datecreated" insertable="true" updatable="true" unique="false"/>
+                <temporal>TIMESTAMP</temporal>
+            </basic>
+            <basic name="locale">
+                <column name="locale" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="timeZone">
+                <column name="timeZone" insertable="true" updatable="true" unique="false"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>

@@ -1,0 +1,69 @@
+NOTICE.txt - Roller copyright notices and credits
+
+
+COPYRIGHT NOTICES
+
+This product includes:
+
+* Software developed by the Apache Software Foundation (http://www.apache.org) 
+    Copyright 2006 The Apache Software Foundation. 
+
+* Software developed by the ROME project
+    Copyright 2003-2006 Sun Microsystems, Inc.
+
+* The JDOM XML parser
+    Copyright 2004 Brett McLaughlin & Jason Hunter. All rights reserved.
+
+* Snippets of code from the Blojsom blog server
+    Copyright 2003 David A. Czarnecki & Mark Lussier. All rights reserved.
+
+* Snippets of code from the Pebble blog server
+    Copyright 2003 Simon Brown, All rights reserved.
+
+* Code written by Sun Microsystems, Inc. 
+    Copyright 2005 Sun Microsystems, Inc.
+
+* Code written by Dave Johnson for RSS and Atom in Action
+    Copyright 2005 David M Johnson (For RSS and Atom In Action)
+
+* Code from OSCache, a product of the OpenSymphony project
+    Copyright 2002-2003 by OpenSymphony
+
+* A Struts LinkTag and LinkParamTag by BSquare Software
+    Copyright 2001 Bsquare Projects 
+
+* The Xinha WYSIWYG editor, which includes HTMLArea
+    Copyright dynarch.com, 2003-2004
+    Copyright 2002 interactivetools.com, inc.
+
+* The Scriptalicious JavaScript library
+    Copyright 2005 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
+    Copyright 1998-2004. Erik Bosrup. All rights reserved.
+
+
+OTHER NOTICES
+
+* Roller includes Acegi Security
+    "This product includes software developed by the Acegi Security
+    System for Spring Project (http://acegisecurity.org)"
+
+* Roller include icons by Mark James (http://www.famfamfam.com/lab/icons)
+
+
+CREDITS
+
+Roller committers (in chronological order): 
+
+David M Johnson
+Lance Lanvandowska 
+Matt Raible 
+Mindaguas Idzelis (emeritus)
+Jaap Van Der Molen (emeritus)
+Anil Gangolli
+Henri Yandell
+Allen Gilliland (emeritus)
+Elias Torres (emeritus)
+Matt Schmidt (emeritus)
+Jeff Blattman (emeritus)
+Craig Russell
+Greg Huber

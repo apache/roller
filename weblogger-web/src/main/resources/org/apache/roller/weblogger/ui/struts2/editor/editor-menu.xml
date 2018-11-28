@@ -1,0 +1,132 @@
+<!-- 
+Defines the Roller Weblog Editor/Admin UI menu and roles allowed to use each 
+menu. See also, admin-menu.xml, which defines the Global Admin menu.
+Each menu or menu item is governed by four attrbibutes:
+
+    1) globalPerms: these are the global permissions required to view the item
+       Possible values:
+       - admin:    superuser, administers server, etc.
+       - login:    allowed to login and save profile
+       - weblog:   is allowed to create and user weblogs
+       - comment:  allowed to comment on weblogs
+       Use "any" to indicate that role is not required to view ite
+       
+    2) webogPerms: these are the weblog specific permissions required to view item
+       - post:        edit and publish entries, bookmarks
+       - edit_draft:  create and edit draft posts only
+       - admin:       edit and publish entries, edit categories, manage users, etc.
+       Use "any" to indicate that website perms are not required to view item
+       
+    3) enable property: if true, show this menu
+
+    4) disable property: if true, don't show this menu
+-->
+<menu-bar>
+    
+    <menu name="tabbedmenu.weblog" weblogPerms="edit_draft" globalPerms="login" >
+        
+        <menu-item action="entryAdd" 
+                   name="tabbedmenu.weblog.newEntry" 
+                   globalPerms="login"
+                   weblogPerms="edit_draft" 
+                   subactions="entryEdit,entryRemove" />
+        
+        <menu-item action="entries" 
+                   name="tabbedmenu.weblog.archives" 
+                   globalPerms="login"
+                   weblogPerms="edit_draft" />
+        
+        <menu-item action="comments" 
+                   name="tabbedmenu.admin.commentManagement" 
+                   globalPerms="login"
+                   weblogPerms="post" />
+        
+        <menu-item action="categories"   
+                   name="tabbedmenu.weblog.categories" 
+                   globalPerms="login"
+                   weblogPerms="post"
+                   subactions="categoryAdd,categoryEdit,categoryRemove" />
+        
+        <menu-item action="bookmarks"    
+                   name="tabbedmenu.bookmarks.allFolders" 
+                   globalPerms="login"
+                   weblogPerms="admin"
+                   subactions="bookmarkAdd,bookmarkEdit,folderAdd,folderEdit,bookmarksImport" />
+
+        <menu-item action="mediaFileView"
+                   name="tabbedmenu.weblog.mediaFiles"
+                   globalPerms="login"
+                   weblogPerms="post"
+                   subactions="mediaFileAdd,mediaFileHierarchicalView,mediaFileSearch" />
+
+        <menu-item action="weblogExport"
+                   enabledProperty="weblog.export.enabled"
+                   name="tabbedmenu.weblog.export"
+                   globalPerms="login"
+                   weblogPerms="admin"
+                   subactions="exportEntries,exportResources"/>
+
+         <menu-item action="referrers"
+                   name="tabbedmenu.weblog.referers" 
+                   globalPerms="login"
+                   weblogPerms="admin"
+                   enabledProperty="referrers.processing.enabled" />
+    </menu>
+    
+    
+    <menu name="tabbedmenu.design" weblogPerms="admin" globalPerms="login" enabledProperty="themes.customtheme.allowed">
+        
+        <menu-item action="themeEdit"         
+                   name="tabbedmenu.website.themes" 
+                   globalPerms="login"
+                   weblogPerms="admin" />
+        
+        <menu-item action="stylesheetEdit"         
+                   name="tabbedmenu.design.stylesheet" 
+                   globalPerms="login"
+                   weblogPerms="admin" />
+                   
+        <menu-item action="templates"         
+                   name="tabbedmenu.website.pages" 
+                   globalPerms="login"
+                   weblogPerms="admin" 
+                   subactions="templateAdd,templateEdit,templateRemove" />
+                   
+    </menu>
+    
+    
+    <menu name="tabbedmenu.website" weblogPerms="admin">
+        
+        <menu-item action="weblogConfig"       
+                   name="tabbedmenu.website.settings" 
+                   globalPerms="login"
+                   weblogPerms="admin" 
+                   subactions="weblogRemove" />
+        
+        <menu-item action="members" 
+                   name="tabbedmenu.website.members" 
+                   globalPerms="login"
+                   weblogPerms="admin"
+                   subactions="invite" 
+                   enabledProperty="groupblogging.enabled"/>
+        
+        <menu-item action="pings"         
+                   name="tabbedmenu.weblog.pingSetup" 
+                   globalPerms="login"
+                   weblogPerms="admin" 
+                   disabledProperty="pings.disablePingUsage" />
+        
+        <menu-item action="customPingTargets" 
+                   name="tabbedmenu.weblog.customPingTargets" 
+                   globalPerms="login"
+                   weblogPerms="admin" 
+                   subactions="customPingTargetAdd,customPingTargetEdit"
+                   disabledProperty="pings.disallowCustomTargets" />        
+        
+        <menu-item action="maintenance"      
+                   name="tabbedmenu.website.maintenance" 
+                   globalPerms="login"
+                   weblogPerms="admin" />
+    </menu>
+    
+</menu-bar>

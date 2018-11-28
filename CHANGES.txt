@@ -1,0 +1,23 @@
+
+---------------------------------------------------------------------------------------------------
+Apache Roller 5.0.2 RELEASE
+
+This is a minor bug fix release of Apache Roller 5.0.
+
+CHANGES IN THIS RELEASE
+
+* Apply proper escaping for search feed request parameters
+* Don't send email notifications when comment not approved
+* Fixed template bug reported in this blog article: 
+* http://kemovitra.blogspot.in/2013/05/fix-comment-form-in-fauxcoly-theme-for.html 
+  (not necessary for trunk branch, template there does not have this error.)
+* Updated Guice dependency to 2.0 and changed version from 5.0.1 to 5.0.2-SNAPSHOT
+* Removed generated files from Roller documentation, 5.0.x branch
+* Removed planet-web application from 5.0.x branch.
+* ROL-1929 Added NPE guard when indexing blog authors 
+* ROL-1969 fix migration scripts for PostgreSQL
+* ROL-1946 Add commenter's email addr to notification emails.
+* ROL-1621 Remove .classpath/.project files.
+* ROL-1241: Remove duplicate items in application.properties
+* ROL-1737 Explain that user email notification option works only if enabled by administrator. 
+* ROL-1421 typos in ApplicationResources (and other changes made to trunk branch)

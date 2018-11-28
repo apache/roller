@@ -1,0 +1,50 @@
+
+<project name="roller-groovy" default="build" basedir=".">
+    <description>Build Roller-Groovy integration classes</description>   
+
+    <property file="./ant.properties" />
+        
+    <path id="scripting.path">
+        <fileset dir="${rollersrc.dir}/build/webapp/WEB-INF/lib">   
+            <include name="roller-core.jar"/>   
+            <include name="roller-business.jar"/>   
+            <include name="roller-web.jar"/>   
+        </fileset>
+        <fileset dir="${tools.dir}/lib">   
+            <include name="commons-logging-1.0.4.jar"/>   
+        </fileset>
+        <fileset dir="${tools.dir}/openjpa-1.1.0">   
+            <include name="openjpa-1.1.0.jar"/>   
+        </fileset>
+        <fileset dir="${groovy.home}/lib">
+            <include name="groovy-1.0.jar"/>
+        </fileset>                      
+    </path>
+    
+    <target name="build">        
+        <mkdir dir="./build/classes" />
+        <javac debug="on" destdir="./build/classes">
+            <src path="./src" />
+            <classpath>
+                <path refid="scripting.path"/>
+            </classpath>
+        </javac>
+        <mkdir dir="./dist" />
+        <jar basedir="build/classes" jarfile="./dist/roller-groovy.jar" />
+    </target>
+    
+    <target name="copy-to-roller" >
+        <copy todir="../../../build/webapp/WEB-INF/lib">
+            <fileset dir="./dist">
+               <include name="roller-groovy.jar" />
+            </fileset>
+            <fileset dir="${groovy.home}/embeddable">
+               <include name="groovy-all-1.0.jar" />
+            </fileset>
+        </copy>
+    </target>    
+    <target name="clean">
+        <delete dir="./build" />
+    </target>
+    
+</project>

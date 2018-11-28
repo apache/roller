@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.weblogger.pojos</package>
+    <entity metadata-complete="true" name="WeblogReferrer" class="org.apache.roller.weblogger.pojos.WeblogReferrer">
+        <table name="referer"/>
+        <named-query name="WeblogReferrer.getByWeblogEntry&amp;TitleNotNull&amp;ExcerptNotNullOrderByTotalHitsDesc">
+            <query>SELECT r FROM WeblogReferrer r WHERE r.weblogEntry = ?1 AND r.title IS NOT NULL AND r.excerpt IS NOT NULL ORDER BY r.totalHits DESC</query>
+        </named-query>
+        <named-query name="WeblogReferrer.getByWeblogEntry">
+                <query>SELECT r FROM WeblogReferrer r WHERE r.weblogEntry = ?1</query>
+        </named-query>
+        <named-query name="WeblogReferrer.getByWebsite">
+            <query>SELECT r FROM WeblogReferrer r WHERE r.website = ?1</query>
+        </named-query>
+        <named-query name="WeblogReferrer.getByWebsiteOrderByTotalHitsDesc">
+            <query>SELECT r FROM WeblogReferrer r WHERE r.website = ?1 ORDER BY r.totalHits DESC</query>
+        </named-query>
+        <named-query name="WeblogReferrer.getByWebsite&amp;DateString&amp;DuplicateOrderByTotalHitsDesc">
+            <query>SELECT r FROM WeblogReferrer r WHERE r.website = ?1 AND r.dateString = ?2 AND r.duplicate = ?3 ORDER BY r.totalHits DESC</query>
+        </named-query>
+        <named-query name="WeblogReferrer.getByWebsite&amp;DayHitsGreaterZeroOrderByDayHitsDesc">
+            <query>SELECT r FROM WeblogReferrer r WHERE r.website = ?1 AND r.dayHits > 0 ORDER BY r.dayHits DESC</query>
+        </named-query>
+        <named-query name="WeblogReferrer.getByWebsite&amp;DateString&amp;RefererPermalink">
+            <query>SELECT r FROM WeblogReferrer r WHERE r.website = ?1 AND r.dateString = ?2 AND r.refererPermalink = ?3</query>
+        </named-query>
+        <named-query name="WeblogReferrer.getByWebsite&amp;RefererUrl">
+            <query>SELECT r FROM WeblogReferrer r WHERE r.website = ?1 AND r.refererUrl = ?2</query>
+        </named-query>
+        <named-query name="WeblogReferrer.getByWebsite&amp;RequestUrl&amp;RefererUrl">
+            <query>SELECT r FROM WeblogReferrer r WHERE r.website = ?1 AND r.requestUrl = ?2 AND r.refererUrl = ?3</query>
+        </named-query>
+        <named-query name="WeblogReferrer.getByWebsite&amp;RequestURL&amp;TitleOrExcerpt">
+            <query>SELECT r FROM WeblogReferrer r WHERE r.website = ?1 AND r.requestUrl = ?2 AND (r.title = ?3 OR r.excerpt = ?4)</query>
+        </named-query>
+        <named-query name="WeblogReferrer.getHotWeblogsByWebsite.enabled&amp;Website.active&amp;Website.lastModifiedGreater">
+            <!--
+            DISTINCT is not required for this query - WeblogReferrer would never be duplicated in retrieved result
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(r), r.website.id, r.website.name, r.website.handle FROM WeblogReferrer r WHERE r.website.enabled = ?1 AND r.website.active = ?2 AND r.website.lastModified &gt; ?3 GROUP BY r.website.id, r.website.name, r.website.handle</query>
+        </named-query>
+        <named-query name="WeblogReferrer.getDaysPopularWebsitesByWebsite.enabled&amp;Website.active">
+            <query>SELECT SUM(r.dayHits), r.website.id, r.website.name, r.website.handle FROM WeblogReferrer r WHERE r.website.enabled = ?1 AND r.website.active = ?2 GROUP BY r.website.id, r.website.name, r.website.handle</query>
+        </named-query>
+        <named-query name="WeblogReferrer.getHitsByWebsite.enabled&amp;Website.id">
+            <query>SELECT SUM(r.dayHits), SUM(r.totalHits) FROM WeblogReferrer r WHERE r.website.enabled = ?1 AND r.website.id = ?2</query>
+        </named-query>
+        <named-query name="WeblogReferrer.clearDayHits">
+            <query>UPDATE WeblogReferrer r SET r.dayHits=0</query>
+        </named-query>
+        <named-query name="WeblogReferrer.clearDayHitsByWebsite">
+            <query>UPDATE WeblogReferrer r SET r.dayHits=0 where r.website = ?1</query>
+        </named-query>
+        <named-query name="WeblogReferrer.removeByNullOrEmptyExcerpt">
+            <query>DELETE FROM WeblogReferrer r WHERE r.excerpt IS NULL OR r.excerpt LIKE ''</query>
+        </named-query>
+        <named-query name="WeblogReferrer.removeByNullOrEmptyExcerpt&amp;Website">
+            <query>DELETE FROM WeblogReferrer r WHERE r.website = ?1 AND (r.excerpt IS NULL OR r.excerpt LIKE '')</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="dateString">
+                <column name="datestr" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="refererUrl">
+                <column name="refurl" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="refererPermalink">
+                <column name="refpermalink" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="requestUrl">
+                <column name="requrl" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="title">
+                <column name="title" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="excerpt">
+                <column name="excerpt" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="visible">
+                <column name="visible" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="duplicate">
+                <column name="duplicate" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="dayHits">
+                <column name="dayhits" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="totalHits">
+                <column name="totalhits" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <many-to-one name="website" target-entity="org.apache.roller.weblogger.pojos.Weblog">
+                <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
+            </many-to-one>
+            <many-to-one name="weblogEntry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntry">
+                <join-column name="entryid" insertable="true" updatable="true"/>
+            </many-to-one>
+            <transient name="displayUrl"/>
+            <transient name="url"/>
+        </attributes>
+    </entity>
+</entity-mappings>

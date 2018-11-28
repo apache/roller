@@ -1,0 +1,65 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.3//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.3.dtd">
+<validators>
+    
+    <field name="bean.screenName">
+        <field-validator type="requiredstring">
+            <message key="Register.error.screenNameNull">unspecified key</message>
+        </field-validator>
+        
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <message key="Register.error.screenNameSize">unspecified key</message>
+        </field-validator>
+    </field>
+    
+    <field name="bean.fullName">
+        <field-validator type="requiredstring">
+            <message key="Register.error.fullNameNull">unspecified key</message>
+        </field-validator>
+        
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <message key="Register.error.fullNameSize">unspecified key</message>
+        </field-validator>
+    </field>
+    
+    <field name="bean.emailAddress">
+        <field-validator type="requiredstring">
+            <message key="Register.error.emailAddressNull">unspecified key</message>
+        </field-validator>
+        
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <message key="Register.error.emailAddressSize">unspecified key</message>
+        </field-validator>
+        
+        <field-validator type="email">
+            <message key="Register.error.emailAddressBad">unspecified key</message>
+        </field-validator>
+    </field>
+    
+    <field name="bean.locale">
+        <field-validator type="requiredstring">
+            <message key="Register.error.localeNull">unspecified key</message>
+        </field-validator>
+        
+        <field-validator type="stringlength">
+            <param name="maxLength">20</param>
+            <message key="Register.error.localeSize">unspecified key</message>
+        </field-validator>
+    </field>
+    
+    <field name="bean.timeZone">
+        <field-validator type="requiredstring">
+            <message key="Register.error.timeZoneNull">unspecified key</message>
+        </field-validator>
+        
+        <field-validator type="stringlength">
+            <param name="maxLength">20</param>
+            <message key="Register.error.timeZoneSize">unspecified key</message>
+        </field-validator>
+    </field>
+    
+</validators>
