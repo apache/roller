@@ -1,0 +1,325 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.roller</groupId>
+        <artifactId>roller-project</artifactId>
+        <version>5.0.1</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <name>Apache Roller Weblogger Web Application</name>
+    <groupId>org.apache.roller</groupId>
+    <artifactId>roller-weblogger-webapp</artifactId>
+    <version>5.0.1</version>
+    <packaging>war</packaging>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.apache.roller</groupId>
+            <artifactId>roller-weblogger-web</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty</artifactId>
+            <version>6.1.26</version>
+            <scope>provided</scope>
+        </dependency>
+        
+    </dependencies>
+
+    <build>
+
+        <finalName>roller</finalName>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <archiveClasses>true</archiveClasses>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <version>6.1.26</version>
+                <configuration>
+                    <contextPath>roller</contextPath>
+                    <jettyConfig>${project.build.directory}/test-classes/jetty.xml</jettyConfig>
+                    <build.plugins.plugin.version></build.plugins.plugin.version>
+                    <systemProperties>
+
+                        <systemProperty>
+                            <name>derby.dir</name>
+                            <value>${project.build.directory}/work/derby-system</value>
+                        </systemProperty>
+
+                        <systemProperty>
+                            <name>config.dir</name>
+                            <value>${basedir}/src/test/resources</value>
+                        </systemProperty>
+
+                        <systemProperty>
+                            <name>jetty.home</name>
+                            <value>${basedir}/src/test/resources</value>
+                        </systemProperty>
+
+                        <systemProperty>
+                            <name>jetty.logs</name>
+                            <value>${basedir}/src/test/resources</value>
+                        </systemProperty>
+
+                        <systemProperty>
+                            <name>derby.port</name>
+                            <value>3223</value>
+                        </systemProperty>
+
+                        <systemProperty>
+                            <name>roller.custom.config</name>
+                            <value>${project.build.directory}/test-classes/roller-custom.properties</value>
+                        </systemProperty>
+
+                        <systemProperty>
+                            <name>planet.custom.config</name>
+                            <value>${project.build.directory}/test-classes/planet-custom.properties</value>
+                        </systemProperty>
+
+                    </systemProperties>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.roller</groupId>
+                        <artifactId>test-utils</artifactId>
+                        <version>5.0.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                        <version>1.2.12</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.roller</groupId>
+                        <artifactId>test-utils</artifactId>
+                        <version>5.0.1</version>
+                    </dependency>
+                    
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derby</artifactId>
+                        <version>${derby.version}</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derbynet</artifactId>
+                        <version>${derby.version}</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derbyclient</artifactId>
+                        <version>${derby.version}</version>
+                    </dependency>                    
+                </dependencies>
+            </plugin>
+
+            <!-- <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+
+                    <execution>
+                        <id>copy-test-properties</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/testsetup</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/resources</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>copy-test-config</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/resources</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                </executions>
+                <configuration>
+                    <includeEmptyDirs>true</includeEmptyDirs>
+                </configuration>
+            </plugin> -->
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+
+                    <!-- Ensure tests will run even if 'openjpa' profile not active -->
+                    <forkMode>once</forkMode>
+                    <argLine>-javaagent:${user.home}/.m2/repository/org/apache/openjpa/openjpa/2.0.1/openjpa-2.0.1.jar</argLine>
+                    
+                    <systemProperties>
+                        <property>
+                            <name>catalina.base</name>
+                            <value>${project.build.testOutputDirectory}</value>
+                        </property>
+                        <property>
+                            <name>context.realpath</name>
+                            <value>${project.basedir}/src/main/webapp</value>
+                        </property>
+                        <property>
+                            <name>project.build.directory</name>
+                            <value>${project.build.directory}</value>
+                        </property>
+                    </systemProperties>
+                    <excludes>
+                        <exclude>**/TestUtils.java</exclude>
+                        <exclude>**/TestTask.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.roller</groupId>
+                        <artifactId>test-utils</artifactId>
+                        <version>${roller.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derby</artifactId>
+                        <version>${derby.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derbynet</artifactId>
+                        <version>${derby.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derbyclient</artifactId>
+                        <version>${derby.version}</version>
+                    </dependency>
+                </dependencies>
+
+                <executions>
+
+                    <execution>
+                        <id>startdb</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- Derby only for unit testing: skip when maven.text.skip is set -->
+                                <delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" />
+                                <taskdef name="startdb" classname="org.apache.roller.weblogger.ant.StartDerbyTask"
+                                         classpathref="maven.test.classpath"/>
+                                <startdb databaseDir="${project.build.directory}/derby-system"
+                                         port="3223"
+                                         databaseScriptsDir="${project.build.directory}/roller/WEB-INF/classes/dbscripts"
+                                         skip="${maven.test.skip}" >
+                                </startdb>
+                            </tasks>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>stopdb</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <!-- Derby only for unit testing: skip when maven.text.skip is set -->
+                                <taskdef name="stopdb" classname="org.apache.roller.weblogger.ant.StopDerbyTask"
+                                         classpathref="maven.test.classpath"/>
+                                <stopdb databaseDir="${project.build.directory}/derby-system"
+                                        port="3223"
+                                        databaseScriptsDir="${project.build.directory}/roller/WEB-INF/classes/dbscripts"
+                                        skip="${maven.test.skip}" >
+                                </stopdb>
+                                <delete dir="${project.build.directory}/derby-system" verbose="true" failonerror="false" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/roller/WEB-INF/classes/dbscripts</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../weblogger-business/target/dbscripts</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>**/*.sql</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+        </plugins>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+    </build>
+
+</project>

@@ -13,12 +13,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<project href="http://www.apache.org/">
+<project href="http://roller.apache.org/">
 
 <title>Apache Roller</title>
+<logo href="images/roller-logo.jpg" />
 <body>
     
 <projects><title>Project information</title>
+    <li><a href="http://roller.apache.org">Project HOME</a></li>
     <li><a href="http://rollerweblogger.org/project">Project Blog</a></li>
     <li><a href="http://cwiki.apache.org/confluence/display/ROLLER">Project Wiki</a></li>
     <li><a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+FAQ">Project FAQ</a> </li>
@@ -30,15 +32,13 @@ limitations under the License.
 </projects>
 
 <projects><title>Downloads</title>
-    <li><a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Downloads">Downloads</a></li>
-    <li><a href="https://roller.dev.java.net/">Downloads (additional)</a></li>
+    <li><a href="downloads.html">Downloads</a></li>
     <li><a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">Roller User Guide</a></li>
     <li><a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">Roller Install Guide</a> </li>
 </projects>
 
 <menu><title>Related Sites</title>
-  <li><a href="http://rollerweblogger.org/project">Roller project announcements blog</a></li>
-  <li><a href="http://roller.dev.java.net"></a>Java.Net Roller Support projet</li>
+  <li><a href="http://rollerweblogger.org/project">Roller project blog</a></li>
 </menu>
 
 <menu><title href="http://projects.apache.org/">Related Projects</title>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.weblogger.pojos</package>
+    <entity metadata-complete="true" name="WeblogEntryTagAggregate"
+            class="org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate">
+        <table name="roller_weblogentrytagagg"/>
+        <named-query name="WeblogEntryTagAggregate.getByName&amp;WebsiteOrderByLastUsedDesc">
+            <query>SELECT w FROM WeblogEntryTagAggregate w WHERE w.name = ?1 AND w.weblog = ?2 ORDER BY w.lastUsed DESC</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getByName&amp;WebsiteNullOrderByLastUsedDesc">
+            <query>SELECT w FROM WeblogEntryTagAggregate w WHERE w.name = ?1 AND w.weblog IS NULL ORDER BY w.lastUsed DESC</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getNameByNameIn&amp;Website">
+            <!-- <query>SELECT DISTINCT w.name FROM WeblogEntryTagAggregate w WHERE w.name IN (?1) AND w.weblog = ?2</query> -->
+            <query>SELECT w.name FROM WeblogEntryTagAggregate w WHERE w.name IN (?1) AND w.weblog = ?2</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getNameByNameIn&amp;WebsiteNull">
+            <!-- <query>SELECT DISTINCT w.name FROM WeblogEntryTagAggregate w WHERE w.name IN (?1) AND w.weblog IS NULL</query> -->
+            <query>SELECT w.name FROM WeblogEntryTagAggregate w WHERE w.name IN (?1) AND w.weblog IS NULL</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getPopularTagsByWebsite&amp;StartDate">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 AND w.lastUsed &gt;= ?2 GROUP BY w.name, w.total ORDER BY w.total DESC</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getPopularTagsByWebsite">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 GROUP BY w.name, w.total ORDER BY w.total DESC</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getPopularTagsByWebsiteNull&amp;StartDate">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL AND w.lastUsed &gt;= ?2 GROUP BY w.name, w.total ORDER BY w.total DESC</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getPopularTagsByWebsiteNull">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL GROUP BY w.name, w.total ORDER BY w.total DESC</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getTagsByWebsite&amp;NameStartsWith">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 AND w.name LIKE ?2 GROUP BY w.name, w.total </query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getTagsByWebsite">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 GROUP BY w.name, w.total</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getTagsByWebsiteNull&amp;NameStartsWith">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL AND w.name LIKE ?2 GROUP BY w.name, w.total</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getTagsByWebsiteNull">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL GROUP BY w.name, w.total</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getTagsByWebsite&amp;NameStartsWithOrderByName">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 AND w.name LIKE ?2 GROUP BY w.name, w.total ORDER BY w.name</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getTagsByWebsiteOrderByName">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1 GROUP BY w.name, w.total ORDER BY w.name</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getTagsByWebsiteNull&amp;NameStartsWithOrderByName">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL AND w.name LIKE ?2 GROUP BY w.name, w.total ORDER BY w.name</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.getTagsByWebsiteNullOrderByName">
+            <query>SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE w.weblog IS NULL GROUP BY w.name, w.total ORDER BY w.name</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.updateAddToTotalByName&amp;Weblog">
+            <query>UPDATE WeblogEntryTagAggregate w SET w.total = w.total + ?1, w.lastUsed = ?2 WHERE w.name = ?3 AND w.weblog = ?4</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.updateAddToTotalByName&amp;WeblogNull">
+            <query>UPDATE WeblogEntryTagAggregate w SET w.total = w.total + ?1 WHERE w.name = ?2 AND w.weblog IS NULL</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.updateMinusFromTotalByName&amp;WeblogNull">
+            <query>UPDATE WeblogEntryTagAggregate w SET w.total = w.total - ?1 WHERE w.name = ?2 AND w.weblog IS NULL</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.removeByTotalLessEqual">
+            <query>DELETE FROM WeblogEntryTagAggregate w WHERE w.total &lt;= ?1</query>
+        </named-query>
+        <named-query name="WeblogEntryTagAggregate.removeByWeblog">
+            <query>DELETE FROM WeblogEntryTagAggregate w WHERE w.weblog = ?1</query>
+        </named-query>
+
+
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="name">
+                <column name="name" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="lastUsed">
+                <column name="lastused" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="total">
+                <column name="total" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <many-to-one name="weblog" target-entity="org.apache.roller.weblogger.pojos.Weblog">
+                <join-column name="websiteid" insertable="true" updatable="true" nullable="true"/>
+            </many-to-one>
+        </attributes>
+    </entity>
+</entity-mappings>

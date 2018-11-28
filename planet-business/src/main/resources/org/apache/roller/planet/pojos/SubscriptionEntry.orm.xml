@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.planet.pojos</package>
+    <entity metadata-complete="true" name="SubscriptionEntry" class="org.apache.roller.planet.pojos.SubscriptionEntry">
+        <table name="rag_entry"/>
+        <named-query name="SubscriptionEntry.getByFeedURL">
+            <query>SELECT p FROM SubscriptionEntry p WHERE p.subscription.feedURL = ?1</query>
+        </named-query>
+        <named-query name="SubscriptionEntry.getByGroup&amp;EndDateOrderByPubTimeDesc">
+            <query>SELECT p FROM SubscriptionEntry p JOIN p.subscription s JOIN s.groups g
+                WHERE g =?1 AND p.pubTime &lt; ?2
+                ORDER BY p.pubTime DESC
+            </query>
+        </named-query>
+        <named-query name="SubscriptionEntry.getByGroup&amp;EndDate&amp;StartDateOrderByPubTimeDesc">
+            <query>SELECT p FROM SubscriptionEntry p JOIN p.subscription s JOIN s.groups g
+                WHERE g=?1 AND p.pubTime &lt; ?2 AND p.pubTime &gt; ?3
+                ORDER BY p.pubTime DESC
+            </query>
+        </named-query>
+        <named-query name="SubscriptionEntry.getBySubscription">
+            <query>
+                SELECT p FROM SubscriptionEntry p WHERE p.subscription = ?1 ORDER BY p.pubTime DESC
+            </query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="categoriesString">
+                <column name="categories" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="author">
+                <column name="author" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="text">
+                <column name="content" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="guid">
+                <column name="guid" insertable="true" updatable="true" unique="true"/>
+            </basic>
+            <basic name="handle">
+                <column name="handle" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="pubTime">
+                <column name="published" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="permalink">
+                <column name="permalink" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="title">
+                <column name="title" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="updateTime">
+                <column name="updated" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <many-to-one name="subscription"
+                         target-entity="org.apache.roller.planet.pojos.Subscription">
+                <join-column name="subscription_id" insertable="true" updatable="true"
+                             nullable="false"/>
+            </many-to-one>
+            <transient name="published"/>
+            <transient name="updated"/>
+            <transient name="content"/>
+            
+            <transient name="categories"/>
+            <transient name="category"/>
+            <transient name="creator"/>
+            <transient name="summary"/>
+            <transient name="website"/>
+        </attributes>
+    </entity>
+</entity-mappings>

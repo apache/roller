@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.weblogger.pojos</package>
+    <entity metadata-complete="true" name="WeblogEntryComment" class="org.apache.roller.weblogger.pojos.WeblogEntryComment">
+        <table name="roller_comment"/>
+        <named-query name="WeblogEntryComment.getCountAllDistinctByStatus">
+            <!-- DISTINCT is not required for this query as comments would never be duplicated in retrieved result-->
+            <query>SELECT COUNT(c) FROM WeblogEntryComment c where c.status = ?1</query>
+        </named-query>
+        <named-query name="WeblogEntryComment.getCountDistinctByWebsite&amp;Status">
+            <!-- DISTINCT is not required for this query as comments would never be duplicated in retrieved result-->
+            <query>SELECT COUNT(c) FROM WeblogEntryComment c WHERE c.weblogEntry.website = ?1 AND c.status = ?2</query>
+        </named-query>
+        <named-query name="WeblogEntryComment.getMostCommentedWebsiteByEndDate">
+            <!--
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result 
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 GROUP BY c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name</query>
+        </named-query>
+        <named-query name="WeblogEntryComment.getMostCommentedWebsiteByEndDate&amp;StartDate">
+            <!--
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(c), c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 AND c.weblogEntry.pubTime &gt; ?2 GROUP BY c.weblogEntry.website.id, c.weblogEntry.website.handle, c.weblogEntry.website.name
+            </query>
+        </named-query>
+        <named-query name="WeblogEntryComment.getMostCommentedWeblogEntryByEndDate">
+            <!--
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
+        </named-query>
+        <named-query name="WeblogEntryComment.getMostCommentedWeblogEntryByEndDate&amp;StartDate">
+            <!--
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM WeblogEntryComment c WHERE c.weblogEntry.pubTime &lt; ?1 AND c.weblogEntry.pubTime &gt; ?2 GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
+        </named-query>
+        <named-query name="WeblogEntryComment.getMostCommentedWeblogEntryByWebsite&amp;EndDate">
+            <!--
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM WeblogEntryComment c WHERE c.weblogEntry.website = ?1 AND c.weblogEntry.pubTime &lt; ?2 GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
+        </named-query>
+        <named-query name="WeblogEntryComment.getMostCommentedWeblogEntryByWebsite&amp;EndDate&amp;StartDate">
+            <!--
+            DISTINCT is not required for this query - comments would never be duplicated in retrieved result
+            because all the navigations from c are for ManyToOne relationship.
+            -->
+            <query>SELECT COUNT(c), c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title FROM WeblogEntryComment c WHERE c.weblogEntry.website = ?1 AND c.weblogEntry.pubTime &lt; ?2 AND c.weblogEntry.pubTime &gt; ?3 GROUP BY c.weblogEntry.website.handle, c.weblogEntry.anchor, c.weblogEntry.title</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="name">
+                <column name="name" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="email">
+                <column name="email" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="url">
+                <column name="url" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="content">
+                <column name="content" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="postTime">
+                <column name="posttime" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="status">
+                <column name="status" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="notify">
+                <column name="notify" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="remoteHost">
+                <column name="remotehost" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="referrer">
+                <column name="referrer" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="userAgent">
+                <column name="useragent" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="plugins">
+                <column name="plugins" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="contentType">
+                <column name="contenttype" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <many-to-one name="weblogEntry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntry">
+                <join-column name="entryid" insertable="true" updatable="true" nullable="false"/>
+            </many-to-one>
+            <transient name="timestamp"/>
+            <transient name="spam"/>
+            <transient name="pending"/>
+            <transient name="approved"/>
+        </attributes>
+    </entity>
+</entity-mappings>

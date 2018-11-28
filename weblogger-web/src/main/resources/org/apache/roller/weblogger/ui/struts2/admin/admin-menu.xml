@@ -1,0 +1,49 @@
+<!-- 
+Defines the Roller Global Admin UI menu and roles allowed to use each menu. 
+Each menu or menu item is governed by four attrbibutes:
+
+See comments in editor-menu.xml for info about attributes.
+-->
+<menu-bar>
+    
+    <menu name="tabbedmenu.admin" globalPerms="admin">
+        
+        <menu-item action="globalConfig"       
+                   name="tabbedmenu.admin.config" 
+                   globalPerms="admin" />
+        
+        <menu-item action="userAdmin"          
+                   name="tabbedmenu.admin.userAdmin" 
+                   globalPerms="admin"
+                   subactions="createUser,modifyUser" />
+        
+        <menu-item action="globalCommentManagement" 
+                   name="tabbedmenu.admin.commentManagement" 
+                   globalPerms="admin" />
+        
+        <menu-item action="commonPingTargets"  
+                   name="tabbedmenu.admin.pingTargets"
+                   globalPerms="admin" 
+                   subactions="commonPingTargetAdd,commonPingTargetEdit" />
+        
+        <menu-item action="cacheInfo"          
+                   name="tabbedmenu.admin.cacheInfo"
+                   globalPerms="admin" />
+    </menu>
+    
+    <menu name="tabbedmenu.planet" globalPerms="admin" enabledProperty="planet.aggregator.enabled">
+        
+        <menu-item action="planetConfig"       
+                   name="tabbedmenu.admin.planetConfig" 
+                   globalPerms="admin" />
+        
+        <menu-item action="planetSubscriptions" 
+                   name="tabbedmenu.admin.planetSubscriptions" 
+                   globalPerms="admin" />
+        
+        <menu-item action="planetGroups"        
+                   name="tabbedmenu.admin.planetGroups" 
+                   globalPerms="admin" />
+    </menu>
+    
+</menu-bar>

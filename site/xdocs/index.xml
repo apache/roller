@@ -20,10 +20,6 @@ limitations under the License.
   </properties>
 <body>
 
-<section>
-<img src="images/roller-logo.gif"></img>   
-</section>
-
 <section><title>Welcome!</title>
     <p>
         Apache Roller is a full-featured, multi-user and group-blog 
@@ -31,11 +27,11 @@ limitations under the License.
         homepage, which provides a brief overview of the software and project as 
         well as links to 
         <a href="http://rollerweblogger.org/project">project news</a>, 
-        <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Downloads">downloads</a>, 
+        <a href="downloads.html">downloads</a>, 
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+User+Documentation">user documentation</a>, 
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Install+Guides">install guide</a>, 
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists">mailing-lists</a>,
-        <a href="http://opensource.atlassian.com/projects/roller">bug tracker</a>,
+        <a href="https://issues.apache.org/jira/browse/ROL">bug tracker</a>,
         <a href="http://cwiki.apache.org/confluence/display/ROLLER">wiki</a> and the 
         <a href="http://cwiki.apache.org/confluence/display/ROLLER/Roller+FAQ">FAQ</a>. 
     </p>
@@ -45,7 +41,7 @@ limitations under the License.
         Roller is a Java web application that should be able to run on any Java EE
         server and any relational database. Currently, Roller is best supported on 
         Tomcat and MySQL -- but users have reported success running Roller on 
-        Glassfish, Websphere, JBoss, Resin, Gernonimo, Derby, PostgresSQL, 
+        Glassfish, Websphere, JBoss, Resin, Geronimo, Derby, PostgresSQL, 
         Oracle, etc.)
     </p>
     <p>Here are some of Roller's key features:</p>
@@ -63,14 +59,22 @@ limitations under the License.
 
 <section><title>Project Status</title>
 <p>
-    Roller is a stable and production-ready blog 
-    server in it's third major revision. It powers internal and external 
-    employee blogs and Sun, IBM and other companies as well as the JRoller.com 
+    Roller is a stable and production-ready blog
+    server in it's third major revision. It powers internal and external
+    employee blogs at Sun, IBM and other companies as well as the JRoller.com
     Java blogging community. Roller graduated from the Apache Incubator in March
     2007 and is now an official Apache project.
-</p>        
+</p>
+</section>
 
-    
+<section><title>Thanks to our sponsors</title>
+<p>
+    The Apache Software Foundation could not exist without the continued
+    generous support from the community. We would like to take this opportunity
+    to <a href="http://www.apache.org/foundation/thanks.html">thank our Sponsors</a>
+    If you are interested in sponsoring the ASF, please
+    read our <a href="http://www.apache.org/foundation/sponsorship.html">sponsorship page</a>.
+</p>
 </section>
 
 </body>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.weblogger.pojos</package>
+    <entity metadata-complete="true" name="WeblogTemplate"
+            class="org.apache.roller.weblogger.pojos.WeblogTemplate">
+        <table name="webpage"/>
+        <named-query name="WeblogTemplate.getByWebsite">
+            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1</query>
+        </named-query>
+        <named-query name="WeblogTemplate.getByWebsiteOrderByName">
+            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1 ORDER BY w.name</query>
+        </named-query>
+        <named-query name="WeblogTemplate.getByWebsite&amp;Link">
+            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1 AND w.link = ?2</query>
+        </named-query>
+        <named-query name="WeblogTemplate.getByAction">
+            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1 AND w.action = ?2</query>
+        </named-query>
+        <named-query name="WeblogTemplate.getByWebsite&amp;Name">
+            <query>SELECT w FROM WeblogTemplate w WHERE w.website = ?1 AND w.name= ?2</query>
+        </named-query>
+
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="name">
+                <column name="name" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="description">
+                <column name="description" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="action">
+                <column name="action" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="link">
+                <column name="link" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="contents">
+                <column name="template" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="lastModified">
+                <column name="updatetime" insertable="true" updatable="true" unique="false"/>
+                <temporal>TIMESTAMP</temporal>
+            </basic>
+            <basic name="templateLanguage">
+                <column name="templatelang" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="navbar">
+                <column name="navbar" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="hidden">
+                <column name="hidden" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="decoratorName">
+                <column name="decorator" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="outputContentType">
+                <column name="outputtype" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <many-to-one name="website" target-entity="org.apache.roller.weblogger.pojos.Weblog">
+                <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
+            </many-to-one>
+            
+            <transient name="custom"/>
+            <transient name="required"/>
+            <transient name="decorator"/>
+        </attributes>
+    </entity>
+</entity-mappings>

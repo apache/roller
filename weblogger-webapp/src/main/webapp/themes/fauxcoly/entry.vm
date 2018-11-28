@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!-- XFN friendly -->
+<head profile="http://gmpg.org/xfn/11">
+    #includeTemplate($model.weblog "standard_head")
+    <title>$model.weblog.name: $model.weblogEntry.title</title>
+
+    <style type="text/css">
+
+    #sidebar_content table {
+        margin: 0.5em;
+        padding: 0;
+    }
+    #sidebar_content td {
+        border: none;
+    }
+
+    /* style the comments and form */
+    p.comment-details {
+        font-size: 80%;
+        color: #999;
+        margin: 1em 1em 1em 0em;
+    }
+    .comments-head {
+        color:#CC0000;
+        font-family:"Lucida Grande",geneva,helvetica,sans-serif;
+        font-size:140%;
+        border-top: 1px solid gray;
+        padding: 5px;
+        margin-top: 1em;
+    }
+    .comments .even {
+         padding: 1em 1em 1em 1em;
+    }
+    .comments .odd {
+         background: #eee;
+         padding: 1em 1em 1em 1em;
+         border-top: 1px solid silver;
+         border-bottom: 1px solid silver;
+    }
+    .comment .comment-details {
+        padding-left: 3px;
+        margin-bottom: 0 !important;
+    }
+    .comments-syntax-indicator {
+        font-weight: bold;
+    }
+    .comments-syntax-indicator .enabled {
+        color: green;
+        font-style: italic;
+    }
+    .comments-syntax-indicator .disabled {
+        color: red;
+        font-style: italic;
+    }
+    div#commentAuthenticator p {
+        font-size: 11px;
+    }
+    form#commentForm textarea {
+        width: 100%;
+    }
+
+    form li.focused{ background-color: #fff7c0 !important; }
+    form li p{ font-size: 9px; line-height: 13px; color: #444; }
+    /* form li{ display: inline-block; } */
+    form[id] li{ display: block; }
+
+    form li div{ display: inline-block; }
+
+    form[id] li div{ display: inline; }
+
+    .comments-form form ul { position: relative; list-style: none; width: 100%; }
+    .comments-form form ul li { line-height: 2em; margin: 0; list-style: none; padding: 1px 1px 6px 9px; }
+    form .left{ float: left !important; margin: 0; }
+    form .right{ float: right !important; margin: 0; }
+    form .clear{ clear: both; }
+    form li div p{ margin: 0 0 5px 0; }
+    form div.left{ margin-right: 2px !important; }
+    form div.left[class]{ margin-right: 4px !important; }
+    form div.left img{ margin: 0 0 -2px 0; }
+    form h2{ font-size: 1.8em; clear: left; }
+    form .info{ display: inline-block; margin: 0 0 10px 0; padding: 0 0 4px 0;}
+    form .info[class]{ display: block; }
+    form .info p{ font-size: 1em; line-height: 1.3em; margin: 0 0 8px 0; }
+    textarea.textarea{margin-bottom: 1px;}
+    textarea.textarea[class]{font-family: "Lucida Grande", Tahoma, "Trebuchet MS", Verdana, sans-serif;}
+    select.select{ padding: 1px 0 0 0; margin: 1px 0 3px 0; }
+    select.select[class]{ margin: 0; padding: 1px 0 1px 0; }
+    form .small{ width: 70px; }
+    form .medium{ width: 170px; }
+    form .large, form textarea.textarea{ width: 340px; }
+    form .tags{ width: 320px; }
+    form textarea.small{ height: 5.5em; }
+    form textarea.medium{ height: 10em; }
+    form textarea.large{ height: 20em; }
+    .choices input{ width: 200px; margin-right: 3px; }
+    .choices ol{ margin: 10px 0 0 0; }
+    .choices[class] ol{ margin: 0 !important; }
+    .choices img{ margin: 0 0 1px 0; }
+    fieldset ol li{ display: list-item !important; margin: 0 5px 2px 3px !important; padding: 0 !important; list-style: inside decimal; }
+    input.button, button { width: 6em; padding: 2px 2px 0 0; /* fix for IE */ }
+    /* revert to normal for Firefox */
+    li>input.button, li>button, input.button>input.button, button>button { padding: 2px; }
+    label.desc{
+        margin: 4px 0 3px 0;
+        border: 0;
+        color: #444;
+        font-size: 1em;
+        line-height: 1.3em;
+        display: block;
+        font-weight: bold;
+    }
+    input.text, input.number, input.url, input.email, input.password, input.file,
+    textarea.textarea, select.select{
+        font-size: 1.2em;
+        border-top: 1px solid #7c7c7c;
+        border-left: 1px solid #c3c3c3;
+        border-right: 1px solid #c3c3c3;
+        border-bottom: 1px solid #ddd;
+        color: #333;
+    }
+    input.text, input.number, input.url, input.email, input.password, input.file{ padding: 2px; }
+    input.currency{ text-align: right; }
+    input.checkbox, input.radio{
+        display: block;
+        line-height: 1.4em;
+        margin: 8px 0 0 3px;
+        width: 13px;
+        height: 13px;
+    }
+    input.focus, textarea.focus { background: #ffd; color: #000; }
+    label.choice{
+        display: block;
+        line-height: 1.4em;
+        margin: -19px 0 0 25px;
+        padding: 4px 0 5px 0;
+        color: #444;
+        width: 80%;
+    }
+	div.comments-form form ul {
+	   width:40em;
+	}
+    </style>
+    <link rel="stylesheet" type="text/css" href='$url.page("custom.css")' />
+</head>
+<body>
+
+<!-- use layout yui-t6: 300px sidebar on right -->
+<div id="doc2" class="yui-t6">
+
+
+<!-- *************************************************** -->
+<!-- HEADER -->
+<!-- *************************************************** -->
+<div id="hd">
+<div id="header_content">
+#includeTemplate($model.weblog "standard_header")
+</div>
+</div>
+
+
+<!-- *************************************************** -->
+<!-- BODY -->
+<!-- *************************************************** -->
+<div id="bd">
+
+
+<!-- *************************************************** -->
+<!-- BODY - MAIN -->
+<!-- *************************************************** -->
+<div id="yui-main">
+<div class="yui-b">
+
+<div id="main_content">
+#set($pager = $model.getWeblogEntriesPager())
+<div id="nextprev">
+    #showNextPrevEntriesControl($pager)
+</div>
+#showWeblogEntriesPager($pager)
+#showWeblogEntryComments($entry)
+#showWeblogEntryCommentForm($entry)
+</div>
+
+</div>
+</div>
+
+<!-- *************************************************** -->
+<!-- BODY - SIDEBAR -->
+<!-- *************************************************** -->
+<div class="yui-b">
+
+<div id="sidebar_content">
+
+    <h3>Welcome</h3>
+
+    <p class="details">
+    You're viewing a weblog entry titled <b>$model.weblogEntry.title</b>.
+    If you like this entry you might want to:
+    </p>
+
+    <table><tbody>
+      <tr>
+        <td><img src="$url.resource('icons/delicious.gif')"
+               alt="del.icio.us" height="16" width="16" />
+            <a href="http://del.icio.us/post?url=$absBaseURL$entry.permaLink"
+               title="bookmark it in del.icio.us">Bookmark it</a></td>
+
+        <td><img src="$url.resource('icons/digman.gif')"
+                alt="submit to dig digg.com" height="14" width="16" />
+            <a href="http://www.digg.com/submit?url=$absBaseURL$entry.permaLink&amp;phase=2" title="submit it to digg">
+                Digg it</a></td>
+      </tr>
+      <tr>
+        <td><img src="$url.resource('icons/slashdot-13x13.png')"
+                alt="slashdot" border="0" />
+            <a href="http://slashdot.org/bookmark.pl?url=$absBaseURL$entry.permaLink" title="submit it to slashdot">
+                Slashdot it</a></td>
+
+        <td><img src="$url.resource('icons/technorati-16x15.png')" title="See who links to it"
+                border="0" alt="technorati" height="15" width="16" />
+            <a href='http://technorati.com/search/$utilities.encode("$absBaseURL$entry.permaLink")'>
+                See who links to it</a>
+        </td>
+      </tr>
+    </tbody></table>
+
+    <p class="details">
+    This is just one entry in the weblog <b>$model.weblog.name</b>.
+    Why don't you <a href="$url.home">visit the main page</a> of the weblog?</p>
+
+    <h3>Related entries</h3>
+    <p class="details">Below are the most recent entries in the category
+    <b>$model.weblogEntry.category.name</b>, some may be related to this entry.</p>
+    #set($recentInCat = $model.weblog.getRecentWeblogEntries($model.weblogEntry.category.name, 20))
+    <ul>#foreach($recentEntry in $recentInCat)
+        <li class="entryLink"><a href="$recentEntry.permalink">$recentEntry.title</a></li>
+    #end</ul>
+
+
+</div> <!-- close sidebar_content -->
+</div>
+</div>
+
+<!-- *************************************************** -->
+<!-- FOOTER -->
+<!-- *************************************************** -->
+<div id="ft">
+<div id="footer_content">
+#includeTemplate($model.weblog "standard_footer")
+</div>
+</div>
+
+</div>
+
+</body>
+</html>
+

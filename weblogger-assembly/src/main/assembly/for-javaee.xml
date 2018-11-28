@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+-->
+
+<!--
+   WARNING: to produce a Java EE compatible build you MUST first build Roller 
+   Weblogger using the -Djavaee=true option, e.g. mvn -Djavaee=true install
+-->
+<assembly>
+    <id>for-javaee</id>
+    <formats>
+        <format>zip</format>
+        <format>tar.gz</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <files> 
+        <file> 
+            <source>../weblogger-war-assembly/target/roller-${artifact.version}-javaee.war</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee/webapp</outputDirectory>
+        </file> 
+        <file> 
+            <source>../README.txt</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee</outputDirectory>
+        </file> 
+        <file> 
+            <source>../NOTICE.txt</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee</outputDirectory>
+        </file> 
+        <file> 
+            <source>../LICENSE.txt</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee</outputDirectory>
+        </file> 
+        <file> 
+            <source>../weblogger-docs/installguide/generated/roller-install-guide.pdf</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee/docs</outputDirectory>
+        </file> 
+        <file> 
+            <source>../weblogger-docs/userguide/generated/roller-user-guide.pdf</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee/docs</outputDirectory>
+        </file> 
+        <file> 
+            <source>../weblogger-docs/templateguide/generated/roller-template-guide.pdf</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}-javaee/docs</outputDirectory>
+        </file> 
+    </files>
+
+</assembly>

@@ -1,0 +1,533 @@
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    
+    <!-- Weblogger default package -->
+    <package name="weblogger" namespace="/roller-ui" extends="struts-default">
+        
+        <!-- Define Tiles result type -->
+        <result-types>
+            <result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult" />
+        </result-types>
+        
+        <!-- define our own interceptors and a custom interceptor stack -->
+        <interceptors>
+            <interceptor name="UIActionInterceptor" 
+                         class="org.apache.roller.weblogger.ui.struts2.util.UIActionInterceptor" />
+            <interceptor name="UISecurityInterceptor" 
+                         class="org.apache.roller.weblogger.ui.struts2.util.UISecurityInterceptor" />
+            <interceptor name="UIActionPrepareInterceptor" 
+                         class="org.apache.roller.weblogger.ui.struts2.util.UIActionPrepareInterceptor" />
+                         
+            <!-- Define a custom interceptor stack for Roller so that we can 
+                 add in our own custom interceptors.  We basically copy the 
+                 default stack from struts2 rather than extend it because we
+                 need to have our custom interceptors go in the middle of the
+                 default stack -->
+            <interceptor-stack name="rollerStack">
+                <interceptor-ref name="exception"/>
+                <interceptor-ref name="alias"/>
+                <interceptor-ref name="servletConfig"/>
+                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="i18n"/>
+                <interceptor-ref name="chain"/>
+                <interceptor-ref name="debugging"/>
+                <interceptor-ref name="profiling"/>
+                <interceptor-ref name="scopedModelDriven"/>
+                <interceptor-ref name="modelDriven"/>
+                <interceptor-ref name="fileUpload"/>
+                <interceptor-ref name="checkbox"/>
+                <interceptor-ref name="staticParams"/>
+                <interceptor-ref name="params">
+                  <param name="excludeParams">dojo\..*</param>
+                </interceptor-ref>
+                <interceptor-ref name="conversionError"/>
+                
+                <!-- custom Roller interceptors -->
+                <interceptor-ref name="UIActionInterceptor"/>
+                <interceptor-ref name="UISecurityInterceptor"/>
+                <interceptor-ref name="UIActionPrepareInterceptor"/>
+                
+                <!-- validation interceptors, MUST come after our custom interceptors -->
+                <interceptor-ref name="validation">
+                    <param name="excludeMethods">input,back,cancel,browse</param>
+                </interceptor-ref>
+                <interceptor-ref name="workflow">
+                    <param name="excludeMethods">input,back,cancel,browse</param>
+                </interceptor-ref>
+                
+            </interceptor-stack>
+        </interceptors>
+        
+        <!-- use our own interceptor stack which extends the default stack -->
+        <default-interceptor-ref name="rollerStack"/>
+        
+        
+        <!-- results made available to all actions -->
+        <global-results>
+            <result name="access-denied" type="tiles">.denied</result>
+        </global-results>
+        
+        
+        <!-- Simple actions which basically just replace the global-forwards from
+             the old struts 1 config.  this is the only way to do it in struts 2 -->
+        <action name="home">
+            <result type="redirect">/</result>
+        </action>
+        
+        <action name="login-redirect">
+            <result>/roller-ui/login-redirect.jsp</result>
+        </action>
+        
+        <action name="logout">
+            <result>/roller-ui/logout-redirect.jsp</result>
+        </action>
+        
+        <action name="setup"
+                class="org.apache.roller.weblogger.ui.struts2.core.Setup">
+            <result name="success" type="tiles">.Setup</result>
+            <result name="home" type="redirectAction">home</result>
+        </action>
+                        
+        <action name="login"
+                class="org.apache.roller.weblogger.ui.struts2.core.Login">
+            <result type="tiles">.Login</result>
+        </action>
+        
+        <action name="register!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.core.Register">
+            <result name="input" type="tiles">.Register</result>
+            <result name="disabled" type="tiles">.RegisterDisabled</result>
+            <result name="success" type="tiles">.Welcome</result>
+        </action>
+        
+        <action name="profile!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.core.Profile">
+            <result name="input" type="tiles">.Profile</result>
+            <result name="cancel" type="redirectAction">menu</result>
+            <result name="success" type="tiles">.Profile</result>
+        </action>
+
+        <action name="oauthKeys!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.core.OAuthKeys">
+            <result name="success" type="tiles">.OAuthKeys</result>
+        </action>
+
+        <action name="oauthAuthorize!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.core.OAuthAuthorize">
+            <result name="success" type="tiles">.OAuthAuthorize</result>
+        </action>
+
+        <action name="createWeblog!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.core.CreateWeblog">
+            <result name="input" type="tiles">.CreateWeblog</result>
+            <result name="success" type="chain">menu</result>
+        </action>
+        
+        <action name="menu!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.core.MainMenu">
+            <result type="tiles">.MainMenu</result>
+        </action>
+        
+    </package>
+    
+    
+    <!-- Weblogger install/bootstrap actions -->
+    <package name="weblogger-install" namespace="/roller-ui/install" extends="weblogger">
+    
+        <action name="install"
+                class="org.apache.roller.weblogger.ui.struts2.core.Install">
+            <result name="database_error" type="tiles">.DatabaseError</result>
+            <result name="create_database" type="tiles">.CreateDatabase</result>
+            <result name="upgrade_database" type="tiles">.UpgradeDatabase</result>
+            <result name="bootstrap" type="tiles">.Bootstrap</result>
+            <result name="success" type="chain">home</result>
+        </action>
+            
+    </package>
+    
+    
+    <!-- Weblogger Admin UI (includes planet) -->
+    <package name="weblogger-admin" namespace="/roller-ui/admin" extends="weblogger">
+        
+        <action name="globalConfig!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.admin.GlobalConfig">
+            <result name="success" type="tiles">.GlobalConfig</result>
+        </action>
+               
+        <action name="userAdmin"
+                class="org.apache.roller.weblogger.ui.struts2.admin.UserAdmin">
+            <result name="success" type="tiles">.UserAdmin</result>
+            <result name="error" type="tiles">.UserAdmin</result>
+            <result name="input" type="tiles">.UserAdmin</result>
+        </action>
+        
+        <action name="createUser!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.admin.CreateUser">
+            <result name="input" type="tiles">.CreateUser</result>
+        </action>
+        
+        <action name="modifyUser!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.admin.ModifyUser">
+            <result name="input" type="tiles">.ModifyUser</result>
+            <result name="error" type="chain">userAdmin</result>
+        </action>
+        
+        <action name="globalCommentManagement!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.admin.GlobalCommentManagement">
+            <result name="list" type="tiles">.GlobalCommentManagement</result>
+        </action>
+        
+        <action name="commonPingTargets!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.admin.CommonPingTargets">
+            <result name="list" type="tiles">.CommonPingTargets</result>
+            <result name="confirm" type="tiles">.CommonPingTargetConfirm</result>
+        </action>
+        
+        <action name="commonPingTargetAdd!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.admin.CommonPingTargetAdd">
+            <result name="input" type="tiles">.CommonPingTargetAdd</result>
+            <result name="success" type="chain">commonPingTargets</result>
+        </action>
+        
+        <action name="commonPingTargetEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.admin.CommonPingTargetEdit">
+            <result name="input" type="tiles">.CommonPingTargetEdit</result>
+            <result name="error" type="chain">commonPingTargets</result>
+        </action>
+        
+        <action name="cacheInfo!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.admin.CacheInfo">
+            <result name="success" type="tiles">.CacheInfo</result>
+        </action>
+        
+        
+        <action name="planetConfig!*" method="{1}"
+                class="org.apache.roller.weblogger.planet.ui.PlanetConfig">
+            <result name="input" type="tiles">.PlanetConfig</result>
+        </action>
+        
+        <action name="planetSubscriptions!*" method="{1}"
+                class="org.apache.roller.weblogger.planet.ui.PlanetSubscriptions">
+            <result name="list" type="tiles">.PlanetSubscriptions</result>
+        </action>
+        
+        <action name="planetGroups!*" method="{1}"
+                class="org.apache.roller.weblogger.planet.ui.PlanetGroups">
+            <result name="list" type="tiles">.PlanetGroups</result>
+        </action>
+    </package>
+    
+    
+    <!-- Weblogger Authoring UI -->
+    <package name="weblogger-authoring" namespace="/roller-ui/authoring" extends="weblogger">
+        
+        <action name="entryAdd!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.EntryAdd">
+            <result name="input" type="tiles">.EntryAdd</result>
+            <result name="success" type="chain">entryEdit</result>
+        </action>
+        
+        <action name="entryAddWithMediaFile!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.EntryAddWithMediaFile">
+            <result name="success" type="chain">entryAdd</result>
+        </action>
+        
+        <action name="mediaFileAdd!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
+            <result name="input" type="tiles">.MediaFileAdd</result>
+            <result name="success" type="tiles">.MediaFileAddSuccess</result>
+            <result name="error" type="tiles">.MediaFileAdd</result>
+        </action>
+
+        <action name="mediaFileEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
+            <result name="input" type="tiles">.MediaFileEdit</result>
+            <result name="success" type="tiles">.MediaFileEditSuccess</result>
+        </action>
+
+        <action name="mediaFileAddExternalInclude!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
+            <result name="input" type="tiles">.MediaFileAddExternalInclude</result>
+            <result name="success" type="tiles">.MediaFileAddExternalInclude</result>
+            <result name="error" type="tiles">.MediaFileAddExternalInclude</result>
+        </action>
+
+	<action name="mediaFileView!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
+            <result name="success" type="tiles">.MediaFileView</result>
+            <result name="success.json" type="dispatcher">/WEB-INF/jsps/editor/MediaFileViewLight.jsp</result>
+        </action>
+
+	<action name="mediaFileHierarchicalView!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
+            <result name="success" type="tiles">.MediaFileHierarchicalView</result>
+        </action>
+
+<!--
+	<action name="mediaFileSearch!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileSearch">
+            <result name="input" type="tiles">.MediaFileSearch</result>
+            <result name="error" type="tiles">.MediaFileSearch</result>
+            <result name="success" type="tiles">.MediaFileSearch</result>
+        </action>
+-->
+		
+	<action name="mediaFileImageDim!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageDim">
+            <result name="success" type="tiles">.MediaFileImageDimension</result>
+        </action>
+
+        <action name="entryEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.EntryEdit">
+            <result name="input" type="tiles">.EntryEdit</result>
+            <result name="error" type="chain">menu</result>
+        </action>
+        
+        <action name="entryRemove!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.EntryRemove">
+            <result name="input" type="tiles">.EntryRemove</result>
+            <result name="error" type="chain">menu</result>
+            <result name="success" type="chain">entryAdd</result>
+        </action>
+        
+        <action name="entries"
+                class="org.apache.roller.weblogger.ui.struts2.editor.Entries">
+            <result name="list" type="tiles">.Entries</result>
+        </action>
+        
+        <action name="comments!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.Comments">
+            <result name="list" type="tiles">.Comments</result>
+        </action>
+        
+        <action name="categories!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.Categories">
+            <result name="list" type="tiles">.Categories</result>
+        </action>
+        
+        <action name="categoryAdd!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.CategoryAdd">
+            <result name="input" type="tiles">.CategoryAdd</result>
+            <result name="success" type="chain">categories</result>
+            <result name="error" type="chain">categories</result>
+        </action>
+        
+        <action name="categoryEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.CategoryEdit">
+            <result name="input" type="tiles">.CategoryEdit</result>
+        </action>
+        
+        <action name="categoryRemove!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.CategoryRemove">
+            <result name="input" type="tiles">.CategoryRemove</result>
+            <result name="success" type="chain">categories</result>
+        </action>
+        
+        <action name="bookmarks!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.Bookmarks">
+            <result name="list" type="tiles">.Bookmarks</result>
+        </action>
+        
+        <action name="bookmarkAdd!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.BookmarkAdd">
+            <result name="input" type="tiles">.BookmarkAdd</result>
+            <result name="success" type="chain">bookmarks</result>
+            <result name="error" type="chain">bookmarks</result>
+        </action>
+        
+        <action name="bookmarkEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.BookmarkEdit">
+            <result name="input" type="tiles">.BookmarkEdit</result>
+            <result name="error" type="chain">bookmarks</result>
+        </action>
+        
+        <action name="bookmarksImport!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.BookmarksImport">
+            <result name="input" type="tiles">.BookmarksImport</result>
+            <result name="success" type="chain">bookmarks</result>
+        </action>
+        
+        <action name="folderAdd!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.FolderAdd">
+            <result name="input" type="tiles">.FolderAdd</result>
+            <result name="success" type="chain">bookmarks</result>
+            <result name="error" type="chain">bookmarks</result>
+        </action>
+        
+        <action name="folderEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.FolderEdit">
+            <result name="input" type="tiles">.FolderEdit</result>
+            <result name="error" type="chain">bookmarks</result>
+        </action>
+        
+        <!--
+        <action name="resources!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.Resources">
+            <result name="list" type="tiles">.Resources</result>
+        </action>
+        -->
+
+        <action name="weblogExport!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.WeblogExport">
+            <result name="input" type="tiles">.WeblogExport</result>
+            <!--<result name="success" type="chain">weblogExport</result>-->
+        </action>
+        
+        <action name="referrers!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.Referrers">
+            <result name="list" type="tiles">.Referrers</result>
+        </action>
+        
+        
+        <action name="weblogConfig!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.WeblogConfig">
+            <result name="input" type="tiles">.WeblogConfig</result>
+        </action>
+        
+        <action name="weblogRemove!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.WeblogRemove">
+            <result name="confirm" type="tiles">.WeblogRemoveConfirm</result>
+            <result name="success" type="chain">menu</result>
+        </action>
+        
+        <action name="themeEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.ThemeEdit">
+            <result name="input" type="tiles">.ThemeEdit</result>
+            <result name="input-sharedonly" type="tiles">.ThemeEditSharedThemesOnly</result>
+        </action>
+        
+        <action name="stylesheetEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.StylesheetEdit">
+            <result name="input" type="tiles">.StylesheetEdit</result>
+            <result name="error" type="tiles">.StylesheetEditError</result>
+        </action>
+        
+        <action name="templates!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.Templates">
+            <result name="list" type="tiles">.Templates</result>
+        </action>
+        
+        <action name="templateEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.TemplateEdit">
+            <result name="list" type="chain">templates</result>
+            <result name="input" type="tiles">.TemplateEdit</result>
+        </action>
+        
+        <action name="templateRemove!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.TemplateRemove">
+            <result name="confirm" type="tiles">.TemplateRemove</result>
+            <result name="success" type="chain">templates</result>
+        </action>
+        
+        <action name="members!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.Members">
+            <result name="list" type="tiles">.Members</result>
+        </action>
+        
+        <action name="invite!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MembersInvite">
+            <result name="input" type="tiles">.MembersInvite</result>
+            <result name="disabled" type="tiles">.disabled</result>
+            <result name="success" type="chain">members</result>
+        </action>
+        
+        <action name="pings!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.Pings">
+            <result name="list" type="tiles">.Pings</result>
+        </action>
+        
+        <action name="customPingTargets!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.CustomPingTargets">
+            <result name="list" type="tiles">.CustomPingTargets</result>
+            <result name="confirm" type="tiles">.CustomPingTargetConfirm</result>
+        </action>
+        
+        <action name="customPingTargetAdd!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.CustomPingTargetAdd">
+            <result name="input" type="tiles">.CustomPingTargetAdd</result>
+            <result name="success" type="chain">customPingTargets</result>
+        </action>
+        
+        <action name="customPingTargetEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.CustomPingTargetEdit">
+            <result name="input" type="tiles">.CustomPingTargetEdit</result>
+            <result name="error" type="chain">customPingTargets</result>
+        </action>
+        
+        <action name="maintenance!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.Maintenance">
+            <result name="success" type="tiles">.Maintenance</result>
+        </action>
+        
+        <!--
+        <action name="importEntries!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.ImportEntriesAction">
+            <result name="importEntries.page">.import-entries</result>
+        </action>
+        
+        <action name="toggleLinkback!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.ToggleLinkbackDisplayAction">
+        </action>
+        -->
+    </package>
+
+
+    <!-- Weblogger Authoring UI - overlay pages-->
+    
+    <package name="weblogger-authoring-overlay" namespace="/roller-ui/authoring/overlay" extends="weblogger-authoring">
+
+        <action name="mediaFileAdd!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
+            <param name="overlayMode">true</param>
+            <result name="input" type="tiles">.MediaFileAddInclude</result>
+            <result name="success" type="tiles">.MediaFileAddSuccessInclude</result>
+            <result name="error" type="tiles">.MediaFileAddInclude</result>
+        </action>
+
+	<action name="mediaFileImageChooser!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageChooser">
+            <param name="overlayMode">true</param>
+            <result name="input" type="tiles">.MediaFileImageChooser</result>
+            <result name="error" type="tiles">.MediaFileImageChooser</result>
+            <result name="success" type="tiles">.MediaFileImageChooser</result>
+        </action>
+
+    </package>
+
+    <!-- MOBILE BEGIN
+
+    <package name="mobile-authoring" namespace="/roller-ui/mobile" extends="weblogger">
+
+        <action name="menu!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.core.MainMenu">
+            <result name="success">/WEB-INF/jsps/mobile/MainMenu.jsp</result>
+        </action>
+
+        <action name="entries"
+                class="org.apache.roller.weblogger.ui.struts2.editor.Entries">
+            <result name="list">/WEB-INF/jsps/mobile/Entries.jsp</result>
+        </action>
+
+        <action name="comments!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.Comments">
+            <result name="list">/WEB-INF/jsps/mobile/Comments.jsp</result>
+        </action>
+
+        <action name="entryAdd!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.EntryAdd">
+            <result name="list">/WEB-INF/jsps/mobile/EntryAdd.jsp</result>
+        </action>
+
+        <action name="entryEdit!*" method="{1}"
+                class="org.apache.roller.weblogger.ui.struts2.editor.EntryEdit">
+            <result name="list">/WEB-INF/jsps/mobile/EntryEdit.jsp</result>
+        </action>
+
+    </package>
+
+    MOBILE END -->
+
+</struts>
+

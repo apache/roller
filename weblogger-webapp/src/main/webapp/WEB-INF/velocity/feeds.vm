@@ -1,0 +1,144 @@
+#**
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+*#
+
+#** macros for use by Roller's built-in feed templates
+
+   Contents
+      #showEntriesAtom10()
+      #showEntriesRSS20()
+      #showCommentsAtom10()
+      #showCommentsRSS20()
+      #showFilesAtom10()
+*#
+
+#macro(showEntriesAtom10 $entries)
+#foreach($entry in $entries)
+    <entry>
+        <id>$entry.permalink</id>
+        <title type="html">$utils.escapeXML($entry.title)</title>
+        <author><name>$entry.creator.screenName</name></author>
+        <link rel="alternate" type="text/html" href="$entry.permalink"/>
+        <published>$utils.formatIso8601Date($entry.pubTime)</published>
+        <updated>$utils.formatIso8601Date($entry.updateTime)</updated> 
+        <category term="$utils.escapeXML($entry.category.path)" label="$utils.escapeXML($entry.category.name)" />
+#foreach($tag in $entry.tags)
+        <category term="$utils.escapeXML($tag.name)" scheme="http://roller.apache.org/ns/tags/" />
+#end        
+#if( $utils.isNotEmpty($entry.summary))
+        <summary type="html">$utils.escapeXML($entry.transformedSummary)</summary>
+#end
+#if( $utils.isNotEmpty($entry.text) )
+        <content type="html">$utils.escapeXML($entry.transformedText)</content>
+#end
+#set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
+#set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
+#set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
+#if( $mc_url && $mc_length && $mc_type )
+        <link rel="enclosure" type="$mc_type" length="$mc_length" href="$utils.escapeXML($mc_url)"/>
+#set($mc_url = false) #set($mc_type = false) #set($mc_length = false)#end
+    </entry>
+#end
+#end
+
+#macro(showEntriesRSS20 $entries)
+  #foreach($entry in $entries)
+  <item>
+    <guid isPermaLink="true">$entry.permalink</guid>
+    <title>$utils.escapeXML($utils.removeHTML($entry.title))</title>
+    <dc:creator>$utils.escapeXML($entry.creator.screenName)</dc:creator>
+    <link>$entry.permalink</link>
+    #if( $entry.link && !$entry.link.trim().equals("") )
+    <source url="$utils.escapeXML($entry.link)">$utils.escapeXML($entry.link)</source>
+    #end
+    <pubDate>$utils.formatRfc822Date($entry.pubTime)</pubDate>
+    <category>$utils.escapeXML($entry.category.name)</category>
+#foreach($tag in $entry.tags)
+    <category>$utils.escapeXML($tag.name)</category>
+#end            
+    #if( $utils.isNotEmpty($entry.summary) && $utils.isNotEmpty($entry.text))<atom:summary type="html">$utils.escapeXML($entry.transformedSummary)</atom:summary>#end
+    #if( $utils.isNotEmpty($entry.summary) && $utils.isEmpty($entry.text))<description>$utils.escapeXML($entry.transformedText)</description>#end
+    #if( $utils.isNotEmpty($entry.text) )<description>$utils.escapeXML($entry.transformedText)</description>#end
+    #set( $mc_url = $entry.findEntryAttribute("att_mediacast_url") )
+    #set( $mc_type = $entry.findEntryAttribute("att_mediacast_type") )
+    #set( $mc_length = $entry.findEntryAttribute("att_mediacast_length") )
+    #if( $mc_url && $mc_length && $mc_type )
+       <enclosure url="$utils.escapeXML($mc_url)" type="$mc_type" length="$mc_length" />
+       #set($mc_url = false) #set($mc_type = false) #set($mc_length = false)
+    #end
+    #if( $website.allowComments )
+    <comments>$url.comments($entry.anchor)</comments>
+    #end
+  </item>
+  #end
+#end
+
+#macro(showCommentsAtom10 $comments)
+    #foreach($comment in $comments)
+    <entry>
+        <id>${comment.weblogEntry.permalink}#comment-${comment.timestamp}</id> 
+        <title type="html">Re: $utils.escapeXML($comment.weblogEntry.title)</title>
+        <author><name>$utils.escapeXML($utils.removeHTML($comment.name))</name></author>
+        <link rel="alternate" type="text/html" href="${comment.weblogEntry.permalink}#comment-${comment.timestamp}"/>
+        <published>$utils.formatIso8601Date($comment.postTime)</published>
+        <updated>$utils.formatIso8601Date($comment.postTime)</updated> 
+        <content type="html">$utils.escapeXML($comment.content)</content>
+    </entry>
+    #end
+#end
+
+#macro(showCommentsRSS20 $comments)
+    #foreach($comment in $comments)
+    <item>
+        <guid isPermaLink="true">${comment.weblogEntry.permalink}#comment-${comment.timestamp}</guid>
+        <title>Re: $utils.escapeXML($comment.weblogEntry.title)</title>
+        <dc:creator>$utils.escapeXML($utils.removeHTML($comment.name))</dc:creator>
+        <pubDate>$utils.formatRfc822Date($comment.postTime)</pubDate>
+        <description>$utils.escapeXML($comment.content)</description>
+    </item>
+    #end
+#end
+
+#macro(showFilesAtom10 $mediaFiles)
+#foreach($file in $mediaFiles)
+    <entry>
+        <id>$file.permalink</id>
+        <title type="html">$utils.escapeXML($file.name)</title>
+        <author><name>$file.creator.screenName</name></author>
+        <link rel="alternate" type="text/html" href="$file.permalink"/>
+        <published>$utils.formatIso8601Date($file.dateUploaded)</published>
+        <updated>$utils.formatIso8601Date($file.lastUpdated)</updated> 
+#foreach($tag in $file.tags)
+        <category term="$utils.escapeXML($tag.name)" scheme="http://roller.apache.org/ns/tags/" />
+#end        
+#if( $utils.isNotEmpty($file.description))
+        <summary type="html">$utils.escapeXML($file.description)</summary>
+#end
+        <link rel="enclosure" type="$file.contentType" href="$utils.escapeXML($file.permalink)"/>
+    </entry>
+#end
+#end
+
+#macro(showFeedHistory $pager)
+<link rel="first" type="application/atom+xml" href="$utils.escapeXML($pager.url)" />
+#if($pager.hasMoreItems())
+    <link rel="next" type="application/atom+xml" href="$utils.escapeXML($pager.nextLink)" />
+#end
+#if($pager.prevLink && $pager.items.size() > 0)
+    <link rel="previous" type="application/atom+xml" href="$utils.escapeXML($pager.prevLink)" />
+#end
+#end

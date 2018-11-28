@@ -1,0 +1,30 @@
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.3//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.3.dtd">
+<validators>
+    
+    <field name="bean.name">
+        <field-validator type="requiredstring">
+            <message key="Category.error.nameNull">unspecified key</message>
+        </field-validator>
+        
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <message key="Category.error.nameSize">unspecified key</message>
+        </field-validator>
+    </field>
+    
+    <field name="bean.description">
+        <field-validator type="stringlength">
+            <param name="maxLength">255</param>
+            <message key="Category.error.descriptionSize">unspecified key</message>
+        </field-validator>
+    </field>
+    
+    <field name="bean.image">
+        <field-validator type="url">
+            <message key="Category.error.imageBad">unspecified key</message>
+        </field-validator>
+    </field>
+    
+</validators>

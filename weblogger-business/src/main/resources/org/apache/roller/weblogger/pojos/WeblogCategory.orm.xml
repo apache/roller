@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.weblogger.pojos</package>
+    <entity metadata-complete="true" name="WeblogCategory"
+            class="org.apache.roller.weblogger.pojos.WeblogCategory">
+        <table name="weblogcategory"/>
+        <named-query name="WeblogCategory.getByPath&amp;Website">
+                <query>SELECT w FROM WeblogCategory w WHERE w.path = ?1 AND w.website = ?2</query>
+        </named-query>
+        <named-query name="WeblogCategory.getByWebsite">
+                <query>SELECT w FROM WeblogCategory w WHERE w.website = ?1</query>
+        </named-query>
+        <named-query name="WeblogCategory.getByWebsite&amp;ParentNull">
+                <query>SELECT w FROM WeblogCategory w WHERE w.website = ?1 AND w.parent IS NULL</query>
+        </named-query>
+        <named-query name="WeblogCategory.getByWebsite&amp;ParentNotNull">
+                <query>SELECT w FROM WeblogCategory w WHERE w.website = ?1 AND w.parent IS NOT NULL</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="name">
+                <column name="name" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="description">
+                <column name="description" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="image">
+                <column name="image" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="path">
+                <column name="path" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <many-to-one name="website" target-entity="org.apache.roller.weblogger.pojos.Weblog">
+                <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
+            </many-to-one>
+            <many-to-one name="parent" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory">
+                <join-column name="parentid" insertable="true" updatable="true" nullable="true"/>
+            </many-to-one>
+            <one-to-many name="weblogCategories" mapped-by="parent" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory" fetch="LAZY">
+                <cascade>
+                    <cascade-remove/>
+                </cascade>
+            </one-to-many>
+            <transient name="inUse"/> 
+        </attributes>
+    </entity>
+</entity-mappings>

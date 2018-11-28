@@ -1,0 +1,302 @@
+
+if (args[0] != "droptables") {
+    println """
+        WARNING: this script will drop all Roller tables and create newones
+        populated with random but somewhat realistic Roller test data. If you 
+        are sure you want to do that, run again with argument \'droptables\'
+        """
+    return
+}
+
+// TODO: assumes database is Derby
+
+
+class RollerDatabaseGenerator {
+
+    def roller = null;
+
+    def userCount = 10 
+    def blogCount = 2*userCount
+    def entryCount = 10 
+    def commentCount = 3
+
+    def users = []
+
+    def blogs = []
+
+    def firstNames = ["Sarah","Nina","Rhonda","Elizabeth","Rosemary","Angela",
+    "Kim","Deborah","Steve","Mike","Jose","Bill","Fred","Tyrone","Abdul"]
+
+    def middleNames = ["Simpson","Rosewood","Arther","Michael","Sydney","Cook",
+    "Drake","Mohonk","Ratburger","Scoober","Albert","Eli","Pat","Reilly"]
+
+    def lastNames = ["Rockberry","Drummond","Shannon","Kingston","Pike","Svensen",
+    "Ramachandran","Hess","Young","Harper","Schmidt","Woodman","Colburn"]
+
+    def blogStart = ["Cool","Beginning","Nutty","Info","Super","Uber",
+    "One","Original","Random","New","Old","Worthless","Artful"]
+
+    def blogMiddle = ["Java","Oracle","Sun","Microsoft","DotNet","Security","3D",
+    "History","Political","Music","Watercolor","Photography"]
+
+    def blogEnd = ["Notebook","Journal","Blog", "Notes","Scribblings",
+    "Observations","Ravings","Vibrations","Noodlings","News","Views"]
+
+    def categories = ["Music", "Java", "General", "Politics", "Status"]
+
+    def blogText = [
+"""Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Mauris non neque.
+Nam ultricies, diam id cursus ultrices, tellus pede ultricies ligula, vel 
+rutrum metus sem sed quam. Nam consectetuer dolor. Proin a nisl. Aliquam 
+malesuada, ligula eget porta nonummy, felis orci laoreet augue, non pulvinar 
+erat erat eu orci. Donec pretium libero pellentesque ante. Class aptent taciti 
+sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Morbi 
+tellus orci, posuere ut, consectetuer at, pulvinar sed, lectus. Sed non augue. 
+Pellentesque adipiscing tellus eget pede. Etiam ac ante. Sed consectetuer
+tellus sit amet elit. Sed malesuada, risus eu eleifend placerat, pede arcu 
+elementum metus, eget auctor ligula velit ac turpis. Vestibulum a est. Sed 
+sagittis dapibus magna. Integer urna velit, ullamcorper nec, tincidunt et, 
+ullamcorper tincidunt, urna. Pellentesque pede lorem, auctor non, sodales 
+sed, pharetra vel, augue.""",
+"""Phasellus sodales, quam sit amet viverra dignissim, neque enim fringilla 
+sem, vitae luctus sem ante id tellus. Mauris risus tortor, varius a, volutpat 
+ac, mollis in, mauris. Ut justo ante, consectetuer vel, sodales eget, facil 
+eu, justo. Sed venenatis consequat sapien. Nunc porttitor urna vel massa. 
+Praesent et mi. Curabitur aliquam eros sed lorem. Suspendisse potenti. 
+Suspendisse at felis quis sapien euismod posuere. Vivamus nunc odio, eleifend 
+eu, elementum id, mattis eu, augue.""",
+"""Suspendisse quis dolor. Duis mollis metus eu est. Donec bibendum mollis. 
+Vestibulum dignissim arcu eget leo. Curabitur orci. Aenean condimentum ante 
+nec neque. Etiam dignissim mauris sit amet nisi. Fusce quis ante. Sed et elit 
+quis ante tempor cursus. Maecenas turpis. Morbi est. Quisque urna ante, euis 
+eget, sollicitudin in, sagittis quis, nisl. Suspendisse non lorem in dui fau 
+venenatis. Pellentesque fermentum, elit sit amet volutpat rhoncus, massa nisl 
+ fringilla enim, non sodales magna risus eget nulla. In hac habitasse platea 
+dictumst. Suspendisse potenti.""",
+"""Maecenas ut justo id lacus fringilla blandit. Vestibulum ante ipsum primis 
+in faucibus orci luctus et ultrices posuere cubilia Curae; Donec malesuada 
+blandit risus. Donec sagittis varius ante. Aliquam velit orci, ultricies ut, 
+vehicula nec, nonummy quis, lectus. Vestibulum placerat. Morbi aliquam, pede 
+nec vestibulum viverra, justo magna mattis mi, quis molestie tortor metus nec 
+dolor. Nulla sed sapien. Vivamus faucibus, lectus et aliquet mollis, nunc 
+nulla dictum mi, feugiat accumsan metus velit vitae diam. Pellentesque 
+ habitant morbi tristique senectus et netus et malesuada fames ac turpis 
+egestas. Nulla facilisi. Proin ac ante eu diam fermentum tempor. Etiam in 
+purus. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla 
+at justo sed nisi viverra elementum. Nullam dolor nisl, dapibus at, commodo, 
+varius euismod, tortor. Suspendisse vel orci.""",
+"""Fusce feugiat neque id nisl. Ut sagittis. Praesent tempus, nibh et rhoncus 
+sodales, neque risus vehicula pede, vel tempus risus nibh nec pede. Vivamus 
+est pede, varius sit amet, tristique vel, ultricies vitae, urna. Cum sociis 
+natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. 
+Sed non mi ut turpis ullamcorper dapibus. Duis metus. Donec placerat pharetra 
+nisi. Duis lacinia enim id dui. Maecenas a leo. Duis lacus.""" ]
+
+    def randomUserNameList() {
+        String first  = firstNames[  (int)(firstNames.size()  * Math.random())] 
+        String middle = middleNames[ (int)(middleNames.size() * Math.random())]
+        String last   = lastNames[   (int)(lastNames.size()   * Math.random())]
+        return [first, middle, last]
+    }
+    def randomBlogNameList() {
+        String first  = blogStart[  (int)(blogStart.size()  * Math.random())] 
+        String middle = blogMiddle[ (int)(blogMiddle.size() * Math.random())]
+        String last   = blogEnd[    (int)(blogEnd.size()   * Math.random())]
+        return [first, middle, last]
+    }
+
+    def createUser(username, password, fullname, email) {
+        println "Creating user: " + username
+        try {
+            def locale   = "en_US";
+            def timeZone = "America/New_York";
+            def user = new org.apache.roller.weblogger.pojos.User();
+            user.setUserName(username);
+            user.setScreenName(username);
+            user.setPassword(password);
+            user.setFullName(fullname);
+            user.setEmailAddress(email);
+            user.setLocale(locale);
+            user.setTimeZone(timeZone);
+            user.setDateCreated(new java.util.Date());
+            roller.getUserManager().addUser(user);
+            roller.flush();
+            users.add(user)
+            return user
+        } catch (Exception e) {
+            e.printStackTrace()
+        }
+    }
+
+    def createBlog(user, handle, name, desc, theme) {
+        println "Creating blog: " + handle
+        try {
+            def website = new org.apache.roller.weblogger.pojos.Weblog(
+                handle, 
+                user,
+                name,
+                desc,
+                user.getEmailAddress(),
+                user.getEmailAddress(),
+                theme,
+                user.getLocale(),
+                user.getTimeZone());
+            def cat = new org.apache.roller.weblogger.pojos.WeblogCategory(
+                website, null, "cat1", "cat1", null);
+            roller.getWeblogManager().saveWeblogCategory(cat);
+            website.setDefaultCategory(cat);
+            roller.getUserManager().addWebsite(website);
+            roller.flush();
+            return website
+        } catch (Exception e) {
+            e.printStackTrace()
+        }
+    }
+
+    def createEntry(blog, title, text, pubTime) {
+        println "Creating entry title: " + title
+        try {
+            def entry = new org.apache.roller.weblogger.pojos.WeblogEntry();
+            entry.setWebsite(blog);
+            entry.setCreator(blog.getCreator());
+            def catName = categories.get((int)(Math.random() * categories.size()))
+            def category = roller.getWeblogManager().getWeblogCategoryByPath(blog,catName)
+            entry.setCategory(category);
+            entry.setPubTime(new java.sql.Timestamp(pubTime.getTime()));
+            entry.setUpdateTime(new java.sql.Timestamp(pubTime.getTime()));
+            entry.setStatus(org.apache.roller.weblogger.pojos.WeblogEntry.PUBLISHED);
+            entry.setText(text);
+            entry.setTitle(title);
+            entry.setLocale("en_US");
+            roller.getWeblogManager().saveWeblogEntry(entry);
+            roller.flush();
+            return entry
+        } catch (Exception e) {
+            e.printStackTrace()
+        }
+    }
+
+    def createComment(entry, commentername, content) { 
+        println "Creating comment from user: " + commentername
+        try {
+            def comment = new org.apache.roller.weblogger.pojos.WeblogEntryComment();
+            comment.setWeblogEntry(entry);
+            comment.setName(commentername);
+            comment.setPostTime(new java.sql.Timestamp(new java.util.Date().getTime()));
+            comment.setContent(content);
+            comment.setNotify(Boolean.FALSE);
+            comment.setStatus(org.apache.roller.weblogger.pojos.WeblogEntryComment.APPROVED);
+            roller.getWeblogManager().saveComment(comment);
+            roller.flush();
+        } catch (Exception e) {
+            e.printStackTrace()
+        }
+    }
+
+    def createDatabase() {
+        def properties = new Properties()
+        properties.load(new FileInputStream("roller-custom.properties"))
+        def jdbcClass    = properties.get("database.jdbc.driverClass")
+        def jdbcUrl      = properties.get("database.jdbc.connectionURL")
+        def jdbcUser     = properties.get("database.jdbc.username")
+        def jdbcPassword = properties.get("database.jdbc.password")
+        def ant = new AntBuilder()   
+        
+        // drop any existing Roller tables
+        ant.sql(onerror:"continue", driver:jdbcClass, url:jdbcUrl, 
+            userid:jdbcUser, password:jdbcPassword,
+            src:"../../../../../apps/weblogger/build/webapp/WEB-INF/classes/dbscripts/droptables.sql")   
+        
+        // create fresh set of Roller tables
+        ant.sql(onerror:"continue", driver:jdbcClass, url:jdbcUrl, 
+            userid:jdbcUser, password:jdbcPassword,
+            src:"../../../../../apps/weblogger/build/webapp/WEB-INF/classes/dbscripts/derby/createdb.sql") 
+
+        bootstrap()
+
+        // set database version to 400  
+        //def propManager = roller.getPropertiesManager();
+        //def versionProp = new org.apache.roller.weblogger.pojos.RuntimeConfigProperty(
+            //"roller.database.version","400")
+        //propManager.saveProperty(versionProp)
+    }
+
+    def bootstrap() {
+        org.apache.roller.weblogger.business.startup.WebloggerStartup.prepare();
+        org.apache.roller.weblogger.business.WebloggerFactory.bootstrap();
+        org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().getPropertiesManager().initialize();
+        org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger().flush();
+        roller = org.apache.roller.weblogger.business.WebloggerFactory.getWeblogger();
+    }
+
+    def createMainBlog() {
+        def adminUser = createUser("admin", "admin", "Admin User", "admin@example.com")
+        def mainBlog = createBlog(adminUser, "main", "main", "main", "frontpage")
+        
+        def propManager = roller.getPropertiesManager();
+
+        def mainBlogProp = propManager.getProperty(
+            "site.frontpage.weblog.handle")
+        mainBlogProp.setValue(mainBlog.handle)
+        propManager.saveProperty(mainBlogProp)
+
+        def aggProp = propManager.getProperty(
+            "site.frontpage.weblog.aggregated")
+        aggProp.setValue("true")
+        propManager.saveProperty(aggProp)
+    }
+
+    def generateAllData() {
+
+        // create users
+        1.upto(userCount) {
+            def names    = randomUserNameList();
+            def username = "${names[0]}${names[1]}${names[2]}";
+            def password = "password"
+            def fullname = "${names[0]} ${names[1]} ${names[2]}";
+            def email    = "${names[0]}@${names[1]}${names[2]}.com"
+            def user = createUser(username, password, fullname, email)    
+            if (user) users.add(user)
+        }
+
+        // create blog
+        1.upto(blogCount) {
+           def names  = randomBlogNameList()
+           def user   = users[(int)(Math.random() * users.size())]
+           def handle = names[0] + names[1] + names[2]
+           def name   = handle
+           def desc   = "A blog named ${names[0]} ${names[1]} ${names[2]}"
+           def theme  = "basic"
+           def blog = createBlog(user, handle, name, desc, theme) 
+           if (blog) blogs.add(blog)
+        }
+
+        // Create blog entries and comments
+        blogs.each() { blog ->
+            1.upto(entryCount) {
+                def text = "";
+                def paraCount = (int)(Math.random() * 5);
+                0.upto(paraCount) {
+                    text += "<p>" + blogText[(int)(Math.random() * blogText.size())] + "</p>"
+                }
+                def title = text.substring(3,25)
+                def pubTime = new Date();
+                pubTime = pubTime - (int)(Math.random() * 60)
+                def entry = createEntry(blog, title, text, pubTime)
+                if (entry) 1.upto(commentCount) {
+                    def names = randomUserNameList()
+                    def commentername = "${names[0]} ${names[1]} ${names[2]}" 
+                    def content = blogText[(int)(Math.random()*blogText.size())]
+                    createComment(entry, commentername, content)
+                }
+
+            }
+        }
+    }
+}
+
+
+def generator = new RollerDatabaseGenerator()
+generator.createDatabase()
+generator.createMainBlog()
+generator.generateAllData()

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+    <description>Persistence Metadata for Roller</description>
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <access>PROPERTY</access>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    <package>org.apache.roller.weblogger.pojos</package>
+    <entity metadata-complete="true" name="WeblogEntry"
+            class="org.apache.roller.weblogger.pojos.WeblogEntry">
+        <table name="weblogentry"/>
+        <named-query name="WeblogEntry.getByStatus&amp;Category">
+            <query>SELECT w FROM WeblogEntry w WHERE w.status = ?1 AND w.category = ?2</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByCategory">
+            <query>SELECT w FROM WeblogEntry w WHERE w.category = ?1</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByStatus&amp;Category.pathLike&amp;Website">
+            <query>SELECT w FROM WeblogEntry w WHERE w.status = ?1 AND w.category.path LIKE ?2 AND w.website = ?3</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByPinnedToMain&amp;statusOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.pinnedToMain = ?1 AND w.status = ?2 ORDER BY w.pubTime DESC</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeGreater&amp;CategoryOrderByPubTimeAsc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3 AND w.category = ?4
+                                                   ORDER BY w.pubTime ASC</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeGreater&amp;Category&amp;LocaleLikeOrderByPubTimeAsc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3 AND w.category = ?4
+                                                     AND UPPER(w.locale) LIKE ?5
+                                                   ORDER BY w.pubTime ASC</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeGreaterOrderByPubTimeAsc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3
+                                                   ORDER BY w.pubTime ASC</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeGreater&amp;LocaleLikeOrderByPubTimeAsc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &gt; ?3
+                                                     AND UPPER(w.locale) LIKE ?4
+                                                   ORDER BY w.pubTime ASC</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeLessOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3
+                                                   ORDER BY w.pubTime DESC</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeLess&amp;CategoryOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3 AND w.category = ?4
+                                                   ORDER BY w.pubTime DESC</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeLess&amp;Category&amp;LocaleLikeOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3  AND w.category = ?4
+                                                     AND UPPER(w.locale) LIKE ?5
+                                                   ORDER BY w.pubTime DESC</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByWebsite&amp;Status&amp;PubTimeLess&amp;LocaleLikeOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.status = ?2 AND w.pubTime &lt; ?3
+                                                     AND UPPER(w.locale) LIKE ?4
+                                                   ORDER BY w.pubTime DESC</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByWebsite&amp;AnchorOrderByPubTimeDesc">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.anchor = ?2 ORDER BY w.pubTime DESC</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByWebsite&amp;Anchor">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.anchor = ?2</query>
+        </named-query>
+        <named-query name="WeblogEntry.getByWebsite">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1</query>
+        </named-query>
+        <named-query name="WeblogEntry.getCountDistinctByStatus">
+            <!-- DISTINCT is not required for this query -->
+            <query>SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1</query>
+        </named-query>
+        <named-query name="WeblogEntry.getCountDistinctByStatus&amp;Website">
+            <!-- DISTINCT is not required for this query -->
+            <query>SELECT COUNT(e) FROM WeblogEntry e WHERE e.status = ?1 AND e.website = ?2</query>
+        </named-query>
+        <named-query name="WeblogEntry.updateAllowComments&amp;CommentDaysByWebsite">
+            <query>UPDATE WeblogEntry e SET e.allowComments = ?1, e.commentDays = ?2 WHERE e.website = ?3</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="title">
+                <column name="title" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="summary">
+                <column name="summary" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="text">
+                <column name="text" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="contentType">
+                <column name="content_type" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="contentSrc">
+                <column name="content_src" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="anchor">
+                <column name="anchor" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="pubTime">
+                <column name="pubtime" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="updateTime">
+                <column name="updatetime" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="status">
+                <column name="status" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="link">
+                <column name="link" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="plugins">
+                <column name="plugins" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="allowComments">
+                <column name="allowcomments" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="commentDays">
+                <column name="commentdays" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="rightToLeft">
+                <column name="righttoleft" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="pinnedToMain">
+                <column name="pinnedtomain" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="locale">
+                <column name="locale" insertable="true" updatable="true" unique="false"/>
+            </basic>
+            <basic name="creatorUserName">
+                <column name="creator" insertable="true" updatable="true" unique="false" />
+            </basic>
+            <many-to-one name="category" target-entity="org.apache.roller.weblogger.pojos.WeblogCategory">
+                <join-column name="categoryid" insertable="true" updatable="true" nullable="false"/>
+            </many-to-one>
+            <many-to-one name="website" target-entity="org.apache.roller.weblogger.pojos.Weblog">
+                <join-column name="websiteid" insertable="true" updatable="true" nullable="false"/>
+            </many-to-one>
+            <one-to-many name="entryAttributes" mapped-by="entry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntryAttribute" fetch="LAZY">
+                <cascade>
+                    <cascade-persist/>
+                    <cascade-remove />
+                </cascade>
+            </one-to-many>
+            <one-to-many name="tags" mapped-by="weblogEntry" target-entity="org.apache.roller.weblogger.pojos.WeblogEntryTag" fetch="LAZY">
+                <cascade>
+                    <cascade-persist /> <!-- Added so entry added by addTag() gets persisted -->
+                    <cascade-remove />
+                </cascade>
+            </one-to-many>
+            <transient name="creator"/>
+            <transient name="categories"/>
+            <transient name="commentCount"/>
+            <transient name="commentsLink"/>
+            <transient name="commentsStillAllowed"/>
+            <transient name="displayContent"/>
+            <transient name="displayTitle"/>
+            <transient name="draft"/>
+            <transient name="pending"/>
+            <transient name="permaLink"/>
+            <transient name="permalink"/>
+            <transient name="published"/>
+            <transient name="rss09xDescription"/>
+            <transient name="tagsAsString"/>
+            <transient name="transformedText"/>
+            <transient name="transformedSummary"/>         
+            <transient name="comments"/>
+            <transient name="pluginsList"/>
+            <transient name="referers"/>
+            <transient name="addedTags"/>
+            <transient name="removedTags"/>
+        </attributes>
+    </entity>
+</entity-mappings>

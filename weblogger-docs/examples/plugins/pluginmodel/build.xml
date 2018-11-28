@@ -1,0 +1,28 @@
+
+<project name="pluginmodel" default="dist">
+    
+    <property name="tools" value="../../../../../../tools" />
+    <property name="buildlib" value="../../../../build/lib" />
+    
+    <target name="dist">
+        <mkdir dir="build" />
+        <mkdir dir="dist" />
+        <javac srcdir="src" destdir="build">
+            <classpath>
+                <pathelement path="${buildlib}/roller-business.jar" />
+                <pathelement path="${buildlib}/roller-web.jar" />
+                <pathelement path="${tools}/roller-core/roller-core.jar" />
+                <pathelement path="${tools}/lib/commons-logging-1.0.4.jar" />
+                <pathelement path="${tools}/buildtime/tomcat-5.0.28/servlet-api.jar" />
+                <pathelement path="${tools}/buildtime/tomcat-5.0.28/jsp-api.jar" />
+            </classpath>
+        </javac>
+        <jar basedir="build" destfile="dist/authusermodel.jar" />
+    </target>
+
+    <target name="clean" >
+        <delete dir="build" />
+        <delete dir="clean" />
+    </target>
+    
+</project>
