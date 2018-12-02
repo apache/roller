@@ -157,8 +157,10 @@ alter table weblog_entry_tag add constraint wtag_entryid_fk
 -- below index for single-blog tag clouds
 create index wtag_tagsearch_idx on weblog_entry_tag( weblogid, name, entryid );
 
+-- weblogid available via entryid but duplicated for performance purposes
 create table weblog_entry_comment (
     id         varchar(48) not null primary key,
+    weblogid   varchar(48) not null,
     entryid    varchar(48) not null,
     status     varchar(20) not null,
     bloggerid  varchar(48),

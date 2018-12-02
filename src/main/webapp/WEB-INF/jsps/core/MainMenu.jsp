@@ -30,6 +30,7 @@ var msg= {
     yesLabel: '<fmt:message key="generic.yes"/>',
     noLabel: '<fmt:message key="generic.no"/>',
     cancelLabel: '<fmt:message key="generic.cancel"/>',
+    unapprovedCommentsTmpl: '<fmt:message key="mainMenu.haveUnapprovedComments"/>'
 };
 </script>
 
@@ -105,6 +106,9 @@ var msg= {
                        <c:url var="manageComments" value="/tb-ui/app/authoring/comments"/>
                        <img src='<c:url value="/images/page_white_edit.png"/>' />
                        <a href="${manageComments}?weblogId={{role.weblog.id}}"><fmt:message key="mainMenu.manageComments" /></a>
+                       <span ng-if="role.weblog.unapprovedComments > 0">
+                            ({{ctrl.getUnapprovedCommentsString(role.weblog.unapprovedComments)}})
+                       </span>
                        <br>
                    </span>
 

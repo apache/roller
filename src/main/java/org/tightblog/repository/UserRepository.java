@@ -44,7 +44,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     User findByActivationCode(String activationCode);
 
-    @Query("SELECT u FROM User u WHERE u.userName= ?1 AND u.status = org.tightblog.domain.UserStatus.EMAILVERIFIED " +
+    @Query("SELECT u FROM User u WHERE u.status = org.tightblog.domain.UserStatus.EMAILVERIFIED " +
             "order by u.userName")
     List<User> findUsersToApprove();
 

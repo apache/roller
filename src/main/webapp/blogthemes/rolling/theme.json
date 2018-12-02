@@ -6,10 +6,10 @@
   "templates": [
     {
       "type": "stylesheet",
-      "name": "basic-custom.css",
-      "description": "Stylesheet for Basic theme",
-      "relativePath": "basic-custom.css",
-      "contentsFile": "basic-custom.css"
+      "name": "rolling.css",
+      "description": "Stylesheet for Rolling theme",
+      "relativePath": "rolling.css",
+      "contentsFile": "rolling.css"
     },
     {
       "type": "weblog",
@@ -25,20 +25,6 @@
       "type": "custom_internal",
       "name": "sidebar",
       "contentsFile": "sidebar.html"
-    },
-    {
-      "type": "stylesheet",
-      "name": "bigcalendar.css",
-      "description": "Stylesheet for Archives calendar",
-      "relativePath": "bigcalendar.css",
-      "contentsFile": "bigcalendar.css"
-    },
-    {
-      "type": "custom_external",
-      "name": "Archives",
-      "description": "Calendar browser and links to latest entries",
-      "relativePath": "archives",
-      "contentsFile": "archives.html"
     }
   ]
 }

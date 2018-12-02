@@ -110,7 +110,8 @@ public class UserWeblogRole {
     }
 
     public String toString() {
-        return "UserWeblogRole: user=" + user.getUserName() + ", weblog=" + weblog.getHandle() + ", role=" + weblogRole;
+        return "UserWeblogRole: user=" + (user != null ? user.getUserName() : "(empty)")
+                + ", weblog=" + weblog.getHandle() + ", role=" + weblogRole;
     }
 
     @Override

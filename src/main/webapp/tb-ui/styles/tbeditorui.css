@@ -275,7 +275,7 @@ table.innertable tr .viewbody .bot {
     background: khaki;
     border: 1px gray solid;
 }
-.pendingcomment {
+td.pendingcomment {
     background: khaki;
 }
 tr.actionrow {
@@ -285,7 +285,7 @@ tr.actionrow {
     background: #ffcccc;
     border: 1px gray solid;
 }
-.spamcomment {
+td.spamcomment {
     background: #ffcccc;
 }
 .draftEntryBox {

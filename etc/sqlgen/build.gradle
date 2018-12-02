@@ -1,3 +1,6 @@
+// If createdb.vm changes, just run gradle genDDL from command-line.
+// Updated output DDL will be placed in expected src/main/resources/dbscripts folder.
+
 apply plugin: 'groovy'
 
 repositories {

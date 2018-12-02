@@ -20,6 +20,7 @@
  */
 package org.tightblog.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.text.StringEscapeUtils;
 import org.tightblog.util.Utilities;
 
@@ -69,6 +70,7 @@ public class WeblogEntryComment {
     private String userAgent;
 
     // associations
+    private Weblog weblog;
     private WeblogEntry weblogEntry;
 
     private User blogger;
@@ -87,6 +89,17 @@ public class WeblogEntryComment {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "weblogid", nullable = false)
+    @JsonIgnore
+    public Weblog getWeblog() {
+        return this.weblog;
+    }
+
+    public void setWeblog(Weblog website) {
+        this.weblog = website;
     }
 
     @ManyToOne

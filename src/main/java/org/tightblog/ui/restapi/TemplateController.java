@@ -188,7 +188,7 @@ public class TemplateController {
         }
     }
 
-    // need to add / at end of URL due to template name possibly having a period in it (e.g., basic-custom.css).
+    // need to add / at end of URL due to template name possibly having a period in it (e.g., rolling.css).
     // none of other solutions (http://stackoverflow.com/questions/16332092/spring-mvc-pathvariable-with-dot-is-getting-truncated)
     // seemed to work.
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templatename/{templateName}/")

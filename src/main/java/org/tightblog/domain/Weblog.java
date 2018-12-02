@@ -90,6 +90,9 @@ public class Weblog {
     // Transient, derived from and re-calculated each time blacklist property is set
     private List<java.util.regex.Pattern> blacklistRegexRules = new ArrayList<>();
 
+    // temporary non-persisted fields used for form entry & retrieving associated data
+    private int unapprovedComments;
+
     // is this weblog instance used for previewing a theme?
     private boolean usedForThemePreview;
     private Locale localeInstance;
@@ -554,4 +557,13 @@ public class Weblog {
     }
 
     static final Comparator<Weblog> HANDLE_COMPARATOR = Comparator.comparing(Weblog::getHandle);
+
+    @Transient
+    public int getUnapprovedComments() {
+        return unapprovedComments;
+    }
+
+    public void setUnapprovedComments(int unapprovedComments) {
+        this.unapprovedComments = unapprovedComments;
+    }
 }

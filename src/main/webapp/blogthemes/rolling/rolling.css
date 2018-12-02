@@ -171,14 +171,6 @@ a:hover {
   width: 220px;
 }
 
-#ArchivesColumn {
-	position: absolute;
-	z-index: 2;
-	top: 0px;
-	left: 93px;
-        width: 80%
-}
-
 .daypermalink {
   border-style : none;
 }

@@ -18,6 +18,7 @@ package org.tightblog.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntryComment;
 import org.tightblog.domain.WeblogEntryComment.ApprovalStatus;
@@ -47,6 +48,13 @@ public interface WeblogEntryCommentRepository extends JpaRepository<WeblogEntryC
     }
 
     int countByWeblogEntryAndStatusIn(WeblogEntry entry, List<ApprovalStatus> statuses);
+
+    default int countByWeblogAndStatusUnapproved(Weblog weblog) {
+        return countByWeblogAndStatusIn(weblog, Collections.unmodifiableList(
+                List.of(ApprovalStatus.PENDING, ApprovalStatus.SPAM, ApprovalStatus.DISAPPROVED)));
+    }
+
+    int countByWeblogAndStatusIn(Weblog weblog, List<ApprovalStatus> statuses);
 
     void deleteByWeblogEntry(WeblogEntry e);
 

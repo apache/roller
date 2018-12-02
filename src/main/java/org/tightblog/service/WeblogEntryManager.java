@@ -102,10 +102,11 @@ public class WeblogEntryManager {
      *                      still requiring moderation.
      */
     public void saveComment(WeblogEntryComment comment, boolean refreshWeblog) {
+        comment.setWeblog(comment.getWeblogEntry().getWeblog());
         weblogEntryCommentRepository.saveAndFlush(comment);
         if (refreshWeblog) {
-            comment.getWeblogEntry().getWeblog().invalidateCache();
-            weblogRepository.saveAndFlush(comment.getWeblogEntry().getWeblog());
+            comment.getWeblog().invalidateCache();
+            weblogRepository.saveAndFlush(comment.getWeblog());
         }
     }
 
@@ -428,7 +429,7 @@ public class WeblogEntryManager {
         } else {
             if (csc.getWeblog() != null) {
                 cqd.params.add(size++, csc.getWeblog());
-                appendConjuctionToWhereClause(whereClause, "c.weblogEntry.weblog = ?").append(size);
+                appendConjuctionToWhereClause(whereClause, "c.weblog = ?").append(size);
             }
             if (csc.getCategoryName() != null) {
                 cqd.params.add(size++, csc.getCategoryName());

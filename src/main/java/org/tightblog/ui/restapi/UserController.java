@@ -26,6 +26,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.tightblog.repository.WeblogEntryCommentRepository;
 import org.tightblog.service.EmailService;
 import org.tightblog.service.URLService;
 import org.tightblog.service.UserManager;
@@ -55,6 +56,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.domain.WebloggerProperties;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -88,13 +91,18 @@ public class UserController {
     private EmailService emailService;
     private MessageSource messages;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
+    private WeblogEntryCommentRepository weblogEntryCommentRepository;
     private URLService urlService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public UserController(WeblogRepository weblogRepository, UserManager userManager,
                           UserWeblogRoleRepository userWeblogRoleRepository, MessageSource messageSource,
                           EmailService emailService, UserRepository userRepository,
                           UserCredentialsRepository userCredentialsRepository, URLService urlService,
+                          WeblogEntryCommentRepository weblogEntryCommentRepository,
                           WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogRepository = weblogRepository;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
@@ -102,6 +110,7 @@ public class UserController {
         this.userWeblogRoleRepository = userWeblogRoleRepository;
         this.userRepository = userRepository;
         this.userCredentialsRepository = userCredentialsRepository;
+        this.weblogEntryCommentRepository = weblogEntryCommentRepository;
         this.urlService = urlService;
         this.emailService = emailService;
         this.messages = messageSource;
@@ -493,6 +502,7 @@ public class UserController {
         }
         List<UserWeblogRole> uwrs = userWeblogRoleRepository.findByUser(user);
         for (UserWeblogRole uwr : uwrs) {
+            entityManager.detach(uwr); // uwr now a DTO
             uwr.getWeblog().setAbsoluteURL(urlService.getWeblogURL(uwr.getWeblog()));
             uwr.setUser(null);
         }
@@ -507,7 +517,17 @@ public class UserController {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
-        return getUsersWeblogs(user.getId(), response);
+
+        List<UserWeblogRole> uwrs = userWeblogRoleRepository.findByUser(user);
+        for (UserWeblogRole uwr : uwrs) {
+            entityManager.detach(uwr); // uwr now a DTO
+            uwr.getWeblog().setAbsoluteURL(urlService.getWeblogURL(uwr.getWeblog()));
+            uwr.getWeblog().setUnapprovedComments(
+                    weblogEntryCommentRepository.countByWeblogAndStatusUnapproved(uwr.getWeblog()));
+            uwr.setUser(null);
+        }
+
+        return uwrs;
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/user/{userId}/role/{role}/attach", produces = "text/plain")

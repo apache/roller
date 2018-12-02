@@ -23,7 +23,8 @@ $(function() {
   });
 });
 
-tightblogApp.controller('PageController', ['$http', function PageController($http) {
+tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
+        function PageController($http, $interpolate, $sce) {
     var self = this;
 
     this.toggleEmails = function(role) {
@@ -32,6 +33,11 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
           },
           self.commonErrorResponse
         )
+    }
+
+    this.getUnapprovedCommentsString = function(commentCount) {
+        return $sce.trustAsHtml($interpolate(msg.unapprovedCommentsTmpl)
+                                   ({unapprovedCommentCount:commentCount}));
     }
 
     this.resignFromBlog = function(roleId) {
