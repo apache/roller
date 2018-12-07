@@ -54,7 +54,7 @@
     <table class="rollertable">
         <thead>
         <tr>
-            <th width="20%"><fmt:message key="categories.column.category"/></th>
+            <th width="20%"><fmt:message key="generic.category"/></th>
             <th width="20%"><fmt:message key="categories.column.count"/></th>
             <th width="20%"><fmt:message key="categories.column.firstEntry"/></th>
             <th width="20%"><fmt:message key="categories.column.lastEntry"/></th>

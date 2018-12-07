@@ -63,7 +63,7 @@
           {
             "action": "tags",
             "actionPath": "/tb-ui/app/authoring/",
-            "titleKey": "tags.title",
+            "titleKey": "generic.tags",
             "weblogRole": "POST"
           },
           {

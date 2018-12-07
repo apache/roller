@@ -62,7 +62,7 @@
                 <div>
                     <div class="sideformrow">
                         <label for="categoryId" class="sideformrow">
-                        <fmt:message key="entries.label.category" /></label>
+                        <fmt:message key="generic.category" /></label>
                         <select id="categoryId" ng-model="ctrl.searchParams.categoryName" size="1" required>
                            <option ng-repeat="(key, value) in ctrl.lookupFields.categories" value="{{key}}">{{value}}</option>
                         </select>
@@ -171,8 +171,9 @@
     <tr>
         <th width="5%"><fmt:message key="entries.pubTime" /></th>
         <th width="5%"><fmt:message key="entries.updateTime" /></th>
-        <th><fmt:message key="entries.title" /></th>
-        <th width="5%"><fmt:message key="entries.category" /></th>
+        <th width="8%"><fmt:message key="generic.category" /></th>
+        <th><fmt:message key="entries.entryTitle" /></th>
+        <th width="16%"><fmt:message key="generic.tags" /></th>
         <th width="5%"></th>
         <th width="5%"></th>
         <th width="5%"></th>
@@ -194,11 +195,15 @@
         </td>
 
         <td>
+            {{entry.category.name}}
+        </td>
+
+        <td>
             {{entry.title | limitTo:80}}
         </td>
 
         <td>
-            {{entry.category.name}}
+            {{entry.tagsAsString}}
         </td>
 
         <td>

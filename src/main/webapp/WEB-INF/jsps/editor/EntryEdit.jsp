@@ -133,7 +133,7 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="categoryId"><fmt:message key="entryEdit.category" /></label>
+                <label for="categoryId"><fmt:message key="generic.category" /></label>
             </td>
             <td ng-cloak>
                 <select id="categoryId" ng-model="ctrl.entry.category.id" size="1" required>
@@ -144,11 +144,11 @@
 
         <tr>
             <td class="entryEditFormLabel">
-                <label for="tags"><fmt:message key="entryEdit.tags" /></label>
+                <label for="tags"><fmt:message key="generic.tags" /></label>
             </td>
             <td>
                 <input id="tags" type="text" cssClass="entryEditTags" ng-model="ctrl.entry.tagsAsString"
-                    size="70" maxlength="255" tabindex="3" style="width:30%">
+                    maxlength="255" tabindex="3" style="width:60%">
             </td>
         </tr>
 
