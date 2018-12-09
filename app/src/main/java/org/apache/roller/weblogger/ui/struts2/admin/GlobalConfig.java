@@ -169,16 +169,17 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
             // it may not always be the case, but we should be okay for now
             // null check below needed w/Oracle
             if( updProp.getValue() != null
-                    && (updProp.getValue().equals("true") || updProp.getValue().equals("false"))) {
-                
-                if(incomingProp == null || !incomingProp.equals("on")) {
-                    incomingProp = "false";
-                }
-                else {
+                    && (   updProp.getValue().equals("true") || updProp.getValue().equals("false")
+                        || updProp.getValue().equals("on")   || updProp.getValue().equals("off")
+                       )) {
+                if (incomingProp != null && (incomingProp.equalsIgnoreCase("true") || incomingProp.equalsIgnoreCase("on"))) {
                     incomingProp = "true";
                 }
+                else {
+                    incomingProp = "false";
+                }
             }
-            
+
             // only work on props that were submitted with the request
             if(incomingProp != null) {
                 log.debug("Setting new value for ["+propName+"]");
