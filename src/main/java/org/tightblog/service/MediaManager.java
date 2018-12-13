@@ -140,6 +140,7 @@ public class MediaManager {
      */
     public void saveMediaFile(MediaFile mediaFile, InputStream updatedStream, Map<String, List<String>> errors)
             throws IOException {
+
         Weblog weblog = mediaFile.getDirectory().getWeblog();
 
         if (!fileService.canSave(weblog, mediaFile.getName(),

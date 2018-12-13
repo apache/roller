@@ -226,9 +226,6 @@ create table weblogger_properties (
     users_comment_notifications $BOOLEAN_SQL_TYPE_TRUE not null,
     comment_spam_filter    $TEXT_SQL_TYPE,
     users_upload_media_files $BOOLEAN_SQL_TYPE_TRUE not null,
-    allowed_file_extensions varchar(255),
-    disallowed_file_extensions varchar(255) default 'exe',
-    max_file_size_mb       integer default 3 not null,
     max_file_uploads_size_mb integer default 20 not null,
     last_weblog_change     $TIMESTAMP_SQL_TYPE_DEFNOW not null
 );

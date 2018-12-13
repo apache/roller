@@ -22,9 +22,11 @@ package org.tightblog.service;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.tightblog.WebloggerTest;
 import org.tightblog.domain.User;
 import org.tightblog.domain.Weblog;
@@ -32,8 +34,6 @@ import org.tightblog.domain.WebloggerProperties;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.annotation.Resource;
 
 import static org.junit.Assert.*;
 
@@ -47,12 +47,8 @@ public class FileServiceIT extends WebloggerTest {
     private User testUser;
     private Weblog testWeblog;
 
-    @Resource
-    private FileService fileService;
-
-    public void setFileService(FileService fileService) {
-        this.fileService = fileService;
-    }
+    @Value("${mediafiles.storage.dir}")
+    private String storageDir;
 
     @Before
     public void setUp() throws Exception {
@@ -63,11 +59,8 @@ public class FileServiceIT extends WebloggerTest {
 
     @After
     public void tearDown() {
-
         WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
         props.setMaxFileUploadsSizeMb(30000);
-        props.setDisallowedFileExtensions("");
-        props.setAllowedFileExtensions("");
         props.setUsersUploadMediaFiles(true);
         webloggerPropertiesRepository.saveAndFlush(props);
         weblogManager.removeWeblog(testWeblog);
@@ -82,10 +75,11 @@ public class FileServiceIT extends WebloggerTest {
         WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
         props.setUsersUploadMediaFiles(true);
         props.setMaxFileUploadsSizeMb(1);
-        props.setAllowedFileExtensions("opml");
         webloggerPropertiesRepository.saveAndFlush(props);
 
-        /* NOTE: upload dir for unit tests is set in application-tbcustom.properties in test/resources */
+        FileService fileService = new FileService(webloggerPropertiesRepository,
+                storageDir,
+                Set.of("opml"), Set.of(), 3);
 
         // File should not exist initially
         WebloggerTest.logExpectedException(log, "FileNotFoundException");
@@ -117,37 +111,40 @@ public class FileServiceIT extends WebloggerTest {
     @Test
     public void testCanSave() {
         WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
-        props.setMaxFileSizeMb(1);
-        props.setDisallowedFileExtensions("");
-        props.setAllowedFileExtensions("");
         props.setUsersUploadMediaFiles(true);
         webloggerPropertiesRepository.saveAndFlush(props);
 
+        FileService fileService1 = new FileService(webloggerPropertiesRepository,
+                storageDir,
+                Set.of(), Set.of(), 1);
+
         // file too big
-        boolean canSave = fileService.canSave(testWeblog, "test.gif", "text/plain", 2500000, null);
+        boolean canSave = fileService1.canSave(testWeblog, "test.gif", "text/plain", 2500000, null);
         assertFalse(canSave);
 
         // file right size
-        canSave = fileService.canSave(testWeblog, "test.gif", "text/plain", 500000, null);
+        canSave = fileService1.canSave(testWeblog, "test.gif", "text/plain", 500000, null);
         assertTrue(canSave);
 
-        props.setDisallowedFileExtensions("gif");
+        FileService fileService2 = new FileService(webloggerPropertiesRepository,
+                storageDir,
+                Set.of(), Set.of("gif"), 1);
+
         webloggerPropertiesRepository.saveAndFlush(props);
 
         // forbidden types check should fail
-        canSave = fileService.canSave(testWeblog, "test.gif", "text/plain", 10, null);
+        canSave = fileService2.canSave(testWeblog, "test.gif", "text/plain", 10, null);
         assertFalse(canSave);
 
         // ok types should pass
-        canSave = fileService.canSave(testWeblog, "test.png", "text/plain", 10, null);
+        canSave = fileService2.canSave(testWeblog, "test.png", "text/plain", 10, null);
         assertTrue(canSave);
 
         props.setUsersUploadMediaFiles(false);
-        props.setDisallowedFileExtensions("");
         webloggerPropertiesRepository.saveAndFlush(props);
 
         // uploads disabled should fail
-        canSave = fileService.canSave(testWeblog, "test.gif", "text/plain", 10, null);
+        canSave = fileService1.canSave(testWeblog, "test.gif", "text/plain", 10, null);
         assertFalse(canSave);
     }
 }

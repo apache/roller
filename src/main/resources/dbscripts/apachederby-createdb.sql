@@ -202,9 +202,6 @@ create table weblogger_properties (
     users_comment_notifications smallint default 1 not null,
     comment_spam_filter    clob(102400),
     users_upload_media_files smallint default 1 not null,
-    allowed_file_extensions varchar(255),
-    disallowed_file_extensions varchar(255) default 'exe',
-    max_file_size_mb       integer default 3 not null,
     max_file_uploads_size_mb integer default 20 not null,
     last_weblog_change     timestamp default current_timestamp not null
 );

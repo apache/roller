@@ -202,7 +202,7 @@ public class MediaFileController {
 
             return ResponseEntity.ok(mf);
         } catch (IOException e) {
-            log.error("Error uploading file {}", mf.getName(), e);
+            log.error("Error uploading file {} from user {}", mf.getName(), user.getUserName(), e);
             throw new ServletException(e.getMessage());
         }
     }

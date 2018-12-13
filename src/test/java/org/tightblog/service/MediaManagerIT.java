@@ -22,10 +22,13 @@ package org.tightblog.service;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.ObjectUtils;
 import org.tightblog.WebloggerTest;
 import org.tightblog.domain.MediaDirectory;
 import org.tightblog.domain.MediaFile;
@@ -170,7 +173,10 @@ public class MediaManagerIT extends WebloggerTest {
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setContentType("image/jpeg");
 
-        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
+        Map<String, List<String>> errors = new HashMap<>();
+        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        assertTrue(ObjectUtils.isEmpty(errors));
+
         String id = mediaFile.getId();
         assertNotNull(id);
         assertNotNull(id.length() > 0);
@@ -204,7 +210,10 @@ public class MediaManagerIT extends WebloggerTest {
         mediaFile.setContentType("image/jpeg");
         rootDirectory.getMediaFiles().add(mediaFile);
 
-        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
+        Map<String, List<String>> errors = new HashMap<>();
+        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        assertTrue(ObjectUtils.isEmpty(errors));
+
         assertNotNull(mediaFile.getId());
         assertTrue(mediaFile.getId().length() > 0);
 
@@ -229,18 +238,23 @@ public class MediaManagerIT extends WebloggerTest {
         mediaFile.setLength(3000);
         mediaFile.setDirectory(rootDirectory);
         mediaFile.setContentType("image/jpeg");
-        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
+
+        Map<String, List<String>> errors = new HashMap<>();
+        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        assertTrue(ObjectUtils.isEmpty(errors));
 
         rootDirectory.getMediaFiles().add(mediaFile);
         String id = mediaFile.getId();
         assertNotNull(id);
-        assertNotNull(id.length() > 0);
+        assertTrue(id.length() > 0);
 
         MediaFile mediaFile1 = mediaFileRepository.findByIdOrNull(id);
         mediaFile1.setName("updated.gif");
         mediaFile1.setNotes("updated desc");
         mediaFile1.setContentType("image/gif");
-        mediaManager.saveMediaFile(mediaFile1, null, null);
+
+        mediaManager.saveMediaFile(mediaFile1, null, errors);
+        assertTrue(ObjectUtils.isEmpty(errors));
 
         MediaFile mediaFile2 = mediaFileRepository.findByIdOrNull(id);
         assertEquals("updated.gif", mediaFile2.getName());
@@ -266,7 +280,10 @@ public class MediaManagerIT extends WebloggerTest {
         mediaFile.setNotes("This is a test image 6.1");
         mediaFile.setLength(4000);
         mediaFile.setContentType("image/jpeg");
-        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
+
+        Map<String, List<String>> errors = new HashMap<>();
+        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        assertTrue(ObjectUtils.isEmpty(errors));
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setCreator(testUser);
@@ -275,7 +292,9 @@ public class MediaManagerIT extends WebloggerTest {
         mediaFile2.setNotes("This is a test image 6.2");
         mediaFile2.setLength(4000);
         mediaFile2.setContentType("image/jpeg");
-        mediaManager.saveMediaFile(mediaFile2, getClass().getResourceAsStream(TEST_IMAGE), null);
+
+        mediaManager.saveMediaFile(mediaFile2, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        assertTrue(ObjectUtils.isEmpty(errors));
 
         rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
 
@@ -313,7 +332,10 @@ public class MediaManagerIT extends WebloggerTest {
         mediaFile.setNotes("This is a test image 7.1");
         mediaFile.setLength(4000);
         mediaFile.setContentType("image/jpeg");
-        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), null);
+
+        Map<String, List<String>> errors = new HashMap<>();
+        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        assertTrue(ObjectUtils.isEmpty(errors));
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setCreator(testUser);
@@ -322,7 +344,9 @@ public class MediaManagerIT extends WebloggerTest {
         mediaFile2.setNotes("This is a test image 7.2");
         mediaFile2.setLength(4000);
         mediaFile2.setContentType("image/jpeg");
-        mediaManager.saveMediaFile(mediaFile2, getClass().getResourceAsStream(TEST_IMAGE), null);
+
+        mediaManager.saveMediaFile(mediaFile2, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        assertTrue(ObjectUtils.isEmpty(errors));
 
         rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
 

@@ -63,11 +63,21 @@
         </td>
         <td class="description"><fmt:message key="globalConfig.tip.requiredRegistrationProcess"/></td>
     </tr>
-        <tr>
-            <td class="label"><fmt:message key="globalConfig.newUsersCreateBlogs" /></td>
-            <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersCreateBlogs"></td>
-            <td class="description"><fmt:message key="globalConfig.tip.newUsersCreateBlogs"/></td>
-        </tr>
+    <tr>
+        <td class="label"><fmt:message key="globalConfig.newUsersCreateBlogs" /></td>
+        <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersCreateBlogs"></td>
+        <td class="description"><fmt:message key="globalConfig.tip.newUsersCreateBlogs"/></td>
+    </tr>
+    <tr>
+        <td class="label"><fmt:message key="globalConfig.enableFileUploads" /></td>
+        <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersUploadMediaFiles"></td>
+        <td class="description"><fmt:message key="globalConfig.tip.enableFileUploads"/></td>
+    </tr>
+    <tr>
+        <td class="label"><fmt:message key="globalConfig.maxMediaFileAllocationMb" /></td>
+        <td class="field"><input type="number" ng-model="ctrl.webloggerProps.maxFileUploadsSizeMb" size='35'></td>
+        <td class="description"><fmt:message key="globalConfig.tip.maxMediaFileAllocationMb"/></td>
+    </tr>
     <tr>
         <td colspan="2">&nbsp;</td>
     </tr>
@@ -145,35 +155,6 @@
     <tr>
         <td colspan="2">&nbsp;</td>
     </tr>
-    <tr>
-        <td colspan="3"><h2><fmt:message key="globalConfig.fileUploadSettings" /></h2></td>
-    </tr>
-        <tr>
-            <td class="label"><fmt:message key="globalConfig.enableFileUploads" /></td>
-            <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersUploadMediaFiles"></td>
-            <td class="description"><fmt:message key="globalConfig.tip.enableFileUploads"/></td>
-        </tr>
-        <tr>
-            <td class="label"><fmt:message key="globalConfig.allowedExtensions" /></td>
-            <td class="field"><input type="text" ng-model="ctrl.webloggerProps.allowedFileExtensions" size='35'></td>
-            <td class="description"><fmt:message key="globalConfig.tip.allowedExtensions"/></td>
-        </tr>
-        <tr>
-            <td class="label"><fmt:message key="globalConfig.forbiddenExtensions" /></td>
-            <td class="field"><input type="text" ng-model="ctrl.webloggerProps.disallowedFileExtensions" size='35'></td>
-            <td class="description"><fmt:message key="globalConfig.tip.forbiddenExtensions"/></td>
-        </tr>
-        <tr>
-            <td class="label"><fmt:message key="globalConfig.maxFileSize" /></td>
-            <td class="field"><input type="number" ng-model="ctrl.webloggerProps.maxFileSizeMb" size='35'></td>
-            <td class="description"></td>
-        </tr>
-        <tr>
-            <td class="label"><fmt:message key="globalConfig.maxFileUploadsSizeMb" /></td>
-            <td class="field"><input type="number" ng-model="ctrl.webloggerProps.maxFileUploadsSizeMb" size='35'></td>
-            <td class="description"><fmt:message key="globalConfig.tip.maxFileUploadsSizeMb"/></td>
-        </tr>
-
 </table>
 
 <div class="control">

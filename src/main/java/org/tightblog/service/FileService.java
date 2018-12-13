@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.repository.WebloggerPropertiesRepository;
@@ -49,17 +51,30 @@ import org.tightblog.util.Utilities;
 public class FileService {
 
     private static Logger log = LoggerFactory.getLogger(FileService.class);
-
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
-
     private String storageDir;
+    private Set<String> allowedExtensions;
+    private Set<String> forbiddenExtensions;
+    private int maxFileSizeMb;
 
     @Autowired
     public FileService(WebloggerPropertiesRepository webloggerPropertiesRepository,
-                                  @Value("${mediafiles.storage.dir}") String storageDir) {
+                       @Value("${mediafiles.storage.dir}") String storageDir,
+                       @Value("#{'${media.file.allowedExtensions}'.split(',')}") Set<String> allowedExtensions,
+                       @Value("#{'${media.file.forbiddenExtensions}'.split(',')}") Set<String> forbiddenExtensions,
+                       @Value("${media.file.maxFileSizeMb:3}") int maxFileSizeMb
+                       ) {
 
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.storageDir = storageDir;
+        this.allowedExtensions = allowedExtensions;
+        this.forbiddenExtensions = forbiddenExtensions;
+        this.maxFileSizeMb = maxFileSizeMb;
+
+        log.info("Allowed extensions/MIME types for media files = {}", ObjectUtils.isEmpty(allowedExtensions) ?
+                        "ALL" : Arrays.toString(allowedExtensions.toArray()));
+        log.info("Forbidden extensions/MIME types for media files (takes precedence where conflicting with allowed) = {}",
+                ObjectUtils.isEmpty(forbiddenExtensions) ? "NONE" : Arrays.toString(forbiddenExtensions.toArray()));
 
         // Note: System property expansion is now handled by WebloggerStaticConfig.
         if (StringUtils.isEmpty(this.storageDir)) {
@@ -175,11 +190,10 @@ public class FileService {
         }
 
         // second check, does upload exceed max size for file?
-        int maxFileMB = webloggerProperties.getMaxFileSizeMb();
-        log.debug("File size = {}, Max allowed = {}MB", fileSize, maxFileMB);
-        if (fileSize > maxFileMB * Utilities.ONE_MB_IN_BYTES) {
+        log.debug("File size = {}, Max allowed = {}MB", fileSize, maxFileSizeMb);
+        if (fileSize > maxFileSizeMb * Utilities.ONE_MB_IN_BYTES) {
             if (messages != null) {
-                messages.put("error.upload.filemax", Arrays.asList(fileName, Integer.toString(maxFileMB)));
+                messages.put("error.upload.filemax", Arrays.asList(fileName, Integer.toString(maxFileSizeMb)));
             }
             return false;
         }
@@ -206,13 +220,7 @@ public class FileService {
         }
 
         // fourth check, is upload type allowed?
-        String allows = webloggerProperties.getAllowedFileExtensions();
-        String forbids = webloggerProperties.getDisallowedFileExtensions();
-        String[] allowFiles = StringUtils.split(
-                StringUtils.deleteWhitespace(allows), ",");
-        String[] forbidFiles = StringUtils.split(
-                StringUtils.deleteWhitespace(forbids), ",");
-        if (!checkFileType(allowFiles, forbidFiles, fileName, contentType)) {
+        if (!checkFileType(fileName, contentType)) {
             if (messages != null) {
                 messages.put("error.upload.forbiddenFile", Arrays.asList(fileName, contentType));
             }
@@ -252,78 +260,54 @@ public class FileService {
      * Return true if file is allowed to be uploaded given specified allowed and
      * forbidden file types.
      */
-    private boolean checkFileType(String[] allowFiles, String[] forbidFiles,
-                                  String fileName, String contentType) {
+    private boolean checkFileType(String fileName, String contentType) {
+
+        String fileDesc = String.format("Media File %s (content type %s)", fileName, contentType);
 
         // if content type is invalid, reject file
         if (contentType == null || contentType.indexOf('/') == -1) {
+            log.warn("{} blocked from uploading because of invalid content type", fileDesc);
             return false;
         }
 
         // default to false
         boolean allowFile = false;
 
-        // if this person hasn't listed any allows, then assume they want
-        // to allow *all* filetypes, except those listed under forbid
-        if (allowFiles == null || allowFiles.length < 1) {
+        // if no allowedExtensions defined, all all except those listed under forbid.
+        if (ObjectUtils.isEmpty(allowedExtensions)) {
             allowFile = true;
-        }
-
-        // First check against what is ALLOWED
-
-        // check file against allowed file extensions
-        if (allowFiles != null && allowFiles.length > 0) {
-            for (String file : allowFiles) {
-                // oops, this allowed rule is a content-type, skip it
-                if (file.indexOf('/') != -1) {
-                    continue;
-                }
-                if (fileName.toLowerCase().endsWith(file.toLowerCase())) {
+        } else {
+            // check file against allowed file extensions
+            for (String extension : allowedExtensions) {
+                if (extension.indexOf('/') == -1) {
+                    // check file extension
+                    if (fileName.toLowerCase().endsWith(extension.toLowerCase())) {
+                        allowFile = true;
+                        break;
+                    }
+                } else if (matchContentType(extension, contentType)) {
+                    // check content type
                     allowFile = true;
                     break;
                 }
             }
+            log.warn("{} blocked from uploading because not in allowed MIME types/extensions", fileDesc);
         }
 
-        // check file against allowed contentTypes
-        if (allowFiles != null && allowFiles.length > 0) {
-            for (String file : allowFiles) {
-                // oops, this allowed rule is NOT a content-type, skip it
-                if (file.indexOf('/') == -1) {
-                    continue;
-                }
-                if (matchContentType(file, contentType)) {
-                    allowFile = true;
-                    break;
-                }
-            }
-        }
-
-        // Next check against what is FORBIDDEN
-
-        // check file against forbidden file extensions, overrides any allows
-        if (forbidFiles != null && forbidFiles.length > 0) {
-            for (String file : forbidFiles) {
-                // oops, this forbid rule is a content-type, skip it
-                if (file.indexOf('/') != -1) {
-                    continue;
-                }
-                if (fileName.toLowerCase().endsWith(file.toLowerCase())) {
+        // Next check file against forbidden file extensions, overrides any allows
+        if (allowFile && !ObjectUtils.isEmpty(forbiddenExtensions)) {
+            for (String extension : forbiddenExtensions) {
+                if (extension.indexOf('/') == -1) {
+                    // check file extension
+                    if (fileName.toLowerCase().endsWith(extension.toLowerCase())) {
+                        allowFile = false;
+                        log.warn("{} blocked from uploading because it has a forbidden extension", fileDesc);
+                        break;
+                    }
+                } else if (matchContentType(extension, contentType)) {
+                    // check content type
                     allowFile = false;
-                    break;
-                }
-            }
-        }
-
-        // check file against forbidden contentTypes, overrides any allows
-        if (forbidFiles != null && forbidFiles.length > 0) {
-            for (String file : forbidFiles) {
-                // oops, this forbid rule is NOT a content-type, skip it
-                if (file.indexOf('/') == -1) {
-                    continue;
-                }
-                if (matchContentType(file, contentType)) {
-                    allowFile = false;
+                    log.warn("{} blocked from uploading because it has a forbidden contentType", fileDesc);
                     break;
                 }
             }

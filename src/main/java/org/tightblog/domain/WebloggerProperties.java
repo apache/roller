@@ -32,9 +32,6 @@ public class WebloggerProperties {
     private boolean usersCommentNotifications;
     private String commentSpamFilter;
     private boolean usersUploadMediaFiles;
-    private String allowedFileExtensions;
-    private String disallowedFileExtensions;
-    private int maxFileSizeMb;
     private int maxFileUploadsSizeMb;
     private Instant lastWeblogChange;
 
@@ -186,33 +183,6 @@ public class WebloggerProperties {
 
     public void setUsersUploadMediaFiles(boolean usersUploadMediaFiles) {
         this.usersUploadMediaFiles = usersUploadMediaFiles;
-    }
-
-    @Column(name = "allowed_file_extensions")
-    public String getAllowedFileExtensions() {
-        return allowedFileExtensions;
-    }
-
-    public void setAllowedFileExtensions(String allowedFileExtensions) {
-        this.allowedFileExtensions = allowedFileExtensions;
-    }
-
-    @Column(name = "disallowed_file_extensions")
-    public String getDisallowedFileExtensions() {
-        return disallowedFileExtensions;
-    }
-
-    public void setDisallowedFileExtensions(String disallowedFileExtensions) {
-        this.disallowedFileExtensions = disallowedFileExtensions;
-    }
-
-    @Column(name = "max_file_size_mb")
-    public int getMaxFileSizeMb() {
-        return maxFileSizeMb;
-    }
-
-    public void setMaxFileSizeMb(int maxFileSizeMb) {
-        this.maxFileSizeMb = maxFileSizeMb;
     }
 
     @Column(name = "max_file_uploads_size_mb")
