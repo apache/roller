@@ -211,26 +211,7 @@ public class Register extends UIAction implements ServletRequestAware {
                     // Create & save the activation data
                     String inActivationCode = UUID.randomUUID().toString();
 
-                    if (mgr.getUserByActivationCode(inActivationCode) != null) {
-                        // In the *extremely* unlikely event that we generate an
-                        // activation code that is already use, we'll retry 3 times.
-                        int numOfRetries = 3;
-                        if (numOfRetries < 1) {
-                            numOfRetries = 1;
-                        }
-                        for (int i = 0; i < numOfRetries; i++) {
-                            inActivationCode = UUID.randomUUID().toString();
-                            if (mgr.getUserByActivationCode(inActivationCode) == null) {
-                                break;
-                            } else {
-                                inActivationCode = null;
-                            }
-                        }
-                        // In more unlikely event that three retries isn't enough
-                        if (inActivationCode == null){
-                            throw new WebloggerException("error.add.user.activationCodeInUse");
-                        }
-                    }
+                    inActivationCode = retryActivationCode(mgr, inActivationCode);
                     ud.setActivationCode(inActivationCode);
                 }
 
@@ -248,16 +229,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 WebloggerFactory.getWeblogger().flush();
 
                 // now send activation email if necessary
-                if (activationEnabled && ud.getActivationCode() != null) {
-                    try {
-                        // send activation mail to the user
-                        MailUtil.sendUserActivationEmail(ud);
-                    } catch (WebloggerException ex) {
-                        log.error("Error sending activation email to - " + ud.getEmailAddress(), ex);
-                    }
-
-                    setActivationStatus("pending");
-                }
+                sendActivationMailIfNeeded(ud, activationEnabled);
 
                 // Invalidate session, otherwise new user who was originally
                 // authenticated via LDAP/SSO will remain logged in but
@@ -278,6 +250,43 @@ public class Register extends UIAction implements ServletRequestAware {
         
         return INPUT;
     }
+
+	private String retryActivationCode(UserManager mgr, String inActivationCode) throws WebloggerException {
+		if (mgr.getUserByActivationCode(inActivationCode) != null) {
+		    // In the *extremely* unlikely event that we generate an
+		    // activation code that is already use, we'll retry 3 times.
+		    int numOfRetries = 3;
+		    if (numOfRetries < 1) {
+		        numOfRetries = 1;
+		    }
+		    for (int i = 0; i < numOfRetries; i++) {
+		        inActivationCode = UUID.randomUUID().toString();
+		        if (mgr.getUserByActivationCode(inActivationCode) == null) {
+		            break;
+		        } else {
+		            inActivationCode = null;
+		        }
+		    }
+		    // In more unlikely event that three retries isn't enough
+		    if (inActivationCode == null){
+		        throw new WebloggerException("error.add.user.activationCodeInUse");
+		    }
+		}
+		return inActivationCode;
+	}
+
+	private void sendActivationMailIfNeeded(User ud, boolean activationEnabled) {
+		if (activationEnabled && ud.getActivationCode() != null) {
+		    try {
+		        // send activation mail to the user
+		        MailUtil.sendUserActivationEmail(ud);
+		    } catch (WebloggerException ex) {
+		        log.error("Error sending activation email to - " + ud.getEmailAddress(), ex);
+		    }
+
+		    setActivationStatus("pending");
+		}
+	}
     
     
     @SkipValidation
@@ -331,19 +340,7 @@ public class Register extends UIAction implements ServletRequestAware {
             String unusedPassword = WebloggerConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
             
             // Preserve username and password, Spring Security case
-            User fromSSOUser = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
-            if (fromSSOUser != null) {
-                getBean().setPasswordText(unusedPassword);
-                getBean().setPasswordConfirm(unusedPassword);
-                getBean().setUserName(fromSSOUser.getUserName());
-            }
-
-            // Preserve username and password, CMA case             
-            else if (getServletRequest().getUserPrincipal() != null) {
-                getBean().setUserName(getServletRequest().getUserPrincipal().getName());
-                getBean().setPasswordText(unusedPassword);
-                getBean().setPasswordConfirm(unusedPassword);
-            }
+            preserveUsernameAndPassword(unusedPassword);
         }
         
         String allowed = WebloggerConfig.getProperty("username.allowedChars");
@@ -378,7 +375,30 @@ public class Register extends UIAction implements ServletRequestAware {
         }
         
         // check that username is not taken
-        if (!StringUtils.isEmpty(getBean().getUserName())) {
+        checkUsername();
+
+        // check that OpenID, if provided, is not taken
+        checkOpenID();
+    }
+
+	private void preserveUsernameAndPassword(String unusedPassword) {
+		User fromSSOUser = CustomUserRegistry.getUserDetailsFromAuthentication(getServletRequest());
+		if (fromSSOUser != null) {
+		    getBean().setPasswordText(unusedPassword);
+		    getBean().setPasswordConfirm(unusedPassword);
+		    getBean().setUserName(fromSSOUser.getUserName());
+		}
+
+		// Preserve username and password, CMA case             
+		else if (getServletRequest().getUserPrincipal() != null) {
+		    getBean().setUserName(getServletRequest().getUserPrincipal().getName());
+		    getBean().setPasswordText(unusedPassword);
+		    getBean().setPasswordConfirm(unusedPassword);
+		}
+	}
+
+	private void checkUsername() {
+		if (!StringUtils.isEmpty(getBean().getUserName())) {
             try {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 if (mgr.getUserByUserName(getBean().getUserName(), null) != null) {
@@ -391,9 +411,10 @@ public class Register extends UIAction implements ServletRequestAware {
                 addError("generic.error.check.logs");
             }
         }
+	}
 
-        // check that OpenID, if provided, is not taken
-        if (!StringUtils.isEmpty(getBean().getOpenIdUrl())) {
+	private void checkOpenID() {
+		if (!StringUtils.isEmpty(getBean().getOpenIdUrl())) {
             try {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 if (mgr.getUserByOpenIdUrl(getBean().getOpenIdUrl()) != null) {
@@ -406,7 +427,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 addError("generic.error.check.logs");
             }
         }
-    }
+	}
     
     
     public HttpServletRequest getServletRequest() {
