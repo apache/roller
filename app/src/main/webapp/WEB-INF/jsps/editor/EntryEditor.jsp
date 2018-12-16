@@ -158,7 +158,7 @@
     
     <%-- Include the Rich text editor (Xinha, see: http://trac.xinha.org/wiki/NewbieGuide) --%>
 
-    <s:url var="xinhaHome" value="/roller-ui/authoring/editors/xinha-0.96.1"></s:url>
+    <s:url var="xinhaHome" value="/roller-ui/authoring/editors/xinha-1.5.1"></s:url>
     <script>
         // (preferably absolute) URL (including trailing slash) where Xinha is installed
         _editor_url  = '<s:property value="xinhaHome" />';

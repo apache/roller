@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.jpa.JPAWeblogEntryManagerImpl;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.StatCount;
@@ -389,10 +390,7 @@ public class SiteModel implements Model {
      */
     public List<WeblogWrapper> getNewWeblogs(int sinceDays, int length) {
         List<WeblogWrapper> results = new ArrayList<WeblogWrapper>();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1 * sinceDays);
-        Date startDate = cal.getTime();
+        Date startDate = JPAWeblogEntryManagerImpl.getStartDateNow(sinceDays);
         try {            
             List<Weblog> weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogs(
                 Boolean.TRUE, Boolean.TRUE, startDate, null, 0, length);
@@ -466,10 +464,7 @@ public class SiteModel implements Model {
      */
     public List getMostCommentedWeblogs(int sinceDays , int length) {
         List results = new ArrayList();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1 * sinceDays);
-        Date startDate = cal.getTime();
+        Date startDate = JPAWeblogEntryManagerImpl.getStartDateNow(sinceDays);
         try {            
             results = WebloggerFactory.getWeblogger().getWeblogManager().getMostCommentedWeblogs(
                     startDate, new Date(), 0, length);
@@ -490,10 +485,7 @@ public class SiteModel implements Model {
     public List getMostCommentedWeblogEntries(
             List cats, int sinceDays, int length) {
         List results = new ArrayList();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1 * sinceDays);
-        Date startDate = cal.getTime();
+        Date startDate = JPAWeblogEntryManagerImpl.getStartDateNow(sinceDays);
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();

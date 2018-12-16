@@ -48,7 +48,7 @@ limitations under the License.
         <eclipse-link.version>2.7.3</eclipse-link.version>
         <guice.version>4.2.1</guice.version>
         <log4j.version>1.2.17</log4j.version>
-        <log4j2.version>2.9.1</log4j2.version>
+        <log4j2.version>2.10.0</log4j2.version>
         <lucene.version>4.10.4</lucene.version>
         <oauth-core.version>20100527</oauth-core.version>
         <maven-war.version>3.1.0</maven-war.version>
@@ -177,6 +177,18 @@ limitations under the License.
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>${velocity.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.2</version>
         </dependency>
 
         <dependency>

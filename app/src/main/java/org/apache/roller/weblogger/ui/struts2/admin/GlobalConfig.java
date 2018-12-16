@@ -167,7 +167,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
                 continue;
             }
 
-            if ( propertyDef.getType().equals("boolean") ) {
+            if ( incomingProp != null && propertyDef.getType().equals("boolean") ) {
 
                 try {
                     Boolean.parseBoolean(incomingProp);
@@ -176,10 +176,10 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
                 } catch ( Exception nfe ) {
                     String propDesc = bundle.getString( propertyDef.getKey() );
                     addError("ConfigForm.invalidBooleanProperty",
-                            Arrays.asList( new Object[] { propDesc, propName } ));
+                            Arrays.asList(propDesc, propName));
                 }
 
-            } else if ( propertyDef.getType().equals("integer") ) {
+            } else if ( incomingProp != null && propertyDef.getType().equals("integer") ) {
 
                 try {
                     Integer.parseInt(incomingProp);
@@ -188,19 +188,19 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
                 } catch ( NumberFormatException nfe ) {
                     String propDesc = bundle.getString( propertyDef.getKey() );
                     addError("ConfigForm.invalidIntegerProperty",
-                            Arrays.asList( new Object[] { propDesc, propName } ));
+                            Arrays.asList(propDesc, propName));
                 }
 
-            } else if ( propertyDef.getType().equals("float") ) {
+            } else if ( incomingProp != null && propertyDef.getType().equals("float") ) {
 
                 try {
                     Float.parseFloat(incomingProp);
                     updProp.setValue(incomingProp);
                     log.debug("Set float " + propName + " = " + incomingProp);
                 } catch ( NumberFormatException nfe ) {
-                    String propDesc = bundle.getString( propertyDef.getKey() );
+                    String propDesc = bundle.getString(propertyDef.getKey());
                     addError("ConfigForm.invalidFloatProperty",
-                            Arrays.asList( new Object[] { propDesc, propName } ));
+                        Arrays.asList(propDesc, propName));
                 }
 
             } else if ( incomingProp != null ){
