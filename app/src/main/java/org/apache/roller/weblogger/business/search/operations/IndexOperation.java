@@ -171,7 +171,7 @@ public abstract class IndexOperation implements Runnable {
 
             LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(
                     IndexManagerImpl.getAnalyzer(),
-                    WebloggerConfig.getIntProperty("lucene.anaylzer.maxTokenCount"));
+                    WebloggerConfig.getIntProperty("lucene.analyzer.maxTokenCount"));
 
             IndexWriterConfig config = new IndexWriterConfig(
                     FieldConstants.LUCENE_VERSION, analyzer);
