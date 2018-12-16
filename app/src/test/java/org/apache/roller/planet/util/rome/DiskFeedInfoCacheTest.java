@@ -16,25 +16,22 @@
 
 package org.apache.roller.planet.util.rome;
 
+import com.rometools.fetcher.impl.DiskFeedInfoCache;
+import com.rometools.fetcher.impl.SyndFeedInfo;
+import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.net.URL;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import com.rometools.fetcher.impl.SyndFeedInfo;
-import com.rometools.fetcher.impl.DiskFeedInfoCache;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author David M Johnson
  */
-public class DiskFeedInfoCacheTest extends TestCase {
+public class DiskFeedInfoCacheTest  {
     
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(DiskFeedInfoCacheTest.class);
-    }
-    
+    @Test
     public void testCache() throws Exception {
         URL url = new URL("http://cnn.com");
         SyndFeedInfo info = new SyndFeedInfo();
@@ -42,7 +39,7 @@ public class DiskFeedInfoCacheTest extends TestCase {
         
         String testPlanetCache = WebloggerConfig.getProperty("cache.dir");
         assertNotNull("testPlanetCache not null", testPlanetCache);
-        assertTrue("testPlanetCache not zero length", testPlanetCache.trim().length() > 0);
+        assertTrue( testPlanetCache.trim().length() > 0, "testPlanetCache not zero length");
         
         File cacheDir = new File(testPlanetCache);
         if (!cacheDir.exists()) cacheDir.mkdirs();
@@ -54,11 +51,6 @@ public class DiskFeedInfoCacheTest extends TestCase {
         SyndFeedInfo info2 = cache.getFeedInfo(url);
         assertNotNull(info2);
         assertEquals(url, info2.getUrl());
-    }
-    
-    public static Test suite() {
-        return new TestSuite(DiskFeedInfoCacheTest.class);
-        
     }
     
 }

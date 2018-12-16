@@ -18,21 +18,23 @@
 
 package org.apache.roller.weblogger.business;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
-import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class CustomTemplateRenditionTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class CustomTemplateRenditionTest  {
     public static Log log = LogFactory.getLog(CustomTemplateRenditionTest.class);
 
        User testUser = null;
@@ -42,19 +44,10 @@ public class CustomTemplateRenditionTest extends TestCase {
        CustomTemplateRendition mobileCode = null;
 
 
-       public CustomTemplateRenditionTest(String name) {
-           super(name);
-       }
-
-
-       public static Test suite() {
-           return new TestSuite(CustomTemplateRenditionTest.class);
-       }
-
-
        /**
         * All tests in this suite require a user and a weblog.
         */
+       @BeforeEach
        public void setUp() throws Exception {
 
            // setup weblogger
@@ -78,6 +71,7 @@ public class CustomTemplateRenditionTest extends TestCase {
            testPage.setWeblog(TestUtils.getManagedWebsite(testWeblog));
        }
 
+       @AfterEach
        public void tearDown() throws Exception {
 
            try {
@@ -96,6 +90,7 @@ public class CustomTemplateRenditionTest extends TestCase {
        /**
         * Test basic persistence operations ... Create, Update, Delete
         */
+       @Test
        public void testTemplateCRUD() throws Exception {
            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
 

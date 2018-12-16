@@ -16,34 +16,43 @@
 
 package org.apache.roller.planet.business;
 
-import java.util.List;
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.planet.pojos.Planet;
+import org.apache.roller.testing.DerbyExtension;
+import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 /**
  * Test Planet functionality.
  */
-public class PlanetFunctionalTests extends TestCase {
+//@ExtendWith(DerbyExtension.class)
+public class PlanetFunctionalTests  {
     
     public static Log log = LogFactory.getLog(PlanetFunctionalTests.class);
     
     private Planet testPlanet = null;
     
-    
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         // setup planet
         TestUtils.setupWeblogger();
 
         testPlanet = TestUtils.setupPlanet("planetFuncTest");
     }
     
-    
-    protected void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() throws Exception {
         TestUtils.teardownPlanet(testPlanet.getId());
     }
     
@@ -51,27 +60,25 @@ public class PlanetFunctionalTests extends TestCase {
     /**
      * Test lookup mechanisms.
      */
+    @Test
     public void testPlanetLookups() throws Exception {
         
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         
-        Planet planet = null;
-        
         // by id
-        planet = mgr.getWebloggerById(testPlanet.getId());
+        Planet planet = mgr.getWebloggerById(testPlanet.getId());
         assertNotNull(planet);
         assertEquals("planetFuncTest", planet.getHandle());
         
         // by handle
-        planet = null;
         planet = mgr.getWeblogger("planetFuncTest");
         assertNotNull(planet);
         assertEquals("planetFuncTest", planet.getHandle());
         
-        // all planets
+        // all planets (should be 2, the default and the one we created)
         List planets = mgr.getWebloggers();
         assertNotNull(planets);
-        assertEquals(1, planets.size());
+        assertEquals(2, planets.size());
     }
     
 }

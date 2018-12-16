@@ -18,21 +18,25 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 /**
  * Test folder business functions and lookups.
  */
-public class FolderFunctionalityTest extends TestCase {
+public class FolderFunctionalityTest  {
     
     public static Log log = LogFactory.getLog(FolderFunctionalityTest.class);
     
@@ -42,10 +46,12 @@ public class FolderFunctionalityTest extends TestCase {
     WeblogBookmarkFolder f2 = null;
     WeblogBookmarkFolder f3 = null;
     WeblogBookmarkFolder testFolder = null;
-    
+
+
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @BeforeEach
     public void setUp() throws Exception {
         
         log.info("BEGIN");
@@ -74,6 +80,7 @@ public class FolderFunctionalityTest extends TestCase {
         log.info("END");
     }
     
+    @AfterEach
     public void tearDown() throws Exception {
         
         log.info("BEGIN");
@@ -94,6 +101,7 @@ public class FolderFunctionalityTest extends TestCase {
     /**
      * Test the hasBookmarkFolder() method on Weblog.
      */
+    @Test
     public void testHasFolder() throws Exception {
         
         log.info("BEGIN");
@@ -110,6 +118,7 @@ public class FolderFunctionalityTest extends TestCase {
     /** 
      * Ensure that duplicate folder name will throw WebloggerException 
      */
+    @Test
     public void testUniquenessOfFolderNames() throws Exception {
         
         log.info("BEGIN");
@@ -144,6 +153,7 @@ public class FolderFunctionalityTest extends TestCase {
     /**
      * Test folder lookup by id.
      */
+    @Test
     public void testLookupFolderById() throws Exception {
         
         log.info("BEGIN");
@@ -162,6 +172,7 @@ public class FolderFunctionalityTest extends TestCase {
     /**
      * Test folder lookup by id.
      */
+    @Test
     public void testLookupFolderByName() throws Exception {
         
         log.info("BEGIN");
@@ -184,8 +195,8 @@ public class FolderFunctionalityTest extends TestCase {
         
         log.info("END");
     }
-    
-    
+
+    @Test
     public void testLookupAllFoldersByWeblog() throws Exception {
         
         log.info("BEGIN");

@@ -18,19 +18,22 @@
 
 package org.apache.roller.weblogger.business;
 
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test WeblogCategory CRUD actions.
  */
-public class WeblogCategoryCRUDTest extends TestCase {
+public class WeblogCategoryCRUDTest  {
     
     public static Log log = LogFactory.getLog(WeblogCategoryCRUDTest.class);
     
@@ -41,6 +44,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @BeforeEach
     public void setUp() {
         
         log.info("BEGIN");
@@ -58,7 +62,8 @@ public class WeblogCategoryCRUDTest extends TestCase {
         
         log.info("END");
     }
-    
+
+    @AfterEach
     public void tearDown() {
         
         log.info("BEGIN");
@@ -78,6 +83,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
     /**
      * Test WeblogCategory.equals() method.
      */
+    @Test
     public void testWeblogCategoryEquality() throws Exception {
         
         log.info("BEGIN");
@@ -99,6 +105,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
+    @Test
     public void testBasicCRUD() throws Exception {
         
         log.info("BEGIN");
@@ -159,6 +166,7 @@ public class WeblogCategoryCRUDTest extends TestCase {
     /**
      * Make sure that deleting a category deletes all child categories.
      */
+    @Test
     public void testCategoryCascadingDelete() throws Exception {
         
         log.info("BEGIN");

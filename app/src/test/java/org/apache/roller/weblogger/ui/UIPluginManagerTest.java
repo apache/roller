@@ -18,37 +18,22 @@
 
 package org.apache.roller.weblogger.ui;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test Plugin Management business layer operations.
  */
-public class UIPluginManagerTest extends TestCase {
+public class UIPluginManagerTest  {
     
     private static Log log = LogFactory.getLog(UIPluginManagerTest.class);
     
-    
-    public UIPluginManagerTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(UIPluginManagerTest.class);
-    }
-    
-    
-    public void setUp() throws Exception { }
-    public void tearDown() throws Exception { }
-    
-    
+    @Test
     public void testEntryEditors() throws Exception {
     	log.debug("Start");
         

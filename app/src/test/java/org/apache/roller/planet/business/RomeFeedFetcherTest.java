@@ -16,40 +16,40 @@
 
 package org.apache.roller.planet.business;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.business.fetcher.FetcherException;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.junit.Ignore;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
  * Test database implementation of PlanetManager.
  */
-@Ignore("Until rollerweblogger.org sorts out SSL issues")
-public class RomeFeedFetcherTest extends TestCase {
+public class RomeFeedFetcherTest  {
     
     public static Log log = LogFactory.getLog(RomeFeedFetcherTest.class);
     
     String feed_url = "https://rollerweblogger.org/roller/feed/entries/atom";
     
-    
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         // setup planet
         TestUtils.setupWeblogger();
     }
     
-    
-    protected void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() throws Exception {
     }
-    
-    
+
+    @Test
     public void testFetchFeed() throws FetcherException {
         try {
             FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
@@ -68,8 +68,9 @@ public class RomeFeedFetcherTest extends TestCase {
             throw ex;
         }
     }
-    
-    
+
+
+    @Test
     public void testFetchFeedConditionally() throws FetcherException {
         try {
             FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();

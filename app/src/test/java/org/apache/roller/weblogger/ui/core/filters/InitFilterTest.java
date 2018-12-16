@@ -18,15 +18,19 @@
 
 package org.apache.roller.weblogger.ui.core.filters;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 /**
  * @author Kohei Nozaki
  */
-public class InitFilterTest extends TestCase {
+public class InitFilterTest  {
 
     private static final String SERVER_NAME = "roller.example.com";
 
+    @Test
     public void testGetAbsoluteUrlOnRootWithHttp() throws Exception {
         boolean secure = false;
         String contextPath = "";
@@ -37,6 +41,7 @@ public class InitFilterTest extends TestCase {
         assertEquals("http://roller.example.com", absoluteUrl);
     }
 
+    @Test
     public void testGetAbsoluteUrlOnRootWithHttps() throws Exception {
         boolean secure = true;
         String contextPath = "";
@@ -47,6 +52,7 @@ public class InitFilterTest extends TestCase {
         assertEquals("http://roller.example.com", absoluteUrl);
     }
 
+    @Test
     public void testGetAbsoluteUrlAgainstTop() throws Exception {
         boolean secure = false;
         String contextPath = "/roller";
@@ -57,6 +63,7 @@ public class InitFilterTest extends TestCase {
         assertEquals("http://roller.example.com/roller", absoluteUrl);
     }
 
+    @Test
     public void testGetAbsoluteUrlAgainstPermalink() throws Exception {
         boolean secure = false;
         String contextPath = "/roller";
@@ -67,6 +74,7 @@ public class InitFilterTest extends TestCase {
         assertEquals("http://roller.example.com/roller", absoluteUrl);
     }
 
+    @Test
     public void testRemoveTrailingSlash() throws Exception {
         assertEquals("http://www.example.com", InitFilter.removeTrailingSlash("http://www.example.com/"));
         assertEquals("http://www.example.com", InitFilter.removeTrailingSlash("http://www.example.com"));

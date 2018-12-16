@@ -18,21 +18,25 @@
 
 package org.apache.roller.weblogger.business.jpa;
 
-import junit.framework.TestCase;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test Weblogger Bookmark Management.
  */
-public class JPAOAuthManagerTest extends TestCase {    
+public class JPAOAuthManagerTest  {
     public static Log log = LogFactory.getLog(JPAOAuthManagerTest.class);
 
+    @BeforeEach
     public void setUp() throws Exception {
         
         // setup weblogger
@@ -45,7 +49,8 @@ public class JPAOAuthManagerTest extends TestCase {
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
         
         try {
@@ -56,6 +61,7 @@ public class JPAOAuthManagerTest extends TestCase {
         }
     }
 
+    @Test
     public void testCRUD() throws Exception {
         JPAOAuthManagerImpl omgr = (JPAOAuthManagerImpl)
             WebloggerFactory.getWeblogger().getOAuthManager();

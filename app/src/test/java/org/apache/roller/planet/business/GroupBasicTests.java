@@ -16,32 +16,37 @@
 
 package org.apache.roller.planet.business;
 
-import junit.framework.TestCase;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
  * Test Group CRUD.
  */
-public class GroupBasicTests extends TestCase {
+public class GroupBasicTests  {
     
     private Planet testPlanet = null;
     
-    
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         // setup planet
         TestUtils.setupWeblogger();
+        testPlanet = TestUtils.setupPlanet("planetFuncTest");
     }
     
-    
-    protected void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() throws Exception {
         TestUtils.teardownPlanet(testPlanet.getId());
     }
     
-    
+    @Test
     public void testGroupCRUD() throws Exception {
         
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();

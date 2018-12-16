@@ -17,44 +17,39 @@
 */
 package org.apache.roller.weblogger.business;
 
-import java.sql.Timestamp;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.SearchOperation;
-import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.sql.Timestamp;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test Search Manager business layer operations.
  */
-public class IndexManagerTest extends TestCase {
+public class IndexManagerTest  {
     User testUser = null;
     Weblog testWeblog = null;
     public static Log log = LogFactory.getLog(IndexManagerTest.class);    
 
-    public IndexManagerTest(String name) {
-        super(name);
-    }
-        
-    public static Test suite() {
-        return new TestSuite(IndexManagerTest.class);
-    }
-
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @BeforeEach
     public void setUp() throws Exception {
         
         // setup weblogger
@@ -73,7 +68,8 @@ public class IndexManagerTest extends TestCase {
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
         
         try {
@@ -85,7 +81,8 @@ public class IndexManagerTest extends TestCase {
             throw new Exception("Test teardown failed", ex);
         }
     }
-        
+
+    @Test
     public void testSearch() throws Exception {
         WeblogEntryManager wem = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 

@@ -18,30 +18,25 @@
 
 package org.apache.roller.weblogger.business;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.pojos.*;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
-import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.Weblog;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test Comment related business operations.
  *
  * That includes:
  */
-public class CommentTest extends TestCase {
+public class CommentTest  {
     
     public static Log log = LogFactory.getLog(CommentTest.class);
     
@@ -49,17 +44,7 @@ public class CommentTest extends TestCase {
     Weblog testWeblog = null;
     WeblogEntry testEntry = null;
     
-    
-    public CommentTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(CommentTest.class);
-    }
-    
-    
+
     /**
      * All tests in this suite require a user, weblog, and an entry.
      */

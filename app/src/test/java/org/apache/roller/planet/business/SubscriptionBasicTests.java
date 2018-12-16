@@ -16,18 +16,20 @@
 
 package org.apache.roller.planet.business;
 
-import junit.framework.TestCase;
-import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
  * Test Subscription CRUD.
  */
-public class SubscriptionBasicTests extends TestCase {
+public class SubscriptionBasicTests  {
     
-    
+    @Test
     public void testSubscriptionCRUD() throws Exception {
         
         // setup planet

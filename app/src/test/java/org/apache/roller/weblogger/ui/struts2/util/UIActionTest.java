@@ -18,21 +18,14 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class UIActionTest extends TestCase {
+public class UIActionTest  {
 
-    public UIActionTest() {
-    }
-
-    public static Test suite() {
-        return new TestSuite(UIActionTest.class);
-    }
-
+    @Test
     public void testCleanTextEmpty() {
         assertEquals(null,UIAction.cleanTextKey(null));
         assertEquals("",UIAction.cleanTextKey(""));
@@ -40,6 +33,7 @@ public class UIActionTest extends TestCase {
         assertEquals("",UIAction.cleanTextArg(""));
     }
 
+    @Test
     public void testCleanTextKey() {
         assertEquals(null,UIAction.cleanTextKey(null));
         assertEquals("",UIAction.cleanTextKey(""));
@@ -58,6 +52,7 @@ public class UIActionTest extends TestCase {
         assertEquals("", UIAction.cleanTextKey("something %{foo} more"));
     }
 
+    @Test
     public void testCleanTextArg() {
         assertEquals("&lt;i&gt;some text&lt;/i&gt;",UIAction.cleanTextArg("<i>some text</i>"));
         assertEquals("&lt;i&gt;some ${text}&lt;/i&gt;",UIAction.cleanTextArg("<i>some ${text}</i>"));

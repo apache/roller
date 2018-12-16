@@ -17,41 +17,28 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.io.File;
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.jpa.JPAMediaFileManagerImpl;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileDirectory;
-import org.apache.roller.weblogger.pojos.MediaFileFilter;
+import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.pojos.MediaFileFilter.MediaFileOrder;
 import org.apache.roller.weblogger.pojos.MediaFileFilter.SizeFilterType;
-import org.apache.roller.weblogger.pojos.MediaFileType;
-import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
-import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.sql.Timestamp;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test media file related business operations.
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MediaFileTest extends TestCase {
+public class MediaFileTest  {
 
     public static Log log = LogFactory.getLog(MediaFileTest.class);
     // static final String runtimeEnv;
@@ -62,8 +49,6 @@ public class MediaFileTest extends TestCase {
 
     public void setUp() throws Exception {
         TestUtils.setupWeblogger();
-       // assertEquals(0L, WebloggerFactory.getWeblogger().getWeblogManager()
-       //         .getWeblogCount());
     }
 
     public void tearDown() throws Exception {
@@ -90,7 +75,7 @@ public class MediaFileTest extends TestCase {
             throw new Exception("Test setup failed", ex);
         }
 
-        /**
+        /*
          * Real test starts here.
          */
         MediaFileManager mfMgr = WebloggerFactory.getWeblogger()
@@ -201,6 +186,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test getting list of all directories for a given user.
      */
+    @Test
     public void testGetMediaFileDirectories() throws Exception {
 
         User testUser = null;
@@ -275,6 +261,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test deletion of media file
      */
+    @Test
     public void testDeleteMediaFile() throws Exception {
         User testUser;
         Weblog testWeblog;
@@ -345,6 +332,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test creation of media file.
      */
+    @Test
     public void testCreateMediaFile() throws Exception {
 
         User testUser;
@@ -400,6 +388,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test searching media file.
      */
+    @Test
     public void testSearchMediaFile() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
@@ -624,6 +613,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test searching media file with paging logic.
      */
+    @Test
     public void testSearchMediaFilePaging() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
@@ -714,6 +704,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test searching media file with paging logic.
      */
+    @Test
     public void testSearchMediaFileOrderBy() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
@@ -803,6 +794,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test media file update
      */
+    @Test
     public void testUpdateMediaFile() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
@@ -870,6 +862,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test media file and directory gets
      */
+    @Test
     public void testGetDirectoryContents() throws Exception {
         User testUser = null;
         Weblog testWeblog = null;
@@ -957,6 +950,7 @@ public class MediaFileTest extends TestCase {
     /**
      * Test moving files across directories.
      */
+    @Test
     public void testMoveDirectoryContents() throws Exception {
 
         User testUser = null;
@@ -1053,6 +1047,7 @@ public class MediaFileTest extends TestCase {
         }
     }
 
+    @Test
     public void testStorageUpgrade() throws Exception {
         User testUser = null;
         Weblog testWeblog1 = null;
@@ -1079,18 +1074,18 @@ public class MediaFileTest extends TestCase {
                     .getMediaFileManager();
             JPAMediaFileManagerImpl mmgr = (JPAMediaFileManagerImpl) mgr;
 
-            assertTrue("Upgrade required", mmgr.isFileStorageUpgradeRequired());
+            assertTrue(mmgr.isFileStorageUpgradeRequired(), "Upgrade required" );
 
             mmgr.upgradeFileStorage();
             TestUtils.endSession(true);
 
-            assertFalse("Upgrade required", mmgr.isFileStorageUpgradeRequired());
+            assertFalse(mmgr.isFileStorageUpgradeRequired(), "Upgrade required" );
 
             // now, let's check to see if migration was successful
 
             MediaFileDirectory root1 = mgr
                     .getDefaultMediaFileDirectory(testWeblog1);
-            assertNotNull("testblog1's mediafile dir exists", root1);
+            assertNotNull(root1, "testblog1's mediafile dir exists" );
             assertNotNull(mgr.getMediaFileByPath(testWeblog1, "/sub1/hawk.jpg"));
             assertNotNull(mgr.getMediaFileByPath(testWeblog1,
                     "/sub2/nasa.jpg"));
@@ -1102,7 +1097,7 @@ public class MediaFileTest extends TestCase {
 
             MediaFileDirectory root2 = mgr
                     .getDefaultMediaFileDirectory(testWeblog2);
-            assertNotNull("testblog2's mediafile dir exists", root2);
+            assertNotNull(root2, "testblog2's mediafile dir exists");
             assertNotNull(root2.getMediaFile("amsterdam.jpg"));
             assertNotNull(root2.getMediaFile("p47-thunderbolt.jpg"));
             assertNotNull(root2.getMediaFile("rollerwiki.png"));
@@ -1133,7 +1128,7 @@ public class MediaFileTest extends TestCase {
      * 
      * This test fails but it should not, so Z'ed out not to run.
      */
-    public void ZtestDirectoryDeleteAssociation() throws Exception {
+    public void testDirectoryDeleteAssociation() throws Exception {
 
         User testUser = null;
         Weblog testWeblog = null;

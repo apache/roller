@@ -457,8 +457,8 @@ limitations under the License.
         <!-- Test deps -->
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -641,7 +641,7 @@ limitations under the License.
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.17</version>
+                <version>2.22.0</version>
                 <configuration>
                     <systemProperties>
                         <property>
@@ -649,9 +649,6 @@ limitations under the License.
                             <value>${basedir}/target</value>
                         </property>
                     </systemProperties>
-                    <!--excludes>
-                        <exclude>**/??.java</exclude>
-                    </excludes-->
                 </configuration>
             </plugin>
 

@@ -19,34 +19,30 @@
 package org.apache.roller.weblogger.business;
 
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.pojos.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class ThemeManagerTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class ThemeManagerTest  {
     public static Log log = LogFactory.getLog(ThemeManagerTest.class);
 
-    public ThemeManagerTest(String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(CustomTemplateRenditionTest.class);
-    }
-
-
+    @BeforeEach
     public void setUp() throws Exception {
         TestUtils.setupWeblogger();
     }
 
+    @AfterEach
     public void tearDown() throws Exception {
     }
 
+    @Test
     public void testThemeAssumptions() throws Exception {
 
         ThemeManager themeManager = WebloggerFactory.getWeblogger().getThemeManager();

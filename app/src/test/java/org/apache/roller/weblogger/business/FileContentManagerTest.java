@@ -17,13 +17,6 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.io.InputStream;
-import java.util.Map;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
@@ -32,25 +25,25 @@ import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.InputStream;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test File Management business layer operations.
  */
-public class FileContentManagerTest extends TestCase {
+public class FileContentManagerTest  {
 
     private static Log log = LogFactory.getLog(FileContentManagerTest.class);
     User testUser = null;
     Weblog testWeblog = null;
 
-    public FileContentManagerTest(String name) {
-        super(name);
-    }
-
-    public static Test suite() {
-        return new TestSuite(FileContentManagerTest.class);
-    }
-
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
 
         // setup weblogger
@@ -58,7 +51,7 @@ public class FileContentManagerTest extends TestCase {
 
     }
 
-    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
         Map config = pmgr.getProperties();
@@ -73,6 +66,7 @@ public class FileContentManagerTest extends TestCase {
     /**
      * Test simple file save/delete.
      */
+    @Test
     public void testFileCRUD() throws Exception {
 
         try {
@@ -99,9 +93,9 @@ public class FileContentManagerTest extends TestCase {
         // File should not exist initially
         try {
             FileContent fileContent = fmgr.getFileContent(testWeblog, "bookmarks-file-id");
-            assertTrue("Non-existant file retrieved without any exception", false);
+            assertTrue(false, "Non-existant file retrieved without any exception");
         } catch (FileNotFoundException e) {
-            assertTrue("Exception thrown for non-existant file as expected", true);
+            assertTrue(true, "Exception thrown for non-existant file as expected");
         }
 
         // store a file
@@ -119,9 +113,9 @@ public class FileContentManagerTest extends TestCase {
         // File should not exist after delete
         try {
             FileContent fileContent = fmgr.getFileContent(testWeblog, "bookmarks-file-id");
-            assertTrue("Non-existant file retrieved without any exception", false);
+            assertTrue(false, "Non-existant file retrieved without any exception");
         } catch (FileNotFoundException e) {
-            assertTrue("Exception thrown for non-existant file as expected", true);
+            assertTrue(true, "Exception thrown for non-existant file as expected");
         }
 
         TestUtils.endSession(true);
@@ -134,6 +128,7 @@ public class FileContentManagerTest extends TestCase {
      *
      * This should test all conditions where a save should fail.
      */
+    @Test
     public void testCanSave() throws Exception {
 
         try {
