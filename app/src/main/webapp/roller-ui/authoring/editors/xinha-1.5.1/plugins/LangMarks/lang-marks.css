@@ -1,0 +1,40 @@
+span.haslang {
+	border-bottom: 1px dashed #aaa;
+	white-space : nowrap;
+}
+
+
+
+span[lang]::after {
+	content: attr(lang);
+	text-transform: uppercase;
+	font-family: sans-serif;
+	color: white;
+	background: red;
+	border: 1px solid red;
+	font-size: x-small;
+	font-weight: normal;
+	vertical-align: top;
+}
+
+/*
+ * NOTE: The "proper" way to do this is with a CSS namespace
+ * @namespace xml "http://www.w3.org/XML/1998/namespace";
+ * and putting xmlns:xml="http://www.w3.org/XML/1998/namespace"
+ * on the root <html> element or the <span> itself, then using 
+ * span[xml|lang] as the selector, but this simply doesn't work 
+ * in most browsers.  Which sucks.
+ */
+
+span[xml\:lang]::after {
+  content: attr(xml\:lang);
+  text-transform: uppercase;
+  font-family: sans-serif;
+  color: white;
+  background: red;
+  border: 1px solid red;
+  font-size: x-small;
+  font-weight: normal;
+  vertical-align: top;
+}
+
