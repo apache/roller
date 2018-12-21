@@ -31,9 +31,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 
-public class DerbyExtension implements BeforeAllCallback, AfterAllCallback {
+public class DerbyJunitExtension implements BeforeAllCallback, AfterAllCallback {
 
-    private static Log log = LogFactory.getLog(DerbyExtension.class);
+    private static Log log = LogFactory.getLog(DerbyJunitExtension.class);
 
     private static DerbyStartStopper derbyStartStopper =
         new DerbyStartStopper("target/derby-system", "target/dbscripts", "4224");

@@ -19,13 +19,11 @@ package org.apache.roller.planet.business;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.pojos.Planet;
-import org.apache.roller.testing.DerbyExtension;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -36,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Test Planet functionality.
  */
-//@ExtendWith(DerbyExtension.class)
+//@ExtendWith(DerbyJunitExtension.class)
 public class PlanetFunctionalTests  {
     
     public static Log log = LogFactory.getLog(PlanetFunctionalTests.class);
