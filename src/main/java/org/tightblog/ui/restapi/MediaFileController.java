@@ -28,6 +28,7 @@ import org.tightblog.repository.MediaDirectoryRepository;
 import org.tightblog.repository.MediaFileRepository;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
+import org.tightblog.util.ValidationError;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -140,25 +141,25 @@ public class MediaFileController {
             throws ServletException {
 
         MediaFile mf = mediaFileRepository.findByIdOrNull(mediaFileData.getId());
-        boolean newMediaFile = mf == null;
 
         // Check user permissions
         User user = userRepository.findEnabledByUserName(p.getName());
 
-        if (newMediaFile) {
+        // new media file?
+        if (mf == null) {
             if (uploadedFile == null) {
-                return ResponseEntity.badRequest().body("Upload File must be provided.");
+                return ValidationError.badRequestFromSingleError("Upload File must be provided.");
             }
 
             mf = new MediaFile();
             mf.setCreator(user);
 
             if (mediaFileData.getDirectory() == null) {
-                return ResponseEntity.badRequest().body("Media Directory was not provided.");
+                return ValidationError.badRequestFromSingleError("Media Directory was not provided.");
             }
             MediaDirectory dir = mediaDirectoryRepository.findByIdOrNull(mediaFileData.getDirectory().getId());
             if (dir == null) {
-                return ResponseEntity.badRequest().body("Specified media directory could not be found.");
+                return ValidationError.badRequestFromSingleError("Specified media directory could not be found.");
             }
             mf.setDirectory(dir);
         }
@@ -171,7 +172,7 @@ public class MediaFileController {
 
         MediaFile fileWithSameName = mf.getDirectory().getMediaFile(mediaFileData.getName());
         if (fileWithSameName != null && !fileWithSameName.getId().equals(mediaFileData.getId())) {
-            return ResponseEntity.badRequest().body(messages.getMessage("mediaFile.error.duplicateName",
+            return ValidationError.badRequestFromSingleError(messages.getMessage("mediaFile.error.duplicateName",
                     null, locale));
         }
 
@@ -185,19 +186,14 @@ public class MediaFileController {
         Map<String, List<String>> errors = new HashMap<>();
 
         try {
-            // check if uploadedFile provided, update if so
-            if (uploadedFile != null) {
-                mf.setLength(uploadedFile.getSize());
-                mf.setContentType(uploadedFile.getContentType());
-                mf.setCreator(user);
-            }
-
-            mediaManager.saveMediaFile(mf, uploadedFile == null ? null : uploadedFile.getInputStream(), errors);
+            mediaManager.saveMediaFile(mf, uploadedFile, user, errors);
 
             if (errors.size() > 0) {
                 Map.Entry<String, List<String>> msg = errors.entrySet().iterator().next();
-                return ResponseEntity.badRequest().body(messages.getMessage(msg.getKey(), msg.getValue().toArray(),
-                        locale));
+                String message = messages.getMessage(msg.getKey(),
+                        msg.getValue() == null ? new String[0] : msg.getValue().toArray(),
+                        locale);
+                return ValidationError.badRequestFromSingleError(message);
             }
 
             return ResponseEntity.ok(mf);
@@ -219,7 +215,7 @@ public class MediaFileController {
                     response.setStatus(HttpServletResponse.SC_OK);
                     return ResponseEntity.ok(newDir.getId());
                 } catch (IllegalArgumentException e) {
-                    return ResponseEntity.badRequest().body(messages.getMessage(e.getMessage(), null, locale));
+                    return ValidationError.badRequestFromSingleError(messages.getMessage(e.getMessage(), null, locale));
                 }
             } else {
                 return ResponseEntity.status(403).body(messages.getMessage("error.title.403", null, locale));

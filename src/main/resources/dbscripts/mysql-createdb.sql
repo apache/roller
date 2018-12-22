@@ -201,7 +201,6 @@ create table weblogger_properties (
     autodelete_spam        tinyint(1) default 0 not null,
     users_comment_notifications tinyint(1) default 1 not null,
     comment_spam_filter    text,
-    users_upload_media_files tinyint(1) default 1 not null,
     max_file_uploads_size_mb integer default 20 not null,
     last_weblog_change     datetime(3) default CURRENT_TIMESTAMP(3) not null
 );

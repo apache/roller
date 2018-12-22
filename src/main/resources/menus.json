@@ -76,6 +76,7 @@
             "action": "mediaFileView",
             "actionPath": "/tb-ui/app/authoring/",
             "titleKey": "mediaFileView.title",
+            "enabledProperty": "media.file.showTab",
             "weblogRole": "POST",
             "subActions": [
               "mediaFileAdd",

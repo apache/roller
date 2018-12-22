@@ -344,7 +344,7 @@ public class UserController {
                     .filter(r -> r.getWeblogRole().equals(WeblogRole.OWNER))
                     .collect(Collectors.toList());
             if (owners.size() < 1) {
-                return ResponseEntity.badRequest().body(messages.getMessage("members.oneAdminRequired", null, locale));
+                return ValidationError.badRequestFromSingleError(messages.getMessage("members.oneAdminRequired", null, locale));
             }
 
             // one iteration for each line (user) in the members table
@@ -543,8 +543,9 @@ public class UserController {
 
             UserWeblogRole roleChk = userWeblogRoleRepository.findByUserAndWeblog(newMember, weblog);
             if (roleChk != null) {
-                return ResponseEntity.badRequest().body(messages.getMessage(
+                ValidationError error = new ValidationError(messages.getMessage(
                         "members.userAlreadyMember", null, locale));
+                return ResponseEntity.badRequest().body(error);
             }
             userManager.grantWeblogRole(newMember, weblog, role);
             return ResponseEntity.ok(messages.getMessage("members.userAdded", null, locale));

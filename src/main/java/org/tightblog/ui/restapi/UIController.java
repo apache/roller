@@ -92,6 +92,9 @@ public class UIController {
     @Value("${weblogger.revision}")
     private String tightblogRevision;
 
+    @Value("${media.file.showTab}")
+    boolean showMediaFileTab;
+
     @RequestMapping(value = "/login")
     public ModelAndView login(@RequestParam(required = false) String activationCode,
                               @RequestParam(required = false) Boolean error,
@@ -212,17 +215,19 @@ public class UIController {
 
     @RequestMapping(value = "/admin/cachedData")
     public ModelAndView cachedData(Principal principal) {
-        return getAdminPage(principal, "cachedData");
+        return getAdminPage(principal, "cachedData", null);
     }
 
     @RequestMapping(value = "/admin/globalConfig")
     public ModelAndView globalConfig(Principal principal) {
-        return getAdminPage(principal, "globalConfig");
+        Map<String, Object> myMap = new HashMap<>();
+        myMap.put("showMediaFileTab", showMediaFileTab);
+        return getAdminPage(principal, "globalConfig", myMap);
     }
 
     @RequestMapping(value = "/admin/userAdmin")
     public ModelAndView userAdmin(Principal principal) {
-        return getAdminPage(principal, "userAdmin");
+        return getAdminPage(principal, "userAdmin", null);
     }
 
     @RequestMapping(value = "/profile")
@@ -301,12 +306,16 @@ public class UIController {
 
     @RequestMapping(value = "/authoring/entryAdd")
     public ModelAndView entryAdd(Principal principal, @RequestParam String weblogId) {
-        return getBlogContributorPage(principal, null, weblogId, "entryAdd");
+        Map<String, Object> myMap = new HashMap<>();
+        myMap.put("showMediaFileTab", showMediaFileTab);
+        return getBlogContributorPage(principal, myMap, weblogId, "entryAdd");
     }
 
     @RequestMapping(value = "/authoring/entryEdit")
     public ModelAndView entryEdit(Principal principal, @RequestParam String weblogId) {
-        return getBlogContributorPage(principal, null, weblogId, "entryEdit");
+        Map<String, Object> myMap = new HashMap<>();
+        myMap.put("showMediaFileTab", showMediaFileTab);
+        return getBlogContributorPage(principal, myMap, weblogId, "entryEdit");
     }
 
     @RequestMapping(value = "/authoring/entries")
@@ -365,9 +374,9 @@ public class UIController {
         return tightblogModelAndView("mainMenu", myMap, principal, null);
     }
 
-    private ModelAndView getAdminPage(Principal principal, String actionName) {
+    private ModelAndView getAdminPage(Principal principal, String actionName, Map<String, Object> propertyMap) {
         User user = userRepository.findEnabledByUserName(principal.getName());
-        Map<String, Object> myMap = new HashMap<>();
+        Map<String, Object> myMap = (propertyMap == null) ? new HashMap<>() : propertyMap;
         myMap.put("menu", getMenu(user, actionName, WeblogRole.NOBLOGNEEDED));
         return tightblogModelAndView(actionName, myMap, user, null);
     }

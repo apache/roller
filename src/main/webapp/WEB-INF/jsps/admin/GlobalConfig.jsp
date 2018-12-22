@@ -68,16 +68,13 @@
         <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersCreateBlogs"></td>
         <td class="description"><fmt:message key="globalConfig.tip.newUsersCreateBlogs"/></td>
     </tr>
-    <tr>
-        <td class="label"><fmt:message key="globalConfig.enableFileUploads" /></td>
-        <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersUploadMediaFiles"></td>
-        <td class="description"><fmt:message key="globalConfig.tip.enableFileUploads"/></td>
-    </tr>
-    <tr>
-        <td class="label"><fmt:message key="globalConfig.maxMediaFileAllocationMb" /></td>
-        <td class="field"><input type="number" ng-model="ctrl.webloggerProps.maxFileUploadsSizeMb" size='35'></td>
-        <td class="description"><fmt:message key="globalConfig.tip.maxMediaFileAllocationMb"/></td>
-    </tr>
+    <c:if test="${showMediaFileTab}">
+        <tr>
+            <td class="label"><fmt:message key="globalConfig.maxMediaFileAllocationMb" /></td>
+            <td class="field"><input type="number" ng-model="ctrl.webloggerProps.maxFileUploadsSizeMb" size='35'></td>
+            <td class="description"><fmt:message key="globalConfig.tip.maxMediaFileAllocationMb"/></td>
+        </tr>
+    </c:if>
     <tr>
         <td colspan="2">&nbsp;</td>
     </tr>

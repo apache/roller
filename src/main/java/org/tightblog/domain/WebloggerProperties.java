@@ -31,7 +31,6 @@ public class WebloggerProperties {
     private boolean autodeleteSpam;
     private boolean usersCommentNotifications;
     private String commentSpamFilter;
-    private boolean usersUploadMediaFiles;
     private int maxFileUploadsSizeMb;
     private Instant lastWeblogChange;
 
@@ -174,15 +173,6 @@ public class WebloggerProperties {
 
     public void setCommentSpamFilter(String commentSpamFilter) {
         this.commentSpamFilter = commentSpamFilter;
-    }
-
-    @Column(name = "users_upload_media_files")
-    public boolean isUsersUploadMediaFiles() {
-        return usersUploadMediaFiles;
-    }
-
-    public void setUsersUploadMediaFiles(boolean usersUploadMediaFiles) {
-        this.usersUploadMediaFiles = usersUploadMediaFiles;
     }
 
     @Column(name = "max_file_uploads_size_mb")

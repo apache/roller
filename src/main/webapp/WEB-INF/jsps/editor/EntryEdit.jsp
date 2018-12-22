@@ -171,9 +171,11 @@
     <div id="accordion">
         <h3>
             <fmt:message key="entryEdit.content" />
-            <span style="font-weight:normal;float:right;">
-                <a href="#" onClick="onClickAddImage();"><fmt:message key="entryEdit.insertMediaFile" /></a>
-            </span>
+            <c:if test="${showMediaFileTab}">
+                <span style="font-weight:normal;float:right;">
+                    <a href="#" onClick="onClickAddImage();"><fmt:message key="entryEdit.insertMediaFile" /></a>
+                </span>
+            </c:if>
         </h3>
         <div>
 

@@ -27,6 +27,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 import org.tightblog.WebloggerTest;
 import org.tightblog.domain.User;
 import org.tightblog.domain.Weblog;
@@ -36,10 +38,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-/**
- * Test File Management business layer operations.
- */
 public class FileServiceIT extends WebloggerTest {
 
     private static Logger log = LoggerFactory.getLogger(FileServiceIT.class);
@@ -61,25 +62,19 @@ public class FileServiceIT extends WebloggerTest {
     public void tearDown() {
         WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
         props.setMaxFileUploadsSizeMb(30000);
-        props.setUsersUploadMediaFiles(true);
         webloggerPropertiesRepository.saveAndFlush(props);
         weblogManager.removeWeblog(testWeblog);
         userManager.removeUser(testUser);
     }
 
-    /**
-     * Test simple file save/delete.
-     */
     @Test
-    public void testFileCRUD() throws Exception {
+    public void testFileSaveAndDelete() throws Exception {
         WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
-        props.setUsersUploadMediaFiles(true);
         props.setMaxFileUploadsSizeMb(1);
         webloggerPropertiesRepository.saveAndFlush(props);
 
         FileService fileService = new FileService(webloggerPropertiesRepository,
-                storageDir,
-                Set.of("opml"), Set.of(), 3);
+                true, storageDir, Set.of("image/jpeg"), 3);
 
         // File should not exist initially
         WebloggerTest.logExpectedException(log, "FileNotFoundException");
@@ -103,48 +98,45 @@ public class FileServiceIT extends WebloggerTest {
         assertNull("Non-existent file retrieved", test);
     }
 
-    /**
-     * Test FileService.saveFile() checks.
-     *
-     * This should test all conditions where a save should fail.
-     */
     @Test
     public void testCanSave() {
-        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
-        props.setUsersUploadMediaFiles(true);
-        webloggerPropertiesRepository.saveAndFlush(props);
+        FileService fileService = new FileService(webloggerPropertiesRepository,
+                true, storageDir, Set.of("image/*"), 1);
 
-        FileService fileService1 = new FileService(webloggerPropertiesRepository,
-                storageDir,
-                Set.of(), Set.of(), 1);
+        MultipartFile mockMultipartFile = mock(MockMultipartFile.class);
+        when(mockMultipartFile.getSize()).thenReturn(2500000L);
+        when(mockMultipartFile.getContentType()).thenReturn("image/gif");
+        when(mockMultipartFile.getName()).thenReturn("test.gif");
+        when(mockMultipartFile.getOriginalFilename()).thenReturn("test.gif");
 
+        boolean canSave = fileService.canSave(mockMultipartFile, testWeblog.getHandle(), null);
         // file too big
-        boolean canSave = fileService1.canSave(testWeblog, "test.gif", "text/plain", 2500000, null);
         assertFalse(canSave);
 
         // file right size
-        canSave = fileService1.canSave(testWeblog, "test.gif", "text/plain", 500000, null);
+        when(mockMultipartFile.getSize()).thenReturn(500000L);
+        canSave = fileService.canSave(mockMultipartFile, testWeblog.getHandle(), null);
         assertTrue(canSave);
 
-        FileService fileService2 = new FileService(webloggerPropertiesRepository,
-                storageDir,
-                Set.of(), Set.of("gif"), 1);
+        // gifs no longer allowed
+        fileService = new FileService(webloggerPropertiesRepository,
+                true, storageDir, Set.of("image/png"), 1);
 
-        webloggerPropertiesRepository.saveAndFlush(props);
-
-        // forbidden types check should fail
-        canSave = fileService2.canSave(testWeblog, "test.gif", "text/plain", 10, null);
+        canSave = fileService.canSave(mockMultipartFile, testWeblog.getHandle(), null);
         assertFalse(canSave);
 
-        // ok types should pass
-        canSave = fileService2.canSave(testWeblog, "test.png", "text/plain", 10, null);
+        // right-side wildcards work
+        fileService = new FileService(webloggerPropertiesRepository,
+                true, storageDir, Set.of("image/*"), 1);
+
+        canSave = fileService.canSave(mockMultipartFile, testWeblog.getHandle(), null);
         assertTrue(canSave);
 
-        props.setUsersUploadMediaFiles(false);
-        webloggerPropertiesRepository.saveAndFlush(props);
-
         // uploads disabled should fail
-        canSave = fileService1.canSave(testWeblog, "test.gif", "text/plain", 10, null);
+        fileService = new FileService(webloggerPropertiesRepository,
+                false, storageDir, Set.of("image/png"), 1);
+
+        canSave = fileService.canSave(mockMultipartFile, testWeblog.getHandle(), null);
         assertFalse(canSave);
     }
 }

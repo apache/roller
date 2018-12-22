@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.repository.WebloggerPropertiesRepository;
@@ -53,28 +54,30 @@ public class FileService {
     private static Logger log = LoggerFactory.getLogger(FileService.class);
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private String storageDir;
-    private Set<String> allowedExtensions;
-    private Set<String> forbiddenExtensions;
+    private Set<String> allowedMimeTypes;
     private int maxFileSizeMb;
+    private boolean allowUploads;
 
     @Autowired
     public FileService(WebloggerPropertiesRepository webloggerPropertiesRepository,
+                       @Value("${media.file.showTab}") boolean allowUploads,
                        @Value("${mediafiles.storage.dir}") String storageDir,
-                       @Value("#{'${media.file.allowedExtensions}'.split(',')}") Set<String> allowedExtensions,
-                       @Value("#{'${media.file.forbiddenExtensions}'.split(',')}") Set<String> forbiddenExtensions,
+                       @Value("#{'${media.file.allowedMimeTypes}'.split(',')}") Set<String> allowedMimeTypes,
                        @Value("${media.file.maxFileSizeMb:3}") int maxFileSizeMb
                        ) {
 
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
+        this.allowUploads = allowUploads;
         this.storageDir = storageDir;
-        this.allowedExtensions = allowedExtensions;
-        this.forbiddenExtensions = forbiddenExtensions;
+        this.allowedMimeTypes = allowedMimeTypes;
         this.maxFileSizeMb = maxFileSizeMb;
 
-        log.info("Allowed extensions/MIME types for media files = {}", ObjectUtils.isEmpty(allowedExtensions) ?
-                        "ALL" : Arrays.toString(allowedExtensions.toArray()));
-        log.info("Forbidden extensions/MIME types for media files (takes precedence where conflicting with allowed) = {}",
-                ObjectUtils.isEmpty(forbiddenExtensions) ? "NONE" : Arrays.toString(forbiddenExtensions.toArray()));
+        if (allowUploads) {
+            log.info("Allowed MIME types for media files = {}", ObjectUtils.isEmpty(allowedMimeTypes) ?
+                    "NONE (all blocked)" : Arrays.toString(allowedMimeTypes.toArray()));
+        } else {
+            log.info("Property media.file.showTab=false so media file uploading is disabled");
+        }
 
         // Note: System property expansion is now handled by WebloggerStaticConfig.
         if (StringUtils.isEmpty(this.storageDir)) {
@@ -100,7 +103,7 @@ public class FileService {
 
         try {
             // get a reference to the file, checks that file exists & is readable
-            resourceFile = this.getRealFile(weblog, fileId);
+            resourceFile = this.getRealFile(weblog.getHandle(), fileId);
 
             // make sure file is not a directory
             if (resourceFile.isDirectory()) {
@@ -128,7 +131,7 @@ public class FileService {
     public void saveFileContent(Weblog weblog, String fileId, InputStream is) throws IOException {
 
         // make sure uploads area exists for this weblog
-        File dirPath = this.getRealFile(weblog, null);
+        File dirPath = this.getRealFile(weblog.getHandle(), null);
 
         // create File that we are about to save
         File saveFile = new File(dirPath.getAbsolutePath() + File.separator + fileId);
@@ -159,7 +162,7 @@ public class FileService {
     public void deleteFile(Weblog weblog, String fileId) throws IOException {
 
         // get path to delete file, checks that path exists and is readable
-        File delFile = this.getRealFile(weblog, fileId);
+        File delFile = this.getRealFile(weblog.getHandle(), fileId);
 
         if (!delFile.delete()) {
             log.warn("Delete appears to have failed for [{}]", fileId);
@@ -167,48 +170,53 @@ public class FileService {
     }
 
     /**
-     * Determine if file can be saved given current WebloggerStaticConfig settings.
+     * Determine if file can be saved given current blogger settings.
      *
-     * @param weblog      The weblog we are working on.
-     * @param fileName    name of the file to be saved
-     * @param contentType content type of the file
-     * @param fileSize        size of the file in bytes.
+     * @param fileToTest MediaFile attempting to save
      * @param messages    output parameter for resource bundle messages, or null if not necessary to receive them
      * @return true if the file can be saved, false otherwise.
      */
-    public boolean canSave(Weblog weblog, String fileName, String contentType, long fileSize,
-                           Map<String, List<String>> messages) {
+    public boolean canSave(MultipartFile fileToTest, String weblogHandle, Map<String, List<String>> messages) {
 
         WebloggerProperties webloggerProperties = webloggerPropertiesRepository.findOrNull();
 
         // first check, is uploading enabled?
-        if (!webloggerProperties.isUsersUploadMediaFiles()) {
+        if (!allowUploads) {
             if (messages != null) {
                 messages.put("error.upload.disabled", null);
             }
             return false;
         }
 
-        // second check, does upload exceed max size for file?
-        log.debug("File size = {}, Max allowed = {}MB", fileSize, maxFileSizeMb);
-        if (fileSize > maxFileSizeMb * Utilities.ONE_MB_IN_BYTES) {
+        // second check, is upload type allowed?
+        if (!checkFileType(fileToTest.getOriginalFilename(), fileToTest.getContentType())) {
             if (messages != null) {
-                messages.put("error.upload.filemax", Arrays.asList(fileName, Integer.toString(maxFileSizeMb)));
+                messages.put("error.upload.forbiddenFile", Collections.singletonList(fileToTest.getContentType()));
             }
             return false;
         }
 
-        // third check, does file cause weblog to exceed quota?
-        int maxDirMB = webloggerProperties.getMaxFileUploadsSizeMb();
-        long maxDirBytes = (long) (Utilities.ONE_MB_IN_BYTES * maxDirMB);
+        // third check, does upload exceed max size for file?
+        log.debug("File size = {}, Max allowed = {}MB", fileToTest.getSize(), maxFileSizeMb);
+        if (fileToTest.getSize() > maxFileSizeMb * Utilities.ONE_MB_IN_BYTES) {
+            if (messages != null) {
+                messages.put("error.upload.filemax", Collections.singletonList(Integer.toString(maxFileSizeMb)));
+            }
+            return false;
+        }
+
+        // fourth check, does file cause weblog to exceed quota?
+        int maxAllocationMB = webloggerProperties.getMaxFileUploadsSizeMb();
+        long maxAllocationBytes = (long) (Utilities.ONE_MB_IN_BYTES * maxAllocationMB);
+
         try {
-            File storageDirectory = this.getRealFile(weblog, null);
-            long userDirSize = getDirSize(storageDirectory);
-            log.debug("File size = {}, current dir space taken = {}, max allowed = {}MB",
-                    fileSize, userDirSize, maxDirMB);
-            if (userDirSize + fileSize > maxDirBytes) {
+            File storageDirectory = this.getRealFile(weblogHandle, null);
+            long alreadyUsedSpace = getDirSize(storageDirectory);
+            log.debug("File size = {}, current allocation space taken = {}, max allowed = {}MB",
+                    fileToTest.getSize(), alreadyUsedSpace, maxAllocationMB);
+            if (alreadyUsedSpace + fileToTest.getSize() > maxAllocationBytes) {
                 if (messages != null) {
-                    messages.put("error.upload.dirmax", Collections.singletonList(Integer.toString(maxDirMB)));
+                    messages.put("error.upload.blogmax", Collections.singletonList(Integer.toString(maxAllocationMB)));
                 }
                 return false;
             }
@@ -217,14 +225,6 @@ public class FileService {
             // somehow
             // rethrow as a runtime exception
             throw new RuntimeException(ex);
-        }
-
-        // fourth check, is upload type allowed?
-        if (!checkFileType(fileName, contentType)) {
-            if (messages != null) {
-                messages.put("error.upload.forbiddenFile", Arrays.asList(fileName, contentType));
-            }
-            return false;
         }
 
         return true;
@@ -257,11 +257,9 @@ public class FileService {
     }
 
     /**
-     * Return true if file is allowed to be uploaded given specified allowed and
-     * forbidden file types.
+     * Return true if file is allowed to be uploaded given specified allowed MIME types
      */
     private boolean checkFileType(String fileName, String contentType) {
-
         String fileDesc = String.format("Media File %s (content type %s)", fileName, contentType);
 
         // if content type is invalid, reject file
@@ -273,44 +271,14 @@ public class FileService {
         // default to false
         boolean allowFile = false;
 
-        // if no allowedExtensions defined, all all except those listed under forbid.
-        if (ObjectUtils.isEmpty(allowedExtensions)) {
-            allowFile = true;
-        } else {
-            // check file against allowed file extensions
-            for (String extension : allowedExtensions) {
-                if (extension.indexOf('/') == -1) {
-                    // check file extension
-                    if (fileName.toLowerCase().endsWith(extension.toLowerCase())) {
-                        allowFile = true;
-                        break;
-                    }
-                } else if (matchContentType(extension, contentType)) {
-                    // check content type
+        if (!ObjectUtils.isEmpty(allowedMimeTypes)) {
+            for (String allowedMimeType : allowedMimeTypes) {
+                if (matchContentType(contentType, allowedMimeType)) {
                     allowFile = true;
                     break;
                 }
             }
-            log.warn("{} blocked from uploading because not in allowed MIME types/extensions", fileDesc);
-        }
-
-        // Next check file against forbidden file extensions, overrides any allows
-        if (allowFile && !ObjectUtils.isEmpty(forbiddenExtensions)) {
-            for (String extension : forbiddenExtensions) {
-                if (extension.indexOf('/') == -1) {
-                    // check file extension
-                    if (fileName.toLowerCase().endsWith(extension.toLowerCase())) {
-                        allowFile = false;
-                        log.warn("{} blocked from uploading because it has a forbidden extension", fileDesc);
-                        break;
-                    }
-                } else if (matchContentType(extension, contentType)) {
-                    // check content type
-                    allowFile = false;
-                    log.warn("{} blocked from uploading because it has a forbidden contentType", fileDesc);
-                    break;
-                }
-            }
+            log.warn("{} blocked from uploading because not in allowed MIME types", fileDesc);
         }
 
         return allowFile;
@@ -319,25 +287,25 @@ public class FileService {
     /**
      * Super simple contentType range rule matching
      */
-    private boolean matchContentType(String rangeRule, String contentType) {
-        if (rangeRule.equals("*/*")) {
+    private boolean matchContentType(String incomingFileContentType, String allowedMimeType) {
+        if (allowedMimeType.indexOf('/') < 0) {
+            return false;
+        }
+        if (allowedMimeType.equals(incomingFileContentType)) {
             return true;
         }
-        if (rangeRule.equals(contentType)) {
-            return true;
-        }
-        String[] ruleParts = rangeRule.split("/");
-        String[] typeParts = contentType.split("/");
+        String[] ruleParts = allowedMimeType.split("/");
+        String[] typeParts = incomingFileContentType.split("/");
         return ruleParts[0].equals(typeParts[0]) && ruleParts[1].equals("*");
     }
 
     /**
      * Construct the full real path to a resource in a weblog's uploads area.
      */
-    private File getRealFile(Weblog weblog, String fileId) throws IOException {
+    private File getRealFile(String weblogHandle, String fileId) throws IOException {
 
         // make sure uploads area exists for this weblog
-        File weblogDir = new File(this.storageDir + weblog.getHandle());
+        File weblogDir = new File(this.storageDir + weblogHandle);
         if (!weblogDir.exists()) {
             if (!weblogDir.mkdirs()) {
                 throw new IOException("Cannot create directory " + weblogDir.getAbsolutePath());
@@ -367,5 +335,4 @@ public class FileService {
 
         return file;
     }
-
 }

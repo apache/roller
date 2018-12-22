@@ -22,15 +22,16 @@ package org.tightblog.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import org.tightblog.domain.MediaDirectory;
 import org.tightblog.domain.MediaFile;
+import org.tightblog.domain.User;
 import org.tightblog.domain.Weblog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tightblog.repository.MediaDirectoryRepository;
 import org.tightblog.repository.MediaFileRepository;
 import org.tightblog.repository.WeblogRepository;
-import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import javax.imageio.ImageIO;
 import javax.validation.ConstraintViolation;
@@ -45,11 +46,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,20 +63,18 @@ public class MediaManager {
     private MediaDirectoryRepository mediaDirectoryRepository;
     private MediaFileRepository mediaFileRepository;
     private WeblogRepository weblogRepository;
-    private WebloggerPropertiesRepository webloggerPropertiesRepository;
 
     private static Logger log = LoggerFactory.getLogger(MediaManager.class);
 
     @Autowired
     public MediaManager(FileService fileService,
                         MediaDirectoryRepository mediaDirectoryRepository, MediaFileRepository mediaFileRepository,
-                        WeblogRepository weblogRepository,
-                        WebloggerPropertiesRepository webloggerPropertiesRepository) {
+                        WeblogRepository weblogRepository) {
+
         this.fileService = fileService;
         this.mediaDirectoryRepository = mediaDirectoryRepository;
         this.mediaFileRepository = mediaFileRepository;
         this.weblogRepository = weblogRepository;
-        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
     }
 
     /**
@@ -107,10 +104,6 @@ public class MediaManager {
     public MediaDirectory createMediaDirectory(Weblog weblog, String requestedName) {
         requestedName = requestedName.startsWith("/") ? requestedName.substring(1) : requestedName;
 
-        if (!webloggerPropertiesRepository.findOrNull().isUsersUploadMediaFiles()) {
-            throw new IllegalArgumentException("error.upload.disabled");
-        }
-
         MediaDirectory newDirectory;
         if (weblog.hasMediaDirectory(requestedName)) {
             throw new IllegalArgumentException("mediaFileView.directoryCreate.error.exists");
@@ -135,36 +128,34 @@ public class MediaManager {
     /**
      * Update metadata for a media file and content.
      * @param mediaFile - Media File to update
-     * @param updatedStream - if non-null, file's contents will be replaced with the contents of this InputStream.
+     * @param uploadedFile - Multipart File to update if provided.
+     * @param user - User saving the media file
      * @param errors object to receive message bundle keys and argument values or null if not desired to receive them
      */
-    public void saveMediaFile(MediaFile mediaFile, InputStream updatedStream, Map<String, List<String>> errors)
+    public void saveMediaFile(MediaFile mediaFile, MultipartFile uploadedFile, User user, Map<String, List<String>> errors)
             throws IOException {
 
-        Weblog weblog = mediaFile.getDirectory().getWeblog();
+        if (uploadedFile != null) {
+            Weblog weblog = mediaFile.getDirectory().getWeblog();
 
-        if (!fileService.canSave(weblog, mediaFile.getName(),
-                mediaFile.getContentType(), mediaFile.getLength(), errors)) {
-            return;
-        }
-
-        mediaFile.getDirectory().getMediaFiles().add(mediaFile);
-        mediaFile.setLastUpdated(Instant.now());
-
-        if (updatedStream != null) {
-            Map<String, List<String>> msgs = new HashMap<>();
-            if (!fileService.canSave(weblog, mediaFile.getName(),
-                    mediaFile.getContentType(), mediaFile.getLength(), msgs)) {
-                throw new IOException(msgs.toString());
+            if (!fileService.canSave(uploadedFile, mediaFile.getDirectory().getWeblog().getHandle(), errors)) {
+                return;
             }
-            fileService.saveFileContent(weblog, mediaFile.getId(), updatedStream);
+
+            fileService.saveFileContent(weblog, mediaFile.getId(), uploadedFile.getInputStream());
+
+            mediaFile.setContentType(uploadedFile.getContentType());
+            mediaFile.setLength(uploadedFile.getSize());
+            mediaFile.setCreator(user);
 
             if (mediaFile.isImageFile()) {
                 updateThumbnail(mediaFile);
             }
         }
 
-          mediaDirectoryRepository.saveAndFlush(mediaFile.getDirectory());
+        mediaFile.getDirectory().getMediaFiles().add(mediaFile);
+        mediaFile.setLastUpdated(Instant.now());
+        mediaDirectoryRepository.saveAndFlush(mediaFile.getDirectory());
     }
 
     private void updateThumbnail(MediaFile mediaFile) {
@@ -263,6 +254,7 @@ public class MediaManager {
         } catch (Exception e) {
             log.debug("File to be deleted already unavailable in the file store");
         }
+        mediaFile.getDirectory().getMediaFiles().remove(mediaFile);
         mediaFileRepository.delete(mediaFile);
     }
 }

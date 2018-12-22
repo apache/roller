@@ -16,6 +16,7 @@
 package org.tightblog.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,6 +29,10 @@ import java.util.List;
  * http://blog.codeleak.pl/2013/09/request-body-validation-in-spring-mvc-3.2.html
  */
 public class ValidationError {
+
+    public static ResponseEntity<ValidationError> badRequestFromSingleError(String message) {
+        return ResponseEntity.badRequest().body(new ValidationError(message));
+    }
 
     public static ValidationError createValidationError(MethodArgumentNotValidException e) {
         return ValidationError.fromBindingErrors(e.getBindingResult());

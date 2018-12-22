@@ -20,7 +20,7 @@
  */
 package org.tightblog.service;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +28,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.tightblog.WebloggerTest;
 import org.tightblog.domain.MediaDirectory;
 import org.tightblog.domain.MediaFile;
@@ -36,24 +38,19 @@ import org.tightblog.domain.User;
 import org.tightblog.domain.Weblog;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 import org.junit.Test;
 
 import javax.annotation.Resource;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-/**
- * Test media file related business operations.
- */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MediaManagerIT extends WebloggerTest {
 
     private User testUser;
     private Weblog testWeblog;
-
-    private static final String TEST_IMAGE = "/hawk.jpg";
+    private MediaDirectory defaultDirectory;
 
     @Value("${mediafiles.storage.dir}")
     private String mediafileDir;
@@ -70,6 +67,7 @@ public class MediaManagerIT extends WebloggerTest {
         super.setUp();
         testUser = setupUser("mediaFileTestUser");
         testWeblog = setupWeblog("media-file-test-weblog", testUser);
+        defaultDirectory = mediaDirectoryRepository.findByWeblogAndName(testWeblog, "default");
     }
 
     @After
@@ -78,27 +76,30 @@ public class MediaManagerIT extends WebloggerTest {
         userManager.removeUser(testUser);
     }
 
-    /**
-     * Test creation of directory by path
-     */
     @Test
-    public void testCreateMediaDirectoryByPath() {
+    public void testCreateMediaDirectory() {
 
         try {
             mediaManager.createMediaDirectory(testWeblog, "");
             fail("did not fail with invalid name");
-        } catch (IllegalArgumentException e) {
-            assertTrue(true);
+        } catch (IllegalArgumentException ignored) {
         }
 
         try {
             mediaManager.createMediaDirectory(testWeblog, "default");
             fail("did not fail with duplicate name");
-        } catch (IllegalArgumentException e) {
-            assertTrue(true);
+        } catch (IllegalArgumentException ignored) {
         }
 
         MediaDirectory newDirectory1 = mediaManager.createMediaDirectory(testWeblog, "test1");
+
+        // show throw error when creating directory that already exists
+        try {
+            mediaManager.createMediaDirectory(testWeblog, "test1");
+            fail("should not have allowed creation of directory with same name");
+        } catch (IllegalArgumentException ignored) {
+        }
+
         MediaDirectory newDirectory2 = mediaManager.createMediaDirectory(testWeblog, "test2");
 
         MediaDirectory newDirectory1ById = mediaDirectoryRepository.findByIdOrNull(newDirectory1.getId());
@@ -107,17 +108,8 @@ public class MediaManagerIT extends WebloggerTest {
         MediaDirectory newDirectory2ById = mediaDirectoryRepository.findByIdOrNull(newDirectory2.getId());
         assertEquals("test2", newDirectory2ById.getName());
 
-        // show throw error when creating directory that already exists
-        try {
-            mediaManager.createMediaDirectory(testWeblog, "test1");
-            fail("should not have allowed creation of directory with same name");
-        } catch (IllegalArgumentException ignored) {
-        }
     }
 
-    /**
-     * Test getting list of all directories for a given user.
-     */
     @Test
     public void testGetMediaDirectories() {
         mediaManager.createMediaDirectory(testWeblog, "dir1");
@@ -131,119 +123,71 @@ public class MediaManagerIT extends WebloggerTest {
         assertTrue(containsName(directories, "dir2"));
     }
 
-    /**
-     * Test utility to determine whether the given list of directories contains
-     * a directory of given path.
-     */
-    private boolean containsName(Collection<MediaDirectory> directories,
-            String name) {
-        for (MediaDirectory directory : directories) {
-            if (name.equals(directory.getName())) {
-                return true;
-            }
-        }
-        return false;
+    private MultipartFile createMockMultipartFile() throws IOException {
+        MultipartFile mockMultipartFile = mock(MockMultipartFile.class);
+        when(mockMultipartFile.getSize()).thenReturn(3000L);
+        when(mockMultipartFile.getContentType()).thenReturn("image/jpeg");
+        when(mockMultipartFile.getName()).thenReturn("hawk.jpg");
+        when(mockMultipartFile.getInputStream()).thenReturn(getClass().getResourceAsStream("/hawk.jpg"));
+        when(mockMultipartFile.getOriginalFilename()).thenReturn("hawk.jpg");
+        return mockMultipartFile;
     }
 
-    /**
-     * Test utility to determine whether a list of files contains a file with
-     * given name.
-     */
-    private boolean containsFileWithName(Collection<MediaFile> files, String name) {
-        for (MediaFile file : files) {
-            if (name.equals(file.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Test deletion of media file
-     */
     @Test
-    public void testDeleteMediaFile() throws Exception {
-        MediaDirectory rootDirectory = mediaDirectoryRepository.findByWeblogAndName(testWeblog, "default");
+    public void testCreateAndDeleteMediaFile() throws Exception {
+        MultipartFile mockMultipartFile = createMockMultipartFile();
 
         MediaFile mediaFile = new MediaFile();
+        mediaFile.setDirectory(defaultDirectory);
         mediaFile.setCreator(testUser);
-        mediaFile.setName("test4.jpg");
-        mediaFile.setNotes("This is a test image 4");
-        mediaFile.setLength(3000);
-        mediaFile.setDirectory(rootDirectory);
-        mediaFile.setContentType("image/jpeg");
-
-        Map<String, List<String>> errors = new HashMap<>();
-        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), errors);
-        assertTrue(ObjectUtils.isEmpty(errors));
-
-        String id = mediaFile.getId();
-        assertNotNull(id);
-        assertNotNull(id.length() > 0);
-
-        MediaFile mediaFile1 = mediaFileRepository.findByIdOrNull(id);
-
-        assertEquals("test4.jpg", mediaFile1.getName());
-        mediaManager.removeMediaFile(testWeblog, mediaFile1);
-
-        MediaFile mediaFile2 = mediaFileRepository.findByIdOrNull(id);
-        assertNull(mediaFile2);
-
-        File flag = new File(mediafileDir + File.separator + "migration-status.properties");
-        flag.delete();
-    }
-
-    /**
-     * Test creation of media file.
-     */
-    @Test
-    public void teststoreMediaFile() throws Exception {
-        MediaDirectory rootDirectory = mediaDirectoryRepository.findByWeblogAndName(testWeblog, "default");
-        rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
-
-        MediaFile mediaFile = new MediaFile();
-        mediaFile.setCreator(testUser);
-        mediaFile.setName("test.jpg");
+        mediaFile.setName(mockMultipartFile.getName());
         mediaFile.setNotes("This is a test image");
-        mediaFile.setLength(2000);
-        mediaFile.setDirectory(rootDirectory);
-        mediaFile.setContentType("image/jpeg");
-        rootDirectory.getMediaFiles().add(mediaFile);
+        mediaFile.setLength(mockMultipartFile.getSize());
+        mediaFile.setContentType(mockMultipartFile.getContentType());
+        defaultDirectory.getMediaFiles().add(mediaFile);
 
         Map<String, List<String>> errors = new HashMap<>();
-        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        mediaManager.saveMediaFile(mediaFile, mockMultipartFile, testUser, errors);
         assertTrue(ObjectUtils.isEmpty(errors));
 
         assertNotNull(mediaFile.getId());
         assertTrue(mediaFile.getId().length() > 0);
 
+        // test values saved
         MediaFile mediaFile1 = mediaFileRepository.findByIdOrNull(mediaFile.getId());
-        assertEquals("test.jpg", mediaFile1.getName());
+        assertEquals(defaultDirectory, mediaFile1.getDirectory());
+        assertEquals(testUser, mediaFile1.getCreator());
+        assertEquals(mockMultipartFile.getName(), mediaFile1.getName());
         assertEquals("This is a test image", mediaFile1.getNotes());
-        assertEquals(2000, mediaFile1.getLength());
+        assertEquals(mockMultipartFile.getSize(), mediaFile1.getLength());
+        assertEquals(mockMultipartFile.getContentType(), mediaFile1.getContentType());
+
+        // test delete
+        MediaFile mediaFile2 = mediaFileRepository.findByIdOrNull(mediaFile1.getId());
+        assertEquals(mockMultipartFile.getName(), mediaFile2.getName());
+        mediaManager.removeMediaFile(testWeblog, mediaFile2);
+
+        MediaFile mediaFile3 = mediaFileRepository.findByIdOrNull(mediaFile1.getId());
+        assertNull(mediaFile3);
     }
 
-    /**
-     * Test media file update
-     */
     @Test
     public void testUpdateMediaFile() throws Exception {
-        MediaDirectory rootDirectory = mediaDirectoryRepository.findByWeblogAndName(testWeblog, "default");
-        rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
+        MultipartFile mockMultipartFile = createMockMultipartFile();
 
         MediaFile mediaFile = new MediaFile();
         mediaFile.setCreator(testUser);
         mediaFile.setName("test5.jpg");
         mediaFile.setNotes("This is a test image 5");
         mediaFile.setLength(3000);
-        mediaFile.setDirectory(rootDirectory);
+        mediaFile.setDirectory(defaultDirectory);
         mediaFile.setContentType("image/jpeg");
 
         Map<String, List<String>> errors = new HashMap<>();
-        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        mediaManager.saveMediaFile(mediaFile, mockMultipartFile, testUser, errors);
         assertTrue(ObjectUtils.isEmpty(errors));
 
-        rootDirectory.getMediaFiles().add(mediaFile);
+        defaultDirectory.getMediaFiles().add(mediaFile);
         String id = mediaFile.getId();
         assertNotNull(id);
         assertTrue(id.length() > 0);
@@ -253,7 +197,7 @@ public class MediaManagerIT extends WebloggerTest {
         mediaFile1.setNotes("updated desc");
         mediaFile1.setContentType("image/gif");
 
-        mediaManager.saveMediaFile(mediaFile1, null, errors);
+        mediaManager.saveMediaFile(mediaFile1, null, testUser, errors);
         assertTrue(ObjectUtils.isEmpty(errors));
 
         MediaFile mediaFile2 = mediaFileRepository.findByIdOrNull(id);
@@ -262,41 +206,35 @@ public class MediaManagerIT extends WebloggerTest {
         assertEquals("image/gif", mediaFile2.getContentType());
     }
 
-    /**
-     * Test media file and directory gets
-     */
     @Test
     public void testGetDirectoryContents() throws Exception {
         mediaManager.createMediaDirectory(testWeblog, "dir1");
         mediaManager.createMediaDirectory(testWeblog, "dir2");
         mediaManager.createMediaDirectory(testWeblog, "dir3");
 
-        MediaDirectory rootDirectory = mediaDirectoryRepository.findByWeblogAndName(testWeblog, "default");
-
         MediaFile mediaFile = new MediaFile();
         mediaFile.setCreator(testUser);
-        mediaFile.setDirectory(rootDirectory);
+        mediaFile.setDirectory(defaultDirectory);
         mediaFile.setName("test6_1.jpg");
         mediaFile.setNotes("This is a test image 6.1");
         mediaFile.setLength(4000);
         mediaFile.setContentType("image/jpeg");
 
         Map<String, List<String>> errors = new HashMap<>();
-        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        MultipartFile mockMultipartFile = createMockMultipartFile();
+        mediaManager.saveMediaFile(mediaFile, mockMultipartFile, testUser, errors);
         assertTrue(ObjectUtils.isEmpty(errors));
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setCreator(testUser);
-        mediaFile2.setDirectory(rootDirectory);
+        mediaFile2.setDirectory(defaultDirectory);
         mediaFile2.setName("test6_2.jpg");
         mediaFile2.setNotes("This is a test image 6.2");
         mediaFile2.setLength(4000);
         mediaFile2.setContentType("image/jpeg");
 
-        mediaManager.saveMediaFile(mediaFile2, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        mediaManager.saveMediaFile(mediaFile2, mockMultipartFile, testUser, errors);
         assertTrue(ObjectUtils.isEmpty(errors));
-
-        rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
 
         List<MediaDirectory> childDirectories = testWeblog.getMediaDirectories();
         assertEquals(4, childDirectories.size());
@@ -304,53 +242,49 @@ public class MediaManagerIT extends WebloggerTest {
         assertTrue(containsName(childDirectories, "dir2"));
         assertTrue(containsName(childDirectories, "dir3"));
 
-        Set<MediaFile> mediaFiles = rootDirectory.getMediaFiles();
+        Set<MediaFile> mediaFiles = defaultDirectory.getMediaFiles();
         assertEquals(2, mediaFiles.size());
         assertTrue(containsFileWithName(mediaFiles, "test6_1.jpg"));
         assertTrue(containsFileWithName(mediaFiles, "test6_2.jpg"));
 
-        rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
-        assertTrue(rootDirectory.hasMediaFile("test6_1.jpg"));
-        assertTrue(rootDirectory.hasMediaFile("test6_2.jpg"));
+        MediaDirectory testDirectory = mediaDirectoryRepository.findByIdOrNull(defaultDirectory.getId());
+        assertTrue(testDirectory.hasMediaFile("test6_1.jpg"));
+        assertTrue(testDirectory.hasMediaFile("test6_2.jpg"));
     }
 
-    /**
-     * Test moving files across directories.
-     */
     @Test
     public void testMoveDirectoryContents() throws Exception {
         MediaDirectory dir1 = mediaManager.createMediaDirectory(testWeblog, "dir1");
         mediaManager.createMediaDirectory(testWeblog, "dir2");
         mediaManager.createMediaDirectory(testWeblog, "dir3");
 
-        MediaDirectory rootDirectory = mediaDirectoryRepository.findByWeblogAndName(testWeblog, "default");
-
         MediaFile mediaFile = new MediaFile();
         mediaFile.setCreator(testUser);
-        mediaFile.setDirectory(rootDirectory);
+        mediaFile.setDirectory(defaultDirectory);
         mediaFile.setName("test7_1.jpg");
         mediaFile.setNotes("This is a test image 7.1");
         mediaFile.setLength(4000);
         mediaFile.setContentType("image/jpeg");
 
         Map<String, List<String>> errors = new HashMap<>();
-        mediaManager.saveMediaFile(mediaFile, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        MultipartFile mockMultipartFile = createMockMultipartFile();
+        mediaManager.saveMediaFile(mediaFile, mockMultipartFile, testUser, errors);
         assertTrue(ObjectUtils.isEmpty(errors));
 
         MediaFile mediaFile2 = new MediaFile();
         mediaFile2.setCreator(testUser);
-        mediaFile2.setDirectory(rootDirectory);
+        mediaFile2.setDirectory(defaultDirectory);
         mediaFile2.setName("test7_2.jpg");
         mediaFile2.setNotes("This is a test image 7.2");
         mediaFile2.setLength(4000);
         mediaFile2.setContentType("image/jpeg");
 
-        mediaManager.saveMediaFile(mediaFile2, getClass().getResourceAsStream(TEST_IMAGE), errors);
+        mediaManager.saveMediaFile(mediaFile2, mockMultipartFile, testUser, errors);
         assertTrue(ObjectUtils.isEmpty(errors));
 
-        rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
+        MediaDirectory sourceDirectory = mediaDirectoryRepository.findByIdOrNull(defaultDirectory.getId());
 
-        Set<MediaFile> mediaFiles = rootDirectory.getMediaFiles();
+        Set<MediaFile> mediaFiles = sourceDirectory.getMediaFiles();
         assertEquals(2, mediaFiles.size());
         assertTrue(containsFileWithName(mediaFiles, "test7_1.jpg"));
         assertTrue(containsFileWithName(mediaFiles, "test7_2.jpg"));
@@ -358,7 +292,7 @@ public class MediaManagerIT extends WebloggerTest {
         MediaDirectory targetDirectory = mediaDirectoryRepository.findByIdOrNull(dir1.getId());
         mediaManager.moveMediaFiles(mediaFiles, targetDirectory);
 
-        rootDirectory = mediaDirectoryRepository.findByIdOrNull(rootDirectory.getId());
+        sourceDirectory = mediaDirectoryRepository.findByIdOrNull(defaultDirectory.getId());
         targetDirectory = mediaDirectoryRepository.findByIdOrNull(dir1.getId());
 
         mediaFiles = targetDirectory.getMediaFiles();
@@ -366,15 +300,12 @@ public class MediaManagerIT extends WebloggerTest {
         assertTrue(containsFileWithName(mediaFiles, "test7_1.jpg"));
         assertTrue(containsFileWithName(mediaFiles, "test7_2.jpg"));
 
-        mediaFiles = rootDirectory.getMediaFiles();
+        mediaFiles = sourceDirectory.getMediaFiles();
         assertEquals(0, mediaFiles.size());
     }
 
-    /**
-     * Test deletion of media file folder association with named queries
-     */
     @Test
-    public void testDirectoryDeleteAssociation() {
+    public void testDeleteDirectory() {
         MediaDirectory dir1 = mediaManager.createMediaDirectory(testWeblog, "dir1");
         mediaManager.createMediaDirectory(testWeblog, "dir2");
         mediaManager.createMediaDirectory(testWeblog, "dir3");
@@ -390,5 +321,13 @@ public class MediaManagerIT extends WebloggerTest {
 
         testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         assertEquals(3, testWeblog.getMediaDirectories().size());
+    }
+
+    private static boolean containsName(Collection<MediaDirectory> directories, String name) {
+        return directories.stream().anyMatch(dir -> name.equals(dir.getName()));
+    }
+
+    private static boolean containsFileWithName(Collection<MediaFile> files, String name) {
+        return files.stream().anyMatch(file -> name.equals(file.getName()));
     }
 }
