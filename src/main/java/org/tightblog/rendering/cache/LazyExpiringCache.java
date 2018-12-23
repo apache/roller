@@ -78,28 +78,24 @@ public class LazyExpiringCache {
         contentCache.invalidateAll();
     }
 
-    public static Logger getLog() {
-        return log;
-    }
-
-    public long getEstimatedSize() {
-        return contentCache == null ? 0 : contentCache.estimatedSize();
-    }
-
-    public long getCacheRequestCount() {
-        return contentCache == null ? 0 : contentCache.stats().requestCount();
-    }
-
     public long getCacheHitCount() {
         return contentCache == null ? 0 : contentCache.stats().hitCount();
+    }
+
+    public double getCacheHitRate() {
+        return contentCache == null ? 0 : contentCache.stats().hitRate();
     }
 
     public long getCacheMissCount() {
         return contentCache == null ? 0 : contentCache.stats().missCount();
     }
 
-    public double getCacheHitRate() {
-        return contentCache == null ? 0 : contentCache.stats().hitRate();
+    public long getCacheRequestCount() {
+        return contentCache == null ? 0 : contentCache.stats().requestCount();
+    }
+
+    public long getEstimatedSize() {
+        return contentCache == null ? 0 : contentCache.estimatedSize();
     }
 
     private long timeoutInMS;
@@ -111,7 +107,7 @@ public class LazyExpiringCache {
     private Cache<String, Object> contentCache;
 
     @PostConstruct
-    public void init() {
+    void init() {
         if (maxEntries > 0) {
             contentCache = Caffeine.newBuilder()
                     .expireAfterWrite(timeoutInMS, TimeUnit.MILLISECONDS)

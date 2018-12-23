@@ -24,19 +24,23 @@ import static org.junit.Assert.*;
 
 public class LazyExpiringCacheEntryTest {
 
+    private Instant twentySecondsAgo = Instant.now().minusSeconds(20);
+    private Instant twentySecondsLater = twentySecondsAgo.plusSeconds(40);
+
     @Test
     public void testGetNonexpiredValue() {
         CachedContent testContent = new CachedContent(Template.ComponentType.ATOMFEED);
-        Instant twentySecondsAgo = Instant.now().minusSeconds(20);
         LazyExpiringCacheEntry entry = new LazyExpiringCacheEntry(testContent);
         assertEquals(testContent, entry.getValue(twentySecondsAgo));
+
+        // test get value of any age
+        assertEquals(testContent, entry.getValue(null));
     }
 
     @Test
     public void testExpiredValueReturnsNull() {
         CachedContent testContent = new CachedContent(Template.ComponentType.ATOMFEED);
         LazyExpiringCacheEntry entry = new LazyExpiringCacheEntry(testContent);
-        Instant twentySecondsLater = Instant.now().plusSeconds(20);
         assertNull(entry.getValue(twentySecondsLater));
     }
 }
