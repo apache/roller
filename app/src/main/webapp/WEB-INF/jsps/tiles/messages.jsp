@@ -40,4 +40,4 @@
     </div>
 </s:if>
 
-<!-- ALERT_END: this comment needed for CategoriesSidebar.jsp -->
+<!-- ALERT_END: this comment needed for AJAX error handling -->

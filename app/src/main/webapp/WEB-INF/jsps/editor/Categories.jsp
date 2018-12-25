@@ -175,7 +175,8 @@
 
             // kludge: scrape response status from HTML returned by Struts
             var alertEnd = data.indexOf("ALERT_END");
-            if (data.indexOf('<s:text name="categoryForm.error.duplicateName" />') < alertEnd) {
+            var notUnique = data.indexOf('<s:text name="categoryForm.error.duplicateName" />');
+            if (notUnique > 0 && notUnique < alertEnd) {
                 feedbackAreaEdit.css("color", "red");
                 feedbackAreaEdit.html('<s:text name="categoryForm.error.duplicateName" />');
 

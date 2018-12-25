@@ -306,7 +306,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
             // kludge: scrape response status from HTML returned by Struts
             var alertEnd = data.indexOf("ALERT_END");
-            if (data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />') < alertEnd) {
+            var notUnique = data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />');
+            if (notUnique > 0 && notUnique < alertEnd) {
                 alert('<s:text name="bookmarkForm.error.duplicateName" />');
 
             } else {
@@ -448,7 +449,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     function submitEditedBlogroll() {
 
-        var folderEditForm = $("#folderEditForm")[0];
+        var folderEditForm = $('#folderEditForm')[0];
 
         var feedbackAreaBlogrollEdit = $("#feedback-area-blogroll-edit");
 
@@ -470,7 +471,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
             // kludge: scrape response status from HTML returned by Struts
             var alertEnd = data.indexOf("ALERT_END");
-            if (data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />') < alertEnd) {
+            var notUnique = data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />');
+            if (notUnique > 0 && notUnique < alertEnd) {
                 feedbackAreaBlogrollEdit.css("color", "red");
                 feedbackAreaBlogrollEdit.html('<s:text name="bookmarkForm.error.duplicateName" />');
 
@@ -516,7 +518,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
             <s:form theme="bootstrap" cssClass="form-horizontal">
                 <div class="modal-body">
-                    <s:text name="bookmarksForm.delete.areYouSure"></s:text>
+                    <s:text name="bookmarksForm.delete.areYouSure" />
                 </div>
 
                 <div class="modal-footer">
@@ -559,7 +561,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 <s:hidden name="folderId"/>
 
                 <div class="modal-body">
-                    <s:text name="blogrollDeleteOK.areYouSure"></s:text>
+                    <s:text name="blogrollDeleteOK.areYouSure" />
                     <span id="deleteBlogrollName"></span>?
                 </div>
 
@@ -690,10 +692,10 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         elem.removeClass("alert-danger");
         elem.addClass("alert-info");
 
-        $('#bookmark_bean_name:first').val('');
-        $('#bookmark_bean_url:first').val('');
-        $('#bookmark_bean_image:first').val('');
-        $('#bookmark_bean_feedUrl:first').val('');
+        $('#bookmarkEdit_bean_name:first').val('');
+        $('#bookmarkEdit_bean_url:first').val('');
+        $('#bookmarkEdit_bean_image:first').val('');
+        $('#bookmarkEdit_bean_feedUrl:first').val('');
 
         $('#subtitle_folder_name:first').html(originalName);
 
@@ -712,13 +714,13 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         elem.removeClass("alert-danger");
         elem.addClass("alert-info");
 
-        $('#bookmark_bean_id:first').val(id);
+        $('#bookmarkEdit_bean_id:first').val(id);
         $('#bookmark_folderId').val(id);
-        $('#bookmark_bean_name:first').val(name);
-        $('#bookmark_bean_url:first').val(url);
-        $('#bookmark_bean_feedUrl:first').val(feedUrl);
-        $('#bookmark_bean_description:first').val(description);
-        $('#bookmark_bean_image:first').val(image);
+        $('#bookmarkEdit_bean_name:first').val(name);
+        $('#bookmarkEdit_bean_url:first').val(url);
+        $('#bookmarkEdit_bean_feedUrl:first').val(feedUrl);
+        $('#bookmarkEdit_bean_description:first').val(description);
+        $('#bookmarkEdit_bean_image:first').val(image);
 
         $('#subtitle_folder_name:first').html(originalName);
 
@@ -730,10 +732,10 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         var saveBookmarkButton = $('#save_bookmark:first');
 
-        var name = $('#bookmark_bean_name:first').val().trim();
-        var url = $('#bookmark_bean_url:first').val().trim();
-        var image = $('#bookmark_bean_image:first').val().trim();
-        var feedUrl = $('#bookmark_bean_feedUrl:first').val().trim();
+        var name = $('#bookmarkEdit_bean_name:first').val().trim();
+        var url = $('#bookmarkEdit_bean_url:first').val().trim();
+        var image = $('#bookmarkEdit_bean_image:first').val().trim();
+        var feedUrl = $('#bookmarkEdit_bean_feedUrl:first').val().trim();
 
         var badUrls = [];
 
@@ -804,21 +806,22 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         $.ajax({
             method: 'post',
             url: "bookmarkEdit!save.rol",
-            data: $("#bookmark").serialize(),
+            data: $("#bookmarkEdit").serialize(),
             context: document.body
 
         }).done(function (data) {
 
             // kludge: scrape response status from HTML returned by Struts
             var alertEnd = data.indexOf("ALERT_END");
-            if (data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />') < alertEnd) {
+            var notUnique = data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />');
+            if (notUnique > 0 && notUnique < alertEnd) {
                 feedbackAreaEdit.css("color", "red");
                 feedbackAreaEdit.html('<s:text name="bookmarkForm.error.duplicateName" />');
 
             } else {
                 feedbackAreaEdit.css("color", "green");
                 feedbackAreaEdit.html('<s:text name="generic.success" />');
-                $('#category-edit-modal').modal("hide");
+                $('#addedit-bookmark-modal').modal("hide");
 
                 // cause page to be reloaded so that edit appears
                 // and make sure we end up on the right folder

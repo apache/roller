@@ -97,15 +97,14 @@ public class BookmarkEdit extends UIAction {
     public String save() {
         myValidate();
 
-        if(!hasActionErrors()) {
+        if (!hasActionErrors()) {
             try {
                 getBean().copyTo(bookmark);
                 BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
                 bmgr.saveBookmark(bookmark);
                 WebloggerFactory.getWeblogger().flush();
                 CacheManager.invalidate(bookmark);
-                addMessage(isAdd() ? "bookmarkForm.created" : "bookmarkForm.updated",
-                        getBookmark().getName());
+                addMessage(isAdd() ? "bookmarkForm.created" : "bookmarkForm.updated", getBookmark().getName());
                 return SUCCESS;
 
             } catch(Exception ex) {
