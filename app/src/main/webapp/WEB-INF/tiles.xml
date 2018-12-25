@@ -191,13 +191,9 @@
     <definition name=".PingTargets" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/PingTargets.jsp" />
     </definition>
-    
-    <definition name=".PingTargetConfirm" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/PingTargetRemove.jsp" />
-    </definition>
-    
+
     <definition name=".PingTargetEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/PingTargetEdit.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
     
     <definition name=".CacheInfo" extends=".tiles-tabbedpage" >
@@ -301,6 +297,16 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
+    <definition name=".CategoryEdit" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
+    </definition>
+
+    <definition name=".CategoryRemove" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/tiles/empty.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
+    </definition>
+
     <definition name=".Bookmarks" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Bookmarks.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/BookmarksSidebar.jsp" />
@@ -313,12 +319,12 @@
     </definition>
 
     <definition name=".BookmarkEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/BookmarkEdit.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
     <definition name=".FolderEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/FolderEdit.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 

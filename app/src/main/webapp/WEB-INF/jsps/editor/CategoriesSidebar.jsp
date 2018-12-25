@@ -21,10 +21,10 @@
 <hr size="1" noshade="noshade"/>
 
 <p>
-    <s:set name="categoryId" value="#bean.id"/>
-    <s:set name="categoryName" value="#post.name"/>
-    <s:set name="categoryDesc" value="#post.description"/>
-    <s:set name="categoryImage" value="#post.image"/>
+    <s:set var="categoryId" value="#bean.id"/>
+    <s:set var="categoryName" value="#post.name"/>
+    <s:set var="categoryDesc" value="#post.description"/>
+    <s:set var="categoryImage" value="#post.image"/>
 
     <a href="#" onclick="showCategoryAddModal()">
         <span class="glyphicon glyphicon-plus"></span>

@@ -51,10 +51,10 @@
 
                     <td align="center">
 
-                        <s:set name="categoryId"    value="#category.id" />
-                        <s:set name="categoryName"  value="#category.name" />
-                        <s:set name="categoryDesc"  value="#category.description" />
-                        <s:set name="categoryImage" value="#category.image" />
+                        <s:set var="categoryId"    value="#category.id" />
+                        <s:set var="categoryName"  value="#category.name" />
+                        <s:set var="categoryDesc"  value="#category.description" />
+                        <s:set var="categoryImage" value="#category.image" />
                         <a href="#" onclick="showCategoryEditModal(
                                 '<s:property value="categoryId" />',
                                 '<s:property value="categoryName"/>',
@@ -68,9 +68,9 @@
                     <td class="rollertable" align="center">
                         <s:if test="AllCategories.size() > 1">
 
-                            <s:set name="categoryId"    value="#category.id" />
-                            <s:set name="categoryName"  value="#category.name" />
-                            <s:set name="categoryInUse" value="#category.inUse.toString()" />
+                            <s:set var="categoryId"    value="#category.id" />
+                            <s:set var="categoryName"  value="#category.name" />
+                            <s:set var="categoryInUse" value="#category.inUse.toString()" />
                             <a href="#" onclick="showCategoryDeleteModal(
                                     '<s:property value="categoryId" />',
                                     '<s:property value="categoryName" />',
@@ -111,7 +111,7 @@
             </div>
 
             <div class="modal-body">
-                <s:form action="#" id="categoryEditForm" theme="bootstrap" cssClass="form-horizontal">
+                <s:form action="categoryEdit" id="categoryEditForm" theme="bootstrap" cssClass="form-horizontal">
                     <s:hidden name="salt"/>
                     <s:hidden name="weblog"/>
                     <s:hidden name="bean.id"/>

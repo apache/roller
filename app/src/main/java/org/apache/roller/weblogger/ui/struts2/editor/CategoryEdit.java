@@ -30,7 +30,6 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
-import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 

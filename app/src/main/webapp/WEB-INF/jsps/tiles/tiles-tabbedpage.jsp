@@ -1,3 +1,4 @@
+<%@ taglib prefix="tilesx" uri="http://tiles.apache.org/tags-tiles-extras" %>
 <%--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
@@ -30,7 +31,8 @@
 
 <tiles:insertAttribute name="bannerStatus" />
 
-<tilesx:useAttribute name="sidebar" />
+<tilesx:useAttribute name="sidebar" id="sidebar" classname="java.lang.String" />
+
 
 <div class="row">
 
@@ -53,7 +55,7 @@
             </div>
         </div>
 
-        <c:if test="${sidebar} != '/WEB-INF/jsps/tiles/empty.jsp'}">
+        <c:if test="${sidebar != '/WEB-INF/jsps/tiles/empty.jsp'}">
             <s:property value="sidebar" />
             <div class="panel panel-default">
                 <div class="panel-body">
