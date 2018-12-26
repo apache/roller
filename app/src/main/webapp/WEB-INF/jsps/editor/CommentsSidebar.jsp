@@ -109,7 +109,7 @@
     <%-- ========================================================= --%>
     <%-- filter button --%>
 
-    <s:submit value="%{getText('commentManagement.query')}"/>
+    <s:submit cssClass="btn btn-default" value="%{getText('commentManagement.query')}"/>
 
 </s:form>
 
