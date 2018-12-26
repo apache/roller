@@ -31,6 +31,7 @@ import org.tightblog.domain.Template;
 import org.tightblog.domain.WeblogTemplate;
 import org.tightblog.rendering.cache.CachedContent;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,22 +42,25 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
 
 public class ThymeleafRendererTest {
 
     private ThymeleafRenderer renderer;
     private WeblogTemplate template;
     private Map<String, Object> model = new HashMap<>();
+    private SpringTemplateEngine templateEngine;
 
     @Before
     public void initialize() {
         model.put("foo", 123);
         model.put("bar", "banana");
         renderer = new ThymeleafRenderer();
-        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolvers(new HashSet<>());
         renderer.setTemplateEngine(templateEngine);
         renderer = Mockito.spy(renderer);
+        templateEngine = Mockito.spy(templateEngine);
         template = new WeblogTemplate();
         template.setName("test template");
         template.setId("mytestid");
@@ -65,12 +69,14 @@ public class ThymeleafRendererTest {
 
     @Test
     public void testSuccessfulRendering() throws IOException {
-        ArgumentCaptor<Context> contextCaptor = ArgumentCaptor.forClass(Context.class);
-        doNothing().when(renderer).runTemplateEngine(eq("mytestid"), contextCaptor.capture(), any());
+        doNothing().when(templateEngine).process(eq("mytestid"), any(IContext.class), any());
 
         CachedContent content = renderer.render(template, model);
         assertNotNull(content);
         assertEquals(Template.ComponentType.WEBLOG, content.getComponentType());
+
+        ArgumentCaptor<Context> contextCaptor = ArgumentCaptor.forClass(Context.class);
+        verify(renderer).runTemplateEngine(eq("mytestid"), contextCaptor.capture(), any());
 
         Context context = contextCaptor.getValue();
         assertEquals(123, context.getVariable("foo"));
@@ -96,5 +102,43 @@ public class ThymeleafRendererTest {
         assertEquals("ParseException Message", context.getVariable("firstMessage"));
         assertEquals("org.springframework.expression.spel.SpelEvaluationException: EL1012E: Cannot index into a null value",
                 context.getVariable("secondMessage"));
+
+        // secondMessage not available if third cause neither SpelEvaluationException nor FNFE
+        tpe = new TemplateProcessingException("TPE Message", new IllegalArgumentException());
+        pe = new ParseException("ParseException Message", tpe);
+        tie = new TemplateInputException("TIE Message", pe);
+        doThrow(tie).when(renderer).runTemplateEngine(eq("mytestid"), any(IContext.class), any());
+
+        renderer.render(template, model);
+        context = contextCaptor.getValue();
+        assertNull(context.getVariable("secondMessage"));
+
+        // secondMessage available if third cause FileNotFoundException
+        tpe = new TemplateProcessingException("TPE Message", new FileNotFoundException("fnfe message"));
+        pe = new ParseException("ParseException Message", tpe);
+        tie = new TemplateInputException("TIE Message", pe);
+        doThrow(tie).when(renderer).runTemplateEngine(eq("mytestid"), any(IContext.class), any());
+
+        renderer.render(template, model);
+        context = contextCaptor.getValue();
+        assertEquals("java.io.FileNotFoundException: fnfe message",
+                context.getVariable("secondMessage"));
+
+        // secondMessage not available if second cause not TemplateProcessingException
+        pe = new ParseException("ParseException Message", new IllegalArgumentException());
+        tie = new TemplateInputException("TIE Message", pe);
+        doThrow(tie).when(renderer).runTemplateEngine(eq("mytestid"), any(IContext.class), any());
+
+        renderer.render(template, model);
+        context = contextCaptor.getValue();
+        assertNull(context.getVariable("secondMessage"));
+    }
+
+    @Test(expected = TemplateInputException.class)
+    public void throwExceptionIfFirstCauseNotParseException() throws IOException {
+        IllegalArgumentException iae = new IllegalArgumentException("firstCause");
+        TemplateInputException tie = new TemplateInputException("TIE Message", iae);
+        doThrow(tie).when(renderer).runTemplateEngine(eq("mytestid"), any(IContext.class), any());
+        renderer.render(template, model);
     }
 }

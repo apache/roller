@@ -46,28 +46,39 @@ public class ThemeTemplateResolverTest {
     }
 
     @Test
-    public void testReturnNullIfNoResourceId() {
+    public void testReturnNullIfInvalidResourceId() {
         assertNull(themeTemplateResolver.computeTemplateResource(null, null, null,
+                null, null, null));
+
+        assertNull(themeTemplateResolver.computeTemplateResource(null, null, "",
+                null, null, null));
+
+        // resourceId should have no more than one colon
+        assertNull(themeTemplateResolver.computeTemplateResource(null, null, "abc:def:ghi",
+                null, null, null));
+
+        // return null if no template found
+        assertNull(themeTemplateResolver.computeTemplateResource(null, null, "abc:def",
                 null, null, null));
     }
 
     @Test
-    public void testReturnSharedTheme() {
+    public void testReturnSharedThemeTemplate() {
         SharedTheme sharedTheme = new SharedTheme();
-        sharedTheme.setId("foo");
+        sharedTheme.setId("themeId");
         SharedTemplate sharedTemplate = new SharedTemplate();
-        sharedTemplate.setName("bar");
+        sharedTemplate.setName("templateId");
         sharedTemplate.setTemplate("shared template contents");
         sharedTemplate.setRole(Template.ComponentType.WEBLOG);
         sharedTheme.addTemplate(sharedTemplate);
-        when(mockThemeManager.getSharedTheme("foo")).thenReturn(sharedTheme);
+        when(mockThemeManager.getSharedTheme("themeId")).thenReturn(sharedTheme);
         StringTemplateResource resource = (StringTemplateResource) themeTemplateResolver.computeTemplateResource(null,
-                null, "foo:bar", null, null, null);
+                null, "themeId:templateId", null, null, null);
         assertEquals("shared template contents", resource.getDescription());
     }
 
     @Test
-    public void testReturnWeblogTheme() {
+    public void testReturnWeblogTemplate() {
         WeblogTemplate weblogTemplate = new WeblogTemplate();
         weblogTemplate.setId("1234");
         weblogTemplate.setRole(Template.ComponentType.CUSTOM_EXTERNAL);

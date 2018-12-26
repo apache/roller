@@ -61,17 +61,19 @@ public class ThemeTemplateResolver extends AbstractConfigurableTemplateResolver 
             return null;
         }
 
-        Template template;
+        Template template = null;
 
         if (resourceId.contains(":")) {
             // shared theme, stored in a file
-            String[] sharedThemeParts = resourceId.split(":", 2);
+            String[] sharedThemeParts = resourceId.split(":", 3);
             if (sharedThemeParts.length != 2) {
                 logger.error("Invalid Theme resource key {}", resourceId);
                 return null;
             }
             SharedTheme theme = themeManager.getSharedTheme(sharedThemeParts[0]);
-            template = theme.getTemplateByName(sharedThemeParts[1]);
+            if (theme != null) {
+                template = theme.getTemplateByName(sharedThemeParts[1]);
+            }
         } else {
             // weblog-only theme in database
             template = weblogTemplateRepository.findById(resourceId).orElse(null);
