@@ -117,14 +117,11 @@ public class PreviewProcessor extends AbstractProcessor {
         if (previewThemeName != null) {
             try {
                 SharedTheme previewTheme = themeManager.getSharedTheme(previewThemeName);
-
-                if (previewTheme.isEnabled()) {
-                    Weblog previewWeblog = new Weblog(weblog);
-                    previewWeblog.setTheme(previewTheme.getId());
-                    previewWeblog.setUsedForThemePreview(true);
-                    incomingRequest.setWeblog(previewWeblog);
-                    weblog = previewWeblog;
-                }
+                Weblog previewWeblog = new Weblog(weblog);
+                previewWeblog.setTheme(previewTheme.getId());
+                previewWeblog.setUsedForThemePreview(true);
+                incomingRequest.setWeblog(previewWeblog);
+                weblog = previewWeblog;
             } catch (IllegalArgumentException tnfe) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;

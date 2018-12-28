@@ -16,9 +16,15 @@
 package org.tightblog.rendering.processors;
 
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationContext;
 import org.tightblog.domain.SharedTheme;
+import org.tightblog.rendering.model.Model;
+import org.tightblog.rendering.model.PageModel;
+import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.domain.Template;
 import org.tightblog.domain.Weblog;
@@ -33,10 +39,13 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -51,6 +60,12 @@ public class SearchProcessorTest {
     private WeblogRepository mockWR;
     private WeblogTheme mockWeblogTheme;
     private ServletOutputStream mockSOS;
+    private ThymeleafRenderer mockRenderer;
+    private SharedTheme sharedTheme;
+    private ApplicationContext mockApplicationContext;
+
+    @Captor
+    ArgumentCaptor<Map<String, Object>> stringObjectMapCaptor;
 
     private void initializeMocks() throws Exception {
         mockSOS = mock(ServletOutputStream.class);
@@ -65,7 +80,7 @@ public class SearchProcessorTest {
 
         mockWR = mock(WeblogRepository.class);
 
-        SharedTheme sharedTheme = new SharedTheme();
+        sharedTheme = new SharedTheme();
         sharedTheme.setSiteWide(false);
 
         ThemeManager mockThemeManager = mock(ThemeManager.class);
@@ -73,19 +88,20 @@ public class SearchProcessorTest {
         when(mockThemeManager.getWeblogTheme(any())).thenReturn(mockWeblogTheme);
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
 
-        ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
+        mockApplicationContext = mock(ApplicationContext.class);
         // return empty model map in getModelMap()
         when(mockApplicationContext.getBean(anyString(), eq(Set.class))).thenReturn(new HashSet());
 
-        ThymeleafRenderer mockThymeleafRenderer = mock(ThymeleafRenderer.class);
-        when(mockThymeleafRenderer.render(any(), any()))
+        mockRenderer = mock(ThymeleafRenderer.class);
+        when(mockRenderer.render(any(), any()))
                 .thenReturn(new CachedContent(Template.ComponentType.WEBLOG));
 
-        processor = new SearchProcessor(mockWR, mockThymeleafRenderer, mockThemeManager);
+        processor = new SearchProcessor(mockWR, mockRenderer, mockThemeManager);
         processor.setApplicationContext(mockApplicationContext);
         processor.setWeblogPageRequestCreator(wprCreator);
         weblog = new Weblog();
         when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
@@ -122,8 +138,17 @@ public class SearchProcessorTest {
         verify(mockResponse, never()).sendError(SC_NOT_FOUND);
         verify(mockResponse).setContentType("text/html");
 
-        Mockito.clearInvocations(mockResponse, mockSOS);
+        Mockito.clearInvocations(mockRenderer, mockResponse, mockSOS);
         when(mockWeblogTheme.getTemplateByAction(Template.ComponentType.SEARCH_RESULTS)).thenReturn(wtSR);
+
+        // test proper page models provided to renderer
+        Set<Model> pageModelSet = new HashSet<>();
+        pageModelSet.add(new PageModel());
+        when(mockApplicationContext.getBean(eq("searchModelSet"), eq(Set.class))).thenReturn(pageModelSet);
+        Set<Model> siteModelSet = new HashSet<>();
+        siteModelSet.add(new SiteModel());
+        when(mockApplicationContext.getBean(eq("siteModelSet"), eq(Set.class))).thenReturn(siteModelSet);
+
         processor.getSearchResults(mockRequest, mockResponse);
         assertEquals(wtSR, pageRequest.getTemplate());
         // test calls on Response object made
@@ -131,5 +156,27 @@ public class SearchProcessorTest {
         verify(mockSOS).write(any());
         // should complete with no error
         verify(mockResponse, never()).sendError(SC_NOT_FOUND);
+
+        // set up captors on thymeleafRenderer.render()
+        verify(mockRenderer).render(any(), stringObjectMapCaptor.capture());
+        Map<String, Object> results = stringObjectMapCaptor.getValue();
+        assertTrue(results.containsKey("model"));
+        assertFalse(results.containsKey("site"));
+
+        // try a site-wide theme
+        sharedTheme.setSiteWide(true);
+        Mockito.clearInvocations(mockRenderer, mockResponse);
+        processor.getSearchResults(mockRequest, mockResponse);
+        verify(mockRenderer).render(any(), stringObjectMapCaptor.capture());
+        results = stringObjectMapCaptor.getValue();
+        assertTrue(results.containsKey("model"));
+        assertTrue(results.containsKey("site"));
+
+        // test 404 if exception during rendering
+        Mockito.clearInvocations(mockResponse);
+        doThrow(new IllegalArgumentException()).when(mockRenderer).render(any(), any());
+        processor.getSearchResults(mockRequest, mockResponse);
+        verify(mockResponse, never()).setContentType(anyString());
+        verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 }

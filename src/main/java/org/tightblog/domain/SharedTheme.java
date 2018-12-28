@@ -44,7 +44,6 @@ public class SharedTheme {
     // Site-wide blogs provide aggregated data from all weblogs to this weblog
     private Boolean siteWide = false;
     private Instant lastModified;
-    private boolean enabled = true;
 
     private Set<SharedTemplate> templates = new HashSet<>();
 
@@ -138,14 +137,6 @@ public class SharedTheme {
 
     public void setLastModified(Instant lastModified) {
         this.lastModified = lastModified;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     /**

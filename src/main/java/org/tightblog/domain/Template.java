@@ -59,16 +59,11 @@ public interface Template {
         }
 
         private final String readableName;
-
         private final String contentType;
-
         private final boolean singleton;
-
-        private final String descriptionProperty;
-
         private final boolean incrementsHitCount;
-
         private final boolean blogComponent;
+        private final String descriptionProperty;
 
         ComponentType(String readableName, String contentType, boolean singleton, boolean incrementsHitCount,
                       boolean blogComponent, String descriptionProperty) {

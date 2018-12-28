@@ -121,7 +121,6 @@ public class PageProcessorTest {
         sharedTheme = new SharedTheme();
         sharedTheme.setSiteWide(false);
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
-        processor = Mockito.spy(processor);
         MockitoAnnotations.initMocks(this);
     }
 
@@ -194,7 +193,7 @@ public class PageProcessorTest {
     }
 
     @Test
-    public void testCustomInternalTemplateRequestReturns404() throws IOException {
+    public void testUnfoundOrCustomInternalTemplateRequestReturns404() throws IOException {
         initializeMocks();
 
         WeblogTheme mockTheme = mock(WeblogTheme.class);
@@ -204,6 +203,7 @@ public class PageProcessorTest {
         WeblogTemplate wt = new WeblogTemplate();
         wt.setRole(ComponentType.CUSTOM_INTERNAL);
         when(mockTheme.getTemplateByPath(any())).thenReturn(wt);
+        pageRequest.setCustomPageName("test");
 
         processor.handleRequest(mockRequest, mockResponse);
         assertNull(pageRequest.getTemplate());
@@ -214,6 +214,13 @@ public class PageProcessorTest {
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
         verify(mockCache, never()).put(anyString(), any());
+
+        // now test with a null template
+        Mockito.clearInvocations(mockResponse);
+        when(mockTheme.getTemplateByPath(any())).thenReturn(null);
+        processor.handleRequest(mockRequest, mockResponse);
+        assertNull(pageRequest.getTemplate());
+        verify(mockResponse).sendError(SC_NOT_FOUND);
     }
 
     @Test
@@ -260,7 +267,7 @@ public class PageProcessorTest {
         when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(entry);
         when(mockTheme.getTemplateByAction(ComponentType.PERMALINK)).thenReturn(wt2);
 
-        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
+        Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);
         assertEquals(entry, pageRequest.getWeblogEntry());
         assertEquals(wt2, pageRequest.getTemplate());
@@ -274,7 +281,7 @@ public class PageProcessorTest {
         when(mockTheme.getTemplateByAction(ComponentType.PERMALINK)).thenReturn(null);
         when(mockTheme.getTemplateByAction(ComponentType.PERMALINK)).thenReturn(wt3);
 
-        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
+        Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);
         assertEquals(wt3, pageRequest.getTemplate());
 
@@ -282,7 +289,7 @@ public class PageProcessorTest {
         entry.setStatus(WeblogEntry.PubStatus.DRAFT);
         pageRequest.setTemplate(null);
 
-        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
+        Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);
         assertNull(pageRequest.getTemplate());
         verify(mockResponse).sendError(SC_NOT_FOUND);
@@ -291,7 +298,7 @@ public class PageProcessorTest {
         when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(null);
         pageRequest.setTemplate(null);
 
-        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
+        Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);
         assertNull(pageRequest.getTemplate());
         verify(mockResponse).sendError(SC_NOT_FOUND);
@@ -301,7 +308,7 @@ public class PageProcessorTest {
         entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
         doThrow(new IllegalArgumentException()).when(mockRenderer).render(any(), any());
 
-        Mockito.clearInvocations(processor, mockResponse, mockWM, mockCache, mockSOS);
+        Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockSOS);
 
         WebloggerTest.logExpectedException(log, "IllegalArgumentException");
         processor.handleRequest(mockRequest, mockResponse);
@@ -335,6 +342,8 @@ public class PageProcessorTest {
         // testing that sitewide themes get the "site" & (page) "model" added to the rendering map.
         sharedTheme.setSiteWide(true);
         when(mockTheme.getTemplateByPath("mycustompage")).thenReturn(sharedTemplate);
+        WeblogEntryComment comment = new WeblogEntryComment();
+        when(mockRequest.getAttribute("commentForm")).thenReturn(comment);
         processor.handleRequest(mockRequest, mockResponse);
 
         // set up captors on thymeleafRenderer.render()
@@ -342,16 +351,28 @@ public class PageProcessorTest {
         Map<String, Object> results = stringObjectMapCaptor.getValue();
         assertTrue(results.containsKey("model"));
         assertTrue(results.containsKey("site"));
+        assertEquals(comment, ((PageModel) results.get("model")).getCommentForm());
+        verify(mockWM).incrementHitCount(weblog);
 
-        Mockito.clearInvocations(processor, mockResponse, mockRenderer);
-        // testing that non-sitewide themes just get "model" added to the rendering map.
+        Mockito.clearInvocations(mockResponse, mockRenderer, mockWM);
+        // testing (1) that non-sitewide themes just get "model" added to the rendering map.
+        // (2) new comment form is generated if first request didn't provide one
+        // (3) increment hit count not called for component types lacking incrementHitCounts property
+        when(mockRequest.getAttribute("commentForm")).thenReturn(null);
         sharedTheme.setSiteWide(false);
+
+        cachedContent = new CachedContent(ComponentType.JAVASCRIPT);
+        cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
+        when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
+
         processor.handleRequest(mockRequest, mockResponse);
         verify(mockRenderer).render(eq(sharedTemplate), stringObjectMapCaptor.capture());
 
         results = stringObjectMapCaptor.getValue();
         assertTrue(results.containsKey("model"));
         assertFalse(results.containsKey("site"));
+        assertNotEquals(comment, ((PageModel) results.get("model")).getCommentForm());
+        verify(mockWM, never()).incrementHitCount(weblog);
     }
 
     @Test

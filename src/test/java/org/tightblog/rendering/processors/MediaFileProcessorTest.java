@@ -139,6 +139,13 @@ public class MediaFileProcessorTest {
         verify(mockResponse).sendError(SC_NOT_FOUND);
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
+
+        // not found also sent on missing thumbnail requests
+        Mockito.clearInvocations(mockResponse);
+        mediaFile.setContentType("image/jpeg");
+        when(mockRequest.getParameter("tn")).thenReturn("true");
+        processor.getMediaFile(mockRequest, mockResponse);
+        verify(mockResponse).sendError(SC_NOT_FOUND);
     }
 
     @Test
@@ -179,8 +186,16 @@ public class MediaFileProcessorTest {
         when(mockResponse.getOutputStream()).thenThrow(new IllegalArgumentException());
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
+        verify(mockResponse).reset();
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
+
+        // don't send error code if response committed
+        Mockito.clearInvocations(mockResponse);
+        when(mockResponse.isCommitted()).thenReturn(true);
+        processor.getMediaFile(mockRequest, mockResponse);
+        verify(mockResponse, never()).sendError(SC_NOT_FOUND);
+        verify(mockResponse, never()).reset();
     }
 
 }

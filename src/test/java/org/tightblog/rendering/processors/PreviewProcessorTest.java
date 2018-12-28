@@ -54,11 +54,14 @@ import java.util.Set;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -150,27 +153,28 @@ public class PreviewProcessorTest {
 
     @Test
     public void testThemePreviewCausesThemeSwitch() throws IOException {
-        String previewThemeName = "previewThemeName";
         weblog.setTheme("currentThemeId");
+
+        // no theme override so use weblog's theme
+        when(mockRequest.getParameter("theme")).thenReturn(null);
+        processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
+        // gets to 404 because no template
+        verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
+        assertEquals("currentThemeId", pageRequest.getWeblog().getTheme());
+
+        // now check that preview theme used instead when defined
         SharedTheme themeToPreview = new SharedTheme();
         themeToPreview.setId("previewThemeId");
+        String previewThemeName = "previewThemeName";
         themeToPreview.setName(previewThemeName);
         when(mockRequest.getParameter("theme")).thenReturn(previewThemeName);
         when(mockThemeManager.getSharedTheme(previewThemeName)).thenReturn(themeToPreview);
         when(mockTheme.getTemplateByAction(any())).thenReturn(null);
 
+        Mockito.clearInvocations(mockResponse);
         processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
-        // gets to 404 because no template
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
-        // check theme switched
         assertEquals("previewThemeId", pageRequest.getWeblog().getTheme());
-
-        Mockito.clearInvocations(processor, mockResponse);
-        // this time, no theme override
-        when(mockRequest.getParameter("theme")).thenReturn(null);
-        processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
-        verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
-        assertEquals("currentThemeId", pageRequest.getWeblog().getTheme());
     }
 
     @Test
@@ -195,6 +199,14 @@ public class PreviewProcessorTest {
         sharedTemplate.setRole(Template.ComponentType.CUSTOM_INTERNAL);
         processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
+        assertNull(pageRequest.getTemplate());
+
+        // now test with a null template
+        Mockito.clearInvocations(mockResponse);
+        when(mockTheme.getTemplateByPath(any())).thenReturn(null);
+        processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
+        verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
+        assertNull(pageRequest.getTemplate());
 
         // Weblog template retrieved if no entry anchor
         pageRequest.setTemplate(null);
@@ -232,8 +244,6 @@ public class PreviewProcessorTest {
         assertEquals(pageRequest.getWeblogEntry(), weblogEntry);
 
         // Weblog template retrieved for a weblog entry if no permalink template
-        pageRequest.setTemplate(null);
-        pageRequest.setWeblogEntry(null);
         when(mockTheme.getTemplateByAction(Template.ComponentType.PERMALINK)).thenReturn(null);
         Mockito.clearInvocations(processor, mockResponse, mockRenderer);
         processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
@@ -246,10 +256,17 @@ public class PreviewProcessorTest {
 
         // not found returned if no weblog for given anchor
         pageRequest.setTemplate(null);
-        pageRequest.setWeblogEntry(null);
         when(mockWEM.getWeblogEntryByAnchor(weblog, "entryAnchor")).thenReturn(null);
         Mockito.clearInvocations(processor, mockResponse, mockRenderer);
         processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
+        verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
+
+        // test 404 if exception during rendering
+        Mockito.clearInvocations(mockResponse);
+        when(mockWEM.getWeblogEntryByAnchor(weblog, "entryAnchor")).thenReturn(weblogEntry);
+        doThrow(new IllegalArgumentException()).when(mockRenderer).render(any(), any());
+        processor.getPreviewPage(mockRequest, mockResponse, mockPrincipal);
+        verify(mockResponse, never()).setContentType(anyString());
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 

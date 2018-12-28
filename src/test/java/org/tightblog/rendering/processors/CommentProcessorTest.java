@@ -188,6 +188,11 @@ public class CommentProcessorTest {
             verify(mockRequest).setAttribute(eq("commentForm"), commentCaptor.capture());
             assertEquals("invalid content should remain", commentCaptor.getValue().getContent());
 
+            // ensure no authentication if authenticator null
+            processor.setCommentAuthenticator(null);
+            incomingComment.setPreview(false);
+            verifyForwardDueToValidationError(incomingComment, "error.commentPostNameMissing", null);
+
         } catch (IOException | ServletException e) {
             fail();
         }
@@ -234,7 +239,7 @@ public class CommentProcessorTest {
     }
 
     @Test
-    public void testNoUserNotAttachedToWeblogPageRequest()
+    public void testNoUserAttachedToWeblogPageRequest()
             throws ServletException, IOException {
         processor = Mockito.spy(processor);
 
@@ -359,6 +364,15 @@ public class CommentProcessorTest {
             processor.postComment(mockRequest, mockResponse);
             verify(mockWEM, never()).saveComment(eq(incomingComment), anyBoolean());
 
+            // confirm no spam checking if comment is preview
+            Mockito.clearInvocations(mockUM, processor);
+            incomingComment.setPreview(true);
+            incomingComment.setStatus(ApprovalStatus.DISAPPROVED);
+            verifyForwardAfterSpamChecking(incomingComment, ApprovalStatus.DISAPPROVED, null);
+            assertTrue(incomingComment.isPreview());
+            verify(mockUM, never()).checkWeblogRole(any(User.class), any(), any());
+            verify(processor, never()).runSpamCheckers(any(), any());
+
         } catch (IOException | ServletException e) {
             fail();
         }
@@ -370,7 +384,9 @@ public class CommentProcessorTest {
         Mockito.clearInvocations(mockMessageSource, mockRequestDispatcher);
         processor.postComment(mockRequest, mockResponse);
         assertEquals(status, incomingComment.getStatus());
-        verify(mockMessageSource).getMessage(commentStatusKey, null, Locale.GERMAN);
+        if (commentStatusKey != null) {
+            verify(mockMessageSource).getMessage(commentStatusKey, null, Locale.GERMAN);
+        }
         verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
     }
 
@@ -412,9 +428,16 @@ public class CommentProcessorTest {
         assertEquals("Content not processed correctly (text and whitelist filtering of tags)",
                 "<p>Enjoy <a href=\"http://www.abc.com\" rel=\"nofollow\">My Link</a> from Bob!</p>", wec.getContent());
 
+        // test other cases
         when(mockRequest.getParameter("preview")).thenReturn("false");
+        when(mockRequest.getParameter("url")).thenReturn("http://www.foo.com");
         wec = processor.createCommentFromRequest(mockRequest, wpr, HTMLSanitizer.Level.BASIC);
         assertFalse(wec.isPreview());
+        assertEquals("http://www.foo.com", wec.getUrl());
+
+        when(mockRequest.getParameter("url")).thenReturn("https://www.foo.com");
+        wec = processor.createCommentFromRequest(mockRequest, wpr, HTMLSanitizer.Level.BASIC);
+        assertEquals("https://www.foo.com", wec.getUrl());
     }
 
     @Test
@@ -429,15 +452,21 @@ public class CommentProcessorTest {
         String response = processor.validateComment(comment);
         assertNull(response);
 
+        // URL is optional
+        comment.setUrl(null);
+        response = processor.validateComment(comment);
+        assertNull(response);
+
         comment.setUrl("ftp://www.myftpsite.com");
         response = processor.validateComment(comment);
         assertEquals("error.commentPostFailedURL", response);
-        comment.setUrl("http://www.bob.com");
 
+        comment.setUrl("http://www.bob.com");
         comment.setEmail("bob@abc");
         response = processor.validateComment(comment);
         assertEquals("error.commentPostFailedEmailAddress", response);
         comment.setEmail("");
+        response = processor.validateComment(comment);
         assertEquals("error.commentPostFailedEmailAddress", response);
         comment.setEmail("bob@email.com");
 
@@ -468,6 +497,12 @@ public class CommentProcessorTest {
         verify(mockResponse).addHeader("Pragma", "no-cache");
         verify(mockResponse).addHeader("Expires", "-1");
         verify(mockWriter).println(authHTML);
+
+        // test if no authenticator, then empty auth form
+        Mockito.clearInvocations(mockWriter);
+        processor.setCommentAuthenticator(null);
+        processor.generateAuthForm(mockRequest, mockResponse);
+        verify(mockWriter).println("");
     }
 
     @Test

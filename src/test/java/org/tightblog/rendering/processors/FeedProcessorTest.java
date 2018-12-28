@@ -169,6 +169,13 @@ public class FeedProcessorTest {
         verify(mockSOS).write("mytest24".getBytes());
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
+
+        // test 404 on rendering error
+        Mockito.clearInvocations(mockResponse, mockCache, mockSOS);
+        when(mockThymeleafRenderer.render(any(), any())).thenThrow(IllegalArgumentException.class);
+        processor.getFeed(mockRequest, mockResponse);
+        verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
+        verify(mockResponse, never()).setContentType(any());
     }
 
     @Test
@@ -196,5 +203,4 @@ public class FeedProcessorTest {
         test1 = processor.generateKey(request, true);
         assertEquals("bobsblog/tag/skiing/lastUpdate=" + testTime.toEpochMilli(), test1);
     }
-
 }

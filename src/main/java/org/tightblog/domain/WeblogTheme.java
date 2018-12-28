@@ -66,10 +66,6 @@ public class WeblogTheme {
         return this.sharedTheme.getLastModified();
     }
 
-    public boolean isEnabled() {
-        return this.sharedTheme.isEnabled();
-    }
-
     /**
      * Get the collection of all templates associated with this Theme.  Presently, for
      * performance reasons, this is the only method that will check the sharedTemplates
