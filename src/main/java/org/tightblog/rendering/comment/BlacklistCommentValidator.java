@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntryComment.ValidationResult;
 import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.repository.WebloggerPropertiesRepository;
 
@@ -47,7 +48,7 @@ public class BlacklistCommentValidator implements CommentValidator {
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
 
     @Autowired
-    public BlacklistCommentValidator(WebloggerPropertiesRepository webloggerPropertiesRepository) {
+    BlacklistCommentValidator(WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
     }
 
@@ -93,9 +94,7 @@ public class BlacklistCommentValidator implements CommentValidator {
             for (Pattern testPattern : combinedRules) {
                 Matcher matcher = testPattern.matcher(textToCheck);
                 if (matcher.find()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("{} matched by {}", matcher.group(), testPattern.pattern());
-                    }
+                    log.debug("{} matched by {}", matcher.group(), testPattern.pattern());
                     return true;
                 }
             }

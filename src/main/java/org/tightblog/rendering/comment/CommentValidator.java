@@ -19,6 +19,7 @@
 package org.tightblog.rendering.comment;
 
 import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntryComment.ValidationResult;
 
 import java.util.List;
 import java.util.Map;
@@ -27,10 +28,6 @@ import java.util.Map;
  * Interface for comment validation plugin
  */
 public interface CommentValidator {
-
-    enum ValidationResult {
-        BLATANT_SPAM, SPAM, NOT_SPAM
-    }
 
     /**
      * @param comment  Comment to be validated

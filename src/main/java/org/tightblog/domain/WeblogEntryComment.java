@@ -55,6 +55,10 @@ public class WeblogEntryComment {
         DISAPPROVED
     }
 
+    public enum ValidationResult {
+        BLATANT_SPAM, SPAM, NOT_SPAM
+    }
+
     // attributes
     private String id = Utilities.generateUUID();
     private int hashCode;
@@ -293,4 +297,5 @@ public class WeblogEntryComment {
                 (weblogEntry != null && weblogEntry.getAnchor() != null) ? weblogEntry.getAnchor() : "(no weblog entry)",
                 name, email, postTime);
     }
+
 }

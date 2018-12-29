@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
+import org.tightblog.domain.WeblogEntryComment.ValidationResult;
 import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import static org.junit.Assert.*;
@@ -93,6 +93,17 @@ public class BlacklistCommentValidatorTest {
         wec.setName(badPerson);
         ValidationResult result = validator.validate(wec, new HashMap<>());
         assertEquals("Blacklisted term in commenter name wasn't failed", ValidationResult.SPAM, result);
+    }
+
+    @Test
+    public void skipPropertiesBlacklistIfInitializedAlready() {
+        String badPerson = "Bad Person";
+        BlacklistCommentValidator validator = generateBlacklistValidator(badPerson);
+        validator.setGlobalCommentFilter("Bad Dog");
+        WeblogEntryComment wec = generateWeblogEntryComment("");
+        wec.setName(badPerson);
+        ValidationResult result = validator.validate(wec, new HashMap<>());
+        assertEquals("Blacklisted term from properties not skipped", ValidationResult.NOT_SPAM, result);
     }
 
     @Test

@@ -9,8 +9,8 @@ import org.tightblog.service.URLService;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntryComment;
-import org.tightblog.rendering.comment.AkismetCommentValidator.AkismetCaller;
-import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
+import org.tightblog.domain.WeblogEntryComment.ValidationResult;
+import org.tightblog.service.WeblogEntryManager;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,6 +31,8 @@ public class AkismetCommentValidatorTest {
     private Weblog weblog;
     private WeblogEntry entry;
     private WeblogEntryComment testComment;
+    private WeblogEntryManager mockWEM;
+    private URLService mockURLService;
 
     @Before
     public void initialize() {
@@ -46,16 +48,16 @@ public class AkismetCommentValidatorTest {
         testComment.setEmail("bob@email.com");
         testComment.setUrl("http://www.bobsite.com");
         testComment.setContent("Hello from Bob!");
+        mockWEM = mock(WeblogEntryManager.class);
+        mockURLService = mock(URLService.class);
     }
 
     @Test
     public void testCreateAkismetCallBody() {
-        URLService mockUrlService = mock(URLService.class);
-        when(mockUrlService.getWeblogURL(weblog)).thenReturn("http://www.foo.com");
-        when(mockUrlService.getWeblogEntryURL(entry)).thenReturn("http://www.foo.com/entry/bar");
+        when(mockURLService.getWeblogURL(weblog)).thenReturn("http://www.foo.com");
+        when(mockURLService.getWeblogEntryURL(entry)).thenReturn("http://www.foo.com/entry/bar");
 
-        AkismetCommentValidator validator = new AkismetCommentValidator(mockUrlService, "ignored");
-
+        AkismetCommentValidator validator = new AkismetCommentValidator(mockWEM, mockURLService, false);
         String apiCall = validator.createAPIRequestBody(testComment);
 
         String expected = "blog=http://www.foo.com&user_ip=remHost&user_agent=userAgt&referrer=http://www.bar.com" +
@@ -67,36 +69,23 @@ public class AkismetCommentValidatorTest {
 
     @Test
     public void testValidatorHandlesNonSpam() throws IOException {
-        URLService mockUrlService = mock(URLService.class);
-
-        AkismetCaller mockCaller = mock(AkismetCaller.class);
-        when(mockCaller.makeAkismetCall(anyString(), anyString())).
-                thenReturn(CommentValidator.ValidationResult.NOT_SPAM);
-
-        String dummyApiKey = "myApiKey123";
-        AkismetCommentValidator validator = new AkismetCommentValidator(mockUrlService, dummyApiKey);
+        when(mockWEM.makeAkismetCall(anyString())).thenReturn(ValidationResult.NOT_SPAM);
+        AkismetCommentValidator validator = new AkismetCommentValidator(mockWEM, mockURLService, false);
         String apiRequestBody = validator.createAPIRequestBody(testComment);
-        validator.setAkismetCaller(mockCaller);
 
         Map<String, List<String>> messageMap = new HashMap<>();
         ValidationResult result = validator.validate(testComment, messageMap);
         assertEquals("Comment not marked as non-spam", ValidationResult.NOT_SPAM, result);
         assertEquals("Message Map hasn't zero entries", 0, messageMap.size());
 
-        // check to make sure AkismetCaller mock called with expected values
-        verify(mockCaller).makeAkismetCall(eq(dummyApiKey), eq(apiRequestBody));
+        // confirm Akismet call made with expected values
+        verify(mockWEM).makeAkismetCall(eq(apiRequestBody));
     }
 
     @Test
     public void testValidatorHandlesSpam() throws IOException {
-        URLService mockUrlService = mock(URLService.class);
-
-        AkismetCaller mockCaller = mock(AkismetCaller.class);
-        when(mockCaller.makeAkismetCall(anyString(), anyString())).
-                thenReturn(CommentValidator.ValidationResult.SPAM);
-
-        AkismetCommentValidator validator = new AkismetCommentValidator(mockUrlService, "ignored");
-        validator.setAkismetCaller(mockCaller);
+        when(mockWEM.makeAkismetCall(anyString())).thenReturn(ValidationResult.SPAM);
+        AkismetCommentValidator validator = new AkismetCommentValidator(mockWEM, mockURLService, false);
 
         Map<String, List<String>> messageMap = new HashMap<>();
         ValidationResult result = validator.validate(testComment, messageMap);
@@ -109,15 +98,8 @@ public class AkismetCommentValidatorTest {
 
     @Test
     public void testValidatorHandlesBlatantSpamWithDelete() throws IOException {
-        URLService mockUrlService = mock(URLService.class);
-
-        AkismetCaller mockCaller = mock(AkismetCaller.class);
-        when(mockCaller.makeAkismetCall(anyString(), anyString())).
-                thenReturn(CommentValidator.ValidationResult.BLATANT_SPAM);
-
-        AkismetCommentValidator validator = new AkismetCommentValidator(mockUrlService, "ignored");
-        validator.setDeleteBlatantSpam(true);
-        validator.setAkismetCaller(mockCaller);
+        when(mockWEM.makeAkismetCall(anyString())).thenReturn(ValidationResult.BLATANT_SPAM);
+        AkismetCommentValidator validator = new AkismetCommentValidator(mockWEM, mockURLService, true);
 
         Map<String, List<String>> messageMap = new HashMap<>();
         ValidationResult result = validator.validate(testComment, messageMap);
@@ -127,15 +109,9 @@ public class AkismetCommentValidatorTest {
 
     @Test
     public void testValidatorHandlesBlatantSpamWithNonDelete() throws IOException {
-        URLService mockUrlService = mock(URLService.class);
+        when(mockWEM.makeAkismetCall(anyString())).thenReturn(ValidationResult.BLATANT_SPAM);
 
-        AkismetCaller mockCaller = mock(AkismetCaller.class);
-        when(mockCaller.makeAkismetCall(anyString(), anyString())).
-                thenReturn(CommentValidator.ValidationResult.BLATANT_SPAM);
-
-        AkismetCommentValidator validator = new AkismetCommentValidator(mockUrlService, "ignored");
-        validator.setDeleteBlatantSpam(false);
-        validator.setAkismetCaller(mockCaller);
+        AkismetCommentValidator validator = new AkismetCommentValidator(mockWEM, mockURLService, false);
 
         Map<String, List<String>> messageMap = new HashMap<>();
         ValidationResult result = validator.validate(testComment, messageMap);
@@ -148,14 +124,8 @@ public class AkismetCommentValidatorTest {
 
     @Test
     public void testValidatorTreatsExceptionAsSpam() throws IOException {
-        URLService mockUrlService = mock(URLService.class);
-
-        AkismetCaller mockCaller = mock(AkismetCaller.class);
-        when(mockCaller.makeAkismetCall(anyString(), anyString())).
-                thenThrow(new IOException());
-
-        AkismetCommentValidator validator = new AkismetCommentValidator(mockUrlService, "ignored");
-        validator.setAkismetCaller(mockCaller);
+        when(mockWEM.makeAkismetCall(anyString())).thenThrow(new IOException());
+        AkismetCommentValidator validator = new AkismetCommentValidator(mockWEM, mockURLService, false);
 
         Map<String, List<String>> messageMap = new HashMap<>();
         WebloggerTest.logExpectedException(log, "Exception");
@@ -166,5 +136,4 @@ public class AkismetCommentValidatorTest {
         assertTrue("Message Map missing correct key", messageMap.containsKey(expectedKey));
         assertNull("Message Map value isn't null", messageMap.get(expectedKey));
     }
-
 }

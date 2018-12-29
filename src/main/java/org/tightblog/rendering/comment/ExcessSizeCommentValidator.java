@@ -14,44 +14,70 @@
  * limitations under the License.  For additional information regarding
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
+ *
+ * Source file modified from the original ASF source; all changes made
+ * are also under Apache License.
  */
 package org.tightblog.rendering.comment;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntryComment.ValidationResult;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Validates comment only if it does not exceed number of characters specified by the excessSize.validator.limit
- * property (default 1000 if not provided). This validator can be disabled by setting this property to a value
- * less than 0.
+ * Validates comment if it neither exceeds a given size in characters nor a specified
+ * number of links.  Size can be adjusted by the excessSize.validator.sizeLimit and
+ * links by the excessSize.validator.linksLimit property (defaults to 1000 and 3
+ * respectively.)
  */
 @Component
 public class ExcessSizeCommentValidator implements CommentValidator {
 
-    @Value("${excessSize.validator.limit:1000}")
-    private int limit;
+    private static Pattern LINK_PATTERN = Pattern.compile("<a\\s*href\\s*=");
 
-    public int getLimit() {
-        return limit;
-    }
+    private int sizeLimit;
+    private int linksLimit;
 
-    public void setLimit(int limit) {
-        this.limit = limit;
+    @Autowired
+    ExcessSizeCommentValidator(
+            @Value("${excessSize.validator.sizeLimit:1000}") int sizeLimit,
+            @Value("${excessSize.validator.linksLimit:3}") int linksLimit) {
+        this.sizeLimit = sizeLimit;
+        this.linksLimit = linksLimit;
     }
 
     @Override
     public ValidationResult validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
-        if (limit >= 0 && comment.getContent() != null && comment.getContent().length() > limit) {
-            messages.put("comment.validator.excessSizeMessage",
-                    Collections.singletonList(Integer.toString(limit)));
-            return ValidationResult.SPAM;
+
+        if (comment.getContent() != null) {
+            // check size
+            if (sizeLimit >= 0 && comment.getContent().length() > sizeLimit) {
+                messages.put("comment.validator.excessSizeMessage",
+                        Collections.singletonList(Integer.toString(sizeLimit)));
+                return ValidationResult.SPAM;
+            }
+
+            // check # of links
+            if (linksLimit >= 0) {
+                Matcher m = LINK_PATTERN.matcher(comment.getContent());
+                int count = 0;
+                while (m.find()) {
+                    if (++count > linksLimit) {
+                        messages.put("comment.validator.excessLinksMessage",
+                                Collections.singletonList(Integer.toString(linksLimit)));
+                        return ValidationResult.SPAM;
+                    }
+                }
+            }
         }
         return ValidationResult.NOT_SPAM;
     }
-
 }

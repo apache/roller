@@ -23,6 +23,7 @@ package org.tightblog.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.domain.AtomEnclosure;
@@ -31,6 +32,7 @@ import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogCategory;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntryComment.ValidationResult;
 import org.tightblog.domain.WeblogEntrySearchCriteria;
 import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.repository.WeblogEntryCommentRepository;
@@ -49,9 +51,14 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -78,6 +85,7 @@ public class WeblogEntryManager {
     private WeblogEntryCommentRepository weblogEntryCommentRepository;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private URLService urlService;
+    private String akismetApiKey;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -86,12 +94,14 @@ public class WeblogEntryManager {
     public WeblogEntryManager(WeblogRepository weblogRepository, WeblogEntryRepository weblogEntryRepository,
                               WeblogEntryCommentRepository weblogEntryCommentRepository,
                               URLService urlService,
-                              WebloggerPropertiesRepository webloggerPropertiesRepository) {
+                              WebloggerPropertiesRepository webloggerPropertiesRepository,
+                              @Value("${akismet.apiKey:#{null}}") String akismetApiKey) {
         this.weblogRepository = weblogRepository;
         this.weblogEntryRepository = weblogEntryRepository;
         this.weblogEntryCommentRepository = weblogEntryCommentRepository;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.urlService = urlService;
+        this.akismetApiKey = akismetApiKey;
     }
 
     /**
@@ -680,5 +690,33 @@ public class WeblogEntryManager {
             }
         }
         return Pair.of(blogEntryTitle, found);
+    }
+
+    public ValidationResult makeAkismetCall(String apiRequestBody) throws IOException {
+        if (!StringUtils.isBlank(akismetApiKey)) {
+            URL url = new URL("http://" + akismetApiKey + ".rest.akismet.com/1.1/comment-check");
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+
+            conn.setRequestProperty("User_Agent", "TightBlog");
+            conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8");
+            conn.setRequestProperty("Content-length", Integer.toString(apiRequestBody.length()));
+
+            OutputStreamWriter osr = new OutputStreamWriter(conn.getOutputStream());
+            osr.write(apiRequestBody, 0, apiRequestBody.length());
+            osr.flush();
+            osr.close();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String response = br.readLine();
+            if ("true".equals(response)) {
+                if ("discard".equalsIgnoreCase(conn.getHeaderField("X-akismet-pro-tip"))) {
+                    return ValidationResult.BLATANT_SPAM;
+                }
+                return ValidationResult.SPAM;
+            }
+        }
+
+        return ValidationResult.NOT_SPAM;
     }
 }

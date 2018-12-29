@@ -86,6 +86,13 @@ public class MathCommentAuthenticatorTest {
         String expected =
                 "<p>Please answer this simple math question</p><p>8 + 37 = <input name='answer' value='42' required></p>";
         assertEquals(expected, actual);
+
+        // test no answer in HTML if not provided by commenter
+        when(mockRequest.getParameter("answer")).thenReturn(null);
+        actual = mathCommentAuthenticator.getHtml(mockRequest);
+        expected =
+                "<p>Please answer this simple math question</p><p>8 + 37 = <input name='answer' value='' required></p>";
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -99,9 +106,25 @@ public class MathCommentAuthenticatorTest {
     }
 
     @Test
+    public void authenticateFailNonNumericEntry() {
+        HttpSession mockSession = mock(HttpSession.class);
+        HttpServletRequest mockRequest = createMockRequest(mockSession);
+        when(mockRequest.getParameter("answer")).thenReturn("eighty two");
+        boolean actual = mathCommentAuthenticator.authenticate(mockRequest);
+        assertFalse(actual);
+    }
+
+    @Test
     public void authenticateFailNoAnswer() {
         HttpSession mockSession = mock(HttpSession.class);
         HttpServletRequest mockRequest = createMockRequest(mockSession);
+        boolean actual = mathCommentAuthenticator.authenticate(mockRequest);
+        assertFalse(actual);
+    }
+
+    @Test
+    public void authenticateFailNoSession() {
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         boolean actual = mathCommentAuthenticator.authenticate(mockRequest);
         assertFalse(actual);
     }
@@ -114,5 +137,14 @@ public class MathCommentAuthenticatorTest {
         when(mockSession.getAttribute("mathAnswer")).thenReturn(84);
         boolean actual = mathCommentAuthenticator.authenticate(mockRequest);
         assertFalse("Authenticate didn't fail with incorrect answer", actual);
+    }
+
+    @Test
+    public void authenticateFailMathAnswerNotAvailable() {
+        HttpSession mockSession = mock(HttpSession.class);
+        HttpServletRequest mockRequest = createMockRequest(mockSession);
+        when(mockRequest.getParameter("answer")).thenReturn("82");
+        boolean actual = mathCommentAuthenticator.authenticate(mockRequest);
+        assertFalse("Authenticate didn't fail with missing mathAnswer attribute", actual);
     }
 }

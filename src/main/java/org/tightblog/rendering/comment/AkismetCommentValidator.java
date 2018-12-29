@@ -20,22 +20,16 @@
  */
 package org.tightblog.rendering.comment;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tightblog.service.URLService;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntryComment.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
+import org.tightblog.service.WeblogEntryManager;
 import java.util.List;
 import java.util.Map;
 
@@ -66,30 +60,19 @@ import java.util.Map;
 public class AkismetCommentValidator implements CommentValidator {
     private static Logger log = LoggerFactory.getLogger(AkismetCommentValidator.class);
 
-    private String apiKey;
-
-    @Value("${akismet.delete.blatant.spam:false}")
-    private boolean deleteBlatantSpam;
-
-    void setDeleteBlatantSpam(boolean deleteBlatantSpam) {
-        this.deleteBlatantSpam = deleteBlatantSpam;
-    }
-
+    private WeblogEntryManager weblogEntryManager;
     private URLService urlService;
-
-    private AkismetCaller akismetCaller;
+    private boolean deleteBlatantSpam;
 
     /**
      * Creates a new instance of AkismetCommentValidator
      */
-    public AkismetCommentValidator(@Autowired URLService urlService, @Value("${akismet.apiKey:#{null}}") String apiKey) {
+    @Autowired
+    AkismetCommentValidator(WeblogEntryManager weblogEntryManager, URLService urlService,
+                                   @Value("${akismet.delete.blatant.spam:false}") boolean deleteBlatantSpam) {
+        this.weblogEntryManager = weblogEntryManager;
         this.urlService = urlService;
-        this.apiKey = apiKey;
-        this.akismetCaller = new AkismetCaller();
-    }
-
-    void setAkismetCaller(AkismetCaller akismetCaller) {
-        this.akismetCaller = akismetCaller;
+        this.deleteBlatantSpam = deleteBlatantSpam;
     }
 
     String createAPIRequestBody(WeblogEntryComment comment) {
@@ -107,44 +90,13 @@ public class AkismetCommentValidator implements CommentValidator {
         return apiCall;
     }
 
-    static class AkismetCaller {
-
-        ValidationResult makeAkismetCall(String apiKey, String apiRequestBody) throws IOException {
-            if (!StringUtils.isBlank(apiKey)) {
-                URL url = new URL("http://" + apiKey + ".rest.akismet.com/1.1/comment-check");
-                URLConnection conn = url.openConnection();
-                conn.setDoOutput(true);
-
-                conn.setRequestProperty("User_Agent", "TightBlog");
-                conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8");
-                conn.setRequestProperty("Content-length", Integer.toString(apiRequestBody.length()));
-
-                OutputStreamWriter osr = new OutputStreamWriter(conn.getOutputStream());
-                osr.write(apiRequestBody, 0, apiRequestBody.length());
-                osr.flush();
-                osr.close();
-
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String response = br.readLine();
-                if ("true".equals(response)) {
-                    if ("discard".equalsIgnoreCase(conn.getHeaderField("X-akismet-pro-tip"))) {
-                        return ValidationResult.BLATANT_SPAM;
-                    }
-                    return ValidationResult.SPAM;
-                }
-            }
-
-            return ValidationResult.NOT_SPAM;
-        }
-    }
-
     @Override
     public ValidationResult validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
 
         String apiRequestBody = createAPIRequestBody(comment);
 
         try {
-            ValidationResult response = akismetCaller.makeAkismetCall(apiKey, apiRequestBody);
+            ValidationResult response = weblogEntryManager.makeAkismetCall(apiRequestBody);
             if (ValidationResult.BLATANT_SPAM.equals(response) && !deleteBlatantSpam) {
                 // with no autodelete, downgrade blatant spam to spam
                 messages.put("comment.validator.akismetMessage.blatantNoDelete", null);

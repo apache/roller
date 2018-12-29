@@ -36,7 +36,7 @@ import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.domain.WebloggerProperties.CommentPolicy;
 import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
-import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
+import org.tightblog.domain.WeblogEntryComment.ValidationResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;

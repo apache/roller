@@ -29,12 +29,12 @@ import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntryComment;
 import org.tightblog.domain.WeblogEntryComment.ApprovalStatus;
+import org.tightblog.domain.WeblogEntryComment.ValidationResult;
 import org.tightblog.domain.WeblogRole;
 import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.domain.WebloggerProperties.CommentPolicy;
 import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
-import org.tightblog.rendering.comment.CommentValidator.ValidationResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogRepository;
@@ -512,15 +512,15 @@ public class CommentProcessorTest {
 
         CommentValidator mockAlwaysBlatantValidator = mock(CommentValidator.class);
         when(mockAlwaysBlatantValidator.validate(any(WeblogEntryComment.class), anyMap()))
-                .thenReturn(CommentValidator.ValidationResult.BLATANT_SPAM);
+                .thenReturn(ValidationResult.BLATANT_SPAM);
 
         CommentValidator mockAlwaysSpamValidator = mock(CommentValidator.class);
         when(mockAlwaysSpamValidator.validate(any(WeblogEntryComment.class), anyMap()))
-                .thenReturn(CommentValidator.ValidationResult.SPAM);
+                .thenReturn(ValidationResult.SPAM);
 
         CommentValidator mockAlwaysNonSpamValidator = mock(CommentValidator.class);
         when(mockAlwaysNonSpamValidator.validate(any(WeblogEntryComment.class), anyMap()))
-                .thenReturn(CommentValidator.ValidationResult.NOT_SPAM);
+                .thenReturn(ValidationResult.NOT_SPAM);
 
         List<CommentValidator> emptyList = new ArrayList<>();
         List<CommentValidator> oneBlatantOneNonSpam = new ArrayList<>();
@@ -534,19 +534,19 @@ public class CommentProcessorTest {
         twoNonSpam.add(mockAlwaysNonSpamValidator);
 
         processor.setCommentValidators(emptyList);
-        assertEquals(CommentValidator.ValidationResult.NOT_SPAM, processor.runSpamCheckers(testComment, testMessages));
+        assertEquals(ValidationResult.NOT_SPAM, processor.runSpamCheckers(testComment, testMessages));
 
         processor.setCommentValidators(oneBlatantOneNonSpam);
-        assertEquals(CommentValidator.ValidationResult.BLATANT_SPAM, processor.runSpamCheckers(testComment, testMessages));
+        assertEquals(ValidationResult.BLATANT_SPAM, processor.runSpamCheckers(testComment, testMessages));
 
         processor.setCommentValidators(oneSpamOneNonSpam);
-        assertEquals(CommentValidator.ValidationResult.SPAM, processor.runSpamCheckers(testComment, testMessages));
+        assertEquals(ValidationResult.SPAM, processor.runSpamCheckers(testComment, testMessages));
         oneSpamOneNonSpam.add(mockAlwaysBlatantValidator);
-        assertEquals(CommentValidator.ValidationResult.BLATANT_SPAM, processor.runSpamCheckers(testComment, testMessages));
+        assertEquals(ValidationResult.BLATANT_SPAM, processor.runSpamCheckers(testComment, testMessages));
 
         processor.setCommentValidators(twoNonSpam);
-        assertEquals(CommentValidator.ValidationResult.NOT_SPAM, processor.runSpamCheckers(testComment, testMessages));
+        assertEquals(ValidationResult.NOT_SPAM, processor.runSpamCheckers(testComment, testMessages));
         twoNonSpam.add(mockAlwaysSpamValidator);
-        assertEquals(CommentValidator.ValidationResult.SPAM, processor.runSpamCheckers(testComment, testMessages));
+        assertEquals(ValidationResult.SPAM, processor.runSpamCheckers(testComment, testMessages));
     }
 }

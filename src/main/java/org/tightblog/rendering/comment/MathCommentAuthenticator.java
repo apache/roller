@@ -23,8 +23,6 @@ package org.tightblog.rendering.comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -35,8 +33,6 @@ import java.util.Random;
  */
 @Component
 public class MathCommentAuthenticator implements CommentAuthenticator {
-
-    private static Logger log = LoggerFactory.getLogger(MathCommentAuthenticator.class);
 
     @Autowired
     private MessageSource messages;
@@ -78,33 +74,27 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
     }
 
     public boolean authenticate(HttpServletRequest request) {
-
         boolean authenticated = false;
-
         HttpSession session = request.getSession(false);
-        String answerString = request.getParameter("answer");
 
-        if (answerString != null && session != null) {
-            try {
-                int answer = Integer.parseInt(answerString);
-                Integer sum = (Integer) session.getAttribute("mathAnswer");
+        if (session != null) {
+            String answerString = request.getParameter("answer");
+            if (answerString != null) {
+                try {
+                    int answer = Integer.parseInt(answerString);
+                    Integer sum = (Integer) session.getAttribute("mathAnswer");
 
-                if (sum != null && answer == sum) {
-                    authenticated = true;
-                    session.removeAttribute("mathAnswer");
-                    session.removeAttribute("mathValue1");
-                    session.removeAttribute("mathValue2");
+                    if (sum != null && answer == sum) {
+                        authenticated = true;
+                        session.removeAttribute("mathAnswer");
+                        session.removeAttribute("mathValue1");
+                        session.removeAttribute("mathValue2");
+                    }
+                } catch (NumberFormatException ignored) {
+                    // ignored ... someone is just really bad at math
                 }
-            } catch (NumberFormatException ignored) {
-                // ignored ... someone is just really bad at math
-            } catch (Exception e) {
-                // unexpected
-                log.error("exception", e);
             }
         }
-
         return authenticated;
     }
-
 }
-
