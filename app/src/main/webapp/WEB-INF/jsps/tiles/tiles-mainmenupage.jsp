@@ -33,26 +33,29 @@
 
 <tiles:insertAttribute name="bannerStatus"/>
 
-<div class="row">
-    
-    <div class="col-md-3 roller-column-left">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <tiles:insertAttribute name="sidebar"/>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-9 roller-column-right">
+<div class="container">
 
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <h2 class="roller-page-title"><s:property value="pageTitle"/></h2>
-                <tiles:insertAttribute name="messages"/>
-                <tiles:insertAttribute name="content"/>
+    <div class="row">
+
+        <div class="col-md-3 roller-column-left">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <tiles:insertAttribute name="sidebar"/>
+                </div>
             </div>
         </div>
 
+        <div class="col-md-9 roller-column-right">
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h2 class="roller-page-title"><s:property value="pageTitle"/></h2>
+                    <tiles:insertAttribute name="messages"/>
+                    <tiles:insertAttribute name="content"/>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 

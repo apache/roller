@@ -16,77 +16,86 @@
 
 package org.apache.roller.weblogger.planet.ui;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
+import org.apache.roller.planet.business.fetcher.FetcherException;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
-import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.ServletRequestAware;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 
 /**
  * Manage planet group subscriptions, default group is "all".
  */
 // TODO: make this work @AllowedMethods({"execute","save","delete"})
-public class PlanetSubscriptions extends PlanetUIAction {
-    
-    private static final Log LOGGER = LogFactory.getLog(PlanetSubscriptions.class);
-    
-    // id of the group we are working in
-    private String groupHandle = null;
-    
+public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAware  {
+
+    private static final Log log = LogFactory.getLog(PlanetGroupSubs.class);
+
     // the planet group we are working in
     private PlanetGroup group = null;
-    
+
     // the subscription to deal with
     private String subUrl = null;
-    
-    
-    public PlanetSubscriptions() {
-        this.actionName = "planetSubscriptions";
+
+    private boolean createNew = false;
+
+    public PlanetGroupSubs() {
+        this.actionName = "planetGroupSubs";
         this.desiredMenu = "admin";
-        this.pageTitle = "planetSubscriptions.title";
     }
-    
-    
+
+
     @Override
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
-    
+
     @Override
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
+
     @Override
-    public void myPrepare() {
-        
+    public void setServletRequest(HttpServletRequest request) {
+
         PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        
-        // lookup group we are operating on, if none specified then use default
-        if (getGroupHandle() == null) {
-            setGroupHandle("all");
-        }
-        
+        String action = null;
         try {
-            setGroup(pmgr.getGroup(getPlanet(), getGroupHandle()));
-        } catch (RollerException ex) {
-            LOGGER.error("Error looking up planet group - " + getGroupHandle(), ex);
+            if (request.getParameter("createNew") != null) {
+                createNew = true;
+
+            } else if (request.getParameter("bean.id") != null) {
+                String groupId = request.getParameter("bean.id");
+                action = "looking up planet group by id: " + groupId;
+                setGroup(pmgr.getGroupById(groupId));
+
+            } else if (request.getParameter("groupHandle") != null) {
+                String groupHandle = request.getParameter("groupHandle");
+                action = "looking up planet group by handle: " + groupHandle;
+                setGroup(pmgr.getGroup(getPlanet(), groupHandle));
+
+            } else {
+                action = "getting default group";
+                setGroup(pmgr.getGroup(getPlanet(), "all"));
+            }
+
+        } catch (Exception ex) {
+            log.error("Error " + action, ex);
         }
     }
-    
-    
+
+
     /**
      * Populate page model and forward to subscription page
      */
@@ -94,22 +103,22 @@ public class PlanetSubscriptions extends PlanetUIAction {
         return LIST;
     }
 
-    
-    /** 
-     * Save subscription, add to current group 
+
+    /**
+     * Save subscription, add to current group
      */
     public String save() {
-        
+
         myValidate();
-        
-        if(!hasActionErrors()) {
+
+        if (!hasActionErrors()) {
             try {
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
 
                 // check if this subscription already exists before adding it
                 Subscription sub = pmgr.getSubscription(getSubUrl());
-                if(sub == null) {
-                    LOGGER.debug("Adding New Subscription - " + getSubUrl());
+                if (sub == null) {
+                    log.debug("Adding New Subscription - " + getSubUrl());
 
                     // sub doesn't exist yet, so we need to fetch it
                     FeedFetcher fetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
@@ -117,19 +126,16 @@ public class PlanetSubscriptions extends PlanetUIAction {
 
                     // save new sub
                     pmgr.saveSubscription(sub);
-                } else {
-                    LOGGER.debug("Adding Existing Subscription - " + getSubUrl());
 
+                } else {
                     // Subscription already exists
-                    addMessage("planetSubscription.foundExisting", sub.getTitle());
+                    log.debug("Adding Existing Subscription - " + getSubUrl());
                 }
 
                 // add the sub to the group
                 group.getSubscriptions().add(sub);
                 sub.getGroups().add(group);
                 pmgr.saveGroup(group);
-
-                // flush changes
                 WebloggerFactory.getWeblogger().flush();
 
                 // clear field after success
@@ -137,22 +143,25 @@ public class PlanetSubscriptions extends PlanetUIAction {
 
                 addMessage("planetSubscription.success.saved");
 
+            } catch (FetcherException ex) {
+                addError("planetGroupSubs.error.fetchingFeed", ex.getRootCauseMessage());
+
             } catch (RollerException ex) {
-                LOGGER.error("Unexpected error saving subscription", ex);
-                addError("planetSubscriptions.error.duringSave", ex.getRootCauseMessage());
+                log.error("Unexpected error saving subscription", ex);
+                addError("planetGroupSubs.error.duringSave", ex.getRootCauseMessage());
             }
         }
-        
+
         return LIST;
     }
 
-    
-    /** 
-     * Delete subscription, reset form  
+
+    /**
+     * Delete subscription, reset form
      */
     public String delete() {
-        
-        if(getSubUrl() != null) {
+
+        if (getSubUrl() != null) {
             try {
 
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
@@ -170,54 +179,45 @@ public class PlanetSubscriptions extends PlanetUIAction {
                 addMessage("planetSubscription.success.deleted");
 
             } catch (RollerException ex) {
-                LOGGER.error("Error removing planet subscription", ex);
+                log.error("Error removing planet subscription", ex);
                 addError("planetSubscription.error.deleting");
             }
         }
 
         return LIST;
     }
-    
-    
-    /** 
+
+
+    /**
      * Validate posted subscription
      */
     private void myValidate() {
-        
-        if(StringUtils.isEmpty(getSubUrl())) {
+
+        if (StringUtils.isEmpty(getSubUrl())) {
             addError("planetSubscription.error.feedUrl");
         }
     }
-    
-    
+
+
     public List<Subscription> getSubscriptions() {
-        
+
         List<Subscription> subs = Collections.emptyList();
-        if(getGroup() != null) {
+        if (getGroup() != null) {
             Set<Subscription> subsSet = getGroup().getSubscriptions();
-            
+
             // iterate over list and build display list
             subs = new ArrayList<Subscription>();
             for (Subscription sub : subsSet) {
                 // only include external subs for display
-                if(!sub.getFeedURL().startsWith("weblogger:")) {
+                if (!sub.getFeedURL().startsWith("weblogger:")) {
                     subs.add(sub);
                 }
             }
         }
-        
+
         return subs;
     }
-    
-    
-    public String getGroupHandle() {
-        return groupHandle;
-    }
 
-    public void setGroupHandle(String groupHandle) {
-        this.groupHandle = groupHandle;
-    }
-    
     public PlanetGroup getGroup() {
         return group;
     }
@@ -232,5 +232,36 @@ public class PlanetSubscriptions extends PlanetUIAction {
 
     public void setSubUrl(String subUrl) {
         this.subUrl = subUrl;
-    }    
+    }
+
+    public boolean getCreateNew() {
+        return createNew;
+    }
+
+    public void setCreateNew(boolean createNew) {
+        this.createNew = createNew;
+    }
+
+    public String getGroupHandle() {
+        if (group != null) {
+            return group.getHandle();
+        }
+        return null;
+    }
+
+    @Override
+    public String getPageTitle() {
+        if (pageTitle == null) {
+            if (createNew) {
+                pageTitle = getText("planetGroupSubs.custom.title.new");
+            } else if (getGroup().getHandle().equals("all")) {
+                pageTitle = getText("planetGroupSubs.default.title");
+            } else {
+                pageTitle = getText("planetGroupSubs.custom.title", new String[] { getGroup().getHandle() } );
+            }
+        }
+        return pageTitle;
+    }
 }
+
+

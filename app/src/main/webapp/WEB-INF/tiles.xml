@@ -204,12 +204,14 @@
         <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetConfig.jsp" />
     </definition>
     
-    <definition name=".PlanetSubscriptions" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetSubscriptions.jsp" />
+    <definition name=".PlanetGroupSubs" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetGroupSubs.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/admin/PlanetGroupSubsSidebar.jsp" />
     </definition>
     
     <definition name=".PlanetGroups" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/PlanetGroups.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/admin/PlanetGroupSidebar.jsp" />
     </definition>
 
     <!-- weblog editor pages (and associates) -->

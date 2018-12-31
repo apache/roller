@@ -29,40 +29,43 @@
 </head>
 <body>
 
-<tiles:insertAttribute name="bannerStatus" />
+<tiles:insertAttribute name="bannerStatus"/>
 
-<tilesx:useAttribute name="sidebar" id="sidebar" classname="java.lang.String" />
+<tilesx:useAttribute name="sidebar" id="sidebar" classname="java.lang.String"/>
 
+<div class="container">
 
-<div class="row">
+    <div class="row">
 
-    <div class="col-md-8 roller-column-left">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <tiles:insertAttribute name="messages"/>
-                <h2 class="roller-page-title"><s:property value="pageTitle"/></h2>
-                <tiles:insertAttribute name="content"/>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4 roller-column-right">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <s:if test="authenticatedUser != null || actionWeblog != null">
-                    <tiles:insertAttribute name="userStatus"/>
-                </s:if>
-            </div>
-        </div>
-
-        <c:if test="${sidebar != '/WEB-INF/jsps/tiles/empty.jsp'}">
-            <s:property value="sidebar" />
+        <div class="col-md-8 roller-column-left">
             <div class="panel panel-default">
-                <div class="panel-body">
-                    <tiles:insertAttribute name="sidebar"/>
+                <div class="panel-body" style="min-height: 30em">
+                    <tiles:insertAttribute name="messages"/>
+                    <h2 class="roller-page-title"><s:property value="pageTitle"/></h2>
+                    <tiles:insertAttribute name="content"/>
                 </div>
             </div>
-        </c:if>
+        </div>
+
+        <div class="col-md-4 roller-column-right">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <s:if test="authenticatedUser != null || actionWeblog != null">
+                        <tiles:insertAttribute name="userStatus"/>
+                    </s:if>
+                </div>
+            </div>
+
+            <c:if test="${sidebar != '/WEB-INF/jsps/tiles/empty.jsp'}">
+                <s:property value="sidebar"/>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <tiles:insertAttribute name="sidebar"/>
+                    </div>
+                </div>
+            </c:if>
+
+        </div>
 
     </div>
 

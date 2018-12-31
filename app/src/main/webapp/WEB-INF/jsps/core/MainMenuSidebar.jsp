@@ -58,13 +58,6 @@
                     <a href="<s:url action="globalConfig" namespace="/roller-ui/admin" />"><s:text name="yourWebsites.globalAdmin" /></a></h4>          
                     <p><s:text name="yourWebsites.globalAdmin.desc" /></p>
 
-                    <%-- Planet settings --%>
-                    
-                    <s:if test="getBooleanProp('planet.aggregator.enabled')">
-                        <h4><span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
-                        <a href="<s:url action="planetConfig" namespace="/roller-ui/admin" />"><s:text name="yourWebsites.planetAdmin" /></a></h4>
-                        <p><s:text name="yourWebsites.planetAdmin.desc" /></p>
-                    </s:if>
                 </s:if>
                 
                 <br />

@@ -52,6 +52,7 @@ i
 
                     <s:set var="tabMenu" value="menu"/>
                     <s:if test="#tabMenu != null">
+
                         <s:iterator var="tab" value="#tabMenu.tabs">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -70,6 +71,7 @@ i
                                 </ul>
                             </li>
                         </s:iterator>
+
                     </s:if>
                     
                 </s:if>
@@ -78,6 +80,7 @@ i
 
                     <s:set var="tabMenu" value="menu"/>
                     <s:if test="#tabMenu != null">
+
                         <s:iterator var="tab" value="#tabMenu.tabs">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -95,6 +98,7 @@ i
                                 </ul>
                             </li>
                         </s:iterator>
+
                     </s:if>
 
                 </s:if>

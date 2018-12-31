@@ -18,6 +18,8 @@ package org.apache.roller.weblogger.planet.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,61 +29,76 @@ import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.ServletRequestAware;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
  * Manage planet groups.
  */
 // TODO: make this work @AllowedMethods({"execute","save","delete"})
-public class PlanetGroups extends PlanetUIAction {
-    
+public class PlanetGroups extends PlanetUIAction implements ServletRequestAware  {
+
     private static Log log = LogFactory.getLog(PlanetGroups.class);
-    
+
     // a bean to manage submitted data
     private PlanetGroupsBean bean = new PlanetGroupsBean();
-    
+
     // the planet group we are working on
     private PlanetGroup group = null;
-    
-    
+
     public PlanetGroups() {
         this.actionName = "planetGroups";
         this.desiredMenu = "admin";
         this.pageTitle = "planetGroups.pagetitle";
     }
-    
-    
+
+
     @Override
     public boolean isWeblogRequired() {
         return false;
     }
-    
-    
+
+    @Override
+    public void setServletRequest(HttpServletRequest request) {
+        if (request.getParameter("groupHandle") != null) {
+            bean.setHandle(request.getParameter("groupHandle"));
+        }
+    }
+
     @Override
     public void myPrepare() {
-        
-        if(getPlanet() != null && getBean().getId() != null) {
+
+        if (getBean().getId() != null) {
             try {
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
                 setGroup(pmgr.getGroupById(getBean().getId()));
-            } catch(Exception ex) {
-                log.error("Error looking up planet group - " + getBean().getId(), ex);
+            } catch (Exception ex) {
+                log.error("Error looking up planet group by id: " + getBean().getId(), ex);
+            }
+
+        } else if (bean.getHandle() != null) {
+            try {
+                PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
+                setGroup(pmgr.getGroup(getPlanet(), bean.getHandle()));
+            } catch (Exception ex) {
+                log.error("Error looking up planet group by handle: " + bean.getHandle(), ex);
             }
         }
     }
 
-    
-    /** 
+    /**
      * Show planet groups page.
      */
     public String execute() {
-        
+
         // if we are loading an existing group then populate the bean
-        if(getGroup() != null) {
+        if (getGroup() != null) {
             getBean().copyFrom(getGroup());
         }
-        
-        return LIST;
+
+        return "groups_list";
     }
 
 
@@ -124,70 +141,68 @@ public class PlanetGroups extends PlanetUIAction {
             }
         }
 
-        return LIST;
+        return "subscriptions_list";
     }
 
-    
-    /** 
-     * Delete group, reset form  
+
+    /**
+     * Delete group, reset form
      */
     public String delete() {
-        
-        if(getGroup() != null) {
+
+        if (getGroup() != null) {
             try {
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
                 pmgr.deleteGroup(getGroup());
                 WebloggerFactory.getWeblogger().flush();
-                
+
                 addMessage("planetSubscription.success.deleted");
 
                 setGroup(null);
 
-            } catch(Exception ex) {
-                log.error("Error deleting planet group - "+getBean().getId());
+            } catch (Exception ex) {
+                log.error("Error deleting planet group - " + getBean().getId());
                 addError("Error deleting planet group");
             }
         }
-        
-        return LIST;
+
+        return "groups_list";
     }
-    
-    
-    /** 
-     * Validate posted group 
+
+
+    /**
+     * Validate posted group
      */
     private void myValidate() {
-        
-        if(StringUtils.isEmpty(getBean().getTitle())) {
+
+        if (StringUtils.isEmpty(getBean().getTitle())) {
             addError("planetGroups.error.title");
         }
-        
-        if(StringUtils.isEmpty(getBean().getHandle())) {
+
+        if (StringUtils.isEmpty(getBean().getHandle())) {
             addError("planetGroups.error.handle");
         }
-        
-        if(getBean().getHandle() != null && "all".equals(getBean().getHandle())) {
+
+        if (getBean().getHandle() != null && "all".equals(getBean().getHandle())) {
             addError("planetGroups.error.nameReserved");
         }
-        
+
         // make sure duplicate group handles are prevented
     }
-    
-    
+
+
     public List<PlanetGroup> getGroups() {
         List<PlanetGroup> displayGroups = new ArrayList<PlanetGroup>();
-        
+
         for (PlanetGroup planetGroup : getPlanet().getGroups()) {
-            // The "all" group is considered a special group and cannot be
-            // managed independently
+            // The "all" group is considered a special group and cannot be managed independently
             if (!planetGroup.getHandle().equals("all")) {
                 displayGroups.add(planetGroup);
             }
         }
         return displayGroups;
     }
-    
-    
+
     public PlanetGroupsBean getBean() {
         return bean;
     }
@@ -195,7 +210,7 @@ public class PlanetGroups extends PlanetUIAction {
     public void setBean(PlanetGroupsBean bean) {
         this.bean = bean;
     }
-    
+
     public PlanetGroup getGroup() {
         return group;
     }
@@ -203,5 +218,6 @@ public class PlanetGroups extends PlanetUIAction {
     public void setGroup(PlanetGroup group) {
         this.group = group;
     }
-    
+
+
 }

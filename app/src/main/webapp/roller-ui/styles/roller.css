@@ -22,6 +22,10 @@ table {
     border:0;
 }
 
+.container {
+    margin: 1em;
+}
+
 .roller-page-title {
     margin-top: 0px;
     margin-bottom: 5px;
@@ -290,7 +294,6 @@ div.image-controls select,
 div.image-controls input {
     display: inline;
 }
-
 
 
 /* theme edit */

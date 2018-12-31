@@ -286,14 +286,15 @@
             <result name="input" type="tiles">.PlanetConfig</result>
         </action>
         
-        <action name="planetSubscriptions"
-                class="org.apache.roller.weblogger.planet.ui.PlanetSubscriptions">
-            <result name="list" type="tiles">.PlanetSubscriptions</result>
+        <action name="planetGroupSubs"
+                class="org.apache.roller.weblogger.planet.ui.PlanetGroupSubs">
+            <result name="list" type="tiles">.PlanetGroupSubs</result>
         </action>
         
         <action name="planetGroups"
                 class="org.apache.roller.weblogger.planet.ui.PlanetGroups">
-            <result name="list" type="tiles">.PlanetGroups</result>
+            <result name="groups_list" type="tiles">.PlanetGroups</result>
+            <result name="subscriptions_list" type="tiles">.PlanetGroupSubs</result>
         </action>
     </package>
     
