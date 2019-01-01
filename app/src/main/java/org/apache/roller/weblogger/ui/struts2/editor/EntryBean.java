@@ -189,6 +189,9 @@ public class EntryBean {
     
     public void setCommentDays(Integer commentDays) {
         this.commentDays = commentDays;
+        if (commentDays == -1) {
+            allowComments = false;
+        }
     }
     
     public int getCommentCount() {

@@ -67,11 +67,11 @@
     <s:if test="actionName == 'entryEdit'">
         <div class="form-group">
             
-            <label class="col-sm-3 control-label" for="entry_bean_permalink">
+            <label class="control-label" for="entry_bean_permalink">
                 <s:text name="weblogEdit.permaLink"/>
             </label>
            
-            <div class="col-sm-9 controls">
+            <div class="controls">
                 <p class="form-control-static">
                     <s:if test="bean.published">
                         <a id="entry_bean_permalink" href='<s:property value="entry.permalink" />'>
@@ -97,7 +97,7 @@
               list="categories" listKey="id" listValue="name" tabindex="3" />
 
     <s:if test="actionWeblog.enableMultiLang">
-        <%-- locale --%>
+        <%-- language / locale --%>
         <s:select label="%{getText('weblogEdit.locale')}" name="bean.locale" size="1"
                   list="localesList" listValue="displayName" tabindex="4"/>
     </s:if>
@@ -107,9 +107,9 @@
 
     <%-- status --%>
     <div class="form-group">
-        <label class="col-sm-3 control-label" for="weblogEdit.status"><s:text name="weblogEdit.status"/></label>
+        <label class="control-label" for="weblogEdit.status"><s:text name="weblogEdit.status"/></label>
 
-        <div class="col-sm-9 controls">
+        <div class="controls">
 
             <p class="form-control-static">
                 <s:if test="bean.published">
@@ -197,9 +197,9 @@
 
                     <div class="form-group">
 
-                        <label class="col-sm-3 control-label"><s:text name="weblogEdit.pubTime"/></label>
+                        <label class="control-label"><s:text name="weblogEdit.pubTime"/></label>
                         
-                        <div class="col-sm-9 controls">
+                        <div class="controls">
                             
                             <s:select theme="simple" name="bean.hours" list="hoursList"/> :
                             <s:select theme="simple" name="bean.minutes" list="minutesList"/> : 
@@ -225,49 +225,11 @@
 
                     </div>
 
-                    
-                    <%--
-                    <s:checkbox label="%{getText('weblogEdit.allowComments')}" name="bean.allowComments"/>
-                    <s:select label="%{getText('weblogEdit.commentDays')}" name="bean.commentDays" 
+                    <s:select label="%{getText('weblogEdit.commentDays')}" name="bean.commentDays"
                               list="commentDaysList" listKey="key" listValue="value"/>
-                    --%>
-
-                    <%-- use raw HTML tags here, Struts-Bootstrap does not provide this --%>                    
-                    <div class="form-group">
-                        
-                        <label class="col-sm-3 control-label" for="entry_bean_allowComments">
-                            <s:text name="weblogEdit.allowComments" />
-                        </label>
-                        
-                        <div class="col-sm-9 controls">
-
-                            <div class="input-group">
-                                
-                                <span class="input-group-addon">
-                                    <input type="checkbox" name="bean.allowComments"
-                                           value="true" checked="checked" id="entry_bean_allowComments"/>
-                                    <input type="hidden" id="__checkbox_entry_bean_allowComments"
-                                           name="__checkbox_bean.allowComments" value="true"/> 
-                                </span>
-
-                                <select name="bean.commentDays" id="entry_bean_commentDays" class="form-control">
-                                    <option value="0" selected="selected">unlimited days</option>
-                                    <option value="3">3 days</option>
-                                    <option value="7">7 days</option>
-                                    <option value="14">14 days</option>
-                                    <option value="30">30 days</option>
-                                    <option value="60">60 days</option>
-                                    <option value="90">90 days</option>
-                                </select>
-                                    
-                            </div> <!-- /input-group -->
-                            
-                        </div>
-                        
-                    </div> <!-- /form-group -->
 
                     <s:checkbox label="%{getText('weblogEdit.rightToLeft')}" name="bean.rightToLeft"/>
-                   
+
                     <%-- global admin can pin items to front page weblog --%>
                     <s:if test="authenticatedUser.hasGlobalPermission('admin')">
                         <s:checkbox label="%{getText('weblogEdit.pinnedToMain')}" name="bean.pinnedToMain"
@@ -281,7 +243,7 @@
                                  maxlength="255" tooltip="%{getText('weblogEdit.enclosureURL.tooltip')}" />
                 
                     <s:if test="actionName == 'entryEdit'">
-                        <s:if test="bean.enclosureURL != null">
+                        <s:if test="!bean.enclosureURL.isEmpty()">
                             <s:text name="weblogEdit.enclosureType"/>:
                             <s:property value='entry.findEntryAttribute("att_mediacast_type")'/>
                             <s:text name="weblogEdit.enclosureLength"/>:

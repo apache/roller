@@ -379,8 +379,9 @@ public abstract class UIAction extends ActionSupport
     
     public List<KeyValueObject> getCommentDaysList() {
         
-        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
-        
+        List<KeyValueObject> opts = new ArrayList<>();
+
+        opts.add(new KeyValueObject(-1, getText("weblogEdit.commentsNotAllowed")));
         opts.add(new KeyValueObject(0, getText("weblogEdit.unlimitedCommentDays")));
         opts.add(new KeyValueObject(3, getText("weblogEdit.days3")));
         opts.add(new KeyValueObject(7, getText("weblogEdit.days7")));
