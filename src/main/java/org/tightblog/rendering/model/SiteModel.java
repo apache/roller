@@ -96,7 +96,7 @@ public class SiteModel implements Model {
 
     /**
      * Get pager of WeblogEntry objects across all weblogs, in reverse chrono order by pubTime.
-     * @param length    Max number of results to return
+     * @param length Max number of results to return
      */
     public WeblogEntryListData getWeblogEntriesPager(int length) {
         return weblogEntryListGenerator.getChronoPager(
@@ -105,7 +105,7 @@ public class SiteModel implements Model {
                 null,
                 null,
                 pageRequest.getPageNum(),
-                length,
+                Math.min(100, length),
                 true);
     }
 

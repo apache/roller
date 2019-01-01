@@ -272,8 +272,10 @@ public class PreviewProcessorTest {
 
     @Test
     public void testModelSetCorrectlyFilled() throws IOException {
+        PageModel mockPageModel = mock(PageModel.class);
+        when(mockPageModel.getModelName()).thenReturn("model");
         Set<Model> previewModelSet = new HashSet<>();
-        previewModelSet.add(new PageModel());
+        previewModelSet.add(mockPageModel);
         when(mockApplicationContext.getBean(eq("previewModelSet"), eq(Set.class))).thenReturn(previewModelSet);
         Set<Model> siteModelSet = new HashSet<>();
         siteModelSet.add(new SiteModel());

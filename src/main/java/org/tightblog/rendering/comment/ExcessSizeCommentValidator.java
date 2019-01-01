@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 @Component
 public class ExcessSizeCommentValidator implements CommentValidator {
 
-    private static Pattern LINK_PATTERN = Pattern.compile("<a\\s*href\\s*=");
+    private static final Pattern LINK_PATTERN = Pattern.compile("<a\\s*href\\s*=");
 
     private int sizeLimit;
     private int linksLimit;

@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.tightblog.rendering.generators.CalendarGenerator;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogEntryManager;
@@ -32,7 +33,6 @@ import org.tightblog.domain.WeblogEntrySearchCriteria;
 import org.tightblog.domain.WeblogRole;
 import org.tightblog.domain.WeblogTheme;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 
 import java.util.HashMap;
@@ -66,12 +66,12 @@ public class PageModelTest {
         mockWeblogManager = mock(WeblogManager.class);
         mockWeblogEntryManager = mock(WeblogEntryManager.class);
         mockThemeManager = mock(ThemeManager.class);
-        pageModel = new PageModel();
-        pageModel.setUserManager(mockUserManager);
-        pageModel.setWeblogManager(mockWeblogManager);
-        pageModel.setWeblogEntryManager(mockWeblogEntryManager);
-        pageModel.setThemeManager(mockThemeManager);
-        pageModel.setWeblogEntryListGenerator(mockGenerator);
+        CalendarGenerator mockCalendarGenerator = mock(CalendarGenerator.class);
+        pageModel = new PageModel(
+                mockUserManager, mockWeblogManager, mockWeblogEntryManager,
+                mockThemeManager, mockGenerator, mockCalendarGenerator,
+                30
+        );
         weblog = new Weblog();
         weblog.setHandle("testblog");
         weblog.setLocale("EN_US");
@@ -156,15 +156,15 @@ public class PageModelTest {
 
     @Test
     public void testTimePagerReturned() {
-        WeblogEntryListData pager = pageModel.getWeblogEntriesPager();
-        verify(mockGenerator).getChronoPager(any(), any(), any(), any(), eq(0), eq(-1), eq(false));
+        pageModel.getWeblogEntriesPager();
+        verify(mockGenerator).getChronoPager(any(), any(), any(), any(), eq(0), eq(12), eq(false));
         verify(mockGenerator, never()).getPermalinkPager(any(), any(), any());
     }
 
     @Test
     public void testPermalinkPagerReturned() {
         pageRequest.setWeblogEntryAnchor("blog-entry");
-        WeblogEntryListData pager = pageModel.getWeblogEntriesPager();
+        pageModel.getWeblogEntriesPager();
         verify(mockGenerator).getPermalinkPager(any(), any(), any());
         verify(mockGenerator, never()).getChronoPager(any(), any(), any(), any(), eq(0), eq(-1), eq(false));
     }

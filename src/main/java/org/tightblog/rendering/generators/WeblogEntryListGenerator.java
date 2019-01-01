@@ -16,7 +16,6 @@
 package org.tightblog.rendering.generators;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.tightblog.service.URLService;
@@ -35,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -48,16 +46,10 @@ public class WeblogEntryListGenerator {
     private MessageSource messages;
 
     @Autowired
-    public WeblogEntryListGenerator(WeblogEntryManager weblogEntryManager, URLService urlService, MessageSource messages) {
+    WeblogEntryListGenerator(WeblogEntryManager weblogEntryManager, URLService urlService,
+                                    MessageSource messages) {
         this.weblogEntryManager = weblogEntryManager;
         this.urlService = urlService;
-        this.messages = messages;
-    }
-
-    @Value("${site.pages.maxEntries:30}")
-    private int maxEntriesPerPage;
-
-    public void setMessages(MessageSource messages) {
         this.messages = messages;
     }
 
@@ -75,32 +67,32 @@ public class WeblogEntryListGenerator {
         String category = pageRequest.getCategory();
         int page = pageRequest.getPageNum();
 
-        // get a message utils instance to handle i18n of messages
-        Locale viewLocale = weblog != null ? weblog.getLocaleInstance() : Locale.getDefault();
-
         if (page > 0) {
             data.nextLink = urlService.getWeblogSearchURL(weblog, query, category, page - 1);
-            data.nextLabel = messages.getMessage("weblogEntriesPager.newer", null, viewLocale);
+            data.nextLabel = messages.getMessage("weblogEntriesPager.newer", null, weblog.getLocaleInstance());
         }
 
         if (moreResults) {
             data.prevLink = urlService.getWeblogSearchURL(weblog, query, category, page + 1);
-            data.prevLabel = messages.getMessage("weblogEntriesPager.older", null, viewLocale);
+            data.prevLabel = messages.getMessage("weblogEntriesPager.older", null, weblog.getLocaleInstance());
         }
 
         return data;
     }
 
-    public WeblogEntryListData getPermalinkPager(Weblog weblog, String entryAnchor, Boolean canShowDraftEntries) {
+    static LocalDate instantToWeblogLocalDate(Weblog weblog, Instant instant) {
+        return instant.atZone(weblog.getZoneId()).toLocalDate();
+    }
+
+    public WeblogEntryListData getPermalinkPager(Weblog weblog, String entryAnchor, Boolean canShowUnpublishedEntries) {
         WeblogEntryListData data = new WeblogEntryListData();
 
         WeblogEntry currEntry = weblogEntryManager.getWeblogEntryByAnchor(weblog, entryAnchor);
         if (currEntry != null) {
-            if (canShowDraftEntries || WeblogEntry.PubStatus.PUBLISHED.equals(currEntry.getStatus())) {
+            if (canShowUnpublishedEntries || WeblogEntry.PubStatus.PUBLISHED.equals(currEntry.getStatus())) {
                 data.entries = new HashMap<>();
-                data.entries.put((currEntry.getPubTime() == null ? Instant.now() : currEntry.getPubTime())
-                                .atZone(currEntry.getWeblog().getZoneId())
-                                .toLocalDate(),
+                data.entries.put(instantToWeblogLocalDate(currEntry.getWeblog(),
+                        currEntry.getPubTime() == null ? Instant.now() : currEntry.getPubTime()),
                         Collections.singletonList(currEntry));
 
                 // make sure that entry is published and not to future
@@ -114,7 +106,7 @@ public class WeblogEntryListGenerator {
 
                 // make sure that entry is published and not to future
                 WeblogEntry prevEntry = weblogEntryManager.getPreviousPublishedEntry(currEntry);
-                if (prevEntry != null) {
+                if (prevEntry != null && prevEntry.getPubTime().isBefore(Instant.now())) {
                     data.prevLink = urlService.getWeblogEntryURL(prevEntry);
                     String title = Utilities.truncateText(prevEntry.getTitle(), 15, 20, "...");
                     data.prevLabel = messages.getMessage("weblogEntriesPager.single.prev", new Object[]{title},
@@ -132,14 +124,6 @@ public class WeblogEntryListGenerator {
         WeblogEntryListData data = new WeblogEntryListData();
         // first page is 0, higher page number means more in the past.
         int page = Math.max(pageNum, 0);
-
-        if (maxEntries < 0) {
-            // make sure offset, maxEntries, and page are valid
-            maxEntries = weblog.getEntriesPerPage();
-            if (maxEntries > maxEntriesPerPage) {
-                maxEntries = maxEntriesPerPage;
-            }
-        }
 
         LocalDateTime startTime = null;
         LocalDateTime endTime = null;

@@ -26,9 +26,16 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.tightblog.rendering.generators.CalendarGenerator;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.service.ThemeManager;
+import org.tightblog.service.UserManager;
+import org.tightblog.service.WeblogEntryManager;
+import org.tightblog.service.WeblogManager;
 import org.tightblog.service.indexer.FieldConstants;
 import org.tightblog.service.LuceneIndexer;
 import org.tightblog.service.indexer.SearchTask;
@@ -64,22 +71,30 @@ public class SearchResultsModel extends PageModel {
 
     private static final int RESULTS_PER_PAGE = 10;
 
+    private WeblogEntryRepository weblogEntryRepository;
+    private LuceneIndexer luceneIndexer;
+
     private int resultCount;
     private int offset;
     private int limit;
 
     @Autowired
-    private LuceneIndexer luceneIndexer;
+    SearchResultsModel(
+            UserManager userManager,
+            WeblogManager weblogManager,
+            WeblogEntryManager weblogEntryManager,
+            ThemeManager themeManager,
+            WeblogEntryListGenerator weblogEntryListGenerator,
+            CalendarGenerator calendarGenerator,
+            @Value("${site.pages.maxEntries:30}") int maxEntriesPerPage,
+            WeblogEntryRepository weblogEntryRepository,
+            LuceneIndexer luceneIndexer) {
 
-    void setLuceneIndexer(LuceneIndexer luceneIndexer) {
-        this.luceneIndexer = luceneIndexer;
-    }
+        super(userManager, weblogManager, weblogEntryManager, themeManager, weblogEntryListGenerator,
+                calendarGenerator, maxEntriesPerPage);
 
-    @Autowired
-    private WeblogEntryRepository weblogEntryRepository;
-
-    public void setWeblogEntryRepository(WeblogEntryRepository weblogEntryRepository) {
         this.weblogEntryRepository = weblogEntryRepository;
+        this.luceneIndexer = luceneIndexer;
     }
 
     @Override

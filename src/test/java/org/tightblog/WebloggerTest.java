@@ -47,7 +47,6 @@ import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.service.LuceneIndexer;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -219,12 +218,11 @@ public abstract class WebloggerTest {
         return commentTest;
     }
 
-    public static WeblogEntry genWeblogEntry(String anchor, Instant pubTime,
-                                             Weblog weblog) {
+    public static WeblogEntry genWeblogEntry(Weblog weblog, String anchor, Instant pubTime) {
         WeblogEntry entry = new WeblogEntry();
+        entry.setWeblog(weblog);
         entry.setAnchor(anchor);
-        entry.setWeblog(weblog == null ? new Weblog() : weblog);
-        entry.setPubTime(pubTime == null ? Instant.now().minus(2, ChronoUnit.DAYS) : pubTime);
+        entry.setPubTime(pubTime);
         return entry;
     }
 

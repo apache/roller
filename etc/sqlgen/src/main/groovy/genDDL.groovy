@@ -17,10 +17,7 @@
  Groovy script runs the createdb.vm Velocity template to generate database-specific table
  creation scripts for TightBlog, placing the generated files in its resources/dbscripts folder.
 
- The TightBlog distribution will always have the  
-
- Run "gradle createDDLScripts" to activate whenever the database script createdb.vm changes,
- to provide TightBlog has the updated scripts.
+ See this subproject's build.gradle for run instructions.
  */
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.Template

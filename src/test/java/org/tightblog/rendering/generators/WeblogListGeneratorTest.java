@@ -117,7 +117,15 @@ public class WeblogListGeneratorTest {
         assertNull(data.getPrevLink());
         assertNull(data.getNextLink());
 
-        // test if no letter & length 1 get just one back
+        // test if no letter & length 1 get just one back (first page - no prev link)
+        data = weblogListGenerator.getWeblogsByLetter("http://www.foo.com", null,
+                0, 1);
+        assertEquals(1, data.getWeblogs().size());
+        assertEquals("mostpop1", data.getWeblogs().get(0).getHandle());
+        assertNull(data.getPrevLink());
+        assertEquals("http://www.foo.com?page=1", data.getNextLink());
+
+        // test if no letter & length 1 get just one back (non-first page)
         data = weblogListGenerator.getWeblogsByLetter("http://www.foo.com", null,
                 2, 1);
         assertEquals(1, data.getWeblogs().size());

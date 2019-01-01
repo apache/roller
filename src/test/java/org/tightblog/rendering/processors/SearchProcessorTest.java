@@ -142,8 +142,10 @@ public class SearchProcessorTest {
         when(mockWeblogTheme.getTemplateByAction(Template.ComponentType.SEARCH_RESULTS)).thenReturn(wtSR);
 
         // test proper page models provided to renderer
+        PageModel mockPageModel = mock(PageModel.class);
+        when(mockPageModel.getModelName()).thenReturn("model");
         Set<Model> pageModelSet = new HashSet<>();
-        pageModelSet.add(new PageModel());
+        pageModelSet.add(mockPageModel);
         when(mockApplicationContext.getBean(eq("searchModelSet"), eq(Set.class))).thenReturn(pageModelSet);
         Set<Model> siteModelSet = new HashSet<>();
         siteModelSet.add(new SiteModel());

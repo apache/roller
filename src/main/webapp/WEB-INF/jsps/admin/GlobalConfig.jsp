@@ -96,11 +96,6 @@
             <td class="description"><fmt:message key="globalConfig.tip.allowCustomTheme"/></td>
         </tr>
         <tr>
-            <td class="label"><fmt:message key="globalConfig.newsfeedMaxEntries" /></td>
-            <td class="field"><input type="number" ng-model="ctrl.webloggerProps.newsfeedItemsPage" size='35'></td>
-            <td class="description"><fmt:message key="globalConfig.tip.newsfeedMaxEntries"/></td>
-        </tr>
-        <tr>
             <td class="label"><fmt:message key="globalConfig.defaultAnalyticsTrackingCode" /></td>
             <td class="field"><textarea rows="10" cols="70" ng-model="ctrl.webloggerProps.defaultAnalyticsCode"></textarea></td>
             <td class="description"><fmt:message key="globalConfig.tip.defaultAnalyticsTrackingCode"/></td>

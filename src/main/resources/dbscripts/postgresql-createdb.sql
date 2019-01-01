@@ -200,7 +200,6 @@ create table weblogger_properties (
     users_create_blogs     boolean default true not null,
     blog_html_policy       varchar(24) default 'RELAXED' not null,
     users_customize_themes boolean default true not null,
-    newsfeed_items_page    integer default 30 not null,
     default_analytics_code text,
     users_override_analytics_code boolean default true not null,
     comment_policy         varchar(24) default 'MUSTMODERATE' not null,

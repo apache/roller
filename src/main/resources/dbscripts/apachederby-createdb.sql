@@ -193,7 +193,6 @@ create table weblogger_properties (
     users_create_blogs     smallint default 1 not null,
     blog_html_policy       varchar(24) default 'RELAXED' not null,
     users_customize_themes smallint default 1 not null,
-    newsfeed_items_page    integer default 30 not null,
     default_analytics_code clob(102400),
     users_override_analytics_code smallint default 1 not null,
     comment_policy         varchar(24) default 'MUSTMODERATE' not null,

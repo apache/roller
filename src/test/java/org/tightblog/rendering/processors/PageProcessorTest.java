@@ -25,6 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mobile.device.DeviceType;
 import org.tightblog.WebloggerTest;
+import org.tightblog.rendering.generators.CalendarGenerator;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.domain.SharedTemplate;
@@ -318,8 +321,10 @@ public class PageProcessorTest {
     @Test
     public void testModelSetCorrectlyFilled() throws IOException {
         initializeMocks();
+        PageModel pageModel = new PageModel(mock(UserManager.class), mockWM, mockWEM,
+                mockThemeManager, mock(WeblogEntryListGenerator.class), mock(CalendarGenerator.class), 30);
         Set<Model> pageModelSet = new HashSet<>();
-        pageModelSet.add(new PageModel());
+        pageModelSet.add(pageModel);
         when(mockApplicationContext.getBean(eq("pageModelSet"), eq(Set.class))).thenReturn(pageModelSet);
         Set<Model> siteModelSet = new HashSet<>();
         siteModelSet.add(new SiteModel());

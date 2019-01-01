@@ -48,21 +48,21 @@ public class WeblogListGenerator {
         return weblogDataList;
     }
 
-    public WeblogListData getWeblogsByLetter(String baseUrl, Character letter, int pageNum, int length) {
+    public WeblogListData getWeblogsByLetter(String baseUrl, Character letter, int pageNum, int maxBlogs) {
         WeblogListData weblogListData = new WeblogListData();
 
         List<Weblog> rawWeblogs;
         if (letter == null) {
-            rawWeblogs = weblogRepository.findByVisibleTrue(PageRequest.of(pageNum, length + 1));
+            rawWeblogs = weblogRepository.findByVisibleTrue(PageRequest.of(pageNum, maxBlogs + 1));
         } else {
             rawWeblogs = weblogRepository.findByLetterOrderByHandle(letter,
-                    PageRequest.of(pageNum * length, length + 1));
+                    PageRequest.of(pageNum * maxBlogs, maxBlogs + 1));
         }
 
         List<WeblogData> weblogList = weblogListData.getWeblogs();
         for (Weblog weblog : rawWeblogs) {
             weblogList.add(weblogToWeblogData(weblog));
-            if (weblogList.size() >= length) {
+            if (weblogList.size() >= maxBlogs) {
                 break;
             }
         }

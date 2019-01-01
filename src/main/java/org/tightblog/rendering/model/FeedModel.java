@@ -21,6 +21,7 @@
 package org.tightblog.rendering.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -44,15 +45,18 @@ public class FeedModel implements Model {
 
     private WeblogFeedRequest feedRequest;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
-    protected WeblogEntryListGenerator weblogEntryListGenerator;
-    protected WeblogEntryManager weblogEntryManager;
+    private WeblogEntryListGenerator weblogEntryListGenerator;
+    private WeblogEntryManager weblogEntryManager;
+    private int numEntriesPerPage;
 
     @Autowired
-    public FeedModel(WebloggerPropertiesRepository webloggerPropertiesRepository,
-                     WeblogEntryListGenerator weblogEntryListGenerator, WeblogEntryManager weblogEntryManager) {
+    FeedModel(WebloggerPropertiesRepository webloggerPropertiesRepository,
+                     WeblogEntryListGenerator weblogEntryListGenerator, WeblogEntryManager weblogEntryManager,
+                     @Value("${site.feed.numEntries:20}") int numEntriesPerPage) {
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.weblogEntryListGenerator = weblogEntryListGenerator;
         this.weblogEntryManager = weblogEntryManager;
+        this.numEntriesPerPage = numEntriesPerPage;
     }
 
     /**
@@ -96,7 +100,7 @@ public class FeedModel implements Model {
                 null,
                 feedRequest.getWeblogCategoryName(), feedRequest.getTag(),
                 feedRequest.getPageNum(),
-                webloggerPropertiesRepository.findOrNull().getNewsfeedItemsPage(),
+                numEntriesPerPage,
                 feedRequest.isSiteWide());
     }
 

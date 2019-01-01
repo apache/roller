@@ -57,7 +57,7 @@ public class FeedModelTest {
         feedRequest.setPageNum(16);
         feedRequest.setSiteWide(true);
         feedModel = new FeedModel(mockPropertiesRepository, mockWeblogEntryListGenerator,
-                mockWeblogEntryManager);
+                mockWeblogEntryManager, 20);
         Map<String, Object> initVals = new HashMap<>();
         initVals.put("parsedRequest", feedRequest);
         feedModel.init(initVals);
@@ -65,10 +65,9 @@ public class FeedModelTest {
 
     @Test
     public void getWeblogEntriesPager() {
-        webloggerProperties.setNewsfeedItemsPage(21);
         feedModel.getWeblogEntriesPager();
         verify(mockWeblogEntryListGenerator).getChronoPager(weblog, null, "stamps",
-                "collectibles", 16, 21, true);
+                "collectibles", 16, 20, true);
     }
 
     @Test

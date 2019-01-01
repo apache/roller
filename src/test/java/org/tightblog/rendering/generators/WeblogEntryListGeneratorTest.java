@@ -15,6 +15,7 @@
  */
 package org.tightblog.rendering.generators;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,12 +54,13 @@ public class WeblogEntryListGeneratorTest {
     private static ResourceBundleMessageSource messages;
     private WeblogEntryListGenerator generator;
     private Weblog weblog;
-    private WeblogEntryManager mockWEM = mock(WeblogEntryManager.class);
+    private WeblogEntryManager mockWEM;
     private URLService mockUrlService = mock(URLService.class);
-    private Instant now = Instant.now();
-    private Instant yesterday = now.minus(1, ChronoUnit.DAYS);
-    private LocalDate nowLD = LocalDate.from(now.atZone(ZoneId.systemDefault()));
-    private LocalDate yesterdayLD = LocalDate.from(yesterday.atZone(ZoneId.systemDefault()));
+    private Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
+    private Instant threeDaysAgo = twoDaysAgo.minus(1, ChronoUnit.DAYS);
+    private Instant oneDayAgo = twoDaysAgo.plus(1, ChronoUnit.DAYS);
+    private LocalDate nowLD = LocalDate.from(twoDaysAgo.atZone(ZoneId.systemDefault()));
+    private LocalDate yesterdayLD = LocalDate.from(threeDaysAgo.atZone(ZoneId.systemDefault()));
 
     @BeforeClass
     public static void initializeOnce() {
@@ -68,13 +70,14 @@ public class WeblogEntryListGeneratorTest {
 
     @Before
     public void initialize() {
-        generator = new WeblogEntryListGenerator(mockWEM, mockUrlService, messages);
         weblog = new Weblog();
         weblog.setLocale(Locale.ENGLISH.getLanguage());
+        mockWEM = mock(WeblogEntryManager.class);
+        generator = new WeblogEntryListGenerator(mockWEM, mockUrlService, messages);
     }
 
     @Test
-    public void getSearchPager() throws Exception {
+    public void getSearchPager() {
         WeblogPageRequest wpr = new WeblogPageRequest();
         wpr.setWeblog(weblog);
         wpr.setQuery("my query");
@@ -111,68 +114,93 @@ public class WeblogEntryListGeneratorTest {
 
     @Test
     public void getPermalinkPager() {
-        // Showing SCHEDULED entries allowed with canShowDraftEntries = false
-        WeblogEntry we1 = WebloggerTest.genWeblogEntry("day1story1", now, weblog);
-        we1.setStatus(PubStatus.SCHEDULED);
-        WeblogEntry weNext = WebloggerTest.genWeblogEntry("nextStory", now, weblog);
+        // Showing SCHEDULED entries allowed with canShowUnpublishedEntries = false
+        WeblogEntry entryToShow = WebloggerTest.genWeblogEntry(weblog, "day1story1", twoDaysAgo);
+        entryToShow.setStatus(PubStatus.SCHEDULED);
+        WeblogEntry weNext = WebloggerTest.genWeblogEntry(weblog, "nextStory", oneDayAgo);
         weNext.setTitle("My Next Story");
-        weNext.setPubTime(now.minus(10, ChronoUnit.SECONDS));
-        WeblogEntry wePrev = WebloggerTest.genWeblogEntry("prevStory", now, weblog);
+        WeblogEntry wePrev = WebloggerTest.genWeblogEntry(weblog, "prevStory", threeDaysAgo);
         wePrev.setTitle("My Prev Story");
-        when(mockWEM.getWeblogEntryByAnchor(weblog, "day1story1")).thenReturn(we1);
-        when(mockWEM.getNextPublishedEntry(we1)).thenReturn(weNext);
-        when(mockWEM.getPreviousPublishedEntry(we1)).thenReturn(wePrev);
+        when(mockWEM.getWeblogEntryByAnchor(weblog, "day1story1")).thenReturn(entryToShow);
+        when(mockWEM.getNextPublishedEntry(entryToShow)).thenReturn(weNext);
+        when(mockWEM.getPreviousPublishedEntry(entryToShow)).thenReturn(wePrev);
         when(mockUrlService.getWeblogEntryURL(weNext)).thenReturn("nextUrl");
         when(mockUrlService.getWeblogEntryURL(wePrev)).thenReturn("prevUrl");
 
         WeblogEntryListData data = generator.getPermalinkPager(weblog, "day1story1", true);
         assertEquals(1, data.getEntries().size());
-        assertEquals(we1, data.getEntries().values().stream().findFirst().get().get(0));
+        assertEquals("entry not added to map", entryToShow, data.getEntries().values().iterator().next().get(0));
+        assertEquals("entry not in list", entryToShow, data.getEntriesAsList().get(0));
+        assertEquals("entriesAsList() not constant w/multiple calls", entryToShow, data.getEntriesAsList().get(0));
+        assertEquals("key not set correctly to entry publish time", entryToShow, data.getEntries().get(
+                        WeblogEntryListGenerator.instantToWeblogLocalDate(entryToShow.getWeblog(), twoDaysAgo)).get(0));
 
         assertEquals("nextUrl", data.getNextLink());
         assertTrue(data.getNextLabel().contains("My Next Story"));
         assertNotNull("prevUrl", data.getPrevLink());
         assertTrue(data.getPrevLabel().contains("My Prev Story"));
 
-        // Showing SCHEDULED entries not allowed with canShowDraftEntries = false
+        // Test entry still retrievable if no publish time
+        entryToShow.setPubTime(null);
+        data = generator.getPermalinkPager(weblog, "day1story1", true);
+        assertEquals(1, data.getEntries().size());
+        assertEquals("unpublished entry not added to map", entryToShow,
+                data.getEntries().values().iterator().next().get(0));
+        assertEquals("unpublished entry not in list", entryToShow, data.getEntriesAsList().get(0));
+
+        // Test SCHEDULED entries not allowed with canShowUnpublishedEntries = false
         data = generator.getPermalinkPager(weblog, "day1story1", false);
         assertNull(data.getEntries());
         assertNull(data.getNextLabel());
         assertNull(data.getPrevLabel());
 
-        // Showing DRAFT entries not allowed with canShowDraftEntries = false
-        we1.setStatus(PubStatus.DRAFT);
+        // Showing DRAFT entries not allowed with canShowUnpublishedEntries = false
+        entryToShow.setStatus(PubStatus.DRAFT);
         data = generator.getPermalinkPager(weblog, "day1story1", false);
         assertNull(data.getEntries());
         assertNull(data.getNextLabel());
         assertNull(data.getPrevLabel());
 
-        // Showing PUBLISHED entries allowed with canShowDraftEntries = false
-        we1.setStatus(PubStatus.PUBLISHED);
+        // Showing PUBLISHED entries allowed with canShowUnpublishedEntries = false
+        entryToShow.setStatus(PubStatus.PUBLISHED);
         data = generator.getPermalinkPager(weblog, "day1story1", false);
         assertNotNull(data.getEntries());
         assertNotNull(data.getNextLabel());
         assertNotNull(data.getPrevLabel());
-    }
 
-    private Map<LocalDate, List<WeblogEntry>> createSampleEntriesMap() {
-        WeblogEntry we1 = WebloggerTest.genWeblogEntry("day1story1", now, weblog);
-        WeblogEntry we2 = WebloggerTest.genWeblogEntry("day1story2", now, weblog);
-        WeblogEntry we3 = WebloggerTest.genWeblogEntry("day2story1", yesterday, weblog);
-        WeblogEntry we4 = WebloggerTest.genWeblogEntry("day2story2", yesterday, weblog);
-        List<WeblogEntry> listNow = new ArrayList<>();
-        listNow.add(we1);
-        listNow.add(we2);
-        List<WeblogEntry> listYesterday = new ArrayList<>();
-        listYesterday.add(we3);
-        // won't be returned as maxEntries = 3
-        listYesterday.add(we4);
+        // Test next, prev link info empty if entries in the future
+        Instant oneHourLater = Instant.now().plus(1, ChronoUnit.HOURS);
+        weNext.setPubTime(oneHourLater);
+        wePrev.setPubTime(oneHourLater);
+        data = generator.getPermalinkPager(weblog, "day1story1", false);
+        assertNotNull(data.getEntries());
+        assertNull(data.getNextLabel());
+        assertNull(data.getNextLink());
+        assertNull(data.getPrevLabel());
+        assertNull(data.getPrevLink());
 
-        Map<LocalDate, List<WeblogEntry>> entryMap = new TreeMap<>(Collections.reverseOrder());
-        entryMap.put(nowLD, listNow);
-        entryMap.put(yesterdayLD, listYesterday);
+        // Test next link info empty if no next link
+        when(mockWEM.getNextPublishedEntry(entryToShow)).thenReturn(null);
+        data = generator.getPermalinkPager(weblog, "day1story1", false);
+        assertNotNull(data.getEntries());
+        assertNull(data.getNextLabel());
+        assertNull(data.getNextLink());
 
-        return entryMap;
+        // Test prev link info empty if no prev link
+        when(mockWEM.getPreviousPublishedEntry(entryToShow)).thenReturn(null);
+        data = generator.getPermalinkPager(weblog, "day1story1", false);
+        assertNotNull(data.getEntries());
+        assertNull(data.getPrevLabel());
+        assertNull(data.getPrevLink());
+
+        // Showing data is empty if anchor cannot be found for weblog
+        data = generator.getPermalinkPager(weblog, "anchorNotFound", false);
+        assertNull(data.getEntries());
+        assertTrue(StringUtils.isEmpty(data.getNextLabel()));
+        assertTrue(StringUtils.isEmpty(data.getNextLink()));
+        assertTrue(StringUtils.isEmpty(data.getPrevLabel()));
+        assertTrue(StringUtils.isEmpty(data.getPrevLink()));
+        assertNull(data.getEntriesAsList());
     }
 
     @Test
@@ -182,7 +210,6 @@ public class WeblogEntryListGeneratorTest {
         String tag = "airmail";
         int pageNum = 2;
         int maxEntries = 3;
-        boolean siteWideSearch = false;
 
         Map<LocalDate, List<WeblogEntry>> entryMap = createSampleEntriesMap();
 
@@ -193,7 +220,7 @@ public class WeblogEntryListGeneratorTest {
                 tag, pageNum + 1)).thenReturn("prevUrl");
 
         WeblogEntryListData data = generator.getChronoPager(weblog, dateString,
-                catName, tag, pageNum, maxEntries, siteWideSearch);
+                catName, tag, pageNum, maxEntries, false);
 
         Map<LocalDate, List<WeblogEntry>> results = data.getEntries();
         assertEquals(2, results.size());
@@ -224,18 +251,25 @@ public class WeblogEntryListGeneratorTest {
         assertEquals(WeblogEntry.PubStatus.PUBLISHED, wesc.getStatus());
         assertEquals(maxEntries + 1, wesc.getMaxResults());
 
+        // test maxEntries honored
+        data = generator.getChronoPager(weblog, dateString,
+                catName, tag, pageNum, 1, false);
+        assertEquals(1, data.getEntries().size());
+
+        data = generator.getChronoPager(weblog, dateString,
+                catName, tag, pageNum, 0, false);
+        assertEquals(0, data.getEntries().size());
+
         // another wesc test:
         // if sitewide, no weblog
         // if no datestring, no start or end
         // page 0, so no next links
         // moreResults = false so no prev links
         Mockito.clearInvocations(mockWEM);
-        siteWideSearch = true;
         dateString = null;
         pageNum = 0;
         maxEntries = 10;
-        data = generator.getChronoPager(weblog, dateString,
-                catName, tag, pageNum, maxEntries, siteWideSearch);
+        data = generator.getChronoPager(weblog, dateString, catName, tag, pageNum, maxEntries, true);
         verify(mockWEM).getDateToWeblogEntryMap(captor.capture());
         wesc = captor.getValue();
         assertNull(wesc.getWeblog());
@@ -245,5 +279,46 @@ public class WeblogEntryListGeneratorTest {
         assertNull(data.getPrevLabel());
         assertNull(data.getNextLink());
         assertNull(data.getNextLabel());
+
+        // check month format (YYYYMM) correctly processed in search criteria
+        Mockito.clearInvocations(mockWEM);
+        dateString = "201805";
+        generator.getChronoPager(weblog, dateString, catName, tag, pageNum, maxEntries, true);
+        verify(mockWEM).getDateToWeblogEntryMap(captor.capture());
+        wesc = captor.getValue();
+        assertEquals(LocalDate.of(2018, 5, 1).atStartOfDay()
+                .atZone(ZoneId.systemDefault()).toInstant(), wesc.getStartDate());
+        assertEquals(LocalDate.of(2018, 6, 1).atStartOfDay()
+                .minusNanos(1)
+                .atZone(ZoneId.systemDefault()).toInstant(), wesc.getEndDate());
+
+        // check invalid length of date format (YYYYMMD) ignored in search criteria
+        Mockito.clearInvocations(mockWEM);
+        dateString = "2018051";
+        generator.getChronoPager(weblog, dateString, catName, tag, pageNum, maxEntries, true);
+        verify(mockWEM).getDateToWeblogEntryMap(captor.capture());
+        wesc = captor.getValue();
+        assertNull(wesc.getStartDate());
+        assertNull(wesc.getEndDate());
+    }
+
+    private Map<LocalDate, List<WeblogEntry>> createSampleEntriesMap() {
+        WeblogEntry we1 = WebloggerTest.genWeblogEntry(weblog, "day1story1", twoDaysAgo);
+        WeblogEntry we2 = WebloggerTest.genWeblogEntry(weblog, "day1story2", twoDaysAgo);
+        WeblogEntry we3 = WebloggerTest.genWeblogEntry(weblog, "day2story1", threeDaysAgo);
+        WeblogEntry we4 = WebloggerTest.genWeblogEntry(weblog, "day2story2", threeDaysAgo);
+        List<WeblogEntry> listNow = new ArrayList<>();
+        listNow.add(we1);
+        listNow.add(we2);
+        List<WeblogEntry> listYesterday = new ArrayList<>();
+        listYesterday.add(we3);
+        // won't be returned as maxEntries = 3
+        listYesterday.add(we4);
+
+        Map<LocalDate, List<WeblogEntry>> entryMap = new TreeMap<>(Collections.reverseOrder());
+        entryMap.put(nowLD, listNow);
+        entryMap.put(yesterdayLD, listYesterday);
+
+        return entryMap;
     }
 }

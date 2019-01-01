@@ -22,6 +22,7 @@
 package org.tightblog.rendering.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -42,7 +43,6 @@ import org.tightblog.rendering.generators.CalendarGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.tightblog.repository.WeblogEntryCommentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,69 +54,42 @@ import java.util.Map;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PageModel implements Model {
-
     static final int MAX_ENTRIES = 100;
+
+    private UserManager userManager;
+    private WeblogManager weblogManager;
+    private WeblogEntryManager weblogEntryManager;
+    protected ThemeManager themeManager;
+    protected WeblogEntryListGenerator weblogEntryListGenerator;
+    private CalendarGenerator calendarGenerator;
+    private int maxEntriesPerPage;
 
     protected WeblogPageRequest pageRequest;
     private WeblogEntryComment commentForm;
+    protected WeblogEntryListData pager;
     private boolean preview;
 
     @Autowired
-    protected WeblogEntryListGenerator weblogEntryListGenerator;
+    public PageModel(
+            UserManager userManager,
+            WeblogManager weblogManager,
+            WeblogEntryManager weblogEntryManager,
+            ThemeManager themeManager,
+            WeblogEntryListGenerator weblogEntryListGenerator,
+            CalendarGenerator calendarGenerator,
+            @Value("${site.pages.maxEntries:30}") int maxEntriesPerPage) {
 
-    public void setWeblogEntryListGenerator(WeblogEntryListGenerator weblogEntryListGenerator) {
-        this.weblogEntryListGenerator = weblogEntryListGenerator;
-    }
-
-    @Autowired
-    protected WeblogEntryCommentRepository commentRepository;
-
-    public void setCommentRepository(WeblogEntryCommentRepository commentRepository) {
-        this.commentRepository = commentRepository;
-    }
-
-    @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    @Autowired
-    protected WeblogEntryManager weblogEntryManager;
-
-    public void setWeblogEntryManager(WeblogEntryManager weblogEntryManager) {
-        this.weblogEntryManager = weblogEntryManager;
-    }
-
-    @Autowired
-    private UserManager userManager;
-
-    public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
-    }
-
-    @Autowired
-    protected ThemeManager themeManager;
-
-    @Autowired
-    private CalendarGenerator weblogCalendar;
-
-    public void setThemeManager(ThemeManager themeManager) {
+        this.weblogManager = weblogManager;
+        this.weblogEntryManager = weblogEntryManager;
         this.themeManager = themeManager;
+        this.weblogEntryListGenerator = weblogEntryListGenerator;
+        this.calendarGenerator = calendarGenerator;
+        this.maxEntriesPerPage = maxEntriesPerPage;
     }
 
-    public void setPreview(boolean preview) {
+    void setPreview(boolean preview) {
         this.preview = preview;
-    }
-
-    protected WeblogEntryListData pager;
-
-    /**
-     * Creates an un-initialized new instance, Weblogger calls init() to complete
-     * construction.
-     */
-    public PageModel() {
     }
 
     /**
@@ -336,7 +309,7 @@ public class PageModel implements Model {
                         pageRequest.getCategory(),
                         pageRequest.getTag(),
                         pageRequest.getPageNum(),
-                        -1,
+                        Math.min(maxEntriesPerPage, pageRequest.getWeblog().getEntriesPerPage()),
                         false);
             }
         }
@@ -373,7 +346,7 @@ public class PageModel implements Model {
     }
 
     public CalendarData getCalendarData(boolean includeBlogEntryData) {
-        return weblogCalendar.getCalendarData(pageRequest, includeBlogEntryData);
+        return calendarGenerator.getCalendarData(pageRequest, includeBlogEntryData);
     }
 
     public String getRequestParameter(String paramName) {

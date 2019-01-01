@@ -92,7 +92,7 @@ public class WeblogRequest {
             wreq.authenticatedUser = principal.getName();
         }
 
-        // servlet path: /tb-ui/rendering/(page|feed|mediafile|comment|search)/aaa[/bbb]
+        // servlet path: /tb-ui/rendering/(page|feed|mediafile|comment|search)/weblogHandle[/bbb]
         String path = sreq.getServletPath();
 
         log.debug("parsing path {}", path);

@@ -23,7 +23,6 @@ public class WebloggerProperties {
     private boolean usersCreateBlogs;
     private HTMLSanitizer.Level blogHtmlPolicy;
     private boolean usersCustomizeThemes;
-    private int newsfeedItemsPage;
     private String defaultAnalyticsCode;
     private boolean usersOverrideAnalyticsCode;
     private CommentPolicy commentPolicy;
@@ -99,15 +98,6 @@ public class WebloggerProperties {
 
     public void setUsersCustomizeThemes(boolean usersCustomizeThemes) {
         this.usersCustomizeThemes = usersCustomizeThemes;
-    }
-
-    @Column(name = "newsfeed_items_page")
-    public int getNewsfeedItemsPage() {
-        return newsfeedItemsPage;
-    }
-
-    public void setNewsfeedItemsPage(int newsfeedItemsPage) {
-        this.newsfeedItemsPage = newsfeedItemsPage;
     }
 
     @Column(name = "default_analytics_code")
