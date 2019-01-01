@@ -119,9 +119,13 @@
                     <%-- action needed here because we are using AJAX to post this form --%>
                     <s:hidden name="action:categoryEdit!save" value="save"/>
 
-                    <s:textfield name="bean.name" label="%{getText('generic.name')}" maxlength="255"/>
+                    <s:textfield name="bean.name" label="%{getText('generic.name')}" maxlength="255"
+                                 onchange="validateCategory()" onkeyup="validateCategory()" />
+
                     <s:textfield name="bean.description" label="%{getText('generic.description')}"/>
-                    <s:textfield name="bean.image" label="%{getText('categoryForm.image')}"/>
+
+                    <s:textfield name="bean.image" label="%{getText('categoryForm.image')}"
+                                 onchange="validateCategory()" onkeyup="validateCategory()" />
                 </s:form>
             </div>
 
@@ -153,6 +157,34 @@
         $('#categoryEditForm_bean_image').val(image);
 
         $('#category-edit-modal').modal({show: true});
+
+    }
+
+    function validateCategory() {
+
+        var saveCategoryButton = $('#categoryEditForm:first');
+
+        var categoryName = $("#categoryEditForm_bean_name").val();
+        var imageURL = $("#categoryEditForm_bean_image").val();
+
+        if (!categoryName || categoryName.trim() === '') {
+            saveCategoryButton.attr("disabled", true);
+            feedbackAreaEdit.html('<s:text name="categoryForm.requiredFields" />');
+            feedbackAreaEdit.css("color", "red");
+            return;
+        }
+
+        if (imageURL && imageURL.trim() !== '') {
+            if (!isValidUrl(imageURL)) {
+                saveCategoryButton.attr("disabled", true);
+                feedbackAreaEdit.html('<s:text name="categoryForm.badURL" />');
+                feedbackAreaEdit.css("color", "red");
+                return;
+            }
+        }
+
+        feedbackAreaEdit.html('');
+        saveCategoryButton.attr("disabled", false);
     }
 
     function submitEditedCategory() {

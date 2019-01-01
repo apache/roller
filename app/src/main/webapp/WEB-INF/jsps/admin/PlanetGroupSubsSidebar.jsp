@@ -23,28 +23,50 @@
 
 <s:if test="!createNew">
 
+    <h3><s:text name="mainPage.actions"/></h3>
+    <hr size="1" noshade="noshade"/>
+
     <s:text name="planetGroupSubs.addFeed"/>
 
-    <s:form action="planetGroupSubs!saveSubscription" theme="bootstrap" cssClass="form-horizontal">
+    <s:form action="planetGroupSubs!saveSubscription"
+            theme="bootstrap" cssClass="form-horizontal" style="margin-top:1em">
         <s:hidden name="salt"/>
         <s:hidden name="group.handle"/>
-        <s:textfield name="subUrl" size="40" maxlength="255" label="%{getText('planetSubscription.feedUrl')}"/>
+
+        <s:textfield name="subUrl" size="40" maxlength="255" label="%{getText('planetSubscription.feedUrl')}"
+            onchange="validateUrl()" onkeyup="validateUrl()" />
+
+        <p id="feedback-area" style="clear:right; width:100%"></p>
+
         <s:submit value="%{getText('generic.save')}" cssClass="btn btn-default" />
+
     </s:form>
 
+    <script>
+
+        function validateUrl() {
+            var feedbackArea = $("#feedback-area");
+            var url = $("#planetGroupSubs_subUrl").val();
+            var saveButton = $('#planetGroupSubs_0');
+
+            if (url && url.trim() !== '') {
+                if (!isValidUrl(url)) {
+                    saveButton.attr("disabled", true);
+                    feedbackArea.html('<s:text name="planetGroupSubs.badFeedURL" />');
+                    feedbackArea.css("color", "red");
+                    return;
+                }
+            }
+
+            feedbackArea.html('');
+            saveButton.attr("disabled", false);
+        }
+
+        $( document ).ready(function() {
+            var saveButton = $('#planetGroupSubs_0');
+            saveButton.attr("disabled", true);
+        });
+    </script>
+
 </s:if>
-
-<%-- ================================================================== --%>
-
-<script>
-
-    function isValidUrl(url) {
-        return /^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url);
-    }
-
-    function validateUrl() {
-
-    }
-
-</script>
 

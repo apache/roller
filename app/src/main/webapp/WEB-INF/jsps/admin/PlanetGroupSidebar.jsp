@@ -21,6 +21,9 @@
 <%-- ================================================================== --%>
 <%-- add new custom planet group --%>
 
+<h3><s:text name="mainPage.actions"/></h3>
+<hr size="1" noshade="noshade"/>
+
 <s:url var="createNewUrl" action="planetGroupSubs" namespace="/roller-ui/admin">
     <s:param name="createNew">true</s:param>
 </s:url>

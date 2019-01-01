@@ -161,8 +161,4 @@
         }
     }
 
-    function validateProperties() {
-
-    }
-
 </script>

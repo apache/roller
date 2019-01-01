@@ -46,6 +46,8 @@
         $('#categoryEditForm_bean_description').val("");
         $('#categoryEditForm_bean_image').val("");
 
+        validateCategory();
+
         $('#category-edit-modal').modal({show: true});
     }
 

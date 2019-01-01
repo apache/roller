@@ -790,9 +790,6 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         }
     }
 
-    function isValidUrl(url) {
-        return /^(http|https|ftp):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i.test(url);
-    }
 
     function saveBookmark() {
 
