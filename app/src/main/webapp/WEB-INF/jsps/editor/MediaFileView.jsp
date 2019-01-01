@@ -17,81 +17,6 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-
-<script>
-    toggleState = 'Off'
-
-    function onSelectDirectory(id) {
-        window.location = "<s:url action="mediaFileView" />?directoryId=" + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
-    }
-
-    function onToggle() {
-        if (toggleState == 'Off') {
-            toggleState = 'On';
-            toggleFunction(true, 'selectedMediaFiles');
-            $("#deleteButton").attr('disabled',false)
-            $("#moveButton").attr('disabled',false)
-            $("#moveTargetMenu").attr('disabled',false)
-        } else {
-            toggleState = 'Off';
-            toggleFunction(false, 'selectedMediaFiles');
-            $("#deleteButton").attr('disabled',true)
-            $("#moveButton").attr('disabled',true)
-            $("#moveTargetMenu").attr('disabled',true)
-        }
-    }
-
-    function onDeleteSelected() {
-        if ( confirm("<s:text name='mediaFile.delete.confirm' />") ) {
-            document.mediaFileViewForm.action='<s:url action="mediaFileView!deleteSelected" />';
-            document.mediaFileViewForm.submit();
-        }
-    }
-
-    function onDeleteFolder() {
-        if (confirm("<s:text name='mediaFile.deleteFolder.confirm' />")) {
-            document.bookmarks.action='<s:url action="mediaFileView!deleteFolder" />';
-            document.bookmarks.submit();
-        }
-    }
-
-    function onMoveSelected() {
-        if ( confirm("<s:text name='mediaFile.move.confirm' />") ) {
-            document.mediaFileViewForm.action='<s:url action="mediaFileView!moveSelected" />';
-            document.mediaFileViewForm.submit();
-        }
-    }
-
-    function onView() {
-        document.mediaFileViewForm.action = "<s:url action='mediaFileView!view' />";
-        document.mediaFileViewForm.submit();
-    }
-
-    <%-- code to toggle buttons on/off as media file/directory selections change --%>
-
-    $(document).ready(function() {
-        $("#deleteButton").attr('disabled',true)
-        $("#moveButton").attr('disabled',true)
-        $("#moveTargetMenu").attr('disabled',true)
-
-        $("input[type=checkbox]").change(function() {
-            var count = 0;
-            $("input[type=checkbox]").each(function(index, element) {
-                if (element.checked) count++;
-            });
-            if (count == 0) {
-                $("#deleteButton").attr('disabled',true)
-                $("#moveButton").attr('disabled',true)
-                $("#moveTargetMenu").attr('disabled',true)
-            } else {
-                $("#deleteButton").attr('disabled',false)
-                $("#moveButton").attr('disabled',false)
-                $("#moveTargetMenu").attr('disabled',false)
-            }
-        });
-    });
-</script>
-
 <s:form id="createPostForm" action='entryAddWithMediaFile'>
 	<s:hidden name="salt" />
     <input type="hidden" name="weblog" value='<s:property value="actionWeblog.handle" />' />
@@ -110,7 +35,6 @@
         <s:text name="mediaFileView.subtitle" >
             <s:param value="weblog" />
         </s:text>
-    </p>
     </p>
     <p class="pagetip">
         <s:text name="mediaFileView.rootPageTip" />
@@ -169,9 +93,6 @@
                 </li>
             </s:if>
         </ul>
-
-    </p>
-    <br />
 
 </s:elseif>
 
@@ -254,19 +175,20 @@
                                 <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
                                      width='<s:property value="#mediaFile.thumbnailWidth"/>'
                                      height='<s:property value="#mediaFile.thumbnailHeight"/>'
-                                     title='<s:property value="#mediaFile.name" />' />
+                                     title='<s:property value="#mediaFile.name" />'
+                                     onclick="onClickEdit('<s:property value="#mediaFile.id"/>')" />
                             </s:if>
 
                             <s:else>
-                                <s:url var="mediaFileURL" value="/images/page.png"></s:url>
+                                <s:url var="mediaFileURL" value="/images/page.png" />
                                 <img border="0" src='<s:property value="%{mediaFileURL}" />'
-                                     style="padding:40px 50px;" alt="logo" />
+                                     style="padding:40px 50px;" alt="logo"
+                                     onclick="onClickEdit('<s:property value="#mediaFile.id"/>')" />
                             </s:else>
 
                         </div>
 
-                        <div class="mediaObjectInfo"
-                             onmouseover='setupMenuButton("<s:property value='#mediaFile.id' />")'>
+                        <div class="mediaObjectInfo" >
 
                             <input type="checkbox"
                                    name="selectedMediaFiles"
@@ -315,8 +237,7 @@
 
                         </div>
 
-                        <div class="mediaObjectInfo"
-                             onmouseover='setupMenuButton("<s:property value='#mediaFile.id' />")'>
+                        <div class="mediaObjectInfo">
 
                                 <input type="checkbox"
                                        name="selectedMediaFiles"
@@ -380,32 +301,137 @@
 </s:if>
 
 
-<%-- ***************************************************************** --%>
+<%-- ================================================================================================ --%>
 
-<div id="mediafile_edit_lightbox" title="<s:text name='mediaFileEdit.popupTitle'/>" style="display:none">
-    <iframe id="mediaFileEditor"
-            style="visibility:inherit"
-            height="100%"
-            width="100%"
-            frameborder="no"
-            scrolling="auto">
-    </iframe>
-</div>
+<%-- view image modal --%>
+
+<div id="mediafile_edit_lightbox" class="modal fade" tabindex="-1" role="dialog">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+            </div> <%-- modal header --%>
+
+            <div class="modal-body">
+
+                <s:if test="bean.isImage">
+                    <div class="mediaFileThumbnail">
+                        <a href='<s:property value="bean.permalink" />' target="_blank">
+                            <img align="right" alt="thumbnail" src='<s:property value="bean.thumbnailURL" />'
+                                 title='<s:text name="mediaFileEdit.clickToView" />'/>
+                        </a>
+                    </div>
+                </s:if>
+
+                <p class="subtitle">
+                    <s:text name="mediaFileEdit.subtitle">
+                        <s:param value="bean.name"/>
+                    </s:text>
+                </p>
+
+                <p class="pagetip">
+                    <s:text name="mediaFileEdit.pagetip"/>
+                </p>
+
+                <s:form id="entry" action="mediaFileEdit!save" method="POST" enctype="multipart/form-data"
+                    theme="bootd=strap" class="form-vertical">
+
+                    <s:hidden name="salt"/>
+                    <s:hidden name="weblog"/>
+                    <s:hidden name="mediaFileId" id="mediaFileId"/>
+                    <s:hidden name="bean.permalink"/>
+
+                    <%-- ================================================================== --%>
+                    <%-- Title, category, dates and other metadata --%>
+
+                    <s:textfield name="bean.name" size="35" maxlength="100" tabindex="1"
+                                 label="%{getText('generic.name')}"/>
+
+                    <label for="fileInfo"><s:text name="mediaFileEdit.fileInfo"/></label>
+                    <s:text name="mediaFileEdit.fileTypeSize">
+                        <s:param value="bean.contentType"/>
+                        <s:param value="bean.length"/>
+                    </s:text>
+                    <s:if test="bean.isImage">
+                        <s:text name="mediaFileEdit.fileDimensions">
+                            <s:param value="bean.width"/>
+                            <s:param value="bean.height"/>
+                        </s:text>
+                    </s:if>
+
+                    <s:url var="linkIconURL" value="/images/link.png" />
+
+                    <a href='<s:property value="bean.permalink" />' target="_blank"
+                       title='<s:text name="mediaFileEdit.linkTitle" />'>
+                        <img border="0" src='<s:property value="%{linkIconURL}" />' style="padding:2px 2px;" alt="link"/>
+                    </a>
+
+                    <input type="text" id="clip_text" size="50" style="width:90%"
+                           value='<s:property value="bean.permalink" />' readonly/>
+
+
+                    <s:textarea name="bean.description" cols="50" rows="2" tabindex="2" style="width:70%"
+                                label="%{getText('generic.description')}"/>
+
+                    <s:textfield name="bean.tagsAsString" size="30" maxlength="100" tabindex="3" style="width:70%"
+                                 label="%{getText('mediaFileEdit.tags')}"/>
+
+                    <s:textfield name="bean.copyrightText" size="30" maxlength="100" tabindex="4" style="width:70%"
+                                 label="%{getText('mediaFileEdit.copyright')}"/>
+
+                    <s:select name="bean.directoryId" list="allDirectories"
+                              listKey="id" listValue="name" tabindex="5" label="%{getText('')}"/>
+
+                    <s:checkbox name="bean.sharedForGallery" tabindex="6" label="%{getText('')}"/>
+                    <s:text name="mediaFileEdit.includeGalleryHelp"/>
+
+                    <div id="fileControldiv" class="miscControl">
+                        <s:file id="fileControl" name="uploadedFile" size="30" label="%{getText('')}"/>
+                    </div>
+
+                    <!-- original path from base URL of ctx/resources/ -->
+                    <s:if test="getBooleanProp('mediafile.originalPathEdit.enabled')">
+                        <div id="originalPathdiv" class="miscControl">
+                            <s:textfield name="bean.originalPath" id="originalPath" size="30"
+                                         maxlength="100" tabindex="3"/>
+                        </div>
+                    </s:if>
+
+                    <div class="control">
+                        <input type="submit" tabindex="7"
+                               value="<s:text name="generic.save" />" name="submit"/>
+                        <input type="button" tabindex="8"
+                               value="<s:text name="generic.cancel" />" onClick="window.parent.onEditCancelled();"/>
+                    </div>
+
+                </s:form>
+
+            </div> <%-- modal body --%>
+
+            <div class="modal-footer">
+
+            </div> <%-- modal footer --%>
+
+        </div> <%-- modal content --%>
+
+    </div> <%-- modal dialog --%>
+
+</div> <%-- modal --%>
+
 
 <script>
+    toggleState = 'Off'
+
     function onClickEdit(mediaFileId) {
         <s:url var="mediaFileEditURL" action="mediaFileEdit">
             <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
-        $("#mediaFileEditor").attr('src',
-          '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
-        $(function() {
-            $("#mediafile_edit_lightbox").dialog({
-                modal  : true,
-                width  : 600,
-                height : 630
-            });
-        });
+        $("#mediaFileEditor").attr('src', '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
+
+        $('#mediafile_edit_lightbox').modal({show: true});
     }
 
     function onEditSuccess() {
@@ -417,8 +443,77 @@
         $("#mediafile_edit_lightbox").dialog("close");
         $("#mediaFileEditor").attr('src','about:blank');
     }
-</script>
 
-<br/>
-<br/>
-<br/>
+
+    function onSelectDirectory(id) {
+        window.location = "<s:url action="mediaFileView" />?directoryId="
+            + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
+    }
+
+    function onToggle() {
+        if (toggleState === 'Off') {
+            toggleState = 'On';
+            toggleFunction(true, 'selectedMediaFiles');
+            $("#deleteButton").attr('disabled',false);
+            $("#moveButton").attr('disabled',false);
+            $("#moveTargetMenu").attr('disabled',false);
+        } else {
+            toggleState = 'Off';
+            toggleFunction(false, 'selectedMediaFiles');
+            $("#deleteButton").attr('disabled',true);
+            $("#moveButton").attr('disabled',true);
+            $("#moveTargetMenu").attr('disabled',true)
+        }
+    }
+
+    function onDeleteSelected() {
+        if ( confirm("<s:text name='mediaFile.delete.confirm' />") ) {
+            document.mediaFileViewForm.action='<s:url action="mediaFileView!deleteSelected" />';
+            document.mediaFileViewForm.submit();
+        }
+    }
+
+    function onDeleteFolder() {
+        if (confirm("<s:text name='mediaFile.deleteFolder.confirm' />")) {
+            document.bookmarks.action='<s:url action="mediaFileView!deleteFolder" />';
+            document.bookmarks.submit();
+        }
+    }
+
+    function onMoveSelected() {
+        if ( confirm("<s:text name='mediaFile.move.confirm' />") ) {
+            document.mediaFileViewForm.action='<s:url action="mediaFileView!moveSelected" />';
+            document.mediaFileViewForm.submit();
+        }
+    }
+
+    function onView() {
+        document.mediaFileViewForm.action = "<s:url action='mediaFileView!view' />";
+        document.mediaFileViewForm.submit();
+    }
+
+    <%-- code to toggle buttons on/off as media file/directory selections change --%>
+
+    $(document).ready(function() {
+        $("#deleteButton").attr('disabled',true);
+        $("#moveButton").attr('disabled',true);
+        $("#moveTargetMenu").attr('disabled',true);
+
+        $("input[type=checkbox]").change(function() {
+            var count = 0;
+            $("input[type=checkbox]").each(function(index, element) {
+                if (element.checked) count++;
+            });
+            if (count === 0) {
+                $("#deleteButton").attr('disabled',true);
+                $("#moveButton").attr('disabled',true);
+                $("#moveTargetMenu").attr('disabled',true)
+            } else {
+                $("#deleteButton").attr('disabled',false);
+                $("#moveButton").attr('disabled',false);
+                $("#moveTargetMenu").attr('disabled',false)
+            }
+        });
+    });
+
+</script>

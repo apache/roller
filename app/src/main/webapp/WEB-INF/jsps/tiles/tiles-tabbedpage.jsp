@@ -33,7 +33,7 @@
 
 <tilesx:useAttribute name="sidebar" id="sidebar" classname="java.lang.String"/>
 
-<div class="container">
+<div class="container-fluid">
 
     <div class="row">
 
@@ -72,7 +72,7 @@
 </div>
 
 <footer class="footer">
-    <div class="container">
+    <div class="container-fluid">
         <tiles:insertAttribute name="footer"/>
     </div>
 </footer>

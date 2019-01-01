@@ -31,7 +31,7 @@
             <tiles:insertAttribute name="banner" />
         </div>
         
-        <div id="wrapper" class="container">
+        <div id="wrapper" class="container-fluid">
             <div id="leftcontent_wrap">
                 <div id="leftcontent"> 
                 </div>

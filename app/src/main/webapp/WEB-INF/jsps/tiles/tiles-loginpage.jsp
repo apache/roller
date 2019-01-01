@@ -32,7 +32,7 @@
 <tiles:insertAttribute name="banner"/>
 <tiles:insertAttribute name="bannerStatus"/>
 
-<div class="container">
+<div class="container-fluid">
 
     <div class="row">
         <div class="col-md-4"></div>

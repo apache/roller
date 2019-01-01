@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <nav class="navbar navbar-default navbar-static-top navbar-inverse">
-    <div class="container">
+    <div class="container-fluid">
         <div id="navbar" class="navbar-collapse collapse">
 
             <div class="navbar-header">

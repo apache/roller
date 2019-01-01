@@ -33,7 +33,7 @@
 
 <tiles:insertAttribute name="bannerStatus"/>
 
-<div class="container">
+<div class="container-fluid">
 
     <div class="row">
 
@@ -60,7 +60,7 @@
 </div>
 
 <footer class="footer">
-    <div class="container">
+    <div class="container-fluid">
         <tiles:insertAttribute name="footer"/>
     </div>
 </footer>

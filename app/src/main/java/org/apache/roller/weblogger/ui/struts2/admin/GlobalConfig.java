@@ -167,11 +167,15 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
                 continue;
             }
 
-            if ( incomingProp != null && propertyDef.getType().equals("boolean") ) {
+            if ( propertyDef.getType().equals("boolean") ) {
 
                 try {
-                    Boolean.parseBoolean(incomingProp);
-                    updProp.setValue(incomingProp);
+                    if (incomingProp == null) {
+                        updProp.setValue("false");
+                    } else {
+                        boolean value = Boolean.parseBoolean(incomingProp);
+                        updProp.setValue(Boolean.toString(value));
+                    }
                     log.debug("Set boolean " + propName + " = " + incomingProp);
                 } catch ( Exception nfe ) {
                     String propDesc = bundle.getString( propertyDef.getKey() );
