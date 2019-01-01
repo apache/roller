@@ -41,7 +41,7 @@
 
                 <td>
                     <s:url var="groupUrl" action="planetGroupSubs">
-                        <s:param name="bean.id" value="#group.id"/>
+                        <s:param name="group.id" value="#group.id"/>
                     </s:url>
                     <s:a href="%{groupUrl}">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
@@ -65,14 +65,14 @@
 
     <s:form action="planetGroups!delete" id="deleteForm">
         <input type="hidden" name="salt" value='<s:property value="salt" />' />
-        <input type="hidden" name="bean.handle"/>
+        <input type="hidden" name="group.handle"/>
     </s:form>
 
     <script>
         function confirmDelete(groupHandle) {
             if (window.confirm('<s:text name="planetGroups.delete.confirm" />')) {
                 var form = $("#deleteForm");
-                form.find('input[name="bean.handle"]').val(groupHandle);
+                form.find('input[name="group.handle"]').val(groupHandle);
                 form.submit();
             }
         }

@@ -30,11 +30,18 @@
 
 <%-- title for a custom planet group --%>
 <s:else>
-    <p class="subtitle">
-        <s:text name="planetGroupSubs.custom.subtitle" >
-            <s:param value="groupHandle" />
-        </s:text>
-    </p>
+    <s:if test="createNew">
+        <p class="subtitle">
+            <s:text name="planetGroupSubs.custom.subtitle.new" />
+        </p>
+    </s:if>
+    <s:else>
+        <p class="subtitle">
+            <s:text name="planetGroupSubs.custom.subtitle" >
+                <s:param value="groupHandle" />
+            </s:text>
+        </p>
+    </s:else>
     <p><s:text name="planetGroupSubs.custom.desc" /></p>
 </s:else>
 
@@ -42,43 +49,49 @@
 <%-- only show edit form for custom group --%>
 <s:if test="groupHandle != 'all'">
 
-    <h3><s:text name="planetGroupSubs.properties"/></h3>
-
-    <s:if test="createNew">
-        <s:text name="planetGroupSubs.creatingNewGroup" />
-    </s:if>
-    <s:else>
-        <s:text name="planetGroupSubs.editingExistingGroup" />
-    </s:else>
-
-    <br/>
-
-    <s:form action="planetGroups!save" theme="bootstrap" cssClass="form-horizontal">
-        <s:hidden name="salt"/>
-        <s:hidden name="bean.id"/>
-
-        <s:textfield name="bean.title" size="40" maxlength="255"
-            onchange="validate()" onkeyup="validate()"
-            label="%{getText('planetGroups.title')}"
-            tooltip="%{getText('planetGroups.tip.title')}"/>
-
-        <s:textfield name="bean.handle" size="40" maxlength="255"
-            onchange="validate()" onkeyup="validate()"
-            label="%{getText('planetGroups.handle')}"
-            tooltip="%{getText('planetGroups.tip.handle')}"/>
-
-
-        <div class="form-group ">
-            <label class="col-sm-3 control-label"></label>
-            <div class="col-sm-9 controls">
-                <s:submit value="%{getText('generic.save')}" cssClass="btn btn-default"/>
-                <input type="button" class="btn"
-                       value='<s:text name="generic.cancel" />'
-                       onclick="window.location='<s:url action="planetGroups"/>'"/>
-            </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <p><s:text name="planetGroupSubs.properties"/></p>
         </div>
+        <div class="panel-body">
+            <s:if test="createNew">
+                <s:text name="planetGroupSubs.creatingNewGroup" />
+            </s:if>
+            <s:else>
+                <s:text name="planetGroupSubs.editingExistingGroup" />
+            </s:else>
 
-    </s:form>
+            <s:form action="planetGroupSubs!saveGroup" theme="bootstrap" cssClass="form-horizontal" style="margin-top:1em">
+                <s:hidden name="salt"/>
+                <s:hidden name="group.id"/>
+
+                <s:textfield name="group.title" size="40" maxlength="255"
+                             onchange="validate()" onkeyup="validate()"
+                             label="%{getText('planetGroups.title')}"
+                             tooltip="%{getText('planetGroups.tip.title')}"/>
+
+                <s:textfield name="group.handle" size="40" maxlength="255"
+                             onchange="validate()" onkeyup="validate()"
+                             label="%{getText('planetGroups.handle')}"
+                             tooltip="%{getText('planetGroups.tip.handle')}"/>
+
+
+                <div class="form-group ">
+                    <label class="col-sm-3 control-label"></label>
+                    <div class="col-sm-9 controls">
+                        <s:submit value="%{getText('generic.save')}" cssClass="btn btn-default"/>
+                        <s:if test="createNew">
+                            <input type="button" class="btn"
+                                   value='<s:text name="generic.cancel" />'
+                                   onclick="window.location='<s:url action="planetGroups"/>'"/>
+                        </s:if>
+                    </div>
+                </div>
+
+            </s:form>
+
+        </div>
+    </div>
 
 </s:if>
 
@@ -124,7 +137,7 @@
 
         <%-- planet subscription delete logic --%>
 
-        <s:form action="planetGroupSubs!delete" id="deleteForm">
+        <s:form action="planetGroupSubs!deleteSubscription" id="deleteForm">
             <input type="hidden" name="salt" value='<s:property value="salt" />' />
             <input type="hidden" name="subUrl"/>
             <input type="hidden" name="groupHandle"/>

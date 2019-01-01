@@ -23,6 +23,7 @@ import org.apache.roller.RollerException;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.business.fetcher.FetcherException;
+import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -36,8 +37,8 @@ import java.util.*;
 /**
  * Manage planet group subscriptions, default group is "all".
  */
-// TODO: make this work @AllowedMethods({"execute","save","delete"})
-public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAware  {
+// TODO: make this work @AllowedMethods({"execute","saveSubscription","saveGroup","deleteSubscription"})
+public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAware {
 
     private static final Log log = LogFactory.getLog(PlanetGroupSubs.class);
 
@@ -47,7 +48,7 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
     // the subscription to deal with
     private String subUrl = null;
 
-    private boolean createNew = false;
+    private Boolean createNew = null;
 
     public PlanetGroupSubs() {
         this.actionName = "planetGroupSubs";
@@ -68,33 +69,38 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
 
     @Override
     public void setServletRequest(HttpServletRequest request) {
-
-        PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-        String action = null;
-        try {
-            if (request.getParameter("createNew") != null) {
-                createNew = true;
-
-            } else if (request.getParameter("bean.id") != null) {
-                String groupId = request.getParameter("bean.id");
-                action = "looking up planet group by id: " + groupId;
-                setGroup(pmgr.getGroupById(groupId));
-
-            } else if (request.getParameter("groupHandle") != null) {
-                String groupHandle = request.getParameter("groupHandle");
-                action = "looking up planet group by handle: " + groupHandle;
-                setGroup(pmgr.getGroup(getPlanet(), groupHandle));
-
-            } else {
-                action = "getting default group";
-                setGroup(pmgr.getGroup(getPlanet(), "all"));
-            }
-
-        } catch (Exception ex) {
-            log.error("Error " + action, ex);
+        if (request.getParameter("createNew") != null) {
+            group = new PlanetGroup();
+        } else {
+            group = getGroupFromRequest(request, getPlanet());
         }
     }
 
+
+    static PlanetGroup getGroupFromRequest(HttpServletRequest request, Planet planet) {
+        PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
+        PlanetGroup planetGroup = null;
+        String action = null;
+        try {
+            if (request.getParameter("group.id") != null) {
+                String groupId = request.getParameter("group.id");
+                action = "looking up planet group by id: " + groupId;
+                planetGroup = pmgr.getGroupById(groupId);
+
+            } else if (request.getParameter("group.handle") != null) {
+                String groupHandle = request.getParameter("group.handle");
+                action = "looking up planet group by handle: " + groupHandle;
+                planetGroup = pmgr.getGroup(planet, groupHandle);
+
+            } else {
+                action = "getting default group";
+                planetGroup = pmgr.getGroup(planet, "all");
+            }
+        } catch (Exception ex) {
+            log.error("Error " + action, ex);
+        }
+        return planetGroup;
+    }
 
     /**
      * Populate page model and forward to subscription page
@@ -103,13 +109,69 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
         return LIST;
     }
 
+    /**
+     * Save group.
+     */
+    public String saveGroup() {
+
+        validateGroup();
+
+        if (!hasActionErrors()) {
+            try {
+                PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
+
+                PlanetGroup existingGroup = planetManager.getGroup(getPlanet(), getGroup().getHandle());
+
+                if (existingGroup == null) {
+                    log.debug("Adding New Group: " + getGroup().getHandle());
+                    planetManager.saveNewPlanetGroup(getPlanet(), getGroup());
+
+                } else {
+                    log.debug("Updating Existing Group: " + existingGroup.getHandle());
+                    existingGroup.setTitle( getGroup().getTitle() );
+                    existingGroup.setHandle( getGroup().getHandle() );
+                    planetManager.saveGroup(existingGroup);
+                }
+
+                WebloggerFactory.getWeblogger().flush();
+                addMessage("planetGroups.success.saved");
+
+            } catch (Exception ex) {
+                log.error("Error saving planet group", ex);
+                addError("planetGroups.error.saved");
+            }
+        }
+
+        return LIST;
+    }
+
+    /**
+     * Validate posted group
+     */
+    private void validateGroup() {
+
+        if (StringUtils.isEmpty(getGroup().getTitle())) {
+            addError("planetGroups.error.title");
+        }
+
+        if (StringUtils.isEmpty(getGroup().getHandle())) {
+            addError("planetGroups.error.handle");
+        }
+
+        if (getGroup().getHandle() != null && "all".equals(getGroup().getHandle())) {
+            addError("planetGroups.error.nameReserved");
+        }
+
+        // make sure duplicate group handles are prevented
+    }
+
 
     /**
      * Save subscription, add to current group
      */
-    public String save() {
+    public String saveSubscription() {
 
-        myValidate();
+        valudateNewSub();
 
         if (!hasActionErrors()) {
             try {
@@ -159,7 +221,7 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
     /**
      * Delete subscription, reset form
      */
-    public String delete() {
+    public String deleteSubscription() {
 
         if (getSubUrl() != null) {
             try {
@@ -191,11 +253,26 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
     /**
      * Validate posted subscription
      */
-    private void myValidate() {
+    private void valudateNewSub() {
 
         if (StringUtils.isEmpty(getSubUrl())) {
             addError("planetSubscription.error.feedUrl");
         }
+    }
+
+
+    @Override
+    public String getPageTitle() {
+        if (pageTitle == null) {
+            if (getCreateNew()) {
+                pageTitle = getText("planetGroupSubs.custom.title.new");
+            } else if (getGroup().getHandle().equals("all")) {
+                pageTitle = getText("planetGroupSubs.default.title");
+            } else {
+                pageTitle = getText("planetGroupSubs.custom.title", new String[]{getGroup().getHandle()});
+            }
+        }
+        return pageTitle;
     }
 
 
@@ -206,7 +283,7 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
             Set<Subscription> subsSet = getGroup().getSubscriptions();
 
             // iterate over list and build display list
-            subs = new ArrayList<Subscription>();
+            subs = new ArrayList<>();
             for (Subscription sub : subsSet) {
                 // only include external subs for display
                 if (!sub.getFeedURL().startsWith("weblogger:")) {
@@ -235,33 +312,27 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
     }
 
     public boolean getCreateNew() {
+        if (createNew == null) {
+            PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
+            PlanetGroup existingGroup = null;
+            try {
+                existingGroup = pmgr.getGroupById(group.getId());
+            } catch (RollerException e) {
+                log.error("Error getting group by ID", e);
+            }
+            createNew = (existingGroup == null);
+        }
         return createNew;
     }
 
     public void setCreateNew(boolean createNew) {
-        this.createNew = createNew;
+        // no op
     }
 
     public String getGroupHandle() {
-        if (group != null) {
-            return group.getHandle();
-        }
-        return null;
+        return group.getHandle();
     }
 
-    @Override
-    public String getPageTitle() {
-        if (pageTitle == null) {
-            if (createNew) {
-                pageTitle = getText("planetGroupSubs.custom.title.new");
-            } else if (getGroup().getHandle().equals("all")) {
-                pageTitle = getText("planetGroupSubs.default.title");
-            } else {
-                pageTitle = getText("planetGroupSubs.custom.title", new String[] { getGroup().getHandle() } );
-            }
-        }
-        return pageTitle;
-    }
 }
 
 

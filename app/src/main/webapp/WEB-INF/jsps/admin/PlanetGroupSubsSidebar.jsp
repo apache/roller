@@ -25,9 +25,9 @@
 
     <s:text name="planetGroupSubs.addFeed"/>
 
-    <s:form action="planetGroupSubs!save" theme="bootstrap" cssClass="form-horizontal">
+    <s:form action="planetGroupSubs!saveSubscription" theme="bootstrap" cssClass="form-horizontal">
         <s:hidden name="salt"/>
-        <s:hidden name="groupHandle"/>
+        <s:hidden name="group.handle"/>
         <s:textfield name="subUrl" size="40" maxlength="255" label="%{getText('planetSubscription.feedUrl')}"/>
         <s:submit value="%{getText('generic.save')}" cssClass="btn btn-default" />
     </s:form>
