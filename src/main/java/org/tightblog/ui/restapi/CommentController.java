@@ -1,10 +1,12 @@
 package org.tightblog.ui.restapi;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.service.EmailService;
 import org.tightblog.service.URLService;
 import org.tightblog.service.UserManager;
@@ -16,7 +18,6 @@ import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntryComment;
 import org.tightblog.domain.WeblogEntryComment.ApprovalStatus;
 import org.tightblog.domain.WeblogRole;
-import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.repository.UserRepository;
 import org.tightblog.repository.WeblogEntryCommentRepository;
 import org.tightblog.repository.WeblogEntryRepository;
@@ -39,7 +40,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
+@EnableConfigurationProperties(DynamicProperties.class)
 @RequestMapping(path = "/tb-ui/authoring/rest/comments")
 public class CommentController {
 
@@ -68,10 +69,11 @@ public class CommentController {
     private URLService urlService;
     private EmailService emailService;
     private MessageSource messages;
+    private DynamicProperties dp;
 
     @Autowired
     public CommentController(WeblogRepository weblogRepository, UserManager userManager, UserRepository userRepository,
-                             WeblogEntryManager weblogEntryManager,
+                             WeblogEntryManager weblogEntryManager, DynamicProperties dp,
                              LuceneIndexer luceneIndexer, URLService urlService, EmailService emailService,
                              MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository,
                              WeblogEntryRepository weblogEntryRepository,
@@ -87,6 +89,7 @@ public class CommentController {
         this.urlService = urlService;
         this.emailService = emailService;
         this.messages = messages;
+        this.dp = dp;
     }
 
     @PostMapping(value = "/{weblogId}/page/{page}")
@@ -192,11 +195,7 @@ public class CommentController {
                 if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
                     weblogEntryManager.removeComment(itemToRemove);
                     luceneIndexer.updateIndex(itemToRemove.getWeblogEntry(), false);
-
-                    // update last weblog change so any site weblog knows it needs to update
-                    WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
-                    props.setLastWeblogChange(Instant.now());
-                    webloggerPropertiesRepository.saveAndFlush(props);
+                    dp.updateLastSitewideChange();
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

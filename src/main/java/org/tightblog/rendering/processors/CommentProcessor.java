@@ -22,7 +22,9 @@ package org.tightblog.rendering.processors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.service.EmailService;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogEntryManager;
@@ -79,6 +81,7 @@ import java.util.Map;
  * an email sent to the blog owner and all who have commented on the same post.
  */
 @RestController
+@EnableConfigurationProperties(DynamicProperties.class)
 // how @RequestMapping is combined at the class- and method-levels: http://stackoverflow.com/q/22702568
 @RequestMapping(path = "/tb-ui/rendering/comment")
 public class CommentProcessor extends AbstractProcessor {
@@ -99,11 +102,12 @@ public class CommentProcessor extends AbstractProcessor {
     private EmailService emailService;
     private MessageSource messages;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
+    private DynamicProperties dp;
 
     private EntityManager entityManager;
 
     @PersistenceContext
-    public void setEntityManager(EntityManager entityManager) {
+    void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
@@ -111,7 +115,7 @@ public class CommentProcessor extends AbstractProcessor {
     public CommentProcessor(WeblogRepository weblogRepository,
                             UserRepository userRepository,
                             LuceneIndexer luceneIndexer, WeblogEntryManager weblogEntryManager, UserManager userManager,
-                            EmailService emailService,
+                            EmailService emailService, DynamicProperties dp,
                             MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
@@ -122,6 +126,7 @@ public class CommentProcessor extends AbstractProcessor {
         this.userManager = userManager;
         this.emailService = emailService;
         this.messages = messages;
+        this.dp = dp;
     }
 
     void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
@@ -253,8 +258,7 @@ public class CommentProcessor extends AbstractProcessor {
                 commentRequiresApproval |= ApprovalStatus.SPAM.equals(incomingComment.getStatus());
 
                 weblogEntryManager.saveComment(incomingComment, !commentRequiresApproval);
-                props.setLastWeblogChange(Instant.now());
-                webloggerPropertiesRepository.saveAndFlush(props);
+                dp.updateLastSitewideChange();
 
                 if (commentRequiresApproval) {
                     emailService.sendPendingCommentNotice(incomingComment, spamEvaluations);

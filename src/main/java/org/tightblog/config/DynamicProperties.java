@@ -17,6 +17,8 @@ package org.tightblog.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.time.Instant;
+
 @ConfigurationProperties(prefix = "site")
 public class DynamicProperties {
 
@@ -36,6 +38,13 @@ public class DynamicProperties {
      */
     private boolean databaseReady;
 
+    /**
+     * Indicates the latest time that any blog incurred a change.
+     * Primarily useful for caching of any site-wide (cross-blog) data
+     * to indicate when that data may need refreshing.
+     */
+    private Instant lastSitewideChange = Instant.now();
+
     public String getAbsoluteUrl() {
         return absoluteUrl;
     }
@@ -50,5 +59,17 @@ public class DynamicProperties {
 
     public void setDatabaseReady(boolean databaseReady) {
         this.databaseReady = databaseReady;
+    }
+
+    public Instant getLastSitewideChange() {
+        return lastSitewideChange;
+    }
+
+    public void setLastSitewideChange(Instant lastSitewideChange) {
+        this.lastSitewideChange = lastSitewideChange;
+    }
+
+    public void updateLastSitewideChange() {
+        setLastSitewideChange(Instant.now());
     }
 }

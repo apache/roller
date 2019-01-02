@@ -41,20 +41,15 @@ import java.util.Map;
 @EnableConfigurationProperties(DynamicProperties.class)
 public class URLModel implements Model {
 
+    protected URLService urlService;
+    private DynamicProperties dp;
     private Weblog weblog;
     private boolean preview;
 
     @Autowired
-    protected URLService urlService;
-
-    @Autowired
-    private DynamicProperties dp;
-
-    public void setUrlService(URLService urlService) {
+    public URLModel(URLService urlService, DynamicProperties dp) {
         this.urlService = urlService;
-    }
-
-    public URLModel() {
+        this.dp = dp;
     }
 
     public void setPreview(boolean preview) {

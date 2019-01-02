@@ -18,17 +18,16 @@ package org.tightblog.rendering.processors;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.domain.SharedTheme;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.domain.Template;
 import org.tightblog.domain.Weblog;
-import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.repository.WeblogRepository;
-import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -54,8 +53,8 @@ public class FeedProcessorTest {
     private FeedProcessor processor;
     private WeblogFeedRequest feedRequest;
     private Weblog weblog;
-    private WebloggerProperties webloggerProperties;
     private SharedTheme sharedTheme;
+    private DynamicProperties dp;
 
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
@@ -65,9 +64,6 @@ public class FeedProcessorTest {
 
     // not done as a @before as not all tests need these mocks
     private void initializeMocks() {
-        WebloggerPropertiesRepository mockPropertiesRepository = mock(WebloggerPropertiesRepository.class);
-        webloggerProperties = new WebloggerProperties();
-        when(mockPropertiesRepository.findOrNull()).thenReturn(webloggerProperties);
         mockRequest = mock(HttpServletRequest.class);
         // default is page always needs refreshing
         when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().minus(7, ChronoUnit.DAYS).toEpochMilli());
@@ -81,7 +77,8 @@ public class FeedProcessorTest {
         sharedTheme = new SharedTheme();
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
         mockThymeleafRenderer = mock(ThymeleafRenderer.class);
-        processor = new FeedProcessor(mockWR, mockPropertiesRepository, mockCache, mockThymeleafRenderer, mockThemeManager);
+        dp = new DynamicProperties();
+        processor = new FeedProcessor(mockWR, mockCache, mockThymeleafRenderer, mockThemeManager, dp);
         processor.setWeblogFeedRequestCreator(wfrCreator);
         weblog = new Weblog();
         when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
@@ -107,7 +104,7 @@ public class FeedProcessorTest {
 
         sharedTheme.setSiteWide(true);
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
-        webloggerProperties.setLastWeblogChange(twoDaysAgo);
+        dp.setLastSitewideChange(twoDaysAgo);
 
         // date header more recent than last change, so should return 304
         when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().toEpochMilli());
@@ -198,7 +195,7 @@ public class FeedProcessorTest {
         request.setPageNum(0);
 
         Instant testTime = Instant.now();
-        webloggerProperties.setLastWeblogChange(testTime);
+        dp.setLastSitewideChange(testTime);
 
         test1 = processor.generateKey(request, true);
         assertEquals("bobsblog/tag/skiing/lastUpdate=" + testTime.toEpochMilli(), test1);

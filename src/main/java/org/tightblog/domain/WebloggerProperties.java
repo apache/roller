@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.Instant;
 
 @Entity
 @Table(name = "weblogger_properties")
@@ -31,7 +30,6 @@ public class WebloggerProperties {
     private boolean usersCommentNotifications;
     private String commentSpamFilter;
     private int maxFileUploadsSizeMb;
-    private Instant lastWeblogChange;
 
     @Id
     public String getId() {
@@ -172,15 +170,6 @@ public class WebloggerProperties {
 
     public void setMaxFileUploadsSizeMb(int maxFileUploadsSizeMb) {
         this.maxFileUploadsSizeMb = maxFileUploadsSizeMb;
-    }
-
-    @Column(name = "last_weblog_change")
-    public Instant getLastWeblogChange() {
-        return lastWeblogChange;
-    }
-
-    public void setLastWeblogChange(Instant lastWeblogChange) {
-        this.lastWeblogChange = lastWeblogChange;
     }
 
     public enum RegistrationPolicy {

@@ -17,12 +17,11 @@ package org.tightblog.rendering.model;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.domain.Weblog;
-import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
-import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -32,23 +31,19 @@ import java.util.Map;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class FeedModelTest {
 
-    private WebloggerProperties webloggerProperties;
     private WeblogEntryListGenerator mockWeblogEntryListGenerator;
     private WeblogFeedRequest feedRequest;
     private FeedModel feedModel;
     private Weblog weblog;
+    private DynamicProperties dp;
 
     @Before
     public void initialize() {
         WeblogEntryManager mockWeblogEntryManager = mock(WeblogEntryManager.class);
         mockWeblogEntryListGenerator = mock(WeblogEntryListGenerator.class);
-        WebloggerPropertiesRepository mockPropertiesRepository = mock(WebloggerPropertiesRepository.class);
-        webloggerProperties = new WebloggerProperties();
-        when(mockPropertiesRepository.findOrNull()).thenReturn(webloggerProperties);
         feedRequest = new WeblogFeedRequest();
         weblog = new Weblog();
         feedRequest.setWeblog(weblog);
@@ -56,8 +51,8 @@ public class FeedModelTest {
         feedRequest.setTag("collectibles");
         feedRequest.setPageNum(16);
         feedRequest.setSiteWide(true);
-        feedModel = new FeedModel(mockPropertiesRepository, mockWeblogEntryListGenerator,
-                mockWeblogEntryManager, 20);
+        dp = new DynamicProperties();
+        feedModel = new FeedModel(mockWeblogEntryListGenerator, mockWeblogEntryManager, dp, 20);
         Map<String, Object> initVals = new HashMap<>();
         initVals.put("parsedRequest", feedRequest);
         feedModel.init(initVals);
@@ -75,7 +70,7 @@ public class FeedModelTest {
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         Instant threeDaysAgo = Instant.now().minus(3, ChronoUnit.DAYS);
         weblog.setLastModified(twoDaysAgo);
-        webloggerProperties.setLastWeblogChange(threeDaysAgo);
+        dp.setLastSitewideChange(threeDaysAgo);
 
         Instant test = feedModel.getLastUpdated();
         assertEquals(threeDaysAgo, test);

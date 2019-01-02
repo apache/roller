@@ -160,10 +160,6 @@ public class AdminController {
 
     @PostMapping(value = "/webloggerproperties", produces = "text/plain")
     public ResponseEntity updateProperties(@Valid @RequestBody WebloggerProperties properties) {
-
-        // maintain last weblog change
-        WebloggerProperties oldProperties = webloggerPropertiesRepository.findOrNull();
-        properties.setLastWeblogChange(oldProperties.getLastWeblogChange());
         webloggerPropertiesRepository.saveAndFlush(properties);
         blacklistCommentValidator.setGlobalCommentFilter(properties.getCommentSpamFilter());
         return ResponseEntity.ok(messages.getMessage("generic.changes.saved", null, null));

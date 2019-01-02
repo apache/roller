@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mobile.device.DeviceType;
 import org.tightblog.WebloggerTest;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.rendering.generators.CalendarGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.service.UserManager;
@@ -40,7 +41,6 @@ import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntryComment;
 import org.tightblog.domain.WeblogTemplate;
 import org.tightblog.domain.WeblogTheme;
-import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.model.Model;
@@ -49,7 +49,6 @@ import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.repository.WeblogRepository;
-import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -81,7 +80,7 @@ public class PageProcessorTest {
     private WeblogEntryManager mockWEM;
     private Weblog weblog;
     private SharedTheme sharedTheme;
-    private WebloggerProperties webloggerProperties;
+    private DynamicProperties dp;
 
     private LazyExpiringCache mockCache;
     private WeblogManager mockWM;
@@ -95,10 +94,6 @@ public class PageProcessorTest {
 
     // not done as a @before as not all tests need these mocks
     private void initializeMocks() {
-        WebloggerPropertiesRepository mockPropertiesRepository = mock(WebloggerPropertiesRepository.class);
-        webloggerProperties = new WebloggerProperties();
-        webloggerProperties.setLastWeblogChange(Instant.now().minus(2, ChronoUnit.DAYS));
-        when(mockPropertiesRepository.findOrNull()).thenReturn(webloggerProperties);
         mockRequest = mock(HttpServletRequest.class);
         // default is page always needs refreshing
         when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().minus(7, ChronoUnit.DAYS).toEpochMilli());
@@ -112,8 +107,10 @@ public class PageProcessorTest {
         mockWM = mock(WeblogManager.class);
         mockRenderer = mock(ThymeleafRenderer.class);
         mockThemeManager = mock(ThemeManager.class);
-        processor = new PageProcessor(mockWR, mockPropertiesRepository, mockCache, mockWM, mockWEM,
-                mockRenderer, mockThemeManager);
+        dp = new DynamicProperties();
+        dp.setLastSitewideChange(Instant.now().minus(2, ChronoUnit.DAYS));
+        processor = new PageProcessor(mockWR, mockCache, mockWM, mockWEM,
+                mockRenderer, mockThemeManager, dp);
         processor.setWeblogPageRequestCreator(wprCreator);
         mockApplicationContext = mock(ApplicationContext.class);
         when(mockApplicationContext.getBean(anyString(), eq(Set.class))).thenReturn(new HashSet());
@@ -259,7 +256,7 @@ public class PageProcessorTest {
 
         // test permalink template, no weblog page hit
         sharedTheme.setSiteWide(true);
-        webloggerProperties.setLastWeblogChange(Instant.now());
+        dp.updateLastSitewideChange();
         pageRequest.setCustomPageName(null);
         pageRequest.setWeblogEntryAnchor("myentry");
 
@@ -423,7 +420,7 @@ public class PageProcessorTest {
         request.setSiteWide(true);
 
         Instant testTime = Instant.now();
-        webloggerProperties.setLastWeblogChange(testTime);
+        dp.setLastSitewideChange(testTime);
 
         test1 = processor.generateKey(request);
         assertEquals("bobsblog/page/mytemplate/date/20171006/cat/finance/tag/" +

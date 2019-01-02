@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.service.EmailService;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogEntryManager;
@@ -97,8 +98,9 @@ public class CommentProcessorTest {
         mockUR = mock(UserRepository.class);
         mockIM = mock(LuceneIndexer.class);
         mockMessageSource = mock(MessageSource.class);
+        DynamicProperties dp = new DynamicProperties();
         processor = new CommentProcessor(mockWR, mockUR, mockIM, mockWEM, mockUM,
-                mockMM, mockMessageSource, mockPropertiesRepository);
+                mockMM, dp, mockMessageSource, mockPropertiesRepository);
         processor.setEntityManager(mockEM);
         processor.setWeblogPageRequestCreator(wprCreator);
     }

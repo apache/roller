@@ -22,6 +22,8 @@ package org.tightblog.rendering.processors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.service.ThemeManager;
@@ -33,7 +35,6 @@ import org.tightblog.domain.WeblogEntryComment;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.repository.WeblogRepository;
-import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
@@ -64,6 +65,7 @@ import java.util.Map;
  * </ul>
  */
 @RestController
+@EnableConfigurationProperties(DynamicProperties.class)
 @RequestMapping(path = "/tb-ui/rendering/page/**")
 public class PageProcessor extends AbstractProcessor {
 
@@ -72,28 +74,27 @@ public class PageProcessor extends AbstractProcessor {
     public static final String PATH = "/tb-ui/rendering/page";
 
     private WeblogRepository weblogRepository;
-    private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private LazyExpiringCache weblogPageCache;
     private WeblogManager weblogManager;
     private WeblogEntryManager weblogEntryManager;
     private ThymeleafRenderer thymeleafRenderer;
     protected ThemeManager themeManager;
     private WeblogPageRequest.Creator weblogPageRequestCreator;
+    private DynamicProperties dp;
 
     @Autowired
-    public PageProcessor(WeblogRepository weblogRepository, WebloggerPropertiesRepository webloggerPropertiesRepository,
-                         LazyExpiringCache weblogPageCache, WeblogManager weblogManager,
-                         WeblogEntryManager weblogEntryManager,
+    PageProcessor(WeblogRepository weblogRepository, LazyExpiringCache weblogPageCache,
+                         WeblogManager weblogManager, WeblogEntryManager weblogEntryManager,
                          @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
-                         ThemeManager themeManager) {
+                         ThemeManager themeManager, DynamicProperties dp) {
         this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
         this.weblogRepository = weblogRepository;
-        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.weblogPageCache = weblogPageCache;
         this.weblogManager = weblogManager;
         this.weblogEntryManager = weblogEntryManager;
         this.thymeleafRenderer = thymeleafRenderer;
         this.themeManager = themeManager;
+        this.dp = dp;
     }
 
     void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
@@ -121,9 +122,7 @@ public class PageProcessor extends AbstractProcessor {
 
         // is this the site-wide weblog?
         incomingRequest.setSiteWide(themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide());
-
-        Instant lastModified = (incomingRequest.isSiteWide()) ? webloggerPropertiesRepository.findOrNull().getLastWeblogChange()
-                : weblog.getLastModified();
+        Instant lastModified = (incomingRequest.isSiteWide()) ? dp.getLastSitewideChange() : weblog.getLastModified();
 
         // Respond with 304 Not Modified if it is not modified.
         // DB stores last modified in millis, browser if-modified-since in seconds, so need to truncate millis from the former.
@@ -283,10 +282,8 @@ public class PageProcessor extends AbstractProcessor {
         // site wide feeds must be aware of the last update date of any weblog
         // as they get refreshed whenever any of blogs do.
         if (request.isSiteWide()) {
-            key.append("/lastUpdate=").append(
-                    webloggerPropertiesRepository.findOrNull().getLastWeblogChange().toEpochMilli());
+            key.append("/lastUpdate=").append(dp.getLastSitewideChange().toEpochMilli());
         }
-
         return key.toString();
     }
 }

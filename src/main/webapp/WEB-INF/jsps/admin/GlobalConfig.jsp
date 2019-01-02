@@ -68,33 +68,33 @@
         <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersCreateBlogs"></td>
         <td class="description"><fmt:message key="globalConfig.tip.newUsersCreateBlogs"/></td>
     </tr>
-    <c:if test="${showMediaFileTab}">
-        <tr>
-            <td class="label"><fmt:message key="globalConfig.maxMediaFileAllocationMb" /></td>
-            <td class="field"><input type="number" ng-model="ctrl.webloggerProps.maxFileUploadsSizeMb" size='35'></td>
-            <td class="description"><fmt:message key="globalConfig.tip.maxMediaFileAllocationMb"/></td>
-        </tr>
-    </c:if>
     <tr>
         <td colspan="2">&nbsp;</td>
     </tr>
     <tr>
         <td colspan="3"><h2><fmt:message key="globalConfig.weblogSettings" /></h2></td>
     </tr>
-    <tr>
-           <td class="label"><fmt:message key="globalConfig.weblogSettings" /></td>
-           <td class="field">
-               <select ng-model="ctrl.webloggerProps.blogHtmlPolicy" size="1" required>
-                   <option ng-repeat="(key, value) in ctrl.metadata.blogHtmlLevels" value="{{key}}">{{value}}</option>
-               </select>
-           </td>
-           <td class="description"><fmt:message key="globalConfig.tip.htmlWhitelistLevel"/></td>
-    </tr>
+        <tr>
+               <td class="label"><fmt:message key="globalConfig.htmlWhitelistLevel" /></td>
+               <td class="field">
+                   <select ng-model="ctrl.webloggerProps.blogHtmlPolicy" size="1" required>
+                       <option ng-repeat="(key, value) in ctrl.metadata.blogHtmlLevels" value="{{key}}">{{value}}</option>
+                   </select>
+               </td>
+               <td class="description"><fmt:message key="globalConfig.tip.htmlWhitelistLevel"/></td>
+        </tr>
         <tr>
             <td class="label"><fmt:message key="globalConfig.allowCustomTheme" /></td>
             <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersCustomizeThemes"></td>
             <td class="description"><fmt:message key="globalConfig.tip.allowCustomTheme"/></td>
         </tr>
+        <c:if test="${showMediaFileTab}">
+            <tr>
+                <td class="label"><fmt:message key="globalConfig.maxMediaFileAllocationMb" /></td>
+                <td class="field"><input type="number" ng-model="ctrl.webloggerProps.maxFileUploadsSizeMb" size='35'></td>
+                <td class="description"><fmt:message key="globalConfig.tip.maxMediaFileAllocationMb"/></td>
+            </tr>
+        </c:if>
         <tr>
             <td class="label"><fmt:message key="globalConfig.defaultAnalyticsTrackingCode" /></td>
             <td class="field"><textarea rows="10" cols="70" ng-model="ctrl.webloggerProps.defaultAnalyticsCode"></textarea></td>

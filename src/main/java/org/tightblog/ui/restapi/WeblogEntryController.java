@@ -18,10 +18,12 @@ package org.tightblog.ui.restapi;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.service.EmailService;
 import org.tightblog.service.URLService;
 import org.tightblog.service.UserManager;
@@ -77,6 +79,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
+@EnableConfigurationProperties(DynamicProperties.class)
 @RequestMapping(path = "/tb-ui/authoring/rest/weblogentries")
 public class WeblogEntryController {
 
@@ -96,6 +99,10 @@ public class WeblogEntryController {
     private EmailService emailService;
     private MessageSource messages;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
+    private DynamicProperties dp;
+
+    // Max Tag options to display for autocomplete
+    private int maxAutocompleteTags;
 
     @Autowired
     public WeblogEntryController(WeblogRepository weblogRepository, WeblogCategoryRepository weblogCategoryRepository,
@@ -103,7 +110,8 @@ public class WeblogEntryController {
                                  WeblogEntryManager weblogEntryManager, LuceneIndexer luceneIndexer,
                                  URLService urlService, EmailService emailService, MessageSource messages,
                                  WebloggerPropertiesRepository webloggerPropertiesRepository,
-                                 WeblogEntryRepository weblogEntryRepository) {
+                                 WeblogEntryRepository weblogEntryRepository, DynamicProperties dp,
+                                 @Value("${max.autocomplete.tags:20}") int maxAutocompleteTags) {
         this.weblogRepository = weblogRepository;
         this.weblogEntryRepository = weblogEntryRepository;
         this.weblogCategoryRepository = weblogCategoryRepository;
@@ -116,14 +124,12 @@ public class WeblogEntryController {
         this.urlService = urlService;
         this.emailService = emailService;
         this.messages = messages;
+        this.dp = dp;
+        this.maxAutocompleteTags = maxAutocompleteTags;
     }
 
     // number of entries to show per page
     private static final int ITEMS_PER_PAGE = 30;
-
-    // Max Tags to show for autocomplete
-    @Value("${max.autocomplete.tags:20}")
-    private int maxAutocompleteTags;
 
     @PostMapping(value = "/{weblogId}/page/{page}")
     public WeblogEntryData getWeblogEntries(@PathVariable String weblogId, @PathVariable int page,
@@ -244,15 +250,8 @@ public class WeblogEntryController {
                     if (itemToRemove.isPublished()) {
                         luceneIndexer.updateIndex(itemToRemove, true);
                     }
-
-                    // update last weblog change so any site weblog knows it needs to update
-                    WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
-                    props.setLastWeblogChange(Instant.now());
-                    webloggerPropertiesRepository.saveAndFlush(props);
-
-                    // remove entry itself
                     weblogEntryManager.removeWeblogEntry(itemToRemove);
-
+                    dp.updateLastSitewideChange();
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -546,11 +545,7 @@ public class WeblogEntryController {
                 }
 
                 weblogEntryManager.saveWeblogEntry(entry);
-
-                // update last weblog change so any site weblog knows it needs to update
-                WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
-                props.setLastWeblogChange(Instant.now());
-                webloggerPropertiesRepository.saveAndFlush(props);
+                dp.updateLastSitewideChange();
 
                 // notify search of the new entry
                 if (entry.isPublished()) {

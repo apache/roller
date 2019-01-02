@@ -23,15 +23,16 @@ package org.tightblog.rendering.model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
-import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import java.time.Instant;
 import java.util.Map;
@@ -41,21 +42,21 @@ import java.util.Map;
  */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@EnableConfigurationProperties(DynamicProperties.class)
 public class FeedModel implements Model {
 
     private WeblogFeedRequest feedRequest;
-    private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private WeblogEntryListGenerator weblogEntryListGenerator;
     private WeblogEntryManager weblogEntryManager;
+    private DynamicProperties dp;
     private int numEntriesPerPage;
 
     @Autowired
-    FeedModel(WebloggerPropertiesRepository webloggerPropertiesRepository,
-                     WeblogEntryListGenerator weblogEntryListGenerator, WeblogEntryManager weblogEntryManager,
-                     @Value("${site.feed.numEntries:20}") int numEntriesPerPage) {
-        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
+    FeedModel(WeblogEntryListGenerator weblogEntryListGenerator, WeblogEntryManager weblogEntryManager,
+                    DynamicProperties dp, @Value("${site.feed.numEntries:20}") int numEntriesPerPage) {
         this.weblogEntryListGenerator = weblogEntryListGenerator;
         this.weblogEntryManager = weblogEntryManager;
+        this.dp = dp;
         this.numEntriesPerPage = numEntriesPerPage;
     }
 
@@ -115,10 +116,8 @@ public class FeedModel implements Model {
      *
      * @return last update date for the feed
      */
-    @SuppressWarnings("unused")
     public Instant getLastUpdated() {
-        return isSiteWideFeed() ? webloggerPropertiesRepository.findOrNull().getLastWeblogChange()
-                : feedRequest.getWeblog().getLastModified();
+        return isSiteWideFeed() ? dp.getLastSitewideChange() : feedRequest.getWeblog().getLastModified();
     }
 
     /**

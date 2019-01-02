@@ -23,10 +23,12 @@ package org.tightblog.service;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import org.tightblog.config.DynamicProperties;
 import org.tightblog.domain.User;
 import org.tightblog.domain.UserStatus;
 import org.tightblog.domain.UserWeblogRole;
@@ -67,6 +69,7 @@ import java.util.TreeMap;
   * Weblog, category and tag management
   */
 @Component
+@EnableConfigurationProperties(DynamicProperties.class)
 public class WeblogManager {
 
     private static Logger log = LoggerFactory.getLogger(WeblogManager.class);
@@ -83,6 +86,7 @@ public class WeblogManager {
     private WeblogEntryManager weblogEntryManager;
     private LuceneIndexer luceneIndexer;
     private MediaManager mediaManager;
+    private DynamicProperties dp;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -107,7 +111,8 @@ public class WeblogManager {
                          WebloggerPropertiesRepository webloggerPropertiesRepository,
                          WeblogRepository weblogRepository,
                          UserManager userManager, WeblogEntryManager weblogEntryManager, LuceneIndexer luceneIndexer,
-                         MediaManager mediaManager) {
+                         MediaManager mediaManager,
+                         DynamicProperties dp) {
         this.weblogEntryRepository = weblogEntryRepository;
         this.weblogEntryCommentRepository = weblogEntryCommentRepository;
         this.weblogCategoryRepository = weblogCategoryRepository;
@@ -120,15 +125,13 @@ public class WeblogManager {
         this.weblogEntryManager = weblogEntryManager;
         this.luceneIndexer = luceneIndexer;
         this.mediaManager = mediaManager;
+        this.dp = dp;
     }
 
     public void saveWeblog(Weblog weblog) {
         weblog.setLastModified(Instant.now());
         weblogRepository.save(weblog);
-
-        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
-        props.setLastWeblogChange(Instant.now());
-        webloggerPropertiesRepository.saveAndFlush(props);
+        dp.updateLastSitewideChange();
     }
 
     public void removeWeblog(Weblog weblog) {
@@ -150,11 +153,10 @@ public class WeblogManager {
         Weblog test = props.getMainBlog();
         if (test != null && test.getId().equals(weblog.getId())) {
             props.setMainBlog(null);
-            webloggerPropertiesRepository.save(props);
+            webloggerPropertiesRepository.saveAndFlush(props);
         }
         weblogRepository.delete(weblog);
-        props.setLastWeblogChange(Instant.now());
-        webloggerPropertiesRepository.saveAndFlush(props);
+        dp.updateLastSitewideChange();
     }
 
     /**
@@ -280,8 +282,7 @@ public class WeblogManager {
             if (scheduledEntries.size() > 0) {
                 // update last weblog change so any site weblog knows it needs to update
                 WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
-                props.setLastWeblogChange(Instant.now());
-                webloggerPropertiesRepository.saveAndFlush(props);
+                dp.updateLastSitewideChange();
             }
 
             // take a second pass to trigger reindexing

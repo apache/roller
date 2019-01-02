@@ -224,8 +224,7 @@ create table weblogger_properties (
     autodelete_spam        $BOOLEAN_SQL_TYPE_FALSE not null,
     users_comment_notifications $BOOLEAN_SQL_TYPE_TRUE not null,
     comment_spam_filter    $TEXT_SQL_TYPE,
-    max_file_uploads_size_mb integer default 20 not null,
-    last_weblog_change     $TIMESTAMP_SQL_TYPE_DEFNOW not null
+    max_file_uploads_size_mb integer default 20 not null
 );
 
 alter table weblogger_properties add constraint wp_weblogid_fk
