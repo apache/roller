@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.domain.SharedTemplate;
+import org.tightblog.rendering.model.FeedModel;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.domain.Template;
 import org.tightblog.domain.Weblog;
@@ -66,6 +67,7 @@ public class FeedProcessor extends AbstractProcessor {
     private ThemeManager themeManager;
     private WeblogFeedRequest.Creator weblogFeedRequestCreator;
     private DynamicProperties dp;
+    private FeedModel feedModel;
 
     void setWeblogFeedRequestCreator(WeblogFeedRequest.Creator creator) {
         this.weblogFeedRequestCreator = creator;
@@ -74,18 +76,19 @@ public class FeedProcessor extends AbstractProcessor {
     @Autowired
     public FeedProcessor(WeblogRepository weblogRepository, LazyExpiringCache weblogFeedCache,
                          @Qualifier("atomRenderer") ThymeleafRenderer thymeleafRenderer,
-                         ThemeManager themeManager, DynamicProperties dp) {
+                         ThemeManager themeManager, FeedModel feedModel, DynamicProperties dp) {
         this.weblogFeedRequestCreator = new WeblogFeedRequest.Creator();
         this.weblogRepository = weblogRepository;
         this.weblogFeedCache = weblogFeedCache;
         this.thymeleafRenderer = thymeleafRenderer;
         this.themeManager = themeManager;
+        this.feedModel = feedModel;
         this.dp = dp;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogFeedRequest feedRequest = weblogFeedRequestCreator.create(request);
+        WeblogFeedRequest feedRequest = weblogFeedRequestCreator.create(request, feedModel);
 
         Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(feedRequest.getWeblogHandle());
         if (weblog == null) {
@@ -126,9 +129,8 @@ public class FeedProcessor extends AbstractProcessor {
                 newContent = true;
 
                 // not in cache so need to generate content
-                Map<String, Object> initData = new HashMap<>();
-                initData.put("parsedRequest", feedRequest);
-                Map<String, Object> model = getModelMap("feedModelSet", initData);
+                Map<String, Object> model = new HashMap<>();
+                model.put("model", feedRequest);
                 Template template = new SharedTemplate("entries-atom", Template.ComponentType.ATOMFEED);
                 rendererOutput = thymeleafRenderer.render(template, model);
             }
@@ -163,8 +165,8 @@ public class FeedProcessor extends AbstractProcessor {
         StringBuilder key = new StringBuilder();
         key.append(feedRequest.getWeblogHandle());
 
-        if (feedRequest.getWeblogCategoryName() != null) {
-            key.append("/cat/").append(Utilities.encode(feedRequest.getWeblogCategoryName()));
+        if (feedRequest.getCategoryName() != null) {
+            key.append("/cat/").append(Utilities.encode(feedRequest.getCategoryName()));
         } else if (feedRequest.getTag() != null) {
             key.append("/tag/").append(Utilities.encode(feedRequest.getTag()));
         }

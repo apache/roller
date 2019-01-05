@@ -185,6 +185,8 @@ public class RequestMappingFilter implements Filter {
             }
         } else {
             // no context means weblog homepage
+            // providing the context in feed and search seems redundant but allows for the
+            // "extrainfo" (ending part of URL) determination in WeblogRequest to be common for all.
             if (context == null || context.equals("page") || context.equals("entry") ||
                     context.equals("date") || context.equals("category") || context.equals("tag")) {
                 forwardUrl = generateForwardUrl(PageProcessor.PATH, handle, context, data);

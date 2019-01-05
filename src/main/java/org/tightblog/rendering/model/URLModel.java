@@ -25,9 +25,9 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.tightblog.domain.Weblog;
 import org.tightblog.service.URLService;
 import org.tightblog.config.DynamicProperties;
-import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.rendering.requests.WeblogRequest;
 

@@ -62,11 +62,11 @@ public class WeblogRequest {
     private String authenticatedUser;
     private DeviceType deviceType = DeviceType.NORMAL;
     private HttpServletRequest request;
-    private int pageNum;
+    protected int pageNum;
     String extraPathInfo;
 
     // attributes populated by processors where appropriate
-    private Weblog weblog;
+    protected Weblog weblog;
     private User blogger;
     private boolean siteWide;
 
@@ -92,7 +92,7 @@ public class WeblogRequest {
             wreq.authenticatedUser = principal.getName();
         }
 
-        // servlet path: /tb-ui/rendering/(page|feed|mediafile|comment|search)/weblogHandle[/bbb]
+        // servlet path: /tb-ui/rendering/(page|feed|mediafile|comment|search)/weblogHandle[/extrainfo]*
         String path = sreq.getServletPath();
 
         log.debug("parsing path {}", path);

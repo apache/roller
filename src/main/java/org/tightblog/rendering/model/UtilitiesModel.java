@@ -44,27 +44,23 @@ import java.util.Map;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class UtilitiesModel implements Model {
-    private ZoneId zoneId;
 
+    private WebloggerPropertiesRepository webloggerPropertiesRepository;
+    private MessageSource messages;
+    private String systemVersion;
+
+    private ZoneId zoneId;
     private Locale locale;
 
     @Autowired
-    private WebloggerPropertiesRepository webloggerPropertiesRepository;
-
-    public void setWebloggerPropertiesRepository(WebloggerPropertiesRepository webloggerPropertiesRepository) {
+    UtilitiesModel(WebloggerPropertiesRepository webloggerPropertiesRepository,
+                          MessageSource messages,
+                          @Value("${weblogger.version:Unknown}") String systemVersion) {
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
+        this.messages = messages;
+        this.systemVersion = systemVersion;
     }
 
-    @Autowired
-    private MessageSource messages;
-
-    @Value("${weblogger.version:Unknown}")
-    private String systemVersion;
-
-    /**
-     * Template context name to be used for model
-     */
-    @Override
     public String getModelName() {
         return "utils";
     }
@@ -117,15 +113,6 @@ public class UtilitiesModel implements Model {
         }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(fmt).withZone(zoneId);
         return dtf.format(dt);
-    }
-
-    /**
-     * Provides required Atom date format e.g. '2011-12-03T10:15:30+01:00'
-     * see https://tools.ietf.org/html/rfc4287#section-3.3
-     * see: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
-     */
-    public String formatIsoOffsetDateTime(Temporal dt) {
-        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(zoneId).format(dt);
     }
 
     /**

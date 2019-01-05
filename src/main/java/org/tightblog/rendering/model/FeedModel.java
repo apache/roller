@@ -22,123 +22,69 @@ package org.tightblog.rendering.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.tightblog.config.DynamicProperties;
+import org.tightblog.service.URLService;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.domain.Weblog;
-import org.tightblog.domain.WeblogEntry;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
-import org.tightblog.rendering.requests.WeblogFeedRequest;
 
 import java.time.Instant;
-import java.util.Map;
 
 /**
- * Model which provides information needed to render a feed.
+ * Model which provides services needed to render a feed.
  */
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @EnableConfigurationProperties(DynamicProperties.class)
-public class FeedModel implements Model {
+public class FeedModel {
 
-    private WeblogFeedRequest feedRequest;
     private WeblogEntryListGenerator weblogEntryListGenerator;
     private WeblogEntryManager weblogEntryManager;
+    private URLService urlService;
     private DynamicProperties dp;
     private int numEntriesPerPage;
+    private String systemVersion;
 
     @Autowired
     FeedModel(WeblogEntryListGenerator weblogEntryListGenerator, WeblogEntryManager weblogEntryManager,
-                    DynamicProperties dp, @Value("${site.feed.numEntries:20}") int numEntriesPerPage) {
+                    URLService urlService,
+                    DynamicProperties dp, @Value("${weblogger.version:Unknown}") String systemVersion,
+                    @Value("${site.feed.numEntries:20}") int numEntriesPerPage) {
         this.weblogEntryListGenerator = weblogEntryListGenerator;
         this.weblogEntryManager = weblogEntryManager;
+        this.urlService = urlService;
         this.dp = dp;
+        this.systemVersion = systemVersion;
         this.numEntriesPerPage = numEntriesPerPage;
     }
 
     /**
-     * Template context name to be used for model
+     * Gets most recent entries filtered by params provided in WeblogFeedRequest.
      */
-    @Override
-    public String getModelName() {
-        return "model";
+    public WeblogEntryListData getWeblogEntriesPager(Weblog weblog, String categoryName, String tag,
+                                                     int pageNum, boolean siteWide) {
+        return weblogEntryListGenerator.getChronoPager(weblog, null, categoryName,
+                tag, pageNum, numEntriesPerPage, siteWide);
     }
 
-    @Override
-    public void init(Map<String, Object> initData) {
-        this.feedRequest = (WeblogFeedRequest) initData.get("parsedRequest");
-
-        if (feedRequest == null) {
-            throw new IllegalStateException("Missing WeblogFeedRequest object");
-        }
+    public Instant getLastSitewideChange() {
+        return dp.getLastSitewideChange();
     }
 
     /**
-     * Get weblog being displayed.
+     * Transform blog text based on Edit Format and HTML policy
      */
-    public Weblog getWeblog() {
-        return feedRequest.getWeblog();
-    }
-
-    /**
-     * Get category path or name specified by request.
-     */
-    public String getCategoryName() {
-        return feedRequest.getWeblogCategoryName();
-    }
-
-    /**
-     * Gets most recent entries limited by: weblog and category specified in
-     * request plus the weblog.entryDisplayCount.
-     */
-    public WeblogEntryListData getWeblogEntriesPager() {
-        return weblogEntryListGenerator.getChronoPager(
-                feedRequest.getWeblog(),
-                null,
-                feedRequest.getWeblogCategoryName(), feedRequest.getTag(),
-                feedRequest.getPageNum(),
-                numEntriesPerPage,
-                feedRequest.isSiteWide());
-    }
-
-    public boolean isSiteWideFeed() {
-        return feedRequest.isSiteWide();
-    }
-
-    /**
-     * Returns the last updated date of either the weblog or the entire site, the latter if and
-     * only if the weblog is a site weblog.  Useful for supplying the "updated" element of the
-     * Atom feed.
-     *
-     * @return last update date for the feed
-     */
-    public Instant getLastUpdated() {
-        return isSiteWideFeed() ? dp.getLastSitewideChange() : feedRequest.getWeblog().getLastModified();
-    }
-
-    /**
-     * Returns the tag specified in the request /?tag=foo
-     */
-    public String getTag() {
-        return feedRequest.getTag();
-    }
-
-    public String getTransformedText(WeblogEntry entry) {
-        return render(entry.getEditFormat(), entry.getText());
-    }
-
-    public String getTransformedSummary(WeblogEntry entry) {
-        return render(entry.getEditFormat(), entry.getSummary());
-    }
-
-    /**
-     * Transform string based on Edit Format and HTML policy
-     */
-    private String render(Weblog.EditFormat format, String str) {
+    public String render(Weblog.EditFormat format, String str) {
         return weblogEntryManager.processBlogText(format, str);
+    }
+
+    public String getSystemVersion() {
+        return systemVersion;
+    }
+
+    public URLService getURLService() {
+        return urlService;
     }
 }

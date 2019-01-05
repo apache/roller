@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.domain.SharedTheme;
+import org.tightblog.rendering.model.FeedModel;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.domain.Template;
 import org.tightblog.domain.Weblog;
@@ -61,16 +62,18 @@ public class FeedProcessorTest {
     private LazyExpiringCache mockCache;
     private WeblogRepository mockWR;
     private ThymeleafRenderer mockThymeleafRenderer;
+    private FeedModel mockFeedModel;
 
     // not done as a @before as not all tests need these mocks
     private void initializeMocks() {
+        mockFeedModel = mock(FeedModel.class);
         mockRequest = mock(HttpServletRequest.class);
         // default is page always needs refreshing
         when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().minus(7, ChronoUnit.DAYS).toEpochMilli());
         mockResponse = mock(HttpServletResponse.class);
         WeblogFeedRequest.Creator wfrCreator = mock(WeblogFeedRequest.Creator.class);
-        feedRequest = new WeblogFeedRequest();
-        when(wfrCreator.create(mockRequest)).thenReturn(feedRequest);
+        feedRequest = new WeblogFeedRequest(mockFeedModel);
+        when(wfrCreator.create(mockRequest, mockFeedModel)).thenReturn(feedRequest);
         mockWR = mock(WeblogRepository.class);
         mockCache = mock(LazyExpiringCache.class);
         ThemeManager mockThemeManager = mock(ThemeManager.class);
@@ -78,7 +81,7 @@ public class FeedProcessorTest {
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
         mockThymeleafRenderer = mock(ThymeleafRenderer.class);
         dp = new DynamicProperties();
-        processor = new FeedProcessor(mockWR, mockCache, mockThymeleafRenderer, mockThemeManager, dp);
+        processor = new FeedProcessor(mockWR, mockCache, mockThymeleafRenderer, mockThemeManager, mockFeedModel, dp);
         processor.setWeblogFeedRequestCreator(wfrCreator);
         weblog = new Weblog();
         when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
@@ -180,16 +183,16 @@ public class FeedProcessorTest {
         initializeMocks();
 
         // comment & category test
-        WeblogFeedRequest request = new WeblogFeedRequest();
+        WeblogFeedRequest request = new WeblogFeedRequest(mockFeedModel);
         request.setWeblogHandle("bobsblog");
-        request.setWeblogCategoryName("sports");
+        request.setCategoryName("sports");
         request.setPageNum(14);
 
         String test1 = processor.generateKey(request, false);
         assertEquals("bobsblog/cat/sports/page=14", test1);
 
         // entry & tag test, site-wide
-        request.setWeblogCategoryName(null);
+        request.setCategoryName(null);
         request.setTag("skiing");
         request.setSiteWide(true);
         request.setPageNum(0);

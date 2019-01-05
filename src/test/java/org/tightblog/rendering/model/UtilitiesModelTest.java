@@ -15,9 +15,12 @@
  */
 package org.tightblog.rendering.model;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.requests.WeblogRequest;
+import org.tightblog.repository.WebloggerPropertiesRepository;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -25,8 +28,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class UtilitiesModelTest {
+
+    private WebloggerPropertiesRepository propertiesRepository;
+    private MessageSource messages;
+
+    @Before
+    public void setUp() {
+        propertiesRepository = mock(WebloggerPropertiesRepository.class);
+        messages = mock(MessageSource.class);
+    }
 
     @Test
     public void testFormatTemporal() {
@@ -37,7 +50,7 @@ public class UtilitiesModelTest {
         weblogRequest.setWeblog(weblog);
         Map<String, Object> initData = new HashMap<>();
         initData.put("parsedRequest", weblogRequest);
-        UtilitiesModel um = new UtilitiesModel();
+        UtilitiesModel um = new UtilitiesModel(propertiesRepository, messages, "2.0");
         um.init(initData);
         // three hours difference between NY and LA
         ZonedDateTime ldt = ZonedDateTime.of(2018, 6, 10, 12, 30, 45, 0,

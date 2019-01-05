@@ -18,65 +18,60 @@ package org.tightblog.rendering.model;
 import org.junit.Before;
 import org.junit.Test;
 import org.tightblog.config.DynamicProperties;
+import org.tightblog.service.URLService;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
-import org.tightblog.rendering.requests.WeblogFeedRequest;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class FeedModelTest {
 
     private WeblogEntryListGenerator mockWeblogEntryListGenerator;
-    private WeblogFeedRequest feedRequest;
     private FeedModel feedModel;
     private Weblog weblog;
     private DynamicProperties dp;
+    private WeblogEntryManager mockWeblogEntryManager;
+    private URLService mockURLService;
 
     @Before
     public void initialize() {
-        WeblogEntryManager mockWeblogEntryManager = mock(WeblogEntryManager.class);
+        mockWeblogEntryManager = mock(WeblogEntryManager.class);
         mockWeblogEntryListGenerator = mock(WeblogEntryListGenerator.class);
-        feedRequest = new WeblogFeedRequest();
-        weblog = new Weblog();
-        feedRequest.setWeblog(weblog);
-        feedRequest.setWeblogCategoryName("stamps");
-        feedRequest.setTag("collectibles");
-        feedRequest.setPageNum(16);
-        feedRequest.setSiteWide(true);
+        mockURLService = mock(URLService.class);
         dp = new DynamicProperties();
-        feedModel = new FeedModel(mockWeblogEntryListGenerator, mockWeblogEntryManager, dp, 20);
-        Map<String, Object> initVals = new HashMap<>();
-        initVals.put("parsedRequest", feedRequest);
-        feedModel.init(initVals);
+        feedModel = new FeedModel(mockWeblogEntryListGenerator, mockWeblogEntryManager, mockURLService,
+                dp, "1.1", 20);
+        weblog = new Weblog();
     }
 
     @Test
-    public void getWeblogEntriesPager() {
-        feedModel.getWeblogEntriesPager();
-        verify(mockWeblogEntryListGenerator).getChronoPager(weblog, null, "stamps",
-                "collectibles", 16, 20, true);
+    public void testAccessors() {
+        // make jacoco happy
+        assertEquals("1.1", feedModel.getSystemVersion());
+        assertEquals(mockURLService, feedModel.getURLService());
     }
 
     @Test
-    public void getLastUpdated() {
-        Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
-        Instant threeDaysAgo = Instant.now().minus(3, ChronoUnit.DAYS);
-        weblog.setLastModified(twoDaysAgo);
-        dp.setLastSitewideChange(threeDaysAgo);
+    public void testPassThroughMethods() {
+        WeblogEntryListGenerator.WeblogEntryListData data = new WeblogEntryListData();
+        when(mockWeblogEntryListGenerator.getChronoPager(weblog, null, "stamps",
+                "collectibles", 16, 20, true)).thenReturn(data);
+        assertEquals(data, feedModel.getWeblogEntriesPager(weblog, "stamps", "collectibles",
+                16, true));
 
-        Instant test = feedModel.getLastUpdated();
-        assertEquals(threeDaysAgo, test);
+        Instant testInstant = Instant.now().minus(1, ChronoUnit.DAYS);
+        dp.setLastSitewideChange(testInstant);
+        assertEquals(testInstant, feedModel.getLastSitewideChange());
 
-        feedRequest.setSiteWide(false);
-        test = feedModel.getLastUpdated();
-        assertEquals(twoDaysAgo, test);
+        when(mockWeblogEntryManager.processBlogText(Weblog.EditFormat.COMMONMARK, "testText"))
+                .thenReturn("processedTestText");
+        assertEquals("processedTestText", feedModel.render(Weblog.EditFormat.COMMONMARK, "testText"));
     }
 }

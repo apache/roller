@@ -144,16 +144,6 @@
         </beans:property>
     </beans:bean>
 
-    <beans:bean id="feedModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">
-        <beans:property name="sourceSet">
-            <beans:set>
-                <beans:ref bean="feedModel"/>
-                <beans:ref bean="utilitiesModel"/>
-                <beans:ref bean="urlModel"/>
-            </beans:set>
-        </beans:property>
-    </beans:bean>
-
     <beans:bean id="searchModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">
         <beans:property name="sourceSet">
             <beans:set>
