@@ -337,7 +337,7 @@
                 </p>
 
                 <s:form id="entry" action="mediaFileEdit!save" method="POST" enctype="multipart/form-data"
-                    theme="bootd=strap" class="form-vertical">
+                    theme="bootstrap" class="form-vertical">
 
                     <s:hidden name="salt"/>
                     <s:hidden name="weblog"/>
