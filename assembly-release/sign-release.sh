@@ -16,16 +16,16 @@ gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-standard.zi
 gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-source.tar.gz
 gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-source.zip
 
-gpg --print-md sha512 target/roller-release-${vstring}${rcstring}-standard.tar.gz > \
+gpg --print-md sha256 target/roller-release-${vstring}${rcstring}-standard.tar.gz > \
 target/roller-release-${vstring}${rcstring}-standard.tar.gz.sha256
 
-gpg --print-md sha512 target/roller-release-${vstring}${rcstring}-standard.zip > \
+gpg --print-md sha256 target/roller-release-${vstring}${rcstring}-standard.zip > \
 target/roller-release-${vstring}${rcstring}-standard.zip.sha256
 
-gpg --print-md sha512 target/roller-release-${vstring}${rcstring}-source.tar.gz > \
+gpg --print-md sha256 target/roller-release-${vstring}${rcstring}-source.tar.gz > \
 target/roller-release-${vstring}${rcstring}-source.tar.gz.sha256
 
-gpg --print-md sha512 target/roller-release-${vstring}${rcstring}-source.zip > \
+gpg --print-md sha256 target/roller-release-${vstring}${rcstring}-source.zip > \
 target/roller-release-${vstring}${rcstring}-source.zip.sha256
 
 
