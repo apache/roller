@@ -222,6 +222,11 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
+    <definition name=".MediaFileEdit" extends=".tiles-popuppage" >
+        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
+    </definition>
+
     <definition name=".MediaFileAddExternalInclude" extends=".tiles-popuppage-only-content" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddExternalInclude.jsp" />

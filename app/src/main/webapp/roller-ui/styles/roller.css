@@ -287,6 +287,10 @@ span.button {
     margin: 1em 0 1em 0;
 }
 
+#imageGrid > div > ul {
+    padding-left:0;
+}
+
 div.image-controls,
 div.image-controls div,
 div.image-controls span,

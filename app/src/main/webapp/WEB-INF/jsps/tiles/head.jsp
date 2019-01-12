@@ -14,5 +14,7 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 <link href="<s:url value='/webjars/bootstrap/3.3.7/css/bootstrap-theme.min.css' />" rel="stylesheet" />
 <script src="<s:url value='/webjars/bootstrap/3.3.7/js/bootstrap.min.js' />"></script>
 
+<script src="<s:url value='/webjars/clipboard.js/2.0.0/clipboard.min.js' />"></script>
+
 <link rel="stylesheet" media="all" href='<s:url value="/roller-ui/styles/roller.css"/>' />
 <script src="<s:url value="/theme/scripts/roller.js"/>"></script>
