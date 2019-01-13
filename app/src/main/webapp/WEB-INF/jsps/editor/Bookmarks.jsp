@@ -33,6 +33,9 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 <s:if test="folder.name == 'default'">
     <p class="pagetip"><s:text name="bookmarksForm.rootPrompt"/></p>
 </s:if>
+<s:else>
+    <p class="pagetip"><s:text name="bookmarksForm.otherPrompt"/></p>
+</s:else>
 
 
 <%-- table of blogroll links with selection checkboxes, wrapped in a form --%>
