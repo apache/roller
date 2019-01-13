@@ -23,7 +23,7 @@ function save() {
     radios = document.getElementsByTagName("input");
     var removing = false;
     for (var i=0; i<radios.length; i++) {
-        if (radios[i].value == -1 && radios[i].checked) {
+        if (radios[i].value === -1 && radios[i].checked) {
             removing = true;
         }
     }
@@ -80,7 +80,7 @@ function save() {
             </s:else>
             
                 <td class="rollertable">
-                    <img src='<s:url value="/images/user.png"/>' border="0" alt="icon" />
+                    <span class="glyphicon glyphicon-user"></span>
 	                <s:property value="#perm.user.userName" />
                 </td>               
                 <td class="rollertable">
