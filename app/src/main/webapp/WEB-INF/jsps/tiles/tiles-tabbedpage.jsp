@@ -37,22 +37,19 @@
 
     <div class="row">
 
-        <div class="col-md-8 roller-column-left">
-            <div class="panel panel-default">
-                <div class="panel-body" style="min-height: 30em">
-                    <tiles:insertAttribute name="messages"/>
-                    <h2 class="roller-page-title"><s:property value="pageTitle"/></h2>
-                    <tiles:insertAttribute name="content"/>
-                </div>
-            </div>
-        </div>
+        <div class="col-md-3 roller-column-left">
 
-        <div class="col-md-4 roller-column-right">
             <div class="panel panel-default">
-                <div class="panel-body">
+                <div class="panel-body" style="text-align: center">
+
+                    <img src='<s:url value="/roller-ui/images/feather.svg" />'
+                         alt="ASF feat" height="100" align="center"/>
+                    <h4><s:text name="generic.apacheRoller" /></h4>
+
                     <s:if test="authenticatedUser != null || actionWeblog != null">
                         <tiles:insertAttribute name="userStatus"/>
                     </s:if>
+
                 </div>
             </div>
 
@@ -60,12 +57,28 @@
                 <s:property value="sidebar"/>
                 <div class="panel panel-default">
                     <div class="panel-body">
+
                         <tiles:insertAttribute name="sidebar"/>
+
                     </div>
                 </div>
             </c:if>
 
         </div>
+
+        <div class="col-md-9 roller-column-right">
+            <div class="panel panel-default">
+                <div class="panel-body" style="min-height: 30em">
+
+                    <tiles:insertAttribute name="messages"/>
+
+                    <h2 class="roller-page-title"><s:property value="pageTitle"/></h2>
+                    <tiles:insertAttribute name="content"/>
+
+                </div>
+            </div>
+        </div>
+
 
     </div>
 

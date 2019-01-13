@@ -27,7 +27,7 @@
 
     <s:iterator var="dg" value="globalConfigDef.displayGroups">
 
-        <h2><s:text name="%{#dg.key}"/></h2>
+        <h3><s:text name="%{#dg.key}"/></h3>
 
         <s:iterator var="pd" value="#dg.propertyDefs">
 
@@ -40,7 +40,7 @@
             <%-- special case for front page blog --%>
             <s:elseif test="#pd.name == 'site.frontpage.weblog.handle'">
                 <s:select name="%{#pd.name}" label="%{getText(#pd.key)}" value="%{properties[#pd.name].value}"
-                          list="weblogs" listKey="name" listValueKey="handle" />
+                          list="weblogs" listKey="name" listValueKey="handle"/>
             </s:elseif>
 
             <%-- "string" type means use a simple textbox --%>
@@ -109,6 +109,9 @@
             </s:else>
 
         </s:iterator>
+
+        <img src="<s:url value='/roller-ui/images/spacer.png' />" alt="spacer" style="min-height: 1em"/>
+
     </s:iterator>
 
     <input id="saveButton" class="btn" type="submit" value="<s:text name="generic.save"/>"/>

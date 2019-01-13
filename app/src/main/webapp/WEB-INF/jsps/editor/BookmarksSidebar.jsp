@@ -26,7 +26,7 @@
     <a href="#" onclick="newBlogroll()">
         <span class="glyphicon glyphicon-plus"></span>
         <s:text name="bookmarksForm.addFolder"/>
-    <a>
+    </a>
 </p>
 
 <%-- Import bookmarks

@@ -54,8 +54,14 @@ table {
     transition: opacity 1.25s linear;
 }
 
+/* bootstrap tweaks */
+
 .glyphicon-info-sign {
     margin-right: 0.5em;
+}
+
+.controls>input[type=checkbox] {
+    margin-bottom: 0.5em;
 }
 
 /* main menu */
@@ -125,6 +131,10 @@ td.draftentry, tr.draftentry {
 }
 td.scheduledentry, tr.scheduledentry {
     background: #EEEEE0;
+}
+
+.entryEditSidebarLink > a {
+    font-size: 10pt;
 }
 
 /* comments */

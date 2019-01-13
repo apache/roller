@@ -49,7 +49,7 @@
     </s:text>
 </p>
 
-<s:form id="entry" theme="bootstrap" cssClass="form-vertical">
+<s:form id="entry" theme="bootstrap" cssClass="form-horizontal">
     <s:hidden name="salt"/>
     <s:hidden name="weblog"/>
     <s:hidden name="bean.status"/>
@@ -67,11 +67,11 @@
     <s:if test="actionName == 'entryEdit'">
         <div class="form-group">
 
-            <label class="control-label" for="entry_bean_permalink">
+            <label class="control-label col-md-3" for="entry_bean_permalink">
                 <s:text name="weblogEdit.permaLink"/>
             </label>
 
-            <div class="controls">
+            <div class="controls col-md-9">
                 <p class="form-control-static">
                     <s:if test="bean.published">
                         <a id="entry_bean_permalink" href='<s:property value="entry.permalink" />'>
@@ -107,9 +107,9 @@
 
     <%-- status --%>
     <div class="form-group">
-        <label class="control-label" for="weblogEdit.status"><s:text name="weblogEdit.status"/></label>
+        <label class="control-label col-md-3" for="weblogEdit.status"><s:text name="weblogEdit.status"/></label>
 
-        <div class="controls">
+        <div class="controls col-md-9">
 
             <p class="form-control-static">
                 <s:if test="bean.published">
@@ -197,28 +197,25 @@
 
                     <div class="form-group">
 
-                        <label class="control-label"><s:text name="weblogEdit.pubTime"/></label>
+                        <label class="control-label col-md-3"><s:text name="weblogEdit.pubTime"/></label>
 
-                        <div class="controls">
+                        <div class="controls col-md-9">
 
                             <s:select theme="simple" name="bean.hours" list="hoursList"/> :
                             <s:select theme="simple" name="bean.minutes" list="minutesList"/> :
-                            <s:select theme="simple" name="bean.seconds" list="secondsList"/>
-                            &nbsp;&nbsp;
-                            <script>
-                                $(function () {
-                                    $("#entry_bean_dateString").datepicker({
-                                        showOn: "button",
-                                        buttonImage: "../../images/calendar.png",
-                                        buttonImageOnly: true,
-                                        changeMonth: true,
-                                        changeYear: true
-                                    });
-                                });
-                            </script>
-                            &nbsp;&nbsp;
-                            <s:textfield theme="simple" name="bean.dateString" readonly="true"/>
-                            &nbsp;&nbsp;
+                            <s:select theme="simple" name="bean.seconds" list="secondsList"/> <br/>
+
+                            <img src="<s:url value='/roller-ui/images/spacer.png' />"
+                                 alt="spacer" style="min-height: 0.3em"/>
+
+                            <div class="input-group">
+                                <s:textfield name="bean.dateString" readonly="true" cssStyle="width:15em"
+                                             theme="simple" cssClass="date-picker form-control"/>
+                                <label for="bean.dateString" class="input-group-addon btn" style="width:3em">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </label>
+                            </div>
+
                             <s:property value="actionWeblog.timeZone"/>
 
                         </div>
@@ -320,6 +317,11 @@
 </s:form>
 
 <script>
+
+    $(document).ready(function () {
+        $("#entry_bean_dateString").datepicker();
+    });
+
     function fullPreviewMode() {
         window.open('<s:property value="previewURL" />');
     }

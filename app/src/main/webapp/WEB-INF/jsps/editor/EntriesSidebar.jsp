@@ -48,12 +48,6 @@
     <%-- ========================================================= --%>
     <%-- filter by date --%>
 
-    <script>
-        $(function () {
-            $("#entries_bean_startDateString").datepicker();
-        });
-    </script>
-
     <div class="control-group">
         <label for="bean.startDateString" class="control-label">
             <s:text name="weblogEntryQuery.label.startDate"/>
@@ -70,12 +64,6 @@
             </div>
         </div>
     </div>
-
-    <script>
-        $(function () {
-            $("#entries_bean_endDateString").datepicker();
-        });
-    </script>
 
     <div class="control-group">
         <label for="bean.endDateString" class="control-label">
@@ -117,4 +105,13 @@
     <s:submit cssClass="btn" value="%{getText('weblogEntryQuery.button.query')}"/>
 
 </s:form>
+
+<script>
+
+    $(document).ready(function () {
+        $("#entries_bean_startDateString").datepicker();
+        $("#entries_bean_endDateString").datepicker();
+    });
+
+</script>
 
