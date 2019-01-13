@@ -240,6 +240,12 @@ limitations under the License.
         </dependency>
 
         <dependency>
+            <groupId>org.webjars.bower</groupId>
+            <artifactId>summernote</artifactId>
+            <version>0.8.11</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
             <scope>compile</scope>
