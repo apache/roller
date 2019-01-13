@@ -92,7 +92,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     <%-- allow user to select the bookmark folder to view --%>
 
-    <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name"
+    <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name" emptyOption="true"
               label="%{getText('bookmarksForm.switchTo')}" onchange="viewChanged()" onmouseup="viewChanged()"/>
 
     <table class="rollertable table table-striped">
