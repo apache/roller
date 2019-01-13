@@ -21,44 +21,12 @@
 
 <%-- ********************************************************************* --%>
 
-<%-- content
-
-<div class="panel panel-default" id="panel-content">
-    <div class="panel-heading">
-        <h4 class="panel-title">
-            <a data-toggle="collapse" data-target="#collapseContentEditor" href="#">
-                <s:text name="weblogEdit.content"/> </a>
-        </h4>
-    </div>
-    <div id="collapseContentEditor" class="panel-collapse collapse in">
-        <div class="panel-body">
-
-            <s:textarea id="edit_content" name="bean.text"
-                        tabindex="5" rows="18" cssClass="col-sm-12" theme="simple"/>
-
-            <s:if test="editor.id == 'editor-text.jsp'">
-                <span>
-                    <a href="#" onClick="onClickAddImage();"><s:text name="weblogEdit.insertMediaFile"/></a>
-                </span>
-            </s:if>
-        </div>
-    </div>
-</div>
---%>
-
+<%-- content --%>
 <s:textarea id="edit_content" name="bean.text"
             tabindex="5" rows="18" cssClass="col-sm-12" theme="simple"/>
 
-<%-- content --%>
-
-<s:if test="editor.id == 'editor-text.jsp'">
-    <span>
-        <a href="#" onClick="onClickAddImage();"><s:text name="weblogEdit.insertMediaFile"/></a>
-    </span>
-</s:if>
-
-<br/>
-<img src="<s:url value='/roller-ui/images/spacer.png' />" alt="spacer" style="min-height: 2em" />
+<a href="#" onClick="onClickMediaFileInsert();"><s:text name="weblogEdit.insertMediaFile"/></a><br/>
+<img src="<s:url value='/roller-ui/images/spacer.png' />" alt="spacer" style="min-height: 2em"/>
 
 <%-- summary --%>
 
@@ -85,107 +53,128 @@
 
 <%-- ********************************************************************* --%>
 
-<s:if test="editor.id == 'editor-text.jsp'">
 
-    <%-- Media File Insert for plain textarea editor --%>
+<%-- Media File Insert for plain textarea editor --%>
 
-    <div id="mediafile_edit_lightbox" class="modal fade" role="dialog">
+<div id="mediafile_edit_lightbox" class="modal fade" role="dialog">
 
-        <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg">
 
-            <div class="modal-content">
+        <div class="modal-content">
 
-                <div class="modal-header">
-                    <h4 class="modal-title"><s:text name='weblogEdit.insertMediaFile'/></h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <iframe id="mediaFileEditor"
-                            style="visibility:inherit"
-                            height="600" <%-- pixels, sigh, this is suboptimal--%>
-                            width="100%"
-                            frameborder="no"
-                            scrolling="auto">
-                    </iframe>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-
+            <div class="modal-header">
+                <h4 class="modal-title"><s:text name='weblogEdit.insertMediaFile'/></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </div>
 
+            <div class="modal-body">
+                <iframe id="mediaFileEditor"
+                        style="visibility:inherit"
+                        height="600" <%-- pixels, sigh, this is suboptimal--%>
+                        width="100%"
+                        frameborder="no"
+                        scrolling="auto">
+                </iframe>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
     </div>
 
-    <script>
-        function insertMediaFile(anchorTag) {
-            insertAtCursor(document.getElementById('edit_content'), anchorTag);
-        }
+</div>
 
-        function insertAtCursor(textAreaElement, valueForInsertion) {
-            if (document.selection) {
-                textAreaElement.focus();
-                var range = document.selection.createRange();
-                range.text = valueForInsertion;
-            } else if (textAreaElement.selectionStart || textAreaElement.selectionStart === '0') {
-                var preText;
-                var postText;
-                if (textAreaElement.selectionStart === 0) {
-                    preText = '';
-                    postText = '';
-                } else {
-                    preText = textAreaElement.value.substring(
-                        0, textAreaElement.selectionStart);
-                    postText = textAreaElement.value.substring(
-                        textAreaElement.selectionEnd, textAreaElement.value.length);
-                }
-                textAreaElement.value = preText + valueForInsertion + postText;
-                textAreaElement.selectionStart = preText.length + valueForInsertion.length;
-                textAreaElement.selectionEnd = textAreaElement.selectionStart;
-                textAreaElement.focus();
+<script>
+
+    <s:if test="editor.id == 'editor-text.jsp'">
+
+    <%-- Plain text editor functions --%>
+
+    function insertMediaFile(anchorTag) {
+        insertAtCursor(document.getElementById('edit_content'), anchorTag);
+    }
+
+    function insertAtCursor(textAreaElement, valueForInsertion) {
+        if (document.selection) {
+            textAreaElement.focus();
+            var range = document.selection.createRange();
+            range.text = valueForInsertion;
+        } else if (textAreaElement.selectionStart || textAreaElement.selectionStart === '0') {
+            var preText;
+            var postText;
+            if (textAreaElement.selectionStart === 0) {
+                preText = '';
+                postText = '';
             } else {
-                textAreaElement.value += valueForInsertion;
-                textAreaElement.focus();
+                preText = textAreaElement.value.substring(
+                    0, textAreaElement.selectionStart);
+                postText = textAreaElement.value.substring(
+                    textAreaElement.selectionEnd, textAreaElement.value.length);
             }
+            textAreaElement.value = preText + valueForInsertion + postText;
+            textAreaElement.selectionStart = preText.length + valueForInsertion.length;
+            textAreaElement.selectionEnd = textAreaElement.selectionStart;
+            textAreaElement.focus();
+        } else {
+            textAreaElement.value += valueForInsertion;
+            textAreaElement.focus();
         }
+    }
 
-        function onClickAddImage() {
-            <s:url var="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-            </s:url>
-            $("#mediaFileEditor").attr('src', '<s:property value="%{mediaFileImageChooser}" />');
-            $('#mediafile_edit_lightbox').modal({show: true});
-        }
+    </s:if>
+    <s:else>
 
-        function onClose() {
-            $("#mediaFileEditor").attr('src', 'about:blank');
-        }
+    <%-- Rich text editor functions --%>
 
-        function onSelectMediaFile(name, url, isImage) {
-            $("#mediafile_edit_lightbox").modal("hide");
-            $("#mediaFileEditor").attr('src', 'about:blank');
-            if (isImage === "true") {
-                insertMediaFile('<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name + '" /></a>');
-            } else {
-                insertMediaFile('<a href="' + url + '">' + name + '</a>');
+    $(document).ready(function () {
+        $('#edit_content').summernote({
+                toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']],
+                    ['misc', ['codeview']]
+                ],
+                height: 400
             }
+        );
+    });
+
+    function insertMediaFile(toInsert) {
+        $('#edit_content').summernote("pasteHTML", toInsert);
+    }
+
+    </s:else>
+
+    <%-- Common functions --%>
+
+    function onClickMediaFileInsert() {
+        <s:url var="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
+        <s:param name="weblog" value="%{actionWeblog.handle}" />
+        </s:url>
+        $("#mediaFileEditor").attr('src', '<s:property value="%{mediaFileImageChooser}" />');
+        $('#mediafile_edit_lightbox').modal({show: true});
+    }
+
+    function onClose() {
+        $("#mediaFileEditor").attr('src', 'about:blank');
+    }
+
+    function onSelectMediaFile(name, url, isImage) {
+        $("#mediafile_edit_lightbox").modal("hide");
+        $("#mediaFileEditor").attr('src', 'about:blank');
+        if (isImage === "true") {
+            insertMediaFile('<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name + '" /></a>');
+        } else {
+            insertMediaFile('<a href="' + url + '">' + name + '</a>');
         }
+    }
 
-    </script>
-
-</s:if>
-<s:else>
-
-    <%-- Rich text editor --%>
-
-    <script>
-        $(document).ready(function () {
-            $('#edit_content').summernote();
-        });
-    </script>
-
-</s:else>
+</script>
