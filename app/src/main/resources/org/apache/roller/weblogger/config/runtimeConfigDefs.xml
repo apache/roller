@@ -105,7 +105,7 @@
        </property-def>
       <property-def  name="users.editor.pages"  key="configForm.editorPages">
          <type>text</type>
-         <default-value>editor-text.jsp,editor-xinha.jsp</default-value>
+         <default-value>editor-text.jsp,editor-summernote.jsp</default-value>
          <rows>3</rows>
          <cols>40</cols>
       </property-def>

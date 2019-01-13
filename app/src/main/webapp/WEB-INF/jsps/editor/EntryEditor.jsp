@@ -21,7 +21,7 @@
 
 <%-- ********************************************************************* --%>
 
-<%-- content --%>
+<%-- content
 
 <div class="panel panel-default" id="panel-content">
     <div class="panel-heading">
@@ -44,6 +44,21 @@
         </div>
     </div>
 </div>
+--%>
+
+<s:textarea id="edit_content" name="bean.text"
+            tabindex="5" rows="18" cssClass="col-sm-12" theme="simple"/>
+
+<%-- content --%>
+
+<s:if test="editor.id == 'editor-text.jsp'">
+    <span>
+        <a href="#" onClick="onClickAddImage();"><s:text name="weblogEdit.insertMediaFile"/></a>
+    </span>
+</s:if>
+
+<br/>
+<img src="<s:url value='/roller-ui/images/spacer.png' />" alt="spacer" style="min-height: 2em" />
 
 <%-- summary --%>
 

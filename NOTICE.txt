@@ -17,13 +17,8 @@ This product includes:
 * Code written by Dave Johnson for RSS and Atom in Action
     Copyright 2005 David M Johnson (For RSS and Atom In Action)
 
-* The Xinha WYSIWYG editor, which includes HTMLArea
-    htmlArea License (based on BSD license)
-    Copyright (c) 2002-2004, interactivetools.com, inc.
-    Copyright (c) 2003-2004 dynarch.com
-    All rights reserved.
-    http://trac.xinha.org/wiki/Licence
-    
+* The Summernote WYSIWYG editor, MIT license
+
 * Snippets of code from Spring Mobile
     Copyright (c) 2010-2014 Pivotal, Inc. All Rights Reserved. 
 

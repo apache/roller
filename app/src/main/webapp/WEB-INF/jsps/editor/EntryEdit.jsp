@@ -152,11 +152,11 @@
 
     <div class="panel-group" id="accordion">
 
-            <%-- Weblog editor --%>
+        <%-- Weblog editor --%>
 
         <s:include value="%{editor.jspPage}"/>
 
-            <%-- Plugins --%>
+        <%-- Plugins --%>
 
         <s:if test="!entryPlugins.isEmpty">
 

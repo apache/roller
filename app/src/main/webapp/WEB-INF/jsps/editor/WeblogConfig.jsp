@@ -157,6 +157,6 @@
     <div class="alert alert-danger" role="alert">
         <s:text name="websiteSettings.removeWebsiteWarning" />
     </div>
-    <s:submit cssClass="btn" value="%{getText('websiteSettings.button.remove')}" />
+    <s:submit cssClass="btn btn-danger" value="%{getText('websiteSettings.button.remove')}" />
 
 </s:form>
