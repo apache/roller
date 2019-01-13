@@ -135,7 +135,7 @@ public class MediaFileBase extends UIAction {
     /**
      * Move selected media files to a directory.
      */
-    protected void doMoveSelected() {
+    void doMoveSelected() {
         String[] fileIds = getSelectedMediaFiles();
         String[] dirIds = getSelectedMediaFileDirectories();
         try {
@@ -175,16 +175,16 @@ public class MediaFileBase extends UIAction {
     /**
      * Refresh the list of directories.
      */
-    protected void refreshAllDirectories() {
+    void refreshAllDirectories() {
         try {
-            MediaFileManager mgr = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
+            MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+
             List<MediaFileDirectory> directories = mgr.getMediaFileDirectories(getActionWeblog());
-            List<MediaFileDirectory> sortedDirList = new ArrayList<MediaFileDirectory>();
-            sortedDirList.addAll(directories);
-            Collections.sort(sortedDirList, new MediaFileDirectoryComparator(
-                    DirectoryComparatorType.NAME));
+            List<MediaFileDirectory> sortedDirList = new ArrayList<>(directories);
+            sortedDirList.sort(new MediaFileDirectoryComparator(DirectoryComparatorType.NAME));
+
             setAllDirectories(sortedDirList);
+
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directories", ex);
         }

@@ -232,13 +232,13 @@
                                              width='<s:property value="#mediaFile.thumbnailWidth"/>'
                                              height='<s:property value="#mediaFile.thumbnailHeight"/>'
                                              title='<s:property value="#mediaFile.name" />'
-                                             alt='<s:property value="#mediaFile.name"/>' />
+                                             alt='<s:property value="#mediaFile.name"/>'/>
                                     </s:if>
 
                                     <s:else>
-                                        <s:url var="mediaFileURL" value="/images/page.png" />
+                                        <s:url var="mediaFileURL" value="/images/page.png"/>
                                         <img border="0" src='<s:property value="%{mediaFileURL}" />'
-                                             style="padding:40px 50px;" alt='<s:property value="#mediaFile.name"/>' />
+                                             style="padding:40px 50px;" alt='<s:property value="#mediaFile.name"/>'/>
                                     </s:else>
 
                                 </div>

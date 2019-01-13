@@ -61,16 +61,16 @@
     <%-- Title, category, dates and other metadata --%>
 
     <%-- title --%>
-    <s:textfield label="%{getText('weblogEdit.title')}" name="bean.title" maxlength="255" tabindex="1" />
+    <s:textfield label="%{getText('weblogEdit.title')}" name="bean.title" maxlength="255" tabindex="1"/>
 
     <%-- permalink --%>
     <s:if test="actionName == 'entryEdit'">
         <div class="form-group">
-            
+
             <label class="control-label" for="entry_bean_permalink">
                 <s:text name="weblogEdit.permaLink"/>
             </label>
-           
+
             <div class="controls">
                 <p class="form-control-static">
                     <s:if test="bean.published">
@@ -84,7 +84,7 @@
                     </s:else>
                 </p>
             </div>
-        
+
         </div>
     </s:if>
 
@@ -94,11 +94,11 @@
 
     <%-- category --%>
     <s:select label="%{getText('weblogEdit.category')}" name="bean.categoryId"
-              list="categories" listKey="id" listValue="name" tabindex="3" />
+              list="categories" listKey="id" listValue="name" tabindex="3"/>
 
     <s:if test="actionWeblog.enableMultiLang">
         <%-- language / locale --%>
-        <s:select label="%{getText('weblogEdit.locale')}" name="bean.locale" size="1"
+        <s:select label="%{getText('weblogEdit.locale')}" name="bean.locale"
                   list="localesList" listValue="displayName" tabindex="4"/>
     </s:if>
     <s:else>
@@ -148,15 +148,15 @@
         </div>
 
     </div>
-    
+
 
     <div class="panel-group" id="accordion">
 
-        <%-- Weblog editor --%>
+            <%-- Weblog editor --%>
 
         <s:include value="%{editor.jspPage}"/>
 
-        <%-- Plugins --%>
+            <%-- Plugins --%>
 
         <s:if test="!entryPlugins.isEmpty">
 
@@ -180,14 +180,14 @@
 
         </s:if>
 
-        <%-- Advanced settings --%>
+            <%-- Advanced settings --%>
 
         <div class="panel panel-default" id="panel-settings">
             <div class="panel-heading">
 
                 <h4 class="panel-title">
-                    <a class="collapsed" data-toggle="collapse" data-parent="#collapseAdvanced" 
-                        href="#collapseAdvanced">
+                    <a class="collapsed" data-toggle="collapse" data-parent="#collapseAdvanced"
+                       href="#collapseAdvanced">
                         <s:text name="weblogEdit.miscSettings"/> </a>
                 </h4>
 
@@ -198,11 +198,11 @@
                     <div class="form-group">
 
                         <label class="control-label"><s:text name="weblogEdit.pubTime"/></label>
-                        
+
                         <div class="controls">
-                            
+
                             <s:select theme="simple" name="bean.hours" list="hoursList"/> :
-                            <s:select theme="simple" name="bean.minutes" list="minutesList"/> : 
+                            <s:select theme="simple" name="bean.minutes" list="minutesList"/> :
                             <s:select theme="simple" name="bean.seconds" list="secondsList"/>
                             &nbsp;&nbsp;
                             <script>
@@ -220,7 +220,7 @@
                             <s:textfield theme="simple" name="bean.dateString" readonly="true"/>
                             &nbsp;&nbsp;
                             <s:property value="actionWeblog.timeZone"/>
-                            
+
                         </div>
 
                     </div>
@@ -230,18 +230,18 @@
 
                     <s:checkbox label="%{getText('weblogEdit.rightToLeft')}" name="bean.rightToLeft"/>
 
-                    <%-- global admin can pin items to front page weblog --%>
+                        <%-- global admin can pin items to front page weblog --%>
                     <s:if test="authenticatedUser.hasGlobalPermission('admin')">
                         <s:checkbox label="%{getText('weblogEdit.pinnedToMain')}" name="bean.pinnedToMain"
-                        tooltop="%{getText('weblogEdit.pinnedToMain.tooltip')}" />
+                                    tooltop="%{getText('weblogEdit.pinnedToMain.tooltip')}"/>
                     </s:if>
 
-                    <s:textfield label="%{getText('weblogEdit.searchDescription')}" name="bean.searchDescription" 
-                                 maxlength="255" tooltip="%{getText('weblogEdit.searchDescription.tooltip')}" />
-                
-                    <s:textfield label="%{getText('weblogEdit.enclosureURL')}" name="bean.enclosureURL" 
-                                 maxlength="255" tooltip="%{getText('weblogEdit.enclosureURL.tooltip')}" />
-                
+                    <s:textfield label="%{getText('weblogEdit.searchDescription')}" name="bean.searchDescription"
+                                 maxlength="255" tooltip="%{getText('weblogEdit.searchDescription.tooltip')}"/>
+
+                    <s:textfield label="%{getText('weblogEdit.enclosureURL')}" name="bean.enclosureURL"
+                                 maxlength="255" tooltip="%{getText('weblogEdit.enclosureURL.tooltip')}"/>
+
                     <s:if test="actionName == 'entryEdit'">
                         <s:if test="!bean.enclosureURL.isEmpty()">
                             <s:text name="weblogEdit.enclosureType"/>:
@@ -250,48 +250,48 @@
                             <s:property value='entry.findEntryAttribute("att_mediacast_length")'/>
                         </s:if>
                     </s:if>
-                    
+
                 </div>
-                
+
             </div>
-            
-        </div> 
-    
+
+        </div>
+
     </div>
-    
+
 
     <%-- ================================================================== --%>
     <%-- The button box --%>
 
-        <%-- save draft --%>
-        <s:submit cssClass="btn btn-warning"
-                  value="%{getText('weblogEdit.save')}" 
-                  action="%{#mainAction}!saveDraft"/>
+    <%-- save draft --%>
+    <s:submit cssClass="btn btn-warning"
+              value="%{getText('weblogEdit.save')}"
+              action="%{#mainAction}!saveDraft"/>
 
-        <s:if test="actionName == 'entryEdit'">
-            
-            <%-- preview mode --%>
-            <input class="btn btn-default" type="button" name="fullPreview"
-                   value="<s:text name='weblogEdit.fullPreviewMode' />"
-                   onclick="fullPreviewMode()"/>
-        </s:if>
-        <s:if test="userAnAuthor">
-            
-            <%-- publish --%>
-            <s:submit cssClass="btn btn-success"
-                      value="%{getText('weblogEdit.post')}" 
-                      action="%{#mainAction}!publish"/>
-        </s:if>
-        <s:else>
-            
-            <%-- submit for review --%>
-            <s:submit cssClass="btn btn-info"
-                      value="%{getText('weblogEdit.submitForReview')}" 
-                      action="%{#mainAction}!publish" />
-        </s:else>
-    
-        <%-- delete --%>
-        <s:if test="actionName == 'entryEdit'">
+    <s:if test="actionName == 'entryEdit'">
+
+        <%-- preview mode --%>
+        <input class="btn btn-default" type="button" name="fullPreview"
+               value="<s:text name='weblogEdit.fullPreviewMode' />"
+               onclick="fullPreviewMode()"/>
+    </s:if>
+    <s:if test="userAnAuthor">
+
+        <%-- publish --%>
+        <s:submit cssClass="btn btn-success"
+                  value="%{getText('weblogEdit.post')}"
+                  action="%{#mainAction}!publish"/>
+    </s:if>
+    <s:else>
+
+        <%-- submit for review --%>
+        <s:submit cssClass="btn btn-info"
+                  value="%{getText('weblogEdit.submitForReview')}"
+                  action="%{#mainAction}!publish"/>
+    </s:else>
+
+    <%-- delete --%>
+    <s:if test="actionName == 'entryEdit'">
             <span style="float:right">
                 <s:url var="removeUrl" action="entryRemove">
                     <s:param name="weblog" value="actionWeblog.handle"/>
@@ -301,7 +301,7 @@
                        value="<s:text name='weblogEdit.deleteEntry'/>"
                        onclick="window.location='<s:property value="removeUrl" escapeHtml="false"/>'"/>
             </span>
-        </s:if>
+    </s:if>
 
 
     <%-- ================================================================== --%>
@@ -335,41 +335,41 @@
 
         $("#tagAutoComplete")
         // don't navigate away from the field on tab when selecting an item
-                .bind("keydown", function (event) {
-                    if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
-                        event.preventDefault();
-                    }
-                })
-                .autocomplete({
-                    delay: 500,
-                    source: function (request, response) {
-                        $.getJSON("<s:property value='jsonAutocompleteUrl' />", {
-                                    format: 'json',
-                                    prefix: extractLast(request.term)
-                                },
-                                function (data) {
-                                    response($.map(data.tagcounts, function (dataValue) {
-                                        return {
-                                            value: dataValue.tag
-                                        };
-                                    }))
-                                })
-                    },
-                    focus: function () {
-                        // prevent value inserted on focus
-                        return false;
-                    },
-                    select: function (event, ui) {
-                        var terms = split(this.value);
-                        // remove the current input
-                        terms.pop();
-                        // add the selected item
-                        terms.push(ui.item.value);
-                        // add placeholder to get the space at the end
-                        terms.push("");
-                        this.value = terms.join(" ");
-                        return false;
-                    }
-                });
+            .bind("keydown", function (event) {
+                if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
+                    event.preventDefault();
+                }
+            })
+            .autocomplete({
+                delay: 500,
+                source: function (request, response) {
+                    $.getJSON("<s:property value='jsonAutocompleteUrl' />", {
+                            format: 'json',
+                            prefix: extractLast(request.term)
+                        },
+                        function (data) {
+                            response($.map(data.tagcounts, function (dataValue) {
+                                return {
+                                    value: dataValue.tag
+                                };
+                            }))
+                        })
+                },
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                select: function (event, ui) {
+                    var terms = split(this.value);
+                    // remove the current input
+                    terms.pop();
+                    // add the selected item
+                    terms.push(ui.item.value);
+                    // add placeholder to get the space at the end
+                    terms.push("");
+                    this.value = terms.join(" ");
+                    return false;
+                }
+            });
     });
 </script>

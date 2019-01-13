@@ -26,16 +26,16 @@
     <div class="panel-heading">
 
         <h4 class="panel-title">
-        <a data-toggle="collapse" data-target="#collapseContentEditor" href="#">
-            <s:text name="weblogEdit.content"/> </a>
+            <a data-toggle="collapse" data-target="#collapseContentEditor" href="#">
+                <s:text name="weblogEdit.content"/> </a>
         </h4>
-        
+
     </div>
     <div id="collapseContentEditor" class="panel-collapse collapse in">
         <div class="panel-body">
 
-            <s:textarea id="edit_content" name="bean.text" 
-                        tabindex="5" rows="18" cssClass="col-sm-12" theme="simple" 
+            <s:textarea id="edit_content" name="bean.text"
+                        tabindex="5" rows="18" cssClass="col-sm-12" theme="simple"
             />
 
             <span> 
@@ -53,17 +53,17 @@
 
         <h4 class="panel-title">
             <a href="#" class="collapsed"
-               data-toggle="collapse" data-target="#collapseSummaryEditor" >
-               <s:text name="weblogEdit.summary"/>
+               data-toggle="collapse" data-target="#collapseSummaryEditor">
+                <s:text name="weblogEdit.summary"/>
             </a>
         </h4>
-        
+
     </div>
     <div id="collapseSummaryEditor" class="panel-collapse collapse">
         <div class="panel-body">
 
-            <s:textarea id="edit_summary" name="bean.summary" 
-                        tabindex="6" rows="10" cssClass="col-sm-12" theme="simple" />
+            <s:textarea id="edit_summary" name="bean.summary"
+                        tabindex="6" rows="10" cssClass="col-sm-12" theme="simple"/>
 
         </div>
     </div>
@@ -73,14 +73,36 @@
 <%-- ********************************************************************* --%>
 <%-- Lightbox for popping up image chooser --%>
 
-<div id="mediafile_edit_lightbox" title="<s:text name='weblogEdit.insertMediaFile'/>" style="display:none">
-    <iframe id="mediaFileEditor"
-            style="visibility:inherit"
-            height="100%"
-            width="100%"
-            frameborder="no"
-            scrolling="auto">
-    </iframe>
+<div id="mediafile_edit_lightbox" class="modal fade" role="dialog">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title"> <s:text name='weblogEdit.insertMediaFile'/> </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <iframe id="mediaFileEditor"
+                        style="visibility:inherit"
+                        height="600" <%-- pixels, sigh, this is suboptimal--%>
+                        width="100%"
+                        frameborder="no"
+                        scrolling="auto">
+                </iframe>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+
 </div>
 
 
@@ -88,29 +110,23 @@
 <%-- Editor event handling, on close, on add image, etc. --%>
 
 <script>
-    function onClickAddImage(){
+    function onClickAddImage() {
         <s:url var="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
+        <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
-        $( "#mediaFileEditor" ).attr('src','<s:property value="%{mediaFileImageChooser}" />');
-        $(function() {
-            $("#mediafile_edit_lightbox").dialog({
-                modal  : true,
-                width  : 600,
-                height : 600
-            });
-        });
+        $("#mediaFileEditor").attr('src', '<s:property value="%{mediaFileImageChooser}" />');
+        $('#mediafile_edit_lightbox').modal({show: true});
     }
 
     function onClose() {
-        $("#mediaFileEditor").attr('src','about:blank');
+        $("#mediaFileEditor").attr('src', 'about:blank');
     }
 
     function onSelectMediaFile(name, url, isImage) {
-        $("#mediafile_edit_lightbox").dialog("close");
+        $("#mediafile_edit_lightbox").modal("hide");
         $("#mediaFileEditor").attr('src', 'about:blank');
-        if (isImage == "true") {
-            insertMediaFile('<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name + '"></img></a>');
+        if (isImage === "true") {
+            insertMediaFile('<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name + '" /></a>');
         } else {
             insertMediaFile('<a href="' + url + '">' + name + '</a>');
         }
@@ -125,24 +141,23 @@
         function insertMediaFile(anchorTag) {
             insertAtCursor(document.getElementById('edit_content'), anchorTag);
         }
+
         function insertAtCursor(textAreaElement, valueForInsertion) {
             if (document.selection) {
                 textAreaElement.focus();
                 var range = document.selection.createRange();
                 range.text = valueForInsertion;
-            }
-            else if (textAreaElement.selectionStart || textAreaElement.selectionStart == '0') {
+            } else if (textAreaElement.selectionStart || textAreaElement.selectionStart === '0') {
                 var preText;
                 var postText;
-                if (textAreaElement.selectionStart == 0) {
+                if (textAreaElement.selectionStart === 0) {
                     preText = '';
                     postText = '';
-                }
-                else {
+                } else {
                     preText = textAreaElement.value.substring(0, textAreaElement.selectionStart);
                     postText = textAreaElement.value.substring(textAreaElement.selectionEnd, textAreaElement.value.length);
                 }
-                textAreaElement.value =  preText + valueForInsertion + postText;
+                textAreaElement.value = preText + valueForInsertion + postText;
                 textAreaElement.selectionStart = preText.length + valueForInsertion.length;
                 textAreaElement.selectionEnd = textAreaElement.selectionStart;
                 textAreaElement.focus();
@@ -152,83 +167,83 @@
             }
         }
     </script>
-    
+
 </s:if>
 <s:else>
-    
+
     <%-- Include the Rich text editor (Xinha, see: http://trac.xinha.org/wiki/NewbieGuide) --%>
 
-    <s:url var="xinhaHome" value="/roller-ui/authoring/editors/xinha-1.5.1"></s:url>
+    <s:url var="xinhaHome" value="/roller-ui/authoring/editors/xinha-1.5.1" />
     <script>
         // (preferably absolute) URL (including trailing slash) where Xinha is installed
-        _editor_url  = '<s:property value="xinhaHome" />';
+        _editor_url = '<s:property value="xinhaHome" />';
         _editor_lang = "en";        // And the language we need to use in the editor.
         _editor_skin = "blue-look"; // If you want use a skin, add the name (of the folder) here
     </script>
-    
+
     <script src="<s:property value="xinhaHome" />/XinhaCore.js"></script>
 
     <script>
-        $(function() {
-            $( "#accordion" ).accordion({
-                activate: function( event, ui ) {
-                   <%-- Xinha summary editor needs a one-time init as it is
-                        not visible upon window opening (http://tinyurl.com/mn97j5l) --%>
-                   if (!summary_editor_initialized) {
-                       xinha_editors.edit_summary.sizeEditor();
-                       summary_editor_initialized = true;
-                   }
+        $(function () {
+            $("#accordion").accordion({
+                activate: function (event, ui) {
+                    <%-- Xinha summary editor needs a one-time init as it is
+                         not visible upon window opening (http://tinyurl.com/mn97j5l) --%>
+                    if (!summary_editor_initialized) {
+                        xinha_editors.edit_summary.sizeEditor();
+                        summary_editor_initialized = true;
+                    }
                 }
             });
         });
 
         <%-- Media insertion for Xinha editor --%>
-        
+
         function insertMediaFile(anchorTag) {
             xinha_editors.edit_content.insertHTML(anchorTag);
         }
 
         summary_editor_initialized = false;
         xinha_editors = null;
-        xinha_init    = null;
-        xinha_config  = null;
+        xinha_init = null;
+        xinha_config = null;
         xinha_plugins = null;
 
-        xinha_init = xinha_init ? xinha_init : function() {
+        xinha_init = xinha_init ? xinha_init : function () {
 
             xinha_editors = xinha_editors ? xinha_editors : [
                 'edit_content', 'edit_summary'
             ];
 
-            xinha_plugins = xinha_plugins ? xinha_plugins :[];
-            if(!Xinha.loadPlugins(xinha_plugins, xinha_init)) return;
+            xinha_plugins = xinha_plugins ? xinha_plugins : [];
+            if (!Xinha.loadPlugins(xinha_plugins, xinha_init)) return;
 
             xinha_config = xinha_config ? xinha_config() : new Xinha.Config();
-            xinha_config.pageStyleSheets = [ _editor_url + "examples/full_example.css" ];
+            xinha_config.pageStyleSheets = [_editor_url + "examples/full_example.css"];
             xinha_config.toolbar =
                 [
-                ["popupeditor"],
-                ["separator","formatblock","fontname","fontsize","bold","italic","underline","strikethrough"],
-                ["separator","forecolor","hilitecolor","textindicator"],
-                ["separator","subscript","superscript"],
-                ["linebreak","separator","justifyleft","justifycenter","justifyright","justifyfull"],
-                ["separator","insertorderedlist","insertunorderedlist","outdent","indent"],
-                ["separator","inserthorizontalrule","createlink","insertimage","inserttable"],
-                ["linebreak","separator","undo","redo","selectall","print"], (Xinha.is_gecko ? [] : ["cut","copy","paste","overwrite","saveas"]),
-                ["separator","killword","clearfonts","removeformat","toggleborders","splitblock","lefttoright", "righttoleft"],
-                ["separator","htmlmode","showhelp","about"]
-            ];
+                    ["popupeditor"],
+                    ["separator", "formatblock", "fontname", "fontsize", "bold", "italic", "underline", "strikethrough"],
+                    ["separator", "forecolor", "hilitecolor", "textindicator"],
+                    ["separator", "subscript", "superscript"],
+                    ["linebreak", "separator", "justifyleft", "justifycenter", "justifyright", "justifyfull"],
+                    ["separator", "insertorderedlist", "insertunorderedlist", "outdent", "indent"],
+                    ["separator", "inserthorizontalrule", "createlink", "insertimage", "inserttable"],
+                    ["linebreak", "separator", "undo", "redo", "selectall", "print"], (Xinha.is_gecko ? [] : ["cut", "copy", "paste", "overwrite", "saveas"]),
+                    ["separator", "killword", "clearfonts", "removeformat", "toggleborders", "splitblock", "lefttoright", "righttoleft"],
+                    ["separator", "htmlmode", "showhelp", "about"]
+                ];
 
             // turn off Xinha's URL stripping default. Blog entries need absolute URLs,
             // otherwise links will be broken in RSS/Atom feeds.
             xinha_config.stripBaseHref = false;
 
-            xinha_editors   = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
+            xinha_editors = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
 
             Xinha.startEditors(xinha_editors);
         }
 
-        Xinha._addEvent(window,'load', xinha_init);
+        Xinha._addEvent(window, 'load', xinha_init);
     </script>
-    
+
 </s:else>

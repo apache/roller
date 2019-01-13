@@ -241,6 +241,7 @@ body {
     width:140px;
     height:140px;
     border: 1px solid #ccc;
+    text-align: center;
 }
 
 #sortByMenu {
@@ -258,6 +259,7 @@ body {
 .mediaObject {
     width:120px;
     height:120px;
+    text-align: center;
 }
 
 .mediaObjectInfo {
@@ -268,9 +270,14 @@ body {
     font-size:11px;
 }
 
-.highlight {
-    border: 1px solid #aaa;
+span.glyphicon-file {
+    font-size: 6em;
 }
+
+.highlight {
+    border: 3px solid #aaa;
+}
+
 span.button {
     height:15px;
     width:15px;
@@ -319,3 +326,6 @@ div.image-controls input {
 tr.rollertable_pending {
     background: #ffffcc;
 }
+
+
+
