@@ -44,7 +44,7 @@
 
                     <img src='<s:url value="/roller-ui/images/feather.svg" />'
                          alt="ASF feat" height="100" align="center"/>
-                    <h4><s:text name="generic.apacheRoller" /></h4>
+                    <h4><s:text name="generic.poweredBy" /></h4>
 
                     <s:if test="authenticatedUser != null || actionWeblog != null">
                         <tiles:insertAttribute name="userStatus"/>

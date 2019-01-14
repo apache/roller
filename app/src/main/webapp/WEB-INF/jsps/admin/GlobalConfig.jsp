@@ -59,11 +59,11 @@
             <s:elseif test="#pd.type == 'boolean'">
 
                 <s:if test="properties[#pd.name].value == 'true'">
-                    <s:checkbox name="%{#pd.name}" label="%{getText(#pd.key)}" cssClass="boolean"
+                    <s:checkbox name="%{#pd.name}" label="%{getText(#pd.key)}"
                                 fieldValue="true" checked="true" onchange="formChanged()"/>
                 </s:if>
                 <s:if test="properties[#pd.name].value != 'true'">
-                    <s:checkbox name="%{#pd.name}" label="%{getText(#pd.key)}" cssClass="boolean"
+                    <s:checkbox name="%{#pd.name}" label="%{getText(#pd.key)}"
                                 fieldValue="false" onchange="formChanged()"/>
                 </s:if>
 

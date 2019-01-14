@@ -29,7 +29,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Apache Roller</a>
+                <a class="navbar-brand" href="#"><s:property value="%{getProp('site.name')}" /></a>
             </div>
             
             <ul class="nav navbar-nav">
