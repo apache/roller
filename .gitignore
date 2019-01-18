@@ -1,6 +1,3 @@
-./tomcat-base/*
-./deployment/docker-compose/roller-data
-./deployment/docker-compose/postgresql-data
-
+tomcat-base
 deployment/docker-compose/postgresql-data
 deployment/docker-compose/roller-data
