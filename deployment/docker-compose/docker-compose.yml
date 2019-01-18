@@ -1,0 +1,19 @@
+version: '3.2'
+
+services:
+
+   postgresql:
+      image: "postgres:10.0"
+      ports:
+         - "5432:5432"
+      volumes:
+         - type: bind
+           source: /Users/dave/src/apache-roller/tomcat-base/data/postgresql
+           target: /var/lib/postgresql/data
+      environment:
+         - POSTGRES_DB=rollerdb
+         - POSTGRES_USER=scott
+         - POSTGRES_PASSWORD=tiger
+
+
+
