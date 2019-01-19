@@ -155,6 +155,7 @@
             execute,
             create,
             update,
+            upgrade,
             bootstrap
         </global-allowed-methods>
 

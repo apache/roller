@@ -22,7 +22,7 @@ limitations under the License.
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-project</artifactId>
-    <version>5.2.2</version>
+    <version>5.2.3</version>
     <packaging>pom</packaging>
 
     <prerequisites>
@@ -47,7 +47,7 @@ limitations under the License.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <derby.version>10.11.1.1</derby.version>
-        <roller.version>5.2.2</roller.version>
+        <roller.version>5.2.3</roller.version>
     </properties>
 
     <modules>
