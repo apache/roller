@@ -8,11 +8,7 @@ This branch __bootstrap-ui__ re-writes the Roller editor/admin user-interface (U
 
 Status
 ---
-The Edit-Entry and Entries pages have been converted over and you can see screen-shots of what they look like below. 
-
-That's all
----
-Want to contribute? Shoot me a PR.
+Work is complete and ready for review and merge to master.
 
 Screen-shots
 ---
