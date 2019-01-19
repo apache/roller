@@ -27,7 +27,8 @@ ARG DATABASE_JDBC_PASSWORD=tiger
 # get Roller from Apache mirror
 
 WORKDIR /usr/local/roller
-RUN wget -O roller.tar.gz http://www-us.apache.org/dist/roller/roller-5.2/v5.2.2/roller-release-5.2.2-standard.tar.gz
+RUN wget -O roller.tar.gz \
+    https://dist.apache.org/repos/dist/dev/roller/roller-6.0/v6.0.0/roller-release-6.0.0-SNAPSHOT-standard.tar.gz
 RUN tar -xf roller.tar.gz
 RUN ln -s roller-release-*/ release
 

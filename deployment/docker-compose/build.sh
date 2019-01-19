@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  The ASF licenses this file to You
@@ -15,29 +16,9 @@
 # copyright in this work, please see the NOTICE file in the top level
 # directory of this distribution.
 
-version: '3.2'
 
-services:
+TAG=roller:6.0.0-SNAPSHOT-1
 
-   postgresql:
-      image: "postgres:10.0"
-      ports:
-         - "5432:5432"
-      volumes:
-         - type: bind
-           source: /Users/dave/src/apache-roller/deployment/docker-compose/postgresql-data
-           target: /var/lib/postgresql/data
-      environment:
-         - POSTGRES_DB=rollerdb
-         - POSTGRES_USER=scott
-         - POSTGRES_PASSWORD=tiger
-
-   roller:
-      image: "snoopdave/roller:6.0.0-SNAPSHOT-1"
-      ports:
-         - "8080:8080"
-      volumes:
-         - type: bind
-           source: /Users/dave/src/apache-roller/deployment/docker-compose/roller-data
-           target: /var/lib/roller/data
+docker build . -t snoopdave/${TAG}
+docker push snoopdave/${TAG}
 

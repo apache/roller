@@ -3,6 +3,9 @@ Rollarcus: bootstrap-ui branch
 
 This branch __bootstrap-ui__ re-writes the Roller editor/admin user-interface (UI) using Bootstrap.
 
+* There's an early access build here: https://dist.apache.org/repos/dist/dev/roller/roller-6.0/v6.0.0/
+
+
 Status
 ---
 The Edit-Entry and Entries pages have been converted over and you can see screen-shots of what they look like below. 
