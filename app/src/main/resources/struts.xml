@@ -137,7 +137,7 @@
                 class="org.apache.roller.weblogger.ui.struts2.core.Profile">
             <result name="input" type="tiles">.Profile</result>
             <result name="cancel" type="redirectAction">menu</result>
-            <result name="success" type="tiles">.Profile</result>
+            <result name="success" type="tiles">.MainMenu</result>
         </action>
 
         <action name="oauthKeys"

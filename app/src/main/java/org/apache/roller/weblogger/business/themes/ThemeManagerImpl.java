@@ -157,8 +157,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
 			// otherwise we are returning a WeblogSharedTheme
 		} else {
-			SharedTheme staticTheme = (SharedTheme) this.themes.get(weblog
-					.getEditorTheme());
+			SharedTheme staticTheme = (SharedTheme) this.themes.get(weblog.getEditorTheme());
 			if (staticTheme != null) {
 				weblogTheme = new WeblogSharedTheme(weblog, staticTheme);
 			} else {
@@ -394,8 +393,7 @@ public class ThemeManagerImpl implements ThemeManager {
             // now go through each theme and load it into a Theme object
             for (String themeName : themenames) {
                 try {
-                    SharedTheme theme = new SharedThemeFromDir(this.themeDir
-                            + File.separator + themeName);
+                    SharedTheme theme = new SharedThemeFromDir(this.themeDir + File.separator + themeName);
                     themeMap.put(theme.getId(), theme);
                     log.info("Loaded theme '" + themeName + "'");
                 } catch (Exception unexpected) {

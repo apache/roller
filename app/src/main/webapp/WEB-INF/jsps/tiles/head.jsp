@@ -20,5 +20,6 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 <link href="<s:url value='/webjars/summernote/0.8.11/dist/summernote.css' />" rel="stylesheet" />
 
 <link rel="stylesheet" media="all" href='<s:url value="/roller-ui/styles/roller.css"/>' />
+
 <script src="<s:url value="/theme/scripts/roller.js"/>"></script>
 

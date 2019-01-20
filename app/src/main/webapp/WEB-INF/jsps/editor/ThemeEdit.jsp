@@ -89,7 +89,7 @@
                 onchange="proposeSharedThemeChange(this[selectedIndex].value)"/>
         </p>
         <p><s:text name="themeEditor.thisTheme"/> <p id="themeDescription"></p>
-        <p><img id="themeThumbnail" src=""/></p>
+        <p><img id="themeThumbnail" src="" class="img-responsive img-thumbnail" style="max-width: 30em" /></p>
 
     </div>
 
@@ -247,7 +247,8 @@
             url: "<s:url value='themedata'/>",
             data: {theme: themeId}, success: function (data) {
                 $('#themeDescription').html(data.description);
-                $('#themeThumbnail').attr('src', '<s:property value="siteURL" />' + data.previewPath);
+                thumbnail = $('#themeThumbnail');
+                thumbnail.attr('src', '<s:property value="siteURL" />' + data.previewPath);
             }
         });
     }
