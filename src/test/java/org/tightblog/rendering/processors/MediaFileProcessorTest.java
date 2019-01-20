@@ -167,8 +167,8 @@ public class MediaFileProcessorTest {
     public void testReturn404OnProcessingException() throws IOException, URISyntaxException {
         File regularFile = new File(getClass().getResource(TEST_IMAGE).toURI());
         mediaFile.setContent(regularFile);
-        WebloggerTest.logExpectedException(log, "IllegalArgumentException");
-        when(mockResponse.getOutputStream()).thenThrow(new IllegalArgumentException());
+        WebloggerTest.logExpectedException(log, "IOException");
+        when(mockResponse.getOutputStream()).thenThrow(new IOException());
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
         verify(mockResponse).reset();

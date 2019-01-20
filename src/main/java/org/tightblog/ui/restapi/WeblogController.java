@@ -303,7 +303,7 @@ public class WeblogController {
         return metadata;
     }
 
-    public class WeblogConfigMetadata {
+    public static class WeblogConfigMetadata {
         Map<String, SharedTheme> sharedThemeMap;
         Map<String, String> editFormats;
         Map<String, String> locales;

@@ -30,6 +30,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -128,7 +129,7 @@ public class InstallerController {
             map.put("databaseProductName", testcon.getMetaData().getDatabaseProductName());
             testcon.close();
         } catch (Exception e) {
-            log.error(messages.getMessage("installer.databaseConnectionError", null, null));
+            log.error(messages.getMessage("installer.databaseConnectionError", null, Locale.getDefault()));
             map.put("status", StartupStatus.databaseError);
             map.put("rootCauseException", e.getCause());
             map.put("rootCauseStackTrace", getRootCauseStackTrace(e.getCause()));
@@ -231,12 +232,13 @@ public class InstallerController {
 
             // OK, exists -- does the database schema match that used by the application?
             int dbversion = -1;
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(
-                    "select database_version from weblogger_properties where id = '1'");
 
-            if (rs.next()) {
-                dbversion = Integer.parseInt(rs.getString(1));
+            try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                    "select database_version from weblogger_properties where id = '1'")) {
+
+                if (rs.next()) {
+                    dbversion = Integer.parseInt(rs.getString(1));
+                }
             }
 
             if (dbversion != expectedDatabaseVersion) {
@@ -244,13 +246,13 @@ public class InstallerController {
                         expectedDatabaseVersion);
                 return StartupStatus.databaseVersionError;
             }
-        } catch (Exception e) {
+
+        } catch (SQLException e) {
             log.error("Error checking for tables", e);
             map.put("rootCauseException", e);
             map.put("rootCauseStackTrace", getRootCauseStackTrace(e));
             return StartupStatus.bootstrapError;
         }
-
         return null;
     }
 

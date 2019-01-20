@@ -159,6 +159,7 @@ public class WeblogSearchRequestTest {
         assertEquals(2, wsr.getLimit());
         assertTrue(wsr.isSearchResults());
         assertTrue(wsr.isNoIndex());
+        assertTrue(wsr.toString().contains("category=collectibles searchPhrase=stamps"));
     }
 
     private WeblogEntry createWeblogEntry(String title, Instant pubTime, WeblogEntry.PubStatus status) {
@@ -220,12 +221,23 @@ public class WeblogSearchRequestTest {
 
         Map<LocalDate, TreeSet<WeblogEntry>> testMap = wsr.convertHitsToEntries(hits, mockSearchTask);
         assertEquals(2, testMap.size());
-        assertEquals(2, testMap.get(oneDayAgo.atZone(ZoneId.systemDefault()).toLocalDate()).size());
         Set<WeblogEntry> oneDayAgoSet = testMap.get(oneDayAgo.atZone(ZoneId.systemDefault()).toLocalDate());
         assertEquals(2, oneDayAgoSet.size());
         assertEquals(entry4, ((TreeSet) oneDayAgoSet).first());
         assertTrue(oneDayAgoSet.contains(entry1));
         Set<WeblogEntry> threeDaysAgoSet = testMap.get(threeDaysAgo.atZone(ZoneId.systemDefault()).toLocalDate());
+        assertEquals(1, threeDaysAgoSet.size());
+        assertTrue(threeDaysAgoSet.contains(entry3));
+
+        // test recovers from an IOException by skipping problematic doc
+        when(mockIndexSearcher.doc(hits[0].doc)).thenThrow(new IOException());
+        testMap = wsr.convertHitsToEntries(hits, mockSearchTask);
+        assertEquals(2, testMap.size());
+        oneDayAgoSet = testMap.get(oneDayAgo.atZone(ZoneId.systemDefault()).toLocalDate());
+        assertEquals(1, oneDayAgoSet.size());
+        assertEquals(entry4, ((TreeSet) oneDayAgoSet).first());
+        assertFalse(oneDayAgoSet.contains(entry1));
+        threeDaysAgoSet = testMap.get(threeDaysAgo.atZone(ZoneId.systemDefault()).toLocalDate());
         assertEquals(1, threeDaysAgoSet.size());
         assertTrue(threeDaysAgoSet.contains(entry3));
     }

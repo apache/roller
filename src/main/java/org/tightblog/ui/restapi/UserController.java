@@ -253,7 +253,9 @@ public class UserController {
 
             if (re.getStatusCode() == HttpStatus.OK && mustActivate) {
                 UserData data = (UserData) re.getBody();
-                emailService.sendUserActivationEmail(data.getUser());
+                if (data != null) {
+                    emailService.sendUserActivationEmail(data.getUser());
+                }
             }
             return re;
         } else {
@@ -592,14 +594,9 @@ public class UserController {
         return metadata;
     }
 
-    public class UserAdminMetadata {
-        Map<String, String> locales;
+    public static class UserAdminMetadata {
         Map<String, String> userStatuses;
         Map<String, String> globalRoles;
-
-        public Map<String, String> getLocales() {
-            return locales;
-        }
 
         public Map<String, String> getUserStatuses() {
             return userStatuses;
@@ -609,5 +606,4 @@ public class UserController {
             return globalRoles;
         }
     }
-
 }

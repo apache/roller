@@ -165,7 +165,7 @@ public class WeblogEntryController {
         }
     }
 
-    public class WeblogEntryData {
+    public static class WeblogEntryData {
         List<WeblogEntry> entries;
         boolean hasMore;
 
@@ -218,7 +218,7 @@ public class WeblogEntryController {
 
     }
 
-    public class WeblogEntrySearchFields {
+    public static class WeblogEntrySearchFields {
         Map<String, String> categories;
         Map<String, String> sortByOptions;
         Map<String, String> statusOptions;
@@ -415,7 +415,7 @@ public class WeblogEntryController {
 
     }
 
-    public class EntryEditMetadata {
+    public static class EntryEditMetadata {
         Map<String, String> categories;
         Map<String, String> commentDayOptions;
         boolean author;
@@ -588,7 +588,7 @@ public class WeblogEntryController {
         }
     }
 
-    public class SuccessfulSaveResponse {
+    public static class SuccessfulSaveResponse {
         private String entryId;
         private String message;
 

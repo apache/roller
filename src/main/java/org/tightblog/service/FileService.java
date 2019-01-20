@@ -55,7 +55,7 @@ public class FileService {
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private String storageDir;
     private Set<String> allowedMimeTypes;
-    private int maxFileSizeMb;
+    private long maxFileSizeMb;
     private boolean allowUploads;
 
     @Autowired
@@ -63,7 +63,7 @@ public class FileService {
                        @Value("${media.file.showTab}") boolean allowUploads,
                        @Value("${mediafiles.storage.dir}") String storageDir,
                        @Value("#{'${media.file.allowedMimeTypes}'.split(',')}") Set<String> allowedMimeTypes,
-                       @Value("${media.file.maxFileSizeMb:3}") int maxFileSizeMb
+                       @Value("${media.file.maxFileSizeMb:3}") long maxFileSizeMb
                        ) {
 
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
@@ -200,14 +200,14 @@ public class FileService {
         log.debug("File size = {}, Max allowed = {}MB", fileToTest.getSize(), maxFileSizeMb);
         if (fileToTest.getSize() > maxFileSizeMb * Utilities.ONE_MB_IN_BYTES) {
             if (messages != null) {
-                messages.put("error.upload.filemax", Collections.singletonList(Integer.toString(maxFileSizeMb)));
+                messages.put("error.upload.filemax", Collections.singletonList(Long.toString(maxFileSizeMb)));
             }
             return false;
         }
 
         // fourth check, does file cause weblog to exceed quota?
-        int maxAllocationMB = webloggerProperties.getMaxFileUploadsSizeMb();
-        long maxAllocationBytes = (long) (Utilities.ONE_MB_IN_BYTES * maxAllocationMB);
+        long maxAllocationMB = webloggerProperties.getMaxFileUploadsSizeMb();
+        long maxAllocationBytes = maxAllocationMB * Utilities.ONE_MB_IN_BYTES;
 
         try {
             File storageDirectory = this.getRealFile(weblogHandle, null);
@@ -216,7 +216,7 @@ public class FileService {
                     fileToTest.getSize(), alreadyUsedSpace, maxAllocationMB);
             if (alreadyUsedSpace + fileToTest.getSize() > maxAllocationBytes) {
                 if (messages != null) {
-                    messages.put("error.upload.blogmax", Collections.singletonList(Integer.toString(maxAllocationMB)));
+                    messages.put("error.upload.blogmax", Collections.singletonList(Long.toString(maxAllocationMB)));
                 }
                 return false;
             }

@@ -130,7 +130,7 @@ public class CommentController {
         }
     }
 
-    public class CommentData {
+    public static class CommentData {
         List<WeblogEntryComment> comments;
         boolean hasMore;
         String entryTitle;
@@ -175,7 +175,7 @@ public class CommentController {
 
     }
 
-    public class CommentSearchFields {
+    public static class CommentSearchFields {
         Map<String, String> statusOptions;
 
         // getters needed for JSON serialization: http://stackoverflow.com/a/35822500

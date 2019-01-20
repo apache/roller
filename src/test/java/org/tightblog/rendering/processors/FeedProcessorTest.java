@@ -134,7 +134,7 @@ public class FeedProcessorTest {
         verify(mockResponse).setContentLength(7);
         verify(mockResponse).setDateHeader("Last-Modified", twoDaysAgo.toEpochMilli());
         verify(mockResponse).setHeader("Cache-Control", "no-cache");
-        verify(mockSOS).write("mytest1".getBytes());
+        verify(mockSOS).write("mytest1".getBytes(StandardCharsets.UTF_8));
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
     }
@@ -159,7 +159,7 @@ public class FeedProcessorTest {
         verify(mockResponse).setContentLength(8);
         verify(mockResponse).setDateHeader("Last-Modified", threeDaysAgo.toEpochMilli());
         verify(mockResponse).setHeader("Cache-Control", "no-cache");
-        verify(mockSOS).write("mytest24".getBytes());
+        verify(mockSOS).write("mytest24".getBytes(StandardCharsets.UTF_8));
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
 

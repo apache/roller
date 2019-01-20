@@ -36,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,11 +73,10 @@ public final class MenuHelper {
     }
 
     @PostConstruct
-    void init() {
+    void init() throws IOException {
         // parse and cache menus
-        try {
-            List<ParsedMenu> menus = objectMapper.readValue(MenuHelper.class.getResourceAsStream("/menus.json"),
-                    new TypeReference<List<ParsedMenu>>() { });
+        try (InputStream menuStream = MenuHelper.class.getResourceAsStream("/menus.json")) {
+            List<ParsedMenu> menus = objectMapper.readValue(menuStream, new TypeReference<List<ParsedMenu>>() { });
 
             for (ParsedMenu menu : menus) {
                 menuMap.put(menu.getId(), menu);
@@ -92,9 +93,6 @@ public final class MenuHelper {
                 }
 
             }
-
-        } catch (Exception ex) {
-            log.error("Error parsing menu configs", ex);
         }
     }
 

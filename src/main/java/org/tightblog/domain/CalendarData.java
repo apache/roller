@@ -21,11 +21,11 @@ public class CalendarData {
     }
 
     public String[] getDayOfWeekNames() {
-        return dayOfWeekNames;
+        return dayOfWeekNames == null ? null : dayOfWeekNames.clone();
     }
 
     public void setDayOfWeekNames(String[] dayOfWeekNames) {
-        this.dayOfWeekNames = dayOfWeekNames;
+        this.dayOfWeekNames = dayOfWeekNames == null ? null : dayOfWeekNames.clone();
     }
 
     public String getThisMonthLink() {
@@ -60,14 +60,23 @@ public class CalendarData {
         this.homeLink = homeLink;
     }
 
-    public Week[] getWeeks() {
-        return weeks;
+    public Week getWeek(int weekNum) {
+        return weeks[weekNum];
+    }
+
+    public void setWeek(int weekNum, Week week) {
+        weeks[weekNum] = week;
     }
 
     public static class Week {
         private Day[] days = new Day[7];
-        public Day[] getDays() {
-            return days;
+
+        public Day getDay(int dayNum) {
+            return days[dayNum];
+        }
+
+        public void setDay(int dayNum, Day day) {
+            days[dayNum] = day;
         }
     }
 

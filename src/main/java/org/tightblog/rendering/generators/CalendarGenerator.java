@@ -57,7 +57,7 @@ public class CalendarGenerator {
     private MessageSource messages;
 
     @Autowired
-    public CalendarGenerator(WeblogEntryManager weblogEntryManager, URLService urlService, MessageSource messages) {
+    CalendarGenerator(WeblogEntryManager weblogEntryManager, URLService urlService, MessageSource messages) {
         this.weblogEntryManager = weblogEntryManager;
         this.urlService = urlService;
         this.messages = messages;
@@ -114,17 +114,17 @@ public class CalendarGenerator {
 
         for (int w = 0; w < 6; w++) {
             CalendarData.Week weekIter = new CalendarData.Week();
-            data.getWeeks()[w] = weekIter;
+            data.setWeek(w, weekIter);
 
             for (int d = 0; d < 7; d++) {
                 CalendarData.Day dayIter = new CalendarData.Day();
-                weekIter.getDays()[d] = dayIter;
+                weekIter.setDay(d, dayIter);
 
                 // don't store info if dayPointer outside monthToDisplay
                 if (YearMonth.from(dayPointer).equals(monthToDisplay)) {
                     // is day today?
                     if (dayPointer.equals(todaysDate)) {
-                        data.getWeeks()[w].getDays()[d].setToday(true);
+                        data.getWeek(w).getDay(d).setToday(true);
                     }
                     dayIter.setDayNum(Integer.toString(dayPointer.getDayOfMonth()));
 

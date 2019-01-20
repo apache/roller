@@ -94,7 +94,7 @@ public class TagController {
         }
     }
 
-    public class TagData {
+    public static class TagData {
         List<WeblogEntryTagAggregate> tags;
         boolean hasMore;
 

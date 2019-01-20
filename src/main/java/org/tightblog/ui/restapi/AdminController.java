@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -102,7 +103,7 @@ public class AdminController {
                 .filter(c -> c.getCacheHandlerId().equalsIgnoreCase(cacheName)).findFirst();
         maybeCache.ifPresent(LazyExpiringCache::invalidateAll);
         return ResponseEntity.ok(messages.getMessage("cachedData.message.cache.cleared",
-                new Object[] {cacheName}, null));
+                new Object[] {cacheName}, Locale.getDefault()));
     }
 
     @PostMapping(value = "/resethitcount", produces = "text/plain")
@@ -110,11 +111,11 @@ public class AdminController {
         try {
             weblogRepository.updateDailyHitCountZero();
             log.info("daily hit counts manually reset by administrator");
-            return ResponseEntity.ok(messages.getMessage("cachedData.message.reset", null, null));
+            return ResponseEntity.ok(messages.getMessage("cachedData.message.reset", null, Locale.getDefault()));
         } catch (Exception ex) {
             log.error("Error resetting weblog hit count - {}", ex);
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).
-                    body(messages.getMessage("generic.error.check.logs", null, null));
+                    body(messages.getMessage("generic.error.check.logs", null, Locale.getDefault()));
         }
     }
 
@@ -141,15 +142,16 @@ public class AdminController {
             Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(handle);
             if (weblog != null) {
                 luceneIndexer.updateIndex(weblog, false);
-                return ResponseEntity.ok(messages.getMessage("cachedData.message.indexed", new Object[]{handle}, null));
+                return ResponseEntity.ok(messages.getMessage("cachedData.message.indexed", new Object[]{handle},
+                        Locale.getDefault()));
             } else {
                 return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).
-                        body(messages.getMessage("generic.error.check.logs", null, null));
+                        body(messages.getMessage("generic.error.check.logs", null, Locale.getDefault()));
             }
         } catch (Exception ex) {
             log.error("Error doing index rebuild", ex);
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).
-                    body(messages.getMessage("generic.error.check.logs", null, null));
+                    body(messages.getMessage("generic.error.check.logs", null, Locale.getDefault()));
         }
     }
 
@@ -162,7 +164,7 @@ public class AdminController {
     public ResponseEntity updateProperties(@Valid @RequestBody WebloggerProperties properties) {
         webloggerPropertiesRepository.saveAndFlush(properties);
         blacklistCommentValidator.setGlobalCommentFilter(properties.getCommentSpamFilter());
-        return ResponseEntity.ok(messages.getMessage("generic.changes.saved", null, null));
+        return ResponseEntity.ok(messages.getMessage("generic.changes.saved", null, Locale.getDefault()));
     }
 
     @GetMapping(value = "/globalconfigmetadata")
@@ -198,7 +200,7 @@ public class AdminController {
         return gcm;
     }
 
-    public class GlobalConfigMetadata {
+    public static class GlobalConfigMetadata {
         Map<String, String> weblogList;
         Map<String, String> registrationOptions;
         Map<String, String> blogHtmlLevels;

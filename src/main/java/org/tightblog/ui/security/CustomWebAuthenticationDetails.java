@@ -23,12 +23,41 @@ public class CustomWebAuthenticationDetails extends WebAuthenticationDetails {
 
     private String verificationCode;
 
-    public CustomWebAuthenticationDetails(HttpServletRequest request) {
+    CustomWebAuthenticationDetails(HttpServletRequest request) {
         super(request);
         verificationCode = request.getParameter("totpCode");
     }
 
-    public String getVerificationCode() {
+    String getVerificationCode() {
         return verificationCode;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean equals = super.equals(obj);
+
+        if (equals && obj instanceof CustomWebAuthenticationDetails) {
+            CustomWebAuthenticationDetails rhs = (CustomWebAuthenticationDetails) obj;
+
+            if ((verificationCode == null) && (rhs.getVerificationCode() != null)) {
+                return false;
+            }
+            if ((verificationCode != null) && (rhs.getVerificationCode() == null)) {
+                return false;
+            }
+            if (verificationCode != null) {
+                if (!verificationCode.equals(rhs.getVerificationCode())) {
+                    return false;
+                }
+            }
+        }
+        return equals;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (verificationCode != null ? verificationCode.hashCode() : 0);
+        return result;
     }
 }

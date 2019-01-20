@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter
+        xmlns="https://github.com/spotbugs/filter/3.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0
+        https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
+
+    <!-- For performance, not cloning byte arrays in CachedContent -->
+    <Match>
+        <Class name="org.tightblog.rendering.cache.CachedContent" />
+        <Or>
+            <Method name="getContent"/>
+            <Method name="setContent"/>
+        </Or>
+        <Bug pattern="EI_EXPOSE_REP, EI_EXPOSE_REP2" />
+    </Match>
+
+    <!-- Apparent false positives occurring regarding unclosed resources
+        in some try-with-resources (https://stackoverflow.com/a/50977253/1207540) -->
+    <Match>
+        <Class name="org.tightblog.ui.restapi.InstallerController" />
+        <Method name="checkDatabase"/>
+        <Bug pattern="OBL_UNSATISFIED_OBLIGATION" />
+    </Match>
+
+    <Match>
+        <Class name="org.tightblog.rendering.processors.MediaFileProcessor" />
+        <Method name="getMediaFile"/>
+        <Bug pattern="OBL_UNSATISFIED_OBLIGATION" />
+    </Match>
+
+</FindBugsFilter>

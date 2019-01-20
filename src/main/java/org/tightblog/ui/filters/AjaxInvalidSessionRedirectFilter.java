@@ -63,8 +63,7 @@ public class AjaxInvalidSessionRedirectFilter extends GenericFilterBean {
             }
 
             ase = (AccessDeniedException) throwableAnalyzer.getFirstThrowableOfType(AccessDeniedException.class, causeChain);
-
-            if (ase != null && ase instanceof AccessDeniedException) {
+            if (ase != null) {
                 if (new AuthenticationTrustResolverImpl().isAnonymous(SecurityContextHolder.getContext().getAuthentication())) {
                     // User session expired or not logged in yet
                     String ajaxHeader = ((HttpServletRequest) request).getHeader("X-Requested-With");
@@ -85,7 +84,6 @@ public class AjaxInvalidSessionRedirectFilter extends GenericFilterBean {
                 // some other exception
                 throw ex;
             }
-
         }
     }
 

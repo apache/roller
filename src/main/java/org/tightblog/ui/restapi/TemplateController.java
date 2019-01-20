@@ -125,7 +125,7 @@ public class TemplateController {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public class WeblogTemplateData {
+    public static class WeblogTemplateData {
         List<Template> templates;
         Map<String, String> availableTemplateRoles = new HashMap<>();
         Map<String, String> templateRoleDescriptions = new HashMap<>();

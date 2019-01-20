@@ -189,15 +189,15 @@ public class MediaManager {
                         "_sm", new ByteArrayInputStream(baos.toByteArray()));
 
             } else {
-                FileInputStream fis2 = new FileInputStream(fileContent);
-                fileService.saveFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId() + "_sm",
-                        fis2);
+                try (FileInputStream fis2 = new FileInputStream(fileContent)) {
+                    fileService.saveFileContent(mediaFile.getDirectory().getWeblog(), mediaFile.getId() + "_sm",
+                            fis2);
+                }
 
                 mediaFile.setWidth(MediaFile.MAX_THUMBNAIL_WIDTH);
                 mediaFile.setHeight(MediaFile.MAX_THUMBNAIL_HEIGHT);
             }
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.debug("ERROR creating thumbnail", e);
         }
     }
@@ -224,7 +224,7 @@ public class MediaManager {
     /**
      * Remove all media content (files and directories) associated with a weblog.
      */
-    public void removeAllFiles(Weblog weblog) {
+    void removeAllFiles(Weblog weblog) {
         List<MediaDirectory> list = mediaDirectoryRepository.findByWeblog(weblog);
 
         for (MediaDirectory directory : list) {

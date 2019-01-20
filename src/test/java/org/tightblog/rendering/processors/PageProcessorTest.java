@@ -176,7 +176,7 @@ public class PageProcessorTest {
         verify(mockResponse).setHeader("Cache-Control", "no-cache");
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
-        verify(mockSOS).write("mytest1".getBytes());
+        verify(mockSOS).write("mytest1".getBytes(StandardCharsets.UTF_8));
     }
 
     @Test

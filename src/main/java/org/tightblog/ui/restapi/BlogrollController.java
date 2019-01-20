@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.repository.BlogrollLinkRepository;
 import org.tightblog.repository.WeblogRepository;
 
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -105,32 +106,30 @@ public class BlogrollController {
                                HttpServletResponse response) throws ServletException {
         try {
             WeblogBookmark bookmark = blogrollLinkRepository.getOne(id);
-            if (bookmark != null) {
-                Weblog weblog = bookmark.getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-                    WeblogBookmark bookmarkFromWeblog = weblog.getBookmarks().stream()
-                            .filter(wb -> wb.getId().equals(bookmark.getId())).findFirst().orElse(null);
-                    if (bookmarkFromWeblog != null) {
-                        bookmarkFromWeblog.setName(newData.getName());
-                        bookmarkFromWeblog.setUrl(newData.getUrl());
-                        bookmarkFromWeblog.setDescription(newData.getDescription());
-                        try {
-                            weblogManager.saveWeblog(weblog);
-                        } catch (RollbackException e) {
-                            response.setStatus(HttpServletResponse.SC_CONFLICT);
-                            return;
-                        }
-                        response.setStatus(HttpServletResponse.SC_OK);
-                    } else {
-                        // should never happen
-                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            Weblog weblog = bookmark.getWeblog();
+            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+                WeblogBookmark bookmarkFromWeblog = weblog.getBookmarks().stream()
+                        .filter(wb -> wb.getId().equals(bookmark.getId())).findFirst().orElse(null);
+                if (bookmarkFromWeblog != null) {
+                    bookmarkFromWeblog.setName(newData.getName());
+                    bookmarkFromWeblog.setUrl(newData.getUrl());
+                    bookmarkFromWeblog.setDescription(newData.getDescription());
+                    try {
+                        weblogManager.saveWeblog(weblog);
+                    } catch (RollbackException e) {
+                        response.setStatus(HttpServletResponse.SC_CONFLICT);
+                        return;
                     }
+                    response.setStatus(HttpServletResponse.SC_OK);
                 } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    // should never happen
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
             } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
+        } catch (EntityNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } catch (Exception e) {
             throw new ServletException(e.getMessage());
         }

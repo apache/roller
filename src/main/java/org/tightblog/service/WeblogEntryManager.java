@@ -59,6 +59,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -480,7 +481,7 @@ public class WeblogEntryManager {
         return cqd;
     }
 
-    private class QueryData {
+    private static class QueryData {
         String queryString;
         List<Object> params = new ArrayList<>();
     }
@@ -702,18 +703,20 @@ public class WeblogEntryManager {
             conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8");
             conn.setRequestProperty("Content-length", Integer.toString(apiRequestBody.length()));
 
-            OutputStreamWriter osr = new OutputStreamWriter(conn.getOutputStream());
+            OutputStreamWriter osr = new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8);
             osr.write(apiRequestBody, 0, apiRequestBody.length());
             osr.flush();
             osr.close();
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String response = br.readLine();
-            if ("true".equals(response)) {
-                if ("discard".equalsIgnoreCase(conn.getHeaderField("X-akismet-pro-tip"))) {
-                    return ValidationResult.BLATANT_SPAM;
+            try (InputStreamReader isr = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
+                    BufferedReader br = new BufferedReader(isr)) {
+                String response = br.readLine();
+                if ("true".equals(response)) {
+                    if ("discard".equalsIgnoreCase(conn.getHeaderField("X-akismet-pro-tip"))) {
+                        return ValidationResult.BLATANT_SPAM;
+                    }
+                    return ValidationResult.SPAM;
                 }
-                return ValidationResult.SPAM;
             }
         }
 

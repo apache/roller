@@ -54,6 +54,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -121,7 +122,7 @@ public class EmailService {
         ctx.setVariable("activationURL", activationURL);
         String message = standardTemplateEngine.process("emails/CommonEmailLayout", ctx);
 
-        String subject = messages.getMessage("user.account.activation.mail.subject", null, null);
+        String subject = messages.getMessage("user.account.activation.mail.subject", null, Locale.getDefault());
         String[] to = new String[]{user.getEmailAddress()};
         sendMessage(null, to, null, subject, message);
     }
@@ -145,7 +146,7 @@ public class EmailService {
         String[] to = admins.stream().map(User::getEmailAddress).toArray(String[]::new);
 
         String subject = messages.getMessage("mailMessage.approveRegistrationSubject",
-                new Object[] {user.getScreenName()}, null);
+                new Object[] {user.getScreenName()}, Locale.getDefault());
 
         Context ctx = new Context();
         ctx.setVariable("emailType", "RegistrationApprovalRequest");
@@ -170,7 +171,7 @@ public class EmailService {
 
         String[] to = new String[]{user.getEmailAddress()};
         String subject = messages.getMessage("mailMessage.registrationApprovedSubject",
-                new Object[] {user.getScreenName()}, null);
+                new Object[] {user.getScreenName()}, Locale.getDefault());
 
         Context ctx = new Context();
         ctx.setVariable("emailType", "RegistrationApprovedNotice");
@@ -193,7 +194,7 @@ public class EmailService {
         }
 
         String[] to = new String[]{user.getEmailAddress()};
-        String subject = messages.getMessage("mailMessage.registrationRejectedSubject", null, null);
+        String subject = messages.getMessage("mailMessage.registrationRejectedSubject", null, Locale.getDefault());
 
         Context ctx = new Context();
         ctx.setVariable("emailType", "RegistrationRejectedNotice");

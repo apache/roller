@@ -82,8 +82,9 @@ public class FileServiceIT extends WebloggerTest {
         assertNull("Non-existent file retrieved", test);
 
         // store a file
-        InputStream is = getClass().getResourceAsStream("/hawk.jpg");
-        fileService.saveFileContent(testWeblog, "bookmarks-file-id", is);
+        try (InputStream is = getClass().getResourceAsStream("/hawk.jpg")) {
+            fileService.saveFileContent(testWeblog, "bookmarks-file-id", is);
+        }
 
         // make sure file was stored successfully
         WebloggerTest.logExpectedException(log, "FileNotFoundException");

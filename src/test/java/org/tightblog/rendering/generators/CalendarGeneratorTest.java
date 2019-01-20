@@ -94,24 +94,23 @@ public class CalendarGeneratorTest {
         CalendarData data = calendarGenerator.getCalendarData(wpr, false);
         assertEquals("October 1858", data.getCalendarTitle());
         assertArrayEquals(new String[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}, data.getDayOfWeekNames());
-        assertEquals(6, data.getWeeks().length);
         // October 1st 1858 was on a Friday, 14th on a Thursday, 31st on a Sunday
-        assertEquals("1", data.getWeeks()[0].getDays()[5].getDayNum());
-        assertEquals("14", data.getWeeks()[2].getDays()[4].getDayNum());
-        assertFalse(data.getWeeks()[2].getDays()[4].isToday());
-        assertEquals("WeblogCollectionURL", data.getWeeks()[2].getDays()[4].getLink());
-        assertNull(data.getWeeks()[2].getDays()[4].getEntries());
-        assertEquals("31", data.getWeeks()[5].getDays()[0].getDayNum());
-        assertNull(data.getWeeks()[5].getDays()[1].getDayNum());
-        assertNull(data.getWeeks()[5].getDays()[0].getEntries());
+        assertEquals("1", data.getWeek(0).getDay(5).getDayNum());
+        assertEquals("14", data.getWeek(2).getDay(4).getDayNum());
+        assertFalse(data.getWeek(2).getDay(4).isToday());
+        assertEquals("WeblogCollectionURL", data.getWeek(2).getDay(4).getLink());
+        assertNull(data.getWeek(2).getDay(4).getEntries());
+        assertEquals("31", data.getWeek(5).getDay(0).getDayNum());
+        assertNull(data.getWeek(5).getDay(1).getDayNum());
+        assertNull(data.getWeek(5).getDay(0).getEntries());
 
         data = calendarGenerator.getCalendarData(wpr, true);
-        assertEquals(2, data.getWeeks()[2].getDays()[4].getEntries().size());
-        assertEquals("A short title", data.getWeeks()[2].getDays()[4].getEntries().get(0).getTitle());
-        assertEquals("my url 1a", data.getWeeks()[2].getDays()[4].getEntries().get(0).getLink());
+        assertEquals(2, data.getWeek(2).getDay(4).getEntries().size());
+        assertEquals("A short title", data.getWeek(2).getDay(4).getEntries().get(0).getTitle());
+        assertEquals("my url 1a", data.getWeek(2).getDay(4).getEntries().get(0).getLink());
         assertEquals("A very long title to ensure it is longer...",
-                data.getWeeks()[2].getDays()[4].getEntries().get(1).getTitle());
-        assertEquals("my url 1b", data.getWeeks()[2].getDays()[4].getEntries().get(1).getLink());
+                data.getWeek(2).getDay(4).getEntries().get(1).getTitle());
+        assertEquals("my url 1b", data.getWeek(2).getDay(4).getEntries().get(1).getLink());
     }
 
     @Test
@@ -136,8 +135,11 @@ public class CalendarGeneratorTest {
         } while (!todaysDatePre.equals(todaysDatePost));
 
         boolean found = false;
-        for (CalendarData.Week week : data.getWeeks()) {
-            for (CalendarData.Day day : week.getDays()) {
+        for (int weekNum = 0; weekNum < 6; weekNum++) {
+            CalendarData.Week week = data.getWeek(weekNum);
+
+            for (int dayNum = 0; dayNum < 7; dayNum++) {
+                CalendarData.Day day = week.getDay(dayNum);
                 if (day.getDayNum() != null && Integer.valueOf(day.getDayNum()).equals(todaysDatePre.getDayOfMonth())) {
                     found = true;
                     assertTrue(day.isToday());

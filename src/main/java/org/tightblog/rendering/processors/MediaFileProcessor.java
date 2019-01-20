@@ -120,17 +120,17 @@ public class MediaFileProcessor extends AbstractProcessor {
         }
 
         try (InputStream resourceStream = new FileInputStream(desiredFile);
-             OutputStream out = response.getOutputStream()) {
-            response.setContentType(useThumbnail ? MediaFile.THUMBNAIL_CONTENT_TYPE : mediaFile.getContentType());
-            response.setHeader("Cache-Control", "no-cache");
-            response.setDateHeader("Last-Modified", mediaFile.getLastUpdated().toEpochMilli());
+                OutputStream out = response.getOutputStream()) {
 
             byte[] buf = new byte[Utilities.EIGHT_KB_IN_BYTES];
             int length;
             while ((length = resourceStream.read(buf)) > 0) {
                 out.write(buf, 0, length);
             }
-        } catch (Exception ex) {
+            response.setContentType(useThumbnail ? MediaFile.THUMBNAIL_CONTENT_TYPE : mediaFile.getContentType());
+            response.setHeader("Cache-Control", "no-cache");
+            response.setDateHeader("Last-Modified", mediaFile.getLastUpdated().toEpochMilli());
+        } catch (IOException ex) {
             log.error("Error obtaining media file {}", desiredFile.getAbsolutePath(), ex);
             if (!response.isCommitted()) {
                 response.reset();

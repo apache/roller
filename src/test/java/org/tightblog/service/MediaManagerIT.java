@@ -21,12 +21,15 @@
 package org.tightblog.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.ObjectUtils;
@@ -51,6 +54,7 @@ public class MediaManagerIT extends WebloggerTest {
     private User testUser;
     private Weblog testWeblog;
     private MediaDirectory defaultDirectory;
+    private static InputStream hawkInputStream;
 
     @Value("${mediafiles.storage.dir}")
     private String mediafileDir;
@@ -60,6 +64,16 @@ public class MediaManagerIT extends WebloggerTest {
 
     public void setMediaManager(MediaManager mediaManager) {
         this.mediaManager = mediaManager;
+    }
+
+    @BeforeClass
+    public static void beforeClass() {
+        hawkInputStream = MediaManagerIT.class.getResourceAsStream("/hawk.jpg");
+    }
+
+    @AfterClass
+    public static void afterClass() throws IOException {
+        hawkInputStream.close();
     }
 
     @Before
@@ -128,7 +142,7 @@ public class MediaManagerIT extends WebloggerTest {
         when(mockMultipartFile.getSize()).thenReturn(3000L);
         when(mockMultipartFile.getContentType()).thenReturn("image/jpeg");
         when(mockMultipartFile.getName()).thenReturn("hawk.jpg");
-        when(mockMultipartFile.getInputStream()).thenReturn(getClass().getResourceAsStream("/hawk.jpg"));
+        when(mockMultipartFile.getInputStream()).thenReturn(hawkInputStream);
         when(mockMultipartFile.getOriginalFilename()).thenReturn("hawk.jpg");
         return mockMultipartFile;
     }

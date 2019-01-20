@@ -10,6 +10,11 @@ buildscript {
 	}
 }
 
+// tasks: spotbugsMain, spotbugsTest, spotbugsIntegrationTest or "check" for all
+plugins {
+	id "com.github.spotbugs" version "1.6.9"
+}
+
 apply plugin: 'war'
 apply plugin: 'java'
 apply plugin: 'checkstyle'
@@ -106,9 +111,13 @@ check.dependsOn integrationTest
 
 checkstyle {
 	toolVersion = "8.9"
-	config = resources.text.fromFile('checkstyle.xml', 'UTF-8')
+	config = resources.text.fromFile("$rootProject.projectDir/etc/buildconfig/checkstyle.xml", 'UTF-8')
 	showViolations = true
 	ignoreFailures = false
+}
+
+spotbugs {
+	excludeFilter = file("$rootProject.projectDir/etc/buildconfig/spotbugsExcludes.xml")
 }
 
 dependencies {

@@ -30,6 +30,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -97,7 +98,7 @@ public class UtilitiesTest {
         String convertLinesFormatted = "paragraph1\r\n\r\nparagraph2\r\nline2\r\nline3\r\n\r\nparagraph3\r\n";
 
         // reformat
-        ByteArrayInputStream stream = new ByteArrayInputStream(convertLinesStart.getBytes());
+        ByteArrayInputStream stream = new ByteArrayInputStream(convertLinesStart.getBytes(StandardCharsets.UTF_8));
         String output = Utilities.apiValueToFormSubmissionValue(stream);
 
         // make sure it turned out how we planned
