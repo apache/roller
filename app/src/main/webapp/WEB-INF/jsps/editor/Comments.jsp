@@ -210,17 +210,17 @@
                     <s:if test="actionName == 'comments'">
                         <%-- only blog admins (not the global admin) can approve blog comments --%>
                         <td>
-                            <s:checkboxlist name="bean.approvedComments" theme="simple" cssClass="comment-select"
-                                            list="{#comment}" listKey="id" listValue="name"/>
+                            <s:checkboxlist name="bean.approvedComments" cssClass="comment-select"
+                                            list="#comment" listKey="id" listValue="emptyString" />
                         </td>
                     </s:if>
                     <td>
-                        <s:checkboxlist name="bean.spamComments" label="" theme="simple" cssClass="comment-select" 
-                                        list="{#comment}" listKey="id" listValue="name"/>
+                        <s:checkboxlist name="bean.spamComments" cssClass="comment-select"
+                                        list="#comment" listKey="id" listValue="emptyString"  />
                     </td>
                     <td>
-                        <s:checkboxlist name="bean.deleteComments" label="" theme="simple" cssClass="comment-select" 
-                                        list="{#comment}" listKey="id" listValue="name"/>
+                        <s:checkboxlist name="bean.deleteComments" cssClass="comment-select"
+                                        list="#comment" listKey="id" listValue="emptyString"  />
                     </td>
 
                         <%-- ======================================================== --%>
@@ -324,8 +324,8 @@
                                                    <a onclick='saveComment("<s:property value="#comment.id"/>")'><s:text
                                                            name="generic.save"/></a> &nbsp;|&nbsp;
                                               </span>
-                                              <span id="cancellink-<s:property value="#comment.id"/>"
-                                                    style="display: none">
+                                                <span id="cancellink-<s:property value="#comment.id"/>"
+                                                      style="display: none">
                                                    <a onclick='editCommentCancel("<s:property
                                                            value="#comment.id"/>")'><s:text name="generic.cancel"/></a>
                                               </span>
@@ -360,10 +360,10 @@
                 </s:if>
             </ul>
         </nav>
-        
+
         <%-- ========================================================= --%>
         <%-- Save changes and cancel buttons --%>
-        
+
         <hr size="1" noshade="noshade"/>
         <s:submit cssClass="btn btn-primary" value="%{getText('commentManagement.update')}"/>
 
@@ -373,7 +373,7 @@
 
 
 <script>
-    
+
     <%-- setup check all/none checkbox controls --%>
     <s:if test="pager.items != null">
     $(document).ready(function () {
@@ -399,13 +399,14 @@
     </s:if>
 
     <%-- TODO: hook this up; it is currently not working in Roller trunk either --%>
+
     function bulkDelete() {
         if (window.confirm('<s:text name="commentManagement.confirmBulkDelete"><s:param value="bulkDeleteCount" /></s:text>')) {
             document.commentQueryForm.method.value = "bulkDelete";
             document.commentQueryForm.submit();
         }
     }
-    
+
     var comments = {};
 
     function editComment(id) {
@@ -469,5 +470,5 @@
             }
         });
     }
-    
+
 </script>

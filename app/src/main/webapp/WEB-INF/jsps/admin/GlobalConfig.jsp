@@ -114,7 +114,7 @@
 
     </s:iterator>
 
-    <input id="saveButton" class="btn" type="submit" value="<s:text name="generic.save"/>"/>
+    <input id="saveButton" class="btn btn-default" type="submit" value="<s:text name="generic.save"/>"/>
 
 </s:form>
 

@@ -50,7 +50,6 @@ public class WeblogEntryComment implements Serializable {
     private String    plugins = null;
     private String    contentType = "text/plain";
 
-    
     // associations
     private WeblogEntry weblogEntry = null;
     
@@ -291,6 +290,10 @@ public class WeblogEntryComment implements Serializable {
      */
     public Boolean getApproved() {
         return ApprovalStatus.APPROVED.equals(getStatus());
+    }
+
+    public String getEmptyString() {
+        return "";
     }
     
     

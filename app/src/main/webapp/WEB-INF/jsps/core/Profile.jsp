@@ -32,7 +32,7 @@
     <s:textfield label="%{getText('userSettings.username')}"
                  tooltip="%{getText('userRegister.tip.userName')}"
                  onchange="formChanged()" onkeyup="formChanged()"
-                 name="bean.userName" size="30" maxlength="30" readonly="true" />
+                 name="bean.userName" size="30" maxlength="30" readonly="true"/>
 
     <s:textfield label="%{getText('userSettings.screenname')}"
                  tooltip="%{getText('userRegister.tip.screenName')}"
@@ -90,7 +90,7 @@
 
     var saveButton;
 
-    $( document ).ready(function() {
+    $(document).ready(function () {
         saveButton = $("#profile_0");
         formChanged();
     });
@@ -98,40 +98,33 @@
     function formChanged() {
         var valid = false;
 
-        var screenName      = $("#profile_bean_screenName:first").val();
-        var fullName        = $("#profile_bean_fullName:first").val();
-        var email           = $("#profile_bean_emailAddress:first").val();
-        var password        = $("#profile_bean_passwordText:first").val();
+        var screenName = $("#profile_bean_screenName:first").val();
+        var fullName = $("#profile_bean_fullName:first").val();
+        var email = $("#profile_bean_emailAddress:first").val();
+        var password = $("#profile_bean_passwordText:first").val();
         var passwordConfirm = $("#profile_bean_passwordConfirm:first").val();
 
-        if (    screenName && screenName.trim().length > 0
-             && fullName   && fullName.trim().length > 0
-             && email      && email.trim().length > 0 && validateEmail(email) ) {
+        if (screenName && screenName.trim().length > 0
+            && fullName && fullName.trim().length > 0
+            && email && email.trim().length > 0 && validateEmail(email)) {
             valid = true;
 
         } else {
             valid = false;
         }
 
-        if ( (password && password.trim().length) || (passwordConfirm && passwordConfirm.trim().length > 0 )) {
-            if ( password !== passwordConfirm ) {
+        if ((password && password.trim().length) || (passwordConfirm && passwordConfirm.trim().length > 0)) {
+            if (password !== passwordConfirm) {
                 valid = false;
             }
         }
 
-        if ( valid ) {
+        if (valid) {
             saveButton.attr("disabled", false);
-            saveButton.removeClass("btn-danger");
         } else {
             saveButton.attr("disabled", true);
-            saveButton.addClass("btn-danger");
         }
 
-    }
-
-    function validateEmail(email) {
-        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(email);
     }
 
 </script>

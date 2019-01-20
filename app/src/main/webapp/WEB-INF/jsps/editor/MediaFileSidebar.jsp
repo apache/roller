@@ -25,7 +25,7 @@
                 <h3><s:text name="mediaFileSidebar.actions"/></h3>
 
                 <div style="clear:right">
-                    <span class="glyphicon glyphicon-folder-open"></span>
+                    <span class="glyphicon glyphicon-picture"></span>
                     <s:url var="mediaFileAddURL" action="mediaFileAdd">
                         <s:param name="weblog" value="%{actionWeblog.handle}"/>
                         <s:param name="directoryName" value="%{directoryName}"/>
@@ -38,15 +38,20 @@
 
                 <s:if test="!pager">
                     <%-- Only show Create New Directory control when NOT showing search results --%>
+
                     <div style="clear:right; margin-top: 1em">
-                        <span class="glyphicon glyphicon-picture"></span>
-                        <s:text name="mediaFileView.addDirectory"/><br/>
-                        <div style="padding-left:2em; padding-top:1em">
+
+                        <span class="glyphicon glyphicon-folder-open"></span>
+                        <s:text name="mediaFileView.addDirectory"/> <br />
+
+                        <label for="newDirectoryName">
                             <s:text name="mediaFileView.directoryName"/>
-                            <input type="text" id="newDirectoryName" name="newDirectoryName" size="10" maxlength="25"/>
-                            <input type="button" id="newDirectoryButton" class="btn btn-primary"
-                                   value='<s:text name="mediaFileView.create" />' onclick="onCreateDirectory()"/>
-                        </div>
+                        </label>
+                        <input type="text" id="newDirectoryName" name="newDirectoryName" size="8" maxlength="25"/>
+
+                        <input type="button" id="newDirectoryButton" class="btn btn-primary" style="clear:left"
+                               value='<s:text name="mediaFileView.create" />' onclick="onCreateDirectory()"/>
+
                     </div>
                 </s:if>
 
@@ -71,9 +76,9 @@
                               list="sizeFilterTypes" listKey="key" listValue="value"
                               label="%{getText('mediaFileView.size')}"/>
 
-                    <s:textfield id="beanSize" name="bean.size" size="3" maxlength="10" />
+                    <s:textfield id="beanSize" name="bean.size" size="3" maxlength="10"/>
 
-                    <s:select name="bean.sizeUnit" list="sizeUnits" listKey="key" listValue="value" />
+                    <s:select name="bean.sizeUnit" list="sizeUnits" listKey="key" listValue="value"/>
 
                     <s:textfield id="beanTags" name="bean.tags" size="20" maxlength="50"
                                  label="%{getText('mediaFileView.tags')}"/>

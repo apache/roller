@@ -268,8 +268,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <s:submit cssClass="btn" value="%{getText('generic.yes')}"/>&nbsp;
-                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">
+                    <s:submit cssClass="btn btn-danger" value="%{getText('generic.yes')}"/>&nbsp;
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
                         <s:text name="generic.no" />
                     </button>
                 </div>

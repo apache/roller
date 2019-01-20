@@ -48,19 +48,21 @@
     </div>
 
     <s:textfield label="%{getText('createWebsite.emailAddress')}"
-                 tooltip="%{getText('createWebsite.tip.emailAddress')}" onkeyup="formChanged()"
+                 tooltip="%{getText('createWebsite.tip.email')}" onkeyup="formChanged()"
                  name="bean.emailAddress" size="40" maxlength="50"/>
 
     <s:select label="%{getText('createWebsite.locale')}"
               tooltip="%{getText('createWebsite.tip.locale')}"
               name="bean.locale" size="1" list="localesList" listValue="displayName"/>
 
-    <s:select label="%{getText('createWebsite.timeZone')}"
-              tooltip="%{getText('createWebsite.tip.timeZone')}"
+    <s:select label="%{getText('createWebsite.timezone')}"
+              tooltip="%{getText('createWebsite.tip.timezone')}"
               name="bean.timeZone" size="1" list="timeZonesList"/>
 
     <div class="form-group" ng-app="themeSelectModule" ng-controller="themeController">
-        <label class="col-sm-3 control-label" for="createWeblog_bean_timeZone">Timezone</label>
+        <label class="col-sm-3 control-label" for="createWeblog_bean_timeZone">
+            <s:text name="createWebsite.theme" />
+        </label>
         <div class="col-sm-9 controls">
             <s:select name="bean.theme" size="1" list="themes" listKey="id" listValue="name"
                       onchange="previewImage(this[selectedIndex].value)"/>
@@ -76,6 +78,8 @@
            onclick="window.location='<s:url action="menu"/>'"/>
 
 </s:form>
+
+<%-- ============================================================================== --%>
 
 <script>
 
@@ -104,27 +108,15 @@
         var handle = $("#createWeblog_bean_handle:first").val();
         var email  = $("#createWeblog_bean_emailAddress:first").val();
 
-        if (    name      && name.trim().length > 0
-                && handle && handle.trim().length > 0
-                && email  && email.trim().length > 0   && validateEmail(email) ) {
-            valid = true;
-
-        } else {
-            valid = false;
-        }
+        valid = !!(name && name.trim().length > 0
+            && handle && handle.trim().length > 0
+            && email && email.trim().length > 0 && validateEmail(email));
 
         if ( valid ) {
             saveButton.attr("disabled", false);
-            saveButton.removeClass("btn-danger");
         } else {
             saveButton.attr("disabled", true);
-            saveButton.addClass("btn-danger");
         }
-    }
-
-    function validateEmail(email) {
-        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(email);
     }
 
     function handlePreview(handle) {

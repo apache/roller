@@ -137,6 +137,8 @@
 
 </s:form>
 
+<%-- ============================================================================== --%>
+
 <script type="text/javascript">
 
     function onChange() {
@@ -144,6 +146,11 @@
         var authMethod    = "<s:property value='authMethod' />";
         var emailAddress    = document.register['bean.emailAddress'].value;
         var userName = passwordText = passwordConfirm = openIdUrl = "";
+
+        if (!validateEmail(emailAddress)) {
+            document.getElementById('submit').disabled = true;
+            return;
+        }
 
         if (authMethod === 'LDAP') {
             userName = '<s:property value="bean.userName" />';
