@@ -31,7 +31,7 @@
 </head>
 <body>
 
-<tiles:insertAttribute name="bannerStatus"/>
+<tiles:insertAttribute name="banner"/>
 
 <div class="container-fluid">
 

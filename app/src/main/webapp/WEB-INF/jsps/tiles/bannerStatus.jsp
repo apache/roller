@@ -33,23 +33,9 @@
             </div>
             
             <ul class="nav navbar-nav">
-i
-                <%-- <s:if test="authenticatedUser != null">
-                    <li>
-                        <a href="<s:url action="menu" namespace="/roller-ui" />">
-                            <s:text name="mainPage.loggedInAs" />: <s:property value="authenticatedUser.userName"/> 
-                        </a>
-                    </li>
-                </s:if> --%>
-                
+
                 <s:if test="actionWeblog != null">
                     
-                    <%-- <li>
-                        <a href='<s:property value="actionWeblog.absoluteURL" />'>
-                            <s:text name="mainPage.currentWebsite" />: <s:property value="actionWeblog.handle" />
-                        </a>
-                    </li> --%> 
-
                     <s:set var="tabMenu" value="menu"/>
                     <s:if test="#tabMenu != null">
 

@@ -25,11 +25,13 @@
     <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
     <title><s:property value="getProp('site.shortName')"/>: <s:property value="pageTitle"/></title>
     <tiles:insertAttribute name="head"/>
-    <style> <tiles:insertAttribute name="styles" /> </style>
+    <style>
+        <tiles:insertAttribute name="styles" />
+    </style>
 </head>
 <body>
 
-<tiles:insertAttribute name="bannerStatus"/>
+<tiles:insertAttribute name="banner"/>
 
 <tilesx:useAttribute name="sidebar" id="sidebar" classname="java.lang.String"/>
 

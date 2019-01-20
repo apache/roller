@@ -23,6 +23,9 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
         <tiles:insertAttribute name="head" />
+        <style>
+            <tiles:insertAttribute name="styles" />
+        </style>
     </head>
 
     <body>

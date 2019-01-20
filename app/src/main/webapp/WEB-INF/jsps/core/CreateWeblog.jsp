@@ -93,6 +93,8 @@
         <s:else>
         previewImage('<s:property value="bean.theme"/>');
         </s:else>
+
+        formChanged()
     });
 
     function formChanged() {

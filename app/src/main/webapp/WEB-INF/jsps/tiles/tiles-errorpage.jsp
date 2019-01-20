@@ -24,6 +24,9 @@
       <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
       <title><s:text name="error" /></title>
       <tiles:insertAttribute name="head" />
+      <style>
+          <tiles:insertAttribute name="styles" />
+      </style>
     </head>
     <body>
         

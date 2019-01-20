@@ -17,18 +17,28 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<div class="bannerStatusBox">
-    
-    <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
-        <tr>
-            <td class="bannerLeft">
-                <s:text name="installer.bannerTitleLeft" />   
-            </td>
-            
-            <td class="bannerRight">
-                <s:text name="installer.bannerTitleRight" />                                   
-            </td>
-        </tr>
-    </table>
-    
-</div>
+<nav class="navbar navbar-default navbar-static-top navbar-inverse">
+    <div class="container-fluid">
+        <div id="navbar" class="navbar-collapse collapse">
+
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed"
+                        data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"><s:text name="installer.bannerTitleLeft" /></a>
+            </div>
+
+            <ul class="nav navbar-nav">
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="<s:url value='/'/>"><s:text name="installer.bannerTitleRight" /></a></li>
+            </ul>
+
+        </div>
+    </div>
+</nav>

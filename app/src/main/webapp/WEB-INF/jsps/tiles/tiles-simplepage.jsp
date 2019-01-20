@@ -25,29 +25,30 @@
     <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
     <title><s:property value="getProp('site.shortName')"/>: <s:property value="pageTitle"/></title>
     <tiles:insertAttribute name="head"/>
-    <style> <tiles:insertAttribute name="styles" /> </style>
+    <style>
+        <tiles:insertAttribute name="styles" />
+    </style>
 </head>
 <body>
 
 <tiles:insertAttribute name="banner"/>
-<tiles:insertAttribute name="bannerStatus"/>
 
 <div class="container-fluid">
 
     <div class="row">
-        <div class="col-md-2"></div>
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
 
-        <div class="col-md-8">
             <h1 class="roller-page-title"><s:property value="pageTitle"/></h1>
-            <tiles:insertAttribute name="messages"/>
+            <p><tiles:insertAttribute name="messages"/>
             <div class="panel">
                 <div class="panel-body">
                     <tiles:insertAttribute name="content"/>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-2"></div>
+        </div>
+        <div class="col-md-1"></div>
     </div>
 </div>
 

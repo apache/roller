@@ -132,7 +132,7 @@
     <p id="readytip"><s:text name="userRegister.tip.ready" /></p>
 
     <s:submit id="submit" key="userRegister.button.save" cssClass="btn btn-default" />
-    <input type="button" class=btn"
+    <input type="button" class="btn btn-cancel"
            value="<s:text name="generic.cancel"/>" onclick="window.location='<s:url value="/"/>'" />
 
 </s:form>

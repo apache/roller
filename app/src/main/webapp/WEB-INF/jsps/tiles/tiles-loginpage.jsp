@@ -25,12 +25,13 @@
     <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
     <title><s:property value="getProp('site.shortName')"/>: <s:property value="pageTitle"/></title>
     <tiles:insertAttribute name="head"/>
-    <style> <tiles:insertAttribute name="styles" /> </style>
+    <style>
+        <tiles:insertAttribute name="styles" />
+    </style>
 </head>
 <body>
 
 <tiles:insertAttribute name="banner"/>
-<tiles:insertAttribute name="bannerStatus"/>
 
 <div class="container-fluid">
 

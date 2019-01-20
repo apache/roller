@@ -22,8 +22,8 @@
 <tiles-definitions>
     
     <definition name=".tiles-mainmenupage" template="/WEB-INF/jsps/tiles/tiles-mainmenupage.jsp">
-        <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
-        <put-attribute name="head"        value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
+        <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
@@ -32,7 +32,7 @@
     </definition>
     
     <definition name=".tiles-tabbedpage" template="/WEB-INF/jsps/tiles/tiles-tabbedpage.jsp">
-        <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
+        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
         <put-attribute name="userStatus"   value="/WEB-INF/jsps/tiles/userStatus.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
@@ -45,8 +45,7 @@
     </definition>
 
     <definition name=".tiles-simplepage" template="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
-        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
-        <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
+        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
@@ -55,8 +54,7 @@
     </definition>
 
     <definition name=".tiles-loginpage" template="/WEB-INF/jsps/tiles/tiles-loginpage.jsp">
-        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
-        <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
+        <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
@@ -67,6 +65,7 @@
     <definition name=".tiles-installpage" template="/WEB-INF/jsps/tiles/tiles-installpage.jsp">
         <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
@@ -75,6 +74,7 @@
     <definition name=".tiles-errorpage" template="/WEB-INF/jsps/tiles/tiles-errorpage.jsp">
         <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
+        <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />

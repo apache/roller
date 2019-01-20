@@ -22,3 +22,4 @@ velocity.log
 tomcat-base
 deployment/docker-compose/postgresql-data
 deployment/docker-compose/roller-data
+deployment/data
