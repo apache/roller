@@ -25,6 +25,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.tightblog.config.DynamicProperties;
+import org.tightblog.rendering.model.PageModel;
 import org.tightblog.service.EmailService;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogEntryManager;
@@ -92,7 +93,6 @@ public class CommentProcessor extends AbstractProcessor {
 
     private static final String EMAIL_ADDR_REGEXP = "^.*@.*[.].{2,}$";
 
-    private WeblogPageRequest.Creator weblogPageRequestCreator;
     private WeblogRepository weblogRepository;
 
     private UserRepository userRepository;
@@ -101,6 +101,7 @@ public class CommentProcessor extends AbstractProcessor {
     private UserManager userManager;
     private EmailService emailService;
     private MessageSource messages;
+    private PageModel pageModel;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private DynamicProperties dp;
 
@@ -116,21 +117,18 @@ public class CommentProcessor extends AbstractProcessor {
                             UserRepository userRepository,
                             LuceneIndexer luceneIndexer, WeblogEntryManager weblogEntryManager, UserManager userManager,
                             EmailService emailService, DynamicProperties dp,
-                            MessageSource messages, WebloggerPropertiesRepository webloggerPropertiesRepository) {
-        this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
+                            MessageSource messages, PageModel pageModel,
+                            WebloggerPropertiesRepository webloggerPropertiesRepository) {
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.weblogRepository = weblogRepository;
         this.userRepository = userRepository;
         this.luceneIndexer = luceneIndexer;
         this.weblogEntryManager = weblogEntryManager;
         this.userManager = userManager;
+        this.pageModel = pageModel;
         this.emailService = emailService;
         this.messages = messages;
         this.dp = dp;
-    }
-
-    void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
-        this.weblogPageRequestCreator = creator;
     }
 
     @Autowired(required = false)
@@ -147,7 +145,6 @@ public class CommentProcessor extends AbstractProcessor {
         this.commentValidators = commentValidators;
     }
 
-
     /**
      * Here we handle incoming comment postings.
      */
@@ -163,7 +160,7 @@ public class CommentProcessor extends AbstractProcessor {
             return;
         }
 
-        WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
+        WeblogPageRequest incomingRequest = WeblogPageRequest.Creator.create(request, pageModel);
 
         Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {
@@ -333,18 +330,20 @@ public class CommentProcessor extends AbstractProcessor {
         // Validate url
         comment.setUrl(Utilities.removeHTML(request.getParameter("url")));
         String urlCheck = comment.getUrl();
-        if (StringUtils.isNotEmpty(urlCheck)) {
+        if (StringUtils.isNotBlank(urlCheck)) {
             urlCheck = urlCheck.trim().toLowerCase();
             if (!urlCheck.startsWith("http://") && !urlCheck.startsWith("https://")) {
                 urlCheck = "http://" + urlCheck;
             }
+            comment.setUrl(urlCheck);
         }
-        comment.setUrl(urlCheck);
 
         // Validate content
-        comment.setContent(StringUtils.left(request.getParameter("content"), 2000));
+        String rawComment = request.getParameter("content");
 
-        if (comment.getContent() != null) {
+        if (StringUtils.isNotBlank(rawComment)) {
+            comment.setContent(StringUtils.left(rawComment, 2000));
+
             Whitelist commentHTMLWhitelist = sanitizerLevel.getWhitelist();
 
             // Need to insert paragraph breaks in case commenter didn't do so.

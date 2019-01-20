@@ -16,51 +16,85 @@
 package org.tightblog.rendering.requests;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import org.tightblog.TestUtils;
+import org.tightblog.domain.CommentSearchCriteria;
+import org.tightblog.domain.SharedTemplate;
+import org.tightblog.domain.Weblog;
+import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntrySearchCriteria;
+import org.tightblog.domain.WeblogRole;
+import org.tightblog.domain.WeblogTheme;
+import org.tightblog.rendering.generators.CalendarGenerator;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.model.PageModel;
+import org.tightblog.service.ThemeManager;
+import org.tightblog.service.UserManager;
+import org.tightblog.service.WeblogEntryManager;
+import org.tightblog.service.WeblogManager;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@Ignore
 public class WeblogPageRequestTest {
 
     private HttpServletRequest mockRequest;
+    private PageModel pageModel;
+    private UserManager mockUM;
+    private WeblogManager mockWM;
+    private WeblogEntryManager mockWEM;
+    private ThemeManager mockTM;
+    private WeblogEntryListGenerator mockWELG;
+    private CalendarGenerator mockCG;
 
     @Before
     public void initializeMocks() {
-        mockRequest = mock(HttpServletRequest.class);
+        mockRequest = TestUtils.createMockServletRequestForWeblogEntryRequest();
+
+        mockUM = mock(UserManager.class);
+        mockWM = mock(WeblogManager.class);
+        mockWEM = mock(WeblogEntryManager.class);
+        mockTM = mock(ThemeManager.class);
+        mockWELG = mock(WeblogEntryListGenerator.class);
+        mockCG = mock(CalendarGenerator.class);
+        pageModel = new PageModel(mockUM, mockWM, mockWEM, mockTM, mockWELG, mockCG, 20);
     }
 
     @Test
     public void testEntryPermalinkPage() {
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/entry/blog-anchor");
-
-        WeblogPageRequest.Creator creator = new WeblogPageRequest.Creator();
-        WeblogPageRequest wpr = creator.create(mockRequest);
-        assertEquals("entry/blog-anchor", wpr.getExtraPathInfo());
-        assertEquals("myblog", wpr.getWeblogHandle());
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+        assertEquals("entry/entry-anchor", wpr.getExtraPathInfo());
+        assertEquals(TestUtils.BLOG_HANDLE, wpr.getWeblogHandle());
         assertEquals("entry", wpr.getContext());
-        assertEquals("blog-anchor", wpr.getWeblogEntryAnchor());
+        assertEquals("entry-anchor", wpr.getWeblogEntryAnchor());
         assertNull(wpr.getCustomPageName());
         assertNull(wpr.getCategory());
         assertNull(wpr.getWeblogDate());
         assertNull(wpr.getTag());
-        assertNull(wpr.getQuery());
+        assertTrue(wpr.isPermalink());
         // pageNum = 0 so index
         assertFalse(wpr.isNoIndex());
+        assertFalse(wpr.isSearchResults());
     }
 
     @Test
     public void testCategoryPageNoTag() {
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/category/stamps");
+        when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/page/myblog/category/stamps");
         when(mockRequest.getParameter("page")).thenReturn("1");
 
-        WeblogPageRequest.Creator creator = new WeblogPageRequest.Creator();
-        WeblogPageRequest wpr = creator.create(mockRequest);
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
         assertEquals("category/stamps", wpr.getExtraPathInfo());
         assertEquals("myblog", wpr.getWeblogHandle());
         assertEquals("category", wpr.getContext());
@@ -69,17 +103,16 @@ public class WeblogPageRequestTest {
         assertEquals("stamps", wpr.getCategory());
         assertNull(wpr.getWeblogDate());
         assertNull(wpr.getTag());
-        assertNull(wpr.getQuery());
+        assertFalse(wpr.isPermalink());
         // pageNum > 0 so no index
         assertTrue(wpr.isNoIndex());
     }
 
     @Test
     public void testCategoryPageWithTag() {
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/category/stamps/tag/semipostals");
+        when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/page/myblog/category/stamps/tag/semipostals");
 
-        WeblogPageRequest.Creator creator = new WeblogPageRequest.Creator();
-        WeblogPageRequest wpr = creator.create(mockRequest);
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
         assertEquals("category/stamps/tag/semipostals", wpr.getExtraPathInfo());
         assertEquals("myblog", wpr.getWeblogHandle());
         assertEquals("category", wpr.getContext());
@@ -88,24 +121,21 @@ public class WeblogPageRequestTest {
         assertEquals("stamps", wpr.getCategory());
         assertNull(wpr.getWeblogDate());
         assertEquals("semipostals", wpr.getTag());
-        assertNull(wpr.getQuery());
     }
 
     @Test
     public void testExtraPathsIgnored() {
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/category/stamps/coins");
-        WeblogPageRequest.Creator creator = new WeblogPageRequest.Creator();
-        WeblogPageRequest request = creator.create(mockRequest);
-        assertEquals(request.getWeblogHandle(), "myblog");
-        assertEquals(request.getCategory(), "stamps");
+        when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/page/myblog/category/stamps/coins");
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+        assertEquals(wpr.getWeblogHandle(), "myblog");
+        assertEquals(wpr.getCategory(), "stamps");
     }
 
     @Test
     public void testTagPage() {
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/tag/commemoratives");
+        when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/page/myblog/tag/commemoratives");
 
-        WeblogPageRequest.Creator creator = new WeblogPageRequest.Creator();
-        WeblogPageRequest wpr = creator.create(mockRequest);
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
         assertEquals("myblog", wpr.getWeblogHandle());
         assertEquals("tag", wpr.getContext());
         assertNull(wpr.getWeblogEntryAnchor());
@@ -113,15 +143,13 @@ public class WeblogPageRequestTest {
         assertNull(wpr.getCategory());
         assertNull(wpr.getWeblogDate());
         assertEquals("commemoratives", wpr.getTag());
-        assertNull(wpr.getQuery());
     }
 
     @Test
     public void testMonthDatePage() {
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/date/201804");
+        when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/page/myblog/date/201804");
 
-        WeblogPageRequest.Creator creator = new WeblogPageRequest.Creator();
-        WeblogPageRequest wpr = creator.create(mockRequest);
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
         assertEquals("myblog", wpr.getWeblogHandle());
         assertEquals("date", wpr.getContext());
         assertNull(wpr.getWeblogEntryAnchor());
@@ -129,15 +157,13 @@ public class WeblogPageRequestTest {
         assertNull(wpr.getCategory());
         assertEquals("201804", wpr.getWeblogDate());
         assertNull(wpr.getTag());
-        assertNull(wpr.getQuery());
     }
 
     @Test
     public void testDayDatePage() {
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/date/20180402");
+        when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/page/myblog/date/20180402");
 
-        WeblogPageRequest.Creator creator = new WeblogPageRequest.Creator();
-        WeblogPageRequest wpr = creator.create(mockRequest);
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
         assertEquals("myblog", wpr.getWeblogHandle());
         assertEquals("date", wpr.getContext());
         assertNull(wpr.getWeblogEntryAnchor());
@@ -145,25 +171,22 @@ public class WeblogPageRequestTest {
         assertNull(wpr.getCategory());
         assertEquals("20180402", wpr.getWeblogDate());
         assertNull(wpr.getTag());
-        assertNull(wpr.getQuery());
     }
 
     @Test
     public void testInvalidDatesIgnored() {
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/date/20181946");
-        WeblogPageRequest.Creator creator = new WeblogPageRequest.Creator();
-        WeblogPageRequest request = creator.create(mockRequest);
-        assertEquals("myblog", request.getWeblogHandle());
-        assertNull(request.getWeblogDate());
+        when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/page/myblog/date/20181946");
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+        assertEquals("myblog", wpr.getWeblogHandle());
+        assertNull(wpr.getWeblogDate());
     }
 
     @Test
     public void testCustomPage() {
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/page/first-day-covers");
+        when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/page/myblog/page/first-day-covers");
         when(mockRequest.getParameter("date")).thenReturn("20181002");
 
-        WeblogPageRequest.Creator creator = new WeblogPageRequest.Creator();
-        WeblogPageRequest wpr = creator.create(mockRequest);
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
         assertEquals("myblog", wpr.getWeblogHandle());
         assertEquals("page", wpr.getContext());
         assertNull(wpr.getWeblogEntryAnchor());
@@ -171,26 +194,6 @@ public class WeblogPageRequestTest {
         assertNull(wpr.getCategory());
         assertEquals("20181002", wpr.getWeblogDate());
         assertNull(wpr.getTag());
-        assertNull(wpr.getQuery());
-    }
-
-    @Test
-    public void testSearchPage() {
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/search");
-        when(mockRequest.getParameter("q")).thenReturn("definitives");
-        when(mockRequest.getParameter("cat")).thenReturn("stamps");
-
-        WeblogPageRequest.Creator creator = new WeblogPageRequest.Creator();
-        WeblogPageRequest wpr = creator.create(mockRequest);
-        assertEquals("search", wpr.getExtraPathInfo());
-        assertEquals("myblog", wpr.getWeblogHandle());
-        assertEquals("search", wpr.getContext());
-        assertNull(wpr.getWeblogEntryAnchor());
-        assertNull(wpr.getCustomPageName());
-        assertEquals("stamps", wpr.getCategory());
-        assertNull(wpr.getWeblogDate());
-        assertNull(wpr.getTag());
-        assertEquals("definitives", wpr.getQuery());
     }
 
     @Test
@@ -205,4 +208,173 @@ public class WeblogPageRequestTest {
         assertFalse(WeblogPageRequest.isValidDateString("pumpkin"));
     }
 
+    @Test
+    public void testGetCommentForm() {
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+
+        // no comment form provided at request time
+        WeblogEntryComment comment = wpr.getCommentForm();
+        assertNotNull(comment);
+        assertEquals("", comment.getName());
+        assertEquals("", comment.getEmail());
+        assertEquals("", comment.getUrl());
+        assertEquals("", comment.getContent());
+
+        // comment form at request time
+        WeblogEntryComment comment2 = new WeblogEntryComment();
+        comment2.setName("Bob");
+        comment2.setEmail("bob@email.com");
+        comment2.setUrl("https://www.google.com");
+        comment2.setContent("This is my comment.");
+        wpr.setCommentForm(comment2);
+
+        assertEquals(comment2, wpr.getCommentForm());
+    }
+
+    @Test
+    public void testGetAnalyticsTrackingCode() {
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+        Weblog weblog = new Weblog();
+        wpr.setWeblog(weblog);
+
+        when(pageModel.getAnalyticsTrackingCode(wpr.getWeblog(), false)).thenReturn("tracking code");
+        assertEquals("tracking code", wpr.getAnalyticsTrackingCode());
+
+        // return empty string if preview
+        when(pageModel.getAnalyticsTrackingCode(wpr.getWeblog(), true)).thenReturn("");
+        wpr = WeblogPageRequest.Creator.createPreview(mockRequest, pageModel);
+        assertEquals("", wpr.getAnalyticsTrackingCode());
+    }
+
+    @Test
+    public void testGetTemplateIdByName() {
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+        Weblog weblog = new Weblog();
+        wpr.setWeblog(weblog);
+
+        WeblogTheme mockTheme = mock(WeblogTheme.class);
+        when(mockTM.getWeblogTheme(wpr.getWeblog())).thenReturn(mockTheme);
+        when(mockTheme.getTemplateByName(any())).thenReturn(null);
+        assertNull(wpr.getTemplateIdByName("abc"));
+
+        SharedTemplate abc = new SharedTemplate();
+        abc.setId("abcId");
+        abc.setName("abcTemplate");
+        when(mockTheme.getTemplateByName("abcTemplate")).thenReturn(abc);
+        assertEquals("abcId", wpr.getTemplateIdByName("abcTemplate"));
+    }
+
+    @Test
+    public void testGetRecentWeblogEntries() {
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+
+        List<WeblogEntry> weblogEntryList = wpr.getRecentWeblogEntries(null, -5);
+        assertEquals(0, weblogEntryList.size());
+
+        // testWeblogEntrySearchCriteria object correctly populated
+        wpr.getRecentWeblogEntries("stamps", 50);
+        ArgumentCaptor<WeblogEntrySearchCriteria> captor = ArgumentCaptor.forClass(WeblogEntrySearchCriteria.class);
+        verify(mockWEM).getWeblogEntries(captor.capture());
+        WeblogEntrySearchCriteria wesc = captor.getValue();
+        assertEquals(wpr.getWeblog(), wesc.getWeblog());
+        assertEquals("stamps", wesc.getCategoryName());
+        assertEquals(WeblogEntry.PubStatus.PUBLISHED, wesc.getStatus());
+        assertEquals(50, wesc.getMaxResults());
+        assertTrue(wesc.isCalculatePermalinks());
+
+        // test limit of MAX_ENTRIES
+        Mockito.clearInvocations(mockWEM);
+        wpr.getRecentWeblogEntries(null, WeblogPageRequest.MAX_ENTRIES + 20);
+        verify(mockWEM).getWeblogEntries(captor.capture());
+        wesc = captor.getValue();
+        assertEquals(WeblogPageRequest.MAX_ENTRIES, wesc.getMaxResults());
+    }
+
+    @Test
+    public void testGetRecentComments() {
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+
+        // test length < 1 returns empty set
+        List<WeblogEntryComment> commentList = wpr.getRecentComments(-5);
+        assertEquals(0, commentList.size());
+
+        // test CommentSearchCriteria object correctly populated
+        wpr.getRecentComments(50);
+        ArgumentCaptor<CommentSearchCriteria> cscCaptor = ArgumentCaptor.forClass(CommentSearchCriteria.class);
+        verify(mockWEM).getComments(cscCaptor.capture());
+        CommentSearchCriteria csc = cscCaptor.getValue();
+        assertEquals(wpr.getWeblog(), csc.getWeblog());
+        assertEquals(WeblogEntryComment.ApprovalStatus.APPROVED, csc.getStatus());
+        assertEquals(50, csc.getMaxResults());
+
+        // test comment limit of MAX_ENTRIES
+        Mockito.clearInvocations(mockWEM);
+        wpr.getRecentComments(WeblogPageRequest.MAX_ENTRIES + 20);
+        verify(mockWEM).getComments(cscCaptor.capture());
+        csc = cscCaptor.getValue();
+        assertEquals(WeblogPageRequest.MAX_ENTRIES, csc.getMaxResults());
+    }
+
+    @Test
+    public void testPermalinkPagerReturned() {
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+
+        wpr.getWeblogEntriesPager();
+        verify(mockWELG).getPermalinkPager(any(), any(), any());
+        verify(mockWELG, never()).getChronoPager(any(), any(), any(), any(), eq(0), eq(-1), eq(false));
+    }
+
+    @Test
+    public void testTimePagerReturned() {
+        mockRequest = TestUtils.createMockServletRequestForWeblogHomePageRequest();
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+        Weblog weblog = new Weblog();
+        weblog.setEntriesPerPage(12);
+        wpr.setWeblog(weblog);
+
+        wpr.getWeblogEntriesPager();
+        verify(mockWELG).getChronoPager(any(), any(), any(), any(), eq(0), eq(12), eq(false));
+        verify(mockWELG, never()).getPermalinkPager(any(), any(), any());
+    }
+
+    @Test
+    public void testCheckUserRights() {
+        Principal mockPrincipal = mock(Principal.class);
+        when(mockRequest.getUserPrincipal()).thenReturn(mockPrincipal);
+
+        WeblogPageRequest wpr = WeblogPageRequest.Creator.createPreview(mockRequest, pageModel);
+
+        // if preview, always false
+        assertFalse(wpr.isUserBlogOwner());
+        assertFalse(wpr.isUserBlogPublisher());
+
+        // authenticated user is null, so both should be false
+        wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+        assertFalse(wpr.isUserBlogOwner());
+        assertFalse(wpr.isUserBlogPublisher());
+
+        // authenticated user has neither role
+        when(mockPrincipal.getName()).thenReturn("bob");
+        wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+        Weblog weblog = new Weblog();
+        wpr.setWeblog(weblog);
+        when(mockUM.checkWeblogRole("bob", weblog, WeblogRole.POST)).thenReturn(false);
+        when(mockUM.checkWeblogRole("bob", weblog, WeblogRole.OWNER)).thenReturn(false);
+        assertFalse(wpr.isUserBlogOwner());
+        assertFalse(wpr.isUserBlogPublisher());
+
+        // authenticated user has lower role
+        when(mockUM.checkWeblogRole("bob", weblog, WeblogRole.POST)).thenReturn(true);
+        wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+        wpr.setWeblog(weblog);
+        assertFalse(wpr.isUserBlogOwner());
+        assertTrue(wpr.isUserBlogPublisher());
+
+        // authenticated user has both roles
+        when(mockUM.checkWeblogRole("bob", weblog, WeblogRole.OWNER)).thenReturn(true);
+        wpr = WeblogPageRequest.Creator.create(mockRequest, pageModel);
+        wpr.setWeblog(weblog);
+        assertTrue(wpr.isUserBlogOwner());
+        assertTrue(wpr.isUserBlogPublisher());
+    }
 }

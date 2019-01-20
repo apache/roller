@@ -21,8 +21,17 @@
 package org.tightblog.rendering.requests;
 
 import org.apache.commons.lang3.StringUtils;
+import org.tightblog.domain.CalendarData;
+import org.tightblog.domain.CommentSearchCriteria;
 import org.tightblog.domain.Template;
+import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
+import org.tightblog.domain.WeblogEntryComment;
+import org.tightblog.domain.WeblogEntrySearchCriteria;
+import org.tightblog.domain.WeblogEntryTagAggregate;
+import org.tightblog.domain.WeblogRole;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.model.PageModel;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a request for a TightBlog weblog page
@@ -41,14 +52,17 @@ public class WeblogPageRequest extends WeblogRequest {
 
     private static Logger log = LoggerFactory.getLogger(WeblogPageRequest.class);
 
+    static final int MAX_ENTRIES = 100;
+
     // lightweight attributes
     private String context;
     private String weblogEntryAnchor;
     private String customPageName;
-    private String category;
+    protected String category;
     private String weblogDate;
     private String tag;
-    private String query;
+
+    private boolean preview;
 
     // whether a robots meta tag with value "noindex" should be added to discourage search engines from indexing page
     private boolean noIndex;
@@ -56,13 +70,28 @@ public class WeblogPageRequest extends WeblogRequest {
     // attributes populated by processors where appropriate
     private Template template;
     private WeblogEntry weblogEntry;
+    private PageModel pageModel;
+    private WeblogEntryComment commentForm;
+    protected WeblogEntryListGenerator.WeblogEntryListData pager;
 
-    public WeblogPageRequest() {
+    public WeblogPageRequest(PageModel pageModel) {
+        this.pageModel = pageModel;
     }
 
     public static class Creator {
-        public WeblogPageRequest create(HttpServletRequest servletRequest) {
-            WeblogPageRequest weblogPageRequest = new WeblogPageRequest();
+        public static WeblogPageRequest create(HttpServletRequest servletRequest, PageModel pageModel) {
+            WeblogPageRequest weblogPageRequest = new WeblogPageRequest(pageModel);
+            return process(weblogPageRequest, servletRequest);
+        }
+
+        public static WeblogPageRequest createPreview(HttpServletRequest servletRequest, PageModel pageModel) {
+            WeblogPageRequest weblogPageRequest = new WeblogPageRequest(pageModel);
+            weblogPageRequest.preview = true;
+            weblogPageRequest.noIndex = true;
+            return process(weblogPageRequest, servletRequest);
+        }
+
+        private static WeblogPageRequest process(WeblogPageRequest weblogPageRequest, HttpServletRequest servletRequest) {
             WeblogRequest.parseRequest(weblogPageRequest, servletRequest);
             weblogPageRequest.parseExtraPathInfo();
             return weblogPageRequest;
@@ -84,7 +113,7 @@ public class WeblogPageRequest extends WeblogRequest {
          *
          * If invalid or incomplete values given, processing will ignore the values (as if not provided)
          */
-        if (extraPathInfo != null && extraPathInfo.trim().length() > 0) {
+        if (StringUtils.isNotBlank(extraPathInfo)) {
 
             // potential 5th item is unused below but split out so not part of the 4th element
             String[] pathElements = extraPathInfo.split("/", 5);
@@ -120,9 +149,6 @@ public class WeblogPageRequest extends WeblogRequest {
                 } else if ("tag".equals(this.context)) {
                     tag = pathElements[1];
                 }
-            } else if ("search".equals(this.context)) {
-                this.query = getRequestParameter("q");
-                this.category = Utilities.decode(getRequestParameter("cat"));
             }
         }
 
@@ -131,7 +157,9 @@ public class WeblogPageRequest extends WeblogRequest {
             noIndex = true;
         }
 
-        log.debug(toString());
+        if (log.isDebugEnabled()) {
+            log.debug(toString());
+        }
     }
 
     static boolean isValidDateString(String dateString) {
@@ -157,10 +185,6 @@ public class WeblogPageRequest extends WeblogRequest {
 
     public String getWeblogEntryAnchor() {
         return weblogEntryAnchor;
-    }
-
-    public void setWeblogEntryAnchor(String weblogEntryAnchor) {
-        this.weblogEntryAnchor = weblogEntryAnchor;
     }
 
     public String getCustomPageName() {
@@ -191,10 +215,6 @@ public class WeblogPageRequest extends WeblogRequest {
         return tag;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
     public Template getTemplate() {
         return template;
     }
@@ -215,17 +235,146 @@ public class WeblogPageRequest extends WeblogRequest {
         return noIndex;
     }
 
-    public String getQuery() {
-        return query;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
     @Override
     public String toString() {
-        return String.format("WeblogPageRequest: context=%s anchor=%s date=%s category=%s tag=%s customPageName=%s query=%s",
-                context, weblogEntryAnchor, weblogDate, category, tag, customPageName, query);
+        return String.format("WeblogPageRequest: context=%s anchor=%s date=%s category=%s tag=%s customPageName=%s",
+                context, weblogEntryAnchor, weblogDate, category, tag, customPageName);
+    }
+
+    public WeblogEntryComment getCommentForm() {
+        if (commentForm == null) {
+            commentForm = new WeblogEntryComment();
+            commentForm.initializeFormFields();
+        }
+        return commentForm;
+    }
+
+    public void setCommentForm(WeblogEntryComment commentForm) {
+        this.commentForm = commentForm;
+    }
+
+    public boolean canSubmitNewComments(WeblogEntry entry) {
+        return pageModel.getWeblogEntryManager().canSubmitNewComments(entry);
+    }
+
+    public String getTransformedText(WeblogEntry entry) {
+        return render(entry.getEditFormat(), entry.getText());
+    }
+
+    public String getTransformedSummary(WeblogEntry entry) {
+        return render(entry.getEditFormat(), entry.getSummary());
+    }
+
+    private String render(Weblog.EditFormat format, String str) {
+        return pageModel.getWeblogEntryManager().processBlogText(format, str);
+    }
+
+    public CalendarData getCalendarData(boolean includeBlogEntryData) {
+        return pageModel.getCalendarGenerator().getCalendarData(this, includeBlogEntryData);
+    }
+
+    public boolean isUserBlogPublisher() {
+        return checkUserRights(WeblogRole.POST);
+    }
+
+    public boolean isUserBlogOwner() {
+        return checkUserRights(WeblogRole.OWNER);
+    }
+
+    private boolean checkUserRights(WeblogRole role) {
+        return !preview && pageModel.getUserManager().checkWeblogRole(authenticatedUser, weblog, role);
+    }
+
+    /**
+     * Get up to 100 most recent published entries in weblog.
+     *
+     * @param catName    Category name or null for no category restriction
+     * @param length Max entries to return (1-100)
+     * @return List of weblog entry objects.
+     */
+    public List<WeblogEntry> getRecentWeblogEntries(String catName, int length) {
+        if (length > MAX_ENTRIES) {
+            length = MAX_ENTRIES;
+        }
+        List<WeblogEntry> recentEntries = new ArrayList<>();
+        if (length < 1) {
+            return recentEntries;
+        }
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(weblog);
+        wesc.setCategoryName(catName);
+        wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
+        wesc.setMaxResults(length);
+        wesc.setCalculatePermalinks(true);
+        recentEntries = pageModel.getWeblogEntryManager().getWeblogEntries(wesc);
+        return recentEntries;
+    }
+
+    /**
+     * Get up to 100 most recent approved and non-spam comments in weblog.
+     *
+     * @param length Max entries to return (1-100)
+     * @return List of comment objects.
+     */
+    public List<WeblogEntryComment> getRecentComments(int length) {
+        if (length > MAX_ENTRIES) {
+            length = MAX_ENTRIES;
+        }
+        List<WeblogEntryComment> recentComments = new ArrayList<>();
+        if (length < 1) {
+            return recentComments;
+        }
+        CommentSearchCriteria csc = new CommentSearchCriteria();
+        csc.setWeblog(weblog);
+        csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
+        csc.setMaxResults(length);
+        recentComments = pageModel.getWeblogEntryManager().getComments(csc);
+        return recentComments;
+    }
+
+    /**
+     * Get a list of WeblogEntryTagAggregate objects for the most popular tags
+     *
+     * @param length Max number of tags to return.
+     * @return Collection of WeblogEntryTagAggregate objects
+     */
+    public List<WeblogEntryTagAggregate> getPopularTags(int length) {
+        return pageModel.getPopularTags(weblog, length);
+    }
+
+    public boolean isPermalink() {
+        return getWeblogEntryAnchor() != null;
+    }
+
+    public boolean isSearchResults() {
+        return false;
+    }
+
+    public String getAnalyticsTrackingCode() {
+        return pageModel.getAnalyticsTrackingCode(weblog, preview);
+    }
+
+    public List<? extends Template> getTemplates() {
+        return pageModel.getThemeManager().getWeblogTheme(weblog).getTemplates();
+    }
+
+    public String getTemplateIdByName(String name) {
+        Template tmpl = pageModel.getThemeManager().getWeblogTheme(weblog).getTemplateByName(name);
+        return tmpl != null ? tmpl.getId() : null;
+    }
+
+    public WeblogEntryListGenerator.WeblogEntryListData getWeblogEntriesPager() {
+        if (pager == null) {
+            // determine which mode to use
+            if (getWeblogEntryAnchor() != null) {
+                pager = pageModel.getWeblogEntryListGenerator().getPermalinkPager(weblog, getWeblogEntryAnchor(),
+                        preview);
+            } else {
+                pager = pageModel.getWeblogEntryListGenerator().getChronoPager(weblog, weblogDate, category,
+                        tag, pageNum, Math.min(pageModel.getMaxEntriesPerPage(), weblog.getEntriesPerPage()),
+                        false);
+            }
+        }
+        return pager;
     }
 }

@@ -24,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.tightblog.config.DynamicProperties;
+import org.tightblog.rendering.model.PageModel;
+import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.service.ThemeManager;
@@ -52,6 +54,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Rendering processor that provides access to weblog pages.
@@ -79,26 +82,26 @@ public class PageProcessor extends AbstractProcessor {
     private WeblogEntryManager weblogEntryManager;
     private ThymeleafRenderer thymeleafRenderer;
     protected ThemeManager themeManager;
-    private WeblogPageRequest.Creator weblogPageRequestCreator;
+    private PageModel pageModel;
+    private Function<WeblogPageRequest, SiteModel> siteModelFactory;
     private DynamicProperties dp;
 
     @Autowired
     PageProcessor(WeblogRepository weblogRepository, LazyExpiringCache weblogPageCache,
-                         WeblogManager weblogManager, WeblogEntryManager weblogEntryManager,
-                         @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
-                         ThemeManager themeManager, DynamicProperties dp) {
-        this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
+                  WeblogManager weblogManager, WeblogEntryManager weblogEntryManager,
+                  @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
+                  ThemeManager themeManager, PageModel pageModel,
+                  Function<WeblogPageRequest, SiteModel> siteModelFactory,
+                  DynamicProperties dp) {
         this.weblogRepository = weblogRepository;
         this.weblogPageCache = weblogPageCache;
         this.weblogManager = weblogManager;
         this.weblogEntryManager = weblogEntryManager;
         this.thymeleafRenderer = thymeleafRenderer;
         this.themeManager = themeManager;
+        this.pageModel = pageModel;
+        this.siteModelFactory = siteModelFactory;
         this.dp = dp;
-    }
-
-    void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
-        this.weblogPageRequestCreator = creator;
     }
 
     /**
@@ -108,7 +111,7 @@ public class PageProcessor extends AbstractProcessor {
      */
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
+        WeblogPageRequest incomingRequest = WeblogPageRequest.Creator.create(request, pageModel);
 
         Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {
@@ -197,14 +200,15 @@ public class PageProcessor extends AbstractProcessor {
 
                 // if we're handling comments, add the comment form
                 if (commentForm != null) {
-                    initData.put("commentForm", commentForm);
+                    incomingRequest.setCommentForm(commentForm);
                 }
 
                 Map<String, Object> model = getModelMap("pageModelSet", initData);
+                model.put("model", incomingRequest);
 
                 // Load special models for site-wide blog
                 if (incomingRequest.isSiteWide()) {
-                    model.putAll(getModelMap("siteModelSet", initData));
+                    model.put("site", siteModelFactory.apply(incomingRequest));
                 }
 
                 // render content

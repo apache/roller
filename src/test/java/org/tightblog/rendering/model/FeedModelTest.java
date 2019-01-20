@@ -22,7 +22,6 @@ import org.tightblog.service.URLService;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -35,7 +34,6 @@ public class FeedModelTest {
 
     private WeblogEntryListGenerator mockWeblogEntryListGenerator;
     private FeedModel feedModel;
-    private Weblog weblog;
     private DynamicProperties dp;
     private WeblogEntryManager mockWeblogEntryManager;
     private URLService mockURLService;
@@ -48,7 +46,6 @@ public class FeedModelTest {
         dp = new DynamicProperties();
         feedModel = new FeedModel(mockWeblogEntryListGenerator, mockWeblogEntryManager, mockURLService,
                 dp, "1.1", 20);
-        weblog = new Weblog();
     }
 
     @Test
@@ -56,16 +53,12 @@ public class FeedModelTest {
         // make jacoco happy
         assertEquals("1.1", feedModel.getSystemVersion());
         assertEquals(mockURLService, feedModel.getURLService());
+        assertEquals(mockWeblogEntryListGenerator, feedModel.getWeblogEntryListGenerator());
+        assertEquals(20, feedModel.getNumEntriesPerPage());
     }
 
     @Test
     public void testPassThroughMethods() {
-        WeblogEntryListGenerator.WeblogEntryListData data = new WeblogEntryListData();
-        when(mockWeblogEntryListGenerator.getChronoPager(weblog, null, "stamps",
-                "collectibles", 16, 20, true)).thenReturn(data);
-        assertEquals(data, feedModel.getWeblogEntriesPager(weblog, "stamps", "collectibles",
-                16, true));
-
         Instant testInstant = Instant.now().minus(1, ChronoUnit.DAYS);
         dp.setLastSitewideChange(testInstant);
         assertEquals(testInstant, feedModel.getLastSitewideChange());

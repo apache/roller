@@ -65,19 +65,13 @@ public class FeedProcessor extends AbstractProcessor {
     private LazyExpiringCache weblogFeedCache;
     private ThymeleafRenderer thymeleafRenderer;
     private ThemeManager themeManager;
-    private WeblogFeedRequest.Creator weblogFeedRequestCreator;
-    private DynamicProperties dp;
     private FeedModel feedModel;
-
-    void setWeblogFeedRequestCreator(WeblogFeedRequest.Creator creator) {
-        this.weblogFeedRequestCreator = creator;
-    }
+    private DynamicProperties dp;
 
     @Autowired
     public FeedProcessor(WeblogRepository weblogRepository, LazyExpiringCache weblogFeedCache,
                          @Qualifier("atomRenderer") ThymeleafRenderer thymeleafRenderer,
                          ThemeManager themeManager, FeedModel feedModel, DynamicProperties dp) {
-        this.weblogFeedRequestCreator = new WeblogFeedRequest.Creator();
         this.weblogRepository = weblogRepository;
         this.weblogFeedCache = weblogFeedCache;
         this.thymeleafRenderer = thymeleafRenderer;
@@ -88,7 +82,7 @@ public class FeedProcessor extends AbstractProcessor {
 
     @RequestMapping(method = RequestMethod.GET)
     void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogFeedRequest feedRequest = weblogFeedRequestCreator.create(request, feedModel);
+        WeblogFeedRequest feedRequest = WeblogFeedRequest.create(request, feedModel);
 
         Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(feedRequest.getWeblogHandle());
         if (weblog == null) {

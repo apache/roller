@@ -15,9 +15,11 @@
  */
 package org.tightblog.rendering.processors;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
+import org.tightblog.TestUtils;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.domain.SharedTheme;
 import org.tightblog.rendering.model.FeedModel;
@@ -51,8 +53,7 @@ import static org.mockito.Mockito.when;
 
 public class FeedProcessorTest {
 
-    private FeedProcessor processor;
-    private WeblogFeedRequest feedRequest;
+    private FeedProcessor feedProcessor;
     private Weblog weblog;
     private SharedTheme sharedTheme;
     private DynamicProperties dp;
@@ -62,58 +63,52 @@ public class FeedProcessorTest {
     private LazyExpiringCache mockCache;
     private WeblogRepository mockWR;
     private ThymeleafRenderer mockThymeleafRenderer;
-    private FeedModel mockFeedModel;
 
-    // not done as a @before as not all tests need these mocks
-    private void initializeMocks() {
-        mockFeedModel = mock(FeedModel.class);
-        mockRequest = mock(HttpServletRequest.class);
-        // default is page always needs refreshing
-        when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().minus(7, ChronoUnit.DAYS).toEpochMilli());
-        mockResponse = mock(HttpServletResponse.class);
-        WeblogFeedRequest.Creator wfrCreator = mock(WeblogFeedRequest.Creator.class);
-        feedRequest = new WeblogFeedRequest(mockFeedModel);
-        when(wfrCreator.create(mockRequest, mockFeedModel)).thenReturn(feedRequest);
+    @Before
+    public void initializeMocks() {
         mockWR = mock(WeblogRepository.class);
-        mockCache = mock(LazyExpiringCache.class);
+        weblog = new Weblog();
+        when(mockWR.findByHandleAndVisibleTrue(TestUtils.BLOG_HANDLE)).thenReturn(weblog);
+
         ThemeManager mockThemeManager = mock(ThemeManager.class);
         sharedTheme = new SharedTheme();
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
+
+        mockCache = mock(LazyExpiringCache.class);
         mockThymeleafRenderer = mock(ThymeleafRenderer.class);
         dp = new DynamicProperties();
-        processor = new FeedProcessor(mockWR, mockCache, mockThymeleafRenderer, mockThemeManager, mockFeedModel, dp);
-        processor.setWeblogFeedRequestCreator(wfrCreator);
-        weblog = new Weblog();
-        when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
+
+        feedProcessor = new FeedProcessor(mockWR, mockCache, mockThymeleafRenderer, mockThemeManager,
+                mock(FeedModel.class), dp);
+
         ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
         when(mockApplicationContext.getBean(eq("feedModelSet"), eq(Set.class)))
                 .thenReturn(new HashSet<>());
-        processor.setApplicationContext(mockApplicationContext);
+        feedProcessor.setApplicationContext(mockApplicationContext);
+
+        mockRequest = TestUtils.createMockServletRequestForWeblogFeedRequest();
+        mockResponse = mock(HttpServletResponse.class);
     }
 
     @Test
     public void test404OnMissingWeblog() throws IOException {
-        initializeMocks();
-        feedRequest.setWeblogHandle("myhandle");
-        when(mockWR.findByHandleAndVisibleTrue("myhandle")).thenReturn(null);
-        processor.getFeed(mockRequest, mockResponse);
+        when(mockWR.findByHandleAndVisibleTrue(TestUtils.BLOG_HANDLE)).thenReturn(null);
+        feedProcessor.getFeed(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
         verify(mockCache, never()).incrementIncomingRequests();
     }
 
     @Test
     public void testReceive304NotModifiedContent() throws IOException {
-        initializeMocks();
-
         sharedTheme.setSiteWide(true);
-        Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
-        dp.setLastSitewideChange(twoDaysAgo);
+        Instant now = Instant.now();
+        dp.setLastSitewideChange(now.minus(2, ChronoUnit.DAYS));
 
         // date header more recent than last change, so should return 304
-        when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().toEpochMilli());
+        when(mockRequest.getDateHeader(any())).thenReturn(now.toEpochMilli());
 
         Mockito.clearInvocations(mockRequest);
-        processor.getFeed(mockRequest, mockResponse);
+        feedProcessor.getFeed(mockRequest, mockResponse);
         verify(mockRequest).getDateHeader(any());
         verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
         verify(mockCache).incrementIncomingRequests();
@@ -122,7 +117,6 @@ public class FeedProcessorTest {
 
     @Test
     public void testCachedFeedReturned() throws IOException {
-        initializeMocks();
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         weblog.setLastModified(twoDaysAgo);
 
@@ -133,7 +127,7 @@ public class FeedProcessorTest {
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
-        processor.getFeed(mockRequest, mockResponse);
+        feedProcessor.getFeed(mockRequest, mockResponse);
 
         // verify cached content being returned
         verify(mockResponse).setContentType(Template.ComponentType.ATOMFEED.getContentType());
@@ -147,7 +141,6 @@ public class FeedProcessorTest {
 
     @Test
     public void testRenderedFeedReturned() throws IOException {
-        initializeMocks();
         Instant threeDaysAgo = Instant.now().minus(3, ChronoUnit.DAYS);
         weblog.setLastModified(threeDaysAgo);
 
@@ -159,7 +152,7 @@ public class FeedProcessorTest {
 
         when(mockThymeleafRenderer.render(any(), any())).thenReturn(renderedContent);
 
-        processor.getFeed(mockRequest, mockResponse);
+        feedProcessor.getFeed(mockRequest, mockResponse);
 
         // verify rendered content being returned
         verify(mockResponse).setContentType(Template.ComponentType.ATOMFEED.getContentType());
@@ -173,34 +166,32 @@ public class FeedProcessorTest {
         // test 404 on rendering error
         Mockito.clearInvocations(mockResponse, mockCache, mockSOS);
         when(mockThymeleafRenderer.render(any(), any())).thenThrow(IllegalArgumentException.class);
-        processor.getFeed(mockRequest, mockResponse);
+        feedProcessor.getFeed(mockRequest, mockResponse);
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
         verify(mockResponse, never()).setContentType(any());
     }
 
     @Test
     public void testGenerateKey() {
-        initializeMocks();
-
         // comment & category test
-        WeblogFeedRequest request = new WeblogFeedRequest(mockFeedModel);
-        request.setWeblogHandle("bobsblog");
-        request.setCategoryName("sports");
-        request.setPageNum(14);
+        WeblogFeedRequest request = mock(WeblogFeedRequest.class);
+        when(request.getWeblogHandle()).thenReturn("bobsblog");
+        when(request.getCategoryName()).thenReturn("sports");
+        when(request.getPageNum()).thenReturn(14);
 
-        String test1 = processor.generateKey(request, false);
+        String test1 = feedProcessor.generateKey(request, false);
         assertEquals("bobsblog/cat/sports/page=14", test1);
 
         // entry & tag test, site-wide
-        request.setCategoryName(null);
-        request.setTag("skiing");
-        request.setSiteWide(true);
-        request.setPageNum(0);
+        when(request.getCategoryName()).thenReturn(null);
+        when(request.getTag()).thenReturn("skiing");
+        when(request.isSiteWide()).thenReturn(true);
+        when(request.getPageNum()).thenReturn(0);
 
         Instant testTime = Instant.now();
         dp.setLastSitewideChange(testTime);
 
-        test1 = processor.generateKey(request, true);
+        test1 = feedProcessor.generateKey(request, true);
         assertEquals("bobsblog/tag/skiing/lastUpdate=" + testTime.toEpochMilli(), test1);
     }
 }

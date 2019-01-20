@@ -29,7 +29,6 @@ import org.tightblog.service.URLService;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 
 import java.time.Instant;
 
@@ -60,13 +59,12 @@ public class FeedModel {
         this.numEntriesPerPage = numEntriesPerPage;
     }
 
-    /**
-     * Gets most recent entries filtered by params provided in WeblogFeedRequest.
-     */
-    public WeblogEntryListData getWeblogEntriesPager(Weblog weblog, String categoryName, String tag,
-                                                     int pageNum, boolean siteWide) {
-        return weblogEntryListGenerator.getChronoPager(weblog, null, categoryName,
-                tag, pageNum, numEntriesPerPage, siteWide);
+    public int getNumEntriesPerPage() {
+        return numEntriesPerPage;
+    }
+
+    public WeblogEntryListGenerator getWeblogEntryListGenerator() {
+        return weblogEntryListGenerator;
     }
 
     public Instant getLastSitewideChange() {

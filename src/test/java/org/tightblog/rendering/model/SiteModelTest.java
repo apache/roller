@@ -16,11 +16,13 @@
 package org.tightblog.rendering.model;
 
 import org.junit.Test;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.service.URLService;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogTemplate;
 import org.tightblog.rendering.generators.WeblogListGenerator;
 import org.tightblog.rendering.requests.WeblogPageRequest;
+import org.tightblog.service.WeblogManager;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -33,7 +35,7 @@ public class SiteModelTest {
         WeblogListGenerator mockWeblogListGenerator = mock(WeblogListGenerator.class);
         WeblogTemplate testTemplate = new WeblogTemplate();
         testTemplate.setRelativePath("bar/bar2");
-        WeblogPageRequest wpr = new WeblogPageRequest();
+        WeblogPageRequest wpr = new WeblogPageRequest(mock(PageModel.class));
         wpr.setTemplate(testTemplate);
         wpr.setPageNum(5);
         Weblog weblog = new Weblog();
@@ -42,13 +44,13 @@ public class SiteModelTest {
         when(mockUrlService.getCustomPageURL(weblog, "bar/bar2", null))
                 .thenReturn("https://foo.com");
 
-        SiteModel siteModel = new SiteModel();
-        siteModel.setWeblogListGenerator(mockWeblogListGenerator);
+        SiteModel siteModel = new SiteModel(wpr);
         siteModel.setUrlService(mockUrlService);
-        siteModel.setPageRequest(wpr);
+        siteModel.setWeblogEntryListGenerator(mock(WeblogEntryListGenerator.class));
+        siteModel.setWeblogListGenerator(mockWeblogListGenerator);
+        siteModel.setWeblogManager(mock(WeblogManager.class));
 
         siteModel.getWeblogListData('R', 24);
         verify(mockWeblogListGenerator).getWeblogsByLetter("https://foo.com", 'R', 5, 24);
     }
-
 }

@@ -18,6 +18,7 @@ package org.tightblog.rendering.generators;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.tightblog.rendering.model.PageModel;
 import org.tightblog.service.URLService;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.domain.CalendarData;
@@ -82,7 +83,7 @@ public class CalendarGeneratorTest {
         initializeDateToWeblogEntryMap();
         Weblog weblog = new Weblog();
         weblog.setLocale("en-US");
-        WeblogPageRequest wpr = new WeblogPageRequest();
+        WeblogPageRequest wpr = new WeblogPageRequest(mock(PageModel.class));
         wpr.setWeblogDate("18581014");
         wpr.setWeblog(weblog);
         wpr.setCategory("stamps");
@@ -118,7 +119,7 @@ public class CalendarGeneratorTest {
         initializeDateToWeblogEntryMap();
         Weblog weblog = new Weblog();
         weblog.setLocale("EN_US");
-        WeblogPageRequest wpr = new WeblogPageRequest();
+        WeblogPageRequest wpr = new WeblogPageRequest(mock(PageModel.class));
         wpr.setWeblog(weblog);
         wpr.setCategory("stamps");
 
@@ -151,7 +152,7 @@ public class CalendarGeneratorTest {
     @Test
     public void testComputeMonthUrl() {
         Weblog weblog = new Weblog();
-        WeblogPageRequest wpr = new WeblogPageRequest();
+        WeblogPageRequest wpr = new WeblogPageRequest(mock(PageModel.class));
         wpr.setWeblog(weblog);
         wpr.setCategory("stamps");
 

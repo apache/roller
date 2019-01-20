@@ -24,17 +24,17 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Categories <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li th:class="${(model.categoryName == null && model.permalink == null)}? 'selected'">
+                            <li th:class="${(model.category == null && model.permalink == null)}? 'selected'">
                                 <a th:href="${url.weblogHome}" th:utext="${utils.msg('generic.all')}">xxx</a>
                             </li>
                             <li th:each="cat : ${model.weblog.weblogCategories}"
-                                th:class="${model.categoryName == cat.name || (model.permalink && model.weblogEntry.category.name == cat.name)}? 'selected'">
+                                th:class="${model.category == cat.name || (model.permalink && model.weblogEntry.category.name == cat.name)}? 'selected'">
                                 <a th:href="${url.getEntriesURLForCategory(cat.name)}" th:text="${cat.name}">category name</a>
                             </li>
                         </ul>
                     </li>
                 </th:block>
-                <li th:each="page : ${model.templates}" th:if="${page.role.name == 'CUSTOM_EXTERNAL'}" th:class="${model.weblogPage != null && page.id == model.weblogPage.id} ? 'active'">
+                <li th:each="page : ${model.templates}" th:if="${page.role.name == 'CUSTOM_EXTERNAL'}" th:class="${model.template != null && page.id == model.template.id} ? 'active'">
                     <a th:href='${url.getCustomPageURL(page.relativePath)}' th:text="${page.name}">xxx</a>
                 </li>
                 <th:block th:if="${model.isUserBlogPublisher()}">
@@ -45,7 +45,7 @@
                         <a th:href="${url.getConfigURL()}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
                     </li>
                 </th:block>
-                <th:block th:switch="${model.isUserAuthenticated()}">
+                <th:block th:switch="${model.authenticatedUser != null}">
                     <li th:case="${true}">
                         <a th:href="${url.getLogoutURL()}"><span th:text="${utils.msg('navigationBar.logout')}">xxx</span></a>
                     </li>

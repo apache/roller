@@ -20,12 +20,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tightblog.TestUtils;
 import org.tightblog.WebloggerTest;
 import org.tightblog.service.MediaManager;
 import org.tightblog.domain.MediaFile;
 import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.cache.LazyExpiringCache;
-import org.tightblog.rendering.requests.WeblogRequest;
 import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.ServletOutputStream;
@@ -52,42 +52,40 @@ public class MediaFileProcessorTest {
     private static Logger log = LoggerFactory.getLogger(MediaFileProcessorTest.class);
 
     private MediaFileProcessor processor;
-    private WeblogRequest mediaFileRequest;
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
     private LazyExpiringCache mockCache;
     private WeblogRepository mockWR;
     private MediaManager mockMFM;
+    private MediaFile mediaFile;
 
     private static final String TEST_IMAGE = "/hawk.jpg";
 
     @Before
     public void initializeMocks() throws IOException {
-        mockRequest = mock(HttpServletRequest.class);
-        // default is resource always needs refreshing
-        when(mockRequest.getDateHeader(any())).thenReturn(
-                Instant.now().minus(7, ChronoUnit.DAYS).toEpochMilli());
-        mockResponse = mock(HttpServletResponse.class);
-        ServletOutputStream mockSOS = mock(ServletOutputStream.class);
-        when(mockResponse.getOutputStream()).thenReturn(mockSOS);
-        mediaFileRequest = new WeblogRequest();
-        mediaFileRequest.setExtraPathInfo("abc");
-        mockCache = mock(LazyExpiringCache.class);
+        mockRequest = TestUtils.createMockServletRequestForMediaFileRequest("1234");
+
         mockWR = mock(WeblogRepository.class);
-        mockMFM = mock(MediaManager.class);
-        processor = new MediaFileProcessor(mockWR, mockCache, mockMFM);
-        WeblogRequest.Creator wprCreator = mock(WeblogRequest.Creator.class);
-        when(wprCreator.create(mockRequest)).thenReturn(mediaFileRequest);
-        processor.setWeblogRequestCreator(wprCreator);
         Weblog weblog = new Weblog();
-        weblog.setHandle("myhandle");
-        when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(weblog);
+        weblog.setHandle(TestUtils.BLOG_HANDLE);
+        when(mockWR.findByHandleAndVisibleTrue(TestUtils.BLOG_HANDLE)).thenReturn(weblog);
+
+        mockCache = mock(LazyExpiringCache.class);
+
+        mediaFile = new MediaFile();
+        mockMFM = mock(MediaManager.class);
+        when(mockMFM.getMediaFileWithContent("1234")).thenReturn(mediaFile);
+
+        processor = new MediaFileProcessor(mockWR, mockCache, mockMFM);
+
+        ServletOutputStream mockSOS = mock(ServletOutputStream.class);
+        mockResponse = mock(HttpServletResponse.class);
+        when(mockResponse.getOutputStream()).thenReturn(mockSOS);
     }
 
     @Test
     public void test404OnMissingWeblog() throws IOException {
-        mediaFileRequest.setWeblogHandle("myhandle");
-        when(mockWR.findByHandleAndVisibleTrue("myhandle")).thenReturn(null);
+        when(mockWR.findByHandleAndVisibleTrue(TestUtils.BLOG_HANDLE)).thenReturn(null);
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
         verify(mockCache, never()).incrementIncomingRequests();
@@ -95,13 +93,7 @@ public class MediaFileProcessorTest {
 
     @Test
     public void test404OnNoPathInfo() throws IOException {
-        mediaFileRequest.setExtraPathInfo(null);
-        processor.getMediaFile(mockRequest, mockResponse);
-        verify(mockMFM, never()).getMediaFileWithContent(anyString());
-        verify(mockResponse).sendError(SC_NOT_FOUND);
-
-        Mockito.clearInvocations(mockResponse, mockMFM);
-        mediaFileRequest.setExtraPathInfo("/");
+        mockRequest = TestUtils.createMockServletRequestForMediaFileRequest(null);
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockMFM, never()).getMediaFileWithContent(anyString());
         verify(mockResponse).sendError(SC_NOT_FOUND);
@@ -110,20 +102,21 @@ public class MediaFileProcessorTest {
 
     @Test
     public void test404OnNoMediaFile() throws IOException {
+        when(mockMFM.getMediaFileWithContent("1234")).thenReturn(null);
         processor.getMediaFile(mockRequest, mockResponse);
-        verify(mockMFM).getMediaFileWithContent("abc");
+        verify(mockMFM).getMediaFileWithContent("1234");
         verify(mockResponse).sendError(SC_NOT_FOUND);
         verify(mockCache, never()).incrementIncomingRequests();
     }
 
     @Test
     public void test304OnNotModified() throws IOException {
-        MediaFile fourDayOldMF = new MediaFile();
         Instant now = Instant.now();
-        fourDayOldMF.setLastUpdated(now.minus(4, ChronoUnit.DAYS));
+        // make four days old
+        mediaFile.setLastUpdated(now.minus(4, ChronoUnit.DAYS));
+        // request has cached version two days old, i.e., still usable without downloading
         when(mockRequest.getDateHeader(any())).thenReturn(now.minus(2,
                 ChronoUnit.DAYS).toEpochMilli());
-        when(mockMFM.getMediaFileWithContent(anyString())).thenReturn(fourDayOldMF);
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockRequest).getDateHeader("If-Modified-Since");
         verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
@@ -133,8 +126,6 @@ public class MediaFileProcessorTest {
 
     @Test
     public void testReturn404onFileNotFound() throws IOException {
-        MediaFile mediaFile = new MediaFile();
-        when(mockMFM.getMediaFileWithContent(anyString())).thenReturn(mediaFile);
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
         verify(mockCache).incrementIncomingRequests();
@@ -151,10 +142,8 @@ public class MediaFileProcessorTest {
     @Test
     public void testReturnCorrectImage() throws IOException, URISyntaxException {
         Instant now = Instant.now();
-        MediaFile mediaFile = new MediaFile();
-        mediaFile.setLastUpdated(now);
-        when(mockMFM.getMediaFileWithContent(anyString())).thenReturn(mediaFile);
         File regularFile = new File(getClass().getResource(TEST_IMAGE).toURI());
+        mediaFile.setLastUpdated(now);
         mediaFile.setContent(regularFile);
         mediaFile.setThumbnail(regularFile);
         mediaFile.setContentType("image/jpeg");
@@ -176,10 +165,6 @@ public class MediaFileProcessorTest {
 
     @Test
     public void testReturn404OnProcessingException() throws IOException, URISyntaxException {
-        Instant now = Instant.now();
-        MediaFile mediaFile = new MediaFile();
-        mediaFile.setLastUpdated(now);
-        when(mockMFM.getMediaFileWithContent(anyString())).thenReturn(mediaFile);
         File regularFile = new File(getClass().getResource(TEST_IMAGE).toURI());
         mediaFile.setContent(regularFile);
         WebloggerTest.logExpectedException(log, "IllegalArgumentException");
@@ -197,5 +182,4 @@ public class MediaFileProcessorTest {
         verify(mockResponse, never()).sendError(SC_NOT_FOUND);
         verify(mockResponse, never()).reset();
     }
-
 }

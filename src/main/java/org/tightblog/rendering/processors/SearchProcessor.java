@@ -21,6 +21,10 @@
 package org.tightblog.rendering.processors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.tightblog.domain.WeblogTheme;
+import org.tightblog.rendering.model.SearchResultsModel;
+import org.tightblog.rendering.model.SiteModel;
+import org.tightblog.rendering.requests.WeblogSearchRequest;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.domain.Template;
 import org.tightblog.domain.Weblog;
@@ -40,6 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Handles search queries for weblogs.
@@ -55,24 +60,24 @@ public class SearchProcessor extends AbstractProcessor {
     private WeblogRepository weblogRepository;
     private ThymeleafRenderer thymeleafRenderer;
     private ThemeManager themeManager;
-    private WeblogPageRequest.Creator weblogPageRequestCreator;
-
-    void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
-        this.weblogPageRequestCreator = creator;
-    }
+    private SearchResultsModel searchResultsModel;
+    private Function<WeblogPageRequest, SiteModel> siteModelFactory;
 
     @Autowired
     SearchProcessor(WeblogRepository weblogRepository,
-                           @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer, ThemeManager themeManager) {
-        this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
+                           @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer, ThemeManager themeManager,
+                    SearchResultsModel searchResultsModel,
+                    Function<WeblogPageRequest, SiteModel> siteModelFactory) {
         this.weblogRepository = weblogRepository;
         this.thymeleafRenderer = thymeleafRenderer;
         this.themeManager = themeManager;
+        this.searchResultsModel = searchResultsModel;
+        this.siteModelFactory = siteModelFactory;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     void getSearchResults(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogPageRequest searchRequest = weblogPageRequestCreator.create(request);
+        WeblogPageRequest searchRequest = WeblogSearchRequest.create(request, searchResultsModel);
 
         Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(searchRequest.getWeblogHandle());
         if (weblog == null) {
@@ -83,10 +88,12 @@ public class SearchProcessor extends AbstractProcessor {
         }
 
         // determine template to use for rendering, look for search results override first
-        searchRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.SEARCH_RESULTS));
+        WeblogTheme weblogTheme = themeManager.getWeblogTheme(weblog);
+
+        searchRequest.setTemplate(weblogTheme.getTemplateByAction(Template.ComponentType.SEARCH_RESULTS));
 
         if (searchRequest.getTemplate() == null) {
-            searchRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(Template.ComponentType.WEBLOG));
+            searchRequest.setTemplate(weblogTheme.getTemplateByAction(Template.ComponentType.WEBLOG));
         }
 
         if (searchRequest.getTemplate() == null) {
@@ -98,12 +105,13 @@ public class SearchProcessor extends AbstractProcessor {
         Map<String, Object> initData = new HashMap<>();
         initData.put("parsedRequest", searchRequest);
 
-        Map<String, Object> model = getModelMap("searchModelSet", initData);
+        Map<String, Object> model = getModelMap("pageModelSet", initData);
 
         // Load special models for site-wide blog
         if (themeManager.getSharedTheme(weblog.getTheme()).isSiteWide()) {
-            model.putAll(getModelMap("siteModelSet", initData));
+            model.put("site", siteModelFactory.apply(searchRequest));
         }
+        model.put("model", searchRequest);
 
         // render content
         try {

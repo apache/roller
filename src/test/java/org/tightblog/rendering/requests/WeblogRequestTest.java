@@ -15,48 +15,38 @@
  */
 package org.tightblog.rendering.requests;
 
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mobile.device.DeviceType;
-
+import org.tightblog.TestUtils;
 import javax.servlet.http.HttpServletRequest;
 
-import java.security.Principal;
-
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Ignore
 public class WeblogRequestTest {
-
-    private HttpServletRequest mockRequest;
-
-    @Before
-    public void initializeMocks() {
-        mockRequest = mock(HttpServletRequest.class);
-    }
 
     @Test
     public void testParseRequest() {
+        HttpServletRequest mockRequest = TestUtils.createMockServletRequestForWeblogFeedRequest();
         when(mockRequest.getParameter("page")).thenReturn("24");
         when(mockRequest.getQueryString()).thenReturn("a=2&b=3");
-        Principal mockPrincipal = mock(Principal.class);
-        when(mockRequest.getUserPrincipal()).thenReturn(mockPrincipal);
-        when(mockPrincipal.getName()).thenReturn("bob");
-        when(mockRequest.getPathInfo()).thenReturn("/myblog/category/categoryname/tag/tagname");
+        when(mockRequest.getServletPath()).thenReturn(
+                "/tb-ui/rendering/page/myblog/category/categoryname/tag/tagname");
 
-        WeblogRequest.Creator creator = new WeblogRequest.Creator();
-        WeblogRequest wr = creator.create(mockRequest);
+        WeblogRequest wr = WeblogRequest.create(mockRequest);
         assertEquals("24", wr.getRequestParameter("page"));
         assertEquals("a=2&b=3", wr.getQueryString());
         assertEquals(DeviceType.NORMAL, wr.getDeviceType());
         assertEquals("bob", wr.getAuthenticatedUser());
         assertTrue(wr.isLoggedIn());
-        assertEquals("myblog", wr.getWeblogHandle());
+        assertEquals(TestUtils.BLOG_HANDLE, wr.getWeblogHandle());
         assertEquals("category/categoryname/tag/tagname", wr.getExtraPathInfo());
         assertEquals(24, wr.getPageNum());
-    }
 
+        when(mockRequest.getUserPrincipal()).thenReturn(null);
+        when(mockRequest.getParameter("page")).thenReturn("invalid");
+        wr = WeblogRequest.create(mockRequest);
+        assertFalse(wr.isLoggedIn());
+        assertEquals(0, wr.getPageNum());
+    }
 }

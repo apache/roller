@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
 import org.tightblog.rendering.model.FeedModel;
 import org.tightblog.service.URLService;
@@ -38,22 +39,24 @@ public class WeblogFeedRequestTest {
     private FeedModel mockFeedModel;
     private Weblog weblog;
     private URLService mockURLService;
-    private WeblogFeedRequest.Creator creator;
+    private WeblogEntryListGenerator mockWeblogEntryListGenerator;
 
     @Before
     public void initialize() {
+        mockWeblogEntryListGenerator = mock(WeblogEntryListGenerator.class);
         mockURLService = mock(URLService.class);
         mockFeedModel = mock(FeedModel.class);
         when(mockFeedModel.getURLService()).thenReturn(mockURLService);
+        when(mockFeedModel.getWeblogEntryListGenerator()).thenReturn(mockWeblogEntryListGenerator);
+        when(mockFeedModel.getNumEntriesPerPage()).thenReturn(25);
         mockRequest = mock(HttpServletRequest.class);
         weblog = new Weblog();
-        creator = new WeblogFeedRequest.Creator();
         when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/feed/myblog/feed");
     }
 
     @Test
     public void testParseFullFeed() {
-        WeblogFeedRequest feedRequest = creator.create(mockRequest, mockFeedModel);
+        WeblogFeedRequest feedRequest = WeblogFeedRequest.create(mockRequest, mockFeedModel);
         feedRequest.setWeblog(weblog);
         assertEquals("myblog", feedRequest.getWeblogHandle());
         assertNull(feedRequest.getCategoryName());
@@ -68,7 +71,7 @@ public class WeblogFeedRequestTest {
     public void testParseCategoryFeed() {
         when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/feed/myblog/feed/category/mycategory");
         when(mockRequest.getParameter("page")).thenReturn("6");
-        WeblogFeedRequest feedRequest = creator.create(mockRequest, mockFeedModel);
+        WeblogFeedRequest feedRequest = WeblogFeedRequest.create(mockRequest, mockFeedModel);
         feedRequest.setWeblog(weblog);
         assertEquals("myblog", feedRequest.getWeblogHandle());
         assertEquals("mycategory", feedRequest.getCategoryName());
@@ -80,7 +83,8 @@ public class WeblogFeedRequestTest {
         assertEquals("http://atomCategoryFeedURL", test);
 
         WeblogEntryListData data = new WeblogEntryListData();
-        when(mockFeedModel.getWeblogEntriesPager(weblog, "mycategory", null, 6, false))
+        when(mockWeblogEntryListGenerator.getChronoPager(weblog, null, "mycategory",
+                null, 6, 25, false))
                 .thenReturn(data);
         assertEquals(data, feedRequest.getWeblogEntriesPager());
     }
@@ -88,7 +92,7 @@ public class WeblogFeedRequestTest {
     @Test
     public void testParseTagFeed() {
         when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/feed/myblog/feed/tag/mytag");
-        WeblogFeedRequest feedRequest = creator.create(mockRequest, mockFeedModel);
+        WeblogFeedRequest feedRequest = WeblogFeedRequest.create(mockRequest, mockFeedModel);
         feedRequest.setWeblog(weblog);
         assertEquals("myblog", feedRequest.getWeblogHandle());
         assertEquals("mytag", feedRequest.getTag());
@@ -99,7 +103,8 @@ public class WeblogFeedRequestTest {
         assertEquals("http://atomTagFeedURL", test);
 
         WeblogEntryListData data = new WeblogEntryListData();
-        when(mockFeedModel.getWeblogEntriesPager(weblog, null, "mytag", 0, false))
+        when(mockWeblogEntryListGenerator.getChronoPager(weblog, null, null,
+                "mytag", 0, 25, false))
                 .thenReturn(data);
         assertEquals(data, feedRequest.getWeblogEntriesPager());
     }
@@ -107,19 +112,19 @@ public class WeblogFeedRequestTest {
     @Test
     public void testInvalidPathArguments() {
         when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/feed/myblog/invalid/mytag");
-        WeblogFeedRequest feedRequest = creator.create(mockRequest, mockFeedModel);
+        WeblogFeedRequest feedRequest = WeblogFeedRequest.create(mockRequest, mockFeedModel);
         assertNull(feedRequest.getCategoryName());
         assertNull(feedRequest.getTag());
 
         when(mockRequest.getServletPath()).thenReturn("/tb-ui/rendering/feed/myblog/tag/mytag/invalid");
-        feedRequest = creator.create(mockRequest, mockFeedModel);
+        feedRequest = WeblogFeedRequest.create(mockRequest, mockFeedModel);
         assertNull(feedRequest.getCategoryName());
         assertNull(feedRequest.getTag());
     }
 
     @Test
     public void testSiteWideCheck() {
-        WeblogFeedRequest feedRequest = creator.create(mockRequest, mockFeedModel);
+        WeblogFeedRequest feedRequest = WeblogFeedRequest.create(mockRequest, mockFeedModel);
         feedRequest.setWeblog(weblog);
 
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
@@ -140,7 +145,7 @@ public class WeblogFeedRequestTest {
 
     @Test
     public void testFeedModelPassThroughMethods() {
-        WeblogFeedRequest feedRequest = creator.create(mockRequest, mockFeedModel);
+        WeblogFeedRequest feedRequest = WeblogFeedRequest.create(mockRequest, mockFeedModel);
         feedRequest.setWeblog(weblog);
 
         when(mockURLService.getWeblogURL(weblog)).thenReturn("http://weblogURL");

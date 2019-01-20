@@ -22,7 +22,7 @@
             <th:block th:if="${entry.getTags() != null && entry.getTags().size() > 0}">
                 <span>| Tags:</span>
                 <span th:each="tag : ${entry.getTags()}">
-                    &nbsp;<a th:href="${url.getEntriesURLForTag(tag.name, model.categoryName)}" th:utext="${tag.name}">xxx</a>
+                    &nbsp;<a th:href="${url.getEntriesURLForTag(tag.name, model.category)}" th:utext="${tag.name}">xxx</a>
                 </span>
             </th:block>
             <span th:if="${model.isUserBlogPublisher()}">

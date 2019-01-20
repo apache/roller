@@ -5,7 +5,7 @@
     <div th:fragment="AutoDiscoveryLinks" th:remove="tag">
         <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  th:href="${url.atomFeedURL}" />
         <link th:if="${model.tag}" rel="alternate" type="application/atom+xml" th:title="${'Entries tagged ' + model.tag + ' (Atom)'}"  th:href="${url.getAtomFeedURLForTag(model.tag)}"/>
-        <link th:if="${model.categoryName}" rel="alternate" type="application/atom+xml" th:title="${'Entries for category ' + model.categoryName + ' (Atom)'}" th:href="${url.getAtomFeedURLForCategory(model.categoryName)}"/>
+        <link th:if="${model.category}" rel="alternate" type="application/atom+xml" th:title="${'Entries for category ' + model.categoryName + ' (Atom)'}" th:href="${url.getAtomFeedURLForCategory(model.categoryName)}"/>
     </div>
     <div th:fragment="MetaDescription" th:remove="tag">
         <th:block th:switch="${model.weblogEntry != null && !#strings.isEmpty(model.weblogEntry.searchDescription)}">
@@ -50,11 +50,11 @@
     </div>
     <div th:fragment="WeblogCategoryBar" th:remove="tag">
         <ul class="rCategory">
-            <li th:class="${(model.categoryName == null && model.permalink == null)}? 'selected'">
+            <li th:class="${(model.category == null && model.permalink == null)}? 'selected'">
                 <a th:href="${url.weblogHome}" th:text="${utils.msg('generic.all')}">"all" category</a>
             </li>
             <li th:each="cat : ${model.weblog.weblogCategories}"
-                th:class="${model.categoryName == cat.name || (model.permalink && model.weblogEntry.category.name == cat.name)}? 'selected'">
+                th:class="${model.category == cat.name || (model.permalink && model.weblogEntry.category.name == cat.name)}? 'selected'">
                 <a th:href="${url.getEntriesURLForCategory(cat.name)}" th:text="${cat.name}">category name</a>
             </li>
         </ul>
@@ -83,7 +83,7 @@
         <form id="searchForm" method="get" th:action="${url.getSearchURL()}" style="margin: 0; padding: 0">
             <p>
                 <input type="text" id="q" name="q" size="10" class="text small" maxlength="255"
-                       th:value="${model.searchResults ? model.searchTerm : ''}" pattern=".*\S+.*" required/>
+                       th:value="${model.searchResults ? model.searchPhrase : ''}" pattern=".*\S+.*" required/>
                 <input type="submit" class="button" th:value="${utils.msg('macro.weblog.searchbutton')}" id="searchbutton" />
             </p>
         </form>
@@ -105,7 +105,7 @@
             </li>
             <th:block th:if="${addExternalPages}">
                 <li th:each="page : ${model.templates}" th:if="${page.role.name == 'CUSTOM_EXTERNAL'}" class="sideboxListItem">
-                    <a th:remove="${model.weblogPage != null && page.id == model.weblogPage.id ? 'tag' : 'none'}" th:href="${url.getCustomPageURL(page.relativePath)}">
+                    <a th:remove="${model.template != null && page.id == model.template.id ? 'tag' : 'none'}" th:href="${url.getCustomPageURL(page.relativePath)}">
                         <span th:text="${page.name}">xxx</span>
                     </a>
                 </li>
@@ -118,7 +118,7 @@
                     <a th:href="${url.getConfigURL()}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
                 </li>
             </th:block>
-            <th:block th:switch="${model.isUserAuthenticated()}">
+            <th:block th:switch="${model.authenticatedUser != null}">
                 <li th:case="${true}" class="sideboxListItem">
                     <a th:href="${url.getLogoutURL()}"><span th:text="${utils.msg('navigationBar.logout')}">xxx</span></a>
                 </li>
@@ -212,14 +212,14 @@
         </div>
     </div>
     <div th:fragment="WeblogSearchAgainForm" id="searchAgain">
-        <span th:utext="${utils.msg('macro.weblog.searchhits', model.searchTerm, T(Math).max(model.resultCount, 0))}">xxx</span>
+        <span th:utext="${utils.msg('macro.weblog.searchhits', model.searchPhrase, T(Math).max(model.resultCount, 0))}">xxx</span>
         <form method="get" th:action="${url.getSearchURL()}" style="margin: 5px">
-            <input type="text" id="q" name="q" class="text medium" maxlength="255" th:value="${model.searchTerm}"
+            <input type="text" id="q" name="q" class="text medium" maxlength="255" th:value="${model.searchPhrase}"
                    style="padding-left: 1px" required><br>
             <select th:unless="${site != null || model.weblog.weblogCategories.size() <= 1}" name="cat" class="select">
                 <option value="" th:utext="${utils.msg('macro.searchresults.incategory')}">xxx</option>
                 <option th:each="cat : ${model.weblog.weblogCategories}"
-                        th:selected="${cat.name == model.categoryName}" th:utext="${cat.name}">xxx</option>
+                        th:selected="${cat.name == model.category}" th:utext="${cat.name}">xxx</option>
             </select>
             <input type="submit" th:value="${utils.msg('macro.weblog.searchbutton')}" class="button">
         </form>

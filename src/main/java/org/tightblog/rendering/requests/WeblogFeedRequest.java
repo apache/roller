@@ -33,23 +33,21 @@ import java.time.temporal.Temporal;
 /**
  * Represents a request for a TightBlog weblog feed.
  */
-public class WeblogFeedRequest extends WeblogRequest {
+public final class WeblogFeedRequest extends WeblogRequest {
 
     private String categoryName;
     private String tag;
     private FeedModel feedModel;
 
-    public WeblogFeedRequest(FeedModel feedModel) {
+    private WeblogFeedRequest(FeedModel feedModel) {
         this.feedModel = feedModel;
     }
 
-    public static class Creator {
-        public WeblogFeedRequest create(HttpServletRequest servletRequest, FeedModel feedModel) {
-            WeblogFeedRequest feedRequest = new WeblogFeedRequest(feedModel);
-            WeblogRequest.parseRequest(feedRequest, servletRequest);
-            feedRequest.parseFeedRequestInfo();
-            return feedRequest;
-        }
+    public static WeblogFeedRequest create(HttpServletRequest servletRequest, FeedModel feedModel) {
+        WeblogFeedRequest feedRequest = new WeblogFeedRequest(feedModel);
+        WeblogRequest.parseRequest(feedRequest, servletRequest);
+        feedRequest.parseFeedRequestInfo();
+        return feedRequest;
     }
 
     /**
@@ -70,18 +68,12 @@ public class WeblogFeedRequest extends WeblogRequest {
         }
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
     // properties/methods for generating the Atom feed
 
     public WeblogEntryListGenerator.WeblogEntryListData getWeblogEntriesPager() {
-        return feedModel.getWeblogEntriesPager(weblog, categoryName, tag, pageNum, isSiteWide());
+        return feedModel.getWeblogEntryListGenerator().getChronoPager(weblog,
+                null, categoryName, tag, pageNum, feedModel.getNumEntriesPerPage(),
+                isSiteWide());
     }
 
     public String getCategoryName() {

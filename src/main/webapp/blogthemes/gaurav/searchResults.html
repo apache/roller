@@ -4,7 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="robots" content="noindex">
 	<span th:replace="${model.getTemplateIdByName('common_html_head')}"></span>
-	<title th:utext="${model.weblog.name + ': Search Results for ' + model.searchTerm}">xxx</title>
+	<title th:utext="${model.weblog.name + ': Search Results for ' + model.searchPhrase}">xxx</title>
 	<th:block th:if="${model.resultCount > 0}">
 		<style>span.searchword { background-color:yellow; }</style>
 		<script>
@@ -13,7 +13,7 @@
 		<script type="application/x-javascript" th:src="${url.getThemeResourceURL('gaurav', 'js/searchhi.js')}"></script>
 		<script>
 			function loadSearchHighlight() {
-				searchhi.highlightWord(document.getElementById("search_results"), '[(${model.searchTerm})]');
+				searchhi.highlightWord(document.getElementById("search_results"), '[(${model.searchPhrase})]');
 			}
 		</script>
    	</th:block>
@@ -39,8 +39,8 @@
 			<!-- BODY MAIN-->
 			<div id="main_content" class="col-lg-8">
 				<div class="alert alert-info">
-					<p th:utext="${'Search Results for ' + model.searchTerm}">xxx</p>
-					<span th:utext="${utils.msg('macro.weblog.searchhits', model.searchTerm, T(Math).max(model.resultCount, 0)}">xxx</span>
+					<p th:utext="${'Search Results for ' + model.searchPhrase}">xxx</p>
+					<span th:utext="${utils.msg('macro.weblog.searchhits', model.searchPhrase, T(Math).max(model.resultCount, 0)}">xxx</span>
 				</div>
 				<th:block th:switch="${model.resultCount > 0}">
 					<div th:case="${true}" id="search_results">
@@ -65,13 +65,13 @@
 					<p>You can refine your search and/or search within one weblog category</p>
 					<form class="form-inline" role="form" method="get" th:action="${url.getSearchURL()}">
 						<div class="form-group" role="form">
-							<input type="text" id="q" class="form-control" name="q" size="8" maxlength="255" required th:value="${model.searchTerm}"/>
+							<input type="text" id="q" class="form-control" name="q" size="8" maxlength="255" required th:value="${model.searchPhrase}"/>
 						</div>
 						<div class="form-group" role="form" th:with="cats = ${model.weblog.getWeblogCategories()}">
 							<select th:if="${cats.size() > 1}" class="form-control" name="cat">
 								<option value="" th:utext="${utils.msg('macro.searchresults.incategory')}">xxx</option>
 								<option th:each="cat : ${cats}"
-										th:selected="${cat.name == model.categoryName}" th:utext="${cat.name}"></option>
+										th:selected="${cat.name == model.category}" th:utext="${cat.name}"></option>
 							</select>
 						</div>
 						<div class="form-group" role="form">

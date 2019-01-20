@@ -20,7 +20,7 @@
                     <td class="bannerRight">
                         <a th:href="${url.getSiteHome()}" th:text="${utils.msg('navigationBar.homePage')}">xxx</a> |
                         <a th:href="${url.getSiteHome() + '/tb-ui/app/home'}">Main Menu</a> |
-                        <th:block th:switch="${model.isUserAuthenticated()}">
+                        <th:block th:switch="${model.authenticatedUser != null}">
                             <th:block th:case="${false}">
                                 <a th:href="${url.getLoginURL()}">Login</a> |
                                 <a th:href="${url.getRegisterURL()}">Register</a>

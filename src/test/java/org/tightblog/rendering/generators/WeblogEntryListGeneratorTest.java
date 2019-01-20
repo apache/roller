@@ -23,6 +23,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.tightblog.WebloggerTest;
+import org.tightblog.rendering.requests.WeblogSearchRequest;
 import org.tightblog.service.URLService;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.domain.Weblog;
@@ -30,7 +31,6 @@ import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntry.PubStatus;
 import org.tightblog.domain.WeblogEntrySearchCriteria;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
-import org.tightblog.rendering.requests.WeblogPageRequest;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -78,19 +78,20 @@ public class WeblogEntryListGeneratorTest {
 
     @Test
     public void getSearchPager() {
-        WeblogPageRequest wpr = new WeblogPageRequest();
-        wpr.setWeblog(weblog);
-        wpr.setQuery("my query");
-        wpr.setCategory("coins");
-        wpr.setPageNum(10);
+        WeblogSearchRequest wsr = new WeblogSearchRequest(null);
+        wsr.setWeblog(weblog);
+        wsr.setSearchPhrase("my query");
+        wsr.setCategory("coins");
+        wsr.setPageNum(10);
         Map<LocalDate, List<WeblogEntry>> entryMap = createSampleEntriesMap();
 
-        when(mockUrlService.getWeblogSearchURL(wpr.getWeblog(), wpr.getQuery(), wpr.getCategory(),
+        when(mockUrlService.getWeblogSearchURL(wsr.getWeblog(), wsr.getSearchPhrase(), wsr.getCategory(),
                 9)).thenReturn("nextUrl");
-        when(mockUrlService.getWeblogSearchURL(wpr.getWeblog(), wpr.getQuery(), wpr.getCategory(),
+        when(mockUrlService.getWeblogSearchURL(wsr.getWeblog(), wsr.getSearchPhrase(), wsr.getCategory(),
                 11)).thenReturn("prevUrl");
 
-        WeblogEntryListData data = generator.getSearchPager(wpr, entryMap, true);
+        WeblogEntryListData data = generator.getSearchPager(wsr.getWeblog(), wsr.getSearchPhrase(), wsr.getCategory(),
+                wsr.getPageNum(), entryMap, true);
         Map<LocalDate, List<WeblogEntry>> results = data.getEntries();
         assertEquals(2, results.size());
         assertEquals(2, results.get(nowLD).size());
@@ -102,8 +103,9 @@ public class WeblogEntryListGeneratorTest {
         assertEquals("nextUrl", data.getNextLink());
         assertNotNull(data.getNextLabel());
 
-        wpr.setPageNum(0);
-        data = generator.getSearchPager(wpr, entryMap, false);
+        wsr.setPageNum(0);
+        data = generator.getSearchPager(wsr.getWeblog(), wsr.getSearchPhrase(), wsr.getCategory(),
+                wsr.getPageNum(), entryMap, false);
         results = data.getEntries();
         assertEquals(2, results.size());
         assertNull(data.getPrevLink());

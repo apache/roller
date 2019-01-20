@@ -20,6 +20,7 @@
  */
 package org.tightblog.rendering.processors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tightblog.service.MediaManager;
 import org.tightblog.domain.MediaFile;
 import org.tightblog.domain.Weblog;
@@ -59,24 +60,18 @@ public class MediaFileProcessor extends AbstractProcessor {
     private WeblogRepository weblogRepository;
     private LazyExpiringCache weblogMediaCache;
     private MediaManager mediaManager;
-    private WeblogRequest.Creator weblogRequestCreator;
 
     @Autowired
-    public MediaFileProcessor(WeblogRepository weblogRepository, LazyExpiringCache weblogMediaCache,
+    MediaFileProcessor(WeblogRepository weblogRepository, LazyExpiringCache weblogMediaCache,
                               MediaManager mediaManager) {
-        this.weblogRequestCreator = new WeblogRequest.Creator();
         this.weblogRepository = weblogRepository;
         this.weblogMediaCache = weblogMediaCache;
         this.mediaManager = mediaManager;
     }
 
-    void setWeblogRequestCreator(WeblogRequest.Creator creator) {
-        this.weblogRequestCreator = creator;
-    }
-
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
     void getMediaFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogRequest incomingRequest = weblogRequestCreator.create(request);
+        WeblogRequest incomingRequest = WeblogRequest.create(request);
 
         Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {
@@ -87,16 +82,10 @@ public class MediaFileProcessor extends AbstractProcessor {
         }
 
         MediaFile mediaFile = null;
-        // we want only the path info left over from after the weblog parsing
+        // path info here is the resourceId
         String pathInfo = incomingRequest.getExtraPathInfo();
-        if (pathInfo != null) {
-            if (pathInfo.startsWith("/")) {
-                pathInfo = pathInfo.substring(1);
-            }
-            if (pathInfo.length() > 0) {
-                // at this stage, pathInfo is the resourceId
-                mediaFile = mediaManager.getMediaFileWithContent(pathInfo);
-            }
+        if (StringUtils.isNotBlank(pathInfo)) {
+            mediaFile = mediaManager.getMediaFileWithContent(pathInfo);
         }
 
         if (mediaFile == null) {

@@ -3,7 +3,7 @@
     <head>
     <span th:replace="${model.getTemplateIdByName('common_html_head')}"></span>
     <title th:utext="${model.weblog.name + ': ' + model.weblog.tagline}">xxx</title>
-    <meta th:if="${model.addNoIndexDirective}" name="robots" content="noindex">
+    <meta th:if="${model.noIndex}" name="robots" content="noindex">
     <span th:utext="${model.analyticsTrackingCode}" th:remove="tag"></span>
     <span th:replace="fragments :: MetaDescription"></span>
 </head>

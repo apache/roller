@@ -17,18 +17,22 @@ package org.tightblog.rendering.processors;
 
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
+import org.tightblog.config.DynamicProperties;
+import org.tightblog.config.WebConfig;
 import org.tightblog.rendering.model.Model;
 import org.tightblog.rendering.model.PageModel;
+import org.tightblog.rendering.model.SiteModel;
+import org.tightblog.rendering.model.URLModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.repository.WeblogRepository;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -41,29 +45,32 @@ public class AbstractProcessorTest {
     @Test
     public void testGetModelMap() {
         ApplicationContext mockContext = mock(ApplicationContext.class);
-        PageModel mockPageModel = mock(PageModel.class);
-        when(mockPageModel.getModelName()).thenReturn("model");
+        URLModel mockURLModel = mock(URLModel.class);
+        when(mockURLModel.getModelName()).thenReturn("url");
         Model mockModel = mock(Model.class);
         when(mockModel.getModelName()).thenReturn("mockModel");
         Set<Model> modelSet = new HashSet<>();
-        modelSet.add(mockPageModel);
+        modelSet.add(mockURLModel);
         modelSet.add(mockModel);
         when(mockContext.getBean(eq("testBean"), eq(Set.class))).thenReturn(modelSet);
-        WeblogPageRequest req = new WeblogPageRequest();
+        WeblogPageRequest req = new WeblogPageRequest.Creator().create(mock(HttpServletRequest.class), mock(PageModel.class));
         Map<String, Object> initData = new HashMap<>();
         initData.put("parsedRequest", req);
         WeblogRepository mockWR = mock(WeblogRepository.class);
+        DynamicProperties dp = new DynamicProperties();
+        Function<WeblogPageRequest, SiteModel> siteModelFactory = new WebConfig().siteModelFactory();
         PageProcessor processor = new PageProcessor(mockWR, null, null,
-                null, null, null, null);
+                null, null, null, null,
+                siteModelFactory, dp);
         processor.setApplicationContext(mockContext);
         Map<String, Object> modelMap = processor.getModelMap("testBean", initData);
-        assertEquals(mockPageModel, modelMap.get("model"));
+        assertEquals(mockURLModel, modelMap.get("url"));
         assertEquals(mockModel, modelMap.get("mockModel"));
         verify(mockModel).init(initData);
     }
 
     @Test
-    public void testRespondIfNotModified() throws IOException {
+    public void testRespondIfNotModified() {
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
 
         // test return date if valid

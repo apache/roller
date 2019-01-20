@@ -21,6 +21,8 @@
 package org.tightblog.rendering.processors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.tightblog.rendering.model.PageModel;
+import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.domain.SharedTheme;
@@ -44,9 +46,9 @@ import org.tightblog.repository.WeblogRepository;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Responsible for rendering weblog page previews, for either of two purposes:
@@ -75,26 +77,25 @@ public class PreviewProcessor extends AbstractProcessor {
     protected ThemeManager themeManager;
     protected UserManager userManager;
     private WeblogEntryManager weblogEntryManager;
-    private WeblogPageRequest.Creator weblogPageRequestCreator;
+    private PageModel pageModel;
+    private Function<WeblogPageRequest, SiteModel> siteModelFactory;
 
     @Autowired
     PreviewProcessor(WeblogRepository weblogRepository, @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
-                            ThemeManager themeManager, UserManager userManager, WeblogEntryManager weblogEntryManager) {
-        this.weblogPageRequestCreator = new WeblogPageRequest.Creator();
+                            ThemeManager themeManager, UserManager userManager, PageModel pageModel,
+                            WeblogEntryManager weblogEntryManager, Function<WeblogPageRequest, SiteModel> siteModelFactory) {
         this.weblogRepository = weblogRepository;
         this.thymeleafRenderer = thymeleafRenderer;
         this.themeManager = themeManager;
         this.userManager = userManager;
+        this.pageModel = pageModel;
         this.weblogEntryManager = weblogEntryManager;
-    }
-
-    void setWeblogPageRequestCreator(WeblogPageRequest.Creator creator) {
-        this.weblogPageRequestCreator = creator;
+        this.siteModelFactory = siteModelFactory;
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    void getPreviewPage(HttpServletRequest request, HttpServletResponse response, Principal p) throws IOException {
-        WeblogPageRequest incomingRequest = weblogPageRequestCreator.create(request);
+    void getPreviewPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        WeblogPageRequest incomingRequest = WeblogPageRequest.Creator.createPreview(request, pageModel);
 
         Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {
@@ -105,9 +106,9 @@ public class PreviewProcessor extends AbstractProcessor {
         }
 
         // User must have access rights on blog being previewed
-        if (!userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.EDIT_DRAFT)) {
-            log.warn("User {} attempting to preview blog {} without access rights, blocking", p.getName(),
-                    weblog.getHandle());
+        if (!userManager.checkWeblogRole(incomingRequest.getAuthenticatedUser(), weblog, WeblogRole.EDIT_DRAFT)) {
+            log.warn("User {} attempting to preview blog {} without access rights, blocking",
+                    incomingRequest.getAuthenticatedUser(), weblog.getHandle());
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
@@ -167,10 +168,11 @@ public class PreviewProcessor extends AbstractProcessor {
 
         // Load models for page previewing
         Map<String, Object> model = getModelMap("previewModelSet", initData);
+        model.put("model", incomingRequest);
 
         // Load special models for site-wide blog
         if (themeManager.getSharedTheme(weblog.getTheme()).isSiteWide()) {
-            model.putAll(getModelMap("siteModelSet", initData));
+            model.put("site", siteModelFactory.apply(incomingRequest));
         }
 
         try {

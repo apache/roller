@@ -22,6 +22,7 @@ package org.tightblog.rendering.requests;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tightblog.domain.User;
 import org.tightblog.domain.Weblog;
 import org.tightblog.util.Utilities;
@@ -59,7 +60,7 @@ public class WeblogRequest {
     // lightweight attributes
     private String weblogHandle;
     private String queryString;
-    private String authenticatedUser;
+    protected String authenticatedUser;
     private DeviceType deviceType = DeviceType.NORMAL;
     private HttpServletRequest request;
     protected int pageNum;
@@ -73,12 +74,10 @@ public class WeblogRequest {
     public WeblogRequest() {
     }
 
-    public static class Creator {
-        public WeblogRequest create(HttpServletRequest servletRequest) {
-            WeblogRequest weblogRequest = new WeblogRequest();
-            WeblogRequest.parseRequest(weblogRequest, servletRequest);
-            return weblogRequest;
-        }
+    public static WeblogRequest create(HttpServletRequest servletRequest) {
+        WeblogRequest weblogRequest = new WeblogRequest();
+        WeblogRequest.parseRequest(weblogRequest, servletRequest);
+        return weblogRequest;
     }
 
     static void parseRequest(WeblogRequest wreq, HttpServletRequest sreq) {
@@ -98,7 +97,7 @@ public class WeblogRequest {
         log.debug("parsing path {}", path);
 
         // first extract the weblog handle
-        if (path != null && path.trim().length() > 1) {
+        if (StringUtils.isNotBlank(path)) {
 
             // strip off the leading slash
             path = path.substring(1);
@@ -128,16 +127,8 @@ public class WeblogRequest {
         return weblogHandle;
     }
 
-    public void setWeblogHandle(String weblogHandle) {
-        this.weblogHandle = weblogHandle;
-    }
-
     public String getExtraPathInfo() {
         return extraPathInfo;
-    }
-
-    public void setExtraPathInfo(String extraPathInfo) {
-        this.extraPathInfo = extraPathInfo;
     }
 
     public Weblog getWeblog() {
@@ -152,20 +143,12 @@ public class WeblogRequest {
         return this.authenticatedUser;
     }
 
-    public void setAuthenticatedUser(String authenticatedUser) {
-        this.authenticatedUser = authenticatedUser;
-    }
-
     public boolean isLoggedIn() {
         return this.authenticatedUser != null;
     }
 
     public DeviceType getDeviceType() {
         return deviceType;
-    }
-
-    public void setDeviceType(DeviceType type) {
-        this.deviceType = type;
     }
 
     /* Supports custom parameters often needed by custom external pages */
@@ -183,10 +166,6 @@ public class WeblogRequest {
 
     public String getQueryString() {
         return queryString;
-    }
-
-    public void setQueryString(String queryString) {
-        this.queryString = queryString;
     }
 
     public int getPageNum() {

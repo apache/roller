@@ -17,6 +17,7 @@ package org.tightblog.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -28,11 +29,14 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.tightblog.rendering.model.SiteModel;
+import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThemeTemplateResolver;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -103,6 +107,17 @@ public class WebConfig implements WebMvcConfigurer {
         ThymeleafRenderer tr = new ThymeleafRenderer();
         tr.setTemplateEngine(standardTemplateEngine);
         return tr;
+    }
+
+    @Bean
+    public Function<WeblogPageRequest, SiteModel> siteModelFactory() {
+        return this::siteModel;
+    }
+
+    @Bean
+    @Scope("prototype")
+    public SiteModel siteModel(WeblogPageRequest wpr) {
+        return new SiteModel(wpr);
     }
 
     @Override

@@ -113,12 +113,7 @@
         <beans:property name="maxUploadSize" value="-1" />
     </beans:bean>
 
-    <beans:bean id="previewPageModel" parent="pageModel" class="org.tightblog.rendering.model.PageModel" scope="prototype">
-        <beans:property name="preview" value="true"/>
-    </beans:bean>
-
     <beans:bean id="previewUrlModel" parent="urlModel" class="org.tightblog.rendering.model.URLModel" scope="prototype">
-        <beans:property name="preview" value="true"/>
         <!-- urlService is manually constructed with the shared theme being previewed -->
         <beans:property name="urlService"><beans:null/></beans:property>
     </beans:bean>
@@ -126,7 +121,6 @@
     <beans:bean id="pageModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">
         <beans:property name="sourceSet">
             <beans:set>
-                <beans:ref bean="pageModel"/>
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="urlModel"/>
             </beans:set>
@@ -137,27 +131,8 @@
     <beans:bean id="previewModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">
         <beans:property name="sourceSet">
             <beans:set>
-                <beans:ref bean="previewPageModel"/>
                 <beans:ref bean="utilitiesModel"/>
                 <beans:ref bean="previewUrlModel"/>
-            </beans:set>
-        </beans:property>
-    </beans:bean>
-
-    <beans:bean id="searchModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">
-        <beans:property name="sourceSet">
-            <beans:set>
-                <beans:ref bean="searchResultsModel"/>
-                <beans:ref bean="utilitiesModel"/>
-                <beans:ref bean="urlModel"/>
-            </beans:set>
-        </beans:property>
-    </beans:bean>
-
-    <beans:bean id="siteModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">
-        <beans:property name="sourceSet">
-            <beans:set>
-                <beans:ref bean="siteModel"/>
             </beans:set>
         </beans:property>
     </beans:bean>

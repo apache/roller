@@ -21,9 +21,6 @@
 package org.tightblog.rendering.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.tightblog.service.URLService;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.domain.Template;
@@ -39,14 +36,20 @@ import java.util.Map;
 /**
  * Page model that provides access to site-wide users, weblogs and entries.
  */
-@Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class SiteModel implements Model {
+public class SiteModel {
 
-    private WeblogPageRequest pageRequest;
+    @Autowired
+    private WeblogManager weblogManager;
 
-    void setPageRequest(WeblogPageRequest pageRequest) {
-        this.pageRequest = pageRequest;
+    public void setWeblogManager(WeblogManager weblogManager) {
+        this.weblogManager = weblogManager;
+    }
+
+    @Autowired
+    private WeblogListGenerator weblogListGenerator;
+
+    public void setWeblogListGenerator(WeblogListGenerator weblogListGenerator) {
+        this.weblogListGenerator = weblogListGenerator;
     }
 
     @Autowired
@@ -64,34 +67,11 @@ public class SiteModel implements Model {
     }
 
     @Autowired
-    private WeblogManager weblogManager;
-
-    public void setWeblogManager(WeblogManager weblogManager) {
-        this.weblogManager = weblogManager;
-    }
-
-    @Override
-    public String getModelName() {
-        return "site";
-    }
+    private WeblogPageRequest pageRequest;
 
     @Autowired
-    private WeblogListGenerator weblogListGenerator;
-
-    void setWeblogListGenerator(WeblogListGenerator weblogListGenerator) {
-        this.weblogListGenerator = weblogListGenerator;
-    }
-
-    /**
-     * Init page model, requires a WeblogPageRequest object.
-     */
-    @Override
-    public void init(Map<String, Object> initData) {
-        this.pageRequest = (WeblogPageRequest) initData.get("parsedRequest");
-
-        if (pageRequest == null) {
-            throw new IllegalStateException("Missing WeblogPageRequest object");
-        }
+    public SiteModel(WeblogPageRequest pageRequest) {
+        this.pageRequest = pageRequest;
     }
 
     /**
@@ -144,5 +124,4 @@ public class SiteModel implements Model {
     public String getWeblogHome(Weblog blog) {
         return urlService.getWeblogURL(blog);
     }
-
 }

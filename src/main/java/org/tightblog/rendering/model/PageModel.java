@@ -18,56 +18,35 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-
 package org.tightblog.rendering.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.service.ThemeManager;
-import org.tightblog.domain.CalendarData;
-import org.tightblog.domain.CommentSearchCriteria;
-import org.tightblog.domain.Template;
 import org.tightblog.domain.Weblog;
-import org.tightblog.domain.WeblogEntry;
-import org.tightblog.domain.WeblogEntryComment;
-import org.tightblog.domain.WeblogEntrySearchCriteria;
 import org.tightblog.domain.WeblogEntryTagAggregate;
-import org.tightblog.domain.WeblogRole;
 import org.tightblog.rendering.generators.CalendarGenerator;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
-import org.tightblog.rendering.requests.WeblogPageRequest;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Model which provides information needed to render a weblog page.
  */
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PageModel implements Model {
-    static final int MAX_ENTRIES = 100;
+public class PageModel {
 
     private UserManager userManager;
     private WeblogManager weblogManager;
     private WeblogEntryManager weblogEntryManager;
     protected ThemeManager themeManager;
-    protected WeblogEntryListGenerator weblogEntryListGenerator;
+    private WeblogEntryListGenerator weblogEntryListGenerator;
     private CalendarGenerator calendarGenerator;
     private int maxEntriesPerPage;
-
-    protected WeblogPageRequest pageRequest;
-    private WeblogEntryComment commentForm;
-    protected WeblogEntryListData pager;
-    private boolean preview;
 
     @Autowired
     public PageModel(
@@ -88,69 +67,28 @@ public class PageModel implements Model {
         this.maxEntriesPerPage = maxEntriesPerPage;
     }
 
-    void setPreview(boolean preview) {
-        this.preview = preview;
+    public UserManager getUserManager() {
+        return userManager;
     }
 
-    /**
-     * Template context name to be used for model
-     */
-    @Override
-    public String getModelName() {
-        return "model";
+    public WeblogEntryManager getWeblogEntryManager() {
+        return weblogEntryManager;
     }
 
-    /**
-     * Init page model, requires a WeblogPageRequest object.
-     */
-    @Override
-    public void init(Map<String, Object> initData) {
-        this.pageRequest = (WeblogPageRequest) initData.get("parsedRequest");
-
-        if (pageRequest == null) {
-            throw new IllegalStateException("Missing WeblogPageRequest object");
-        }
-
-        // see if there is a comment form
-        this.commentForm = (WeblogEntryComment) initData.get("commentForm");
+    public ThemeManager getThemeManager() {
+        return themeManager;
     }
 
-    /**
-     * Get the weblog locale used to render this page, null if no locale.
-     */
-    public String getLocale() {
-        return null;
+    public WeblogEntryListGenerator getWeblogEntryListGenerator() {
+        return weblogEntryListGenerator;
     }
 
-    /**
-     * Get weblog being displayed.
-     */
-    public Weblog getWeblog() {
-        return pageRequest.getWeblog();
+    public CalendarGenerator getCalendarGenerator() {
+        return calendarGenerator;
     }
 
-    /**
-     * Is this page considered a permalink?
-     */
-    public boolean isPermalink() {
-        return pageRequest.getWeblogEntryAnchor() != null;
-    }
-
-    /**
-     * Is this page showing search results?
-     */
-    public boolean isSearchResults() {
-        return false;
-    }
-
-    /**
-     * Whether a "noindex" directive should be added to the page to discourage
-     * search engines from returning the page in search results
-     *
-     * @return true if page shouldn't be indexed
-     */
-    public boolean isAddNoIndexDirective() {
-        return preview || pageRequest.isNoIndex();
+    public int getMaxEntriesPerPage() {
+        return maxEntriesPerPage;
     }
 
     /**
@@ -158,199 +96,15 @@ public class PageModel implements Model {
      * tracking code if defined and permitted by the installation, else the server-defined tracking
      * code if defined will be used.
      */
-    public String getAnalyticsTrackingCode() {
+    public String getAnalyticsTrackingCode(Weblog weblog, boolean preview) {
         if (preview) {
             return "";
         } else {
-            return weblogManager.getAnalyticsTrackingCode(pageRequest.getWeblog());
+            return weblogManager.getAnalyticsTrackingCode(weblog);
         }
     }
 
-    public String getTransformedText(WeblogEntry entry) {
-        return render(entry.getEditFormat(), entry.getText());
+    public List<WeblogEntryTagAggregate> getPopularTags(Weblog weblog, int length) {
+        return weblogManager.getPopularTags(weblog, 0, length);
     }
-
-    public String getTransformedSummary(WeblogEntry entry) {
-        return render(entry.getEditFormat(), entry.getSummary());
-    }
-
-    public boolean canSubmitNewComments(WeblogEntry entry) {
-        return weblogEntryManager.canSubmitNewComments(entry);
-    }
-
-    /**
-     * Transform string based on Edit Format and HTML policy
-     */
-    private String render(Weblog.EditFormat format, String str) {
-        return weblogEntryManager.processBlogText(format, str);
-    }
-
-    /**
-     * Get weblog entry being displayed or null if none specified by request.
-     */
-    public WeblogEntry getWeblogEntry() {
-        return pageRequest.getWeblogEntry();
-    }
-
-    /**
-     * Get weblog template being displayed.
-     */
-    public Template getWeblogPage() {
-        return pageRequest.getTemplate();
-    }
-
-    public List<? extends Template> getTemplates() {
-        return themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplates();
-    }
-
-    public String getTemplateIdByName(String name) {
-        Template template = themeManager.getWeblogTheme(pageRequest.getWeblog()).getTemplateByName(name);
-        return template != null ? template.getId() : null;
-    }
-
-    /**
-     * Get category name specified by request.
-     */
-    public String getCategoryName() {
-        return pageRequest.getCategory();
-    }
-
-    /**
-     * Get up to 100 most recent published entries in weblog.
-     *
-     * @param category    Category name or null for no category restriction
-     * @param length Max entries to return (1-100)
-     * @return List of weblog entry objects.
-     */
-    public List<WeblogEntry> getRecentWeblogEntries(String category, int length) {
-        if (length > MAX_ENTRIES) {
-            length = MAX_ENTRIES;
-        }
-        List<WeblogEntry> recentEntries = new ArrayList<>();
-        if (length < 1) {
-            return recentEntries;
-        }
-        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-        wesc.setWeblog(pageRequest.getWeblog());
-        wesc.setCategoryName(category);
-        wesc.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-        wesc.setMaxResults(length);
-        wesc.setCalculatePermalinks(true);
-        recentEntries = weblogEntryManager.getWeblogEntries(wesc);
-        return recentEntries;
-    }
-
-    /**
-     * Get up to 100 most recent approved and non-spam comments in weblog.
-     *
-     * @param length Max entries to return (1-100)
-     * @return List of comment objects.
-     */
-    public List<WeblogEntryComment> getRecentComments(int length) {
-        if (length > MAX_ENTRIES) {
-            length = MAX_ENTRIES;
-        }
-        List<WeblogEntryComment> recentComments = new ArrayList<>();
-        if (length < 1) {
-            return recentComments;
-        }
-        CommentSearchCriteria csc = new CommentSearchCriteria();
-        csc.setWeblog(pageRequest.getWeblog());
-        csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
-        csc.setMaxResults(length);
-        recentComments = weblogEntryManager.getComments(csc);
-        return recentComments;
-    }
-
-    /**
-     * Get a list of WeblogEntryTagAggregate objects for the most popular tags
-     *
-     * @param length Max number of tags to return.
-     * @return Collection of WeblogEntryTag objects
-     */
-    public List<WeblogEntryTagAggregate> getPopularTags(int length) {
-        return weblogManager.getPopularTags(pageRequest.getWeblog(), 0, length);
-    }
-
-    /**
-     * Returns the tag specified in the request. if any /tag/foo
-     */
-    public String getTag() {
-        return pageRequest.getTag();
-    }
-
-    /**
-     * Access to device type, which is NORMAL, MOBILE, or TABLET
-     *
-     * @return device type
-     */
-    public String getDeviceType() {
-        return pageRequest.getDeviceType().toString();
-    }
-
-    /**
-     * A map of entries representing this page. The collection is grouped by
-     * days of entries.  Each value is a list of entry objects keyed by the
-     * date they were published.
-     */
-    public WeblogEntryListData getWeblogEntriesPager() {
-        if (pager == null) {
-            // determine which mode to use
-            if (pageRequest.getWeblogEntryAnchor() != null) {
-                pager = weblogEntryListGenerator.getPermalinkPager(
-                        pageRequest.getWeblog(),
-                        pageRequest.getWeblogEntryAnchor(),
-                        // preview can show draft entries
-                        preview);
-            } else {
-                pager = weblogEntryListGenerator.getChronoPager(
-                        pageRequest.getWeblog(),
-                        pageRequest.getWeblogDate(),
-                        pageRequest.getCategory(),
-                        pageRequest.getTag(),
-                        pageRequest.getPageNum(),
-                        Math.min(maxEntriesPerPage, pageRequest.getWeblog().getEntriesPerPage()),
-                        false);
-            }
-        }
-        return pager;
-    }
-
-    /**
-     * Get comment form to be displayed, may contain preview data.
-     *
-     * @return Comment form object
-     */
-    public WeblogEntryComment getCommentForm() {
-        if (commentForm == null) {
-            commentForm = new WeblogEntryComment();
-            commentForm.initializeFormFields();
-        }
-        return commentForm;
-    }
-
-    public boolean isUserAuthenticated() {
-        return pageRequest.getAuthenticatedUser() != null;
-    }
-
-    public boolean isUserBlogPublisher() {
-        return checkUserRights(WeblogRole.POST);
-    }
-
-    public boolean isUserBlogOwner() {
-        return checkUserRights(WeblogRole.OWNER);
-    }
-
-    private boolean checkUserRights(WeblogRole role) {
-        return !preview && userManager.checkWeblogRole(pageRequest.getAuthenticatedUser(), getWeblog(), role);
-    }
-
-    public CalendarData getCalendarData(boolean includeBlogEntryData) {
-        return calendarGenerator.getCalendarData(pageRequest, includeBlogEntryData);
-    }
-
-    public String getRequestParameter(String paramName) {
-        return pageRequest.getRequestParameter(paramName);
-    }
-
 }

@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="shortcut icon" th:href="${url.getSiteHome() + '/favicon.ico'}">
-    <meta th:if="${model.addNoIndexDirective}" name="robots" content="noindex">
+    <meta th:if="${model.noIndex}" name="robots" content="noindex">
     <link rel="stylesheet" th:href='${url.getCustomPageURL("rolling.css")}'/>
     <th:block th:switch="${model.searchResults}">
-        <title th:case="${true}" th:utext="${'Search Results for ' + model.searchTerm + ': ' + model.weblog.name}">xxx</title>
+        <title th:case="${true}" th:utext="${'Search Results for ' + model.searchPhrase + ': ' + model.weblog.name}">xxx</title>
         <th:block th:case="${false}">
             <title th:utext="${(model.permalink ? model.weblogEntry.title + ' | ' : '') + model.weblog.name}">Weblog Name - Title Bar</title>
             <span th:replace="fragments :: AutoDiscoveryLinks"></span>

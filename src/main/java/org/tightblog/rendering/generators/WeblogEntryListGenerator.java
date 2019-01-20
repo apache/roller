@@ -23,7 +23,6 @@ import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntrySearchCriteria;
-import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.util.Utilities;
 
 import java.time.Instant;
@@ -53,27 +52,21 @@ public class WeblogEntryListGenerator {
         this.messages = messages;
     }
 
-    public WeblogEntryListData getSearchPager(WeblogPageRequest pageRequest, Map<LocalDate, List<WeblogEntry>> entries,
-                                              boolean moreResults) {
+    public WeblogEntryListData getSearchPager(Weblog weblog, String searchPhrase, String category, int page,
+                                              Map<LocalDate, List<WeblogEntry>> entries, boolean moreResults) {
 
         WeblogEntryListData data = new WeblogEntryListData();
 
         // store search results
         data.entries = entries;
 
-        // data from search request
-        Weblog weblog = pageRequest.getWeblog();
-        String query = pageRequest.getQuery();
-        String category = pageRequest.getCategory();
-        int page = pageRequest.getPageNum();
-
         if (page > 0) {
-            data.nextLink = urlService.getWeblogSearchURL(weblog, query, category, page - 1);
+            data.nextLink = urlService.getWeblogSearchURL(weblog, searchPhrase, category, page - 1);
             data.nextLabel = messages.getMessage("weblogEntriesPager.newer", null, weblog.getLocaleInstance());
         }
 
         if (moreResults) {
-            data.prevLink = urlService.getWeblogSearchURL(weblog, query, category, page + 1);
+            data.prevLink = urlService.getWeblogSearchURL(weblog, searchPhrase, category, page + 1);
             data.prevLabel = messages.getMessage("weblogEntriesPager.older", null, weblog.getLocaleInstance());
         }
 

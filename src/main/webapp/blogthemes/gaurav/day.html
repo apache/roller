@@ -43,7 +43,7 @@
         </p>
 
         <p th:if="${entry.tags.size() > 0}" class="entryInfo" style="clear: right">
-            Tags: <a th:each="tag : ${entry.tags}" class="tagLink" th:href="${url.getEntriesURLForTag(tag.name, model.categoryName)}" th:utext="${tag.name}">xxx</a>
+            Tags: <a th:each="tag : ${entry.tags}" class="tagLink" th:href="${url.getEntriesURLForTag(tag.name, model.category)}" th:utext="${tag.name}">xxx</a>
         </p>
     </div>
     <hr>
