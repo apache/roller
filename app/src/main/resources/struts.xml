@@ -94,13 +94,6 @@
             <result name="access-denied" type="tiles">.denied</result>
         </global-results>
 
-        <global-allowed-methods>
-            accept,
-            activate,
-            decline,
-            execute
-        </global-allowed-methods>
-
         <!-- Simple actions which basically just replace the global-forwards from
              the old struts 1 config.  this is the only way to do it in struts 2 -->
         <action name="home">
@@ -119,11 +112,13 @@
                 class="org.apache.roller.weblogger.ui.struts2.core.Setup">
             <result name="success" type="tiles">.Setup</result>
             <result name="home" type="redirectAction">home</result>
+            <allowed-methods>activate, execute, save</allowed-methods>
         </action>
                         
         <action name="login"
                 class="org.apache.roller.weblogger.ui.struts2.core.Login">
             <result type="tiles">.Login</result>
+            <allowed-methods>execute</allowed-methods>
         </action>
         
         <action name="register"
@@ -131,6 +126,7 @@
             <result name="input" type="tiles">.Register</result>
             <result name="disabled" type="tiles">.GenericError</result>
             <result name="success" type="tiles">.Welcome</result>
+            <allowed-methods>activate, execute, save</allowed-methods>
         </action>
         
         <action name="profile"
@@ -138,16 +134,19 @@
             <result name="input" type="tiles">.Profile</result>
             <result name="cancel" type="redirectAction">menu</result>
             <result name="success" type="tiles">.MainMenu</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
         <action name="oauthKeys"
                 class="org.apache.roller.weblogger.ui.struts2.core.OAuthKeys">
             <result name="success" type="tiles">.OAuthKeys</result>
+            <allowed-methods>execute</allowed-methods>
         </action>
 
         <action name="oauthAuthorize"
                 class="org.apache.roller.weblogger.ui.struts2.core.OAuthAuthorize">
             <result name="success" type="tiles">.OAuthAuthorize</result>
+            <allowed-methods>execute</allowed-methods>
         </action>
 
         <action name="createWeblog"
@@ -155,11 +154,13 @@
             <result name="input" type="tiles">.CreateWeblog</result>
             <result name="disabled" type="tiles">.GenericError</result>
             <result name="success" type="chain">menu</result>
+            <allowed-methods>cancel, execute, save</allowed-methods>
         </action>
         
         <action name="menu"
                 class="org.apache.roller.weblogger.ui.struts2.core.MainMenu">
             <result type="tiles">.MainMenu</result>
+            <allowed-methods>accept, decline, execute</allowed-methods>
         </action>
 
     </package>
@@ -167,13 +168,6 @@
     
     <!-- Weblogger install/bootstrap actions -->
     <package name="weblogger-install" namespace="/roller-ui/install" extends="weblogger" >
-
-        <global-allowed-methods>
-            execute,
-            create,
-            upgrade,
-            bootstrap
-        </global-allowed-methods>
 
         <action name="install"
                 class="org.apache.roller.weblogger.ui.struts2.core.Install">
@@ -185,6 +179,7 @@
                 <param name="actionName">home</param>
                 <param name="namespace">/roller-ui</param>
             </result>
+            <allowed-methods>execute, create, upgrade, bootstrap</allowed-methods>
         </action>
             
     </package>
@@ -193,28 +188,11 @@
     <!-- Weblogger Admin UI (includes planet) -->
     <package name="weblogger-admin" namespace="/roller-ui/admin" extends="weblogger" >
 
-        <global-allowed-methods>
-            clear,
-            disable,
-            delete,
-            deleteConfirm,
-            deleteSubscription,
-            edit,
-            enable,
-            execute,
-            firstSave,
-            save,
-            saveSubscription,
-            saveGroup,
-            query,
-            delete,
-            update
-        </global-allowed-methods>
-        
         <action name="globalConfig"
                 class="org.apache.roller.weblogger.ui.struts2.admin.GlobalConfig">
             <result name="success" type="tiles">.GlobalConfig</result>
             <result name="error" type="tiles">.GlobalConfig</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
                
         <action name="userAdmin"
@@ -226,6 +204,7 @@
                 <param name="actionName">modifyUser</param>
                 <param name="bean.userName">${bean.userName}</param>
             </result>
+            <allowed-methods>edit, execute</allowed-methods>
         </action>
         
         <action name="createUser"
@@ -237,6 +216,7 @@
                 <param name="actionName">modifyUser!firstSave</param>
                 <param name="bean.id">${bean.id}</param>
             </result>
+            <allowed-methods>execute, firstSave, save</allowed-methods>
         </action>
 
         <action name="modifyUser"
@@ -248,17 +228,20 @@
             <result name="cancel" type="redirectAction">
                 <param name="actionName">userAdmin</param>
             </result>
+            <allowed-methods>execute, firstSave, save</allowed-methods>
         </action>
         
         <action name="globalCommentManagement"
                 class="org.apache.roller.weblogger.ui.struts2.admin.GlobalCommentManagement">
             <result name="list" type="tiles">.GlobalCommentManagement</result>
+            <allowed-methods>execute, delete, query, update</allowed-methods>
         </action>
         
         <action name="commonPingTargets"
                 class="org.apache.roller.weblogger.ui.struts2.admin.PingTargets">
             <result name="list" type="tiles">.PingTargets</result>
             <result name="confirm" type="tiles">.PingTargetConfirm</result>
+            <allowed-methods>delete, deleteConfirm, disable, enable, execute</allowed-methods>
         </action>
         
         <action name="commonPingTargetAdd"
@@ -267,6 +250,7 @@
             <param name="pageTitle">pingTarget.addTarget</param>
             <result name="input" type="tiles">.PingTargetEdit</result>
             <result name="success" type="chain">commonPingTargets</result>
+            <allowed-methods>execute</allowed-methods>
         </action>
         
         <action name="commonPingTargetEdit"
@@ -276,65 +260,37 @@
             <result name="input" type="tiles">.PingTargetEdit</result>
             <result name="success" type="chain">commonPingTargets</result>
             <result name="error" type="chain">commonPingTargets</result>
+            <allowed-methods>execute</allowed-methods>
         </action>
         
         <action name="cacheInfo"
                 class="org.apache.roller.weblogger.ui.struts2.admin.CacheInfo">
             <result name="success" type="tiles">.CacheInfo</result>
+            <allowed-methods>execute, clear</allowed-methods>
         </action>
-        
-        
+
         <action name="planetConfig"
                 class="org.apache.roller.weblogger.planet.ui.PlanetConfig">
             <result name="input" type="tiles">.PlanetConfig</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
         
         <action name="planetGroupSubs"
                 class="org.apache.roller.weblogger.planet.ui.PlanetGroupSubs">
             <result name="list" type="tiles">.PlanetGroupSubs</result>
+            <allowed-methods>execute, deleteSubscription, saveGroup, saveSubscription</allowed-methods>
         </action>
         
         <action name="planetGroups"
                 class="org.apache.roller.weblogger.planet.ui.PlanetGroups">
             <result name="list" type="tiles">.PlanetGroups</result>
+            <allowed-methods>delete, execute</allowed-methods>
         </action>
     </package>
     
     
     <!-- Weblogger Authoring UI -->
     <package name="weblogger-authoring" namespace="/roller-ui/authoring" extends="weblogger" >
-
-        <global-allowed-methods>
-            add,
-            cancel,
-            copyStylesheet,
-            createNewDirectory,
-            execute,
-            delete,
-            deleteConfirm,
-            deleteFolder,
-            deleteSelected,
-            disable,
-            enable,
-            entryAdd,
-            entryEdit,
-            firstSave,
-            folderCreated,
-            flushCache,
-            includeInGallery,
-            moveSelected,
-            pingNow,
-            publish,
-            query,
-            remove,
-            revert,
-            reset,
-            save,
-            saveDraft,
-            search,
-            update,
-            view
-        </global-allowed-methods>
 
         <action name="mediaFileAdd"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
@@ -345,12 +301,14 @@
                 <param name="actionName">mediaFileView</param>
                 <param name="weblog">${weblog}</param>
             </result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
         <action name="mediaFileEdit"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
             <result name="input" type="tiles">.MediaFileEdit</result>
             <result name="success" type="tiles">.MediaFileEditSuccess</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
         <action name="mediaFileAddExternalInclude"
@@ -358,22 +316,37 @@
             <result name="input" type="tiles">.MediaFileAddExternalInclude</result>
             <result name="success" type="tiles">.MediaFileAddExternalInclude</result>
             <result name="error" type="tiles">.MediaFileAddExternalInclude</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
 	    <action name="mediaFileView"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileView">
             <result name="success" type="tiles">.MediaFileView</result>
             <result name="success.json" type="dispatcher">/WEB-INF/jsps/editor/MediaFileViewLight.jsp</result>
+            <allowed-methods>
+                delete,
+                execute,
+                createNewDirectory,
+                deleteFolder,
+                deleteSelected,
+                fetchDirectoryContentLight,
+                includeInGallery,
+                moveSelected,
+                search,
+                view
+            </allowed-methods>
         </action>
 
 	    <action name="mediaFileImageDim"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageDim">
             <result name="success" type="tiles">.MediaFileImageDimension</result>
+            <allowed-methods>execute</allowed-methods>
         </action>
 
         <action name="entryAddWithMediaFile"
                 class="org.apache.roller.weblogger.ui.struts2.editor.EntryAddWithMediaFile">
             <result name="success" type="chain">entryAdd</result>
+            <allowed-methods>execute</allowed-methods>
         </action>
 
         <action name="entryAdd"
@@ -386,6 +359,7 @@
                 <param name="weblog">${weblog}</param>
                 <param name="bean.id">${bean.id}</param>
             </result>
+            <allowed-methods>execute, firstSave, publish, saveDraft, trackback</allowed-methods>
         </action>
 
         <action name="entryEdit"
@@ -397,6 +371,7 @@
                 <param name="actionName">menu</param>
                 <param name="namespace">/roller-ui</param>
             </result>
+            <allowed-methods>execute, firstSave, publish, saveDraft, trackback</allowed-methods>
         </action>
         
         <action name="entryRemove"
@@ -408,6 +383,7 @@
                 <param name="namespace">/roller-ui</param>
             </result>
             <result name="success" type="chain">entryAdd</result>
+            <allowed-methods>execute, remove</allowed-methods>
         </action>
 
         <!-- Below activated by Entries.jsp and EntryRemove.jsp, kept separate from
@@ -429,21 +405,25 @@
                 <param name="namespace">/roller-ui</param>
             </result>
           <result name="success" type="chain">entries</result>
+            <allowed-methods>execute, remove</allowed-methods>
         </action>
 
         <action name="entries"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Entries">
             <result name="list" type="tiles">.Entries</result>
+            <allowed-methods>execute</allowed-methods>
         </action>
-        
+
         <action name="comments"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Comments">
             <result name="list" type="tiles">.Comments</result>
+            <allowed-methods>delete, execute, query, update</allowed-methods>
         </action>
-        
+
         <action name="categories"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Categories">
             <result name="list" type="tiles">.Categories</result>
+            <allowed-methods>execute, move</allowed-methods>
         </action>
 
         <action name="categoryAdd"
@@ -453,6 +433,7 @@
             <result name="input" type="tiles">.CategoryEdit</result>
             <result name="success" type="chain">categories</result>
             <result name="error" type="chain">categories</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
         <action name="categoryEdit"
@@ -465,6 +446,7 @@
                 <param name="actionName">categories</param>
                 <param name="weblog">${weblog}</param>
             </result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
         <action name="categoryRemove"
@@ -475,10 +457,13 @@
                 <param name="weblog">${weblog}</param>
             </result>
             <result name="success" type="chain">categories</result>
+            <allowed-methods>execute, remove</allowed-methods>
         </action>
+
         <action name="bookmarks"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Bookmarks">
             <result name="list" type="tiles">.Bookmarks</result>
+            <allowed-methods>delete, deleteFolder, execute, folderCreated, move, view</allowed-methods>
         </action>
 
         <action name="bookmarkAdd"
@@ -488,6 +473,7 @@
             <result name="input" type="tiles">.BookmarkEdit</result>
             <result name="success" type="chain">bookmarks</result>
             <result name="error" type="chain">bookmarks</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
         <action name="bookmarkEdit"
@@ -502,12 +488,14 @@
                 <param name="folderId">${folderId}</param>
             </result>
             <result name="error" type="chain">bookmarkEdit</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
         <action name="bookmarksImport"
                 class="org.apache.roller.weblogger.ui.struts2.editor.BookmarksImport">
             <result name="input" type="tiles">.BookmarksImport</result>
             <result name="success" type="chain">bookmarks</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
         <action name="folderAdd"
@@ -522,6 +510,7 @@
                 <param name="folderId">${folderId}</param>
             </result>
             <result name="error" type="chain">bookmarks</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
         <action name="folderEdit"
@@ -536,11 +525,13 @@
                 <param name="folderId">${folderId}</param>
             </result>
             <result name="error" type="chain">bookmarks</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
         <action name="weblogConfig"
                 class="org.apache.roller.weblogger.ui.struts2.editor.WeblogConfig">
             <result name="input" type="tiles">.WeblogConfig</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
         
         <action name="weblogRemove"
@@ -550,32 +541,38 @@
                 <param name="actionName">menu</param>
                 <param name="namespace">/roller-ui</param>
             </result>
+            <allowed-methods>execute, remove</allowed-methods>
         </action>
         
         <action name="themeEdit"
                 class="org.apache.roller.weblogger.ui.struts2.editor.ThemeEdit">
             <result name="input" type="tiles">.ThemeEdit</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
         
         <action name="stylesheetEdit"
                 class="org.apache.roller.weblogger.ui.struts2.editor.StylesheetEdit">
             <result name="input" type="tiles">.StylesheetEdit</result>
+            <allowed-methods>copyStylesheet, delete, execute, revert, save </allowed-methods>
         </action>
         
         <action name="templates"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Templates">
             <result name="list" type="tiles">.Templates</result>
+            <allowed-methods>add,execute</allowed-methods>
         </action>
         
         <action name="templateEdit"
                 class="org.apache.roller.weblogger.ui.struts2.editor.TemplateEdit">
             <result name="list" type="chain">templates</result>
             <result name="input" type="tiles">.TemplateEdit</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
         <action name="members"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Members">
             <result name="list" type="tiles">.Members</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
         
         <action name="invite"
@@ -587,6 +584,7 @@
                 <param name="actionName">members</param>
                 <param name="weblog">${weblog}</param>
             </result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
         <action name="memberResign"
@@ -600,16 +598,19 @@
                 <param name="actionName">menu</param>
                 <param name="namespace">/roller-ui</param>
             </result>
+            <allowed-methods>execute, resign</allowed-methods>
         </action>
 
         <action name="pings"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Pings">
             <result name="list" type="tiles">.Pings</result>
+            <allowed-methods>disable, enable, execute, pingNow</allowed-methods>
         </action>
 
         <action name="maintenance"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Maintenance">
             <result name="success" type="tiles">.Maintenance</result>
+            <allowed-methods>execute, flushCache, reset</allowed-methods>
         </action>
 
     </package>
@@ -618,16 +619,13 @@
     
     <package name="weblogger-authoring-overlay" namespace="/roller-ui/authoring/overlay" extends="weblogger-authoring" >
 
-        <global-allowed-methods>
-            execute,save
-        </global-allowed-methods>
-
         <action name="mediaFileAdd"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileAdd">
             <param name="overlayMode">true</param>
             <result name="input" type="tiles">.MediaFileAddInclude</result>
             <result name="success" type="tiles">.MediaFileAddSuccessInclude</result>
             <result name="error" type="tiles">.MediaFileAddInclude</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
 	    <action name="mediaFileImageChooser"
@@ -636,6 +634,7 @@
             <result name="input" type="tiles">.MediaFileImageChooser</result>
             <result name="error" type="tiles">.MediaFileImageChooser</result>
             <result name="success" type="tiles">.MediaFileImageChooser</result>
+            <allowed-methods>execute, save</allowed-methods>
         </action>
 
     </package>

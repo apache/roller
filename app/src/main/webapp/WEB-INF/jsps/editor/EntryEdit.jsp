@@ -152,11 +152,11 @@
 
     <div class="panel-group" id="accordion">
 
-        <%-- Weblog editor --%>
+            <%-- Weblog editor --%>
 
         <s:include value="%{editor.jspPage}"/>
 
-        <%-- Plugins --%>
+            <%-- Plugins --%>
 
         <s:if test="!entryPlugins.isEmpty">
 
@@ -287,22 +287,18 @@
                   action="%{#mainAction}!publish"/>
     </s:else>
 
-    <%-- delete --%>
     <s:if test="actionName == 'entryEdit'">
-            <span style="float:right">
-                <s:url var="removeUrl" action="entryRemove">
-                    <s:param name="weblog" value="actionWeblog.handle"/>
-                    <s:param name="removeId" value="%{entry.id}"/>
-                </s:url>
-                <input class="btn btn-danger" type="button"
-                       value="<s:text name='weblogEdit.deleteEntry'/>"
-                       onclick="window.location='<s:property value="removeUrl" escapeHtml="false"/>'"/>
-            </span>
+
+        <%-- delete --%>
+        <span style="float:right">
+            <input class="btn btn-danger" type="button"
+                   value="<s:text name='weblogEdit.deleteEntry'/>"
+                   onclick="showDeleteModal('<s:property value="entry.id" />', '<s:property value="entry.title"/>' )">
+        </span>
     </s:if>
 
 
-    <%-- ================================================================== --%>
-    <%-- Trackback control 
+    <%-- Trackback control
     <s:if test="actionName == 'entryEdit' && userAnAuthor">
         <br/>
         <h2><s:text name="weblogEdit.trackback"/></h2>
@@ -315,6 +311,70 @@
     --%>
 
 </s:form>
+
+
+<%-- ========================================================================================== --%>
+
+<%-- delete blogroll confirmation modal --%>
+
+<div id="delete-entry-modal" class="modal fade delete-entry-modal" tabindex="-1" role="dialog">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <s:set var="deleteAction">entryRemoveViaList!remove</s:set>
+
+            <s:form action="%{#deleteAction}" theme="bootstrap" cssClass="form-horizontal">
+                <s:hidden name="salt"/>
+                <s:hidden name="weblog"/>
+                <s:hidden name="removeId" id="removeId"/>
+
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <h3><s:text name="weblogEntryRemove.removeWeblogEntry"/></h3>
+                        <p><s:text name="weblogEntryRemove.areYouSure"/></p>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <s:text name="weblogEntryRemove.entryTitle"/>
+                        </label>
+                        <div class="col-sm-9 controls">
+                            <p class="form-control-static" style="padding-top:0px" id="postTitleLabel"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <s:text name="weblogEntryRemove.entryId"/>
+                        </label>
+                        <div class="col-sm-9 controls">
+                            <p class="form-control-static" style="padding-top:0px" id="postIdLabel"></p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <s:submit cssClass="btn" value="%{getText('generic.yes')}"/>
+                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">
+                        <s:text name="generic.no"/>
+                    </button>
+                </div>
+
+            </s:form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%-- ========================================================================================== --%>
 
 <script>
 
@@ -374,4 +434,12 @@
                 }
             });
     });
+
+    function showDeleteModal(postId, postTitle) {
+        $('#postIdLabel').html(postId);
+        $('#postTitleLabel').html(postTitle);
+        $('#removeId').val(postId);
+        $('#delete-entry-modal').modal({show: true});
+    }
+
 </script>
