@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Custom Plugins Xinha Loading Example</title>
+
+  <script src="../XinhaEasy.js" type="text/javascript">
+    
+    // The following options are, optional...
+    xinha_options = 
+    {
+      // Specify language and skin
+      _editor_lang:   'en',         // Language to use
+      _editor_skin:   'silva',      // Name of the skin to use (see skins directory for available skins)
+      
+      // Simply a CSS selector to pick the textarea(s) you want, eg 'textarea'
+      //  converts all textarea, or textarea.my-xinha,textarea.your-xinha 
+      //  would convert only those textareas with the my-xinha or your-xinha 
+      //  classes on them
+      xinha_editors:  'textarea',   
+
+      // Plugins can be a default set - 'common', 'minimal', 'loaded'
+      //   xinha_plugins: 'minimal'
+      //
+      // or you can specify the plugins you want exactly
+      //   xinha_plugins: [ 'Linker', 'Stylist' ]
+      //
+      // or you can do both to add extras to the set
+      //   xinha_pass_to_php_backend: ['minimal', 'Linker' ]
+      xinha_plugins:  [ 'minimal', { from: '/examples/custom_plugins', load: 'StatusBarMessage' } ],
+      
+      // The default toolbar can be one of the pre-defined toolbars, 
+      //   'default', 'minimal', 'minimal+fonts', 'supermini'
+      //   xinha_toolbar: 'minimal+fonts'
+      //
+      // or you an specify a toolbar structure completely
+      //   xinha_toolbar: [ ["popupeditor"],["separator","bold","italic","underline","strikethrough","superscript"] ]
+      xinha_toolbar:  'minimal+fonts',
+      
+      // To specify a stylesheet to load inside the editor (to style the contents
+      //  the user is editing), simply specify the path to it here, note that in
+      //  this example we use _editor_url to referenec the Xinha directory
+      //  you would probably reference it absolutely.
+      //
+      // Note as with all these options, it's optional, leave it out if you 
+      //  don't want to load a stylesheet in the editor
+      xinha_stylesheet: _editor_url + 'examples/files/stylist.css', 
+      
+      // This is where you set the other default configuration globally
+      xinha_config:            function(xinha_config) 
+      {
+
+      },
+      
+      // Here is where you can customise configs for each editor area
+      xinha_config_specific:   function(xinha_config, textarea)
+      {
+
+      },
+      
+      // Here you can limit the plugins to certain editor areas
+      //   note that you only can use the plugins you specified 
+      //   above in xinha_plugins, you just don't have to use all of 
+      //   them but that controls what code gets loaded this contols
+      //   which editors get them
+      xinha_plugins_specific:  function(xinha_plugins, textarea)
+      {
+
+      }
+    }
+
+  </script>
+
+
+</head>
+
+<body>
+  <h1>Custom Plugins Newbie Guide Example</h1>
+  <p> This example shows how you can load custom plugins which are outside of the Xinha standard plugins location. </p>
+  
+  <p> You can do this even if you use Xinha from a CDN and have your custom plugins locally. </p>
+  
+  <p>Click into the editor and look in the status bar, on the right you will see the message printed by this (silly) custom plugin which has been loaded from /examples/custom_plugins.</p>
+
+  
+  <div>
+    <form onsubmit="alert(this.myTextArea.value); return false;" style="">
+    
+      <textarea id="firstOne" name="firstOne" style="width:100%;height:10em;">
+      &lt;p&gt;Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+      Aliquam et tellus vitae justo varius placerat. Suspendisse iaculis
+      velit semper dolor. Donec gravida tincidunt mi. Curabitur tristique
+      ante elementum turpis. Aliquam nisl. Nulla posuere neque non
+      tellus. Morbi vel nibh. Cum sociis natoque penatibus et magnis dis
+      parturient montes, nascetur ridiculus mus. Nam nec wisi. In wisi.
+      Curabitur pharetra bibendum lectus.&lt;/p&gt;
+      </textarea>
+
+      <input type="submit" value="SUBMIT" />
+    </form>
+  </div>
+      
+    
+  <p>You can see in the source of this page how we do this, simply by specifying...</p>
+  
+  <pre>
+    xinha_plugins:  [ 'minimal', { from: '/examples/custom_plugins', load: 'StatusBarMessage' } ]
+  </pre>
+  
+  <p>... as an option to Xinha, which says, to load the standard 'minimal' plugins and also, from '/examples/custom_plugins' directory, load 'StatusBarMessage' plugin, you could of course <tt>load: ['StatusBarMessage', 'AnotherCustom' ]</tt> to load more than one thing from the same directory.</p>
+  
+</body>
+</html>

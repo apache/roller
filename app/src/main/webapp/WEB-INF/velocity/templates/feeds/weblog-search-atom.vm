@@ -16,6 +16,7 @@
   directory of this distribution.
 
 *#<?xml version="1.0" encoding='utf-8'?>
+#showFirefoxFeedWorkaround()
 #if($config.feedStyle)<?xml-stylesheet type="text/xsl" href="$url.absoluteSite/roller-ui/styles/atom.xsl" media="screen"?>#end
 #set($pager = $model.searchResultsPager)
 <feed xmlns="http://www.w3.org/2005/Atom" 

@@ -63,8 +63,13 @@ limitations under the License.
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.8.0</version>
                     <configuration>
+<<<<<<< HEAD
                         <source>10</source>
                         <target>10</target>
+=======
+                        <source>1.8</source>
+                        <target>1.8</target>
+>>>>>>> master
                         <fork>true</fork>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
@@ -80,7 +85,7 @@ limitations under the License.
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.2.6.v20141205</version>
+                    <version>9.4.11.v20180605</version>
                 </plugin>
                 <plugin>
                     <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>

@@ -31,6 +31,15 @@ import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.PingConfig;
+import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.xmlrpc.util.SAXParsers;
+import org.springframework.security.access.method.P;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -135,7 +144,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getThreadManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getThreadManager()
      */
     public ThreadManager getThreadManager() {
         return threadManager;
@@ -145,7 +154,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.model.Weblogger#getIndexManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getIndexManager()
      */
     public IndexManager getIndexManager() {
         return indexManager;
@@ -155,7 +164,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getThemeManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getThemeManager()
      */
     public ThemeManager getThemeManager() {
         return themeManager;
@@ -165,7 +174,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getUserManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getUserManager()
      */
     public UserManager getUserManager() {
         return userManager;
@@ -175,7 +184,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getBookmarkManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getBookmarkManager()
      */
     public BookmarkManager getBookmarkManager() {
         return bookmarkManager;
@@ -185,7 +194,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getMediaFileManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getMediaFileManager()
      */
     public MediaFileManager getMediaFileManager() {
         return mediaFileManager;
@@ -194,7 +203,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getFileContentManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getFileContentManager()
      */
     public FileContentManager getFileContentManager() {
         return fileContentManager;
@@ -204,7 +213,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getWeblogEntryManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getWeblogEntryManager()
      */
     public WeblogEntryManager getWeblogEntryManager() {
         return weblogEntryManager;
@@ -214,7 +223,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getWeblogManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getWeblogManager()
      */
     public WeblogManager getWeblogManager() {
         return weblogManager;
@@ -224,7 +233,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getPropertiesManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getPropertiesManager()
      */
     public PropertiesManager getPropertiesManager() {
         return propertiesManager;
@@ -234,7 +243,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getPingTargetManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
      */
     public PingQueueManager getPingQueueManager() {
         return pingQueueManager;
@@ -244,7 +253,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getPingTargetManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
      */
     public AutoPingManager getAutopingManager() {
         return autoPingManager;
@@ -254,7 +263,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * 
      * 
-     * @see org.apache.roller.weblogger.modelWebloggerr#getPingTargetManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
      */
     public PingTargetManager getPingTargetManager() {
         return pingTargetManager;
@@ -264,7 +273,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      *
      *
-     * @see org.apache.roller.weblogger.modelWebloggerr#getPluginManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getPluginManager()
      */
     public PluginManager getPluginManager() {
         return pluginManager;
@@ -274,7 +283,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      *
      *
-     * @see org.apache.roller.weblogger.modelWebloggerr#getOauthManager()
+     * @see org.apache.roller.weblogger.business.Weblogger#getOAuthManager()
      */
     public OAuthManager getOAuthManager() {
         return oauthManager;
@@ -335,7 +344,21 @@ public abstract class WebloggerImpl implements Weblogger {
         getThreadManager().initialize();
         getIndexManager().initialize();
         getMediaFileManager().initialize();
-        
+
+        // Turn off External DTD support in SAXParser to protect Roller from vulnerability.
+        SAXParserFactory spf = SAXParsers.getSAXParserFactory();
+        try {
+            spf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        } catch (ParserConfigurationException | SAXNotRecognizedException | SAXNotSupportedException e) {
+            String message = "Unable to turn off External DTD support in SAXParser. XML-RLC is vulnerable";
+            if ( log.isDebugEnabled() ) {
+                log.error(message, e);
+            } else {
+                log.error(message);
+            }
+        }
+
         try {
             // Initialize ping systems
             // TODO: this should probably be moving inside ping manager initialize() methods?
