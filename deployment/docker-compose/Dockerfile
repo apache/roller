@@ -50,6 +50,7 @@ RUN wget http://repo2.maven.org/maven2/javax/activation/activation/1.1.1/activat
 # start Tomcat
 
 ADD entry-point.sh /usr/local/tomcat/bin
+ADD wait-for-it.sh /usr/local/tomcat/bin
 RUN chgrp -R 0 /usr/local/tomcat
 RUN chmod -R g+rw /usr/local/tomcat
 

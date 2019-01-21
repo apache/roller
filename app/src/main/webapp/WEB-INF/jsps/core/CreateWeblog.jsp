@@ -67,7 +67,8 @@
             <s:select name="bean.theme" size="1" list="themes" listKey="id" listValue="name"
                       onchange="previewImage(this[selectedIndex].value)"/>
             <p id="themedescription"></p>
-            <img id="themeThumbnail" src='' />
+            <p><img id="themeThumbnail" src="" class="img-responsive img-thumbnail" style="max-width: 30em" /></p>
+
         </div>
     </div>
 

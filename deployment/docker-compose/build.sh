@@ -17,8 +17,8 @@
 # directory of this distribution.
 
 
-TAG=roller:6.0.0-SNAPSHOT-1
+TAG=roller:6.0.0-SNAPSHOT
 
-docker build . -t snoopdave/${TAG}
+docker build --no-cache . -t snoopdave/${TAG}
 docker push snoopdave/${TAG}
 

@@ -25,7 +25,7 @@ services:
          - "5432:5432"
       volumes:
          - type: bind
-           source: /Users/dave/src/apache-roller/deployment/docker-compose/postgresql-data
+           source: ./postgresql-data
            target: /var/lib/postgresql/data
       environment:
          - POSTGRES_DB=rollerdb
@@ -33,11 +33,11 @@ services:
          - POSTGRES_PASSWORD=tiger
 
    roller:
-      image: "snoopdave/roller:6.0.0-SNAPSHOT-1"
+      image: "snoopdave/roller:6.0.0-SNAPSHOT"
       ports:
          - "8080:8080"
       volumes:
          - type: bind
-           source: /Users/dave/src/apache-roller/deployment/docker-compose/roller-data
+           source: ./roller-data
            target: /var/lib/roller/data
 

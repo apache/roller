@@ -16,7 +16,6 @@
 # copyright in this work, please see the NOTICE file in the top level
 # directory of this distribution.
 
-
 cat > /usr/local/tomcat/lib/roller-custom.properties << EOF
 installation.type=auto
 mediafiles.storage.dir=${STORAGE_ROOT}/roller_mediafiles
@@ -29,6 +28,7 @@ database.jdbc.username=${DATABASE_JDBC_USERNAME}
 database.jdbc.password=${DATABASE_JDBC_PASSWORD}
 EOF
 
+/usr/local/tomcat/bin/wait-for-it.sh postgresql:5434
 /usr/local/tomcat/bin/catalina.sh run
 
 
