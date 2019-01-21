@@ -60,8 +60,8 @@
     <fmt:message key="bookmarks.rootPrompt" />
 </p>
 
-<table class="rollertable">
-    <thead>
+<table class="table table-sm table-bordered table-striped">
+    <thead class="thead-light">
       <tr>
           <th width="5%"><input name="control" type="checkbox" onclick="toggleCheckboxes(this.checked,'idSelections');"
               title="<fmt:message key='bookmarks.selectAllLabel'/>"/></th>
@@ -73,7 +73,7 @@
       </tr>
     </thead>
     <tbody id="tableBody" ng-cloak>
-      <tr ng-repeat="item in ctrl.items | orderBy:'position'" ng-class-even="'altrow'">
+      <tr ng-repeat="item in ctrl.items | orderBy:'position'">
         <td class="center" style="vertical-align:middle">
             <input type="checkbox" name="idSelections" ng-attr-title="checkbox for {{item.name}}" value="{{item.id}}" />
         </td>

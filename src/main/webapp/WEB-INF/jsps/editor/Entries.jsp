@@ -166,63 +166,67 @@
     <fmt:message key="entries.scheduled" />&nbsp;&nbsp;
 </p>
 
-<table class="rollertable" width="100%">
+<table class="table table-sm table-bordered table-hover" width="100%">
 
-    <tr>
-        <th width="5%"><fmt:message key="entries.pubTime" /></th>
-        <th width="5%"><fmt:message key="entries.updateTime" /></th>
-        <th width="8%"><fmt:message key="generic.category" /></th>
-        <th><fmt:message key="entries.entryTitle" /></th>
-        <th width="16%"><fmt:message key="generic.tags" /></th>
-        <th width="5%"></th>
-        <th width="5%"></th>
-        <th width="5%"></th>
-    </tr>
+    <thead class="thead-light">
+        <tr>
+            <th width="10%"><fmt:message key="entries.pubTime" /></th>
+            <th width="10%"><fmt:message key="entries.updateTime" /></th>
+            <th width="8%"><fmt:message key="generic.category" /></th>
+            <th><fmt:message key="entries.entryTitle" /></th>
+            <th width="16%"><fmt:message key="generic.tags" /></th>
+            <th width="5%"></th>
+            <th width="5%"></th>
+            <th width="5%"></th>
+        </tr>
+    </thead>
 
-    <tr ng-repeat="entry in ctrl.entriesData.entries"
-        ng-class="{DRAFT : 'draftentry', PENDING : 'pendingentry', SCHEDULED : 'scheduledentry'}[entry.status]" ng-cloak>
+    <tbody>
+        <tr ng-repeat="entry in ctrl.entriesData.entries"
+            ng-class="{DRAFT : 'draftentry', PENDING : 'pendingentry', SCHEDULED : 'scheduledentry'}[entry.status]" ng-cloak>
 
-        <td>
-            <span ng-if="entry.pubTime != null">
-              {{entry.pubTime | date:'short'}}
-            </span>
-        </td>
+            <td>
+                <span ng-if="entry.pubTime != null">
+                  {{entry.pubTime | date:'short'}}
+                </span>
+            </td>
 
-        <td>
-            <span ng-if="entry.updateTime != null">
-              {{entry.updateTime | date:'short'}}
-            </span>
-        </td>
+            <td>
+                <span ng-if="entry.updateTime != null">
+                  {{entry.updateTime | date:'short'}}
+                </span>
+            </td>
 
-        <td>
-            {{entry.category.name}}
-        </td>
+            <td>
+                {{entry.category.name}}
+            </td>
 
-        <td>
-            {{entry.title | limitTo:80}}
-        </td>
+            <td>
+                {{entry.title | limitTo:80}}
+            </td>
 
-        <td>
-            {{entry.tagsAsString}}
-        </td>
+            <td>
+                {{entry.tagsAsString}}
+            </td>
 
-        <td>
-            <span ng-if="entry.status == 'PUBLISHED'">
-                <a ng-href='{{entry.permalink}}' target="_blank"><fmt:message key="entries.view" /></a>
-            </span>
-        </td>
+            <td>
+                <span ng-if="entry.status == 'PUBLISHED'">
+                    <a ng-href='{{entry.permalink}}' target="_blank"><fmt:message key="entries.view" /></a>
+                </span>
+            </td>
 
-        <td>
-            <a target="_blank" ng-href="<c:url value='/tb-ui/app/authoring/entryEdit'/>?weblogId=<c:out value='${param.weblogId}'/>&entryId={{entry.id}}">
-                <fmt:message key="generic.edit" />
-            </a>
-        </td>
+            <td>
+                <a target="_blank" ng-href="<c:url value='/tb-ui/app/authoring/entryEdit'/>?weblogId=<c:out value='${param.weblogId}'/>&entryId={{entry.id}}">
+                    <fmt:message key="generic.edit" />
+                </a>
+            </td>
 
-        <td>
-            <button confirm-delete-dialog="confirm-delete" id-to-delete="{{entry.id}}"><fmt:message key="generic.delete" /></button>
-        </td>
+            <td>
+                <button confirm-delete-dialog="confirm-delete" id-to-delete="{{entry.id}}"><fmt:message key="generic.delete" /></button>
+            </td>
 
         </tr>
+    </tbody>
 </table>
 
 <div id="confirm-delete" title="<fmt:message key='entryEdit.deleteEntry'/>" style="display:none">

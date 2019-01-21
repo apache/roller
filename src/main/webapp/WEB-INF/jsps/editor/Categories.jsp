@@ -51,8 +51,8 @@
 
 <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/authoring/categories'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
-    <table class="rollertable">
-        <thead>
+    <table class="table table-sm table-bordered table-striped">
+        <thead class="thead-light">
         <tr>
             <th width="20%"><fmt:message key="generic.category"/></th>
             <th width="20%"><fmt:message key="categories.column.count"/></th>
@@ -63,7 +63,7 @@
         </tr>
       </thead>
       <tbody ng-cloak>
-          <tr ng-repeat="item in ctrl.items | orderBy:'position'" ng-class-even="'altrow'">
+          <tr ng-repeat="item in ctrl.items | orderBy:'position'">
               <td>{{item.name}}</td>
               <td>{{item.numEntries}}</td>
               <td>{{ctrl.formatDate(item.firstEntry)}}</td>

@@ -64,43 +64,44 @@
     <br>
 </div>
 
-<table class="rollertable" width="100%">
+<table class="table table-sm  table-bordered table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th width="20%"><fmt:message key="tags.column.tag" /></th>
+            <th width="10%"><fmt:message key="categories.column.count" /></th>
+            <th width="10%"><fmt:message key="categories.column.firstEntry" /></th>
+            <th width="10%"><fmt:message key="categories.column.lastEntry" /></th>
+            <th width="14%"></th>
+            <th width="10%"></th>
+            <th width="10%"></th>
+            <th width="10%"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="tag in ctrl.tagData.tags" ng-cloak>
 
-    <tr>
-        <th width="20%"><fmt:message key="tags.column.tag" /></th>
-        <th width="10%"><fmt:message key="categories.column.count" /></th>
-        <th width="10%"><fmt:message key="categories.column.firstEntry" /></th>
-        <th width="10%"><fmt:message key="categories.column.lastEntry" /></th>
-        <th width="14%"></th>
-        <th width="10%"></th>
-        <th width="10%"></th>
-        <th width="10%"></th>
-    </tr>
+            <td>{{tag.name}}</td>
+            <td>{{tag.total}}</td>
+            <td>{{ctrl.formatDate(tag.firstEntry)}}</td>
+            <td>{{ctrl.formatDate(tag.lastEntry)}}</td>
 
-    <tr ng-repeat="tag in ctrl.tagData.tags" ng-class-even="'altrow'" ng-cloak>
+            <td>
+                <a ng-href='{{tag.viewUrl}}' target="_blank"><fmt:message key="tags.column.view" /></a>
+            </td>
 
-        <td>{{tag.name}}</td>
-        <td>{{tag.total}}</td>
-        <td>{{ctrl.formatDate(tag.firstEntry)}}</td>
-        <td>{{ctrl.formatDate(tag.lastEntry)}}</td>
+            <td>
+                <button rename-tag-dialog="change-tag-dialog" current-tag="{{tag.name}}"><fmt:message key="generic.rename" /></button>
+            </td>
 
-        <td>
-            <a ng-href='{{tag.viewUrl}}' target="_blank"><fmt:message key="tags.column.view" /></a>
-        </td>
+            <td>
+                <button add-tag-dialog="change-tag-dialog" current-tag="{{tag.name}}"><fmt:message key="generic.add" /></button>
+            </td>
 
-        <td>
-            <button rename-tag-dialog="change-tag-dialog" current-tag="{{tag.name}}"><fmt:message key="generic.rename" /></button>
-        </td>
-
-        <td>
-            <button add-tag-dialog="change-tag-dialog" current-tag="{{tag.name}}"><fmt:message key="generic.add" /></button>
-        </td>
-
-        <td>
-            <button confirm-delete-dialog="confirm-delete-dialog" name-to-delete="{{tag.name}}"><fmt:message key="generic.delete" /></button>
-        </td>
-
-    </tr>
+            <td>
+                <button confirm-delete-dialog="confirm-delete-dialog" name-to-delete="{{tag.name}}"><fmt:message key="generic.delete" /></button>
+            </td>
+        </tr>
+    </tbody>
 </table>
 
 <div id="change-tag-dialog" style="display:none">

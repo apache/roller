@@ -143,8 +143,8 @@
 
 <div class="showinguser" ng-show="ctrl.userBeingEdited">
     <p><fmt:message key="userAdmin.userMemberOf"/></p>
-    <table class="rollertable">
-      <thead>
+    <table class="table table-bordered table-hover">
+      <thead class="thead-light">
         <tr>
             <th style="width:30%"><fmt:message key="generic.weblog" /></th>
             <th style="width:10%"><fmt:message key="userAdmin.pending" /></th>

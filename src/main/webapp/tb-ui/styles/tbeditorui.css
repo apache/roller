@@ -221,37 +221,13 @@ Table styles
 div.tablenav {
     font-size: 110%
 }
-table.rollertable {
-    border-collapse: collapse;
-    width: 100%;
-}
 table.innertable {
     border-collapse: collapse;
     width: 100%;
     margin-bottom: 0;
 }
-table.rollertable th {
-    border: 1px solid #ccc;
-    font-size: 110%;
-    padding: 3px;
-}
-table.rollertable th {
-    color: white;
-}
-table.rollertable td, table.rollertable tbody td {
-    vertical-align: top;
-}
-table.rollertable tbody td {
-    padding: 3px;
-}
 table.innertable tbody td {
     padding: 0;
-}
-table.rollertable td.center {
-    text-align: center;
-}
-table.rollertable .innertable td {
-	border: none;
 }
 table.innertable td.viewbody {
 	padding: 5px;
@@ -262,24 +238,12 @@ table.innertable tr .bot {
 table.innertable tr .viewbody .bot {
 	padding-bottom: 10px;
 }
-.rollertable td {
-    border: 1px solid #ccc;
-    background: inherit;
-    vertical-align: top;
-    color: black;
-}
-.rollertable .altrow td {
-    background: #EEEEEE;
-}
 .pendingCommentBox {
     background: khaki;
     border: 1px gray solid;
 }
 td.pendingcomment {
     background: khaki;
-}
-tr.actionrow {
-    background: #e5e5e5;
 }
 .spamCommentBox {
     background: #ffcccc;

@@ -53,8 +53,8 @@
 
 <br style="clear:left"/>
 
-<table class="rollertable">
-<thead>
+<table class="table table-sm table-bordered table-striped">
+<thead class="thead-light">
    <tr>
         <th style="width:10%"><fmt:message key="generic.name"/></th>
         <th style="width:9%"><fmt:message key="cachedData.maxEntries"/></th>
@@ -70,7 +70,7 @@
     </tr>
 </thead>
 <tbody id="tableBody" ng-cloak>
-      <tr ng-repeat="(key,item) in ctrl.cacheData" ng-class-even="'altrow'">
+      <tr ng-repeat="(key,item) in ctrl.cacheData">
         <td>{{key}}</td>
         <td>{{item.maxEntries}}</td>
         <td>{{item.estimatedSize}}</td>

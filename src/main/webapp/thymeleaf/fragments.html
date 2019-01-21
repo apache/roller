@@ -31,15 +31,17 @@
             <tr>
                 <th th:each="dayOfWeekName : ${cal.dayOfWeekNames}" class="hCalendarDayNameRow" align="center" th:text="${dayOfWeekName}">xxx</th>
             </tr>
-            <tr th:each="week : ${cal.weeks}">
-                <td th:each="day : ${week.days}" class="hCalendarDay" th:classappend="${day.dayNum == null ? 'NotInMonth' : (day.today ? 'Current' : '')}">
-                    <th:block th:if="${day.dayNum}">
-                        <a th:remove="${#strings.isEmpty(day.link) ? 'tag' : 'none'}" th:href="${day.link}"><div class="hCalendarDay" th:text="${day.dayNum}"></div></a>
-                        <th:block th:if="${big}">
-                            <a th:each="entry : ${day.entries}" th:href="${entry.link}"><div th:class="bCalendarDayContent" th:text="${entry.title}"></div></a>
+            <tr th:each="weekNum : ${#numbers.sequence(0, 5, 1)}">
+                <th:block th:each="dayNo : ${#numbers.sequence(0, 6, 1)}" th:with="dayIter = ${cal.getWeek(weekNum).getDay(dayNo)}">
+                    <td class="hCalendarDay" th:classappend="${dayIter.dayNum == null ? 'NotInMonth' : (dayIter.today ? 'Current' : '')}">
+                        <th:block th:if="${dayIter.dayNum}">
+                            <a th:remove="${#strings.isEmpty(dayIter.link) ? 'tag' : 'none'}" th:href="${dayIter.link}"><div class="hCalendarDay" th:text="${dayIter.dayNum}"></div></a>
+                            <th:block th:if="${big}">
+                                <a th:each="entry : ${dayIter.entries}" th:href="${entry.link}"><div th:class="bCalendarDayContent" th:text="${entry.title}"></div></a>
+                            </th:block>
                         </th:block>
-                    </th:block>
-                </td>
+                    </td>
+                </th:block>
             </tr>
             <tr class="hCalendarNextPrev">
                 <td colspan="7" align="center">

@@ -156,87 +156,84 @@
         </div>
 
 
-            <table class="rollertable" width="100%">
+        <table class="table table-sm table-bordered table-hover" width="100%">
 
         <%-- ======================================================== --%>
         <%-- Comment table header --%>
 
-        <tr>
-            <th width="8%"><fmt:message key="comments.showhide" /></th>
-            <th width="8%" ><fmt:message key="generic.delete" /></th>
-            <th ><fmt:message key="comments.columnComment" /></th>
-        </tr>
-
-        <tr class="actionrow">
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td align="right">
-                <br />
-                <span class="pendingCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <fmt:message key="comments.pending" />&nbsp;&nbsp;
-                <span class="spamCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <fmt:message key="comments.spam" />&nbsp;&nbsp;
-            </td>
-        </tr>
+        <thead class="thead-light">
+            <tr>
+                <th width="8%"><fmt:message key="comments.showhide" /></th>
+                <th width="8%" ><fmt:message key="generic.delete" /></th>
+                <th><fmt:message key="comments.columnComment" /> -
+                    <span class="pendingCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <fmt:message key="comments.pending" />&nbsp;&nbsp;
+                    <span class="spamCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <fmt:message key="comments.spam" />&nbsp;&nbsp;
+                </th>
+            </tr>
+        </thead>
 
         <%-- ========================================================= --%>
         <%-- Loop through comments --%>
         <%-- ========================================================= --%>
 
-        <tr ng-repeat="comment in commentArr">
-            <td>
-                <input ng-if="comment.status == 'SPAM' || comment.status == 'DISAPPROVED' || comment.status == 'PENDING'"
-                    type="button" value="<fmt:message key='comments.approve'/>" ng-click="ctrl.approveComment(comment)"/>
-                <input ng-if="comment.status == 'APPROVED'"
-                    type="button" value="<fmt:message key='comments.hide'/>" ng-click="ctrl.hideComment(comment)"/>
-            </td>
-            <td>
-                <input type="button" value="<fmt:message key='generic.delete'/>" ng-click="ctrl.deleteComment(comment)"/>
-            </td>
+        <tbody>
+            <tr ng-repeat="comment in commentArr">
+                <td>
+                    <input ng-if="comment.status == 'SPAM' || comment.status == 'DISAPPROVED' || comment.status == 'PENDING'"
+                        type="button" value="<fmt:message key='comments.approve'/>" ng-click="ctrl.approveComment(comment)"/>
+                    <input ng-if="comment.status == 'APPROVED'"
+                        type="button" value="<fmt:message key='comments.hide'/>" ng-click="ctrl.hideComment(comment)"/>
+                </td>
+                <td>
+                    <input type="button" value="<fmt:message key='generic.delete'/>" ng-click="ctrl.deleteComment(comment)"/>
+                </td>
 
-            <td ng-class="{SPAM : 'spamcomment', PENDING : 'pendingcomment', DISAPPROVED : 'pendingcomment'}[comment.status]">
+                <td ng-class="{SPAM : 'spamcomment', PENDING : 'pendingcomment', DISAPPROVED : 'pendingcomment'}[comment.status]">
 
-                <%-- comment details table in table --%>
-                <table class="innertable" >
-                    <tr>
-                        <td class="viewbody">
-                        <div class="viewdetails bot">
-                            <div class="details">
-                                <fmt:message key="comments.entryTitled" />:&nbsp;
-                                <a ng-href='{{comment.weblogEntry.permalink}}' target="_blank">{{comment.weblogEntry.title}}</a>
-                            </div>
-                            <div class="details">
-                                <fmt:message key="comments.commentBy" />:&nbsp;
-                                <span ng-bind-html="ctrl.getCommentHeader(comment)"></span>
-                            </div>
-                            <span ng-if="comment.url">
+                    <%-- comment details table in table --%>
+                    <table class="innertable" >
+                        <tr>
+                            <td class="viewbody">
+                            <div class="viewdetails bot">
                                 <div class="details">
-                                    <fmt:message key="comments.commentByURL" />:&nbsp;
-                                    <a ng-href='{{comment.url}}'>
-                                    {{comment.url | limitTo:60}}{{comment.url.length > 60 ? '...' : ''}}
-                                    </a>
+                                    <fmt:message key="comments.entryTitled" />:&nbsp;
+                                    <a ng-href='{{comment.weblogEntry.permalink}}' target="_blank">{{comment.weblogEntry.title}}</a>
                                 </div>
-                            </span>
-                            <div class="details">
-                                <fmt:message key="comments.postTime" />: {{comment.postTime | date:'short'}}
+                                <div class="details">
+                                    <fmt:message key="comments.commentBy" />:&nbsp;
+                                    <span ng-bind-html="ctrl.getCommentHeader(comment)"></span>
+                                </div>
+                                <span ng-if="comment.url">
+                                    <div class="details">
+                                        <fmt:message key="comments.commentByURL" />:&nbsp;
+                                        <a ng-href='{{comment.url}}'>
+                                        {{comment.url | limitTo:60}}{{comment.url.length > 60 ? '...' : ''}}
+                                        </a>
+                                    </div>
+                                </span>
+                                <div class="details">
+                                    <fmt:message key="comments.postTime" />: {{comment.postTime | date:'short'}}
+                                </div>
                             </div>
-                        </div>
-                        <div class="viewdetails bot">
-                             <div class="details bot">
-                                  <textarea style='width:100%' rows='10' ng-model="comment.content" ng-readonly="!comment.editable"></textarea>
-                             </div>
-                             <div class="details" ng-show="!comment.editable">
-                                  <a ng-click="ctrl.editComment(comment)"><fmt:message key="generic.edit"/></a>
-                             </div>
-                             <div class="details" ng-show="comment.editable">
-                                  <a ng-click="ctrl.saveComment(comment)"><fmt:message key="generic.save"/></a> &nbsp;|&nbsp;
-                                  <a ng-click="ctrl.editCommentCancel(comment)"><fmt:message key="generic.cancel"/></a>
-                             </div>
-                        </div>
-                    </tr>
-                </table>
-            </td>
-        </tr>
+                            <div class="viewdetails bot">
+                                 <div class="details bot">
+                                      <textarea style='width:100%' rows='10' ng-model="comment.content" ng-readonly="!comment.editable"></textarea>
+                                 </div>
+                                 <div class="details" ng-show="!comment.editable">
+                                      <a ng-click="ctrl.editComment(comment)"><fmt:message key="generic.edit"/></a>
+                                 </div>
+                                 <div class="details" ng-show="comment.editable">
+                                      <a ng-click="ctrl.saveComment(comment)"><fmt:message key="generic.save"/></a> &nbsp;|&nbsp;
+                                      <a ng-click="ctrl.editCommentCancel(comment)"><fmt:message key="generic.cancel"/></a>
+                                 </div>
+                            </div>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
     </table>
     <br>
 </div>

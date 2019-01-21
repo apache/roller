@@ -54,12 +54,6 @@ a:visited {
 .subtitle span {
     color: #ad3431;
 }
-table.rollertable th {
-    background: #c6ab74;
-}
-table.rollertable td {
-    border: 1px solid #c6ab74;
-}
 div.control {
     background: #c6ab74;
 }

@@ -76,9 +76,9 @@ var actionWeblogId = "<c:out value='${param.weblogId}'/>";
     <div>
 
     <fmt:message key="generic.date.toStringFormat" var="dateFormat"/>
-    <table class="rollertable">
 
-      <thead>
+    <table class="table table-sm table-bordered table-striped">
+        <thead class="thead-light">
         <tr>
           <th width="4%"><input type="checkbox" onclick="toggleCheckboxes(this.checked,'idSelections');"
             title="<fmt:message key="templates.selectAllLabel"/>"/></th>
@@ -91,7 +91,7 @@ var actionWeblogId = "<c:out value='${param.weblogId}'/>";
         </tr>
       </thead>
       <tbody ng-cloak>
-        <tr ng-repeat="tpl in ctrl.weblogTemplateData.templates" ng-class-even="'altrow'">
+        <tr ng-repeat="tpl in ctrl.weblogTemplateData.templates">
             <td class="center" style="vertical-align:middle">
               <span ng-if="tpl.derivation != 'Default'">
                   <input type="checkbox" name="idSelections" value="{{tpl.id}}" />
