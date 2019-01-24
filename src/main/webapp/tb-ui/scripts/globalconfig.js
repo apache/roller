@@ -30,7 +30,7 @@ tightblogApp.controller('PageController', ['$http',
             $http.post(self.urlRoot + 'webloggerproperties', JSON.stringify(self.webloggerProps)).then(
               function(response) {
                 self.errorObj = {};
-                self.saveResponseMessage = response.data;
+                self.successMessage = response.data;
                 self.loadWebloggerProperties();
                 window.scrollTo(0, 0);
               },

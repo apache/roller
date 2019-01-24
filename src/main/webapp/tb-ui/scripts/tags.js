@@ -74,7 +74,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.deleteTag = function(tagName) {
         $http.delete(this.urlRoot + 'weblog/' + weblogId + '/tagname/' + tagName).then(
           function(response) {
-             self.resultsMessage = '[' + tagName + '] deleted';
+             self.successMessage = '[' + tagName + '] deleted';
              self.loadTags();
           },
           self.commonErrorResponse
@@ -85,7 +85,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         $http.post(this.urlRoot + 'weblog/' + weblogId + '/add/currenttag/' + currentTag + '/newtag/' + newTag).then(
           function(response) {
              self.resultsMap = response.data;
-             self.resultsMessage = 'Added [' + newTag + '] to ' + self.resultsMap.updated + ' entries having ['
+             self.successMessage = 'Added [' + newTag + '] to ' + self.resultsMap.updated + ' entries having ['
                 + currentTag + (self.resultsMap.unchanged > 0 ? '] (' + self.resultsMap.unchanged
                 + ' already had [' + newTag + '])' : ']');
              self.loadTags();
@@ -98,7 +98,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         $http.post(this.urlRoot + 'weblog/' + weblogId + '/rename/currenttag/' + currentTag + '/newtag/' + newTag).then(
           function(response) {
              self.resultsMap = response.data;
-             self.resultsMessage = 'Renamed [' + currentTag + '] to [' + newTag + '] in ' + self.resultsMap.updated
+             self.successMessage = 'Renamed [' + currentTag + '] to [' + newTag + '] in ' + self.resultsMap.updated
                 + ' entries' + (self.resultsMap.unchanged > 0 ? ', deleted [' + currentTag + '] from '
                 + self.resultsMap.unchanged + ' entries already having [' + newTag + ']': '');
              self.loadTags();
@@ -117,13 +117,13 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     };
 
     this.previousPage = function() {
-        self.resultsMessage = '';
+        self.successMessage = '';
         this.pageNum--;
         this.loadTags();
     };
 
     this.nextPage = function() {
-        self.resultsMessage = '';
+        self.successMessage = '';
         this.pageNum++;
         this.loadTags();
     };
@@ -132,7 +132,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         if (response.status == 408) {
            window.location.replace($('#refreshURL').attr('value'));
         } else if (response.status == 400) {
-           self.resultsMessage = response.data;
+           self.successMessage = response.data;
         }
     }
 

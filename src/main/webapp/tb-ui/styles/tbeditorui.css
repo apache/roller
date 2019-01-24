@@ -272,23 +272,7 @@ Error and status message styles
     color: #f00;
     font-size: larger;
 }
-.errors, .messages {
-    padding: 5px;
-    margin: 10px 0px 10px 0px;
-}
-.errors {
-    background-color: #fcc;
-    border: 1px solid red;
-}
-.messages {
-    background-color: #cfc;
-    border: 1px solid green;
-}
-div.notification {
-    padding: 10px;
-    background-color: #ffffce;
-    border: 1px solid #f0c000;
-}
+
 div.errorTitle {
     background-color: #ffcccc;
     border: 1px solid #000000;

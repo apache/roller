@@ -37,11 +37,14 @@
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/mediafileedit.js'/>"></script>
 
-<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj">
-  <b>{{ctrl.errorObj.errorMessage}}</b>
-  <ul>
-     <li ng-repeat="em in ctrl.errorObj.errors">{{em}}</li>
-  </ul>
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
+    <b>{{ctrl.errorObj.errorMessage}}</b>
+    <button type="button" class="close" data-ng-click="ctrl.errorObj.errorMessage = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
+    <ul ng-if="ctrl.errorObj.errors">
+       <li ng-repeat="item in ctrl.errorObj.errors">{{item}}</li>
+    </ul>
 </div>
 
 <c:choose>

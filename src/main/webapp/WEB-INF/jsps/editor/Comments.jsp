@@ -46,8 +46,11 @@
     </c:otherwise>
 </c:choose>
 
-<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorMsg" ng-cloak>
-   <b>{{ctrl.errorMsg}}</b>
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorMessage" ng-cloak>
+    {{ctrl.errorMessage}}
+    <button type="button" class="close" data-ng-click="ctrl.errorMessage = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 
 <p class="subtitle">

@@ -31,13 +31,19 @@
 
 <input type="hidden" id="refreshURL" value="<c:url value='/tb-ui/app/admin/userAdmin'/>"/>
 
-<div id="successMessageDiv" class="messages" ng-show="ctrl.successMessage" ng-cloak>
-    <p>{{ctrl.successMessage}}</p>
+<div id="successMessageDiv" class="alert alert-success" role="alert" ng-show="ctrl.successMessage" ng-cloak>
+    {{ctrl.successMessage}}
+    <button type="button" class="close" data-ng-click="ctrl.successMessage = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 
-<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
-    <p>{{ctrl.errorObj.errorMessage}}</p>
-    <ul>
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
+    <b>{{ctrl.errorObj.errorMessage}}</b>
+    <button type="button" class="close" data-ng-click="ctrl.errorObj.errorMessage = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
+    <ul ng-if="ctrl.errorObj.errors">
        <li ng-repeat="item in ctrl.errorObj.errors">{{item}}</li>
     </ul>
 </div>

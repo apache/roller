@@ -1,12 +1,12 @@
 tightblogApp.controller('PageController', ['$http', function PageController($http) {
 
     var self = this;
+    var messageToShow = null;
 
     this.updateRoles = function() {
       $http.post(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/memberupdate', JSON.stringify(self.roles)).then(
         function(response) {
-          $('#errorMessageDiv').hide();
-          $('#successMessageDiv').show();
+          messageToShow = 'success';
           self.loadMembers();
         },
         function(response) {
@@ -14,8 +14,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
            window.location.replace($('#refreshURL').attr('value'));  // return;
          if (response.status == 400) {
            self.errorObj = response.data;
-           $('#successMessageDiv').hide();
-           $('#errorMessageDiv').show();
+          messageToShow = 'error';
          }
       })
     }
@@ -27,8 +26,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
       $http.post(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/user/' + self.userToAdd +
         '/role/' + self.userToAddRole + '/attach').then(
         function(response) {
-          $('#errorMessageDiv').hide();
-          $('#successMessageDiv').show();
+          messageToShow = 'success';
           self.userToAdd = '';
           self.userToAddRole = '';
           self.loadMembers();
@@ -38,8 +36,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
            window.location.replace($('#refreshURL').attr('value'));  // return;
          if (response.status == 400) {
            self.errorObj = response.data;
-           $('#successMessageDiv').hide();
-           $('#errorMessageDiv').show();
+           messageToShow = 'error';
          }
       })
     }

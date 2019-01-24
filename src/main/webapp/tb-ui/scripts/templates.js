@@ -32,6 +32,7 @@ $(function() {
 
 tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
+    var showSuccessMessage = false;
     this.errorObj = {};
 
     this.resetAddTemplateData = function() {
@@ -56,8 +57,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     }
 
     this.addTemplate = function() {
-      $('#errorMessageDiv').hide();
-      $('#successMessageDiv').hide();
+      self.showSuccessMessage = false;
       var newData = {
         "name" : this.newTemplateName,
         "roleName" : this.selectedRole,
@@ -65,7 +65,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
       };
       $http.post(contextPath + '/tb-ui/authoring/rest/weblog/' + actionWeblogId + '/templates', JSON.stringify(newData)).then(
         function(response) {
-          $('#successMessageDiv').show();
+          self.showSuccessMessage = true;
           self.loadTemplateData();
           self.resetAddTemplateData();
         },
@@ -74,7 +74,6 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
            window.location.replace($('#refreshURL').attr('value'));  // return;
          if (response.status == 400) {
            self.errorObj = response.data;
-           $('#errorMessageDiv').show();
          }
       })
     }

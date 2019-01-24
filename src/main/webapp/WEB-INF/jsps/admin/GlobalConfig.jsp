@@ -33,11 +33,14 @@
 
 <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/admin/globalConfig'/>"/>
 
-<p><fmt:message key="globalConfig.prompt" /></p>
-
-<div id="successMessageDiv" class="messages" ng-show="ctrl.saveResponseMessage" ng-cloak>
-    <p>{{ctrl.saveResponseMessage}}</p>
+<div id="successMessageDiv" class="alert alert-success" role="alert" ng-show="ctrl.successMessage" ng-cloak>
+    {{ctrl.successMessage}}
+    <button type="button" class="close" data-ng-click="ctrl.successMessage = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
 </div>
+
+<p><fmt:message key="globalConfig.prompt"/></p>
 
 <table class="formtable">
 

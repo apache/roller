@@ -58,15 +58,19 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
     </div>
 </div>
 
-  <div id="errorMessageDiv" class="errors" style="display:none">
-    <b>{{ctrl.errorObj}}</b>
-  </div>
+<div id="successMessageDiv" class="alert alert-success" role="alert" ng-show="ctrl.messageToShow == 'success'" ng-cloak>
+    <fmt:message key="generic.changes.saved"/>
+    <button type="button" class="close" data-ng-click="ctrl.messageToShow = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
+</div>
 
-  <div id="successMessageDiv" class="messages" style="display:none">
-    <c:if test="${weblogId != null}">
-      <p><fmt:message key="generic.changes.saved"/></p>
-    </c:if>
-  </div>
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.messageToShow == 'error'" ng-cloak>
+    <button type="button" class="close" data-ng-click="ctrl.messageToShow = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
+    <b>{{ctrl.errorObj}}</b>
+</div>
 
     <table class="table table-bordered table-hover">
         <thead class="thead-light">

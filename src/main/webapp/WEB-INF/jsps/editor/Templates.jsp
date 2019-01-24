@@ -45,15 +45,21 @@ var actionWeblogId = "<c:out value='${param.weblogId}'/>";
 
 <div>
 
-    <div id="errorMessageDiv" class="errors" style="display:none">
-      <b>{{ctrl.errorObj.errorMessage}}</b>
-      <ul>
-         <li ng-repeat="em in ctrl.errorObj.errors">{{em}}</li>
-      </ul>
+    <div id="successMessageDiv" class="alert alert-success" role="alert" ng-show="ctrl.showSuccessMessage" ng-cloak>
+        <fmt:message key="generic.changes.saved"/>
+        <button type="button" class="close" data-ng-click="ctrl.showSuccessMessage = false" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+        </button>
     </div>
 
-    <div id="successMessageDiv" class="messages" style="display:none">
-        <p><fmt:message key="generic.changes.saved"/></p>
+    <div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
+        <b>{{ctrl.errorObj.errorMessage}}</b>
+        <button type="button" class="close" data-ng-click="ctrl.errorObj.errorMessage = null" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+        </button>
+        <ul ng-if="ctrl.errorObj.errors">
+           <li ng-repeat="item in ctrl.errorObj.errors">{{item}}</li>
+        </ul>
     </div>
 
     <p class="subtitle">

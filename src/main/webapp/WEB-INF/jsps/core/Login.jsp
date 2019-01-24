@@ -24,14 +24,14 @@
 
 <%-- Success Message --%>
 <c:if test='${actionMessage != null && !"".equals(actionMessage)}'>
-    <div class="messages">
+    <div class="alert alert-success">
         <c:out value="${actionMessage}"/>
     </div>
 </c:if>
 
 <%-- Error Message --%>
 <c:if test='${actionError != null && !"".equals(actionError)}'>
-    <div class="errors">
+    <div class="alert alert-danger">
         <c:out value="${actionError}"/>
     </div>
 </c:if>

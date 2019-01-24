@@ -37,12 +37,18 @@
 
 <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/admin/cachedData'/>"/>
 
-<div id="successMessageDiv" class="messages" ng-show="ctrl.successMessage" ng-cloak>
-    <p>{{ctrl.successMessage}}</p>
+<div id="successMessageDiv" class="alert alert-success" role="alert" ng-show="ctrl.successMessage" ng-cloak>
+    {{ctrl.successMessage}}
+    <button type="button" class="close" data-ng-click="ctrl.successMessage = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 
-<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorMessage" ng-cloak>
-    <p>{{ctrl.errorMessage}}</p>
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorMessage" ng-cloak>
+    {{ctrl.errorMessage}}
+    <button type="button" class="close" data-ng-click="ctrl.errorMessage = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 
 <p class="subtitle">

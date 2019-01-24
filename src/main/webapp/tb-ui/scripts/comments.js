@@ -39,7 +39,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
     };
 
     this.editComment = function(comment) {
-        self.errorMsg = null;
+        self.errorMessage = null;
         comment.editable = true;
     }
 
@@ -47,7 +47,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
         if (!comment.editable) {
             return;
         }
-        self.errorMsg = null;
+        self.errorMessage = null;
         comment.editable = false;
 
         $http.put(this.urlRoot + comment.id + '/content' , comment.content).then(
@@ -64,7 +64,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
 
     this.editCommentCancel = function(comment) {
         comment.editable = false;
-        self.errorMsg = null;
+        self.errorMessage = null;
         var oldItem = $filter('filter')(self.originalCommentData.comments, {id : comment.id}, true);
         if (oldItem && oldItem.length) {
             comment.content = oldItem[0].content;
@@ -74,7 +74,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
     this.approveComment = function(comment) {
         $http.post(this.urlRoot + comment.id + '/approve').then(
           function(response) {
-             self.errorMsg = null;
+             self.errorMessage = null;
              comment.status = 'APPROVED';
           },
           self.commonErrorResponse
@@ -84,7 +84,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
     this.hideComment = function(comment) {
         $http.post(this.urlRoot + comment.id + '/hide').then(
           function(response) {
-             self.errorMsg = null;
+             self.errorMessage = null;
              comment.status = 'DISAPPROVED';
           },
           self.commonErrorResponse
@@ -114,7 +114,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
     }
 
     this.loadComments = function() {
-        self.errorMsg = null;
+        self.errorMessage = null;
         var urlToUse = this.urlRoot + weblogId + '/page/' + this.pageNum;
         if (entryId) {
             urlToUse += "?entryId=" + entryId
@@ -151,7 +151,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
         if (response.status == 408) {
            window.location.replace($('#refreshURL').attr('value'));
         } else if (response.status == 400) {
-           self.errorMsg = response.data;
+           self.errorMessage = response.data;
         }
     }
 

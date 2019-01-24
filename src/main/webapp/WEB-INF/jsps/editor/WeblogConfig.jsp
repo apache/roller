@@ -40,13 +40,19 @@
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/weblogconfig.js'/>"></script>
 
-<div id="successMessageDiv" class="messages" ng-show="ctrl.showSuccessMessage" ng-cloak>
-    <p><fmt:message key="weblogConfig.savedChanges"/></p>
+<div id="successMessageDiv" class="alert alert-success" role="alert" ng-show="ctrl.showSuccessMessage" ng-cloak>
+    <fmt:message key="weblogConfig.savedChanges"/>
+    <button type="button" class="close" data-ng-click="ctrl.showSuccessMessage = false" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 
-<div id="errorMessageDiv" class="errors" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
-    <p>{{ctrl.errorObj.errorMessage}}</p>
-    <ul>
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
+    <b>{{ctrl.errorObj.errorMessage}}</b>
+    <button type="button" class="close" data-ng-click="ctrl.errorObj.errorMessage = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
+    <ul ng-if="ctrl.errorObj.errors">
        <li ng-repeat="item in ctrl.errorObj.errors">{{item}}</li>
     </ul>
 </div>

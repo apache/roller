@@ -34,8 +34,11 @@
 
 <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/authoring/tags'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
-<div id="successMessageDiv" class="messages" ng-show="ctrl.resultsMessage" ng-cloak>
-    <p>{{ctrl.resultsMessage}}</p>
+<div id="successMessageDiv" class="alert alert-success" role="alert" ng-show="ctrl.successMessage" ng-cloak>
+    {{ctrl.successMessage}}
+    <button type="button" class="close" data-ng-click="ctrl.successMessage = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
 </div>
 
 <p class="subtitle">
