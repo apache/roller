@@ -87,7 +87,6 @@ create table roller_oauthconsumer (
     username       varchar(48)
 );
 create index oc_username_idx  on roller_oauthconsumer( username$!db.INDEXSIZE );
-create index oc_consumerkey_idx  on roller_oauthconsumer( consumerkey$!db.INDEXSIZE );
 
 -- each record is an OAuth accessor, always tied to just one user
 create table roller_oauthaccessor (
