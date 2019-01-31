@@ -47,13 +47,10 @@ limitations under the License.
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-codec.version>1.10</commons-codec.version>
         <eclipse-link.version>2.7.3</eclipse-link.version>
-        <guice.version>4.2.1</guice.version>
+        <guice.version>4.2.2</guice.version>
         <log4j.version>1.2.17</log4j.version>
-<<<<<<< HEAD
         <log4j2.version>2.9.1</log4j2.version>
-=======
-        <log4j2.version>2.10.0</log4j2.version>
->>>>>>> master
+        <!-- <log4j2.version>2.10.0</log4j2.version> -->
         <lucene.version>4.10.4</lucene.version>
         <oauth-core.version>20100527</oauth-core.version>
         <maven-war.version>3.1.0</maven-war.version>
