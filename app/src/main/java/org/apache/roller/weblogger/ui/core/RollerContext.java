@@ -282,31 +282,6 @@ public class RollerContext extends ContextLoaderListener
                     (LoginUrlAuthenticationEntryPoint) ctx.getBean("_formLoginEntryPoint");
             entryPoint.setForceHttps(true);
         }
-   
-        /*
-        if (WebloggerConfig.getBooleanProperty("schemeenforcement.enabled")) {
-            
-            ChannelProcessingFilter procfilter =
-                    (ChannelProcessingFilter)ctx.getBean("channelProcessingFilter");
-            ConfigAttributeDefinition secureDef = new ConfigAttributeDefinition();
-            secureDef.addConfigAttribute(new SecurityConfig("REQUIRES_SECURE_CHANNEL"));
-            ConfigAttributeDefinition insecureDef = new ConfigAttributeDefinition();
-            insecureDef.addConfigAttribute(new SecurityConfig("REQUIRES_INSECURE_CHANNEL"));
-            PathBasedFilterInvocationDefinitionMap defmap =
-                    (PathBasedFilterInvocationDefinitionMap)procfilter.getFilterInvocationDefinitionSource();
-            
-            // add HTTPS URL path patterns to Spring Security config
-            String httpsUrlsProp = WebloggerConfig.getProperty("schemeenforcement.https.urls");
-            if (httpsUrlsProp != null) {
-                String[] httpsUrls = StringUtils.stripAll(StringUtils.split(httpsUrlsProp, ",") );
-                for (int i=0; i<httpsUrls.length; i++) {
-                    defmap.addSecureUrl(httpsUrls[i], secureDef);
-                }
-            }
-            // all other action URLs are non-HTTPS
-            defmap.addSecureUrl("/**<!-- need to remove this when uncommenting -->/*.do*", insecureDef);
-        }
-        */
     }
 
 
