@@ -37,7 +37,7 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
     
     public String getHtml(HttpServletRequest request) {
         
-        String answer = "";
+        int answer = 0;
         
         HttpSession session = request.getSession(true);
         if (session.getAttribute("mathAnswer") == null) {
@@ -51,10 +51,12 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
             session.setAttribute("mathAnswer", sum);
         } else {
             // preserve user's answer
-            answer = request.getParameter("answer");
-            answer = (answer == null) ? "" : answer;
+            String answerString = request.getParameter("answer");
+            try {
+                answer = Integer.parseInt(answerString);
+            } catch (Throwable intentionallyIgnored) {}
         }
-        
+
         // pull existing values out of session
         Integer value1o = (Integer)request.getSession().getAttribute("mathValue1");
         Integer value2o = (Integer)request.getSession().getAttribute("mathValue2");
