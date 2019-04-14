@@ -97,8 +97,6 @@ create table blogroll_link (
 alter table blogroll_link add constraint bl_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
 
-alter table blogroll_link add constraint bl_name_uq unique (weblogid, name);
-
 #if($FOREIGN_KEY_MAKES_INDEX == "false")
     create index bl_weblogid_idx on blogroll_link( weblogid );
 #end

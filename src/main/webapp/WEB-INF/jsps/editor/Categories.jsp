@@ -19,31 +19,21 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
-<script src="<c:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.min.js"></script>
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
     var msg = {
-        confirmLabel: '<fmt:message key="generic.confirm"/>',
-        saveLabel: '<fmt:message key="generic.save"/>',
-        cancelLabel: '<fmt:message key="generic.cancel"/>',
-        editTitle: '<fmt:message key="generic.rename"/>',
-        addTitle: '<fmt:message key="categories.add.title"/>'
+        addTitle: '<fmt:message key="categories.add.title"/>',
+        editTitleTmpl: '<fmt:message key="categories.renameTitleTmpl"/>',
+        confirmDeleteTmpl: '<fmt:message key="categories.deleteCategoryTmpl"/>'
     };
     var actionWeblogId = "<c:out value='${param.weblogId}'/>";
 </script>
 
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/categories.js'/>"></script>
-
-<p class="subtitle">
-    <fmt:message key="categories.subtitle">
-        <fmt:param value="${actionWeblog.handle}"/>
-    </fmt:message>
-</p>
 
 <p class="pagetip">
     <fmt:message key="categories.rootPrompt"/>
@@ -68,18 +58,14 @@
               <td>{{item.numEntries}}</td>
               <td>{{ctrl.formatDate(item.firstEntry)}}</td>
               <td>{{ctrl.formatDate(item.lastEntry)}}</td>
-              <td align="center">
-                <a edit-dialog="edit-dialog" ng-click="ctrl.setEditItem(item)">
-                    <img src='<c:url value="/images/page_white_edit.png"/>' border="0" alt="icon"
-                         title="<fmt:message key='generic.edit'/>"/>
-                </a>
+              <td class="buttontd">
+                  <button class="btn btn-warning" data-category-id="{{item.id}}" data-category-name="{{item.name}}" data-action="rename"
+                      data-toggle="modal" data-target="#editCategoryModal"><fmt:message key="generic.rename" /></button>
               </td>
-              <td align="center">
+              <td class="buttontd">
                   <span ng-if="ctrl.items.length > 1">
-                      <a confirm-delete-dialog="delete-dialog" name-to-delete="{{item.name}}" ng-click="ctrl.setDeleteItem(item)">
-                          <img src="<c:url value='/images/delete.png'/>" border="0" alt="icon"
-                              title="<fmt:message key='generic.delete'/>"/>
-                      </a>
+                    <button class="btn btn-danger" data-category-id="{{item.id}}" data-category-name="{{item.name}}"
+                        data-toggle="modal" data-target="#deleteCategoryModal"><fmt:message key="generic.delete" /></button>
                   </span>
               </td>
           </tr>
@@ -87,22 +73,55 @@
        </table>
 
     <div class="control clearfix">
-        <input type="button" add-dialog="edit-dialog" ng-click="ctrl.addItem()" value="<fmt:message key='categories.addCategory'/>">
+        <input type="button" data-toggle="modal" data-target="#editCategoryModal" data-action="add"
+            data-category-id="" value="<fmt:message key='categories.addCategory'/>">
     </div>
 
-    <div id="edit-dialog" style="display:none">
+<!-- Add/Edit Category modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCategoryModalTitle"></h5>
+      </div>
+      <div class="modal-body">
         <span ng-show="ctrl.showUpdateErrorMessage">
             <fmt:message key='categories.error.duplicateName'/><br>
         </span>
-        <label for="name"><fmt:message key='generic.name'/>:</label>
-        <input id="name" ng-model="ctrl.itemToEdit.name" maxlength="80" size="50"/>
+        <label for="category-name"><fmt:message key='generic.name'/>:</label>
+        <input id="category-name" ng-model="ctrl.itemToEdit.name" maxlength="80" size="40"/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" ng-click="ctrl.inputClear()" data-dismiss="modal"><fmt:message key='generic.cancel'/></button>
+        <button type="button" class="btn btn-warning" ng-disabled="!ctrl.itemToEdit.name" id="saveButton" ng-click="ctrl.updateItem($event)"
+            data-action="populatedByJS" data-category-id="populatedByJS">
+            <fmt:message key='generic.save'/>
+        </button>
+      </div>
     </div>
+  </div>
+</div>
 
-    <div id="delete-dialog" title="<fmt:message key='categories.deleteRemoveCategory'/>" style="display:none">
+<!-- Delete category modal -->
+<div class="modal fade" id="deleteCategoryModal" tabindex="-1" role="dialog" aria-labelledby="deleteCategoryModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteCategoryModalTitle"></h5>
+      </div>
+      <div class="modal-body">
         <p>
+        <!-- | filter: { id: '!' + ctrl.itemToDelete.id } -->
             <fmt:message key="categories.deleteMoveToWhere"/>
-            <select ng-model="ctrl.targetCategoryId" size="1" required>
-               <option ng-repeat="item in ctrl.items | filter: { id: '!' + ctrl.itemToDelete.id }" value="{{item.id}}">{{item.name}}</option>
-            </select>
+            <select ng-model="ctrl.targetCategoryId" size="1" required
+                ng-options="item.id as item.name for item in ctrl.items | filter: {id : '!' + ctrl.selectedCategoryId }"
+            ></select>
         </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><fmt:message key='generic.cancel'/></button>
+        <button type="button" class="btn btn-danger" ng-disabled="!ctrl.targetCategoryId" ng-click="ctrl.deleteItem()" id="deleteButton"><fmt:message key='generic.delete'/></button>
+      </div>
     </div>
+  </div>
+</div>

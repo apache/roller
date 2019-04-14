@@ -20,8 +20,10 @@
  */
 package org.tightblog.ui.restapi;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogManager;
@@ -37,7 +39,6 @@ import org.tightblog.repository.BlogrollLinkRepository;
 import org.tightblog.repository.WeblogRepository;
 
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.RollbackException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
@@ -45,10 +46,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * List bookmarks and allow for moving them around and deleting them.
+ * Manage a blog's blogroll
  */
 @RestController
 public class BlogrollController {
+
+    private static Logger log = LoggerFactory.getLogger(BlogrollController.class);
 
     private WeblogRepository weblogRepository;
     private BlogrollLinkRepository blogrollLinkRepository;
@@ -78,27 +81,39 @@ public class BlogrollController {
         }
     }
 
-    @DeleteMapping(value = "/tb-ui/authoring/rest/bookmark/{id}")
-    public void deleteBookmark(@PathVariable String id, Principal p, HttpServletResponse response)
-            throws ServletException {
-
-        try {
-            WeblogBookmark itemToRemove = blogrollLinkRepository.findById(id).orElse(null);
-            if (itemToRemove != null) {
-                Weblog weblog = itemToRemove.getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-                    weblog.getBookmarks().remove(itemToRemove);
-                    weblogManager.saveWeblog(weblog);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                }
+    private void deleteBookmark(String id, Principal p) {
+        WeblogBookmark itemToRemove = blogrollLinkRepository.findById(id).orElse(null);
+        if (itemToRemove != null) {
+            Weblog weblog = itemToRemove.getWeblog();
+            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+                weblog.getBookmarks().remove(itemToRemove);
+                weblogManager.saveWeblog(weblog);
             } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                log.warn("Effort to delete bookmark {} by user {} failed, insufficent access rights",
+                        itemToRemove, p.getName());
             }
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
+        } else {
+            log.warn("Effort to delete bookmark {} by user {} failed, item could not be found",
+                    id, p.getName());
         }
+    }
+
+    @PostMapping(value = "/tb-ui/authoring/rest/bookmarks/delete")
+    public void deleteBookmarks(@RequestBody List<String> bookmarkIds, Principal p,
+                                HttpServletResponse response) throws ServletException {
+
+        if (bookmarkIds != null && bookmarkIds.size() > 0) {
+            for (String bookmarkId : bookmarkIds) {
+                try {
+                    deleteBookmark(bookmarkId, p);
+                } catch (Exception e) {
+                    String message = String.format("Error while user %s deleting bookmark %s: %s",
+                            p.getName(), bookmarkId, e.getMessage());
+                    throw new ServletException(message);
+                }
+            }
+        }
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     @PutMapping(value = "/tb-ui/authoring/rest/bookmark/{id}")
@@ -114,12 +129,7 @@ public class BlogrollController {
                     bookmarkFromWeblog.setName(newData.getName());
                     bookmarkFromWeblog.setUrl(newData.getUrl());
                     bookmarkFromWeblog.setDescription(newData.getDescription());
-                    try {
-                        weblogManager.saveWeblog(weblog);
-                    } catch (RollbackException e) {
-                        response.setStatus(HttpServletResponse.SC_CONFLICT);
-                        return;
-                    }
+                    weblogManager.saveWeblog(weblog);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     // should never happen
@@ -144,12 +154,7 @@ public class BlogrollController {
                 WeblogBookmark bookmark = new WeblogBookmark(weblog, newData.getName(),
                         newData.getUrl(), newData.getDescription());
                 weblog.addBookmark(bookmark);
-                try {
-                    weblogManager.saveWeblog(weblog);
-                } catch (RollbackException e) {
-                    response.setStatus(HttpServletResponse.SC_CONFLICT);
-                    return;
-                }
+                weblogManager.saveWeblog(weblog);
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);

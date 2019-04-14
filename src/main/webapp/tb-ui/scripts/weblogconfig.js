@@ -1,28 +1,3 @@
-$(function() {
-  $("#confirm-delete").dialog({
-    autoOpen: false,
-    resizable: true,
-    height:310,
-    modal: true,
-    buttons: [
-       {
-          text: msg.deleteLabel,
-          click: function() {
-             angular.element('#ngapp-div').scope().ctrl.deleteWeblog();
-             angular.element('#ngapp-div').scope().$apply();
-             $( this ).dialog( "close" );
-          }
-       },
-       {
-          text: msg.cancelLabel,
-          click: function() {
-             $(this).dialog("close");
-          }
-       }
-    ]
-  });
-});
-
 tightblogApp.requires.push('ngSanitize');
 
 tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$filter',
@@ -85,6 +60,8 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
         }
 
         this.deleteWeblog = function() {
+            $('#deleteWeblogModal').modal('hide');
+
             $http.delete(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId).then(
               function(response) {
                  window.location.replace(homeUrl);
@@ -126,15 +103,3 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
         }
     }]
 );
-
-tightblogApp.directive('confirmDeleteDialog', function() {
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attr, ctrl) {
-            var dialogId = '#' + attr.confirmDeleteDialog;
-            elem.bind('click', function(e) {
-                $(dialogId).dialog('open');
-            });
-        }
-    };
-});

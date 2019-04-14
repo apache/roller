@@ -23,10 +23,13 @@
         <tr>
             <td class="bannerLeft">
 
+                <fmt:message key="product.name.version">
+                    <fmt:param value="${tightblogVersion}" />:
+                </fmt:message>
+
                 <c:if test="${authenticatedUser != null}">
                     <fmt:message key="mainPage.loggedInAs" /> <c:out value="${authenticatedUser.screenName}"/>
                 </c:if>
-
 
                 <c:if test="${actionWeblog != null}">
                     - <fmt:message key="mainPage.currentWebsite" />

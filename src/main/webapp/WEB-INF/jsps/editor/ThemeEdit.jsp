@@ -19,9 +19,7 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>'/>
 <script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
-<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.min.js"></script>
 
 <script>
@@ -29,10 +27,6 @@ var contextPath = "${pageContext.request.contextPath}";
 var weblogHandle = "<c:out value='${actionWeblog.handle}'/>";
 var currentTheme = "<c:out value='${actionWeblog.theme}'/>";
 var weblogId = "<c:out value='${weblogId}'/>";
-var msg= {
-  confirmLabel: '<fmt:message key="generic.confirm"/>',
-  cancelLabel: '<fmt:message key="generic.cancel"/>'
-};
 var templatePageUrl = "<c:url value='/tb-ui/app/authoring/templates'/>?weblogId=" + weblogId;
 </script>
 
@@ -91,17 +85,29 @@ var templatePageUrl = "<c:url value='/tb-ui/app/authoring/templates'/>?weblogId=
     <div class="control">
         <span style="padding-left:7px">
             <button ng-click="ctrl.previewTheme()"><fmt:message key='themeEdit.preview' /></button>
-            <button confirm-switch-dialog="confirm-switch"><fmt:message key='themeEdit.save' /></button>
+            <button data-toggle="modal" data-target="#switchThemeModal"><fmt:message key='themeEdit.save' /></button>
         </span>
     </div>
 
 </div>
 
-<div id="confirm-switch" title="<fmt:message key='themeEdit.confirmTitle'/>" style="display:none">
-    <fmt:message key="themeEdit.youSure"/>
-    <br>
-    <br>
-    <span class="warning">
-        <fmt:message key="themeEdit.switchWarning" />
-    </span>
+<!-- Switch theme modal -->
+<div class="modal fade" id="switchThemeModal" tabindex="-1" role="dialog" aria-labelledby="switchThemeTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="switchThemeTitle"><fmt:message key="themeEdit.confirmSwitch"/></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span id="confirmSwitchMsg"><fmt:message key="themeEdit.switchWarning" /></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><fmt:message key='generic.cancel'/></button>
+        <button type="button" class="btn btn-danger" ng-click="ctrl.switchTheme()"><fmt:message key='generic.confirm'/></button>
+      </div>
+    </div>
+  </div>
 </div>

@@ -16,9 +16,7 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
-<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.min.js"></script>
 
 <script>
@@ -27,11 +25,6 @@
     var templateId = "<c:out value='${param.templateId}'/>";
     var templateName = "<c:out value='${param.templateName}'/>";
     var weblogUrl = "<c:out value='${actionWeblogURL}'/>";
-    var msg = {
-        deleteLabel: "<fmt:message key='generic.delete'/>",
-        cancelLabel: "<fmt:message key='generic.cancel'/>"
-    };
-    var templatesUrl = "<c:url value='/tb-ui/app/templates'/>";
 </script>
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/templateedit.js'/>"></script>
@@ -41,6 +34,7 @@
     <c:param name="templateId" value="${param.templateId}"/>
     <c:param name="templateName" value="${param.templateName}"/>
 </c:url>
+
 <input id="refreshURL" type="hidden" value="${refreshURL}"/>
 
 <div id="successMessageDiv" class="alert alert-success" role="alert" ng-show="ctrl.showSuccessMessage" ng-cloak>
@@ -104,16 +98,7 @@
 
 </table>
 
-<div data-template-tabs>
-    <ul>
-        <li><a href="#tabStandard"><em>Template</em></a></li>
-    </ul>
-    <div>
-        <div id="tabStandard">
-            <textarea ng-model="ctrl.templateData.template" rows="30" style="width:100%"></textarea>
-        </div>
-    </div>
-</div>
+<textarea ng-model="ctrl.templateData.template" rows="30" style="width:100%"></textarea>
 
 <c:url var="templatesUrl" value="/tb-ui/app/authoring/templates">
     <c:param name="weblogId" value="${param.weblogId}" />

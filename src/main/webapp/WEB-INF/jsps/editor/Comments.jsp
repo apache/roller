@@ -53,15 +53,9 @@
     </button>
 </div>
 
-<p class="subtitle">
-    <span ng-show="ctrl.entryTitleMsg != ''">
+<p class="subtitle" ng-show="ctrl.entryTitleMsg != ''">
+    <span>
         <span ng-bind-html="ctrl.entryTitleMsg"></span>
-    </span>
-
-    <span ng-show="ctrl.entryTitleMsg == null || ctrl.entryTitleMsg.length() == 0">
-        <fmt:message key="comments.website.subtitle">
-            <fmt:param value="${actionWeblog.handle}"/>
-        </fmt:message>
     </span>
 </p>
 
@@ -144,7 +138,7 @@
         <%-- Next / previous links --%>
         <%-- ============================================================= --%>
 
-        <span ng-if="ctrl.pageNum > 0 || ctrl.commentData.hasMore">
+        <span ng-if="ctrl.pageNum > 0 || ctrl.commentData.hasMore" ng-cloak>
             <center>
                 &laquo;
                 <input type="button" value="<fmt:message key='weblogEntryQuery.prev'/>"
@@ -240,4 +234,3 @@
     </table>
     <br>
 </div>
-

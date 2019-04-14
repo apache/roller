@@ -27,9 +27,13 @@
     width: 100%;
 }
 #menu {
-    padding: 0px 10px 0px 10px;
+    padding: 10px 10px 0px 10px;
 }
 #content {
+}
+
+body, h1, h2, h3, h4, h5, h6 {
+    font-weight: 300;
 }
 /*
     NOTE: these wrap divs are kinda lame, however they are necessary.
@@ -305,7 +309,7 @@ div.viewdetails {
     margin-right: 5px;
     padding: 5px 5px 5px 7px;
 }
-.control input {
+.control input, .control button {
     margin: 0.3em;
 }
 .control select {
@@ -480,6 +484,10 @@ td.menuTab {
 
 td.menuTabSelected {
     font-weight: bold;
+}
+
+td.buttontd {
+    text-align: center
 }
 
 /* ----------------------------------------------------------------------

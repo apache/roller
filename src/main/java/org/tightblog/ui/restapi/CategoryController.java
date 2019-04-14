@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -79,7 +80,7 @@ public class CategoryController {
                         try {
                             weblogManager.saveWeblog(weblog);
                             response.setStatus(HttpServletResponse.SC_OK);
-                        } catch (IllegalArgumentException e) {
+                        } catch (TransactionSystemException e) {
                             response.setStatus(HttpServletResponse.SC_CONFLICT);
                         }
                     }

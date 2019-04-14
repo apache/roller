@@ -19,17 +19,13 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
-<link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
 <script src='<c:url value="/tb-ui/scripts/jquery-2.2.3.min.js" />'></script>
-<script src='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js"/>'></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.min.js"></script>
 
 <script>
 var contextPath = "${pageContext.request.contextPath}";
 var msg= {
-    yesLabel: '<fmt:message key="generic.yes"/>',
-    noLabel: '<fmt:message key="generic.no"/>',
-    cancelLabel: '<fmt:message key="generic.cancel"/>',
+    confirmResignationTmpl: '<fmt:message key="mainMenu.confirmResignationTmpl"/>',
     unapprovedCommentsTmpl: '<fmt:message key="mainMenu.haveUnapprovedComments"/>'
 };
 </script>
@@ -132,10 +128,8 @@ var msg= {
                    <%-- disallow owners from resigning from blog --%>
                    <span ng-if="role.weblogRole != 'OWNER'">
                       <img src='<c:url value="/images/delete.png"/>' />
-                      <a href="#" confirm-resign-dialog="confirm-resign" data-role-id="{{role.id}}"
-                                data-weblog-name="{{role.weblog.name}}">
-                           <fmt:message key='mainMenu.resign'/>
-                      </a>
+                      <a href="#" data-toggle="modal" data-target="#resignWeblogModal" data-userrole-id="{{role.id}}"
+                            data-weblog-name="{{role.weblog.name}}"><fmt:message key='mainMenu.resign'/></a>
                    </span>
            </td>
            </tr>
@@ -151,7 +145,26 @@ var msg= {
         </form>
     </c:if>
 
-    <div id="confirm-resign" style="display:none">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span><fmt:message key="mainMenu.confirmResignation"/></p>
+</div>
+
+<!-- Resign from weblog modal -->
+<div class="modal fade" id="resignWeblogModal" tabindex="-1" role="dialog" aria-labelledby="resignWeblogTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="resignWeblogTitle"><fmt:message key="mainMenu.confirmResignation"/></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span id="resignWeblogMsg"></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal"><fmt:message key='generic.cancel'/></button>
+        <button type="button" class="btn btn-danger" id="resignButton" ng-click="ctrl.resignWeblog($event)"
+            data-userrole-id="populatedByJS"><fmt:message key='generic.confirm'/></button>
+      </div>
     </div>
+  </div>
 </div>

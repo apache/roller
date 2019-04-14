@@ -1,26 +1,15 @@
 $(function() {
-  $("#confirm-resign").dialog({
-    autoOpen: false,
-    resizable: true,
-    height:170,
-    modal: true,
-    buttons: [
-      {
-        text: msg.yesLabel,
-        click: function() {
-          angular.element('#ngapp-div').scope().ctrl.resignFromBlog(encodeURIComponent($(this).data('roleId')));
-          angular.element('#ngapp-div').scope().$apply();
-          $(this).dialog("close");
-        },
-      },
-      {
-        text: msg.noLabel,
-        click: function() {
-          $(this).dialog("close");
-        }
-      }
-    ]
-  });
+    $('#resignWeblogModal').on('show.bs.modal', function(e) {
+        //get data-id attribute of the clicked element
+        var weblogName = $(e.relatedTarget).attr('data-weblog-name');
+        var userRoleId = $(e.relatedTarget).attr('data-userrole-id');
+
+        // populate delete modal with tag-specific information
+        var modal = $(this)
+        var tmpl = eval('`' + msg.confirmResignationTmpl + '`')
+        modal.find('#resignWeblogMsg').html(tmpl);
+        modal.find('button[id="resignButton"]').attr("data-userrole-id", userRoleId);
+    });
 });
 
 tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
@@ -40,8 +29,13 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
                                    ({unapprovedCommentCount:commentCount}));
     }
 
-    this.resignFromBlog = function(roleId) {
-        $http.post(contextPath + '/tb-ui/authoring/rest/weblogrole/' + roleId + '/detach').then(
+    this.resignWeblog = function(obj) {
+        $('#resignWeblogModal').modal('hide');
+
+        // https://stackoverflow.com/a/18030442/1207540
+        var userRoleId = obj.toElement.dataset.userroleId;
+
+        $http.post(contextPath + '/tb-ui/authoring/rest/weblogrole/' + userRoleId + '/detach').then(
           function(response) {
              self.loadItems();
           },
@@ -57,17 +51,3 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
 
     this.loadItems();
   }]);
-
-tightblogApp.directive('confirmResignDialog', function(){
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attr, ctrl) {
-            var dialogId = '#' + attr.confirmResignDialog;
-            elem.bind('click', function(e) {
-                $(dialogId).data('roleId',  attr.roleId)
-                    .dialog("option", {"title" : attr.weblogName})
-                    .dialog('open');
-            });
-        }
-    };
-});

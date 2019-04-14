@@ -1,35 +1,3 @@
-$(function() {
-  $("#confirm-delete").dialog({
-    autoOpen: false,
-    resizable: true,
-    height:310,
-    modal: true,
-    buttons: [
-      {
-      text: msg.deleteLabel,
-      click: function() {
-        var idsToRemove = [];
-        $('input[name="idSelections"]:checked').each(function(){
-          idsToRemove.push($(this).val());
-        });
-        $(this).dialog("close");
-        if (idsToRemove.length > 0) {
-          for (i = 0; i < idsToRemove.length; i++) {
-            angular.element('#ngapp-div').scope().ctrl.deleteTemplate(idsToRemove[i]);
-          }
-        }
-      }
-      },
-      {
-        text: msg.cancelLabel,
-        click: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-    ]
-  });
-});
-
 tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
     var showSuccessMessage = false;
@@ -48,12 +16,30 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.loadTemplateData();
     this.resetAddTemplateData();
 
-    this.deleteTemplate = function(templateId) {
-      $http.delete(contextPath + '/tb-ui/authoring/rest/template/' + templateId).then(
-         function(response) {
-           self.loadTemplateData();
-         }
-      );
+    this.deleteTemplates = function() {
+        $('#deleteTemplatesModal').modal('hide');
+
+        var selectedItems = [];
+        $('input[name="idSelections"]:checked').each(function(){
+            selectedItems.push($(this).val());
+        });
+
+        $http.post(contextPath + '/tb-ui/authoring/rest/templates/delete',
+            JSON.stringify(selectedItems)).then(
+            function(response) {
+                self.loadTemplateData();
+            }
+        );
+    }
+
+    this.templatesSelected = function() {
+        return $('input[name="idSelections"]:checked').size() > 0;
+    }
+
+    this.toggleCheckboxes = function(checked) {
+        $('input[name="idSelections"]').each(function(){
+            $(this).prop('checked', checked);
+        });
     }
 
     this.addTemplate = function() {
@@ -77,18 +63,4 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
          }
       })
     }
-  }]);
-
-tightblogApp.directive('confirmDeleteDialog', function(){
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attr, ctrl) {
-            var dialogId = '#' + attr.confirmDeleteDialog;
-            elem.bind('click', function(e) {
-                if ($('input[name="idSelections"]:checked').size() > 0) {
-                    $(dialogId).dialog('open');
-                }
-            });
-        }
-    };
-});
+}]);

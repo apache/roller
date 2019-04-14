@@ -15,9 +15,9 @@
  */
 package org.tightblog.ui.restapi;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.tightblog.service.URLService;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogManager;
@@ -107,22 +107,24 @@ public class TagController {
         }
     }
 
-    @DeleteMapping(value = "/weblog/{weblogId}/tagname/{tagName}")
-    public void deleteTag(@PathVariable String weblogId, @PathVariable String tagName, Principal p,
-                          HttpServletResponse response) throws ServletException {
-
-        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-        try {
-            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
-                weblogManager.removeTag(weblog, tagName);
-                response.setStatus(HttpServletResponse.SC_OK);
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+    @PostMapping(value = "/weblog/{weblogId}/delete")
+    public void deleteTags(@PathVariable String weblogId, @RequestBody List<String> tagNames, Principal p,
+                           HttpServletResponse response) throws ServletException {
+        if (tagNames != null && tagNames.size() > 0) {
+            Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
+            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
+                for (String tagName : tagNames) {
+                    try {
+                        weblogManager.removeTag(weblog, tagName);
+                    } catch (Exception e) {
+                        String message = String.format("Error removing tagName %s from weblog %s: %s", tagName,
+                                weblog.getHandle(), e.getMessage());
+                        throw new ServletException(message);
+                    }
+                }
             }
-        } catch (Exception e) {
-            log.error("Error removing tagName {} from weblog {}", tagName, weblog.getId(), e);
-            throw new ServletException(e.getMessage());
         }
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     @PostMapping(value = "/weblog/{weblogId}/add/currenttag/{currentTagName}/newtag/{newTagName}")
@@ -133,8 +135,8 @@ public class TagController {
         return changeTags(weblogId, currentTagName, newTagName, p, response, true);
     }
 
-    @PostMapping(value = "/weblog/{weblogId}/rename/currenttag/{currentTagName}/newtag/{newTagName}")
-    public Map<String, Integer> renameTag(@PathVariable String weblogId, @PathVariable String currentTagName,
+    @PostMapping(value = "/weblog/{weblogId}/replace/currenttag/{currentTagName}/newtag/{newTagName}")
+    public Map<String, Integer> replaceTag(@PathVariable String weblogId, @PathVariable String currentTagName,
                                        @PathVariable String newTagName, Principal p, HttpServletResponse response)
             throws ServletException {
 

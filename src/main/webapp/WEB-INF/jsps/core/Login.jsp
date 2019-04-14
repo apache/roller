@@ -86,3 +86,8 @@
 
     </table>
 </form>
+
+<fmt:message key="product.powered.by">
+    <fmt:param value="${tightblogVersion}" />
+    <fmt:param value="${tightblogRevision}" />
+</fmt:message>

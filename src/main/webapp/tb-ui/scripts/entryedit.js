@@ -7,22 +7,12 @@ function extractLast( term ) {
 }
 
 function onClickAddImage(){
-    $( "#mediaFileChooser" ).attr('src', mediaFileChooserUrl);
-    $(function() {
-        $("#mediafile_edit_lightbox").dialog({
-            modal  : true,
-            width  : 600,
-            height : 600
-        });
-    });
-}
-
-function onClose() {
-    $("#mediaFileChooser").attr('src','about:blank');
+    $("#mediaFileChooser" ).attr('src', mediaFileChooserUrl);
+    $("#insertMediaFileModal").modal('show');
 }
 
 function onSelectMediaFile(name, url, alt, title, anchor, isImage) {
-    $("#mediafile_edit_lightbox").dialog("close");
+    $("#insertMediaFileModal").modal('hide');
     $("#mediaFileChooser").attr('src','about:blank');
     var anchorTag;
     if (isImage === true) {
@@ -52,28 +42,14 @@ $(function() {
         changeYear: true
     });
 
-    $("#confirm-delete").dialog({
-        autoOpen: false,
-        resizable: false,
-        height:170,
-        modal: true,
-        buttons: [
-            {
-                text: msg.deleteLabel,
-                click: function() {
-                    angular.element('#ngapp-div').scope().ctrl.deleteWeblogEntry();
-                    angular.element('#ngapp-div').scope().$apply();
-                    $( this ).dialog( "close" );
-                    document.location.href=newEntryUrl;
-                }
-            },
-            {
-                text: msg.cancelLabel,
-                click: function() {
-                    $( this ).dialog( "close" );
-                }
-            }
-        ]
+    $('#deleteEntryModal').on('show.bs.modal', function(e) {
+        //get data-id attribute of the clicked element
+        var title = $(e.relatedTarget).attr('data-title');
+
+        // populate delete modal with tag-specific information
+        var modal = $(this)
+        var tmpl = eval('`' + msg.confirmDeleteTmpl + '`')
+        modal.find('#confirmDeleteMsg').html(tmpl);
     });
 
     // tag autocomplete
@@ -233,10 +209,13 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
         }
 
         this.deleteWeblogEntry = function() {
+            $('#deleteWeblogEntryModal').modal('hide');
+
             $http.delete(this.urlRoot + entryId).then(
-              function(response) {
-              },
-              self.commonErrorResponse
+                function(response) {
+                    document.location.href=newEntryUrl;
+                },
+                self.commonErrorResponse
             )
         }
 
@@ -259,16 +238,3 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
         }
     }]
 );
-
-function showDialog(dialogId) {
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attr, ctrl) {
-            elem.bind('click', function(e) {
-                $(dialogId).dialog('open');
-            });
-        }
-    };
-}
-
-tightblogApp.directive('deleteEntryDialog', function(){return showDialog('#confirm-delete')});

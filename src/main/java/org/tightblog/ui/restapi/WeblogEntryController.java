@@ -137,7 +137,7 @@ public class WeblogEntryController {
                                               HttpServletResponse response) {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog, WeblogRole.OWNER)) {
+        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog, WeblogRole.POST)) {
 
             WeblogEntryData data = new WeblogEntryData();
 

@@ -1,61 +1,21 @@
-  $(function() {
-    $("#confirm-delete-dialog").dialog({
-      autoOpen: false,
-      resizable: false,
-      height:170,
-      modal: true,
-      buttons: [
-      {
-        text: msg.deleteLabel,
-        click: function() {
-            angular.element('#ngapp-div').scope().ctrl.deleteTag(encodeURIComponent($(this).data('tagName')));
-            angular.element('#ngapp-div').scope().$apply();
-            $( this ).dialog( "close" );
-        }
-      },
-      {
-        text: msg.cancelLabel,
-        click: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-      ]
-    });
+$(function() {
+    $('#changeTagModal').on('show.bs.modal', function(e) {
+        //get data-id attribute of the clicked element
+        var tagName = $(e.relatedTarget).attr('current-tag');
+        var action = $(e.relatedTarget).attr('action');
 
-    $("#change-tag-dialog").dialog({
-      autoOpen: false,
-      resizable: false,
-      height:170,
-      modal: true,
-      buttons: [
-      {
-        text: msg.updateLabel,
-        click: function() {
-            var currentTag = $(this).data('currentTag');
-            var newTag = $('#tagname').val().trim();
-            if ($(this).data('action') == 'rename') {
-                angular.element('#ngapp-div').scope().ctrl.renameTag(currentTag, newTag);
-            } else {
-                angular.element('#ngapp-div').scope().ctrl.addTag(currentTag, newTag);
-            }
-            angular.element('#ngapp-div').scope().$apply();
-            $( this ).dialog( "close" );
-            $('#tagname').val('');
-        }
-      },
-      {
-        text: msg.cancelLabel,
-        click: function() {
-          $( this ).dialog( "close" );
-          $('#tagname').val('');
-        }
-      }
-      ]
+        // populate delete modal with tag-specific information
+        var modal = $(this)
+        var button = modal.find('button[id="changeButton"]');
+        button.data("currentTag", tagName);
+        button.data("action", action);
+        var tmpl = eval('`' + (action == 'replace' ? msg.replaceTagTitleTmpl : msg.addTagTitleTmpl) + '`')
+        modal.find('#changeTagModalTitle').html(tmpl);
     });
-
 });
 
-tightblogApp.controller('PageController', ['$http', function PageController($http) {
+tightblogApp.controller('PageController', ['$http',
+    function PageController($http) {
     var self = this;
     this.tagData = {};
     this.errorObj = null;
@@ -71,14 +31,44 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         }
     }
 
-    this.deleteTag = function(tagName) {
-        $http.delete(this.urlRoot + 'weblog/' + weblogId + '/tagname/' + tagName).then(
-          function(response) {
-             self.successMessage = '[' + tagName + '] deleted';
-             self.loadTags();
-          },
-          self.commonErrorResponse
-        )
+    this.tagsSelected = function() {
+        return $('input[name="idSelections"]:checked').size() > 0;
+    }
+
+    this.toggleCheckboxes = function(checked) {
+        $('input[name="idSelections"]').each(function(){
+            $(this).prop('checked', checked);
+        });
+    }
+
+    this.deleteTags = function() {
+        $('#deleteTagsModal').modal('hide');
+
+        var selectedTagNames = [];
+        $('input[name="idSelections"]:checked').each(function(){
+            selectedTagNames.push($(this).val());
+        });
+
+        $http.post(contextPath + '/tb-ui/authoring/rest/tags/weblog/' + weblogId + '/delete',
+            JSON.stringify(selectedTagNames)).then(
+            function(response) {
+                self.successMessage = selectedTagNames.length + ' tag(s) deleted';
+                self.loadTags();
+            }
+        );
+    }
+
+    this.tagUpdate = function() {
+        var changeButton = $('#changeButton');
+        var currentTag = changeButton.data('currentTag');
+
+        if (changeButton.data('action') == 'replace') {
+            this.replaceTag(currentTag, this.newTagName);
+        } else {
+            this.addTag(currentTag, this.newTagName);
+        }
+        $('#changeTagModal').modal('hide');
+        this.inputClear();
     }
 
     this.addTag = function(currentTag, newTag) {
@@ -94,11 +84,11 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         )
     }
 
-    this.renameTag = function(currentTag, newTag) {
-        $http.post(this.urlRoot + 'weblog/' + weblogId + '/rename/currenttag/' + currentTag + '/newtag/' + newTag).then(
+    this.replaceTag = function(currentTag, newTag) {
+        $http.post(this.urlRoot + 'weblog/' + weblogId + '/replace/currenttag/' + currentTag + '/newtag/' + newTag).then(
           function(response) {
              self.resultsMap = response.data;
-             self.successMessage = 'Renamed [' + currentTag + '] to [' + newTag + '] in ' + self.resultsMap.updated
+             self.successMessage = 'Replaced [' + currentTag + '] with [' + newTag + '] in ' + self.resultsMap.updated
                 + ' entries' + (self.resultsMap.unchanged > 0 ? ', deleted [' + currentTag + '] from '
                 + self.resultsMap.unchanged + ' entries already having [' + newTag + ']': '');
              self.loadTags();
@@ -136,38 +126,10 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         }
     }
 
+    this.inputClear = function() {
+        this.newTagName = '';
+    }
+
     this.loadTags();
 
   }]);
-
-function showTagDialog(action, titleStub) {
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attr, ctrl) {
-            elem.bind('click', function(e) {
-                $('#change-tag-dialog').data('currentTag',  attr.currentTag)
-                           .data('action',  action)
-                           .dialog("option", {"title" : titleStub + attr.currentTag})
-                           .dialog('open');
-            });
-        }
-    };
-}
-
-tightblogApp.directive('addTagDialog', function(){return showTagDialog('add', 'Add to ')});
-
-tightblogApp.directive('renameTagDialog', function(){return showTagDialog('rename', 'Rename ')});
-
-tightblogApp.directive('confirmDeleteDialog', function(){
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attr, ctrl) {
-            var dialogId = '#' + attr.confirmDeleteDialog;
-            elem.bind('click', function(e) {
-                $(dialogId).data('tagName',  attr.nameToDelete)
-                    .dialog("option", {"title" : attr.nameToDelete})
-                    .dialog('open');
-            });
-        }
-    };
-});

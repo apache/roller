@@ -1,29 +1,3 @@
-$(function() {
-  $("#confirm-switch").dialog({
-    autoOpen: false,
-    resizable: true,
-    height:310,
-    modal: true,
-    buttons: [
-       {
-          text: msg.confirmLabel,
-          click: function() {
-             angular.element('#ngapp-div').scope().ctrl.switchTheme();
-             angular.element('#ngapp-div').scope().$apply();
-             $( this ).dialog( "close" );
-          }
-       },
-       {
-          text: msg.cancelLabel,
-          click: function() {
-             $(this).dialog("close");
-          }
-       }
-    ]
-  });
-
-});
-
 tightblogApp.controller('PageController', ['$http',
     function PageController($http) {
         var self = this;
@@ -45,6 +19,7 @@ tightblogApp.controller('PageController', ['$http',
 
         this.switchTheme = function() {
             this.messageClear();
+            $('#switchThemeModal').modal('hide');
 
             $http.post(contextPath + '/tb-ui/authoring/rest/weblog/' + weblogId + '/switchtheme/' + this.selectedTheme).then(
               function(response) {
@@ -79,15 +54,3 @@ tightblogApp.controller('PageController', ['$http',
         this.loadMetadata();
     }
 ]);
-
-tightblogApp.directive('confirmSwitchDialog', function() {
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attr, ctrl) {
-            var dialogId = '#' + attr.confirmSwitchDialog;
-            elem.bind('click', function(e) {
-                $(dialogId).dialog('open');
-            });
-        }
-    };
-});

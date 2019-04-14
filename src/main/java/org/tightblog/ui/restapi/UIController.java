@@ -269,9 +269,9 @@ public class UIController {
         return getBlogOwnerPage(principal, null, weblogId, "members");
     }
 
-    @RequestMapping(value = "/authoring/bookmarks")
-    public ModelAndView bookmarks(Principal principal, @RequestParam String weblogId) {
-        return getBlogOwnerPage(principal, null, weblogId, "bookmarks");
+    @RequestMapping(value = "/authoring/blogroll")
+    public ModelAndView blogroll(Principal principal, @RequestParam String weblogId) {
+        return getBlogOwnerPage(principal, null, weblogId, "blogroll");
     }
 
     @RequestMapping(value = "/authoring/categories")

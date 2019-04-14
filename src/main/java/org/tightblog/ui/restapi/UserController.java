@@ -332,6 +332,29 @@ public class UserController {
         }
     }
 
+    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/user/{userId}/role/{role}/attach", produces = "text/plain")
+    public ResponseEntity addUserToWeblog(@PathVariable String weblogId, @PathVariable String userId,
+                                          @PathVariable WeblogRole role, Principal p, Locale locale) {
+
+        User requestor = userRepository.findEnabledByUserName(p.getName());
+        User newMember = userRepository.findByIdOrNull(userId);
+        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
+
+        if (weblog != null && newMember != null && requestor != null &&
+                requestor.hasEffectiveGlobalRole(GlobalRole.ADMIN)) {
+
+            UserWeblogRole roleChk = userWeblogRoleRepository.findByUserAndWeblog(newMember, weblog);
+            if (roleChk != null) {
+                return ResponseEntity.badRequest().body(messages.getMessage(
+                        "members.userAlreadyMember", null, locale));
+            }
+            userManager.grantWeblogRole(newMember, weblog, role);
+            return ResponseEntity.ok(messages.getMessage("members.userAdded", null, locale));
+        } else {
+            return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).build();
+        }
+    }
+
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/memberupdate", produces = "text/plain")
     public ResponseEntity updateWeblogMembership(@PathVariable String weblogId, Principal p, Locale locale,
                                                  @RequestBody List<UserWeblogRole> roles)
@@ -346,7 +369,8 @@ public class UserController {
                     .filter(r -> r.getWeblogRole().equals(WeblogRole.OWNER))
                     .collect(Collectors.toList());
             if (owners.size() < 1) {
-                return ValidationError.badRequestFromSingleError(messages.getMessage("members.oneAdminRequired", null, locale));
+                return ResponseEntity.badRequest().body(
+                        messages.getMessage("members.oneAdminRequired", null, locale));
             }
 
             // one iteration for each line (user) in the members table
@@ -530,30 +554,6 @@ public class UserController {
         }
 
         return uwrs;
-    }
-
-    @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/user/{userId}/role/{role}/attach", produces = "text/plain")
-    public ResponseEntity addUserToWeblog(@PathVariable String weblogId, @PathVariable String userId,
-                                     @PathVariable WeblogRole role, Principal p, Locale locale) {
-
-        User requestor = userRepository.findEnabledByUserName(p.getName());
-        User newMember = userRepository.findByIdOrNull(userId);
-        Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-
-        if (weblog != null && newMember != null && requestor != null &&
-                requestor.hasEffectiveGlobalRole(GlobalRole.ADMIN)) {
-
-            UserWeblogRole roleChk = userWeblogRoleRepository.findByUserAndWeblog(newMember, weblog);
-            if (roleChk != null) {
-                ValidationError error = new ValidationError(messages.getMessage(
-                        "members.userAlreadyMember", null, locale));
-                return ResponseEntity.badRequest().body(error);
-            }
-            userManager.grantWeblogRole(newMember, weblog, role);
-            return ResponseEntity.ok(messages.getMessage("members.userAdded", null, locale));
-        } else {
-            return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN).build();
-        }
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblogrole/{id}/emails/{emailComments}")

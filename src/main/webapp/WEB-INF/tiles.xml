@@ -174,8 +174,8 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Tags.jsp" />
     </definition>
 
-    <definition name=".bookmarks" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/Bookmarks.jsp" />
+    <definition name=".blogroll" extends=".tiles-tabbedpage" >
+        <put-attribute name="content" value="/WEB-INF/jsps/editor/Blogroll.jsp" />
     </definition>
 
     <definition name=".createWeblog" extends=".tiles-tabbedpage" >

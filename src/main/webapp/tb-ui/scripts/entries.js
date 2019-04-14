@@ -1,25 +1,15 @@
   $(function() {
-    $("#confirm-delete").dialog({
-      autoOpen: false,
-      resizable: false,
-      height:170,
-      modal: true,
-      buttons: [
-      {
-        text: msg.deleteLabel,
-        click: function() {
-            angular.element('#ngapp-div').scope().ctrl.deleteWeblogEntry(encodeURIComponent($(this).data('entryId')));
-            angular.element('#ngapp-div').scope().$apply();
-            $( this ).dialog( "close" );
-        }
-      },
-      {
-        text: msg.cancelLabel,
-        click: function() {
-          $( this ).dialog( "close" );
-        }
-      }
-      ]
+    $('#deleteEntryModal').on('show.bs.modal', function(e) {
+        // get data-id attribute of the clicked element
+        var id = $(e.relatedTarget).data('id');
+        // ${title} used in template below
+        var title = $(e.relatedTarget).data('title');
+
+        // populate delete modal with tag-specific information
+        var modal = $(this)
+        modal.find('button[id="deleteButton"]').attr("data-id", id);
+        var tmpl = eval('`' + msg.confirmDeleteTmpl + '`')
+        modal.find('#confirmDeleteMsg').html(tmpl);
     });
 
     $( "#startDateString" ).datepicker({
@@ -50,7 +40,12 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.pageNum = 0;
     this.urlRoot = contextPath + '/tb-ui/authoring/rest/weblogentries/';
 
-    this.deleteWeblogEntry = function(entryId) {
+    this.deleteWeblogEntry = function(obj) {
+        $('#deleteEntryModal').modal('hide');
+
+        // https://stackoverflow.com/a/18030442/1207540
+        var entryId = obj.toElement.dataset.id;
+
         $http.delete(this.urlRoot + entryId).then(
           function(response) {
              self.loadEntries();
@@ -109,16 +104,4 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.loadLookupFields();
     this.loadEntries();
 
-  }]);
-
-tightblogApp.directive('confirmDeleteDialog', function(){
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attr, ctrl) {
-            var dialogId = '#' + attr.confirmDeleteDialog;
-            elem.bind('click', function(e) {
-                $(dialogId).data('entryId',  attr.idToDelete).dialog('open');
-            });
-        }
-    };
-});
+}]);

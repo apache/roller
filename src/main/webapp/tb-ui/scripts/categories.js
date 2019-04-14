@@ -1,54 +1,40 @@
 $(function() {
-   $("#delete-dialog").dialog({
-      autoOpen: false,
-      height: 255,
-      modal: true,
-      buttons: [
-         {
-            text: msg.confirmLabel,
-            click: function() {
-                if (angular.element('#ngapp-div').scope().ctrl.targetCategoryId) {
-                    $(this).dialog("close");
-                    angular.element('#ngapp-div').scope().ctrl.deleteItem();
-                    angular.element('#ngapp-div').scope().$apply();
-                }
-            }
-         },
-         {
-            text: msg.cancelLabel,
-            click: function() {
-               $(this).dialog("close");
-            }
-         }
-      ]
-   });
+    $('#deleteCategoryModal').on('show.bs.modal', function(e) {
+        var categoryId = $(e.relatedTarget).data('category-id');
+        angular.element('#ngapp-div').scope().ctrl.selectedCategoryId = categoryId;
+        angular.element('#ngapp-div').scope().$apply();
 
-   $("#edit-dialog").dialog({
-      autoOpen: false,
-      height: 200,
-      width: 570,
-      modal: true,
-      buttons: [
-         {
-            text: msg.saveLabel,
-            click: function() {
-               angular.element('#ngapp-div').scope().ctrl.updateItem();
-            }
-         },
-         {
-            text: msg.cancelLabel,
-            click: function() {
-               $(this).dialog("close");
-            }
-         }
-       ]
-   });
+        // used by tmpl below
+        var categoryName = $(e.relatedTarget).data('category-name');
+
+
+        var modal = $(this)
+        var tmpl = eval('`' + msg.confirmDeleteTmpl + '`')
+        modal.find('#deleteCategoryModalTitle').html(tmpl);
+    });
+
+    $('#editCategoryModal').on('show.bs.modal', function(e) {
+        $('#category-name').val('');
+
+        var categoryId = $(e.relatedTarget).data('category-id');
+
+        // used by tmpl below for renames
+        var categoryName = $(e.relatedTarget).data('category-name');
+
+        var action = $(e.relatedTarget).data('action');
+
+        // populate edit modal with category-specific information
+        var modal = $(this)
+        var button = modal.find('button[id="saveButton"]');
+        button.attr("data-category-id", categoryId);
+        button.attr("data-action", action);
+        var tmpl = eval('`' + (action == 'rename' ? msg.editTitleTmpl : msg.addTitle) + '`');
+        modal.find('#editCategoryModalTitle').html(tmpl);
+    });
 });
 
 tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
-    this.itemToEdit = {};
-    this.showUpdateErrorMessage = false;
 
     this.formatDate = function(inDate) {
         if (inDate) {
@@ -58,29 +44,19 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         }
     }
 
-    this.setDeleteItem = function(item) {
-        this.targetCategoryId = null;
-        this.itemToDelete = item;
-    }
+    this.updateItem = function(obj) {
+        // https://stackoverflow.com/a/18030442/1207540
+        var categoryId = obj.toElement.dataset.categoryId;
 
-    this.setEditItem = function(item) {
-        angular.copy(item, this.itemToEdit);
-    }
-
-    this.addItem = function() {
-        this.itemToEdit = {};
-    }
-
-    this.updateItem = function() {
         this.messageClear();
         if (this.itemToEdit.name) {
             this.itemToEdit.name = this.itemToEdit.name.replace(/[,%"/]/g,'');
             if (this.itemToEdit.name) {
-                $http.put(contextPath + (this.itemToEdit.id ? '/tb-ui/authoring/rest/category/' + this.itemToEdit.id
+                $http.put(contextPath + (categoryId ? '/tb-ui/authoring/rest/category/' + categoryId
                     : '/tb-ui/authoring/rest/categories?weblogId=' + actionWeblogId),
                     JSON.stringify(this.itemToEdit)).then(
                   function(response) {
-                     $("#edit-dialog").dialog("close");
+                     $('#editCategoryModal').modal('hide');
                      self.itemToEdit = {};
                      self.loadItems();
                   },
@@ -91,8 +67,11 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     }
 
     this.deleteItem = function() {
-      $http.delete(contextPath + '/tb-ui/authoring/rest/category/' + this.itemToDelete.id + '?targetCategoryId=' + this.targetCategoryId).then(
+      $('#deleteCategoryModal').modal('hide');
+
+      $http.delete(contextPath + '/tb-ui/authoring/rest/category/' + this.selectedCategoryId + '?targetCategoryId=' + this.targetCategoryId).then(
          function(response) {
+           self.targetCategoryId = null;
            self.loadItems();
          },
          self.commonErrorResponse
@@ -120,36 +99,11 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         this.showUpdateErrorMessage = false;
     }
 
+    this.inputClear = function() {
+        self.messageClear();
+        this.itemToEdit = {};
+    }
+
+    this.messageClear();
     this.loadItems();
   }]);
-
-function showEditDialog(title) {
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attr, ctrl) {
-            var dialogId = '#edit-dialog';
-            elem.bind('click', function(e) {
-                $(dialogId).dialog("option", {"title" : title})
-                           .dialog('open');
-            });
-        }
-    };
-}
-
-tightblogApp.directive('addDialog', function(){return showEditDialog(msg.addTitle)});
-
-tightblogApp.directive('editDialog', function(){return showEditDialog(msg.editTitle)});
-
-tightblogApp.directive('confirmDeleteDialog', function(){
-    return {
-        restrict: 'A',
-        link: function(scope, elem, attr, ctrl) {
-            var dialogId = '#' + attr.confirmDeleteDialog;
-            elem.bind('click', function(e) {
-                $(dialogId).dialog("option", {"title" : "Delete Category " + attr.nameToDelete})
-                           .dialog('open');
-            });
-        }
-    };
-});
-

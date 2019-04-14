@@ -32,12 +32,6 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
 
 <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/authoring/members'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
-<p class="subtitle">
-    <fmt:message key="members.subtitle" >
-        <fmt:param value="${actionWeblog.handle}"/>
-    </fmt:message>
-</p>
-
 <p><fmt:message key="members.description" /></p>
 
 <div class="sidebarFade">
@@ -69,7 +63,7 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
     <button type="button" class="close" data-ng-click="ctrl.messageToShow = null" aria-label="Close">
        <span aria-hidden="true">&times;</span>
     </button>
-    <b>{{ctrl.errorObj}}</b>
+    <b>{{ctrl.errorMessage}}</b>
 </div>
 
     <table class="table table-bordered table-hover">

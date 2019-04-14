@@ -67,9 +67,9 @@
             "weblogRole": "POST"
           },
           {
-            "action": "bookmarks",
+            "action": "blogroll",
             "actionPath": "/tb-ui/app/authoring/",
-            "titleKey": "bookmarks.title",
+            "titleKey": "blogroll.title",
             "weblogRole": "OWNER"
           },
           {

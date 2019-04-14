@@ -34,8 +34,8 @@
         </div>
         
         <div id="menu">
-            <h1><fmt:message key="${pageTitleKey}" /></h1>
             <tiles:insertAttribute name="menu" />
+            <h3><fmt:message key="${pageTitleKey}" /></h3>
         </div>
         
         <div id="content"> 
