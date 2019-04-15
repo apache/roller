@@ -218,6 +218,7 @@ public class PageProcessor extends AbstractProcessor {
             // write rendered content to response
             response.setContentType(rendererOutput.getComponentType().getContentType());
             response.setContentLength(rendererOutput.getContent().length);
+            // no-cache: browser may cache but must validate with server each time before using (check for 304 response)
             response.setHeader("Cache-Control", "no-cache");
             response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
             response.getOutputStream().write(rendererOutput.getContent());

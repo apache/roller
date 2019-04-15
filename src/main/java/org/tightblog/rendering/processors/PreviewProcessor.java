@@ -179,7 +179,8 @@ public class PreviewProcessor extends AbstractProcessor {
             CachedContent rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
             response.setContentType(rendererOutput.getComponentType().getContentType());
             response.setContentLength(rendererOutput.getContent().length);
-            response.setHeader("Cache-Control", "no-cache");
+            // no-store: must pull each time from server when requested
+            response.setHeader("Cache-Control", "no-store");
             response.getOutputStream().write(rendererOutput.getContent());
         } catch (Exception e) {
             log.error("Error during rendering for page {}", incomingRequest.getTemplate().getId(), e);
