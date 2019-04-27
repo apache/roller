@@ -120,20 +120,8 @@ limitations under the License.
          -->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
+            <artifactId>org.eclipse.persistence.jpa</artifactId>
             <version>${eclipse-link.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.persistence</groupId>
-                    <artifactId>jakarta.persistence</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>javax.persistence</artifactId>
-            <version>2.1.1</version>
         </dependency>
 
         <!-- Alternative testing with Hibernate (used by default with JBoss)
