@@ -17,14 +17,12 @@ package org.tightblog.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogCategory;
 
 import java.util.List;
 
 @Repository
-@Transactional("transactionManager")
 public interface WeblogCategoryRepository extends JpaRepository<WeblogCategory, String> {
 
     WeblogCategory findByWeblogAndName(Weblog weblog, String name);

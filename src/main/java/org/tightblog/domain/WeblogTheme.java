@@ -79,7 +79,7 @@ public class WeblogTheme {
 
         // now, unless in preview mode, overwrite individual templates with blog-specific ones stored in the DB
         if (!weblog.isUsedForThemePreview()) {
-            for (WeblogTemplate template : weblogTemplateRepository.findByWeblog(this.weblog)) {
+            for (WeblogTemplate template : weblogTemplateRepository.getWeblogTemplateMetadata(this.weblog)) {
                 if (pageMap.get(template.getName()) != null) {
                     // mark weblog template as an override
                     template.setDerivation(TemplateDerivation.OVERRIDDEN);

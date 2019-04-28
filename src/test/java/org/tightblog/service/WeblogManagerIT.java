@@ -94,7 +94,7 @@ public class WeblogManagerIT extends WebloggerTest {
 
         // modify weblog and save
         weblog.setName("testtesttest");
-        weblogManager.saveWeblog(weblog);
+        weblogManager.saveWeblog(weblog, true);
 
         // make sure changes were saved
         weblog = weblogRepository.findById(id).orElse(null);
@@ -141,14 +141,14 @@ public class WeblogManagerIT extends WebloggerTest {
             
             // make sure disabled weblogs are not returned
             weblog.setVisible(Boolean.FALSE);
-            weblogManager.saveWeblog(weblog);
+            weblogManager.saveWeblog(weblog, true);
             weblog = weblogRepository.findByHandleAndVisibleTrue(testWeblog1.getHandle());
             assertNull(weblog);
             
             // restore visible state
             weblog = weblogRepository.findByHandle(testWeblog1.getHandle());
             weblog.setVisible(Boolean.TRUE);
-            weblogManager.saveWeblog(weblog);
+            weblogManager.saveWeblog(weblog, true);
             weblog = weblogRepository.findByHandleAndVisibleTrue(testWeblog1.getHandle());
             assertNotNull(weblog);
             
@@ -176,7 +176,7 @@ public class WeblogManagerIT extends WebloggerTest {
         Weblog aWeblog = weblogRepository.findById(testWeblog.getId()).orElse(null);
         int oldHits = aWeblog.getHitsToday();
         aWeblog.setHitsToday(oldHits + 10);
-        weblogManager.saveWeblog(aWeblog);
+        weblogManager.saveWeblog(aWeblog, true);
 
         // make sure it was stored
         aWeblog = weblogRepository.findById(testWeblog.getId()).orElse(null);
@@ -189,7 +189,7 @@ public class WeblogManagerIT extends WebloggerTest {
     public void testIncrementHitCount() {
         Weblog aWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         aWeblog.setHitsToday(10);
-        weblogManager.saveWeblog(aWeblog);
+        weblogManager.saveWeblog(aWeblog, true);
 
         // make sure it was created
         aWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
@@ -215,8 +215,8 @@ public class WeblogManagerIT extends WebloggerTest {
         blog1.setHitsToday(10);
         blog2.setHitsToday(20);
 
-        weblogManager.saveWeblog(blog1);
-        weblogManager.saveWeblog(blog2);
+        weblogManager.saveWeblog(blog1, true);
+        weblogManager.saveWeblog(blog2, true);
 
         try {
             // make sure data was properly initialized
@@ -258,7 +258,7 @@ public class WeblogManagerIT extends WebloggerTest {
         );
         testWeblog.addBookmark(bookmark2);
         bookmark2.calculatePosition();
-        weblogManager.saveWeblog(testWeblog);
+        weblogManager.saveWeblog(testWeblog, true);
 
         testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         WeblogBookmark bookmarka;
@@ -273,7 +273,7 @@ public class WeblogManagerIT extends WebloggerTest {
 
         // Remove one bookmark directly
         testWeblog.getBookmarks().remove(bookmarka);
-        weblogManager.saveWeblog(testWeblog);
+        weblogManager.saveWeblog(testWeblog, true);
         assertFalse(blogrollLinkRepository.findById(bookmarka.getId()).isPresent());
 
         // Weblog should now contain one bookmark
@@ -284,7 +284,7 @@ public class WeblogManagerIT extends WebloggerTest {
 
         // Remove other bookmark via removing from weblog
         testWeblog.getBookmarks().remove(bookmarkb);
-        weblogManager.saveWeblog(testWeblog);
+        weblogManager.saveWeblog(testWeblog, true);
 
         // Last bookmark should be gone
         testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
@@ -307,7 +307,7 @@ public class WeblogManagerIT extends WebloggerTest {
         WeblogBookmark b3 = new WeblogBookmark(testWeblog, "b3", "http://example3.com", "testbookmark16");
         testWeblog.addBookmark(b3);
 
-        weblogRepository.saveAndFlush(testWeblog);
+        weblogManager.saveWeblog(testWeblog, true);
 
         // test lookup by id
         Optional<WeblogBookmark> testBookmark = blogrollLinkRepository.findById(b1.getId());

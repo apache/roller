@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.service.UserManager;
+import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogCategory;
@@ -55,14 +56,16 @@ public class CategoryController {
     private WeblogCategoryRepository weblogCategoryRepository;
     private UserManager userManager;
     private WeblogManager weblogManager;
+    private WeblogEntryManager weblogEntryManager;
 
     @Autowired
     public CategoryController(WeblogRepository weblogRepository, WeblogCategoryRepository weblogCategoryRepository,
-                              UserManager userManager, WeblogManager weblogManager) {
+                              UserManager userManager, WeblogManager weblogManager, WeblogEntryManager weblogEntryManager) {
         this.weblogRepository = weblogRepository;
         this.weblogCategoryRepository = weblogCategoryRepository;
         this.userManager = userManager;
         this.weblogManager = weblogManager;
+        this.weblogEntryManager = weblogEntryManager;
     }
 
     @PutMapping(value = "/tb-ui/authoring/rest/category/{id}")
@@ -78,7 +81,7 @@ public class CategoryController {
                                 .filter(wc -> wc.getId().equals(c.getId())).findFirst();
                         maybeWC.ifPresent(wc -> wc.setName(updatedCategory.getName()));
                         try {
-                            weblogManager.saveWeblog(weblog);
+                            weblogManager.saveWeblog(weblog, true);
                             response.setStatus(HttpServletResponse.SC_OK);
                         } catch (TransactionSystemException e) {
                             response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -104,7 +107,7 @@ public class CategoryController {
                 WeblogCategory wc = new WeblogCategory(weblog, newCategory.getName());
                 try {
                     weblog.addCategory(wc);
-                    weblogManager.saveWeblog(weblog);
+                    weblogManager.saveWeblog(weblog, true);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } catch (IllegalArgumentException e) {
                     response.setStatus(HttpServletResponse.SC_CONFLICT);
@@ -139,9 +142,9 @@ public class CategoryController {
                     Optional<WeblogCategory> targetCategory = targetCategoryId == null ?
                             Optional.empty() : weblogCategoryRepository.findById(targetCategoryId);
 
-                    targetCategory.ifPresent(tc -> weblogManager.moveWeblogCategoryContents(categoryToRemove, tc));
+                    targetCategory.ifPresent(tc -> weblogEntryManager.moveWeblogCategoryContents(categoryToRemove, tc));
                     weblog.getWeblogCategories().remove(categoryToRemove);
-                    weblogManager.saveWeblog(weblog);
+                    weblogManager.saveWeblog(weblog, true);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

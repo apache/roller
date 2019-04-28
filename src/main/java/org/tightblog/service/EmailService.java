@@ -218,7 +218,7 @@ public class EmailService {
         String from = entry.getCreator().getEmailAddress();
 
         // build list of reviewers (website users with at least publish role)
-        List<User> weblogUsers = weblogManager.getWeblogUsers(entry.getWeblog());
+        List<User> weblogUsers = userWeblogRoleRepository.findByWeblogAndStatusEnabled(entry.getWeblog());
         List<String> reviewers = new ArrayList<>();
         weblogUsers.forEach(user -> {
             if (userManager.checkWeblogRole(user, entry.getWeblog(), WeblogRole.POST) &&

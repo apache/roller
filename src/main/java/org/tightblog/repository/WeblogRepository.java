@@ -15,6 +15,8 @@
  */
 package org.tightblog.repository;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -26,9 +28,9 @@ import org.tightblog.domain.Weblog;
 import java.util.List;
 
 @Repository
-@Transactional(value = "transactionManager")
 public interface WeblogRepository extends JpaRepository<Weblog, String> {
 
+    @Cacheable(value = "visibleWeblogs")
     Weblog findByHandleAndVisibleTrue(String handle);
 
     Weblog findByHandle(String handle);
@@ -50,8 +52,16 @@ public interface WeblogRepository extends JpaRepository<Weblog, String> {
     @Query("SELECT COUNT(w) FROM Weblog w WHERE UPPER(w.handle) like %?1")
     int getCountByHandle(char firstLetter);
 
+    @Transactional(value = "transactionManager")
     @Modifying
     @Query("UPDATE Weblog w SET w.hitsToday = 0, w.lastModified = CURRENT_TIMESTAMP")
-    int updateDailyHitCountZero();
+    void updateDailyHitCountZero();
 
+    // note due to default proxy advice mode @Cacheable and @CacheEvict annotations are ignored on methods called
+    // by another method within the same class.
+    // https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#cache-annotation-enable
+    @CacheEvict(cacheNames = {"visibleWeblogs"})
+    default void evictWeblog(String weblogHandle) {
+        // ignored
+    }
 }

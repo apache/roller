@@ -74,8 +74,11 @@ public class ThemeTemplateResolver extends AbstractConfigurableTemplateResolver 
             if (theme != null) {
                 template = theme.getTemplateByName(sharedThemeParts[1]);
             }
-        } else {
-            // weblog-only theme in database
+        } else if (resourceId.length() == 36) {
+            // weblog-only templates in database are indexed by 36 char UUIDs
+            // 36 requirement blocks most DB calls for static resources in Thymeleaf folder, e.g.,
+            // "fragments", these are resolved and cached subsequently by Thymeleaf.
+            // Below method would return null anyway for any 36 char non-UUIDs
             template = weblogTemplateRepository.findById(resourceId).orElse(null);
         }
 

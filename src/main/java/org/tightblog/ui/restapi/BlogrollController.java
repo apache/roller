@@ -87,7 +87,7 @@ public class BlogrollController {
             Weblog weblog = itemToRemove.getWeblog();
             if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                 weblog.getBookmarks().remove(itemToRemove);
-                weblogManager.saveWeblog(weblog);
+                weblogManager.saveWeblog(weblog, true);
             } else {
                 log.warn("Effort to delete bookmark {} by user {} failed, insufficent access rights",
                         itemToRemove, p.getName());
@@ -129,7 +129,7 @@ public class BlogrollController {
                     bookmarkFromWeblog.setName(newData.getName());
                     bookmarkFromWeblog.setUrl(newData.getUrl());
                     bookmarkFromWeblog.setDescription(newData.getDescription());
-                    weblogManager.saveWeblog(weblog);
+                    weblogManager.saveWeblog(weblog, true);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     // should never happen
@@ -154,7 +154,7 @@ public class BlogrollController {
                 WeblogBookmark bookmark = new WeblogBookmark(weblog, newData.getName(),
                         newData.getUrl(), newData.getDescription());
                 weblog.addBookmark(bookmark);
-                weblogManager.saveWeblog(weblog);
+                weblogManager.saveWeblog(weblog, true);
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);

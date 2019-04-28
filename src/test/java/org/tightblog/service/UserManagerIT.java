@@ -61,6 +61,7 @@ public class UserManagerIT extends WebloggerTest {
         // make sure test user does not exist
         user = userRepository.findEnabledByUserName(testUser.getUserName());
         assertNull(user);
+        userRepository.evictUser(testUser);
         
         // add test user
         userRepository.saveAndFlush(testUser);
@@ -106,13 +107,8 @@ public class UserManagerIT extends WebloggerTest {
         user1 = userRepository.findEnabledByUserName(testUser.getUserName());
         assertNotNull(user1);
         assertEquals(testUser.getUserName(), user1.getUserName());
-        
-        // lookup by id
-        String userName = user1.getUserName();
-        user1 = userRepository.findEnabledByUserName(userName);
-        assertNotNull(user1);
-        assertEquals(testUser.getUserName(), user1.getUserName());
-        
+        userRepository.evictUser(testUser);
+
         // lookup by getUsers() - all users
         List<User> users = userRepository.findAll();
         assertEquals(2, users.size());

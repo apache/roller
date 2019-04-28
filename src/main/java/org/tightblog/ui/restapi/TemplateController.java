@@ -154,7 +154,8 @@ public class TemplateController {
             if (template != null) {
                 if (userManager.checkWeblogRole(p.getName(), template.getWeblog(), WeblogRole.OWNER)) {
                     weblogTemplateRepository.delete(template);
-                    weblogManager.saveWeblog(template.getWeblog());
+                    weblogTemplateRepository.evictWeblogTemplates(template.getWeblog());
+                    weblogManager.saveWeblog(template.getWeblog(), true);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -197,6 +198,7 @@ public class TemplateController {
         }
     }
 
+    // Used to obtain shared templates not yet customized for a particular weblog
     // need to add / at end of URL due to template name possibly having a period in it (e.g., rolling.css).
     // none of other solutions (http://stackoverflow.com/questions/16332092/spring-mvc-pathvariable-with-dot-is-getting-truncated)
     // seemed to work.
@@ -270,7 +272,8 @@ public class TemplateController {
                 }
 
                 weblogTemplateRepository.save(templateToSave);
-                weblogManager.saveWeblog(templateToSave.getWeblog());
+                weblogTemplateRepository.evictWeblogTemplates(templateToSave.getWeblog());
+                weblogManager.saveWeblog(templateToSave.getWeblog(), true);
 
                 return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(templateToSave.getId());
             } else {

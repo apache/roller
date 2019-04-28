@@ -705,7 +705,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
 
         Weblog blog3 = setupWeblog("statblog3", user1);
         blog3.setVisible(Boolean.FALSE);
-        weblogManager.saveWeblog(blog3);
+        weblogManager.saveWeblog(blog3, true);
 
         WeblogEntry entry1 = setupWeblogEntry("entry1", blog1, user1);
         WeblogEntry entry2 = setupWeblogEntry("entry2", blog1, user1);

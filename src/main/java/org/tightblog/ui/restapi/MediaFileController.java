@@ -236,7 +236,7 @@ public class MediaFileController {
                 if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
                     mediaManager.removeAllFiles(itemToRemove);
                     weblog.getMediaDirectories().remove(itemToRemove);
-                    weblogManager.saveWeblog(weblog);
+                    weblogManager.saveWeblog(weblog, false);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -264,7 +264,8 @@ public class MediaFileController {
                             mediaManager.removeMediaFile(weblog, mediaFile);
                         }
                     }
-                    weblogManager.saveWeblog(weblog);
+                    // setting false as even with refresh any blog articles using deleted images will have broken images
+                    weblogManager.saveWeblog(weblog, false);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

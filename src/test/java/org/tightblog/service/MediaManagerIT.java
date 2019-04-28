@@ -331,7 +331,7 @@ public class MediaManagerIT extends WebloggerTest {
         MediaDirectory directoryById = mediaDirectoryRepository.findByIdOrNull(dir1.getId());
         testWeblog.getMediaDirectories().remove(directoryById);
         mediaManager.removeAllFiles(directoryById);
-        weblogRepository.saveAndFlush(testWeblog);
+        weblogManager.saveWeblog(testWeblog, false);
 
         testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         assertEquals(3, testWeblog.getMediaDirectories().size());

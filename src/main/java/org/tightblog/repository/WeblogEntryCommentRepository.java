@@ -15,6 +15,8 @@
  */
 package org.tightblog.repository;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-@Transactional("transactionManager")
 public interface WeblogEntryCommentRepository extends JpaRepository<WeblogEntryComment, String> {
 
     // method should be used with care as it returns all comments regardless of approval status
@@ -43,19 +44,32 @@ public interface WeblogEntryCommentRepository extends JpaRepository<WeblogEntryC
 
     int countByWeblogEntry(WeblogEntry e);
 
+    @Cacheable(value = "ApprovedCommentCounts", key = "#entry.id")
     default int countByWeblogEntryAndStatusApproved(WeblogEntry entry) {
         return countByWeblogEntryAndStatusIn(entry, Collections.unmodifiableList(List.of(ApprovalStatus.APPROVED)));
     }
 
+    @CacheEvict(cacheNames = {"ApprovedCommentCounts"}, key = "#entry.id")
+    default void evictWeblogEntryCommentCounts(WeblogEntry entry) {
+        // no-op
+    }
+
     int countByWeblogEntryAndStatusIn(WeblogEntry entry, List<ApprovalStatus> statuses);
 
+    @Cacheable(value = "UnapprovedCommentCounts", key = "#weblog.id")
     default int countByWeblogAndStatusUnapproved(Weblog weblog) {
         return countByWeblogAndStatusIn(weblog, Collections.unmodifiableList(
                 List.of(ApprovalStatus.PENDING, ApprovalStatus.SPAM, ApprovalStatus.DISAPPROVED)));
     }
 
+    @CacheEvict(cacheNames = {"UnapprovedCommentCounts"}, key = "#weblog.id")
+    default void evictWeblogCommentCounts(Weblog weblog) {
+        // no-op
+    }
+
     int countByWeblogAndStatusIn(Weblog weblog, List<ApprovalStatus> statuses);
 
+    @Transactional("transactionManager")
     void deleteByWeblogEntry(WeblogEntry e);
 
     default WeblogEntryComment findByIdOrNull(String id) {

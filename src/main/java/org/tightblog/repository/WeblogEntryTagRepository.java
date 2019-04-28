@@ -18,14 +18,12 @@ package org.tightblog.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntryTag;
 
 import java.util.List;
 
 @Repository
-@Transactional("transactionManager")
 public interface WeblogEntryTagRepository extends JpaRepository<WeblogEntryTag, String> {
 
     List<WeblogEntryTag> findByWeblogAndName(Weblog weblog, String name);

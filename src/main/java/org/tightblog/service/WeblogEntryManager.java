@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.domain.AtomEnclosure;
@@ -37,7 +38,6 @@ import org.tightblog.domain.WeblogEntrySearchCriteria;
 import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.repository.WeblogEntryCommentRepository;
 import org.tightblog.repository.WeblogEntryRepository;
-import org.tightblog.repository.WeblogRepository;
 import org.tightblog.repository.WebloggerPropertiesRepository;
 import org.tightblog.util.Utilities;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -81,23 +81,25 @@ public class WeblogEntryManager {
 
     private static Logger log = LoggerFactory.getLogger(WeblogEntryManager.class);
 
-    private WeblogRepository weblogRepository;
+    private WeblogManager weblogManager;
     private WeblogEntryRepository weblogEntryRepository;
     private WeblogEntryCommentRepository weblogEntryCommentRepository;
     private WebloggerPropertiesRepository webloggerPropertiesRepository;
     private URLService urlService;
     private String akismetApiKey;
+    private LuceneIndexer luceneIndexer;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
-    public WeblogEntryManager(WeblogRepository weblogRepository, WeblogEntryRepository weblogEntryRepository,
+    public WeblogEntryManager(WeblogManager weblogManager, WeblogEntryRepository weblogEntryRepository,
                               WeblogEntryCommentRepository weblogEntryCommentRepository,
-                              URLService urlService,
+                              URLService urlService, @Lazy LuceneIndexer luceneIndexer,
                               WebloggerPropertiesRepository webloggerPropertiesRepository,
                               @Value("${akismet.apiKey:#{null}}") String akismetApiKey) {
-        this.weblogRepository = weblogRepository;
+        this.luceneIndexer = luceneIndexer;
+        this.weblogManager = weblogManager;
         this.weblogEntryRepository = weblogEntryRepository;
         this.weblogEntryCommentRepository = weblogEntryCommentRepository;
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
@@ -115,9 +117,10 @@ public class WeblogEntryManager {
     public void saveComment(WeblogEntryComment comment, boolean refreshWeblog) {
         comment.setWeblog(comment.getWeblogEntry().getWeblog());
         weblogEntryCommentRepository.saveAndFlush(comment);
+        weblogEntryCommentRepository.evictWeblogCommentCounts(comment.getWeblog());
         if (refreshWeblog) {
-            comment.getWeblog().invalidateCache();
-            weblogRepository.saveAndFlush(comment.getWeblog());
+            weblogEntryCommentRepository.evictWeblogEntryCommentCounts(comment.getWeblogEntry());
+            weblogManager.saveWeblog(comment.getWeblog(), true);
         }
     }
 
@@ -126,8 +129,65 @@ public class WeblogEntryManager {
      */
     public void removeComment(WeblogEntryComment comment) {
         weblogEntryCommentRepository.deleteById(comment.getId());
-        comment.getWeblogEntry().getWeblog().invalidateCache();
-        weblogRepository.saveAndFlush(comment.getWeblogEntry().getWeblog());
+        boolean externallyViewable = WeblogEntryComment.ApprovalStatus.APPROVED.equals(comment.getStatus());
+        weblogManager.saveWeblog(comment.getWeblogEntry().getWeblog(), externallyViewable);
+        weblogEntryCommentRepository.evictWeblogCommentCounts(comment.getWeblog());
+        if (externallyViewable) {
+            weblogEntryCommentRepository.evictWeblogEntryCommentCounts(comment.getWeblogEntry());
+        }
+    }
+
+    /**
+     * Recategorize all entries with one category to another.
+     */
+    public void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat) {
+        // get all entries in category and subcats
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(srcCat.getWeblog());
+        wesc.setCategoryName(srcCat.getName());
+        List<WeblogEntry> results = getWeblogEntries(wesc);
+
+        // Loop through entries in src cat, assign them to dest cat
+        for (WeblogEntry entry : results) {
+            entry.setCategory(destCat);
+            weblogEntryRepository.saveAndFlush(entry);
+        }
+    }
+
+    /**
+     * Check for any scheduled weblog entries whose publication time has been
+     * reached and promote them.
+     */
+    public void promoteScheduledEntries() {
+        log.debug("promoting scheduled entries...");
+
+        try {
+            Instant now = Instant.now();
+            log.debug("looking up scheduled entries older than {}", now);
+
+            // get all published entries older than current time
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setEndDate(now);
+            wesc.setStatus(WeblogEntry.PubStatus.SCHEDULED);
+            List<WeblogEntry> scheduledEntries = getWeblogEntries(wesc);
+            log.debug("promoting {} entries to PUBLISHED state", scheduledEntries.size());
+
+            for (WeblogEntry entry : scheduledEntries) {
+                entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
+                saveWeblogEntry(entry);
+            }
+
+            // take a second pass to trigger reindexing
+            // this is because we need the updated entries flushed first
+            for (WeblogEntry entry : scheduledEntries) {
+                // trigger search index on entry
+                luceneIndexer.updateIndex(entry, false);
+            }
+
+        } catch (Exception e) {
+            log.error("Unexpected exception running task", e);
+        }
+        log.debug("finished promoting entries");
     }
 
     public void saveWeblogEntry(WeblogEntry entry) {
@@ -153,17 +213,15 @@ public class WeblogEntryManager {
         // Store value object (creates new or updates existing)
         Instant now = Instant.now();
         entry.setUpdateTime(now);
-        entry.getWeblog().setLastModified(now);
 
         weblogEntryRepository.save(entry);
-        weblogRepository.saveAndFlush(entry.getWeblog());
+        weblogManager.saveWeblog(entry.getWeblog(), true);
     }
 
     public void removeWeblogEntry(WeblogEntry entry) {
         weblogEntryCommentRepository.deleteByWeblogEntry(entry);
         weblogEntryRepository.delete(entry);
-        entry.getWeblog().invalidateCache();
-        weblogRepository.saveAndFlush(entry.getWeblog());
+        weblogManager.saveWeblog(entry.getWeblog(), true);
     }
 
     /**

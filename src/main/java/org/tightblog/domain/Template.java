@@ -168,8 +168,8 @@ public interface Template {
 
     /**
      * The relative path for this Template to add to the default page URL
-     * to view the template from the browser providing it is not hidden.
-     * Can be null or empty if hidden.
+     * to view the template from the browser providing it is external.
+     * Can be null or empty if not external.
      */
     String getRelativePath();
 

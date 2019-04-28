@@ -224,7 +224,7 @@ public class CommentController {
     }
 
     private void changeApprovalStatus(@PathVariable String id, Principal p, HttpServletResponse response,
-                               WeblogEntryComment.ApprovalStatus status)
+                               WeblogEntryComment.ApprovalStatus newStatus)
             throws ServletException {
 
         try {
@@ -233,13 +233,14 @@ public class CommentController {
                 Weblog weblog = comment.getWeblogEntry().getWeblog();
                 if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
                     WeblogEntryComment.ApprovalStatus oldStatus = comment.getStatus();
-                    comment.setStatus(status);
+                    comment.setStatus(newStatus);
                     // send approval notification only first time, not after any subsequent hide and approves.
                     if ((oldStatus == ApprovalStatus.PENDING || oldStatus == ApprovalStatus.SPAM) &&
-                            status == ApprovalStatus.APPROVED) {
+                            newStatus == ApprovalStatus.APPROVED) {
                         emailService.sendYourCommentWasApprovedNotifications(Collections.singletonList(comment));
                     }
-                    weblogEntryManager.saveComment(comment, true);
+                    boolean needRefresh = ApprovalStatus.APPROVED.equals(oldStatus) ^ ApprovalStatus.APPROVED.equals(newStatus);
+                    weblogEntryManager.saveComment(comment, needRefresh);
                     luceneIndexer.updateIndex(comment.getWeblogEntry(), false);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {

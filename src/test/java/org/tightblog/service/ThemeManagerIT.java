@@ -130,7 +130,7 @@ public class ThemeManagerIT extends WebloggerTest {
         assertNotNull(page);
 
         // lookup all pages for weblog
-        List pages = weblogTemplateRepository.findByWeblog(testWeblog);
+        List pages = weblogTemplateRepository.getWeblogTemplateMetadata(testWeblog);
         assertNotNull(pages);
         assertEquals(1, pages.size());
         

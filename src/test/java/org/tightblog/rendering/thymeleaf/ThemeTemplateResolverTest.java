@@ -26,6 +26,7 @@ import org.tightblog.domain.WeblogTemplate;
 import org.tightblog.repository.WeblogTemplateRepository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -80,12 +81,13 @@ public class ThemeTemplateResolverTest {
     @Test
     public void testReturnWeblogTemplate() {
         WeblogTemplate weblogTemplate = new WeblogTemplate();
-        weblogTemplate.setId("1234");
+        String newUUID = UUID.randomUUID().toString();
+        weblogTemplate.setId(newUUID);
         weblogTemplate.setRole(Template.ComponentType.CUSTOM_EXTERNAL);
         weblogTemplate.setTemplate("weblog template contents");
-        when(mockWeblogTemplateRepository.findById("1234")).thenReturn(Optional.of(weblogTemplate));
+        when(mockWeblogTemplateRepository.findById(newUUID)).thenReturn(Optional.of(weblogTemplate));
         StringTemplateResource resource = (StringTemplateResource) themeTemplateResolver.computeTemplateResource(null,
-                null, "1234", null, null, null);
+                null, newUUID, null, null, null);
         assertEquals("weblog template contents", resource.getDescription());
     }
 }

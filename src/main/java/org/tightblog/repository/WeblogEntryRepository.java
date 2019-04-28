@@ -26,15 +26,16 @@ import org.tightblog.domain.WeblogEntry;
 import java.util.List;
 
 @Repository
-@Transactional("transactionManager")
 public interface WeblogEntryRepository extends JpaRepository<WeblogEntry, String> {
 
     List<WeblogEntry> findByWeblog(Weblog e);
 
+    @Transactional("transactionManager")
     void deleteByWeblog(Weblog weblog);
 
     int countByWeblog(Weblog weblog);
 
+    @Transactional("transactionManager")
     @Modifying
     @Query("UPDATE WeblogEntry e SET e.commentDays = ?2 WHERE e.weblog = ?1")
     void applyDefaultCommentDaysToWeblogEntries(Weblog weblog, int commentDays);

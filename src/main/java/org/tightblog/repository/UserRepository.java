@@ -15,10 +15,11 @@
  */
 package org.tightblog.repository;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.domain.User;
 import org.tightblog.domain.UserStatus;
 
@@ -26,11 +27,16 @@ import java.util.Collections;
 import java.util.List;
 
 @Repository
-@Transactional("transactionManager")
 public interface UserRepository extends JpaRepository<User, String> {
 
+    @Cacheable(value = "enabledUsers")
     @Query("SELECT u FROM User u WHERE u.userName= ?1 AND u.status = org.tightblog.domain.UserStatus.ENABLED")
     User findEnabledByUserName(String userName);
+
+    @CacheEvict(cacheNames = {"enabledUsers"}, key = "#user.userName")
+    default void evictUser(User user) {
+        // no-op
+    }
 
     default List<User> findByStatusEnabled() {
         return findByStatusIn(Collections.unmodifiableList(List.of(UserStatus.ENABLED)));

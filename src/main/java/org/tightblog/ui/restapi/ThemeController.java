@@ -72,7 +72,7 @@ public class ThemeController {
                 }
 
                 // Remove old template overrides
-                List<WeblogTemplate> oldTemplates = weblogTemplateRepository.findByWeblog(weblog);
+                List<WeblogTemplate> oldTemplates = weblogTemplateRepository.getWeblogTemplateMetadata(weblog);
 
                 for (WeblogTemplate template : oldTemplates) {
                     if (template.getDerivation() == Template.TemplateDerivation.OVERRIDDEN) {
@@ -85,7 +85,8 @@ public class ThemeController {
                 log.debug("Saving theme {} for weblog {}", newThemeId, weblog.getHandle());
 
                 // save updated weblog so its cached pages will expire
-                weblogManager.saveWeblog(weblog);
+                weblogManager.saveWeblog(weblog, true);
+                weblogTemplateRepository.evictWeblogTemplates(weblog);
 
                 // Theme set to..
                 String msg = messages.getMessage("themeEdit.setTheme.success", new Object[] {newTheme.getName()},

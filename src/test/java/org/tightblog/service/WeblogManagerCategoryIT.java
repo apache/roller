@@ -97,7 +97,7 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
 
         WeblogCategory dest = new WeblogCategory(testWeblog, "dest");
         testWeblog.addCategory(dest);
-        weblogManager.saveWeblog(testWeblog);
+        weblogManager.saveWeblog(testWeblog, true);
 
         testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
         setupWeblogEntry("e1", c1, PubStatus.PUBLISHED, testWeblog, testUser);
@@ -116,7 +116,7 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
         assertEquals(1, retrieveWeblogEntries(fromCat, true).size());
 
         // move contents of source category c1 to destination category dest
-        weblogManager.moveWeblogCategoryContents(c1, dest);
+        weblogEntryManager.moveWeblogCategoryContents(c1, dest);
 
         // after move, verify number of entries in each category
         fromCat = weblogCategoryRepository.findByIdOrNull(c1.getId());
@@ -146,7 +146,7 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
     private WeblogCategory setupWeblogCategory(Weblog weblog, String name) {
         WeblogCategory testCategory = new WeblogCategory(weblog, name);
         weblog.addCategory(testCategory);
-        weblogManager.saveWeblog(weblog);
+        weblogManager.saveWeblog(weblog, true);
 
         // query for object
         Optional<WeblogCategory> maybeCat = weblogCategoryRepository.findById(testCategory.getId());
@@ -178,7 +178,7 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
         // add a new category
         WeblogCategory newCat = new WeblogCategory(testWeblog, "catTestCategory");
         testWeblog.addCategory(newCat);
-        weblogRepository.saveAndFlush(testWeblog);
+        weblogManager.saveWeblog(testWeblog, true);
 
         // make sure category was added
         WeblogCategory catFromDb = weblogCategoryRepository.findById(newCat.getId()).orElse(null);
@@ -194,7 +194,7 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
                 .filter(wc -> wc.getId().equals(newCat.getId())).findFirst();
         assertTrue(maybeTest.isPresent());
         maybeTest.get().setName("testtest");
-        weblogRepository.saveAndFlush(testWeblog);
+        weblogManager.saveWeblog(testWeblog, true);
 
         // verify category was updated
         catFromDb = weblogCategoryRepository.findById(newCat.getId()).orElse(null);
@@ -204,7 +204,7 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
 
         // remove category
         testWeblog.getWeblogCategories().remove(catFromDb);
-        weblogManager.saveWeblog(testWeblog);
+        weblogManager.saveWeblog(testWeblog, true);
 
         // make sure cat was removed
         catFromDb = weblogCategoryRepository.findById(newCat.getId()).orElse(null);
@@ -224,7 +224,7 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
         // add a category above default one
         WeblogCategory testCatA = new WeblogCategory(testWeblog, "SampleCategory");
         testWeblog.addCategory(testCatA);
-        weblogManager.saveWeblog(testWeblog);
+        weblogManager.saveWeblog(testWeblog, true);
 
         // check that testCat can be retrieved
         testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
@@ -235,7 +235,7 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
 
         // now delete category and subcats should be deleted by cascade
         testWeblog.getWeblogCategories().remove(testCatA);
-        weblogManager.saveWeblog(testWeblog);
+        weblogManager.saveWeblog(testWeblog, true);
 
         // verify cascading delete succeeded
         testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());

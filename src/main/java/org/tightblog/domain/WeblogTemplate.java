@@ -70,6 +70,17 @@ public class WeblogTemplate implements Template {
     public WeblogTemplate() {
     }
 
+    // used in WeblogTemplateRepository where template metadata rather than template itself is needed
+    public WeblogTemplate(String id, ComponentType role, @NotBlank(message = "{templates.error.nameNull}") String name,
+                          String description, String relativePath, Instant lastModified) {
+        this.id = id;
+        this.role = role;
+        this.name = name;
+        this.description = description;
+        this.relativePath = relativePath;
+        this.lastModified = lastModified;
+    }
+
     @Id
     public String getId() {
         return this.id;

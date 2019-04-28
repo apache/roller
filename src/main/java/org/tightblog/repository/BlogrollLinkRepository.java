@@ -17,11 +17,9 @@ package org.tightblog.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.domain.WeblogBookmark;
 
 @Repository
-@Transactional("transactionManager")
 public interface BlogrollLinkRepository extends JpaRepository<WeblogBookmark, String> {
 
 }

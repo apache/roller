@@ -137,6 +137,9 @@
         </beans:property>
     </beans:bean>
 
+    <!-- Caching of Spring Data JPA repository queries -->
+    <beans:bean id="cacheManager" class="org.springframework.cache.caffeine.CaffeineCacheManager"/>
+
     <!-- Caches -->
     <beans:bean id="weblogPageCache" class="org.tightblog.rendering.cache.LazyExpiringCache">
         <beans:property name="cacheHandlerId" value="cache.weblogpage"/>
@@ -190,7 +193,7 @@
         <!-- midnight every day -->
         <task:scheduled ref="weblogRepository" method="updateDailyHitCountZero" cron="0 0 0 * * *"/>
         <!-- every 4 hours -->
-        <task:scheduled ref="weblogManager" method="promoteScheduledEntries" cron="0 0 0/4 * * *"/>
+        <task:scheduled ref="weblogEntryManager" method="promoteScheduledEntries" cron="0 0 0/4 * * *"/>
         <!-- every 15 mins -->
         <task:scheduled ref="weblogManager" method="updateHitCounters" cron="0 0/20 * * * *"/>
     </task:scheduled-tasks>

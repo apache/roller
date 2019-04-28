@@ -17,16 +17,13 @@ package org.tightblog.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.domain.WebloggerProperties;
 
 @Repository
-@Transactional("transactionManager")
 public interface WebloggerPropertiesRepository extends JpaRepository<WebloggerProperties, String> {
 
     // convenience method
     default WebloggerProperties findOrNull() {
         return findById("1").orElse(null);
     }
-
 }

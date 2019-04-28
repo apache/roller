@@ -5,7 +5,7 @@
     <div th:fragment="AutoDiscoveryLinks" th:remove="tag">
         <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  th:href="${url.atomFeedURL}" />
         <link th:if="${model.tag}" rel="alternate" type="application/atom+xml" th:title="${'Entries tagged ' + model.tag + ' (Atom)'}"  th:href="${url.getAtomFeedURLForTag(model.tag)}"/>
-        <link th:if="${model.category}" rel="alternate" type="application/atom+xml" th:title="${'Entries for category ' + model.categoryName + ' (Atom)'}" th:href="${url.getAtomFeedURLForCategory(model.categoryName)}"/>
+        <link th:if="${model.category}" rel="alternate" type="application/atom+xml" th:title="${'Entries for category ' + model.category + ' (Atom)'}" th:href="${url.getAtomFeedURLForCategory(model.category)}"/>
     </div>
     <div th:fragment="MetaDescription" th:remove="tag">
         <th:block th:switch="${model.weblogEntry != null && !#strings.isEmpty(model.weblogEntry.searchDescription)}">
@@ -106,7 +106,7 @@
                 <a th:href="${url.weblogHome}"><span>Weblog</span></a>
             </li>
             <th:block th:if="${addExternalPages}">
-                <li th:each="page : ${model.templates}" th:if="${page.role.name == 'CUSTOM_EXTERNAL'}" class="sideboxListItem">
+                <li th:each="page : ${model.customPages}" class="sideboxListItem">
                     <a th:remove="${model.template != null && page.id == model.template.id ? 'tag' : 'none'}" th:href="${url.getCustomPageURL(page.relativePath)}">
                         <span th:text="${page.name}">xxx</span>
                     </a>

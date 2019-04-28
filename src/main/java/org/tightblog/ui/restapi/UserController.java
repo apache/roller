@@ -133,6 +133,7 @@ public class UserController {
             if (!UserStatus.ENABLED.equals(acceptedUser.getStatus())) {
                 acceptedUser.setStatus(UserStatus.ENABLED);
                 userRepository.saveAndFlush(acceptedUser);
+                userRepository.evictUser(acceptedUser);
                 emailService.sendRegistrationApprovedNotice(acceptedUser);
             }
             response.setStatus(HttpServletResponse.SC_OK);
@@ -357,7 +358,7 @@ public class UserController {
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/memberupdate", produces = "text/plain")
     public ResponseEntity updateWeblogMembership(@PathVariable String weblogId, Principal p, Locale locale,
-                                                 @RequestBody List<UserWeblogRole> roles)
+                                                 @RequestBody List<UserWeblogRole> uwrs)
             throws ServletException {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
@@ -365,7 +366,7 @@ public class UserController {
         if (user != null && weblog != null && user.hasEffectiveGlobalRole(GlobalRole.ADMIN)) {
 
             // must remain at least one admin
-            List<UserWeblogRole> owners = roles.stream()
+            List<UserWeblogRole> owners = uwrs.stream()
                     .filter(r -> r.getWeblogRole().equals(WeblogRole.OWNER))
                     .collect(Collectors.toList());
             if (owners.size() < 1) {
@@ -374,12 +375,12 @@ public class UserController {
             }
 
             // one iteration for each line (user) in the members table
-            for (UserWeblogRole role : roles) {
-                if (WeblogRole.NOBLOGNEEDED.equals(role.getWeblogRole())) {
-                    userWeblogRoleRepository.delete(role);
+            for (UserWeblogRole uwr : uwrs) {
+                if (WeblogRole.NOBLOGNEEDED.equals(uwr.getWeblogRole())) {
+                    userManager.deleteUserWeblogRole(uwr);
                 } else {
                     userManager.grantWeblogRole(
-                            role.getUser(), role.getWeblog(), role.getWeblogRole());
+                            uwr.getUser(), uwr.getWeblog(), uwr.getWeblogRole());
                 }
             }
             String msg = messages.getMessage("members.membersChanged", null, locale);
@@ -419,6 +420,7 @@ public class UserController {
 
                 try {
                     userRepository.saveAndFlush(user);
+                    userRepository.evictUser(user);
                     // reset password if set
                     if (newData.credentials != null) {
                         if (!StringUtils.isEmpty(newData.credentials.getPasswordText())) {
@@ -573,7 +575,7 @@ public class UserController {
     public void resignFromWeblog(@PathVariable String id, Principal p, HttpServletResponse response) {
         UserWeblogRole uwr = userWeblogRoleRepository.findByIdOrNull(id);
         if (uwr != null && uwr.getUser().getUserName().equals(p.getName())) {
-            userWeblogRoleRepository.delete(uwr);
+            userManager.deleteUserWeblogRole(uwr);
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

@@ -23,18 +23,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.domain.UserCredentials;
 
 @Repository
-@Transactional("transactionManager")
 public interface UserCredentialsRepository extends JpaRepository<UserCredentials, String> {
 
     @Query("SELECT uc FROM UserCredentials uc, User u WHERE uc.userName= ?1 " +
             "AND u.id = uc.id AND u.status = org.tightblog.domain.UserStatus.ENABLED")
     UserCredentials findByUserName(String userName);
 
+    @Transactional("transactionManager")
     @Modifying
     @Query("UPDATE UserCredentials u SET u.password = ?2 WHERE u.id = ?1")
-    int updatePassword(String userId, String newPassword);
+    void updatePassword(String userId, String newPassword);
 
+    @Transactional("transactionManager")
     @Modifying
     @Query("UPDATE UserCredentials u SET u.mfaSecret = null WHERE u.id = ?1")
-    int eraseMfaCode(String userId);
+    void eraseMfaCode(String userId);
 }

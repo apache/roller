@@ -67,7 +67,7 @@ public class UserManagerWeblogRoleIT extends WebloggerTest {
         // delete weblog roles
         role = userWeblogRoleRepository.findByUserAndWeblog(testUser, testWeblog);
         assertNotNull(role);
-        userWeblogRoleRepository.delete(role);
+        userManager.deleteUserWeblogRole(role);
 
         // check that delete was successful
         role = userWeblogRoleRepository.findByUserAndWeblog(testUser, testWeblog);
@@ -82,7 +82,7 @@ public class UserManagerWeblogRoleIT extends WebloggerTest {
         assertSame(role.getWeblogRole(), WeblogRole.OWNER);
 
         // revoke role
-        userWeblogRoleRepository.delete(role);
+        userManager.deleteUserWeblogRole(role);
 
         // add only draft role
         userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.EDIT_DRAFT);
@@ -148,12 +148,12 @@ public class UserManagerWeblogRoleIT extends WebloggerTest {
         assertEquals(testWeblog.getId(), userRoles.get(0).getWeblog().getId());
 
         // assert that website has user
-        List users = weblogManager.getWeblogUsers(testWeblog);
+        List users = userWeblogRoleRepository.findByWeblogAndStatusEnabled(testWeblog);
         assertEquals(2, users.size());
 
         // test user can be retired from website
         UserWeblogRole uwr = userWeblogRoleRepository.findByUserAndWeblog(user, testWeblog);
-        userWeblogRoleRepository.delete(uwr);
+        userManager.deleteUserWeblogRole(uwr);
 
         userRoles = userWeblogRoleRepository.findByUser(user);
         assertEquals(0, userRoles.size());

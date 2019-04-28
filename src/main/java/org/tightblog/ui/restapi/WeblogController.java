@@ -108,7 +108,7 @@ public class WeblogController {
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
-    public Weblog getWeblogData(@PathVariable String id, Principal p, HttpServletResponse response) throws ServletException {
+    public Weblog getWeblogData(@PathVariable String id, Principal p, HttpServletResponse response) {
         ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
         if (maybeError == null) {
             return weblogRepository.findById(id).orElse(null);
@@ -119,7 +119,7 @@ public class WeblogController {
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblogs")
-    public ResponseEntity addWeblog(@Valid @RequestBody Weblog newData, Principal p, HttpServletResponse response)
+    public ResponseEntity addWeblog(@Valid @RequestBody Weblog newData, Principal p)
             throws ServletException {
 
         User user = userRepository.findEnabledByUserName(p.getName());
@@ -140,12 +140,12 @@ public class WeblogController {
                 newData.getName().trim(),
                 newData.getTheme());
 
-        return saveWeblog(weblog, newData, response, true);
+        return saveWeblog(weblog, newData, true);
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
-    public ResponseEntity updateWeblog(@PathVariable String id, @Valid @RequestBody Weblog newData, Principal p,
-                                       HttpServletResponse response) throws ServletException {
+    public ResponseEntity updateWeblog(@PathVariable String id, @Valid @RequestBody Weblog newData, Principal p)
+            throws ServletException {
         ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
         if (maybeError != null) {
             return maybeError;
@@ -156,10 +156,10 @@ public class WeblogController {
             return ResponseEntity.badRequest().body(maybeValError);
         }
 
-        return saveWeblog(weblog, newData, response, false);
+        return saveWeblog(weblog, newData, false);
     }
 
-    private ResponseEntity saveWeblog(Weblog weblog, Weblog newData, HttpServletResponse response, boolean newWeblog)
+    private ResponseEntity saveWeblog(Weblog weblog, Weblog newData, boolean newWeblog)
             throws ServletException {
         try {
             if (weblog != null) {
@@ -193,7 +193,7 @@ public class WeblogController {
                     weblogManager.addWeblog(weblog);
                     log.info("New weblog {} created by user {}", weblog, weblog.getCreator());
                 } else {
-                    weblogManager.saveWeblog(weblog);
+                    weblogManager.saveWeblog(weblog, true);
                 }
 
                 // ROL-1050: apply comment defaults to existing entries
@@ -212,17 +212,20 @@ public class WeblogController {
     }
 
     @DeleteMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
-    public void deleteWeblog(@PathVariable String id, Principal p, HttpServletResponse response)
-            throws ServletException {
+    public void deleteWeblog(@PathVariable String id, Principal p, HttpServletResponse response) {
         ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
         if (maybeError == null) {
             Weblog weblog = weblogRepository.findById(id).orElse(null);
-            try {
-                weblogManager.removeWeblog(weblog);
+            if (weblog != null) {
+                try {
+                    weblogManager.removeWeblog(weblog);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } catch (Exception ex) {
+                    response.setStatus(HttpServletResponse.SC_CONFLICT);
+                    log.error("Error removing weblog - {}", weblog.getHandle(), ex);
+                }
+            } else {
                 response.setStatus(HttpServletResponse.SC_OK);
-            } catch (Exception ex) {
-                response.setStatus(HttpServletResponse.SC_CONFLICT);
-                log.error("Error removing weblog - {}", weblog.getHandle(), ex);
             }
         } else {
             response.setStatus(maybeError.getStatusCode().value());
@@ -234,7 +237,7 @@ public class WeblogController {
 
         // make sure handle isn't already taken
         if (isAdd) {
-            if (weblogRepository.findByHandleAndVisibleTrue(data.getHandle()) != null) {
+            if (weblogRepository.findByHandle(data.getHandle()) != null) {
                 be.addError(new ObjectError("Weblog object", messages.getMessage("weblogConfig.error.handleExists",
                         null, Locale.getDefault())));
             }

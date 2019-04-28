@@ -15,5 +15,6 @@
     <class>org.tightblog.domain.WeblogTemplate</class>
     <class>org.tightblog.domain.WebloggerProperties</class>
     <class>org.tightblog.util.InstantConverter</class>
+    <shared-cache-mode>ALL</shared-cache-mode>
   </persistence-unit>
 </persistence>

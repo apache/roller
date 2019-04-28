@@ -61,9 +61,11 @@ public class UserManager {
      *
      * @param user User to be removed.
      */
+
     public void removeUser(User user) {
         userWeblogRoleRepository.deleteByUser(user);
         userRepository.delete(user);
+        userRepository.evictUser(user);
     }
 
     /**
@@ -138,6 +140,13 @@ public class UserManager {
             roleCheck.setEmailComments(true);
         }
         userWeblogRoleRepository.saveAndFlush(roleCheck);
+        userWeblogRoleRepository.evictUserWeblogRole(user, weblog);
+        userRepository.evictUser(user);
+    }
+
+    public void deleteUserWeblogRole(UserWeblogRole uwr) {
+        userWeblogRoleRepository.delete(uwr);
+        userWeblogRoleRepository.evictUserWeblogRole(uwr.getUser(), uwr.getWeblog());
     }
 
     /**

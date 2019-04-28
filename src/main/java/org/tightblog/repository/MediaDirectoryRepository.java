@@ -17,14 +17,12 @@ package org.tightblog.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.domain.MediaDirectory;
 import org.tightblog.domain.Weblog;
 
 import java.util.List;
 
 @Repository
-@Transactional("transactionManager")
 public interface MediaDirectoryRepository extends JpaRepository<MediaDirectory, String> {
 
     MediaDirectory findByWeblogAndName(Weblog weblog, String directoryName);

@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tightblog.repository.MediaDirectoryRepository;
 import org.tightblog.repository.MediaFileRepository;
-import org.tightblog.repository.WeblogRepository;
 
 import javax.imageio.ImageIO;
 import javax.validation.ConstraintViolation;
@@ -62,19 +61,19 @@ public class MediaManager {
     private FileService fileService;
     private MediaDirectoryRepository mediaDirectoryRepository;
     private MediaFileRepository mediaFileRepository;
-    private WeblogRepository weblogRepository;
+
+    @Autowired
+    private WeblogManager weblogManager;
 
     private static Logger log = LoggerFactory.getLogger(MediaManager.class);
 
     @Autowired
     public MediaManager(FileService fileService,
-                        MediaDirectoryRepository mediaDirectoryRepository, MediaFileRepository mediaFileRepository,
-                        WeblogRepository weblogRepository) {
+                        MediaDirectoryRepository mediaDirectoryRepository, MediaFileRepository mediaFileRepository) {
 
         this.fileService = fileService;
         this.mediaDirectoryRepository = mediaDirectoryRepository;
         this.mediaFileRepository = mediaFileRepository;
-        this.weblogRepository = weblogRepository;
     }
 
     /**
@@ -119,7 +118,7 @@ public class MediaManager {
                 throw new IllegalArgumentException(origMessage.substring(1, origMessage.length() - 1));
             }
             weblog.getMediaDirectories().add(newDirectory);
-            weblogRepository.saveAndFlush(weblog);
+            weblogManager.saveWeblog(weblog, false);
             log.debug("Created media directory '{}' for weblog {}", requestedName, weblog.getHandle());
         }
         return newDirectory;

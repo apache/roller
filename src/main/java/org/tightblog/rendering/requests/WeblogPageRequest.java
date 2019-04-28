@@ -41,6 +41,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Represents a request for a TightBlog weblog page
@@ -282,7 +283,8 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     private boolean checkUserRights(WeblogRole role) {
-        return !preview && pageModel.getUserManager().checkWeblogRole(authenticatedUser, weblog, role);
+        return !preview && (authenticatedUser != null)
+                && pageModel.getUserManager().checkWeblogRole(authenticatedUser, weblog, role);
     }
 
     /**
@@ -354,8 +356,10 @@ public class WeblogPageRequest extends WeblogRequest {
         return pageModel.getAnalyticsTrackingCode(weblog, preview);
     }
 
-    public List<? extends Template> getTemplates() {
-        return pageModel.getThemeManager().getWeblogTheme(weblog).getTemplates();
+    public List<? extends Template> getCustomPages() {
+        return pageModel.getThemeManager().getWeblogTheme(weblog).getTemplates().stream()
+                .filter(t -> Template.ComponentType.CUSTOM_EXTERNAL.equals(t.getRole()))
+                .collect(Collectors.toList());
     }
 
     public String getTemplateIdByName(String name) {

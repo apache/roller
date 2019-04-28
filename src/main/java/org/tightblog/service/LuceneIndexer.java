@@ -30,6 +30,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.tightblog.service.indexer.AbstractTask;
 import org.tightblog.service.indexer.IndexEntryTask;
@@ -81,7 +82,7 @@ public class LuceneIndexer {
      */
     @Autowired
     public LuceneIndexer(
-            WeblogEntryManager weblogEntryManager, WeblogEntryRepository weblogEntryRepository,
+            @Lazy WeblogEntryManager weblogEntryManager, @Lazy WeblogEntryRepository weblogEntryRepository,
             @Value("${search.include.comments:true}") boolean indexComments,
             @Value("${search.enabled:false}") boolean searchEnabled,
             @Value("${search.index.dir:#{null}}") String indexDir) {

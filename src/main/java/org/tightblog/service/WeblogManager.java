@@ -1,6 +1,6 @@
  /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,19 +24,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.tightblog.config.DynamicProperties;
-import org.tightblog.domain.User;
-import org.tightblog.domain.UserStatus;
-import org.tightblog.domain.UserWeblogRole;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogBookmark;
 import org.tightblog.domain.WeblogCategory;
 import org.tightblog.domain.WeblogEntry;
-import org.tightblog.domain.WeblogEntrySearchCriteria;
 import org.tightblog.domain.WeblogEntryTag;
 import org.tightblog.domain.WeblogEntryTagAggregate;
 import org.tightblog.domain.WeblogRole;
@@ -83,10 +77,13 @@ public class WeblogManager {
     private UserWeblogRoleRepository userWeblogRoleRepository;
     private WeblogRepository weblogRepository;
     private UserManager userManager;
-    private WeblogEntryManager weblogEntryManager;
-    private LuceneIndexer luceneIndexer;
-    private MediaManager mediaManager;
     private DynamicProperties dp;
+
+    @Autowired
+    private MediaManager mediaManager;
+
+    @Autowired
+    private LuceneIndexer luceneIndexer;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -110,8 +107,7 @@ public class WeblogManager {
                          UserWeblogRoleRepository userWeblogRoleRepository,
                          WebloggerPropertiesRepository webloggerPropertiesRepository,
                          WeblogRepository weblogRepository,
-                         UserManager userManager, WeblogEntryManager weblogEntryManager, LuceneIndexer luceneIndexer,
-                         MediaManager mediaManager,
+                         UserManager userManager,
                          DynamicProperties dp) {
         this.weblogEntryRepository = weblogEntryRepository;
         this.weblogEntryCommentRepository = weblogEntryCommentRepository;
@@ -122,16 +118,18 @@ public class WeblogManager {
         this.webloggerPropertiesRepository = webloggerPropertiesRepository;
         this.weblogRepository = weblogRepository;
         this.userManager = userManager;
-        this.weblogEntryManager = weblogEntryManager;
-        this.luceneIndexer = luceneIndexer;
-        this.mediaManager = mediaManager;
         this.dp = dp;
     }
 
-    public void saveWeblog(Weblog weblog) {
-        weblog.setLastModified(Instant.now());
-        weblogRepository.save(weblog);
-        dp.updateLastSitewideChange();
+    public void saveWeblog(Weblog weblog, boolean externallyViewableChange) {
+        if (externallyViewableChange) {
+            weblog.setLastModified(Instant.now());
+        }
+        weblogRepository.saveAndFlush(weblog);
+        if (externallyViewableChange) {
+            dp.updateLastSitewideChange();
+            weblogRepository.evictWeblog(weblog.getHandle());
+        }
     }
 
     public void removeWeblog(Weblog weblog) {
@@ -142,7 +140,6 @@ public class WeblogManager {
         List<WeblogEntry> entryList = weblogEntryRepository.findByWeblog(weblog);
         entryList.forEach(e -> weblogEntryCommentRepository.deleteByWeblogEntry(e));
         weblogEntryRepository.deleteByWeblog(weblog);
-        weblogRepository.saveAndFlush(weblog);
         userWeblogRoleRepository.deleteByWeblog(weblog);
 
         // remove indexing
@@ -157,6 +154,7 @@ public class WeblogManager {
         }
         weblogRepository.delete(weblog);
         dp.updateLastSitewideChange();
+        weblogRepository.evictWeblog(weblog.getHandle());
     }
 
     /**
@@ -199,10 +197,9 @@ public class WeblogManager {
                 }
             }
         }
-
         // create initial media file directory named "default"
         mediaManager.createMediaDirectory(newWeblog, "default");
-        weblogRepository.saveAndFlush(newWeblog);
+        saveWeblog(newWeblog, true);
     }
 
     /**
@@ -221,25 +218,6 @@ public class WeblogManager {
         }
     }
 
-
-    /**
-     * Get users of a weblog.
-     *
-     * @param weblog      Weblog to retrieve users for
-     * @return List of User objects.
-     */
-    public List<User> getWeblogUsers(Weblog weblog) {
-        List<User> users = new ArrayList<>();
-        Page<UserWeblogRole> roles = userWeblogRoleRepository.findAll(Pageable.unpaged());
-        for (UserWeblogRole role : roles) {
-            User user = role.getUser();
-            if (UserStatus.ENABLED.equals(user.getStatus())) {
-                users.add(user);
-            }
-        }
-        return users;
-    }
-
     /**
      * Get map with 26 entries, one for each letter A-Z and
      * containing integers reflecting the number of weblogs whose
@@ -254,48 +232,6 @@ public class WeblogManager {
             results.put(currentChar, count);
         }
         return results;
-    }
-
-    /**
-     * Check for any scheduled weblog entries whose publication time has been
-     * reached and promote them.
-     */
-    public void promoteScheduledEntries() {
-        log.debug("promoting scheduled entries...");
-
-        try {
-            Instant now = Instant.now();
-            log.debug("looking up scheduled entries older than {}", now);
-
-            // get all published entries older than current time
-            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-            wesc.setEndDate(now);
-            wesc.setStatus(WeblogEntry.PubStatus.SCHEDULED);
-            List<WeblogEntry> scheduledEntries = weblogEntryManager.getWeblogEntries(wesc);
-            log.debug("promoting {} entries to PUBLISHED state", scheduledEntries.size());
-
-            for (WeblogEntry entry : scheduledEntries) {
-                entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-                weblogEntryManager.saveWeblogEntry(entry);
-            }
-
-            if (scheduledEntries.size() > 0) {
-                // update last weblog change so any site weblog knows it needs to update
-                WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
-                dp.updateLastSitewideChange();
-            }
-
-            // take a second pass to trigger reindexing
-            // this is because we need the updated entries flushed first
-            for (WeblogEntry entry : scheduledEntries) {
-                // trigger search index on entry
-                luceneIndexer.updateIndex(entry, false);
-            }
-
-        } catch (Exception e) {
-            log.error("Unexpected exception running task", e);
-        }
-        log.debug("finished promoting entries");
     }
 
     /**
@@ -331,31 +267,11 @@ public class WeblogManager {
                 weblog = weblogRepository.findById(entry.getKey()).orElse(null);
                 if (weblog != null) {
                     weblog.setHitsToday(weblog.getHitsToday() + entry.getValue().intValue());
-                    saveWeblog(weblog);
+                    saveWeblog(weblog, true);
                     totalHitsProcessed += entry.getValue();
                     log.info("Updated blog hits, {} total extra hits from {} blogs", totalHitsProcessed, hitsTallyCopy.size());
                 }
             }
-        }
-    }
-
-    /**
-     * Recategorize all entries with one category to another.
-     */
-    public void moveWeblogCategoryContents(WeblogCategory srcCat, WeblogCategory destCat) {
-
-        // get all entries in category and subcats
-        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-        wesc.setWeblog(srcCat.getWeblog());
-        wesc.setCategoryName(srcCat.getName());
-        List<WeblogEntry> results = weblogEntryManager.getWeblogEntries(wesc);
-
-        // Loop through entries in src cat, assign them to dest cat
-        Weblog website = destCat.getWeblog();
-        for (WeblogEntry entry : results) {
-            entry.setCategory(destCat);
-            entry.setWeblog(website);
-            weblogEntryRepository.saveAndFlush(entry);
         }
     }
 
@@ -531,8 +447,7 @@ public class WeblogManager {
         }
 
         if (updated) {
-            weblog.invalidateCache();
-            weblogRepository.saveAndFlush(weblog);
+            saveWeblog(weblog, true);
         }
     }
 
@@ -565,8 +480,7 @@ public class WeblogManager {
         }
 
         if (updatedEntries > 0) {
-            weblog.invalidateCache();
-            weblogRepository.saveAndFlush(weblog);
+            saveWeblog(weblog, true);
         }
 
         resultsMap.put("updated", updatedEntries);
