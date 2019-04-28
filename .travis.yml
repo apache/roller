@@ -1,6 +1,6 @@
 language: java
 
-jdk: openjdk10
+jdk: openjdk11
 
 script: ./gradlew clean build
 
