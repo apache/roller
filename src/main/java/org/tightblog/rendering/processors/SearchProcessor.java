@@ -22,7 +22,6 @@ package org.tightblog.rendering.processors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.tightblog.domain.WeblogTheme;
-import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.model.SearchResultsModel;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.requests.WeblogSearchRequest;

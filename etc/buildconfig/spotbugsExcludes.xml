@@ -29,4 +29,17 @@
         <Bug pattern="OBL_UNSATISFIED_OBLIGATION" />
     </Match>
 
+    <!-- Additional false positives regarding redundant null checks and Java 11
+        https://github.com/spotbugs/spotbugs/issues/259 -->
+    <Match>
+        <Or>
+            <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+            <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
+            <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+            <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE"/>
+        </Or>
+    </Match>
+
+
+
 </FindBugsFilter>

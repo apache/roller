@@ -184,7 +184,7 @@ public class ThemeManager implements ServletContextAware {
     }
 
     private SharedTheme loadThemeData(String themePath) throws Exception {
-        SharedTheme sharedTheme = null;
+        SharedTheme sharedTheme;
         String themeJson = themePath + "theme.json";
 
         try (InputStream is = servletContext.getResourceAsStream(themeJson)) {
