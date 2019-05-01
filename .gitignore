@@ -10,6 +10,11 @@
 *.iml
 *.iws
 
+# NetBeans
+/nb-configuration.xml
+/app/nb-configuration.xml
+/app/nbactions.xml
+
 # Mac
 .DS_Store
 

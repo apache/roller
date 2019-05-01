@@ -34,33 +34,32 @@ limitations under the License.
 
     <properties>
 
-        <servlet.version>3.0.1</servlet.version>
+        <servlet.version>4.0.1</servlet.version>
         <jsp-api.version>2.2</jsp-api.version>
         <java-activation.version>1.2.0</java-activation.version>
         <java-mail.version>1.4.7</java-mail.version>
         <jstl.version>1.2</jstl.version>
 
-        <angular.version>1.2.29</angular.version>
-        <ant.version>1.10.1</ant.version>
+        <angular.version>1.7.8</angular.version>
+        <ant.version>1.10.5</ant.version>
         <commons-validator.version>1.6</commons-validator.version>
         <commons-beanutils.version>1.9.3</commons-beanutils.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
-        <commons-codec.version>1.10</commons-codec.version>
-        <eclipse-link.version>2.7.3</eclipse-link.version>
+        <commons-codec.version>1.12</commons-codec.version>
+        <eclipse-link.version>2.7.4</eclipse-link.version>
         <guice.version>4.2.2</guice.version>
         <log4j.version>1.2.17</log4j.version>
-        <log4j2.version>2.9.1</log4j2.version>
-        <!-- <log4j2.version>2.10.0</log4j2.version> -->
+        <log4j2.version>2.10.0</log4j2.version>
         <lucene.version>4.10.4</lucene.version>
         <oauth-core.version>20100527</oauth-core.version>
         <maven-war.version>3.1.0</maven-war.version>
         <maven-surefire.version>2.17</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
-        <rome.version>1.7.4</rome.version>
-        <slf4j.version>1.7.25</slf4j.version>
+        <rome.version>1.12.0</rome.version>
+        <slf4j.version>1.7.26</slf4j.version>
         <spring.version>4.1.4.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
-        <struts.version>2.5.17</struts.version>
+        <struts.version>2.5.20</struts.version>
         <velocity.version>1.7</velocity.version>
         <webjars.version>1.5</webjars.version>
         <ws-commons-util.version>1.0.2</ws-commons-util.version>
@@ -121,20 +120,8 @@ limitations under the License.
          -->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
+            <artifactId>org.eclipse.persistence.jpa</artifactId>
             <version>${eclipse-link.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.eclipse.persistence</groupId>
-                    <artifactId>javax.persistence</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>javax.persistence</artifactId>
-            <version>2.1.1</version>
         </dependency>
 
         <!-- Alternative testing with Hibernate (used by default with JBoss)
@@ -186,13 +173,30 @@ limitations under the License.
                 </exclusion>
             </exclusions>
         </dependency>
-
+        
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
             <version>3.2.2</version>
         </dependency>
-
+        
+        <!-- explicitly adding newest asm lib to improve compatibility with latest JDKs -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-tree</artifactId>
+            <version>7.1</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-core</artifactId>
@@ -636,7 +640,7 @@ limitations under the License.
 
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
                 <dependencies>
                     <dependency>
                         <groupId>ant-contrib</groupId>
