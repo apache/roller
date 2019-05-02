@@ -1,39 +1,12 @@
-LICENSE.txt - Roller licensing terms
-
-Roller is licensed under the Apache License Version 2.0, see below.
-
-Roller also uses the JDOM XML parser library, licensed under the 
-terms of the JDOM license (an Apache-like license listed at end of this file).
-
-Roller includes the YUI (BSD license) and JQuery (MIT) front end libraries:
-
-YUI 3.17.2 (build 9c3c78e)
-Copyright 2014 Yahoo! Inc. All rights reserved.
-Licensed under the BSD License.
-http://yuilibrary.com/license/
-
-jQuery v2.1.1 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license
-
-Roller contains some snippets of code from the Blojsom and Pebble
-blog servers, which are both licensed under the terms of the BSD license 
-(http://www.opensource.org/licenses/bsd-license.php).
-
--------------------------------------------------------------------------------
-
-Some themes packaged with Roller use Font Awesome by Dave Gandy
-(http://fontawesome.io), whose licensing is subject to the SIL OFL 1.1:
-http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
-
-Some themes packaged with Roller use the MIT-licensed Bootstrap:
-https://github.com/twbs/bootstrap/blob/master/LICENSE
 
 -------------------------------------------------------------------------------
 
                               Apache License
-                        Version 2.0, January 2004
-                     http://www.apache.org/licenses/
+                        Version 2.0, trần trương phi 2019
+                     Kieptimem@gmail.com
 
-   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+   Trần Trương phi
+Gmail. kieptimem@gmail.com
 
    1. Definitions.
 
