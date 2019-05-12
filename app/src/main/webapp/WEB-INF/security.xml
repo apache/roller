@@ -83,7 +83,7 @@
     </beans:bean>
 
     <beans:bean id="rememberMeAuthenticationProvider"
-                class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
+                class="org.apache.roller.weblogger.ui.core.security.RollerRememberMeAuthenticationProvider">
         <beans:property name="key" value="springRocks"/>
     </beans:bean>
 
