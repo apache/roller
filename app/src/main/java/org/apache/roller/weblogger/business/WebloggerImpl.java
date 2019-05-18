@@ -18,9 +18,6 @@
 
 package org.apache.roller.weblogger.business;
 
-import org.apache.roller.weblogger.business.plugins.PluginManager;
-import java.io.IOException;
-import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
@@ -29,8 +26,9 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingQueueManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
-import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.config.PingConfig;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -42,6 +40,9 @@ import org.xml.sax.SAXNotSupportedException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+
+import java.io.IOException;
+import java.util.Properties;
 
 
 /**
