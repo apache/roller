@@ -332,16 +332,7 @@
             <result name="success" type="tiles">.MediaFileView</result>
             <result name="success.json" type="dispatcher">/WEB-INF/jsps/editor/MediaFileViewLight.jsp</result>
             <allowed-methods>
-                delete,
-                execute,
-                createNewDirectory,
-                deleteFolder,
-                deleteSelected,
-                fetchDirectoryContentLight,
-                includeInGallery,
-                moveSelected,
-                search,
-                view
+                delete,execute,createNewDirectory,deleteFolder,deleteSelected,fetchDirectoryContentLight,includeInGallery,moveSelected,search,view
             </allowed-methods>
         </action>
 
