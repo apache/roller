@@ -508,4 +508,3 @@ alter table autoping add constraint ap_pingtargetid_fk
 -- oauth indexes
 
 create index oc_username_idx  on roller_oauthconsumer( username$!db.INDEXSIZE );
-create index oc_consumerkey_idx  on roller_oauthconsumer( consumerkey$!db.INDEXSIZE );

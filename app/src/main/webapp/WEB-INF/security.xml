@@ -41,7 +41,7 @@
                     authentication-failure-url="/roller-ui/login.rol?error=true"
                     login-processing-url="/roller_j_security_check"/>
 
-        <remember-me user-service-ref="rollerUserService"
+        <remember-me services-ref="rollerRememberMeServices"
                      key="715F2448-3176-11DD-ABC6-9CD955D89593"/>
 
         <custom-filter ref="openidAuthenticationProcessingFilter" position="OPENID_FILTER"/>
@@ -63,19 +63,28 @@
     <!-- Read users from Roller API -->
     <authentication-manager alias='rollerAuthenticationManager'>
         <authentication-provider ref="rememberMeAuthenticationProvider"/>
+
         <!-- Uncomment one of the three below, based on whether database, LDAP, or
              OpenID authentication is desired. -->
         <authentication-provider user-service-ref="rollerUserService"/>
-        <!--authentication-provider ref="ldapAuthProvider"/>
-        <authentication-provider ref="openIDAuthProvider"/-->
+        <!--
+        <authentication-provider ref="ldapAuthProvider" />
+        <authentication-provider ref="openIDAuthProvider"/>
+        -->
     </authentication-manager>
 
     <beans:bean id="rollerUserService"
                 class="org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService"/>
 
+    <beans:bean id="rollerRememberMeServices"
+                class="org.apache.roller.weblogger.ui.core.security.RollerRememberMeServices">
+        <beans:property name="key" value="ignored"/>
+        <beans:property name="userDetailsService" ref="rollerUserService"/>
+    </beans:bean>
+
     <beans:bean id="rememberMeAuthenticationProvider"
-                class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
-        <beans:property name="key" value="springRocks"/>
+                class="org.apache.roller.weblogger.ui.core.security.RollerRememberMeAuthenticationProvider">
+        <beans:property name="key" value="ignored"/>
     </beans:bean>
 
     <beans:bean id = "openIDAuthProvider" class="org.springframework.security.openid.OpenIDAuthenticationProvider">
@@ -113,10 +122,10 @@
         </beans:property>
     </beans:bean>
 
-    <!-- Uncomment & customize below beans if using LDAP -->
-    <!--beans:bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
-        <beans:constructor-arg value="ldap://localhost:10389/dc=example,dc=com" />
-        <beans:property name="userDn" value="uid=admin,ou=system" />
+    <!-- Uncomment & customize below beans if using LDAP
+    <beans:bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+        <beans:constructor-arg value="ldap://localhost:389/dc=example,dc=com" />
+        <beans:property name="userDn" value="uid=admin" />
         <beans:property name="password" value="secret" />
     </beans:bean>
 
@@ -142,6 +151,7 @@
         <beans:constructor-arg index="1" value="(uid={0})" />
         <beans:constructor-arg index="2" ref="contextSource" />
         <beans:property name="searchSubtree" value="true" />
-    </beans:bean-->
-
+    </beans:bean>
+    -->
+    
 </beans:beans>

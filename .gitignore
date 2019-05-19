@@ -10,6 +10,11 @@
 *.iml
 *.iws
 
+# NetBeans
+/nb-configuration.xml
+/app/nb-configuration.xml
+/app/nbactions.xml
+
 # Mac
 .DS_Store
 
@@ -22,4 +27,5 @@ velocity.log
 tomcat-base
 deployment/docker-compose/postgresql-data
 deployment/docker-compose/roller-data
-deployment/data
+assembly-release/release.sh
+it-selenium/overlays/

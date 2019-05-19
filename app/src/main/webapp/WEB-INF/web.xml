@@ -56,11 +56,6 @@
     </filter>
 
     <filter>
-        <filter-name>SchemeEnforcementFilter</filter-name>
-        <filter-class>org.apache.roller.weblogger.ui.core.filters.SchemeEnforcementFilter</filter-class>
-    </filter>
-
-    <filter>
         <filter-name>CharEncodingFilter</filter-name>
         <filter-class>org.apache.roller.weblogger.ui.core.filters.CharEncodingFilter</filter-class>
     </filter>
@@ -102,13 +97,6 @@
         <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
         <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
         <dispatcher>FORWARD</dispatcher>
-    </filter-mapping>
-
-    <!-- Scheme enforcement.  Only here until we get Spring Security scheme enforcement working -->
-    <filter-mapping>
-        <filter-name>SchemeEnforcementFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
     <!-- Spring Security filters - controls secure access to different parts of Roller -->
