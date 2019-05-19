@@ -29,6 +29,7 @@ public class RollerRememberMeAuthenticationProvider extends RememberMeAuthentica
 
 
     public RollerRememberMeAuthenticationProvider() {
+        log.debug("initializing: RollerRememberMeAuthenticationProvider");
 
         String key = WebloggerConfig.getProperty("rememberme.key", "springRocks");
 
@@ -38,6 +39,8 @@ public class RollerRememberMeAuthenticationProvider extends RememberMeAuthentica
                 "properties file. Make sure it is a secret and make sure it is NOT be springRocks");
         }
         setKey(key);
+
+        log.debug("initialized: RollerRememberMeAuthenticationProvider with key: " + getKey());
     }
 }
 
