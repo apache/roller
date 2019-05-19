@@ -28,7 +28,7 @@ public class RollerRememberMeAuthenticationProvider extends RememberMeAuthentica
     private static final Log log = LogFactory.getLog(RollerRememberMeServices.class);
 
 
-    public RollerRememberMeAuthenticationProvider(String ignored) {
+    public RollerRememberMeAuthenticationProvider() {
 
         String key = WebloggerConfig.getProperty("rememberme.key", "springRocks");
 
