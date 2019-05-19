@@ -84,7 +84,6 @@
 
     <beans:bean id="rememberMeAuthenticationProvider"
                 class="org.apache.roller.weblogger.ui.core.security.RollerRememberMeAuthenticationProvider">
-        <beans:property name="key" value="springRocks"/>
     </beans:bean>
 
     <beans:bean id = "openIDAuthProvider" class="org.springframework.security.openid.OpenIDAuthenticationProvider">
