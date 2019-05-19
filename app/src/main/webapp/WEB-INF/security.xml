@@ -78,12 +78,13 @@
 
     <beans:bean id="rollerRememberMeServices"
                 class="org.apache.roller.weblogger.ui.core.security.RollerRememberMeServices">
-        <beans:property name="key" value="715F2448-3176-11DD-ABC6-9CD955D89593"/>
+        <beans:property name="key" value="ignored"/>
         <beans:property name="userDetailsService" ref="rollerUserService"/>
     </beans:bean>
 
     <beans:bean id="rememberMeAuthenticationProvider"
                 class="org.apache.roller.weblogger.ui.core.security.RollerRememberMeAuthenticationProvider">
+        <beans:property name="key" value="ignored"/>
     </beans:bean>
 
     <beans:bean id = "openIDAuthProvider" class="org.springframework.security.openid.OpenIDAuthenticationProvider">

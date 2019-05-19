@@ -33,7 +33,20 @@ public class RollerRememberMeServices extends TokenBasedRememberMeServices {
     private static final Log log = LogFactory.getLog(RollerRememberMeServices.class);
 
 
-    public RollerRememberMeServices() {}
+    public RollerRememberMeServices() {
+        log.debug("initializing: RollerRememberMeServices");
+
+        String key = WebloggerConfig.getProperty("rememberme.key", "springRocks");
+
+        if ("springRocks".equals(key)) {
+            throw new RuntimeException(
+                "If remember-me is to be enabled, rememberme.key must be specified in the roller " +
+                    "properties file. Make sure it is a secret and make sure it is NOT be springRocks");
+        }
+        setKey(key);
+
+        log.debug("initialized: RollerRememberMeServices with key: " + getKey());
+    }
 
     /**
      * Calculates the digital signature to be put in the cookie. Default value is
@@ -62,6 +75,4 @@ public class RollerRememberMeServices extends TokenBasedRememberMeServices {
 
         return new String(Hex.encode(digest.digest(data.getBytes())));
     }
-
-
 }

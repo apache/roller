@@ -234,10 +234,6 @@ public class RollerContext extends ContextLoaderListener
         ApplicationContext ctx =
                 WebApplicationContextUtils.getRequiredWebApplicationContext(context);
 
-        /*String[] beanNames = ctx.getBeanDefinitionNames();
-        for (String name : beanNames)
-            System.out.println(name);*/
-
         String rememberMe = WebloggerConfig.getProperty("rememberme.enabled");
         boolean rememberMeEnabled = Boolean.valueOf(rememberMe);
 
@@ -246,7 +242,8 @@ public class RollerContext extends ContextLoaderListener
         context.setAttribute("rememberMeEnabled", rememberMe);
 
         if (!rememberMeEnabled) {
-            ProviderManager provider = (ProviderManager) ctx.getBean("_authenticationManager");
+            ProviderManager provider =
+                (ProviderManager) ctx.getBean("org.springframework.security.authenticationManager");
             for (AuthenticationProvider authProvider : provider.getProviders()) {
                 if (authProvider instanceof RememberMeAuthenticationProvider) {
                     provider.getProviders().remove(authProvider);
