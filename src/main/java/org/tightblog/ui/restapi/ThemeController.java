@@ -76,7 +76,7 @@ public class ThemeController {
 
                 for (WeblogTemplate template : oldTemplates) {
                     if (template.getDerivation() == Template.TemplateDerivation.OVERRIDDEN) {
-                        weblogTemplateRepository.delete(template);
+                        weblogTemplateRepository.deleteById(template.getId());
                     }
                 }
 
