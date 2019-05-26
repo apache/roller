@@ -138,9 +138,9 @@
         <%-- planet subscription delete logic --%>
 
         <s:form action="planetGroupSubs!deleteSubscription" id="deleteForm">
-            <input type="hidden" name="salt" value='<s:property value="salt" />' />
+            <s:hidden name="salt"/>
+            <s:hidden name="group.handle"/>
             <input type="hidden" name="subUrl"/>
-            <input type="hidden" name="groupHandle"/>
         </s:form>
 
     </s:else>

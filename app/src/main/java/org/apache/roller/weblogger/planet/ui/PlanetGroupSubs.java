@@ -228,11 +228,16 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
 
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
 
-                // remove subscription
                 Subscription sub = pmgr.getSubscription(getSubUrl());
+
+                // remove sub from group
                 getGroup().getSubscriptions().remove(sub);
-                sub.getGroups().remove(getGroup());
                 pmgr.saveGroup(getGroup());
+
+                // remove group from sub
+                sub.getGroups().remove(getGroup());
+                pmgr.saveSubscription(sub);
+
                 WebloggerFactory.getWeblogger().flush();
 
                 // clear field after success
