@@ -85,9 +85,9 @@
         <put-attribute name="messages"     value="/WEB-INF/jsps/tiles/messages.jsp" />
         <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="content"      value="${content}" />
-       
     </definition>
-    <definition name=".tiles-popuppage-only-content" template="/WEB-INF/jsps/tiles/tiles-popuppage.jsp">       
+
+    <definition name=".tiles-popuppage-only-content" extends=".tiles-popuppage">
         <put-attribute name="content"      value="${content}" />
     </definition>
     
