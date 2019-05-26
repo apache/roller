@@ -236,9 +236,7 @@ public class RollerContext extends ContextLoaderListener
 
         String rememberMe = WebloggerConfig.getProperty("rememberme.enabled");
         boolean rememberMeEnabled = Boolean.valueOf(rememberMe);
-
         log.info("Remember Me enabled: " + rememberMeEnabled);
-
         context.setAttribute("rememberMeEnabled", rememberMe);
 
         if (!rememberMeEnabled) {
