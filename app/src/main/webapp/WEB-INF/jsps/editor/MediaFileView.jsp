@@ -327,7 +327,7 @@
             <div class="modal-body">
                 <iframe id="mediaFileEditor"
                         style="visibility:inherit"
-                        height="600" <%-- pixels, sigh, this is suboptimal--%>
+                        height="700" <%-- pixels, sigh, this is suboptimal--%>
                         width="100%"
                         frameborder="no"
                         scrolling="auto">
