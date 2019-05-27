@@ -1,12 +1,12 @@
 tightblogApp.controller('PageController', ['$http', function PageController($http) {
       var self = this;
       var templateData = {};
-      var lastSavedRelativePath = null;
+      var lastSavedName = null;
       var errorObj = null;
       var showSuccessMessage = false;
 
       this.launchPage = function() {
-          window.open(weblogUrl + 'page/' + self.lastSavedRelativePath, '_blank');
+          window.open(weblogUrl + 'page/' + self.lastSavedName, '_blank');
       };
 
       this.loadTemplate = function() {
@@ -19,7 +19,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
           $http.get(contextPath + urlStem).then(
           function(response) {
               self.templateData = response.data;
-              self.lastSavedRelativePath = self.templateData.relativePath;
+              self.lastSavedName = self.templateData.name;
           });
       };
 

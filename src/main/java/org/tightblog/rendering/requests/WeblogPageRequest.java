@@ -358,7 +358,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
     public List<? extends Template> getCustomPages() {
         return pageModel.getThemeManager().getWeblogTheme(weblog).getTemplates().stream()
-                .filter(t -> Template.ComponentType.CUSTOM_EXTERNAL.equals(t.getRole()))
+                .filter(t -> Template.Role.CUSTOM_EXTERNAL.equals(t.getRole()))
                 .collect(Collectors.toList());
     }
 

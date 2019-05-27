@@ -90,10 +90,10 @@ public class SearchProcessor extends AbstractProcessor {
         // determine template to use for rendering, look for search results override first
         WeblogTheme weblogTheme = themeManager.getWeblogTheme(weblog);
 
-        searchRequest.setTemplate(weblogTheme.getTemplateByAction(Template.ComponentType.SEARCH_RESULTS));
+        searchRequest.setTemplate(weblogTheme.getTemplateByRole(Template.Role.SEARCH_RESULTS));
 
         if (searchRequest.getTemplate() == null) {
-            searchRequest.setTemplate(weblogTheme.getTemplateByAction(Template.ComponentType.WEBLOG));
+            searchRequest.setTemplate(weblogTheme.getTemplateByRole(Template.Role.WEBLOG));
         }
 
         if (searchRequest.getTemplate() == null) {
@@ -116,7 +116,7 @@ public class SearchProcessor extends AbstractProcessor {
         // render content
         try {
             CachedContent rendererOutput = thymeleafRenderer.render(searchRequest.getTemplate(), model);
-            response.setContentType(rendererOutput.getComponentType().getContentType());
+            response.setContentType(rendererOutput.getRole().getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             response.getOutputStream().write(rendererOutput.getContent());
         } catch (Exception e) {

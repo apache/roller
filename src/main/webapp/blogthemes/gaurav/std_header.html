@@ -35,7 +35,7 @@
                     </li>
                 </th:block>
                 <li th:each="page : ${model.customPages}" th:class="${model.template != null && page.id == model.template.id} ? 'active'">
-                    <a th:href='${url.getCustomPageURL(page.relativePath)}' th:text="${page.name}">xxx</a>
+                    <a th:href='${url.getCustomPageURL(page.name)}' th:text="${page.name}">xxx</a>
                 </li>
                 <th:block th:if="${model.isUserBlogPublisher()}">
                     <li>

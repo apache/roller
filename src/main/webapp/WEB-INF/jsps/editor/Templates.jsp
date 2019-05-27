@@ -69,8 +69,8 @@
                 ng-change="ctrl.toggleCheckboxes(ctrl.checkAll)"
             title="<fmt:message key='templates.selectAllLabel'/>"/></th>
           <th width="17%"><fmt:message key="generic.name"/></th>
-          <th width="20%"><fmt:message key="templates.path"/></th>
-          <th width="34%"><fmt:message key="templates.role"/></th>
+          <th width="16%"><fmt:message key="templates.role"/></th>
+          <th width="38%"><fmt:message key="templates.description"/></th>
           <th width="8%"><fmt:message key="templates.source"/></th>
           <th width="13%"><fmt:message key="generic.lastModified"/></th>
           <th width="4%"><fmt:message key="generic.view"/></th>
@@ -97,15 +97,12 @@
             </td>
 
             <td style="vertical-align:middle">
-                <span ng-if="tpl.role.accessibleViaUrl == true">
-                  {{tpl.relativePath}}
-                </span>
+               {{tpl.role.readableName}}
             </td>
 
             <td style="vertical-align:middle">
-                {{tpl.role.readableName}}
               <span ng-if="tpl.role.singleton != true && tpl.description != null && tpl.description != ''">
-                : {{tpl.description}}
+                 {{tpl.description}}
               </span>
             </td>
 
@@ -120,8 +117,8 @@
             </td>
 
             <td class="buttontd">
-                <span ng-if="tpl.role.accessibleViaUrl && tpl.relativePath != null && tpl.relativePath != ''">
-                    <a target="_blank" href="<c:out value='${actionWeblogURL}'/>page/{{tpl.relativePath}}">
+                <span ng-if="tpl.role.accessibleViaUrl">
+                    <a target="_blank" href="<c:out value='${actionWeblogURL}'/>page/{{tpl.name}}">
                       <img src='<c:url value="/images/world_go.png"/>' border="0" alt="icon"/>
                     </a>
                 </span>

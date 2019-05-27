@@ -75,8 +75,9 @@ public class ThemeController {
                 List<WeblogTemplate> oldTemplates = weblogTemplateRepository.getWeblogTemplateMetadata(weblog);
 
                 for (WeblogTemplate template : oldTemplates) {
-                    if (template.getDerivation() == Template.TemplateDerivation.OVERRIDDEN) {
+                    if (template.getDerivation() == Template.Derivation.OVERRIDDEN) {
                         weblogTemplateRepository.deleteById(template.getId());
+                        weblogManager.evictWeblogTemplateCaches(template.getWeblog(), template.getName(), template.getRole());
                     }
                 }
 
@@ -109,19 +110,13 @@ public class ThemeController {
                 themeManager.getSharedTheme(weblog.getTheme()));
 
         oldTheme.getTemplates().stream().filter(
-                old -> old.getDerivation() == Template.TemplateDerivation.SPECIFICBLOG).forEach(old -> {
-                    if (old.getRole().isSingleton() && newTheme.getTemplateByAction(old.getRole()) != null) {
+                old -> old.getDerivation() == Template.Derivation.SPECIFICBLOG).forEach(old -> {
+                    if (old.getRole().isSingleton() && newTheme.getTemplateByRole(old.getRole()) != null) {
                         be.addError(new ObjectError("Weblog object", messages.getMessage("themeEdit.conflicting.singleton.role",
                                 new Object[]{old.getRole().getReadableName()}, locale)));
                     } else if (newTheme.getTemplateByName(old.getName()) != null) {
                         be.addError(new ObjectError("Weblog object", messages.getMessage("themeEdit.conflicting.name",
                                 new Object[]{old.getName()}, locale)));
-                    } else {
-                        String maybePath = old.getRelativePath();
-                        if (maybePath != null && newTheme.getTemplateByPath(maybePath) != null) {
-                            be.addError(new ObjectError("Weblog object", messages.getMessage("themeEdit.conflicting.link",
-                                    new Object[]{old.getRelativePath()}, locale)));
-                        }
                     }
         });
 

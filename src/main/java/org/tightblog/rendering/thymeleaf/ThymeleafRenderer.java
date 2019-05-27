@@ -56,7 +56,7 @@ public class ThymeleafRenderer {
                 // unknown method call and unknown property name
                 Throwable firstCause = e.getCause();
                 if (firstCause instanceof ParseException) {
-                    rendererOutput.setComponentType(Template.ComponentType.CUSTOM_EXTERNAL);
+                    rendererOutput.setRole(Template.Role.CUSTOM_EXTERNAL);
                     Context ctx = new Context();
                     ctx.setVariable("templateName", template.getName());
                     // output commonly "Exception evaluating Spring EL expression..."

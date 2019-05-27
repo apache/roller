@@ -30,16 +30,16 @@ import java.util.List;
 @Repository
 public interface WeblogTemplateRepository extends JpaRepository<WeblogTemplate, String> {
 
-    WeblogTemplate findByWeblogAndRelativePath(Weblog weblog, String relativePath);
-
+    @Cacheable(value = "weblogTemplatesByName")
     WeblogTemplate findByWeblogAndName(Weblog weblog, String name);
 
-    WeblogTemplate findByWeblogAndRole(Weblog weblog, Template.ComponentType role);
+    @Cacheable(value = "weblogTemplatesByRole")
+    WeblogTemplate findByWeblogAndRole(Weblog weblog, Template.Role role);
 
     @Cacheable(value = "weblogTemplates", key = "#weblog.handle")
     // Select all but the template source (latter obtainable individually by methods above)
     // https://stackoverflow.com/a/47471486/1207540
-    @Query("SELECT new org.tightblog.domain.WeblogTemplate(w.id, w.role, w.name, w.description, w.relativePath, " +
+    @Query("SELECT new org.tightblog.domain.WeblogTemplate(w.id, w.role, w.name, w.description, " +
             "w.lastModified) FROM WeblogTemplate w WHERE w.weblog = ?1")
     List<WeblogTemplate> getWeblogTemplateMetadata(Weblog weblog);
 
@@ -49,5 +49,13 @@ public interface WeblogTemplateRepository extends JpaRepository<WeblogTemplate, 
     @CacheEvict(value = "weblogTemplates", key = "#weblog.handle")
     default void evictWeblogTemplates(Weblog weblog) {
         // ignored
+    }
+
+    @CacheEvict(value = "weblogTemplatesByName")
+    default void evictWeblogTemplateByName(Weblog weblog, String name) {
+    }
+
+    @CacheEvict(value = "weblogTemplatesByRole")
+    default void evictWeblogTemplateByRole(Weblog weblog, Template.Role role) {
     }
 }

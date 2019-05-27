@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title th:utext="${model.weblog.name}">xxx</title>
         <link rel="shortcut icon" th:href="${url.getSiteHome() + '/favicon.ico'}">
-        <link rel="stylesheet" th:href="${url.getCustomPageURL('_css.css')}">
+        <link rel="stylesheet" th:href="${url.getCustomPageURL('frontpage.css')}">
         <!--/* replace/insert within a fragment seems to work only with th:block */-->
         <th:block th:replace="fragments :: AutoDiscoveryLinks"></th:block>
     </th:block>

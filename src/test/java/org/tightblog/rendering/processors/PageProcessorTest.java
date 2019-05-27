@@ -36,8 +36,7 @@ import org.tightblog.service.WeblogManager;
 import org.tightblog.domain.SharedTemplate;
 import org.tightblog.domain.SharedTheme;
 import org.tightblog.service.ThemeManager;
-import org.tightblog.domain.Template;
-import org.tightblog.domain.Template.ComponentType;
+import org.tightblog.domain.Template.Role;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntryComment;
@@ -162,7 +161,7 @@ public class PageProcessorTest {
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         weblog.setLastModified(twoDaysAgo);
 
-        CachedContent cachedContent = new CachedContent(ComponentType.WEBLOG);
+        CachedContent cachedContent = new CachedContent(Role.WEBLOG);
         cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockCache.get(any(), any())).thenReturn(cachedContent);
 
@@ -170,7 +169,7 @@ public class PageProcessorTest {
 
         // verify cached content being returned
         verify(mockWM).incrementHitCount(weblog);
-        verify(mockResponse).setContentType(ComponentType.WEBLOG.getContentType());
+        verify(mockResponse).setContentType(Role.WEBLOG.getContentType());
         verify(mockResponse).setContentLength(7);
         verify(mockResponse).setDateHeader("Last-Modified", twoDaysAgo.toEpochMilli());
         verify(mockResponse).setHeader("Cache-Control", "no-cache");
@@ -181,7 +180,7 @@ public class PageProcessorTest {
 
     @Test
     public void testNonExistentTemplateRequestReturns404() throws IOException {
-        when(mockWeblogTheme.getTemplateByPath(any())).thenReturn(null);
+        when(mockWeblogTheme.getTemplateByName(any())).thenReturn(null);
         processor.handleRequest(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
 
@@ -194,8 +193,8 @@ public class PageProcessorTest {
     public void testUnfoundOrCustomInternalTemplateRequestReturns404() throws IOException {
         // test custom internal template returns 404
         WeblogTemplate wt = new WeblogTemplate();
-        wt.setRole(ComponentType.CUSTOM_INTERNAL);
-        when(mockWeblogTheme.getTemplateByPath("my-custom-page")).thenReturn(wt);
+        wt.setRole(Role.CUSTOM_INTERNAL);
+        when(mockWeblogTheme.getTemplateByName("my-custom-page")).thenReturn(wt);
         mockRequest = TestUtils.createMockServletRequestForCustomPageRequest();
 
         processor.handleRequest(mockRequest, mockResponse);
@@ -209,7 +208,7 @@ public class PageProcessorTest {
 
         // now test with a null template
         Mockito.clearInvocations(mockResponse);
-        when(mockWeblogTheme.getTemplateByPath(any())).thenReturn(null);
+        when(mockWeblogTheme.getTemplateByName(any())).thenReturn(null);
         processor.handleRequest(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }
@@ -217,12 +216,12 @@ public class PageProcessorTest {
     @Test
     public void testUncachedPageRendering() throws IOException {
         WeblogTemplate customTemplate = new WeblogTemplate();
-        customTemplate.setRole(ComponentType.CUSTOM_EXTERNAL);
-        when(mockWeblogTheme.getTemplateByPath(any())).thenReturn(customTemplate);
+        customTemplate.setRole(Role.CUSTOM_EXTERNAL);
+        when(mockWeblogTheme.getTemplateByName(any())).thenReturn(customTemplate);
 
         mockRequest = TestUtils.createMockServletRequestForCustomPageRequest();
 
-        CachedContent cachedContent = new CachedContent(ComponentType.CUSTOM_EXTERNAL);
+        CachedContent cachedContent = new CachedContent(Role.CUSTOM_EXTERNAL);
         cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 
@@ -234,14 +233,14 @@ public class PageProcessorTest {
         verify(mockCache, never()).incrementRequestsHandledBy304();
         verify(mockCache).put(anyString(), any());
         verify(mockRenderer).render(eq(customTemplate), any());
-        verify(mockResponse).setContentType(ComponentType.CUSTOM_EXTERNAL.getContentType());
+        verify(mockResponse).setContentType(Role.CUSTOM_EXTERNAL.getContentType());
         verify(mockResponse).setContentLength("mytest1".length());
         verify(mockSOS).write(any());
 
         // test weblog template
         WeblogTemplate weblogTemplate = new WeblogTemplate();
-        weblogTemplate.setRole(ComponentType.WEBLOG);
-        when(mockWeblogTheme.getTemplateByAction(ComponentType.WEBLOG)).thenReturn(weblogTemplate);
+        weblogTemplate.setRole(Role.WEBLOG);
+        when(mockWeblogTheme.getTemplateByRole(Role.WEBLOG)).thenReturn(weblogTemplate);
 
         Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockRenderer, mockSOS);
         mockRequest = TestUtils.createMockServletRequestForWeblogHomePageRequest();
@@ -257,11 +256,11 @@ public class PageProcessorTest {
         mockRequest = TestUtils.createMockServletRequestForWeblogEntryRequest();
 
         WeblogTemplate permalinkTemplate = new WeblogTemplate();
-        permalinkTemplate.setRole(ComponentType.PERMALINK);
+        permalinkTemplate.setRole(Role.PERMALINK);
         WeblogEntry entry = new WeblogEntry();
         entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
         when(mockWEM.getWeblogEntryByAnchor(weblog, "entry-anchor")).thenReturn(entry);
-        when(mockWeblogTheme.getTemplateByAction(ComponentType.PERMALINK)).thenReturn(permalinkTemplate);
+        when(mockWeblogTheme.getTemplateByRole(Role.PERMALINK)).thenReturn(permalinkTemplate);
 
         Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockRenderer, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);
@@ -273,7 +272,7 @@ public class PageProcessorTest {
         verify(mockSOS).write(any());
 
         // test fallback to weblog template if no permalink one
-        when(mockWeblogTheme.getTemplateByAction(ComponentType.PERMALINK)).thenReturn(null);
+        when(mockWeblogTheme.getTemplateByRole(Role.PERMALINK)).thenReturn(null);
 
         Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockRenderer, mockSOS);
         processor.handleRequest(mockRequest, mockResponse);
@@ -316,16 +315,16 @@ public class PageProcessorTest {
         mockRequest = TestUtils.createMockServletRequestForCustomPageRequest();
 
         SharedTemplate sharedTemplate = new SharedTemplate();
-        sharedTemplate.setRole(Template.ComponentType.CUSTOM_EXTERNAL);
+        sharedTemplate.setRole(Role.CUSTOM_EXTERNAL);
 
-        CachedContent cachedContent = new CachedContent(ComponentType.CUSTOM_EXTERNAL);
+        CachedContent cachedContent = new CachedContent(Role.CUSTOM_EXTERNAL);
         cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 
         when(mockThemeManager.getSharedTheme(any())).thenReturn(sharedTheme);
         // testing that sitewide themes get the "site" & (page) "model" added to the rendering map.
         sharedTheme.setSiteWide(true);
-        when(mockWeblogTheme.getTemplateByPath("my-custom-page")).thenReturn(sharedTemplate);
+        when(mockWeblogTheme.getTemplateByName("my-custom-page")).thenReturn(sharedTemplate);
 
         WeblogEntryComment comment = new WeblogEntryComment();
         when(mockRequest.getAttribute("commentForm")).thenReturn(comment);
@@ -348,7 +347,7 @@ public class PageProcessorTest {
         when(mockRequest.getAttribute("commentForm")).thenReturn(null);
         sharedTheme.setSiteWide(false);
 
-        cachedContent = new CachedContent(ComponentType.JAVASCRIPT);
+        cachedContent = new CachedContent(Role.JAVASCRIPT);
         cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 

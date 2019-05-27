@@ -107,7 +107,7 @@
             </li>
             <th:block th:if="${addExternalPages}">
                 <li th:each="page : ${model.customPages}" class="sideboxListItem">
-                    <a th:remove="${model.template != null && page.id == model.template.id ? 'tag' : 'none'}" th:href="${url.getCustomPageURL(page.relativePath)}">
+                    <a th:remove="${model.template != null && page.id == model.template.id ? 'tag' : 'none'}" th:href="${url.getCustomPageURL(page.name)}">
                         <span th:text="${page.name}">xxx</span>
                     </a>
                 </li>

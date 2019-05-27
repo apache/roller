@@ -40,7 +40,7 @@ public class LazyExpiringCacheTest {
 
     @Test
     public void testReturnNonExpiredValue() {
-        CachedContent testContent = new CachedContent(Template.ComponentType.ATOMFEED);
+        CachedContent testContent = new CachedContent(Template.Role.ATOMFEED);
         cache.put("abc", testContent);
         assertEquals(testContent, cache.get("abc", twentySecondsAgo));
 
@@ -64,7 +64,7 @@ public class LazyExpiringCacheTest {
     public void testDisabledCacheResults() {
         cache.setMaxEntries(0);
         cache.init();
-        CachedContent testContent = new CachedContent(Template.ComponentType.ATOMFEED);
+        CachedContent testContent = new CachedContent(Template.Role.ATOMFEED);
         cache.put("abc", testContent);
         assertNull(cache.get("abc", twentySecondsAgo));
 
@@ -78,7 +78,7 @@ public class LazyExpiringCacheTest {
 
     @Test
     public void testReturnNullForExpiredOrNoncachedValues() {
-        CachedContent testContent = new CachedContent(Template.ComponentType.ATOMFEED);
+        CachedContent testContent = new CachedContent(Template.Role.ATOMFEED);
         cache.put("tooOld", testContent);
         assertNull(cache.get("tooOld", twentySecondsLater));
         assertNull(cache.get("uncached", twentySecondsAgo));

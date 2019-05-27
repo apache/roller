@@ -125,11 +125,11 @@ public class FeedProcessor extends AbstractProcessor {
                 // not in cache so need to generate content
                 Map<String, Object> model = new HashMap<>();
                 model.put("model", feedRequest);
-                Template template = new SharedTemplate("entries-atom", Template.ComponentType.ATOMFEED);
+                Template template = new SharedTemplate("entries-atom", Template.Role.ATOMFEED);
                 rendererOutput = thymeleafRenderer.render(template, model);
             }
 
-            response.setContentType(rendererOutput.getComponentType().getContentType());
+            response.setContentType(rendererOutput.getRole().getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
             response.setHeader("Cache-Control", "no-cache");

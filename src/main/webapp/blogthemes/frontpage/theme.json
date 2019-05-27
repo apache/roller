@@ -14,7 +14,6 @@
       "type": "custom_external",
       "name": "directory",
       "description": "weblog directory",
-      "relativePath": "directory",
       "contentsFile": "directory.html"
     },
     {
@@ -24,9 +23,8 @@
     },
     {
       "type": "stylesheet",
-      "name": "_css",
-      "contentsFile": "_css.css",
-      "relativePath": "_css.css"
+      "name": "frontpage.css",
+      "contentsFile": "frontpage.css"
     }
   ]
 }

@@ -83,7 +83,7 @@ public class SearchProcessorTest {
 
         mockRenderer = mock(ThymeleafRenderer.class);
         when(mockRenderer.render(any(), any()))
-                .thenReturn(new CachedContent(Template.ComponentType.WEBLOG));
+                .thenReturn(new CachedContent(Template.Role.WEBLOG));
 
         sharedTheme = new SharedTheme();
         sharedTheme.setSiteWide(false);
@@ -119,28 +119,28 @@ public class SearchProcessorTest {
     @Test
     public void testCorrectTemplateChosen() throws IOException {
         WeblogTemplate searchResultsTemplate = new WeblogTemplate();
-        searchResultsTemplate.setRole(Template.ComponentType.SEARCH_RESULTS);
+        searchResultsTemplate.setRole(Template.Role.SEARCH_RESULTS);
 
         WeblogTemplate weblogTemplate = new WeblogTemplate();
-        weblogTemplate.setRole(Template.ComponentType.WEBLOG);
+        weblogTemplate.setRole(Template.Role.WEBLOG);
 
         processor.getSearchResults(mockRequest, mockResponse);
 
         // verify weblog retrieved, NOT FOUND returned due to no matching template
         verify(mockThemeManager).getWeblogTheme(weblog);
-        verify(mockWeblogTheme).getTemplateByAction(Template.ComponentType.WEBLOG);
+        verify(mockWeblogTheme).getTemplateByRole(Template.Role.WEBLOG);
         verify(mockResponse).sendError(SC_NOT_FOUND);
 
         // weblogTheme should be chosen because no template of type SEARCH_RESULTS
-        when(mockWeblogTheme.getTemplateByAction(Template.ComponentType.WEBLOG)).thenReturn(weblogTemplate);
+        when(mockWeblogTheme.getTemplateByRole(Template.Role.WEBLOG)).thenReturn(weblogTemplate);
 
         Mockito.clearInvocations(mockThemeManager, mockWeblogTheme, mockResponse);
         processor.getSearchResults(mockRequest, mockResponse);
-        verify(mockWeblogTheme).getTemplateByAction(Template.ComponentType.WEBLOG);
+        verify(mockWeblogTheme).getTemplateByRole(Template.Role.WEBLOG);
         verify(mockResponse, never()).sendError(SC_NOT_FOUND);
         verify(mockResponse).setContentType("text/html");
 
-        when(mockWeblogTheme.getTemplateByAction(Template.ComponentType.SEARCH_RESULTS)).thenReturn(searchResultsTemplate);
+        when(mockWeblogTheme.getTemplateByRole(Template.Role.SEARCH_RESULTS)).thenReturn(searchResultsTemplate);
 
         // test proper page models provided to renderer
         URLModel mockURLModel = mock(URLModel.class);
@@ -152,7 +152,7 @@ public class SearchProcessorTest {
         Mockito.clearInvocations(mockThemeManager, mockWeblogTheme, mockResponse, mockSOS, mockRenderer);
         processor.getSearchResults(mockRequest, mockResponse);
         // search results template should now be retrieved, backup weblog template call not occurring
-        verify(mockWeblogTheme, never()).getTemplateByAction(Template.ComponentType.WEBLOG);
+        verify(mockWeblogTheme, never()).getTemplateByRole(Template.Role.WEBLOG);
 
         // test calls on Response object made
         verify(mockResponse).setContentLength(0);

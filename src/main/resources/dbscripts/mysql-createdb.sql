@@ -65,13 +65,11 @@ create table weblog_template (
     weblogid        varchar(48) not null,
     role            varchar(20) not null,
     name            varchar(255) not null,
-    relative_path   varchar(255),
     description     varchar(255),
     template        text not null,
     updatetime      datetime(3) not null
 );
 create index wt_name_idx on weblog_template(name);
-create index wt_link_idx on weblog_template(relative_path);
 
 alter table weblog_template add constraint wt_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
@@ -90,8 +88,6 @@ create table blogroll_link (
 
 alter table blogroll_link add constraint bl_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;
-
-alter table blogroll_link add constraint bl_name_uq unique (weblogid, name);
 
 
 create table weblog_category (

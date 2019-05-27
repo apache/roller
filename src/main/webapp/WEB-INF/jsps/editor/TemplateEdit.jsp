@@ -65,6 +65,13 @@
         <td class="label"><fmt:message key="generic.name"/>&nbsp;</td>
         <td class="field">
             <input id="name" type="text" ng-model="ctrl.templateData.name" size="50" maxlength="255" style="background: #e5e5e5" ng-readonly="ctrl.templateData.derivation != 'Blog-Only'"/>
+            <span ng-if="ctrl.templateData.role.accessibleViaUrl">
+                <br/>
+                <c:out value="${actionWeblogURL}"/>page/<span id="linkPreview" style="color:red">{{ctrl.templateData.name}}</span>
+                <span ng-if="ctrl.lastSavedName != null">
+                    [<a id="launchLink" ng-click="ctrl.launchPage()"><fmt:message key="templateEdit.launch" /></a>]
+                </span>
+            </span>
         </td>
     </tr>
 
@@ -72,18 +79,6 @@
         <td class="label"><fmt:message key="templateEdit.role" />&nbsp;</td>
         <td class="field">
              <span>{{ctrl.templateData.role.readableName}}</span>
-        </td>
-    </tr>
-
-    <tr ng-if="ctrl.templateData.role.accessibleViaUrl">
-        <td class="label" valign="top"><fmt:message key="templateEdit.path" />&nbsp;</td>
-        <td class="field">
-            <input id="path" type="text" ng-model="ctrl.templateData.relativePath" size="50" maxlength="255"/>
-            <br/>
-            <c:out value="${actionWeblogURL}"/>page/<span id="linkPreview" style="color:red">{{ctrl.templateData.relativePath}}</span>
-            <span ng-if="ctrl.lastSavedRelativePath != null">
-                [<a id="launchLink" ng-click="ctrl.launchPage()"><fmt:message key="templateEdit.launch" /></a>]
-            </span>
         </td>
     </tr>
 
@@ -98,7 +93,7 @@
 
 </table>
 
-<textarea ng-model="ctrl.templateData.template" rows="30" style="width:100%"></textarea>
+<textarea ng-model="ctrl.templateData.template" rows="20" style="width:100%"></textarea>
 
 <c:url var="templatesUrl" value="/tb-ui/app/authoring/templates">
     <c:param name="weblogId" value="${param.weblogId}" />

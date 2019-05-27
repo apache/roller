@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 import org.tightblog.domain.SharedTemplate;
 import org.tightblog.domain.SharedTheme;
 import org.tightblog.domain.Template;
-import org.tightblog.domain.Template.ComponentType;
+import org.tightblog.domain.Template.Role;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogTemplate;
 import org.tightblog.domain.WeblogTheme;
@@ -171,15 +171,13 @@ public class ThemeManager implements ServletContextAware {
      */
     public WeblogTemplate createWeblogTemplate(Weblog weblog, Template sharedTemplate) {
         WeblogTemplate weblogTemplate = new WeblogTemplate();
-        weblogTemplate.setDerivation(Template.TemplateDerivation.OVERRIDDEN);
+        weblogTemplate.setDerivation(Template.Derivation.OVERRIDDEN);
         weblogTemplate.setWeblog(weblog);
         weblogTemplate.setRole(sharedTemplate.getRole());
         weblogTemplate.setName(sharedTemplate.getName());
         weblogTemplate.setDescription(sharedTemplate.getDescription());
-        weblogTemplate.setRelativePath(sharedTemplate.getRelativePath());
         weblogTemplate.setLastModified(Instant.now());
         weblogTemplate.setTemplate(sharedTemplate.getTemplate());
-
         return weblogTemplate;
     }
 
@@ -206,7 +204,7 @@ public class ThemeManager implements ServletContextAware {
                 for (SharedTemplate template : sharedTheme.getTemplates()) {
 
                     // one and only one template with action "weblog" allowed
-                    if (ComponentType.WEBLOG.equals(template.getRole())) {
+                    if (Role.WEBLOG.equals(template.getRole())) {
                         if (hasWeblogTemplate) {
                             throw new IllegalStateException("Theme has more than one template with action of 'weblog'");
                         } else {

@@ -66,7 +66,6 @@ public class SiteModel {
         this.urlService = urlService;
     }
 
-    @Autowired
     private WeblogPageRequest pageRequest;
 
     @Autowired
@@ -105,7 +104,7 @@ public class SiteModel {
      */
     public WeblogListGenerator.WeblogListData getWeblogListData(Character letter, int length) {
         Template weblogPage = pageRequest.getTemplate();
-        String pageLink = (weblogPage != null) ? weblogPage.getRelativePath() : null;
+        String pageLink = (weblogPage != null) ? weblogPage.getName() : null;
         String baseUrl = urlService.getCustomPageURL(pageRequest.getWeblog(), pageLink, null);
 
         return weblogListGenerator.getWeblogsByLetter(baseUrl, letter, pageRequest.getPageNum(), length);

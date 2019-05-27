@@ -24,7 +24,7 @@ import java.time.Instant;
 import java.util.List;
 
 import org.tightblog.WebloggerTest;
-import org.tightblog.domain.Template.ComponentType;
+import org.tightblog.domain.Template.Role;
 import org.tightblog.domain.User;
 import org.tightblog.domain.WeblogTemplate;
 import org.tightblog.domain.Weblog;
@@ -53,10 +53,9 @@ public class ThemeManagerIT extends WebloggerTest {
         testWeblog = setupWeblog("wt-test-weblog", testUser);
 
         testPage = new WeblogTemplate();
-        testPage.setRole(ComponentType.WEBLOG);
+        testPage.setRole(Role.WEBLOG);
         testPage.setName("testTemplate");
         testPage.setDescription("Test Weblog Template");
-        testPage.setRelativePath("testTemp");
         testPage.setLastModified(Instant.now());
         testPage.setWeblog(testWeblog);
     }
@@ -93,6 +92,7 @@ public class ThemeManagerIT extends WebloggerTest {
 
         // delete template
         weblogTemplateRepository.delete(template);
+        weblogManager.evictWeblogTemplateCaches(template.getWeblog(), testPage.getName(), template.getRole());
 
         // check that delete was successful
         testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
@@ -123,10 +123,6 @@ public class ThemeManagerIT extends WebloggerTest {
 
         // lookup by name
         page = weblogTemplateRepository.findByWeblogAndName(testWeblog, testPage.getName());
-        assertNotNull(page);
-
-        // lookup by link
-        page = weblogTemplateRepository.findByWeblogAndRelativePath(testWeblog, testPage.getRelativePath());
         assertNotNull(page);
 
         // lookup all pages for weblog

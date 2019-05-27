@@ -34,14 +34,14 @@ public class SiteModelTest {
     public void testGetWeblogListData() {
         WeblogListGenerator mockWeblogListGenerator = mock(WeblogListGenerator.class);
         WeblogTemplate testTemplate = new WeblogTemplate();
-        testTemplate.setRelativePath("bar/bar2");
+        testTemplate.setName("bar2");
         WeblogPageRequest wpr = new WeblogPageRequest(mock(PageModel.class));
         wpr.setTemplate(testTemplate);
         wpr.setPageNum(5);
         Weblog weblog = new Weblog();
         wpr.setWeblog(weblog);
         URLService mockUrlService = mock(URLService.class);
-        when(mockUrlService.getCustomPageURL(weblog, "bar/bar2", null))
+        when(mockUrlService.getCustomPageURL(weblog, "bar2", null))
                 .thenReturn("https://foo.com");
 
         SiteModel siteModel = new SiteModel(wpr);

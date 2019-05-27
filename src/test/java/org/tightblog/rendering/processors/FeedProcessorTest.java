@@ -120,7 +120,7 @@ public class FeedProcessorTest {
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         weblog.setLastModified(twoDaysAgo);
 
-        CachedContent cachedContent = new CachedContent(Template.ComponentType.ATOMFEED);
+        CachedContent cachedContent = new CachedContent(Template.Role.ATOMFEED);
         cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockCache.get(any(), any())).thenReturn(cachedContent);
 
@@ -130,7 +130,7 @@ public class FeedProcessorTest {
         feedProcessor.getFeed(mockRequest, mockResponse);
 
         // verify cached content being returned
-        verify(mockResponse).setContentType(Template.ComponentType.ATOMFEED.getContentType());
+        verify(mockResponse).setContentType(Template.Role.ATOMFEED.getContentType());
         verify(mockResponse).setContentLength(7);
         verify(mockResponse).setDateHeader("Last-Modified", twoDaysAgo.toEpochMilli());
         verify(mockResponse).setHeader("Cache-Control", "no-cache");
@@ -147,7 +147,7 @@ public class FeedProcessorTest {
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
-        CachedContent renderedContent = new CachedContent(Template.ComponentType.ATOMFEED);
+        CachedContent renderedContent = new CachedContent(Template.Role.ATOMFEED);
         renderedContent.setContent("mytest24".getBytes(StandardCharsets.UTF_8));
 
         when(mockThymeleafRenderer.render(any(), any())).thenReturn(renderedContent);
@@ -155,7 +155,7 @@ public class FeedProcessorTest {
         feedProcessor.getFeed(mockRequest, mockResponse);
 
         // verify rendered content being returned
-        verify(mockResponse).setContentType(Template.ComponentType.ATOMFEED.getContentType());
+        verify(mockResponse).setContentType(Template.Role.ATOMFEED.getContentType());
         verify(mockResponse).setContentLength(8);
         verify(mockResponse).setDateHeader("Last-Modified", threeDaysAgo.toEpochMilli());
         verify(mockResponse).setHeader("Cache-Control", "no-cache");

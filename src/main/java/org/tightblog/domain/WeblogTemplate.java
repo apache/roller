@@ -51,13 +51,12 @@ public class WeblogTemplate implements Template {
     // attributes
     private String id = Utilities.generateUUID();
     private int hashCode;
-    private ComponentType role;
+    private Role role;
     @NotBlank(message = "{templates.error.nameNull}")
     private String name;
     private String description;
-    private String relativePath;
     private Instant lastModified;
-    private TemplateDerivation derivation = TemplateDerivation.SPECIFICBLOG;
+    private Derivation derivation = Derivation.SPECIFICBLOG;
     private String template = "";
 
     // associations
@@ -71,16 +70,16 @@ public class WeblogTemplate implements Template {
     }
 
     // used in WeblogTemplateRepository where template metadata rather than template itself is needed
-    public WeblogTemplate(String id, ComponentType role, @NotBlank(message = "{templates.error.nameNull}") String name,
-                          String description, String relativePath, Instant lastModified) {
+    public WeblogTemplate(String id, Role role, @NotBlank(message = "{templates.error.nameNull}") String name,
+                          String description, Instant lastModified) {
         this.id = id;
         this.role = role;
         this.name = name;
         this.description = description;
-        this.relativePath = relativePath;
         this.lastModified = lastModified;
     }
 
+    @Override
     @Id
     public String getId() {
         return this.id;
@@ -90,16 +89,18 @@ public class WeblogTemplate implements Template {
         this.id = id;
     }
 
+    @Override
     @Basic(optional = false)
     @Enumerated(EnumType.STRING)
-    public ComponentType getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(ComponentType role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
+    @Override
     @Basic(optional = false)
     public String getName() {
         return this.name;
@@ -109,6 +110,7 @@ public class WeblogTemplate implements Template {
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return this.description;
     }
@@ -117,15 +119,7 @@ public class WeblogTemplate implements Template {
         this.description = description;
     }
 
-    @Column(name = "relative_path")
-    public String getRelativePath() {
-        return this.relativePath;
-    }
-
-    public void setRelativePath(String relativePath) {
-        this.relativePath = relativePath;
-    }
-
+    @Override
     @Column(name = "updatetime", nullable = false)
     public Instant getLastModified() {
         return lastModified;
@@ -147,11 +141,11 @@ public class WeblogTemplate implements Template {
 
     @Override
     @Transient
-    public TemplateDerivation getDerivation() {
+    public Derivation getDerivation() {
         return derivation;
     }
 
-    public void setDerivation(TemplateDerivation derivation) {
+    public void setDerivation(Derivation derivation) {
         this.derivation = derivation;
     }
 
@@ -164,17 +158,19 @@ public class WeblogTemplate implements Template {
         this.roleName = roleName;
     }
 
+    @Override
     @Basic(optional = false)
     public String getTemplate() {
         return template;
     }
 
+    @Override
     public void setTemplate(String template) {
         this.template = template;
     }
 
     public String toString() {
-        return "WeblogTemplate: id=" + id + ", name=" + name + ", role=" + role + ", relativePath=" + relativePath;
+        return "WeblogTemplate: id=" + id + ", name=" + name + ", role=" + role + ", derivation=" + derivation;
     }
 
     @Override
@@ -189,5 +185,4 @@ public class WeblogTemplate implements Template {
         }
         return hashCode;
     }
-
 }

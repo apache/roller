@@ -28,10 +28,9 @@ import java.time.Instant;
 public class SharedTemplate implements Template {
 
     private String id;
-    private ComponentType role;
+    private Role role;
     private String name;
     private String description;
-    private String relativePath;
     private String contentsFile;
     private String template;
 
@@ -49,11 +48,12 @@ public class SharedTemplate implements Template {
         this.contentsFile = contentsFile;
     }
 
-    public SharedTemplate(String id, ComponentType role) {
+    public SharedTemplate(String id, Role role) {
         this.id = id;
         this.role = role;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -62,6 +62,7 @@ public class SharedTemplate implements Template {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -70,6 +71,7 @@ public class SharedTemplate implements Template {
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -78,33 +80,27 @@ public class SharedTemplate implements Template {
         this.description = description;
     }
 
-    public String getRelativePath() {
-        return relativePath;
-    }
-
-    public void setRelativePath(String relativePath) {
-        this.relativePath = relativePath;
-    }
-
+    @Override
     public Instant getLastModified() {
         return null;
     }
 
     public String toString() {
-        return "SharedTemplate: id=" + id + ", role=" + role + ", name=" + name + ", relativePath=" + relativePath;
+        return "SharedTemplate: id=" + id + ", role=" + role + ", name=" + name;
     }
 
-    public ComponentType getRole() {
+    @Override
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(ComponentType role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
     @Override
-    public TemplateDerivation getDerivation() {
-        return TemplateDerivation.SHARED;
+    public Derivation getDerivation() {
+        return Derivation.SHARED;
     }
 
     @Override
@@ -117,8 +113,8 @@ public class SharedTemplate implements Template {
         this.template = template;
     }
 
-    // type used during JSON deserialization to determine the ComponentType (role)
+    // type used during JSON deserialization to determine the Role
     public void setType(String type) {
-        role = ComponentType.valueOf(type.toUpperCase());
+        role = Role.valueOf(type.toUpperCase());
     }
 }

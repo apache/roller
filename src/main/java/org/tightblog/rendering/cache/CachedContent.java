@@ -20,7 +20,7 @@
  */
 package org.tightblog.rendering.cache;
 
-import org.tightblog.domain.Template.ComponentType;
+import org.tightblog.domain.Template.Role;
 
 /**
  * A utility class for storing content that can be cached for subsequent retrieval
@@ -28,21 +28,21 @@ import org.tightblog.domain.Template.ComponentType;
 public class CachedContent {
 
     // content-type of data in byte array
-    private ComponentType componentType;
+    private Role role;
 
     // the byte array we use to maintain the cached content
     private byte[] content = new byte[0];
 
-    public CachedContent(ComponentType componentType) {
-        this.componentType = componentType;
+    public CachedContent(Role role) {
+        this.role = role;
     }
 
-    public ComponentType getComponentType() {
-        return componentType;
+    public Role getRole() {
+        return role;
     }
 
-    public void setComponentType(ComponentType componentType) {
-        this.componentType = componentType;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     /**

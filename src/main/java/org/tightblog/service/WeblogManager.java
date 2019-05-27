@@ -27,6 +27,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.tightblog.config.DynamicProperties;
+import org.tightblog.domain.Template;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogBookmark;
 import org.tightblog.domain.WeblogCategory;
@@ -135,6 +136,7 @@ public class WeblogManager {
     public void removeWeblog(Weblog weblog) {
         // remove contents first, then remove weblog
         weblogTemplateRepository.deleteByWeblog(weblog);
+        weblogTemplateRepository.evictWeblogTemplates(weblog);
         mediaManager.removeAllFiles(weblog);
 
         List<WeblogEntry> entryList = weblogEntryRepository.findByWeblog(weblog);
@@ -486,5 +488,11 @@ public class WeblogManager {
         resultsMap.put("updated", updatedEntries);
         resultsMap.put("unchanged", unchangedEntries);
         return resultsMap;
+    }
+
+    public void evictWeblogTemplateCaches(Weblog weblog, String templateName, Template.Role role) {
+        weblogTemplateRepository.evictWeblogTemplates(weblog);
+        weblogTemplateRepository.evictWeblogTemplateByName(weblog, templateName);
+        weblogTemplateRepository.evictWeblogTemplateByRole(weblog, role);
     }
 }

@@ -29,7 +29,7 @@ public class LazyExpiringCacheEntryTest {
 
     @Test
     public void testGetNonexpiredValue() {
-        CachedContent testContent = new CachedContent(Template.ComponentType.ATOMFEED);
+        CachedContent testContent = new CachedContent(Template.Role.ATOMFEED);
         LazyExpiringCacheEntry entry = new LazyExpiringCacheEntry(testContent);
         assertEquals(testContent, entry.getValue(twentySecondsAgo));
 
@@ -39,7 +39,7 @@ public class LazyExpiringCacheEntryTest {
 
     @Test
     public void testExpiredValueReturnsNull() {
-        CachedContent testContent = new CachedContent(Template.ComponentType.ATOMFEED);
+        CachedContent testContent = new CachedContent(Template.Role.ATOMFEED);
         LazyExpiringCacheEntry entry = new LazyExpiringCacheEntry(testContent);
         assertNull(entry.getValue(twentySecondsLater));
     }

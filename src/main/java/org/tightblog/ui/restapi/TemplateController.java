@@ -21,7 +21,6 @@
 package org.tightblog.ui.restapi;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -105,8 +104,8 @@ public class TemplateController {
             wtd.templates = new ArrayList<>(theme.getTemplates());
 
             // build list of action types that may be added
-            List<Template.ComponentType> availableRoles = Arrays.stream(Template.ComponentType.values()).
-                    filter(Template.ComponentType::isBlogComponent).
+            List<Template.Role> availableRoles = Arrays.stream(Template.Role.values()).
+                    filter(Template.Role::isBlogComponent).
                     collect(Collectors.toList());
 
             // remove from above list any already existing for the theme
@@ -154,7 +153,7 @@ public class TemplateController {
             if (template != null) {
                 if (userManager.checkWeblogRole(p.getName(), template.getWeblog(), WeblogRole.OWNER)) {
                     weblogTemplateRepository.delete(template);
-                    weblogTemplateRepository.evictWeblogTemplates(template.getWeblog());
+                    weblogManager.evictWeblogTemplateCaches(template.getWeblog(), template.getName(), template.getRole());
                     weblogManager.saveWeblog(template.getWeblog(), true);
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
@@ -189,7 +188,7 @@ public class TemplateController {
                 userManager.checkWeblogRole(p.getName(), template.getWeblog(), WeblogRole.POST);
         if (permitted) {
             if (themeManager.getSharedTheme(template.getWeblog().getTheme()).getTemplateByName(template.getName()) != null) {
-                template.setDerivation(Template.TemplateDerivation.OVERRIDDEN);
+                template.setDerivation(Template.Derivation.OVERRIDDEN);
             }
             return template;
         } else {
@@ -207,18 +206,19 @@ public class TemplateController {
                                                   HttpServletResponse response) {
 
         Weblog weblog = weblogRepository.findById(weblogId).orElse(null);
-        // First-time override of a shared template
-        SharedTheme sharedTheme = themeManager.getSharedTheme(weblog.getTheme());
-        Template sharedTemplate = sharedTheme.getTemplateByName(templateName);
+        if (weblog != null) {
+            // First-time override of a shared template
+            SharedTheme sharedTheme = themeManager.getSharedTheme(weblog.getTheme());
+            Template sharedTemplate = sharedTheme.getTemplateByName(templateName);
 
-        boolean permitted = sharedTemplate != null &&
-                userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST);
-        if (permitted) {
-            return themeManager.createWeblogTemplate(weblog, sharedTemplate);
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return null;
+            boolean permitted = sharedTemplate != null &&
+                    userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST);
+            if (permitted) {
+                return themeManager.createWeblogTemplate(weblog, sharedTemplate);
+            }
         }
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        return null;
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates", consumes = { "application/json" },
@@ -244,7 +244,7 @@ public class TemplateController {
                     if (templateData.getRole() != null) {
                         templateToSave.setRole(templateData.getRole());
                     } else {
-                        templateToSave.setRole(Template.ComponentType.valueOf(templateData.getRoleName()));
+                        templateToSave.setRole(Template.Role.valueOf(templateData.getRoleName()));
                     }
                     templateToSave.setTemplate(templateData.getTemplate());
                 } else {
@@ -256,11 +256,8 @@ public class TemplateController {
                     templateToSave.setDescription(templateData.getDescription());
                 }
 
-                if (templateToSave.getRole().isAccessibleViaUrl()) {
-                    templateToSave.setRelativePath(templateData.getRelativePath());
-                }
-
-                if (Template.TemplateDerivation.SPECIFICBLOG.equals(templateToSave.getDerivation())) {
+                String originalName = templateToSave.getName();
+                if (Template.Derivation.SPECIFICBLOG.equals(templateToSave.getDerivation())) {
                     templateToSave.setName(templateData.getName());
                 }
 
@@ -272,7 +269,7 @@ public class TemplateController {
                 }
 
                 weblogTemplateRepository.save(templateToSave);
-                weblogTemplateRepository.evictWeblogTemplates(templateToSave.getWeblog());
+                weblogManager.evictWeblogTemplateCaches(templateToSave.getWeblog(), originalName, templateToSave.getRole());
                 weblogManager.saveWeblog(templateToSave.getWeblog(), true);
 
                 return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(templateToSave.getId());
@@ -287,21 +284,6 @@ public class TemplateController {
 
     private ValidationError advancedValidate(WeblogTemplate templateToCheck, boolean initialSave, Locale locale) {
         BindException be = new BindException(templateToCheck, "new data object");
-
-        // make sure relative path exists if required
-        if (!initialSave && templateToCheck.getRole().isAccessibleViaUrl()) {
-            if (StringUtils.isEmpty(templateToCheck.getRelativePath())) {
-                be.addError(new ObjectError("WeblogTemplate",
-                        messages.getMessage("templateEdit.error.relativePathRequired", null, locale)));
-            } else {
-                WeblogTemplate test = weblogTemplateRepository.findByWeblogAndRelativePath(templateToCheck.getWeblog(),
-                        templateToCheck.getRelativePath());
-                if (test != null && !test.getId().equals(templateToCheck.getId())) {
-                    be.addError(new ObjectError("WeblogTemplate",
-                            messages.getMessage("templates.error.pathAlreadyExists", null, locale)));
-                }
-            }
-        }
 
         WeblogTemplate template = weblogTemplateRepository.findByWeblogAndName(templateToCheck.getWeblog(),
                 templateToCheck.getName());

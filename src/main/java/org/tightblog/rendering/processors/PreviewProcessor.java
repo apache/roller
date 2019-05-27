@@ -28,7 +28,7 @@ import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.domain.SharedTheme;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.domain.Template;
-import org.tightblog.domain.Template.ComponentType;
+import org.tightblog.domain.Template.Role;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogRole;
@@ -131,10 +131,10 @@ public class PreviewProcessor extends AbstractProcessor {
 
         // figure out what template to use
         if (incomingRequest.getCustomPageName() != null) {
-            Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(incomingRequest.getCustomPageName());
+            Template template = themeManager.getWeblogTheme(weblog).getTemplateByName(incomingRequest.getCustomPageName());
 
             // block internal custom pages from appearing directly
-            if (template != null && !ComponentType.CUSTOM_INTERNAL.equals(template.getRole())) {
+            if (template != null && template.getRole().isAccessibleViaUrl()) {
                 incomingRequest.setTemplate(template);
             }
         } else {
@@ -147,13 +147,13 @@ public class PreviewProcessor extends AbstractProcessor {
                     invalid = true;
                 } else {
                     incomingRequest.setWeblogEntry(entry);
-                    incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK));
+                    incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByRole(Role.PERMALINK));
                 }
             }
 
             // use default template for other contexts (or, for entries, if PERMALINK template is undefined)
             if (!invalid && incomingRequest.getTemplate() == null) {
-                incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG));
+                incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByRole(Role.WEBLOG));
             }
         }
 
@@ -177,7 +177,7 @@ public class PreviewProcessor extends AbstractProcessor {
 
         try {
             CachedContent rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
-            response.setContentType(rendererOutput.getComponentType().getContentType());
+            response.setContentType(rendererOutput.getRole().getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             // no-store: must pull each time from server when requested
             response.setHeader("Cache-Control", "no-store");

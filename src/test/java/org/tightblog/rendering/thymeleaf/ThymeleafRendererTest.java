@@ -64,7 +64,7 @@ public class ThymeleafRendererTest {
         template = new WeblogTemplate();
         template.setName("test template");
         template.setId("mytestid");
-        template.setRole(Template.ComponentType.WEBLOG);
+        template.setRole(Template.Role.WEBLOG);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ThymeleafRendererTest {
 
         CachedContent content = renderer.render(template, model);
         assertNotNull(content);
-        assertEquals(Template.ComponentType.WEBLOG, content.getComponentType());
+        assertEquals(Template.Role.WEBLOG, content.getRole());
 
         ArgumentCaptor<Context> contextCaptor = ArgumentCaptor.forClass(Context.class);
         verify(renderer).runTemplateEngine(eq("mytestid"), contextCaptor.capture(), any());
@@ -96,7 +96,7 @@ public class ThymeleafRendererTest {
 
         doNothing().when(renderer).runTemplateEngine(eq("error-page"), contextCaptor.capture(), any());
         CachedContent content = renderer.render(template, model);
-        assertEquals(Template.ComponentType.CUSTOM_EXTERNAL, content.getComponentType());
+        assertEquals(Template.Role.CUSTOM_EXTERNAL, content.getRole());
         Context context = contextCaptor.getValue();
         assertEquals("test template", context.getVariable("templateName"));
         assertEquals("ParseException Message", context.getVariable("firstMessage"));

@@ -68,13 +68,11 @@ create table weblog_template (
     weblogid        varchar(48) not null,
     role            varchar(20) not null,
     name            varchar(255) not null,
-    relative_path   varchar(255),
     description     varchar(255),
     template        $TEXT_SQL_TYPE not null,
     updatetime      $TIMESTAMP_SQL_TYPE not null
 );
 create index wt_name_idx on weblog_template(name);
-create index wt_link_idx on weblog_template(relative_path);
 
 alter table weblog_template add constraint wt_weblogid_fk
     foreign key ( weblogid ) references weblog( id ) ;

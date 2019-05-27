@@ -20,7 +20,7 @@
  */
 package org.tightblog.domain;
 
-import org.tightblog.domain.Template.ComponentType;
+import org.tightblog.domain.Template.Role;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -53,11 +53,8 @@ public class SharedTheme {
     // we keep templates in a Map for faster lookups by name
     private Map<String, Template> templatesByName = new HashMap<>();
 
-    // we keep templates in a Map for faster lookups by link
-    private Map<String, Template> templatesByLink = new HashMap<>();
-
     // we keep templates in a Map for faster lookups by action
-    private Map<ComponentType, Template> templatesByAction = new HashMap<>();
+    private Map<Role, Template> templatesByRole = new HashMap<>();
 
     public SharedTheme() {
     }
@@ -148,19 +145,11 @@ public class SharedTheme {
     }
 
     /**
-     * Lookup the specified template by link. Returns null if the template
-     * cannot be found.
+     * Lookup the specified template by role. Available only for temlates whose Role.singleton value is true.
+     * Returns null if the template for the provided role is not found or if the role is not a singleton.
      */
-    public Template getTemplateByPath(String link) {
-        return this.templatesByLink.get(link);
-    }
-
-    /**
-     * Lookup the specified template by action. Returns null if the template
-     * cannot be found.
-     */
-    public Template getTemplateByAction(ComponentType action) {
-        return this.templatesByAction.get(action);
+    public Template getTemplateByRole(Role role) {
+        return this.templatesByRole.get(role);
     }
 
     /**
@@ -169,9 +158,8 @@ public class SharedTheme {
     public void addTemplate(SharedTemplate template) {
         this.templates.add(template);
         this.templatesByName.put(template.getName(), template);
-        this.templatesByLink.put(template.getRelativePath(), template);
         if (template.getRole().isSingleton()) {
-            this.templatesByAction.put(template.getRole(), template);
+            this.templatesByRole.put(template.getRole(), template);
         }
     }
 

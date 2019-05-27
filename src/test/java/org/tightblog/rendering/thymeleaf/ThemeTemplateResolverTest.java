@@ -70,7 +70,7 @@ public class ThemeTemplateResolverTest {
         SharedTemplate sharedTemplate = new SharedTemplate();
         sharedTemplate.setName("templateId");
         sharedTemplate.setTemplate("shared template contents");
-        sharedTemplate.setRole(Template.ComponentType.WEBLOG);
+        sharedTemplate.setRole(Template.Role.WEBLOG);
         sharedTheme.addTemplate(sharedTemplate);
         when(mockThemeManager.getSharedTheme("themeId")).thenReturn(sharedTheme);
         StringTemplateResource resource = (StringTemplateResource) themeTemplateResolver.computeTemplateResource(null,
@@ -83,7 +83,7 @@ public class ThemeTemplateResolverTest {
         WeblogTemplate weblogTemplate = new WeblogTemplate();
         String newUUID = UUID.randomUUID().toString();
         weblogTemplate.setId(newUUID);
-        weblogTemplate.setRole(Template.ComponentType.CUSTOM_EXTERNAL);
+        weblogTemplate.setRole(Template.Role.CUSTOM_EXTERNAL);
         weblogTemplate.setTemplate("weblog template contents");
         when(mockWeblogTemplateRepository.findById(newUUID)).thenReturn(Optional.of(weblogTemplate));
         StringTemplateResource resource = (StringTemplateResource) themeTemplateResolver.computeTemplateResource(null,

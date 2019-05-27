@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,8 +21,8 @@
 
 package org.tightblog.domain;
 
-import org.tightblog.domain.Template.ComponentType;
-import org.tightblog.domain.Template.TemplateDerivation;
+import org.tightblog.domain.Template.Role;
+import org.tightblog.domain.Template.Derivation;
 import org.tightblog.repository.WeblogTemplateRepository;
 
 import java.time.Instant;
@@ -39,7 +39,7 @@ import java.util.TreeMap;
  */
 public class WeblogTheme {
 
-    protected WeblogTemplateRepository weblogTemplateRepository;
+    private WeblogTemplateRepository weblogTemplateRepository;
     protected Weblog weblog;
     private SharedTheme sharedTheme;
 
@@ -82,7 +82,7 @@ public class WeblogTheme {
             for (WeblogTemplate template : weblogTemplateRepository.getWeblogTemplateMetadata(this.weblog)) {
                 if (pageMap.get(template.getName()) != null) {
                     // mark weblog template as an override
-                    template.setDerivation(TemplateDerivation.OVERRIDDEN);
+                    template.setDerivation(Derivation.OVERRIDDEN);
                 }
                 // add new or replace shared template
                 pageMap.put(template.getName(), template);
@@ -93,17 +93,18 @@ public class WeblogTheme {
     }
 
     /**
-     * Lookup the specified template by action.
+     * Lookup the specified template its role.
+     * Intended for use with templates whose Role.isSingleton() is true
      * Returns null if the template cannot be found.
      */
-    public Template getTemplateByAction(ComponentType action) {
+    public Template getTemplateByRole(Role role) {
         Template template = null;
 
         if (!weblog.isUsedForThemePreview()) {
-            template = weblogTemplateRepository.findByWeblogAndRole(this.weblog, action);
+            template = weblogTemplateRepository.findByWeblogAndRole(this.weblog, role);
         }
         if (template == null) {
-            template = sharedTheme.getTemplateByAction(action);
+            template = sharedTheme.getTemplateByRole(role);
         }
         return template;
     }
@@ -123,21 +124,4 @@ public class WeblogTheme {
         }
         return template;
     }
-
-    /**
-     * Lookup the specified template by link.
-     * Returns null if the template cannot be found.
-     */
-    public Template getTemplateByPath(String path) {
-        Template template = null;
-
-        if (!weblog.isUsedForThemePreview()) {
-            template = weblogTemplateRepository.findByWeblogAndRelativePath(this.weblog, path);
-        }
-        if (template == null) {
-            template = sharedTheme.getTemplateByPath(path);
-        }
-        return template;
-    }
-
 }

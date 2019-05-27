@@ -102,7 +102,7 @@ public class PreviewProcessorTest {
             when(mockUM.checkWeblogRole("bob", weblog, WeblogRole.EDIT_DRAFT)).thenReturn(true);
 
             mockRenderer = mock(ThymeleafRenderer.class);
-            CachedContent cachedContent = new CachedContent(Template.ComponentType.JAVASCRIPT);
+            CachedContent cachedContent = new CachedContent(Template.Role.JAVASCRIPT);
             when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 
             mockThemeManager = mock(ThemeManager.class);
@@ -165,7 +165,7 @@ public class PreviewProcessorTest {
         // no theme override so use weblog's theme
         when(mockRequest.getParameter("theme")).thenReturn(null);
         Template template = new SharedTemplate();
-        when(mockTheme.getTemplateByAction(any())).thenReturn(template);
+        when(mockTheme.getTemplateByRole(any())).thenReturn(template);
 
         processor.getPreviewPage(mockRequest, mockResponse);
         WeblogPageRequest wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
@@ -193,26 +193,26 @@ public class PreviewProcessorTest {
         // Custom External retrieved
         mockRequest = TestUtils.createMockServletRequestForCustomPageRequest();
         SharedTemplate sharedTemplate = new SharedTemplate();
-        sharedTemplate.setRole(Template.ComponentType.CUSTOM_EXTERNAL);
+        sharedTemplate.setRole(Template.Role.CUSTOM_EXTERNAL);
         sharedTemplate.setName("my-custom-page");
-        when(mockTheme.getTemplateByPath(any())).thenReturn(sharedTemplate);
+        when(mockTheme.getTemplateByName(any())).thenReturn(sharedTemplate);
 
         processor.getPreviewPage(mockRequest, mockResponse);
         ArgumentCaptor<Template> templateCaptor = ArgumentCaptor.forClass(Template.class);
         verify(mockRenderer).render(templateCaptor.capture(), any());
         Template results = templateCaptor.getValue();
         assertEquals("my-custom-page", results.getName());
-        assertEquals(Template.ComponentType.CUSTOM_EXTERNAL, results.getRole());
+        assertEquals(Template.Role.CUSTOM_EXTERNAL, results.getRole());
 
         // Custom Internal blocked -- 404 returned
         Mockito.clearInvocations(mockResponse, mockRenderer);
-        sharedTemplate.setRole(Template.ComponentType.CUSTOM_INTERNAL);
+        sharedTemplate.setRole(Template.Role.CUSTOM_INTERNAL);
         processor.getPreviewPage(mockRequest, mockResponse);
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
 
         // now test with a null template
         Mockito.clearInvocations(mockResponse);
-        when(mockTheme.getTemplateByPath(any())).thenReturn(null);
+        when(mockTheme.getTemplateByName(any())).thenReturn(null);
         processor.getPreviewPage(mockRequest, mockResponse);
         verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
 
@@ -220,39 +220,39 @@ public class PreviewProcessorTest {
         mockRequest = TestUtils.createMockServletRequestForWeblogHomePageRequest();
         Mockito.clearInvocations(mockResponse, mockRenderer);
         SharedTemplate weblogTemplate = new SharedTemplate();
-        weblogTemplate.setRole(Template.ComponentType.WEBLOG);
+        weblogTemplate.setRole(Template.Role.WEBLOG);
         weblogTemplate.setName("myweblogtemplate");
-        when(mockTheme.getTemplateByAction(Template.ComponentType.WEBLOG)).thenReturn(weblogTemplate);
+        when(mockTheme.getTemplateByRole(Template.Role.WEBLOG)).thenReturn(weblogTemplate);
         processor.getPreviewPage(mockRequest, mockResponse);
         templateCaptor = ArgumentCaptor.forClass(Template.class);
         verify(mockRenderer).render(templateCaptor.capture(), any());
         results = templateCaptor.getValue();
         assertEquals("myweblogtemplate", results.getName());
-        assertEquals(Template.ComponentType.WEBLOG, results.getRole());
+        assertEquals(Template.Role.WEBLOG, results.getRole());
 
         // Permalink template retrieved for a weblog entry
         mockRequest = TestUtils.createMockServletRequestForWeblogEntryRequest();
         Mockito.clearInvocations(mockResponse, mockRenderer);
         SharedTemplate permalinkTemplate = new SharedTemplate();
-        permalinkTemplate.setRole(Template.ComponentType.PERMALINK);
+        permalinkTemplate.setRole(Template.Role.PERMALINK);
         permalinkTemplate.setName("mypermalinktemplate");
-        when(mockTheme.getTemplateByAction(Template.ComponentType.PERMALINK)).thenReturn(permalinkTemplate);
+        when(mockTheme.getTemplateByRole(Template.Role.PERMALINK)).thenReturn(permalinkTemplate);
         processor.getPreviewPage(mockRequest, mockResponse);
         templateCaptor = ArgumentCaptor.forClass(Template.class);
         verify(mockRenderer).render(templateCaptor.capture(), any());
         results = templateCaptor.getValue();
         assertEquals("mypermalinktemplate", results.getName());
-        assertEquals(Template.ComponentType.PERMALINK, results.getRole());
+        assertEquals(Template.Role.PERMALINK, results.getRole());
 
         // Weblog template retrieved for a weblog entry if no permalink template
-        when(mockTheme.getTemplateByAction(Template.ComponentType.PERMALINK)).thenReturn(null);
+        when(mockTheme.getTemplateByRole(Template.Role.PERMALINK)).thenReturn(null);
         Mockito.clearInvocations(mockResponse, mockRenderer);
         processor.getPreviewPage(mockRequest, mockResponse);
         templateCaptor = ArgumentCaptor.forClass(Template.class);
         verify(mockRenderer).render(templateCaptor.capture(), any());
         results = templateCaptor.getValue();
         assertEquals("myweblogtemplate", results.getName());
-        assertEquals(Template.ComponentType.WEBLOG, results.getRole());
+        assertEquals(Template.Role.WEBLOG, results.getRole());
 
         // test 404 if exception during rendering
         WebloggerTest.logExpectedException(log, "IllegalArgumentException");
@@ -278,11 +278,11 @@ public class PreviewProcessorTest {
         when(mockApplicationContext.getBean(eq("pageModelSet"), eq(Set.class))).thenReturn(pageModelSet);
         // setting custom page name to allow for a template to be chosen and hence the rendering to occur
         SharedTemplate sharedTemplate = new SharedTemplate();
-        sharedTemplate.setRole(Template.ComponentType.CUSTOM_EXTERNAL);
+        sharedTemplate.setRole(Template.Role.CUSTOM_EXTERNAL);
 
         // testing that sitewide themes get the "site" & (page) "model" added to the rendering map.
         sharedTheme.setSiteWide(true);
-        when(mockTheme.getTemplateByAction(Template.ComponentType.PERMALINK)).thenReturn(sharedTemplate);
+        when(mockTheme.getTemplateByRole(Template.Role.PERMALINK)).thenReturn(sharedTemplate);
         processor.getPreviewPage(mockRequest, mockResponse);
 
         // set up captors on thymeleafRenderer.render()

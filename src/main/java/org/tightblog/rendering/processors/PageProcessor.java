@@ -30,7 +30,7 @@ import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.domain.Template;
-import org.tightblog.domain.Template.ComponentType;
+import org.tightblog.domain.Template.Role;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntryComment;
@@ -159,11 +159,11 @@ public class PageProcessor extends AbstractProcessor {
                 // not using cache so need to generate page from scratch
                 // figure out what template to use
                 if (incomingRequest.getCustomPageName() != null) {
-                    Template template = themeManager.getWeblogTheme(weblog).getTemplateByPath(
+                    Template template = themeManager.getWeblogTheme(weblog).getTemplateByName(
                             incomingRequest.getCustomPageName());
 
                     // block internal custom pages from appearing directly
-                    if (template != null && !ComponentType.CUSTOM_INTERNAL.equals(template.getRole())) {
+                    if (template != null && template.getRole().isAccessibleViaUrl()) {
                         incomingRequest.setTemplate(template);
                     }
                 } else {
@@ -178,14 +178,14 @@ public class PageProcessor extends AbstractProcessor {
                         } else {
                             incomingRequest.setWeblogEntry(entry);
                             incomingRequest.setTemplate(
-                                    themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.PERMALINK));
+                                    themeManager.getWeblogTheme(weblog).getTemplateByRole(Role.PERMALINK));
                         }
                     }
 
                     // use default template for other contexts (or, for entries, if PERMALINK template is undefined)
                     if (!invalid && incomingRequest.getTemplate() == null) {
                         incomingRequest.setTemplate(
-                                themeManager.getWeblogTheme(weblog).getTemplateByAction(ComponentType.WEBLOG));
+                                themeManager.getWeblogTheme(weblog).getTemplateByRole(Role.WEBLOG));
                     }
                 }
 
@@ -216,14 +216,14 @@ public class PageProcessor extends AbstractProcessor {
             }
 
             // write rendered content to response
-            response.setContentType(rendererOutput.getComponentType().getContentType());
+            response.setContentType(rendererOutput.getRole().getContentType());
             response.setContentLength(rendererOutput.getContent().length);
             // no-cache: browser may cache but must validate with server each time before using (check for 304 response)
             response.setHeader("Cache-Control", "no-cache");
             response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
             response.getOutputStream().write(rendererOutput.getContent());
 
-            if (rendererOutput.getComponentType().isIncrementsHitCount()) {
+            if (rendererOutput.getRole().isIncrementsHitCount()) {
                 weblogManager.incrementHitCount(weblog);
             }
 

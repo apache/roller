@@ -36,7 +36,7 @@ import java.util.Map;
 public interface Template {
 
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-    enum ComponentType {
+    enum Role {
         WEBLOG("Weblog", "text/html", true, true, true, "template.weblog.description"),
         PERMALINK("Permalink", "text/html", true, true, true, "template.permalink.description"),
         SEARCH_RESULTS("Search Results", "text/html", true, true, true,
@@ -54,8 +54,8 @@ public interface Template {
         // fromObject() allows for enum deserialization (used with front-end template saves)
         // see https://github.com/FasterXML/jackson-databind/issues/158#issuecomment-13092598
         @JsonCreator
-        public static ComponentType fromObject(Map<String, Object> data) {
-            return ComponentType.valueOf((String) data.get("name"));
+        public static Role fromObject(Map<String, Object> data) {
+            return Role.valueOf((String) data.get("name"));
         }
 
         private final String readableName;
@@ -65,8 +65,8 @@ public interface Template {
         private final boolean blogComponent;
         private final String descriptionProperty;
 
-        ComponentType(String readableName, String contentType, boolean singleton, boolean incrementsHitCount,
-                      boolean blogComponent, String descriptionProperty) {
+        Role(String readableName, String contentType, boolean singleton, boolean incrementsHitCount,
+             boolean blogComponent, String descriptionProperty) {
             this.readableName = readableName;
             this.contentType = contentType;
             this.singleton = singleton;
@@ -119,14 +119,14 @@ public interface Template {
      * SPECIFICBLOG - A database-stored template that does not override a shared template.  It is defined
      * for a single blog only.
      */
-    enum TemplateDerivation {
+    enum Derivation {
         SHARED("Default"),
         OVERRIDDEN("Override"),
         SPECIFICBLOG("Blog-Only");
 
         private final String readableName;
 
-        TemplateDerivation(String readableName) {
+        Derivation(String readableName) {
             this.readableName = readableName;
         }
 
@@ -137,44 +137,35 @@ public interface Template {
     }
 
     /**
-     * The unique identifier for this Template.
+     * Identifier for a template, must be unique for all templates defined for a single blog.
      */
     String getId();
 
     /**
-     * A simple name for this Template.
+     * Human-readable name for the template.  For templates whose Role.isAccessibleViaUrl() is true,
+     * used to create the URL to access the template's generated output.
      */
     String getName();
 
     /**
-     * A description of the contents of this Template.
+     * Description can be used to help template maintainers understand purpose and usage of a template.
      */
     String getDescription();
 
+    Role getRole();
+
+    Derivation getDerivation();
+
     /**
-     * The last time the template was modified.
+     * The last time the template was modified (not necessarily the time what the template generated
+     * changed, as templates usually query dynamic data.)
      */
     Instant getLastModified();
 
     /**
-     * The role this template performs.
+     * The template contents.
      */
-    ComponentType getRole();
-
-    /**
-     * The derivation of this template.
-     */
-    TemplateDerivation getDerivation();
-
-    /**
-     * The relative path for this Template to add to the default page URL
-     * to view the template from the browser providing it is external.
-     * Can be null or empty if not external.
-     */
-    String getRelativePath();
-
     String getTemplate();
 
     void setTemplate(String template);
-
 }
