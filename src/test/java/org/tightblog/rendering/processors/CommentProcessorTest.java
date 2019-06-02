@@ -83,6 +83,7 @@ public class CommentProcessorTest {
     private CommentValidator alwaysSpamValidator = (comment, messages) -> ValidationResult.SPAM;
     private CommentValidator alwaysNotSpamValidator = (comment, messages) -> ValidationResult.NOT_SPAM;
     private CommentValidator alwaysBlatantSpamValidator = (comment, messages) -> ValidationResult.BLATANT_SPAM;
+    private CommentAuthenticator mockAuthenticator;
 
     @Before
     public void initialize() {
@@ -135,7 +136,7 @@ public class CommentProcessorTest {
         EntityManager mockEM = mock(EntityManager.class);
         processor.setEntityManager(mockEM);
 
-        CommentAuthenticator mockAuthenticator = mock(CommentAuthenticator.class);
+        mockAuthenticator = mock(CommentAuthenticator.class);
         when(mockAuthenticator.authenticate(mockRequest)).thenReturn(true);
         processor.setCommentAuthenticator(mockAuthenticator);
 
@@ -145,6 +146,9 @@ public class CommentProcessorTest {
     @Test
     public void testCommentSpamChecking() {
         try {
+            // confirm authenticator ignored if user logged in
+            when(mockAuthenticator.authenticate(mockRequest)).thenReturn(false);
+
             // test that if it is the blogger's comment it is automatically not spam
             // make this a blogger's comment
             when(mockUM.checkWeblogRole(any(User.class), any(Weblog.class), eq(WeblogRole.POST))).thenReturn(true);
@@ -162,6 +166,7 @@ public class CommentProcessorTest {
             assertEquals(user, testComment.getBlogger());
 
             // make subsequent tests a non-blogger comment
+            when(mockAuthenticator.authenticate(mockRequest)).thenReturn(true);
             when(mockUM.checkWeblogRole(any(User.class), any(Weblog.class), eq(WeblogRole.POST))).thenReturn(false);
             when(mockUR.findEnabledByUserName(any())).thenReturn(null);
 
@@ -306,9 +311,9 @@ public class CommentProcessorTest {
             when(mockWEM.canSubmitNewComments(any())).thenReturn(true);
             when(mockRequest.getParameter("answer")).thenReturn("123");
 
-            CommentAuthenticator mockAuthenticator = mock(CommentAuthenticator.class);
+            // no blogger, so authenticator will be activated
+            when(mockRequest.getUserPrincipal()).thenReturn(null);
             when(mockAuthenticator.authenticate(mockRequest)).thenReturn(false);
-            processor.setCommentAuthenticator(mockAuthenticator);
             verifyForwardDueToValidationError("error.commentAuthFailed", "123");
 
             // ensure auth not checked if preview and content remains in commentForm
@@ -425,13 +430,11 @@ public class CommentProcessorTest {
     @Test
     public void testGenerateAuthForm() throws IOException {
         String authHTML = "difficult math question";
-        CommentAuthenticator mockAuthenticator = mock(CommentAuthenticator.class);
         when(mockAuthenticator.getHtml(any(HttpServletRequest.class))).thenReturn(authHTML);
 
         PrintWriter mockWriter = mock(PrintWriter.class);
         when(mockResponse.getWriter()).thenReturn(mockWriter);
 
-        processor.setCommentAuthenticator(mockAuthenticator);
         processor.generateAuthForm(mockRequest, mockResponse);
 
         verify(mockResponse).setContentType("text/html; charset=utf-8");

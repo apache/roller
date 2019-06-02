@@ -174,25 +174,29 @@
                         <input type="hidden" name="method" value="post" />
 
                         <ul>
-                            <li>
-                                <label class="desc" th:utext="${utils.msg('macro.weblog.name')}">xxx</label>
-                                <input type="text" name="name" class="text large" th:value="${cform.name}" size="50" maxlength="255" required/>
-                            </li>
-                            <li><label class="desc" th:utext="${utils.msg('macro.weblog.email')}">xxx</label>
-                                <input type="text" name="email" class="text large" th:value="${cform.email}" size="50" maxlength="255" required/>
-                            </li>
+                            <th:block th:with="formName=${model.blogger == null ? cform.name : model.blogger.screenName},
+                                formEmail=${model.blogger == null ? cform.email : model.blogger.emailAddress}">
+                                <li>
+                                    <label class="desc" th:utext="${utils.msg('macro.weblog.name')}">xxx</label>
+                                    <input type="text" name="name" class="text large" th:value="${formName}" size="50" maxlength="255" required th:readonly="${model.blogger!=null}"/>
+                                </li>
+                                <li><label class="desc" th:utext="${utils.msg('macro.weblog.email')}">xxx</label>
+                                    <input type="text" name="email" class="text large" th:value="${formEmail}" size="50" maxlength="255" required th:readonly="${model.blogger!=null}"/>
+                                </li>
+                            </th:block>
+
                             <li><label class="desc" th:utext="${utils.msg('macro.weblog.url')}">xxx</label>
                                 <input type="text" name="url" class="text large" th:value="${cform.url}" size="50" maxlength="255" />
-                            </li>
-                            <li th:if="${utils.commentEmailNotify}">
-                                <input type="checkbox" class="checkbox" id="notify" name="notify" th:checked="${cform.notify}"/>
-                                <label for="notify" class="choice" th:utext="${utils.msg('macro.weblog.notifyMeOfComments')}">xxx</label>
                             </li>
                             <li>
                                 <label class="desc" th:utext="${utils.msg('macro.weblog.yourcomment')}">xxx</label>
                                 <textarea name="content" class="textarea large" cols="40" rows="10" maxlength="2000" th:utext="${cform.content}" required>xxx</textarea>
                             </li>
-                            <li class="info">
+                            <li th:if="${utils.commentEmailNotify}">
+                                <input type="checkbox" class="checkbox" id="notify" name="notify" th:checked="${cform.notify}"/>
+                                <label for="notify" class="choice" th:utext="${utils.msg('macro.weblog.notifyMeOfComments')}">xxx</label>
+                            </li>
+                            <li class="info" th:if="${model.blogger == null}">
                                 <script th:src="${url.getSiteHome() + '/scripts/clientSideInclude.js'}"></script>
                                 <div id="commentAuthenticator"></div>
                             </li>

@@ -82,14 +82,20 @@
                             <form method="post" focus="name" name="commentForm">
                                 <div class="row">
                                     <input type="hidden" name="method" value="post" />
-                                    <div class="form-group col-lg-4">
-                                        <label for="input1" th:utext="${utils.msg('macro.weblog.name')}">xxx</label>
-                                        <input type="text" name="name" class="form-control" th:value="${cform.name}" id="input1" required>
-                                    </div>
-                                    <div class="form-group col-lg-4">
-                                        <label for="input2" th:utext="${utils.msg('macro.weblog.email')}">xxx</label>
-                                        <input type="text" name="email" class="form-control" th:value="${cform.email}" id="input2" required>
-                                    </div>
+
+                                    <th:block th:with="formName=${model.blogger == null ? cform.name : model.blogger.screenName},
+                                formEmail=${model.blogger == null ? cform.email : model.blogger.emailAddress}">
+
+                                        <div class="form-group col-lg-4">
+                                            <label for="input1" th:utext="${utils.msg('macro.weblog.name')}">xxx</label>
+                                            <input type="text" name="name" class="form-control" th:value="${formName}" id="input1" required th:readonly="${model.blogger!=null}">
+                                        </div>
+                                        <div class="form-group col-lg-4">
+                                            <label for="input2" th:utext="${utils.msg('macro.weblog.email')}">xxx</label>
+                                            <input type="text" name="email" class="form-control" th:value="${formEmail}" id="input2" required th:readonly="${model.blogger!=null}">
+                                        </div>
+                                    </th:block>
+
                                     <div class="form-group col-lg-4">
                                         <label for="input3" th:utext="${utils.msg('macro.weblog.url')}">xxx</label>
                                         <input type="text" name="url" class="form-control" th:value="${cform.url}" id="input3">
@@ -107,8 +113,8 @@
                                     </div>
 
                                     <div class="form-group col-lg-12">
-                                       <script th:src="${url.getSiteHome() + '/scripts/clientSideInclude.js'}"></script>
-                                       <div id="commentAuthenticator"></div>
+                                       <script th:if="${model.blogger == null}" th:src="${url.getSiteHome() + '/scripts/clientSideInclude.js'}"></script>
+                                       <div id="commentAuthenticator" th:if="${model.blogger == null}"></div>
                                        <input type="submit" th:formaction="${url.getWeblogEntryPreviewCommentURL(entry)}" class="btn btn-primary"
                                                name="post" th:value="${utils.msg('macro.weblog.postpreview')}">
                                        <input type="submit" th:formaction="${url.getWeblogEntryPostCommentURL(entry)}" class="btn btn-success"

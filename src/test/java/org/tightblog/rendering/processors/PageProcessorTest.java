@@ -31,6 +31,7 @@ import org.tightblog.config.DynamicProperties;
 import org.tightblog.config.WebConfig;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.model.URLModel;
+import org.tightblog.repository.UserRepository;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.domain.SharedTemplate;
@@ -84,6 +85,7 @@ public class PageProcessorTest {
 
     private LazyExpiringCache mockCache;
     private WeblogManager mockWM;
+    private UserRepository mockUR;
     private WeblogRepository mockWR;
     private ThymeleafRenderer mockRenderer;
     private ServletOutputStream mockSOS;
@@ -97,6 +99,7 @@ public class PageProcessorTest {
     public void initializeMocks() throws IOException {
         mockRequest = TestUtils.createMockServletRequestForWeblogEntryRequest();
 
+        mockUR = mock(UserRepository.class);
         mockWR = mock(WeblogRepository.class);
         weblog = new Weblog();
         weblog.setLastModified(Instant.now().minus(2, ChronoUnit.DAYS));
@@ -121,7 +124,7 @@ public class PageProcessorTest {
 
         processor = new PageProcessor(mockWR, mockCache, mockWM, mockWEM,
                 mockRenderer, mockThemeManager, mock(PageModel.class),
-                siteModelFactory, dp);
+                siteModelFactory, mockUR, dp);
 
         mockApplicationContext = mock(ApplicationContext.class);
         when(mockApplicationContext.getBean(anyString(), eq(Set.class))).thenReturn(new HashSet());

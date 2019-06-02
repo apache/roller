@@ -197,7 +197,7 @@ public class CommentProcessor extends AbstractProcessor {
 
         if (!weblogEntryManager.canSubmitNewComments(incomingRequest.getWeblogEntry())) {
             errorProperty = "comments.disabled";
-        } else if (!incomingComment.isPreview() && commentAuthenticator != null
+        } else if (commentAuthenticator != null && !incomingComment.isPreview() && incomingRequest.getBlogger() == null
                 && !commentAuthenticator.authenticate(request)) {
             errorValue = request.getParameter("answer");
             errorProperty = "error.commentAuthFailed";

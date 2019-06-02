@@ -26,6 +26,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.model.SiteModel;
+import org.tightblog.repository.UserRepository;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.service.ThemeManager;
@@ -76,6 +77,7 @@ public class PageProcessor extends AbstractProcessor {
 
     public static final String PATH = "/tb-ui/rendering/page";
 
+    private UserRepository userRepository;
     private WeblogRepository weblogRepository;
     private LazyExpiringCache weblogPageCache;
     private WeblogManager weblogManager;
@@ -92,7 +94,8 @@ public class PageProcessor extends AbstractProcessor {
                   @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
                   ThemeManager themeManager, PageModel pageModel,
                   Function<WeblogPageRequest, SiteModel> siteModelFactory,
-                  DynamicProperties dp) {
+                  UserRepository userRepository, DynamicProperties dp) {
+        this.userRepository = userRepository;
         this.weblogRepository = weblogRepository;
         this.weblogPageCache = weblogPageCache;
         this.weblogManager = weblogManager;
@@ -136,6 +139,10 @@ public class PageProcessor extends AbstractProcessor {
             weblogPageCache.incrementRequestsHandledBy304();
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
+        }
+
+        if (incomingRequest.getAuthenticatedUser() != null) {
+            incomingRequest.setBlogger(userRepository.findEnabledByUserName(incomingRequest.getAuthenticatedUser()));
         }
 
         // cache key to retrieve earlier generated content
