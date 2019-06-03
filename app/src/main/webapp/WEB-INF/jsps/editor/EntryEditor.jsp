@@ -127,7 +127,6 @@
         }
         // Added event listener to confirm once the editor content is changed
         jQuery("#edit_content").one("change", function() {
-            console.log("this");
             jQuery(window).on("beforeunload", function(event) {
                 // Chrome requires returnValue to be set and original event is found as originalEvent
                 // see https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload#Example
