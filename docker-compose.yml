@@ -15,6 +15,10 @@
 # copyright in this work, please see the NOTICE file in the top level
 # directory of this distribution.
 
+
+# Example Docker Compose setup for running Roller and PostreSQL locally
+
+
 version: '3.2'
 
 services:
@@ -25,7 +29,7 @@ services:
          - "5432:5432"
       volumes:
          - type: bind
-           source: ./postgresql-data
+           source: ./docker/postgresql-data
            target: /var/lib/postgresql/data
       environment:
          - POSTGRES_DB=rollerdb
@@ -33,11 +37,12 @@ services:
          - POSTGRES_PASSWORD=tiger
 
    roller:
-      image: "snoopdave/roller:6.0.0-SNAPSHOT"
+      image:
+         build: .
       ports:
          - "8080:8080"
       volumes:
          - type: bind
-           source: ./roller-data
+           source: ./docker/roller-data
            target: /var/lib/roller/data
 

@@ -16,9 +16,19 @@
 # copyright in this work, please see the NOTICE file in the top level
 # directory of this distribution.
 
+cat > /usr/local/tomcat/lib/roller-custom.properties << EOF
+installation.type=auto
+mediafiles.storage.dir=${STORAGE_ROOT}/roller_mediafiles
+search.index.dir=${STORAGE_ROOT}/roller_searchindex
+log4j.appender.roller.File=/usr/local/tomcat/logs/roller.log
+database.configurationType=jdbc
+database.jdbc.driverClass=${DATABASE_JDBC_DRIVERCLASS}
+database.jdbc.connectionURL=${DATABASE_JDBC_CONNECTIONURL}
+database.jdbc.username=${DATABASE_JDBC_USERNAME}
+database.jdbc.password=${DATABASE_JDBC_PASSWORD}
+EOF
 
-TAG=roller:6.0.0-SNAPSHOT
+/usr/local/tomcat/bin/wait-for-it.sh ${DATABASE_HOST}
+/usr/local/tomcat/bin/catalina.sh run
 
-docker build --no-cache . -t snoopdave/${TAG}
-docker push snoopdave/${TAG}
 
