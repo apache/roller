@@ -16,15 +16,13 @@
 
 package org.apache.roller.planet.business;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.business.fetcher.FetcherException;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 
@@ -46,9 +44,23 @@ public class RomeFeedFetcherTest extends TestCase {
     
     protected void tearDown() throws Exception {
     }
-    
-    
+
+    static boolean shouldSkip() {
+
+        if (System.getProperty("java.version").startsWith("1.7")) {
+            log.warn("Skipping testFetchFeed because free-of-charge versions of " +
+                "Java 1.7 do not support TLS 1.2 which is now in common usage.");
+            return true;
+        }
+        return false;
+    }
+
     public void testFetchFeed() throws FetcherException {
+
+        if (shouldSkip()) {
+            return;
+        }
+
         try {
             FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
             
@@ -69,6 +81,11 @@ public class RomeFeedFetcherTest extends TestCase {
     
     
     public void testFetchFeedConditionally() throws FetcherException {
+
+        if (shouldSkip()) {
+            return;
+        }
+
         try {
             FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
             
