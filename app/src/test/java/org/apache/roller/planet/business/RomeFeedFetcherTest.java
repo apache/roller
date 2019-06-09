@@ -16,6 +16,10 @@
 
 package org.apache.roller.planet.business;
 
+<<<<<<< HEAD
+=======
+import junit.framework.TestCase;
+>>>>>>> master
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
@@ -51,6 +55,7 @@ public class RomeFeedFetcherTest  {
 
     @Test
     public void testFetchFeed() throws FetcherException {
+
         try {
             FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
             
@@ -72,6 +77,11 @@ public class RomeFeedFetcherTest  {
 
     @Test
     public void testFetchFeedConditionally() throws FetcherException {
+
+        if (shouldSkip()) {
+            return;
+        }
+
         try {
             FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
             
