@@ -80,7 +80,7 @@ limitations under the License.
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.2.6.v20141205</version>
+                    <version>9.4.17.v20190418</version>
                 </plugin>
                 <plugin>
                     <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
