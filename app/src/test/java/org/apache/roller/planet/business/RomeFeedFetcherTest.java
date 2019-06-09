@@ -16,10 +16,6 @@
 
 package org.apache.roller.planet.business;
 
-<<<<<<< HEAD
-=======
-import junit.framework.TestCase;
->>>>>>> master
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
@@ -28,10 +24,9 @@ import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -77,10 +72,6 @@ public class RomeFeedFetcherTest  {
 
     @Test
     public void testFetchFeedConditionally() throws FetcherException {
-
-        if (shouldSkip()) {
-            return;
-        }
 
         try {
             FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();
