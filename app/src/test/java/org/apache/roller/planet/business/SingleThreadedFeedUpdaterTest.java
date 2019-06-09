@@ -41,6 +41,7 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
     
     
     protected void setUp() throws Exception {
+
         // setup planet
         TestUtils.setupWeblogger();
         
@@ -60,7 +61,11 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
     
     
     public void testUpdateSubscription() throws Exception {
-        
+
+        if (RomeFeedFetcherTest.shouldSkip()) {
+            return;
+        }
+
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         Subscription sub = mgr.getSubscriptionById(testSub.getId());
         
