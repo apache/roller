@@ -1,5 +1,9 @@
-NOTICE.txt - Roller copyright notices and credits
+Apache Roller
+Copyright 2001-2019 The Apache Software Foundation
 
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+-------------------------------------------------------------------------------
 
 COPYRIGHT NOTICES
 
@@ -35,25 +39,3 @@ OTHER NOTICES
      COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.1
      Copyright (c) 1997-2011 Oracle and/or its affiliates. All rights reserved.
      https://glassfish.java.net/public/CDDL+GPL_1_1.html
-
-CREDITS
-
-Roller committers (in chronological order): 
-
-David M Johnson
-Lance Lanvandowska (emeritus)
-Matt Raible 
-Mindaguas Idzelis (emeritus)
-Jaap Van Der Molen (emeritus)
-Anil Gangolli
-Henri Yandell (emeritus)
-Allen Gilliland (emeritus)
-Elias Torres (emeritus)
-Matt Schmidt (emeritus)
-Jeff Blattman (emeritus)
-Craig Russell
-Greg Huber
-Ganesh Mathrerootham (emeritus)
-Shelan Perera (emeritus)
-Glen Mazza (emeritus)
-Gaurav Saini
