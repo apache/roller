@@ -157,8 +157,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
 			// otherwise we are returning a WeblogSharedTheme
 		} else {
-			SharedTheme staticTheme = (SharedTheme) this.themes.get(weblog
-					.getEditorTheme());
+			SharedTheme staticTheme = (SharedTheme) this.themes.get(weblog.getEditorTheme());
 			if (staticTheme != null) {
 				weblogTheme = new WeblogSharedTheme(weblog, staticTheme);
 			} else {
@@ -317,19 +316,15 @@ public class ThemeManagerImpl implements ThemeManager {
 					justName = resourcePath;
 
 				} else {
-					justPath = resourcePath.substring(0,
-							resourcePath.lastIndexOf('/'));
+					justPath = resourcePath.substring(0, resourcePath.lastIndexOf('/'));
 					if (!justPath.startsWith("/")) {
                         justPath = "/" + justPath;
                     }
-					justName = resourcePath.substring(resourcePath
-							.lastIndexOf('/') + 1);
-					mdir = fileMgr.getMediaFileDirectoryByName(weblog,
-							justPath);
+					justName = resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
+					mdir = fileMgr.getMediaFileDirectoryByName(weblog, justPath);
 					if (mdir == null) {
 						log.debug("    Creating directory: " + justPath);
-						mdir = fileMgr.createMediaFileDirectory(weblog,
-								justPath);
+						mdir = fileMgr.createMediaFileDirectory(weblog, justPath);
 						roller.flush();
 					}
 				}
@@ -354,7 +349,7 @@ public class ThemeManagerImpl implements ThemeManager {
 				log.debug("    Saving file: " + justName);
 				log.debug("    Saving in directory = " + mf.getDirectory());
 				RollerMessages errors = new RollerMessages();
-				fileMgr.createMediaFile(weblog, mf, errors);
+				fileMgr.createThemeMediaFile(weblog, mf, errors);
 				try {
 					resource.getInputStream().close();
 				} catch (IOException ex) {
@@ -398,8 +393,7 @@ public class ThemeManagerImpl implements ThemeManager {
             // now go through each theme and load it into a Theme object
             for (String themeName : themenames) {
                 try {
-                    SharedTheme theme = new SharedThemeFromDir(this.themeDir
-                            + File.separator + themeName);
+                    SharedTheme theme = new SharedThemeFromDir(this.themeDir + File.separator + themeName);
                     themeMap.put(theme.getId(), theme);
                     log.info("Loaded theme '" + themeName + "'");
                 } catch (Exception unexpected) {

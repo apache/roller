@@ -16,109 +16,133 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
-<script src="<s:url value='/webjars/angular/1.2.29/angular.min.js' />"></script>
 
-<script>
-function handlePreview(handle) {
-    previewSpan = document.getElementById("handlePreview");
-    var n1 = previewSpan.childNodes[0];
-    var n2 = document.createTextNode(handle.value);
-    if (handle.value == null) {
-	    previewSpan.appendChild(n2);
-    } else {
-	    previewSpan.replaceChild(n2, n1);
-    }
-}
-</script>
+<p class="subtitle"><s:text name="createWebsite.prompt"/></p>
 
-<p class="subtitle"><s:text name="createWebsite.prompt" /></p>
+<br/>
 
-<br />
+<s:form action="createWeblog!save" theme="bootstrap" cssClass="form-horizontal">
 
-<s:form action="createWeblog!save">
-<s:hidden name="salt" />
+    <s:hidden name="salt"/>
 
-<table class="formtable">
+    <s:textfield label="%{getText('generic.name')}"
+                 tooltip="%{getText('createWebsite.tip.name')}" onkeyup="formChanged()"
+                 name="bean.name" size="30" maxlength="30"/>
 
-<tr>
-    <td class="label"><label for="name"><s:text name="generic.name" /></label></td>
-    <td class="field"><s:textfield name="bean.name" size="30" maxlength="30" /></td>
-    <td class="description"><s:text name="createWebsite.tip.name" /></td>
-</tr>
+    <s:textfield label="%{getText('createWebsite.handle')}"
+                 tooltip="%{getText('createWebsite.tip.handle')}"
+                 name="bean.handle" size="30" maxlength="30"
+                 onkeyup="handlePreview(this)"/>
 
-<tr>
-        <td class="label"><label for="description"><s:text name="generic.tagline" /></td>
-    <td class="field"><s:textfield name="bean.description" size="40" maxlength="255" /></td>
-    <td class="description"><s:text name="createWebsite.tip.description" /></td>
-</tr>
-
-<tr>
-    <td class="label"><label for="handle"><s:text name="createWebsite.handle" /></label></td>
-    <td class="field">
-        <s:textfield name="bean.handle" size="30" maxlength="30" onkeyup="handlePreview(this)" /><br />
-        <span style="text-size:70%">
+    <div class="form-group">
+        <label class="col-sm-3"></label>
+        <div class="col-sm-9 controls">
             <s:text name="createWebsite.weblogUrl" />:&nbsp;
-            <s:property value="absoluteSiteURL" />/<span id="handlePreview" style="color:red"><s:if test="bean.handle != null"><s:property value="bean.handle"/></s:if><s:else>handle</s:else></span>
-        </span>
-    </td>
-    <td class="description"><s:text name="createWebsite.tip.handle" /></td>
-</tr>
+            <s:property value="absoluteSiteURL" />/<span id="handlePreview" style="color:red">
+            <s:if test="bean.handle != null">
+                <s:property value="bean.handle"/>
+            </s:if>
+            <s:else>handle</s:else></span>
+            <br>
+        </div>
+    </div>
 
-<tr>
-    <td class="label"><label for="emailAddress"><s:text name="createWebsite.emailAddress" /></label></td>
-    <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="50" /></td>
-    <td class="description"><s:text name="createWebsite.tip.email" /></td>
-</tr>
+    <s:textfield label="%{getText('createWebsite.emailAddress')}"
+                 tooltip="%{getText('createWebsite.tip.email')}" onkeyup="formChanged()"
+                 name="bean.emailAddress" size="40" maxlength="50"/>
 
-<tr>
-    <td class="label"><label for="locale" /><s:text name="createWebsite.locale" /></label></td>
-    <td class="field">
-       <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
-    </td>
-    <td class="description"><s:text name="createWebsite.tip.locale" /></td>
-</tr>
+    <s:select label="%{getText('createWebsite.locale')}"
+              tooltip="%{getText('createWebsite.tip.locale')}"
+              name="bean.locale" size="1" list="localesList" listValue="displayName"/>
 
-<tr>
-    <td class="label"><label for="timeZone"><s:text name="createWebsite.timeZone" /></label></td>
-    <td class="field">
-       <s:select name="bean.timeZone" size="1" list="timeZonesList" />
-    </td>
-    <td class="description"><s:text name="createWebsite.tip.timezone" /></td>
-</tr>
+    <s:select label="%{getText('createWebsite.timezone')}"
+              tooltip="%{getText('createWebsite.tip.timezone')}"
+              name="bean.timeZone" size="1" list="timeZonesList"/>
 
-<tr>
-    <td class="label"><label for="theme"><s:text name="createWebsite.theme" /></label></td>
-    <td class="field" ng-app="themeSelectModule" ng-controller="themeController">
-        <select id="themeSelector" name="bean.theme" size="1"
-        ng-model="selectedTheme" ng-options="theme as theme.name for theme in themes track by theme.id"></select>
-        <br />
-        <br />
-        <p>{{ selectedTheme.description }}</p>
-        <br />
-        <img ng-src="<s:property value='siteURL'/>{{ selectedTheme.previewPath }}"/>
-    </td>
-    <td class="description"><s:text name="createWebsite.tip.theme" /></td>
-</tr>
+    <div class="form-group" ng-app="themeSelectModule" ng-controller="themeController">
+        <label class="col-sm-3 control-label" for="createWeblog_bean_timeZone">
+            <s:text name="createWebsite.theme" />
+        </label>
+        <div class="col-sm-9 controls">
+            <s:select name="bean.theme" size="1" list="themes" listKey="id" listValue="name"
+                      onchange="previewImage(this[selectedIndex].value)"/>
+            <p id="themedescription"></p>
+            <p><img id="themeThumbnail" src="" class="img-responsive img-thumbnail" style="max-width: 30em" /></p>
 
-</table>
+        </div>
+    </div>
 
-<br />
+    <s:submit cssClass="btn btn-default"
+              value="%{getText('createWebsite.button.save')}"/>
 
-<s:submit value="%{getText('createWebsite.button.save')}" />
-<input type="button" value="<s:text name="generic.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
+    <input class="btn" type="button" value="<s:text name="generic.cancel"/>"
+           onclick="window.location='<s:url action="menu"/>'"/>
 
 </s:form>
 
+<%-- ============================================================================== --%>
+
 <script>
+
     document.forms[0].elements[0].focus();
 
-    angular.module('themeSelectModule', [])
-        .controller('themeController', ['$scope', function($scope) {
-            $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themedata", async:false,
-                success: function(data) { $scope.themes = data; }
-            });
-            $scope.selectedTheme = $scope.themes[0];
-    }]);
+    var saveButton;
+
+    $( document ).ready(function() {
+
+        saveButton = $("#createWeblog_0");
+
+        <s:if test="bean.theme == null">
+        previewImage('<s:property value="themes[0].id"/>');
+        </s:if>
+        <s:else>
+        previewImage('<s:property value="bean.theme"/>');
+        </s:else>
+
+        formChanged()
+    });
+
+    function formChanged() {
+        var valid = false;
+
+        var name   = $("#createWeblog_bean_name:first").val();
+        var handle = $("#createWeblog_bean_handle:first").val();
+        var email  = $("#createWeblog_bean_emailAddress:first").val();
+
+        valid = !!(name && name.trim().length > 0
+            && handle && handle.trim().length > 0
+            && email && email.trim().length > 0 && validateEmail(email));
+
+        if ( valid ) {
+            saveButton.attr("disabled", false);
+        } else {
+            saveButton.attr("disabled", true);
+        }
+    }
+
+    function handlePreview(handle) {
+        previewSpan = document.getElementById("handlePreview");
+        var n1 = previewSpan.childNodes[0];
+        var n2 = document.createTextNode(handle.value);
+        if (handle.value == null) {
+            previewSpan.appendChild(n2);
+        } else {
+            previewSpan.replaceChild(n2, n1);
+        }
+    }
+
+    function previewImage(themeId) {
+        $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themedata",
+            data: {theme:themeId}, success: function(data) {
+                $('#themedescription').html(data.description);
+                $('#themeThumbnail').attr('src','<s:property value="siteURL" />' + data.previewPath);
+            }
+        });
+        formChanged();
+    }
+
+</script>
+
+
 </script>
 

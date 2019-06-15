@@ -17,140 +17,101 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
-<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
-<script src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
+<h3><s:text name="weblogEntryQuery.sidebarTitle"/></h3>
+<hr size="1" noshade="noshade"/>
 
-<div class="sidebarFade">
-    <div class="menu-tr">
-        <div class="menu-tl">
+<p><s:text name="weblogEntryQuery.sidebarDescription"/></p>
 
-            <div class="sidebarInner">
+<s:form action="entries" theme="bootstrap" cssClass="form-vertical">
+    <s:hidden name="salt"/>
+    <s:hidden name="weblog"/>
 
-                <h3><s:text name="weblogEntryQuery.sidebarTitle" /></h3>
-                <hr size="1" noshade="noshade" />
+    <%-- ========================================================= --%>
+    <%-- filter by category --%>
 
-                <p><s:text name="weblogEntryQuery.sidebarDescription" /></p>
+    <s:select name="bean.categoryName"
+              label="%{getText('weblogEntryQuery.label.category')}"
+              list="categories" listKey="name" listValue="name" size="1"/>
 
-                <s:form action="entries">
-					<s:hidden name="salt" />
-                    <s:hidden name="weblog" />
+    <%-- ========================================================= --%>
+    <%-- filter by tag --%>
 
-                    <%-- ========================================================= --%>
-                    <%-- filter by category --%>
+    <s:textfield name="bean.tagsAsString" size="14"
+                 label="%{getText('weblogEntryQuery.label.tags')}"/>
 
-                    <div class="sideformrow">
-                        <label for="categoryId" class="sideformrow">
-                        <s:text name="weblogEntryQuery.label.category" /></label>
-                        <s:select name="bean.categoryName" list="categories" listKey="name" listValue="name" size="1" />
-                    </div>
-                    <br />
-                    <br />
+    <%-- ========================================================= --%>
+    <%-- filter by text --%>
 
-                    <%-- ========================================================= --%>
-                    <%-- filter by tag --%>
+    <s:textfield name="bean.text" size="14"
+                 label="%{getText('weblogEntryQuery.label.text')}"/>
 
-                    <div class="sideformrow">
-                        <label for="tags" class="sideformrow">
-                        <s:text name="weblogEntryQuery.label.tags" /></label>
-                        <s:textfield name="bean.tagsAsString" size="14" />
-                    </div>
-                    <br />
-                    <br />
+    <%-- ========================================================= --%>
+    <%-- filter by date --%>
 
-                    <%-- ========================================================= --%>
-                    <%-- filter by text --%>
+    <div class="control-group">
+        <label for="bean.startDateString" class="control-label">
+            <s:text name="weblogEntryQuery.label.startDate"/>
+        </label>
+        <div class="controls">
+            <div class="input-group">
 
-                    <div class="sideformrow">
-                        <label for="text" class="sideformrow">
-                        <s:text name="weblogEntryQuery.label.text" /></label>
-                        <s:textfield name="bean.text" size="14" />
-                    </div>
-                    <br />
-                    <br />
+                <s:textfield name="bean.startDateString" readonly="true"
+                             theme="simple" cssClass="date-picker form-control"/>
+                <label for="bean.startDateString" class="input-group-addon btn">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </label>
 
-                    <%-- ========================================================= --%>
-                    <%-- filter by date --%>
-
-                    <div class="sideformrow">
-                        <label for="startDateString" class="sideformrow"><s:text name="weblogEntryQuery.label.startDate" />:</label>
-                        <script>
-                        $(function() {
-                            $( "#entries_bean_startDateString" ).datepicker({
-                                showOn: "button",
-                                buttonImage: "../../images/calendar.png",
-                                buttonImageOnly: true,
-                                changeMonth: true,
-                                changeYear: true
-                            });
-                        });
-                        </script>
-                        <s:textfield name="bean.startDateString" size="12" readonly="true"/>
-                    </div>
-
-                    <div class="sideformrow">
-                        <label for="endDateString" class="sideformrow"><s:text name="weblogEntryQuery.label.endDate" />:</label>
-                        <script>
-                        $(function() {
-                            $( "#entries_bean_endDateString" ).datepicker({
-                                showOn: "button",
-                                buttonImage: "../../images/calendar.png",
-                                buttonImageOnly: true,
-                                changeMonth: true,
-                                changeYear: true
-                            });
-                        });
-                        </script>
-                        <s:textfield name="bean.endDateString" size="12" readonly="true"/>
-                    </div>
-                    <br />
-                    <br />
-
-                    <%-- ========================================================= --%>
-                    <%-- filter by status --%>
-
-                    <div class="sideformrow">
-                        <label for="status" class="sideformrow">
-                            <s:text name="weblogEntryQuery.label.status" />:
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                            <br />
-                        </label>
-                        <div>
-                            <s:radio theme="roller" name="bean.status" list="statusOptions" listKey="key" listValue="value" />
-                        </div>
-                    </div>
-
-                    <%-- ========================================================= --%>
-                    <%-- sort by --%>
-
-                    <div class="sideformrow">
-                        <label for="status" class="sideformrow">
-                            <s:text name="weblogEntryQuery.label.sortby" />:
-                            <br />
-                            <br />
-                        </label>
-                        <div>
-                            <s:radio theme="roller" name="bean.sortBy" list="sortByOptions" listKey="key" listValue="value" />
-                        </div>
-                    </div>
-
-                    <%-- ========================================================= --%>
-                    <%-- search button --%>
-
-                    <br />
-
-                    <s:submit value="%{getText('weblogEntryQuery.button.query')}" />
-
-                </s:form>
-
-                <br />
-                <br />
-            </div> <!-- sidebarInner -->
-
+            </div>
         </div>
     </div>
-</div>
+
+    <div class="control-group">
+        <label for="bean.endDateString" class="control-label">
+            <s:text name="weblogEntryQuery.label.endDate"/>
+        </label>
+        <div class="controls">
+            <div class="input-group">
+
+                <s:textfield name="bean.endDateString" readonly="true"
+                             theme="simple" cssClass="date-picker form-control"/>
+                <label for="bean.endDateString" class="input-group-addon btn">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </label>
+
+            </div>
+        </div>
+    </div>
+
+    <br/>
+
+    <%-- ========================================================= --%>
+    <%-- filter by status --%>
+
+    <s:radio name="bean.status"
+             label="%{getText('weblogEntryQuery.label.status')}"
+             list="statusOptions" listKey="key" listValue="value"/>
+
+    <%-- ========================================================= --%>
+    <%-- sort by --%>
+
+    <s:radio name="bean.sortBy"
+             label="%{getText('weblogEntryQuery.label.sortby')}"
+             list="sortByOptions" listKey="key" listValue="value"/>
+
+    
+    <%-- ========================================================= --%>
+    <%-- filter button --%>
+
+    <s:submit cssClass="btn" value="%{getText('weblogEntryQuery.button.query')}"/>
+
+</s:form>
+
+<script>
+
+    $(document).ready(function () {
+        $("#entries_bean_startDateString").datepicker();
+        $("#entries_bean_endDateString").datepicker();
+    });
+
+</script>
+

@@ -69,8 +69,7 @@ public class Bookmarks extends UIAction {
 
     public void myPrepare() {
         try {
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger()
-                    .getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             if (!StringUtils.isEmpty(getFolderId())) {
                 setFolder(bmgr.getFolder(getFolderId()));
             } else {
@@ -160,7 +159,13 @@ public class Bookmarks extends UIAction {
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             WeblogBookmarkFolder fd = bmgr.getFolder(getFolderId());
+
             if (fd != null) {
+
+                if ( "default".equals( fd.getName() ) ) {
+                    addError("Cannot delete default bookmark");
+                    return execute();
+                }
                 bmgr.removeFolder(fd);
 
                 // flush changes
@@ -173,6 +178,7 @@ public class Bookmarks extends UIAction {
                 setFolder(bmgr.getDefaultFolder(getActionWeblog()));
                 setFolderId(getFolder().getId());
             }
+
         } catch (WebloggerException ex) {
             log.error("Error deleting folder", ex);
         }
@@ -210,17 +216,16 @@ public class Bookmarks extends UIAction {
     public String move() {
 
         try {
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger()
-                    .getBookmarkManager();
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
 
             if (log.isDebugEnabled()) {
-                log.debug("Moving bookmarks to folder - "
-                        + getTargetFolderId());
+                log.debug("Moving bookmarks to folder - " + getTargetFolderId());
             }
 
             // Move bookmarks to new parent folder.
             WeblogBookmarkFolder newFolder = bmgr.getFolder(getTargetFolderId());
             String bookmarks[] = getSelectedBookmarks();
+
             if (null != bookmarks && bookmarks.length > 0) {
                 for (int j = 0; j < bookmarks.length; j++) {
                     WeblogBookmark bd = bmgr.getBookmark(bookmarks[j]);
@@ -283,6 +288,9 @@ public class Bookmarks extends UIAction {
 
     public void setFolder(WeblogBookmarkFolder folder) {
         this.folder = folder;
+        if ( folder != null ) {
+            this.folderId = folder.getId();
+        }
     }
 
     public String getViewFolderId() {

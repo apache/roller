@@ -154,6 +154,10 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>struts2</filter-name>
+        <url-pattern>/struts/*</url-pattern>
+    </filter-mapping>
 
     <!-- Context Listeners -->
     <listener>

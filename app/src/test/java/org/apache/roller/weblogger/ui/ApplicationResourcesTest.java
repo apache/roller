@@ -22,13 +22,13 @@
  */
 package org.apache.roller.weblogger.ui;
 
+import org.junit.jupiter.api.BeforeEach;
+
 import java.io.FileInputStream;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 /**
@@ -47,33 +47,12 @@ import junit.framework.TestSuite;
  * @author <a href="mailto:molen@mail.com">Jaap van der Molen</a>
  * @version $Revision: 1.7 $
  */
-public class ApplicationResourcesTest extends TestCase
-{
+public class ApplicationResourcesTest {
 	//private String userDir = null;
 	private Properties baseProps = null; 
 
-	/**
-	 * @param name
-	 */
-	public ApplicationResourcesTest(String name)
-	{
-		super(name);
-	}
-	
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-//		suite.addTest(new ApplicationResourcesTest("testSystemProperties"));
-//		suite.addTest(
-//			new ApplicationResourcesTest("testApplicationResources_zh_cn"));
-		return suite;
-	}
-	
-	/**
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	protected void setUp() throws Exception
-	{
-		super.setUp();
+	@BeforeEach
+	public void setUp() throws Exception {
 		//userDir = System.getProperty("user.dir");
 		
 		// load base ApplicationResources.properties file
@@ -84,16 +63,12 @@ public class ApplicationResourcesTest extends TestCase
 
 	/**
 	 * Test Simple Chinese stuff.
-	 * 
-	 * @throws Exception
 	 */
-	public void _testApplicationResources_zh_cn() throws Exception
-	{
+	public void testApplicationResources_zh_cn() throws Exception {
 		verifyResourceBundle("ApplicationResources_zh_cn");
 	}
 
-    public void testSystemProperties()
-    {
+    public void testSystemProperties() {
         Properties sysProps = System.getProperties();
         for (Object key : sysProps.keySet()) {
             System.out.println(key + " = " + sysProps.getProperty((String)key));
@@ -106,8 +81,7 @@ public class ApplicationResourcesTest extends TestCase
 	 * @param bundle name of bundle to test
 	 * @throws Exception if file not found, or if io ecxeption occurs.
 	 */
-	private void verifyResourceBundle(String bundle) throws Exception
-	{
+	private void verifyResourceBundle(String bundle) throws Exception {
 		// verify user-dir; should end with roller
 		//assertNotNull(userDir);
 		//assertTrue(userDir.endsWith("roller"));

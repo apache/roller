@@ -131,8 +131,7 @@ public class MediaFileAdd extends MediaFileBase {
 
         if (!hasActionErrors()) {
 
-            MediaFileManager manager = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
 
             RollerMessages errors = new RollerMessages();
             List<MediaFile> uploaded = new ArrayList();
@@ -176,27 +175,22 @@ public class MediaFileAdd extends MediaFileBase {
                         mediaFile
                                 .setContentType(this.uploadedFilesContentType[i]);
 
-                        // insome cases Struts2 is not able to guess the content
+                        // in some cases Struts2 is not able to guess the content
                         // type correctly and assigns the default, which is
                         // octet-stream. So in cases where we see octet-stream
                         // we double check and see if we can guess the content
                         // type via the Java MIME type facilities.
-                        mediaFile
-                                .setContentType(this.uploadedFilesContentType[i]);
+                        mediaFile.setContentType(this.uploadedFilesContentType[i]);
                         if (mediaFile.getContentType() == null
-                                || mediaFile.getContentType().endsWith(
-                                        "/octet-stream")) {
+                                || mediaFile.getContentType().endsWith("/octet-stream")) {
 
-                            String ctype = Utilities
-                                    .getContentTypeFromFileName(mediaFile
-                                            .getName());
+                            String ctype = Utilities.getContentTypeFromFileName(mediaFile.getName());
                             if (null != ctype) {
                                 mediaFile.setContentType(ctype);
                             }
                         }
 
-                        manager.createMediaFile(getActionWeblog(), mediaFile,
-                                errors);
+                        manager.createMediaFile(getActionWeblog(), mediaFile, errors);
                         WebloggerFactory.getWeblogger().flush();
 
                         if (mediaFile.isImageFile()) {

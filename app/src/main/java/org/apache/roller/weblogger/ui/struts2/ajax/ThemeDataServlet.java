@@ -57,8 +57,7 @@ public class ThemeDataServlet extends HttpServlet {
 
         themeId = request.getParameter("theme");
 
-        ThemeManager themeMgr = WebloggerFactory.getWeblogger()
-                .getThemeManager();
+        ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
         if (themeId == null) {
             themes = themeMgr.getEnabledThemesList();
         } else {

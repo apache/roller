@@ -18,40 +18,34 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test User related business operations.
  */
-public class UserTest extends TestCase {
+public class UserTest  {
     
     public static Log log = LogFactory.getLog(UserTest.class);
-    
-    
-    public UserTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(UserTest.class);
-    }
-    
-    
+
+
+    @BeforeEach
     public void setUp() throws Exception {
         // setup weblogger
         TestUtils.setupWeblogger();
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
     }
     
@@ -59,6 +53,7 @@ public class UserTest extends TestCase {
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
+    @Test
     public void testUserCRUD() throws Exception {
         
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -117,6 +112,7 @@ public class UserTest extends TestCase {
     /**
      * Test lookup mechanisms.
      */
+    @Test
     public void testUserLookups() throws Exception {
         
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -171,6 +167,7 @@ public class UserTest extends TestCase {
     /**
      * Test basic user role persistence ... Add, Remove
      */
+    @Test
     public void testRoleCRUD() throws Exception {
         
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -234,12 +231,4 @@ public class UserTest extends TestCase {
         TestUtils.endSession(true);
     }
 
-    
-    /**
-     * Test ability to remove a user with a full set of data.
-     */
-    public void testRemoveLoadedUser() throws Exception {
-        // TODO: implement testRemoveLoadedUser
-    }
-    
 }

@@ -19,67 +19,55 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 
-<p class="subtitle"><s:text name="planetConfig.subtitle" /></a>
-<p><s:text name="planetConfig.prompt" /></a>
+<p class="subtitle"><s:text name="planetConfig.subtitle"/></p>
+<p><s:text name="planetConfig.prompt"/></p>
 
-<s:form action="planetConfig!save">
-	<s:hidden name="salt" />
 
-    <table class="formtableNoDesc">
-    
+<s:form action="planetConfig!save" theme="bootstrap" cssClass="form-horizontal">
+    <s:hidden name="salt"/>
+
     <s:iterator var="dg" value="globalConfigDef.displayGroups">
-    
-        <tr>
-            <td colspan="3"><h2><s:text name="%{#dg.key}" /></h2></td>
-        </tr>
-    
+
+        <h2><s:text name="%{#dg.key}"/></h2>
+
         <s:iterator var="pd" value="#dg.propertyDefs">
-            
-            <tr>
-                <td class="label"><s:text name="%{#pd.key}" /></td>
-              
-                  <%-- "string" type means use a simple textbox --%>
-                  <s:if test="#pd.type == 'string'">
-                    <td class="field"><input type="text" name='<s:property value="#pd.name"/>' value='<s:property value="properties[#pd.name].value"/>' size="35" /></td>
-                  </s:if>
-                  
-                  <%-- "text" type means use a full textarea --%>
-                  <s:elseif test="#pd.type == 'text'">
-                    <td class="field">
-                      <textarea name='<s:property value="#pd.name"/>' rows="<s:property value="#pd.rows"/>" cols="<s:property value="#pd.cols"/>"><s:property value="properties[#pd.name].value"/></textarea>
-                    </td>
-                  </s:elseif>
-                  
-                  <%-- "boolean" type means use a checkbox --%>
-                  <s:elseif test="#pd.type == 'boolean'">
-                      <s:if test="properties[#pd.name].value == 'true'">
-                          <td class="field"><input type="checkbox" name='<s:property value="#pd.name"/>' CHECKED></td>
-                      </s:if>
-                      <s:else>
-                          <td class="field"><input type="checkbox" name='<s:property value="#pd.name"/>'></td>
-                      </s:else>
-                  </s:elseif>
-                  
-                  <%-- if it's something we don't understand then use textbox --%>
-                  <s:else>
-                    <td class="field"><input type="text" name='<s:property value="#pd.name"/>' size="50" /></td>
-                  </s:else>
-                
-                <td class="description"><%-- <s:text name="" /> --%></td>
-            </tr>
-          
+
+            <%-- "string" type means use a simple textbox --%>
+            <s:if test="#pd.type == 'string'">
+                <s:textfield name="%{#pd.name}" label="%{getText(#pd.key)}" size="35"
+                             value="%{properties[#pd.name].value} "/>
+            </s:if>
+
+            <%-- "text" type means use a full textarea --%>
+            <s:elseif test="#pd.type == 'text'">
+                <s:textarea name="%{#pd.name}" label="%{getText(#pd.key)}" rows="#pd.rows" cols="#pd.cols"
+                            value="%{properties[#pd.name].value} "/>
+            </s:elseif>
+
+            <%-- "boolean" type means use a checkbox --%>
+            <s:elseif test="#pd.type == 'boolean'">
+
+                <s:if test="properties[#pd.name].value == 'true'">
+                    <s:checkbox name="%{#pd.name}" label="%{getText(#pd.key)}" cssClass="boolean"
+                                fieldValue="true" checked="true" onchange="formChanged()"/>
+                </s:if>
+                <s:if test="properties[#pd.name].value != 'true'">
+                    <s:checkbox name="%{#pd.name}" label="%{getText(#pd.key)}" cssClass="boolean"
+                                fieldValue="false" onchange="formChanged()"/>
+                </s:if>
+
+            </s:elseif>
+
+            <%-- if it's something we don't understand then use textbox --%>
+            <s:else>
+                <s:textfield name="%{#pd.name}" label="%{getText(#pd.key)}" size="35"
+                             value="%{properties[#pd.name].value}"/>
+            </s:else>
+
         </s:iterator>
-      
-        <tr>
-            <td colspan="2">&nbsp;</td>
-        </tr>
-        
+
     </s:iterator>
 
-    </table>
-    
-    <div class="control">
-        <input class="buttonBox" type="submit" value="<s:text name="generic.save"/>"/>
-    </div>
-    
+     <input class="btn btn-default" type="submit" value="<s:text name="generic.save"/>"/>
+
 </s:form>

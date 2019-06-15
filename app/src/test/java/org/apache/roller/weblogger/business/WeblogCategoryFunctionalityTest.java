@@ -18,22 +18,26 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.List;
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test Weblog Category related business operations.
  */
-public class WeblogCategoryFunctionalityTest extends TestCase {
+public class WeblogCategoryFunctionalityTest  {
     
     public static Log log = LogFactory.getLog(WeblogCategoryFunctionalityTest.class);
     
@@ -48,6 +52,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @BeforeEach
     public void setUp() {
         
         log.info("BEGIN");
@@ -74,7 +79,8 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
         
         log.info("END");
     }
-    
+
+    @AfterEach
     public void tearDown() {
         
         log.info("BEGIN");
@@ -93,6 +99,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     /**
      * Test the hasCategory() method on WeblogCategory.
      */
+    @Test
     public void testHasCategory() throws Exception {
         
         log.info("BEGIN");
@@ -107,6 +114,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     /**
      * Lookup category by id.
      */
+    @Test
     public void testLookupCategoryById() throws Exception {
         
         log.info("BEGIN");
@@ -124,6 +132,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     /**
      * Lookup category by name.
      */
+    @Test
     public void testLookupCategoryByName() throws Exception {
         
         log.info("BEGIN");
@@ -151,6 +160,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     /**
      * Lookup all categories for a weblog.
      */
+    @Test
     public void testLookupAllCategoriesByWeblog() throws Exception {
         
         log.info("BEGIN");
@@ -168,6 +178,7 @@ public class WeblogCategoryFunctionalityTest extends TestCase {
     /**
      * Test moving entries in category to new category.
      */
+    @Test
     public void testMoveWeblogCategoryContents() throws Exception {
         log.info("BEGIN");
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();

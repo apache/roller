@@ -17,26 +17,39 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<div class="sidebarFade">
-    <div class="menu-tr">
-        <div class="menu-tl">
-            
-            <div class="sidebarInner">
-                <h3><s:text name="mainPage.actions" /></h3>
-                <hr size="1" noshade="noshade" />
-                
-                <p>
-                    <%-- Add Category link --%>
-                    <img src='<s:url value="/images/folder_add.png"/>' border="0"alt="icon" />
-                    <s:url var="addCategory" action="categoryAdd">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                    </s:url>
-                    <s:a href="%{addCategory}"><s:text name="categoriesForm.addCategory" /></s:a>
-                </p>
-                
-                <br />
-            </div>
-            
-        </div>
-    </div>
-</div>
+<h3><s:text name="mainPage.actions"/></h3>
+<hr size="1" noshade="noshade"/>
+
+<p>
+    <s:set var="categoryId" value="#bean.id"/>
+    <s:set var="categoryName" value="#post.name"/>
+    <s:set var="categoryDesc" value="#post.description"/>
+    <s:set var="categoryImage" value="#post.image"/>
+
+    <a href="#" onclick="showCategoryAddModal()">
+        <span class="glyphicon glyphicon-plus"></span>
+        <s:text name="categoriesForm.addCategory"/>
+    </a>
+</p>
+
+<script>
+
+    var feedbackArea = $("#feedback-area");
+
+    function showCategoryAddModal() {
+
+        feedbackAreaEdit.html("");
+        $('#category-edit-title').html('<s:text name="categoryForm.add.title" />');
+
+        $('#categoryEditForm_bean_id').val("");
+        $('#categoryEditForm_bean_name').val("");
+        $('#categoryEditForm_bean_description').val("");
+        $('#categoryEditForm_bean_image').val("");
+
+        validateCategory();
+
+        $('#category-edit-modal').modal({show: true});
+    }
+
+</script>
+

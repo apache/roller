@@ -27,10 +27,10 @@ import java.util.List;
  */
 public class Menu {
     
-    private List<MenuTab> tabs = new ArrayList<MenuTab>();
+    private List<MenuTab> tabs = new ArrayList<>();
     
     
-    public void addTab(MenuTab tab) {
+    void addTab(MenuTab tab) {
         this.tabs.add(tab);
     }
     

@@ -2,16 +2,24 @@
 This default stuff goes in the HTML head element of each page
 You can override it with your own file via WEB-INF/tiles-def.xml
 --%>
+
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" media="all" href="<s:url value='/roller-ui/yui3/cssreset/cssreset-min.css'/>" />
-<link rel="stylesheet" media="all" href="<s:url value='/roller-ui/yui3/cssfonts/cssfonts-min.css'/>" />
-<link rel="stylesheet" media="all" href="<s:url value='/roller-ui/yui3/cssbase/cssbase-min.css'/>" />
+<script src="<s:url value='/webjars/jquery/3.3.1/jquery.min.js' />"></script>
 
-<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/styles/layout.css"/>' />
+<script src="<s:url value='/webjars/jquery-ui/1.12.1/jquery-ui.min.js' />"></script>
+<link href="<s:url value='/webjars/jquery-ui/1.12.1/jquery-ui.css' />" rel="stylesheet" />
+
+<link href="<s:url value='/webjars/bootstrap/3.3.7/css/bootstrap.min.css' />" rel="stylesheet" />
+<link href="<s:url value='/webjars/bootstrap/3.3.7/css/bootstrap-theme.min.css' />" rel="stylesheet" />
+<script src="<s:url value='/webjars/bootstrap/3.3.7/js/bootstrap.min.js' />"></script>
+
+<script src="<s:url value='/webjars/clipboard.js/2.0.0/clipboard.min.js' />"></script>
+
+<script src="<s:url value='/webjars/summernote/0.8.11/dist/summernote.min.js' />"></script>
+<link href="<s:url value='/webjars/summernote/0.8.11/dist/summernote.css' />" rel="stylesheet" />
+
 <link rel="stylesheet" media="all" href='<s:url value="/roller-ui/styles/roller.css"/>' />
-<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/styles/menu.css"/>' />
-
-<link rel="stylesheet" media="all" href="<s:url value="/roller-ui/theme/"/><s:property value="getProp('editor.theme')"/>/colors.css" />
 
 <script src="<s:url value="/theme/scripts/roller.js"/>"></script>
+

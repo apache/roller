@@ -18,85 +18,72 @@
 
 package org.apache.roller.weblogger.util;
 
-import java.io.File;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test blacklist functionality.
  */
-public class BlacklistTest extends TestCase {
-    public static Log log =    
-        LogFactory.getLog(BlacklistTest.class);  
+public class BlacklistTest  {
+    public static Log log = LogFactory.getLog(BlacklistTest.class);
     
     private Blacklist blacklist;
     
-      
-    public BlacklistTest() {
-        super();
-    }
-    
-    /**
-     * @param arg0
-     */
-    public BlacklistTest(String arg0) {
-        super(arg0);
-    }
-    
-    /**
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @BeforeEach
+    public void setUp() throws Exception {
         blacklist = Blacklist.getBlacklist();
         String FS = File.separator;
         String blacklistName = System.getProperty("project.build.directory") + FS + "classes" + "blacklist.txt";
         log.info("Processing Blacklist file: " + blacklistName);
         blacklist.loadBlacklistFromFile(blacklistName);
     }
-    
-    /**
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        //System.out.println(blacklist);
+
+    @AfterEach
+    public void tearDown() throws Exception {
     }
-    
+
+    @Test
     public void testIsBlacklisted0() {
         assertFalse(blacklist.isBlacklisted("four score and seven years ago.com"));
     }
     
     // test non-regex
+    @Test
     public void testIsBlacklisted1() {
         assertTrue(blacklist.isBlacklisted("www.myblacklistedsite.com"));
     }
     
     // test the regex patterns
+    @Test
     public void testIsBlacklisted2() {
         assertTrue(blacklist.isBlacklisted("www.lsotr.com"));
     }
     
     // test the regex patterns
+    @Test
     public void testIsBlacklisted3() {
         assertTrue(blacklist.isBlacklisted("buymoreonline.com"));
     }
     
     // test the regex patterns
+    @Test
     public void testIsBlacklisted4() {
         assertTrue(blacklist.isBlacklisted("diet-enlargement.com"));
     }
     
     // test the regex patterns
+    @Test
     public void testIsBlacklisted5() {
         assertTrue(blacklist.isBlacklisted("viagra.com"));
     }
     
-    public static Test suite() {
-        return new TestSuite(BlacklistTest.class);
-    }
-    
+
 }

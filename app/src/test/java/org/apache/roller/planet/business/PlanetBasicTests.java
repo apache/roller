@@ -16,22 +16,24 @@
 
 package org.apache.roller.planet.business;
 
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
  * Test Planet CRUD.
  */
-public class PlanetBasicTests extends TestCase {
+public class PlanetBasicTests  {
     
     public static Log log = LogFactory.getLog(PlanetBasicTests.class);
     
-    
+    @Test
     public void testPlanetCRUD() throws Exception {
         
         // setup planet

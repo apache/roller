@@ -23,11 +23,6 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.ArrayList;
-import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
@@ -37,12 +32,19 @@ import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test Pings related business operations.
  */
-public class PingsTest extends TestCase {
+public class PingsTest  {
     
     public static Log log = LogFactory.getLog(PingsTest.class);
     
@@ -50,20 +52,11 @@ public class PingsTest extends TestCase {
     Weblog testWeblog = null;
     PingTarget testCommonPing = null;
 
-    
-    public PingsTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(PingsTest.class);
-    }
-    
-    
+
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @BeforeEach
     public void setUp() throws Exception {
         
         // setup weblogger
@@ -82,7 +75,8 @@ public class PingsTest extends TestCase {
         testCommonPing.setName("testCommonPing");
         testCommonPing.setPingUrl("http://localhost/testCommonPing");
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
         
         try {
@@ -101,6 +95,7 @@ public class PingsTest extends TestCase {
     /**
      * Test basic persistence operations ... Create, Update, Delete
      */
+    @Test
     public void testPingTargetCRUD() throws Exception {
         
         PingTargetManager mgr = WebloggerFactory.getWeblogger().getPingTargetManager();
@@ -146,6 +141,7 @@ public class PingsTest extends TestCase {
     /**
      * Test lookup mechanisms ... id, all common for weblog
      */
+    @Test
     public void testPingTargetLookups() throws Exception {
         
         PingTargetManager mgr = WebloggerFactory.getWeblogger().getPingTargetManager();
@@ -179,6 +175,7 @@ public class PingsTest extends TestCase {
     /**
      * Test basic persistence operations ... Create, Update, Delete
      */
+    @Test
     public void testAutoPingCRUD() throws Exception {
         
         AutoPingManager mgr = WebloggerFactory.getWeblogger().getAutopingManager();
@@ -232,6 +229,7 @@ public class PingsTest extends TestCase {
     /**
      * Test special ping target removal methods ... by weblog/target, collection, all
      */
+    @Test
     public void testPingTargetRemovals() throws Exception {
         
         AutoPingManager mgr = WebloggerFactory.getWeblogger().getAutopingManager();
@@ -306,6 +304,7 @@ public class PingsTest extends TestCase {
     /**
      * Test lookup mechanisms ... id, ping target, weblog
      */
+    @Test
     public void testAutoPingLookups() throws Exception {
         
         AutoPingManager mgr = WebloggerFactory.getWeblogger().getAutopingManager();
@@ -352,19 +351,5 @@ public class PingsTest extends TestCase {
         TestUtils.teardownPingTarget(pingTarget.getId());
         TestUtils.endSession(true);
     }
-    
-    
-    public void testApplicableAutoPings() throws Exception {
-        
-    }
-    
-    
-    /**
-     * Test that we can properly remove a ping target when it has
-     * associated elements like auto pings and ping queue entries.
-     */
-    public void testRemoveLoadedPingTarget() throws Exception {
-        // TODO: implement this test
-    }
-    
+
 }

@@ -1,5 +1,0 @@
-The mootools-filemanager directory contains a version of mootools-filemanager as extracted from the following git repository
-
-https://github.com/sleemanj/mootools-filemanager/
-
-it has been stripped of unnecessary code including the "GetID3" library as this is GPL licenced rather than MIT, no code changes are necessary from the git above, just stuff deleted.

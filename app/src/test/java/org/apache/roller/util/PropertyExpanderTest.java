@@ -18,42 +18,45 @@
 
 package org.apache.roller.util;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.TestCase;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for org.apache.roller.weblogger.util.PropertyExpander.
  *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
-public class PropertyExpanderTest extends TestCase {
+class PropertyExpanderTest  {
     
-    private static final Map props = new HashMap();
+    private static final Map<String, String> props = new HashMap<>();
     
-    static
-    {
+    static {
         props.put("defined.property.one", "value one");
         props.put("defined.property.two", "value two");
         props.put("defined.property.with.dollar.sign.in.value", "$2");
     }
-    
-    public void testExpansion() throws Exception {
+
+    @Test
+    void testExpansion() throws Exception {
         String expanded =
                 PropertyExpander.expandProperties("String with ${defined.property.one} and ${defined.property.two} and ${defined.property.with.dollar.sign.in.value} and ${undefined.property} and some stuff.", props);
         
-        assertEquals("Expanded string doesn't match expected",
-                "String with value one and value two and $2 and ${undefined.property} and some stuff.",
-                expanded);
+        assertEquals(expanded,
+            "String with value one and value two and $2 and ${undefined.property} and some stuff.",
+            "Expanded string doesn't match expected");
     }
-    
-    public void testSystemProperty() throws Exception {
-        String expanded =
-                PropertyExpander.expandSystemProperties("${java.home}");
-        assertEquals("Expanded string doesn't match expected",
-                System.getProperty("java.home"),
-                expanded);
+
+    @Test
+    void testSystemProperty() throws Exception {
+        String expanded = PropertyExpander.expandSystemProperties("${java.home}");
+        assertEquals(expanded,
+            System.getProperty("java.home"),
+            "Expanded string doesn't match expected"
+        );
     }
     
 }

@@ -25,5 +25,7 @@ target/
 velocity.log
 
 tomcat-base
-deployment/docker-compose/postgresql-data
-deployment/docker-compose/roller-data
+docker/postgresql-data
+docker/roller-data
+assembly-release/release.sh
+it-selenium/overlays/

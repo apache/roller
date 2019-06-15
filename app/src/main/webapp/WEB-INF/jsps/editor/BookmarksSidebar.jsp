@@ -17,48 +17,27 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<div class="sidebarFade">
-    <div class="menu-tr">
-        <div class="menu-tl">
-            
-            <div class="sidebarInner">
-                
-                <h3><s:text name="mainPage.actions" /></h3>
-                <hr size="1" noshade="noshade" />
-                
-                <p>
-                    <%-- Add Bookmark link --%>
-                    <img src='<s:url value="/images/link_add.png"/>' border="0"alt="icon" />
-                    <s:url var="addBookmark" action="bookmarkAdd">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="folderId" value="%{folder.id}" />
-                    </s:url>
-                    <s:a href="%{addBookmark}"><s:text name="bookmarksForm.addBookmark" /></s:a>
-                </p>
-                
-                <p>
-                    <%-- Add Folder link --%>
-                    <img src='<s:url value="/images/folder_add.png"/>' border="0"alt="icon" />
-                    <s:url var="addFolder" action="folderAdd">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                        <s:param name="folderId" value="%{folder.id}" />
-                    </s:url>
-                    <s:a href="%{addFolder}"><s:text name="bookmarksForm.addFolder" /></s:a>
-                </p>
-                
-                <%-- Import bookmarks --%>
-                <p>
-                    <img src='<s:url value="/images/link_add.png"/>' border="0"alt="icon" />
-                    <s:url var="importBookmarks" action="bookmarksImport">
-                        <s:param name="weblog" value="%{actionWeblog.handle}" />
-                    </s:url>
-                    <s:a href="%{importBookmarks}"><s:text name="bookmarksForm.importBookmarks" /></s:a>
-                </p>
+<h3><s:text name="mainPage.actions"/></h3>
+<hr size="1" noshade="noshade"/>
 
-                <br />
-                <br />
-            </div>
-            
-        </div>
-    </div>
-</div>	
+<p>
+    <%-- Add Blogroll --%>
+
+    <a href="#" onclick="newBlogroll()">
+        <span class="glyphicon glyphicon-plus"></span>
+        <s:text name="bookmarksForm.addFolder"/>
+    </a>
+</p>
+
+<%-- Import bookmarks
+<p>
+    <s:url var="importBookmarks" action="bookmarksImport">
+        <s:param name="weblog" value="%{actionWeblog.handle}"/>
+    </s:url>
+    <s:a href="%{importBookmarks}">
+        <span class="glyphicon glyphicon-plus"></span>
+        <s:text name="bookmarksForm.importBookmarks"/>
+    </s:a>
+</p>
+--%>
+

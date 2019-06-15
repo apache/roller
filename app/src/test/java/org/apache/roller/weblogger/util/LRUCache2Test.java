@@ -18,24 +18,16 @@
 
 package org.apache.roller.weblogger.util;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test LRUCache2.
  */
-public class LRUCache2Test extends TestCase {
-    
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        // TODO Auto-generated method stub
-        super.setUp();
-    }
-    
+public class LRUCache2Test  {
+
+    @Test
     public void testTimeout() {
         // Create cache with 100 item limit and 15 second timeout
         TestEnvironment env = new TestEnvironment();
@@ -54,7 +46,8 @@ public class LRUCache2Test extends TestCase {
         assertNull(cache.get("key2"));
         assertNull(cache.get("key3"));
     }
-    
+
+    @Test
     public void testLRU() {
         // Create cache with 3 item limit and 15 second timeout
         TestEnvironment env = new TestEnvironment();
@@ -78,7 +71,8 @@ public class LRUCache2Test extends TestCase {
         cache.put("key4", "string4");
         assertNull(cache.get("key3"));
     }
-    
+
+    @Test
     public void testPurge() {
         // Create cache with 100 item limit and 15 second timeout
         TestEnvironment env = new TestEnvironment();
@@ -99,14 +93,6 @@ public class LRUCache2Test extends TestCase {
         assertEquals(0, cache.size());
     }
     
-    /**
-     * @see junit.framework.TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        // TODO Auto-generated method stub
-        super.tearDown();
-    }
-    
     public static class TestEnvironment implements LRUCache2.Environment {
         public long time = 0;
         public long getCurrentTimeInMillis() {
@@ -114,8 +100,5 @@ public class LRUCache2Test extends TestCase {
         }
     }
     
-    public static Test suite() {
-        return new TestSuite(LRUCache2Test.class);
-    }
-    
+
 }

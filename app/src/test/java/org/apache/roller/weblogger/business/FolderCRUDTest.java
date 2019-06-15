@@ -18,18 +18,23 @@
 
 package org.apache.roller.weblogger.business;
 
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test basic folder operations.
  */
-public class FolderCRUDTest extends TestCase {
+public class FolderCRUDTest  {
     
     public static Log log = LogFactory.getLog(FolderCRUDTest.class);
     
@@ -40,6 +45,7 @@ public class FolderCRUDTest extends TestCase {
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @BeforeEach
     public void setUp() throws Exception {
         
         log.info("BEGIN");
@@ -58,7 +64,8 @@ public class FolderCRUDTest extends TestCase {
         
         log.info("END");
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
         
         log.info("BEGIN");
@@ -79,6 +86,7 @@ public class FolderCRUDTest extends TestCase {
     /**
      * Test add/modify/remove of folders.
      */
+    @Test
     public void testBasicCRUD() throws Exception {
         
         log.info("BEGIN");

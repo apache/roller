@@ -18,30 +18,35 @@
 
 package org.apache.roller.weblogger.business.plugins;
 
-import junit.framework.TestCase;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test comment plugins.
  */
-public class CommentPluginsTest extends TestCase {
+public class CommentPluginsTest  {
 
     private String convertLinesStart = "paragraph1\n\nparagraph2\nline2\nline3\n\nparagraph3";
     private String convertLinesFormatted = "\n<p>paragraph1</p>\n\n\n<p>paragraph2<br/>\nline2<br/>\nline3</p>\n\n\n<p>paragraph3</p>\n\n";
     
-    
-    protected void setUp() throws Exception {
+
+    @BeforeEach
+    public void setUp() throws Exception {
         TestUtils.setupWeblogger();
     }
-    
-    protected void tearDown() throws Exception {
+
+    @AfterEach
+    public void tearDown() throws Exception {
         // no-op
     }
     
-    
+    @Test
     public void testAutoFormatPlugin() {
         
         PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();

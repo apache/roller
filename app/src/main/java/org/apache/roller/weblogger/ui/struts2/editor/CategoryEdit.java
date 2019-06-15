@@ -30,7 +30,6 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
-import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -64,10 +63,12 @@ public class CategoryEdit extends UIAction {
     
     
     public void myPrepare() {
-        if (StringUtils.isEmpty(bean.getId())) {
+
+        if ( isAdd() ) {
             // Create and initialize new, not-yet-saved category
             category = new WeblogCategory();
             category.setWeblog(getActionWeblog());
+
         } else {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -92,7 +93,7 @@ public class CategoryEdit extends UIAction {
     }
 
     private boolean isAdd() {
-        return actionName.equals("categoryAdd");
+        return StringUtils.isEmpty( bean.getId() );
     }
 
     /**
@@ -134,10 +135,16 @@ public class CategoryEdit extends UIAction {
     }
 
     public void myValidate() {
-        // make sure new name is not a duplicate of an existing category
-        if ((isAdd() || !category.getName().equals(bean.getName())) &&
-            category.getWeblog().hasCategory(bean.getName())) {
-            addError("categoryForm.error.duplicateName", bean.getName());
+
+        if ( isAdd() ) {
+            if ( getActionWeblog().hasCategory( bean.getName() ) ) {
+                addError("categoryForm.error.duplicateName", bean.getName());
+            }
+        } else {
+            WeblogCategory wc = getActionWeblog().getWeblogCategory(bean.getName());
+            if ( wc != null && !wc.getId().equals( bean.getId() )) {
+                addError("categoryForm.error.duplicateName", bean.getName());
+            }
         }
     }
 

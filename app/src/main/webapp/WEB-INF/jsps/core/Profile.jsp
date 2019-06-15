@@ -17,7 +17,7 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<p class="subtitle"><s:text name="userAdmin.title.editUser" /></p>
+<p class="subtitle"><s:text name="userAdmin.title.editUser"/></p>
 
 <s:if test="authMethod == 'DB_OPENID'">
     <p class="pagetip">
@@ -25,83 +25,108 @@
     </p>
 </s:if>
 
-<s:form action="profile!save">
-	<s:hidden name="salt" />
-    
-    <table class="formtable">
-        
-        <tr>
-            <td class="label"><label for="userName" /><s:text name="userSettings.username" /></label></td>
-            <td class="field"><s:textfield name="bean.userName" size="30" maxlength="30" readonly="true" cssStyle="background: #e5e5e5" /></td>
-            <td class="description"><s:text name="userSettings.tip.username" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="screenName" /><s:text name="userSettings.screenname" /></label></td>
-            <td class="field"><s:textfield name="bean.screenName" size="30" maxlength="30" /></td>
-            <td class="description"><s:text name="userRegister.tip.screenName" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="fullName" /><s:text name="userSettings.fullname" /></label></td>
-            <td class="field"><s:textfield name="bean.fullName" size="30" maxlength="30" /></td>
-            <td class="description"><s:text name="userRegister.tip.fullName" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="emailAddress" /><s:text name="userSettings.email" /></label></td>
-            <td class="field"><s:textfield name="bean.emailAddress" size="40" maxlength="40" /></td>
-            <td class="description"><s:text name="userRegister.tip.email" /></td>
-        </tr>
-        
-        <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OPENID'">
-            <tr>
-                <td class="label"><label for="passwordText" /><s:text name="userSettings.password" /></label></td>
-                <td class="field">
-                    <s:password name="bean.passwordText" size="20" maxlength="20" />
-                </td>
-                <td class="description"><s:text name="userRegister.tip.password" /></td>
-            </tr>
 
-            <tr>
-                <td class="label"><label for="passwordConfirm" /><s:text name="userSettings.passwordConfirm" /></label></td>
-                <td class="field"><s:password name="bean.passwordConfirm" size="20" maxlength="20" /></td>
-                <td class="description"><s:text name="userRegister.tip.passwordConfirm" /></td>
-            </tr>
-        </s:if>
-        <s:else>
-            <s:hidden name="bean.password" />
-        </s:else>
-        
-        <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
-            <tr>
-                <td class="label"><label for="openIdUrl" /><s:text name="userSettings.openIdUrl" /></label></td>
-                <td class="field"><s:textfield name="bean.openIdUrl" size="40" maxlength="255" style="width:75%" id="f_openid_identifier" /></td>
-                <td class="description"><s:text name="userRegister.tip.openIdUrl" /></td>
-            </tr>     
-        </s:if>
-        
-        <tr>
-            <td class="label"><label for="locale" /><s:text name="userSettings.locale" /></label></td>
-            <td class="field">
-                <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
-            </td>
-            <td class="description"><s:text name="userRegister.tip.locale" /></td>
-        </tr>
-        
-        <tr>
-            <td class="label"><label for="timeZone" /><s:text name="userSettings.timeZone" /></label></td>
-            <td class="field">
-                <s:select name="bean.timeZone" size="1" list="timeZonesList" />
-            </td>
-            <td class="description"><s:text name="userRegister.tip.timeZone" /></td>
-        </tr>
-        
-    </table>
-    
-    <br />
-    
-    <s:submit value="%{getText('generic.save')}" />
-    <input type="button" value="<s:text name="generic.cancel"/>" onclick="window.location='<s:url action="menu"/>'" />
+<s:form action="profile!save" theme="bootstrap" cssClass="form-horizontal">
+    <s:hidden name="salt"/>
+
+    <s:textfield label="%{getText('userSettings.username')}"
+                 tooltip="%{getText('userRegister.tip.userName')}"
+                 onchange="formChanged()" onkeyup="formChanged()"
+                 name="bean.userName" size="30" maxlength="30" readonly="true"/>
+
+    <s:textfield label="%{getText('userSettings.screenname')}"
+                 tooltip="%{getText('userRegister.tip.screenName')}"
+                 onchange="formChanged()" onkeyup="formChanged()"
+                 name="bean.screenName" size="30" maxlength="30"/>
+
+    <s:textfield label="%{getText('userSettings.fullname')}"
+                 tooltip="%{getText('')}"
+                 onchange="formChanged()" onkeyup="formChanged()"
+                 name="bean.fullName" size="30" maxlength="30"/>
+
+    <s:textfield label="%{getText('userSettings.email')}"
+                 tooltip="%{getText('userRegister.tip.email')}"
+                 onchange="formChanged()" onkeyup="formChanged()"
+                 name="bean.emailAddress" size="40" maxlength="40"/>
+
+    <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OPENID'">
+        <s:password label="%{getText('userSettings.password')}"
+                    tooltip="%{getText('userSettings.tip.password')}"
+                    onchange="formChanged()" onkeyup="formChanged()"
+                    name="bean.passwordText" size="20" maxlength="20"/>
+
+        <s:password label="%{getText('userSettings.passwordConfirm')}"
+                    tooltip="%{getText('userRegister.tip.passwordConfirm')}"
+                    onchange="formChanged()" onkeyup="formChanged()"
+                    name="bean.passwordConfirm" size="20" maxlength="20"/>
+    </s:if>
+    <s:else>
+        <s:hidden name="bean.password"/>
+    </s:else>
+
+    <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
+        <s:textfield label="%{getText('userSettings.openIdUrl')}"
+                     tooltip="%{getText('userRegister.tip.openIdUrl')}"
+                     name="bean.openIdUrl" size="40" maxlength="255"
+                     style="width:75%" id="f_openid_identifier"/>
+    </s:if>
+
+    <s:select label="%{getText('userSettings.locale')}"
+              tooltip="%{getText('userRegister.tip.locale')}"
+              name="bean.locale" size="1" list="localesList" listValue="displayName"/>
+
+    <s:select label="%{getText('userSettings.timeZone')}"
+              tooltip="%{getText('userRegister.tip.timeZone')}"
+              name="bean.timeZone" size="1" list="timeZonesList"/>
+
+    <s:submit cssClass="btn btn-default" value="%{getText('generic.save')}"/>
+
+    <input class="btn" type="button" value="<s:text name="generic.cancel"/>"
+           onclick="window.location='<s:url action="menu"/>'"/>
 
 </s:form>
+
+<%-- -------------------------------------------------------- --%>
+
+<script type="text/javascript">
+
+    var saveButton;
+
+    $(document).ready(function () {
+        saveButton = $("#profile_0");
+        formChanged();
+    });
+
+    function formChanged() {
+        var valid = false;
+
+        var screenName = $("#profile_bean_screenName:first").val();
+        var fullName = $("#profile_bean_fullName:first").val();
+        var email = $("#profile_bean_emailAddress:first").val();
+        var password = $("#profile_bean_passwordText:first").val();
+        var passwordConfirm = $("#profile_bean_passwordConfirm:first").val();
+
+        if (screenName && screenName.trim().length > 0
+            && fullName && fullName.trim().length > 0
+            && email && email.trim().length > 0 && validateEmail(email)) {
+            valid = true;
+
+        } else {
+            valid = false;
+        }
+
+        if ((password && password.trim().length) || (passwordConfirm && passwordConfirm.trim().length > 0)) {
+            if (password !== passwordConfirm) {
+                valid = false;
+            }
+        }
+
+        if (valid) {
+            saveButton.attr("disabled", false);
+        } else {
+            saveButton.attr("disabled", true);
+        }
+
+    }
+
+</script>

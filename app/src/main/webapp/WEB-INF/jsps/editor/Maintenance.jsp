@@ -19,21 +19,19 @@
 
 <p class="subtitle"><s:text name="maintenance.subtitle" /></p>
     
-<s:form action="maintenance">
+<s:form action="maintenance" cssClass="form-vertical">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
 
-    <s:text name="maintenance.prompt.flush" /><br /><br />
-    <s:submit value="%{getText('maintenance.button.flush')}" action="maintenance!flushCache" />
+    <p><s:text name="maintenance.prompt.flush" /></p>
+    <s:submit value="%{getText('maintenance.button.flush')}" action="maintenance!flushCache" cssClass="btn" />
 
     <s:if test="getBooleanProp('search.enabled')">
-        <br /><br />
-        <s:text name="maintenance.prompt.index" /><br /><br />
-        <s:submit value="%{getText('maintenance.button.index')}" action="maintenance!index" />	
+        <p><s:text name="maintenance.prompt.index" /></p>
+        <s:submit value="%{getText('maintenance.button.index')}" action="maintenance!index" cssClass="btn" />
     </s:if>
 
-    <br /><br />
-    <s:text name="maintenance.prompt.reset" /><br /><br />
-    <s:submit value="%{getText('maintenance.button.reset')}" action="maintenance!reset" />
+    <p><s:text name="maintenance.prompt.reset" /></p>
+    <s:submit value="%{getText('maintenance.button.reset')}" action="maintenance!reset" cssClass="btn" />
 
 </s:form>

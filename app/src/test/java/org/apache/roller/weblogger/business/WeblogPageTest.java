@@ -18,44 +18,39 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static junit.framework.TestCase.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test Weblog Page related business operations.
  */
-public class WeblogPageTest extends TestCase {
+public class WeblogPageTest  {
     
     public static Log log = LogFactory.getLog(WeblogPageTest.class);
     
     User testUser = null;
     Weblog testWeblog = null;
     WeblogTemplate testPage = null;
-    
-    
-    public WeblogPageTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(WeblogPageTest.class);
-    }
-    
+
     
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @BeforeEach
     public void setUp() throws Exception {
         
         // setup weblogger
@@ -78,7 +73,8 @@ public class WeblogPageTest extends TestCase {
         testPage.setLastModified(new java.util.Date());
         testPage.setWeblog(TestUtils.getManagedWebsite(testWeblog));
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
         
         try {
@@ -97,6 +93,7 @@ public class WeblogPageTest extends TestCase {
     /**
      * Test basic persistence operations ... Create, Update, Delete
      */
+    @Test
     public void testTemplateCRUD() throws Exception {
         
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
@@ -135,6 +132,7 @@ public class WeblogPageTest extends TestCase {
     /**
      * Test lookup mechanisms ... id, name, link, weblog
      */
+    @Test
     public void testPermissionsLookups() throws Exception {
         
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();

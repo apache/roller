@@ -18,19 +18,22 @@
 
 package org.apache.roller.weblogger.planet.business;
 
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.fetcher.FeedFetcher;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test custom weblogger feed fetcher.
  */
-public class WebloggerRomeFeedFetcherTest extends TestCase {
+public class WebloggerRomeFeedFetcherTest  {
     
     public static Log log = LogFactory.getLog(WebloggerRomeFeedFetcherTest.class);
     
@@ -42,7 +45,7 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
     /**
      * All tests in this suite require a user and a weblog.
      */
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         
         // setup weblogger
@@ -58,7 +61,7 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
         }
     }
     
-    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         
         try {
@@ -72,7 +75,7 @@ public class WebloggerRomeFeedFetcherTest extends TestCase {
         }
     }
     
-    
+    @Test
     public void testFetchSubscription() throws Exception {
         try {
             FeedFetcher feedFetcher = WebloggerFactory.getWeblogger().getFeedFetcher();

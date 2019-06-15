@@ -18,22 +18,28 @@
 
 package org.apache.roller.weblogger.business;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
+import org.apache.roller.weblogger.business.startup.WebloggerStartup;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import junit.framework.TestCase;
-import org.apache.roller.weblogger.business.startup.WebloggerStartup;
-import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
-import org.apache.roller.weblogger.TestUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test parsing and running of SQL scripts
  */
-public class SQLScriptRunnerTest extends TestCase {
+public class SQLScriptRunnerTest  {
     public static Log log = LogFactory.getLog(SQLScriptRunnerTest.class);
 
+    @BeforeEach
     public void setUp() {
         try {
             TestUtils.setupWeblogger();
@@ -42,7 +48,8 @@ public class SQLScriptRunnerTest extends TestCase {
         }
     }
 
-    public void testParseOnly() throws Exception {        
+    @Test
+    public void testParseOnly() throws Exception {
         DatabaseProvider dbp = WebloggerStartup.getDatabaseProvider();
         Connection con = dbp.getConnection(); 
         
@@ -59,8 +66,9 @@ public class SQLScriptRunnerTest extends TestCase {
         SQLScriptRunner runner = new SQLScriptRunner(scriptPath);
         assertTrue(runner != null);
         assertTrue(runner.getCommandCount() == 5);        
-    }    
-    
+    }
+
+    @Test
     public void testSimpleRun() throws Exception {
         DatabaseProvider dbp = WebloggerStartup.getDatabaseProvider();
         Connection con = dbp.getConnection(); 

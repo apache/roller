@@ -18,30 +18,33 @@
 
 package org.apache.roller.weblogger.ui.rendering.util;
 
-import junit.framework.TestCase;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidationManager;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.TestUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  * @author David M. Johnson
  */
-public class CommentValidatorTest extends TestCase {
+public class CommentValidatorTest  {
     CommentValidationManager mgr = null;
     Weblog        weblog = null;
     User           user = null;
     WeblogEntry    entry = null;
     
-    /** Creates a new instance of CommentValidatorTest */
-    public CommentValidatorTest() {
-    } 
 
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         // setup weblogger
         TestUtils.setupWeblogger();
         
@@ -57,14 +60,16 @@ public class CommentValidatorTest extends TestCase {
 
         TestUtils.endSession(true);
     }
-    
-    protected void tearDown() throws Exception {
+
+    @AfterEach
+    public void tearDown() throws Exception {
         TestUtils.teardownWeblogEntry(entry.getId());
         //TestUtils.teardownWeblogCategory(weblog.getDefaultCategory().getId());
         TestUtils.teardownWeblog(weblog.getId());
         TestUtils.teardownUser(user.getUserName());
     }
-    
+
+    @Test
     public void testExcessSizeCommentValidator() {
         RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();
@@ -81,7 +86,8 @@ public class CommentValidatorTest extends TestCase {
         comment.setContent(sb.toString()); 
         assertTrue(mgr.validateComment(comment, msgs) != 100);
     }
-    
+
+    @Test
     public void testExcessLinksCommentValidator() {
         RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();
@@ -99,7 +105,8 @@ public class CommentValidatorTest extends TestCase {
         ); 
         assertTrue(mgr.validateComment(comment, msgs) != 100);        
     }
-    
+
+    @Test
     public void testBlacklistCommentValidator() {
         RollerMessages msgs = new RollerMessages();
         WeblogEntryComment comment = createEmptyComment();

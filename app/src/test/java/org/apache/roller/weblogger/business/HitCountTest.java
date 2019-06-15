@@ -18,43 +18,35 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.Iterator;
-import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogHitCount;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.util.Iterator;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test HitCount related business operations.
  */
-public class HitCountTest extends TestCase {
+public class HitCountTest  {
     
     public static Log log = LogFactory.getLog(HitCountTest.class);
     
     User testUser = null;
     Weblog testWeblog = null;
-    
-    
-    public HitCountTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(HitCountTest.class);
-    }
-    
-    
+
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @BeforeEach
     public void setUp() throws Exception {
         
         // setup weblogger
@@ -69,7 +61,8 @@ public class HitCountTest extends TestCase {
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
         
         try {
@@ -86,6 +79,7 @@ public class HitCountTest extends TestCase {
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
+    @Test
     public void testHitCountCRUD() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -126,7 +120,7 @@ public class HitCountTest extends TestCase {
         assertNull(hitCount);
     }
     
-    
+    @Test
     public void testHitCountLookups() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -164,7 +158,7 @@ public class HitCountTest extends TestCase {
         assertNull(hitCount);
     }
     
-    
+    @Test
     public void testIncrementHitCount() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -205,7 +199,7 @@ public class HitCountTest extends TestCase {
         assertNull(hitCount);
     }
     
-    
+    @Test
     public void testResetHitCounts() throws Exception {
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         
@@ -266,7 +260,7 @@ public class HitCountTest extends TestCase {
         }
     }
 
-    
+    @Test
     public void testHotWeblogs() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();

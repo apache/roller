@@ -249,11 +249,6 @@
 					</tbody></table>
 				</div>
 				<div class="well">
-					<p class="details">
-					This is just one entry in the weblog <b>$model.weblog.name</b>.
-					Why don't you <a href="$url.home">visit the main page</a> of the weblog?</p>
-				</div>
-				<div class="well">
 					<h3>Related entries</h3>
 					#set($recentInCat = $model.weblog.getRecentWeblogEntries($model.weblogEntry.category.name, 20))
 					<ul>#foreach($recentEntry in $recentInCat)
