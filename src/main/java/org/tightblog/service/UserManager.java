@@ -150,7 +150,7 @@ public class UserManager {
     }
 
     /**
-     * Generate a URL for the user's Google Authenticator code (for MFA)
+     * Generate a URL for the user's smartphone authenticator app code (for MFA)
      * @param user User to obtain QA code for
      * @return url Image URL for the QR code
      */

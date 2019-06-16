@@ -80,7 +80,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         targetPassword = creds.getPassword();
 
-        // If MFA required & user hasn't a secret for Google Authenticator, limit role
+        // If MFA required & user hasn't a secret for their authenticator app, limit role
         // to PRE_AUTH_USER (intended to limit user to QR code scan page.)
         if (mfaEnabled && StringUtils.isBlank(creds.getMfaSecret())) {
             targetGlobalRole = GlobalRole.MISSING_MFA_SECRET;

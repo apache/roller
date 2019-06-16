@@ -148,8 +148,8 @@
     </div>
 
     <form name="myform">
+      <div><fmt:message key="templates.addNewPage" /></div>
       <table cellpadding="0" cellspacing="6">
-          <caption style="text-align:left"><fmt:message key="templates.addNewPage" /></caption>
           <tr>
               <td><fmt:message key="generic.name"/></td>
               <td><input type="text" ng-model="ctrl.newTemplateName" maxlength="40" required/></td>

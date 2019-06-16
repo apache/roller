@@ -62,7 +62,7 @@ public class MultiFactorAuthenticationProvider extends DaoAuthenticationProvider
             if (creds.getMfaSecret() != null) {
                 Totp totp = new Totp(creds.getMfaSecret());
                 if (!isValidLong(verificationCode) || !totp.verify(verificationCode)) {
-                    throw new InvalidVerificationCodeException("Google Authenticator code invalid");
+                    throw new InvalidVerificationCodeException("Authenticator app code invalid");
                 }
             }
         }

@@ -33,7 +33,9 @@
                 <table class="bannerStatusBox" cellpadding="0" cellspacing="0">
                     <tr>
                         <td class="bannerLeft">
-                            <fmt:message><tiles:insertAttribute name='titleLeft'/></fmt:message>
+                            <fmt:message key="product.name.version">
+                                <fmt:param value="${tightblogVersion}" />:
+                            </fmt:message>
                         </td>
                         <td class="bannerRight">
                             <fmt:message><tiles:insertAttribute name='titleRight'/></fmt:message>

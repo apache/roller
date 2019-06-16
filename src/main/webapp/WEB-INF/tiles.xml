@@ -45,7 +45,6 @@
     <definition name=".tiles-no-nav-page" template="/WEB-INF/jsps/tiles/tiles-no-nav-page.jsp">
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content"      value="${content}" />
-        <put-attribute name="titleLeft"    value="simpleBanner.titleLeft"/>
         <put-attribute name="titleRight"   value="${titleRight}"/>
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>

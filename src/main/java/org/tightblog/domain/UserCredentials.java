@@ -42,7 +42,7 @@ public class UserCredentials {
     private String password;
     private GlobalRole globalRole;
 
-    // for Google Authenticator use
+    // for Authenticator app use
     // see http://www.baeldung.com/spring-security-two-factor-authentication-with-soft-token
     private String mfaSecret;
 

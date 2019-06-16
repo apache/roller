@@ -95,7 +95,7 @@
                 <label for="name"><fmt:message key="generic.name" /></label>
             </td>
             <td>
-                <input id="name" type="text" ng-model="ctrl.mediaFileData.name" size="50" maxlength="255" style="width:30%"/>
+                <input id="name" type="text" ng-model="ctrl.mediaFileData.name" size="40" maxlength="255"/>
             </td>
         </tr>
 
@@ -104,7 +104,7 @@
                 <label for="altText"><fmt:message key="mediaFileEdit.altText"/><tags:help key="mediaFileEdit.altText.tooltip"/></label>
             </td>
             <td>
-                <input id="altText" type="text" ng-model="ctrl.mediaFileData.altText" size="50" maxlength="255" style="width:30%"/>
+                <input id="altText" type="text" ng-model="ctrl.mediaFileData.altText" size="80" maxlength="255"/>
             </td>
         </tr>
 
@@ -113,7 +113,7 @@
                 <label for="titleText"><fmt:message key="mediaFileEdit.titleText"/><tags:help key="mediaFileEdit.titleText.tooltip"/></label>
             </td>
             <td>
-                <input id="titleText" type="text" ng-model="ctrl.mediaFileData.titleText" size="50" maxlength="255" style="width:30%"/>
+                <input id="titleText" type="text" ng-model="ctrl.mediaFileData.titleText" size="80" maxlength="255"/>
             </td>
         </tr>
 
@@ -122,7 +122,7 @@
                 <label for="anchor"><fmt:message key="mediaFileEdit.anchor"/><tags:help key="mediaFileEdit.anchor.tooltip"/></label>
             </td>
             <td>
-                <input id="anchor" type="text" ng-model="ctrl.mediaFileData.anchor" size="50" maxlength="255" style="width:30%"/>
+                <input id="anchor" type="text" ng-model="ctrl.mediaFileData.anchor" size="80" maxlength="255"/>
             </td>
         </tr>
 
@@ -131,7 +131,7 @@
                 <label for="notes"><fmt:message key="generic.notes"/></label>
             </td>
             <td>
-                <input id="notes" type="text" ng-model="ctrl.mediaFileData.notes" size="50" maxlength="255" style="width:30%"/>
+                <input id="notes" type="text" ng-model="ctrl.mediaFileData.notes" size="80" maxlength="255"/>
             </td>
        </tr>
     <c:if test="${param.mediaFileId != null}">
@@ -151,7 +151,7 @@
                 <label for="permalink"><fmt:message key="mediaFileEdit.permalink" /></label>
             </td>
             <td>
-                <input id="permalink" type="text" size="50" style="width:50%" value='{{ctrl.mediaFileData.permalink}}' readonly />
+                <input id="permalink" type="text" size="80" value='{{ctrl.mediaFileData.permalink}}' readonly />
             </td>
        </tr>
 
@@ -160,7 +160,7 @@
                 <label for="directoryId"><fmt:message key="mediaFileEdit.folder" /></label>
             </td>
             <td>
-                <input id="directoryId" type="text" size="50" value='{{ctrl.mediaFileData.directory.name}}' readonly />
+                <input id="directoryId" type="text" size="30" value='{{ctrl.mediaFileData.directory.name}}' readonly />
             </td>
        </tr>
     </c:if>
