@@ -202,48 +202,19 @@
    limitations under the License.
 
 -------------------------------------------------------------------------------
-
-Roller also uses the JDOM XML parser library, licensed under the 
-terms of the JDOM license (an Apache-like license listed at end of this file).
-
-Roller includes the YUI (BSD license) and JQuery (MIT) front end libraries:
-
-YUI 3.17.2 (build 9c3c78e)
-Copyright 2014 Yahoo! Inc. All rights reserved.
-Licensed under the BSD License.
-http://yuilibrary.com/license/
-
-jQuery v2.1.1 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license
-
-Roller contains some snippets of code from the Blojsom and Pebble
-blog servers, which are both licensed under the terms of the BSD license 
-(http://www.opensource.org/licenses/bsd-license.php).
-
--------------------------------------------------------------------------------
-
-Some themes packaged with Roller use Font Awesome by Dave Gandy
-(http://fontawesome.io), whose licensing is subject to the SIL OFL 1.1:
-http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
-
-Some themes packaged with Roller use the MIT-licensed Bootstrap:
-https://github.com/twbs/bootstrap/blob/master/LICENSE
-
--------------------------------------------------------------------------------
-
-The JDOM license
-
-/*--
+This product bundles JDOM XML parser library, which is available under a
+"JDOM" license. For details, see http://www.jdom.org/.
 
  Copyright (C) 2000-2012 Jason Hunter & Brett McLaughlin.
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
  are met:
- 
+
  1. Redistributions of source code must retain the above copyright
     notice, this list of conditions, and the following disclaimer.
- 
+
  2. Redistributions in binary form must reproduce the above copyright
     notice, this list of conditions, and the disclaimer that follows
     these conditions in the documentation and/or other materials
@@ -252,11 +223,11 @@ The JDOM license
  3. The name "JDOM" must not be used to endorse or promote products
     derived from this software without prior written permission. For
     written permission, please contact <request_AT_jdom_DOT_org>.
- 
+
  4. Products derived from this software may not be called "JDOM", nor
     may "JDOM" appear in their name, without prior written permission
     from the JDOM Project Management <request_AT_jdom_DOT_org>.
- 
+
  In addition, we request (but do not require) that you include in the
  end-user documentation provided with the redistribution and/or in the
  software itself an acknowledgement equivalent to the following:
@@ -284,6 +255,88 @@ The JDOM license
  Brett McLaughlin <brett_AT_jdom_DOT_org>. For more information
  on the JDOM Project, please see <http://www.jdom.org/>.
 
- */
 
+-------------------------------------------------------------------------------
+This product bundles YUI, which is available under a "BSD" license.
+For details, see
+app/src/main/webapp/roller-ui/yui3
+http://yuilibrary.com/license/
 
+Software License Agreement (BSD License)
+========================================
+
+Copyright (c) 2013, Yahoo! Inc. All rights reserved.
+----------------------------------------------------
+
+Redistribution and use of this software in source and binary forms, with or
+without modification, are permitted provided that the following conditions are
+met:
+
+  * Redistributions of source code must retain the above copyright notice, this
+    list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+  * Neither the name of Yahoo! Inc. nor the names of YUI's contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission of Yahoo! Inc.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-------------------------------------------------------------------------------
+This product bundles jQuery and jQuery plugins, which are available under a "MIT" license.
+For details, see
+roller-ui/scripts/jquery-2.1.1.min.js.
+roller-ui/jquery-ui-1.11.0/jquery-ui.min.js
+
+-------------------------------------------------------------------------------
+
+This product bundles some snippets of code from the Blojsom and Pebble
+blog servers, which are both licensed under the terms of the BSD license 
+(http://www.opensource.org/licenses/bsd-license.php).
+
+-------------------------------------------------------------------------------
+
+This product bundles some themes packaged with Roller use Font Awesome by Dave Gandy
+(http://fontawesome.io), whose licensing is subject to the SIL OFL 1.1:
+http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+
+-------------------------------------------------------------------------------
+
+This product bundles some themes packaged with Roller use the MIT-licensed Bootstrap:
+For details, see
+themes/gaurav/js/bootstrap.js
+https://github.com/twbs/bootstrap/blob/master/LICENSE
+
+The MIT License (MIT)
+
+Copyright (c) 2011-2019 Twitter, Inc.
+Copyright (c) 2011-2019 The Bootstrap Authors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-------------------------------------------------------------------------------

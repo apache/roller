@@ -1,41 +1,27 @@
 Apache Roller
 Copyright 2001-2019 The Apache Software Foundation
 
-This product includes software developed by
+This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
--------------------------------------------------------------------------------
 
-COPYRIGHT NOTICES
+The product includes snippets of code from the Blojsom blog server
+Copyright 2003 David A. Czarnecki & Mark Lussier. All rights reserved.
 
-This product includes:
+The product includes snippets of code from the Pebble blog server
+Copyright 2003 Simon Brown, All rights reserved.
 
-* Snippets of code from the Blojsom blog server
-    Copyright 2003 David A. Czarnecki & Mark Lussier. All rights reserved.
+The product includes snippets of code written by Sun Microsystems, Inc.
+Copyright 2009 Sun Microsystems, Inc.
 
-* Snippets of code from the Pebble blog server
-    Copyright 2003 Simon Brown, All rights reserved.
+The product includes snippets of code written by Dave Johnson for RSS and Atom in Action
+Copyright 2005 David M Johnson (For RSS and Atom In Action)
 
-* Code written by Sun Microsystems, Inc. 
-    Copyright 2009 Sun Microsystems, Inc.
+The product includes snippets of code from Spring Mobile
+Copyright (c) 2010-2014 Pivotal, Inc. All Rights Reserved.
 
-* Code written by Dave Johnson for RSS and Atom in Action
-    Copyright 2005 David M Johnson (For RSS and Atom In Action)
+The product includes icons by Mark James (http://www.famfamfam.com/lab/icons)
 
-* The Xinha WYSIWYG editor, which includes HTMLArea
-    htmlArea License (based on BSD license)
-    Copyright (c) 2002-2004, interactivetools.com, inc.
-    Copyright (c) 2003-2004 dynarch.com
-    All rights reserved.
-    http://trac.xinha.org/wiki/Licence
-    
-* Snippets of code from Spring Mobile
-    Copyright (c) 2010-2014 Pivotal, Inc. All Rights Reserved. 
-
-OTHER NOTICES
-
-* Roller includes icons by Mark James (http://www.famfamfam.com/lab/icons)
-
-* Roller uses JavaMail
-     COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.1
-     Copyright (c) 1997-2011 Oracle and/or its affiliates. All rights reserved.
-     https://glassfish.java.net/public/CDDL+GPL_1_1.html
+The product includes snippets of code from the JavaMail
+COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.1
+Copyright (c) 1997-2011 Oracle and/or its affiliates. All rights reserved.
+https://glassfish.java.net/public/CDDL+GPL_1_1.html
