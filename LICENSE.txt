@@ -306,13 +306,13 @@ blog servers, which are both licensed under the terms of the BSD license
 
 -------------------------------------------------------------------------------
 
-This product bundles some themes packaged with Roller use Font Awesome by Dave Gandy
+This product bundles some themes which use Font Awesome by Dave Gandy
 (http://fontawesome.io), whose licensing is subject to the SIL OFL 1.1:
 http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
 
 -------------------------------------------------------------------------------
 
-This product bundles some themes packaged with Roller use the MIT-licensed Bootstrap:
+This product bundles some themes which use the MIT-licensed Bootstrap:
 For details, see
 themes/gaurav/js/bootstrap.js
 https://github.com/twbs/bootstrap/blob/master/LICENSE
