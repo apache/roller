@@ -288,7 +288,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         this.entryAnchorToIdMap.remove(entry.getWebsite().getHandle()+":"+entry.getAnchor());
     }
     
-    public List getNextPrevEntries(WeblogEntry current, String catName,
+    private List getNextPrevEntries(WeblogEntry current, String catName,
             String locale, int maxEntries, boolean next)
             throws WebloggerException {
 
@@ -462,13 +462,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             query.setParameter(i+1, params.get(i));
         }
         
-        if (wesc.getOffset() != 0) {
-            query.setFirstResult(wesc.getOffset());
-        }
-        if (wesc.getMaxResults() != -1) {
-            query.setMaxResults(wesc.getMaxResults());
-        }
-        
+        setFirstMax( query, wesc.getOffset(), wesc.getMaxResults() );
         return query.getResultList();
     }
     
@@ -666,12 +660,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         
         TypedQuery<WeblogEntryComment> query = strategy.getDynamicQuery(queryString.toString(), WeblogEntryComment.class);
-        if (csc.getOffset() != 0) {
-            query.setFirstResult(csc.getOffset());
-        }
-        if (csc.getMaxResults() != -1) {
-            query.setMaxResults(csc.getMaxResults());
-        }
+        setFirstMax( query, csc.getOffset(), csc.getMaxResults());
         for (int i=0; i<params.size(); i++) {
             query.setParameter(i+1, params.get(i));
         }
@@ -758,7 +747,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * @inheritDoc
      */
     public Map<Date, List<WeblogEntry>> getWeblogEntryObjectMap(WeblogEntrySearchCriteria wesc) throws WebloggerException {
-        TreeMap<Date, List<WeblogEntry>> map = new TreeMap<Date, List<WeblogEntry>>(Collections.reverseOrder());
+        TreeMap<Date, List<WeblogEntry>> map = new TreeMap<>(Collections.reverseOrder());
 
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 
@@ -769,11 +758,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
         for (WeblogEntry entry : entries) {
             Date sDate = DateUtil.getNoonOfDay(entry.getPubTime(), cal);
-            List<WeblogEntry> dayEntries = map.get(sDate);
-            if (dayEntries == null) {
-                dayEntries = new ArrayList<WeblogEntry>();
-                map.put(sDate, dayEntries);
-            }
+            List<WeblogEntry> dayEntries = map.computeIfAbsent(sDate, k -> new ArrayList<>());
             dayEntries.add(entry);
         }
         return map;
@@ -843,12 +828,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                 query.setParameter(1, end);
             }
         }
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (length != -1) {
-            query.setMaxResults(length);
-        }
+        setFirstMax( query, offset, length);
         queryResults = query.getResultList();
         List<StatCount> results = new ArrayList<StatCount>();
         if (queryResults != null) {
@@ -951,12 +931,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                         "WeblogEntryTagAggregate.getPopularTagsByWebsiteNull", TagStat.class);
             }
         }
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (limit != -1) {
-            query.setMaxResults(limit);
-        }
+        setFirstMax( query, offset, limit);
         queryResults = query.getResultList();
         
         double min = Integer.MAX_VALUE;
@@ -1029,12 +1004,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         for (int i=0; i<params.size(); i++) {
             query.setParameter(i+1, params.get(i));
         }
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (limit != -1) {
-            query.setMaxResults(limit);
-        }
+        setFirstMax( query, offset, limit);
         queryResults = query.getResultList();
         
         List<TagStat> results = new ArrayList<TagStat>();
@@ -1214,26 +1184,36 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     throws WebloggerException {
         
         // figure out start date
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -1 * sinceDays);
-        Date startDate = cal.getTime();
+        Date startDate = getStartDateNow(sinceDays);
 
-        TypedQuery<WeblogHitCount> query = strategy.getNamedQuery(
+        TypedQuery<WeblogHitCount> query;
+        query = strategy.getNamedQuery(
                 "WeblogHitCount.getByWeblogEnabledTrueAndActiveTrue&DailyHitsGreaterThenZero&WeblogLastModifiedGreaterOrderByDailyHitsDesc",
                 WeblogHitCount.class);
         query.setParameter(1, startDate);
-        
+        setFirstMax( query, offset, length );
+        return query.getResultList();
+    }
+
+
+    private static void setFirstMax( Query query, int offset, int length )  {
         if (offset != 0) {
             query.setFirstResult(offset);
         }
         if (length != -1) {
             query.setMaxResults(length);
-        }        
-        return query.getResultList();
+        }
     }
-    
-    
+
+
+    public static Date getStartDateNow(int sinceDays) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1 * sinceDays);
+        return cal.getTime();
+    }
+
+
     /**
      * @inheritDoc
      */

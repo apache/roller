@@ -18,263 +18,145 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <p class="subtitle">
-   <s:text name="websiteSettings.subtitle" >
-       <s:param value="actionWeblog.handle" />
-   </s:text>
-</p>  
-   
-<s:form action="weblogConfig!save">
-	<s:hidden name="salt" />
-    <s:hidden name="weblog" value="%{actionWeblog.handle}" />
+    <s:text name="websiteSettings.subtitle">
+        <s:param value="actionWeblog.handle"/>
+    </s:text>
+</p>
 
-<table class="formtableNoDesc">
+<s:form action="weblogConfig!save" theme="bootstrap" cssClass="form-horizontal">
+    <s:hidden name="salt"/>
+    <s:hidden name="weblog" value="%{actionWeblog.handle}"/>
 
     <%-- ***** General settings ***** --%>
-    
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.generalSettings" /></h2></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.websiteTitle" />
-        <td class="field"><s:textfield name="bean.name" size="40"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
 
-    <tr>
-        <td class="label"><s:text name="generic.tagline" /></td>
-        <td class="field"><s:textfield name="bean.tagline" size="40" maxlength="255"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.icon" /></td>
-        <td class="field"><s:textfield name="bean.icon" size="40"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.about" /></td>
-        <td class="field"><s:textarea name="bean.about" rows="3" cols="40"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.emailAddress" />
-        <td class="field"><s:textfield name="bean.emailAddress" size="40"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.editor" /></td>
-        <td class="field">
-            <s:select name="bean.editorPage" size="1" list="editorsList" listKey="id" listValue="getText(name)" />
-       </td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.active" /></td>
-        <td class="field"><s:checkbox name="bean.active" /></td>
-        <td class="description"></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.entryDisplayCount" /></td>
-        <td class="field"><s:textfield name="bean.entryDisplayCount" size="4"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
+    <h3><s:text name="websiteSettings.generalSettings"/></h3>
 
-    
+    <s:textfield label="%{getText('websiteSettings.websiteTitle')}"
+                 name="bean.name" size="30" maxlength="40"/>
+
+    <s:textfield label="%{getText('generic.tagline')}"
+                 name="bean.tagline" size="30" maxlength="255"/>
+
+    <s:textfield label="%{getText('websiteSettings.icon')}"
+                 name="bean.icon" size="30" maxlength="40"/>
+
+    <s:textarea label="%{getText('websiteSettings.about')}"
+                name="bean.about" rows="3" cols="40 "/>
+
+    <s:textfield label="%{getText('websiteSettings.emailAddress')}"
+                 name="bean.emailAddress" size="30" maxlength="40"/>
+
+    <s:select name="bean.editorPage" label="%{getText('websiteSettings.editor')}"
+              list="editorsList" listKey="id" listValue="getText(name)"/>
+
+    <s:textfield type="number" label="%{getText('websiteSettings.entryDisplayCount')}"
+                 name="bean.entryDisplayCount" size="4"/>
+
+    <s:checkbox label="%{getText('websiteSettings.active')}"
+                name="bean.active" size="30" maxlength="40"/>
+
     <%-- ***** Language/i18n settings ***** --%>
-    
-    
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.languageSettings" /></h2></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.enableMultiLang" /></td>
-        <td class="field"><s:checkbox name="bean.enableMultiLang" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.showAllLangs" /></td>
-        <td class="field"><s:checkbox name="bean.showAllLangs" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="createWebsite.locale" />
-        <td class="field">
-            <s:select name="bean.locale" size="1" list="localesList" listValue="displayName" />
-        </td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="createWebsite.timeZone" />
-        <td class="field">
-            <s:select name="bean.timeZone" size="1" list="timeZonesList" />
-        </td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    
-    <%-- ***** Comment settings ***** --%>
-    
-    
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.commentSettings" /></h2></td>
-    </tr>
 
-    <tr>
-        <td class="label"><s:text name="websiteSettings.allowComments" /></td>
-        <td class="field"><s:checkbox name="bean.allowComments" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <s:if test="!getBooleanProp('users.moderation.required')">
-    <tr>
-        <td class="label"><s:text name="websiteSettings.moderateComments" /></td>
-        <td class="field"><s:checkbox name="bean.moderateComments" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    </s:if>
-    
+    <h3><s:text name="websiteSettings.languageSettings"/></h3>
+
+    <s:select name="bean.locale" list="localesList" listValue="displayName"
+              label="%{getText('createWebsite.locale')}"/>
+
+    <s:select name="bean.timeZone" list="timeZonesList"
+              label="%{getText('createWebsite.timeZone')}"/>
+
+    <s:checkbox name="bean.enableMultiLang"
+                label="%{getText('websiteSettings.enableMultiLang')}"/>
+
+    <s:checkbox name="bean.showAllLangs"
+                label="%{getText('websiteSettings.showAllLangs')}"/>
+
+    <%-- ***** Comment settings ***** --%>
+
+    <h3><s:text name="websiteSettings.commentSettings"/></h3>
+
+    <s:checkbox name="bean.allowComments"
+                label="%{getText('websiteSettings.allowComments')}"/>
+
     <s:if test="getBooleanProp('users.comments.emailnotify')">
-        <tr>
-            <td class="label"><s:text name="websiteSettings.emailComments" /></td>
-            <td class="field"><s:checkbox name="bean.emailComments"/></td>
-            <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-        </tr>
+        <s:checkbox name="bean.emailComments"
+                    label="%{getText('websiteSettings.emailComments')}"/>
+    </s:if>
+
+    <s:if test="!getBooleanProp('users.moderation.required')">
+        <s:checkbox name="bean.moderateComments"
+                    label="%{getText('websiteSettings.moderateComments')}"/>
     </s:if>
 
     <%-- ***** Default entry comment settings ***** --%>
 
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.defaultCommentSettings" /></h2></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.defaultAllowComments" /></td>
-        <td class="field"><s:checkbox name="bean.defaultAllowComments" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-     <tr>
-        <td class="label"><s:text name="websiteSettings.defaultCommentDays" /></td>
-        <td class="field">
-            <s:select name="bean.defaultCommentDays" list="commentDaysList" size="1" listKey="key" listValue="value" />
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
-    
-    <tr>
-        <td class="label"><s:text name="websiteSettings.applyCommentDefaults" /></td>
-        <td class="field"><s:checkbox name="bean.applyCommentDefaults" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
+    <h3><s:text name="websiteSettings.defaultCommentSettings"/></h3>
+
+    <s:select name="bean.defaultCommentDays" label="%{getText('websiteSettings.applyCommentDefaults')}"
+              list="commentDaysList" listKey="key" listValue="value"/>
+
+    <s:checkbox name="bean.defaultAllowComments"
+                label="%{getText('websiteSettings.defaultAllowComments')}"/>
+
+    <s:checkbox name="bean.applyCommentDefaults"
+                label="%{getText('websiteSettings.applyCommentDefaults')}"/>
 
     <%-- ***** Blogger API setting settings ***** --%>
-    
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.bloggerApi" /></h2></td>
-    </tr>
 
-    <tr>
-        <td class="label"><s:text name="websiteSettings.enableBloggerApi" /></td>
-        <td class="field"><s:checkbox name="bean.enableBloggerApi" /></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
+    <h3><s:text name="websiteSettings.bloggerApi"/></h3>
 
-    <tr>
-        <td class="label"><s:text name="websiteSettings.bloggerApiCategory" /></td>
-        <td class="field">
-            <s:select name="bean.bloggerCategoryId" list="weblogCategories" size="1" listKey="id" listValue="name" />
-        </td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
+    <s:select name="bean.bloggerCategoryId" label="%{getText('websiteSettings.bloggerApiCategory')}"
+              list="weblogCategories" listKey="id" listValue="name"/>
+
+    <s:checkbox name="bean.enableBloggerApi"
+                label="%{getText('websiteSettings.enableBloggerApi')}"/>
 
     <%-- ***** Plugins "formatting" settings ***** --%>
 
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.formatting" /></h2></td>
-    </tr>
+    <h3><s:text name="websiteSettings.formatting"/></h3>
 
     <s:if test="!pluginsList.isEmpty">
-        <tr>
-            <td class="label"><s:text name="websiteSettings.label1" /> <br /><s:text name="websiteSettings.label2" /></td>
-            <td class="field">
-                <s:checkboxlist theme="roller" list="pluginsList" name="bean.defaultPluginsArray" listKey="name" listValue="name" />
-            
-            </td>
-            <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-        </tr>
+
+        <s:checkboxlist list="pluginsList" label="%{getText('websiteSettings.label1')}"
+                        name="bean.defaultPluginsArray" listKey="name" listValue="name"/>
+
     </s:if>
     <s:else>
-        <s:hidden name="defaultPlugins" />
+        <s:hidden name="defaultPlugins"/>
     </s:else>
 
-
     <%-- ***** Spam prevention settings ***** --%>
-    
-    <tr>
-        <td colspan="3"><h2><s:text name="websiteSettings.spamPrevention" /></h2></td>
-    </tr>
 
-    <tr>
-        <td class="label"><s:text name="websiteSettings.ignoreUrls" /></td>
-        <td class="field"><s:textarea name="bean.blacklist" rows="7" cols="40"/></td>
-        <td class="description"><%-- <s:text name="websiteSettings.tip." /> --%></td>
-    </tr>
+    <h3><s:text name="websiteSettings.spamPrevention"/></h3>
 
+    <s:textarea name="bean.blacklist" rows="7" cols="40"
+                label="%{getText('websiteSettings.analyticsTrackingCode')}"/>
 
     <%-- ***** Web analytics settings ***** --%>
 
     <s:if test="getBooleanProp('analytics.code.override.allowed')">
-        <tr>
-            <td colspan="3"><h2><s:text name="configForm.webAnalytics" /></h2></td>
-        </tr>
+        <h3><s:text name="configForm.webAnalytics"/></h3>
 
-        <tr>
-            <td class="label"><s:text name="websiteSettings.analyticsTrackingCode" /></td>
-            <td class="field"><s:textarea name="bean.analyticsCode" rows="10" cols="70"/></td>
-        </tr>
+        <s:textarea name="bean.analyticsCode" rows="10" cols="70"
+                    label="%{getText('websiteSettings.analyticsTrackingCode')}"/>
     </s:if>
 
-</table>
-
-<br />
-<div class="control">
-    <s:submit value="%{getText('websiteSettings.button.update')}" />
-</div>
-        
-<br />
-<br />
+    <div class="control" style="margin-bottom:5em">
+        <s:submit cssClass="btn btn-success" value="%{getText('websiteSettings.button.update')}"/>
+    </div>
 
 </s:form>
 
 
-<s:form action="weblogRemove">
-	<s:hidden name="salt" />
-    <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-    
-    <h2><s:text name="websiteSettings.removeWebsiteHeading" /></h2>
-    
-    <p>
-        <s:text name="websiteSettings.removeWebsite" /><br/><br/>
-        <span class="warning">
-            <s:text name="websiteSettings.removeWebsiteWarning" />
-        </span>
-    </p>
-    
-    <br />
-    
-    <s:submit value="%{getText('websiteSettings.button.remove')}" />
-    
-    <br />
-    <br />    
-    <br />
-    
+<s:form action="weblogRemove" cssClass="form-horizontal">
+    <s:hidden name="salt"/>
+    <s:hidden name="weblog" value="%{actionWeblog.handle}"/>
+
+    <h3><s:text name="websiteSettings.removeWebsiteHeading"/></h3>
+    <s:text name="websiteSettings.removeWebsite"/><br/><br/>
+    <div class="alert alert-danger" role="alert">
+        <s:text name="websiteSettings.removeWebsiteWarning"/>
+    </div>
+    <s:submit cssClass="btn btn-danger" value="%{getText('websiteSettings.button.remove')}"/>
+
 </s:form>

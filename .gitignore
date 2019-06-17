@@ -1,1 +1,31 @@
-./tomcat/*
+# Taken from http://gary-rowe.com/agilestack/2012/10/12/a-gitignore-file-for-intellij-and-eclipse-with-maven/
+#
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# NetBeans
+/nb-configuration.xml
+/app/nb-configuration.xml
+/app/nbactions.xml
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
+
+velocity.log
+
+tomcat-base
+docker/postgresql-data
+docker/roller-data
+assembly-release/release.sh
+it-selenium/overlays/

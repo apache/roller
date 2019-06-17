@@ -19,23 +19,28 @@
 
 <%-- Success Messages --%>
 <s:if test="!actionMessages.isEmpty">
-    <div id="messages" class="messages">
+    <div id="messages" class="alert alert-success">
         <s:actionmessage />
     </div>
 </s:if>
 
 <%-- Error Messages --%>
 <s:if test="!actionErrors.isEmpty || !fieldErrors.isEmpty">
-    <div id="errors" class="errors">
+    <div id="errors" class="alert alert-danger">
         <ul>
+
             <s:iterator var="actionError" value="actionErrors">
                 <li><s:property value="#actionError" escapeHtml="false" /></li>
             </s:iterator>
+
             <s:iterator var="fieldErrorName" value="fieldErrors.keySet()">
                 <s:iterator var="fieldErrorValue" value="fieldErrors[#fieldErrorName]">
                     <li><s:property value="#fieldErrorValue" escapeHtml="false" /></li>
                 </s:iterator>
             </s:iterator>
+
         </ul>
     </div>
 </s:if>
+
+<!-- ALERT_END: this comment needed for AJAX error handling -->

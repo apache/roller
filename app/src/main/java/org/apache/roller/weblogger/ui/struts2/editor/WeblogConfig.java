@@ -66,8 +66,7 @@ public class WeblogConfig extends UIAction {
         this.desiredMenu = "editor";
         this.pageTitle = "websiteSettings.title";
     }
-    
-    
+
     public void myPrepare() {
         
         try {

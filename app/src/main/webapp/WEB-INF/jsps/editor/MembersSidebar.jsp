@@ -17,50 +17,19 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<div class="sidebarFade">
-    <div class="menu-tr">
-        <div class="menu-tl">
-            
-        <div class="sidebarInner">
+<h3><s:text name="mainPage.actions" /></h3>
+<hr size="1" noshade="noshade" />
 
-            <h3><s:text name="mainPage.actions" /></h3>            
-            <hr size="1" noshade="noshade" />
-            
-            <img src='<s:url value="/images/email_edit.png"/>' alt="mail-icon" align="bottom" />
-            <s:url action="invite" var="inviteUrl">
-               <s:param name="weblog" value="%{actionWeblog.handle}" />
-            </s:url>
-            <a href='<s:property value="#inviteUrl" />'>
-                <s:text name="memberPermissions.inviteMember" />
-            </a>
-            <br />
-            <s:text name="memberPermissions.whyInvite" />       
-            <br />
-            <br />
-        </div>                					
-        </div>
-    </div>
-</div>	
+<span class="glyphicon glyphicon-plus"></span>
+<s:url action="invite" var="inviteUrl">
+   <s:param name="weblog" value="%{actionWeblog.handle}" />
+</s:url>
+<a href='<s:property value="#inviteUrl" />'>
+    <s:text name="memberPermissions.inviteMember" />
+</a>
+<s:text name="memberPermissions.whyInvite" />
 
-<br />
-<br />
+<h3> <s:text name="memberPermissions.permissionsHelpTitle" /> </h3>
+<hr size="1" noshade="noshade" />
 
-<div class="sidebarFade">
-    <div class="menu-tr">
-        <div class="menu-tl">
-            <div class="sidebarBody">
-            <div class="sidebarInner">
-            
-            <h3>
-                <s:text name="memberPermissions.permissionsHelpTitle" />
-            </h3>
-            <hr size="1" noshade="noshade" />
-            
-            <s:text name="memberPermissions.permissionHelp" />	
-		    <br />
-		    <br />
-        </div>		    
-            </div>
-        </div>
-    </div>
-</div>	
+<s:text name="memberPermissions.permissionHelp" />

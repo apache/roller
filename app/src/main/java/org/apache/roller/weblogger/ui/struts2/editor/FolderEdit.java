@@ -27,16 +27,19 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
  * Edit a new or existing folder.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class FolderEdit extends UIAction {
-    
+public class FolderEdit extends UIAction implements ServletResponseAware {
+
     private static Log log = LogFactory.getLog(FolderEdit.class);
 
     // bean for managing form data
@@ -47,6 +50,9 @@ public class FolderEdit extends UIAction {
 
     // the folder we are adding or editing
     private WeblogBookmarkFolder folder = null;
+
+    private HttpServletResponse httpServletResponse;
+
 
     public FolderEdit() {
         this.desiredMenu = "editor";
@@ -72,6 +78,11 @@ public class FolderEdit extends UIAction {
                 log.error("Error looking up folder", ex);
             }
         }
+    }
+
+    @Override
+    public void setServletResponse(HttpServletResponse httpServletResponse) {
+        this.httpServletResponse = httpServletResponse;
     }
 
     /**
@@ -114,6 +125,8 @@ public class FolderEdit extends UIAction {
                     addMessage("folderForm.updated");
                 }
 
+                httpServletResponse.addHeader("folderId", folderId );
+
                 return SUCCESS;
 
             } catch(Exception ex) {
@@ -127,7 +140,7 @@ public class FolderEdit extends UIAction {
 
     public void myValidate() {
         // make sure new name is not a duplicate of an existing folder
-        if((isAdd() || !folder.getName().equals(getBean().getName()))) {
+        if ( isAdd() || !getBean().getName().equals(folder.getName()) ) {
             if (folder.getWeblog().hasBookmarkFolder(getBean().getName())) {
                 addError("folderForm.error.duplicateName", getBean().getName());
             }

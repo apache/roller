@@ -18,47 +18,39 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <!doctype html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
-        <title><s:property value="getProp('site.shortName')"/>: <s:property value="pageTitle" /></title>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
+    <title><s:property value="getProp('site.shortName')"/>: <s:property value="pageTitle"/></title>
+    <tiles:insertAttribute name="head"/>
+    <style>
+        <tiles:insertAttribute name="styles" />
+    </style>
+</head>
+<body>
 
-        <tiles:insertAttribute name="head" />
-        <style>
-            <tiles:insertAttribute name="styles" />
-        </style>
-    </head>
-    <body>
-        
-        <div id="banner">
-            <tiles:insertAttribute name="banner" />
-            <tiles:insertAttribute name="bannerStatus" />
-        </div>
-        
-        <div id="wrapper"> 
-            <div id="leftcontent_wrap">
-                <div id="leftcontent"> 
+<tiles:insertAttribute name="banner"/>
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+
+            <h1 class="roller-page-title"><s:property value="pageTitle"/></h1>
+            <p><tiles:insertAttribute name="messages"/>
+            <div class="panel">
+                <div class="panel-body">
+                    <tiles:insertAttribute name="content"/>
                 </div>
             </div>
-            
-            <div id="centercontent_wrap">
-                <div id="centercontent">   
-                    <h1><s:property value="pageTitle" /></h1>
-                    <tiles:insertAttribute name="messages" />
-                    <tiles:insertAttribute name="content" />
-                </div>
-            </div>
-            
-            <div id="rightcontent_wrap">
-                <div id="rightcontent"> 
-                </div>
-            </div>
+
         </div>
-        
-        <div id="footer">
-            <tiles:insertAttribute name="footer" />
-        </div>
-        
-    </body>
+        <div class="col-md-1"></div>
+    </div>
+</div>
+
+</body>
 </html>

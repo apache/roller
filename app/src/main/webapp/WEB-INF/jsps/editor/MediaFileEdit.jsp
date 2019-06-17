@@ -16,168 +16,107 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
-
-<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
-
-<s:if test="bean.isImage">
-    <div class="mediaFileThumbnail">
-        <a href='<s:property value="bean.permalink" />' target="_blank">
-            <img align="right" alt="thumbnail" src='<s:property value="bean.thumbnailURL" />'
-                 title='<s:text name="mediaFileEdit.clickToView" />' />
-        </a>
-    </div>
-</s:if>
-
-<p class="subtitle">
-    <s:text name="mediaFileEdit.subtitle">
-        <s:param value="bean.name" />
-    </s:text>
-</p>
 
 <p class="pagetip">
-    <s:text name="mediaFileEdit.pagetip"  />
+    <s:text name="mediaFileEdit.pagetip"/>
 </p>
 
-<s:form id="entry" action="mediaFileEdit!save" method="POST" enctype="multipart/form-data">
-	<s:hidden name="salt" />
-    <s:hidden name="weblog" />
-    <s:hidden name="mediaFileId" id="mediaFileId" />
-    <s:hidden name="bean.permalink" />
+<s:form id="entry" action="mediaFileEdit!save" method="POST" enctype="multipart/form-data"
+        theme="bootstrap" class="form-horizontal">
+
+    <s:hidden name="salt"/>
+    <s:hidden name="weblog"/>
+    <s:hidden name="mediaFileId" id="mediaFileId"/>
+    <s:hidden name="bean.permalink"/>
+
+    <s:if test="bean.isImage">
+        <div class="form-group">
+            <label class="control-label col-sm-3">Thumbnail</label>
+            <div class="controls col-sm-9">
+                <a href='<s:property value="bean.permalink" />' target="_blank">
+                    <img alt="thumbnail" src='<s:property value="bean.thumbnailURL" />'
+                         title='<s:text name="mediaFileEdit.clickToView" />'/>
+                </a>
+            </div>
+        </div>
+    </s:if>
 
     <%-- ================================================================== --%>
     <%-- Title, category, dates and other metadata --%>
 
-    <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">
+    <s:textfield name="bean.name" size="35" maxlength="100" tabindex="1"
+                 label="%{getText('generic.name')}"/>
 
-        <tr>
-            <td class="entryEditFormLabel">
-                <label for="status"><s:text name="generic.name" /></label>
-            </td>
-            <td>
-                <s:textfield name="bean.name" size="35" maxlength="100" tabindex="1" />
-            </td>
-       </tr>
+    <div class="form-group">
+        <label class="control-label col-sm-3"><s:text name="mediaFileEdit.fileInfo"/></label>
 
-       <tr>
-            <td class="entryEditFormLabel">
-                <label for="fileInfo"><s:text name="mediaFileEdit.fileInfo" /></label>
-            </td>
-            <td>
-                <s:text name="mediaFileEdit.fileTypeSize">
-                    <s:param value="bean.contentType" />
-                    <s:param value="bean.length" />
+        <div class="controls col-sm-9">
+
+            <s:text name="mediaFileEdit.fileTypeSize">
+                <s:param value="bean.contentType"/>
+                <s:param value="bean.length"/>
+            </s:text>
+
+            <s:if test="bean.isImage">
+                <s:text name="mediaFileEdit.fileDimensions">
+                    <s:param value="bean.width"/>
+                    <s:param value="bean.height"/>
                 </s:text>
-                <s:if test="bean.isImage">
-                    <s:text name="mediaFileEdit.fileDimensions">
-                        <s:param value="bean.width" />
-                        <s:param value="bean.height" />
-                    </s:text>
-                </s:if>
-            </td>
-       </tr>
+            </s:if>
 
-        <tr>
-            <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileEdit.permalink"/></label>
-            </td>
-            <td>
-                <s:url var="linkIconURL" value="/images/link.png"></s:url>
-
-                <a href='<s:property value="bean.permalink" />' target="_blank"
-                   title='<s:text name="mediaFileEdit.linkTitle" />'>
-                    <img border="0" src='<s:property value="%{linkIconURL}" />' style="padding:2px 2px;" alt="link"/>
-                </a>
-
-                <input type="text" id="clip_text" size="50" style="width:90%"
-                       value='<s:property value="bean.permalink" />' readonly/>
-
-            </td>
-        </tr>
-
-       <tr>
-            <td class="entryEditFormLabel">
-                <label for="status"><s:text name="generic.description" /></label>
-            </td>
-            <td>
-                <s:textarea name="bean.description" cols="50" rows="2" tabindex="2" style="width:70%" />
-            </td>
-       </tr>
-
-       <tr>
-            <td class="entryEditFormLabel">
-                <label for="tags"><s:text name="mediaFileEdit.tags" /></label>
-            </td>
-            <td>
-                <s:textfield name="bean.tagsAsString" size="30" maxlength="100" tabindex="3" style="width:70%"/>
-            </td>
-       </tr>
-
-       <tr>
-            <td class="entryEditFormLabel">
-                <label for="copyright"><s:text name="mediaFileEdit.copyright" /></label>
-            </td>
-            <td>
-                <s:textfield name="bean.copyrightText" size="30" maxlength="100" tabindex="4" style="width:70%"/>
-            </td>
-       </tr>
-
-       <tr>
-            <td class="entryEditFormLabel">
-                <label for="directoryId"><s:text name="mediaFileEdit.directory" /></label>
-            </td>
-            <td>
-                <s:select name="bean.directoryId" list="allDirectories"
-                    listKey="id" listValue="name" tabindex="5" />
-            </td>
-       </tr>
-
-       <tr>
-            <td class="entryEditFormLabel">
-                <label for="status"><s:text name="mediaFileEdit.includeGallery" /></label>
-            </td>
-            <td>
-                <s:checkbox name="bean.sharedForGallery" tabindex="6" />
-                <s:text name="mediaFileEdit.includeGalleryHelp" />
-            </td>
-       </tr>
-
-        <tr>
-            <td class="entryEditFormLabel">
-                <label for="title"><s:text name="mediaFileEdit.updateFileContents" /></label>
-            </td>
-            <td>
-                <div id="fileControldiv" class="miscControl">
-                    <s:file id="fileControl" name="uploadedFile" size="30" />
-                    <br />
-                </div>
-            </td>
-        </tr>
-
-        <!-- original path from base URL of ctx/resources/ -->
-        <s:if test="getBooleanProp('mediafile.originalPathEdit.enabled')">
-        <tr>
-            <td class="originalPathLabel">
-                <label for="originalPath"><s:text name="mediaFileEdit.originalPath" /></label>
-            </td>
-            <td>
-                <div id="originalPathdiv" class="miscControl">
-                    <s:textfield name="bean.originalPath" id="originalPath" size="30" maxlength="100" tabindex="3" />
-                    <br />
-                </div>
-            </td>
-        </tr>
-        </s:if>
-
-    </table>
-
-    <div class="control">
-       <input type="submit" tabindex="7"
-              value="<s:text name="generic.save" />" name="submit" />
-       <input type="button" tabindex="8"
-              value="<s:text name="generic.cancel" />" onClick="javascript:window.parent.onEditCancelled();" />
+        </div>
     </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-3">URL</label>
+
+        <div class="controls col-sm-9">
+
+            <input type="text" id="clip_text" size="80"
+                   value='<s:property value="bean.permalink" />' readonly />
+
+            <s:url var="linkIconURL" value="/roller-ui/images/clippy.svg"/>
+            <button class="clipbutton" data-clipboard-target="#clip_text" type="button">
+                <img src='<s:property value="%{linkIconURL}" />' alt="Copy to clipboard" style="width:0.9em; height:0.9em">
+            </button>
+
+        </div>
+    </div>
+
+    <s:textarea name="bean.description" cols="50" rows="2" tabindex="2"
+                label="%{getText('generic.description')}"/>
+
+    <s:textfield name="bean.tagsAsString" size="30" maxlength="100" tabindex="3"
+                 label="%{getText('mediaFileEdit.tags')}"/>
+
+    <s:textfield name="bean.copyrightText" size="30" maxlength="100" tabindex="4"
+                 label="%{getText('mediaFileEdit.copyright')}"/>
+
+    <s:select name="bean.directoryId" list="allDirectories" listKey="id" listValue="name"
+              tabindex="5" label="%{getText('mediaFileEdit.directory')}"/>
+
+    <s:checkbox name="bean.sharedForGallery" tabindex="6"
+                label="%{getText('mediaFileEdit.includeGalleryHelp')}"/>
+
+    <!-- original path from base URL of ctx/resources/ -->
+    <s:if test="getBooleanProp('mediafile.originalPathEdit.enabled')">
+        <div id="originalPathdiv" class="miscControl">
+            <s:textfield name="bean.originalPath" id="originalPath" size="30"
+                         maxlength="100" tabindex="3"/>
+        </div>
+    </s:if>
+
+
+    <input type="submit" tabindex="7" class="btn btn-success"
+           value="<s:text name="generic.save" />" name="submit"/>
+    <input type="button" tabindex="8" class="btn"
+           value="<s:text name="generic.cancel" />" onClick="window.parent.onEditCancelled();"/>
 
 </s:form>
 
 
+<script>
+    $(document).ready(function () {
+        new ClipboardJS('.clipbutton');
+    });
+</script>

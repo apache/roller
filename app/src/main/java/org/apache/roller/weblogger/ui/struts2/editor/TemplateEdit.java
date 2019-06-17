@@ -114,8 +114,7 @@ public class TemplateEdit extends UIAction {
                 getBean().copyTo(templateToSave);
                 templateToSave.setLastModified(new Date());
 
-                if (getBean().getAutoContentType() == null ||
-                        !getBean().getAutoContentType()) {
+                if (getBean().getAutoContentType() == null || !getBean().getAutoContentType()) {
                     templateToSave.setOutputContentType(getBean().getManualContentType());
                 } else {
                     // empty content-type indicates that template uses auto content-type detection
@@ -151,7 +150,7 @@ public class TemplateEdit extends UIAction {
         if (!getTemplate().getName().equals(getBean().getName())) {
             try {
                 if (WebloggerFactory.getWeblogger().getWeblogManager()
-                    .getTemplateByName(getActionWeblog(), getBean().getName()) != null) {
+                        .getTemplateByName(getActionWeblog(), getBean().getName()) != null) {
                     addError("pagesForm.error.alreadyExists", getBean().getName());
                 }
             } catch (WebloggerException ex) {

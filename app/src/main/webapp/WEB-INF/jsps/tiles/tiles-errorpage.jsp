@@ -24,6 +24,9 @@
       <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
       <title><s:text name="error" /></title>
       <tiles:insertAttribute name="head" />
+      <style>
+          <tiles:insertAttribute name="styles" />
+      </style>
     </head>
     <body>
         
@@ -31,7 +34,7 @@
             <tiles:insertAttribute name="banner" />
         </div>
         
-        <div id="wrapper"> 
+        <div id="wrapper" class="container-fluid">
             <div id="leftcontent_wrap">
                 <div id="leftcontent"> 
                 </div>

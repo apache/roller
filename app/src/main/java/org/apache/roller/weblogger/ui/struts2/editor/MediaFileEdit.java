@@ -64,8 +64,7 @@ public class MediaFileEdit extends MediaFileBase {
     public void myPrepare() {
         refreshAllDirectories();
         try {
-            MediaFileManager mgr = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
+            MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
             }
@@ -79,10 +78,8 @@ public class MediaFileEdit extends MediaFileBase {
      * Validates media file metadata to be updated.
      */
     public void myValidate() {
-        MediaFile fileWithSameName = getDirectory().getMediaFile(
-                getBean().getName());
-        if (fileWithSameName != null
-                && !fileWithSameName.getId().equals(getMediaFileId())) {
+        MediaFile fileWithSameName = getDirectory().getMediaFile(getBean().getName());
+        if (fileWithSameName != null && !fileWithSameName.getId().equals(getMediaFileId())) {
             addError("MediaFile.error.duplicateName", getBean().getName());
         }
     }
@@ -94,8 +91,7 @@ public class MediaFileEdit extends MediaFileBase {
      */
     @SkipValidation
     public String execute() {
-        MediaFileManager manager = WebloggerFactory.getWeblogger()
-                .getMediaFileManager();
+        MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
         try {
             MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
             this.bean.copyFrom(mediaFile);
@@ -119,8 +115,7 @@ public class MediaFileEdit extends MediaFileBase {
     public String save() {
         myValidate();
         if (!hasActionErrors()) {
-            MediaFileManager manager = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
             try {
                 MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
                 bean.copyTo(mediaFile);

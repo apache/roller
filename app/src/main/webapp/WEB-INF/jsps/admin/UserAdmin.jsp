@@ -21,35 +21,38 @@
 <%@ include file="/roller-ui/scripts/ajax-user.js" %>
 </script>
 
-<p class="subtitle"><s:text name="userAdmin.subtitle.searchUser" /></p>
-<p><s:text name="userAdmin.prompt.searchUser" /></p>
+<p class="subtitle">
+<b><s:text name="userAdmin.subtitle.searchUser" /></b>
+<s:text name="userAdmin.prompt.searchUser" />
+</p>
 
-<s:form action="modifyUser" method="GET">
+<s:form action="userAdmin!edit" method="POST" theme="bootstrap" cssClass="form-vertical">
    	<s:hidden name="salt" />
- 
-    <span style="margin:4px"><s:text name="inviteMember.userName" /></span>
-    <input name="bean.userName" id="userName" size="30" maxlength="30"
-           onfocus="onUserNameFocus(null)" onkeyup="onUserNameChange(null)" 
-           style="margin:4px" />
-    <input type="submit" value='<s:text name="generic.edit" />'
-           style="margin:4px" />
-    <br />
-    <select id="userList" size="10" onchange="onUserSelected()" 
-            style="width:400px; margin:4px" ></select>
-    
+
+    <s:textfield cssClass="form-control"
+        id="userName"
+        name="bean.userName"
+        label="%{getText('inviteMember.userName')}"
+        onfocus="onUserNameFocus(null)"
+        onkeyup="onUserNameChange(null)" />
+
+    <s:select class="form-control" id="userList" size="10" onchange="onUserSelected()" list="bean.list" />
+
+    <button type="submit" class="btn btn-default" id="user-submit">
+        <s:text name="generic.edit" />
+    </button>
+
 </s:form>
 
-<%-- LDAP uses external user creation --%>
-<s:if test="authMethod != 'LDAP'">
-    <p class="subtitle"><s:text name="userAdmin.subtitle.userCreation" /></p>
+<s:if test="authMethod != 'LDAP'"> <%-- if we're not doing LDAP we can create new users in Roller --%>
+
+    <h3><s:text name="userAdmin.subtitle.userCreation" /></h3>
     <s:text name="userAdmin.prompt.orYouCan" />
     <s:url action="createUser" var="createUser" />
     <a href="<s:property value="createUser" />">
         <s:text name="userAdmin.prompt.createANewUser" />
     </a>
+
 </s:if>
 
-<%-- this forces focus to the userName field --%>
-<script>
-    document.getElementById('userName').focus();
-</script>
+<script> document.getElementById('userName').focus(); </script>

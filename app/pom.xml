@@ -24,7 +24,7 @@ limitations under the License.
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.2.3</version>
+        <version>6.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -33,17 +33,20 @@ limitations under the License.
     <packaging>war</packaging>
 
     <properties>
-        <angular.version>1.2.29</angular.version>
-        <ant.version>1.10.1</ant.version>
+        <servlet.version>4.0.1</servlet.version>
+        <jsp-api.version>2.2</jsp-api.version>
+        <java-activation.version>1.2.0</java-activation.version>
+        <java-mail.version>1.4.7</java-mail.version>
+        <jstl.version>1.2</jstl.version>
+
+        <angular.version>1.7.8</angular.version>
+        <ant.version>1.10.5</ant.version>
         <commons-validator.version>1.6</commons-validator.version>
         <commons-beanutils.version>1.9.3</commons-beanutils.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
-        <commons-codec.version>1.10</commons-codec.version>
-        <eclipse-link.version>2.5.2</eclipse-link.version>
-        <guice.version>4.1.0</guice.version>
-        <java-mail.version>1.4.7</java-mail.version>
-        <jsp-api.version>2.2</jsp-api.version>
-        <jstl.version>1.2</jstl.version>
+        <commons-codec.version>1.12</commons-codec.version>
+        <eclipse-link.version>2.7.4</eclipse-link.version>
+        <guice.version>4.2.2</guice.version>
         <log4j.version>1.2.17</log4j.version>
         <log4j2.version>2.10.0</log4j2.version>
         <lucene.version>4.10.4</lucene.version>
@@ -51,21 +54,20 @@ limitations under the License.
         <maven-war.version>3.1.0</maven-war.version>
         <maven-surefire.version>2.17</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
-        <rome.version>1.7.4</rome.version>
-        <servlet.version>3.0.1</servlet.version>
-        <slf4j.version>1.7.25</slf4j.version>
+        <rome.version>1.12.0</rome.version>
+        <slf4j.version>1.7.26</slf4j.version>
         <spring.version>4.1.4.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
-        <struts.version>2.5.17</struts.version>
+        <struts.version>2.5.20</struts.version>
         <velocity.version>1.7</velocity.version>
         <webjars.version>1.5</webjars.version>
         <ws-commons-util.version>1.0.2</ws-commons-util.version>
         <xml-security.version>1.3.0</xml-security.version>
         <xmlrpc-version>3.1.3</xmlrpc-version>
+
     </properties>
 
     <dependencies>
-
 
         <!-- Java EE deps -->
 
@@ -94,12 +96,18 @@ limitations under the License.
             <artifactId>mail</artifactId>
             <version>${java-mail.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+            <version>${java-activation.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
         </dependency>
 
         <!-- Eclipselink JPA is the default JPA implementation used by
@@ -107,12 +115,11 @@ limitations under the License.
              to use that stack instead.
 
              Logging, other special configuration during JUnit tests can be
-             placed in the src/test/resources/roller-custom.properties
-             file.
+             placed in the src/test/resources/roller-custom.properties file.
          -->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
+            <artifactId>org.eclipse.persistence.jpa</artifactId>
             <version>${eclipse-link.version}</version>
         </dependency>
 
@@ -158,8 +165,40 @@ limitations under the License.
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>${velocity.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+        
+        <!-- explicitly adding newest asm lib to improve compatibility with latest JDKs -->
+
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>7.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-tree</artifactId>
+            <version>7.0</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-core</artifactId>
@@ -182,6 +221,36 @@ limitations under the License.
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-tiles-plugin</artifactId>
             <version>${struts.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>3.3.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>clipboard.js</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery-ui</artifactId>
+            <version>1.12.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars.bower</groupId>
+            <artifactId>summernote</artifactId>
+            <version>0.8.11</version>
         </dependency>
 
         <dependency>
@@ -357,6 +426,12 @@ limitations under the License.
         </dependency>
 
         <dependency>
+            <groupId>com.jgeppert.struts2.bootstrap</groupId>
+            <artifactId>struts2-bootstrap-plugin</artifactId>
+            <version>2.5.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.rometools</groupId>
             <artifactId>rome-fetcher</artifactId>
             <version>${rome.version}</version>
@@ -387,24 +462,17 @@ limitations under the License.
         </dependency>
 
         <dependency>
-            <groupId>org.webjars.npm</groupId>
-            <artifactId>angular</artifactId>
-            <version>${angular.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth-provider</artifactId>
             <scope>compile</scope>
             <version>${oauth-core.version}</version>
         </dependency>
 
-
         <!-- Test deps -->
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -593,7 +661,7 @@ limitations under the License.
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.17</version>
+                <version>2.22.0</version>
                 <configuration>
                     <systemProperties>
                         <property>
@@ -601,15 +669,12 @@ limitations under the License.
                             <value>${basedir}/target</value>
                         </property>
                     </systemProperties>
-                    <!--excludes>
-                        <exclude>**/??.java</exclude>
-                    </excludes-->
                 </configuration>
             </plugin>
 
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
                 <dependencies>
                     <dependency>
                         <groupId>ant-contrib</groupId>

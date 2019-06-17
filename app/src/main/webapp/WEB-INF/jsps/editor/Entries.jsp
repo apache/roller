@@ -28,76 +28,30 @@
 
 
 <%-- ============================================================= --%>
-<%-- Number of entries and date message --%>
-<%-- ============================================================= --%>
+<%-- Next / previous links --%>
 
-<div class="tablenav">
-    
-    <div style="float:left;">
-        <s:text name="weblogEntryQuery.nowShowing">
-            <s:param value="pager.items.size()" />
-        </s:text>
-    </div>
-    <s:if test="pager.items.size() > 0">
-        <div style="float:right;">
-            <s:if test="firstEntry.pubTime != null">
-                <s:text name="weblogEntryQuery.date.toStringFormat">
-                    <s:param value="firstEntry.pubTime" />
-                </s:text>
-            </s:if>
-            ---
-            <s:if test="lastEntry.pubTime != null">
-                <s:text name="weblogEntryQuery.date.toStringFormat">
-                    <s:param value="lastEntry.pubTime" />
-                </s:text>
-            </s:if>
-        </div>
-    </s:if>
-    <br />
-    
-    
-    <%-- ============================================================= --%>
-    <%-- Next / previous links --%>
-    <%-- ============================================================= --%>
-    
-    <s:if test="pager.prevLink != null && pager.nextLink != null">
-        <br /><center>
-            &laquo;
-            <a href='<s:property value="pager.prevLink" />'>
-            <s:text name="weblogEntryQuery.prev" /></a>
-            | <a href='<s:property value="pager.nextLink" />'>
-            <s:text name="weblogEntryQuery.next" /></a>
-            &raquo;
-        </center><br />
-    </s:if>
-    <s:elseif test="pager.prevLink != null">
-        <br /><center>
-            &laquo;
-            <a href='<s:property value="pager.prevLink" />'>
-            <s:text name="weblogEntryQuery.prev" /></a>
-            | <s:text name="weblogEntryQuery.next" />
-            &raquo;
-        </center><br />
-    </s:elseif>
-    <s:elseif test="pager.nextLink != null">
-        <br /><center>
-            &laquo;
-            <s:text name="weblogEntryQuery.prev" />
-            | <a class="" href='<s:property value="pager.nextLink" />'>
-            <s:text name="weblogEntryQuery.next" /></a>
-            &raquo;
-        </center><br />
-    </s:elseif>
-    <s:else><br /></s:else>
-    
-</div> <%-- class="tablenav" --%>
+<nav>
+    <ul class="pager">
+        <s:if test="pager.prevLink != null">
+            <li class="previous">
+                <a href='<s:property value="pager.prevLink" />'> 
+                    <span aria-hidden="true">&larr;</span>Newer</a>
+            </li>
+        </s:if>
+        <s:if test="pager.nextLink != null">
+            <li class="next">
+                <a href='<s:property value="pager.nextLink"/>'>Older
+                    <span aria-hidden="true">&rarr;</span></a>
+            </li>
+        </s:if>
+    </ul>
+</nav>
 
 
 <%-- ============================================================= --%>
 <%-- Entry table--%>
-<%-- ============================================================= --%>
 
-<p>
+<p style="text-align: center">
     <span class="draftEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span> 
     <s:text name="weblogEntryQuery.draft" />&nbsp;&nbsp;
     <span class="pendingEntryBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -106,9 +60,11 @@
     <s:text name="weblogEntryQuery.scheduled" />&nbsp;&nbsp;
 </p>
 
-<table class="rollertable" width="100%">
+<table class="rollertable table table-striped" width="100%">
 
 <tr>
+    <th class="rollertable" width="5%"> </th>
+    <th class="rollertable" width="5%"> </th>
     <th class="rollertable" width="5%">
         <s:text name="weblogEntryQuery.pubTime" />
     </th>
@@ -120,12 +76,6 @@
     </th>
     <th class="rollertable" width="5%">
         <s:text name="weblogEntryQuery.category" />
-    </th>
-    <th class="rollertable" width="5%">
-    </th>
-    <th class="rollertable" width="5%">
-    </th>
-    <th class="rollertable" width="5%">
     </th>
 </tr>
 
@@ -143,6 +93,22 @@
     <s:else>
         <tr>
     </s:else>
+
+    <td>
+        <s:url var="editUrl" action="entryEdit">
+            <s:param name="weblog" value="%{actionWeblog.handle}" />
+            <s:param name="bean.id" value="#post.id" />
+        </s:url>
+        <s:a href="%{editUrl}"><span class="glyphicon glyphicon-edit"></s:a>
+    </td>
+
+    <td>
+        <s:set var="postId" value="#post.id" />
+        <s:set var="postTitle" value="#post.title" />
+        <a href="#" 
+            onclick="showDeleteModal('<s:property value="postId" />', '<s:property value="postTitle"/>' )"> 
+            <span class="glyphicon glyphicon-trash"></span></a>
+    </td>
     
     <td>
         <s:if test="#post.pubTime != null">
@@ -161,33 +127,18 @@
     </td>
     
     <td>
-        <str:truncateNicely upper="80"><s:property value="#post.displayTitle" /></str:truncateNicely>
+        <s:if test="#post.status.name() == 'PUBLISHED'">
+            <a href='<s:property value="#post.permalink" />'>
+                <str:truncateNicely upper="80"><s:property value="#post.displayTitle" /></str:truncateNicely>
+            </a>
+        </s:if>
+        <s:else>
+            <str:truncateNicely upper="80"><s:property value="#post.displayTitle" /></str:truncateNicely>
+        </s:else>
     </td>
     
     <td>
         <s:property value="#post.category.name" />
-    </td>
-    
-    <td>
-        <s:if test="#post.status.name() == 'PUBLISHED'">
-            <a href='<s:property value="#post.permalink" />'><s:text name="weblogEntryQuery.view" /></a>
-        </s:if>
-    </td>
-
-    <td>
-        <s:url var="editUrl" action="entryEdit">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-            <s:param name="bean.id" value="#post.id" />
-        </s:url>
-        <s:a href="%{editUrl}"><s:text name="generic.edit" /></s:a>
-    </td>
-
-    <td>
-        <s:url var="deleteUrl" action="entryRemoveViaList">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-            <s:param name="removeId" value="#post.id" />
-        </s:url>
-        <s:a href="%{deleteUrl}"><s:text name="generic.delete" /></s:a>
     </td>
 
     </tr>
@@ -195,7 +146,94 @@
 
 </table>
 
+
+<%-- ============================================================= --%>
+<%-- Next / previous links --%>
+
+<nav>
+    <ul class="pager">
+        <s:if test="pager.prevLink != null">
+            <li class="previous">
+                <a href='<s:property value="pager.prevLink" />'>
+                    <span aria-hidden="true">&larr;</span> Older</a>
+            </li>
+        </s:if>
+        <s:if test="pager.nextLink != null">
+            <li class="next">
+                <a href='<s:property value="pager.nextLink"/>'>Newer
+                    <span aria-hidden="true">&rarr;</span></a>
+            </li>
+        </s:if>
+    </ul>
+</nav>
+
 <s:if test="pager.items.isEmpty">
     <s:text name="weblogEntryQuery.noneFound" />
-    <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 </s:if>
+
+
+<div id="delete-entry-modal" class="modal fade delete-entry-modal" tabindex="-1" role="dialog">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <s:set var="deleteAction">entryRemoveViaList!remove</s:set>
+            
+            <s:form action="%{#deleteAction}" theme="bootstrap" cssClass="form-horizontal">
+                <s:hidden name="salt"/>
+                <s:hidden name="weblog"/>
+                <s:hidden name="removeId" id="removeId"/>
+            
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <h3><s:text name="weblogEntryRemove.removeWeblogEntry"/></h3>
+                        <p><s:text name="weblogEntryRemove.areYouSure"/></p>
+                    </div>
+                </div>
+                
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <s:text name="weblogEntryRemove.entryTitle"/>
+                        </label>
+                        <div class="col-sm-9 controls">
+                            <p class="form-control-static" style="padding-top:0px" id="postTitleLabel"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <s:text name="weblogEntryRemove.entryId"/>
+                        </label>
+                        <div class="col-sm-9 controls">
+                            <p class="form-control-static" style="padding-top:0px" id="postIdLabel"></p>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="modal-footer">
+                    <s:submit cssClass="btn" value="%{getText('generic.yes')}"/>
+                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">
+                        <s:text name="generic.no" />
+                    </button>
+                </div>
+
+            </s:form>
+            
+        </div>
+
+    </div> 
+    
+</div>
+
+<script>
+    function showDeleteModal( postId, postTitle ) {
+        $('#postIdLabel').html(postId);
+        $('#postTitleLabel').html(postTitle);
+        $('#removeId').val(postId);
+        $('#delete-entry-modal').modal({show: true});
+    }
+</script>

@@ -16,22 +16,28 @@
 
 package org.apache.roller.planet.business;
 
-import java.util.Date;
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.pojos.Planet;
-import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 /**
  * Test planet Entry functionality.
  */
-public class EntryFunctionalTests extends TestCase {
+public class EntryFunctionalTests  {
     
     public static Log log = LogFactory.getLog(EntryFunctionalTests.class);
     
@@ -43,8 +49,9 @@ public class EntryFunctionalTests extends TestCase {
     private SubscriptionEntry testEntry2 = null;
     private SubscriptionEntry testEntry3 = null;
     
-    
-    protected void setUp() throws Exception {
+
+    @BeforeEach
+    public void setUp() throws Exception {
         // setup planet
         TestUtils.setupWeblogger();
 
@@ -71,8 +78,8 @@ public class EntryFunctionalTests extends TestCase {
         log.info("EXITED");
     }
     
-    
-    protected void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() throws Exception {
         log.info("ENTERED");
         
         TestUtils.teardownSubscription(testSub1.getId());
@@ -83,7 +90,8 @@ public class EntryFunctionalTests extends TestCase {
         log.info("EXITED");
     }
     
-    
+
+    @Test
     public void testEntryLookups() throws Exception {
         
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
@@ -108,7 +116,7 @@ public class EntryFunctionalTests extends TestCase {
         assertEquals(0, mgr.getEntries(group, new Date(), null, 0, 10).size());
     }
     
-    
+    @Test
     public void testDeleteEntries() throws Exception {
         
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();

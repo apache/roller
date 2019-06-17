@@ -39,7 +39,7 @@ public final class UIPluginManagerImpl implements UIPluginManager {
     private static UIPluginManagerImpl instance = null;
     
     // list of configured WeblogEntryEditor classes
-    Map editors = new LinkedHashMap();
+    private Map editors = new LinkedHashMap();
     
     // the default WeblogEntryEditor
     WeblogEntryEditor defaultEditor = null;

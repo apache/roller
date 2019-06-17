@@ -17,41 +17,33 @@
 */
 package org.apache.roller.weblogger.business;
 
-import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
  * Test Weblog related business operations.
  */
-public class WeblogTest extends TestCase {
+public class WeblogTest  {
     
     public static Log log = LogFactory.getLog(WeblogTest.class);
     
     User testUser = null;
     
-    
-    public WeblogTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(WeblogTest.class);
-    }
-    
-    
     /**
      * All tests in this suite require a user.
      */
+    @BeforeEach
     public void setUp() throws Exception {
         
         log.info("BEGIN");
@@ -69,7 +61,8 @@ public class WeblogTest extends TestCase {
         
         log.info("END");
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
         
         log.info("BEGIN");
@@ -89,6 +82,7 @@ public class WeblogTest extends TestCase {
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
+    @Test
     public void testWeblogCRUD() throws Exception {
         
         log.info("BEGIN");
@@ -159,6 +153,7 @@ public class WeblogTest extends TestCase {
     /**
      * Test lookup mechanisms.
      */
+    @Test
     public void testWeblogLookups() throws Exception {
         
         log.info("BEGIN");

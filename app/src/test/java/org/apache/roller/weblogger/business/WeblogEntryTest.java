@@ -18,56 +18,37 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.TagStat;
-import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
-import org.apache.roller.weblogger.pojos.WeblogEntryTag;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.Timestamp;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test WeblogEntry related business operations.
  */
-public class WeblogEntryTest extends TestCase {
+public class WeblogEntryTest  {
     
     public static Log log = LogFactory.getLog(WeblogEntryTest.class);
     
     User testUser = null;
     Weblog testWeblog = null;
-    
-    
-    public WeblogEntryTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(WeblogEntryTest.class);
-    }
-    
+
     
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @BeforeEach
     public void setUp() throws Exception {
 
         // setup weblogger
@@ -89,7 +70,8 @@ public class WeblogEntryTest extends TestCase {
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
         
         try {
@@ -106,6 +88,7 @@ public class WeblogEntryTest extends TestCase {
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
+    @Test
     public void testWeblogEntryCRUD() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -157,6 +140,7 @@ public class WeblogEntryTest extends TestCase {
     /**
      * Test lookup mechanisms ... 
      */
+    @Test
     public void testWeblogEntryLookups() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -326,6 +310,7 @@ public class WeblogEntryTest extends TestCase {
     /**
      * Test that the createAnchor() method actually ensures unique anchors.
      */
+    @Test
     public void testCreateAnchor() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -355,6 +340,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
     }
 
+    @Test
     public void testCreateAnEntryWithTagsShortcut() throws Exception {
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -404,7 +390,8 @@ public class WeblogEntryTest extends TestCase {
             log.info(sw.toString());
         }
     }
-        
+
+    @Test
     public void testAddMultipleTags() throws Exception {
 
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -431,7 +418,8 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.teardownWeblogEntry(id);
         TestUtils.endSession(true);
     }
-    
+
+    @Test
     public void testAddMultipleIdenticalTags() throws Exception {
 
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -456,8 +444,9 @@ public class WeblogEntryTest extends TestCase {
         // teardown our test entry
         TestUtils.teardownWeblogEntry(id);
         TestUtils.endSession(true);
-    }    
+    }
 
+    @Test
     public void testRemoveTagsViaShortcut() throws Exception {
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -496,7 +485,8 @@ public class WeblogEntryTest extends TestCase {
             log.info(sw.toString());
         }
     }
-    
+
+    @Test
     public void testTagsExist() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -546,7 +536,8 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.teardownWeblog(wid);
         TestUtils.endSession(true);
     }
-    
+
+    @Test
     public void testGetEntriesByTag() throws Exception {
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -582,8 +573,9 @@ public class WeblogEntryTest extends TestCase {
             log.info(sw.toString());
         }
     }
-        
 
+
+    @Test
     public void testRemoveEntryTagCascading() throws Exception {
 
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -617,8 +609,9 @@ public class WeblogEntryTest extends TestCase {
 
         // terminate
         TestUtils.endSession(true);
-    } 
-    
+    }
+
+    @Test
     public void testUpdateTags() throws Exception {
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
@@ -662,6 +655,7 @@ public class WeblogEntryTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
      public void testUpdateTagTime() throws Exception {
          WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
@@ -710,6 +704,7 @@ public class WeblogEntryTest extends TestCase {
         TestUtils.endSession(true);
     }
 
+    @Test
     public void testTagAggregates() throws Exception {
         log.info("BEGIN");
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -818,8 +813,7 @@ public class WeblogEntryTest extends TestCase {
                 }
                 Integer expectedCount =
                         expectedWeblogTags.get(stat.getName());
-                assertEquals(stat.getName(),
-                        expectedCount.intValue(), stat.getCount());
+                assertEquals(expectedCount.intValue(), stat.getCount(), stat.getName());
             }
 
             tags = mgr.getTags(null, null, null, 0, -1);
@@ -837,7 +831,7 @@ public class WeblogEntryTest extends TestCase {
                     fail("Unexpected tagName.");
                 }
                 Integer expectedCount = expectedSiteTags.get(stat.getName());
-                assertEquals(stat.getName(), expectedCount.intValue(), stat.getCount());
+                assertEquals( expectedCount.intValue(), stat.getCount(), stat.getName());
             }
 
             TestUtils.teardownWeblog(testWeblog2.getId());
@@ -854,6 +848,7 @@ public class WeblogEntryTest extends TestCase {
         log.info("END");
     }
 
+    @Test
     public void testTagAggregatesCaseSensitivity() throws Exception {
 
         Weblog testWeblog2 = TestUtils.setupWeblog("entryTestWeblog2",
@@ -938,6 +933,7 @@ public class WeblogEntryTest extends TestCase {
     /**
      * Test that we can add and remove entry attributes for an entry.
      */
+    @Test
      public void testEntryAttributeCRUD() throws Exception {
         
         WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -999,8 +995,9 @@ public class WeblogEntryTest extends TestCase {
         entry = emgr.getWeblogEntry(id);
         assertNull(entry);
     }
-    
-    
+
+
+    @Test
     public void testWeblogStats() throws Exception {
 
         WeblogEntryManager emgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();

@@ -16,25 +16,31 @@
 
 package org.apache.roller.planet.business;
 
-import java.util.Set;
-import junit.framework.TestCase;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 /**
  * Test planet Group functionality.
  */
-public class GroupFunctionalTests extends TestCase {
+public class GroupFunctionalTests  {
     
     private Planet testPlanet = null;
     private PlanetGroup testGroup1 = null;
     private PlanetGroup testGroup2 = null;
     
-    
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         // setup planet
         TestUtils.setupWeblogger();
 
@@ -43,14 +49,14 @@ public class GroupFunctionalTests extends TestCase {
         testGroup2 = TestUtils.setupGroup(testPlanet, "groupFuncTest2");
     }
     
-    
-    protected void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() throws Exception {
         TestUtils.teardownGroup(testGroup1.getId());
         TestUtils.teardownGroup(testGroup2.getId());
         TestUtils.teardownPlanet(testPlanet.getId());
     }
     
-    
+    @Test
     public void testGroupLookups() throws Exception {
         
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();

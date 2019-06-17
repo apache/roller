@@ -18,41 +18,34 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <!doctype html>
 <html>
-    <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
-      <title><s:property value="pageTitle" /></title>
-      <tiles:insertAttribute name="head" />
-    </head>
-    <body>
-        
-        <div id="banner">
-            <tiles:insertAttribute name="banner" />
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
+    <title><s:property value="pageTitle"/></title>
+    <tiles:insertAttribute name="head"/>
+    <style>
+        <tiles:insertAttribute name="styles" />
+    </style>
+</head>
+<body>
+
+<tiles:insertAttribute name="banner"/>
+
+<div id="wrapper" class="container-fluid" style="margin-top:5em">
+
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <tiles:insertAttribute name="messages"/>
+            <tiles:insertAttribute name="content"/>
         </div>
-        
-        <div id="wrapper"> 
-            <div id="leftcontent_wrap">
-                <div id="leftcontent"> 
-                </div>
-            </div>
-            
-            <div id="centercontent_wrap">
-                <div id="centercontent">
-                    <tiles:insertAttribute name="messages" />
-                    <tiles:insertAttribute name="content" />    
-                </div>
-            </div>
-            
-            <div id="rightcontent_wrap">
-                <div id="rightcontent"> 
-                </div>
-            </div>
-        </div>
-        
-        <div id="footer">
-            <tiles:insertAttribute name="footer" />
-        </div>
-        
-    </body>
+        <div class="col-md-1"></div>
+    </div>
+
+    <div id="footer">
+        <tiles:insertAttribute name="footer"/>
+    </div>
+
+</body>
 </html>

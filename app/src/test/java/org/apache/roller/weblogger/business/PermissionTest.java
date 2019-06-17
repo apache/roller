@@ -17,44 +17,36 @@
 */
 package org.apache.roller.weblogger.business;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test User/Weblog Permissions related business operations.
  */
-public class PermissionTest extends TestCase {
+public class PermissionTest  {
     
     public static Log log = LogFactory.getLog(PermissionTest.class);
     
     User testUser = null;
     Weblog testWeblog = null;
-    
-    
-    public PermissionTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(PermissionTest.class);
-    }
-    
-    
+
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @BeforeEach
     public void setUp() throws Exception {
         
         log.info("BEGIN");
@@ -73,7 +65,8 @@ public class PermissionTest extends TestCase {
         
         log.info("END");
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
         
         log.info("BEGIN");
@@ -94,6 +87,7 @@ public class PermissionTest extends TestCase {
     /**
      * Test basic persistence operations ... Create, Update, Delete.
      */
+    @Test
     public void testPermissionsCRUD() throws Exception {
         
         log.info("BEGIN");
@@ -172,6 +166,7 @@ public class PermissionTest extends TestCase {
     /**
      * Test lookup mechanisms.
      */
+    @Test
     public void testPermissionsLookups() throws Exception {
         
         log.info("BEGIN");
@@ -238,6 +233,7 @@ public class PermissionTest extends TestCase {
     /**
      * Tests weblog invitation process.
      */
+    @Test
     public void testInvitations() throws Exception {
         
         log.info("BEGIN");
@@ -300,6 +296,7 @@ public class PermissionTest extends TestCase {
     /**
      * Tests weblog invitation process.
      */
+    @Test
     public void testPermissionChecks() throws Exception {
         
         log.info("BEGIN");

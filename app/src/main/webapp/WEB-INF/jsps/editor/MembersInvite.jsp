@@ -17,32 +17,26 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<script>
-// <!--
-<%@ include file="/roller-ui/scripts/ajax-user.js" %>
-// -->
-</script> 
-
 <p class="subtitle"><s:text name="inviteMember.subtitle" /></p>
 <p><s:text name="inviteMember.prompt" /></p>
 
-<s:form action="invite!save">
+<s:form action="invite!save" cssClass="form-horizontal">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
     
     <div class="formrow">
-       <label for="userName" class="formrow" />
+       <label for="userName" class="formrow">
            <s:text name="inviteMember.userName" /></label>
        <div>
            <input name="userName" id="userName" size="30" maxlength="30" 
-               onfocus="onUserNameFocus(true)" onkeyup="onUserNameChange(true)" /><br />
+               onfocus="onMemberNameFocus(true)" onkeyup="onMemberNameChange(true)" /><br />
        </div>
-    </div>    
-    
+    </div>
+
     <div class="formrow">
        <label class="formrow" />&nbsp;</label>
        <div>
-           <select id="userList" size="10" onchange="onUserSelected()" style="width:400px"></select>
+           <select id="userList" size="10" onchange="onMemberSelected()" style="width:400px"></select>
        </div>
     </div>    
     
@@ -58,14 +52,56 @@
     </div>  
          
     <br />      
-    <s:submit value="%{getText('inviteMember.button.save')}" />
-    <s:submit value="%{getText('generic.cancel')}" action="invite!cancel" />
+    <s:submit id="inviteButton" value="%{getText('inviteMember.button.save')}"  cssClass="btn btn-default"/>
+    <s:submit value="%{getText('generic.cancel')}" action="invite!cancel" cssClass="btn"/>
 
 </s:form>
 
-<%-- this forces focus to the userName field --%>
 <script>
-<!--
-document.getElementById('userName').focus();
-// -->
+
+    <%@ include file="/roller-ui/scripts/ajax-user.js" %>
+
+    $(document).ready(function () {
+        $('#userName').focus();
+        $('#inviteButton').attr("disabled", true);
+    });
+
+    function onMemberNameChange(enabled) {
+        u = userURL;
+        if (enabled != null) {
+            u = u + "&enabled=" + enabled;
+        }
+
+        userName = $('#userName').val();
+        if (userName.length > 0) {
+            u = u + "&startsWith=" + userName;
+        }
+
+        sendUserRequest(u);
+    }
+
+    function onMemberSelected() {
+        userName = $('#userList').children("option:selected").val();
+        if (userName !== '') {
+            $('#inviteButton').attr("disabled", false);
+        }
+    }
+
+    function onMemberNameFocus(enabled) {
+        if (!init) {
+            init = true;
+            u = userURL;
+
+            if (enabled != null) {
+                u = u + "&enabled=" + enabled;
+            }
+
+            sendUserRequest(u);
+
+        } else {
+            $('#inviteButton').attr("disabled", false);
+        }
+    }
+
+
 </script>

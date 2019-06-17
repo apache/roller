@@ -1,3 +1,4 @@
+<%@ taglib prefix="tilesx" uri="http://tiles.apache.org/tags-tiles-extras" %>
 <%--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
@@ -18,50 +19,79 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
-        <title><s:property value="getProp('site.shortName')"/>: <s:property value="pageTitle" /></title>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
+    <title><s:property value="getProp('site.shortName')"/>: <s:property value="pageTitle"/></title>
+    <tiles:insertAttribute name="head"/>
+    <style>
+        <tiles:insertAttribute name="styles" />
+    </style>
+</head>
+<body>
 
-        <tiles:insertAttribute name="head" />     
-        <style>
-            <tiles:insertAttribute name="styles" />
-        </style>
-    </head>
-    <body>
-        <div id="banner">
-            <tiles:insertAttribute name="bannerStatus" />
-        </div>
-        
-        <div id="menu">
-            <h1><s:property value="pageTitle" /></h1>
-            <tiles:insertAttribute name="menu" />
-        </div>
-        
-        <div id="content"> 
-            <div id="leftcontent_wrap">
-                <div id="leftcontent"> 
+<tiles:insertAttribute name="banner"/>
+
+<tilesx:useAttribute name="sidebar" id="sidebar" classname="java.lang.String"/>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <div class="col-md-3 roller-column-left">
+
+            <div class="panel panel-default">
+                <div class="panel-body" style="text-align: center">
+
+                    <img src='<s:url value="/roller-ui/images/feather.svg" />'
+                         alt="ASF feat" height="100" align="center"/>
+                    <h4><s:text name="generic.poweredBy" /></h4>
+
+                    <s:if test="authenticatedUser != null || actionWeblog != null">
+                        <tiles:insertAttribute name="userStatus"/>
+                    </s:if>
+
                 </div>
             </div>
-            
-            <div id="centercontent_wrap">
-                <div id="centercontent">   
-                    <tiles:insertAttribute name="messages" /> 
-                    <tiles:insertAttribute name="content" />    
+
+            <c:if test="${sidebar != '/WEB-INF/jsps/tiles/empty.jsp'}">
+                <s:property value="sidebar"/>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+
+                        <tiles:insertAttribute name="sidebar"/>
+
+                    </div>
                 </div>
-            </div>
-            
-            <div id="rightcontent_wrap">
-                <div id="rightcontent"> 
-                    <tiles:insertAttribute name="sidebar" />
+            </c:if>
+
+        </div>
+
+        <div class="col-md-9 roller-column-right">
+            <div class="panel panel-default">
+                <div class="panel-body" style="min-height: 30em">
+
+                    <tiles:insertAttribute name="messages"/>
+
+                    <h2 class="roller-page-title"><s:property value="pageTitle"/></h2>
+                    <tiles:insertAttribute name="content"/>
+
                 </div>
             </div>
         </div>
-        
-        <div id="footer">
-            <tiles:insertAttribute name="footer" />
-        </div>
-        
-    </body>
+
+
+    </div>
+
+</div>
+
+<footer class="footer">
+    <div class="container-fluid">
+        <tiles:insertAttribute name="footer"/>
+    </div>
+</footer>
+
+</body>
 </html>
+

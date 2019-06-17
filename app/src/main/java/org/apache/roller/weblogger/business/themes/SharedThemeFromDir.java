@@ -194,8 +194,7 @@ public class SharedThemeFromDir extends SharedTheme {
         setEnabled(true);
 
         // load resource representing preview image
-        File previewFile = new File(this.themeDir + File.separator
-                + themeMetadata.getPreviewImage());
+        File previewFile = new File(this.themeDir + File.separator + themeMetadata.getPreviewImage());
         if (!previewFile.exists() || !previewFile.canRead()) {
             log.warn("Couldn't read theme [" + this.getName()
                     + "] preview image file ["

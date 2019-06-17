@@ -18,43 +18,37 @@
 
 package org.apache.roller.weblogger.business;
 
-import java.util.Map;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test Properties related business operations.
  */
-public class PropertiesTest extends TestCase {
+public class PropertiesTest  {
     
     public static Log log = LogFactory.getLog(PropertiesTest.class);
-    
-    
-    public PropertiesTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(PropertiesTest.class);
-    }
-    
-    
+
+    @BeforeEach
     public void setUp() throws Exception {
         // setup weblogger
         TestUtils.setupWeblogger();
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
     }
-    
-    
+
+
+    @Test
     public void testProperiesCRUD() throws Exception {
         
         // remember, the properties table is initialized during Roller startup

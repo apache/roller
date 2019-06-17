@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +34,8 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
  */
 // TODO: make this work @AllowedMethods({"execute"})
 public class UserAdmin extends UIAction {
-    
+    private CreateUserBean bean = new CreateUserBean();
+
     public UserAdmin() {
         this.actionName = "userAdmin";
         this.desiredMenu = "admin";
@@ -52,15 +54,24 @@ public class UserAdmin extends UIAction {
         return false;
     }
 
-    /**
-     * Show user admin search page.
-     */
+    // show user admin search page
     public String execute() {
         return SUCCESS;
+    }
+
+    public String edit() {
+        return "edit";
     }
 
     public String getAuthMethod() {
         return authMethod.name();
     }
 
+    public CreateUserBean getBean() {
+        return bean;
+    }
+
+    public void setBean(CreateUserBean bean) {
+        this.bean = bean;
+    }
 }

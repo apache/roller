@@ -16,7 +16,6 @@
 
 package org.apache.roller.planet.business;
 
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.updater.FeedUpdater;
@@ -24,12 +23,17 @@ import org.apache.roller.planet.business.updater.SingleThreadedFeedUpdater;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
  * Test feed updater.
  */
-public class SingleThreadedFeedUpdaterTest extends TestCase {
+public class SingleThreadedFeedUpdaterTest  {
     
     public static Log log = LogFactory.getLog(SingleThreadedFeedUpdaterTest.class);
     
@@ -37,9 +41,9 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
     
     private String feed_url = "https://rollerweblogger.org/roller/feed/entries/atom";
     
-    
-    protected void setUp() throws Exception {
 
+    @BeforeEach
+    public void setUp() throws Exception {
         // setup planet
         TestUtils.setupWeblogger();
         
@@ -52,18 +56,14 @@ public class SingleThreadedFeedUpdaterTest extends TestCase {
         WebloggerFactory.getWeblogger().flush();
     }
     
-    
-    protected void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() throws Exception {
         TestUtils.teardownSubscription(testSub.getId());
     }
-    
-    
+
+    @Test
     public void testUpdateSubscription() throws Exception {
-
-        if (RomeFeedFetcherTest.shouldSkip()) {
-            return;
-        }
-
+        
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
         Subscription sub = mgr.getSubscriptionById(testSub.getId());
         

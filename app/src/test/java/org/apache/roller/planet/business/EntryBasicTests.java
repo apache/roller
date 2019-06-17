@@ -16,34 +16,36 @@
 
 package org.apache.roller.planet.business;
 
-import junit.framework.TestCase;
-import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
  * Test Entry CRUD.
  */
-public class EntryBasicTests extends TestCase {
+public class EntryBasicTests {
     
     private Subscription testSub = null;
-    
-    
-    protected void setUp() throws Exception {
-        // setup planet
+
+    @BeforeEach
+    public void setUp() throws Exception {
         TestUtils.setupWeblogger();
-        
         testSub = TestUtils.setupSubscription("entryBasicTest");
     }
     
-    
-    protected void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() throws Exception {
         TestUtils.teardownSubscription(testSub.getId());
     }
     
-    
+    @Test
     public void testEntryCRUD() throws Exception {
         
         PlanetManager mgr = WebloggerFactory.getWeblogger().getPlanetManager();
@@ -85,5 +87,5 @@ public class EntryBasicTests extends TestCase {
         entry = mgr.getEntryById(testEntry.getId());
         assertNull(entry);
     }
-    
+
 }

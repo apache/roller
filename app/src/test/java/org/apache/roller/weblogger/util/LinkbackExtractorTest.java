@@ -18,51 +18,24 @@
 
 package org.apache.roller.weblogger.util;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test linkback extractor.
  */
-public class LinkbackExtractorTest extends TestCase {
-    
-    /**
-     * Constructor for LinkbackExtractorTest.
-     * @param arg0
-     */
-    public LinkbackExtractorTest(String arg0) {
-        super(arg0);
-    }
+public class LinkbackExtractorTest  {
 
-    public static void main(String[] args) {
-    }
-    
-    /**
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-    
-    /**
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
     public void testLinkbackExtractor() throws Exception {
         String[][] testrefs = new String[][]
         {
             // Second URL contains a link to the first
             {
                 "http://cassandra.apache.org/",
-                        "http://rollerweblogger.org/roller/entry/composite_keys_in_cassandra"
+                        "https://rollerweblogger.org/roller/entry/composite_keys_in_cassandra"
             },
             {
                 "http://roller.apache.org/downloads/downloads.html",
-                        "http://rollerweblogger.org/project/date/20140627"
+                        "https://rollerweblogger.org/project/date/20140627"
             }
         };
 
@@ -74,9 +47,6 @@ public class LinkbackExtractorTest extends TestCase {
 
         // todo: le.getPermalink() and le.getExcerpt() working
     }
-    
-    public static Test suite() {
-        return new TestSuite(LinkbackExtractorTest.class);
-    }
+
     
 }

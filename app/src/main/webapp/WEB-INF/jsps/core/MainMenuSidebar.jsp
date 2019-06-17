@@ -22,31 +22,42 @@
         <div class="menu-tl">
             
             <div class="sidebarInner">
-                <h3><s:text name="yourWebsites.actions" /></h3>
                 
+                <%-- 
+                <h4><s:text name="yourWebsites.actions" /></h4> 
                 <hr size="1" noshade="noshade" />
-                
-                <h3><a href="<s:url action="profile"/>"><s:text name="yourWebsites.editProfile" /></a></h3>
+                --%>
+
+                <%-- Edit profile --%>
+
+                <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                <a href="<s:url action="profile"/>"><s:text name="yourWebsites.editProfile" /></a></h4>
                 <p><s:text name="yourWebsites.editProfile.desc" /></p>
 
+                <%-- Edit profile --%>
+                
                 <s:if test="getBooleanProp('webservices.enableAtomPub') && getProp('webservices.atomPubAuth') == 'oauth'">
-                    <h3><a href="<s:url action="oauthKeys" />"><s:text name="yourWebsites.oauthKeys" /></a></h3>
+                    <h4><span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+                    <a href="<s:url action="oauthKeys" />"><s:text name="yourWebsites.oauthKeys" /></a></h4>
                     <p><s:text name="yourWebsites.oauthKeys.desc" /></p>
                 </s:if>
 
+                <%-- Create weblog --%>
+                
                 <s:if test="getBooleanProp('site.allowUserWeblogCreation') && (getBooleanProp('groupblogging.enabled') || (existingPermissions.isEmpty && pendingPermissions.isEmpty))">
-                    <h3><a href="<s:url action="createWeblog" />"><s:text name="yourWebsites.createWeblog" /></a></h3>
+                    <h4><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    <a href="<s:url action="createWeblog" />"><s:text name="yourWebsites.createWeblog" /></a></h4>
                     <p><s:text name="yourWebsites.createWeblog.desc" /></p>
                 </s:if>
 
-                <s:if test="userIsAdmin">               
-                    <h3><a href="<s:url action="globalConfig" namespace="/roller-ui/admin" />"><s:text name="yourWebsites.globalAdmin" /></a></h3>          
+                <s:if test="userIsAdmin">
+
+                    <%-- Roller settings --%>
+
+                    <h4><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                    <a href="<s:url action="globalConfig" namespace="/roller-ui/admin" />"><s:text name="yourWebsites.globalAdmin" /></a></h4>          
                     <p><s:text name="yourWebsites.globalAdmin.desc" /></p>
-                    
-                    <s:if test="getBooleanProp('planet.aggregator.enabled')">               
-                        <h3><a href="<s:url action="planetConfig" namespace="/roller-ui/admin" />"><s:text name="yourWebsites.planetAdmin" /></a></h3>
-                        <p><s:text name="yourWebsites.planetAdmin.desc" /></p>
-                    </s:if>
+
                 </s:if>
                 
                 <br />

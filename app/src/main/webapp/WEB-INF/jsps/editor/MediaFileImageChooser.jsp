@@ -17,25 +17,8 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
-
 <style>
-    .mediaObject {
-         width:120px;
-         height:120px;
-    }
-    .mediaObjectInfo {
-        clear:left;
-        width:130px;
-        margin-left:5px;
-        font-size:11px;
-    }
-    .highlight {
-        border: 1px solid #aaa;
-    }
-    #myMenu {
-        margin-left: 0;
-    }
+
 </style>
 
 <script>
@@ -49,144 +32,102 @@
 
 <%-- Subtitle and folder path --%>
 
-<s:if test='currentDirectory.name.equals("default")'>
-
-    <p class="subtitle">
-        <s:text name="mediaFileImageChooser.subtitle" >
-            <s:param value="weblog" />
-        </s:text>
-    </p>
-    </p>
-    <p class="pagetip">
-        <s:text name="mediaFileImageChooser.rootPageTip" />
-    </p>
-
-</s:if>
-
-<s:else>
-
-    <p class="subtitle">
-        <s:text name="mediaFileView.folderName"/> /
-        <s:iterator var="directory" value="currentDirectoryHierarchy">
-            <s:url var="getDirectoryByPathUrl" action="mediaFileImageChooser">
-                <s:param name="directoryName" value="#directory.key" />
-                <s:param name="weblog" value="%{actionWeblog.handle}" />
-            </s:url>
-            <s:a href="%{getDirectoryByPathUrl}"><s:property value="#directory.value" /></s:a> /
-        </s:iterator>
-    </p>
-    <p class="pagetip">
-        <s:text name="mediaFileImageChooser.dirPageTip" />
-    </p>
-
-</s:else>
-
-
-<%-- || (pager && pager.items.size() > 0) --%>
 <s:if test="childFiles || allDirectories">
 
-<s:form id="mediaFileChooserForm" name="mediaFileChooserForm" action="mediaFileView">
-	<s:hidden name="salt" />
-    <s:hidden name="weblog" />
-    <s:hidden name="directoryId" />
-    <input type="hidden" name="mediaFileId" value="" />
+    <s:form id="mediaFileChooserForm" name="mediaFileChooserForm" action="mediaFileImageChooser"
+            theme="bootstrap" cssClass="form-vertical">
+        <s:hidden name="salt"/>
+        <s:hidden name="weblog"/>
+        <input type="hidden" name="mediaFileId" value=""/>
 
+        <p class="pagetip"><s:text name="mediaFileImageChooser.pageTip"/></p>
 
-    <%-- ***************************************************************** --%>
+        <%-- ***************************************************************** --%>
+        <%-- Maybe show media directory selector --%>
 
-    <%-- Media file folder contents --%>
+        <s:if test="!allDirectories.isEmpty">
+            <s:select name="directoryId" emptyOption="true" label="%{getText('mediaFileView.viewFolder')}"
+                      list="allDirectories" listKey="id" listValue="name" onchange="onView()"/>
+        </s:if>
 
-    <script>
-        function highlight(el, flag) {
-            if (flag) {
-                $(el).addClass("highlight");
-            } else {
-                $(el).removeClass("highlight");
-            }
-        }
-    </script>
+        <%-- ***************************************************************** --%>
+        <%-- Media files grid --%>
 
-    <div  width="720px" height="500px">
-        <ul id = "myMenu">
+        <div id="imageGrid" class="panel panel-default">
+            <div class="panel-body">
 
-            <s:if test="childFiles.size() == 0">
-                <p style="text-align: center"><s:text name="mediaFileView.noFiles"/></p>
-            </s:if>
+                <ul>
 
-            <%-- --------------------------------------------------------- --%>
+                    <s:if test="childFiles.size() == 0">
+                        <p style="text-align: center"><s:text name="mediaFileView.noFiles"/></p>
+                    </s:if>
 
-            <%-- List media directories first --%>
+                    <s:if test="childFiles.size() > 0">
 
-            <s:iterator var="directory" value="allDirectories">
-                <li class="align-images"
-                        onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
-                    <div class="mediaObject">
-                        <img  border="0" src='<s:url value="/images/folder.png"/>'
-                              class="dir-image" alt="mediaFolder.png"
-                              onclick="onSelectDirectory('<s:property value="#directory.id"/>')"/>
-                    </div>
-                    <div class="mediaObjectInfo">
-                        <label><s:property value="#directory.name" /></label>
-                    </div>
-                </li>
-            </s:iterator>
+                        <s:iterator var="mediaFile" value="childFiles">
 
-            <%-- --------------------------------------------------------- --%>
+                            <s:url var="mediaFileURL" includeContext="false" value="%{#mediaFile.permalink}"/>
+                            <s:url var="mediaFileThumbnailURL" value="%{#mediaFile.thumbnailURL}"/>
 
-            <%-- List media files next --%>
-            <s:if test="childFiles.size() > 0">
+                            <li class="align-images"
+                                onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
 
-                <s:iterator var="mediaFile" value="childFiles">
+                                <div class="mediaObject"
+                                     onclick="onSelectMediaFile('<s:property value="#mediaFile.name"/>',
+                                             '<s:property value="%{mediaFileURL}"/>',
+                                             '<s:property value="#mediaFile.isImageFile()"/>')">
 
-                    <li class="align-images"
-                        onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
+                                    <s:if test="#mediaFile.imageFile">
+                                        <img border="0" src='<s:property value="%{mediaFileThumbnailURL}" />'
+                                             width='<s:property value="#mediaFile.thumbnailWidth"/>'
+                                             height='<s:property value="#mediaFile.thumbnailHeight"/>'
+                                             alt='<s:property value="#mediaFile.name" />'/>
+                                    </s:if>
 
-                        <s:url var="mediaFileURL" includeContext="false"
-                            value="%{#mediaFile.permalink}"></s:url>
+                                    <s:else>
+                                        <span class="glyphicon glyphicon-file"></span>
+                                    </s:else>
 
-                        <s:url var="mediaFileThumbnailURL"
-                            value="%{#mediaFile.thumbnailURL}"></s:url>
+                                </div>
 
-                        <div class="mediaObject"
-                             onclick="onSelectMediaFile('<s:property value="#mediaFile.name"/>',
-                             '<s:property value="%{mediaFileURL}" />','<s:property value="#mediaFile.isImageFile()"/>')" >
+                                <div class="mediaObjectInfo">
+                                    <str:truncateNicely upper="60">
+                                        <s:property value="#mediaFile.name"/>
+                                    </str:truncateNicely>
+                                </div>
 
-                            <s:if test="#mediaFile.imageFile">
+                            </li>
 
-                                <img border="0" src='<s:property value="%{mediaFileThumbnailURL}" />'
-                                     width='<s:property value="#mediaFile.thumbnailWidth"/>'
-                                     height='<s:property value="#mediaFile.thumbnailHeight"/>' />
-                            </s:if>
+                        </s:iterator>
+                    </s:if>
 
-                        </div>
+                </ul>
+            </div>
+        </div>
 
-                        <div class="mediaObjectInfo">
-                            <label>
-                                <str:truncateNicely upper="50">
-                                    <s:property value="#mediaFile.name" />
-                                </str:truncateNicely>
-                            </label>
-                        </div>
+        <div style="clear:left;"></div>
 
-                    </li>
-
-                </s:iterator>
-            </s:if>
-
-        </ul>
-    </div>
-
-    <div style="clear:left;"></div>
-
-
-</s:form>
+    </s:form>
 
 </s:if>
-
 
 
 <script>
+
     function onSelectMediaFile(name, url, isImage) {
         window.parent.onSelectMediaFile(name, url, isImage);
     }
+
+    function highlight(el, flag) {
+        if (flag) {
+            $(el).addClass("highlight");
+        } else {
+            $(el).removeClass("highlight");
+        }
+    }
+
+    function onView() {
+        document.mediaFileChooserForm.submit();
+    }
+
 </script>

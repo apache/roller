@@ -105,7 +105,7 @@
        </property-def>
       <property-def  name="users.editor.pages"  key="configForm.editorPages">
          <type>text</type>
-         <default-value>editor-text.jsp,editor-xinha.jsp</default-value>
+         <default-value>editor-text.jsp,editor-summernote.jsp</default-value>
          <rows>3</rows>
          <cols>40</cols>
       </property-def>
@@ -136,11 +136,11 @@
    <display-group name="weblogSettings" key="configForm.weblogSettings" >
        
       <property-def  name="site.pages.maxEntries"  key="configForm.pageMaxEntries">
-         <type>string</type>
+         <type>integer</type>
          <default-value>30</default-value>
       </property-def>
       <property-def  name="site.newsfeeds.defaultEntries"  key="configForm.newsfeedMaxEntries">
-         <type>string</type>
+         <type>integer</type>
          <default-value>30</default-value>
       </property-def>
       <property-def  name="site.newsfeeds.styledFeeds"  key="configForm.styledFeeds">
@@ -210,11 +210,11 @@
          <default-value>exe</default-value>
       </property-def>
       <property-def  name="uploads.file.maxsize"  key="configForm.maxFileSize">
-         <type>string</type>
+         <type>float</type>
          <default-value>2.00</default-value>
       </property-def>
       <property-def  name="uploads.dir.maxsize"  key="configForm.maxDirSize">
-         <type>string</type>
+         <type>float</type>
          <default-value>20.00</default-value>
       </property-def>
 

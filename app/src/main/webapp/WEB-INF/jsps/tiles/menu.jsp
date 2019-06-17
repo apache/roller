@@ -20,41 +20,47 @@
 <s:set var="tabMenu" value="menu"/>
 <s:if test="#tabMenu != null">
 
-<table class="menuTabTable" cellspacing="0" >
-<tr>
-<s:iterator var="tab" value="#tabMenu.tabs" >
-    <s:if test="#tab.selected">
-        <s:set var="selectedTab" value="#tab" />
-        <td class="menuTabSelected">
-    </s:if>
-    <s:else>
-        <td class="menuTabUnselected">
-    </s:else>
-    <div class="menu-tr">
-        <div class="menu-tl">
-            &nbsp;&nbsp;<a href="<s:url action="%{#tab.action}"><s:param name="weblog" value="actionWeblog.handle"/></s:url>"><s:text name="%{#tab.key}" /></a>&nbsp;&nbsp;
-        </div>
-    </div>
-    </td>
-    <td class="menuTabSeparator"></td>
-</s:iterator>
-</tr>
-</table>
+    <%--
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
 
-<table class="menuItemTable" cellspacing="0" >
-    <tr>
-        <td class="padleft">
-            <s:iterator var="tabItem" value="#selectedTab.items" status="stat">
-                <s:if test="!#stat.first">|</s:if>
-                <s:if test="#tabItem.selected">
-                    <a class="menuItemSelected" href="<s:url action="%{#tabItem.action}"><s:param name="weblog" value="actionWeblog.handle"/></s:url>"><s:text name="%{#tabItem.key}" /></a>
-                </s:if>
-                <s:else>
-                    <a class="menuItemUnselected" href="<s:url action="%{#tabItem.action}"><s:param name="weblog" value="actionWeblog.handle"/></s:url>"><s:text name="%{#tabItem.key}" /></a>
-                </s:else>
+                    <s:iterator id="tab" value="#tabMenu.tabs">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" 
+                                aria-haspopup="true" aria-expanded="false">
+                                <s:text name="%{#tab.key}"/> <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <s:iterator id="tabItem" value="#tab.items" status="stat">
+                                    <li>
+                                        <a href="<s:url action="%{#tabItem.action}"><s:param name="weblog" value="actionWeblog.handle"/></s:url>">
+                                            <s:text name="%{#tabItem.key}"/>
+                                        </a>
+                                    </li>
+                                </s:iterator>
+                            </ul>
+                        </li>
+                    </s:iterator>
+                    
+                </ul>
+            </div> <!--/.nav-collapse -->
+        </div> <!--/.container-fluid -->
+    </nav>
+
+    <s:iterator id="tab" value="#tabMenu.tabs">
+
+        <h3><s:text name="%{#tab.key}"/></h3>
+
+        <div class="list-group">
+            <s:iterator id="tabItem" value="#tab.items" status="stat">
+                <a class="list-group-item" href="<s:url action="%{#tabItem.action}"><s:param name="weblog" value="actionWeblog.handle"/></s:url>">
+                    <s:text name="%{#tabItem.key}"/></a>
             </s:iterator>
-        </td>
-    </tr>
-</table>
+        </div>
 
+    </s:iterator>
+    --%>
+        
 </s:if>

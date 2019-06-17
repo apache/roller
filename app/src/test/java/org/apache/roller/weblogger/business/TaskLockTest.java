@@ -18,39 +18,31 @@
 
 package org.apache.roller.weblogger.business;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.business.runnable.RollerTask;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test TaskLock related business operations.
  */
-public class TaskLockTest extends TestCase {
+public class TaskLockTest  {
     
     public static Log log = LogFactory.getLog(TaskLockTest.class);
-    
-    
-    public TaskLockTest(String name) {
-        super(name);
-    }
-    
-    
-    public static Test suite() {
-        return new TestSuite(TaskLockTest.class);
-    }
-    
-    
+
+    @BeforeEach
     public void setUp() throws Exception {
         // setup weblogger
         TestUtils.setupWeblogger();
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
     }
     
@@ -59,6 +51,7 @@ public class TaskLockTest extends TestCase {
      * Test basic persistence operations ... Create, Update, Delete.
      * @throws Exception if one is raised
      */
+    @Test
     public void testTaskLockCRUD() throws Exception {
         
         ThreadManager mgr = WebloggerFactory.getWeblogger().getThreadManager();
@@ -68,22 +61,22 @@ public class TaskLockTest extends TestCase {
         task.init();
         
         // try to acquire a lock
-        assertTrue("Failed to acquire lease.",mgr.registerLease(task));
+        assertTrue(mgr.registerLease(task), "Failed to acquire lease.");
         // We don't flush here because registerLease should flush on its own
         TestUtils.endSession(false);
         
         // make sure task is locked
-        assertFalse("Acquired lease a second time when we shouldn't have been able to.",mgr.registerLease(task));
+        assertFalse(mgr.registerLease(task),"Acquired lease a second time when we shouldn't have been able to.");
         TestUtils.endSession(false);
         
         // try to release a lock
-        assertTrue("Release of lease failed.",mgr.unregisterLease(task));
+        assertTrue(mgr.unregisterLease(task), "Release of lease failed.");
         // We don't flush here because unregisterLease should flush on its own
         TestUtils.endSession(false);
 
         // Current unregisterLease semantics are idempotent.  Double release should
         // actually succeed.
-        assertTrue("Second release failed.", mgr.unregisterLease(task));
+        assertTrue( mgr.unregisterLease(task), "Second release failed.");
         TestUtils.endSession(false);
     }
     

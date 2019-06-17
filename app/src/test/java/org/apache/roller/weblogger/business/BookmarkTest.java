@@ -18,26 +18,30 @@
 
 package org.apache.roller.weblogger.business;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogBookmark;
+import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
-import junit.framework.TestCase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.pojos.WeblogBookmark;
-import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
-import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.Weblog;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
  * Test Weblogger Bookmark Management.
  */
-public class BookmarkTest extends TestCase {
+public class BookmarkTest  {
     
     public static Log log = LogFactory.getLog(BookmarkTest.class);
     
@@ -48,6 +52,7 @@ public class BookmarkTest extends TestCase {
     /**
      * All tests in this suite require a user and a weblog.
      */
+    @BeforeEach
     public void setUp() throws Exception {
         
         // setup weblogger
@@ -62,7 +67,8 @@ public class BookmarkTest extends TestCase {
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
         
         try {
@@ -79,7 +85,8 @@ public class BookmarkTest extends TestCase {
         return WebloggerFactory.getWeblogger();
     }
     
-    
+
+    @Test
     public void testBookmarkCRUD() throws Exception {
         
         BookmarkManager bmgr = getRoller().getBookmarkManager();
@@ -151,6 +158,7 @@ public class BookmarkTest extends TestCase {
     /**
      * Test all bookmark lookup methods.
      */
+    @Test
     public void _testBookmarkLookups() throws Exception {
         
         BookmarkManager bmgr = getRoller().getBookmarkManager();
@@ -222,7 +230,7 @@ public class BookmarkTest extends TestCase {
      * method.  i am leaving this test here for a while just in case we change
      * our minds.
      */
-    public void _testMoveFolderContents() throws Exception {
+    public void testMoveFolderContents() throws Exception {
         BookmarkManager bmgr = getRoller().getBookmarkManager();
         try {        
 
@@ -293,9 +301,8 @@ public class BookmarkTest extends TestCase {
             TestUtils.endSession(true);
         }
     }
-    
-    
-    public void _testBookmarkImport() throws Exception {
+
+    public void testBookmarkImport() throws Exception {
         
         InputStream fis = this.getClass().getResourceAsStream("/bookmarks.opml");
         getRoller().getBookmarkManager().importBookmarks(

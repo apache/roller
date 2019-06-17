@@ -18,7 +18,10 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
@@ -42,8 +45,16 @@ public class CreateUserBean {
     private Boolean enabled = Boolean.TRUE;
     private String activationCode = null;
     private boolean administrator = false;
-    
-    
+    private List<String> list = new ArrayList<>();
+
+    public List<String> getList() {
+        return list;
+    }
+
+    public void setList(List<String> list) {
+        this.list = list;
+    }
+
     public String getId() {
         return id;
     }
@@ -139,7 +150,6 @@ public class CreateUserBean {
     public void setAdministrator(boolean administrator) {
         this.administrator = administrator;
     }
-    
     
     public void copyTo(User dataHolder) {
         

@@ -60,18 +60,20 @@
 						<a href="$url.feed.entries.atom">Subscribe to this blog</a>
 					</div>
 				</div>
-				<div class="well">
-                    #set($mytags = $model.weblog.getPopularTags(-1, 30))
-                    #if ($mytags && $mytags.size() > 4)
-                       <h3>Hot tags</h3>
-                       <p class="details">Below are the most often used tags in the blog. Hover over a tag to see a count of entries, click a tag to see the most recent posts with the tag.</p>
-                       <div id="tagcloud">
-                       #foreach ($tag in $mytags)
-                          <a class="tag s${tag.intensity}" href="$url.tag($tag.name)" title="$tag.count">$tag.name</a>
-                       #end
-                       </div>
-                    #end
+				#if ($mytags && $mytags.size() > 4)
+                    <div class="well">
+                        #set($mytags = $model.weblog.getPopularTags(-1, 30))
+                           <h3>Hot tags</h3>
+                           <p class="details">Below are the most often used tags in the blog.
+							   Hover over a tag to see a count of entries, click a tag to see
+							   the most recent posts with the tag.</p>
+                           <div id="tagcloud">
+                           #foreach ($tag in $mytags)
+                              <a class="tag s${tag.intensity}" href="$url.tag($tag.name)" title="$tag.count">$tag.name</a>
+                           #end
+                           </div>
 				</div>
+				#end
 			</div> <!-- close sidebar_content -->
 		</div> <!-- /.row -->
 	</div> <!-- /.container -->

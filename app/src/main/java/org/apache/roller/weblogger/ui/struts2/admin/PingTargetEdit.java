@@ -77,17 +77,10 @@ public class PingTargetEdit extends UIAction {
         }
     }
 
-    public String execute() {
-        if (!isAdd()) {
-            getBean().copyFrom(pingTarget);
-        }
-        return INPUT;
-    }
-
     /**
      * Save ping target.
      */
-    public String save() {
+    public String execute() {
         myValidate();
 
         if (!hasActionErrors()) {
@@ -98,8 +91,7 @@ public class PingTargetEdit extends UIAction {
                 pingTargetMgr.savePingTarget(pingTarget);
                 WebloggerFactory.getWeblogger().flush();
 
-                addMessage(isAdd() ? "pingTarget.created" : "pingTarget.updated",
-                        pingTarget.getName());
+                addMessage(isAdd() ? "pingTarget.created" : "pingTarget.updated", pingTarget.getName());
 
                 return SUCCESS;
             } catch (WebloggerException ex) {

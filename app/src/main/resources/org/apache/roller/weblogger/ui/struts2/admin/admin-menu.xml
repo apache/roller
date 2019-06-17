@@ -42,8 +42,8 @@ See comments in editor-menu.xml for info about attributes.
                    name="tabbedmenu.admin.planetConfig" />
         
         <!-- globalPerms="admin" -->
-        <menu-item action="planetSubscriptions"
-                   name="tabbedmenu.admin.planetSubscriptions" />
+        <menu-item action="planetGroupSubs"
+                   name="tabbedmenu.admin.planetGroupSubs" />
         
         <!-- globalPerms="admin" -->
         <menu-item action="planetGroups"

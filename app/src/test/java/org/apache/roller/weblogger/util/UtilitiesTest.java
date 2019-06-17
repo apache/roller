@@ -18,62 +18,40 @@
 
 package org.apache.roller.weblogger.util;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test utilities.
  */
-public class UtilitiesTest extends TestCase {
-    
-    /**
-     * Constructor for LinkbackExtractorTest.
-     * @param arg0
-     */
-    public UtilitiesTest(String arg0) {
-        super(arg0);
-    }
-    
-    public static void main(String[] args) {
-    }
-    
-    /**
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
-    
-    /**
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
+public class UtilitiesTest  {
+
+    @Test
     public void testExtractHTML() {
         String test = "<a>keep me</a>";
         String expect = "<a></a>";
         String result = Utilities.extractHTML(test);
         assertEquals(expect, result);
     }
-    
+
+    @Test
     public void testRemoveHTML() {
         String test = "<br><br><p>a <b>bold</b> sentence with a <a href=\"http://example.com\">link</a></p>";
         String expect = "a bold sentence with a link";
         String result = Utilities.removeHTML(test, false);
         assertEquals(expect, result);
     }
-    
+
+    @Test
     public void testTruncateNicely1() {
         String test = "blah blah blah blah blah";
         String expect = "blah blah blah";
         String result = Utilities.truncateNicely(test, 11, 15, "");
         assertEquals(expect, result);
     }
-    
+
+    @Test
     public void testTruncateNicely2() {
         String test = "<p><b>blah1 blah2</b> <i>blah3 blah4 blah5</i></p>";
         String expect = "<p><b>blah1 blah2</b> <i>blah3</i></p>";
@@ -83,6 +61,7 @@ public class UtilitiesTest extends TestCase {
     }
     
     /* broken because it uses UtilitiesModel which is part of .ui.* package
+    @Test
     public void testAddNoFollow() {
         String test1 = "<p>this some text with a <a href=\"http://example.com\">link</a>";
         String expect1 = "<p>this some text with a <a href=\"http://example.com\" rel=\"nofollow\">link</a>";
@@ -96,9 +75,5 @@ public class UtilitiesTest extends TestCase {
      
     }
      */
-    
-    public static Test suite() {
-        return new TestSuite(UtilitiesTest.class);
-    }
-    
+
 }

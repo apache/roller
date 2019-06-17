@@ -15,14 +15,20 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 --%>
-<meta charset="UTF-8">
-<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
-<% response.setContentType("text/html;charset=UTF-8"); %>
-<%@ page language="java" contentType="text/html;charset=UTF-8" %>
+
+<%@ page contentType="text/html; charset=UTF-8" %>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
-<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ taglib uri="/struts-tags" prefix="s" %>
+
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="tags"%>
+
+<%@ taglib uri="/struts-tags" prefix="s" %>
+<%@ taglib uri="/struts-bootstrap-tags" prefix="sboo" %>
+
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+
+
+

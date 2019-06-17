@@ -22,19 +22,14 @@
        <s:param value="actionWeblog.handle" />
    </s:text>
 </p>  
-<p class="pagetip">
-    <s:text name="pings.explanation"/>
-<p/>
+<p class="pagetip"> <s:text name="pings.explanation"/> </p>
 
-<p/>
-<h2><s:text name="pings.commonPingTargets"/></h2>
-<p/>
+<p> <h2><s:text name="pings.commonPingTargets"/></h2> </p>
 
-<p/>
-<s:text name="pings.commonPingTargetsExplanation"/>
-<p/>
+<p> <s:text name="pings.commonPingTargetsExplanation"/> </p>
 
-<table class="rollertable">
+
+<table class="rollertable table table-striped">
 <%-- Headings --%>
 <tr class="rollertable">
     <th class="rollertable" width="20%"><s:text name="generic.name" /></th>

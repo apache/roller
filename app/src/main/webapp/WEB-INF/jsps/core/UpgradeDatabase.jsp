@@ -19,47 +19,44 @@
 
 
 <s:if test="error">
-    
-    <h2><s:text name="installer.errorUpgradingTables" /></h2> 
-    <p><s:text name="installer.errorUpgradingTablesExplanation" /></p> 
-<pre>
-<s:iterator value="messages"><s:property/><br /></s:iterator>
-</pre>
-    
+
+    <h2><s:text name="installer.errorUpgradingTables"/></h2>
+    <p><s:text name="installer.errorUpgradingTablesExplanation"/></p>
+    <pre>
+        <s:iterator value="messages"><s:property/><br/></s:iterator>
+    </pre>
+
 </s:if>
 <s:elseif test="upgradeRequired">
 
-    <h2><s:text name="installer.databaseUpgradeNeeded" /></h2>
-    
+    <h2><s:text name="installer.databaseUpgradeNeeded"/></h2>
+
     <p>
         <s:text name="installer.databaseUpgradeNeededExplanation">
-            <s:param value="databaseProductName" />
+            <s:param value="databaseProductName"/>
         </s:text>
     </p>
-    <p><s:text name="installer.upgradeTables" /></p>
+    <p><s:text name="installer.upgradeTables"/></p>
 
-    <s:form action="install!upgrade">
-		<s:hidden name="salt" />
-        <s:submit value="%{getText('installer.yesUpgradeTables')}" />
+    <s:form action="install!upgrade" class="form-horizontal">
+        <s:hidden name="salt"/>
+        <s:submit value="%{getText('installer.yesUpgradeTables')}" cssClass="btn btn-primary" />
     </s:form>
 
 </s:elseif>
 <s:else>
-    
-    <h2><s:text name="installer.tablesUpgraded" /></h2>
-    
-    <p><s:text name="installer.tablesUpgradedExplanation" /></p>
+
+    <h2><s:text name="installer.tablesUpgraded"/></h2>
+
+    <p><s:text name="installer.tablesUpgradedExplanation"/></p>
     <p>
         <s:text name="installer.tryBootstrapping">
             <s:param><s:url action="install!bootstrap"/></s:param>
         </s:text>
     </p>
-    
-<pre>
-<s:iterator value="messages"><s:property/><br /></s:iterator>
-</pre>
-    
-</s:else>
 
-<br />
-<br />
+    <pre>
+        <s:iterator value="messages"><s:property/><br/></s:iterator>
+    </pre>
+
+</s:else>

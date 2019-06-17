@@ -22,7 +22,8 @@
 
 <s:iterator var="cache" value="stats">
     <s:if test="#cache != null && !#cache.value.isEmpty">
-        <table cellspacing="3" border="1">
+
+        <table class="table table-bordered">
             <tr>
                 <th colspan="2"><s:property value="#cache.key"/></th>
             </tr>
@@ -39,7 +40,7 @@
                     <s:form action="cacheInfo!clear">
 						<s:hidden name="salt" />
                         <s:hidden name="cache" value="%{#cache.key}" />
-                        <s:submit value="%{getText('cacheInfo.clear')}" />
+                        <s:submit value="%{getText('cacheInfo.clear')}" cssClass="btn btn-default" />
                     </s:form>
                 </td>
             </tr>

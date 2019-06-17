@@ -22,6 +22,8 @@
         <div class="menu-tl">
             
             <div class="sidebarInner">
+
+                <%-- comments on this entry --%>
                 
                 <h3><s:text name="weblogEdit.comments" /></h3>
 
@@ -38,7 +40,9 @@
                 <s:else>
                     <span><s:text name="generic.none" /></span>
                 </s:else>
-                
+
+                <%-- pending entries --%>
+                    
                 <hr size="1" noshade="noshade" />  
                 <h3><s:text name="weblogEdit.pendingEntries" /></h3>
                 
@@ -52,12 +56,13 @@
                             <s:param name="weblog" value="%{actionWeblog.handle}" />
                             <s:param name="bean.id" value="#post.id" />
                         </s:url>
-                        <img src='<s:url value="/images/table_error.png"/>' 
-                             align="absmiddle" border="0" alt="icon" title="Edit" />
-                             <s:a href="%{editUrl}"><str:truncateNicely lower="50"><s:property value="#post.title" /></str:truncateNicely></s:a>
+                        <span class="glyphicon glyphicon-lock" aria-hidden="true"> </span> 
+                        <s:a href="%{editUrl}"><str:truncateNicely lower="60">
+                             <s:property value="#post.title" /></str:truncateNicely></s:a>
                     </span><br />
                 </s:iterator>
-                
+
+                <%-- draft entries --%>
                 
                 <hr size="1" noshade="noshade" />            
                 <h3><s:text name="weblogEdit.draftEntries" /></h3>
@@ -72,15 +77,17 @@
                             <s:param name="weblog" value="%{actionWeblog.handle}" />
                             <s:param name="bean.id" value="#post.id" />
                         </s:url>
-                        <img src='<s:url value="/images/table_edit.png"/>' 
-                             align="absmiddle" border="0" alt="icon" title="Edit" />
-                             <s:a href="%{editUrl}"><str:truncateNicely lower="50"><s:property value="#post.title" /></str:truncateNicely></s:a>
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"> </span> 
+                        <s:a href="%{editUrl}"><str:truncateNicely lower="60">
+                             <s:property value="#post.title" /></str:truncateNicely></s:a>
                     </span><br />
                 </s:iterator>
                 
                 
                 <s:if test="userAnAuthor">
-                    
+
+                    <%-- published entries --%>
+
                     <hr size="1" noshade="noshade" />
                     <h3><s:text name="weblogEdit.publishedEntries" /></h3>
                     
@@ -94,13 +101,15 @@
                                 <s:param name="weblog" value="%{actionWeblog.handle}" />
                                 <s:param name="bean.id" value="#post.id" />
                             </s:url>
-                            <img src='<s:url value="/images/table_edit.png"/>' 
-                                 align="absmiddle" border="0" alt="icon" title="Edit" />
-                            <s:a href="%{editUrl}"><str:truncateNicely lower="50"><s:property value="#post.title" /></str:truncateNicely></s:a>
+                            <span class="glyphicon glyphicon-book" aria-hidden="true"> </span> 
+                            <s:a href="%{editUrl}"><str:truncateNicely lower="60">
+                                <s:property value="#post.title" /></str:truncateNicely></s:a>
                         </span><br />
                     </s:iterator>
-                    
-                    
+
+
+                    <%-- scheduled entries --%>
+
                     <hr size="1" noshade="noshade" />            
                     <h3><s:text name="weblogEdit.scheduledEntries" /></h3>
                     
@@ -114,9 +123,9 @@
                                 <s:param name="weblog" value="%{actionWeblog.handle}" />
                                 <s:param name="bean.id" value="#post.id" />
                             </s:url>
-                            <img src='<s:url value="/images/table_edit.png"/>' 
-                                 align="absmiddle" border="0" alt="icon" title="Edit" />
-                            <s:a href="%{editUrl}"><str:truncateNicely lower="50"><s:property value="#post.title" /></str:truncateNicely></s:a>
+                            <span class="glyphicon glyphicon-time" aria-hidden="true"> </span>
+                            <s:a href="%{editUrl}"><str:truncateNicely lower="60">
+                                <s:property value="#post.title" /></str:truncateNicely></s:a>
                         </span><br />
                     </s:iterator>
                     

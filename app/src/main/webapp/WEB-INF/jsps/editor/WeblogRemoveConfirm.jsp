@@ -21,7 +21,7 @@
     <s:text name="websiteRemove.subtitle" />
 </p>
 
-<p>
+<p style="margin-bottom: 3em">
     <s:text name="websiteRemove.youSure"> 
         <s:param value="actionWeblog.name" />
     </s:text>
@@ -32,27 +32,30 @@
     </span>
 </p>
 
-<p>
-    <s:text name="websiteRemove.websiteId" /> = [<s:property value="actionWeblog.id" />]
-    <br />
-    <s:text name="websiteRemove.websiteName" /> = [<s:property value="actionWeblog.name" />]
-</p>
+<div class="row">
+    <div class="col-md-2">
 
-<table>
-    <tr>
-        <td>
-            <s:form action="weblogRemove!remove">
-				<s:hidden name="salt" />
-                <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-                <s:submit value="%{getText('generic.yes')}" />
-            </s:form>
-        </td>
-        <td>
-            <s:form action="weblogConfig" method="post">
-				<s:hidden name="salt" />
-                <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-                <s:submit value="%{getText('generic.no')}" />
-            </s:form>
-        </td>
-    </tr>
-</table>
+        <s:form action="weblogRemove!remove" theme="bootstrap" cssClass="form-horizontal">
+            <s:hidden name="salt" />
+            <s:hidden name="weblog" value="%{actionWeblog.handle}" />
+            <s:submit cssClass="btn btn-danger" value="%{getText('generic.yesRemove')}" />
+        </s:form>
+
+    </div>
+    <div class="col-md-2">
+
+        <s:form action="weblogConfig" method="post" theme="bootstrap" cssClass="form-horizontal">
+            <s:hidden name="salt" />
+            <s:hidden name="weblog" value="%{actionWeblog.handle}" />
+            <s:submit cssClass="btn btn-success" value="%{getText('generic.cancel')}" />
+        </s:form>
+
+    </div>
+    <div class="col-md-8"></div>
+</div>
+
+
+
+
+
+

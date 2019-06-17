@@ -23,7 +23,7 @@ function save() {
     radios = document.getElementsByTagName("input");
     var removing = false;
     for (var i=0; i<radios.length; i++) {
-        if (radios[i].value == -1 && radios[i].checked) {
+        if (radios[i].value === -1 && radios[i].checked) {
             removing = true;
         }
     }
@@ -41,7 +41,7 @@ function save() {
 
 <p><s:text name="memberPermissions.description" /></p>
 
-<s:form action="members!save">
+<s:form action="members!save" cssClass="form-horizontal">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
     
@@ -50,7 +50,7 @@ function save() {
             <s:text name="commentManagement.pending" />&nbsp;
     </div>
     
-    <table class="rollertable">
+    <table class="rollertable table table-striped">
         <tr class="rHeaderTr">
            <th class="rollertable" width="20%">
                <s:text name="memberPermissions.userName" />
@@ -80,7 +80,7 @@ function save() {
             </s:else>
             
                 <td class="rollertable">
-                    <img src='<s:url value="/images/user.png"/>' border="0" alt="icon" />
+                    <span class="glyphicon glyphicon-user"></span>
 	                <s:property value="#perm.user.userName" />
                 </td>               
                 <td class="rollertable">
@@ -108,7 +108,7 @@ function save() {
     <br />
      
     <div class="control">
-       <s:submit value="%{getText('generic.save')}" />
+       <s:submit value="%{getText('generic.save')}" cssClass="btn" />
     </div>
     
 </s:form>

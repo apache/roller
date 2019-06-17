@@ -15,27 +15,27 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-/*
- * ConfigDef.java
- *
- * Created on June 4, 2005, 1:10 PM
- */
-
 package org.apache.roller.weblogger.config.runtime;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 /**
  * Represents a logic grouping of runtime configuration properties.
  * Each ConfigDef may contain 0 or more DisplayGroups.
  *
+ * Created on June 4, 2005, 1:10 PM
  * @author Allen Gilliland
  */
 public class ConfigDef {
     
     private List<DisplayGroup> displayGroups = null;
     private String name = null;
+
+    Map<String, PropertyDef> propertyDefs = null;
     
     
     public ConfigDef() {
@@ -53,8 +53,8 @@ public class ConfigDef {
     public boolean removeDisplayGroup(DisplayGroup group) {
         return this.displayGroups.remove(group);
     }
-    
-    
+
+
     public String toString() {
         return name;
     }
@@ -74,5 +74,16 @@ public class ConfigDef {
     public void setName(String name) {
         this.name = name;
     }
-    
+
+    public PropertyDef getPropertyDef( String name ) {
+        if ( propertyDefs == null ) {
+            propertyDefs = new HashMap<>();
+            for (DisplayGroup displayGroup : getDisplayGroups()) {
+                for (PropertyDef propertyDef : displayGroup.getPropertyDefs()) {
+                    propertyDefs.put( propertyDef.getName(), propertyDef );
+                }
+            }
+        }
+        return propertyDefs.get( name );
+    }
 }
