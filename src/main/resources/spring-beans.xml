@@ -113,30 +113,6 @@
         <beans:property name="maxUploadSize" value="-1" />
     </beans:bean>
 
-    <beans:bean id="previewUrlModel" parent="urlModel" class="org.tightblog.rendering.model.URLModel" scope="prototype">
-        <!-- urlService is manually constructed with the shared theme being previewed -->
-        <beans:property name="urlService"><beans:null/></beans:property>
-    </beans:bean>
-
-    <beans:bean id="pageModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">
-        <beans:property name="sourceSet">
-            <beans:set>
-                <beans:ref bean="utilitiesModel"/>
-                <beans:ref bean="urlModel"/>
-            </beans:set>
-        </beans:property>
-    </beans:bean>
-
-    <!-- For weblog page preview rendering -->
-    <beans:bean id="previewModelSet" class="org.springframework.beans.factory.config.SetFactoryBean" scope="prototype">
-        <beans:property name="sourceSet">
-            <beans:set>
-                <beans:ref bean="utilitiesModel"/>
-                <beans:ref bean="previewUrlModel"/>
-            </beans:set>
-        </beans:property>
-    </beans:bean>
-
     <!-- Caching of Spring Data JPA repository queries -->
     <beans:bean id="cacheManager" class="org.springframework.cache.caffeine.CaffeineCacheManager"/>
 

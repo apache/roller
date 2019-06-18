@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -573,7 +573,6 @@ public class WeblogEntryManagerIT extends WebloggerTest {
             PrintWriter pw = new PrintWriter(sw); 
             t.printStackTrace(pw);
             log.error(sw.toString());
-            System.out.println(sw.toString());
         }
     }
 

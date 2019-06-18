@@ -29,7 +29,10 @@ import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.tightblog.rendering.model.Model;
 import org.tightblog.rendering.model.SiteModel;
+import org.tightblog.rendering.model.URLModel;
+import org.tightblog.rendering.model.UtilitiesModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThemeTemplateResolver;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
@@ -118,6 +121,15 @@ public class WebConfig implements WebMvcConfigurer {
     @Scope("prototype")
     public SiteModel siteModel(WeblogPageRequest wpr) {
         return new SiteModel(wpr);
+    }
+
+    @Bean
+    @Scope("prototype")
+    public Set<Model> pageModelSet(UtilitiesModel utilitiesModel, URLModel urlModel) {
+        Set<Model> models = new HashSet<>();
+        models.add(utilitiesModel);
+        models.add(urlModel);
+        return models;
     }
 
     @Override

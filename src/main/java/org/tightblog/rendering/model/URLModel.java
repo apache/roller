@@ -26,6 +26,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.tightblog.domain.Weblog;
+import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.service.URLService;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.domain.WeblogEntry;
@@ -44,16 +45,11 @@ public class URLModel implements Model {
     protected URLService urlService;
     private DynamicProperties dp;
     private Weblog weblog;
-    private boolean preview;
 
     @Autowired
     public URLModel(URLService urlService, DynamicProperties dp) {
         this.urlService = urlService;
         this.dp = dp;
-    }
-
-    public void setPreview(boolean preview) {
-        this.preview = preview;
     }
 
     @Override
@@ -73,7 +69,7 @@ public class URLModel implements Model {
 
         this.weblog = weblogRequest.getWeblog();
 
-        if (preview) {
+        if (weblogRequest instanceof WeblogPageRequest && ((WeblogPageRequest) weblogRequest).isPreview()) {
             this.urlService = new URLService(weblog.getTheme(), weblog.isUsedForThemePreview(), dp);
         }
     }

@@ -180,6 +180,10 @@ public class WeblogPageRequest extends WeblogRequest {
         return valid;
     }
 
+    public boolean isPreview() {
+        return preview;
+    }
+
     public String getContext() {
         return context;
     }

@@ -167,7 +167,7 @@ public class PreviewProcessor extends AbstractProcessor {
         initData.put("parsedRequest", incomingRequest);
 
         // Load models for page previewing
-        Map<String, Object> model = getModelMap("previewModelSet", initData);
+        Map<String, Object> model = getModelMap("pageModelSet", initData);
         model.put("model", incomingRequest);
 
         // Load special models for site-wide blog
