@@ -77,8 +77,8 @@ public class ThemeController {
                 for (WeblogTemplate template : oldTemplates) {
                     if (template.getDerivation() == Template.Derivation.OVERRIDDEN) {
                         weblogTemplateRepository.deleteById(template.getId());
-                        weblogManager.evictWeblogTemplateCaches(template.getWeblog(), template.getName(), template.getRole());
                     }
+                    weblogManager.evictWeblogTemplateCaches(weblog, template.getName(), template.getRole());
                 }
 
                 weblog.setTheme(newThemeId);

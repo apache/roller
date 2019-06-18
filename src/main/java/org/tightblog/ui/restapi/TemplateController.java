@@ -269,7 +269,11 @@ public class TemplateController {
                 }
 
                 weblogTemplateRepository.save(templateToSave);
-                weblogManager.evictWeblogTemplateCaches(templateToSave.getWeblog(), originalName, templateToSave.getRole());
+                weblogManager.evictWeblogTemplateCaches(templateToSave.getWeblog(), templateToSave.getName(),
+                        templateToSave.getRole());
+                if (originalName != null) {
+                    weblogTemplateRepository.evictWeblogTemplateByName(templateToSave.getWeblog(), originalName);
+                }
                 weblogManager.saveWeblog(templateToSave.getWeblog(), true);
 
                 return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(templateToSave.getId());
