@@ -55,6 +55,18 @@
             <source>../docs/roller-user-guide.odt</source>
             <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
         </file>
+        <file>
+            <source>../docs/roller-install-guide.pdf</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
+        </file>
+        <file>
+            <source>../docs/roller-template-guide.pdf</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
+        </file>
+        <file>
+            <source>../docs/roller-user-guide.pdf</source>
+            <outputDirectory>${artifact.artifactId}-${artifact.version}/docs</outputDirectory>
+        </file>
     </files>
 
 </assembly>
