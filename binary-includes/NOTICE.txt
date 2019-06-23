@@ -1,0 +1,27 @@
+Apache Roller
+Copyright 2001-2019 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+The product includes snippets of code from the Blojsom blog server
+Copyright 2003 David A. Czarnecki & Mark Lussier. All rights reserved.
+
+The product includes snippets of code from the Pebble blog server
+Copyright 2003 Simon Brown, All rights reserved.
+
+The product includes snippets of code written by Sun Microsystems, Inc.
+Copyright 2009 Sun Microsystems, Inc.
+
+The product includes snippets of code written by Dave Johnson for RSS and Atom in Action
+Copyright 2005 David M Johnson (For RSS and Atom In Action)
+
+The product includes snippets of code from Spring Mobile
+Copyright (c) 2010-2014 Pivotal, Inc. All Rights Reserved.
+
+The product includes icons by Mark James (http://www.famfamfam.com/lab/icons)
+
+The product includes snippets of code from the JavaMail
+COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.1
+Copyright (c) 1997-2011 Oracle and/or its affiliates. All rights reserved.
+https://glassfish.java.net/public/CDDL+GPL_1_1.html
