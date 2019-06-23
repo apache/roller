@@ -144,16 +144,10 @@
                         <span th:utext="${comment.content}">xxx</span>
 
                         <p class="comment-details">
-                            <span th:utext="${utils.msg('macro.weblog.postedby')}"></span>
-
-                            <a rel="nofollow" th:href="${comment.url}" th:remove="${#strings.isEmpty(comment.url) ? 'tag' : 'none'}">
-                                <b th:text="${comment.name}">xxx</b>
+                            Posted by <a rel="nofollow" th:href="${comment.url}" th:remove="${#strings.isEmpty(comment.url) ? 'tag' : 'none'}">
+                                <span th:text="${comment.name}">xxx</span>
                             </a>
-
-                            <span th:utext="${utils.msg('macro.weblog.on') + ' ' + utils.formatTemporal(comment.postTime, utils.msg('macro.weblog.datetimepattern'))}"></span>
-
-                            <a th:href="${url.getCommentURL(entry, comment.timestamp)}"
-                               class="entrypermalink" title="${utils.msg('macro.weblog.commentpermalink.title')}">#</a>
+                            <span th:if="${comment.postTime != null}">at <a th:href="${url.getCommentURL(entry, comment.timestamp)}" th:utext="${utils.formatTemporal(comment.postTime, utils.msg('macro.weblog.timedatepattern'))}">xxx</a></span>
                         </p>
 
                     </div>

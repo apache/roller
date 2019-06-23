@@ -3,7 +3,7 @@
     <h2 class="box" th:with="entries=${model.weblogEntriesPager.getEntries().get(day)}">
         <a th:href="${entries != null && entries.size() > 0 ? url.getURL(entries[0])
             : url.getEntriesURLForDate($utils.formatTemporal($day, $utils.msg('macro.weblog.datelinkpattern')))}">
-            <img class="daypermalink" border="0"
+            <img border="0"
                  th:src="${url.getSiteHome() + '/images/permalink.gif'}"
                  th:title="${utils.msg('macro.weblog.daypermalink.title')}"
                  th:alt="${url.getEntriesURLForDate(utils.formatTemporal(day, 'yyyyMMdd'))}"/></a>
@@ -17,8 +17,8 @@
             <span th:case="${false}" th:utext="${model.getTransformedSummary(entry) + ' ' + utils.msg('macro.weblog.readMoreLink', url.getURL(entry))}"></span>
         </p>
         <p class="entryPubInfo">
-            Posted <span th:if="${entry.pubTime != null}">at <a th:href="${url.getURL(entry)}" th:utext="${utils.formatTemporal(entry.pubTime, utils.msg('macro.weblog.timedatepattern'))}">xxx</a></span>
-            by <span th:utext="${entry.creator.screenName}">xxx</span> in <span class="category" th:utext="${entry.category.name}">xxx</span>
+            Posted by <span th:utext="${entry.creator.screenName}">xxx</span> in <span class="category" th:utext="${entry.category.name}">xxx</span>
+            <span th:if="${entry.pubTime != null}">at <a th:href="${url.getURL(entry)}" th:utext="${utils.formatTemporal(entry.pubTime, utils.msg('macro.weblog.timedatepattern'))}">xxx</a></span>
             <th:block th:if="${entry.getTags() != null && entry.getTags().size() > 0}">
                 <span>| Tags:</span>
                 <span th:each="tag : ${entry.getTags()}">

@@ -19,39 +19,37 @@
 
 <body>
 
-<div id="MainColumn">
-    <div align="center">
-        <h1 th:utext="${model.weblog.name}">xxx</h1>
+    <div class="row">
+        <div id="MainColumn">
+            <div align="center">
+                <h1 th:utext="${model.weblog.name}">xxx</h1>
 
-        <center>
-            <span th:replace="fragments :: WeblogCategoryBar"></span>
-        </center>
+                <center>
+                    <span th:replace="fragments :: WeblogCategoryBar"></span>
+                </center>
+            </div>
+
+            <div th:switch="${model.searchResults}" class="next-previous-links">
+                <span th:case="${false}" th:replace="fragments :: PreviousNextPager"></span>
+                <th:block th:case="${true}">
+                    <div th:replace="fragments :: WeblogSearchAgainForm"></div>
+                    <th:block th:if="${model.resultCount > 0}">
+                        <div th:replace="fragments :: PreviousNextSearchPager"></div>
+                    </th:block>
+                </th:block>
+            </div>
+
+            <div th:replace="fragments :: WeblogEntriesPager"></div>
+
+            <div th:if="${model.permalink}" th:remove="tag">
+                <div th:replace="fragments :: WeblogEntryComments"></div>
+                <div th:replace="fragments :: WeblogEntryCommentForm"></div>
+            </div>
+            <br/>
+        </div>
+
+        <div th:replace="${model.getTemplateIdByName('sidebar')}"></div>
     </div>
-
-    <div th:switch="${model.searchResults}" class="next-previous-links">
-        <span th:case="${false}" th:replace="fragments :: PreviousNextPager"></span>
-        <th:block th:case="${true}">
-            <div th:replace="fragments :: WeblogSearchAgainForm"></div>
-            <th:block th:if="${model.resultCount > 0}">
-                <div th:replace="fragments :: PreviousNextSearchPager"></div>
-            </th:block>
-        </th:block>
-    </div>
-
-    <div th:replace="fragments :: WeblogEntriesPager"></div>
-
-    <div th:if="${model.permalink}" th:remove="tag">
-        <div th:replace="fragments :: WeblogEntryComments"></div>
-        <div th:replace="fragments :: WeblogEntryCommentForm"></div>
-    </div>
-    <br/>
-</div>
-
-<div class="rightbar_wrapper">
-    <div class="rightbar">
-        <span th:replace="${model.getTemplateIdByName('sidebar')}"></span>
-    </div>
-</div>
 
 </body>
 </html>
