@@ -379,25 +379,19 @@ https://github.com/spring-projects/spring-framework
 
 -------------------------------------------------------------------------------
 
-This product bundles Google Guice 4.2.2, which is available under a
+This product bundles Google Guice 4.1.0, which is available under a
 "Apache 2.0" license. For details, see
 https://github.com/google/guice/blob/master/COPYING
 
 -------------------------------------------------------------------------------
 
-This product bundles SLF4J 1.7.26, which is available under a
+This product bundles SLF4J 1.7.25, which is available under a
 "MIT" license. For details, see
 https://www.slf4j.org/license.html
 
 -------------------------------------------------------------------------------
 
-This product bundles struts2-bootstrap 2.5.2, which is available under a
-"Apache 2.0" license. For details, see
-https://github.com/struts-community-plugins/struts2-bootstrap/blob/release/2.5.x/LICENSE
-
--------------------------------------------------------------------------------
-
-This product bundles romtools 1.12.0, which is available under a
+This product bundles romtools 1.7.4, which is available under a
 "Apache 2.0" license. For details, see
 https://github.com/rometools/rome/blob/master/LICENSE
 
@@ -437,7 +431,7 @@ https://mvnrepository.com/artifact/net.oauth.core/oauth-provider
 
 -------------------------------------------------------------------------------
 
-This product bundles Apache Ant 1.10.5 , which is available under a
+This product bundles Apache Ant 1.10.1 , which is available under a
 "Apache 2.0" license. For details, see
 https://ant.apache.org/license.html
 -------------------------------------------------------------------------------
