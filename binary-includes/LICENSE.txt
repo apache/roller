@@ -366,4 +366,84 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+Binary distribution specific license
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+This product bundles Spring Framework 4.1.4.RELEASE, which is available under a
+"Apache 2.0" license. For details, see
+https://github.com/spring-projects/spring-framework
+
+-------------------------------------------------------------------------------
+
+This product bundles Google Guice 4.2.2, which is available under a
+"Apache 2.0" license. For details, see
+https://github.com/google/guice/blob/master/COPYING
+
+-------------------------------------------------------------------------------
+
+This product bundles SLF4J 1.7.26, which is available under a
+"MIT" license. For details, see
+https://www.slf4j.org/license.html
+
+-------------------------------------------------------------------------------
+
+This product bundles struts2-bootstrap 2.5.2, which is available under a
+"Apache 2.0" license. For details, see
+https://github.com/struts-community-plugins/struts2-bootstrap/blob/release/2.5.x/LICENSE
+
+-------------------------------------------------------------------------------
+
+This product bundles romtools 1.12.0, which is available under a
+"Apache 2.0" license. For details, see
+https://github.com/rometools/rome/blob/master/LICENSE
+
+-------------------------------------------------------------------------------
+
+This product bundles webjars-servlet-2.x 1.5, which is available under a
+"MIT" license. For details, see
+https://github.com/webjars/webjars-servlet-2.x/blob/master/LICENSE
+
+The MIT License (MIT)
+
+Copyright (c) 2015 Angel Ruiz Calvo
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+
+This product bundles oauth-provider 20100527, which is available under a
+"Apache 2.0" license. For details, see
+https://mvnrepository.com/artifact/net.oauth.core/oauth-provider
+
+-------------------------------------------------------------------------------
+
+This product bundles Apache Ant 1.10.5 , which is available under a
+"Apache 2.0" license. For details, see
+https://ant.apache.org/license.html
+-------------------------------------------------------------------------------
+
+This product bundles Apache Derby 10.11.1.1 , which is available under a
+"Apache 2.0" license. For details, see
+https://db.apache.org/derby/license.html
+
 -------------------------------------------------------------------------------
