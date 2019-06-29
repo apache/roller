@@ -1,78 +1,34 @@
-body {
-  font-family: sans-serif;
-  padding: 20px;
-}
-
-#MainColumn {
-    float: left;
-    width: 78%;
-}
-
-#SideBar {
-    float: left;
-    width: 22%;
-    padding-left: 0px;
-}
-
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-/* If screen < max-width wide, make the two columns stack on top of each other instead of next to each other
-   See: https://www.w3schools.com/howto/howto_css_blog_layout.asp
-*/
-@media screen and (max-width: 1000px) {
-  #MainColumn, #SideBar {
-    width: 100%;
-    padding: 0;
-  }
-}
-
-p {
-    font-size: small;
-}
-
-a {
-    text-decoration: none;
+h1, h2, h3, h4, h5 {
+    color: blue;
 }
 
 .next-previous-links {
-    font-size: 80%;
     text-align: center;
     padding: .5em 0 .5em 0;
 }
 
 .rCategory li {
-    font-size: 80%;
     display: inline;
     list-style-type: none;
     padding-right: 20px;
 }
 
 /* entries */
-
-.entryTitle {
-    font-weight: bold;
-    font-size: 130%;
+div.entry h5.card-title {
+    color: black;
 }
 
-.entryPubInfo {
+.pubInfo {
     font-size: 80%;
     color: darkgray;
 }
 
-/* sidebar items */
-
-ul.sideboxList {
-    margin: 0;
-    padding-left: 0;
-    font-size: medium;
-    list-style-type: none;
+pre.code {
+    background-color: lightblue;
+    padding: .25em .5em .5em .5em !important;
 }
 
+/* sidebar items */
 li.rssItem::before {
     content: url([(${url.getSiteHome()})]/images/feed-icon-12x12.gif);
 }
@@ -106,79 +62,6 @@ th.hCalendarDayNameRow {
   font-size : x-small;
   text-align : center;
   font-style : italic;
-}
-
-/* comments and comment form */
-
-p.comment-details {
-    font-size: 80%;
-    color: darkgray;
-}
-
-form ul{ position: relative; list-style: none; width: 100%; }
-
-label.desc{
-    display: block;
-    margin: 4px 0 3px 0;
-}
-
-label.choice{
-    display: block;
-    margin: -19px 0 0 25px;
-    padding: 4px 0 5px 0;
-}
-
-input.text, input.number, input.url, input.email, input.password, input.file,
-textarea.textarea, select.select{
-    font-size: 1.2em;
-    padding: 2px;
-}
-
-input.checkbox, input.radio{
-    display: block;
-    line-height: 1.4em;
-    margin: 8px 0 0 3px;
-    width: 13px;
-    height: 13px;
-}
-
-h1, h2 {
-    color: blue;
-}
-
-div.box, .comments, .comments-form {
-  margin: 5px 5px 5px 5px;
-  border: dashed 1px gray;
-  padding: 2px;
-}
-
-h2 {
-  margin: 2px;
-  padding: 4px;
-}
-
-h2.box, .comments-head {
-  font-size: medium;
-  font-weight : bolder;
-  text-transform : uppercase;
-  letter-spacing : 0.3em;
-  background-color : blue;
-  color : white;
-}
-
-code {
-    font-size: 10pt;
-}
-
-pre.code {
-    font-size: 10pt;
-    overflow: auto;
-    word-wrap: break-word;
-    background-color: lightblue;
-    font-family: monospace;
-    margin: 0 !important;
-    border: none !important;
-    padding: .25em .5em .5em .5em !important;
 }
 
 /* Used for gist-it: https://gist-it.appspot.com/ */

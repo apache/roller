@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">>
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="robots" content="noindex">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="robots" content="noindex">
 	<span th:replace="${model.getTemplateIdByName('common_html_head')}"></span>
 	<title th:utext="${model.weblog.name + ': Search Results for ' + model.searchPhrase}">xxx</title>
 	<th:block th:if="${model.resultCount > 0}">
@@ -40,7 +41,7 @@
 			<div id="main_content" class="col-lg-8">
 				<div class="alert alert-info">
 					<p th:utext="${'Search Results for ' + model.searchPhrase}">xxx</p>
-					<span th:utext="${utils.msg('macro.weblog.searchhits', model.searchPhrase, T(Math).max(model.resultCount, 0)}">xxx</span>
+					<span th:utext="${utils.msg('macro.weblog.searchhits', model.searchPhrase, T(Math).max(model.resultCount, 0))}">xxx</span>
 				</div>
 				<th:block th:switch="${model.resultCount > 0}">
 					<div th:case="${true}" id="search_results">

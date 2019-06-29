@@ -67,7 +67,7 @@ public class WeblogEntryListGenerator {
 
         if (moreResults) {
             data.prevLink = urlService.getWeblogSearchURL(weblog, searchPhrase, category, page + 1);
-            data.prevLabel = messages.getMessage("weblogEntriesPager.older", null, weblog.getLocaleInstance());
+            data.prevLabel = messages.getMessage("weblogEntriesPager.prior", null, weblog.getLocaleInstance());
         }
 
         return data;
@@ -92,8 +92,7 @@ public class WeblogEntryListGenerator {
                 WeblogEntry nextEntry = weblogEntryManager.getNextPublishedEntry(currEntry);
                 if (nextEntry != null && nextEntry.getPubTime().isBefore(Instant.now())) {
                     data.nextLink = urlService.getWeblogEntryURL(nextEntry);
-                    String title = Utilities.truncateText(nextEntry.getTitle(), 15, 20, "...");
-                    data.nextLabel = messages.getMessage("weblogEntriesPager.single.next", new Object[]{title},
+                    data.nextLabel = messages.getMessage("weblogEntriesPager.single.next", new Object[]{nextEntry.getTitle()},
                             weblog.getLocaleInstance());
                 }
 
@@ -101,8 +100,7 @@ public class WeblogEntryListGenerator {
                 WeblogEntry prevEntry = weblogEntryManager.getPreviousPublishedEntry(currEntry);
                 if (prevEntry != null && prevEntry.getPubTime().isBefore(Instant.now())) {
                     data.prevLink = urlService.getWeblogEntryURL(prevEntry);
-                    String title = Utilities.truncateText(prevEntry.getTitle(), 15, 20, "...");
-                    data.prevLabel = messages.getMessage("weblogEntriesPager.single.prev", new Object[]{title},
+                    data.prevLabel = messages.getMessage("weblogEntriesPager.single.prev", new Object[]{prevEntry.getTitle()},
                             weblog.getLocaleInstance());
                 }
             }
@@ -185,7 +183,7 @@ public class WeblogEntryListGenerator {
         if (moreResults) {
             data.prevLink = urlService.getWeblogCollectionURL(weblog, catName, dateString, tag,
                     page + 1);
-            data.prevLabel = messages.getMessage("weblogEntriesPager.older", null, weblog.getLocaleInstance());
+            data.prevLabel = messages.getMessage("weblogEntriesPager.prior", null, weblog.getLocaleInstance());
         }
 
         return data;

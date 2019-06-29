@@ -42,7 +42,6 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
     }
 
     public String getHtml(HttpServletRequest request) {
-
         String answer = "";
 
         HttpSession session = request.getSession(true);
@@ -65,12 +64,10 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
         Integer value1o = (Integer) request.getSession().getAttribute("mathValue1");
         Integer value2o = (Integer) request.getSession().getAttribute("mathValue2");
 
-        String str = "<p>";
-        str += messages.getMessage("comments.mathAuthenticatorQuestion", null, request.getLocale());
-        str += "</p><p>" + value1o + " + " + value2o;
-        str += " = <input name='answer' value='";
-        str += answer + "' required></p>";
-        return str;
+        return String.format("<label for='answerId'>%s: %d + %d =</label>" +
+                        "<input class='form-control' id='answerId' name='answer' type='number' value='%s' required>",
+                messages.getMessage("comments.mathAuthenticatorQuestion", null, request.getLocale()),
+                value1o, value2o, answer);
     }
 
     public boolean authenticate(HttpServletRequest request) {

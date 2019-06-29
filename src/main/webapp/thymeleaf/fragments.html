@@ -72,164 +72,169 @@
               th:insert="${model.getTemplateIdByName('day')}">
     </th:block>
     <div th:fragment="AtomFeedsList" th:remove="tag">
-        <ul class="sideboxList">
-            <li class="sideboxListItem rssItem">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item rssItem">
                 <a th:href="${url.atomFeedURL}" th:utext="${utils.msg('generic.all')}">xxx</a>
             </li>
-            <li class="sideboxListItem rssItem" th:each="cat : ${model.weblog.weblogCategories}">
+            <li class="list-group-item rssItem" th:each="cat : ${model.weblog.weblogCategories}">
                 <a th:href="${url.getAtomFeedURLForCategory(cat.name)}" th:utext="${cat.name}">xxx</a>
             </li>
         </ul>
     </div>
-    <div th:fragment="WeblogSearchForm" th:remove="tag">
-        <form id="searchForm" method="get" th:action="${url.getSearchURL()}" style="margin: 0; padding: 0">
-            <p>
-                <input type="text" id="q" name="q" size="10" class="text small" maxlength="255"
-                       th:value="${model.searchResults ? model.searchPhrase : ''}" pattern=".*\S+.*" required/>
-                <input type="submit" class="button" th:value="${utils.msg('macro.weblog.searchbutton')}" id="searchbutton" />
-            </p>
-        </form>
-    </div>
     <div th:fragment="Blogroll" th:remove="tag">
-        <ul class="sideboxList">
-            <li th:each="link : ${model.weblog.getBookmarks()}" class="sideboxListItem">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item" th:each="link : ${model.weblog.getBookmarks()}">
                 <a th:href="${link.url}" th:title="${link.description}" th:utext="${link.name}">xxx</a>
             </li>
         </ul>
     </div>
     <div th:fragment="PageMenu(addExternalPages)" th:remove="tag">
-        <ul class="sideboxList">
-            <li class="sideboxListItem">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
                 <a th:href="${url.getSiteHome()}"><span th:utext="${utils.msg('navigationBar.homePage')}"></span></a>
             </li>
-            <li class="sideboxListItem">
+            <li class="list-group-item">
                 <a th:href="${url.weblogHome}"><span>Weblog</span></a>
             </li>
             <th:block th:if="${addExternalPages}">
-                <li th:each="page : ${model.customPages}" class="sideboxListItem">
+                <li class="list-group-item" th:each="page : ${model.customPages}">
                     <a th:remove="${model.template != null && page.id == model.template.id ? 'tag' : 'none'}" th:href="${url.getCustomPageURL(page.name)}">
                         <span th:text="${page.name}">xxx</span>
                     </a>
                 </li>
             </th:block>
             <th:block th:if="${model.isUserBlogPublisher()}">
-                <li class="sideboxListItem">
+                <li class="list-group-item">
                     <a th:href="${url.getNewEntryURL()}"><span th:text="${utils.msg('navigationBar.newEntry')}">xxx</span></a>
                 </li>
-                <li th:if="${model.isUserBlogOwner()}" class="sideboxListItem">
+                <li class="list-group-item" th:if="${model.isUserBlogOwner()}">
                     <a th:href="${url.getConfigURL()}"><span th:text="${utils.msg('navigationBar.settings')}">xxx</span></a>
                 </li>
             </th:block>
             <th:block th:switch="${model.authenticatedUser != null}">
-                <li th:case="${true}" class="sideboxListItem">
+                <li class="list-group-item" th:case="${true}">
                     <a th:href="${url.getLogoutURL()}"><span th:text="${utils.msg('navigationBar.logout')}">xxx</span></a>
                 </li>
-                <li th:case="${false}" class="sideboxListItem">
+                <li class="list-group-item" th:case="${false}">
                     <a th:href="${url.getLoginURL()}" target="_blank"><span th:text="${utils.msg('navigationBar.login')}">xxx</span></a>
                 </li>
             </th:block>
         </ul>
     </div>
     <div th:fragment="WeblogEntryComments" th:remove="tag" th:with="entry=${model.weblogEntry}">
-        <div class="comments" id="comments">
+        <div class="card" id="comments">
 
-            <div class="comments-head" th:utext="${utils.msg(model.commentForm.preview ? 'macro.weblog.preview' : 'macro.weblog.comments')}">xxx</div>
-
-            <br/>
+            <div class="card-header">
+                <h5 th:utext="${utils.msg(model.commentForm.preview ? 'macro.weblog.preview' : 'macro.weblog.comments')}">xxx</h5>
+            </div>
 
             <th:block th:with="comments=${model.commentForm.preview ? model.commentForm : entry.getComments()}">
                 <th:block th:each="comment : ${comments}" th:if="${comment.approved || model.commentForm.preview}">
-                    <div th:id="${'comment-' + comment.timestamp}">
+                    <div class="card-body" th:id="${'comment-' + comment.timestamp}">
 
-                        <span th:utext="${comment.content}">xxx</span>
+                        <span class="card-text" th:utext="${comment.content}">xxx</span>
 
-                        <p class="comment-details">
+                        <p class="pubInfo">
                             Posted by <a rel="nofollow" th:href="${comment.url}" th:remove="${#strings.isEmpty(comment.url) ? 'tag' : 'none'}">
                                 <span th:text="${comment.name}">xxx</span>
                             </a>
                             <span th:if="${comment.postTime != null}">at <a th:href="${url.getCommentURL(entry, comment.timestamp)}" th:utext="${utils.formatTemporal(comment.postTime, utils.msg('macro.weblog.timedatepattern'))}">xxx</a></span>
                         </p>
-
                     </div>
                 </th:block>
             </th:block>
         </div>
     </div>
+
     <div th:fragment="WeblogEntryCommentForm" th:remove="tag">
-        <div class="comments-form" th:with="entry=${model.weblogEntry}, cform = ${model.getCommentForm()}">
-            <div class="comments-head"><span th:utext="${utils.msg('macro.weblog.postcommentHeader')}">xxx</span></div>
+        <div class="card" th:with="entry=${model.weblogEntry}, cform = ${model.getCommentForm()}">
+            <div class="card-header">
+                <h5 span th:utext="${utils.msg('macro.weblog.postcommentHeader')}">xxx</h5>
+            </div>
 
             <th:block th:switch="${model.canSubmitNewComments(entry)}">
-                <th:block th:case="${true}">
-                    <span th:class="${cform.invalid ? 'error' : (!#strings.isEmpty(cform.submitResponseMessage) ? 'status' : null)}"
+                <div class="card-body" th:block th:case="${true}">
+                    <span class="card-text" th:class="${cform.invalid ? 'error' : (!#strings.isEmpty(cform.submitResponseMessage) ? 'status' : null)}"
                           th:utext="${cform.submitResponseMessage}">xxx</span>
 
                     <form method="post" focus="name" name="commentForm">
-                        <input type="hidden" name="method" value="post" />
+                        <input type="hidden" name="method" value="post">
 
-                        <ul>
-                            <th:block th:with="formName=${model.blogger == null ? cform.name : model.blogger.screenName},
-                                formEmail=${model.blogger == null ? cform.email : model.blogger.emailAddress}">
-                                <li>
-                                    <label class="desc" th:utext="${utils.msg('macro.weblog.name')}">xxx</label>
-                                    <input type="text" name="name" class="text large" th:value="${formName}" size="50" maxlength="255" required th:readonly="${model.blogger!=null}"/>
-                                </li>
-                                <li><label class="desc" th:utext="${utils.msg('macro.weblog.email')}">xxx</label>
-                                    <input type="text" name="email" class="text large" th:value="${formEmail}" size="50" maxlength="255" required th:readonly="${model.blogger!=null}"/>
-                                </li>
-                            </th:block>
+                        <th:block th:with="formName=${model.blogger == null ? cform.name : model.blogger.screenName},
+                            formEmail=${model.blogger == null ? cform.email : model.blogger.emailAddress}">
+                            <div class="form-group">
+                                <label for="nameId" th:utext="${utils.msg('macro.weblog.name')}">xxx</label>
+                                <input type="text" id="nameId" name="name" class="form-control" th:value="${formName}" size="50" maxlength="255" required th:readonly="${model.blogger!=null}">
+                            </div>
+                            <div class="form-group">
+                                <label for="emailId" th:utext="${utils.msg('macro.weblog.email')}">xxx</label>
+                                <input type="email" id="emailId" name="email" class="form-control" th:value="${formEmail}" size="50" maxlength="255" required th:readonly="${model.blogger!=null}">
+                            </div>
+                        </th:block>
 
-                            <li><label class="desc" th:utext="${utils.msg('macro.weblog.url')}">xxx</label>
-                                <input type="text" name="url" class="text large" th:value="${cform.url}" size="50" maxlength="255" />
-                            </li>
-                            <li>
-                                <label class="desc" th:utext="${utils.msg('macro.weblog.yourcomment')}">xxx</label>
-                                <textarea name="content" class="textarea large" cols="40" rows="10" maxlength="2000" th:utext="${cform.content}" required>xxx</textarea>
-                            </li>
-                            <li th:if="${utils.commentEmailNotify}">
-                                <input type="checkbox" class="checkbox" id="notify" name="notify" th:checked="${cform.notify}"/>
-                                <label for="notify" class="choice" th:utext="${utils.msg('macro.weblog.notifyMeOfComments')}">xxx</label>
-                            </li>
-                            <li class="info" th:if="${model.blogger == null}">
-                                <script th:src="${url.getSiteHome() + '/scripts/clientSideInclude.js'}"></script>
-                                <div id="commentAuthenticator"></div>
-                            </li>
-                            <li>
-                                <input type="submit" th:formaction="${url.getWeblogEntryPreviewCommentURL(entry)}" class="button"
-                                       name="post" th:value="${utils.msg('macro.weblog.postpreview')}">
-                                <input type="submit" th:formaction="${url.getWeblogEntryPostCommentURL(entry)}" class="button"
-                                       name="post" th:value="${utils.msg('macro.weblog.post')}">
-                            </li>
-                        </ul>
+                        <div class="form-group">
+                            <label for="urlId" th:utext="${utils.msg('macro.weblog.url')}">xxx</label>
+                            <input type="url" id="urlId" name="url" class="form-control" th:value="${cform.url}" size="50" maxlength="255">
+                        </div>
+                        <div class="form-group">
+                            <label for="contentId" th:utext="${utils.msg('macro.weblog.yourcomment')}">xxx</label>
+                            <textarea id="contentId" name="content" class="form-control" cols="40" rows="10" maxlength="2000" th:utext="${cform.content}" required>xxx</textarea>
+                        </div>
+                        <div class="form-group form-check" th:if="${utils.commentEmailNotify}">
+                            <input type="checkbox" class="form-check-input" id="notifyId" name="notify" th:checked="${cform.notify}">
+                            <label for="notifyId" class="form-check-label" th:utext="${utils.msg('macro.weblog.notifyMeOfComments')}">xxx</label>
+                        </div>
+                        <th:block th:if="${model.blogger == null}">
+                            <script th:src="${url.getSiteHome() + '/scripts/clientSideInclude.js'}"></script>
+                            <div class="form-group" id="commentAuthenticator">
+                                <label for="answerId" th:utext="${utils.msg('macro.weblog.name')}">xxx</label>
+                                <input type="text" id="answerId" name="name" class="form-control" th:value="${formName}" size="50" maxlength="255" required th:readonly="${model.blogger!=null}">
+                            </div>
+                        </th:block>
+                        <button type="submit" class="btn btn-secondary" th:formaction="${url.getWeblogEntryPreviewCommentURL(entry)}"
+                                name="post" th:text="${utils.msg('macro.weblog.postpreview')}"></button>
+                        <button type="submit" class="btn btn-primary" th:formaction="${url.getWeblogEntryPostCommentURL(entry)}"
+                                name="post" th:text="${utils.msg('macro.weblog.post')}"></button>
 
                     </form>
                     <script>
                         clientSideInclude('commentAuthenticator', '[(${url.getCommentAuthenticatorURL()})]');
                     </script>
-                </th:block>
-                <span th:case="${false}" class="status" th:utext="${utils.msg('comments.disabled')}">xxx</span>
+
+                    <span class="status card-text" th:case="${false}" th:utext="${utils.msg('comments.disabled')}">xxx</span>
+                </div>
             </th:block>
         </div>
     </div>
-    <div th:fragment="WeblogSearchAgainForm" id="searchAgain">
-        <span th:utext="${utils.msg('macro.weblog.searchhits', model.searchPhrase, T(Math).max(model.resultCount, 0))}">xxx</span>
-        <form method="get" th:action="${url.getSearchURL()}" style="margin: 5px">
-            <input type="text" id="q" name="q" class="text medium" maxlength="255" th:value="${model.searchPhrase}"
-                   style="padding-left: 1px" required><br>
-            <select th:unless="${site != null || model.weblog.weblogCategories.size() <= 1}" name="cat" class="select">
-                <option value="" th:utext="${utils.msg('macro.searchresults.incategory')}">xxx</option>
-                <option th:each="cat : ${model.weblog.weblogCategories}"
-                        th:selected="${cat.name == model.category}" th:utext="${cat.name}">xxx</option>
-            </select>
-            <input type="submit" th:value="${utils.msg('macro.weblog.searchbutton')}" class="button">
+    <div th:fragment="WeblogSearchForm" th:remove="tag">
+        <form id="searchForm" method="get" th:action="${url.getSearchURL()}">
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="qId" name="q" size="10" class="form-control" maxlength="255"
+                           th:value="${model.searchResults ? model.searchPhrase : ''}" pattern=".*\S+.*" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" th:unless="${site != null || model.weblog.weblogCategories.size() <= 1}">
+                    <select class="form-control" id="catId" name="cat">
+                        <option value="" th:utext="${utils.msg('macro.searchresults.incategory')}">xxx</option>
+                        <option th:each="cat : ${model.weblog.weblogCategories}"
+                                th:selected="${cat.name == model.category}" th:utext="${cat.name}">xxx</option>
+                    </select>
+                </div>
+                <div class="col-sm-auto">
+                    <button type="submit" class="btn btn-primary"
+                            th:text="${utils.msg('macro.weblog.searchbutton')}" id="searchbutton"></button>
+                </div>
+            </div>
         </form>
     </div>
     <div th:fragment="PreviousNextSearchPager" th:remove="tag" th:with="pager = ${model.weblogEntriesPager},
             min=${model.offset + 1}, max=${T(Math).min(model.offset+model.limit, model.resultCount)}">
-        <h3 th:utext="${utils.msg('searchSummary.text', min, max, T(Math).max(model.resultCount, 0))}">xxx</h3>
+        <h5 th:utext="${utils.msg('searchSummary.text', min, max, T(Math).max(model.resultCount, 0), model.searchPhrase)}">xxx</h5>
         <span th:if="${pager.prevLink != null}">&laquo; <a th:href="${pager.prevLink}" th:text="${pager.prevLabel}">xxx</a> |</span>
         <span th:if="${pager.prevLink != null || pager.nextLink != null}"><a th:href="${url.weblogHome}"
-                                                                             th:text="${utils.msg('weblogEntriesPager.home.label')}">xxx</a></span>
+              th:text="${utils.msg('weblogEntriesPager.home.label')}">xxx</a></span>
         <span th:if="${pager.nextLink != null}">| <a th:href="${pager.nextLink}" th:text="${pager.nextLabel}">xxx</a> &raquo;</span>
     </div>
 </body>

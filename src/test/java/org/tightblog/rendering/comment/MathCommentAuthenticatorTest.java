@@ -69,7 +69,9 @@ public class MathCommentAuthenticatorTest {
         assertEquals((long) (firstValCaptor.getValue() + secondValCaptor.getValue()), (long) sumCaptor.getValue());
 
         // mocked session ignores setAttribute calls, so relying on "when" calls above for getAttribute calls
-        String expected = "<p>Please answer this simple math question</p><p>5 + 57 = <input name='answer' value='' required></p>";
+        String expected =
+            "<label for='answerId'>Please answer this simple math question: 5 + 57 =</label>" +
+                    "<input class='form-control' id='answerId' name='answer' type='number' value='' required>";
         assertEquals(expected, actual);
     }
 
@@ -84,14 +86,16 @@ public class MathCommentAuthenticatorTest {
         when(mockRequest.getParameter("answer")).thenReturn("42");
         String actual = mathCommentAuthenticator.getHtml(mockRequest);
         String expected =
-                "<p>Please answer this simple math question</p><p>8 + 37 = <input name='answer' value='42' required></p>";
+                "<label for='answerId'>Please answer this simple math question: 8 + 37 =</label>" +
+                                "<input class='form-control' id='answerId' name='answer' type='number' value='42' required>";
         assertEquals(expected, actual);
 
         // test no answer in HTML if not provided by commenter
         when(mockRequest.getParameter("answer")).thenReturn(null);
         actual = mathCommentAuthenticator.getHtml(mockRequest);
         expected =
-                "<p>Please answer this simple math question</p><p>8 + 37 = <input name='answer' value='' required></p>";
+                "<label for='answerId'>Please answer this simple math question: 8 + 37 =</label>" +
+                        "<input class='form-control' id='answerId' name='answer' type='number' value='' required>";
         assertEquals(expected, actual);
     }
 

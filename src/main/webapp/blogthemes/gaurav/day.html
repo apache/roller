@@ -33,7 +33,7 @@
 
         <p class="entryInfo" style="clear: right" th:with="commentCount = ${entry.commentCount}">
             <th:block th:if="${model.canSubmitNewComments(entry) || commentCount > 0}">
-                <a th:href="${url.getCommentsURL(entry)}" class="commentslink" th:utext="${utils.msg('macro.weblog.comments') + '[' + commentCount + ']'}">xxx</a>
+                <a th:href="${url.getCommentsURL(entry)}" th:utext="${utils.msg('macro.weblog.comments') + '[' + commentCount + ']'}">xxx</a>
             </th:block>
 
             <th:block th:if="${model.isUserBlogPublisher()}">

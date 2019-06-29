@@ -1,43 +1,66 @@
-<div id="SideBar">
-    <div class="box">
-        <h2 class="box sidebox">calendar</h2>
-        <center><span th:replace="fragments :: Calendar(false)"></span></center>
-    </div>
-
-    <div class="box"><h2 class="box sidebox">About Me</h2>
-        <center><em th:utext="${'Today''s Blog Hits: ' + model.weblog.hitsToday}"></em></center></p>
-    </div>
-
-    <div class="box"><h2 class="box sidebox">search</h2>
-        <div class="rNavigationBar">
-            <span th:replace="fragments :: WeblogSearchForm"></span>
+<div class="col">
+    <div class="card">
+        <h5 class="card-header">Calendar</h5>
+        <div class="card-body">
+            <center><span th:replace="fragments :: Calendar(false)"></span></center>
         </div>
     </div>
 
-    <div class="box"><h2 class="box sidebox">Links</h2><div>
-        <span th:replace="fragments :: Blogroll"></span>
-    </div></div>
-
-    <div class="box"><h2 class="box sidebox">last 20</h2>
-        <ul class="sideboxList" th:each="recentEntry : ${model.getRecentWeblogEntries(null, 20)}">
-            <li class="sideboxListItem"><a th:href="${url.getURL(recentEntry)}" th:utext="${recentEntry.title}">xxx</a></li>
-        </ul>
+    <div class="card">
+        <h5 class="card-header">About Me</h5>
+        <div class="card-body">
+            <center><em th:utext="${'Today''s Blog Hits: ' + model.weblog.hitsToday}"></em></center></p>
+        </div>
     </div>
 
-    <div class="box"><h2 class="box sidebox">recent $0.02</h2>
-        <ul class="sideboxList">
-            <li th:each="comment : ${model.getRecentComments(10)}" class="sideboxListItem">
-                - <a th:href="${comment.url}" th:remove="${comment.url == '' ? 'tag' : 'none'}" th:utext="${comment.name}"></a>
-                on <a th:href="${url.getCommentURL(comment.weblogEntry, comment.timestamp)}"
-                      th:utext="${comment.weblogEntry.title}"></a></li>
-        </ul>
+    <div class="card">
+        <h5 class="card-header">Blog Search</h5>
+        <div class="card-body">
+            <div>
+                <span th:replace="fragments :: WeblogSearchForm"></span>
+            </div>
+        </div>
     </div>
 
-    <div class="box"><h2 class="box sidebox">feeds</h2>
-        <span th:replace="fragments :: AtomFeedsList"></span>
+    <div class="card">
+        <h5 class="card-header">Links</h5><div>
+        <div class="card-body">
+            <span th:replace="fragments :: Blogroll"></span>
+        </div>
     </div>
 
-    <div class="box"><h2 class="box sidebox">navigation</h2>
-        <span th:replace="fragments :: PageMenu(true)"></span>
+    <div class="card">
+        <h5 class="card-header">Recent Posts</h5>
+        <div class="card-body">
+            <ul class="list-group list-group-flush" th:each="recentEntry : ${model.getRecentWeblogEntries(null, 10)}">
+                <li class="list-group-item"><a th:href="${url.getURL(recentEntry)}" th:utext="${recentEntry.title}">xxx</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <h5 class="card-header">Recent Comments</h5>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item" th:each="comment : ${model.getRecentComments(10)}">
+                    <a th:href="${comment.url}" th:remove="${comment.url == '' ? 'tag' : 'none'}" th:utext="${comment.name}"></a>
+                    on <a th:href="${url.getCommentURL(comment.weblogEntry, comment.timestamp)}"
+                          th:utext="${comment.weblogEntry.title}"></a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <h5 class="card-header">Feeds</h5>
+        <div class="card-body">
+            <span th:replace="fragments :: AtomFeedsList"></span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h5 class="card-header">Navigation</h5>
+        <div class="card-body">
+            <span th:replace="fragments :: PageMenu(true)"></span>
+        </div>
     </div>
 </div>

@@ -1,7 +1,7 @@
 {
   "id": "rolling",
   "name": "Rolling",
-  "description": "Offers wide margins for blogging programming language source code.",
+  "description": "Bootstrap 4 based template.",
   "previewImagePath": "rolling-sample.png",
   "templates": [
     {
