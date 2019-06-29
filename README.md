@@ -27,18 +27,24 @@ Hit the Roller Confluence wiki:
 * Other developer resources: <https://cwiki.apache.org/confluence/x/D84>
 
 
+## Installing Roller 
+
+If you want to run Roller in production, then you should down load the latest official release and install it by following the Installation Guide, which you can find at the documentation link: <https://github.com/apache/roller/tree/master/docs>.
+
+
 ## Quick start: Running via Maven
 
+You probably should not run Roller in production using this technique, but it's a relatively easy way to try Roller for yourself. 
 Assuming you've got a UNIX shell, Java, Maven and Git:
 
 Get the code:
 
     $ git clone https://github.com/apache/roller.git
 
-Build and test the code:
+Compile and build Roller:
 
     $ cd roller
-    $ mvn clean install
+    $ mvn -DskipTests=true install
 
 Run Roller in Jetty with Derby database:
 
@@ -50,7 +56,9 @@ Once Jetty is up and running browse to <http://localhost:8080/roller> to try to 
 
 ## Quick start: running via Docker
 
-Assuming you've got Docker, here's how you can run Roller for demo purposes.
+Another way to try Roller is to use Docker. 
+This is actually easier than running via Maven because you do not need Maven or Java. 
+If you've got Docker, here's how you can run Roller for demo purposes.
 
 Get the code:
 
@@ -61,5 +69,5 @@ Run Docker Compose to build and launch Roller along with a PostgreSQL database:
     $ cd roller
     $ docker-compose up
     
-It will take a while to build the Docker image. Once it's done browse to <http://localhost:8080/roller> to try Roller.
-
+It will take a while to build and start the Docker image. 
+Once it's done browse to <http://localhost:8080/roller> to try Roller.
