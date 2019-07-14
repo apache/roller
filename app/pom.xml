@@ -24,7 +24,7 @@ limitations under the License.
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>5.2.3</version>
+        <version>5.2.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
