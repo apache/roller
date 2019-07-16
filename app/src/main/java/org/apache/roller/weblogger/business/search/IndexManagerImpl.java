@@ -38,8 +38,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.IOContext;
-import org.apache.lucene.store.RAMDirectory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -49,7 +47,6 @@ import org.apache.roller.weblogger.business.search.operations.ReIndexEntryOperat
 import org.apache.roller.weblogger.business.search.operations.RebuildWebsiteIndexOperation;
 import org.apache.roller.weblogger.business.search.operations.RemoveEntryOperation;
 import org.apache.roller.weblogger.business.search.operations.RemoveWebsiteIndexOperation;
-import org.apache.roller.weblogger.business.search.operations.WriteToIndexOperation;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -78,10 +75,6 @@ public class IndexManagerImpl implements IndexManager {
     private boolean searchEnabled = true;
 
     File indexConsistencyMarker;
-
-    private boolean useRAMIndex = false;
-
-    private RAMDirectory fRAMindex;
 
     private String indexDir = null;
 
@@ -156,34 +149,22 @@ public class IndexManagerImpl implements IndexManager {
             }
 
             if (indexExists()) {
-                FSDirectory filesystem = getFSDirectory(false);
-                if (useRAMIndex) {
-                    try {
-                        fRAMindex = new RAMDirectory(filesystem, IOContext.DEFAULT);
-                    } catch (IOException e) {
-                        mLogger.error("Error creating in-memory index", e);
-                    }
-                } else {
-                    // test if the index is readable, if the version is outdated this might fail and we rebuild.
-                    // TODO: we probably should just eagerly initialize the actual rader here, since we have it already
-                    try {
-                        DirectoryReader readerProbe = DirectoryReader.open(filesystem);
-                        readerProbe.close();
-                    } catch (IOException ex) {
-                        mLogger.warn("Error opening search index, scheduling rebuild.", ex);
-                        getFSDirectory(true);
-                        inconsistentAtStartup = true;
-                    }
+
+                // test if the index is readable, if the version is outdated this might fail and we rebuild.
+                // TODO: we probably should just eagerly initialize the actual reader here, since we have it already
+                try {
+                    DirectoryReader readerProbe = DirectoryReader.open(getFSDirectory(false));
+                    readerProbe.close();
+                } catch (IOException ex) {
+                    mLogger.warn("Error opening search index, scheduling rebuild.", ex);
+                    getFSDirectory(true);
+                    inconsistentAtStartup = true;
                 }
             } else {
                 mLogger.debug("Creating index");
                 inconsistentAtStartup = true;
-                if (useRAMIndex) {
-                    fRAMindex = new RAMDirectory();
-                    createIndex(fRAMindex);
-                } else {
-                    createIndex(getFSDirectory(true));
-                }
+
+                createIndex(getFSDirectory(true));
             }
 
             if (isInconsistentAtStartup()) {
@@ -328,17 +309,12 @@ public class IndexManagerImpl implements IndexManager {
 
     /**
      * Get the directory that is used by the lucene index. This method will
-     * return null if there is no index at the directory location. If we are
-     * using a RAM index, the directory will be a ram directory.
+     * return null if there is no index at the directory location.
      * 
      * @return Directory The directory containing the index, or null if error.
      */
     public Directory getIndexDirectory() {
-        if (useRAMIndex) {
-            return fRAMindex;
-        } else {
-            return getFSDirectory(false);
-        }
+        return getFSDirectory(false);
     }
 
     private boolean indexExists() {
@@ -401,38 +377,6 @@ public class IndexManagerImpl implements IndexManager {
         }
     }
 
-    private IndexOperation getSaveIndexOperation() {
-        return new WriteToIndexOperation(this) {
-            @Override
-            public void doRun() {
-                Directory dir = getIndexDirectory();
-                Directory fsdir = getFSDirectory(true);
-                IndexWriter writer = null;
-                try {
-                    IndexWriterConfig config = new IndexWriterConfig(
-                            new LimitTokenCountAnalyzer(
-                                    IndexManagerImpl.getAnalyzer(), 128));
-                    writer = new IndexWriter(fsdir, config);
-                    writer.addIndexes(dir);
-                    writer.commit();
-                    indexConsistencyMarker.delete();
-                } catch (IOException e) {
-                    mLogger.error("Problem saving index to disk", e);
-                    // Delete the directory, since there was a problem saving the RAM contents
-                    getFSDirectory(true);
-                } finally {
-                    if (writer != null) {
-                        try {
-                            writer.close();
-                        } catch (IOException ex) {
-                            mLogger.warn("Unable to close IndexWriter.", ex);
-                        }
-                    }
-                }
-            }
-        };
-    }
-
     @Override
     public void release() {
         // no-op
@@ -440,11 +384,8 @@ public class IndexManagerImpl implements IndexManager {
 
     @Override
     public void shutdown() {
-        if (useRAMIndex) {
-            scheduleIndexOperation(getSaveIndexOperation());
-        } else {
-            indexConsistencyMarker.delete();
-        }
+        
+        indexConsistencyMarker.delete();
 
         if (reader != null) {
             try {
