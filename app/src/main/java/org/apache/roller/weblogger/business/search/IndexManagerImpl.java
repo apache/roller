@@ -150,11 +150,11 @@ public class IndexManagerImpl implements IndexManager {
 
             if (indexExists()) {
 
-                // test if the index is readable, if the version is outdated this might fail and we rebuild.
-                // TODO: we probably should just eagerly initialize the actual reader here, since we have it already
+                // test if the index is readable, if the version is outdated or it fails we rebuild.
                 try {
-                    DirectoryReader readerProbe = DirectoryReader.open(getFSDirectory(false));
-                    readerProbe.close();
+                    synchronized(this) {
+                        reader = DirectoryReader.open(getFSDirectory(false));
+                    }
                 } catch (IOException ex) {
                     mLogger.warn("Error opening search index, scheduling rebuild.", ex);
                     getFSDirectory(true);
