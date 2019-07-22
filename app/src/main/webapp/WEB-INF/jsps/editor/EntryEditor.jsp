@@ -140,7 +140,8 @@
                     ['color', ['color']],
                     ['para', ['ul', 'ol', 'paragraph']],
                     ['height', ['height']],
-                    ['misc', ['codeview']]
+                    ['misc', ['codeview']],
+                    ['insert', ['link']]
                 ],
                 height: 400
             }
