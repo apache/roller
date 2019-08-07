@@ -27,7 +27,7 @@
     },
     {
       "type": "custom_external",
-      "name": "archives",
+      "name": "Archives",
       "description": "Calendar browser and links to latest entries",
       "contentsFile": "archives.html"
     },

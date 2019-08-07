@@ -11,11 +11,11 @@
     </h4>
 
     <div class="entry card-body" th:each="entry : ${model.weblogEntriesPager.getEntries().get(day)}" th:id="${entry.anchor}">
-        <h5 class="card-title" th:utext="${entry.title}">xxx</h5>
-        <p class="card-text" th:switch="${model.permalink || #strings.isEmpty(entry.summary)}">
-            <span th:case="${true}" th:utext="${model.getTransformedText(entry)}"></span>
-            <span th:case="${false}" th:utext="${model.getTransformedSummary(entry) + ' ' + utils.msg('macro.weblog.readMoreLink', url.getURL(entry))}"></span>
-        </p>
+        <h5 class="card-title searchable_text" th:utext="${entry.title}">xxx</h5>
+        <th:block th:switch="${model.permalink || #strings.isEmpty(entry.summary)}">
+            <div class="card-text searchable_text" th:case="${true}" th:utext="${model.getTransformedText(entry)}"></div>
+            <div class="card-text searchable_text" th:case="${false}" th:utext="${model.getTransformedSummary(entry) + ' ' + utils.msg('macro.weblog.readMoreLink', url.getURL(entry))}"></div>
+        </th:block>
         <p class="pubInfo">
             Posted by <span th:utext="${entry.creator.screenName}">xxx</span> in <span class="category" th:utext="${entry.category.name}">xxx</span>
             <span th:if="${entry.pubTime != null}">at <a th:href="${url.getURL(entry)}" th:utext="${utils.formatTemporal(entry.pubTime, utils.msg('macro.weblog.timedatepattern'))}">xxx</a></span>

@@ -28,6 +28,11 @@ pre.code {
     padding: .25em .5em .5em .5em !important;
 }
 
+/* searchhi.js */
+span.searchword {
+    background-color:yellow;
+}
+
 /* sidebar items */
 li.rssItem::before {
     content: url([(${url.getSiteHome()})]/images/feed-icon-12x12.gif);

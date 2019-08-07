@@ -13,6 +13,11 @@ body {
     font-size: 110%;
 }
 
+/* searchhi.js */
+span.searchword {
+    background-color:yellow;
+}
+
 a.permalink {
     padding: 2px 0px 2px 20px;
     background: url('../icons/icon_clock.gif') left center no-repeat;

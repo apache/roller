@@ -7,17 +7,13 @@
 	<span th:replace="${model.getTemplateIdByName('common_html_head')}"></span>
 	<title th:utext="${model.weblog.name + ': Search Results for ' + model.searchPhrase}">xxx</title>
 	<th:block th:if="${model.resultCount > 0}">
-		<style>span.searchword { background-color:yellow; }</style>
-		<script>
-		    searchhi_config = {ignore_site : '[(${url.getSiteHome()})]'};
-		</script>
-		<script type="application/x-javascript" th:src="${url.getThemeResourceURL('gaurav', 'js/searchhi.js')}"></script>
+		<script type="application/x-javascript" th:src="${url.getSiteHome() + '/scripts/searchhi.js'}"></script>
 		<script>
 			function loadSearchHighlight() {
-				searchhi.highlightWord(document.getElementById("search_results"), '[(${model.searchPhrase})]');
+				searchhi.highlightWord(document.getElementsByClassName("searchable_text"), '[(${model.searchPhrase})]');
 			}
-		</script>
-   	</th:block>
+    	</script>
+	</th:block>
 </head>
 <body onload="loadSearchHighlight()">
 
@@ -44,7 +40,7 @@
 					<span th:utext="${utils.msg('macro.weblog.searchhits', model.searchPhrase, T(Math).max(model.resultCount, 0))}">xxx</span>
 				</div>
 				<th:block th:switch="${model.resultCount > 0}">
-					<div th:case="${true}" id="search_results">
+					<div th:case="${true}">
 						 <div th:replace="fragments :: PreviousNextSearchPager"></div>
 
 						 <div th:replace="fragments :: WeblogEntriesPager"></div>

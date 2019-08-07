@@ -12,7 +12,15 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href='${url.getCustomPageURL("rolling.css")}'/>
     <th:block th:switch="${model.searchResults}">
-        <title th:case="${true}" th:utext="${'Search Results for ' + model.searchPhrase + ': ' + model.weblog.name}">xxx</title>
+        <th:block th:case="${true}">
+            <title th:case="${true}" th:utext="${'Search Results for ' + model.searchPhrase + ': ' + model.weblog.name}">xxx</title>
+            <script type="application/x-javascript" th:src="${url.getSiteHome() + '/scripts/searchhi.js'}"></script>
+            <script>
+                function loadSearchHighlight() {
+                    searchhi.highlightWord(document.getElementsByClassName("searchable_text"), '[(${model.searchPhrase})]');
+                }
+    		</script>
+        </th:block>
         <th:block th:case="${false}">
             <title th:utext="${(model.permalink ? model.weblogEntry.title + ' | ' : '') + model.weblog.name}">Weblog Name - Title Bar</title>
             <span th:replace="fragments :: AutoDiscoveryLinks"></span>
@@ -22,7 +30,7 @@
     </th:block>
 </head>
 
-<body>
+<body th:onload="${model.searchResults}? 'loadSearchHighlight()'">
 
     <div class="container-fluid">
         <div class="row">

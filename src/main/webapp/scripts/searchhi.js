@@ -6,54 +6,54 @@
    http://www.woolyss.free.fr/js/searchhi_Woolyss.js and say when not found */
 
 searchhi = {
-  highlightWord: function(node,word) {
+  highlightWord: function(nodeArr,word) {
     // Iterate into this nodes childNodes
-    if (node.hasChildNodes) {
-	    for (var hi_cn=0;hi_cn<node.childNodes.length;hi_cn++) {
-		    searchhi.highlightWord(node.childNodes[hi_cn],word);
-	    }
-    }
+    for (var i = 0; i < nodeArr.length; i++) {
 
-    // And do this node itself
-    if (node.nodeType == 3) { // text node
-	    tempNodeVal = node.nodeValue.toLowerCase();
-	    tempWordVal = word.toLowerCase();
-	    if (tempNodeVal.indexOf(tempWordVal) != -1) {
-		    var pn = node.parentNode;
-		    // check if we're inside a "nosearchhi" zone
-		    var checkn = pn;
-		    while (checkn.nodeType != 9 &&
-		    checkn.nodeName.toLowerCase() != 'body') {
-		    // 9 = top of doc
-			    if (checkn.className.match(/\bnosearchhi\b/)) { return; }
-			    checkn = checkn.parentNode;
-		    }
-		    if (pn.className != "searchword") {
-			    // word has not already been highlighted!
-			    var nv = node.nodeValue;
-			    var ni = tempNodeVal.indexOf(tempWordVal);
-			    // Create a load of replacement nodes
-			    var before = document.createTextNode(nv.substr(0,ni));
-			    var docWordVal = nv.substr(ni,word.length);
-			    var after = document.createTextNode(nv.substr(ni+word.length));
-			    var hiwordtext = document.createTextNode(docWordVal);
-			    var hiword = document.createElement("span");
-			    hiword.className = "searchword";
-			    hiword.appendChild(hiwordtext);
-			    pn.insertBefore(before,node);
-			    pn.insertBefore(hiword,node);
-			    pn.insertBefore(after,node);
-			    pn.removeChild(node);
-			    searchhi.found += 1;
-			    if (searchhi.found == 1) pn.scrollIntoView();
-		    }
-	    }
+        if (nodeArr[i].hasChildNodes) {
+            searchhi.highlightWord(nodeArr[i].childNodes, word);
+        }
+
+        // And do this node itself
+        if (nodeArr[i].nodeType == 3) { // text node
+            tempNodeVal = nodeArr[i].nodeValue.toLowerCase();
+            tempWordVal = word.toLowerCase();
+            if (tempNodeVal.indexOf(tempWordVal) != -1) {
+                var pn = nodeArr[i].parentNode;
+                // check if we're inside a "nosearchhi" zone
+                var checkn = pn;
+                while (checkn.nodeType != 9 &&
+                checkn.nodeName.toLowerCase() != 'body') {
+                // 9 = top of doc
+                    if (checkn.className.match(/\bnosearchhi\b/)) { return; }
+                    checkn = checkn.parentNode;
+                }
+                if (pn.className != "searchword") {
+                    // word has not already been highlighted!
+                    var nv = nodeArr[i].nodeValue;
+                    var ni = tempNodeVal.indexOf(tempWordVal);
+                    // Create a load of replacement nodes
+                    var before = document.createTextNode(nv.substr(0,ni));
+                    var docWordVal = nv.substr(ni,word.length);
+                    var after = document.createTextNode(nv.substr(ni+word.length));
+                    var hiwordtext = document.createTextNode(docWordVal);
+                    var hiword = document.createElement("span");
+                    hiword.className = "searchword";
+                    hiword.appendChild(hiwordtext);
+                    pn.insertBefore(before,nodeArr[i]);
+                    pn.insertBefore(hiword,nodeArr[i+1]);
+                    pn.insertBefore(after,nodeArr[i+2]);
+                    pn.removeChild(nodeArr[i+3]);
+                    searchhi.found += 1;
+                    if (searchhi.found == 1) pn.scrollIntoView();
+                }
+            }
+        }
     }
   },
 
   googleSearchHighlight: function() {
     var ref = document.referrer;
-    if (ref.indexOf(searchhi_config.ignore_site) == 0) return;
     if (ref.indexOf('?') == -1) return;
     var qs = ref.substr(ref.indexOf('?')+1);
     var qsa = qs.split('&');
