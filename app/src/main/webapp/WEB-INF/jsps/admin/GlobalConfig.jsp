@@ -40,7 +40,7 @@
             <%-- special case for front page blog --%>
             <s:elseif test="#pd.name == 'site.frontpage.weblog.handle'">
                 <s:select name="%{#pd.name}" label="%{getText(#pd.key)}" value="%{properties[#pd.name].value}"
-                          list="weblogs" listKey="name" listValueKey="handle"/>
+                          list="weblogs" listKey="handle" listValueKey="name"/>
             </s:elseif>
 
             <%-- "string" type means use a simple textbox --%>
