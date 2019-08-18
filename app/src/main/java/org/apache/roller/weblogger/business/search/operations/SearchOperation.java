@@ -52,11 +52,11 @@ public class SearchOperation extends ReadFromIndexOperation {
     private static Log mLogger = LogFactory.getFactory().getInstance(
             SearchOperation.class);
 
-    private static String[] SEARCH_FIELDS = new String[] {
+    private static final String[] SEARCH_FIELDS = new String[] {
             FieldConstants.CONTENT, FieldConstants.TITLE,
             FieldConstants.C_CONTENT };
 
-    private static Sort SORTER = new Sort(new SortField(
+    private static final Sort SORTER = new Sort(new SortField(
             FieldConstants.PUBLISHED, SortField.Type.STRING, true));
 
     // ~ Instance fields
@@ -95,6 +95,7 @@ public class SearchOperation extends ReadFromIndexOperation {
      * 
      * @see java.lang.Runnable#run()
      */
+    @Override
     public void doRun() {
         final int docLimit = 500;
         searchresults = null;
@@ -105,8 +106,7 @@ public class SearchOperation extends ReadFromIndexOperation {
             searcher = new IndexSearcher(reader);
 
             MultiFieldQueryParser multiParser = new MultiFieldQueryParser(
-                    FieldConstants.LUCENE_VERSION, SEARCH_FIELDS,
-                    IndexManagerImpl.getAnalyzer());
+                    SEARCH_FIELDS, IndexManagerImpl.getAnalyzer());
 
             // Make it an AND by default. Comment this out for an or (default)
             multiParser.setDefaultOperator(MultiFieldQueryParser.Operator.AND);
@@ -118,32 +118,30 @@ public class SearchOperation extends ReadFromIndexOperation {
                     websiteHandle);
 
             if (tUsername != null) {
-                BooleanQuery bQuery = new BooleanQuery();
-                bQuery.add(query, BooleanClause.Occur.MUST);
-                bQuery.add(new TermQuery(tUsername), BooleanClause.Occur.MUST);
-                query = bQuery;
+                query = new BooleanQuery.Builder()
+                    .add(query, BooleanClause.Occur.MUST)
+                    .add(new TermQuery(tUsername), BooleanClause.Occur.MUST)
+                    .build();
             }
 
             if (category != null) {
                 Term tCategory = new Term(FieldConstants.CATEGORY, category.toLowerCase());
-                BooleanQuery bQuery = new BooleanQuery();
-                bQuery.add(query, BooleanClause.Occur.MUST);
-                bQuery.add(new TermQuery(tCategory), BooleanClause.Occur.MUST);
-                query = bQuery;
+                query = new BooleanQuery.Builder()
+                    .add(query, BooleanClause.Occur.MUST)
+                    .add(new TermQuery(tCategory), BooleanClause.Occur.MUST)
+                    .build();
             }
 
-            Term tLocale = IndexUtil.getTerm(FieldConstants.LOCALE,
-                    locale);
+            Term tLocale = IndexUtil.getTerm(FieldConstants.LOCALE, locale);
 
             if (tLocale != null) {
-                BooleanQuery bQuery = new BooleanQuery();
-                bQuery.add(query, BooleanClause.Occur.MUST);
-                bQuery.add(new TermQuery(tLocale), BooleanClause.Occur.MUST);
-                query = bQuery;
+                query = new BooleanQuery.Builder()
+                    .add(query, BooleanClause.Occur.MUST)
+                    .add(new TermQuery(tLocale), BooleanClause.Occur.MUST)
+                    .build();
             }
 
-            searchresults = searcher.search(query, null/* Filter */, docLimit,
-                    SORTER);
+            searchresults = searcher.search(query, docLimit, SORTER);
 
         } catch (IOException e) {
             mLogger.error("Error searching index", e);
@@ -193,7 +191,7 @@ public class SearchOperation extends ReadFromIndexOperation {
         if (searchresults == null) {
             return -1;
         }
-        return searchresults.totalHits;
+        return (int) searchresults.totalHits.value;
     }
 
     /**
