@@ -17,7 +17,7 @@
 	
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header" th:utext="${model.weblog.name + ' '}">
+				<h1 class="pb-2 mt-4 mb-2 border-bottom" th:utext="${model.weblog.name + ' '}">
 				    <small th:utext="${model.weblog.tagline}">xxx</small>
 				</h1>
 			</div>
@@ -25,17 +25,17 @@
 
 	  	<div class="row">
 	  	<!-- BODY MAIN-->
-			<div id="main_content" class="col-lg-8" th:with="entry = ${model.weblogEntriesPager.entries.get(model.weblogEntriesPager.entries.keySet().iterator().next()).get(0)}">
+			<div class="col-lg-8" th:with="entry = ${model.weblogEntriesPager.entries.get(model.weblogEntriesPager.entries.keySet().iterator().next()).get(0)}">
                 <div th:replace="fragments :: WeblogEntriesPager"></div>
 
-				<ul class="pager" th:with="pager = ${model.getWeblogEntriesPager()}">
-	        		<li th:if="${!#strings.isEmpty(pager.prevLink)}" class="previous">
-	        		    <a th:href="${pager.prevLink}" th:utext="${'← ' + pager.prevLabel}">xxx</a>
-	        		</li>
-                    <li th:if=${!#strings.isEmpty(pager.nextLink)} class="next">
+                <div class="d-flex justify-content-between" th:with="pager = ${model.getWeblogEntriesPager()}">
+                    <span th:if="${!#strings.isEmpty(pager.prevLink)}" style="text-align:left">
+                        <a th:href="${pager.prevLink}" th:utext="${'← ' + pager.prevLabel}">xxx</a>
+                    </span>
+                    <span th:if="${!#strings.isEmpty(pager.nextLink)}" style="text-align:right">
                         <a th:href="${pager.nextLink}" th:utext="${pager.nextLabel + ' →'}">xxx</a>
-                    </li>
-				</ul>
+                    </span>
+                </div>
 
 				<hr>
 
@@ -53,7 +53,7 @@
                             <th:block th:each="comment,iterStat : ${comments}" th:if="${comment.approved || model.commentForm.preview}">
                                 <div th:id="${'comment-' + comment.timestamp}" th:class="${iterStat.even}? 'even' : 'odd'">
                                     <p th:utext="${comment.content}">xxx</p>
-                                    <p class="comment-details">
+                                    <p class="small">
                                     <span th:utext="${utils.msg('macro.weblog.postedby')}">xxx</span>
                                         <a rel="nofollow" th:href="${comment.url}" th:remove="${#strings.isEmpty(comment.url)} ? 'tag' : 'none'">
                                             <b th:utext="${comment.name}">xxx</b>
@@ -132,42 +132,18 @@
             </div>
 			
 			<!-- BODY - SIDEBAR -->
-			<div id="sidebar_content" class="col-lg-4">
-				<div class="well">
-					<h3>Welcome</h3>
-
-					<p class="details">
-					You're viewing a weblog entry titled <b th:utext="${model.weblogEntry.title}">xxx</b>.
-					If you like this entry you might want to:
-					</p>
-
-					<table><tbody>
-						<tr>
-						  <td><img th:src="${url.getThemeResourceURL('gaurav', 'icons/delicious.gif')}"
-						         alt="del.icio.us" height="16" width="16" />
-						      <a th:href="${'http://del.icio.us/post?url=' + url.getURL(model.weblogEntry)}"
-						         title="bookmark it in del.icio.us">Bookmark it</a></td>
-
-						  <td><img th:src="${url.getThemeResourceURL('gaurav', 'icons/digman.gif')}"
-						          alt="submit to dig digg.com" height="14" width="16" />
-						      <a th:href="${'http://www.digg.com/submit?url=' + url.getURL(model.weblogEntry) + '&amp;phase=2'}" title="submit it to digg">
-						          Digg it</a></td>
-						</tr>
-					</tbody></table>
-				</div>
-				<div class="well">
-					<p class="details">
-					This is just one entry in the weblog <b th:utext="${model.weblog.name}">xxx</b>.
-					Why don't you <a th:href="${url.weblogHome}">visit the main page</a> of the weblog?</p>
-				</div>
-				<div class="well">
-					<h3>Related entries</h3>
-					<ul>
-					    <li th:each="recentEntry : ${model.getRecentWeblogEntries(model.weblogEntry.category.name, 20)}" class="entryLink">
-					        <a th:href="${url.getURL(recentEntry)}" th:utext="${recentEntry.title}">xxx</a>
-					    </li>
-					</ul>
-				</div>
+			<div class="col-lg-4">
+                <div class="card">
+                    <h5 class="card-header">Related entries</h5>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li th:each="recentEntry : ${model.getRecentWeblogEntries(model.weblogEntry.category.name, 20)}"
+                                class="list-group-item">
+                                <a th:href="${url.getURL(recentEntry)}" th:utext="${recentEntry.title}">xxx</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 			</div>
 		</div>
 	</div>

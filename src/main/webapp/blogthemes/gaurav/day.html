@@ -1,6 +1,6 @@
 <div th:class="${model.permalink}? 'daybox'">
     <div th:each="entry : ${model.weblogEntriesPager.getEntries().get(day)}" class="entryBox" th:id="${entry.anchor}">
-        <h2 class="entryTitle searchable_text">
+        <h2 class="blogEntryTitle searchable_text">
             <a th:remove="${model.permalink}? 'tag' : 'none'" th:href="${url.getURL(entry)}" th:utext="${entry.title}">xxx</a>
         </h2>
 
@@ -16,7 +16,7 @@
           </p>
         <hr>
 
-        <div class="entryContent searchable_text">
+        <div class="searchable_text">
             <th:block th:switch="${model.permalink}">
                 <p th:case="${true}" th:utext="${model.getTransformedText(entry)}">xxx</p>
                 <th:block th:case="${false}">
@@ -42,7 +42,7 @@
             </th:block>
         </p>
 
-        <p th:if="${entry.tags.size() > 0}" class="entryInfo" style="clear: right">
+        <p th:if="${entry.tags.size() > 0}" class="text-muted" style="clear: right">
             Tags: <a th:each="tag : ${entry.tags}" class="tagLink" th:href="${url.getEntriesURLForTag(tag.name, model.category)}" th:utext="${tag.name}">xxx</a>
         </p>
     </div>

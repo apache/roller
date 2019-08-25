@@ -14,7 +14,7 @@
 	
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header" th:utext="${model.weblog.name + ' '}">
+				<h1 class="pb-2 mt-4 mb-2 border-bottom" th:utext="${model.weblog.name + ' '}">
 				    <small th:utext="${model.weblog.tagline}">xxx</small>
 				</h1>
 			</div>
@@ -23,32 +23,37 @@
 	  	<div class="row">
 	  
 	  		<!-- BODY MAIN-->
-		   	<div id="main_content" class="col-lg-8">
-				<h3 th:utext="${'Browse the ' + model.weblog.name + ' archives'}">xxx</h3>
-				<p th:utext="${'Browse the <b>' + model.weblog.name + '</b> archive in month view, search for specific keywords
-                   or jump to the most recent posts listed in the right sidebar.'}">xxx</p>
-				<br>
-				<div th:replace="fragments :: Calendar(true)"></div>
+		   	<div class="col-lg-8">
+				<h5 th:utext="${'Browse the ' + model.weblog.name + ' archives'}">xxx</h5>
+				<div>
+					<p class="text-info" th:utext="${'Browse the <b>' + model.weblog.name + '</b> archive in month view, search for specific keywords
+					   or jump to the most recent posts listed in the right sidebar.'}">xxx</p>
+
+					<div th:replace="fragments :: Calendar(true)"></div>
+				</div>
 			</div>
 			
 			<!-- BODY SIDEBAR-->
-			<div id="sidebar_content" class="col-lg-4">
-				<div class="well">
-					<h3>Welcome</h3>
+			<div class="col-lg-4">
+				<div class="card">
+					<h5 class="card-header">Welcome</h5>
+					<div class="card-body">
+						<p class="text-muted" th:utext="${'You''re on the Archives page of the weblog <b>' + model.weblog.name + '</b>.'}"></p>
 
-					<p class="details" th:utext="${'You''re on the Archives page of the weblog <b>' + model.weblog.name + '</b>.'}"></p>
-
-					<p class="details">
-					From here you can browse via the calendar, follow the links below or
-					<a th:href="${url.weblogHome}">visit the main page</a> of the weblog.</p>
+						<p class="text-muted">
+						From here you can browse via the calendar, follow the links below or
+						<a th:href="${url.weblogHome}">visit the main page</a> of the weblog.</p>
+					</div>
 				</div>
-				<div class="well">
-				  <h3>Most recent posts</h3>
-				  <ul th:each="recentEntry : ${model.getRecentWeblogEntries(null, 30)}">
-				      <li class="entryLink"><a th:href="${url.getURL(recentEntry)}" th:utext="${recentEntry.title}">xxx</a></li>
-				  </ul>
+				<div class="card">
+					<h5 class="card-header">Most recent posts</h5>
+					<div class="card-body">
+						<ul class="list-group list-group-flush" th:each="recentEntry : ${model.getRecentWeblogEntries(null, 10)}">
+							<li class="list-group-item"><a th:href="${url.getURL(recentEntry)}" th:utext="${recentEntry.title}">xxx</a></li>
+						</ul>
+					</div>
 				</div>	
-			</div> <!-- close sidebar_content -->
+			</div>
 		</div> <!-- /.row -->
 	</div> <!-- /.container -->
 

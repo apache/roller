@@ -1,8 +1,9 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<meta name="Description" th:content="${model.permalink ? model.weblogEntry.searchDescription : model.weblog.about}">
+<span th:replace="fragments :: MetaDescription"></span>
 <meta name="viewport" content="initial-scale=1.0">
 
 <!-- Bootstrap core CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
-<link rel="stylesheet" th:href="${url.getThemeResourceURL('gaurav', 'css/style.css')}" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" th:href="${url.getThemeResourceURL('gaurav', 'style.css')}" />

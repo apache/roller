@@ -146,6 +146,13 @@
         </div>
     </div>
 
+    <div th:fragment="TagCloud(myTags)" th:remove="tag">
+        <div id="tagcloud">
+            <a th:each="tag : ${myTags}" th:class="${'tag tc' + tag.intensity}"
+               th:href="${url.getEntriesURLForTag(tag.name, null)}" th:title="${tag.total}" th:utext="${tag.name + ' '}">xxx</a>
+        </div>
+    </div>
+
     <div th:fragment="WeblogEntryCommentForm" th:remove="tag">
         <div class="card" th:with="entry=${model.weblogEntry}, cform = ${model.getCommentForm()}">
             <div class="card-header">

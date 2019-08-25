@@ -1,8 +1,8 @@
 {
   "id": "gaurav",
   "name": "Gaurav",
-  "description": "Responsive Bootstrap-based theme originally by Gaurav Saini.",
-  "previewImagePath": "images/theme-gaurav.png",
+  "description": "Uses Bootstrap 4, features a narrower main column suitable for non-coding text blogs.",
+  "previewImagePath": "images/gaurav-sample.png",
   "templates": [
     {
       "type": "weblog",
@@ -24,6 +24,12 @@
       "name": "day",
       "description": "One day's worth of entries",
       "contentsFile": "day.html"
+    },
+    {
+      "type": "stylesheet",
+      "name": "style.css",
+      "description": "Additional styling beyond Bootstrap",
+      "contentsFile": "style.css"
     },
     {
       "type": "custom_external",

@@ -28,6 +28,20 @@ pre.code {
     padding: .25em .5em .5em .5em !important;
 }
 
+/* tagcloud */
+
+#tagcloud {
+    text-align: justify;
+    margin: 1em;
+}
+
+.tc1 {font-size:80%;}
+.tc2 {font-size:100%;}
+.tc3 {font-size:120%;}
+.tc4 {font-size:140%;}
+.tc5 {font-size:160%;}
+
+
 /* searchhi.js */
 span.searchword {
     background-color:yellow;

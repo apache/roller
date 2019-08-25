@@ -57,6 +57,17 @@
         </div>
     </div>
 
+    <th:block th:with="myTags = ${model.getPopularTags(30)}">
+        <th:block th:if="${myTags.size() > 4}">
+            <div class="card">
+                <h5 class="card-header">Tags</h5>
+                <div class="card-body">
+                    <span th:replace="fragments :: TagCloud(${myTags})"></span>
+                </div>
+            </div>
+        </th:block>
+    </th:block>
+
     <div class="card">
         <h5 class="card-header">Navigation</h5>
         <div class="card-body">

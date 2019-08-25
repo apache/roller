@@ -1,0 +1,39 @@
+.blogEntryTitle {color:royalblue}
+
+a.tagLink {
+    padding: 0px 5px 0px 20px;
+    background: url('icons/tag_blue.png') left center no-repeat;
+    font-weight: normal;
+}
+
+/* searchhi.js matched search item color */
+span.searchword {
+    background-color:yellow;
+}
+
+/* Calendar */
+.hCalendarTableBig {
+    width: 100%;
+    margin-bottom: 20px;
+    border: 1px solid #dddddd;
+}
+.hCalendarTableBig > thead > tr > th, .hCalendarTableBig > tbody > tr > th, .hCalendarTableBig > tfoot > tr > th, .hCalendarTableBig > thead > tr > td, .hCalendarTableBig > tbody > tr > td, .hCalendarTableBig > tfoot > tr > td {
+    padding:8px;
+    border: 1px solid #dddddd;
+}
+.hCalendarTableBig .hCalendarMonthYearRow {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Tag Cloud Items */
+#tagcloud {
+    text-align: justify;
+    margin: 1em;
+}
+
+.tc1 {font-size:80%;}
+.tc2 {font-size:100%;}
+.tc3 {font-size:120%;}
+.tc4 {font-size:140%;}
+.tc5 {font-size:160%;}

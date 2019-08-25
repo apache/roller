@@ -1,7 +1,7 @@
 {
   "id": "rolling",
   "name": "Rolling",
-  "description": "Bootstrap 4 based template.",
+  "description": "Uses Bootstrap 4.3, features a wider main column suitable for blogs displaying source code.",
   "previewImagePath": "rolling-sample.png",
   "templates": [
     {

@@ -19,7 +19,7 @@
 		
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header" th:utext="${model.weblog.name + ' '}">
+				<h1 class="pb-2 mt-4 mb-2 border-bottom" th:utext="${model.weblog.name + ' '}">
 				    <small th:utext="${model.weblog.tagline}">xxx</small>
 				</h1>
 			</div>
@@ -28,13 +28,9 @@
 	  	<div class="row">
 	  	
 		  	<!-- BODY MAIN-->
-		   	<div id="main_content" class="col-lg-8">
+		   	<div class="col-lg-8">
                 <div th:replace="fragments :: WeblogEntriesPager"></div>
 
-                <div th:if="${model.permalink}" th:remove="tag">
-                    <div th:replace="fragments :: WeblogEntryComments"></div>
-                    <div th:replace="fragments :: WeblogEntryCommentForm"></div>
-                </div>
 				<ul class="pager" th:with="pager = ${model.getWeblogEntriesPager()}">
 	        		<li th:if="${!#strings.isEmpty(pager.prevLink)}" class="previous">
 	        		    <a th:href="${pager.prevLink}" th:utext="${'← ' + pager.prevLabel}">xxx</a>
@@ -46,38 +42,39 @@
 			</div>
 		
 			<!-- BODY - SIDEBAR -->
-			<div id="sidebar_content" class="col-lg-4">
-				<div class="well">
-					<h3>Welcome</h3>
-					<p class="details">
-                    <th:block th:switch="${model.weblog.about != null && model.weblog.about.length() > 0}">
-                        <span th:case="${true}" th:utext="${model.weblog.about}">xxx</span>
-    					<span th:case="${false}" class="setup">Add an about message on your Weblog Settings
-    					    page and it will appear here</span>
-					</th:block></p>
+			<div class="col-lg-4">
+				<div class="card">
+					<h5 class="card-header">Welcome</h5>
+					<div class="card-body">
+						<p class="bg-info font-italic">
+						<th:block th:switch="${model.weblog.about != null && model.weblog.about.length() > 0}">
+							<span th:case="${true}" th:utext="${model.weblog.about}">xxx</span>
+							<span th:case="${false}">Add an about message on your Weblog Settings
+								page and it will appear here.</span>
+						</th:block></p>
 
-					<p>Click the link below to subscribe via your favorite feed reader:</p>
+						<p class="text-muted">Click the link below to subscribe via your favorite feed reader:</p>
 
-					<div id="subscribe">
-						<a th:href="${url.atomFeedURL}">
-							<img th:src="${url.getThemeResourceURL('gaurav', 'icons/feed-icon-28x28.png')}" title="RSS/Atom feed icon" alt="RSS/Atom feed icon" /></a>&nbsp;
-						<a th:href="${url.atomFeedURL}">Subscribe to this blog</a>
+						<div id="subscribe">
+							<a th:href="${url.atomFeedURL}">
+								<img th:src="${url.getThemeResourceURL('gaurav', 'icons/feed-icon-28x28.png')}" title="RSS/Atom feed icon" alt="RSS/Atom feed icon" /></a>&nbsp;
+							<a th:href="${url.atomFeedURL}">Subscribe to this blog</a>
+						</div>
 					</div>
 				</div>
-				<div class="well">
-                    <th:block th:with="myTags = ${model.getPopularTags(30)}">
-                        <th:block th:if="${myTags.size() > 4}">
-                           <h3>Hot tags</h3>
-                           <p class="details">Below are the most often used tags in the blog. Hover over a tag to
-							   see a count of entries, click a tag to see the most recent posts with the tag.</p>
-                           <div id="tagcloud">
-                              <a th:each="tag : ${myTags}" th:class="${'tag s' + tag.intensity}"
-                                th:href="${url.getEntriesURLForTag(tag.name, null)}" th:title="${tag.total}" th:utext="${tag.name + ' '}">xxx</a>
-                           </div>
-                       </th:block>
-                    </th:block>
-				</div>
-			</div> <!-- close sidebar_content -->
+				<th:block th:with="myTags = ${model.getPopularTags(30)}">
+					<th:block th:if="${myTags.size() > 4}">
+						<div class="card">
+							<h5 class="card-header">Hot tags</h5>
+							<div class="card-body">
+							   <p class="text-muted">Below are the most often used tags in the blog. Hover over a tag to
+								   see a count of entries, click a tag to see the most recent posts with the tag.</p>
+							   <span th:replace="fragments :: TagCloud(${myTags})"></span>
+							</div>
+						</div>
+					</th:block>
+				</th:block>
+			</div>
 		</div> <!-- /.row -->
 	</div> <!-- /.container -->
 
