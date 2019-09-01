@@ -220,10 +220,7 @@
             <param name="actionName">createUser</param>
             <param name="pageTitle">userAdmin.title.createNewUser</param>
             <result name="input" type="tiles">.UserEdit</result>
-            <result name="success" type="redirectAction">
-                <param name="actionName">modifyUser!firstSave</param>
-                <param name="bean.id">${bean.id}</param>
-            </result>
+            <result name="success" type="tiles">.UserAdmin</result>
             <allowed-methods>execute,firstSave,save</allowed-methods>
         </action>
 
@@ -236,6 +233,7 @@
             <result name="cancel" type="redirectAction">
                 <param name="actionName">userAdmin</param>
             </result>
+            <result name="success" type="tiles">.UserAdmin</result>
             <allowed-methods>execute,firstSave,save</allowed-methods>
         </action>
         
