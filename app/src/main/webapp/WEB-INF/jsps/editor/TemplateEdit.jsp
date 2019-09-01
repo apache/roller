@@ -264,7 +264,7 @@ if (getCookie('control_advancedControl') != null) {
 }
 </script>
 
- <script src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
+ <script src="<s:url value='/roller-ui/js/jquery-3.4.1.min.js'></s:url>"></script>
  <script src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
 
  <script>

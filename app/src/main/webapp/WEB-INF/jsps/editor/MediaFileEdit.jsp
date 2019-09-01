@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 <%@ page import="org.apache.roller.weblogger.config.WebloggerConfig" %>
 
-<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
+<script src="<s:url value="/roller-ui/js/jquery-3.4.1.min.js" />"></script>
 
 <s:if test="bean.isImage">
     <div class="mediaFileThumbnail">
