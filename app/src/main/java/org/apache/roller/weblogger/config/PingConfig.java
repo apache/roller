@@ -36,8 +36,7 @@ import java.util.regex.Pattern;
 /**
  * Thin wrapper around WebloggerConfig and WebloggerRuntimeConfig for centralizing access to the many configurable
  * settings for pings.
- * 
- * 
+ *
  * @author <a href="mailto:anil@busybuddha.org">Anil Gangolli</a>
  */
 public final class PingConfig {
@@ -80,12 +79,12 @@ public final class PingConfig {
     // commenting out this property in the config file.
     private static final String PINGS_INITIAL_COMMON_TARGETS_PROP = "pings.initialCommonTargets";
 
-
     // PingConfig property determining the known WeblogUpdates.ping variants/bugs
     // in popular ping targets, which we are used when invoking pings on those targets.
     // The value takes the form of a comma separated list of ping target urls and
     // variant options, where each one is in the form {{pingurl}{option[[,option]...]}}.
     private static final String PINGS_VARIANT_OPTIONS_PROP = "pings.variantOptions";
+
     // Map of configured ping variants.  Maps a ping target hostname to a set of
     // Strings representing variant options to be used when pinging this target.
     // This was introduced in order to support certain buggy (but popular) ping
@@ -111,7 +110,8 @@ public final class PingConfig {
      * @return the configured (or default) maximum number of ping attempts
      */
     public static int getMaxPingAttempts() {
-        return getIntegerProperty(MAX_PING_ATTEMPTS_PROP, MAX_PING_ATTEMPTS_DEFAULT, MAX_PING_ATTEMPTS_MIN, MAX_PING_ATTEMPTS_MAX);
+        return getIntegerProperty(MAX_PING_ATTEMPTS_PROP, MAX_PING_ATTEMPTS_DEFAULT,
+                MAX_PING_ATTEMPTS_MIN, MAX_PING_ATTEMPTS_MAX);
     }
 
     /**
@@ -120,7 +120,8 @@ public final class PingConfig {
      * @return the configured (or default) queue processing interval in minutes.
      */
     public static int getQueueProcessingIntervalMins() {
-        return getIntegerProperty(QUEUE_PROCESSING_INTERVAL_PROP, QUEUE_PROCESSING_INTERVAL_DEFAULT, QUEUE_PROCESSING_INTERVAL_MIN, QUEUE_PROCESSING_INTERVAL_MAX);
+        return getIntegerProperty(QUEUE_PROCESSING_INTERVAL_PROP, QUEUE_PROCESSING_INTERVAL_DEFAULT,
+                QUEUE_PROCESSING_INTERVAL_MIN, QUEUE_PROCESSING_INTERVAL_MAX);
     }
 
 
@@ -236,10 +237,13 @@ public final class PingConfig {
                 if (!variantOptions.isEmpty()) {
                     CONFIGURED_VARIANTS.put(url, variantOptions);
                 } else {
-                    LOGGER.warn("Ping variant entry for url '" + url + "' has an empty variant options list.  Ignored.");
+                    LOGGER.warn("Ping variant entry for url '" + url
+                            + "' has an empty variant options list.  Ignored.");
                 }
             } else {
-                LOGGER.error("Unable to parse configured ping variant '" + thisVariant + "'. Skipping this variant. Check your setting of the property " + PINGS_VARIANT_OPTIONS_PROP);
+                LOGGER.error("Unable to parse configured ping variant '"
+                        + thisVariant + "'. Skipping this variant. Check your setting of the property "
+                        + PINGS_VARIANT_OPTIONS_PROP);
             }
         }
     }
@@ -276,7 +280,8 @@ public final class PingConfig {
         String configuredVal = WebloggerConfig.getProperty(propName);
         if (configuredVal == null) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
+                LOGGER.debug("PingConfig property '" + propName
+                        + "' is not present in the configuration.  Using default value: " + defaultValue);
             }
             return defaultValue;
         }
@@ -285,12 +290,15 @@ public final class PingConfig {
         try {
             val = Integer.parseInt(configuredVal);
         } catch (NumberFormatException ex) {
-            LOGGER.error("ERROR: PingConfig property '" + propName + "' is not an integer value.  Using default value: " + defaultValue);
+            LOGGER.error("ERROR: PingConfig property '" + propName
+                    + "' is not an integer value.  Using default value: " + defaultValue);
             return defaultValue;
         }
 
         if (val < min || val > max) {
-            LOGGER.error("ERROR: PingConfig property '" + propName + "' is outside the required range (" + min + ", " + max + ").  Using default value: " + defaultValue);
+            LOGGER.error("ERROR: PingConfig property '" + propName
+                    + "' is outside the required range ("
+                    + min + ", " + max + ").  Using default value: " + defaultValue);
             return defaultValue;
         }
 
@@ -308,7 +316,8 @@ public final class PingConfig {
         String configuredVal = WebloggerConfig.getProperty(propName);
         if (configuredVal == null) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("PingConfig property '" + propName + "' is not present in the configuration.  Using default value: " + defaultValue);
+                LOGGER.debug("PingConfig property '" + propName
+                        + "' is not present in the configuration.  Using default value: " + defaultValue);
             }
             return defaultValue;
         }
