@@ -2,6 +2,7 @@
 Apache Roller Weblogger
 :toc:
 :sectnums:
+:imagesdir: ./images
 
 == Overview
 
@@ -564,8 +565,12 @@ Tomcat Manager application, which you can reach at the following URL
 http://localhost:8080/manager. Once you are there, you’ll see something
 like this:
 
+image::roller-install-guide-tomcat.png[]
+
 On the manager screen above, scroll down until you see the *Deploy*
 section, see below:
+
+image::roller-install-guide-tomcat-deploy.png[]
 
 Enter the context path at which you would like to see Roller, above we
 use _/roller_. Enter the full path to the Roller WAR file, in the
