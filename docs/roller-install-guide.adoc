@@ -310,33 +310,33 @@ in particular, is presently required if your mail SMTP server requires
 authentication.)
 
 Example: _roller-custom.properties_ file
-
+----
 installation.type=auto
 
-mediafiles.storage.dir=*/usr/local/rollerdata/mediafiles*
+mediafiles.storage.dir=/usr/local/rollerdata/mediafiles
 
-search.index.dir=*/usr/local/rollerdata/searchindex*
+search.index.dir=/usr/local/rollerdata/searchindex
 
-log4j.appender.roller.File=*/usr/local/rollerdata/roller.log*
+log4j.appender.roller.File=/usr/local/rollerdata/roller.log
 
 database.configurationType=jdbc
 
-database.jdbc.driverClass=*com.mysql.jdbc.Driver*
+database.jdbc.driverClass=com.mysql.jdbc.Driver
 
-database.jdbc.connectionURL=*jdbc:mysql://localhost:3306/rollerdb?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8*
+database.jdbc.connectionURL=jdbc:mysql://localhost:3306/rollerdb?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&mysqlEncoding=utf8
 
-database.jdbc.username=*scott*
+database.jdbc.username=scott
 
-database.jdbc.password=*tiger*
+database.jdbc.password=tiger
 
 mail.configurationType=properties
 
-mail.hostname=smtp-*server.example.com*
+mail.hostname=smtp-server.example.com
 
-mail.username=*scott*
+mail.username=scott
 
-mail.password=*tiger*
-
+mail.password=tiger
+----
 
 The _installation.type=auto_ property tells Roller to operate in
 automatic installation mode. In this mode Roller will provide very
@@ -345,9 +345,9 @@ Roller finds that the database exists but its tables are not, it will
 offer to run the database creation scripts. If find finds that the
 tables are there, but they are not up-to-date Roller will offer to
 upgrade them for you. Once your Roller installation is complete and you
-are ready to go "live" then you should set* installation.type=manual*.
+are ready to go "live" then you should set __installation.type=manual__.
 
-The above sample __roller-custom.properties __uses a MySQL connection.
+The above sample __roller-custom.properties__ uses a MySQL connection.
 It shows the MySQL JDBC driver class name, an example MySQL connection
 URL and username/password settings for the mail connection:
 
@@ -360,6 +360,7 @@ to require authentication with Derby. The username configured below will
 be the table owner used when the Roller installation process later
 creates the database tables.
 
+----
 database.configurationType=jdbc
 
 database.jdbc.driverClass=org.apache.derby.jdbc.EmbeddedDriver
@@ -369,9 +370,11 @@ database.jdbc.connectionURL=jdbc:derby:/path/to/new/MYROLLERDB
 database.jdbc.username=app
 
 database.jdbc.password=app
+----
 
 For PostgreSQL:
 
+----
 database.configurationType=jdbc
 
 database.jdbc.driverClass=org.postgresql.Driver
@@ -381,6 +384,7 @@ database.jdbc.connectionURL=jdbc:postgresql://localhost:5432/pgsqlroller
 database.jdbc.username=scott
 
 database.jdbc.password=tiger
+----
 
 *Alternative Authentication Options*
 
@@ -417,22 +421,18 @@ server’s Admin Console. No matter the reason, it’s easy to do in Roller.
 Here, you omit the _roller-custom.properties_ database and mail
 configuration given in the previous section and replace it with just:
 
+----
 installation.type=auto
-
-mediafiles.storage.dir=**/usr/local/rollerdata/mediafiles**
-
-search.index.dir=**/usr/local/rollerdata/searchindex**
-
-log4j.appender.roller.File=**/usr/local/rollerdata/roller.log**
-
+mediafiles.storage.dir=/usr/local/rollerdata/mediafiles
+search.index.dir=/usr/local/rollerdata/searchindex
+log4j.appender.roller.File=/usr/local/rollerdata/roller.log
 
 database.configurationType=jndi
-
 database.jndi.name=jdbc/rollerdb
-
 mail.configurationType=jndi
-
 mail.jndi.name=mail/Session
+
+----
 
 The _database.configurationType=jndi_ setting tells Roller to look up
 its datasource via Java Naming and Directory Interface (JNDI). Roller
@@ -540,12 +540,8 @@ each connector element, as shown below:
 
 ----
 <Connector port="8080" maxThreads="150" minSpareThreads="25"
-maxSpareThreads="75"
-
-enableLookups="false" redirectPort="8443" debug="0"
-acceptCount="100"
-
-connectionTimeout="20000" disableUploadTimeout="true"
+maxSpareThreads="75" enableLookups="false" redirectPort="8443" debug="0"
+acceptCount="100" connectionTimeout="20000" disableUploadTimeout="true"
 URIEncoding="UTF-8"/>
 ----
 
@@ -798,11 +794,14 @@ file-system. Here are a couple of examples: of how to do that on various
 databases:
 
 * On MySQL you create a dump file
-_mysqldump -u scott -p rollerdb >
-/somewhere/safe/roller.dmp_
+
+`mysqldump -u scott -p rollerdb >
+/somewhere/safe/roller.dmp`
+
 * With PostgreSQL you can do the same thing
-_pg_dump -h 127.0.0.1 -W -U
-scott rollerdb > /somewhere/safe/roller.db_
+
+`pg_dump -h 127.0.0.1 -W -U
+scott rollerdb > /somewhere/safe/roller.db`
 
 And backup any other data. Make a copy of your Roller data directory,
 i.e. the one with your Roller resources and search-index files. If you
@@ -843,7 +842,7 @@ Roller, but…
 
 * When creating your _roller-custom.properties_, copy of your old one.
 Carefully review each property and compare it to the property settings
-in the Roller property file described in Section link:#anchor-2[6.1].
+in the Roller property file described in Section link:#tomcat-create-roller-configuration-file[6.1].
 * Don’t create a new database for Roller. Instead point Roller to your
 existing Roller database. *This is completely safe because you created a
 backup of your database, right?*
@@ -854,7 +853,7 @@ necessary to upgrade you from your old version to the new version of
 Roller.
 
 *NOTE*: You can run the database scripts manually too, see Section
-link:#anchor-5[8.2].
+link:#manual-table-creation-and-upgrade[8.2].
 
 *NOTE*: On Tomcat, before startup you should delete the contents of the
 Tomcat work directory (located under the webapps folder.)
