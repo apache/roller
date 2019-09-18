@@ -33,11 +33,6 @@ The original version of this document was written by Dave Johnson. The
 document is currently written and updated by the Apache Roller project
 of the Apache Software Foundation.
 
-The general format of this document was based on the documentation
-template used by the OpenDS project which in turn was based on the
-templates used by the http://www.OpenOffice.org/[OpenOffice.org]
-project.
-
 == Securing Roller
 
 Security should be top-of-mind when setting up any web site, even one
