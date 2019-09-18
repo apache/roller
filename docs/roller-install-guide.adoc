@@ -597,6 +597,8 @@ page asking you to complete the installation by registering an admin
 user and creating a front-page blog. First, let’s talk about what
 happens when things go wrong.
 
+image::db-connection-error.png[]
+
 If there’s a problem with your database configuration, Roller will
 display a page or error messages to help you diagnose the problem. It’s
 possible that you entered the wrong JDBC driver class name, connection
@@ -613,12 +615,16 @@ appropriate database creation script for your database and then show you
 the results. You can then proceed to the next step to setup your first
 user account and weblog.
 
+image::no-tables-found.png[]
+
 === Register a user and create a weblog
 
 If Roller starts up fine but doesn’t find a front-page weblog then it
 will display the Completing Your Installation below that explains how to
 register your first user, create your first weblog and setup your site’s
 front page.
+
+image::roller-home.png[]
 
 You have to decide what you want as the front-page of your Roller site.
 If you are using Roller to run your personal weblog, then you probably
