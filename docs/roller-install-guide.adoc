@@ -106,12 +106,13 @@ for comments and other events via the JavaMail and Activation APIs.
 Roller WAR file, ready to deploy to your server, plus Roller license
 files, README and documentation. Unpack using either file based on a
 compression method your operating system supports:
-* roller-release-6.0.0-standard.zip
-* roller-release-6.0.0-standard.tar.gz
-+
+** roller-release-6.0.0-standard.zip
+** roller-release-6.0.0-standard.tar.gz
+
 This step can also be done after deployment and determination that you
 would like themes other than the defaults available available, just
 modify the WAR and redeploy on your servlet container.
+
 * *(Optional) Additional blog themes*. Roller comes pre-packaged with
 several blog themes (templates) for you to choose and optionally
 customize for each blog you create. You may wish to add additional
