@@ -31,7 +31,7 @@ WORKDIR /tmp
 RUN apt-get update && apt-get install -y git
 RUN git clone https://github.com/apache/roller.git
 WORKDIR /tmp/roller
-RUN git checkout master; \
+RUN git checkout roller-6.0.x; \
 mvn -Duser.home=/builder/home -DskipTests=true -B clean install
 
 
