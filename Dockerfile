@@ -31,7 +31,7 @@ WORKDIR /tmp
 RUN apt-get update && apt-get install -y git
 RUN git clone https://github.com/apache/roller.git
 WORKDIR /tmp/roller
-RUN git checkout bootstrap-ui; \
+RUN git checkout master; \
 mvn -Duser.home=/builder/home -DskipTests=true -B clean install
 
 
@@ -62,7 +62,7 @@ ENV DATABASE_HOST ${DATABASE_HOST}
 # install Roller WAR as ROOT.war, create data dirs
 
 WORKDIR /usr/local/roller
-COPY --from=builder /project/app/target/roller.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=builder /tmp/roller/app/target/roller.war /usr/local/tomcat/webapps/ROOT.war
 RUN mkdir -p data/mediafiles data/searchindex
 
 # download PostgreSQL and MySQL drivers plus Mail and Activation JARs

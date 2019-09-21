@@ -40,7 +40,7 @@
             <%-- special case for front page blog --%>
             <s:elseif test="#pd.name == 'site.frontpage.weblog.handle'">
                 <s:select name="%{#pd.name}" label="%{getText(#pd.key)}" value="%{properties[#pd.name].value}"
-                          list="weblogs" listKey="name" listValueKey="handle"/>
+                          list="weblogs" listKey="handle" listValueKey="name"/>
             </s:elseif>
 
             <%-- "string" type means use a simple textbox --%>
@@ -59,12 +59,10 @@
             <s:elseif test="#pd.type == 'boolean'">
 
                 <s:if test="properties[#pd.name].value == 'true'">
-                    <s:checkbox name="%{#pd.name}" label="%{getText(#pd.key)}"
-                                fieldValue="true" checked="true" onchange="formChanged()"/>
+                    <s:checkbox name="%{#pd.name}" label="%{getText(#pd.key)}" checked="true" onchange="formChanged()"/>
                 </s:if>
                 <s:if test="properties[#pd.name].value != 'true'">
-                    <s:checkbox name="%{#pd.name}" label="%{getText(#pd.key)}"
-                                fieldValue="false" onchange="formChanged()"/>
+                    <s:checkbox name="%{#pd.name}" label="%{getText(#pd.key)}" onchange="formChanged()"/>
                 </s:if>
 
             </s:elseif>

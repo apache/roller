@@ -64,7 +64,6 @@
 
 <tr>
     <th class="rollertable" width="5%"> </th>
-    <th class="rollertable" width="5%"> </th>
     <th class="rollertable" width="5%">
         <s:text name="weblogEntryQuery.pubTime" />
     </th>
@@ -74,9 +73,10 @@
     <th class="rollertable">
         <s:text name="weblogEntryQuery.title" />
     </th>
-    <th class="rollertable" width="5%">
+    <th class="rollertable" width="15%">
         <s:text name="weblogEntryQuery.category" />
     </th>
+    <th class="rollertable" width="5%"> </th>
 </tr>
 
 <s:iterator var="post" value="pager.items">
@@ -99,17 +99,13 @@
             <s:param name="weblog" value="%{actionWeblog.handle}" />
             <s:param name="bean.id" value="#post.id" />
         </s:url>
-        <s:a href="%{editUrl}"><span class="glyphicon glyphicon-edit"></s:a>
+        <s:a href="%{editUrl}">
+            <span class="glyphicon glyphicon-edit" data-toggle="tooltip" data-placement="top"
+                  title="<s:text name='generic.edit'/>">
+            </span>
+        </s:a>
     </td>
 
-    <td>
-        <s:set var="postId" value="#post.id" />
-        <s:set var="postTitle" value="#post.title" />
-        <a href="#" 
-            onclick="showDeleteModal('<s:property value="postId" />', '<s:property value="postTitle"/>' )"> 
-            <span class="glyphicon glyphicon-trash"></span></a>
-    </td>
-    
     <td>
         <s:if test="#post.pubTime != null">
             <s:text name="weblogEntryQuery.date.toStringFormat">
@@ -139,6 +135,17 @@
     
     <td>
         <s:property value="#post.category.name" />
+    </td>
+
+    <td>
+        <s:set var="postId" value="#post.id" />
+        <s:set var="postTitle" value="#post.title" />
+        <a href="#"
+            onclick="showDeleteModal('<s:property value="postId" />', '<s:property value="postTitle"/>' )">
+            <span class="glyphicon glyphicon-trash"
+                  data-toggle="tooltip" data-placement="top" title="<s:text name='generic.delete'/>">
+            </span>
+        </a>
     </td>
 
     </tr>

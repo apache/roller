@@ -26,10 +26,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.util.BytesRef;
 import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -135,8 +137,8 @@ public abstract class IndexOperation implements Runnable {
 
         // keyword
         if (data.getPubTime() != null) {
-            doc.add(new StringField(FieldConstants.PUBLISHED, data.getPubTime()
-                    .toString(), Field.Store.YES));
+            // SearchOperation sorts results by date
+            doc.add(new SortedDocValuesField(FieldConstants.PUBLISHED, new BytesRef(data.getPubTime().toString())));
         }
 
         // index Category, needs to be in lower case as it is used in a term
@@ -173,8 +175,7 @@ public abstract class IndexOperation implements Runnable {
                     IndexManagerImpl.getAnalyzer(),
                     WebloggerConfig.getIntProperty("lucene.analyzer.maxTokenCount"));
 
-            IndexWriterConfig config = new IndexWriterConfig(
-                    FieldConstants.LUCENE_VERSION, analyzer);
+            IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
             writer = new IndexWriter(manager.getIndexDirectory(), config);
 
@@ -201,6 +202,7 @@ public abstract class IndexOperation implements Runnable {
     /**
      * @see java.lang.Runnable#run()
      */
+    @Override
     public void run() {
         doRun();
     }

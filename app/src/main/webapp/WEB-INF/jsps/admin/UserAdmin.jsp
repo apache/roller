@@ -55,4 +55,14 @@
 
 </s:if>
 
-<script> document.getElementById('userName').focus(); </script>
+<script>
+
+
+$(document).ready(function () {
+
+    document.getElementById('userName').focus();
+    onUserNameFocus(false);
+
+});
+
+</script>

@@ -18,7 +18,6 @@
 /* Created on Jul 19, 2003 */
 package org.apache.roller.weblogger.business.search;
 
-import org.apache.lucene.util.Version;
 
 /**
  * Field constants for indexing blog entries and comments.
@@ -26,9 +25,6 @@ import org.apache.lucene.util.Version;
  * @author Mindaugas Idzelis (min@idzelis.com)
  */
 public final class FieldConstants {
-
-    // Set what version we are on
-    public static final Version LUCENE_VERSION = Version.LUCENE_44;
 
     public static final String ANCHOR = "anchor";
     public static final String UPDATED = "updated";

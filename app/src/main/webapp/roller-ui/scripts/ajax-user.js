@@ -16,7 +16,7 @@
 * directory of this distribution.
 */
 
-// Used in: InviteMember.jsp, UserAdmin.jsp
+// Used in: MemberInvite.jsp, UserAdmin.jsp
 
 function createRequestObject() {
     var ro;
@@ -41,6 +41,7 @@ function onUserNameFocus(enabled) {
         if (enabled != null) u = u + "&enabled=" + enabled;
         sendUserRequest(u);
     } else {
+        userSubmitButton = document.getElementById("user-submit");
         userSubmitButton.disabled = true;
     }
 }
