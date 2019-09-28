@@ -17,7 +17,6 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<script src="<s:url value="/roller-ui/js/jquery-3.4.1.min.js" />"></script>
 
 <style>
     .mediaObject {
