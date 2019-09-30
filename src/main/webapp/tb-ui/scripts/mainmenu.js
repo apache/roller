@@ -33,7 +33,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
         $('#resignWeblogModal').modal('hide');
 
         // https://stackoverflow.com/a/18030442/1207540
-        var userRoleId = obj.toElement.dataset.userroleId;
+        var userRoleId = obj.target.getAttribute("data-userrole-id");
 
         $http.post(contextPath + '/tb-ui/authoring/rest/weblogrole/' + userRoleId + '/detach').then(
           function(response) {

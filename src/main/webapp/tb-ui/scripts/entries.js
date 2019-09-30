@@ -44,7 +44,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         $('#deleteEntryModal').modal('hide');
 
         // https://stackoverflow.com/a/18030442/1207540
-        var entryId = obj.toElement.dataset.id;
+        var entryId = obj.target.getAttribute("data-id");
 
         $http.delete(this.urlRoot + entryId).then(
           function(response) {

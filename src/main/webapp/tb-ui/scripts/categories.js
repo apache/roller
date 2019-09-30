@@ -46,7 +46,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
 
     this.updateItem = function(obj) {
         // https://stackoverflow.com/a/18030442/1207540
-        var categoryId = obj.toElement.dataset.categoryId;
+        var categoryId = obj.target.getAttribute("data-category-id");
 
         this.messageClear();
         if (this.itemToEdit.name) {
