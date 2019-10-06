@@ -16,10 +16,6 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
-
-<script src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
-
 
 <style>
     .mediaObject {
@@ -90,7 +86,7 @@
             document.mediaFileViewForm.submit();
         }
     }
-    
+
     function onView() {
         document.mediaFileViewForm.action = "<s:url action='mediaFileView!view' />";
         document.mediaFileViewForm.submit();
