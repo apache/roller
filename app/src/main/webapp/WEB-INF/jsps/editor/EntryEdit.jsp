@@ -17,10 +17,6 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
-
-<script src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
-
 <style>
 #tagAutoCompleteWrapper {
     width:40em; /* set width here or else widget will expand to fit its container */
@@ -284,7 +280,7 @@
         </s:if>
     </div>
 
-    
+
     <%-- ================================================================== --%>
     <%-- Trackback control --%>
     <s:if test="actionName == 'entryEdit' && userAnAuthor">
