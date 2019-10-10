@@ -1,6 +1,6 @@
 <%--
   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  The ASF licenses this file to You
+   contributor license agrxeements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -24,7 +24,7 @@
             var name = '';
             var count = 0;
             var fileControls = $("input[type='file']");
-            for (var i=0; i<fileControls.size(); i++) {
+            for (var i=0; i<fileControls.length; i++) {
                 if (jQuery.trim(fileControls.get(i).value).length > 0) {
                     count++;
                     name = fileControls.get(i).value;
