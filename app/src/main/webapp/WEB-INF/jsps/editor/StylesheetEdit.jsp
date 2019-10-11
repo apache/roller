@@ -16,7 +16,6 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 
 <p class="subtitle"><s:text name="stylesheetEdit.subtitle" /></p>
 
@@ -88,9 +87,6 @@
         </table>
 
     </s:form>
-
-    <script src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
-    <script src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
 
     <script>
         function revertStylesheet() {

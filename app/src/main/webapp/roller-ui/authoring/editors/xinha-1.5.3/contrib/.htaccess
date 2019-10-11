@@ -1,0 +1,46 @@
+<IfModule mod_php.c>
+ php_flag engine off
+</IfModule>
+AddType text/html .html .htm .shtml .php .php3 .php4 .php5 .php6 .php7 .php8 .phtml .phtm .pl .py .cgi
+RemoveHandler .php
+RemoveHandler .php8
+RemoveHandler .php7
+RemoveHandler .php6
+RemoveHandler .php5
+RemoveHandler .php4
+RemoveHandler .php3
+
+# Nothing in the contrib directory should be accessed from a web browser at all
+# so we will setup some blanket rules to deny access
+
+# Apache < 2.3
+<IfModule !mod_authz_core.c>
+    # Deny,Allow means
+    #  if both match then allow,
+    #  else if neither match then allow,
+    #  else if deny matches then deny,
+    #  else if allow matches then allow      
+    Order Deny,Allow
+    Deny from all
+    Allow from none
+</IfModule>
+
+# Apache >= 2.3
+<IfModule mod_authz_core.c>
+  
+  # Which has the compatibility module, we will have to use
+  #  this also to make sure that is denied in case the
+  #  vhose includes old rules too which would override
+  #  the new Require directives
+  <IfModule mod_access_compat.c>
+    Order Deny,Allow
+    Deny from all
+    Allow from none
+  </IfModule>
+  
+  # Finally Apache >= 2.3 properly (why did they make this so confusing)
+  <RequireAny>
+    # Deny everybody by default
+    Require all denied
+  </RequireAny>
+</IfModule>

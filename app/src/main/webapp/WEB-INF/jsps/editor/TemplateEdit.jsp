@@ -16,7 +16,6 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
 
 <p class="subtitle">
    <s:text name="pageForm.subtitle" >
@@ -31,16 +30,16 @@
 <s:else>
     <p class="pagetip"><s:text name="pageForm.tip" /></p>
 </s:else>
-                
+
 <s:form action="templateEdit!save" id="template">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" />
     <s:hidden name="bean.id"/>
     <s:hidden name ="bean.type"/>
-    
+
     <%-- ================================================================== --%>
     <%-- Name, link and description: disabled when page is a required page --%>
-    
+
     <table cellspacing="5">
         <tr>
             <td class="label"><s:text name="generic.name" />&nbsp;</td>
@@ -54,7 +53,7 @@
             </td>
             <td class="description"></td>
         </tr>
-        
+
         <tr>
             <td class="label"><s:text name="pageForm.action" />&nbsp;</td>
             <td class="field">
@@ -62,7 +61,7 @@
             </td>
             <td class="description"></td>
         </tr>
-        
+
        <s:if test="!template.required && template.custom">
             <tr>
                 <td class="label" valign="top"><s:text name="pageForm.link" />&nbsp;</td>
@@ -82,7 +81,7 @@
                 <s:text name="generic.description" />&nbsp;</td>
             <td class="field">
                 <s:if test="template.required">
-                    <s:textarea name="bean.description" cols="50" rows="2" 
+                    <s:textarea name="bean.description" cols="50" rows="2"
                         readonly="true" cssStyle="background: #e5e5e5" />
                 </s:if>
                 <s:else>
@@ -91,7 +90,7 @@
             </td>
             <td class="description"></td>
         </tr>
-        
+
     </table>
 
     <%-- ================================================================== --%>
@@ -129,10 +128,10 @@
         </tr>
     </table>
 
-  
+
     <%-- ================================================================== --%>
     <%-- Advanced settings inside a control toggle --%>
-    
+
     <s:if test="template.custom">
         <br />
         <div id="advancedControlToggle" class="controlToggle">
@@ -140,9 +139,9 @@
             <a class="controlToggle" onclick="javascript:toggleControl('advancedControlToggle','advancedControl')">
             <s:text name="pageForm.advancedSettings" /></a>
         </div>
-        
+
         <div id="advancedControl" class="advancedControl" style="display:none">
-            
+
             <table cellspacing="6">
                 <tr>
                     <td class="label" valign="top"><s:text name="pageForm.outputContentType" />&nbsp;</td>
@@ -159,62 +158,62 @@
                         }
                         // --></script>
                         <s:if test="bean.autoContentType">
-                            <input type="radio" name="bean.autoContentType" 
-                                   value="true" checked="true" 
-                                   onchange="showContentTypeField()" 
-                                   id="template_bean_autoContentType1"/> 
+                            <input type="radio" name="bean.autoContentType"
+                                   value="true" checked="true"
+                                   onchange="showContentTypeField()"
+                                   id="template_bean_autoContentType1"/>
                             <s:text name="pageForm.useAutoContentType" /><br />
-                            
-                            <input type="radio" name="bean.autoContentType" 
-                                   value="false" 
-                                   onchange="showContentTypeField()" 
+
+                            <input type="radio" name="bean.autoContentType"
+                                   value="false"
+                                   onchange="showContentTypeField()"
                                    id="template_bean_autoContentType2"/>
                             <s:text name="pageForm.useManualContentType" />
                             <s:textfield name="bean.manualContentType" />
                         </s:if>
                         <s:else>
-                            <input type="radio" name="bean.autoContentType" 
-                                   value="true" 
-                                   onchange="showContentTypeField()" 
-                                   id="template_bean_autoContentType1"/> 
+                            <input type="radio" name="bean.autoContentType"
+                                   value="true"
+                                   onchange="showContentTypeField()"
+                                   id="template_bean_autoContentType1"/>
                             <s:text name="pageForm.useAutoContentType" /><br />
-                            
-                            <input type="radio" name="bean.autoContentType" 
-                                   value="false" 
-                                   checked="true" 
-                                   onchange="showContentTypeField()" 
+
+                            <input type="radio" name="bean.autoContentType"
+                                   value="false"
+                                   checked="true"
+                                   onchange="showContentTypeField()"
                                    id="template_bean_autoContentType2"/>
                             <s:text name="pageForm.useManualContentType" />
                             <s:textfield name="bean.manualContentType" />
                         </s:else>
-                        
+
                         <br />
                         <br />
-                        
+
                         <script><!--
                             showContentTypeField();
-                        // --></script> 
-                        
+                        // --></script>
+
                     </td>
                     <td class="description"></td>
                 </tr>
-                
+
                 <tr>
                     <td class="label"><s:text name="pageForm.navbar" />&nbsp;</td>
-                    <td class="field"><s:checkbox name="bean.navbar" /> 
+                    <td class="field"><s:checkbox name="bean.navbar" />
                         <s:text name="pageForm.navbar.tip" />
                     </td>
                     <td class="description"></td>
                 </tr>
-                
+
                 <tr>
                     <td class="label"><s:text name="pageForm.hidden" />&nbsp;</td>
                     <td class="field"><s:checkbox name="bean.hidden" />
                         <s:text name="pageForm.hidden.tip" />
                     </td>
-                    <td class="description"></td>                            
+                    <td class="description"></td>
                 </tr>
-                
+
                 <tr>
                     <td class="label"><s:text name="pageForm.templateLanguage" />&nbsp;</td>
                     <td class="field">
@@ -222,12 +221,12 @@
                     </td>
                     <td class="description"></td>
                 </tr>
-                
+
             </table>
-            
+
         </div>
     </s:if>
-    
+
 </s:form>
 
 
@@ -245,7 +244,7 @@ function updatePageURLDisplay() {
         previewSpan.appendChild(n2);
     } else {
         previewSpan.replaceChild(n2, n1);
-    }           
+    }
 }
 // Don't launch page if user has changed link, it'll be a 404
 function launchPage() {
@@ -263,9 +262,6 @@ if (getCookie('control_advancedControl') != null) {
     }
 }
 </script>
-
- <script src="<s:url value='/roller-ui/scripts/jquery-2.1.1.min.js'></s:url>"></script>
- <script src="<s:url value='/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js'></s:url>"></script>
 
  <script>
      $(function() {

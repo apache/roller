@@ -16,7 +16,6 @@
   directory of this distribution.
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
-<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
 
 
 <script>
@@ -25,7 +24,7 @@
             var name = '';
             var count = 0;
             var fileControls = $("input[type='file']");
-            for (var i=0; i<fileControls.size(); i++) {
+            for (var i=0; i<fileControls.length; i++) {
                 if (jQuery.trim(fileControls.get(i).value).length > 0) {
                     count++;
                     name = fileControls.get(i).value;

@@ -17,10 +17,6 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<link rel="stylesheet" media="all" href='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.css"/>' />
-<script src="<s:url value="/roller-ui/scripts/jquery-2.1.1.min.js" />"></script>
-<script src='<s:url value="/roller-ui/jquery-ui-1.11.0/jquery-ui.min.js"/>'></script>
-
 <div class="sidebarFade">
     <div class="menu-tr">
         <div class="menu-tl">

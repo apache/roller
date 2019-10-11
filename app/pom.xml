@@ -387,6 +387,17 @@ limitations under the License.
         </dependency>
 
         <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery-ui</artifactId>
+            <version>1.12.1</version>
+         </dependency>
+
+        <dependency>
             <groupId>org.webjars.npm</groupId>
             <artifactId>angular</artifactId>
             <version>${angular.version}</version>
@@ -562,7 +573,7 @@ limitations under the License.
                             </resources>
                         </configuration>
                     </execution>
-                   
+
                     <execution>
                         <id>copy-resources</id>
                         <phase>process-resources</phase>
@@ -584,7 +595,7 @@ limitations under the License.
                     </execution>
 
                 </executions>
-                
+
                 <configuration>
                     <includeEmptyDirs>true</includeEmptyDirs>
                 </configuration>
