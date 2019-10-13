@@ -125,6 +125,16 @@
                 textAreaElement.focus();
             }
         }
+        // Added event listener to confirm once the editor content is changed
+        jQuery("#edit_content").one("change", function() {
+            jQuery(window).on("beforeunload", function(event) {
+                // Chrome requires returnValue to be set and original event is found as originalEvent
+                // see https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload#Example
+                if (event.originalEvent)
+                    event.originalEvent.returnValue = "Are you sure you want to leave?";
+                return "Are you sure you want to leave?";
+            });
+        });
     </script>
 </s:if>
 <s:else>
@@ -169,7 +179,7 @@
                 'edit_content', 'edit_summary'
             ];
 
-            xinha_plugins = xinha_plugins ? xinha_plugins :[];
+            xinha_plugins = xinha_plugins ? xinha_plugins :[ 'UnsavedChanges'];
             if(!Xinha.loadPlugins(xinha_plugins, xinha_init)) return;
 
             xinha_config = xinha_config ? xinha_config() : new Xinha.Config();
