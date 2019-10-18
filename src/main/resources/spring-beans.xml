@@ -21,15 +21,12 @@
              xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xmlns:util="http://www.springframework.org/schema/util"
-             xmlns:task="http://www.springframework.org/schema/task"
              xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
           http://www.springframework.org/schema/util
           http://www.springframework.org/schema/util/spring-util-4.3.xsd
           http://www.springframework.org/schema/security
           http://www.springframework.org/schema/security/spring-security.xsd
-          http://www.springframework.org/schema/task
-          http://www.springframework.org/schema/task/spring-task-4.2.xsd
           ">
     <!-- Any of these values can be overridden and maintained outside of the WAR by placing in a separate
          tightblog-custom.xml file in the servlet container's library folder, e.g. for Tomcat its lib folder
@@ -163,15 +160,5 @@
         <!-- See CommentProcessor for an example of how URLs are combined at the class- and method-level. -->
         <beans:property name="alwaysUseFullPath" value="true"/>
     </beans:bean>
-
-    <task:scheduled-tasks scheduler="blogTaskScheduler">
-        <!-- uncomment/comment and configure frequency of each task as desired -->
-        <!-- midnight every day -->
-        <task:scheduled ref="weblogDao" method="updateDailyHitCountZero" cron="0 0 0 * * *"/>
-        <!-- every 4 hours -->
-        <task:scheduled ref="weblogEntryManager" method="promoteScheduledEntries" cron="0 0 0/4 * * *"/>
-        <!-- every 15 mins -->
-        <task:scheduled ref="weblogManager" method="updateHitCounters" cron="0 0/20 * * * *"/>
-    </task:scheduled-tasks>
 
 </beans:beans>

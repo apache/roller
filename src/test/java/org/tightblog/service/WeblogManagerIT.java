@@ -224,7 +224,7 @@ public class WeblogManagerIT extends WebloggerTest {
             assertEquals(20, blog2.getHitsToday());
 
             // reset all counts
-            weblogDao.updateDailyHitCountZero();
+            weblogDao.resetDailyHitCounts();
 
             blog1 = weblogDao.findByIdOrNull(blog1.getId());
             blog2 = weblogDao.findByIdOrNull(blog2.getId());

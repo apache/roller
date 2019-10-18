@@ -110,7 +110,7 @@ public class AdminController {
     @PostMapping(value = "/resethitcount", produces = "text/plain")
     public ResponseEntity<String> resetHitCount() {
         try {
-            weblogDao.updateDailyHitCountZero();
+            weblogDao.resetDailyHitCounts();
             log.info("daily hit counts manually reset by administrator");
             return ResponseEntity.ok(messages.getMessage("cachedData.message.reset", null, Locale.getDefault()));
         } catch (Exception ex) {

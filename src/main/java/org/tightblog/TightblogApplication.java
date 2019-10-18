@@ -19,6 +19,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @SpringBootApplication
@@ -26,6 +27,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @EnableWebSecurity
 // https://docs.spring.io/spring/docs/current/spring-framework-reference/integration.html#cache-annotation-enable
 @EnableCaching
+// Search code for @Scheduled annotations for scheduled tasks
+@EnableScheduling
 // extending SBSI to make deployable as a WAR file
 public class TightblogApplication extends SpringBootServletInitializer {
 

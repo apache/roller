@@ -25,6 +25,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.domain.AtomEnclosure;
@@ -158,6 +159,7 @@ public class WeblogEntryManager {
      * Check for any scheduled weblog entries whose publication time has been
      * reached and promote them.
      */
+    @Scheduled(cron = "${cron.promote.scheduled.entries}")
     public void promoteScheduledEntries() {
         log.debug("promoting scheduled entries...");
 

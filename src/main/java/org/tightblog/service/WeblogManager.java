@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.tightblog.config.DynamicProperties;
@@ -254,6 +255,7 @@ public class WeblogManager {
      * Job to write out the hit count queue to the database, updating
      * individual blog's hit counters
      */
+    @Scheduled(cron = "${cron.update.hit.counters}")
     public void updateHitCounters() {
         if (hitsTally.size() > 0) {
             // Make a reference to the current queue
