@@ -30,7 +30,7 @@ import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
-import org.tightblog.repository.WeblogRepository;
+import org.tightblog.dao.WeblogDao;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -61,12 +61,12 @@ public class FeedProcessorTest {
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
     private LazyExpiringCache mockCache;
-    private WeblogRepository mockWR;
+    private WeblogDao mockWR;
     private ThymeleafRenderer mockThymeleafRenderer;
 
     @Before
     public void initializeMocks() {
-        mockWR = mock(WeblogRepository.class);
+        mockWR = mock(WeblogDao.class);
         weblog = new Weblog();
         when(mockWR.findByHandleAndVisibleTrue(TestUtils.BLOG_HANDLE)).thenReturn(weblog);
 

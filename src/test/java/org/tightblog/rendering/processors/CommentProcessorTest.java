@@ -39,9 +39,9 @@ import org.tightblog.domain.WebloggerProperties.CommentPolicy;
 import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.tightblog.repository.UserRepository;
-import org.tightblog.repository.WeblogRepository;
-import org.tightblog.repository.WebloggerPropertiesRepository;
+import org.tightblog.dao.UserDao;
+import org.tightblog.dao.WeblogDao;
+import org.tightblog.dao.WebloggerPropertiesDao;
 import org.tightblog.util.HTMLSanitizer;
 
 import javax.persistence.EntityManager;
@@ -74,9 +74,9 @@ public class CommentProcessorTest {
     private WebloggerProperties properties;
     private CommentProcessor processor;
     private MessageSource mockMessageSource;
-    private WeblogRepository mockWR;
+    private WeblogDao mockWD;
     private WeblogEntryManager mockWEM;
-    private UserRepository mockUR;
+    private UserDao mockUD;
     private UserManager mockUM;
     private LuceneIndexer mockIM;
     private EmailService mockES = mock(EmailService.class);
@@ -99,15 +99,15 @@ public class CommentProcessorTest {
         mockRequestDispatcher = mock(RequestDispatcher.class);
         when(mockRequest.getRequestDispatcher(anyString())).thenReturn(mockRequestDispatcher);
 
-        WebloggerPropertiesRepository mockPropertiesRepository = mock(WebloggerPropertiesRepository.class);
+        WebloggerPropertiesDao mockPropertiesDao = mock(WebloggerPropertiesDao.class);
         properties = new WebloggerProperties();
         properties.setCommentHtmlPolicy(HTMLSanitizer.Level.LIMITED);
-        when(mockPropertiesRepository.findOrNull()).thenReturn(properties);
+        when(mockPropertiesDao.findOrNull()).thenReturn(properties);
 
-        mockWR = mock(WeblogRepository.class);
+        mockWD = mock(WeblogDao.class);
         weblog = new Weblog();
         weblog.setHandle("myblog");
-        when(mockWR.findByHandleAndVisibleTrue("myblog")).thenReturn(weblog);
+        when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(weblog);
 
         mockWEM = mock(WeblogEntryManager.class);
         weblogEntry = new WeblogEntry();
@@ -116,10 +116,10 @@ public class CommentProcessorTest {
         when(mockWEM.getWeblogEntryByAnchor(weblog, weblogEntry.getAnchor())).thenReturn(weblogEntry);
         when(mockWEM.canSubmitNewComments(weblogEntry)).thenReturn(true);
 
-        mockUR = mock(UserRepository.class);
+        mockUD = mock(UserDao.class);
         user = new User();
         user.setUserName("bob");
-        when(mockUR.findEnabledByUserName("bob")).thenReturn(user);
+        when(mockUD.findEnabledByUserName("bob")).thenReturn(user);
 
         mockIM = mock(LuceneIndexer.class);
         when(mockIM.isIndexComments()).thenReturn(true);
@@ -129,8 +129,8 @@ public class CommentProcessorTest {
         mockMessageSource = mock(MessageSource.class);
         PageModel mockPageModel = mock(PageModel.class);
 
-        processor = new CommentProcessor(mockWR, mockUR, mockIM, mockWEM, mockUM,
-                mockES, new DynamicProperties(), mockMessageSource, mockPageModel, mockPropertiesRepository);
+        processor = new CommentProcessor(mockWD, mockUD, mockIM, mockWEM, mockUM,
+                mockES, new DynamicProperties(), mockMessageSource, mockPageModel, mockPropertiesDao);
         processor.setCommentValidators(Collections.singletonList(alwaysNotSpamValidator));
 
         EntityManager mockEM = mock(EntityManager.class);
@@ -168,7 +168,7 @@ public class CommentProcessorTest {
             // make subsequent tests a non-blogger comment
             when(mockAuthenticator.authenticate(mockRequest)).thenReturn(true);
             when(mockUM.checkWeblogRole(any(User.class), any(Weblog.class), eq(WeblogRole.POST))).thenReturn(false);
-            when(mockUR.findEnabledByUserName(any())).thenReturn(null);
+            when(mockUD.findEnabledByUserName(any())).thenReturn(null);
 
             // check spam comment requires approval even if must moderate off
             properties.setCommentPolicy(CommentPolicy.YES);
@@ -273,7 +273,7 @@ public class CommentProcessorTest {
     @Test
     public void postCommentReturn404IfWeblogNotFound() {
         try {
-            when(mockWR.findByHandleAndVisibleTrue("myblog")).thenReturn(null);
+            when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(null);
             processor.postComment(mockRequest, mockResponse);
             verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (IOException | ServletException e) {
@@ -283,7 +283,7 @@ public class CommentProcessorTest {
 
     @Test
     public void postCommentReturn404IfWeblogEntryUnavailable() {
-        when(mockWR.findByHandleAndVisibleTrue(any())).thenReturn(new Weblog());
+        when(mockWD.findByHandleAndVisibleTrue(any())).thenReturn(new Weblog());
 
         try {
             // entry null

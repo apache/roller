@@ -30,7 +30,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
     this.urlRoot = contextPath + '/tb-ui/authoring/rest/comments/';
 
     this.loadLookupFields = function() {
-        $http.get(this.urlRoot + weblogId + '/searchfields'  ).then(
+        $http.get(this.urlRoot + 'searchfields'  ).then(
         function(response) {
             self.lookupFields = response.data;
           },

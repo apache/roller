@@ -24,8 +24,8 @@ import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.model.URLModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.tightblog.repository.UserRepository;
-import org.tightblog.repository.WeblogRepository;
+import org.tightblog.dao.UserDao;
+import org.tightblog.dao.WeblogDao;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
@@ -57,13 +57,13 @@ public class AbstractProcessorTest {
         WeblogPageRequest req = WeblogPageRequest.Creator.create(mock(HttpServletRequest.class), mock(PageModel.class));
         Map<String, Object> initData = new HashMap<>();
         initData.put("parsedRequest", req);
-        UserRepository mockUR = mock(UserRepository.class);
-        WeblogRepository mockWR = mock(WeblogRepository.class);
+        UserDao mockUD = mock(UserDao.class);
+        WeblogDao mockWD = mock(WeblogDao.class);
         DynamicProperties dp = new DynamicProperties();
         Function<WeblogPageRequest, SiteModel> siteModelFactory = new WebConfig().siteModelFactory();
-        PageProcessor processor = new PageProcessor(mockWR, null, null,
+        PageProcessor processor = new PageProcessor(mockWD, null, null,
                 null, null, null, null,
-                siteModelFactory, mockUR, dp);
+                siteModelFactory, mockUD, dp);
         processor.setApplicationContext(mockContext);
         Map<String, Object> modelMap = processor.getModelMap("testBean", initData);
         assertEquals(mockURLModel, modelMap.get("url"));

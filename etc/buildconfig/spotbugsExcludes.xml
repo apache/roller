@@ -18,7 +18,7 @@
     <!-- Apparent false positives occurring regarding unclosed resources
         in some try-with-resources (https://stackoverflow.com/a/50977253/1207540) -->
     <Match>
-        <Class name="org.tightblog.ui.restapi.InstallerController" />
+        <Class name="org.tightblog.editorui.controller.InstallerController" />
         <Method name="checkDatabase"/>
         <Bug pattern="OBL_UNSATISFIED_OBLIGATION" />
     </Match>

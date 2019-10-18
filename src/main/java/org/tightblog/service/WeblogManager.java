@@ -38,14 +38,14 @@ import org.tightblog.domain.WeblogRole;
 import org.tightblog.domain.WebloggerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tightblog.repository.UserWeblogRoleRepository;
-import org.tightblog.repository.WeblogCategoryRepository;
-import org.tightblog.repository.WeblogEntryCommentRepository;
-import org.tightblog.repository.WeblogEntryRepository;
-import org.tightblog.repository.WeblogEntryTagRepository;
-import org.tightblog.repository.WeblogRepository;
-import org.tightblog.repository.WeblogTemplateRepository;
-import org.tightblog.repository.WebloggerPropertiesRepository;
+import org.tightblog.dao.UserWeblogRoleDao;
+import org.tightblog.dao.WeblogCategoryDao;
+import org.tightblog.dao.WeblogEntryCommentDao;
+import org.tightblog.dao.WeblogEntryDao;
+import org.tightblog.dao.WeblogEntryTagDao;
+import org.tightblog.dao.WeblogDao;
+import org.tightblog.dao.WeblogTemplateDao;
+import org.tightblog.dao.WebloggerPropertiesDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -69,14 +69,14 @@ public class WeblogManager {
 
     private static Logger log = LoggerFactory.getLogger(WeblogManager.class);
 
-    private WeblogEntryRepository weblogEntryRepository;
-    private WeblogEntryCommentRepository weblogEntryCommentRepository;
-    private WeblogCategoryRepository weblogCategoryRepository;
-    private WeblogEntryTagRepository weblogEntryTagRepository;
-    private WeblogTemplateRepository weblogTemplateRepository;
-    private WebloggerPropertiesRepository webloggerPropertiesRepository;
-    private UserWeblogRoleRepository userWeblogRoleRepository;
-    private WeblogRepository weblogRepository;
+    private WeblogEntryDao weblogEntryDao;
+    private WeblogEntryCommentDao weblogEntryCommentDao;
+    private WeblogCategoryDao weblogCategoryDao;
+    private WeblogEntryTagDao weblogEntryTagDao;
+    private WeblogTemplateDao weblogTemplateDao;
+    private WebloggerPropertiesDao webloggerPropertiesDao;
+    private UserWeblogRoleDao userWeblogRoleDao;
+    private WeblogDao weblogDao;
     private UserManager userManager;
     private DynamicProperties dp;
 
@@ -100,24 +100,24 @@ public class WeblogManager {
     private Map<String, Long> hitsTally = Collections.synchronizedMap(new HashMap<>());
 
     @Autowired
-    public WeblogManager(WeblogEntryRepository weblogEntryRepository,
-                         WeblogCategoryRepository weblogCategoryRepository,
-                         WeblogEntryTagRepository weblogEntryTagRepository,
-                         WeblogEntryCommentRepository weblogEntryCommentRepository,
-                         WeblogTemplateRepository weblogTemplateRepository,
-                         UserWeblogRoleRepository userWeblogRoleRepository,
-                         WebloggerPropertiesRepository webloggerPropertiesRepository,
-                         WeblogRepository weblogRepository,
+    public WeblogManager(WeblogEntryDao weblogEntryDao,
+                         WeblogCategoryDao weblogCategoryDao,
+                         WeblogEntryTagDao weblogEntryTagDao,
+                         WeblogEntryCommentDao weblogEntryCommentDao,
+                         WeblogTemplateDao weblogTemplateDao,
+                         UserWeblogRoleDao userWeblogRoleDao,
+                         WebloggerPropertiesDao webloggerPropertiesDao,
+                         WeblogDao weblogDao,
                          UserManager userManager,
                          DynamicProperties dp) {
-        this.weblogEntryRepository = weblogEntryRepository;
-        this.weblogEntryCommentRepository = weblogEntryCommentRepository;
-        this.weblogCategoryRepository = weblogCategoryRepository;
-        this.weblogEntryTagRepository = weblogEntryTagRepository;
-        this.weblogTemplateRepository = weblogTemplateRepository;
-        this.userWeblogRoleRepository = userWeblogRoleRepository;
-        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
-        this.weblogRepository = weblogRepository;
+        this.weblogEntryDao = weblogEntryDao;
+        this.weblogEntryCommentDao = weblogEntryCommentDao;
+        this.weblogCategoryDao = weblogCategoryDao;
+        this.weblogEntryTagDao = weblogEntryTagDao;
+        this.weblogTemplateDao = weblogTemplateDao;
+        this.userWeblogRoleDao = userWeblogRoleDao;
+        this.webloggerPropertiesDao = webloggerPropertiesDao;
+        this.weblogDao = weblogDao;
         this.userManager = userManager;
         this.dp = dp;
     }
@@ -126,37 +126,37 @@ public class WeblogManager {
         if (externallyViewableChange) {
             weblog.setLastModified(Instant.now());
         }
-        weblogRepository.saveAndFlush(weblog);
+        weblogDao.saveAndFlush(weblog);
         if (externallyViewableChange) {
             dp.updateLastSitewideChange();
-            weblogRepository.evictWeblog(weblog.getHandle());
+            weblogDao.evictWeblog(weblog.getHandle());
         }
     }
 
     public void removeWeblog(Weblog weblog) {
         // remove contents first, then remove weblog
-        weblogTemplateRepository.deleteByWeblog(weblog);
-        weblogTemplateRepository.evictWeblogTemplates(weblog);
+        weblogTemplateDao.deleteByWeblog(weblog);
+        weblogTemplateDao.evictWeblogTemplates(weblog);
         mediaManager.removeAllFiles(weblog);
 
-        List<WeblogEntry> entryList = weblogEntryRepository.findByWeblog(weblog);
-        entryList.forEach(e -> weblogEntryCommentRepository.deleteByWeblogEntry(e));
-        weblogEntryRepository.deleteByWeblog(weblog);
-        userWeblogRoleRepository.deleteByWeblog(weblog);
+        List<WeblogEntry> entryList = weblogEntryDao.findByWeblog(weblog);
+        entryList.forEach(e -> weblogEntryCommentDao.deleteByWeblogEntry(e));
+        weblogEntryDao.deleteByWeblog(weblog);
+        userWeblogRoleDao.deleteByWeblog(weblog);
 
         // remove indexing
         luceneIndexer.updateIndex(weblog, true);
 
         // check if main blog, disconnect if it is
-        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
+        WebloggerProperties props = webloggerPropertiesDao.findOrNull();
         Weblog test = props.getMainBlog();
         if (test != null && test.getId().equals(weblog.getId())) {
             props.setMainBlog(null);
-            webloggerPropertiesRepository.saveAndFlush(props);
+            webloggerPropertiesDao.saveAndFlush(props);
         }
-        weblogRepository.delete(weblog);
+        weblogDao.delete(weblog);
         dp.updateLastSitewideChange();
-        weblogRepository.evictWeblog(weblog.getHandle());
+        weblogDao.evictWeblog(weblog.getHandle());
     }
 
     /**
@@ -166,13 +166,13 @@ public class WeblogManager {
      * @param newWeblog New weblog to be created, must have creator field populated.
      */
     public void addWeblog(Weblog newWeblog) {
-        weblogRepository.save(newWeblog);
+        weblogDao.save(newWeblog);
 
-        if (weblogRepository.count() == 1) {
+        if (weblogDao.count() == 1) {
             // first weblog, let's make it the frontpage one.
-            WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
+            WebloggerProperties props = webloggerPropertiesDao.findOrNull();
             props.setMainBlog(newWeblog);
-            webloggerPropertiesRepository.save(props);
+            webloggerPropertiesDao.save(props);
         }
 
         // grant weblog creator OWNER permission
@@ -210,7 +210,7 @@ public class WeblogManager {
      * @return analytics tracking code, empty string if none.
      */
     public String getAnalyticsTrackingCode(Weblog weblog) {
-        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
+        WebloggerProperties props = webloggerPropertiesDao.findOrNull();
 
         if (props.isUsersOverrideAnalyticsCode() &&
                 !StringUtils.isBlank(weblog.getAnalyticsCode())) {
@@ -230,7 +230,7 @@ public class WeblogManager {
         Map<Character, Integer> results = new TreeMap<>();
         for (int i = 0; i < 26; i++) {
             char currentChar = lc.charAt(i);
-            int count = weblogRepository.getCountByHandle(currentChar);
+            int count = weblogDao.getCountByHandle(currentChar);
             results.put(currentChar, count);
         }
         return results;
@@ -266,7 +266,7 @@ public class WeblogManager {
             long totalHitsProcessed = 0;
             Weblog weblog;
             for (Map.Entry<String, Long> entry : hitsTallyCopy.entrySet()) {
-                weblog = weblogRepository.findById(entry.getKey()).orElse(null);
+                weblog = weblogDao.findById(entry.getKey()).orElse(null);
                 if (weblog != null) {
                     weblog.setHitsToday(weblog.getHitsToday() + entry.getValue().intValue());
                     saveWeblog(weblog, true);
@@ -286,7 +286,7 @@ public class WeblogManager {
             throw new IllegalArgumentException("weblog is null");
         }
 
-        List<WeblogCategory> categories = weblogCategoryRepository.findByWeblogOrderByPosition(weblog);
+        List<WeblogCategory> categories = weblogCategoryDao.findByWeblogOrderByPosition(weblog);
 
         // obtain usage stats
         String queryString = "SELECT new org.tightblog.service.WeblogManager.CategoryStats(we.category, " +
@@ -439,12 +439,12 @@ public class WeblogManager {
      * @param tagName Tag name to remove.
      */
     public void removeTag(Weblog weblog, String tagName) {
-        List<WeblogEntryTag> currentResults = weblogEntryTagRepository.findByWeblogAndName(weblog, tagName);
+        List<WeblogEntryTag> currentResults = weblogEntryTagDao.findByWeblogAndName(weblog, tagName);
 
         boolean updated = false;
         for (WeblogEntryTag tag : currentResults) {
             tag.getWeblogEntry().getTags().remove(tag);
-            weblogEntryRepository.save(tag.getWeblogEntry());
+            weblogEntryDao.save(tag.getWeblogEntry());
             updated = true;
         }
 
@@ -467,8 +467,8 @@ public class WeblogManager {
         int updatedEntries = 0;
         int unchangedEntries = 0;
 
-        List<WeblogEntryTag> currentResults = weblogEntryTagRepository.findByWeblogAndName(weblog, currentTagName);
-        List<String> alreadyEntryIdList = weblogEntryTagRepository.getEntryIdsByWeblogAndName(weblog, newTagName);
+        List<WeblogEntryTag> currentResults = weblogEntryTagDao.findByWeblogAndName(weblog, currentTagName);
+        List<String> alreadyEntryIdList = weblogEntryTagDao.getEntryIdsByWeblogAndName(weblog, newTagName);
 
         for (WeblogEntryTag currentTag : currentResults) {
             if (alreadyEntryIdList.contains(currentTag.getWeblogEntry().getId())) {
@@ -476,7 +476,7 @@ public class WeblogManager {
             } else {
                 WeblogEntryTag newTag = new WeblogEntryTag(weblog, currentTag.getWeblogEntry(), newTagName);
                 currentTag.getWeblogEntry().getTags().add(newTag);
-                weblogEntryRepository.save(currentTag.getWeblogEntry());
+                weblogEntryDao.save(currentTag.getWeblogEntry());
                 updatedEntries++;
             }
         }
@@ -491,8 +491,8 @@ public class WeblogManager {
     }
 
     public void evictWeblogTemplateCaches(Weblog weblog, String templateName, Template.Role role) {
-        weblogTemplateRepository.evictWeblogTemplates(weblog);
-        weblogTemplateRepository.evictWeblogTemplateByName(weblog, templateName);
-        weblogTemplateRepository.evictWeblogTemplateByRole(weblog, role);
+        weblogTemplateDao.evictWeblogTemplates(weblog);
+        weblogTemplateDao.evictWeblogTemplateByName(weblog, templateName);
+        weblogTemplateDao.evictWeblogTemplateByRole(weblog, role);
     }
 }

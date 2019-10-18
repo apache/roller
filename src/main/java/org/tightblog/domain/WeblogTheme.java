@@ -23,7 +23,7 @@ package org.tightblog.domain;
 
 import org.tightblog.domain.Template.Role;
 import org.tightblog.domain.Template.Derivation;
-import org.tightblog.repository.WeblogTemplateRepository;
+import org.tightblog.dao.WeblogTemplateDao;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -39,13 +39,13 @@ import java.util.TreeMap;
  */
 public class WeblogTheme {
 
-    private WeblogTemplateRepository weblogTemplateRepository;
+    private WeblogTemplateDao weblogTemplateDao;
     protected Weblog weblog;
     private SharedTheme sharedTheme;
 
-    public WeblogTheme(WeblogTemplateRepository weblogTemplateRepository,
+    public WeblogTheme(WeblogTemplateDao weblogTemplateDao,
                        Weblog weblog, SharedTheme sharedTheme) {
-        this.weblogTemplateRepository = weblogTemplateRepository;
+        this.weblogTemplateDao = weblogTemplateDao;
         this.weblog = weblog;
         this.sharedTheme = sharedTheme;
     }
@@ -79,7 +79,7 @@ public class WeblogTheme {
 
         // now, unless in preview mode, overwrite individual templates with blog-specific ones stored in the DB
         if (!weblog.isUsedForThemePreview()) {
-            for (WeblogTemplate template : weblogTemplateRepository.getWeblogTemplateMetadata(this.weblog)) {
+            for (WeblogTemplate template : weblogTemplateDao.getWeblogTemplateMetadata(this.weblog)) {
                 if (pageMap.get(template.getName()) != null) {
                     // mark weblog template as an override
                     template.setDerivation(Derivation.OVERRIDDEN);
@@ -101,7 +101,7 @@ public class WeblogTheme {
         Template template = null;
 
         if (!weblog.isUsedForThemePreview()) {
-            template = weblogTemplateRepository.findByWeblogAndRole(this.weblog, role);
+            template = weblogTemplateDao.findByWeblogAndRole(this.weblog, role);
         }
         if (template == null) {
             template = sharedTheme.getTemplateByRole(role);
@@ -117,7 +117,7 @@ public class WeblogTheme {
         Template template = null;
 
         if (!weblog.isUsedForThemePreview()) {
-            template = weblogTemplateRepository.findByWeblogAndName(this.weblog, name);
+            template = weblogTemplateDao.findByWeblogAndName(this.weblog, name);
         }
         if (template == null) {
             template = sharedTheme.getTemplateByName(name);

@@ -30,7 +30,7 @@ import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.service.LuceneIndexer;
-import org.tightblog.repository.WeblogEntryRepository;
+import org.tightblog.dao.WeblogEntryDao;
 
 /**
  * Extends normal page renderer model to represent search results.
@@ -40,7 +40,7 @@ import org.tightblog.repository.WeblogEntryRepository;
 @Component
 public class SearchResultsModel extends PageModel {
 
-    private WeblogEntryRepository weblogEntryRepository;
+    private WeblogEntryDao weblogEntryDao;
     private LuceneIndexer luceneIndexer;
 
     @Autowired
@@ -52,18 +52,18 @@ public class SearchResultsModel extends PageModel {
             WeblogEntryListGenerator weblogEntryListGenerator,
             CalendarGenerator calendarGenerator,
             @Value("${site.pages.maxEntries:30}") int maxEntriesPerPage,
-            WeblogEntryRepository weblogEntryRepository,
+            WeblogEntryDao weblogEntryDao,
             LuceneIndexer luceneIndexer) {
 
         super(userManager, weblogManager, weblogEntryManager, themeManager, weblogEntryListGenerator,
                 calendarGenerator, maxEntriesPerPage);
 
-        this.weblogEntryRepository = weblogEntryRepository;
+        this.weblogEntryDao = weblogEntryDao;
         this.luceneIndexer = luceneIndexer;
     }
 
-    public WeblogEntryRepository getWeblogEntryRepository() {
-        return weblogEntryRepository;
+    public WeblogEntryDao getWeblogEntryDao() {
+        return weblogEntryDao;
     }
 
     public LuceneIndexer getLuceneIndexer() {

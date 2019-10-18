@@ -41,10 +41,10 @@ import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.tightblog.repository.UserRepository;
-import org.tightblog.repository.UserWeblogRoleRepository;
-import org.tightblog.repository.WeblogEntryCommentRepository;
-import org.tightblog.repository.WebloggerPropertiesRepository;
+import org.tightblog.dao.UserDao;
+import org.tightblog.dao.UserWeblogRoleDao;
+import org.tightblog.dao.WeblogEntryCommentDao;
+import org.tightblog.dao.WebloggerPropertiesDao;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -65,32 +65,32 @@ public class EmailService {
     private static Logger log = LoggerFactory.getLogger(EmailService.class);
 
     private UserManager userManager;
-    private UserRepository userRepository;
-    private UserWeblogRoleRepository userWeblogRoleRepository;
+    private UserDao userDao;
+    private UserWeblogRoleDao userWeblogRoleDao;
     private WeblogManager weblogManager;
-    private WeblogEntryCommentRepository weblogEntryCommentRepository;
+    private WeblogEntryCommentDao weblogEntryCommentDao;
     private URLService urlService;
     private JavaMailSender mailSender;
     private SpringTemplateEngine standardTemplateEngine;
     private MessageSource messages;
-    private WebloggerPropertiesRepository webloggerPropertiesRepository;
+    private WebloggerPropertiesDao webloggerPropertiesDao;
     private DynamicProperties dp;
     private boolean mailEnabled;
 
     @Autowired
-    public EmailService(UserManager userManager, UserRepository userRepository,
-                        UserWeblogRoleRepository userWeblogRoleRepository, WeblogManager weblogManager,
+    public EmailService(UserManager userManager, UserDao userDao,
+                        UserWeblogRoleDao userWeblogRoleDao, WeblogManager weblogManager,
                         URLService urlService, JavaMailSender mailSender,
                         SpringTemplateEngine standardTemplateEngine, MessageSource messages, DynamicProperties dp,
-                        WebloggerPropertiesRepository webloggerPropertiesRepository,
-                        WeblogEntryCommentRepository weblogEntryCommentRepository,
+                        WebloggerPropertiesDao webloggerPropertiesDao,
+                        WeblogEntryCommentDao weblogEntryCommentDao,
                         @Value("${mail.enabled:false}") boolean mailEnabled) {
         this.userManager = userManager;
-        this.userRepository = userRepository;
-        this.userWeblogRoleRepository = userWeblogRoleRepository;
-        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
+        this.userDao = userDao;
+        this.userWeblogRoleDao = userWeblogRoleDao;
+        this.webloggerPropertiesDao = webloggerPropertiesDao;
         this.weblogManager = weblogManager;
-        this.weblogEntryCommentRepository = weblogEntryCommentRepository;
+        this.weblogEntryCommentDao = weblogEntryCommentDao;
         this.urlService = urlService;
         this.mailSender = mailSender;
         this.standardTemplateEngine = standardTemplateEngine;
@@ -142,7 +142,7 @@ public class EmailService {
                 null, null);
 
         // send to blog server admins
-        List<User> admins = userRepository.findAdmins();
+        List<User> admins = userDao.findAdmins();
         String[] to = admins.stream().map(User::getEmailAddress).toArray(String[]::new);
 
         String subject = messages.getMessage("mailMessage.approveRegistrationSubject",
@@ -218,7 +218,7 @@ public class EmailService {
         String from = entry.getCreator().getEmailAddress();
 
         // build list of reviewers (website users with at least publish role)
-        List<User> weblogUsers = userWeblogRoleRepository.findByWeblogAndStatusEnabled(entry.getWeblog());
+        List<User> weblogUsers = userWeblogRoleDao.findByWeblogAndStatusEnabled(entry.getWeblog());
         List<String> reviewers = new ArrayList<>();
         weblogUsers.forEach(user -> {
             if (userManager.checkWeblogRole(user, entry.getWeblog(), WeblogRole.POST) &&
@@ -278,7 +278,7 @@ public class EmailService {
         String subject = messages.getMessage("email.comment.moderate.title", null, weblog.getLocaleInstance());
         subject += entry.getTitle();
 
-        List<UserWeblogRole> bloggerList = userWeblogRoleRepository.findByWeblogAndEmailCommentsTrue(weblog);
+        List<UserWeblogRole> bloggerList = userWeblogRoleDao.findByWeblogAndEmailCommentsTrue(weblog);
 
         String[] sendToList = bloggerList.stream()
                 .map(UserWeblogRole::getUser)
@@ -297,7 +297,7 @@ public class EmailService {
      */
     public void sendNewPublishedCommentNotification(WeblogEntryComment comment) {
         if (!mailEnabled ||
-                !webloggerPropertiesRepository.findOrNull().isUsersCommentNotifications() ||
+                !webloggerPropertiesDao.findOrNull().isUsersCommentNotifications() ||
                 !comment.isApproved()) {
             return;
         }
@@ -311,7 +311,7 @@ public class EmailService {
 
         // Get all the subscribers to this comment thread
         List<WeblogEntryComment> priorComments =
-                weblogEntryCommentRepository.findByWeblogEntryAndStatusApproved(entry).stream()
+                weblogEntryCommentDao.findByWeblogEntryAndStatusApproved(entry).stream()
                 // don't send a routing email to the person who made the comment.
                 .filter(pc -> !comment.getEmail().equalsIgnoreCase(pc.getEmail()))
                 .collect(Collectors.toList());
@@ -336,7 +336,7 @@ public class EmailService {
         // send message to blog members (same email for everyone)
         if (// if must moderate on, blogger(s) already got pending email, good enough.
                 !WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments())) {
-            List<UserWeblogRole> bloggerList = userWeblogRoleRepository.findByWeblogAndEmailCommentsTrue(weblog);
+            List<UserWeblogRole> bloggerList = userWeblogRoleDao.findByWeblogAndEmailCommentsTrue(weblog);
 
             Context ctx = getPublishedCommentNotificationContext(comment, null);
             String msg = standardTemplateEngine.process("emails/NewCommentNotification", ctx);

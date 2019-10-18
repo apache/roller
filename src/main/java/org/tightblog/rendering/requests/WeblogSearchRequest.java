@@ -194,7 +194,7 @@ public class WeblogSearchRequest extends WeblogPageRequest {
                 log.warn("IOException processing {}", hits[i].doc, e);
                 continue;
             }
-            entry = searchModel.getWeblogEntryRepository().
+            entry = searchModel.getWeblogEntryDao().
                     findByIdOrNull(doc.getField(FieldConstants.ID).stringValue());
 
             if (entry != null && WeblogEntry.PubStatus.PUBLISHED.equals(entry.getStatus())) {

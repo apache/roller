@@ -69,7 +69,7 @@ public class WeblogTemplate implements Template {
     public WeblogTemplate() {
     }
 
-    // used in WeblogTemplateRepository where template metadata rather than template itself is needed
+    // used in WeblogTemplateDao where template metadata rather than template itself is needed
     public WeblogTemplate(String id, Role role, @NotBlank(message = "{templates.error.nameNull}") String name,
                           String description, Instant lastModified) {
         this.id = id;

@@ -18,7 +18,7 @@ import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.model.SearchResultsModel;
-import org.tightblog.repository.WeblogEntryRepository;
+import org.tightblog.dao.WeblogEntryDao;
 import org.tightblog.service.LuceneIndexer;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.service.indexer.FieldConstants;
@@ -48,7 +48,7 @@ import static org.mockito.Mockito.when;
 
 public class WeblogSearchRequestTest {
 
-    private WeblogEntryRepository mockWeblogEntryRepository;
+    private WeblogEntryDao mockWeblogEntryDao;
     private WeblogEntryListGenerator mockWELG;
     private LuceneIndexer mockLuceneIndexer;
     private SearchTask mockSearchTask;
@@ -74,7 +74,7 @@ public class WeblogSearchRequestTest {
 
         mockWELG = mock(WeblogEntryListGenerator.class);
         mockLuceneIndexer = mock(LuceneIndexer.class);
-        mockWeblogEntryRepository = mock(WeblogEntryRepository.class);
+        mockWeblogEntryDao = mock(WeblogEntryDao.class);
 
         ThemeManager mockThemeManager = mock(ThemeManager.class);
         SharedTheme sharedTheme = new SharedTheme();
@@ -83,7 +83,7 @@ public class WeblogSearchRequestTest {
         SearchResultsModel mockSearchResultsModel = mock(SearchResultsModel.class);
         when(mockSearchResultsModel.getWeblogEntryListGenerator()).thenReturn(mockWELG);
         when(mockSearchResultsModel.getLuceneIndexer()).thenReturn(mockLuceneIndexer);
-        when(mockSearchResultsModel.getWeblogEntryRepository()).thenReturn(mockWeblogEntryRepository);
+        when(mockSearchResultsModel.getWeblogEntryDao()).thenReturn(mockWeblogEntryDao);
         when(mockSearchResultsModel.getThemeManager()).thenReturn(mockThemeManager);
 
         wsr = WeblogSearchRequest.create(mockRequest, mockSearchResultsModel);
@@ -169,7 +169,7 @@ public class WeblogSearchRequestTest {
         entry.setAnchor(title + "Anchor");
         entry.setStatus(status);
         entry.setPubTime(pubTime);
-        when(mockWeblogEntryRepository.findByIdOrNull(entry.getId())).thenReturn(entry);
+        when(mockWeblogEntryDao.findByIdOrNull(entry.getId())).thenReturn(entry);
         return entry;
     }
 

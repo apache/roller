@@ -22,7 +22,7 @@ import org.tightblog.domain.User;
 import org.tightblog.domain.Weblog;
 
 import org.tightblog.rendering.generators.WeblogListGenerator.WeblogListData;
-import org.tightblog.repository.WeblogRepository;
+import org.tightblog.dao.WeblogDao;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -42,12 +42,12 @@ public class WeblogListGeneratorTest {
     private List<Weblog> weblogList;
     private Instant now = Instant.now();
     private Instant twoDaysAgo = now.minus(2, ChronoUnit.DAYS);
-    private WeblogRepository mockWeblogRepository;
+    private WeblogDao mockWeblogDao;
 
     @Before
     public void initialize() {
-        mockWeblogRepository = mock(WeblogRepository.class);
-        weblogListGenerator = new WeblogListGenerator(mockWeblogRepository);
+        mockWeblogDao = mock(WeblogDao.class);
+        weblogListGenerator = new WeblogListGenerator(mockWeblogDao);
 
         User user1 = new User();
         user1.setScreenName("user1");
@@ -78,7 +78,7 @@ public class WeblogListGeneratorTest {
 
     @Test
     public void testGetHotWeblogs() {
-        when(mockWeblogRepository.findByVisibleTrueAndHitsTodayGreaterThanOrderByHitsTodayDesc(eq(0), any()))
+        when(mockWeblogDao.findByVisibleTrueAndHitsTodayGreaterThanOrderByHitsTodayDesc(eq(0), any()))
                 .thenReturn(weblogList);
         List<WeblogListGenerator.WeblogData> weblogDataList = weblogListGenerator.getHotWeblogs(12);
         assertEquals(2, weblogDataList.size());
@@ -97,9 +97,9 @@ public class WeblogListGeneratorTest {
         List<Weblog> oneWeblogList = new ArrayList<>();
         oneWeblogList.add(weblogList.get(0));
 
-        when(mockWeblogRepository.findByLetterOrderByHandle('M', PageRequest.of(30, 11)))
+        when(mockWeblogDao.findByLetterOrderByHandle('M', PageRequest.of(30, 11)))
                 .thenReturn(oneWeblogList);
-        when(mockWeblogRepository.findByVisibleTrue(any())).thenReturn(weblogList);
+        when(mockWeblogDao.findByVisibleTrue(any())).thenReturn(weblogList);
 
         // test if letter and pageNum > 0 get one weblog and prev link
         WeblogListData data = weblogListGenerator.getWeblogsByLetter("http://www.foo.com", 'M',

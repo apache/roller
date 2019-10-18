@@ -39,7 +39,7 @@ import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tightblog.repository.WeblogEntryRepository;
+import org.tightblog.dao.WeblogEntryDao;
 
 import javax.annotation.PreDestroy;
 import java.io.File;
@@ -62,7 +62,7 @@ public class LuceneIndexer {
 
     private DirectoryReader reader;
     private WeblogEntryManager weblogEntryManager;
-    private WeblogEntryRepository weblogEntryRepository;
+    private WeblogEntryDao weblogEntryDao;
 
     @Value("${search.analyzer.class:org.apache.lucene.analysis.standard.StandardAnalyzer}")
     private String luceneAnalyzerName;
@@ -82,13 +82,13 @@ public class LuceneIndexer {
      */
     @Autowired
     public LuceneIndexer(
-            @Lazy WeblogEntryManager weblogEntryManager, @Lazy WeblogEntryRepository weblogEntryRepository,
+            @Lazy WeblogEntryManager weblogEntryManager, @Lazy WeblogEntryDao weblogEntryDao,
             @Value("${search.include.comments:true}") boolean indexComments,
             @Value("${search.enabled:false}") boolean searchEnabled,
             @Value("${search.index.dir:#{null}}") String indexDir) {
 
         this.weblogEntryManager = weblogEntryManager;
-        this.weblogEntryRepository = weblogEntryRepository;
+        this.weblogEntryDao = weblogEntryDao;
         this.indexComments = indexComments;
         this.searchEnabled = searchEnabled;
         this.indexDir = indexDir;
@@ -205,7 +205,7 @@ public class LuceneIndexer {
      * @param remove If true, remove the weblog entry from the index.  If false, adds/updates weblog entry.
      */
     public void updateIndex(WeblogEntry entry, boolean remove) {
-        scheduleIndexOperation(new IndexEntryTask(weblogEntryRepository, this, entry, remove));
+        scheduleIndexOperation(new IndexEntryTask(weblogEntryDao, this, entry, remove));
     }
 
     /**

@@ -37,7 +37,7 @@ import org.tightblog.domain.WeblogTemplate;
 import org.tightblog.domain.WeblogTheme;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
-import org.tightblog.repository.WeblogRepository;
+import org.tightblog.dao.WeblogDao;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +61,7 @@ public class SearchProcessorTest {
     private Weblog weblog;
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
-    private WeblogRepository mockWR;
+    private WeblogDao mockWD;
     private WeblogTheme mockWeblogTheme;
     private ServletOutputStream mockSOS;
     private ThemeManager mockThemeManager;
@@ -76,10 +76,10 @@ public class SearchProcessorTest {
     public void initializeMocks() throws IOException {
         mockRequest = TestUtils.createMockServletRequestForWeblogSearchRequest();
 
-        mockWR = mock(WeblogRepository.class);
+        mockWD = mock(WeblogDao.class);
         weblog = new Weblog();
         weblog.setHandle("myblog");
-        when(mockWR.findByHandleAndVisibleTrue("myblog")).thenReturn(weblog);
+        when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(weblog);
 
         mockRenderer = mock(ThymeleafRenderer.class);
         when(mockRenderer.render(any(), any()))
@@ -94,7 +94,7 @@ public class SearchProcessorTest {
 
         Function<WeblogPageRequest, SiteModel> siteModelFactory = new WebConfig().siteModelFactory();
 
-        processor = new SearchProcessor(mockWR, mockRenderer, mockThemeManager, mock(SearchResultsModel.class),
+        processor = new SearchProcessor(mockWD, mockRenderer, mockThemeManager, mock(SearchResultsModel.class),
                 siteModelFactory);
 
         mockApplicationContext = mock(ApplicationContext.class);
@@ -111,7 +111,7 @@ public class SearchProcessorTest {
 
     @Test
     public void test404OnMissingWeblog() throws IOException {
-        when(mockWR.findByHandleAndVisibleTrue("myblog")).thenReturn(null);
+        when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(null);
         processor.getSearchResults(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }

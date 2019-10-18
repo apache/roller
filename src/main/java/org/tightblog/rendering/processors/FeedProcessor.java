@@ -30,7 +30,7 @@ import org.tightblog.domain.Template;
 import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
-import org.tightblog.repository.WeblogRepository;
+import org.tightblog.dao.WeblogDao;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
@@ -61,7 +61,7 @@ public class FeedProcessor extends AbstractProcessor {
 
     public static final String PATH = "/tb-ui/rendering/feed";
 
-    private WeblogRepository weblogRepository;
+    private WeblogDao weblogDao;
     private LazyExpiringCache weblogFeedCache;
     private ThymeleafRenderer thymeleafRenderer;
     private ThemeManager themeManager;
@@ -69,10 +69,10 @@ public class FeedProcessor extends AbstractProcessor {
     private DynamicProperties dp;
 
     @Autowired
-    public FeedProcessor(WeblogRepository weblogRepository, LazyExpiringCache weblogFeedCache,
+    public FeedProcessor(WeblogDao weblogDao, LazyExpiringCache weblogFeedCache,
                          @Qualifier("atomRenderer") ThymeleafRenderer thymeleafRenderer,
                          ThemeManager themeManager, FeedModel feedModel, DynamicProperties dp) {
-        this.weblogRepository = weblogRepository;
+        this.weblogDao = weblogDao;
         this.weblogFeedCache = weblogFeedCache;
         this.thymeleafRenderer = thymeleafRenderer;
         this.themeManager = themeManager;
@@ -84,7 +84,7 @@ public class FeedProcessor extends AbstractProcessor {
     void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogFeedRequest feedRequest = WeblogFeedRequest.create(request, feedModel);
 
-        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(feedRequest.getWeblogHandle());
+        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(feedRequest.getWeblogHandle());
         if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

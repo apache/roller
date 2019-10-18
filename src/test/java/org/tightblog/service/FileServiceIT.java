@@ -60,20 +60,20 @@ public class FileServiceIT extends WebloggerTest {
 
     @After
     public void tearDown() {
-        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
+        WebloggerProperties props = webloggerPropertiesDao.findOrNull();
         props.setMaxFileUploadsSizeMb(30000);
-        webloggerPropertiesRepository.saveAndFlush(props);
+        webloggerPropertiesDao.saveAndFlush(props);
         weblogManager.removeWeblog(testWeblog);
         userManager.removeUser(testUser);
     }
 
     @Test
     public void testFileSaveAndDelete() throws Exception {
-        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
+        WebloggerProperties props = webloggerPropertiesDao.findOrNull();
         props.setMaxFileUploadsSizeMb(1);
-        webloggerPropertiesRepository.saveAndFlush(props);
+        webloggerPropertiesDao.saveAndFlush(props);
 
-        FileService fileService = new FileService(webloggerPropertiesRepository,
+        FileService fileService = new FileService(webloggerPropertiesDao,
                 true, storageDir, Set.of("image/jpeg"), 3);
 
         // File should not exist initially
@@ -101,7 +101,7 @@ public class FileServiceIT extends WebloggerTest {
 
     @Test
     public void testCanSave() {
-        FileService fileService = new FileService(webloggerPropertiesRepository,
+        FileService fileService = new FileService(webloggerPropertiesDao,
                 true, storageDir, Set.of("image/*"), 1);
 
         MultipartFile mockMultipartFile = mock(MockMultipartFile.class);
@@ -120,21 +120,21 @@ public class FileServiceIT extends WebloggerTest {
         assertTrue(canSave);
 
         // gifs no longer allowed
-        fileService = new FileService(webloggerPropertiesRepository,
+        fileService = new FileService(webloggerPropertiesDao,
                 true, storageDir, Set.of("image/png"), 1);
 
         canSave = fileService.canSave(mockMultipartFile, testWeblog.getHandle(), null);
         assertFalse(canSave);
 
         // right-side wildcards work
-        fileService = new FileService(webloggerPropertiesRepository,
+        fileService = new FileService(webloggerPropertiesDao,
                 true, storageDir, Set.of("image/*"), 1);
 
         canSave = fileService.canSave(mockMultipartFile, testWeblog.getHandle(), null);
         assertTrue(canSave);
 
         // uploads disabled should fail
-        fileService = new FileService(webloggerPropertiesRepository,
+        fileService = new FileService(webloggerPropertiesDao,
                 false, storageDir, Set.of("image/png"), 1);
 
         canSave = fileService.canSave(mockMultipartFile, testWeblog.getHandle(), null);

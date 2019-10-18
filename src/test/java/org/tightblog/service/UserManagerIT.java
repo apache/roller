@@ -40,7 +40,7 @@ public class UserManagerIT extends WebloggerTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        userRepository.deleteAll();
+        userDao.deleteAll();
     }
     
     /**
@@ -59,25 +59,25 @@ public class UserManagerIT extends WebloggerTest {
         testUser.setGlobalRole(GlobalRole.BLOGGER);
         
         // make sure test user does not exist
-        user = userRepository.findEnabledByUserName(testUser.getUserName());
+        user = userDao.findEnabledByUserName(testUser.getUserName());
         assertNull(user);
-        userRepository.evictUser(testUser);
+        userDao.evictUser(testUser);
         
         // add test user
-        userRepository.saveAndFlush(testUser);
+        userDao.saveAndFlush(testUser);
         String userName = testUser.getUserName();
 
         // make sure test user exists
-        user = userRepository.findEnabledByUserName(userName);
+        user = userDao.findEnabledByUserName(userName);
         assertNotNull(user);
         assertEquals(testUser, user);
         
         // modify user and save
         user.setScreenName("testtesttest");
-        userRepository.saveAndFlush(user);
+        userDao.saveAndFlush(user);
 
         // make sure changes were saved
-        user = userRepository.findEnabledByUserName(userName);
+        user = userDao.findEnabledByUserName(userName);
         assertNotNull(user);
         assertEquals("testtesttest", user.getScreenName());
 
@@ -85,7 +85,7 @@ public class UserManagerIT extends WebloggerTest {
         userManager.removeUser(user);
 
         // make sure user no longer exists
-        user = userRepository.findEnabledByUserName(userName);
+        user = userDao.findEnabledByUserName(userName);
         assertNull(user);
     }
     
@@ -101,20 +101,20 @@ public class UserManagerIT extends WebloggerTest {
         User testUser = setupUser("usertestuser");
         User testUser2 = setupUser("disabledtestuser");
         testUser2.setStatus(UserStatus.DISABLED);
-        userRepository.saveAndFlush(testUser2);
+        userDao.saveAndFlush(testUser2);
 
         // lookup by username
-        user1 = userRepository.findEnabledByUserName(testUser.getUserName());
+        user1 = userDao.findEnabledByUserName(testUser.getUserName());
         assertNotNull(user1);
         assertEquals(testUser.getUserName(), user1.getUserName());
-        userRepository.evictUser(testUser);
+        userDao.evictUser(testUser);
 
         // lookup by getUsers() - all users
-        List<User> users = userRepository.findAll();
+        List<User> users = userDao.findAll();
         assertEquals(2, users.size());
 
         // lookup by getUsers() - enabled only
-        users = userRepository.findByStatusEnabled();
+        users = userDao.findByStatusEnabled();
         assertEquals(1, users.size());
         user1 = users.get(0);
         assertNotNull(user1);
@@ -122,8 +122,8 @@ public class UserManagerIT extends WebloggerTest {
 
         // make sure disable users are not returned
         user1.setStatus(UserStatus.DISABLED);
-        userRepository.saveAndFlush(user1);
-        user1 = userRepository.findEnabledByUserName(testUser.getUserName());
+        userDao.saveAndFlush(user1);
+        user1 = userDao.findEnabledByUserName(testUser.getUserName());
         assertNull(user1);
         
         userManager.removeUser(testUser);
@@ -137,14 +137,14 @@ public class UserManagerIT extends WebloggerTest {
     public void testRoleCRUD() {
         User user;
         User testUser = setupUser("roletestuser");
-        user = userRepository.findEnabledByUserName(testUser.getUserName());
+        user = userDao.findEnabledByUserName(testUser.getUserName());
         assertNotNull(user);
         assertEquals(GlobalRole.BLOGGER, user.getGlobalRole());
         user.setGlobalRole(GlobalRole.BLOGCREATOR);
-        userRepository.saveAndFlush(user);
+        userDao.saveAndFlush(user);
 
         // check that role was switched
-        user = userRepository.findEnabledByUserName(testUser.getUserName());
+        user = userDao.findEnabledByUserName(testUser.getUserName());
         assertNotNull(user);
         assertEquals(GlobalRole.BLOGCREATOR, user.getGlobalRole());
         userManager.removeUser(testUser);

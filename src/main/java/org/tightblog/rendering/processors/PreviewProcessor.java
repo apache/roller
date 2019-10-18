@@ -41,7 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.tightblog.repository.WeblogRepository;
+import org.tightblog.dao.WeblogDao;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,7 +71,7 @@ public class PreviewProcessor extends AbstractProcessor {
 
     private static Logger log = LoggerFactory.getLogger(PreviewProcessor.class);
 
-    private WeblogRepository weblogRepository;
+    private WeblogDao weblogDao;
 
     private ThymeleafRenderer thymeleafRenderer;
     protected ThemeManager themeManager;
@@ -81,10 +81,10 @@ public class PreviewProcessor extends AbstractProcessor {
     private Function<WeblogPageRequest, SiteModel> siteModelFactory;
 
     @Autowired
-    PreviewProcessor(WeblogRepository weblogRepository, @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
-                            ThemeManager themeManager, UserManager userManager, PageModel pageModel,
-                            WeblogEntryManager weblogEntryManager, Function<WeblogPageRequest, SiteModel> siteModelFactory) {
-        this.weblogRepository = weblogRepository;
+    PreviewProcessor(WeblogDao weblogDao, @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
+                     ThemeManager themeManager, UserManager userManager, PageModel pageModel,
+                     WeblogEntryManager weblogEntryManager, Function<WeblogPageRequest, SiteModel> siteModelFactory) {
+        this.weblogDao = weblogDao;
         this.thymeleafRenderer = thymeleafRenderer;
         this.themeManager = themeManager;
         this.userManager = userManager;
@@ -97,7 +97,7 @@ public class PreviewProcessor extends AbstractProcessor {
     void getPreviewPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogPageRequest incomingRequest = WeblogPageRequest.Creator.createPreview(request, pageModel);
 
-        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
+        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

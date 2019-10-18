@@ -40,7 +40,7 @@ import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = {"org.tightblog.repository"}
+        basePackages = {"org.tightblog.dao"}
 )
 @EnableTransactionManagement
 public class DBConfig extends JpaBaseConfiguration {

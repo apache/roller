@@ -26,7 +26,7 @@ import org.tightblog.service.MediaManager;
 import org.tightblog.domain.MediaFile;
 import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.cache.LazyExpiringCache;
-import org.tightblog.repository.WeblogRepository;
+import org.tightblog.dao.WeblogDao;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +55,7 @@ public class MediaFileProcessorTest {
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
     private LazyExpiringCache mockCache;
-    private WeblogRepository mockWR;
+    private WeblogDao mockWD;
     private MediaManager mockMFM;
     private MediaFile mediaFile;
 
@@ -65,10 +65,10 @@ public class MediaFileProcessorTest {
     public void initializeMocks() throws IOException {
         mockRequest = TestUtils.createMockServletRequestForMediaFileRequest("1234");
 
-        mockWR = mock(WeblogRepository.class);
+        mockWD = mock(WeblogDao.class);
         Weblog weblog = new Weblog();
         weblog.setHandle(TestUtils.BLOG_HANDLE);
-        when(mockWR.findByHandleAndVisibleTrue(TestUtils.BLOG_HANDLE)).thenReturn(weblog);
+        when(mockWD.findByHandleAndVisibleTrue(TestUtils.BLOG_HANDLE)).thenReturn(weblog);
 
         mockCache = mock(LazyExpiringCache.class);
 
@@ -76,7 +76,7 @@ public class MediaFileProcessorTest {
         mockMFM = mock(MediaManager.class);
         when(mockMFM.getMediaFileWithContent("1234")).thenReturn(mediaFile);
 
-        processor = new MediaFileProcessor(mockWR, mockCache, mockMFM);
+        processor = new MediaFileProcessor(mockWD, mockCache, mockMFM);
 
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         mockResponse = mock(HttpServletResponse.class);
@@ -85,7 +85,7 @@ public class MediaFileProcessorTest {
 
     @Test
     public void test404OnMissingWeblog() throws IOException {
-        when(mockWR.findByHandleAndVisibleTrue(TestUtils.BLOG_HANDLE)).thenReturn(null);
+        when(mockWD.findByHandleAndVisibleTrue(TestUtils.BLOG_HANDLE)).thenReturn(null);
         processor.getMediaFile(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
         verify(mockCache, never()).incrementIncomingRequests();

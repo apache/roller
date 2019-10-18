@@ -36,9 +36,9 @@ import org.tightblog.domain.WeblogEntryComment;
 import org.tightblog.domain.WeblogEntryComment.ValidationResult;
 import org.tightblog.domain.WeblogEntrySearchCriteria;
 import org.tightblog.domain.WebloggerProperties;
-import org.tightblog.repository.WeblogEntryCommentRepository;
-import org.tightblog.repository.WeblogEntryRepository;
-import org.tightblog.repository.WebloggerPropertiesRepository;
+import org.tightblog.dao.WeblogEntryCommentDao;
+import org.tightblog.dao.WeblogEntryDao;
+import org.tightblog.dao.WebloggerPropertiesDao;
 import org.tightblog.util.Utilities;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.node.Node;
@@ -82,9 +82,9 @@ public class WeblogEntryManager {
     private static Logger log = LoggerFactory.getLogger(WeblogEntryManager.class);
 
     private WeblogManager weblogManager;
-    private WeblogEntryRepository weblogEntryRepository;
-    private WeblogEntryCommentRepository weblogEntryCommentRepository;
-    private WebloggerPropertiesRepository webloggerPropertiesRepository;
+    private WeblogEntryDao weblogEntryDao;
+    private WeblogEntryCommentDao weblogEntryCommentDao;
+    private WebloggerPropertiesDao webloggerPropertiesDao;
     private URLService urlService;
     private String akismetApiKey;
     private LuceneIndexer luceneIndexer;
@@ -93,16 +93,16 @@ public class WeblogEntryManager {
     private EntityManager entityManager;
 
     @Autowired
-    public WeblogEntryManager(WeblogManager weblogManager, WeblogEntryRepository weblogEntryRepository,
-                              WeblogEntryCommentRepository weblogEntryCommentRepository,
+    public WeblogEntryManager(WeblogManager weblogManager, WeblogEntryDao weblogEntryDao,
+                              WeblogEntryCommentDao weblogEntryCommentDao,
                               URLService urlService, @Lazy LuceneIndexer luceneIndexer,
-                              WebloggerPropertiesRepository webloggerPropertiesRepository,
+                              WebloggerPropertiesDao webloggerPropertiesDao,
                               @Value("${akismet.apiKey:#{null}}") String akismetApiKey) {
         this.luceneIndexer = luceneIndexer;
         this.weblogManager = weblogManager;
-        this.weblogEntryRepository = weblogEntryRepository;
-        this.weblogEntryCommentRepository = weblogEntryCommentRepository;
-        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
+        this.weblogEntryDao = weblogEntryDao;
+        this.weblogEntryCommentDao = weblogEntryCommentDao;
+        this.webloggerPropertiesDao = webloggerPropertiesDao;
         this.urlService = urlService;
         this.akismetApiKey = akismetApiKey;
     }
@@ -116,10 +116,10 @@ public class WeblogEntryManager {
      */
     public void saveComment(WeblogEntryComment comment, boolean refreshWeblog) {
         comment.setWeblog(comment.getWeblogEntry().getWeblog());
-        weblogEntryCommentRepository.saveAndFlush(comment);
-        weblogEntryCommentRepository.evictWeblogCommentCounts(comment.getWeblog());
+        weblogEntryCommentDao.saveAndFlush(comment);
+        weblogEntryCommentDao.evictWeblogCommentCounts(comment.getWeblog());
         if (refreshWeblog) {
-            weblogEntryCommentRepository.evictWeblogEntryCommentCounts(comment.getWeblogEntry());
+            weblogEntryCommentDao.evictWeblogEntryCommentCounts(comment.getWeblogEntry());
             weblogManager.saveWeblog(comment.getWeblog(), true);
         }
     }
@@ -128,12 +128,12 @@ public class WeblogEntryManager {
      * Remove comment and invalidate its parent weblog's cache
      */
     public void removeComment(WeblogEntryComment comment) {
-        weblogEntryCommentRepository.deleteById(comment.getId());
+        weblogEntryCommentDao.deleteById(comment.getId());
         boolean externallyViewable = WeblogEntryComment.ApprovalStatus.APPROVED.equals(comment.getStatus());
         weblogManager.saveWeblog(comment.getWeblogEntry().getWeblog(), externallyViewable);
-        weblogEntryCommentRepository.evictWeblogCommentCounts(comment.getWeblog());
+        weblogEntryCommentDao.evictWeblogCommentCounts(comment.getWeblog());
         if (externallyViewable) {
-            weblogEntryCommentRepository.evictWeblogEntryCommentCounts(comment.getWeblogEntry());
+            weblogEntryCommentDao.evictWeblogEntryCommentCounts(comment.getWeblogEntry());
         }
     }
 
@@ -150,7 +150,7 @@ public class WeblogEntryManager {
         // Loop through entries in src cat, assign them to dest cat
         for (WeblogEntry entry : results) {
             entry.setCategory(destCat);
-            weblogEntryRepository.saveAndFlush(entry);
+            weblogEntryDao.saveAndFlush(entry);
         }
     }
 
@@ -214,13 +214,13 @@ public class WeblogEntryManager {
         Instant now = Instant.now();
         entry.setUpdateTime(now);
 
-        weblogEntryRepository.save(entry);
+        weblogEntryDao.save(entry);
         weblogManager.saveWeblog(entry.getWeblog(), true);
     }
 
     public void removeWeblogEntry(WeblogEntry entry) {
-        weblogEntryCommentRepository.deleteByWeblogEntry(entry);
-        weblogEntryRepository.delete(entry);
+        weblogEntryCommentDao.deleteByWeblogEntry(entry);
+        weblogEntryDao.delete(entry);
         weblogManager.saveWeblog(entry.getWeblog(), true);
     }
 
@@ -429,9 +429,9 @@ public class WeblogEntryManager {
     }
 
     public WeblogEntry getWeblogEntryByAnchor(Weblog weblog, String anchor) {
-        WeblogEntry entry = weblogEntryRepository.findByWeblogAndAnchor(weblog, anchor);
+        WeblogEntry entry = weblogEntryDao.findByWeblogAndAnchor(weblog, anchor);
         if (entry != null) {
-            entry.setCommentRepository(weblogEntryCommentRepository);
+            entry.setWeblogEntryCommentDao(weblogEntryCommentDao);
         }
         return entry;
     }
@@ -449,7 +449,7 @@ public class WeblogEntryManager {
             if (count++ > 0) {
                 name = base + count;
             }
-            WeblogEntry entryTest = weblogEntryRepository.findByWeblogAndAnchor(entry.getWeblog(), name);
+            WeblogEntry entryTest = weblogEntryDao.findByWeblogAndAnchor(entry.getWeblog(), name);
             if (entryTest == null) {
                 break;
             }
@@ -556,7 +556,7 @@ public class WeblogEntryManager {
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 
         for (WeblogEntry entry : entries) {
-            entry.setCommentRepository(weblogEntryCommentRepository);
+            entry.setWeblogEntryCommentDao(weblogEntryCommentDao);
             LocalDate tmp = entry.getPubTime() == null ? LocalDate.now() :
                     entry.getPubTime().atZone(ZoneId.systemDefault()).toLocalDate();
             List<WeblogEntry> dayEntries = map.computeIfAbsent(tmp, k -> new ArrayList<>());
@@ -596,7 +596,7 @@ public class WeblogEntryManager {
             return false;
         }
         if (WebloggerProperties.CommentPolicy.NONE.equals(
-                webloggerPropertiesRepository.findOrNull().getCommentPolicy())) {
+                webloggerPropertiesDao.findOrNull().getCommentPolicy())) {
             return false;
         }
         if (WebloggerProperties.CommentPolicy.NONE.equals(entry.getWeblog().getAllowComments())) {
@@ -657,7 +657,7 @@ public class WeblogEntryManager {
         }
 
         if (ret != null) {
-            WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
+            WebloggerProperties props = webloggerPropertiesDao.findOrNull();
             Whitelist whitelist = props.getBlogHtmlPolicy().getWhitelist();
 
             if (whitelist != null) {
@@ -730,7 +730,7 @@ public class WeblogEntryManager {
         boolean found = false;
         String blogEntryTitle = null;
 
-        WeblogEntryComment commentWithUnsubscribingUser = weblogEntryCommentRepository.findByIdOrNull(commentId);
+        WeblogEntryComment commentWithUnsubscribingUser = weblogEntryCommentDao.findByIdOrNull(commentId);
 
         if (commentWithUnsubscribingUser != null) {
             // get entry
@@ -738,12 +738,12 @@ public class WeblogEntryManager {
             blogEntryTitle = entry.getTitle();
 
             // turn off notify on all comments for this entry by user
-            List<WeblogEntryComment> comments = weblogEntryCommentRepository.findByWeblogEntry(entry);
+            List<WeblogEntryComment> comments = weblogEntryCommentDao.findByWeblogEntry(entry);
 
             for (WeblogEntryComment comment : comments) {
                 if (comment.getNotify() && comment.getEmail().equalsIgnoreCase(commentWithUnsubscribingUser.getEmail())) {
                     comment.setNotify(false);
-                    weblogEntryCommentRepository.save(comment);
+                    weblogEntryCommentDao.save(comment);
                     found = true;
                 }
             }

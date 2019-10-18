@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import org.tightblog.domain.WeblogEntryComment;
 import org.tightblog.domain.WeblogEntryComment.ValidationResult;
 import org.tightblog.domain.WebloggerProperties;
-import org.tightblog.repository.WebloggerPropertiesRepository;
+import org.tightblog.dao.WebloggerPropertiesDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +45,11 @@ public class BlacklistCommentValidator implements CommentValidator {
 
     private static Logger log = LoggerFactory.getLogger(BlacklistCommentValidator.class);
 
-    private WebloggerPropertiesRepository webloggerPropertiesRepository;
+    private WebloggerPropertiesDao webloggerPropertiesDao;
 
     @Autowired
-    BlacklistCommentValidator(WebloggerPropertiesRepository webloggerPropertiesRepository) {
-        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
+    BlacklistCommentValidator(WebloggerPropertiesDao webloggerPropertiesDao) {
+        this.webloggerPropertiesDao = webloggerPropertiesDao;
     }
 
     private List<Pattern> globalRegexRules = new ArrayList<>();
@@ -73,7 +73,7 @@ public class BlacklistCommentValidator implements CommentValidator {
     @Override
     public ValidationResult validate(WeblogEntryComment comment, Map<String, List<String>> messages) {
         if (!globalRulesLoaded) {
-            WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
+            WebloggerProperties props = webloggerPropertiesDao.findOrNull();
             setGlobalCommentFilter(props.getCommentSpamFilter());
         }
 

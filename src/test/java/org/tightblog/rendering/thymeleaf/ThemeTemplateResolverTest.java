@@ -23,7 +23,7 @@ import org.tightblog.domain.SharedTemplate;
 import org.tightblog.domain.SharedTheme;
 import org.tightblog.domain.Template;
 import org.tightblog.domain.WeblogTemplate;
-import org.tightblog.repository.WeblogTemplateRepository;
+import org.tightblog.dao.WeblogTemplateDao;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -37,13 +37,13 @@ public class ThemeTemplateResolverTest {
 
     private ThemeManager mockThemeManager;
     private ThemeTemplateResolver themeTemplateResolver;
-    private WeblogTemplateRepository mockWeblogTemplateRepository;
+    private WeblogTemplateDao mockWeblogTemplateDao;
 
     @Before
     public void initialize() {
         mockThemeManager = mock(ThemeManager.class);
-        mockWeblogTemplateRepository = mock(WeblogTemplateRepository.class);
-        themeTemplateResolver = new ThemeTemplateResolver(mockThemeManager, mockWeblogTemplateRepository);
+        mockWeblogTemplateDao = mock(WeblogTemplateDao.class);
+        themeTemplateResolver = new ThemeTemplateResolver(mockThemeManager, mockWeblogTemplateDao);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class ThemeTemplateResolverTest {
         weblogTemplate.setId(newUUID);
         weblogTemplate.setRole(Template.Role.CUSTOM_EXTERNAL);
         weblogTemplate.setTemplate("weblog template contents");
-        when(mockWeblogTemplateRepository.findById(newUUID)).thenReturn(Optional.of(weblogTemplate));
+        when(mockWeblogTemplateDao.findById(newUUID)).thenReturn(Optional.of(weblogTemplate));
         StringTemplateResource resource = (StringTemplateResource) themeTemplateResolver.computeTemplateResource(null,
                 null, newUUID, null, null, null);
         assertEquals("weblog template contents", resource.getDescription());

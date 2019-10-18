@@ -42,7 +42,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WebloggerProperties;
-import org.tightblog.repository.WebloggerPropertiesRepository;
+import org.tightblog.dao.WebloggerPropertiesDao;
 import org.tightblog.util.Utilities;
 
 /**
@@ -52,21 +52,21 @@ import org.tightblog.util.Utilities;
 public class FileService {
 
     private static Logger log = LoggerFactory.getLogger(FileService.class);
-    private WebloggerPropertiesRepository webloggerPropertiesRepository;
+    private WebloggerPropertiesDao webloggerPropertiesDao;
     private String storageDir;
     private Set<String> allowedMimeTypes;
     private long maxFileSizeMb;
     private boolean allowUploads;
 
     @Autowired
-    public FileService(WebloggerPropertiesRepository webloggerPropertiesRepository,
+    public FileService(WebloggerPropertiesDao webloggerPropertiesDao,
                        @Value("${media.file.showTab}") boolean allowUploads,
                        @Value("${mediafiles.storage.dir}") String storageDir,
                        @Value("#{'${media.file.allowedMimeTypes}'.split(',')}") Set<String> allowedMimeTypes,
                        @Value("${media.file.maxFileSizeMb:3}") long maxFileSizeMb
                        ) {
 
-        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
+        this.webloggerPropertiesDao = webloggerPropertiesDao;
         this.allowUploads = allowUploads;
         this.storageDir = storageDir;
         this.allowedMimeTypes = allowedMimeTypes;
@@ -178,7 +178,7 @@ public class FileService {
      */
     public boolean canSave(MultipartFile fileToTest, String weblogHandle, Map<String, List<String>> messages) {
 
-        WebloggerProperties webloggerProperties = webloggerPropertiesRepository.findOrNull();
+        WebloggerProperties webloggerProperties = webloggerPropertiesDao.findOrNull();
 
         // first check, is uploading enabled?
         if (!allowUploads) {

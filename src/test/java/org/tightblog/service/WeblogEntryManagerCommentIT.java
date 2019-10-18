@@ -96,7 +96,7 @@ public class WeblogEntryManagerCommentIT extends WebloggerTest {
         String id = comment.getId();
 
         // make sure comment was created
-        comment = weblogEntryCommentRepository.findByIdOrNull(id);
+        comment = weblogEntryCommentDao.findByIdOrNull(id);
         assertNotNull(comment);
         assertEquals("this is a test comment", comment.getContent());
         
@@ -105,7 +105,7 @@ public class WeblogEntryManagerCommentIT extends WebloggerTest {
         weblogEntryManager.saveComment(comment, true);
 
         // make sure comment was updated
-        comment = weblogEntryCommentRepository.findByIdOrNull(id);
+        comment = weblogEntryCommentDao.findByIdOrNull(id);
         assertNotNull(comment);
         assertEquals("testtest", comment.getContent());
         
@@ -113,7 +113,7 @@ public class WeblogEntryManagerCommentIT extends WebloggerTest {
         weblogEntryManager.removeComment(comment);
 
         // make sure comment was deleted
-        comment = weblogEntryCommentRepository.findByIdOrNull(id);
+        comment = weblogEntryCommentDao.findByIdOrNull(id);
         assertNull(comment);
     }
     
@@ -138,12 +138,12 @@ public class WeblogEntryManagerCommentIT extends WebloggerTest {
         
         // get all comments for entry
         csc.setEntry(testEntry);
-        comments = weblogEntryCommentRepository.findByWeblogEntry(testEntry);
+        comments = weblogEntryCommentDao.findByWeblogEntry(testEntry);
         assertNotNull(comments);
         assertEquals(3, comments.size());
         
         // make some changes
-        comment3 = weblogEntryCommentRepository.findByIdOrNull(comment3.getId());
+        comment3 = weblogEntryCommentDao.findByIdOrNull(comment3.getId());
         comment3.setStatus(WeblogEntryComment.ApprovalStatus.PENDING);
         weblogEntryManager.saveComment(comment3, false);
 
@@ -155,7 +155,7 @@ public class WeblogEntryManagerCommentIT extends WebloggerTest {
         assertEquals(1, comments.size());
         
         // get approved comments
-        comments = weblogEntryCommentRepository.findByWeblogEntryAndStatusApproved(testEntry);
+        comments = weblogEntryCommentDao.findByWeblogEntryAndStatusApproved(testEntry);
         assertNotNull(comments);
         assertEquals(2, comments.size());
         
@@ -199,7 +199,7 @@ public class WeblogEntryManagerCommentIT extends WebloggerTest {
             assertNull(ex);
 
             // now make sure we can delete a weblog with comments
-            weblog = weblogRepository.findByIdOrNull(weblog.getId());
+            weblog = weblogDao.findByIdOrNull(weblog.getId());
             entry = setupWeblogEntry("CommentParentDeletes2", weblog, user);
 
             setupComment("comment1", entry);

@@ -31,7 +31,7 @@ import org.tightblog.config.DynamicProperties;
 import org.tightblog.config.WebConfig;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.model.URLModel;
-import org.tightblog.repository.UserRepository;
+import org.tightblog.dao.UserDao;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.domain.SharedTemplate;
@@ -49,7 +49,7 @@ import org.tightblog.rendering.model.Model;
 import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
-import org.tightblog.repository.WeblogRepository;
+import org.tightblog.dao.WeblogDao;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -85,8 +85,8 @@ public class PageProcessorTest {
 
     private LazyExpiringCache mockCache;
     private WeblogManager mockWM;
-    private UserRepository mockUR;
-    private WeblogRepository mockWR;
+    private UserDao mockUD;
+    private WeblogDao mockWD;
     private ThymeleafRenderer mockRenderer;
     private ServletOutputStream mockSOS;
     private ThemeManager mockThemeManager;
@@ -99,11 +99,11 @@ public class PageProcessorTest {
     public void initializeMocks() throws IOException {
         mockRequest = TestUtils.createMockServletRequestForWeblogEntryRequest();
 
-        mockUR = mock(UserRepository.class);
-        mockWR = mock(WeblogRepository.class);
+        mockUD = mock(UserDao.class);
+        mockWD = mock(WeblogDao.class);
         weblog = new Weblog();
         weblog.setLastModified(Instant.now().minus(2, ChronoUnit.DAYS));
-        when(mockWR.findByHandleAndVisibleTrue("myblog")).thenReturn(weblog);
+        when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(weblog);
 
         mockCache = mock(LazyExpiringCache.class);
         mockWM = mock(WeblogManager.class);
@@ -122,9 +122,9 @@ public class PageProcessorTest {
 
         Function<WeblogPageRequest, SiteModel> siteModelFactory = new WebConfig().siteModelFactory();
 
-        processor = new PageProcessor(mockWR, mockCache, mockWM, mockWEM,
+        processor = new PageProcessor(mockWD, mockCache, mockWM, mockWEM,
                 mockRenderer, mockThemeManager, mock(PageModel.class),
-                siteModelFactory, mockUR, dp);
+                siteModelFactory, mockUD, dp);
 
         mockApplicationContext = mock(ApplicationContext.class);
         when(mockApplicationContext.getBean(anyString(), eq(Set.class))).thenReturn(new HashSet());
@@ -139,7 +139,7 @@ public class PageProcessorTest {
 
     @Test
     public void test404OnMissingWeblog() throws IOException {
-        when(mockWR.findByHandleAndVisibleTrue("myblog")).thenReturn(null);
+        when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(null);
         processor.handleRequest(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
         verify(mockCache, never()).incrementIncomingRequests();

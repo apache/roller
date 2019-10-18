@@ -80,7 +80,7 @@ public class WeblogManagerIT extends WebloggerTest {
         testWeblogA.setCreator(testUser);
 
         // make sure test weblog does not exist
-        weblog = weblogRepository.findByHandleAndVisibleTrue(testWeblogA.getHandle());
+        weblog = weblogDao.findByHandleAndVisibleTrue(testWeblogA.getHandle());
         assertNull(weblog);
 
         // add test weblog
@@ -88,7 +88,7 @@ public class WeblogManagerIT extends WebloggerTest {
         String id = testWeblogA.getId();
 
         // make sure test weblog exists
-        weblog = weblogRepository.findById(id).orElse(null);
+        weblog = weblogDao.findById(id).orElse(null);
         assertNotNull(weblog);
         assertEquals(testWeblogA, weblog);
 
@@ -97,7 +97,7 @@ public class WeblogManagerIT extends WebloggerTest {
         weblogManager.saveWeblog(weblog, true);
 
         // make sure changes were saved
-        weblog = weblogRepository.findById(id).orElse(null);
+        weblog = weblogDao.findById(id).orElse(null);
         assertNotNull(weblog);
         assertEquals("testtesttest", weblog.getName());
 
@@ -105,7 +105,7 @@ public class WeblogManagerIT extends WebloggerTest {
         weblogManager.removeWeblog(weblog);
 
         // make sure weblog no longer exists
-        weblog = weblogRepository.findById(id).orElse(null);
+        weblog = weblogDao.findById(id).orElse(null);
         assertNull(weblog);
     }
     
@@ -120,9 +120,9 @@ public class WeblogManagerIT extends WebloggerTest {
             Weblog weblog;
 
             // start with no permissions
-            userWeblogRoleRepository.deleteByUser(testUser);
+            userWeblogRoleDao.deleteByUser(testUser);
 
-            List<UserWeblogRole> userRoles = userWeblogRoleRepository.findByUser(testUser);
+            List<UserWeblogRole> userRoles = userWeblogRoleDao.findByUser(testUser);
             assertEquals(0, userRoles.size());
 
             // add test weblogs
@@ -130,32 +130,32 @@ public class WeblogManagerIT extends WebloggerTest {
             testWeblog2 = setupWeblog("test-weblog2", testUser);
 
             // lookup by id
-            weblog = weblogRepository.findById(testWeblog1.getId()).orElse(null);
+            weblog = weblogDao.findById(testWeblog1.getId()).orElse(null);
             assertNotNull(weblog);
             assertEquals(testWeblog1.getHandle(), weblog.getHandle());
             
             // lookup by weblog handle
-            weblog = weblogRepository.findByHandleAndVisibleTrue(testWeblog1.getHandle());
+            weblog = weblogDao.findByHandleAndVisibleTrue(testWeblog1.getHandle());
             assertNotNull(weblog);
             assertEquals(testWeblog1.getHandle(), weblog.getHandle());
             
             // make sure disabled weblogs are not returned
             weblog.setVisible(Boolean.FALSE);
             weblogManager.saveWeblog(weblog, true);
-            weblog = weblogRepository.findByHandleAndVisibleTrue(testWeblog1.getHandle());
+            weblog = weblogDao.findByHandleAndVisibleTrue(testWeblog1.getHandle());
             assertNull(weblog);
             
             // restore visible state
-            weblog = weblogRepository.findByHandle(testWeblog1.getHandle());
+            weblog = weblogDao.findByHandle(testWeblog1.getHandle());
             weblog.setVisible(Boolean.TRUE);
             weblogManager.saveWeblog(weblog, true);
-            weblog = weblogRepository.findByHandleAndVisibleTrue(testWeblog1.getHandle());
+            weblog = weblogDao.findByHandleAndVisibleTrue(testWeblog1.getHandle());
             assertNotNull(weblog);
             
             userManager.grantWeblogRole(testUser, testWeblog1, WeblogRole.EDIT_DRAFT);
 
             // get all weblogs for user
-            userRoles = userWeblogRoleRepository.findByUser(testUser);
+            userRoles = userWeblogRoleDao.findByUser(testUser);
             assertEquals(2, userRoles.size());
 
         } finally {
@@ -173,13 +173,13 @@ public class WeblogManagerIT extends WebloggerTest {
      */
     @Test
     public void testHitCountCRUD() {
-        Weblog aWeblog = weblogRepository.findById(testWeblog.getId()).orElse(null);
+        Weblog aWeblog = weblogDao.findById(testWeblog.getId()).orElse(null);
         int oldHits = aWeblog.getHitsToday();
         aWeblog.setHitsToday(oldHits + 10);
         weblogManager.saveWeblog(aWeblog, true);
 
         // make sure it was stored
-        aWeblog = weblogRepository.findById(testWeblog.getId()).orElse(null);
+        aWeblog = weblogDao.findById(testWeblog.getId()).orElse(null);
         assertNotNull(aWeblog);
         assertEquals(aWeblog, testWeblog);
         assertEquals(oldHits + 10, aWeblog.getHitsToday());
@@ -187,12 +187,12 @@ public class WeblogManagerIT extends WebloggerTest {
 
     @Test
     public void testIncrementHitCount() {
-        Weblog aWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        Weblog aWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
         aWeblog.setHitsToday(10);
         weblogManager.saveWeblog(aWeblog, true);
 
         // make sure it was created
-        aWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        aWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
         assertNotNull(aWeblog);
         assertEquals(10, aWeblog.getHitsToday());
 
@@ -203,7 +203,7 @@ public class WeblogManagerIT extends WebloggerTest {
         weblogManager.updateHitCounters();
 
         // make sure it was incremented properly
-        aWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        aWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
         assertEquals(15, aWeblog.getHitsToday());
     }
 
@@ -224,10 +224,10 @@ public class WeblogManagerIT extends WebloggerTest {
             assertEquals(20, blog2.getHitsToday());
 
             // reset all counts
-            weblogRepository.updateDailyHitCountZero();
+            weblogDao.updateDailyHitCountZero();
 
-            blog1 = weblogRepository.findByIdOrNull(blog1.getId());
-            blog2 = weblogRepository.findByIdOrNull(blog2.getId());
+            blog1 = weblogDao.findByIdOrNull(blog1.getId());
+            blog2 = weblogDao.findByIdOrNull(blog2.getId());
 
             // make sure it reset all counts
             assertEquals(0, blog1.getHitsToday());
@@ -260,7 +260,7 @@ public class WeblogManagerIT extends WebloggerTest {
         bookmark2.calculatePosition();
         weblogManager.saveWeblog(testWeblog, true);
 
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
         WeblogBookmark bookmarka;
         WeblogBookmark bookmarkb;
 
@@ -274,10 +274,10 @@ public class WeblogManagerIT extends WebloggerTest {
         // Remove one bookmark directly
         testWeblog.getBookmarks().remove(bookmarka);
         weblogManager.saveWeblog(testWeblog, true);
-        assertFalse(blogrollLinkRepository.findById(bookmarka.getId()).isPresent());
+        assertFalse(blogrollLinkDao.findById(bookmarka.getId()).isPresent());
 
         // Weblog should now contain one bookmark
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
         assertNotNull(testWeblog);
         assertEquals(1, testWeblog.getBookmarks().size());
         assertEquals(bookmarkb.getId(), testWeblog.getBookmarks().get(0).getId());
@@ -287,9 +287,9 @@ public class WeblogManagerIT extends WebloggerTest {
         weblogManager.saveWeblog(testWeblog, true);
 
         // Last bookmark should be gone
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
         assertEquals(0, testWeblog.getBookmarks().size());
-        assertFalse(blogrollLinkRepository.findById(bookmarkb.getId()).isPresent());
+        assertFalse(blogrollLinkDao.findById(bookmarkb.getId()).isPresent());
     }
 
     /**
@@ -297,7 +297,7 @@ public class WeblogManagerIT extends WebloggerTest {
      */
     @Test
     public void testBookmarkLookups() {
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
 
         // add some bookmarks
         WeblogBookmark b1 = new WeblogBookmark(testWeblog, "b1", "http://example1.com", "testbookmark13");
@@ -310,12 +310,12 @@ public class WeblogManagerIT extends WebloggerTest {
         weblogManager.saveWeblog(testWeblog, true);
 
         // test lookup by id
-        Optional<WeblogBookmark> testBookmark = blogrollLinkRepository.findById(b1.getId());
+        Optional<WeblogBookmark> testBookmark = blogrollLinkDao.findById(b1.getId());
         assertTrue(testBookmark.isPresent());
         assertEquals("b1", testBookmark.get().getName());
 
         // test lookup of all bookmarks for a website
-        Weblog testWeblog2 = weblogRepository.findById(testWeblog.getId()).orElse(null);
+        Weblog testWeblog2 = weblogDao.findById(testWeblog.getId()).orElse(null);
         List<WeblogBookmark> allBookmarks = testWeblog2.getBookmarks();
         assertNotNull(allBookmarks);
         assertEquals(3, allBookmarks.size());

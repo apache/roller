@@ -98,7 +98,7 @@
                         </label>
                         <div>
                             <select id="status" ng-model="ctrl.searchParams.status" size="1" required>
-                                <option ng-repeat="(key, value) in ctrl.lookupFields.statusOptions" value="{{key}}">{{value}}</option>
+                                <option ng-repeat="(key, value) in ctrl.lookupFields" value="{{key}}">{{value}}</option>
                             </select>
                         </div>
                     </div>

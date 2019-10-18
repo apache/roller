@@ -1,5 +1,5 @@
-TightBlog is a bottom-to-nearly-top rewrite of Apache Roller with much lesser-used functionality removed
-and new functionality added in (see below for details).  Its goal is to pleasantly satisfy 100% of the needs of 70-80% of bloggers while
+TightBlog is a bottom-to-top rewrite of Apache Roller with much lesser-used functionality removed
+and new functionality added in (see below for details).  Its goal is to satisfy the needs of 70-80% of bloggers while
 serving as a reliable starting point for other developers to fork and add additional customized features.  
 
 After contributing for about 2 1/2 years on Roller, I forked the codebase in May 2015 after I was unable to
@@ -23,7 +23,7 @@ significantly easier to work with and a much more reliable starting point for fo
 |TightBlog 3.5|16 June 2019|12|122|38|32.5K|
 
 Lines of code (LOC) above were based on <a href="https://www.openhub.net/p/tightblog">OpenHub</a> stats.  The
-droppage would be even more significant were it not for increased test code coverage (a good thing!). 
+droppage would be even more significant were it not for increased test code coverage. 
 <a href="https://codetabs.com/">CodeTabs</a> provides a 
 <a href="https://codetabs.com/count-loc/count-loc-online.html">real-time comparator</a> allowing one to see how much
 more streamlined TightBlog is over its predecessor:  

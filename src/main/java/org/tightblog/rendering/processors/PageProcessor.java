@@ -26,7 +26,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.model.SiteModel;
-import org.tightblog.repository.UserRepository;
+import org.tightblog.dao.UserDao;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.service.ThemeManager;
@@ -37,7 +37,7 @@ import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntryComment;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
-import org.tightblog.repository.WeblogRepository;
+import org.tightblog.dao.WeblogDao;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
@@ -77,8 +77,8 @@ public class PageProcessor extends AbstractProcessor {
 
     public static final String PATH = "/tb-ui/rendering/page";
 
-    private UserRepository userRepository;
-    private WeblogRepository weblogRepository;
+    private UserDao userDao;
+    private WeblogDao weblogDao;
     private LazyExpiringCache weblogPageCache;
     private WeblogManager weblogManager;
     private WeblogEntryManager weblogEntryManager;
@@ -89,14 +89,14 @@ public class PageProcessor extends AbstractProcessor {
     private DynamicProperties dp;
 
     @Autowired
-    PageProcessor(WeblogRepository weblogRepository, LazyExpiringCache weblogPageCache,
+    PageProcessor(WeblogDao weblogDao, LazyExpiringCache weblogPageCache,
                   WeblogManager weblogManager, WeblogEntryManager weblogEntryManager,
                   @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
                   ThemeManager themeManager, PageModel pageModel,
                   Function<WeblogPageRequest, SiteModel> siteModelFactory,
-                  UserRepository userRepository, DynamicProperties dp) {
-        this.userRepository = userRepository;
-        this.weblogRepository = weblogRepository;
+                  UserDao userDao, DynamicProperties dp) {
+        this.userDao = userDao;
+        this.weblogDao = weblogDao;
         this.weblogPageCache = weblogPageCache;
         this.weblogManager = weblogManager;
         this.weblogEntryManager = weblogEntryManager;
@@ -116,7 +116,7 @@ public class PageProcessor extends AbstractProcessor {
     void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogPageRequest incomingRequest = WeblogPageRequest.Creator.create(request, pageModel);
 
-        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
+        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -142,7 +142,7 @@ public class PageProcessor extends AbstractProcessor {
         }
 
         if (incomingRequest.getAuthenticatedUser() != null) {
-            incomingRequest.setBlogger(userRepository.findEnabledByUserName(incomingRequest.getAuthenticatedUser()));
+            incomingRequest.setBlogger(userDao.findEnabledByUserName(incomingRequest.getAuthenticatedUser()));
         }
 
         // cache key to retrieve earlier generated content

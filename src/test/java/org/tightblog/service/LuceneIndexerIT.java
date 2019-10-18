@@ -61,7 +61,7 @@ public class LuceneIndexerIT extends WebloggerTest {
         testUser = setupUser("entryTestUser");
         testWeblog = setupWeblog("entry-test-weblog", testUser);
         // ensure exactly one weblog so downstream tests don't become inaccurate
-        List<Weblog> weblogList = weblogRepository.findAll();
+        List<Weblog> weblogList = weblogDao.findAll();
         weblogList.forEach(w -> Assert.assertEquals("entry-test-weblog", w.getHandle()));
     }
 
@@ -86,14 +86,14 @@ public class LuceneIndexerIT extends WebloggerTest {
         wd1.setPubTime(Instant.now());
         wd1.setWeblog(testWeblog);
 
-        WeblogCategory cat = weblogCategoryRepository.findByWeblogAndName(testWeblog, "General");
+        WeblogCategory cat = weblogCategoryDao.findByWeblogAndName(testWeblog, "General");
         wd1.setCategory(cat);
 
         weblogEntryManager.saveWeblogEntry(wd1);
-        wd1 = weblogEntryRepository.findByIdOrNull(wd1.getId());
+        wd1 = weblogEntryDao.findByIdOrNull(wd1.getId());
 
         luceneIndexer.executeIndexOperationNow(
-                new IndexEntryTask(weblogEntryRepository, luceneIndexer, wd1, false));
+                new IndexEntryTask(weblogEntryDao, luceneIndexer, wd1, false));
 
         WeblogEntry wd2 = new WeblogEntry();
         wd2.setTitle("A Piece of the Action");
@@ -108,14 +108,14 @@ public class LuceneIndexerIT extends WebloggerTest {
         wd2.setPubTime(Instant.now());
         wd2.setWeblog(testWeblog);
 
-        cat = weblogCategoryRepository.findByWeblogAndName(testWeblog, "General");
+        cat = weblogCategoryDao.findByWeblogAndName(testWeblog, "General");
         wd2.setCategory(cat);
 
         weblogEntryManager.saveWeblogEntry(wd2);
-        wd2 = weblogEntryRepository.findByIdOrNull(wd2.getId());
+        wd2 = weblogEntryDao.findByIdOrNull(wd2.getId());
 
         luceneIndexer.executeIndexOperationNow(
-            new IndexEntryTask(weblogEntryRepository, luceneIndexer, wd2, false));
+            new IndexEntryTask(weblogEntryDao, luceneIndexer, wd2, false));
 
         Thread.sleep(DateUtils.MILLIS_PER_SECOND);
 
@@ -130,9 +130,9 @@ public class LuceneIndexerIT extends WebloggerTest {
         assertEquals(1, search2.getResultsCount());
 
         // Clean up
-        IndexEntryTask t1 = new IndexEntryTask(weblogEntryRepository, luceneIndexer, wd1, true);
+        IndexEntryTask t1 = new IndexEntryTask(weblogEntryDao, luceneIndexer, wd1, true);
         luceneIndexer.executeIndexOperationNow(t1);
-        IndexEntryTask t2 = new IndexEntryTask(weblogEntryRepository, luceneIndexer, wd2, true);
+        IndexEntryTask t2 = new IndexEntryTask(weblogEntryDao, luceneIndexer, wd2, true);
         luceneIndexer.executeIndexOperationNow(t2);
 
         SearchTask search3 = new SearchTask(luceneIndexer);

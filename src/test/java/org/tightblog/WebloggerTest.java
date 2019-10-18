@@ -33,17 +33,17 @@ import org.tightblog.domain.WeblogCategory;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntryComment;
 import org.junit.Before;
-import org.tightblog.repository.BlogrollLinkRepository;
-import org.tightblog.repository.MediaDirectoryRepository;
-import org.tightblog.repository.MediaFileRepository;
-import org.tightblog.repository.UserRepository;
-import org.tightblog.repository.UserWeblogRoleRepository;
-import org.tightblog.repository.WeblogCategoryRepository;
-import org.tightblog.repository.WeblogEntryCommentRepository;
-import org.tightblog.repository.WeblogEntryRepository;
-import org.tightblog.repository.WeblogRepository;
-import org.tightblog.repository.WeblogTemplateRepository;
-import org.tightblog.repository.WebloggerPropertiesRepository;
+import org.tightblog.dao.BlogrollLinkDao;
+import org.tightblog.dao.MediaDirectoryDao;
+import org.tightblog.dao.MediaFileDao;
+import org.tightblog.dao.UserDao;
+import org.tightblog.dao.UserWeblogRoleDao;
+import org.tightblog.dao.WeblogCategoryDao;
+import org.tightblog.dao.WeblogEntryCommentDao;
+import org.tightblog.dao.WeblogEntryDao;
+import org.tightblog.dao.WeblogDao;
+import org.tightblog.dao.WeblogTemplateDao;
+import org.tightblog.dao.WebloggerPropertiesDao;
 import org.tightblog.service.LuceneIndexer;
 
 import java.time.Instant;
@@ -56,31 +56,31 @@ public abstract class WebloggerTest {
     private ApplicationContext appContext;
 
     @Autowired
-    protected BlogrollLinkRepository blogrollLinkRepository;
+    protected BlogrollLinkDao blogrollLinkDao;
 
     @Autowired
-    protected WeblogCategoryRepository weblogCategoryRepository;
+    protected WeblogCategoryDao weblogCategoryDao;
 
     @Autowired
-    protected WeblogRepository weblogRepository;
+    protected WeblogDao weblogDao;
 
     @Autowired
-    protected WeblogEntryRepository weblogEntryRepository;
+    protected WeblogEntryDao weblogEntryDao;
 
     @Autowired
-    protected WeblogEntryCommentRepository weblogEntryCommentRepository;
+    protected WeblogEntryCommentDao weblogEntryCommentDao;
 
     @Autowired
-    protected WeblogTemplateRepository weblogTemplateRepository;
+    protected WeblogTemplateDao weblogTemplateDao;
 
     @Autowired
-    protected WebloggerPropertiesRepository webloggerPropertiesRepository;
+    protected WebloggerPropertiesDao webloggerPropertiesDao;
 
     @Autowired
-    protected UserRepository userRepository;
+    protected UserDao userDao;
 
     @Autowired
-    protected UserWeblogRoleRepository userWeblogRoleRepository;
+    protected UserWeblogRoleDao userWeblogRoleDao;
 
     @Autowired
     protected WeblogManager weblogManager;
@@ -89,10 +89,10 @@ public abstract class WebloggerTest {
     protected WeblogEntryManager weblogEntryManager;
 
     @Autowired
-    protected MediaDirectoryRepository mediaDirectoryRepository;
+    protected MediaDirectoryDao mediaDirectoryDao;
 
     @Autowired
-    protected MediaFileRepository mediaFileRepository;
+    protected MediaFileDao mediaFileDao;
 
     @Autowired
     protected UserManager userManager;
@@ -119,10 +119,10 @@ public abstract class WebloggerTest {
         testUser.setEmailAddress("TestUser@dev.null");
         testUser.setDateCreated(Instant.now());
         testUser.setStatus(UserStatus.ENABLED);
-        userRepository.saveAndFlush(testUser);
+        userDao.saveAndFlush(testUser);
 
         // query for the user to make sure we return the persisted object
-        User user = userRepository.findEnabledByUserName(userName.toLowerCase());
+        User user = userDao.findEnabledByUserName(userName.toLowerCase());
 
         if (user == null) {
             throw new IllegalStateException("error inserting new user");
@@ -151,7 +151,7 @@ public abstract class WebloggerTest {
         weblogManager.addWeblog(testWeblog);
 
         // query for the new weblog and return it
-        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(handle);
+        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(handle);
 
         if (weblog == null) {
             throw new IllegalStateException("error setting up weblog");
@@ -184,7 +184,7 @@ public abstract class WebloggerTest {
         weblogEntryManager.saveWeblogEntry(testEntry);
 
         // query for object
-        WeblogEntry entry = weblogEntryRepository.findByIdOrNull(testEntry.getId());
+        WeblogEntry entry = weblogEntryDao.findByIdOrNull(testEntry.getId());
 
         if (entry == null) {
             throw new IllegalStateException("error setting up weblog entry");
@@ -209,7 +209,7 @@ public abstract class WebloggerTest {
         weblogEntryManager.saveComment(testComment, true);
 
         // query for object
-        WeblogEntryComment commentTest = weblogEntryCommentRepository.findByIdOrNull(testComment.getId());
+        WeblogEntryComment commentTest = weblogEntryCommentDao.findByIdOrNull(testComment.getId());
 
         if (commentTest == null) {
             throw new IllegalStateException("error setting up comment");

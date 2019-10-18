@@ -21,7 +21,7 @@
 package org.tightblog.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.tightblog.repository.WeblogEntryCommentRepository;
+import org.tightblog.dao.WeblogEntryCommentDao;
 import org.tightblog.util.Utilities;
 
 import javax.validation.constraints.NotBlank;
@@ -113,7 +113,7 @@ public class WeblogEntry {
     private Set<WeblogEntryTag> tagSet = new HashSet<>();
 
     // temporary non-persisted fields used for form entry & retrieving associated data
-    private WeblogEntryCommentRepository commentRepository;
+    private WeblogEntryCommentDao weblogEntryCommentDao;
     private int hours;
     private int minutes;
 
@@ -379,25 +379,25 @@ public class WeblogEntry {
         this.tagsAsString = tagsAsString;
     }
 
-    public void setCommentRepository(WeblogEntryCommentRepository commentRepository) {
-        this.commentRepository = commentRepository;
+    public void setWeblogEntryCommentDao(WeblogEntryCommentDao weblogEntryCommentDao) {
+        this.weblogEntryCommentDao = weblogEntryCommentDao;
     }
 
     @Transient
     @JsonIgnore
     public List<WeblogEntryComment> getComments() {
-        return commentRepository != null ? commentRepository.findByWeblogEntryAndStatusApproved(this)
+        return weblogEntryCommentDao != null ? weblogEntryCommentDao.findByWeblogEntryAndStatusApproved(this)
                 : new ArrayList<>();
     }
 
     @Transient
     public int getCommentCount() {
-        return commentRepository != null ? commentRepository.countByWeblogEntryAndStatusApproved(this) : 0;
+        return weblogEntryCommentDao != null ? weblogEntryCommentDao.countByWeblogEntryAndStatusApproved(this) : 0;
     }
 
     @Transient
     public int getCommentCountIncludingUnapproved() {
-        return commentRepository != null ? commentRepository.countByWeblogEntry(this) : 0;
+        return weblogEntryCommentDao != null ? weblogEntryCommentDao.countByWeblogEntry(this) : 0;
     }
 
     /**

@@ -81,7 +81,7 @@ public class MediaManagerIT extends WebloggerTest {
         super.setUp();
         testUser = setupUser("mediaFileTestUser");
         testWeblog = setupWeblog("media-file-test-weblog", testUser);
-        defaultDirectory = mediaDirectoryRepository.findByWeblogAndName(testWeblog, "default");
+        defaultDirectory = mediaDirectoryDao.findByWeblogAndName(testWeblog, "default");
     }
 
     @After
@@ -116,10 +116,10 @@ public class MediaManagerIT extends WebloggerTest {
 
         MediaDirectory newDirectory2 = mediaManager.createMediaDirectory(testWeblog, "test2");
 
-        MediaDirectory newDirectory1ById = mediaDirectoryRepository.findByIdOrNull(newDirectory1.getId());
+        MediaDirectory newDirectory1ById = mediaDirectoryDao.findByIdOrNull(newDirectory1.getId());
         assertEquals(newDirectory1, newDirectory1ById);
 
-        MediaDirectory newDirectory2ById = mediaDirectoryRepository.findByIdOrNull(newDirectory2.getId());
+        MediaDirectory newDirectory2ById = mediaDirectoryDao.findByIdOrNull(newDirectory2.getId());
         assertEquals("test2", newDirectory2ById.getName());
 
     }
@@ -129,7 +129,7 @@ public class MediaManagerIT extends WebloggerTest {
         mediaManager.createMediaDirectory(testWeblog, "dir1");
         mediaManager.createMediaDirectory(testWeblog, "dir2");
 
-        List<MediaDirectory> directories = mediaDirectoryRepository.findByWeblog(testWeblog);
+        List<MediaDirectory> directories = mediaDirectoryDao.findByWeblog(testWeblog);
         assertNotNull(directories);
         assertEquals(3, directories.size());
         assertTrue(containsName(directories, "default"));
@@ -168,7 +168,7 @@ public class MediaManagerIT extends WebloggerTest {
         assertTrue(mediaFile.getId().length() > 0);
 
         // test values saved
-        MediaFile mediaFile1 = mediaFileRepository.findByIdOrNull(mediaFile.getId());
+        MediaFile mediaFile1 = mediaFileDao.findByIdOrNull(mediaFile.getId());
         assertEquals(defaultDirectory, mediaFile1.getDirectory());
         assertEquals(testUser, mediaFile1.getCreator());
         assertEquals(mockMultipartFile.getName(), mediaFile1.getName());
@@ -177,11 +177,11 @@ public class MediaManagerIT extends WebloggerTest {
         assertEquals(mockMultipartFile.getContentType(), mediaFile1.getContentType());
 
         // test delete
-        MediaFile mediaFile2 = mediaFileRepository.findByIdOrNull(mediaFile1.getId());
+        MediaFile mediaFile2 = mediaFileDao.findByIdOrNull(mediaFile1.getId());
         assertEquals(mockMultipartFile.getName(), mediaFile2.getName());
         mediaManager.removeMediaFile(testWeblog, mediaFile2);
 
-        MediaFile mediaFile3 = mediaFileRepository.findByIdOrNull(mediaFile1.getId());
+        MediaFile mediaFile3 = mediaFileDao.findByIdOrNull(mediaFile1.getId());
         assertNull(mediaFile3);
     }
 
@@ -206,7 +206,7 @@ public class MediaManagerIT extends WebloggerTest {
         assertNotNull(id);
         assertTrue(id.length() > 0);
 
-        MediaFile mediaFile1 = mediaFileRepository.findByIdOrNull(id);
+        MediaFile mediaFile1 = mediaFileDao.findByIdOrNull(id);
         mediaFile1.setName("updated.gif");
         mediaFile1.setNotes("updated desc");
         mediaFile1.setContentType("image/gif");
@@ -214,7 +214,7 @@ public class MediaManagerIT extends WebloggerTest {
         mediaManager.saveMediaFile(mediaFile1, null, testUser, errors);
         assertTrue(ObjectUtils.isEmpty(errors));
 
-        MediaFile mediaFile2 = mediaFileRepository.findByIdOrNull(id);
+        MediaFile mediaFile2 = mediaFileDao.findByIdOrNull(id);
         assertEquals("updated.gif", mediaFile2.getName());
         assertEquals("updated desc", mediaFile2.getNotes());
         assertEquals("image/gif", mediaFile2.getContentType());
@@ -261,7 +261,7 @@ public class MediaManagerIT extends WebloggerTest {
         assertTrue(containsFileWithName(mediaFiles, "test6_1.jpg"));
         assertTrue(containsFileWithName(mediaFiles, "test6_2.jpg"));
 
-        MediaDirectory testDirectory = mediaDirectoryRepository.findByIdOrNull(defaultDirectory.getId());
+        MediaDirectory testDirectory = mediaDirectoryDao.findByIdOrNull(defaultDirectory.getId());
         assertTrue(testDirectory.hasMediaFile("test6_1.jpg"));
         assertTrue(testDirectory.hasMediaFile("test6_2.jpg"));
     }
@@ -296,18 +296,18 @@ public class MediaManagerIT extends WebloggerTest {
         mediaManager.saveMediaFile(mediaFile2, mockMultipartFile, testUser, errors);
         assertTrue(ObjectUtils.isEmpty(errors));
 
-        MediaDirectory sourceDirectory = mediaDirectoryRepository.findByIdOrNull(defaultDirectory.getId());
+        MediaDirectory sourceDirectory = mediaDirectoryDao.findByIdOrNull(defaultDirectory.getId());
 
         Set<MediaFile> mediaFiles = sourceDirectory.getMediaFiles();
         assertEquals(2, mediaFiles.size());
         assertTrue(containsFileWithName(mediaFiles, "test7_1.jpg"));
         assertTrue(containsFileWithName(mediaFiles, "test7_2.jpg"));
 
-        MediaDirectory targetDirectory = mediaDirectoryRepository.findByIdOrNull(dir1.getId());
+        MediaDirectory targetDirectory = mediaDirectoryDao.findByIdOrNull(dir1.getId());
         mediaManager.moveMediaFiles(mediaFiles, targetDirectory);
 
-        sourceDirectory = mediaDirectoryRepository.findByIdOrNull(defaultDirectory.getId());
-        targetDirectory = mediaDirectoryRepository.findByIdOrNull(dir1.getId());
+        sourceDirectory = mediaDirectoryDao.findByIdOrNull(defaultDirectory.getId());
+        targetDirectory = mediaDirectoryDao.findByIdOrNull(dir1.getId());
 
         mediaFiles = targetDirectory.getMediaFiles();
         assertEquals(2, mediaFiles.size());
@@ -328,12 +328,12 @@ public class MediaManagerIT extends WebloggerTest {
         assertEquals(4, directories.size());
 
         // Delete folder
-        MediaDirectory directoryById = mediaDirectoryRepository.findByIdOrNull(dir1.getId());
+        MediaDirectory directoryById = mediaDirectoryDao.findByIdOrNull(dir1.getId());
         testWeblog.getMediaDirectories().remove(directoryById);
         mediaManager.removeAllFiles(directoryById);
         weblogManager.saveWeblog(testWeblog, false);
 
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
         assertEquals(3, testWeblog.getMediaDirectories().size());
     }
 

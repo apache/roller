@@ -41,9 +41,9 @@ import org.tightblog.rendering.comment.CommentAuthenticator;
 import org.tightblog.rendering.comment.CommentValidator;
 import org.tightblog.domain.WeblogEntryComment.ValidationResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.tightblog.repository.UserRepository;
-import org.tightblog.repository.WeblogRepository;
-import org.tightblog.repository.WebloggerPropertiesRepository;
+import org.tightblog.dao.UserDao;
+import org.tightblog.dao.WeblogDao;
+import org.tightblog.dao.WebloggerPropertiesDao;
 import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.Utilities;
 import org.jsoup.Jsoup;
@@ -93,16 +93,16 @@ public class CommentProcessor extends AbstractProcessor {
 
     private static final String EMAIL_ADDR_REGEXP = "^.*@.*[.].{2,}$";
 
-    private WeblogRepository weblogRepository;
+    private WeblogDao weblogDao;
 
-    private UserRepository userRepository;
+    private UserDao userDao;
     private LuceneIndexer luceneIndexer;
     private WeblogEntryManager weblogEntryManager;
     private UserManager userManager;
     private EmailService emailService;
     private MessageSource messages;
     private PageModel pageModel;
-    private WebloggerPropertiesRepository webloggerPropertiesRepository;
+    private WebloggerPropertiesDao webloggerPropertiesDao;
     private DynamicProperties dp;
 
     private EntityManager entityManager;
@@ -113,15 +113,15 @@ public class CommentProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    public CommentProcessor(WeblogRepository weblogRepository,
-                            UserRepository userRepository,
+    public CommentProcessor(WeblogDao weblogDao,
+                            UserDao userDao,
                             LuceneIndexer luceneIndexer, WeblogEntryManager weblogEntryManager, UserManager userManager,
                             EmailService emailService, DynamicProperties dp,
                             MessageSource messages, PageModel pageModel,
-                            WebloggerPropertiesRepository webloggerPropertiesRepository) {
-        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
-        this.weblogRepository = weblogRepository;
-        this.userRepository = userRepository;
+                            WebloggerPropertiesDao webloggerPropertiesDao) {
+        this.webloggerPropertiesDao = webloggerPropertiesDao;
+        this.weblogDao = weblogDao;
+        this.userDao = userDao;
         this.luceneIndexer = luceneIndexer;
         this.weblogEntryManager = weblogEntryManager;
         this.userManager = userManager;
@@ -151,7 +151,7 @@ public class CommentProcessor extends AbstractProcessor {
     @RequestMapping(path = "/**", method = RequestMethod.POST)
     void postComment(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
+        WebloggerProperties props = webloggerPropertiesDao.findOrNull();
         WebloggerProperties.CommentPolicy commentOption = props.getCommentPolicy();
 
         if (WebloggerProperties.CommentPolicy.NONE.equals(commentOption)) {
@@ -162,7 +162,7 @@ public class CommentProcessor extends AbstractProcessor {
 
         WeblogPageRequest incomingRequest = WeblogPageRequest.Creator.create(request, pageModel);
 
-        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
+        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {
             log.info("Commenter attempted to leave comment for weblog with unknown handle: {}, returning 404",
                     incomingRequest.getWeblogHandle());
@@ -184,7 +184,7 @@ public class CommentProcessor extends AbstractProcessor {
         }
 
         if (incomingRequest.getAuthenticatedUser() != null) {
-            incomingRequest.setBlogger(userRepository.findEnabledByUserName(incomingRequest.getAuthenticatedUser()));
+            incomingRequest.setBlogger(userDao.findEnabledByUserName(incomingRequest.getAuthenticatedUser()));
         }
 
         WeblogEntryComment incomingComment = createCommentFromRequest(request, incomingRequest, props.getCommentHtmlPolicy());

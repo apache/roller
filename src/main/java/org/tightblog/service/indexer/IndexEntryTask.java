@@ -26,7 +26,7 @@ import org.tightblog.service.LuceneIndexer;
 import org.tightblog.domain.WeblogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tightblog.repository.WeblogEntryRepository;
+import org.tightblog.dao.WeblogEntryDao;
 
 import java.io.IOException;
 
@@ -37,7 +37,7 @@ public class IndexEntryTask extends AbstractIndexTask {
 
     private static Logger log = LoggerFactory.getLogger(IndexEntryTask.class);
     private WeblogEntry weblogEntry;
-    private WeblogEntryRepository weblogEntryRepository;
+    private WeblogEntryDao weblogEntryDao;
     private boolean deleteOnly;
 
     /**
@@ -45,10 +45,10 @@ public class IndexEntryTask extends AbstractIndexTask {
      * @param weblogEntry entry to index
      * @param deleteOnly If true just remove the weblog entry from the index.
      */
-    public IndexEntryTask(WeblogEntryRepository wer, LuceneIndexer mgr,
+    public IndexEntryTask(WeblogEntryDao weblogEntryDao, LuceneIndexer indexer,
                           WeblogEntry weblogEntry, boolean deleteOnly) {
-        super(mgr);
-        this.weblogEntryRepository = wer;
+        super(indexer);
+        this.weblogEntryDao = weblogEntryDao;
         this.weblogEntry = weblogEntry;
         this.deleteOnly = deleteOnly;
     }
@@ -64,7 +64,7 @@ public class IndexEntryTask extends AbstractIndexTask {
                     // since this task is normally run on a separate thread we must treat
                     // the weblog object passed in as a detached JPA entity object with
                     // potentially obsolete data, so requery for the object now
-                    this.weblogEntry = weblogEntryRepository.findByIdOrNull(this.weblogEntry.getId());
+                    this.weblogEntry = weblogEntryDao.findByIdOrNull(this.weblogEntry.getId());
                     if (weblogEntry != null) {
                         writer.addDocument(getDocument(weblogEntry));
                     }

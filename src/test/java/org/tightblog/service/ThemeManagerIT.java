@@ -75,28 +75,28 @@ public class ThemeManagerIT extends WebloggerTest {
         WeblogTemplate template;
         
         // create template
-        weblogTemplateRepository.save(testPage);
+        weblogTemplateDao.save(testPage);
 
         // check that create was successful
-        template = weblogTemplateRepository.findByWeblogAndName(testWeblog, testPage.getName());
+        template = weblogTemplateDao.findByWeblogAndName(testWeblog, testPage.getName());
         assertNotNull(template);
 
         // update template
         template.setName("testtesttest");
-        weblogTemplateRepository.save(template);
+        weblogTemplateDao.save(template);
 
         // check that update was successful
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
-        template = weblogTemplateRepository.findByWeblogAndName(testWeblog, "testtesttest");
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
+        template = weblogTemplateDao.findByWeblogAndName(testWeblog, "testtesttest");
         assertNotNull(template);
 
         // delete template
-        weblogTemplateRepository.delete(template);
+        weblogTemplateDao.delete(template);
         weblogManager.evictWeblogTemplateCaches(template.getWeblog(), testPage.getName(), template.getRole());
 
         // check that delete was successful
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
-        template = weblogTemplateRepository.findByWeblogAndName(testWeblog, testPage.getName());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
+        template = weblogTemplateDao.findByWeblogAndName(testWeblog, testPage.getName());
         assertNull(template);
     }
     
@@ -109,29 +109,29 @@ public class ThemeManagerIT extends WebloggerTest {
         WeblogTemplate page;
         
         // create page
-        weblogTemplateRepository.save(testPage);
+        weblogTemplateDao.save(testPage);
         String id = testPage.getId();
 
         // lookup by id
-        page = weblogTemplateRepository.findById(id).orElse(null);
+        page = weblogTemplateDao.findById(id).orElse(null);
         assertNotNull(page);
 
         // lookup by action
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
-        page = weblogTemplateRepository.findByWeblogAndRole(testWeblog, testPage.getRole());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
+        page = weblogTemplateDao.findByWeblogAndRole(testWeblog, testPage.getRole());
         assertNotNull(page);
 
         // lookup by name
-        page = weblogTemplateRepository.findByWeblogAndName(testWeblog, testPage.getName());
+        page = weblogTemplateDao.findByWeblogAndName(testWeblog, testPage.getName());
         assertNotNull(page);
 
         // lookup all pages for weblog
-        List pages = weblogTemplateRepository.getWeblogTemplateMetadata(testWeblog);
+        List pages = weblogTemplateDao.getWeblogTemplateMetadata(testWeblog);
         assertNotNull(pages);
         assertEquals(1, pages.size());
         
         // delete page
-        weblogTemplateRepository.delete(page);
+        weblogTemplateDao.delete(page);
     }
     
 }

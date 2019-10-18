@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.rendering.requests.WeblogRequest;
-import org.tightblog.repository.WebloggerPropertiesRepository;
+import org.tightblog.dao.WebloggerPropertiesDao;
 import org.tightblog.util.Utilities;
 
 import java.time.ZoneId;
@@ -45,7 +45,7 @@ import java.util.Map;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class UtilitiesModel implements Model {
 
-    private WebloggerPropertiesRepository webloggerPropertiesRepository;
+    private WebloggerPropertiesDao webloggerPropertiesDao;
     private MessageSource messages;
     private String systemVersion;
 
@@ -53,10 +53,10 @@ public class UtilitiesModel implements Model {
     private Locale locale;
 
     @Autowired
-    UtilitiesModel(WebloggerPropertiesRepository webloggerPropertiesRepository,
-                          MessageSource messages,
-                          @Value("${weblogger.version:Unknown}") String systemVersion) {
-        this.webloggerPropertiesRepository = webloggerPropertiesRepository;
+    UtilitiesModel(WebloggerPropertiesDao webloggerPropertiesDao,
+                   MessageSource messages,
+                   @Value("${weblogger.version:Unknown}") String systemVersion) {
+        this.webloggerPropertiesDao = webloggerPropertiesDao;
         this.messages = messages;
         this.systemVersion = systemVersion;
     }
@@ -95,7 +95,7 @@ public class UtilitiesModel implements Model {
     }
 
     public boolean getCommentEmailNotify() {
-        WebloggerProperties props = webloggerPropertiesRepository.findOrNull();
+        WebloggerProperties props = webloggerPropertiesDao.findOrNull();
         return props.isUsersCommentNotifications();
     }
 

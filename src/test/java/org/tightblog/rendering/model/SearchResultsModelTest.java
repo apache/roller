@@ -24,7 +24,7 @@ import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.service.LuceneIndexer;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
-import org.tightblog.repository.WeblogEntryRepository;
+import org.tightblog.dao.WeblogEntryDao;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -37,7 +37,7 @@ public class SearchResultsModelTest {
     private ThemeManager mockThemeManager;
     private WeblogEntryListGenerator mockWELG;
     private CalendarGenerator mockCalendarGenerator;
-    private WeblogEntryRepository mockWeblogEntryRepository;
+    private WeblogEntryDao mockWeblogEntryDao;
     private LuceneIndexer mockLuceneIndexer;
 
     @Before
@@ -48,13 +48,13 @@ public class SearchResultsModelTest {
         mockThemeManager = mock(ThemeManager.class);
         mockWELG = mock(WeblogEntryListGenerator.class);
         mockCalendarGenerator = mock(CalendarGenerator.class);
-        mockWeblogEntryRepository = mock(WeblogEntryRepository.class);
+        mockWeblogEntryDao = mock(WeblogEntryDao.class);
         mockLuceneIndexer = mock(LuceneIndexer.class);
 
         searchResultsModel = new SearchResultsModel(
                 mockUserManager, mockWeblogManager, mockWeblogEntryManager,
                 mockThemeManager, mockWELG, mockCalendarGenerator,
-                25, mockWeblogEntryRepository, mockLuceneIndexer);
+                25, mockWeblogEntryDao, mockLuceneIndexer);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class SearchResultsModelTest {
         assertEquals(mockWELG, searchResultsModel.getWeblogEntryListGenerator());
         assertEquals(mockCalendarGenerator, searchResultsModel.getCalendarGenerator());
         assertEquals(25, searchResultsModel.getMaxEntriesPerPage());
-        assertEquals(mockWeblogEntryRepository, searchResultsModel.getWeblogEntryRepository());
+        assertEquals(mockWeblogEntryDao, searchResultsModel.getWeblogEntryDao());
         assertEquals(mockLuceneIndexer, searchResultsModel.getLuceneIndexer());
     }
 }

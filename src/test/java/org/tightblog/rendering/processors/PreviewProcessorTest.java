@@ -44,7 +44,7 @@ import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.model.Model;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
-import org.tightblog.repository.WeblogRepository;
+import org.tightblog.dao.WeblogDao;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -80,7 +80,7 @@ public class PreviewProcessorTest {
     private HttpServletResponse mockResponse;
     private WeblogEntryManager mockWEM;
     private UserManager mockUM;
-    private WeblogRepository mockWR;
+    private WeblogDao mockWD;
     private ThymeleafRenderer mockRenderer;
     private ThemeManager mockThemeManager;
     private WeblogTheme mockTheme;
@@ -94,9 +94,9 @@ public class PreviewProcessorTest {
         try {
             mockRequest = TestUtils.createMockServletRequestForWeblogEntryRequest();
 
-            mockWR = mock(WeblogRepository.class);
+            mockWD = mock(WeblogDao.class);
             weblog = new Weblog();
-            when(mockWR.findByHandleAndVisibleTrue("myblog")).thenReturn(weblog);
+            when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(weblog);
 
             mockUM = mock(UserManager.class);
             when(mockUM.checkWeblogRole("bob", weblog, WeblogRole.EDIT_DRAFT)).thenReturn(true);
@@ -119,7 +119,7 @@ public class PreviewProcessorTest {
 
             Function<WeblogPageRequest, SiteModel> siteModelFactory = new WebConfig().siteModelFactory();
 
-            processor = new PreviewProcessor(mockWR, mockRenderer, mockThemeManager, mockUM, mock(PageModel.class),
+            processor = new PreviewProcessor(mockWD, mockRenderer, mockThemeManager, mockUM, mock(PageModel.class),
                     mockWEM, siteModelFactory);
 
             mockApplicationContext = mock(ApplicationContext.class);
@@ -138,7 +138,7 @@ public class PreviewProcessorTest {
 
     @Test
     public void test404OnMissingWeblog() throws IOException {
-        when(mockWR.findByHandleAndVisibleTrue("myblog")).thenReturn(null);
+        when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(null);
         processor.getPreviewPage(mockRequest, mockResponse);
         verify(mockResponse).sendError(SC_NOT_FOUND);
     }

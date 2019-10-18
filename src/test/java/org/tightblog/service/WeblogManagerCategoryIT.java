@@ -76,7 +76,7 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
     
     @Test
     public void testLookupCategoryById() {
-        Optional<WeblogCategory> maybeCat = weblogCategoryRepository.findById(testCat.getId());
+        Optional<WeblogCategory> maybeCat = weblogCategoryDao.findById(testCat.getId());
         assertTrue(maybeCat.isPresent());
         assertEquals(maybeCat.get(), testCat);
     }
@@ -99,13 +99,13 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
         testWeblog.addCategory(dest);
         weblogManager.saveWeblog(testWeblog, true);
 
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
         setupWeblogEntry("e1", c1, PubStatus.PUBLISHED, testWeblog, testUser);
         setupWeblogEntry("e2", c1, PubStatus.DRAFT, testWeblog, testUser);
 
         // need to query for cats again since session was closed
-        WeblogCategory fromCat = weblogCategoryRepository.findByIdOrNull(c1.getId());
-        WeblogCategory toCat = weblogCategoryRepository.findByIdOrNull(dest.getId());
+        WeblogCategory fromCat = weblogCategoryDao.findByIdOrNull(c1.getId());
+        WeblogCategory toCat = weblogCategoryDao.findByIdOrNull(dest.getId());
 
         // verify number of entries in each category
         assertNotNull(fromCat);
@@ -119,8 +119,8 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
         weblogEntryManager.moveWeblogCategoryContents(c1, dest);
 
         // after move, verify number of entries in each category
-        fromCat = weblogCategoryRepository.findByIdOrNull(c1.getId());
-        toCat = weblogCategoryRepository.findByIdOrNull(dest.getId());
+        fromCat = weblogCategoryDao.findByIdOrNull(c1.getId());
+        toCat = weblogCategoryDao.findByIdOrNull(dest.getId());
 
         assertNotNull(fromCat);
         assertNotNull(toCat);
@@ -149,7 +149,7 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
         weblogManager.saveWeblog(weblog, true);
 
         // query for object
-        Optional<WeblogCategory> maybeCat = weblogCategoryRepository.findById(testCategory.getId());
+        Optional<WeblogCategory> maybeCat = weblogCategoryDao.findById(testCategory.getId());
         if (!maybeCat.isPresent()) {
             throw new IllegalStateException("error setting up weblog category");
         }
@@ -181,12 +181,12 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
         weblogManager.saveWeblog(testWeblog, true);
 
         // make sure category was added
-        WeblogCategory catFromDb = weblogCategoryRepository.findById(newCat.getId()).orElse(null);
+        WeblogCategory catFromDb = weblogCategoryDao.findById(newCat.getId()).orElse(null);
         assertNotNull(catFromDb);
         assertEquals(newCat, catFromDb);
 
         // make sure category count increased
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
         assertEquals(5, testWeblog.getWeblogCategories().size());
 
         // update category
@@ -197,7 +197,7 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
         weblogManager.saveWeblog(testWeblog, true);
 
         // verify category was updated
-        catFromDb = weblogCategoryRepository.findById(newCat.getId()).orElse(null);
+        catFromDb = weblogCategoryDao.findById(newCat.getId()).orElse(null);
         assertNotNull(catFromDb);
         assertEquals("testtest", catFromDb.getName());
         assertEquals(5, testWeblog.getWeblogCategories().size());
@@ -207,11 +207,11 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
         weblogManager.saveWeblog(testWeblog, true);
 
         // make sure cat was removed
-        catFromDb = weblogCategoryRepository.findById(newCat.getId()).orElse(null);
+        catFromDb = weblogCategoryDao.findById(newCat.getId()).orElse(null);
         assertNull(catFromDb);
 
         // make sure category count decreased
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
         assertEquals(4, testWeblog.getWeblogCategories().size());
     }
 
@@ -227,7 +227,7 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
         weblogManager.saveWeblog(testWeblog, true);
 
         // check that testCat can be retrieved
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
 
         assertEquals(5, testWeblog.getWeblogCategories().size());
         testCatA = testWeblog.getWeblogCategories().get(4);
@@ -238,9 +238,9 @@ public class WeblogManagerCategoryIT extends WebloggerTest {
         weblogManager.saveWeblog(testWeblog, true);
 
         // verify cascading delete succeeded
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
         assertEquals(4, testWeblog.getWeblogCategories().size());
-        assertNull(weblogCategoryRepository.findByWeblogAndName(testWeblog, "SampleCategory"));
+        assertNull(weblogCategoryDao.findByWeblogAndName(testWeblog, "SampleCategory"));
     }
 
 }

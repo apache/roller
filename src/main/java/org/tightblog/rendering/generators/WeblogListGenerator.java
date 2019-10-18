@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.tightblog.domain.Weblog;
-import org.tightblog.repository.WeblogRepository;
+import org.tightblog.dao.WeblogDao;
 import org.tightblog.util.Utilities;
 
 import java.time.Instant;
@@ -31,16 +31,16 @@ import java.util.Map;
 @Component
 public class WeblogListGenerator {
 
-    private WeblogRepository weblogRepository;
+    private WeblogDao weblogDao;
 
     @Autowired
-    public WeblogListGenerator(WeblogRepository weblogRepository) {
-        this.weblogRepository = weblogRepository;
+    public WeblogListGenerator(WeblogDao weblogDao) {
+        this.weblogDao = weblogDao;
     }
 
     public List<WeblogData> getHotWeblogs(int length) {
         List<WeblogData> weblogDataList = new ArrayList<>();
-        List<Weblog> weblogs = weblogRepository.findByVisibleTrueAndHitsTodayGreaterThanOrderByHitsTodayDesc(0,
+        List<Weblog> weblogs = weblogDao.findByVisibleTrueAndHitsTodayGreaterThanOrderByHitsTodayDesc(0,
                 PageRequest.of(0, length));
         for (Weblog weblog : weblogs) {
             weblogDataList.add(weblogToWeblogData(weblog));
@@ -53,9 +53,9 @@ public class WeblogListGenerator {
 
         List<Weblog> rawWeblogs;
         if (letter == null) {
-            rawWeblogs = weblogRepository.findByVisibleTrue(PageRequest.of(pageNum, maxBlogs + 1));
+            rawWeblogs = weblogDao.findByVisibleTrue(PageRequest.of(pageNum, maxBlogs + 1));
         } else {
-            rawWeblogs = weblogRepository.findByLetterOrderByHandle(letter,
+            rawWeblogs = weblogDao.findByLetterOrderByHandle(letter,
                     PageRequest.of(pageNum * maxBlogs, maxBlogs + 1));
         }
 

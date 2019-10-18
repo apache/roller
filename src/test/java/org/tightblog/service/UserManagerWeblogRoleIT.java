@@ -65,19 +65,19 @@ public class UserManagerWeblogRoleIT extends WebloggerTest {
         UserWeblogRole role;
          
         // delete weblog roles
-        role = userWeblogRoleRepository.findByUserAndWeblog(testUser, testWeblog);
+        role = userWeblogRoleDao.findByUserAndWeblog(testUser, testWeblog);
         assertNotNull(role);
         userManager.deleteUserWeblogRole(role);
 
         // check that delete was successful
-        role = userWeblogRoleRepository.findByUserAndWeblog(testUser, testWeblog);
+        role = userWeblogRoleDao.findByUserAndWeblog(testUser, testWeblog);
         assertNull(role);
         
         // create weblog roles
         userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.OWNER);
 
         // check that create was successful
-        role = userWeblogRoleRepository.findByUserAndWeblog(testUser, testWeblog);
+        role = userWeblogRoleDao.findByUserAndWeblog(testUser, testWeblog);
         assertNotNull(role);
         assertSame(role.getWeblogRole(), WeblogRole.OWNER);
 
@@ -88,7 +88,7 @@ public class UserManagerWeblogRoleIT extends WebloggerTest {
         userManager.grantWeblogRole(testUser, testWeblog, WeblogRole.EDIT_DRAFT);
 
         // check that user has draft weblog role only
-        role = userWeblogRoleRepository.findByUserAndWeblog(testUser, testWeblog);
+        role = userWeblogRoleDao.findByUserAndWeblog(testUser, testWeblog);
         assertNotNull(role);
         assertSame(role.getWeblogRole(), WeblogRole.EDIT_DRAFT);
     }
@@ -106,19 +106,19 @@ public class UserManagerWeblogRoleIT extends WebloggerTest {
         List<UserWeblogRole> roles;
 
         // get all weblog roles for a user
-        roles = userWeblogRoleRepository.findByUser(user);
+        roles = userWeblogRoleDao.findByUser(user);
         assertEquals(0, roles.size());
-        roles = userWeblogRoleRepository.findByUser(testUser);
+        roles = userWeblogRoleDao.findByUser(testUser);
         assertEquals(1, roles.size());
 
         // get all weblog roles for a weblog
-        roles = userWeblogRoleRepository.findByWeblog(testWeblog);
+        roles = userWeblogRoleDao.findByWeblog(testWeblog);
         assertEquals(1, roles.size());
 
         userManager.grantWeblogRole(user, testWeblog, WeblogRole.POST);
 
         // get weblog roles for a specific user/weblog
-        role = userWeblogRoleRepository.findByUserAndWeblog(testUser, testWeblog);
+        role = userWeblogRoleDao.findByUserAndWeblog(testUser, testWeblog);
         assertNotNull(role);
         assertSame(role.getWeblogRole(), WeblogRole.OWNER);
 
@@ -138,24 +138,24 @@ public class UserManagerWeblogRoleIT extends WebloggerTest {
         userManager.grantWeblogRole(user, testWeblog, WeblogRole.EDIT_DRAFT);
 
         // re-query now that we have changed things
-        user = userRepository.findEnabledByUserName(user.getUserName());
-        testWeblog = weblogRepository.findByHandleAndVisibleTrue(testWeblog.getHandle());
+        user = userDao.findEnabledByUserName(user.getUserName());
+        testWeblog = weblogDao.findByHandleAndVisibleTrue(testWeblog.getHandle());
 
         // assert that user is member of weblog
-        assertNotNull(userWeblogRoleRepository.findByUserAndWeblog(user, testWeblog));
-        List<UserWeblogRole> userRoles = userWeblogRoleRepository.findByUser(user);
+        assertNotNull(userWeblogRoleDao.findByUserAndWeblog(user, testWeblog));
+        List<UserWeblogRole> userRoles = userWeblogRoleDao.findByUser(user);
         assertEquals(1, userRoles.size());
         assertEquals(testWeblog.getId(), userRoles.get(0).getWeblog().getId());
 
         // assert that website has user
-        List users = userWeblogRoleRepository.findByWeblogAndStatusEnabled(testWeblog);
+        List users = userWeblogRoleDao.findByWeblogAndStatusEnabled(testWeblog);
         assertEquals(2, users.size());
 
         // test user can be retired from website
-        UserWeblogRole uwr = userWeblogRoleRepository.findByUserAndWeblog(user, testWeblog);
+        UserWeblogRole uwr = userWeblogRoleDao.findByUserAndWeblog(user, testWeblog);
         userManager.deleteUserWeblogRole(uwr);
 
-        userRoles = userWeblogRoleRepository.findByUser(user);
+        userRoles = userWeblogRoleDao.findByUser(user);
         assertEquals(0, userRoles.size());
 
         userManager.removeUser(user);

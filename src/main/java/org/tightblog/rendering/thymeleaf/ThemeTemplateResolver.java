@@ -27,7 +27,7 @@ import org.thymeleaf.templateresource.StringTemplateResource;
 import org.tightblog.domain.SharedTheme;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.domain.Template;
-import org.tightblog.repository.WeblogTemplateRepository;
+import org.tightblog.dao.WeblogTemplateDao;
 
 import java.util.Map;
 
@@ -37,12 +37,12 @@ public class ThemeTemplateResolver extends AbstractConfigurableTemplateResolver 
     private static Logger logger = LoggerFactory.getLogger(ThemeTemplateResolver.class);
 
     private ThemeManager themeManager;
-    private WeblogTemplateRepository weblogTemplateRepository;
+    private WeblogTemplateDao weblogTemplateDao;
 
     @Autowired
-    public ThemeTemplateResolver(ThemeManager themeManager, WeblogTemplateRepository weblogTemplateRepository) {
+    public ThemeTemplateResolver(ThemeManager themeManager, WeblogTemplateDao weblogTemplateDao) {
         this.themeManager = themeManager;
-        this.weblogTemplateRepository = weblogTemplateRepository;
+        this.weblogTemplateDao = weblogTemplateDao;
         setTemplateMode(TemplateMode.HTML);
         setOrder(1);
         setCheckExistence(true);
@@ -79,7 +79,7 @@ public class ThemeTemplateResolver extends AbstractConfigurableTemplateResolver 
             // 36 requirement blocks most DB calls for static resources in Thymeleaf folder, e.g.,
             // "fragments", these are resolved and cached subsequently by Thymeleaf.
             // Below method would return null anyway for any 36 char non-UUIDs
-            template = weblogTemplateRepository.findById(resourceId).orElse(null);
+            template = weblogTemplateDao.findById(resourceId).orElse(null);
         }
 
         if (template == null) {

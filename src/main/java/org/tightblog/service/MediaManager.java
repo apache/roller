@@ -29,8 +29,8 @@ import org.tightblog.domain.User;
 import org.tightblog.domain.Weblog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tightblog.repository.MediaDirectoryRepository;
-import org.tightblog.repository.MediaFileRepository;
+import org.tightblog.dao.MediaDirectoryDao;
+import org.tightblog.dao.MediaFileDao;
 
 import javax.imageio.ImageIO;
 import javax.validation.ConstraintViolation;
@@ -59,8 +59,8 @@ import java.util.Set;
 public class MediaManager {
 
     private FileService fileService;
-    private MediaDirectoryRepository mediaDirectoryRepository;
-    private MediaFileRepository mediaFileRepository;
+    private MediaDirectoryDao mediaDirectoryDao;
+    private MediaFileDao mediaFileDao;
 
     @Autowired
     private WeblogManager weblogManager;
@@ -69,11 +69,11 @@ public class MediaManager {
 
     @Autowired
     public MediaManager(FileService fileService,
-                        MediaDirectoryRepository mediaDirectoryRepository, MediaFileRepository mediaFileRepository) {
+                        MediaDirectoryDao mediaDirectoryDao, MediaFileDao mediaFileDao) {
 
         this.fileService = fileService;
-        this.mediaDirectoryRepository = mediaDirectoryRepository;
-        this.mediaFileRepository = mediaFileRepository;
+        this.mediaDirectoryDao = mediaDirectoryDao;
+        this.mediaFileDao = mediaFileDao;
     }
 
     /**
@@ -93,8 +93,8 @@ public class MediaManager {
             oldDirectory.getMediaFiles().remove(mediaFile);
         }
 
-        mediaDirectoryRepository.saveAndFlush(targetDirectory);
-        mediaDirectoryRepository.saveAndFlush(oldDirectory);
+        mediaDirectoryDao.saveAndFlush(targetDirectory);
+        mediaDirectoryDao.saveAndFlush(oldDirectory);
     }
 
     /**
@@ -154,7 +154,7 @@ public class MediaManager {
 
         mediaFile.getDirectory().getMediaFiles().add(mediaFile);
         mediaFile.setLastUpdated(Instant.now());
-        mediaDirectoryRepository.saveAndFlush(mediaFile.getDirectory());
+        mediaDirectoryDao.saveAndFlush(mediaFile.getDirectory());
     }
 
     private void updateThumbnail(MediaFile mediaFile) {
@@ -206,7 +206,7 @@ public class MediaManager {
      * @return MediaFile object or null if unavailable/inaccessible.
      */
     public MediaFile getMediaFileWithContent(String id) {
-        MediaFile mediaFile = mediaFileRepository.findByIdOrNull(id);
+        MediaFile mediaFile = mediaFileDao.findByIdOrNull(id);
 
         if (mediaFile != null) {
             File content = fileService.getFileContent(mediaFile.getDirectory().getWeblog(), id);
@@ -224,7 +224,7 @@ public class MediaManager {
      * Remove all media content (files and directories) associated with a weblog.
      */
     void removeAllFiles(Weblog weblog) {
-        List<MediaDirectory> list = mediaDirectoryRepository.findByWeblog(weblog);
+        List<MediaDirectory> list = mediaDirectoryDao.findByWeblog(weblog);
 
         for (MediaDirectory directory : list) {
             removeAllFiles(directory);
@@ -235,11 +235,11 @@ public class MediaManager {
      * Delete a directory and all of its associated file contents
      */
     public void removeAllFiles(MediaDirectory dir) {
-        List<MediaFile> files = mediaFileRepository.findByDirectory(dir);
+        List<MediaFile> files = mediaFileDao.findByDirectory(dir);
         for (MediaFile mf : files) {
             removeMediaFile(dir.getWeblog(), mf);
         }
-        mediaDirectoryRepository.delete(dir);
+        mediaDirectoryDao.delete(dir);
     }
 
     /**
@@ -254,6 +254,6 @@ public class MediaManager {
             log.debug("File to be deleted already unavailable in the file store");
         }
         mediaFile.getDirectory().getMediaFiles().remove(mediaFile);
-        mediaFileRepository.delete(mediaFile);
+        mediaFileDao.delete(mediaFile);
     }
 }

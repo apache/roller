@@ -26,7 +26,7 @@ import org.tightblog.domain.MediaFile;
 import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.requests.WeblogRequest;
-import org.tightblog.repository.WeblogRepository;
+import org.tightblog.dao.WeblogDao;
 import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,14 +57,14 @@ public class MediaFileProcessor extends AbstractProcessor {
 
     public static final String PATH = "/tb-ui/rendering/mediafile";
 
-    private WeblogRepository weblogRepository;
+    private WeblogDao weblogDao;
     private LazyExpiringCache weblogMediaCache;
     private MediaManager mediaManager;
 
     @Autowired
-    MediaFileProcessor(WeblogRepository weblogRepository, LazyExpiringCache weblogMediaCache,
-                              MediaManager mediaManager) {
-        this.weblogRepository = weblogRepository;
+    MediaFileProcessor(WeblogDao weblogDao, LazyExpiringCache weblogMediaCache,
+                       MediaManager mediaManager) {
+        this.weblogDao = weblogDao;
         this.weblogMediaCache = weblogMediaCache;
         this.mediaManager = mediaManager;
     }
@@ -73,7 +73,7 @@ public class MediaFileProcessor extends AbstractProcessor {
     void getMediaFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogRequest incomingRequest = WeblogRequest.create(request);
 
-        Weblog weblog = weblogRepository.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
+        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

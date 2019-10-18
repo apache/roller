@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.tightblog.domain.WeblogEntryComment.ValidationResult;
-import org.tightblog.repository.WebloggerPropertiesRepository;
+import org.tightblog.dao.WebloggerPropertiesDao;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -47,9 +47,9 @@ public class BlacklistCommentValidatorTest {
     private BlacklistCommentValidator generateBlacklistValidator(String siteBlacklistStr) {
         WebloggerProperties properties = new WebloggerProperties();
         properties.setCommentSpamFilter(siteBlacklistStr);
-        WebloggerPropertiesRepository mockPropertiesRepository = mock(WebloggerPropertiesRepository.class);
-        when(mockPropertiesRepository.findOrNull()).thenReturn(properties);
-        return new BlacklistCommentValidator(mockPropertiesRepository);
+        WebloggerPropertiesDao mockPropertiesDao = mock(WebloggerPropertiesDao.class);
+        when(mockPropertiesDao.findOrNull()).thenReturn(properties);
+        return new BlacklistCommentValidator(mockPropertiesDao);
     }
 
     @Test

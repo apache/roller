@@ -92,7 +92,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         testEntry.setCreator(testUser);
         testEntry.setStatus(PubStatus.DRAFT);
 
-        WeblogCategory cat = weblogCategoryRepository.findByWeblogAndName(testWeblog, "General");
+        WeblogCategory cat = weblogCategoryDao.findByWeblogAndName(testWeblog, "General");
         testEntry.setCategory(cat);
         
         // create a weblog entry
@@ -100,7 +100,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         String id = testEntry.getId();
 
         // make sure entry was created
-        entry = weblogEntryRepository.findByIdOrNull(id);
+        entry = weblogEntryDao.findByIdOrNull(id);
         assertNotNull(entry);
         assertEquals(testEntry, entry);
         
@@ -109,7 +109,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(entry);
 
         // make sure entry was updated
-        entry = weblogEntryRepository.findByIdOrNull(id);
+        entry = weblogEntryDao.findByIdOrNull(id);
         assertNotNull(entry);
         assertEquals("testtest", entry.getTitle());
         
@@ -117,7 +117,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         weblogEntryManager.removeWeblogEntry(entry);
 
         // make sure entry was deleted
-        entry = weblogEntryRepository.findByIdOrNull(id);
+        entry = weblogEntryDao.findByIdOrNull(id);
         assertNull(entry);
     }
 
@@ -155,27 +155,27 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(entry4);
         weblogEntryManager.saveWeblogEntry(entry5);
 
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
 
-        entry1 = weblogEntryRepository.findByIdOrNull(entry1.getId());
-        entry2 = weblogEntryRepository.findByIdOrNull(entry2.getId());
-        entry3 = weblogEntryRepository.findByIdOrNull(entry3.getId());
-        entry4 = weblogEntryRepository.findByIdOrNull(entry4.getId());
-        entry5 = weblogEntryRepository.findByIdOrNull(entry5.getId());
+        entry1 = weblogEntryDao.findByIdOrNull(entry1.getId());
+        entry2 = weblogEntryDao.findByIdOrNull(entry2.getId());
+        entry3 = weblogEntryDao.findByIdOrNull(entry3.getId());
+        entry4 = weblogEntryDao.findByIdOrNull(entry4.getId());
+        entry5 = weblogEntryDao.findByIdOrNull(entry5.getId());
         
         // get entry by id
-        entry = weblogEntryRepository.findByIdOrNull(entry1.getId());
+        entry = weblogEntryDao.findByIdOrNull(entry1.getId());
         assertNotNull(entry);
         assertEquals(entry1.getAnchor(), entry.getAnchor());
         assertEquals(entry1.getSearchDescription(), "sample search description");
         
         // get entry by anchor
-        entry = weblogEntryRepository.findByWeblogAndAnchor(testWeblog, entry1.getAnchor());
+        entry = weblogEntryDao.findByWeblogAndAnchor(testWeblog, entry1.getAnchor());
         assertNotNull(entry);
         assertEquals(entry1.getTitle(), entry.getTitle());
         
         // get all entries for weblog
-        entries = weblogEntryRepository.findByWeblog(testWeblog);
+        entries = weblogEntryDao.findByWeblog(testWeblog);
         assertNotNull(entries);
         assertEquals(5, entries.size());
 
@@ -259,7 +259,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         WeblogEntry entry1 = setupWeblogEntry("entry1", testWeblog, testUser);
 
         // make sure createAnchor gives us a new anchor value
-        entry1 = weblogEntryRepository.findByIdOrNull(entry1.getId());
+        entry1 = weblogEntryDao.findByIdOrNull(entry1.getId());
         String anchor = weblogEntryManager.createAnchor(entry1);
         assertNotNull(anchor);
         assertNotSame("entry1", anchor);
@@ -285,7 +285,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
             testEntry.setUpdateTime(Instant.now());
             testEntry.setWeblog(testWeblog);
             testEntry.setCreator(testUser);
-            testEntry.setCategory(weblogCategoryRepository.findByWeblogAndName(testWeblog, "General"));
+            testEntry.setCategory(weblogCategoryDao.findByWeblogAndName(testWeblog, "General"));
 
             // shortcut
             addTag(testEntry, "testTag");
@@ -295,7 +295,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
             String id = testEntry.getId();
 
             // make sure entry was created
-            entry = weblogEntryRepository.findByIdOrNull(id);
+            entry = weblogEntryDao.findByIdOrNull(id);
             assertNotNull(entry);
             assertEquals(testEntry, entry);
             assertNotNull(entry.getTags());
@@ -321,11 +321,11 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         String id = entry.getId();
         weblogEntryManager.saveWeblogEntry(entry);
 
-        entry = weblogEntryRepository.findByIdOrNull(id);
+        entry = weblogEntryDao.findByIdOrNull(id);
         addTag(entry, "testTag2");
         weblogEntryManager.saveWeblogEntry(entry);
 
-        entry = weblogEntryRepository.findByIdOrNull(id);
+        entry = weblogEntryDao.findByIdOrNull(id);
         assertEquals(3, entry.getTags().size());
 
         weblogEntryManager.removeWeblogEntry(entry);
@@ -339,11 +339,11 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         String id = entry.getId();
         weblogEntryManager.saveWeblogEntry(entry);
 
-        entry = weblogEntryRepository.findByIdOrNull(id);
+        entry = weblogEntryDao.findByIdOrNull(id);
         addTag(entry, "testTag");
         weblogEntryManager.saveWeblogEntry(entry);
 
-        entry = weblogEntryRepository.findByIdOrNull(id);
+        entry = weblogEntryDao.findByIdOrNull(id);
         assertEquals(1, entry.getTags().size());
 
         weblogEntryManager.removeWeblogEntry(entry);
@@ -359,14 +359,14 @@ public class WeblogEntryManagerIT extends WebloggerTest {
             String id = entry.getId();
             weblogEntryManager.saveWeblogEntry(entry);
 
-            entry = weblogEntryRepository.findByIdOrNull(id);
+            entry = weblogEntryDao.findByIdOrNull(id);
             assertEquals(2, entry.getTags().size());
 
-            entry = weblogEntryRepository.findByIdOrNull(id);
+            entry = weblogEntryDao.findByIdOrNull(id);
             entry.setTags(Collections.emptySet());
             weblogEntryManager.saveWeblogEntry(entry);
 
-            entry = weblogEntryRepository.findByIdOrNull(id);
+            entry = weblogEntryDao.findByIdOrNull(id);
             assertEquals(0, entry.getTags().size());
             weblogEntryManager.removeWeblogEntry(entry);
         } catch (Throwable t) {
@@ -419,7 +419,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         assertEquals(entry, testEntry);
 
         weblogEntryManager.removeWeblogEntry(entry);
-        testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+        testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
         results = weblogEntryManager.getWeblogEntries(wesc);
         assertEquals(0, results.size());
     }
@@ -433,13 +433,13 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         String id = entry.getId();
         weblogEntryManager.saveWeblogEntry(entry);
 
-        entry = weblogEntryRepository.findByIdOrNull(id);
+        entry = weblogEntryDao.findByIdOrNull(id);
         assertEquals(2, entry.getTags().size());
 
         entry.updateTags(new HashSet<>(Arrays.asList("testwillstaytag testnewtag testnewtag3".split("\\s+"))));
         weblogEntryManager.saveWeblogEntry(entry);
 
-        entry = weblogEntryRepository.findByIdOrNull(id);
+        entry = weblogEntryDao.findByIdOrNull(id);
         Set<String> tagNames = entry.getTags().stream()
                 .map(WeblogEntryTag::getName)
                 .collect(Collectors.toCollection(HashSet::new));
@@ -500,7 +500,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
             }
 
             // now add another entry in another blog
-            testWeblog2 = weblogRepository.findByIdOrNull(testWeblog2.getId());
+            testWeblog2 = weblogDao.findByIdOrNull(testWeblog2.getId());
             entry = setupWeblogEntry("entry3", testWeblog2, testUser);
             addTag(entry, "one");
             addTag(entry, "three");
@@ -525,7 +525,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
                 assertEquals(expectedCount.intValue(), stat.getTotal());
             }
 
-            testWeblog = weblogRepository.findByIdOrNull(testWeblog.getId());
+            testWeblog = weblogDao.findByIdOrNull(testWeblog.getId());
             entry = weblogEntryManager.getWeblogEntryByAnchor(testWeblog, "entry2");
             entry.updateTags(new HashSet<>(Arrays.asList("one three five".split("\\s+"))));
             weblogEntryManager.saveWeblogEntry(entry);
@@ -656,21 +656,21 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         testEntry.setStatus(PubStatus.DRAFT);
         testEntry.setCreator(testUser);
 
-        WeblogCategory cat = weblogCategoryRepository.findByWeblogAndName(testWeblog, "General");
+        WeblogCategory cat = weblogCategoryDao.findByWeblogAndName(testWeblog, "General");
         testEntry.setCategory(cat);
         
         // create a weblog entry
         weblogEntryManager.saveWeblogEntry(testEntry);
         String id = testEntry.getId();
 
-        testEntry = weblogEntryRepository.findByIdOrNull(testEntry.getId());
+        testEntry = weblogEntryDao.findByIdOrNull(testEntry.getId());
         testEntry.setEnclosureUrl("http://podcast-schmodcast.com");
         testEntry.setEnclosureType("application/drivel");
         testEntry.setEnclosureLength(2141592654L);
         weblogEntryManager.saveWeblogEntry(testEntry);
 
         // make sure entry was created
-        entry = weblogEntryRepository.findByIdOrNull(id);
+        entry = weblogEntryDao.findByIdOrNull(id);
         assertNotNull(entry);
         assertEquals(testEntry, entry);
         assertEquals(entry.getEnclosureUrl(), "http://podcast-schmodcast.com");
@@ -682,7 +682,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(entry);
 
         // make sure entry was updated
-        entry = weblogEntryRepository.findByIdOrNull(id);
+        entry = weblogEntryDao.findByIdOrNull(id);
         assertNotNull(entry);
         assertEquals("testtest", entry.getTitle());
         
@@ -690,13 +690,13 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         weblogEntryManager.removeWeblogEntry(entry);
 
         // make sure entry was deleted
-        entry = weblogEntryRepository.findByIdOrNull(id);
+        entry = weblogEntryDao.findByIdOrNull(id);
         assertNull(entry);
     }
 
     @Test
     public void testWeblogStats() {
-        long existingUserCount = userRepository.count() - 1;
+        long existingUserCount = userDao.count() - 1;
         
         User user1 = setupUser("statuser1");
         Weblog blog1 = setupWeblog("statblog1", user1);
@@ -721,16 +721,16 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         WeblogEntryComment comment5 = setupComment("comment5", entry3);
 
         try {
-            blog1 = weblogRepository.findById(blog1.getId()).orElse(null);
-            blog2 = weblogRepository.findById(blog2.getId()).orElse(null);
+            blog1 = weblogDao.findById(blog1.getId()).orElse(null);
+            blog2 = weblogDao.findById(blog2.getId()).orElse(null);
 
-            assertEquals(2L, weblogEntryRepository.countByWeblog(blog1));
-            assertEquals(3, weblogEntryRepository.countByWeblog(blog2));
-            assertEquals(5, weblogEntryRepository.count());
-            assertEquals(2, weblogEntryCommentRepository.countByWeblogEntryAndStatusApproved(entry1));
-            assertEquals(3, weblogEntryCommentRepository.countByWeblogEntryAndStatusApproved(entry3));
-            assertEquals(4L, weblogRepository.count());
-            assertEquals(existingUserCount + 2L, userRepository.count());
+            assertEquals(2L, weblogEntryDao.countByWeblog(blog1));
+            assertEquals(3, weblogEntryDao.countByWeblog(blog2));
+            assertEquals(5, weblogEntryDao.count());
+            assertEquals(2, weblogEntryCommentDao.countByWeblogEntryAndStatusApproved(entry1));
+            assertEquals(3, weblogEntryCommentDao.countByWeblogEntryAndStatusApproved(entry3));
+            assertEquals(4L, weblogDao.count());
+            assertEquals(existingUserCount + 2L, userDao.count());
         } finally {
             weblogEntryManager.removeComment(comment1);
             weblogEntryManager.removeComment(comment2);

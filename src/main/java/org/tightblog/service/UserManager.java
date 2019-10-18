@@ -31,9 +31,9 @@ import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogRole;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.tightblog.repository.UserCredentialsRepository;
-import org.tightblog.repository.UserRepository;
-import org.tightblog.repository.UserWeblogRoleRepository;
+import org.tightblog.dao.UserCredentialsDao;
+import org.tightblog.dao.UserDao;
+import org.tightblog.dao.UserWeblogRoleDao;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -44,16 +44,16 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class UserManager {
 
-    private UserRepository userRepository;
-    private UserWeblogRoleRepository userWeblogRoleRepository;
-    private UserCredentialsRepository userCredentialsRepository;
+    private UserDao userDao;
+    private UserWeblogRoleDao userWeblogRoleDao;
+    private UserCredentialsDao userCredentialsDao;
 
     @Autowired
-    public UserManager(UserRepository userRepository, UserWeblogRoleRepository uwrRepository,
-                       UserCredentialsRepository userCredentialsRepository) {
-        this.userRepository = userRepository;
-        this.userWeblogRoleRepository = uwrRepository;
-        this.userCredentialsRepository = userCredentialsRepository;
+    public UserManager(UserDao userDao, UserWeblogRoleDao userWeblogRoleDao,
+                       UserCredentialsDao userCredentialsDao) {
+        this.userDao = userDao;
+        this.userWeblogRoleDao = userWeblogRoleDao;
+        this.userCredentialsDao = userCredentialsDao;
     }
 
     /**
@@ -63,9 +63,9 @@ public class UserManager {
      */
 
     public void removeUser(User user) {
-        userWeblogRoleRepository.deleteByUser(user);
-        userRepository.delete(user);
-        userRepository.evictUser(user);
+        userWeblogRoleDao.deleteByUser(user);
+        userDao.delete(user);
+        userDao.evictUser(user);
     }
 
     /**
@@ -78,7 +78,7 @@ public class UserManager {
     public void updateCredentials(String userId, String newPassword) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         String encodedPwd = encoder.encode(newPassword);
-        userCredentialsRepository.updatePassword(userId, encodedPwd);
+        userCredentialsDao.updatePassword(userId, encodedPwd);
     }
 
     /**
@@ -92,7 +92,7 @@ public class UserManager {
      * otherwise whatever checkWeblogRole(User, Weblog, WeblogRole) would return.
      */
     public boolean checkWeblogRole(String username, Weblog weblog, WeblogRole role) {
-        User userToCheck = userRepository.findEnabledByUserName(username);
+        User userToCheck = userDao.findEnabledByUserName(username);
         if (userToCheck != null) {
             return checkWeblogRole(userToCheck, weblog, role);
         }
@@ -114,7 +114,7 @@ public class UserManager {
             if (GlobalRole.ADMIN.equals(user.getGlobalRole())) {
                 hasRole = true;
             } else {
-                UserWeblogRole existingRole = userWeblogRoleRepository.findByUserAndWeblog(user, weblog);
+                UserWeblogRole existingRole = userWeblogRoleDao.findByUserAndWeblog(user, weblog);
                 if (existingRole != null && existingRole.hasEffectiveWeblogRole(role)) {
                     hasRole = true;
                 }
@@ -131,7 +131,7 @@ public class UserManager {
      * @param role    WeblogRole to grant
      */
     public void grantWeblogRole(User user, Weblog weblog, WeblogRole role) {
-        UserWeblogRole roleCheck = userWeblogRoleRepository.findByUserAndWeblog(user, weblog);
+        UserWeblogRole roleCheck = userWeblogRoleDao.findByUserAndWeblog(user, weblog);
 
         if (roleCheck != null) {
             roleCheck.setWeblogRole(role);
@@ -139,14 +139,14 @@ public class UserManager {
             roleCheck = new UserWeblogRole(user, weblog, role);
             roleCheck.setEmailComments(true);
         }
-        userWeblogRoleRepository.saveAndFlush(roleCheck);
-        userWeblogRoleRepository.evictUserWeblogRole(user, weblog);
-        userRepository.evictUser(user);
+        userWeblogRoleDao.saveAndFlush(roleCheck);
+        userWeblogRoleDao.evictUserWeblogRole(user, weblog);
+        userDao.evictUser(user);
     }
 
     public void deleteUserWeblogRole(UserWeblogRole uwr) {
-        userWeblogRoleRepository.delete(uwr);
-        userWeblogRoleRepository.evictUserWeblogRole(uwr.getUser(), uwr.getWeblog());
+        userWeblogRoleDao.delete(uwr);
+        userWeblogRoleDao.evictUserWeblogRole(uwr.getUser(), uwr.getWeblog());
     }
 
     /**
@@ -156,12 +156,12 @@ public class UserManager {
      */
     public String generateMFAQRUrl(User user) {
         String url = "";
-        UserCredentials uc = userCredentialsRepository.findByUserName(user.getUserName());
+        UserCredentials uc = userCredentialsDao.findByUserName(user.getUserName());
 
         if (uc != null) {
             if (uc.getMfaSecret() == null) {
                 uc.setMfaSecret(Base32.random());
-                userCredentialsRepository.saveAndFlush(uc);
+                userCredentialsDao.saveAndFlush(uc);
             }
             url = "https://chart.googleapis.com/chart?chs=200x200&chld=M%%7C0&cht=qr&chl="
                     + URLEncoder.encode(String.format(

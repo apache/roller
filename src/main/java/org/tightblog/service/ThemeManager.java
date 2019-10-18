@@ -34,7 +34,7 @@ import org.tightblog.domain.WeblogTheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ServletContextAware;
-import org.tightblog.repository.WeblogTemplateRepository;
+import org.tightblog.dao.WeblogTemplateDao;
 
 import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
@@ -60,12 +60,12 @@ public class ThemeManager implements ServletContextAware {
 
     private ServletContext servletContext;
     private ObjectMapper objectMapper;
-    private WeblogTemplateRepository weblogTemplateRepository;
+    private WeblogTemplateDao weblogTemplateDao;
 
     @Autowired
-    public ThemeManager(ObjectMapper objectMapper, WeblogTemplateRepository weblogTemplateRepository) {
+    public ThemeManager(ObjectMapper objectMapper, WeblogTemplateDao weblogTemplateDao) {
         this.objectMapper = objectMapper;
-        this.weblogTemplateRepository = weblogTemplateRepository;
+        this.weblogTemplateDao = weblogTemplateDao;
     }
 
     static {
@@ -142,7 +142,7 @@ public class ThemeManager implements ServletContextAware {
 
         SharedTheme staticTheme = this.themeMap.get(weblog.getTheme());
         if (staticTheme != null) {
-            weblogTheme = new WeblogTheme(weblogTemplateRepository, weblog, staticTheme);
+            weblogTheme = new WeblogTheme(weblogTemplateDao, weblog, staticTheme);
         } else {
             log.warn("Unable to find shared theme {}", weblog.getTheme());
         }
