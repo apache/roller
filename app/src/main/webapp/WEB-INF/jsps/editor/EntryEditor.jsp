@@ -126,13 +126,18 @@
             }
         }
         // Added event listener to confirm once the editor content is changed
-        jQuery("#edit_content").one("change", function() {
-            jQuery(window).on("beforeunload", function(event) {
+        $("#edit_content").one("change", function() {
+            var confirmFunction = function(event) {
                 // Chrome requires returnValue to be set and original event is found as originalEvent
                 // see https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload#Example
                 if (event.originalEvent)
                     event.originalEvent.returnValue = "Are you sure you want to leave?";
                 return "Are you sure you want to leave?";
+            }
+            $(window).on("beforeunload", confirmFunction);
+            // Remove it if it is form submit
+            $(this.form).on('submit', function() {
+                $(window).off("beforeunload", confirmFunction);
             });
         });
     </script>
