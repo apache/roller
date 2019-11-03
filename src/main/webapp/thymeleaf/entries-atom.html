@@ -40,6 +40,6 @@
         <summary th:if="${!#strings.isEmpty(entry.summary)}" type="html" th:utext="${#strings.escapeXml(model.getTransformedSummary(entry))}">xxx</summary>
         <content th:if="${!#strings.isEmpty(entry.text)}" type="html" th:utext="${#strings.escapeXml(model.getTransformedText(entry))}">xxx</content>
         <link th:if="${entry.enclosureUrl != null && entry.enclosureLength != null && entry.enclosureType != null}"
-              rel="enclosure" th:type="$entry.enclosureType" th:attr="length=${entry.enclosureLength}" th:href="${#strings.escapeXml(entry.enclosureUrl)}"/>
+              rel="enclosure" th:type="${entry.enclosureType}" th:attr="length=${entry.enclosureLength}" th:href="${#strings.escapeXml(entry.enclosureUrl)}"/>
     </entry>
 </feed>

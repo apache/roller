@@ -176,6 +176,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
             this.messageClear();
             var urlStem = weblogId + '/entries';
 
+            oldStatus = self.entry.status;
             self.entry.status = saveType;
 
             // get text from RTE
@@ -194,6 +195,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
                 window.scrollTo(0, 0);
               },
              function(response) {
+               self.entry.status = oldStatus;
                if (response.status == 408) {
                  self.errorObj.errorMessage = $sce.trustAsHtml($interpolate(msg.sessionTimeoutTmpl)({loginUrl}));
                  window.scrollTo(0, 0);

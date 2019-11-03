@@ -88,9 +88,9 @@ public class WeblogEntry {
     // Simple properties
     private String id = Utilities.generateUUID();
     private int hashCode;
-    @NotBlank(message = "{Entry.error.titleNull}")
+    @NotBlank(message = "{entryEdit.error.titleNull}")
     private String title;
-    @NotBlank(message = "{Entry.error.textNull}")
+    @NotBlank(message = "{entryEdit.error.textNull}")
     private String text;
     private String summary;
     private String notes;

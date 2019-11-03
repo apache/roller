@@ -49,14 +49,12 @@ import org.tightblog.dao.WeblogEntryDao;
 import org.tightblog.dao.WeblogDao;
 import org.tightblog.dao.WebloggerPropertiesDao;
 import org.tightblog.util.Utilities;
-import org.tightblog.util.ValidationError;
+import org.tightblog.editorui.model.ValidationErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -108,13 +106,12 @@ public class WeblogController {
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
-    public Weblog getWeblogData(@PathVariable String id, Principal p, HttpServletResponse response) {
-        ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
-        if (maybeError == null) {
-            return weblogDao.findById(id).orElse(null);
+    public ResponseEntity getWeblogData(@PathVariable String id, Principal p, HttpServletResponse response) {
+        Weblog weblog = getWeblogIfOwner(id, p);
+        if (weblog != null) {
+            return ResponseEntity.ok(weblog);
         } else {
-            response.setStatus(maybeError.getStatusCode().value());
-            return null;
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -125,13 +122,13 @@ public class WeblogController {
         User user = userDao.findEnabledByUserName(p.getName());
 
         if (!user.hasEffectiveGlobalRole(GlobalRole.BLOGCREATOR)) {
-            return ResponseEntity.status(403).body(messages.getMessage("weblogConfig.createNotAuthorized", null,
-                    Locale.getDefault()));
+            return ResponseEntity.status(403).body(messages.getMessage("weblogConfig.createNotAuthorized",
+                    null, Locale.getDefault()));
         }
 
-        ValidationError maybeError = advancedValidate(newData, true);
-        if (maybeError != null) {
-            return ResponseEntity.badRequest().body(maybeError);
+        if (weblogDao.findByHandle(newData.getHandle()) != null) {
+            return ValidationErrorResponse.badRequest(messages.getMessage("weblogConfig.error.handleExists",
+                    null, Locale.getDefault()));
         }
 
         Weblog weblog = new Weblog(
@@ -146,14 +143,9 @@ public class WeblogController {
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
     public ResponseEntity updateWeblog(@PathVariable String id, @Valid @RequestBody Weblog newData, Principal p)
             throws ServletException {
-        ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
-        if (maybeError != null) {
-            return maybeError;
-        }
-        Weblog weblog = weblogDao.findById(id).orElse(null);
-        ValidationError maybeValError = advancedValidate(newData, false);
-        if (maybeValError != null) {
-            return ResponseEntity.badRequest().body(maybeValError);
+        Weblog weblog = getWeblogIfOwner(id, p);
+        if (weblog == null) {
+            return ResponseEntity.notFound().build();
         }
 
         return saveWeblog(weblog, newData, false);
@@ -212,51 +204,22 @@ public class WeblogController {
     }
 
     @DeleteMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
-    public void deleteWeblog(@PathVariable String id, Principal p, HttpServletResponse response) {
-        ResponseEntity maybeError = checkIfOwnerOfValidWeblog(id, p);
-        if (maybeError == null) {
-            Weblog weblog = weblogDao.findById(id).orElse(null);
-            if (weblog != null) {
-                try {
-                    weblogManager.removeWeblog(weblog);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } catch (Exception ex) {
-                    response.setStatus(HttpServletResponse.SC_CONFLICT);
-                    log.error("Error removing weblog - {}", weblog.getHandle(), ex);
-                }
-            } else {
-                response.setStatus(HttpServletResponse.SC_OK);
-            }
-        } else {
-            response.setStatus(maybeError.getStatusCode().value());
-        }
-    }
-
-    private ValidationError advancedValidate(Weblog data, boolean isAdd) {
-        BindException be = new BindException(data, "new data object");
-
-        // make sure handle isn't already taken
-        if (isAdd) {
-            if (weblogDao.findByHandle(data.getHandle()) != null) {
-                be.addError(new ObjectError("Weblog object", messages.getMessage("weblogConfig.error.handleExists",
-                        null, Locale.getDefault())));
-            }
+    public ResponseEntity deleteWeblog(@PathVariable String id, Principal p, HttpServletResponse response) {
+        Weblog weblog = getWeblogIfOwner(id, p);
+        if (weblog == null) {
+            return ResponseEntity.notFound().build();
         }
 
-        return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
+        weblogManager.removeWeblog(weblog);
+        return ResponseEntity.noContent().build();
     }
 
-    private ResponseEntity checkIfOwnerOfValidWeblog(String weblogId, Principal p) {
+    private Weblog getWeblogIfOwner(String weblogId, Principal p) {
         Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-        if (weblog != null) {
-            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-                return null;
-            } else {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+            return weblog;
         }
+        return null;
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblogconfig/metadata")

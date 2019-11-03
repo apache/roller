@@ -140,7 +140,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(entry1);
         
         entry2.setStatus(PubStatus.PUBLISHED);
-        entry2.setUpdateTime(Instant.now().plus(1, ChronoUnit.HOURS));
+        entry2.setUpdateTime(Instant.now().plus(2, ChronoUnit.HOURS));
         entry2.setPubTime(entry2.getUpdateTime());
         weblogEntryManager.saveWeblogEntry(entry2);
 
@@ -150,7 +150,7 @@ public class WeblogEntryManagerIT extends WebloggerTest {
         weblogEntryManager.saveWeblogEntry(entry3);
         
         entry4.setPubTime(Instant.now().minus(1, ChronoUnit.DAYS));
-        entry5.setPubTime(Instant.now().minus(1, ChronoUnit.HOURS));
+        entry5.setPubTime(Instant.now().minus(2, ChronoUnit.HOURS));
 
         weblogEntryManager.saveWeblogEntry(entry4);
         weblogEntryManager.saveWeblogEntry(entry5);

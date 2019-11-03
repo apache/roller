@@ -114,7 +114,7 @@ public class AdminController {
             log.info("daily hit counts manually reset by administrator");
             return ResponseEntity.ok(messages.getMessage("cachedData.message.reset", null, Locale.getDefault()));
         } catch (Exception ex) {
-            log.error("Error resetting weblog hit count - {}", ex);
+            log.error("Error resetting weblog hit count", ex);
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).
                     body(messages.getMessage("generic.error.check.logs", null, Locale.getDefault()));
         }

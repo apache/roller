@@ -33,13 +33,12 @@ var templatePageUrl = "<c:url value='/tb-ui/app/authoring/templates'/>?weblogId=
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/themeedit.js'/>"></script>
 
-<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorObj.errorMessage" ng-cloak>
-    <b>{{ctrl.errorObj.errorMessage}}</b>
-    <button type="button" class="close" data-ng-click="ctrl.errorObj.errorMessage = null" aria-label="Close">
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorObj.errors" ng-cloak>
+    <button type="button" class="close" data-ng-click="ctrl.errorObj.errors = null" aria-label="Close">
        <span aria-hidden="true">&times;</span>
     </button>
-    <ul ng-if="ctrl.errorObj.errors">
-       <li ng-repeat="item in ctrl.errorObj.errors">{{item}}</li>
+    <ul>
+       <li ng-repeat="item in ctrl.errorObj.errors">{{item.message}}</li>
     </ul>
 </div>
 

@@ -24,6 +24,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.tightblog.editorui.model.Violation;
 import org.tightblog.editorui.model.WeblogTemplateData;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogManager;
@@ -38,13 +39,11 @@ import org.tightblog.domain.WeblogTheme;
 import org.tightblog.dao.UserDao;
 import org.tightblog.dao.WeblogDao;
 import org.tightblog.dao.WeblogTemplateDao;
-import org.tightblog.util.ValidationError;
+import org.tightblog.editorui.model.ValidationErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,6 +53,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -200,7 +200,6 @@ public class TemplateController {
     public ResponseEntity postTemplate(@PathVariable String weblogId, @Valid @RequestBody WeblogTemplate templateData,
                                       Principal p, Locale locale) throws ServletException {
         try {
-            boolean createNew = false;
             WeblogTemplate templateToSave = weblogTemplateDao.findById(templateData.getId()).orElse(null);
 
             // Check user permissions
@@ -212,7 +211,6 @@ public class TemplateController {
 
                 // create new?
                 if (templateToSave == null) {
-                    createNew = true;
                     templateToSave = new WeblogTemplate();
                     templateToSave.setWeblog(weblog);
                     if (templateData.getRole() != null) {
@@ -237,9 +235,9 @@ public class TemplateController {
 
                 templateToSave.setLastModified(Instant.now());
 
-                ValidationError maybeError = advancedValidate(templateToSave, createNew, locale);
-                if (maybeError != null) {
-                    return ResponseEntity.badRequest().body(maybeError);
+                List<Violation> violations = validateTemplates(templateToSave, locale);
+                if (violations.size() > 0) {
+                    return ValidationErrorResponse.badRequest(violations);
                 }
 
                 weblogTemplateDao.save(templateToSave);
@@ -260,24 +258,23 @@ public class TemplateController {
         }
     }
 
-    private ValidationError advancedValidate(WeblogTemplate templateToCheck, boolean initialSave, Locale locale) {
-        BindException be = new BindException(templateToCheck, "new data object");
+    private List<Violation> validateTemplates(WeblogTemplate templateToCheck, Locale locale) {
+        List<Violation> violations = new ArrayList<>();
 
         WeblogTemplate template = weblogTemplateDao.findByWeblogAndName(templateToCheck.getWeblog(),
                 templateToCheck.getName());
         if (template != null && !template.getId().equals(templateToCheck.getId())) {
-            be.addError(new ObjectError("WeblogTemplate", messages.getMessage("templates.error.nameAlreadyExists",
-                null, locale)));
+            violations.add(new Violation(messages.getMessage("templates.error.nameAlreadyExists", null, locale)));
         }
 
         if (templateToCheck.getRole().isSingleton()) {
             template = weblogTemplateDao.findByWeblogAndRole(templateToCheck.getWeblog(), templateToCheck.getRole());
             if (template != null && !template.getId().equals(templateToCheck.getId())) {
-                be.addError(new ObjectError("WeblogTemplate",
+                violations.add(new Violation(
                         messages.getMessage("templates.error.singletonActionAlreadyExists", null, locale)));
             }
         }
 
-        return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
+        return violations;
     }
 }

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.editorui.model.EntryEditMetadata;
 import org.tightblog.editorui.model.TagAutocompleteData;
+import org.tightblog.editorui.model.Violation;
 import org.tightblog.editorui.model.WeblogEntryData;
 import org.tightblog.editorui.model.WeblogEntrySaveResponse;
 import org.tightblog.editorui.model.WeblogEntrySearchFields;
@@ -51,13 +52,11 @@ import org.tightblog.dao.WeblogEntryDao;
 import org.tightblog.dao.WeblogDao;
 import org.tightblog.dao.WebloggerPropertiesDao;
 import org.tightblog.util.Utilities;
-import org.tightblog.util.ValidationError;
+import org.tightblog.editorui.model.ValidationErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -359,7 +358,6 @@ public class WeblogEntryController {
                                        Locale locale, Principal p) throws ServletException {
 
         try {
-
             boolean createNew = false;
             WeblogEntry entry = null;
 
@@ -424,10 +422,9 @@ public class WeblogEntryController {
                     try {
                         enclosure = weblogEntryManager.generateEnclosure(entry.getEnclosureUrl());
                     } catch (IllegalArgumentException e) {
-                        BindException be = new BindException(entry, "new data object");
-                        be.addError(new ObjectError("Enclosure URL", messages.getMessage(e.getMessage(), null,
-                                locale)));
-                        return ResponseEntity.badRequest().body(ValidationError.fromBindingErrors(be));
+                        return ValidationErrorResponse.badRequest(new Violation(
+                                messages.getMessage("entryEdit.enclosureURL", null, locale),
+                                messages.getMessage(e.getMessage(), null, locale)));
                     }
 
                     // set enclosure attributes

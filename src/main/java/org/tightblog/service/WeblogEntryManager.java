@@ -691,7 +691,7 @@ public class WeblogEntryManager {
 
             if (response != 200) {
                 // Bad Response
-                log.debug("Mediacast error {}:{} from url {}", response, message, url);
+                log.info("Mediacast error {}:{} from url {}", response, message, url);
                 throw new IllegalArgumentException("entryEdit.mediaCastResponseError");
             } else {
                 String contentType = con.getContentType();
@@ -699,19 +699,19 @@ public class WeblogEntryManager {
 
                 if (contentType == null || length == -1) {
                     // Incomplete
-                    log.debug("Response valid, but contentType or length is invalid");
+                    log.info("Response valid, but contentType or length is invalid");
                     throw new IllegalArgumentException("entryEdit.mediaCastLacksContentTypeOrLength");
                 }
 
                 resource = new AtomEnclosure(url, contentType, length);
-                log.debug("Valid mediacast resource = {}", resource.toString());
+                log.info("Valid mediacast resource = {}", resource.toString());
 
             }
         } catch (MalformedURLException mfue) {
             // Bad URL
-            log.debug("Malformed MediaCast url: {}", url);
+            log.info("Malformed MediaCast url: {}", url);
             throw new IllegalArgumentException("entryEdit.mediaCastUrlMalformed", mfue);
-        } catch (Exception e) {
+        } catch (IOException e) {
             // Check Failed
             log.error("ERROR while checking MediaCast URL: {}: {}", url, e.getMessage());
             throw new IllegalArgumentException("entryEdit.mediaCastFailedFetchingInfo", e);

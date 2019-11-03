@@ -15,22 +15,47 @@
  */
 package org.tightblog.editorui.controller;
 
-import org.tightblog.util.ValidationError;
+import org.springframework.validation.FieldError;
+import org.tightblog.editorui.model.ValidationErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.tightblog.editorui.model.Violation;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
+// https://reflectoring.io/bean-validation-with-spring-boot/
 @ControllerAdvice
 public class GlobalControllerAdvice {
 
-    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    // for request bodies
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ValidationError handleException(MethodArgumentNotValidException exception) {
-        return ValidationError.createValidationError(exception);
+    public ValidationErrorResponse handleException(MethodArgumentNotValidException e) {
+        ValidationErrorResponse error = new ValidationErrorResponse();
+        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
+            error.getErrors().add(
+                    new Violation(fieldError.getField(), fieldError.getDefaultMessage()));
+        }
+        return error;
+    }
+
+    // for path and query variables
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ValidationErrorResponse handleException(ConstraintViolationException e) {
+        ValidationErrorResponse error = new ValidationErrorResponse();
+        for (ConstraintViolation violation : e.getConstraintViolations()) {
+            error.getErrors().add(
+                    new Violation(violation.getPropertyPath().toString(), violation.getMessage()));
+        }
+        return error;
     }
 
 }

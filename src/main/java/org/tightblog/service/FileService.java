@@ -221,9 +221,7 @@ public class FileService {
                 return false;
             }
         } catch (Exception ex) {
-            // shouldn't ever happen, means the weblogs uploads dir is bad
-            // somehow
-            // rethrow as a runtime exception
+            // shouldn't ever happen, means the weblogs uploads dir is bad somehow
             throw new RuntimeException(ex);
         }
 

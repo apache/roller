@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.tightblog.editorui.model.Violation;
 import org.tightblog.service.MediaManager;
 import org.tightblog.service.URLService;
 import org.tightblog.service.UserManager;
@@ -28,13 +29,14 @@ import org.tightblog.dao.MediaDirectoryDao;
 import org.tightblog.dao.MediaFileDao;
 import org.tightblog.dao.UserDao;
 import org.tightblog.dao.WeblogDao;
-import org.tightblog.util.ValidationError;
+import org.tightblog.editorui.model.ValidationErrorResponse;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -148,18 +150,18 @@ public class MediaFileController {
         // new media file?
         if (mf == null) {
             if (uploadedFile == null) {
-                return ValidationError.badRequestFromSingleError("Upload File must be provided.");
+                return ValidationErrorResponse.badRequest("Upload File must be provided.");
             }
 
             mf = new MediaFile();
             mf.setCreator(user);
 
             if (mediaFileData.getDirectory() == null) {
-                return ValidationError.badRequestFromSingleError("Media Directory was not provided.");
+                return ValidationErrorResponse.badRequest("Media Directory was not provided.");
             }
             MediaDirectory dir = mediaDirectoryDao.findByIdOrNull(mediaFileData.getDirectory().getId());
             if (dir == null) {
-                return ValidationError.badRequestFromSingleError("Specified media directory could not be found.");
+                return ValidationErrorResponse.badRequest("Specified media directory could not be found.");
             }
             mf.setDirectory(dir);
         }
@@ -172,8 +174,9 @@ public class MediaFileController {
 
         MediaFile fileWithSameName = mf.getDirectory().getMediaFile(mediaFileData.getName());
         if (fileWithSameName != null && !fileWithSameName.getId().equals(mediaFileData.getId())) {
-            return ValidationError.badRequestFromSingleError(messages.getMessage("mediaFile.error.duplicateName",
-                    null, locale));
+
+            return ValidationErrorResponse.badRequest(
+                    messages.getMessage("mediaFile.error.duplicateName", null, locale));
         }
 
         // update media file with new metadata
@@ -189,11 +192,12 @@ public class MediaFileController {
             mediaManager.saveMediaFile(mf, uploadedFile, user, errors);
 
             if (errors.size() > 0) {
-                Map.Entry<String, List<String>> msg = errors.entrySet().iterator().next();
-                String message = messages.getMessage(msg.getKey(),
-                        msg.getValue() == null ? new String[0] : msg.getValue().toArray(),
-                        locale);
-                return ValidationError.badRequestFromSingleError(message);
+                List<Violation> violations = new ArrayList<>();
+                for (Map.Entry<String, List<String>> msg : errors.entrySet()) {
+                    violations.add(new Violation(messages.getMessage(msg.getKey(),
+                            msg.getValue() == null ? new String[0] : msg.getValue().toArray(), locale)));
+                }
+                return ValidationErrorResponse.badRequest(violations);
             }
 
             return ResponseEntity.ok(mf);
@@ -215,7 +219,7 @@ public class MediaFileController {
                     response.setStatus(HttpServletResponse.SC_OK);
                     return ResponseEntity.ok(newDir.getId());
                 } catch (IllegalArgumentException e) {
-                    return ValidationError.badRequestFromSingleError(messages.getMessage(e.getMessage(), null, locale));
+                    return ValidationErrorResponse.badRequest(messages.getMessage(e.getMessage(), null, locale));
                 }
             } else {
                 return ResponseEntity.status(403).body(messages.getMessage("error.title.403", null, locale));

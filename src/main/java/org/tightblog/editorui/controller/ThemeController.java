@@ -2,6 +2,7 @@ package org.tightblog.editorui.controller;
 
 import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.tightblog.editorui.model.Violation;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.domain.SharedTheme;
@@ -15,18 +16,17 @@ import org.tightblog.domain.WeblogTheme;
 import org.tightblog.dao.UserDao;
 import org.tightblog.dao.WeblogDao;
 import org.tightblog.dao.WeblogTemplateDao;
-import org.tightblog.util.ValidationError;
+import org.tightblog.editorui.model.ValidationErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -66,9 +66,9 @@ public class ThemeController {
 
         if (weblog != null && newTheme != null) {
             if (userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
-                ValidationError maybeError = advancedValidate(weblog, newTheme, locale);
-                if (maybeError != null) {
-                    return ResponseEntity.badRequest().body(maybeError);
+                List<Violation> errors = validateTheme(weblog, newTheme, locale);
+                if (errors.size() > 0) {
+                    return ValidationErrorResponse.badRequest(errors);
                 }
 
                 // Remove old template overrides
@@ -103,8 +103,8 @@ public class ThemeController {
 
     }
 
-    private ValidationError advancedValidate(Weblog weblog, SharedTheme newTheme, Locale locale) {
-        BindException be = new BindException(weblog, "new data object");
+    private List<Violation> validateTheme(Weblog weblog, SharedTheme newTheme, Locale locale) {
+        List<Violation> violations = new ArrayList<>();
 
         WeblogTheme oldTheme = new WeblogTheme(weblogTemplateDao, weblog,
                 themeManager.getSharedTheme(weblog.getTheme()));
@@ -112,14 +112,14 @@ public class ThemeController {
         oldTheme.getTemplates().stream().filter(
                 old -> old.getDerivation() == Template.Derivation.SPECIFICBLOG).forEach(old -> {
                     if (old.getRole().isSingleton() && newTheme.getTemplateByRole(old.getRole()) != null) {
-                        be.addError(new ObjectError("Weblog object", messages.getMessage("themeEdit.conflicting.singleton.role",
+                        violations.add(new Violation(messages.getMessage("themeEdit.conflicting.singleton.role",
                                 new Object[]{old.getRole().getReadableName()}, locale)));
                     } else if (newTheme.getTemplateByName(old.getName()) != null) {
-                        be.addError(new ObjectError("Weblog object", messages.getMessage("themeEdit.conflicting.name",
+                        violations.add(new Violation(messages.getMessage("themeEdit.conflicting.name",
                                 new Object[]{old.getName()}, locale)));
                     }
         });
 
-        return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
+        return violations;
     }
 }

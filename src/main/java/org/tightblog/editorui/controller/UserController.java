@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.tightblog.dao.WeblogEntryCommentDao;
 import org.tightblog.editorui.model.UserAdminMetadata;
 import org.tightblog.editorui.model.UserData;
+import org.tightblog.editorui.model.Violation;
 import org.tightblog.service.EmailService;
 import org.tightblog.service.URLService;
 import org.tightblog.service.UserManager;
@@ -44,14 +45,12 @@ import org.tightblog.dao.UserWeblogRoleDao;
 import org.tightblog.dao.WeblogDao;
 import org.tightblog.dao.WebloggerPropertiesDao;
 import org.tightblog.util.Utilities;
-import org.tightblog.util.ValidationError;
+import org.tightblog.editorui.model.ValidationErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,6 +65,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -242,9 +242,9 @@ public class UserController {
     @PostMapping(value = "/tb-ui/register/rest/registeruser")
     public ResponseEntity registerUser(@Valid @RequestBody UserData newData, Locale locale, HttpServletResponse response)
             throws ServletException {
-        ValidationError maybeError = advancedValidate(null, newData, true, locale);
-        if (maybeError != null) {
-            return ResponseEntity.badRequest().body(maybeError);
+        List<Violation> errors = validateUser(null, newData, true, locale);
+        if (errors.size() > 0) {
+            return ValidationErrorResponse.badRequest(errors);
         }
 
         long userCount = userDao.count();
@@ -284,9 +284,9 @@ public class UserController {
         User authenticatedUser = userDao.findEnabledByUserName(p.getName());
 
         if (user != null && user.getId().equals(authenticatedUser.getId())) {
-            ValidationError maybeError = advancedValidate(null, newData, false, locale);
-            if (maybeError != null) {
-                return ResponseEntity.badRequest().body(maybeError);
+            List<Violation> errors = validateUser(null, newData, false, locale);
+            if (errors.size() > 0) {
+                return ValidationErrorResponse.badRequest(errors);
             }
             return saveUser(user, newData, p, response, false);
         } else {
@@ -298,9 +298,9 @@ public class UserController {
     public ResponseEntity updateUser(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
                                      Locale locale, HttpServletResponse response) throws ServletException {
         User user = userDao.findByIdOrNull(id);
-        ValidationError maybeError = advancedValidate(user, newData, false, locale);
-        if (maybeError != null) {
-            return ResponseEntity.badRequest().body(maybeError);
+        List<Violation> errors = validateUser(user, newData, false, locale);
+        if (errors.size() > 0) {
+            return ValidationErrorResponse.badRequest(errors);
         }
         return saveUser(user, newData, p, response, false);
     }
@@ -438,18 +438,18 @@ public class UserController {
         }
     }
 
-    private ValidationError advancedValidate(User currentUser, UserData data, boolean isAdd, Locale locale) {
-        BindException be = new BindException(data, "new data object");
+    private List<Violation> validateUser(User currentUser, UserData data, boolean isAdd, Locale locale) {
+        List<Violation> errors = new ArrayList<>();
 
         User testHasUserName = userDao.findByUserName(data.getUser().getUserName());
         if (testHasUserName != null && !testHasUserName.getId().equals(data.getUser().getId())) {
-            be.addError(new ObjectError("User object", messages.getMessage("error.add.user.userNameInUse",
+            errors.add(new Violation(messages.getMessage("error.add.user.userNameInUse",
                     null, locale)));
         }
 
         User testHasScreenName = userDao.findByScreenName(data.getUser().getScreenName());
         if (testHasScreenName != null && !testHasScreenName.getId().equals(data.getUser().getId())) {
-            be.addError(new ObjectError("User object", messages.getMessage("error.add.user.screenNameInUse",
+            errors.add(new Violation(messages.getMessage("error.add.user.screenNameInUse",
                     null, locale)));
         }
 
@@ -459,21 +459,21 @@ public class UserController {
                 switch (currentStatus) {
                     case ENABLED:
                         if (data.getUser().getStatus() != UserStatus.DISABLED) {
-                            be.addError(new ObjectError("User object",
-                                    messages.getMessage("error.useradmin.enabled.only.disabled", null, locale)));
+                            errors.add(new Violation(messages.getMessage(
+                                    "error.useradmin.enabled.only.disabled", null, locale)));
                         }
                         break;
                     case DISABLED:
                         if (data.getUser().getStatus() != UserStatus.ENABLED) {
-                            be.addError(new ObjectError("User object",
-                                    messages.getMessage("error.useradmin.disabled.only.enabled", null, locale)));
+                            errors.add(new Violation(messages.getMessage(
+                                    "error.useradmin.disabled.only.enabled", null, locale)));
                         }
                         break;
                     case REGISTERED:
                     case EMAILVERIFIED:
                         if (data.getUser().getStatus() != UserStatus.ENABLED) {
-                            be.addError(new ObjectError("User object",
-                                    messages.getMessage("error.useradmin.nonenabled.only.enabled", null, locale)));
+                            errors.add(new Violation(messages.getMessage(
+                                    "error.useradmin.nonenabled.only.enabled", null, locale)));
                         }
                         break;
                     default:
@@ -486,29 +486,29 @@ public class UserController {
             String maybePassword = credentials.getPasswordText();
             if (!StringUtils.isEmpty(maybePassword)) {
                 if (!maybePassword.equals(credentials.getPasswordConfirm())) {
-                    be.addError(new ObjectError("User object",
-                            messages.getMessage("error.add.user.passwordConfirmFail", null, locale)));
+                    errors.add(new Violation(messages.getMessage(
+                            "error.add.user.passwordConfirmFail", null, locale)));
                 } else {
                     if (!PWD_PATTERN.matcher(maybePassword).matches()) {
-                        be.addError(new ObjectError("User object",
-                                messages.getMessage("error.add.user.passwordComplexityFail", null, locale)));
+                        errors.add(new Violation(messages.getMessage(
+                                "error.add.user.passwordComplexityFail", null, locale)));
                     }
                 }
             } else {
                 if (!StringUtils.isEmpty(credentials.getPasswordConfirm())) {
                     // confirm provided but password field itself not filled out
-                    be.addError(new ObjectError("User object",
+                    errors.add(new Violation(
                             messages.getMessage("error.add.user.passwordConfirmFail", null, locale)));
                 }
             }
 
             if (isAdd && StringUtils.isEmpty(credentials.getPasswordText())) {
-                be.addError(new ObjectError("User object",
+                errors.add(new Violation(
                         messages.getMessage("error.add.user.missingPassword", null, locale)));
             }
         }
 
-        return be.getErrorCount() > 0 ? ValidationError.fromBindingErrors(be) : null;
+        return errors;
     }
 
     @GetMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}/weblogs")
