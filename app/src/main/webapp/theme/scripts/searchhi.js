@@ -25,23 +25,23 @@ function highlightWord(node,word) {
 			highlightWord(node.childNodes[hi_cn],word);
 		}
 	}
-	
+
 	// And do this node itself
 	if (node.nodeType == 3) { // text node
-		tempNodeVal = node.nodeValue.toLowerCase();
-		tempWordVal = word.toLowerCase();
+		var tempNodeVal = node.nodeValue.toLowerCase();
+		var tempWordVal = word.toLowerCase();
 		if (tempNodeVal.indexOf(tempWordVal) != -1) {
-			pn = node.parentNode;
+			var pn = node.parentNode;
 			if (pn.className != "searchword") {
 				// word has not already been highlighted!
-				nv = node.nodeValue;
-				ni = tempNodeVal.indexOf(tempWordVal);
+				var nv = node.nodeValue;
+				var ni = tempNodeVal.indexOf(tempWordVal);
 				// Create a load of replacement nodes
-				before = document.createTextNode(nv.substr(0,ni));
-				docWordVal = nv.substr(ni,word.length);
-				after = document.createTextNode(nv.substr(ni+word.length));
-				hiwordtext = document.createTextNode(docWordVal);
-				hiword = document.createElement("span");
+				var before = document.createTextNode(nv.substr(0,ni));
+				var docWordVal = nv.substr(ni,word.length);
+				var after = document.createTextNode(nv.substr(ni+word.length));
+				var hiwordtext = document.createTextNode(docWordVal);
+				var hiword = document.createElement("span");
 				hiword.className = "searchword";
 				hiword.appendChild(hiwordtext);
 				pn.insertBefore(before,node);
@@ -55,16 +55,16 @@ function highlightWord(node,word) {
 
 function googleSearchHighlight() {
 	if (!document.createElement) return;
-	ref = document.referrer;
+	var ref = document.referrer;
 	if (ref.indexOf('?') == -1) return;
-	qs = ref.substr(ref.indexOf('?')+1);
-	qsa = qs.split('&');
-	for (i=0;i<qsa.length;i++) {
-		qsip = qsa[i].split('=');
+	var qs = ref.substr(ref.indexOf('?')+1);
+	var qsa = qs.split('&');
+	for (var i=0;i<qsa.length;i++) {
+		var qsip = qsa[i].split('=');
         if (qsip.length == 1) continue;
         if (qsip[0] == 'q' || qsip[0] == 'p') { // q= for Google, p= for Yahoo
-            words = unescape(qsip[1].replace(/\+/g,' ')).split(/\s+/);
-            for (w=0;w<words.length;w++) {
+            var words = unescape(qsip[1].replace(/\+/g,' ')).split(/\s+/);
+            for (var w=0;w<words.length;w++) {
                 highlightWord(document.getElementsByTagName("body")[0],words[w]);
             }
         }
