@@ -23,12 +23,12 @@
 <s:form action="invite!save" cssClass="form-horizontal">
 	<s:hidden name="salt" />
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-    
+
     <div class="formrow">
        <label for="userName" class="formrow">
            <s:text name="inviteMember.userName" /></label>
        <div>
-           <input name="userName" id="userName" size="30" maxlength="30" 
+           <input name="userName" id="userName" size="30" maxlength="30"
                onfocus="onMemberNameFocus(true)" onkeyup="onMemberNameChange(true)" /><br />
        </div>
     </div>
@@ -38,8 +38,8 @@
        <div>
            <select id="userList" size="10" onchange="onMemberSelected()" style="width:400px"></select>
        </div>
-    </div>    
-    
+    </div>
+
     <div style="clear:left">
        <label for="userName" class="formrow" />
            <s:text name="inviteMember.permissions" /></label>
@@ -49,9 +49,9 @@
        <s:text name="inviteMember.author" />
        <input type="radio" name="permissionString" value="edit_draft" />
        <s:text name="inviteMember.limited" />
-    </div>  
-         
-    <br />      
+    </div>
+
+    <br />
     <s:submit id="inviteButton" value="%{getText('inviteMember.button.save')}"  cssClass="btn btn-default"/>
     <s:submit value="%{getText('generic.cancel')}" action="invite!cancel" cssClass="btn"/>
 
@@ -67,12 +67,12 @@
     });
 
     function onMemberNameChange(enabled) {
-        u = userURL;
+        var u = userURL;
         if (enabled != null) {
             u = u + "&enabled=" + enabled;
         }
 
-        userName = $('#userName').val();
+        var userName = $('#userName').val();
         if (userName.length > 0) {
             u = u + "&startsWith=" + userName;
         }
@@ -81,7 +81,7 @@
     }
 
     function onMemberSelected() {
-        userName = $('#userList').children("option:selected").val();
+        var userName = $('#userList').children("option:selected").val();
         if (userName !== '') {
             $('#inviteButton').attr("disabled", false);
         }
@@ -90,7 +90,7 @@
     function onMemberNameFocus(enabled) {
         if (!init) {
             init = true;
-            u = userURL;
+            var u = userURL;
 
             if (enabled != null) {
                 u = u + "&enabled=" + enabled;
