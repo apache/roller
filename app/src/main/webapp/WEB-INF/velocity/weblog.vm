@@ -16,7 +16,7 @@
   directory of this distribution.
 *#
 
-#** 
+#**
 Set of essential macros needed in Roller velocity templates.
 These are the documented macros in order defined in this file:
 
@@ -52,16 +52,16 @@ These are the documented macros in order defined in this file:
     #showMobileSearchAgainForm($weblog)
     #showNextPrevSearchControl($pager)
     #showMobileNextPrevSearchControl($pager)
-    
+
     #showMobilePopupDialog($id $header $message)
 
     #_showCommonJavaScript()
-    
+
     #showEntryTags($entry)
 *#
 
 
-#** 
+#**
 Parse and include page template from weblog.
 *#
 #macro(includeTemplate $weblog $pageName)
@@ -74,14 +74,14 @@ Parse and include page template from weblog.
 #end
 
 
-#** 
+#**
 Show RSS, Atom and RSD auto-discovery links as HTML link elements.
 *#
 #macro(showAutodiscoveryLinks $weblog)
     #if ($weblog.enableBloggerApi)
        <link rel="EditURI"   type="application/rsd+xml" title="RSD" href="$url.rsd"/>
     #end
-    
+
     ## main feed urls are always available
     #if (!$model.searchResults)
     <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  href="$url.feed.entries.atom" />
@@ -168,8 +168,8 @@ code if defined will be used.
     #end
 #end
 
-#** 
-Shows weblog entries pager via default day template 
+#**
+Shows weblog entries pager via default day template
 *#
 #macro(showWeblogEntriesPager $pager)
     #set($dayPage = $model.weblog.getTemplateByName("_day"))
@@ -201,7 +201,7 @@ Shows weblog entries pager via default day template
         #set($nextName = $pager.nextCollectionName)
     #end
     #if ($prevLink)
-        &laquo; <a href="$prevLink">$prevName</a> | 
+        &laquo; <a href="$prevLink">$prevName</a> |
     #end
     #if ($prevLink || $nextLink)
         <a href="$pager.getHomeLink()">$pager.getHomeName()</a>
@@ -256,11 +256,11 @@ Shows weblog entries pager via default day template
       </ul>
     </div>
   #end
-    
+
 #end
 
 
-#** 
+#**
 Show comments for weblog entry according to Roller configuration.
 *#
 #macro(showWeblogEntryComments $entry)
@@ -355,8 +355,8 @@ Show comments for weblog entry according to Roller configuration.
 #end
 
 
-#** 
-Show comments form for weblog entry. 
+#**
+Show comments form for weblog entry.
 *#
 #macro(showWeblogEntryCommentForm $entry)
     #set($cform = $model.getCommentForm())
@@ -474,7 +474,7 @@ Show comments form for weblog entry.
 #end
 
 
-#** 
+#**
 Show entries as a HTML ul list.
 *#
 #macro(showWeblogEntryLinksList $entriesList)
@@ -486,7 +486,7 @@ Show entries as a HTML ul list.
 #end
 
 
-#** 
+#**
 Show bookmarks as a HTML ul list.
 *#
 #macro(showBookmarkLinksList $folderObject)
@@ -519,7 +519,7 @@ Show bookmarks as a HTML ul list.
 #end
 
 
-#** 
+#**
 Show weblog's categories in specified parent category.
 *#
 #macro(showWeblogCategoryLinksList)
@@ -651,14 +651,14 @@ Show weblog's categories in specified parent category.
 #end
 
 
-#** 
+#**
 Show weblog entry calendar, with optional category restriction.
 *#
 #macro(showWeblogEntryCalendar $weblog $category)
 $calendarModel.showWeblogEntryCalendar($weblog, $category)
 #end
 
-#** 
+#**
 Show large format weblog entry calendar, with optional category restriction.
 *#
 #macro(showWeblogEntryCalendarBig $weblog $category)
@@ -666,11 +666,11 @@ $calendarModel.showWeblogEntryCalendarBig($weblog, $category)
 #end
 
 
-#** 
+#**
 Show weblog author menu with vertical or horizontal orientation.
 *#
 #macro(showAuthorMenu $vertical)
-  
+
   #set( $authorMenu = $menuModel.authorMenu )
   #if( $authorMenu )
       #if( $vertical )
@@ -696,11 +696,11 @@ Show weblog author menu with vertical or horizontal orientation.
 #end
 
 
-#** 
+#**
 Show weblog author menu with vertical or horizontal orientation.
 *#
 #macro(showAdminMenu $vertical)
-  
+
   #set( $adminMenu = $menuModel.adminMenu )
   #if( $adminMenu )
       #if( $vertical )
@@ -726,7 +726,7 @@ Show weblog author menu with vertical or horizontal orientation.
 #end
 
 
-#** 
+#**
 Show search form for a weblog.
 *#
 #macro(showWeblogSearchForm $weblog $showCatChooser)
@@ -790,7 +790,7 @@ Show search form for a weblog.
 #end
 
 
-#** 
+#**
 Show search again form for a weblog.
 *#
 #macro(showWeblogSearchAgainForm $weblog)
@@ -835,7 +835,7 @@ Show search again form for a weblog.
 #end
 
 
-#** 
+#**
 Show next/prev pager for search results.
 *#
 #macro(showNextPrevSearchControl $pager)
@@ -857,7 +857,7 @@ Show next/prev pager for search results.
         #set($nextName = $pager.nextName)
     #end
     #if ($prevLink)
-        &laquo; <a href="$prevLink">$prevName</a> |  
+        &laquo; <a href="$prevLink">$prevName</a> |
     #end
     #if ($prevLink || $nextLink)
         <a href="$pager.getHomeLink()">$pager.getHomeName()</a>
@@ -917,7 +917,7 @@ Show next/prev pager for search results.
 #end
 
 
-#** 
+#**
 Show mobile alert popup.
 *#
 #macro(showMobilePopupDialog $id $header $message)
@@ -945,12 +945,12 @@ Include Javascript code needed for expanding folder macros (undocumented).
         ((domain) ? "; domain=" + domain : "") + ((secure) ? "; secure" : "");
     }
     function getCookie(name) {
-        var prefix = name + "=" 
-        var start = document.cookie.indexOf(prefix) 
+        var prefix = name + "="
+        var start = document.cookie.indexOf(prefix)
         if (start==-1) return null;
-        var end = document.cookie.indexOf(";", start+prefix.length) 
+        var end = document.cookie.indexOf(";", start+prefix.length)
         if (end==-1) end=document.cookie.length;
-        var value=document.cookie.substring(start+prefix.length, end) 
+        var value=document.cookie.substring(start+prefix.length, end)
         return unescape(value);
     }
     /* The toggleFolder and togglePlusMinus functions are for expanding/contracting folders */
@@ -959,13 +959,13 @@ Include Javascript code needed for expanding folder macros (undocumented).
         if (document.getElementById) {
             target = document.getElementById(targetId);
             if (target.style.display == "none") {
-                target.style.display = "";    
-                expanded = true;        
+                target.style.display = "";
+                expanded = true;
             } else {
                 target.style.display = "none";
                 expanded = false;
             }
-            togglePlusMinus("i" + targetId);        
+            togglePlusMinus("i" + targetId);
             // set a cookie to remember this preference
             var expires = new Date();
             expires.setTime(expires.getTime() + 24 * 365 * 60 * 60 * 1000); // sets it for approx 365 days.
@@ -985,14 +985,14 @@ Include Javascript code needed for expanding folder macros (undocumented).
     function folderPreference(folderId) {
         var folderCookie = getCookie("rfolder-"+folderId);
         if (folderCookie != null) { // we have user's last setting
-            folder = document.getElementById(folderId);
-            plusMinus = document.getElementById("i"+folderId);
+            var folder = document.getElementById(folderId);
+            var plusMinus = document.getElementById("i"+folderId);
             if (folderCookie == "true") { // show
                 folder.style.display = "";
                 plusMinus.innerHTML = "-";
             } else { // hide
                 folder.style.display = "none";
-                plusMinus.innerHTML = "+"; 
+                plusMinus.innerHTML = "+";
             }
         }
     }
@@ -1019,12 +1019,12 @@ Include Javascript code needed for expanding folder macros (undocumented).
  Display a list of tag urls for the tags on a given entry.
 *#
 #macro(showEntryTags $entry)
-  
+
   #set ( $tags = $entry.tags )
   #foreach($tag in $tags)
-	    <a href="$url.tag($tag.name)" rel="tag">$tag.name</a> 
+	    <a href="$url.tag($tag.name)" rel="tag">$tag.name</a>
   #end
-  
+
 #end
 
 
