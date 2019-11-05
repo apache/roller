@@ -35,6 +35,15 @@
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
 <script src="<c:url value='/tb-ui/scripts/categories.js'/>"></script>
 
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorObj.errors" ng-cloak>
+    <button type="button" class="close" data-ng-click="ctrl.errorObj.errors = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
+    <ul>
+       <li ng-repeat="item in ctrl.errorObj.errors">{{item.message}}</li>
+    </ul>
+</div>
+
 <p class="pagetip">
     <fmt:message key="categories.rootPrompt"/>
 </p>

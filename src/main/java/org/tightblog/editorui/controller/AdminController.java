@@ -36,6 +36,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.editorui.model.GlobalConfigMetadata;
+import org.tightblog.editorui.model.ValidationErrorResponse;
 import org.tightblog.service.LuceneIndexer;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WebloggerProperties;
@@ -54,8 +55,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 /**
@@ -91,85 +90,65 @@ public class AdminController {
     }
 
     @GetMapping(value = "/caches")
-    public Map<String, LazyExpiringCache> getCacheData() throws ServletException {
+    public Map<String, LazyExpiringCache> getCacheData() {
         Map<String, LazyExpiringCache> cacheMap = new HashMap<>();
         cacheSet.forEach(c -> cacheMap.put(c.getCacheHandlerId(), c));
         return cacheMap;
     }
 
     @PostMapping(value = "/cache/{cacheName}/clear", produces = "text/plain")
-    public ResponseEntity<String> emptyOneCache(@PathVariable String cacheName)
-            throws ServletException {
+    public String emptyOneCache(@PathVariable String cacheName, Locale locale) {
         Optional<LazyExpiringCache> maybeCache = cacheSet.stream()
                 .filter(c -> c.getCacheHandlerId().equalsIgnoreCase(cacheName)).findFirst();
         maybeCache.ifPresent(LazyExpiringCache::invalidateAll);
-        return ResponseEntity.ok(messages.getMessage("cachedData.message.cache.cleared",
-                new Object[] {cacheName}, Locale.getDefault()));
+        return messages.getMessage("cachedData.message.cache.cleared",
+                new Object[] {cacheName}, locale);
     }
 
     @PostMapping(value = "/resethitcount", produces = "text/plain")
-    public ResponseEntity<String> resetHitCount() {
-        try {
-            weblogDao.resetDailyHitCounts();
-            log.info("daily hit counts manually reset by administrator");
-            return ResponseEntity.ok(messages.getMessage("cachedData.message.reset", null, Locale.getDefault()));
-        } catch (Exception ex) {
-            log.error("Error resetting weblog hit count", ex);
-            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).
-                    body(messages.getMessage("generic.error.check.logs", null, Locale.getDefault()));
-        }
+    public String resetHitCount(Locale locale) {
+        weblogDao.resetDailyHitCounts();
+        log.info("daily hit counts manually reset by administrator");
+        return messages.getMessage("cachedData.message.reset", null, locale);
     }
 
     @GetMapping(value = "/webloglist")
-    public List<String> getWeblogHandles(HttpServletResponse response) throws ServletException {
-        try {
-            List<String> weblogHandles = new ArrayList<>();
-            Page<Weblog> weblogs = weblogDao.findAll(Pageable.unpaged());
-            for (Weblog weblog : weblogs) {
-                weblogHandles.add(weblog.getHandle());
-            }
-            response.setStatus(HttpServletResponse.SC_OK);
-            return weblogHandles;
-        } catch (Exception ex) {
-            log.error("Error retrieving weblog handle list", ex);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return null;
+    public List<String> getWeblogHandles() {
+        List<String> weblogHandles = new ArrayList<>();
+        Page<Weblog> weblogs = weblogDao.findAll(Pageable.unpaged());
+        for (Weblog weblog : weblogs) {
+            weblogHandles.add(weblog.getHandle());
         }
+        return weblogHandles;
     }
 
     @PostMapping(value = "/weblog/{handle}/rebuildindex", produces = "text/plain")
-    public ResponseEntity<String> rebuildIndex(@PathVariable String handle) {
-        try {
-            Weblog weblog = weblogDao.findByHandleAndVisibleTrue(handle);
-            if (weblog != null) {
-                luceneIndexer.updateIndex(weblog, false);
-                return ResponseEntity.ok(messages.getMessage("cachedData.message.indexed", new Object[]{handle},
-                        Locale.getDefault()));
-            } else {
-                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).
-                        body(messages.getMessage("generic.error.check.logs", null, Locale.getDefault()));
-            }
-        } catch (Exception ex) {
-            log.error("Error doing index rebuild", ex);
-            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).
-                    body(messages.getMessage("generic.error.check.logs", null, Locale.getDefault()));
+    public ResponseEntity rebuildIndex(@PathVariable String handle, Locale locale) {
+        Weblog weblog = weblogDao.findByHandle(handle);
+        if (weblog != null) {
+            luceneIndexer.updateIndex(weblog, false);
+            return ResponseEntity.ok(
+                    messages.getMessage("cachedData.message.indexed", new Object[]{handle}, locale));
+        } else {
+            return ValidationErrorResponse.badRequest(
+                    messages.getMessage("generic.weblog.not.found", new Object[]{handle}, locale));
         }
     }
 
     @GetMapping(value = "/webloggerproperties")
-    public WebloggerProperties getWebloggerProperties(HttpServletResponse response) throws ServletException {
+    public WebloggerProperties getWebloggerProperties() {
         return webloggerPropertiesDao.findOrNull();
     }
 
     @PostMapping(value = "/webloggerproperties", produces = "text/plain")
-    public ResponseEntity updateProperties(@Valid @RequestBody WebloggerProperties properties) {
+    public String updateProperties(@Valid @RequestBody WebloggerProperties properties, Locale locale) {
         webloggerPropertiesDao.saveAndFlush(properties);
         blacklistCommentValidator.setGlobalCommentFilter(properties.getCommentSpamFilter());
-        return ResponseEntity.ok(messages.getMessage("generic.changes.saved", null, Locale.getDefault()));
+        return messages.getMessage("generic.changes.saved", null, locale);
     }
 
     @GetMapping(value = "/globalconfigmetadata")
-    public GlobalConfigMetadata getGlobalConfigMetadata(HttpServletResponse response) {
+    public GlobalConfigMetadata getGlobalConfigMetadata() {
 
         GlobalConfigMetadata gcm = new GlobalConfigMetadata();
 

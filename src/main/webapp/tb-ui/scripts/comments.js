@@ -25,7 +25,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
     this.lookupFields = {};
     this.searchParams = {};
     this.commentData = {};
-    this.errorObj = null;
+    this.errorObj = {};
     this.pageNum = 0;
     this.urlRoot = contextPath + '/tb-ui/authoring/rest/comments/';
 
@@ -39,15 +39,15 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
     };
 
     this.editComment = function(comment) {
-        self.errorMessage = null;
+        this.messageClear();
         comment.editable = true;
     }
 
     this.saveComment = function(comment) {
+        this.messageClear();
         if (!comment.editable) {
             return;
         }
-        self.errorMessage = null;
         comment.editable = false;
 
         $http.put(this.urlRoot + comment.id + '/content' , comment.content).then(
@@ -63,8 +63,8 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
     }
 
     this.editCommentCancel = function(comment) {
+        this.messageClear();
         comment.editable = false;
-        self.errorMessage = null;
         var oldItem = $filter('filter')(self.originalCommentData.comments, {id : comment.id}, true);
         if (oldItem && oldItem.length) {
             comment.content = oldItem[0].content;
@@ -72,6 +72,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
     }
 
     this.approveComment = function(comment) {
+        this.messageClear();
         $http.post(this.urlRoot + comment.id + '/approve').then(
           function(response) {
              self.errorMessage = null;
@@ -82,6 +83,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
     }
 
     this.hideComment = function(comment) {
+        this.messageClear();
         $http.post(this.urlRoot + comment.id + '/hide').then(
           function(response) {
              self.errorMessage = null;
@@ -92,6 +94,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
     }
 
     this.deleteComment = function(comment) {
+        this.messageClear();
         $http.delete(this.urlRoot + comment.id).then(
           function(response) {
              self.loadComments();
@@ -151,8 +154,12 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
         if (response.status == 408) {
            window.location.replace($('#refreshURL').attr('value'));
         } else if (response.status == 400) {
-           self.errorMessage = response.data;
+           self.errorObj = response.data;
         }
+    }
+
+    this.messageClear = function() {
+        this.errorObj = {};
     }
 
     this.loadLookupFields();

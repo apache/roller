@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.dao.WeblogDao;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.List;
@@ -95,7 +94,7 @@ public class TagController {
 
     @PostMapping(value = "/weblog/{weblogId}/delete")
     public void deleteTags(@PathVariable String weblogId, @RequestBody List<String> tagNames, Principal p,
-                           HttpServletResponse response) throws ServletException {
+                           HttpServletResponse response) {
         if (tagNames != null && tagNames.size() > 0) {
             Weblog weblog = weblogDao.findById(weblogId).orElse(null);
             if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
@@ -103,9 +102,8 @@ public class TagController {
                     try {
                         weblogManager.removeTag(weblog, tagName);
                     } catch (Exception e) {
-                        String message = String.format("Error removing tagName %s from weblog %s: %s", tagName,
-                                weblog.getHandle(), e.getMessage());
-                        throw new ServletException(message);
+                        log.warn("Error removing tagName {} from weblog {}: {}", tagName, weblog.getHandle(), e.getMessage());
+                        throw e;
                     }
                 }
             }
@@ -115,41 +113,33 @@ public class TagController {
 
     @PostMapping(value = "/weblog/{weblogId}/add/currenttag/{currentTagName}/newtag/{newTagName}")
     public Map<String, Integer> addTag(@PathVariable String weblogId, @PathVariable String currentTagName,
-                                       @PathVariable String newTagName, Principal p, HttpServletResponse response)
-            throws ServletException {
-
+                                       @PathVariable String newTagName, Principal p, HttpServletResponse response) {
         return changeTags(weblogId, currentTagName, newTagName, p, response, true);
     }
 
     @PostMapping(value = "/weblog/{weblogId}/replace/currenttag/{currentTagName}/newtag/{newTagName}")
     public Map<String, Integer> replaceTag(@PathVariable String weblogId, @PathVariable String currentTagName,
-                                       @PathVariable String newTagName, Principal p, HttpServletResponse response)
-            throws ServletException {
-
+                                       @PathVariable String newTagName, Principal p, HttpServletResponse response) {
         return changeTags(weblogId, currentTagName, newTagName, p, response, false);
     }
 
     private Map<String, Integer> changeTags(String weblogId, String currentTagName, String newTagName,
-                                            Principal p, HttpServletResponse response, boolean isAdd)
-            throws ServletException {
+                                            Principal p, HttpServletResponse response, boolean isAdd) {
 
         Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-        try {
-            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
-                Map<String, Integer> results = weblogManager.addTag(weblog, currentTagName, newTagName);
-                if (!isAdd) {
-                    weblogManager.removeTag(weblog, currentTagName);
-                }
-                response.setStatus(HttpServletResponse.SC_OK);
-                return results;
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                return null;
+        log.info("For weblog {} {} current tag {} to new tag {}", isAdd ? "adding" : "renaming",
+                weblog == null ? "(null)" : weblog.getHandle(), currentTagName, newTagName);
+
+        if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
+            Map<String, Integer> results = weblogManager.addTag(weblog, currentTagName, newTagName);
+            if (!isAdd) {
+                weblogManager.removeTag(weblog, currentTagName);
             }
-        } catch (Exception e) {
-            log.error("Error {} weblog {} current tag {} new tag {}", isAdd ? "adding" : "renaming", weblog.getId(),
-                    currentTagName, newTagName, e);
-            throw new ServletException(e.getMessage());
+            response.setStatus(HttpServletResponse.SC_OK);
+            return results;
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return null;
         }
     }
 

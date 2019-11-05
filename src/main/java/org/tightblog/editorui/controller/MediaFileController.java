@@ -31,7 +31,6 @@ import org.tightblog.dao.UserDao;
 import org.tightblog.dao.WeblogDao;
 import org.tightblog.editorui.model.ValidationErrorResponse;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -47,9 +46,7 @@ import java.util.stream.Collectors;
 
 @RestController
 public class MediaFileController {
-
     private static Logger log = LoggerFactory.getLogger(MediaFileController.class);
-
 
     private WeblogDao weblogDao;
     private MediaDirectoryDao mediaDirectoryDao;
@@ -81,8 +78,7 @@ public class MediaFileController {
     public List<MediaDirectory> getMediaDirectories(@PathVariable String id, Principal p, HttpServletResponse response) {
         Weblog weblog = weblogDao.findById(id).orElse(null);
         if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.EDIT_DRAFT)) {
-            List<MediaDirectory> temp =
-                    mediaDirectoryDao.findByWeblog(weblogDao.findById(id).orElse(null))
+            return mediaDirectoryDao.findByWeblog(weblogDao.findById(id).orElse(null))
                             .stream()
                             .peek(md -> {
                                 md.setMediaFiles(null);
@@ -90,7 +86,6 @@ public class MediaFileController {
                             })
                             .sorted(Comparator.comparing(MediaDirectory::getName))
                             .collect(Collectors.toList());
-            return temp;
         } else {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return null;
@@ -140,7 +135,7 @@ public class MediaFileController {
     public ResponseEntity postMediaFile(Principal p, @Valid @RequestPart("mediaFileData") MediaFile mediaFileData,
                                         Locale locale,
                                         @RequestPart(name = "uploadFile", required = false) MultipartFile uploadedFile)
-            throws ServletException {
+            throws IOException {
 
         MediaFile mf = mediaFileDao.findByIdOrNull(mediaFileData.getId());
 
@@ -203,113 +198,93 @@ public class MediaFileController {
             return ResponseEntity.ok(mf);
         } catch (IOException e) {
             log.error("Error uploading file {} from user {}", mf.getName(), user.getUserName(), e);
-            throw new ServletException(e.getMessage());
+            throw e;
         }
     }
 
     @PutMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/mediadirectories", produces = "text/plain")
     public ResponseEntity addMediaDirectory(@PathVariable String weblogId, @RequestBody TextNode directoryName,
-                                    Principal p, Locale locale, HttpServletResponse response)
-            throws ServletException {
-        try {
-            Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-                try {
-                    MediaDirectory newDir = mediaManager.createMediaDirectory(weblog, directoryName.asText().trim());
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    return ResponseEntity.ok(newDir.getId());
-                } catch (IllegalArgumentException e) {
-                    return ValidationErrorResponse.badRequest(messages.getMessage(e.getMessage(), null, locale));
-                }
-            } else {
-                return ResponseEntity.status(403).body(messages.getMessage("error.title.403", null, locale));
+                                    Principal p, Locale locale, HttpServletResponse response) {
+        Weblog weblog = weblogDao.findById(weblogId).orElse(null);
+        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+            try {
+                MediaDirectory newDir = mediaManager.createMediaDirectory(weblog, directoryName.asText().trim());
+                response.setStatus(HttpServletResponse.SC_OK);
+                return ResponseEntity.ok(newDir.getId());
+            } catch (IllegalArgumentException e) {
+                return ValidationErrorResponse.badRequest(messages.getMessage(e.getMessage(), null, locale));
             }
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
+        } else {
+            return ResponseEntity.status(403).body(messages.getMessage("error.title.403", null, locale));
         }
     }
 
     @DeleteMapping(value = "/tb-ui/authoring/rest/mediadirectory/{id}")
-    public void deleteMediaDirectory(@PathVariable String id, Principal p, HttpServletResponse response)
-            throws ServletException {
+    public void deleteMediaDirectory(@PathVariable String id, Principal p, HttpServletResponse response) {
 
-        try {
-            MediaDirectory itemToRemove = mediaDirectoryDao.findByIdOrNull(id);
-            if (itemToRemove != null) {
-                Weblog weblog = itemToRemove.getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-                    mediaManager.removeAllFiles(itemToRemove);
-                    weblog.getMediaDirectories().remove(itemToRemove);
-                    weblogManager.saveWeblog(weblog, false);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                }
+        MediaDirectory itemToRemove = mediaDirectoryDao.findByIdOrNull(id);
+        if (itemToRemove != null) {
+            Weblog weblog = itemToRemove.getWeblog();
+            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+                mediaManager.removeAllFiles(itemToRemove);
+                weblog.getMediaDirectories().remove(itemToRemove);
+                weblogManager.saveWeblog(weblog, false);
+                response.setStatus(HttpServletResponse.SC_OK);
             } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
-    }
+   }
 
     @PostMapping(value = "/tb-ui/authoring/rest/mediafiles/weblog/{weblogId}")
     public void deleteMediaFiles(@PathVariable String weblogId, @RequestBody List<String> fileIdsToDelete,
-                                 Principal p, HttpServletResponse response)
-            throws ServletException {
+                                 Principal p, HttpServletResponse response) {
 
-        try {
-            if (fileIdsToDelete != null && fileIdsToDelete.size() > 0) {
-                Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-                if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-                    for (String fileId : fileIdsToDelete) {
-                        MediaFile mediaFile = mediaFileDao.findByIdOrNull(fileId);
-                        if (mediaFile != null && weblog.equals(mediaFile.getDirectory().getWeblog())) {
-                            mediaManager.removeMediaFile(weblog, mediaFile);
-                        }
+        if (fileIdsToDelete != null && fileIdsToDelete.size() > 0) {
+            Weblog weblog = weblogDao.findById(weblogId).orElse(null);
+            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+                for (String fileId : fileIdsToDelete) {
+                    MediaFile mediaFile = mediaFileDao.findByIdOrNull(fileId);
+                    if (mediaFile != null && weblog.equals(mediaFile.getDirectory().getWeblog())) {
+                        mediaManager.removeMediaFile(weblog, mediaFile);
                     }
-                    // setting false as even with refresh any blog articles using deleted images will have broken images
-                    weblogManager.saveWeblog(weblog, false);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 }
+                // setting false as even with refresh any blog articles using deleted images will have broken images
+                weblogManager.saveWeblog(weblog, false);
+                response.setStatus(HttpServletResponse.SC_OK);
             } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/mediafiles/weblog/{weblogId}/todirectory/{directoryId}")
     public void moveMediaFiles(@PathVariable String weblogId, @PathVariable String directoryId,
                                @RequestBody List<String> fileIdsToMove,
-                               Principal p, HttpServletResponse response)
-            throws ServletException {
+                               Principal p, HttpServletResponse response) {
 
-        try {
-            if (fileIdsToMove != null && fileIdsToMove.size() > 0) {
-                Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-                MediaDirectory targetDirectory = mediaDirectoryDao.findByIdOrNull(directoryId);
-                if (weblog != null && targetDirectory != null && weblog.equals(targetDirectory.getWeblog()) &&
-                        userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+        if (fileIdsToMove != null && fileIdsToMove.size() > 0) {
+            Weblog weblog = weblogDao.findById(weblogId).orElse(null);
+            MediaDirectory targetDirectory = mediaDirectoryDao.findByIdOrNull(directoryId);
+            if (weblog != null && targetDirectory != null && weblog.equals(targetDirectory.getWeblog()) &&
+                    userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
 
-                    for (String fileId : fileIdsToMove) {
-                        MediaFile mediaFile = mediaFileDao.findByIdOrNull(fileId);
-                        if (mediaFile != null && weblog.equals(mediaFile.getDirectory().getWeblog())) {
-                            mediaManager.moveMediaFiles(Collections.singletonList(mediaFile), targetDirectory);
-                        }
+                for (String fileId : fileIdsToMove) {
+                    MediaFile mediaFile = mediaFileDao.findByIdOrNull(fileId);
+                    if (mediaFile != null && weblog.equals(mediaFile.getDirectory().getWeblog())) {
+                        mediaManager.moveMediaFiles(Collections.singletonList(mediaFile), targetDirectory);
                     }
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 }
+                response.setStatus(HttpServletResponse.SC_OK);
             } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 

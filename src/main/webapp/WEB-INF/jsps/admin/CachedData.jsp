@@ -42,11 +42,13 @@
     </button>
 </div>
 
-<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorMessage" ng-cloak>
-    {{ctrl.errorMessage}}
-    <button type="button" class="close" data-ng-click="ctrl.errorMessage = null" aria-label="Close">
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorObj.errors" ng-cloak>
+    <button type="button" class="close" data-ng-click="ctrl.errorObj.errors = null" aria-label="Close">
        <span aria-hidden="true">&times;</span>
     </button>
+    <ul>
+       <li ng-repeat="item in ctrl.errorObj.errors">{{item.message}}</li>
+    </ul>
 </div>
 
 <p class="subtitle">

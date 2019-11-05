@@ -4,7 +4,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.metadata = {};
     this.weblogToReindex = null;
     this.successMessage = null;
-    this.errorMessage = null;
+    this.errorObj = {};
 
     this.loadMetadata = function() {
         $http.get(this.urlRoot + 'webloglist').then(
@@ -63,14 +63,14 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.commonErrorResponse = function(response) {
         if (response.status == 408) {
            window.location.replace($('#refreshURL').attr('value'));
-        } else if (response.status == 400) {
-           self.errorMessage = response.data;
+        } else {
+           self.errorObj = response.data;
         }
     }
 
     this.messageClear = function() {
         this.successMessage = null;
-        this.errorMessage = null;
+        this.errorObj = {};
     }
 
     this.loadMetadata();

@@ -60,7 +60,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.domain.WebloggerProperties;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -116,8 +115,7 @@ public class WeblogController {
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblogs")
-    public ResponseEntity addWeblog(@Valid @RequestBody Weblog newData, Principal p)
-            throws ServletException {
+    public ResponseEntity addWeblog(@Valid @RequestBody Weblog newData, Principal p) {
 
         User user = userDao.findEnabledByUserName(p.getName());
 
@@ -141,8 +139,7 @@ public class WeblogController {
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
-    public ResponseEntity updateWeblog(@PathVariable String id, @Valid @RequestBody Weblog newData, Principal p)
-            throws ServletException {
+    public ResponseEntity updateWeblog(@PathVariable String id, @Valid @RequestBody Weblog newData, Principal p) {
         Weblog weblog = getWeblogIfOwner(id, p);
         if (weblog == null) {
             return ResponseEntity.notFound().build();
@@ -151,56 +148,50 @@ public class WeblogController {
         return saveWeblog(weblog, newData, false);
     }
 
-    private ResponseEntity saveWeblog(Weblog weblog, Weblog newData, boolean newWeblog)
-            throws ServletException {
-        try {
-            if (weblog != null) {
+    private ResponseEntity saveWeblog(Weblog weblog, Weblog newData, boolean newWeblog) {
+        if (weblog != null) {
 
-                if (newData.getAnalyticsCode() != null) {
-                    newData.setAnalyticsCode(newData.getAnalyticsCode().trim());
-                }
-
-                weblog.setName(newData.getName());
-                weblog.setTagline(StringUtils.trimToEmpty(newData.getTagline()));
-                weblog.setEditFormat(newData.getEditFormat());
-                weblog.setVisible(newData.getVisible());
-                weblog.setEntriesPerPage(newData.getEntriesPerPage());
-                weblog.setBlacklist(newData.getBlacklist());
-                weblog.setAllowComments(newData.getAllowComments());
-                weblog.setLocale(newData.getLocale());
-                weblog.setTimeZone(newData.getTimeZone());
-
-                // make sure user didn't enter an invalid entry display count
-                if (newData.getEntriesPerPage() > maxEntriesPerPage) {
-                    newData.setEntriesPerPage(maxEntriesPerPage);
-                }
-                weblog.setEntriesPerPage(newData.getEntriesPerPage());
-
-                weblog.setAbout(newData.getAbout());
-                weblog.setAnalyticsCode(newData.getAnalyticsCode());
-                weblog.setDefaultCommentDays(newData.getDefaultCommentDays());
-
-                // save config
-                if (newWeblog) {
-                    weblogManager.addWeblog(weblog);
-                    log.info("New weblog {} created by user {}", weblog, weblog.getCreator());
-                } else {
-                    weblogManager.saveWeblog(weblog, true);
-                }
-
-                // ROL-1050: apply comment defaults to existing entries
-                if (newData.isApplyCommentDefaults()) {
-                    weblogEntryDao.applyDefaultCommentDaysToWeblogEntries(weblog, weblog.getDefaultCommentDays());
-                }
-
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            if (newData.getAnalyticsCode() != null) {
+                newData.setAnalyticsCode(newData.getAnalyticsCode().trim());
             }
-            return ResponseEntity.ok(weblog);
-        } catch (Exception e) {
-            log.error("Error updating weblog", e);
-            throw new ServletException(e.getMessage());
+
+            weblog.setName(newData.getName());
+            weblog.setTagline(StringUtils.trimToEmpty(newData.getTagline()));
+            weblog.setEditFormat(newData.getEditFormat());
+            weblog.setVisible(newData.getVisible());
+            weblog.setEntriesPerPage(newData.getEntriesPerPage());
+            weblog.setBlacklist(newData.getBlacklist());
+            weblog.setAllowComments(newData.getAllowComments());
+            weblog.setLocale(newData.getLocale());
+            weblog.setTimeZone(newData.getTimeZone());
+
+            // make sure user didn't enter an invalid entry display count
+            if (newData.getEntriesPerPage() > maxEntriesPerPage) {
+                newData.setEntriesPerPage(maxEntriesPerPage);
+            }
+            weblog.setEntriesPerPage(newData.getEntriesPerPage());
+
+            weblog.setAbout(newData.getAbout());
+            weblog.setAnalyticsCode(newData.getAnalyticsCode());
+            weblog.setDefaultCommentDays(newData.getDefaultCommentDays());
+
+            // save config
+            if (newWeblog) {
+                weblogManager.addWeblog(weblog);
+                log.info("New weblog {} created by user {}", weblog, weblog.getCreator());
+            } else {
+                weblogManager.saveWeblog(weblog, true);
+            }
+
+            // ROL-1050: apply comment defaults to existing entries
+            if (newData.isApplyCommentDefaults()) {
+                weblogEntryDao.applyDefaultCommentDaysToWeblogEntries(weblog, weblog.getDefaultCommentDays());
+            }
+
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return ResponseEntity.ok(weblog);
     }
 
     @DeleteMapping(value = "/tb-ui/authoring/rest/weblog/{id}")

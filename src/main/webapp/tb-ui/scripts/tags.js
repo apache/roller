@@ -42,6 +42,7 @@ tightblogApp.controller('PageController', ['$http',
     }
 
     this.deleteTags = function() {
+        this.messageClear();
         $('#deleteTagsModal').modal('hide');
 
         var selectedTagNames = [];
@@ -59,6 +60,7 @@ tightblogApp.controller('PageController', ['$http',
     }
 
     this.tagUpdate = function() {
+        this.messageClear();
         var changeButton = $('#changeButton');
         var currentTag = changeButton.data('currentTag');
 
@@ -72,6 +74,7 @@ tightblogApp.controller('PageController', ['$http',
     }
 
     this.addTag = function(currentTag, newTag) {
+        this.messageClear();
         $http.post(this.urlRoot + 'weblog/' + weblogId + '/add/currenttag/' + currentTag + '/newtag/' + newTag).then(
           function(response) {
              self.resultsMap = response.data;
@@ -85,6 +88,7 @@ tightblogApp.controller('PageController', ['$http',
     }
 
     this.replaceTag = function(currentTag, newTag) {
+        this.messageClear();
         $http.post(this.urlRoot + 'weblog/' + weblogId + '/replace/currenttag/' + currentTag + '/newtag/' + newTag).then(
           function(response) {
              self.resultsMap = response.data;
@@ -107,13 +111,13 @@ tightblogApp.controller('PageController', ['$http',
     };
 
     this.previousPage = function() {
-        self.successMessage = '';
+        this.messageClear();
         this.pageNum--;
         this.loadTags();
     };
 
     this.nextPage = function() {
-        self.successMessage = '';
+        this.messageClear();
         this.pageNum++;
         this.loadTags();
     };
@@ -121,9 +125,14 @@ tightblogApp.controller('PageController', ['$http',
     this.commonErrorResponse = function(response) {
         if (response.status == 408) {
            window.location.replace($('#refreshURL').attr('value'));
-        } else if (response.status == 400) {
-           self.successMessage = response.data;
+        }  else {
+           self.errorObj = response.data;
         }
+    }
+
+    this.messageClear = function() {
+        self.successMessage = '';
+        this.errorObj = {};
     }
 
     this.inputClear = function() {

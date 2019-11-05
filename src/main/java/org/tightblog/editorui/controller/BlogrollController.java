@@ -39,15 +39,11 @@ import org.tightblog.dao.BlogrollLinkDao;
 import org.tightblog.dao.WeblogDao;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Manage a blog's blogroll
- */
 @RestController
 public class BlogrollController {
 
@@ -100,25 +96,17 @@ public class BlogrollController {
 
     @PostMapping(value = "/tb-ui/authoring/rest/bookmarks/delete")
     public void deleteBookmarks(@RequestBody List<String> bookmarkIds, Principal p,
-                                HttpServletResponse response) throws ServletException {
-
+                                HttpServletResponse response) {
         if (bookmarkIds != null && bookmarkIds.size() > 0) {
             for (String bookmarkId : bookmarkIds) {
-                try {
-                    deleteBookmark(bookmarkId, p);
-                } catch (Exception e) {
-                    String message = String.format("Error while user %s deleting bookmark %s: %s",
-                            p.getName(), bookmarkId, e.getMessage());
-                    throw new ServletException(message);
-                }
+                deleteBookmark(bookmarkId, p);
             }
         }
-        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     @PutMapping(value = "/tb-ui/authoring/rest/bookmark/{id}")
     public void updateBookmark(@PathVariable String id, @RequestBody WeblogBookmark newData, Principal p,
-                               HttpServletResponse response) throws ServletException {
+                               HttpServletResponse response) {
         try {
             WeblogBookmark bookmark = blogrollLinkDao.getOne(id);
             Weblog weblog = bookmark.getWeblog();
@@ -140,27 +128,22 @@ public class BlogrollController {
             }
         } catch (EntityNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
         }
     }
 
     @PutMapping(value = "/tb-ui/authoring/rest/bookmarks")
     public void addBookmark(@RequestParam(name = "weblogId") String weblogId, @RequestBody WeblogBookmark newData, Principal p,
-                            HttpServletResponse response) throws ServletException {
-        try {
-            Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-                WeblogBookmark bookmark = new WeblogBookmark(weblog, newData.getName(),
-                        newData.getUrl(), newData.getDescription());
-                weblog.addBookmark(bookmark);
-                weblogManager.saveWeblog(weblog, true);
-                response.setStatus(HttpServletResponse.SC_OK);
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            }
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
+                            HttpServletResponse response) {
+        Weblog weblog = weblogDao.findById(weblogId).orElse(null);
+        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+            WeblogBookmark bookmark = new WeblogBookmark(weblog, newData.getName(),
+                    newData.getUrl(), newData.getDescription());
+            weblog.addBookmark(bookmark);
+            weblogManager.saveWeblog(weblog, true);
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
     }
+
 }

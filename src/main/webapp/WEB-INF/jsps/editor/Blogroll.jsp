@@ -36,6 +36,15 @@
 
 <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/authoring/bookmarks'/>?weblogId=<c:out value='${param.weblogId}'/>"/>
 
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorObj.errors" ng-cloak>
+    <button type="button" class="close" data-ng-click="ctrl.errorObj.errors = null" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+    </button>
+    <ul>
+       <li ng-repeat="item in ctrl.errorObj.errors">{{item.message}}</li>
+    </ul>
+</div>
+
 <p class="pagetip">
     <fmt:message key="blogroll.rootPrompt" />
 </p>

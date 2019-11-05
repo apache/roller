@@ -127,18 +127,18 @@ public class UIController {
             }
 
         }
-        return tightblogModelAndView("login", myMap, (User) null, null);
+        return tightblogModelAndView("login", myMap, null, null);
     }
 
     @RequestMapping(value = "/unsubscribe")
-    public ModelAndView unsubscribe(@RequestParam String commentId) throws IOException {
+    public ModelAndView unsubscribe(@RequestParam String commentId) {
 
         Pair<String, Boolean> results = weblogEntryManager.stopNotificationsForCommenter(commentId);
         Map<String, Object> myMap = new HashMap<>();
         myMap.put("found", results.getRight());
         myMap.put("weblogEntryTitle", results.getLeft());
 
-        return tightblogModelAndView("unsubscribed", myMap, (User) null, null);
+        return tightblogModelAndView("unsubscribed", myMap, null, null);
     }
 
     @RequestMapping(value = "/logout")
@@ -181,15 +181,15 @@ public class UIController {
     }
 
     @RequestMapping(value = "/scanCode")
-    public ModelAndView scanAuthenticatorSecret(Principal principal, HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    public ModelAndView scanAuthenticatorSecret(Principal principal, HttpServletRequest request,
+                                                HttpServletResponse response) {
 
         User user = userDao.findEnabledByUserName(principal.getName());
         String qrCode = userManager.generateMFAQRUrl(user);
         Map<String, Object> myMap = new HashMap<>();
         myMap.put("qrCode", qrCode);
 
-        return tightblogModelAndView("scanCode", myMap, (User) null, null);
+        return tightblogModelAndView("scanCode", myMap, null, null);
     }
 
     @RequestMapping(value = "/get-default-blog")
@@ -232,19 +232,19 @@ public class UIController {
 
     @RequestMapping(value = "/profile")
     public ModelAndView profile(Principal principal) {
-        return tightblogModelAndView("profile", null, principal, null);
+        return tightblogModelAndView("profile", null, principal);
     }
 
     @RequestMapping(value = "/register")
     public ModelAndView register() {
-        return tightblogModelAndView("register", null, (User) null, null);
+        return tightblogModelAndView("register", null, null, null);
     }
 
     @RequestMapping(value = "/createWeblog")
     public ModelAndView createWeblog(Principal principal) {
         Map<String, Object> myMap = new HashMap<>();
         myMap.put("globalCommentPolicy", webloggerPropertiesDao.findOrNull().getCommentPolicy());
-        return tightblogModelAndView("createWeblog", myMap, principal, null);
+        return tightblogModelAndView("createWeblog", myMap, principal);
     }
 
     @RequestMapping(value = "/authoring/weblogConfig")
@@ -276,7 +276,7 @@ public class UIController {
 
     @RequestMapping(value = "/authoring/categories")
     public ModelAndView categories(Principal principal, @RequestParam String weblogId) {
-        return getBlogPublisherPage(principal, null, weblogId, "categories");
+        return getBlogPublisherPage(principal, weblogId, "categories");
     }
 
     @RequestMapping(value = "/authoring/templateEdit")
@@ -291,17 +291,17 @@ public class UIController {
 
     @RequestMapping(value = "/authoring/mediaFileView")
     public ModelAndView mediaFileView(Principal principal, @RequestParam String weblogId) {
-        return getBlogPublisherPage(principal, null, weblogId, "mediaFileView");
+        return getBlogPublisherPage(principal, weblogId, "mediaFileView");
     }
 
     @RequestMapping(value = "/authoring/mediaFileAdd")
     public ModelAndView mediaFileAdd(Principal principal, @RequestParam String weblogId) {
-        return getBlogPublisherPage(principal, null, weblogId, "mediaFileAdd");
+        return getBlogPublisherPage(principal, weblogId, "mediaFileAdd");
     }
 
     @RequestMapping(value = "/authoring/mediaFileEdit")
     public ModelAndView mediaFileEdit(Principal principal, @RequestParam String weblogId) {
-        return getBlogPublisherPage(principal, null, weblogId, "mediaFileEdit");
+        return getBlogPublisherPage(principal, weblogId, "mediaFileEdit");
     }
 
     @RequestMapping(value = "/authoring/entryAdd")
@@ -320,25 +320,25 @@ public class UIController {
 
     @RequestMapping(value = "/authoring/entries")
     public ModelAndView entries(Principal principal, @RequestParam String weblogId) {
-        return getBlogPublisherPage(principal, null, weblogId, "entries");
+        return getBlogPublisherPage(principal, weblogId, "entries");
     }
 
     @RequestMapping(value = "/authoring/comments")
     public ModelAndView comments(Principal principal, @RequestParam String weblogId) {
-        return getBlogPublisherPage(principal, null, weblogId, "comments");
+        return getBlogPublisherPage(principal, weblogId, "comments");
     }
 
     @RequestMapping(value = "/authoring/tags")
     public ModelAndView tags(Principal principal, @RequestParam String weblogId) {
-        return getBlogPublisherPage(principal, null, weblogId, "tags");
+        return getBlogPublisherPage(principal, weblogId, "tags");
     }
 
     private ModelAndView getBlogOwnerPage(Principal principal, Map<String, Object> map, String weblogId, String actionName) {
         return getBlogPage(principal, map, weblogId, actionName, WeblogRole.OWNER);
     }
 
-    private ModelAndView getBlogPublisherPage(Principal principal, Map<String, Object> map, String weblogId, String actionName) {
-        return getBlogPage(principal, map, weblogId, actionName, WeblogRole.POST);
+    private ModelAndView getBlogPublisherPage(Principal principal, String weblogId, String actionName) {
+        return getBlogPage(principal, null, weblogId, actionName, WeblogRole.POST);
     }
 
     private ModelAndView getBlogContributorPage(Principal principal, Map<String, Object> map, String weblogId,
@@ -363,7 +363,7 @@ public class UIController {
             map.put("weblogId", weblogId);
             return tightblogModelAndView(actionName, map, user, weblog);
         } else {
-            return tightblogModelAndView("denied", null, (User) null, null);
+            return tightblogModelAndView("denied", null, null, null);
         }
     }
 
@@ -371,7 +371,7 @@ public class UIController {
     public ModelAndView home(Principal principal) {
         Map<String, Object> myMap = new HashMap<>();
         myMap.put("usersCustomizeThemes", webloggerPropertiesDao.findOrNull().isUsersCustomizeThemes());
-        return tightblogModelAndView("mainMenu", myMap, principal, null);
+        return tightblogModelAndView("mainMenu", myMap, principal);
     }
 
     private ModelAndView getAdminPage(Principal principal, String actionName, Map<String, Object> propertyMap) {
@@ -381,9 +381,9 @@ public class UIController {
         return tightblogModelAndView(actionName, myMap, user, null);
     }
 
-    private ModelAndView tightblogModelAndView(String actionName, Map<String, Object> map, Principal principal, Weblog weblog) {
+    private ModelAndView tightblogModelAndView(String actionName, Map<String, Object> map, Principal principal) {
         User user = userDao.findEnabledByUserName(principal.getName());
-        return tightblogModelAndView(actionName, map, user, weblog);
+        return tightblogModelAndView(actionName, map, user, null);
     }
 
     private ModelAndView tightblogModelAndView(String actionName, Map<String, Object> map, User user, Weblog weblog) {

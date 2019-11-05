@@ -15,6 +15,11 @@
  */
 package org.tightblog.editorui.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.tightblog.editorui.model.ValidationErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -27,12 +32,18 @@ import org.tightblog.editorui.model.Violation;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.util.Locale;
+import java.util.UUID;
 
-// https://reflectoring.io/bean-validation-with-spring-boot/
 @ControllerAdvice
 public class GlobalControllerAdvice {
 
-    // for request bodies
+    private static Logger log = LoggerFactory.getLogger(GlobalControllerAdvice.class);
+
+    @Autowired
+    private MessageSource messages;
+
+    // for request bodies: https://reflectoring.io/bean-validation-with-spring-boot/
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
@@ -45,7 +56,7 @@ public class GlobalControllerAdvice {
         return error;
     }
 
-    // for path and query variables
+    // for path and query variables: https://reflectoring.io/bean-validation-with-spring-boot/
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
@@ -56,6 +67,20 @@ public class GlobalControllerAdvice {
                     new Violation(violation.getPropertyPath().toString(), violation.getMessage()));
         }
         return error;
+    }
+
+    // for system errors
+    @ExceptionHandler(value = Exception.class)
+    // avoiding use of ResponseStatus as it activates Tomcat HTML page (see ResponseStatus JavaDoc)
+    public ResponseEntity<ValidationErrorResponse> handleException(Exception ex, Locale locale) {
+        UUID errorUUID = UUID.randomUUID();
+        log.error("Internal Server Error (ID: {}) processing REST call", errorUUID, ex);
+
+        ValidationErrorResponse error = new ValidationErrorResponse();
+        error.getErrors().add(new Violation(messages.getMessage(
+                "generic.error.check.logs", new Object[] {errorUUID}, locale)));
+
+        return ResponseEntity.status(500).body(error);
     }
 
 }

@@ -48,7 +48,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
@@ -119,32 +118,25 @@ public class TemplateController {
         }
     }
 
-    private void deleteTemplate(@PathVariable String id, Principal p, HttpServletResponse response)
-            throws ServletException {
-
-        try {
-            WeblogTemplate template = weblogTemplateDao.findById(id).orElse(null);
-            if (template != null) {
-                if (userManager.checkWeblogRole(p.getName(), template.getWeblog(), WeblogRole.OWNER)) {
-                    weblogTemplateDao.delete(template);
-                    weblogManager.evictWeblogTemplateCaches(template.getWeblog(), template.getName(), template.getRole());
-                    weblogManager.saveWeblog(template.getWeblog(), true);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                }
+    private void deleteTemplate(@PathVariable String id, Principal p, HttpServletResponse response) {
+        log.info("Deleting template with ID {}...", id);
+        WeblogTemplate template = weblogTemplateDao.findById(id).orElse(null);
+        if (template != null) {
+            if (userManager.checkWeblogRole(p.getName(), template.getWeblog(), WeblogRole.OWNER)) {
+                weblogTemplateDao.delete(template);
+                weblogManager.evictWeblogTemplateCaches(template.getWeblog(), template.getName(), template.getRole());
+                weblogManager.saveWeblog(template.getWeblog(), true);
+                response.setStatus(HttpServletResponse.SC_OK);
             } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
-        } catch (Exception e) {
-            log.error("Error deleting template with ID: ", id, e);
-            throw new ServletException(e.getMessage());
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/templates/delete")
-    public void deleteTemplates(@RequestBody List<String> ids, Principal p, HttpServletResponse response)
-            throws ServletException {
+    public void deleteTemplates(@RequestBody List<String> ids, Principal p, HttpServletResponse response) {
         if (ids != null && ids.size() > 0) {
             for (String id : ids) {
                 deleteTemplate(id, p, response);
@@ -198,63 +190,60 @@ public class TemplateController {
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates", consumes = { "application/json" },
             produces = { "text/plain", "application/json" })
     public ResponseEntity postTemplate(@PathVariable String weblogId, @Valid @RequestBody WeblogTemplate templateData,
-                                      Principal p, Locale locale) throws ServletException {
-        try {
-            WeblogTemplate templateToSave = weblogTemplateDao.findById(templateData.getId()).orElse(null);
+                                      Principal p, Locale locale) {
 
-            // Check user permissions
-            User user = userDao.findEnabledByUserName(p.getName());
-            Weblog weblog = (templateToSave == null) ? weblogDao.findById(weblogId).orElse(null)
-                    : templateToSave.getWeblog();
+        WeblogTemplate templateToSave = weblogTemplateDao.findById(templateData.getId()).orElse(null);
 
-            if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
+        // Check user permissions
+        User user = userDao.findEnabledByUserName(p.getName());
+        Weblog weblog = (templateToSave == null) ? weblogDao.findById(weblogId).orElse(null)
+                : templateToSave.getWeblog();
 
-                // create new?
-                if (templateToSave == null) {
-                    templateToSave = new WeblogTemplate();
-                    templateToSave.setWeblog(weblog);
-                    if (templateData.getRole() != null) {
-                        templateToSave.setRole(templateData.getRole());
-                    } else {
-                        templateToSave.setRole(Template.Role.valueOf(templateData.getRoleName()));
-                    }
-                    templateToSave.setTemplate(templateData.getTemplate());
+        if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
+
+            // create new?
+            if (templateToSave == null) {
+                templateToSave = new WeblogTemplate();
+                templateToSave.setWeblog(weblog);
+                if (templateData.getRole() != null) {
+                    templateToSave.setRole(templateData.getRole());
                 } else {
-                    templateToSave.setTemplate(templateData.getTemplate());
+                    templateToSave.setRole(Template.Role.valueOf(templateData.getRoleName()));
                 }
-
-                // some properties relevant only for certain template roles
-                if (!templateToSave.getRole().isSingleton()) {
-                    templateToSave.setDescription(templateData.getDescription());
-                }
-
-                String originalName = templateToSave.getName();
-                if (Template.Derivation.SPECIFICBLOG.equals(templateToSave.getDerivation())) {
-                    templateToSave.setName(templateData.getName());
-                }
-
-                templateToSave.setLastModified(Instant.now());
-
-                List<Violation> violations = validateTemplates(templateToSave, locale);
-                if (violations.size() > 0) {
-                    return ValidationErrorResponse.badRequest(violations);
-                }
-
-                weblogTemplateDao.save(templateToSave);
-                weblogManager.evictWeblogTemplateCaches(templateToSave.getWeblog(), templateToSave.getName(),
-                        templateToSave.getRole());
-                if (originalName != null) {
-                    weblogTemplateDao.evictWeblogTemplateByName(templateToSave.getWeblog(), originalName);
-                }
-                weblogManager.saveWeblog(templateToSave.getWeblog(), true);
-
-                return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(templateToSave.getId());
+                templateToSave.setTemplate(templateData.getTemplate());
             } else {
-                return ResponseEntity.status(403).body(messages.getMessage("error.title.403", null,
-                        locale));
+                templateToSave.setTemplate(templateData.getTemplate());
             }
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
+
+            // some properties relevant only for certain template roles
+            if (!templateToSave.getRole().isSingleton()) {
+                templateToSave.setDescription(templateData.getDescription());
+            }
+
+            String originalName = templateToSave.getName();
+            if (Template.Derivation.SPECIFICBLOG.equals(templateToSave.getDerivation())) {
+                templateToSave.setName(templateData.getName());
+            }
+
+            templateToSave.setLastModified(Instant.now());
+
+            List<Violation> violations = validateTemplates(templateToSave, locale);
+            if (violations.size() > 0) {
+                return ValidationErrorResponse.badRequest(violations);
+            }
+
+            weblogTemplateDao.save(templateToSave);
+            weblogManager.evictWeblogTemplateCaches(templateToSave.getWeblog(), templateToSave.getName(),
+                    templateToSave.getRole());
+            if (originalName != null) {
+                weblogTemplateDao.evictWeblogTemplateByName(templateToSave.getWeblog(), originalName);
+            }
+            weblogManager.saveWeblog(templateToSave.getWeblog(), true);
+
+            return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(templateToSave.getId());
+        } else {
+            return ResponseEntity.status(403).body(messages.getMessage("error.title.403", null,
+                    locale));
         }
     }
 

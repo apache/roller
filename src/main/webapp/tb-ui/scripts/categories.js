@@ -35,6 +35,7 @@ $(function() {
 
 tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
+    this.errorObj = {};
 
     this.formatDate = function(inDate) {
         if (inDate) {
@@ -45,6 +46,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     }
 
     this.updateItem = function(obj) {
+        this.messageClear();
         // https://stackoverflow.com/a/18030442/1207540
         var categoryId = obj.target.getAttribute("data-category-id");
 
@@ -67,6 +69,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     }
 
     this.deleteItem = function() {
+      this.messageClear();
       $('#deleteCategoryModal').modal('hide');
 
       $http.delete(contextPath + '/tb-ui/authoring/rest/category/' + this.selectedCategoryId + '?targetCategoryId=' + this.targetCategoryId).then(
@@ -92,11 +95,14 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
            window.location.replace($('#refreshURL').attr('value'));
         } else if (response.status == 409) {
            self.showUpdateErrorMessage = true;
-        }
+        } else {
+            self.errorObj = response.data;
+         }
     }
 
     this.messageClear = function() {
         this.showUpdateErrorMessage = false;
+        this.errorObj = {};
     }
 
     this.inputClear = function() {

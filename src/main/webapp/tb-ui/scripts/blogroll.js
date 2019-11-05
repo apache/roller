@@ -13,6 +13,7 @@ $(function() {
 tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
     this.itemToEdit = {};
+    this.errorObj = {};
 
     this.itemsSelected = function() {
         return $('input[name="idSelections"]:checked').size() > 0;
@@ -34,6 +35,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     };
 
     this.deleteLinks = function() {
+        this.messageClear();
         $('#deleteLinksModal').modal('hide');
 
         var selectedLinkIds = [];
@@ -59,6 +61,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     }
 
     this.updateItem = function() {
+        this.messageClear();
         if (this.itemToEdit.name && this.itemToEdit.url) {
             $http.put(contextPath + (this.itemToEdit.id ? '/tb-ui/authoring/rest/bookmark/' + this.itemToEdit.id
                 : '/tb-ui/authoring/rest/bookmarks?weblogId=' + actionWeblogId),
@@ -76,7 +79,13 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.commonErrorResponse = function(response) {
         if (response.status == 408) {
            window.location.replace($('#refreshURL').attr('value'));
+        } else {
+           self.errorObj = response.data;
         }
+    }
+
+    this.messageClear = function() {
+        this.errorObj = {};
     }
 
     this.loadItems();

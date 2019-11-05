@@ -28,8 +28,6 @@ import org.tightblog.util.HTMLSanitizer;
 import org.tightblog.util.Utilities;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,9 +35,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -52,8 +50,6 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(DynamicProperties.class)
 @RequestMapping(path = "/tb-ui/authoring/rest/comments")
 public class CommentController {
-
-    private static Logger log = LoggerFactory.getLogger(CommentController.class);
 
     // number of comments to show per page
     private static final int ITEMS_PER_PAGE = 30;
@@ -142,108 +138,87 @@ public class CommentController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public void deleteComment(@PathVariable String id, Principal p, HttpServletResponse response)
-            throws ServletException {
+    public void deleteComment(@PathVariable String id, Principal p, HttpServletResponse response) {
 
-        try {
-            WeblogEntryComment itemToRemove = weblogEntryCommentDao.findByIdOrNull(id);
-            if (itemToRemove != null) {
-                Weblog weblog = itemToRemove.getWeblogEntry().getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
-                    weblogEntryManager.removeComment(itemToRemove);
-                    luceneIndexer.updateIndex(itemToRemove.getWeblogEntry(), false);
-                    dp.updateLastSitewideChange();
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                }
+        WeblogEntryComment itemToRemove = weblogEntryCommentDao.findByIdOrNull(id);
+        if (itemToRemove != null) {
+            Weblog weblog = itemToRemove.getWeblogEntry().getWeblog();
+            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
+                weblogEntryManager.removeComment(itemToRemove);
+                luceneIndexer.updateIndex(itemToRemove.getWeblogEntry(), false);
+                dp.updateLastSitewideChange();
+                response.setStatus(HttpServletResponse.SC_OK);
             } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
-        } catch (Exception e) {
-            log.error("Error removing entry {}", id, e);
-            throw new ServletException(e.getMessage());
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
     @PostMapping(value = "/{id}/approve")
-    private void approveComment(@PathVariable String id, Principal p, HttpServletResponse response)
-            throws ServletException {
-
+    public void approveComment(@PathVariable String id, Principal p, HttpServletResponse response) {
         changeApprovalStatus(id, p, response, WeblogEntryComment.ApprovalStatus.APPROVED);
     }
 
     @PostMapping(value = "/{id}/hide")
-    private void hideComment(@PathVariable String id, Principal p, HttpServletResponse response)
-            throws ServletException {
-
+    public void hideComment(@PathVariable String id, Principal p, HttpServletResponse response) {
         changeApprovalStatus(id, p, response, WeblogEntryComment.ApprovalStatus.DISAPPROVED);
     }
 
     private void changeApprovalStatus(@PathVariable String id, Principal p, HttpServletResponse response,
-                               WeblogEntryComment.ApprovalStatus newStatus)
-            throws ServletException {
+                               WeblogEntryComment.ApprovalStatus newStatus) {
 
-        try {
-            WeblogEntryComment comment = weblogEntryCommentDao.findByIdOrNull(id);
-            if (comment != null) {
-                Weblog weblog = comment.getWeblogEntry().getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
-                    WeblogEntryComment.ApprovalStatus oldStatus = comment.getStatus();
-                    comment.setStatus(newStatus);
-                    // send approval notification only first time, not after any subsequent hide and approves.
-                    if ((oldStatus == ApprovalStatus.PENDING || oldStatus == ApprovalStatus.SPAM) &&
-                            newStatus == ApprovalStatus.APPROVED) {
-                        emailService.sendYourCommentWasApprovedNotifications(Collections.singletonList(comment));
-                    }
-                    boolean needRefresh = ApprovalStatus.APPROVED.equals(oldStatus) ^ ApprovalStatus.APPROVED.equals(newStatus);
-                    weblogEntryManager.saveComment(comment, needRefresh);
-                    luceneIndexer.updateIndex(comment.getWeblogEntry(), false);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        WeblogEntryComment comment = weblogEntryCommentDao.findByIdOrNull(id);
+        if (comment != null) {
+            Weblog weblog = comment.getWeblogEntry().getWeblog();
+            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
+                WeblogEntryComment.ApprovalStatus oldStatus = comment.getStatus();
+                comment.setStatus(newStatus);
+                // send approval notification only first time, not after any subsequent hide and approves.
+                if ((oldStatus == ApprovalStatus.PENDING || oldStatus == ApprovalStatus.SPAM) &&
+                        newStatus == ApprovalStatus.APPROVED) {
+                    emailService.sendYourCommentWasApprovedNotifications(Collections.singletonList(comment));
                 }
+                boolean needRefresh = ApprovalStatus.APPROVED.equals(oldStatus) ^ ApprovalStatus.APPROVED.equals(newStatus);
+                weblogEntryManager.saveComment(comment, needRefresh);
+                luceneIndexer.updateIndex(comment.getWeblogEntry(), false);
+                response.setStatus(HttpServletResponse.SC_OK);
             } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
-        } catch (Exception e) {
-            log.error("Error removing entry {}", id, e);
-            throw new ServletException(e.getMessage());
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 
     @PutMapping(value = "/{id}/content")
     public WeblogEntryComment updateComment(@PathVariable String id, Principal p, HttpServletRequest request,
-                                     HttpServletResponse response)
-            throws ServletException {
-        try {
-            WeblogEntryComment wec = weblogEntryCommentDao.findByIdOrNull(id);
-            if (wec == null) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                                     HttpServletResponse response) throws IOException {
+        WeblogEntryComment wec = weblogEntryCommentDao.findByIdOrNull(id);
+        if (wec == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        } else {
+            // need post permission to edit comments
+            User authenticatedUser = userDao.findEnabledByUserName(p.getName());
+            Weblog weblog = wec.getWeblogEntry().getWeblog();
+            if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.POST)) {
+                String content = Utilities.apiValueToFormSubmissionValue(request.getInputStream());
+
+                // Validate content
+                HTMLSanitizer.Level sanitizerLevel = webloggerPropertiesDao.findOrNull().getCommentHtmlPolicy();
+                Whitelist commentHTMLWhitelist = sanitizerLevel.getWhitelist();
+
+                wec.setContent(Jsoup.clean(content, commentHTMLWhitelist));
+
+                // don't update the posttime when updating the comment
+                wec.setPostTime(wec.getPostTime());
+                weblogEntryManager.saveComment(wec, true);
+                return wec;
             } else {
-                // need post permission to edit comments
-                User authenticatedUser = userDao.findEnabledByUserName(p.getName());
-                Weblog weblog = wec.getWeblogEntry().getWeblog();
-                if (userManager.checkWeblogRole(authenticatedUser, weblog, WeblogRole.POST)) {
-                    String content = Utilities.apiValueToFormSubmissionValue(request.getInputStream());
-
-                    // Validate content
-                    HTMLSanitizer.Level sanitizerLevel = webloggerPropertiesDao.findOrNull().getCommentHtmlPolicy();
-                    Whitelist commentHTMLWhitelist = sanitizerLevel.getWhitelist();
-
-                    wec.setContent(Jsoup.clean(content, commentHTMLWhitelist));
-
-                    // don't update the posttime when updating the comment
-                    wec.setPostTime(wec.getPostTime());
-                    weblogEntryManager.saveComment(wec, true);
-                    return wec;
-                } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                }
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
-            return null;
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
         }
+        return null;
     }
 }

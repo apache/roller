@@ -49,7 +49,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.service.LuceneIndexer;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
@@ -63,7 +62,6 @@ public class InstallerController {
 
     private static Logger log = LoggerFactory.getLogger(InstallerController.class);
 
-    ServletContext context;
     private DataSource tbDataSource;
     private MessageSource messages;
     private DynamicProperties dynamicProperties;
@@ -71,10 +69,9 @@ public class InstallerController {
     private LuceneIndexer luceneIndexer;
 
     @Autowired
-    public InstallerController(ServletContext context, DataSource tbDataSource, MessageSource messages,
+    public InstallerController(DataSource tbDataSource, MessageSource messages,
                                LuceneIndexer luceneIndexer, DynamicProperties dynamicProperties,
                                Environment environment) {
-        this.context = context;
         this.tbDataSource = tbDataSource;
         this.luceneIndexer = luceneIndexer;
         this.messages = messages;

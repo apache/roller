@@ -46,8 +46,6 @@ import org.tightblog.dao.WeblogDao;
 import org.tightblog.dao.WebloggerPropertiesDao;
 import org.tightblog.util.Utilities;
 import org.tightblog.editorui.model.ValidationErrorResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +58,6 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.RollbackException;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
@@ -79,8 +76,6 @@ import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
-
-    private static Logger log = LoggerFactory.getLogger(UserController.class);
 
     private static final Pattern PWD_PATTERN =
             Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,20}$");
@@ -130,12 +125,12 @@ public class UserController {
     }
 
     @GetMapping(value = "/tb-ui/admin/rest/useradmin/userlist")
-    public Map<String, String> getUserEditList() throws ServletException {
+    public Map<String, String> getUserEditList() {
         return createUserMap(userDao.findAll());
     }
 
     @GetMapping(value = "/tb-ui/admin/rest/useradmin/registrationapproval")
-    public List<User> getRegistrationsNeedingApproval() throws ServletException {
+    public List<User> getRegistrationsNeedingApproval() {
         return userDao.findUsersToApprove();
     }
 
@@ -169,8 +164,7 @@ public class UserController {
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/potentialmembers")
     public Map<String, String> getPotentialNewBlogMembers(@PathVariable String weblogId, Principal p,
-                                                          HttpServletResponse response)
-            throws ServletException {
+                                                          HttpServletResponse response) {
 
         Weblog weblog = weblogDao.findById(weblogId).orElse(null);
         if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
@@ -204,14 +198,13 @@ public class UserController {
         for (User user : users) {
             userMap.put(user.getId(), user.getScreenName() + " (" + user.getEmailAddress() + ")");
         }
-        Map<String, String> sortedMap = userMap.entrySet().stream().sorted(Map.Entry.comparingByValue())
+        return userMap.entrySet().stream().sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                         (e1, e2) -> e2, LinkedHashMap::new));
-        return sortedMap;
     }
 
     @GetMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}")
-    public UserData getUserData(@PathVariable String id, HttpServletResponse response) throws ServletException {
+    public UserData getUserData(@PathVariable String id, HttpServletResponse response) {
         User user = userDao.findByIdOrNull(id);
 
         if (user != null) {
@@ -227,7 +220,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/userprofile/{id}")
-    public User getProfileData(@PathVariable String id, Principal p, HttpServletResponse response) throws ServletException {
+    public User getProfileData(@PathVariable String id, Principal p, HttpServletResponse response) {
         User user = userDao.findByIdOrNull(id);
         User authenticatedUser = userDao.findEnabledByUserName(p.getName());
 
@@ -240,8 +233,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/tb-ui/register/rest/registeruser")
-    public ResponseEntity registerUser(@Valid @RequestBody UserData newData, Locale locale, HttpServletResponse response)
-            throws ServletException {
+    public ResponseEntity registerUser(@Valid @RequestBody UserData newData, Locale locale, HttpServletResponse response) {
         List<Violation> errors = validateUser(null, newData, true, locale);
         if (errors.size() > 0) {
             return ValidationErrorResponse.badRequest(errors);
@@ -279,7 +271,7 @@ public class UserController {
 
     @PostMapping(value = "/tb-ui/authoring/rest/userprofile/{id}")
     public ResponseEntity updateUserProfile(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
-                                            Locale locale, HttpServletResponse response) throws ServletException {
+                                            Locale locale, HttpServletResponse response) {
         User user = userDao.findByIdOrNull(id);
         User authenticatedUser = userDao.findEnabledByUserName(p.getName());
 
@@ -296,7 +288,7 @@ public class UserController {
 
     @PutMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}")
     public ResponseEntity updateUser(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
-                                     Locale locale, HttpServletResponse response) throws ServletException {
+                                     Locale locale, HttpServletResponse response) {
         User user = userDao.findByIdOrNull(id);
         List<Violation> errors = validateUser(user, newData, false, locale);
         if (errors.size() > 0) {
@@ -306,13 +298,11 @@ public class UserController {
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/members")
-    public List<UserWeblogRole> getWeblogMembers(@PathVariable String weblogId, Principal p, HttpServletResponse response)
-            throws ServletException {
+    public List<UserWeblogRole> getWeblogMembers(@PathVariable String weblogId, Principal p, HttpServletResponse response) {
 
         Weblog weblog = weblogDao.findById(weblogId).orElse(null);
         if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-            List<UserWeblogRole> uwrs = userWeblogRoleDao.findByWeblog(weblog);
-            return uwrs;
+            return userWeblogRoleDao.findByWeblog(weblog);
         } else {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return null;
@@ -344,8 +334,7 @@ public class UserController {
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/memberupdate", produces = "text/plain")
     public ResponseEntity updateWeblogMembership(@PathVariable String weblogId, Principal p, Locale locale,
-                                                 @RequestBody List<UserWeblogRole> uwrs)
-            throws ServletException {
+                                                 @RequestBody List<UserWeblogRole> uwrs) {
 
         Weblog weblog = weblogDao.findById(weblogId).orElse(null);
         User user = userDao.findEnabledByUserName(p.getName());
@@ -376,66 +365,61 @@ public class UserController {
         }
     }
 
-    private ResponseEntity saveUser(User user, UserData newData, Principal p, HttpServletResponse response, boolean add)
-            throws ServletException {
-        try {
-            if (user != null) {
-                user.setScreenName(newData.getUser().getScreenName().trim());
-                user.setEmailAddress(newData.getUser().getEmailAddress().trim());
+    private ResponseEntity saveUser(User user, UserData newData, Principal p, HttpServletResponse response, boolean add) {
 
-                if (!UserStatus.ENABLED.equals(user.getStatus()) && StringUtils.isNotEmpty(
-                        newData.getUser().getActivationCode())) {
-                    user.setActivationCode(newData.getUser().getActivationCode());
-                }
+        if (user != null) {
+            user.setScreenName(newData.getUser().getScreenName().trim());
+            user.setEmailAddress(newData.getUser().getEmailAddress().trim());
 
-                if (add) {
-                    user.setStatus(newData.getUser().getStatus());
-                    if (userDao.count() == 0) {
-                        // first person in is always an admin
-                        user.setGlobalRole(GlobalRole.ADMIN);
-                    } else {
-                        user.setGlobalRole(webloggerPropertiesDao.findOrNull().isUsersCreateBlogs() ?
-                                GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER);
-                    }
+            if (!UserStatus.ENABLED.equals(user.getStatus()) && StringUtils.isNotEmpty(
+                    newData.getUser().getActivationCode())) {
+                user.setActivationCode(newData.getUser().getActivationCode());
+            }
+
+            if (add) {
+                user.setStatus(newData.getUser().getStatus());
+                if (userDao.count() == 0) {
+                    // first person in is always an admin
+                    user.setGlobalRole(GlobalRole.ADMIN);
                 } else {
-                    // users can't alter own roles or status
-                    if (!user.getUserName().equals(p.getName())) {
-                        user.setGlobalRole(newData.getUser().getGlobalRole());
-                        user.setStatus(newData.getUser().getStatus());
-                    }
-                }
-
-                try {
-                    userDao.saveAndFlush(user);
-                    userDao.evictUser(user);
-                    // reset password if set
-                    if (newData.getCredentials() != null) {
-                        UserCredentials credentials = newData.getCredentials();
-
-                        if (!StringUtils.isEmpty(credentials.getPasswordText())) {
-                            userManager.updateCredentials(user.getId(), credentials.getPasswordText());
-                        }
-                        // reset MFA secret if requested
-                        if (credentials.isEraseMfaSecret()) {
-                            userCredentialsDao.eraseMfaCode(user.getId());
-                        }
-                    }
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } catch (RollbackException e) {
-                    return ResponseEntity.status(HttpServletResponse.SC_CONFLICT).body("Persistence Problem");
+                    user.setGlobalRole(webloggerPropertiesDao.findOrNull().isUsersCreateBlogs() ?
+                            GlobalRole.BLOGCREATOR : GlobalRole.BLOGGER);
                 }
             } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                // users can't alter own roles or status
+                if (!user.getUserName().equals(p.getName())) {
+                    user.setGlobalRole(newData.getUser().getGlobalRole());
+                    user.setStatus(newData.getUser().getStatus());
+                }
             }
-            UserData data = new UserData();
-            data.setUser(user);
-            UserCredentials creds = userCredentialsDao.findByUserName(user.getUserName());
-            data.setCredentials(creds);
-            return ResponseEntity.ok(data);
-        } catch (Exception e) {
-            log.error("Error updating user", e);
-            throw new ServletException(e);
+
+            try {
+                userDao.saveAndFlush(user);
+                userDao.evictUser(user);
+                // reset password if set
+                if (newData.getCredentials() != null) {
+                    UserCredentials credentials = newData.getCredentials();
+
+                    if (!StringUtils.isEmpty(credentials.getPasswordText())) {
+                        userManager.updateCredentials(user.getId(), credentials.getPasswordText());
+                    }
+                    // reset MFA secret if requested
+                    if (credentials.isEraseMfaSecret()) {
+                        userCredentialsDao.eraseMfaCode(user.getId());
+                    }
+                }
+                response.setStatus(HttpServletResponse.SC_OK);
+            } catch (RollbackException e) {
+                return ResponseEntity.status(HttpServletResponse.SC_CONFLICT).body("Persistence Problem");
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        UserData data = new UserData();
+        data.setUser(user);
+        UserCredentials creds = userCredentialsDao.findByUserName(user.getUserName());
+        data.setCredentials(creds);
+        return ResponseEntity.ok(data);
     }
 
     private List<Violation> validateUser(User currentUser, UserData data, boolean isAdd, Locale locale) {
@@ -512,7 +496,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}/weblogs")
-    public List<UserWeblogRole> getUsersWeblogs(@PathVariable String id, HttpServletResponse response) throws ServletException {
+    public List<UserWeblogRole> getUsersWeblogs(@PathVariable String id, HttpServletResponse response) {
         User user = userDao.findByIdOrNull(id);
         if (user == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -528,8 +512,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/loggedinuser/weblogs")
-    public List<UserWeblogRole> getLoggedInUsersWeblogs(Principal p, HttpServletResponse response)
-            throws ServletException {
+    public List<UserWeblogRole> getLoggedInUsersWeblogs(Principal p, HttpServletResponse response) {
         User user = userDao.findEnabledByUserName(p.getName());
         if (user == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

@@ -43,12 +43,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.dao.WeblogCategoryDao;
 import org.tightblog.dao.WeblogDao;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Manage weblog categories.
- */
 @RestController
 public class CategoryController {
 
@@ -70,53 +66,45 @@ public class CategoryController {
 
     @PutMapping(value = "/tb-ui/authoring/rest/category/{id}")
     public void updateCategory(@PathVariable String id, @RequestBody WeblogCategory updatedCategory, Principal p,
-                               HttpServletResponse response) throws ServletException {
-        try {
-            WeblogCategory c = weblogCategoryDao.findById(id).orElse(null);
-            if (c != null) {
-                Weblog weblog = c.getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-                    if (!c.getName().equals(updatedCategory.getName())) {
-                        Optional<WeblogCategory> maybeWC = weblog.getWeblogCategories().stream()
-                                .filter(wc -> wc.getId().equals(c.getId())).findFirst();
-                        maybeWC.ifPresent(wc -> wc.setName(updatedCategory.getName()));
-                        try {
-                            weblogManager.saveWeblog(weblog, true);
-                            response.setStatus(HttpServletResponse.SC_OK);
-                        } catch (TransactionSystemException e) {
-                            response.setStatus(HttpServletResponse.SC_CONFLICT);
-                        }
+                               HttpServletResponse response) {
+        WeblogCategory c = weblogCategoryDao.findById(id).orElse(null);
+        if (c != null) {
+            Weblog weblog = c.getWeblog();
+            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+                if (!c.getName().equals(updatedCategory.getName())) {
+                    Optional<WeblogCategory> maybeWC = weblog.getWeblogCategories().stream()
+                            .filter(wc -> wc.getId().equals(c.getId())).findFirst();
+                    maybeWC.ifPresent(wc -> wc.setName(updatedCategory.getName()));
+                    try {
+                        weblogManager.saveWeblog(weblog, true);
+                        response.setStatus(HttpServletResponse.SC_OK);
+                    } catch (TransactionSystemException e) {
+                        response.setStatus(HttpServletResponse.SC_CONFLICT);
                     }
-                } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 }
             } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
     }
 
     @PutMapping(value = "/tb-ui/authoring/rest/categories")
     public void addCategory(@RequestParam(name = "weblogId") String weblogId, @RequestBody WeblogCategory newCategory,
-                            Principal p, HttpServletResponse response) throws ServletException {
-        try {
-            Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-            if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-                WeblogCategory wc = new WeblogCategory(weblog, newCategory.getName());
-                try {
-                    weblog.addCategory(wc);
-                    weblogManager.saveWeblog(weblog, true);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } catch (IllegalArgumentException e) {
-                    response.setStatus(HttpServletResponse.SC_CONFLICT);
-                }
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            Principal p, HttpServletResponse response) {
+        Weblog weblog = weblogDao.findById(weblogId).orElse(null);
+        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+            WeblogCategory wc = new WeblogCategory(weblog, newCategory.getName());
+            try {
+                weblog.addCategory(wc);
+                weblogManager.saveWeblog(weblog, true);
+                response.setStatus(HttpServletResponse.SC_OK);
+            } catch (IllegalArgumentException e) {
+                response.setStatus(HttpServletResponse.SC_CONFLICT);
             }
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
     }
 
@@ -130,30 +118,24 @@ public class CategoryController {
 
     @DeleteMapping(value = "/tb-ui/authoring/rest/category/{id}")
     public void removeCategory(@PathVariable String id, @RequestParam(required = false) String targetCategoryId,
-                               Principal p, HttpServletResponse response)
-            throws ServletException {
+                               Principal p, HttpServletResponse response) {
+        WeblogCategory categoryToRemove = weblogCategoryDao.findById(id).orElse(null);
+        if (categoryToRemove != null) {
+            Weblog weblog = categoryToRemove.getWeblog();
+            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
 
-        try {
-            WeblogCategory categoryToRemove = weblogCategoryDao.findById(id).orElse(null);
-            if (categoryToRemove != null) {
-                Weblog weblog = categoryToRemove.getWeblog();
-                if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
+                Optional<WeblogCategory> targetCategory = targetCategoryId == null ?
+                        Optional.empty() : weblogCategoryDao.findById(targetCategoryId);
 
-                    Optional<WeblogCategory> targetCategory = targetCategoryId == null ?
-                            Optional.empty() : weblogCategoryDao.findById(targetCategoryId);
-
-                    targetCategory.ifPresent(tc -> weblogEntryManager.moveWeblogCategoryContents(categoryToRemove, tc));
-                    weblog.getWeblogCategories().remove(categoryToRemove);
-                    weblogManager.saveWeblog(weblog, true);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                }
+                targetCategory.ifPresent(tc -> weblogEntryManager.moveWeblogCategoryContents(categoryToRemove, tc));
+                weblog.getWeblogCategories().remove(categoryToRemove);
+                weblogManager.saveWeblog(weblog, true);
+                response.setStatus(HttpServletResponse.SC_OK);
             } else {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             }
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage());
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
     }
 
