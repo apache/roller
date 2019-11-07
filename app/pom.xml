@@ -38,7 +38,6 @@ limitations under the License.
         <java-activation.version>1.2.0</java-activation.version>
         <java-mail.version>1.4.7</java-mail.version>
         <jstl.version>1.2</jstl.version>
-
         <angular.version>1.7.8</angular.version>
         <ant.version>1.10.5</ant.version>
         <commons-validator.version>1.6</commons-validator.version>
@@ -58,13 +57,12 @@ limitations under the License.
         <slf4j.version>1.7.26</slf4j.version>
         <spring.version>4.1.4.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
-        <struts.version>2.5.20</struts.version>
+        <struts.version>2.5.21</struts.version>
         <velocity.version>1.7</velocity.version>
         <webjars.version>1.5</webjars.version>
         <ws-commons-util.version>1.0.2</ws-commons-util.version>
         <xml-security.version>1.3.0</xml-security.version>
         <xmlrpc-version>3.1.3</xmlrpc-version>
-
     </properties>
 
     <dependencies>
@@ -782,5 +780,12 @@ limitations under the License.
         </resources>
 
     </build>
+
+    <repositories>
+        <repository>
+            <id>struts-staging</id>
+            <url>https://repository.apache.org/content/groups/staging/</url>
+        </repository>
+    </repositories>
 
 </project>
