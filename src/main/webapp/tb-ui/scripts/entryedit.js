@@ -199,9 +199,8 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
                if (response.status == 408) {
                  self.errorObj.errorMessage = $sce.trustAsHtml($interpolate(msg.sessionTimeoutTmpl)({loginUrl}));
                  window.scrollTo(0, 0);
-               } else if (response.status == 400) {
-                 self.errorObj = response.data;
-                 window.scrollTo(0, 0);
+               } else {
+                 self.commonErrorResponse(response);
                }
             })
         };
@@ -238,6 +237,7 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
                window.location.replace($('#refreshURL').attr('value'));
             } else {
                self.errorObj = response.data;
+               window.scrollTo(0, 0);
             }
         }
 

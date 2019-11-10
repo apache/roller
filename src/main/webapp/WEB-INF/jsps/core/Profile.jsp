@@ -58,7 +58,7 @@
     <button type="button" class="close" data-ng-click="ctrl.errorObj.errors = null" aria-label="Close">
        <span aria-hidden="true">&times;</span>
     </button>
-    <ul>
+    <ul class="list-unstyled">
        <li ng-repeat="item in ctrl.errorObj.errors">{{item.message}}</li>
     </ul>
 </div>

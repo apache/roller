@@ -36,7 +36,7 @@ $(function() {
 tightblogApp.controller('PageController', ['$http', function PageController($http) {
     var self = this;
     this.successMessage = null;
-    this.errorMessage = null;
+    this.errorObj = {};
     this.mediaDirectories = null;
 
     this.loadMediaDirectories = function() {
@@ -100,7 +100,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
       $('#deleteFolderModal').modal('hide');
       $http.delete(contextPath + '/tb-ui/authoring/rest/mediadirectory/' + self.currentFolderId).then(
         function(response) {
-          self.successMessage = msg.folderDeleteSuccess;
+          self.successMessage = response.data;
           self.currentFolderId = null;
           self.loadMediaDirectories();
         },
@@ -119,11 +119,10 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
       $http.post(contextPath + '/tb-ui/authoring/rest/mediafiles/weblog/' + weblogId,
       JSON.stringify(selectedFiles)).then(
         function(response) {
-          self.successMessage = msg.fileDeleteSuccess;
+          self.successMessage = response.data;
           self.loadMediaFiles();
-        },
-        self.commonErrorResponse
-      )
+        }, self.commonErrorResponse
+        )
     }
 
     this.moveFiles = function() {
@@ -138,29 +137,23 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
       "/todirectory/" + self.targetFolderId,
       JSON.stringify(selectedFiles)).then(
         function(response) {
-          self.successMessage = msg.fileMoveSuccess;
+          self.successMessage = response.data;
           self.loadMediaFiles();
-        },
-        function(response) {
-         if (response.status == 408) {
-           window.location.replace($('#refreshURL').attr('value'));  // return;
-         } else {
-           self.errorMessage = msg.fileMoveError;
-         }
-        })
+        }, self.commonErrorResponse
+        )
     }
 
     this.commonErrorResponse = function(response) {
          if (response.status == 408) {
            window.location.replace($('#refreshURL').attr('value'));  // return;
-         } else if (response.status == 400) {
-           self.errorMessage = response.data;
+         } else {
+           self.errorObj = response.data;
          }
     }
 
     this.messageClear = function() {
         this.successMessage = null;
-        this.errorMessage = null;
+        this.errorObj = {};
     }
 
 }]);

@@ -29,11 +29,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.tightblog.domain.GlobalRole;
 import org.tightblog.domain.WeblogRole;
-import org.tightblog.editorui.model.Menu;
-import org.tightblog.editorui.model.ParsedMenu;
+import org.tightblog.bloggerui.model.Menu;
+import org.tightblog.bloggerui.model.ParsedMenu;
 import org.tightblog.dao.WebloggerPropertiesDao;
-import org.tightblog.editorui.model.Menu.MenuTab;
-import org.tightblog.editorui.model.Menu.MenuTabItem;
+import org.tightblog.bloggerui.model.Menu.MenuTab;
+import org.tightblog.bloggerui.model.Menu.MenuTabItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

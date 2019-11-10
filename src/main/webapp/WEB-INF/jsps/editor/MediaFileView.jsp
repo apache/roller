@@ -28,11 +28,7 @@
     var msg = {
         confirmDeleteFilesTmpl: "<fmt:message key='mediafileView.confirmDeleteFilesTmpl'/>",
         confirmDeleteFolderTmpl: "<fmt:message key='mediafileView.confirmDeleteFolderTmpl'/>",
-        confirmMoveFilesTmpl: "<fmt:message key='mediafileView.confirmMoveFilesTmpl'/>",
-        fileDeleteSuccess: '<fmt:message key="mediaFileView.delete.success"/>',
-        folderDeleteSuccess: '<fmt:message key="mediaFileView.deleteFolder.success"/>',
-        fileMoveSuccess: '<fmt:message key="mediaFileView.move.success"/>',
-        fileMoveError: '<fmt:message key="mediaFileView.move.errors"/>'
+        confirmMoveFilesTmpl: "<fmt:message key='mediafileView.confirmMoveFilesTmpl'/>"
     };
 </script>
 
@@ -52,12 +48,15 @@
     </button>
 </div>
 
-<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorMessage" ng-cloak>
-    {{ctrl.errorMessage}}
-    <button type="button" class="close" data-ng-click="ctrl.errorMessage = null" aria-label="Close">
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorObj.errors" ng-cloak>
+    <button type="button" class="close" data-ng-click="ctrl.errorObj.errors = null" aria-label="Close">
        <span aria-hidden="true">&times;</span>
     </button>
+    <ul class="list-unstyled">
+       <li ng-repeat="item in ctrl.errorObj.errors">{{item.message}}</li>
+    </ul>
 </div>
+
 
 <div class="control">
     <span style="padding-left:7px">

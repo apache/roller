@@ -52,18 +52,20 @@ var weblogId = "<c:out value='${actionWeblog.id}'/>";
     </div>
 </div>
 
-<div id="successMessageDiv" class="alert alert-success" role="alert" ng-show="ctrl.messageToShow == 'success'" ng-cloak>
-    <fmt:message key="generic.changes.saved"/>
-    <button type="button" class="close" data-ng-click="ctrl.messageToShow = null" aria-label="Close">
+<div id="successMessageDiv" class="alert alert-success" role="alert" ng-show="ctrl.successMessage" ng-cloak>
+    {{ctrl.successMessage}}
+    <button type="button" class="close" data-ng-click="ctrl.successMessage = null" aria-label="Close">
        <span aria-hidden="true">&times;</span>
     </button>
 </div>
 
-<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.messageToShow == 'error'" ng-cloak>
-    <button type="button" class="close" data-ng-click="ctrl.messageToShow = null" aria-label="Close">
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorObj.errors" ng-cloak>
+    <button type="button" class="close" data-ng-click="ctrl.errorObj.errors = null" aria-label="Close">
        <span aria-hidden="true">&times;</span>
     </button>
-    <b>{{ctrl.errorMessage}}</b>
+    <ul class="list-unstyled">
+       <li ng-repeat="item in ctrl.errorObj.errors">{{item.message}}</li>
+    </ul>
 </div>
 
     <table class="table table-bordered table-hover">

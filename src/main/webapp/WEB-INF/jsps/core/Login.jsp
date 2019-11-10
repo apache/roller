@@ -55,14 +55,14 @@
         <tr>
             <td width="20%" align="right"><fmt:message key="login.userName" /></td>
             <td width="80%">
-                <input type="text" name="username" value="gmazza" id="j_username" size="25" onBlur="this.value=this.value.trim()"/>
+                <input type="text" name="username" id="j_username" size="25" onBlur="this.value=this.value.trim()"/>
             </td>
         </tr>
 
         <tr>
             <td width="20%" align="right"><fmt:message key="login.password" /></td>
             <td width="80%">
-                <input type="password" name="password" value="1@Password" id="j_password" size="20" onBlur="this.value=this.value.trim()"/>
+                <input type="password" name="password" id="j_password" size="20" onBlur="this.value=this.value.trim()"/>
             </td>
         </tr>
 

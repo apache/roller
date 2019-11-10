@@ -96,7 +96,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     this.commonErrorResponse = function(response) {
         if (response.status == 408) {
            window.location.replace($('#refreshURL').attr('value'));
-        } else if (response.status == 400) {
+        } else {
            self.errorMsg = response.data;
         }
     }
