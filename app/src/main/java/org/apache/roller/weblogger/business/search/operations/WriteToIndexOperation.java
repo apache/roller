@@ -35,6 +35,7 @@ public abstract class WriteToIndexOperation extends IndexOperation {
     private static Log mLogger =
             LogFactory.getFactory().getInstance(WriteToIndexOperation.class);
     
+    @Override
     public void run() {
         try {
             manager.getReadWriteLock().writeLock().lock();

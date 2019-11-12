@@ -117,6 +117,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
     /**
      * Get url for a collection of entries on a given weblog.
      */
+    @Override
     public String getWeblogCollectionURL(Weblog weblog,
                                                       String locale,
                                                       String category,

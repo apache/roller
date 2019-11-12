@@ -64,6 +64,7 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
     }
     
     
+    @Override
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
@@ -97,7 +98,8 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
         }
     }
 
-    
+
+    @Override
     public String execute() {
         return INPUT;
     }
