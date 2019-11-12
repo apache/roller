@@ -54,6 +54,7 @@ public class PreviewResourceServlet extends HttpServlet {
 
     private ServletContext context = null;
 
+    @Override
     public void init(ServletConfig config) throws ServletException {
 
         super.init(config);
@@ -66,6 +67,7 @@ public class PreviewResourceServlet extends HttpServlet {
     /**
      * Handles requests for user uploaded resources.
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
