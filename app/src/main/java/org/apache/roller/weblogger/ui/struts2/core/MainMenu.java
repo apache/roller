@@ -50,11 +50,13 @@ public class MainMenu extends UIAction {
     
     
     // override default security, we do not require an action weblog
+    @Override
     public boolean isWeblogRequired() {
         return false;
     }
     
     
+    @Override
     public String execute() {
         
         return SUCCESS;

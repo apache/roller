@@ -76,6 +76,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     }
     
     
+    @Override
     boolean isValidDestination(String servlet) {
         return (servlet != null && PREVIEW_SERVLET.equals(servlet));
     }
@@ -90,11 +91,13 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     }
     
     // override so that previews never show login status
+    @Override
     public String getAuthenticUser() {
         return null;
     }
     
     // override so that previews never show login status
+    @Override
     public boolean isLoggedIn() {
         return false;
     }
@@ -128,6 +131,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
     }
     
     // if we have a preview entry we would prefer to return that
+    @Override
     public WeblogEntry getWeblogEntry() {
         
         if(weblogEntry == null && 
@@ -149,6 +153,7 @@ public class WeblogPreviewRequest extends WeblogPageRequest {
         return weblogEntry;
     }
     
+    @Override
     public void setWeblogEntry(WeblogEntry weblogEntry) {
         this.weblogEntry = weblogEntry;
     }

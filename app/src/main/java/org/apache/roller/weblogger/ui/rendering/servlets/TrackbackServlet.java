@@ -59,6 +59,7 @@ public class TrackbackServlet extends HttpServlet {
     private CommentValidationManager commentValidationManager = null;
     
 
+    @Override
     public void init(ServletConfig config) throws ServletException {
         commentValidationManager = new CommentValidationManager();
         
@@ -72,6 +73,7 @@ public class TrackbackServlet extends HttpServlet {
      *
      * The TrackbackServlet does not support GET requests, it's a 404.
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         
@@ -84,6 +86,7 @@ public class TrackbackServlet extends HttpServlet {
      *
      * Here we handle incoming trackback posts.
      */
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
