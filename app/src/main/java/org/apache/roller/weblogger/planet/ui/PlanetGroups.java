@@ -58,6 +58,7 @@ public class PlanetGroups extends PlanetUIAction  implements ServletRequestAware
     /**
      * Show planet groups page.
      */
+    @Override
     public String execute() {
         return LIST;
     }
