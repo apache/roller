@@ -55,15 +55,18 @@ public class Install extends UIAction {
     private String databaseName = "Unknown";
 
 
+    @Override
     public boolean isUserRequired() {
         return false;
     }
 
+    @Override
     public boolean isWeblogRequired() {
         return false;
     }
 
 
+    @Override
     public String execute() {
 
         if (WebloggerFactory.isBootstrapped()) {
@@ -208,6 +211,7 @@ public class Install extends UIAction {
         return name;
     }
 
+    @Override
     public String getProp(String key) {
         // Static config only, we don't have database yet
         String value = WebloggerConfig.getProperty(key);

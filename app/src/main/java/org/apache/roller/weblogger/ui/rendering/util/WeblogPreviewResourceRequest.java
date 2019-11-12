@@ -71,11 +71,13 @@ public class WeblogPreviewResourceRequest extends WeblogResourceRequest {
     }
     
     // override so that previews never show login status
+    @Override
     public String getAuthenticUser() {
         return null;
     }
     
     // override so that previews never show login status
+    @Override
     public boolean isLoggedIn() {
         return false;
     }
