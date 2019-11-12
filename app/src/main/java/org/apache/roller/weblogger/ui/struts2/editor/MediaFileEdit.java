@@ -61,6 +61,7 @@ public class MediaFileEdit extends MediaFileBase {
     /**
      * Prepares edit action.
      */
+    @Override
     public void myPrepare() {
         refreshAllDirectories();
         try {
@@ -90,6 +91,7 @@ public class MediaFileEdit extends MediaFileBase {
      * @return String The result of the action.
      */
     @SkipValidation
+    @Override
     public String execute() {
         MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
         try {
