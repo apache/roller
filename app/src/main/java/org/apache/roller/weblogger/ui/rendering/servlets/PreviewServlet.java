@@ -65,6 +65,7 @@ public class PreviewServlet extends HttpServlet {
     /**
      * Init method for this servlet
      */
+    @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         
         super.init(servletConfig);
@@ -76,6 +77,7 @@ public class PreviewServlet extends HttpServlet {
     /**
      * Handle GET requests for weblog pages.
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         

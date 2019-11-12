@@ -140,6 +140,7 @@ public class WeblogEntriesListPager extends AbstractPager {
     }
     
     
+    @Override
     public boolean hasMoreItems() {
         return more;
     }
