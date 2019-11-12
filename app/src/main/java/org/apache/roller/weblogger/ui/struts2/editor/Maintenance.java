@@ -45,6 +45,7 @@ public class Maintenance extends UIAction {
         this.pageTitle = "maintenance.title";
     }
 
+    @Override
     public String execute() {
         return SUCCESS;
     }

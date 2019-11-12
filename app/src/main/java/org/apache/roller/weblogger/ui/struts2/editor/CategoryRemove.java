@@ -68,6 +68,7 @@ public class CategoryRemove extends UIAction {
     }
     
     
+    @Override
     public void myPrepare() {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -83,6 +84,7 @@ public class CategoryRemove extends UIAction {
     /**
      * Display the remove template confirmation.
      */
+    @Override
     public String execute() {
         try {
             // Build list of categories that the removed category's blog entries (if any) can be moved to
@@ -136,6 +138,7 @@ public class CategoryRemove extends UIAction {
      * 
      * @return the string
      */
+    @Override
     public String cancel() {
         return CANCEL;
     }

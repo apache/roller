@@ -65,6 +65,7 @@ public final class BookmarksImport extends UIAction {
     /**
      * Request to import bookmarks
      */
+    @Override
     public String execute() {
         return INPUT;
     }
