@@ -57,6 +57,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     }
     
     
+    @Override
     protected void loadWeblogEntries(Date startDate, Date endDate, String catName) {
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -75,6 +76,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
     }
     
     
+    @Override
     public String getContent(Date day) {
         String content = null;
         try {
@@ -136,6 +138,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
      * @param alwaysURL        Always return a URL, never return null
      * @return URL for day, or null if no weblog entry on that day
      */
+    @Override
     public String computeUrl(Date day, boolean nextPrevMonthURL, boolean alwaysURL) {
         String url = null;
         // get the 8 char YYYYMMDD datestring for day, returns null

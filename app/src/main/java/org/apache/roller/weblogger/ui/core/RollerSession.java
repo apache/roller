@@ -122,12 +122,14 @@ public class RollerSession
     
     
     /** Create session's Roller instance */
+    @Override
     public void sessionCreated(HttpSessionEvent se) {
         RollerSession rollerSession = new RollerSession();
         se.getSession().setAttribute(ROLLER_SESSION, rollerSession);
     }
-    
-    
+
+
+    @Override
     public void sessionDestroyed(HttpSessionEvent se) {
         clearSession(se);
     }
@@ -144,6 +146,7 @@ public class RollerSession
      * to call it when sessions are saved and then restored at some later
      * point in time.
      */
+    @Override
     public void sessionWillPassivate(HttpSessionEvent se) {
         clearSession(se);
     }
