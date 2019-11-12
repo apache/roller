@@ -159,6 +159,7 @@ public class FeedModel implements Model {
             this.feedRequest = feedRequest;
         }
         
+        @Override
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
             if(tags != null && tags.size() > 0) {
@@ -174,6 +175,7 @@ public class FeedModel implements Model {
             return super.createURL(url, params);
         }
         
+        @Override
         public String getUrl() {
             return createURL(super.getUrl(), new HashMap());
         }
@@ -191,6 +193,7 @@ public class FeedModel implements Model {
             this.feedRequest = feedRequest;
         }
         
+        @Override
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
             if(tags != null && tags.size() > 0) {
@@ -206,6 +209,7 @@ public class FeedModel implements Model {
             return super.createURL(url, params);
         }
         
+        @Override
         public String getUrl() {
             return createURL(super.getUrl(), new HashMap());
         }
@@ -223,6 +227,7 @@ public class FeedModel implements Model {
             this.feedRequest = feedRequest;
         }
         
+        @Override
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
             if(tags != null && tags.size() > 0) {
@@ -238,6 +243,7 @@ public class FeedModel implements Model {
             return super.createURL(url, params);
         }
         
+        @Override
         public String getUrl() {
             return createURL(super.getUrl(), new HashMap());
         }

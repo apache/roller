@@ -37,6 +37,7 @@ public class PreviewURLModel extends URLModel {
     private URLStrategy urlStrategy = null;
     
     
+    @Override
     public void init(Map initData) throws WebloggerException {
         
         // need a weblog request so that we can know the weblog and locale
@@ -71,6 +72,7 @@ public class PreviewURLModel extends URLModel {
      * knowing what theme you are previewing and thus couldn't find the
      * resources for that theme.
      */
+    @Override
     public String resource(String filePath) {
         return urlStrategy.getWeblogResourceURL(weblog, filePath, true);
     }

@@ -44,11 +44,11 @@ public class LoadSaltFilter implements Filter {
         chain.doFilter(request, response);
     }
  
-    //@Override
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
  
-    //@Override
+    @Override
     public void destroy() {
     }
 }

@@ -81,9 +81,11 @@ public class BootstrapFilter implements Filter {
     }
     
     
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         context = filterConfig.getServletContext();
     }
-    
+
+    @Override
     public void destroy() {}    
 }
