@@ -230,7 +230,7 @@ public class URLService {
     public String getAtomFeedURLForCategory(Weblog weblog, String category) {
         String url = getAtomFeedURL(weblog);
         if (category != null && category.trim().length() > 0) {
-            url += "/category/" + Utilities.encode(category);
+            url += "?category=" + Utilities.encode(category);
         }
         return url;
     }
@@ -241,7 +241,7 @@ public class URLService {
     public String getAtomFeedURLForTag(Weblog weblog, String tag) {
         String url = getAtomFeedURL(weblog);
         if (tag != null && tag.trim().length() > 0) {
-            url += "/tag/" + Utilities.encode(tag);
+            url += "?tag=" + Utilities.encode(tag);
         }
         return url;
     }

@@ -18,10 +18,19 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.rendering.processors;
+package org.tightblog.rendering.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.domain.SharedTemplate;
 import org.tightblog.rendering.model.FeedModel;
@@ -38,12 +47,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -54,10 +62,10 @@ import java.util.Map;
  */
 @RestController
 @EnableConfigurationProperties(DynamicProperties.class)
-@RequestMapping(path = "/tb-ui/rendering/feed/**")
-public class FeedProcessor extends AbstractProcessor {
+@RequestMapping(path = "/tb-ui/rendering/feed")
+public class FeedController extends AbstractController {
 
-    private static Logger log = LoggerFactory.getLogger(FeedProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(FeedController.class);
 
     public static final String PATH = "/tb-ui/rendering/feed";
 
@@ -69,9 +77,9 @@ public class FeedProcessor extends AbstractProcessor {
     private DynamicProperties dp;
 
     @Autowired
-    public FeedProcessor(WeblogDao weblogDao, LazyExpiringCache weblogFeedCache,
-                         @Qualifier("atomRenderer") ThymeleafRenderer thymeleafRenderer,
-                         ThemeManager themeManager, FeedModel feedModel, DynamicProperties dp) {
+    public FeedController(WeblogDao weblogDao, LazyExpiringCache weblogFeedCache,
+                          @Qualifier("atomRenderer") ThymeleafRenderer thymeleafRenderer,
+                          ThemeManager themeManager, FeedModel feedModel, DynamicProperties dp) {
         this.weblogDao = weblogDao;
         this.weblogFeedCache = weblogFeedCache;
         this.thymeleafRenderer = thymeleafRenderer;
@@ -80,14 +88,31 @@ public class FeedProcessor extends AbstractProcessor {
         this.dp = dp;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    void getFeed(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogFeedRequest feedRequest = WeblogFeedRequest.create(request, feedModel);
+    @GetMapping("/{weblogHandle}/feed")
+    ResponseEntity<Resource> getFeed(@PathVariable String weblogHandle,
+                                     @RequestParam(value = "category", required = false) String category,
+                                     @RequestParam(value = "tag", required = false) String tag,
+                                     @RequestParam(value = "page", required = false) Integer page,
+                                     Principal principal,
+                                     HttpServletRequest request, HttpServletResponse resonse) {
 
-        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(feedRequest.getWeblogHandle());
+        WeblogFeedRequest feedRequest = new WeblogFeedRequest(feedModel);
+        feedRequest.setWeblogHandle(weblogHandle);
+        feedRequest.setPrincipal(principal);
+
+        if (category != null) {
+            feedRequest.setCategoryName(Utilities.decode(category));
+        } else if (tag != null) {
+            feedRequest.setTag(Utilities.decode(tag));
+        }
+
+        if (page != null) {
+            feedRequest.setPageNum(page);
+        }
+
+        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(weblogHandle);
         if (weblog == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
+            return ResponseEntity.notFound().build();
         } else {
             feedRequest.setWeblog(weblog);
         }
@@ -106,8 +131,7 @@ public class FeedProcessor extends AbstractProcessor {
 
         if (inDb <= inBrowser) {
             weblogFeedCache.incrementRequestsHandledBy304();
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            return;
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
 
         // check cache before manually generating
@@ -129,20 +153,21 @@ public class FeedProcessor extends AbstractProcessor {
                 rendererOutput = thymeleafRenderer.render(template, model);
             }
 
-            response.setContentType(rendererOutput.getRole().getContentType());
-            response.setContentLength(rendererOutput.getContent().length);
-            response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
-            response.setHeader("Cache-Control", "no-cache");
-            response.getOutputStream().write(rendererOutput.getContent());
-
             if (newContent) {
                 log.debug("PUT {}", cacheKey);
                 weblogFeedCache.put(cacheKey, rendererOutput);
             }
 
+            return ResponseEntity.ok()
+                    .contentType(MediaType.valueOf(rendererOutput.getRole().getContentType()))
+                    .contentLength(rendererOutput.getContent().length)
+                    .lastModified(lastModified.toEpochMilli())
+                    .cacheControl(CacheControl.noCache())
+                    .body(new ByteArrayResource(rendererOutput.getContent()));
+
         } catch (Exception e) {
             log.error("Error rendering Atom feed for {}", feedRequest.getWeblog().getHandle(), e);
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 

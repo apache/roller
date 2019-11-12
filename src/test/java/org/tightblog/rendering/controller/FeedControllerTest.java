@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tightblog.rendering.processors;
+package org.tightblog.rendering.controller;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.tightblog.TestUtils;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.domain.SharedTheme;
@@ -42,8 +46,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -51,9 +55,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class FeedProcessorTest {
+public class FeedControllerTest {
 
-    private FeedProcessor feedProcessor;
+    private FeedController feedProcessor;
     private Weblog weblog;
     private SharedTheme sharedTheme;
     private DynamicProperties dp;
@@ -78,7 +82,7 @@ public class FeedProcessorTest {
         mockThymeleafRenderer = mock(ThymeleafRenderer.class);
         dp = new DynamicProperties();
 
-        feedProcessor = new FeedProcessor(mockWR, mockCache, mockThymeleafRenderer, mockThemeManager,
+        feedProcessor = new FeedController(mockWR, mockCache, mockThymeleafRenderer, mockThemeManager,
                 mock(FeedModel.class), dp);
 
         ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
@@ -91,15 +95,16 @@ public class FeedProcessorTest {
     }
 
     @Test
-    public void test404OnMissingWeblog() throws IOException {
+    public void test404OnMissingWeblog() {
         when(mockWR.findByHandleAndVisibleTrue(TestUtils.BLOG_HANDLE)).thenReturn(null);
-        feedProcessor.getFeed(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
+        ResponseEntity<Resource> result = feedProcessor.getFeed(TestUtils.BLOG_HANDLE, null, null,
+                null, null, mockRequest, mockResponse);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         verify(mockCache, never()).incrementIncomingRequests();
     }
 
     @Test
-    public void testReceive304NotModifiedContent() throws IOException {
+    public void testReceive304NotModifiedContent() {
         sharedTheme.setSiteWide(true);
         Instant now = Instant.now();
         dp.setLastSitewideChange(now.minus(2, ChronoUnit.DAYS));
@@ -108,9 +113,10 @@ public class FeedProcessorTest {
         when(mockRequest.getDateHeader(any())).thenReturn(now.toEpochMilli());
 
         Mockito.clearInvocations(mockRequest);
-        feedProcessor.getFeed(mockRequest, mockResponse);
+        ResponseEntity<Resource> result = feedProcessor.getFeed(TestUtils.BLOG_HANDLE, null, null,
+                null, null, mockRequest, mockResponse);
         verify(mockRequest).getDateHeader(any());
-        verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        assertEquals(HttpStatus.NOT_MODIFIED, result.getStatusCode());
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache).incrementRequestsHandledBy304();
     }
@@ -127,14 +133,16 @@ public class FeedProcessorTest {
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
-        feedProcessor.getFeed(mockRequest, mockResponse);
+        ResponseEntity<Resource> result = feedProcessor.getFeed(TestUtils.BLOG_HANDLE, null, null,
+                null, null, mockRequest, mockResponse);
 
         // verify cached content being returned
-        verify(mockResponse).setContentType(Template.Role.ATOMFEED.getContentType());
-        verify(mockResponse).setContentLength(7);
-        verify(mockResponse).setDateHeader("Last-Modified", twoDaysAgo.toEpochMilli());
-        verify(mockResponse).setHeader("Cache-Control", "no-cache");
-        verify(mockSOS).write("mytest1".getBytes(StandardCharsets.UTF_8));
+        assertNotNull(result.getHeaders().getContentType());
+        assertEquals(Template.Role.ATOMFEED.getContentType(), result.getHeaders().getContentType().toString());
+        assertEquals(7, result.getHeaders().getContentLength());
+        assertEquals(twoDaysAgo.truncatedTo(ChronoUnit.SECONDS).toEpochMilli(),
+                result.getHeaders().getLastModified());
+        assertEquals(CacheControl.noCache().getHeaderValue(), result.getHeaders().getCacheControl());
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
     }
@@ -152,23 +160,24 @@ public class FeedProcessorTest {
 
         when(mockThymeleafRenderer.render(any(), any())).thenReturn(renderedContent);
 
-        feedProcessor.getFeed(mockRequest, mockResponse);
+        ResponseEntity<Resource> result = feedProcessor.getFeed(TestUtils.BLOG_HANDLE, null, null,
+                null, null, mockRequest, mockResponse);
 
         // verify rendered content being returned
-        verify(mockResponse).setContentType(Template.Role.ATOMFEED.getContentType());
-        verify(mockResponse).setContentLength(8);
-        verify(mockResponse).setDateHeader("Last-Modified", threeDaysAgo.toEpochMilli());
-        verify(mockResponse).setHeader("Cache-Control", "no-cache");
-        verify(mockSOS).write("mytest24".getBytes(StandardCharsets.UTF_8));
+        assertNotNull(result.getHeaders().getContentType());
+        assertEquals(Template.Role.ATOMFEED.getContentType(), result.getHeaders().getContentType().toString());
+        assertEquals(8, result.getHeaders().getContentLength());
+        assertEquals(threeDaysAgo.truncatedTo(ChronoUnit.SECONDS).toEpochMilli(),
+                result.getHeaders().getLastModified());
+        assertEquals(CacheControl.noCache().getHeaderValue(), result.getHeaders().getCacheControl());
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
 
         // test 404 on rendering error
         Mockito.clearInvocations(mockResponse, mockCache, mockSOS);
         when(mockThymeleafRenderer.render(any(), any())).thenThrow(IllegalArgumentException.class);
-        feedProcessor.getFeed(mockRequest, mockResponse);
-        verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
-        verify(mockResponse, never()).setContentType(any());
+        result = feedProcessor.getFeed(null, null, null, null, null, mockRequest, mockResponse);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     @Test

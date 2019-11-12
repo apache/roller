@@ -18,12 +18,14 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.rendering.processors;
+package org.tightblog.rendering.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.rendering.model.PageModel;
 import org.tightblog.service.EmailService;
@@ -52,7 +54,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
@@ -81,13 +82,13 @@ import java.util.Map;
  * If email notification is turned on, each new non-spam comment will result in
  * an email sent to the blog owner and all who have commented on the same post.
  */
-@RestController
+@RestController("RenderingCommentController")
 @EnableConfigurationProperties(DynamicProperties.class)
 // how @RequestMapping is combined at the class- and method-levels: http://stackoverflow.com/q/22702568
 @RequestMapping(path = "/tb-ui/rendering/comment")
-public class CommentProcessor extends AbstractProcessor {
+public class CommentController extends AbstractController {
 
-    private static Logger log = LoggerFactory.getLogger(CommentProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(CommentController.class);
 
     public static final String PATH = "/tb-ui/rendering/comment";
 
@@ -113,12 +114,11 @@ public class CommentProcessor extends AbstractProcessor {
     }
 
     @Autowired
-    public CommentProcessor(WeblogDao weblogDao,
-                            UserDao userDao,
-                            LuceneIndexer luceneIndexer, WeblogEntryManager weblogEntryManager, UserManager userManager,
-                            EmailService emailService, DynamicProperties dp,
-                            MessageSource messages, PageModel pageModel,
-                            WebloggerPropertiesDao webloggerPropertiesDao) {
+    public CommentController(WeblogDao weblogDao, UserDao userDao, LuceneIndexer luceneIndexer,
+                             WeblogEntryManager weblogEntryManager, UserManager userManager,
+                             EmailService emailService, DynamicProperties dp,
+                             MessageSource messages, PageModel pageModel,
+                             WebloggerPropertiesDao webloggerPropertiesDao) {
         this.webloggerPropertiesDao = webloggerPropertiesDao;
         this.weblogDao = weblogDao;
         this.userDao = userDao;
@@ -148,7 +148,7 @@ public class CommentProcessor extends AbstractProcessor {
     /**
      * Here we handle incoming comment postings.
      */
-    @RequestMapping(path = "/**", method = RequestMethod.POST)
+    @PostMapping(path = "/**")
     void postComment(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         WebloggerProperties props = webloggerPropertiesDao.findOrNull();
@@ -361,7 +361,7 @@ public class CommentProcessor extends AbstractProcessor {
      * outside of the normal rendering process so that we can cache full pages and
      * still set the comment authentication section dynamically.
      */
-    @RequestMapping(value = "/authform", method = RequestMethod.GET)
+    @GetMapping(value = "/authform")
     void generateAuthForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         response.setContentType("text/html; charset=utf-8");

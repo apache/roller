@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tightblog.rendering.processors;
+package org.tightblog.rendering.controller;
 
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
-public class AbstractProcessorTest {
+public class AbstractControllerTest {
 
     @Test
     public void testGetModelMap() {

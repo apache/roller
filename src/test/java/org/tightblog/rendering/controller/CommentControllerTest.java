@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tightblog.rendering.processors;
+package org.tightblog.rendering.controller;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +63,7 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-public class CommentProcessorTest {
+public class CommentControllerTest {
 
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
@@ -72,7 +72,7 @@ public class CommentProcessorTest {
     private WeblogEntry weblogEntry;
     private User user;
     private WebloggerProperties properties;
-    private CommentProcessor processor;
+    private CommentController processor;
     private MessageSource mockMessageSource;
     private WeblogDao mockWD;
     private WeblogEntryManager mockWEM;
@@ -129,7 +129,7 @@ public class CommentProcessorTest {
         mockMessageSource = mock(MessageSource.class);
         PageModel mockPageModel = mock(PageModel.class);
 
-        processor = new CommentProcessor(mockWD, mockUD, mockIM, mockWEM, mockUM,
+        processor = new CommentController(mockWD, mockUD, mockIM, mockWEM, mockUM,
                 mockES, new DynamicProperties(), mockMessageSource, mockPageModel, mockPropertiesDao);
         processor.setCommentValidators(Collections.singletonList(alwaysNotSpamValidator));
 

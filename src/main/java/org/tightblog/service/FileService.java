@@ -266,20 +266,17 @@ public class FileService {
             return false;
         }
 
-        // default to false
-        boolean allowFile = false;
-
         if (!ObjectUtils.isEmpty(allowedMimeTypes)) {
             for (String allowedMimeType : allowedMimeTypes) {
                 if (matchContentType(contentType, allowedMimeType)) {
-                    allowFile = true;
-                    break;
+                    return true;
                 }
             }
             log.warn("{} blocked from uploading because not in allowed MIME types", fileDesc);
+            return false;
+        } else {
+            return true;
         }
-
-        return allowFile;
     }
 
     /**

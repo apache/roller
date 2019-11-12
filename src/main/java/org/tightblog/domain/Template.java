@@ -44,7 +44,7 @@ public interface Template {
         STYLESHEET("Stylesheet", "text/css", false, false, true, "template.stylesheet.description"),
         JAVASCRIPT("JavaScript file", "application/javascript", false, false,
                 true, "template.javascript.description"),
-        ATOMFEED("Atom Feed", "application/atom+xml; charset=utf-8", false, true,
+        ATOMFEED("Atom Feed", "application/atom+xml;charset=utf-8", false, true,
                 false, "template.atomFeed.description"),
         CUSTOM_INTERNAL("Custom internal", "text/html", false, false,
                 true, "template.customInternal.description"),

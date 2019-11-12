@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tightblog.rendering.processors;
+package org.tightblog.rendering.controller;
 
 import org.tightblog.rendering.model.Model;
 import org.springframework.beans.BeansException;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractProcessor implements ApplicationContextAware {
+public abstract class AbstractController implements ApplicationContextAware {
 
     private ApplicationContext appContext;
 

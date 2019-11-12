@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tightblog.rendering.processors;
+package org.tightblog.rendering.controller;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.tightblog.TestUtils;
-import org.tightblog.WebloggerTest;
 import org.tightblog.service.MediaManager;
 import org.tightblog.domain.MediaFile;
 import org.tightblog.domain.Weblog;
@@ -38,20 +40,17 @@ import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class MediaFileProcessorTest {
+public class MediaFileControllerTest {
 
-    private static Logger log = LoggerFactory.getLogger(MediaFileProcessorTest.class);
-
-    private MediaFileProcessor processor;
+    private MediaFileController controller;
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
     private LazyExpiringCache mockCache;
@@ -73,10 +72,11 @@ public class MediaFileProcessorTest {
         mockCache = mock(LazyExpiringCache.class);
 
         mediaFile = new MediaFile();
+        mediaFile.setContentType("image/jpeg");
         mockMFM = mock(MediaManager.class);
         when(mockMFM.getMediaFileWithContent("1234")).thenReturn(mediaFile);
 
-        processor = new MediaFileProcessor(mockWD, mockCache, mockMFM);
+        controller = new MediaFileController(mockWD, mockCache, mockMFM);
 
         ServletOutputStream mockSOS = mock(ServletOutputStream.class);
         mockResponse = mock(HttpServletResponse.class);
@@ -86,26 +86,17 @@ public class MediaFileProcessorTest {
     @Test
     public void test404OnMissingWeblog() throws IOException {
         when(mockWD.findByHandleAndVisibleTrue(TestUtils.BLOG_HANDLE)).thenReturn(null);
-        processor.getMediaFile(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
-        verify(mockCache, never()).incrementIncomingRequests();
-    }
-
-    @Test
-    public void test404OnNoPathInfo() throws IOException {
-        mockRequest = TestUtils.createMockServletRequestForMediaFileRequest(null);
-        processor.getMediaFile(mockRequest, mockResponse);
-        verify(mockMFM, never()).getMediaFileWithContent(anyString());
-        verify(mockResponse).sendError(SC_NOT_FOUND);
+        ResponseEntity<Resource> result = controller.getMediaFile(TestUtils.BLOG_HANDLE, "1234", mockRequest, mockResponse);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         verify(mockCache, never()).incrementIncomingRequests();
     }
 
     @Test
     public void test404OnNoMediaFile() throws IOException {
         when(mockMFM.getMediaFileWithContent("1234")).thenReturn(null);
-        processor.getMediaFile(mockRequest, mockResponse);
+        ResponseEntity<Resource> result = controller.getMediaFile(TestUtils.BLOG_HANDLE, "1234", mockRequest, mockResponse);
         verify(mockMFM).getMediaFileWithContent("1234");
-        verify(mockResponse).sendError(SC_NOT_FOUND);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         verify(mockCache, never()).incrementIncomingRequests();
     }
 
@@ -117,17 +108,17 @@ public class MediaFileProcessorTest {
         // request has cached version two days old, i.e., still usable without downloading
         when(mockRequest.getDateHeader(any())).thenReturn(now.minus(2,
                 ChronoUnit.DAYS).toEpochMilli());
-        processor.getMediaFile(mockRequest, mockResponse);
+        ResponseEntity<Resource> result = controller.getMediaFile(TestUtils.BLOG_HANDLE, "1234", mockRequest, mockResponse);
         verify(mockRequest).getDateHeader("If-Modified-Since");
-        verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        assertEquals(HttpStatus.NOT_MODIFIED, result.getStatusCode());
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache).incrementRequestsHandledBy304();
     }
 
     @Test
     public void testReturn404onFileNotFound() throws IOException {
-        processor.getMediaFile(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
+        ResponseEntity<Resource> result = controller.getMediaFile(TestUtils.BLOG_HANDLE, "1234", mockRequest, mockResponse);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
 
@@ -135,8 +126,8 @@ public class MediaFileProcessorTest {
         Mockito.clearInvocations(mockResponse);
         mediaFile.setContentType("image/jpeg");
         when(mockRequest.getParameter("tn")).thenReturn("true");
-        processor.getMediaFile(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
+        result = controller.getMediaFile(TestUtils.BLOG_HANDLE, "1234", mockRequest, mockResponse);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     @Test
@@ -147,39 +138,20 @@ public class MediaFileProcessorTest {
         mediaFile.setContent(regularFile);
         mediaFile.setThumbnail(regularFile);
         mediaFile.setContentType("image/jpeg");
-        processor.getMediaFile(mockRequest, mockResponse);
+        ResponseEntity<Resource> result = controller.getMediaFile(TestUtils.BLOG_HANDLE, "1234", mockRequest, mockResponse);
         // image/jpeg: regular image sent
-        verify(mockResponse).setContentType("image/jpeg");
+        assertEquals(MediaType.IMAGE_JPEG, result.getHeaders().getContentType());
 
         Mockito.clearInvocations(mockResponse);
         when(mockRequest.getParameter("tn")).thenReturn("true");
-        processor.getMediaFile(mockRequest, mockResponse);
+        result = controller.getMediaFile(TestUtils.BLOG_HANDLE, "1234", mockRequest, mockResponse);
         // image/png: thumbnail image sent
-        verify(mockResponse).setContentType("image/png");
+        assertEquals(MediaType.IMAGE_PNG, result.getHeaders().getContentType());
+        assertEquals(CacheControl.noCache().getHeaderValue(), result.getHeaders().getCacheControl());
+        assertEquals(now.truncatedTo(ChronoUnit.SECONDS).toEpochMilli(),
+                result.getHeaders().getLastModified());
 
-        verify(mockResponse).setHeader("Cache-Control", "no-cache");
-        verify(mockResponse).setDateHeader("Last-Modified", now.toEpochMilli());
         verify(mockCache, times(2)).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
-    }
-
-    @Test
-    public void testReturn404OnProcessingException() throws IOException, URISyntaxException {
-        File regularFile = new File(getClass().getResource(TEST_IMAGE).toURI());
-        mediaFile.setContent(regularFile);
-        WebloggerTest.logExpectedException(log, "IOException");
-        when(mockResponse.getOutputStream()).thenThrow(new IOException());
-        processor.getMediaFile(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
-        verify(mockResponse).reset();
-        verify(mockCache).incrementIncomingRequests();
-        verify(mockCache, never()).incrementRequestsHandledBy304();
-
-        // don't send error code if response committed
-        Mockito.clearInvocations(mockResponse);
-        when(mockResponse.isCommitted()).thenReturn(true);
-        processor.getMediaFile(mockRequest, mockResponse);
-        verify(mockResponse, never()).sendError(SC_NOT_FOUND);
-        verify(mockResponse, never()).reset();
     }
 }

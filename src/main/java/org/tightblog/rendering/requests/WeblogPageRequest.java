@@ -287,8 +287,8 @@ public class WeblogPageRequest extends WeblogRequest {
     }
 
     private boolean checkUserRights(WeblogRole role) {
-        return !preview && (authenticatedUser != null)
-                && pageModel.getUserManager().checkWeblogRole(authenticatedUser, weblog, role);
+        return !preview && getAuthenticatedUser() != null
+                && pageModel.getUserManager().checkWeblogRole(getAuthenticatedUser(), weblog, role);
     }
 
     /**

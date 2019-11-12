@@ -30,6 +30,8 @@ import org.springframework.mobile.device.DeviceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.Principal;
+
 /**
  * Represents a request to a weblog.
  * <p>
@@ -60,17 +62,19 @@ public class WeblogRequest {
     // lightweight attributes
     private String weblogHandle;
     private String queryString;
-    protected String authenticatedUser;
     private DeviceType deviceType = DeviceType.NORMAL;
     private HttpServletRequest request;
     protected int pageNum;
     String extraPathInfo;
+
+    private Principal principal;
 
     // attributes populated by processors where appropriate
     protected Weblog weblog;
     private User blogger;
     private boolean siteWide;
 
+    // TODO: Add principal to constructor
     public WeblogRequest() {
     }
 
@@ -86,10 +90,7 @@ public class WeblogRequest {
         wreq.deviceType = Utilities.getDeviceType(sreq);
 
         // login status
-        java.security.Principal principal = sreq.getUserPrincipal();
-        if (principal != null) {
-            wreq.authenticatedUser = principal.getName();
-        }
+        wreq.principal = sreq.getUserPrincipal();
 
         // servlet path: /tb-ui/rendering/(page|feed|mediafile|comment|search)/weblogHandle[/extrainfo]*
         String path = sreq.getServletPath();
@@ -123,8 +124,16 @@ public class WeblogRequest {
         log.debug("handle = {}, extraPathInfo = {}, pageNum = {}", wreq.weblogHandle, wreq.extraPathInfo, wreq.pageNum);
     }
 
+    public void setPrincipal(Principal principal) {
+        this.principal = principal;
+    }
+
     public String getWeblogHandle() {
         return weblogHandle;
+    }
+
+    public void setWeblogHandle(String weblogHandle) {
+        this.weblogHandle = weblogHandle;
     }
 
     public String getExtraPathInfo() {
@@ -140,11 +149,14 @@ public class WeblogRequest {
     }
 
     public String getAuthenticatedUser() {
-        return this.authenticatedUser;
+        if (principal != null) {
+            return principal.getName();
+        }
+        return null;
     }
 
     public boolean isLoggedIn() {
-        return this.authenticatedUser != null;
+        return getAuthenticatedUser() != null;
     }
 
     public DeviceType getDeviceType() {

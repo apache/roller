@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.rendering.processors;
+package org.tightblog.rendering.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.tightblog.rendering.model.PageModel;
@@ -67,7 +67,7 @@ import java.util.function.Function;
  */
 @RestController
 @RequestMapping(path = "/tb-ui/authoring/preview/**")
-public class PreviewProcessor extends AbstractProcessor {
+public class PreviewProcessor extends AbstractController {
 
     private static Logger log = LoggerFactory.getLogger(PreviewProcessor.class);
 

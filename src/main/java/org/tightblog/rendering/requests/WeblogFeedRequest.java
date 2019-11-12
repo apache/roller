@@ -20,12 +20,9 @@
  */
 package org.tightblog.rendering.requests;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.model.FeedModel;
-import org.tightblog.util.Utilities;
 
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
@@ -39,49 +36,30 @@ public final class WeblogFeedRequest extends WeblogRequest {
     private String tag;
     private FeedModel feedModel;
 
-    private WeblogFeedRequest(FeedModel feedModel) {
+    public WeblogFeedRequest(FeedModel feedModel) {
         this.feedModel = feedModel;
-    }
-
-    public static WeblogFeedRequest create(HttpServletRequest servletRequest, FeedModel feedModel) {
-        WeblogFeedRequest feedRequest = new WeblogFeedRequest(feedModel);
-        WeblogRequest.parseRequest(feedRequest, servletRequest);
-        feedRequest.parseFeedRequestInfo();
-        return feedRequest;
-    }
-
-    /**
-     * Handles:
-     * /feed - Atom feed
-     * /feed/category/<category> - Atom feed of category
-     * /feed/tag/<tag> - Atom feed of tag
-     */
-    private void parseFeedRequestInfo() {
-        String[] pathElements = extraPathInfo.split("/", 3);
-
-        if (pathElements.length == 3) {
-            if ("category".equals(pathElements[1])) {
-                categoryName = Utilities.decode(pathElements[2]);
-            } else if ("tag".equals(pathElements[1])) {
-                tag = Utilities.decode(pathElements[2]);
-            }
-        }
-    }
-
-    // properties/methods for generating the Atom feed
-
-    public WeblogEntryListGenerator.WeblogEntryListData getWeblogEntriesPager() {
-        return feedModel.getWeblogEntryListGenerator().getChronoPager(weblog,
-                null, categoryName, tag, pageNum, feedModel.getNumEntriesPerPage(),
-                isSiteWide());
     }
 
     public String getCategoryName() {
         return categoryName;
     }
 
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
     public String getTag() {
         return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public WeblogEntryListGenerator.WeblogEntryListData getWeblogEntriesPager() {
+        return feedModel.getWeblogEntryListGenerator().getChronoPager(weblog,
+                null, categoryName, tag, pageNum, feedModel.getNumEntriesPerPage(),
+                isSiteWide());
     }
 
     public String getTransformedText(WeblogEntry entry) {

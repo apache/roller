@@ -18,7 +18,7 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.rendering.processors;
+package org.tightblog.rendering.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -71,7 +71,7 @@ import java.util.function.Function;
 @RestController
 @EnableConfigurationProperties(DynamicProperties.class)
 @RequestMapping(path = "/tb-ui/rendering/page/**")
-public class PageProcessor extends AbstractProcessor {
+public class PageProcessor extends AbstractController {
 
     private static Logger log = LoggerFactory.getLogger(PageProcessor.class);
 

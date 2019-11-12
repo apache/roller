@@ -18,29 +18,35 @@
  * Source file modified from the original ASF source; all changes made
  * are also under Apache License.
  */
-package org.tightblog.rendering.processors;
+package org.tightblog.rendering.controller;
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.tightblog.service.MediaManager;
 import org.tightblog.domain.MediaFile;
 import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.cache.LazyExpiringCache;
-import org.tightblog.rendering.requests.WeblogRequest;
 import org.tightblog.dao.WeblogDao;
-import org.tightblog.util.Utilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -49,11 +55,13 @@ import java.time.temporal.ChronoUnit;
  * Since we keep resources in a location outside of the webapp context we need a
  * way to serve them up.
  */
-@RestController
-@RequestMapping(path = "/tb-ui/rendering/mediafile/**")
-public class MediaFileProcessor extends AbstractProcessor {
+@RestController("RenderingMediaFileController")
+@RequestMapping(path = MediaFileController.PATH)
+// Validate constraint annotations on method parameters
+@Validated
+public class MediaFileController extends AbstractController {
 
-    private static Logger log = LoggerFactory.getLogger(MediaFileProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(MediaFileController.class);
 
     public static final String PATH = "/tb-ui/rendering/mediafile";
 
@@ -62,36 +70,28 @@ public class MediaFileProcessor extends AbstractProcessor {
     private MediaManager mediaManager;
 
     @Autowired
-    MediaFileProcessor(WeblogDao weblogDao, LazyExpiringCache weblogMediaCache,
-                       MediaManager mediaManager) {
+    MediaFileController(WeblogDao weblogDao, LazyExpiringCache weblogMediaCache,
+                        MediaManager mediaManager) {
         this.weblogDao = weblogDao;
         this.weblogMediaCache = weblogMediaCache;
         this.mediaManager = mediaManager;
     }
 
-    @RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
-    void getMediaFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogRequest incomingRequest = WeblogRequest.create(request);
+    @GetMapping(path = "/{weblogHandle}/{mediaFileId}")
+    ResponseEntity<Resource> getMediaFile(
+            @PathVariable String weblogHandle, @PathVariable @NotBlank String mediaFileId,
+            HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
+        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(weblogHandle);
         if (weblog == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        } else {
-            incomingRequest.setWeblog(weblog);
+            return ResponseEntity.notFound().build();
         }
 
-        MediaFile mediaFile = null;
-        // path info here is the resourceId
-        String pathInfo = incomingRequest.getExtraPathInfo();
-        if (StringUtils.isNotBlank(pathInfo)) {
-            mediaFile = mediaManager.getMediaFileWithContent(pathInfo);
-        }
-
+        MediaFile mediaFile = mediaManager.getMediaFileWithContent(mediaFileId);
         if (mediaFile == null) {
-            log.info("Could not obtain media file for resource path: ", request.getRequestURL());
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
+            log.info("Could not obtain media file for weblog {} and media file ID {}", weblogHandle,
+                    mediaFileId);
+            return ResponseEntity.notFound().build();
         }
 
         weblogMediaCache.incrementIncomingRequests();
@@ -102,8 +102,7 @@ public class MediaFileProcessor extends AbstractProcessor {
 
         if (inDb <= inBrowser) {
             weblogMediaCache.incrementRequestsHandledBy304();
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            return;
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
 
         boolean useThumbnail = false;
@@ -113,29 +112,21 @@ public class MediaFileProcessor extends AbstractProcessor {
 
         File desiredFile = useThumbnail ? mediaFile.getThumbnail() : mediaFile.getContent();
         if (desiredFile == null) {
-            log.info("Could not obtain {} file content for resource path: ", useThumbnail ? "thumbnail" : "",
+            log.info("Could not obtain {} file content for resource path {}", useThumbnail ? "thumbnail" : "",
                     request.getRequestURL());
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
+            return ResponseEntity.notFound().build();
         }
 
-        try (InputStream resourceStream = new FileInputStream(desiredFile);
-                OutputStream out = response.getOutputStream()) {
+        // alternative: https://stackoverflow.com/a/35683261
+        Path path = Paths.get(desiredFile.getAbsolutePath());
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
 
-            byte[] buf = new byte[Utilities.EIGHT_KB_IN_BYTES];
-            int length;
-            while ((length = resourceStream.read(buf)) > 0) {
-                out.write(buf, 0, length);
-            }
-            response.setContentType(useThumbnail ? MediaFile.THUMBNAIL_CONTENT_TYPE : mediaFile.getContentType());
-            response.setHeader("Cache-Control", "no-cache");
-            response.setDateHeader("Last-Modified", mediaFile.getLastUpdated().toEpochMilli());
-        } catch (IOException ex) {
-            log.error("Error obtaining media file {}", desiredFile.getAbsolutePath(), ex);
-            if (!response.isCommitted()) {
-                response.reset();
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            }
-        }
+        return ResponseEntity.ok()
+                .contentType(useThumbnail ? MediaFile.THUMBNAIL_CONTENT_TYPE
+                        : MediaType.valueOf(mediaFile.getContentType()))
+                .contentLength(desiredFile.length())
+                .lastModified(mediaFile.getLastUpdated().toEpochMilli())
+                .cacheControl(CacheControl.noCache())
+                .body(resource);
     }
 }

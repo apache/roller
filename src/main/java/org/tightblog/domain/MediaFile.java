@@ -23,6 +23,8 @@ package org.tightblog.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.validation.constraints.NotBlank;
+
+import org.springframework.http.MediaType;
 import org.tightblog.util.Utilities;
 
 import javax.persistence.Basic;
@@ -46,7 +48,7 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MediaFile implements Comparable<MediaFile> {
 
-    public static final String THUMBNAIL_CONTENT_TYPE = "image/png";
+    public static final MediaType THUMBNAIL_CONTENT_TYPE = MediaType.IMAGE_PNG;
     public static final int MAX_THUMBNAIL_WIDTH = 120;
     public static final int MAX_THUMBNAIL_HEIGHT = 120;
 

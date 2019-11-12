@@ -22,11 +22,11 @@ package org.tightblog.filters;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.tightblog.rendering.processors.CommentProcessor;
-import org.tightblog.rendering.processors.FeedProcessor;
-import org.tightblog.rendering.processors.MediaFileProcessor;
-import org.tightblog.rendering.processors.PageProcessor;
-import org.tightblog.rendering.processors.SearchProcessor;
+import org.tightblog.rendering.controller.CommentController;
+import org.tightblog.rendering.controller.FeedController;
+import org.tightblog.rendering.controller.MediaFileController;
+import org.tightblog.rendering.controller.PageProcessor;
+import org.tightblog.rendering.controller.SearchProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,7 +181,7 @@ public class RequestMappingFilter implements Filter {
         if ("POST".equals(request.getMethod())) {
             // posting to permalink, should mean comment (which must have a content param)
             if (context.equals("entrycomment") && request.getParameter("content") != null) {
-                forwardUrl = generateForwardUrl(CommentProcessor.PATH, handle, "entry", data);
+                forwardUrl = generateForwardUrl(CommentController.PATH, handle, "entry", data);
             }
         } else {
             // no context means weblog homepage
@@ -191,9 +191,9 @@ public class RequestMappingFilter implements Filter {
                     context.equals("date") || context.equals("category") || context.equals("tag")) {
                 forwardUrl = generateForwardUrl(PageProcessor.PATH, handle, context, data);
             } else if (context.equals("feed")) {
-                forwardUrl = generateForwardUrl(FeedProcessor.PATH, handle, context, data);
+                forwardUrl = generateForwardUrl(FeedController.PATH, handle, context, data);
             } else if (context.equals("mediafile")) {
-                forwardUrl = generateForwardUrl(MediaFileProcessor.PATH, handle, null, data);
+                forwardUrl = generateForwardUrl(MediaFileController.PATH, handle, null, data);
             } else if (context.equals("search")) {
                 forwardUrl = generateForwardUrl(SearchProcessor.PATH, handle, context, null);
             }

@@ -24,7 +24,7 @@
     </Match>
 
     <Match>
-        <Class name="org.tightblog.rendering.processors.MediaFileProcessor" />
+        <Class name="org.tightblog.rendering.controller.MediaFileProcessor" />
         <Method name="getMediaFile"/>
         <Bug pattern="OBL_UNSATISFIED_OBLIGATION" />
     </Match>
