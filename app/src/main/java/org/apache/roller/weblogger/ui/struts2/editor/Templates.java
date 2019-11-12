@@ -64,6 +64,7 @@ public class Templates extends UIAction {
         this.pageTitle = "pagesForm.title";
     }
 
+    @Override
     public String execute() {
 
         // query for templates list

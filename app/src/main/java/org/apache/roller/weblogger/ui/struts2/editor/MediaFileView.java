@@ -89,6 +89,7 @@ public class MediaFileView extends MediaFileBase {
     /**
      * Prepares view action
      */
+    @Override
     public void myPrepare() {
 
         if (SIZE_FILTER_TYPES == null) {
@@ -193,6 +194,7 @@ public class MediaFileView extends MediaFileBase {
      * @return String The result of the action.
      */
     @SkipValidation
+    @Override
     public String execute() {
         MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
         try {
