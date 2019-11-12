@@ -573,7 +573,7 @@ limitations under the License.
                             <port>4224</port>
                             <sources>
                                 <script>
-                                    <sourceFile>${pom.basedir}/target/dbscripts/derby/createdb.sql</sourceFile>
+                                    <sourceFile>${project.basedir}/target/dbscripts/derby/createdb.sql</sourceFile>
                                 </script>
                             </sources>
                         </configuration>
