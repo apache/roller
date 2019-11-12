@@ -73,6 +73,7 @@ public class ThemeEdit extends UIAction {
         this.pageTitle = "themeEditor.title";
     }
 
+    @Override
     public void myPrepare() {
         ThemeManager themeMgr = WebloggerFactory.getWeblogger()
                 .getThemeManager();
@@ -100,6 +101,7 @@ public class ThemeEdit extends UIAction {
         }
     }
 
+    @Override
     public String execute() {
 
         // set theme to current value

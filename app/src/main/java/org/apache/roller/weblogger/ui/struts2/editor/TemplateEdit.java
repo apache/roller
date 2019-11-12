@@ -55,6 +55,7 @@ public class TemplateEdit extends UIAction {
         this.pageTitle = "pagesForm.title";
     }
 
+    @Override
     public void myPrepare() {
         try {
             setTemplate(WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(getBean().getId()));
@@ -68,6 +69,7 @@ public class TemplateEdit extends UIAction {
      * Show template edit page.
      */
     @SkipValidation
+    @Override
     public String execute() {
         try {
             if (getTemplate() == null) {

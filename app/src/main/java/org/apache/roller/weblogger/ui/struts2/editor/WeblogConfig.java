@@ -67,6 +67,7 @@ public class WeblogConfig extends UIAction {
         this.pageTitle = "websiteSettings.title";
     }
 
+    @Override
     public void myPrepare() {
         
         try {
@@ -100,6 +101,7 @@ public class WeblogConfig extends UIAction {
     
     
     @SkipValidation
+    @Override
     public String execute() {
         
         // load bean with data from weblog

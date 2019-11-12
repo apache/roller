@@ -137,6 +137,7 @@ public class LRUCacheImpl implements Cache {
             this.maxsize = maxsize;
         }
         
+        @Override
         protected boolean removeEldestEntry(Map.Entry eldest) {
             return this.size() > this.maxsize;
         }

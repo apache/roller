@@ -48,6 +48,7 @@ public class MemberResign extends UIAction {
         return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
     }
 
+    @Override
     public boolean isWeblogRequired() {
         return false;
     }
@@ -55,6 +56,7 @@ public class MemberResign extends UIAction {
     /**
      * Show member resign confirmation
      */
+    @Override
     public String execute() {
         return INPUT;
     }
