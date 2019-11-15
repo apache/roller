@@ -44,17 +44,20 @@ public class UserAdmin extends UIAction {
 
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
-    // admin role required    
+    // admin role required
+    @Override
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
     
     // no weblog required
+    @Override
     public boolean isWeblogRequired() {
         return false;
     }
 
     // show user admin search page
+    @Override
     public String execute() {
         return SUCCESS;
     }

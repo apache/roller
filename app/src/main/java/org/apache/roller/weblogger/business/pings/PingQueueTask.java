@@ -78,6 +78,7 @@ public class PingQueueTask extends RollerTaskWithLeasing {
         this.init(PingQueueTask.NAME);
     }
 
+    @Override
     public void init(String name) throws WebloggerException {
         super.init(name);
 

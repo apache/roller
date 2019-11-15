@@ -53,6 +53,7 @@ public class EntryRemove extends UIAction {
         this.pageTitle = "weblogEdit.deleteEntry";
     }
 
+    @Override
     public void myPrepare() {
         if (getRemoveId() != null) {
             try {
@@ -65,6 +66,7 @@ public class EntryRemove extends UIAction {
         }
     }
 
+    @Override
     public String execute() {
         return INPUT;
     }

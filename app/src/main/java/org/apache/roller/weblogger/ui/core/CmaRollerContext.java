@@ -36,6 +36,7 @@ public class CmaRollerContext extends RollerContext {
     /**
      * Setup Spring Security features.
      */
+    @Override
     protected void initializeSecurityFeatures(ServletContext context) { 
         // no need to setup Spring Security
     }

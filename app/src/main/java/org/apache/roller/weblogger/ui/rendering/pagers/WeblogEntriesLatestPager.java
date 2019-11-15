@@ -110,6 +110,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
     }
     
     
+    @Override
     public boolean hasMoreEntries() {
         return more;
     }

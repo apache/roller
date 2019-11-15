@@ -54,6 +54,7 @@ public class RollerRememberMeServices extends TokenBasedRememberMeServices {
      *
      * If LDAP is enabled then a configurable dummy password is used in the calculation.
      */
+    @Override
     protected String makeTokenSignature(long tokenExpiryTime, String username, String password) {
 
         boolean usingLDAP = WebloggerConfig.getAuthMethod() == AuthMethod.LDAP;

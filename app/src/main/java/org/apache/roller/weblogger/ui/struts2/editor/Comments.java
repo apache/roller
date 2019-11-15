@@ -159,6 +159,7 @@ public class Comments extends UIAction {
             .getActionURL("comments", "/roller-ui/authoring", getActionWeblog().getHandle(), params, false);
     }
 
+    @Override
     public String execute() {
 
         // load list of comments from query

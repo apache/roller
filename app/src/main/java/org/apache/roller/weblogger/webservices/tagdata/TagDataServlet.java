@@ -57,6 +57,7 @@ public class TagDataServlet extends HttpServlet {
     private static final int MAX = WebloggerConfig.getIntProperty("services.tagdata.max", 30);
 
     
+    @Override
     protected void doPost(
             HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -64,6 +65,7 @@ public class TagDataServlet extends HttpServlet {
     }
 
     
+    @Override
     public void doGet(
             HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {

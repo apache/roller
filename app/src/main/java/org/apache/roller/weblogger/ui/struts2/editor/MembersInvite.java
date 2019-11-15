@@ -56,6 +56,7 @@ public class MembersInvite extends UIAction {
         this.pageTitle = "inviteMember.title";
     }
 
+    @Override
     public String execute() {
         
         // if group blogging is disabled then you can't change permissions
@@ -157,6 +158,7 @@ public class MembersInvite extends UIAction {
      * 
      * @return the string
      */
+    @Override
     public String cancel() {
         return CANCEL;
     }

@@ -55,6 +55,7 @@ public class PingTargets extends UIAction {
     private String pingTargetId = null;
 
     // no weblog required
+    @Override
     public boolean isWeblogRequired() {
         return false;
     }
@@ -70,6 +71,7 @@ public class PingTargets extends UIAction {
     }
 
     // prepare method needs to set ping targets list
+    @Override
     public void myPrepare() {
 
         // load list of ping targets
@@ -89,6 +91,7 @@ public class PingTargets extends UIAction {
     /**
      * Display the ping targets.
      */
+    @Override
     public String execute() {
         return LIST;
     }

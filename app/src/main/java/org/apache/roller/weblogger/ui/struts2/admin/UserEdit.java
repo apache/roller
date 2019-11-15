@@ -69,16 +69,19 @@ public class UserEdit extends UIAction {
     }
 
     // admin role required
+    @Override
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
     
     // no weblog required
+    @Override
     public boolean isWeblogRequired() { 
         return false;
     }
 
     // prepare for action by loading user object we are modifying
+    @Override
     public void myPrepare() {
 
         if (isAdd()) {
@@ -109,6 +112,7 @@ public class UserEdit extends UIAction {
      * Show admin user edit page.
      */
     @SkipValidation
+    @Override
     public String execute() {
         if (isAdd()) {
             // initial user create

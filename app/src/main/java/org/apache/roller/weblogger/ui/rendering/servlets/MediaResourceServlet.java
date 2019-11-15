@@ -50,6 +50,7 @@ public class MediaResourceServlet extends HttpServlet {
 
     private static Log log = LogFactory.getLog(MediaResourceServlet.class);
 
+    @Override
     public void init(ServletConfig config) throws ServletException {
 
         super.init(config);
@@ -60,6 +61,7 @@ public class MediaResourceServlet extends HttpServlet {
     /**
      * Handles requests for user uploaded media file resources.
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 

@@ -46,6 +46,7 @@ public class MediaFileImageDim extends MediaFileBase {
      * @return String The result of the action.
      */
     @SkipValidation
+    @Override
     public String execute() {
         try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();

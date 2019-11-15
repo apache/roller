@@ -52,6 +52,7 @@ public class Categories extends UIAction {
 		return Collections.singletonList(WeblogPermission.POST);
 	}
 
+	@Override
 	public String execute() {
 		try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
