@@ -53,6 +53,7 @@ public class TemplateRemove extends UIAction {
         this.pageTitle = "editPages.title.removeOK";
     }
 
+    @Override
     public void myPrepare() {
         if (StringUtils.isNotEmpty(getRemoveId())) {
             try {
@@ -68,6 +69,7 @@ public class TemplateRemove extends UIAction {
     /**
      * Display the remove template confirmation.
      */
+    @Override
     public String execute() {
         return "confirm";
     }
@@ -127,6 +129,7 @@ public class TemplateRemove extends UIAction {
     }
 
 
+    @Override
     public String cancel() {
         return CANCEL;
     }

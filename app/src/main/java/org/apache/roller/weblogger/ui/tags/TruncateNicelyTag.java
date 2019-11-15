@@ -105,6 +105,7 @@ public class TruncateNicelyTag extends StringTagSupport {
         return truncateNicely(text, l, u, this.appendToEnd);
     }
 
+    @Override
     public void initAttributes() {
 
         this.lower = "10";

@@ -67,6 +67,7 @@ public abstract class StringTagSupport extends BodyTagSupport {
      * evaluating the body of the tag. The evaluation 
      * is delegated to the changeString(String) method 
      */
+    @Override
     public int doEndTag() throws JspException {
 
         String text = "";

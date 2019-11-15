@@ -97,13 +97,15 @@ public class JPAWebloggerImpl extends WebloggerImpl {
     }
 
     
+    @Override
     public void release() {
         super.release();
         // tell JPA to close down
         this.strategy.release();
     }
 
-    
+
+    @Override
     public void shutdown() {
         // do our own shutdown first
         this.release();

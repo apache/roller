@@ -85,11 +85,13 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
     
     
     // admin role required
+    @Override
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
     
     // no weblog required
+    @Override
     public boolean isWeblogRequired() {
         return false;
     }
@@ -159,6 +161,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
     
     
     // show comment management page
+    @Override
     public String execute() {
         
         // load list of comments from query

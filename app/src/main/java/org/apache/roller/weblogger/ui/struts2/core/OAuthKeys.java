@@ -45,12 +45,14 @@ public class OAuthKeys extends UIAction {
     
     
     // override default security, we do not require an action weblog
+    @Override
     public boolean isWeblogRequired() {
         return false;
     }
 
 
     @SkipValidation
+    @Override
     public String execute() {
         boolean flush = false;
         

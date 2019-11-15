@@ -58,6 +58,7 @@ public class BookmarkEdit extends UIAction {
         this.pageTitle = pageTitle;
     }
 
+    @Override
     public void myPrepare() {
         if (StringUtils.isEmpty(bean.getId())) {
             // Create and initialize new, not-yet-saved WeblogBookmark
@@ -85,6 +86,7 @@ public class BookmarkEdit extends UIAction {
     
     
     @SkipValidation
+    @Override
     public String execute() {
         if (!isAdd()) {
             // load bean with database values during initial load

@@ -46,11 +46,13 @@ public class Login extends UIAction {
     }
 
     // override default security, we do not require an authenticated user
+    @Override
     public boolean isUserRequired() {
         return false;
     }
     
     // override default security, we do not require an action weblog
+    @Override
     public boolean isWeblogRequired() {
         return false;
     }
@@ -59,6 +61,7 @@ public class Login extends UIAction {
         return authMethod.name();
     }
 
+    @Override
     public String execute() {
         
         // set action error message if there was login error

@@ -56,6 +56,7 @@ public class UserDataServlet extends HttpServlet {
     private static final long serialVersionUID = -7596671919118637768L;
     private static final int MAX_LENGTH = 50;
 
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 

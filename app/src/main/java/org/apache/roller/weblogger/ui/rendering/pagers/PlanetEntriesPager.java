@@ -125,7 +125,8 @@ public class PlanetEntriesPager extends AbstractPager {
         return entries;
     }
     
-    
+
+    @Override
     public boolean hasMoreItems() {
         return more;
     }
