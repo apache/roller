@@ -520,7 +520,7 @@ public class CommentControllerTest {
         verify(mockRequest).setAttribute(eq("commentForm"), commentCaptor.capture());
         assertTrue(commentCaptor.getValue().isInvalid());
         verify(mockMessageSource).getMessage(errorProperty, new Object[] {errorValue}, Locale.GERMAN);
-        verify(mockRequest).getRequestDispatcher(PageProcessor.PATH + "/myblog/entry/entry-anchor");
+        verify(mockRequest).getRequestDispatcher(PageController.PATH + "/myblog/entry/entry-anchor");
         verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
     }
 }

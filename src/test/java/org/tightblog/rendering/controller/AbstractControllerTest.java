@@ -61,7 +61,7 @@ public class AbstractControllerTest {
         WeblogDao mockWD = mock(WeblogDao.class);
         DynamicProperties dp = new DynamicProperties();
         Function<WeblogPageRequest, SiteModel> siteModelFactory = new WebConfig().siteModelFactory();
-        PageProcessor processor = new PageProcessor(mockWD, null, null,
+        PageController processor = new PageController(mockWD, null, null,
                 null, null, null, null,
                 siteModelFactory, mockUD, dp);
         processor.setApplicationContext(mockContext);
@@ -78,12 +78,12 @@ public class AbstractControllerTest {
         // test return date if valid
         Instant now = Instant.now();
         when(mockRequest.getDateHeader("If-Modified-Since")).thenReturn(now.toEpochMilli());
-        long val = PageProcessor.getBrowserCacheExpireDate(mockRequest);
+        long val = PageController.getBrowserCacheExpireDate(mockRequest);
         assertEquals(now.toEpochMilli(), val);
 
         // test return -1 on invalid date
         when(mockRequest.getDateHeader("If-Modified-Since")).thenThrow(new IllegalArgumentException());
-        val = PageProcessor.getBrowserCacheExpireDate(mockRequest);
+        val = PageController.getBrowserCacheExpireDate(mockRequest);
         assertEquals(-1, val);
     }
 

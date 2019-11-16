@@ -276,7 +276,7 @@ public class CommentController extends AbstractController {
         }
 
         // now send the user back to the weblog entry page via PageProcessor
-        String dispatchUrl = PageProcessor.PATH + "/" + weblog.getHandle() + "/entry/"
+        String dispatchUrl = PageController.PATH + "/" + weblog.getHandle() + "/entry/"
                 + Utilities.encode(incomingRequest.getWeblogEntry().getAnchor());
 
         log.debug("comment processed, forwarding to {}", dispatchUrl);

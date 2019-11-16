@@ -98,7 +98,7 @@ public class FeedControllerTest {
     public void test404OnMissingWeblog() {
         when(mockWR.findByHandleAndVisibleTrue(TestUtils.BLOG_HANDLE)).thenReturn(null);
         ResponseEntity<Resource> result = feedProcessor.getFeed(TestUtils.BLOG_HANDLE, null, null,
-                null, null, mockRequest, mockResponse);
+                null, null, mockRequest);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         verify(mockCache, never()).incrementIncomingRequests();
     }
@@ -114,7 +114,7 @@ public class FeedControllerTest {
 
         Mockito.clearInvocations(mockRequest);
         ResponseEntity<Resource> result = feedProcessor.getFeed(TestUtils.BLOG_HANDLE, null, null,
-                null, null, mockRequest, mockResponse);
+                null, null, mockRequest);
         verify(mockRequest).getDateHeader(any());
         assertEquals(HttpStatus.NOT_MODIFIED, result.getStatusCode());
         verify(mockCache).incrementIncomingRequests();
@@ -134,7 +134,7 @@ public class FeedControllerTest {
         when(mockResponse.getOutputStream()).thenReturn(mockSOS);
 
         ResponseEntity<Resource> result = feedProcessor.getFeed(TestUtils.BLOG_HANDLE, null, null,
-                null, null, mockRequest, mockResponse);
+                null, null, mockRequest);
 
         // verify cached content being returned
         assertNotNull(result.getHeaders().getContentType());
@@ -161,7 +161,7 @@ public class FeedControllerTest {
         when(mockThymeleafRenderer.render(any(), any())).thenReturn(renderedContent);
 
         ResponseEntity<Resource> result = feedProcessor.getFeed(TestUtils.BLOG_HANDLE, null, null,
-                null, null, mockRequest, mockResponse);
+                null, null, mockRequest);
 
         // verify rendered content being returned
         assertNotNull(result.getHeaders().getContentType());
@@ -176,7 +176,7 @@ public class FeedControllerTest {
         // test 404 on rendering error
         Mockito.clearInvocations(mockResponse, mockCache, mockSOS);
         when(mockThymeleafRenderer.render(any(), any())).thenThrow(IllegalArgumentException.class);
-        result = feedProcessor.getFeed(null, null, null, null, null, mockRequest, mockResponse);
+        result = feedProcessor.getFeed(null, null, null, null, null, mockRequest);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 

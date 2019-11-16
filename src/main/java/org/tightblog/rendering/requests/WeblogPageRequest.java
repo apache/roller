@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
     // lightweight attributes
     private String context;
+
     private String weblogEntryAnchor;
     private String customPageName;
     protected String category;
@@ -75,18 +77,32 @@ public class WeblogPageRequest extends WeblogRequest {
     private WeblogEntryComment commentForm;
     protected WeblogEntryListGenerator.WeblogEntryListData pager;
 
+    public WeblogPageRequest(String weblogHandle, Principal principal, PageModel pageModel) {
+        setPrincipal(principal);
+        setWeblogHandle(weblogHandle);
+        this.pageModel = pageModel;
+    }
+
     public WeblogPageRequest(PageModel pageModel) {
         this.pageModel = pageModel;
     }
 
+    public void setWeblogEntryAnchor(String weblogEntryAnchor) {
+        this.weblogEntryAnchor = weblogEntryAnchor;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     public static class Creator {
         public static WeblogPageRequest create(HttpServletRequest servletRequest, PageModel pageModel) {
-            WeblogPageRequest weblogPageRequest = new WeblogPageRequest(pageModel);
+            WeblogPageRequest weblogPageRequest = new WeblogPageRequest(null, null, pageModel);
             return process(weblogPageRequest, servletRequest);
         }
 
         public static WeblogPageRequest createPreview(HttpServletRequest servletRequest, PageModel pageModel) {
-            WeblogPageRequest weblogPageRequest = new WeblogPageRequest(pageModel);
+            WeblogPageRequest weblogPageRequest = new WeblogPageRequest(null, null, pageModel);
             weblogPageRequest.preview = true;
             weblogPageRequest.noIndex = true;
             return process(weblogPageRequest, servletRequest);
@@ -108,8 +124,8 @@ public class WeblogPageRequest extends WeblogRequest {
          * /tag/<tag> - tag
          * /category/<category> - category collection view
          * /category/<category>/tag/<tag> - tag under a category
-         * /search?q=xyz[&cat=Sports] - search on xyz (optionally under given category)
          * /page/<pagelink> - custom page
+         * /search?q=xyz[&cat=Sports] - search on xyz (optionally under given category)
          * path info may be null, which indicates the weblog homepage
          *
          * If invalid or incomplete values given, processing will ignore the values (as if not provided)
@@ -163,7 +179,7 @@ public class WeblogPageRequest extends WeblogRequest {
         }
     }
 
-    static boolean isValidDateString(String dateString) {
+    public static boolean isValidDateString(String dateString) {
         boolean valid = false;
 
         if (StringUtils.isNumeric(dateString) && (dateString.length() == 6 || dateString.length() == 8)) {
@@ -178,6 +194,10 @@ public class WeblogPageRequest extends WeblogRequest {
             }
         }
         return valid;
+    }
+
+    public void setNoIndex(boolean noIndex) {
+        this.noIndex = noIndex;
     }
 
     public boolean isPreview() {

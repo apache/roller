@@ -61,7 +61,7 @@ public class WeblogSearchRequest extends WeblogPageRequest {
     private SearchResultsModel searchModel;
 
     public WeblogSearchRequest(SearchResultsModel searchModel) {
-        super(searchModel);
+        super(null, null, searchModel);
         this.searchModel = searchModel;
     }
 

@@ -24,11 +24,16 @@ import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mobile.device.DeviceType;
 import org.tightblog.TestUtils;
 import org.tightblog.WebloggerTest;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.config.WebConfig;
+import org.tightblog.domain.Template;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.model.URLModel;
 import org.tightblog.dao.UserDao;
@@ -51,12 +56,11 @@ import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.dao.WeblogDao;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
@@ -64,31 +68,30 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class PageProcessorTest {
-    private static Logger log = LoggerFactory.getLogger(PageProcessorTest.class);
+public class PageControllerTest {
+    private static Logger log = LoggerFactory.getLogger(PageControllerTest.class);
 
-    private PageProcessor processor;
+    private static final String TEST_BLOG_HANDLE = "myblog";
+
+    private PageController controller;
     private HttpServletRequest mockRequest;
-    private HttpServletResponse mockResponse;
     private WeblogEntryManager mockWEM;
     private Weblog weblog;
     private SharedTheme sharedTheme;
     private WeblogTheme mockWeblogTheme;
     private DynamicProperties dp;
+    private Principal mockPrincipal;
 
     private LazyExpiringCache mockCache;
     private WeblogManager mockWM;
-    private UserDao mockUD;
     private WeblogDao mockWD;
     private ThymeleafRenderer mockRenderer;
-    private ServletOutputStream mockSOS;
     private ThemeManager mockThemeManager;
     private ApplicationContext mockApplicationContext;
 
@@ -98,12 +101,13 @@ public class PageProcessorTest {
     @Before
     public void initializeMocks() throws IOException {
         mockRequest = TestUtils.createMockServletRequestForWeblogEntryRequest();
+        mockPrincipal = mock(Principal.class);
 
-        mockUD = mock(UserDao.class);
+        UserDao mockUD = mock(UserDao.class);
         mockWD = mock(WeblogDao.class);
         weblog = new Weblog();
         weblog.setLastModified(Instant.now().minus(2, ChronoUnit.DAYS));
-        when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(weblog);
+        when(mockWD.findByHandleAndVisibleTrue(TEST_BLOG_HANDLE)).thenReturn(weblog);
 
         mockCache = mock(LazyExpiringCache.class);
         mockWM = mock(WeblogManager.class);
@@ -122,39 +126,37 @@ public class PageProcessorTest {
 
         Function<WeblogPageRequest, SiteModel> siteModelFactory = new WebConfig().siteModelFactory();
 
-        processor = new PageProcessor(mockWD, mockCache, mockWM, mockWEM,
+        controller = new PageController(mockWD, mockCache, mockWM, mockWEM,
                 mockRenderer, mockThemeManager, mock(PageModel.class),
                 siteModelFactory, mockUD, dp);
 
         mockApplicationContext = mock(ApplicationContext.class);
         when(mockApplicationContext.getBean(anyString(), eq(Set.class))).thenReturn(new HashSet());
-        processor.setApplicationContext(mockApplicationContext);
-
-        mockResponse = mock(HttpServletResponse.class);
-        mockSOS = mock(ServletOutputStream.class);
-        when(mockResponse.getOutputStream()).thenReturn(mockSOS);
+        controller.setApplicationContext(mockApplicationContext);
 
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void test404OnMissingWeblog() throws IOException {
-        when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(null);
-        processor.handleRequest(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
+    public void test404OnMissingWeblog() {
+        when(mockWD.findByHandleAndVisibleTrue(TEST_BLOG_HANDLE)).thenReturn(null);
+        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
+                mockPrincipal);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         verify(mockCache, never()).incrementIncomingRequests();
     }
 
     @Test
-    public void testReceive304NotModifiedContent() throws IOException {
+    public void testReceive304NotModifiedContent() {
         sharedTheme.setSiteWide(true);
 
         // date header more recent than last change, so should return 304
         when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().toEpochMilli());
 
-        processor.handleRequest(mockRequest, mockResponse);
+        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
+                mockPrincipal);
         verify(mockRequest).getDateHeader(any());
-        verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        assertEquals(HttpStatus.NOT_MODIFIED, result.getStatusCode());
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache).incrementRequestsHandledBy304();
     }
@@ -168,24 +170,27 @@ public class PageProcessorTest {
         cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockCache.get(any(), any())).thenReturn(cachedContent);
 
-        processor.handleRequest(mockRequest, mockResponse);
+        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
+                mockPrincipal);
 
         // verify cached content being returned
         verify(mockWM).incrementHitCount(weblog);
-        verify(mockResponse).setContentType(Role.WEBLOG.getContentType());
-        verify(mockResponse).setContentLength(7);
-        verify(mockResponse).setDateHeader("Last-Modified", twoDaysAgo.toEpochMilli());
-        verify(mockResponse).setHeader("Cache-Control", "no-cache");
+        assertNotNull(result.getHeaders().getContentType());
+        assertEquals(Template.Role.WEBLOG.getContentType(), result.getHeaders().getContentType().toString());
+        assertEquals(7, result.getHeaders().getContentLength());
+        assertEquals(twoDaysAgo.truncatedTo(ChronoUnit.SECONDS).toEpochMilli(),
+                result.getHeaders().getLastModified());
+        assertEquals(CacheControl.noCache().getHeaderValue(), result.getHeaders().getCacheControl());
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
-        verify(mockSOS).write("mytest1".getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
     public void testNonExistentTemplateRequestReturns404() throws IOException {
         when(mockWeblogTheme.getTemplateByName(any())).thenReturn(null);
-        processor.handleRequest(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
+        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
+                mockPrincipal);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 
         verify(mockCache).incrementIncomingRequests();
         verify(mockCache, never()).incrementRequestsHandledBy304();
@@ -200,8 +205,9 @@ public class PageProcessorTest {
         when(mockWeblogTheme.getTemplateByName("my-custom-page")).thenReturn(wt);
         mockRequest = TestUtils.createMockServletRequestForCustomPageRequest();
 
-        processor.handleRequest(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
+        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
+                mockPrincipal);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         // CUSTOM_INTERNAL has incrementHitCounts = false
         verify(mockWM, never()).incrementHitCount(weblog);
 
@@ -210,10 +216,10 @@ public class PageProcessorTest {
         verify(mockCache, never()).put(anyString(), any());
 
         // now test with a null template
-        Mockito.clearInvocations(mockResponse);
         when(mockWeblogTheme.getTemplateByName(any())).thenReturn(null);
-        processor.handleRequest(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
+        result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
+                mockPrincipal);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     @Test
@@ -228,7 +234,8 @@ public class PageProcessorTest {
         cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 
-        processor.handleRequest(mockRequest, mockResponse);
+        ResponseEntity<Resource> result = controller.getByCustomPage(TEST_BLOG_HANDLE,
+                "my-custom-page", null, mockRequest, mockPrincipal);
 
         // CUSTOM_EXTERNAL has incrementHitCounts = true
         verify(mockWM).incrementHitCount(weblog);
@@ -236,19 +243,19 @@ public class PageProcessorTest {
         verify(mockCache, never()).incrementRequestsHandledBy304();
         verify(mockCache).put(anyString(), any());
         verify(mockRenderer).render(eq(customTemplate), any());
-        verify(mockResponse).setContentType(Role.CUSTOM_EXTERNAL.getContentType());
-        verify(mockResponse).setContentLength("mytest1".length());
-        verify(mockSOS).write(any());
+        assertNotNull(result.getHeaders().getContentType());
+        assertEquals(Role.CUSTOM_EXTERNAL.getContentType(), result.getHeaders().getContentType().toString());
+        assertEquals("mytest1".length(), result.getHeaders().getContentLength());
 
         // test weblog template
         WeblogTemplate weblogTemplate = new WeblogTemplate();
         weblogTemplate.setRole(Role.WEBLOG);
         when(mockWeblogTheme.getTemplateByRole(Role.WEBLOG)).thenReturn(weblogTemplate);
 
-        Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockRenderer, mockSOS);
+        Mockito.clearInvocations(mockWM, mockCache, mockRenderer);
         mockRequest = TestUtils.createMockServletRequestForWeblogHomePageRequest();
 
-        processor.handleRequest(mockRequest, mockResponse);
+        controller.getHomePage(TEST_BLOG_HANDLE, mockRequest, mockPrincipal);
         WeblogPageRequest wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
         assertEquals(weblogTemplate, wpr.getTemplate());
 
@@ -265,46 +272,52 @@ public class PageProcessorTest {
         when(mockWEM.getWeblogEntryByAnchor(weblog, "entry-anchor")).thenReturn(entry);
         when(mockWeblogTheme.getTemplateByRole(Role.PERMALINK)).thenReturn(permalinkTemplate);
 
-        Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockRenderer, mockSOS);
-        processor.handleRequest(mockRequest, mockResponse);
+        Mockito.clearInvocations(mockWM, mockCache, mockRenderer);
+        controller.getByEntry(TEST_BLOG_HANDLE, "entry-anchor", mockRequest, mockPrincipal);
         wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
         assertEquals(entry, wpr.getWeblogEntry());
         assertEquals(permalinkTemplate, wpr.getTemplate());
         verify(mockWM).incrementHitCount(weblog);
         verify(mockCache).put(anyString(), any());
-        verify(mockSOS).write(any());
+
+        // test redirect to home page (i.e., usage of weblog template) if weblog entry not published
+        entry.setStatus(WeblogEntry.PubStatus.DRAFT);
+
+        Mockito.clearInvocations(mockWM, mockCache, mockRenderer);
+        result = controller.getByEntry(TEST_BLOG_HANDLE, "entry-anchor", mockRequest,
+                mockPrincipal);
+        wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
+        assertEquals(weblogTemplate, wpr.getTemplate());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+
+        // test redirect to home page (i.e., usage of weblog template) if weblog entry not found
+        when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(null);
+        Mockito.clearInvocations(mockWM, mockCache, mockRenderer);
+        result = controller.getByEntry(TEST_BLOG_HANDLE, "entry-anchor", mockRequest,
+                mockPrincipal);
+        wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
+        assertEquals(weblogTemplate, wpr.getTemplate());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
 
         // test fallback to weblog template if no permalink one
         when(mockWeblogTheme.getTemplateByRole(Role.PERMALINK)).thenReturn(null);
 
-        Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockRenderer, mockSOS);
-        processor.handleRequest(mockRequest, mockResponse);
+        Mockito.clearInvocations(mockWM, mockCache, mockRenderer);
+        controller.getByEntry(TEST_BLOG_HANDLE, "entry-anchor", mockRequest, mockPrincipal);
         wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
         assertEquals(weblogTemplate, wpr.getTemplate());
-
-        // test 404 if weblog entry not published
-        entry.setStatus(WeblogEntry.PubStatus.DRAFT);
-
-        Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockRenderer, mockSOS);
-        processor.handleRequest(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
-
-        // test 404 if no weblog entry could be found for anchor
-        when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(null);
-        Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockRenderer, mockSOS);
-        processor.handleRequest(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
 
         // test 404 if exception during rendering
         when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(entry);
         entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
         doThrow(new IllegalArgumentException()).when(mockRenderer).render(any(), any());
 
-        Mockito.clearInvocations(mockResponse, mockWM, mockCache, mockSOS);
+        Mockito.clearInvocations(mockWM, mockCache);
 
         WebloggerTest.logExpectedException(log, "IllegalArgumentException");
-        processor.handleRequest(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
+        result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
+                mockPrincipal);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     @Test
@@ -331,7 +344,7 @@ public class PageProcessorTest {
 
         WeblogEntryComment comment = new WeblogEntryComment();
         when(mockRequest.getAttribute("commentForm")).thenReturn(comment);
-        processor.handleRequest(mockRequest, mockResponse);
+        controller.getByCustomPage(TEST_BLOG_HANDLE, "my-custom-page", null, mockRequest, mockPrincipal);
 
         // set up captors on thymeleafRenderer.render()
         verify(mockRenderer).render(eq(sharedTemplate), stringObjectMapCaptor.capture());
@@ -343,7 +356,7 @@ public class PageProcessorTest {
         assertEquals(comment, wpr.getCommentForm());
         verify(mockWM).incrementHitCount(weblog);
 
-        Mockito.clearInvocations(mockResponse, mockRenderer, mockWM);
+        Mockito.clearInvocations(mockRenderer, mockWM);
         // testing (1) that non-sitewide themes just get "model" added to the rendering map.
         // (2) new comment form is generated if first request didn't provide one
         // (3) increment hit count not called for component types lacking incrementHitCounts property
@@ -354,7 +367,7 @@ public class PageProcessorTest {
         cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
         when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 
-        processor.handleRequest(mockRequest, mockResponse);
+        controller.getByCustomPage(TEST_BLOG_HANDLE, "my-custom-page", null, mockRequest, mockPrincipal);
         verify(mockRenderer).render(eq(sharedTemplate), stringObjectMapCaptor.capture());
 
         results = stringObjectMapCaptor.getValue();
@@ -371,7 +384,7 @@ public class PageProcessorTest {
         mockRequest = TestUtils.createMockServletRequestForCustomPageRequest();
         WeblogEntryComment wec = new WeblogEntryComment();
         when(mockRequest.getAttribute("commentForm")).thenReturn(wec);
-        processor.handleRequest(mockRequest, mockResponse);
+        controller.getHomePage(TEST_BLOG_HANDLE, mockRequest, mockPrincipal);
         verify(mockWM, never()).incrementHitCount(any());
         verify(mockCache, never()).get(any(), any());
         verify(mockCache, never()).put(any(), any());
@@ -386,7 +399,7 @@ public class PageProcessorTest {
         when(wpr.isSiteWide()).thenReturn(false);
         when(wpr.getAuthenticatedUser()).thenReturn("bob");
 
-        String test1 = processor.generateKey(wpr);
+        String test1 = controller.generateKey(wpr);
         assertEquals("bobsblog/entry/neatoentry/user=bob/deviceType=TABLET", test1);
 
         when(wpr.getAuthenticatedUser()).thenReturn(null);
@@ -402,12 +415,12 @@ public class PageProcessorTest {
         Instant testTime = Instant.now();
         dp.setLastSitewideChange(testTime);
 
-        test1 = processor.generateKey(wpr);
+        test1 = controller.generateKey(wpr);
         assertEquals("bobsblog/date/20171006/cat/finance/tag/" +
                 "taxes/page=5/query=a=foo&b=123/deviceType=MOBILE/lastUpdate=" + testTime.toEpochMilli(), test1);
 
         when(wpr.getCustomPageName()).thenReturn("mytemplate");
-        test1 = processor.generateKey(wpr);
+        test1 = controller.generateKey(wpr);
         assertEquals("bobsblog/page/mytemplate/date/20171006/cat/finance/tag/" +
                 "taxes/page=5/query=a=foo&b=123/deviceType=MOBILE/lastUpdate=" + testTime.toEpochMilli(), test1);
     }

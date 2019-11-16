@@ -50,7 +50,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -93,12 +92,11 @@ public class FeedController extends AbstractController {
                                      @RequestParam(value = "category", required = false) String category,
                                      @RequestParam(value = "tag", required = false) String tag,
                                      @RequestParam(value = "page", required = false) Integer page,
-                                     Principal principal,
-                                     HttpServletRequest request, HttpServletResponse resonse) {
+                                     Principal principal, HttpServletRequest request) {
 
         WeblogFeedRequest feedRequest = new WeblogFeedRequest(feedModel);
-        feedRequest.setWeblogHandle(weblogHandle);
         feedRequest.setPrincipal(principal);
+        feedRequest.setWeblogHandle(weblogHandle);
 
         if (category != null) {
             feedRequest.setCategoryName(Utilities.decode(category));

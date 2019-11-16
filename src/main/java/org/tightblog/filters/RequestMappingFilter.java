@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import org.tightblog.rendering.controller.CommentController;
 import org.tightblog.rendering.controller.FeedController;
 import org.tightblog.rendering.controller.MediaFileController;
-import org.tightblog.rendering.controller.PageProcessor;
+import org.tightblog.rendering.controller.PageController;
 import org.tightblog.rendering.controller.SearchProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,7 +189,7 @@ public class RequestMappingFilter implements Filter {
             // "extrainfo" (ending part of URL) determination in WeblogRequest to be common for all.
             if (context == null || context.equals("page") || context.equals("entry") ||
                     context.equals("date") || context.equals("category") || context.equals("tag")) {
-                forwardUrl = generateForwardUrl(PageProcessor.PATH, handle, context, data);
+                forwardUrl = generateForwardUrl(PageController.PATH, handle, context, data);
             } else if (context.equals("feed")) {
                 forwardUrl = generateForwardUrl(FeedController.PATH, handle, context, data);
             } else if (context.equals("mediafile")) {

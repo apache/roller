@@ -1,6 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
+ * contributor license agreements.  The ASF licenses this file to You
  * under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,15 @@ package org.tightblog.rendering.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.model.SiteModel;
@@ -49,8 +58,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.security.Principal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -70,10 +78,10 @@ import java.util.function.Function;
  */
 @RestController
 @EnableConfigurationProperties(DynamicProperties.class)
-@RequestMapping(path = "/tb-ui/rendering/page/**")
-public class PageProcessor extends AbstractController {
+@RequestMapping(path = "/tb-ui/rendering/page")
+public class PageController extends AbstractController {
 
-    private static Logger log = LoggerFactory.getLogger(PageProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(PageController.class);
 
     public static final String PATH = "/tb-ui/rendering/page";
 
@@ -89,12 +97,12 @@ public class PageProcessor extends AbstractController {
     private DynamicProperties dp;
 
     @Autowired
-    PageProcessor(WeblogDao weblogDao, LazyExpiringCache weblogPageCache,
-                  WeblogManager weblogManager, WeblogEntryManager weblogEntryManager,
-                  @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
-                  ThemeManager themeManager, PageModel pageModel,
-                  Function<WeblogPageRequest, SiteModel> siteModelFactory,
-                  UserDao userDao, DynamicProperties dp) {
+    PageController(WeblogDao weblogDao, LazyExpiringCache weblogPageCache,
+                   WeblogManager weblogManager, WeblogEntryManager weblogEntryManager,
+                   @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
+                   ThemeManager themeManager, PageModel pageModel,
+                   Function<WeblogPageRequest, SiteModel> siteModelFactory,
+                   UserDao userDao, DynamicProperties dp) {
         this.userDao = userDao;
         this.weblogDao = weblogDao;
         this.weblogPageCache = weblogPageCache;
@@ -112,23 +120,145 @@ public class PageProcessor extends AbstractController {
      * POSTs are for handling responses from the CommentProcessor, those will have a commentForm
      * attribute that translates to a WeblogEntryComment instance containing the comment.
      */
-    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
-    void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogPageRequest incomingRequest = WeblogPageRequest.Creator.create(request, pageModel);
+
+    @GetMapping(path = "/{weblogHandle}")
+    ResponseEntity<Resource> getHomePage(@PathVariable String weblogHandle,
+                                              HttpServletRequest request, Principal principal) {
+        WeblogPageRequest incomingRequest = new WeblogPageRequest(weblogHandle, principal, pageModel);
+
+        // weblog template
+        return handleRequest(incomingRequest, null, request);
+    }
+
+    @RequestMapping(path = "/{weblogHandle}/entry/{anchor}", method = {RequestMethod.GET, RequestMethod.POST})
+    ResponseEntity<Resource> getByEntry(@PathVariable String weblogHandle, @PathVariable String anchor,
+                                        HttpServletRequest request, Principal principal) {
+        WeblogPageRequest incomingRequest = new WeblogPageRequest(weblogHandle, principal, pageModel);
+        incomingRequest.setWeblogEntryAnchor(Utilities.decode(anchor));
 
         Weblog weblog = weblogDao.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
+
         if (weblog == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
+            return ResponseEntity.notFound().build();
         } else {
             incomingRequest.setWeblog(weblog);
+
+            WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog,
+                    incomingRequest.getWeblogEntryAnchor());
+
+            if (entry == null || !entry.isPublished()) {
+                log.warn("For weblog {}, invalid or not yet published entry {} requested, returning home page instead.",
+                        weblogHandle, anchor);
+                return getHomePage(weblogHandle, request, principal);
+            } else {
+                incomingRequest.setWeblogEntry(entry);
+                incomingRequest.setTemplate(
+                        themeManager.getWeblogTheme(weblog).getTemplateByRole(Role.PERMALINK));
+            }
+
+            return handleRequest(incomingRequest, null, request);
+        }
+    }
+
+    @GetMapping(path = "/{weblogHandle}/date/{date}")
+    ResponseEntity<Resource> getByDate(@PathVariable String weblogHandle, @PathVariable String date,
+                                       @RequestParam(value = "page", required = false) Integer page,
+                                       HttpServletRequest request, Principal principal) {
+        WeblogPageRequest incomingRequest = new WeblogPageRequest(weblogHandle, principal, pageModel);
+        // discourage date-based URLs from appearing in search engines
+        incomingRequest.setNoIndex(true);
+        if (WeblogPageRequest.isValidDateString(date)) {
+            incomingRequest.setWeblogDate(date);
+        }
+
+        return handleRequest(incomingRequest, null, request);
+    }
+
+    @GetMapping(path = "/{weblogHandle}/category/{category}")
+    ResponseEntity<Resource> getByCategory(@PathVariable String weblogHandle, @PathVariable String category,
+                                           @RequestParam(value = "page", required = false) Integer page,
+                                           @RequestParam(value = "tag", required = false) String tag,
+                                           HttpServletRequest request, Principal principal) {
+        WeblogPageRequest incomingRequest = new WeblogPageRequest(weblogHandle, principal, pageModel);
+
+        // TODO: Validate category
+        incomingRequest.setCategory(category);
+        if (tag != null) {
+            incomingRequest.setTag(tag);
+        }
+
+        return handleRequest(incomingRequest, page, request);
+    }
+
+    @GetMapping(path = "/{weblogHandle}/tag/{tag}")
+    ResponseEntity<Resource> getByTag(@PathVariable String weblogHandle, @PathVariable String tag,
+                                      @RequestParam(value = "page", required = false) Integer page,
+                                      HttpServletRequest request, Principal principal) {
+        WeblogPageRequest incomingRequest = new WeblogPageRequest(weblogHandle, principal, pageModel);
+        incomingRequest.setTag(tag);
+
+        return handleRequest(incomingRequest, page, request);
+    }
+
+    @GetMapping(path = "/{weblogHandle}/page/{customPage}")
+    ResponseEntity<Resource> getByCustomPage(@PathVariable String weblogHandle, @PathVariable String customPage,
+                                       @RequestParam(value = "date", required = false) String date,
+                                       HttpServletRequest request, Principal principal) {
+        WeblogPageRequest incomingRequest = new WeblogPageRequest(weblogHandle, principal, pageModel);
+        incomingRequest.setCustomPageName(customPage);
+        if (date != null && WeblogPageRequest.isValidDateString(date)) {
+            incomingRequest.setWeblogDate(date);
+        }
+
+        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
+
+        if (weblog == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            incomingRequest.setWeblog(weblog);
+            Template template = themeManager.getWeblogTheme(weblog).getTemplateByName(
+                    incomingRequest.getCustomPageName());
+
+            // block internal custom pages from appearing directly
+            if (template != null && template.getRole().isAccessibleViaUrl()) {
+                incomingRequest.setTemplate(template);
+                return handleRequest(incomingRequest, null, request);
+            } else {
+                log.warn("For weblog {},  invalid or non-external page {} requested, returning home page instead.",
+                        weblogHandle, customPage);
+                return getHomePage(weblogHandle, request, principal);
+            }
+        }
+    }
+
+    private ResponseEntity<Resource> handleRequest(WeblogPageRequest incomingRequest, Integer pageNum,
+                                                   HttpServletRequest request) {
+
+        if (incomingRequest.getWeblog() == null) {
+            Weblog weblog = weblogDao.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
+
+            if (weblog == null) {
+                return ResponseEntity.notFound().build();
+            } else {
+                incomingRequest.setWeblog(weblog);
+            }
         }
 
         weblogPageCache.incrementIncomingRequests();
 
+        // TODO: handle pagenums in the callers
+        if (pageNum != null) {
+            incomingRequest.setPageNum(pageNum);
+            if (pageNum > 0) {
+                // only index first pages (i.e., those without this parameter)
+                incomingRequest.setNoIndex(true);
+            }
+        }
+
         // is this the site-wide weblog?
         incomingRequest.setSiteWide(themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide());
-        Instant lastModified = (incomingRequest.isSiteWide()) ? dp.getLastSitewideChange() : weblog.getLastModified();
+        Instant lastModified = (incomingRequest.isSiteWide()) ?
+                dp.getLastSitewideChange() : incomingRequest.getWeblog().getLastModified();
 
         // Respond with 304 Not Modified if it is not modified.
         // DB stores last modified in millis, browser if-modified-since in seconds, so need to truncate millis from the former.
@@ -137,8 +267,7 @@ public class PageProcessor extends AbstractController {
 
         if (inDb <= inBrowser) {
             weblogPageCache.incrementRequestsHandledBy304();
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            return;
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         }
 
         if (incomingRequest.getAuthenticatedUser() != null) {
@@ -163,42 +292,16 @@ public class PageProcessor extends AbstractController {
             if (rendererOutput == null) {
                 newContent = true;
 
-                // not using cache so need to generate page from scratch
-                // figure out what template to use
-                if (incomingRequest.getCustomPageName() != null) {
-                    Template template = themeManager.getWeblogTheme(weblog).getTemplateByName(
-                            incomingRequest.getCustomPageName());
-
-                    // block internal custom pages from appearing directly
-                    if (template != null && template.getRole().isAccessibleViaUrl()) {
-                        incomingRequest.setTemplate(template);
-                    }
-                } else {
-                    boolean invalid = false;
-
-                    if (incomingRequest.getWeblogEntryAnchor() != null) {
-                        WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog,
-                                incomingRequest.getWeblogEntryAnchor());
-
-                        if (entry == null || !entry.isPublished()) {
-                            invalid = true;
-                        } else {
-                            incomingRequest.setWeblogEntry(entry);
-                            incomingRequest.setTemplate(
-                                    themeManager.getWeblogTheme(weblog).getTemplateByRole(Role.PERMALINK));
-                        }
-                    }
-
-                    // use default template for other contexts (or, for entries, if PERMALINK template is undefined)
-                    if (!invalid && incomingRequest.getTemplate() == null) {
-                        incomingRequest.setTemplate(
-                                themeManager.getWeblogTheme(weblog).getTemplateByRole(Role.WEBLOG));
-                    }
+                // use default template if not yet earlier determined
+                if (incomingRequest.getTemplate() == null) {
+                    incomingRequest.setTemplate(
+                            themeManager.getWeblogTheme(incomingRequest.getWeblog()).getTemplateByRole(Role.WEBLOG));
                 }
 
                 if (incomingRequest.getTemplate() == null) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                    return;
+                    log.warn("For weblog {}, no WEBLOG template defined, returning 404",
+                            incomingRequest.getWeblog());
+                    return ResponseEntity.notFound().build();
                 }
 
                 // populate the rendering model
@@ -222,16 +325,8 @@ public class PageProcessor extends AbstractController {
                 rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
             }
 
-            // write rendered content to response
-            response.setContentType(rendererOutput.getRole().getContentType());
-            response.setContentLength(rendererOutput.getContent().length);
-            // no-cache: browser may cache but must validate with server each time before using (check for 304 response)
-            response.setHeader("Cache-Control", "no-cache");
-            response.setDateHeader("Last-Modified", lastModified.toEpochMilli());
-            response.getOutputStream().write(rendererOutput.getContent());
-
             if (rendererOutput.getRole().isIncrementsHitCount()) {
-                weblogManager.incrementHitCount(weblog);
+                weblogManager.incrementHitCount(incomingRequest.getWeblog());
             }
 
             if (newContent && cacheKey != null) {
@@ -239,14 +334,23 @@ public class PageProcessor extends AbstractController {
                 weblogPageCache.put(cacheKey, rendererOutput);
             }
 
+            return ResponseEntity.ok()
+                    .contentType(MediaType.valueOf(rendererOutput.getRole().getContentType()))
+                    .contentLength(rendererOutput.getContent().length)
+                    .lastModified(lastModified.toEpochMilli())
+                    // no-cache: browser may cache but must validate with server each time before using (check for 304 response)
+                    .cacheControl(CacheControl.noCache())
+                    .body(new ByteArrayResource(rendererOutput.getContent()));
+
         } catch (Exception e) {
             log.error("Error during rendering for {}", incomingRequest, e);
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 
     /**
      * Generate a cache key from a parsed weblog page request.
+     * TODO: Handle in the calling methods
      */
     String generateKey(WeblogPageRequest request) {
         StringBuilder key = new StringBuilder();
