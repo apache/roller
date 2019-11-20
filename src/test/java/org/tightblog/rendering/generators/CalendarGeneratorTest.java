@@ -83,7 +83,8 @@ public class CalendarGeneratorTest {
         initializeDateToWeblogEntryMap();
         Weblog weblog = new Weblog();
         weblog.setLocale("en-US");
-        WeblogPageRequest wpr = new WeblogPageRequest(mock(PageModel.class));
+        weblog.setHandle("testblog");
+        WeblogPageRequest wpr = new WeblogPageRequest(weblog.getHandle(), null, mock(PageModel.class));
         wpr.setWeblogDate("18581014");
         wpr.setWeblog(weblog);
         wpr.setCategory("stamps");
@@ -118,7 +119,8 @@ public class CalendarGeneratorTest {
         initializeDateToWeblogEntryMap();
         Weblog weblog = new Weblog();
         weblog.setLocale("EN_US");
-        WeblogPageRequest wpr = new WeblogPageRequest(mock(PageModel.class));
+        weblog.setHandle("testblog");
+        WeblogPageRequest wpr = new WeblogPageRequest(weblog.getHandle(), null, mock(PageModel.class));
         wpr.setWeblog(weblog);
         wpr.setCategory("stamps");
 
@@ -154,7 +156,8 @@ public class CalendarGeneratorTest {
     @Test
     public void testComputeMonthUrl() {
         Weblog weblog = new Weblog();
-        WeblogPageRequest wpr = new WeblogPageRequest(mock(PageModel.class));
+        weblog.setHandle("testblog");
+        WeblogPageRequest wpr = new WeblogPageRequest(weblog.getHandle(), null, mock(PageModel.class));
         wpr.setWeblog(weblog);
         wpr.setCategory("stamps");
 

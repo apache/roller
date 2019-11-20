@@ -37,12 +37,13 @@ import static org.mockito.Mockito.when;
 public class TestUtils {
 
     public static final String BLOG_HANDLE = "myblog";
+    public static final String ENTRY_ANCHOR = "entry-anchor";
 
     @Captor
     ArgumentCaptor<Map<String, Object>> stringObjectMapCaptor;
 
     public static HttpServletRequest createMockServletRequestForWeblogEntryRequest() {
-        return createBaseMockServletRequest(addBlogHandle("page/%s/entry/entry-anchor"));
+        return createBaseMockServletRequest(addBlogHandle("page/%s/entry/" + ENTRY_ANCHOR));
     }
 
     public static HttpServletRequest createMockServletRequestForWeblogHomePageRequest() {
@@ -61,11 +62,6 @@ public class TestUtils {
         return createBaseMockServletRequest(addBlogHandle("page/%s/search?q=antelope"));
     }
 
-    public static HttpServletRequest createMockServletRequestForMediaFileRequest(String fileId) {
-        return createBaseMockServletRequest(addBlogHandle("mediafile/%s/"
-                + (fileId == null ? "" : fileId)));
-    }
-
     private static String addBlogHandle(String urlPath) {
         return String.format("/tb-ui/rendering/" + urlPath, BLOG_HANDLE);
     }
@@ -76,6 +72,11 @@ public class TestUtils {
         verify(mockRenderer).render(any(), stringObjectMapCaptor.capture());
         Map<String, Object> results = stringObjectMapCaptor.getValue();
         return (WeblogPageRequest) results.get("model");
+    }
+
+    // Spring REST parses servlet path directly, so not necessary to place in HttpServletRequest object.
+    public static HttpServletRequest createMockServletRequest() {
+        return createBaseMockServletRequest(null);
     }
 
     private static HttpServletRequest createBaseMockServletRequest(String servletPath) {

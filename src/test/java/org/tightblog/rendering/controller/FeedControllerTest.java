@@ -90,7 +90,7 @@ public class FeedControllerTest {
                 .thenReturn(new HashSet<>());
         feedProcessor.setApplicationContext(mockApplicationContext);
 
-        mockRequest = TestUtils.createMockServletRequestForWeblogFeedRequest();
+        mockRequest = TestUtils.createMockServletRequest();
         mockResponse = mock(HttpServletResponse.class);
     }
 

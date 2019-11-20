@@ -25,6 +25,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.rendering.model.PageModel;
@@ -64,6 +65,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Principal;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -148,8 +150,11 @@ public class CommentController extends AbstractController {
     /**
      * Here we handle incoming comment postings.
      */
-    @PostMapping(path = "/**")
-    void postComment(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    @PostMapping(path = "/{weblogHandle}/entry/{anchor}")
+    void postComment(HttpServletRequest request, HttpServletResponse response,
+                     @PathVariable String weblogHandle, @PathVariable String anchor,
+                     Principal principal)
+            throws IOException, ServletException {
 
         WebloggerProperties props = webloggerPropertiesDao.findOrNull();
         WebloggerProperties.CommentPolicy commentOption = props.getCommentPolicy();
@@ -160,7 +165,8 @@ public class CommentController extends AbstractController {
             return;
         }
 
-        WeblogPageRequest incomingRequest = WeblogPageRequest.Creator.create(request, pageModel);
+        WeblogPageRequest incomingRequest = new WeblogPageRequest(weblogHandle, principal, pageModel);
+        incomingRequest.setWeblogEntryAnchor(anchor);
 
         Weblog weblog = weblogDao.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
         if (weblog == null) {

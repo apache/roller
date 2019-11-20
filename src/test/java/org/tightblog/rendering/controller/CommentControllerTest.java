@@ -52,6 +52,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -84,6 +85,7 @@ public class CommentControllerTest {
     private CommentValidator alwaysNotSpamValidator = (comment, messages) -> ValidationResult.NOT_SPAM;
     private CommentValidator alwaysBlatantSpamValidator = (comment, messages) -> ValidationResult.BLATANT_SPAM;
     private CommentAuthenticator mockAuthenticator;
+    private Principal mockPrincipal;
 
     @Before
     public void initialize() {
@@ -115,6 +117,9 @@ public class CommentControllerTest {
         weblogEntry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
         when(mockWEM.getWeblogEntryByAnchor(weblog, weblogEntry.getAnchor())).thenReturn(weblogEntry);
         when(mockWEM.canSubmitNewComments(weblogEntry)).thenReturn(true);
+
+        mockPrincipal = mock(Principal.class);
+        when(mockPrincipal.getName()).thenReturn("bob");
 
         mockUD = mock(UserDao.class);
         user = new User();
@@ -198,7 +203,7 @@ public class CommentControllerTest {
             Mockito.clearInvocations(mockWEM, mockES, mockIM, mockRequest);
             weblog.setAllowComments(CommentPolicy.YES);
             when(mockIM.isIndexComments()).thenReturn(false);
-            processor.postComment(mockRequest, mockResponse);
+            processor.postComment(mockRequest, mockResponse, weblog.getHandle(), weblogEntry.getAnchor(), null);
             verify(mockES).sendNewPublishedCommentNotification(any());
             verify(mockIM, never()).updateIndex(weblogEntry, false);
 
@@ -211,7 +216,7 @@ public class CommentControllerTest {
             Mockito.clearInvocations(mockWEM, mockES, mockIM);
             processor.setCommentValidators(Collections.singletonList(alwaysSpamValidator));
             properties.setAutodeleteSpam(false);
-            processor.postComment(mockRequest, mockResponse);
+            processor.postComment(mockRequest, mockResponse, weblog.getHandle(), weblogEntry.getAnchor(), null);
             verify(mockWEM).saveComment(any(), anyBoolean());
             verify(mockES).sendPendingCommentNotice(any(), any());
             verify(mockIM, never()).updateIndex(any(WeblogEntry.class), anyBoolean());
@@ -219,14 +224,14 @@ public class CommentControllerTest {
             // check spam not persisted to database with autodelete spam on
             Mockito.clearInvocations(mockWEM);
             properties.setAutodeleteSpam(true);
-            processor.postComment(mockRequest, mockResponse);
+            processor.postComment(mockRequest, mockResponse, weblog.getHandle(), weblogEntry.getAnchor(), null);
             verify(mockWEM, never()).saveComment(any(), anyBoolean());
 
             Mockito.clearInvocations(mockWEM);
 
             // check blatant spam not persisted to database
             processor.setCommentValidators(Collections.singletonList(alwaysBlatantSpamValidator));
-            processor.postComment(mockRequest, mockResponse);
+            processor.postComment(mockRequest, mockResponse, weblog.getHandle(), weblogEntry.getAnchor(), null);
             verify(mockWEM, never()).saveComment(any(), anyBoolean());
 
             // confirm no spam checking if comment is preview
@@ -243,14 +248,13 @@ public class CommentControllerTest {
     @Test
     public void checkBloggerFieldPopulatedCorrectly() {
         try {
-            processor.postComment(mockRequest, mockResponse);
+            processor.postComment(mockRequest, mockResponse, weblog.getHandle(), weblogEntry.getAnchor(), mockPrincipal);
             ArgumentCaptor<WeblogEntryComment> commentCaptor = ArgumentCaptor.forClass(WeblogEntryComment.class);
             verify(mockRequest).setAttribute(eq("commentForm"), commentCaptor.capture());
             assertEquals(user, commentCaptor.getValue().getBlogger());
 
             Mockito.clearInvocations(mockRequest);
-            when(mockRequest.getUserPrincipal()).thenReturn(null);
-            processor.postComment(mockRequest, mockResponse);
+            processor.postComment(mockRequest, mockResponse, weblog.getHandle(), weblogEntry.getAnchor(), null);
             verify(mockRequest).setAttribute(eq("commentForm"), commentCaptor.capture());
             assertNull(commentCaptor.getValue().getBlogger());
         } catch (IOException | ServletException e) {
@@ -263,7 +267,7 @@ public class CommentControllerTest {
         properties.setCommentPolicy(WebloggerProperties.CommentPolicy.NONE);
 
         try {
-            processor.postComment(mockRequest, mockResponse);
+            processor.postComment(mockRequest, mockResponse, weblog.getHandle(), weblogEntry.getAnchor(), null);
             verify(mockResponse).sendError(HttpServletResponse.SC_FORBIDDEN);
         } catch (IOException | ServletException e) {
             fail();
@@ -274,7 +278,7 @@ public class CommentControllerTest {
     public void postCommentReturn404IfWeblogNotFound() {
         try {
             when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(null);
-            processor.postComment(mockRequest, mockResponse);
+            processor.postComment(mockRequest, mockResponse, weblog.getHandle(), weblogEntry.getAnchor(), null);
             verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (IOException | ServletException e) {
             fail();
@@ -287,13 +291,13 @@ public class CommentControllerTest {
 
         try {
             // entry null
-            processor.postComment(mockRequest, mockResponse);
+            processor.postComment(mockRequest, mockResponse, weblog.getHandle(), weblogEntry.getAnchor(), null);
 
             // entry available but not published
             WeblogEntry entry = new WeblogEntry();
             entry.setStatus(WeblogEntry.PubStatus.DRAFT);
             when(mockWEM.getWeblogEntryByAnchor(any(), any())).thenReturn(entry);
-            processor.postComment(mockRequest, mockResponse);
+            processor.postComment(mockRequest, mockResponse, weblog.getHandle(), weblogEntry.getAnchor(), null);
             verify(mockResponse, times(2)).sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (IOException | ServletException e) {
             fail();
@@ -305,21 +309,20 @@ public class CommentControllerTest {
         try {
             // will return disabled if comments not allowed
             when(mockWEM.canSubmitNewComments(any())).thenReturn(false);
-            verifyForwardDueToValidationError("comments.disabled", null);
+            verifyForwardDueToValidationError("comments.disabled", null, true);
 
             // comments allowed, but will show auth error if latter failed
             when(mockWEM.canSubmitNewComments(any())).thenReturn(true);
             when(mockRequest.getParameter("answer")).thenReturn("123");
 
             // no blogger, so authenticator will be activated
-            when(mockRequest.getUserPrincipal()).thenReturn(null);
             when(mockAuthenticator.authenticate(mockRequest)).thenReturn(false);
-            verifyForwardDueToValidationError("error.commentAuthFailed", "123");
+            verifyForwardDueToValidationError("error.commentAuthFailed", "123", false);
 
             // ensure auth not checked if preview and content remains in commentForm
             when(mockRequest.getParameter("preview")).thenReturn("preview");
             when(mockRequest.getParameter("name")).thenReturn(null);
-            verifyForwardDueToValidationError("error.commentPostNameMissing", null);
+            verifyForwardDueToValidationError("error.commentPostNameMissing", null, false);
             ArgumentCaptor<WeblogEntryComment> commentCaptor = ArgumentCaptor.forClass(WeblogEntryComment.class);
             verify(mockRequest).setAttribute(eq("commentForm"), commentCaptor.capture());
             assertEquals("<p>My comment for this blog entry.</p>", commentCaptor.getValue().getContent());
@@ -327,7 +330,7 @@ public class CommentControllerTest {
             // ensure no authentication if authenticator null
             processor.setCommentAuthenticator(null);
             when(mockRequest.getParameter("preview")).thenReturn(null);
-            verifyForwardDueToValidationError("error.commentPostNameMissing", null);
+            verifyForwardDueToValidationError("error.commentPostNameMissing", null, false);
 
         } catch (IOException | ServletException e) {
             fail();
@@ -339,7 +342,7 @@ public class CommentControllerTest {
         when(mockRequest.getParameter("url")).thenReturn("www.foo.com");
         when(mockRequest.getParameter("content")).thenReturn("Enjoy <a href=\"http://www.abc.com\">My Link</a> from Bob!");
 
-        WeblogPageRequest wpr = WeblogPageRequest.Creator.create(mockRequest, mock(PageModel.class));
+        WeblogPageRequest wpr = new WeblogPageRequest("myblog", mockPrincipal, mock(PageModel.class));
         WeblogEntry entry = new WeblogEntry();
         User blogger = new User();
         wpr.setWeblogEntry(entry);
@@ -498,7 +501,7 @@ public class CommentControllerTest {
     private void verifyForwardAfterSpamChecking(ApprovalStatus status, String commentStatusKey, boolean preview)
             throws ServletException, IOException {
         Mockito.clearInvocations(mockWEM, mockMessageSource, mockRequest, mockRequestDispatcher);
-        processor.postComment(mockRequest, mockResponse);
+        processor.postComment(mockRequest, mockResponse, weblog.getHandle(), weblogEntry.getAnchor(), mockPrincipal);
         ArgumentCaptor<WeblogEntryComment> commentCaptor = ArgumentCaptor.forClass(WeblogEntryComment.class);
         if (preview) {
             verify(mockRequest).setAttribute(eq("commentForm"), commentCaptor.capture());
@@ -512,10 +515,11 @@ public class CommentControllerTest {
         verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
     }
 
-    private void verifyForwardDueToValidationError(String errorProperty, String errorValue)
+    private void verifyForwardDueToValidationError(String errorProperty, String errorValue, boolean hasPrincipal)
             throws ServletException, IOException {
         Mockito.clearInvocations(mockMessageSource, mockRequest, mockRequestDispatcher);
-        processor.postComment(mockRequest, mockResponse);
+        processor.postComment(mockRequest, mockResponse, weblog.getHandle(), weblogEntry.getAnchor(),
+                hasPrincipal ? mockPrincipal : null);
         ArgumentCaptor<WeblogEntryComment> commentCaptor = ArgumentCaptor.forClass(WeblogEntryComment.class);
         verify(mockRequest).setAttribute(eq("commentForm"), commentCaptor.capture());
         assertTrue(commentCaptor.getValue().isInvalid());

@@ -54,7 +54,7 @@ public class AbstractControllerTest {
         modelSet.add(mockURLModel);
         modelSet.add(mockModel);
         when(mockContext.getBean(eq("testBean"), eq(Set.class))).thenReturn(modelSet);
-        WeblogPageRequest req = WeblogPageRequest.Creator.create(mock(HttpServletRequest.class), mock(PageModel.class));
+        WeblogPageRequest req = new WeblogPageRequest("myblog", null, mock(PageModel.class));
         Map<String, Object> initData = new HashMap<>();
         initData.put("parsedRequest", req);
         UserDao mockUD = mock(UserDao.class);

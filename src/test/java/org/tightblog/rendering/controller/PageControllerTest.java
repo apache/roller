@@ -34,6 +34,7 @@ import org.tightblog.WebloggerTest;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.config.WebConfig;
 import org.tightblog.domain.Template;
+import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.model.URLModel;
 import org.tightblog.dao.UserDao;
@@ -77,7 +78,9 @@ import static org.mockito.Mockito.*;
 public class PageControllerTest {
     private static Logger log = LoggerFactory.getLogger(PageControllerTest.class);
 
-    private static final String TEST_BLOG_HANDLE = "myblog";
+    private static final String TEST_BLOG_HANDLE = TestUtils.BLOG_HANDLE;
+    private static final String TEST_ENTRY_ANCHOR = TestUtils.ENTRY_ANCHOR;
+    private static final String TEST_GENERATED_PAGE = "<p>hello</p>";
 
     private PageController controller;
     private HttpServletRequest mockRequest;
@@ -87,12 +90,15 @@ public class PageControllerTest {
     private WeblogTheme mockWeblogTheme;
     private DynamicProperties dp;
     private Principal mockPrincipal;
+    private WeblogEntryListGenerator mockWELG;
+    private WeblogTemplate weblogTemplate;
 
     private LazyExpiringCache mockCache;
     private WeblogManager mockWM;
     private WeblogDao mockWD;
     private ThymeleafRenderer mockRenderer;
     private ThemeManager mockThemeManager;
+    private PageModel mockPageModel;
     private ApplicationContext mockApplicationContext;
 
     @Captor
@@ -100,19 +106,24 @@ public class PageControllerTest {
 
     @Before
     public void initializeMocks() throws IOException {
-        mockRequest = TestUtils.createMockServletRequestForWeblogEntryRequest();
+        mockRequest = TestUtils.createMockServletRequest();
         mockPrincipal = mock(Principal.class);
 
         UserDao mockUD = mock(UserDao.class);
         mockWD = mock(WeblogDao.class);
         weblog = new Weblog();
         weblog.setLastModified(Instant.now().minus(2, ChronoUnit.DAYS));
+        weblog.setHandle(TEST_BLOG_HANDLE);
         when(mockWD.findByHandleAndVisibleTrue(TEST_BLOG_HANDLE)).thenReturn(weblog);
 
         mockCache = mock(LazyExpiringCache.class);
         mockWM = mock(WeblogManager.class);
         mockWEM = mock(WeblogEntryManager.class);
         mockRenderer = mock(ThymeleafRenderer.class);
+
+        CachedContent cachedContent = new CachedContent(Role.CUSTOM_EXTERNAL);
+        cachedContent.setContent(TEST_GENERATED_PAGE.getBytes(StandardCharsets.UTF_8));
+        when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 
         mockThemeManager = mock(ThemeManager.class);
         sharedTheme = new SharedTheme();
@@ -126,8 +137,12 @@ public class PageControllerTest {
 
         Function<WeblogPageRequest, SiteModel> siteModelFactory = new WebConfig().siteModelFactory();
 
+        mockPageModel = mock(PageModel.class);
+        mockWELG = mock(WeblogEntryListGenerator.class);
+        when(mockPageModel.getWeblogEntryListGenerator()).thenReturn(mockWELG);
+
         controller = new PageController(mockWD, mockCache, mockWM, mockWEM,
-                mockRenderer, mockThemeManager, mock(PageModel.class),
+                mockRenderer, mockThemeManager, mockPageModel,
                 siteModelFactory, mockUD, dp);
 
         mockApplicationContext = mock(ApplicationContext.class);
@@ -135,6 +150,10 @@ public class PageControllerTest {
         controller.setApplicationContext(mockApplicationContext);
 
         MockitoAnnotations.initMocks(this);
+
+        weblogTemplate = new WeblogTemplate();
+        weblogTemplate.setRole(Role.WEBLOG);
+        when(mockWeblogTheme.getTemplateByRole(Role.WEBLOG)).thenReturn(weblogTemplate);
     }
 
     @Test
@@ -167,7 +186,7 @@ public class PageControllerTest {
         weblog.setLastModified(twoDaysAgo);
 
         CachedContent cachedContent = new CachedContent(Role.WEBLOG);
-        cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
+        cachedContent.setContent(TEST_GENERATED_PAGE.getBytes(StandardCharsets.UTF_8));
         when(mockCache.get(any(), any())).thenReturn(cachedContent);
 
         ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
@@ -177,7 +196,7 @@ public class PageControllerTest {
         verify(mockWM).incrementHitCount(weblog);
         assertNotNull(result.getHeaders().getContentType());
         assertEquals(Template.Role.WEBLOG.getContentType(), result.getHeaders().getContentType().toString());
-        assertEquals(7, result.getHeaders().getContentLength());
+        assertEquals(TEST_GENERATED_PAGE.length(), result.getHeaders().getContentLength());
         assertEquals(twoDaysAgo.truncatedTo(ChronoUnit.SECONDS).toEpochMilli(),
                 result.getHeaders().getLastModified());
         assertEquals(CacheControl.noCache().getHeaderValue(), result.getHeaders().getCacheControl());
@@ -187,7 +206,7 @@ public class PageControllerTest {
 
     @Test
     public void testNonExistentTemplateRequestReturns404() throws IOException {
-        when(mockWeblogTheme.getTemplateByName(any())).thenReturn(null);
+        when(mockWeblogTheme.getTemplateByRole(Role.WEBLOG)).thenReturn(null);
         ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
                 mockPrincipal);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
@@ -198,102 +217,97 @@ public class PageControllerTest {
     }
 
     @Test
-    public void testUnfoundOrCustomInternalTemplateRequestReturns404() throws IOException {
+    public void testUnfoundOrCustomInternalTemplateRequestReturnsHomePage() throws IOException {
+        String customPageName = "my-custom-page";
+
         // test custom internal template returns 404
         WeblogTemplate wt = new WeblogTemplate();
         wt.setRole(Role.CUSTOM_INTERNAL);
-        when(mockWeblogTheme.getTemplateByName("my-custom-page")).thenReturn(wt);
-        mockRequest = TestUtils.createMockServletRequestForCustomPageRequest();
+        when(mockWeblogTheme.getTemplateByName(customPageName)).thenReturn(wt);
 
-        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
-                mockPrincipal);
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-        // CUSTOM_INTERNAL has incrementHitCounts = false
-        verify(mockWM, never()).incrementHitCount(weblog);
-
-        verify(mockCache).incrementIncomingRequests();
-        verify(mockCache, never()).incrementRequestsHandledBy304();
-        verify(mockCache, never()).put(anyString(), any());
+        ResponseEntity<Resource> result = controller.getByCustomPage(TEST_BLOG_HANDLE, customPageName,
+                null, mockRequest, mockPrincipal);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        WeblogPageRequest wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
+        // home page uses weblog template
+        assertEquals(weblogTemplate, wpr.getTemplate());
 
         // now test with a null template
-        when(mockWeblogTheme.getTemplateByName(any())).thenReturn(null);
-        result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
-                mockPrincipal);
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        Mockito.clearInvocations(mockRenderer);
+        when(mockWeblogTheme.getTemplateByName(customPageName)).thenReturn(null);
+        result = controller.getByCustomPage(TEST_BLOG_HANDLE, customPageName,
+                null, mockRequest, mockPrincipal);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
+        // home page uses weblog template
+        assertEquals(weblogTemplate, wpr.getTemplate());
     }
 
     @Test
-    public void testUncachedPageRendering() throws IOException {
-        WeblogTemplate customTemplate = new WeblogTemplate();
-        customTemplate.setRole(Role.CUSTOM_EXTERNAL);
-        when(mockWeblogTheme.getTemplateByName(any())).thenReturn(customTemplate);
-
-        mockRequest = TestUtils.createMockServletRequestForCustomPageRequest();
-
-        CachedContent cachedContent = new CachedContent(Role.CUSTOM_EXTERNAL);
-        cachedContent.setContent("mytest1".getBytes(StandardCharsets.UTF_8));
-        when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
-
-        ResponseEntity<Resource> result = controller.getByCustomPage(TEST_BLOG_HANDLE,
-                "my-custom-page", null, mockRequest, mockPrincipal);
-
-        // CUSTOM_EXTERNAL has incrementHitCounts = true
-        verify(mockWM).incrementHitCount(weblog);
-        verify(mockCache).incrementIncomingRequests();
-        verify(mockCache, never()).incrementRequestsHandledBy304();
-        verify(mockCache).put(anyString(), any());
-        verify(mockRenderer).render(eq(customTemplate), any());
-        assertNotNull(result.getHeaders().getContentType());
-        assertEquals(Role.CUSTOM_EXTERNAL.getContentType(), result.getHeaders().getContentType().toString());
-        assertEquals("mytest1".length(), result.getHeaders().getContentLength());
-
-        // test weblog template
-        WeblogTemplate weblogTemplate = new WeblogTemplate();
-        weblogTemplate.setRole(Role.WEBLOG);
-        when(mockWeblogTheme.getTemplateByRole(Role.WEBLOG)).thenReturn(weblogTemplate);
-
-        Mockito.clearInvocations(mockWM, mockCache, mockRenderer);
-        mockRequest = TestUtils.createMockServletRequestForWeblogHomePageRequest();
-
-        controller.getHomePage(TEST_BLOG_HANDLE, mockRequest, mockPrincipal);
+    public void testGetHomePage() throws IOException {
+        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest, mockPrincipal);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
         WeblogPageRequest wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
+        assertNull(wpr.getWeblogEntry());
         assertEquals(weblogTemplate, wpr.getTemplate());
+        assertNull(wpr.getCustomPageName());
+        assertNull(wpr.getCategory());
+        assertNull(wpr.getWeblogDate());
+        assertNull(wpr.getTag());
+        assertFalse(wpr.isPermalink());
+        assertFalse(wpr.isNoIndex());
+        assertFalse(wpr.isSearchResults());
 
-        // test permalink template
-        sharedTheme.setSiteWide(true);
-        dp.updateLastSitewideChange();
+        // test chrono pager called
+        wpr.getWeblogEntriesPager();
+        verify(mockWELG).getChronoPager(weblog, null, null,
+                null, 0, 0, false);
+    }
 
-        mockRequest = TestUtils.createMockServletRequestForWeblogEntryRequest();
-
+    @Test
+    public void testGetByEntry() throws IOException {
+        // test entry generated with permalink template
         WeblogTemplate permalinkTemplate = new WeblogTemplate();
         permalinkTemplate.setRole(Role.PERMALINK);
-        WeblogEntry entry = new WeblogEntry();
-        entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-        when(mockWEM.getWeblogEntryByAnchor(weblog, "entry-anchor")).thenReturn(entry);
         when(mockWeblogTheme.getTemplateByRole(Role.PERMALINK)).thenReturn(permalinkTemplate);
 
-        Mockito.clearInvocations(mockWM, mockCache, mockRenderer);
-        controller.getByEntry(TEST_BLOG_HANDLE, "entry-anchor", mockRequest, mockPrincipal);
-        wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
-        assertEquals(entry, wpr.getWeblogEntry());
+        WeblogEntry entry = new WeblogEntry();
+        entry.setAnchor(TEST_ENTRY_ANCHOR);
+        entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
+        when(mockWEM.getWeblogEntryByAnchor(weblog, entry.getAnchor())).thenReturn(entry);
+
+        ResponseEntity<Resource> result = controller.getByEntry(TEST_BLOG_HANDLE, TEST_ENTRY_ANCHOR, mockRequest, mockPrincipal);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        WeblogPageRequest wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
+        assertEquals(TEST_ENTRY_ANCHOR, wpr.getWeblogEntry().getAnchor());
         assertEquals(permalinkTemplate, wpr.getTemplate());
-        verify(mockWM).incrementHitCount(weblog);
-        verify(mockCache).put(anyString(), any());
+        assertNull(wpr.getCustomPageName());
+        assertNull(wpr.getCategory());
+        assertNull(wpr.getWeblogDate());
+        assertNull(wpr.getTag());
+        assertTrue(wpr.isPermalink());
+        // pageNum = 0 so index
+        assertFalse(wpr.isNoIndex());
+        assertFalse(wpr.isSearchResults());
+
+        // test permalink pager called
+        wpr.getWeblogEntriesPager();
+        verify(mockWELG).getPermalinkPager(eq(weblog), any(), any());
 
         // test redirect to home page (i.e., usage of weblog template) if weblog entry not published
         entry.setStatus(WeblogEntry.PubStatus.DRAFT);
 
-        Mockito.clearInvocations(mockWM, mockCache, mockRenderer);
-        result = controller.getByEntry(TEST_BLOG_HANDLE, "entry-anchor", mockRequest,
-                mockPrincipal);
+        Mockito.clearInvocations(mockWM, mockCache, mockRenderer, mockWELG);
+        result = controller.getByEntry(TEST_BLOG_HANDLE, TEST_ENTRY_ANCHOR,
+                mockRequest, mockPrincipal);
         wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
         assertEquals(weblogTemplate, wpr.getTemplate());
         assertEquals(HttpStatus.OK, result.getStatusCode());
 
         // test redirect to home page (i.e., usage of weblog template) if weblog entry not found
-        when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(null);
+        when(mockWEM.getWeblogEntryByAnchor(weblog, TEST_ENTRY_ANCHOR)).thenReturn(null);
         Mockito.clearInvocations(mockWM, mockCache, mockRenderer);
-        result = controller.getByEntry(TEST_BLOG_HANDLE, "entry-anchor", mockRequest,
+        result = controller.getByEntry(TEST_BLOG_HANDLE, TEST_ENTRY_ANCHOR, mockRequest,
                 mockPrincipal);
         wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
         assertEquals(weblogTemplate, wpr.getTemplate());
@@ -303,12 +317,13 @@ public class PageControllerTest {
         when(mockWeblogTheme.getTemplateByRole(Role.PERMALINK)).thenReturn(null);
 
         Mockito.clearInvocations(mockWM, mockCache, mockRenderer);
-        controller.getByEntry(TEST_BLOG_HANDLE, "entry-anchor", mockRequest, mockPrincipal);
+        result = controller.getByEntry(TEST_BLOG_HANDLE, TEST_ENTRY_ANCHOR, mockRequest, mockPrincipal);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
         wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
         assertEquals(weblogTemplate, wpr.getTemplate());
 
         // test 404 if exception during rendering
-        when(mockWEM.getWeblogEntryByAnchor(weblog, "myentry")).thenReturn(entry);
+        when(mockWEM.getWeblogEntryByAnchor(weblog, TEST_ENTRY_ANCHOR)).thenReturn(entry);
         entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
         doThrow(new IllegalArgumentException()).when(mockRenderer).render(any(), any());
 
@@ -321,14 +336,121 @@ public class PageControllerTest {
     }
 
     @Test
+    public void testGetByCategory() throws IOException {
+        String categoryName = "my-category";
+        String tagName = "my-tag";
+
+        // test with optional tag
+        ResponseEntity<Resource> result = controller.getByCategory(TEST_BLOG_HANDLE, categoryName, 0, tagName,
+                mockRequest, mockPrincipal);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        WeblogPageRequest wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
+        assertNull(wpr.getWeblogEntry());
+        assertEquals(weblogTemplate, wpr.getTemplate());
+        assertNull(wpr.getCustomPageName());
+        assertEquals(categoryName, wpr.getCategory());
+        assertNull(wpr.getWeblogDate());
+        assertEquals(tagName, wpr.getTag());
+        assertFalse(wpr.isPermalink());
+        assertFalse(wpr.isNoIndex());
+        assertFalse(wpr.isSearchResults());
+
+        // test chrono pager called
+        wpr.getWeblogEntriesPager();
+        verify(mockWELG).getChronoPager(weblog, null, categoryName,
+                tagName, 0, 0, false);
+
+        // test without tag
+        Mockito.clearInvocations(mockRenderer, mockWELG);
+        result = controller.getByCategory(TEST_BLOG_HANDLE, categoryName, 0, null, mockRequest, mockPrincipal);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
+        assertEquals(categoryName, wpr.getCategory());
+        assertNull(wpr.getTag());
+    }
+
+    @Test
+    public void testGetByTag() throws IOException {
+        String tagName = "my-tag";
+
+        ResponseEntity<Resource> result = controller.getByTag(TEST_BLOG_HANDLE, tagName, 0, mockRequest, mockPrincipal);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        WeblogPageRequest wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
+        assertNull(wpr.getWeblogEntry());
+        assertEquals(weblogTemplate, wpr.getTemplate());
+        assertNull(wpr.getCustomPageName());
+        assertNull(wpr.getCategory());
+        assertNull(wpr.getWeblogDate());
+        assertEquals(tagName, wpr.getTag());
+        assertFalse(wpr.isPermalink());
+        assertFalse(wpr.isNoIndex());
+        assertFalse(wpr.isSearchResults());
+
+        // test chrono pager called
+        wpr.getWeblogEntriesPager();
+        verify(mockWELG).getChronoPager(weblog, null, null,
+                tagName, 0, 0, false);
+    }
+
+    @Test
+    public void testGetByDate() throws IOException {
+        String monthDate = "201804";
+
+        ResponseEntity<Resource> result = controller.getByDate(TEST_BLOG_HANDLE, monthDate, 0, mockRequest, mockPrincipal);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        WeblogPageRequest wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
+        assertNull(wpr.getWeblogEntry());
+        assertEquals(weblogTemplate, wpr.getTemplate());
+        assertNull(wpr.getCustomPageName());
+        assertNull(wpr.getCategory());
+        assertEquals(monthDate, wpr.getWeblogDate());
+        assertNull(wpr.getTag());
+        assertFalse(wpr.isPermalink());
+        assertTrue(wpr.isNoIndex());
+        assertFalse(wpr.isSearchResults());
+
+        // test chrono pager called
+        wpr.getWeblogEntriesPager();
+        verify(mockWELG).getChronoPager(weblog, monthDate, null,
+                null, 0, 0, false);
+    }
+
+    @Test
+    public void testGetCustomPage() throws IOException {
+        String customPageName = "my-custom-page";
+
+        WeblogTemplate customTemplate = new WeblogTemplate();
+        customTemplate.setRole(Role.CUSTOM_EXTERNAL);
+        when(mockWeblogTheme.getTemplateByName(any())).thenReturn(customTemplate);
+
+        ResponseEntity<Resource> result = controller.getByCustomPage(TEST_BLOG_HANDLE,
+                customPageName, null, mockRequest, mockPrincipal);
+
+        // CUSTOM_EXTERNAL has incrementHitCounts = true
+        verify(mockWM).incrementHitCount(weblog);
+        verify(mockCache).incrementIncomingRequests();
+        verify(mockCache, never()).incrementRequestsHandledBy304();
+        verify(mockCache).put(anyString(), any());
+        verify(mockRenderer).render(eq(customTemplate), any());
+        assertNotNull(result.getHeaders().getContentType());
+        assertEquals(Role.CUSTOM_EXTERNAL.getContentType(), result.getHeaders().getContentType().toString());
+        assertEquals(TEST_GENERATED_PAGE.length(), result.getHeaders().getContentLength());
+
+        WeblogPageRequest wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
+        assertEquals(TEST_BLOG_HANDLE, wpr.getWeblogHandle());
+        assertEquals(customPageName, wpr.getCustomPageName());
+        assertNull(wpr.getWeblogEntryAnchor());
+        assertNull(wpr.getCategory());
+        assertNull(wpr.getTag());
+        assertEquals(customTemplate, wpr.getTemplate());
+    }
+
+    @Test
     public void testModelSetCorrectlyFilled() throws IOException {
         URLModel urlModel = new URLModel(null, null);
         Set<Model> pageModelSet = new HashSet<>();
         pageModelSet.add(urlModel);
         when(mockApplicationContext.getBean(eq("pageModelSet"), eq(Set.class))).thenReturn(pageModelSet);
-
-        // setting custom page name to allow for a template to be chosen and hence the rendering to occur
-        mockRequest = TestUtils.createMockServletRequestForCustomPageRequest();
 
         SharedTemplate sharedTemplate = new SharedTemplate();
         sharedTemplate.setRole(Role.CUSTOM_EXTERNAL);
@@ -354,7 +476,7 @@ public class PageControllerTest {
         assertTrue(results.containsKey("site"));
         WeblogPageRequest wpr = (WeblogPageRequest) results.get("model");
         assertEquals(comment, wpr.getCommentForm());
-        verify(mockWM).incrementHitCount(weblog);
+        verify(mockWM, never()).incrementHitCount(weblog);
 
         Mockito.clearInvocations(mockRenderer, mockWM);
         // testing (1) that non-sitewide themes just get "model" added to the rendering map.
@@ -381,7 +503,6 @@ public class PageControllerTest {
 
     @Test
     public void testCommentFormsSkipCache() throws IOException {
-        mockRequest = TestUtils.createMockServletRequestForCustomPageRequest();
         WeblogEntryComment wec = new WeblogEntryComment();
         when(mockRequest.getAttribute("commentForm")).thenReturn(wec);
         controller.getHomePage(TEST_BLOG_HANDLE, mockRequest, mockPrincipal);

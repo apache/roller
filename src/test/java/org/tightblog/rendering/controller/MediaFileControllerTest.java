@@ -62,7 +62,7 @@ public class MediaFileControllerTest {
 
     @Before
     public void initializeMocks() throws IOException {
-        mockRequest = TestUtils.createMockServletRequestForMediaFileRequest("1234");
+        mockRequest = TestUtils.createMockServletRequest();
 
         mockWD = mock(WeblogDao.class);
         Weblog weblog = new Weblog();

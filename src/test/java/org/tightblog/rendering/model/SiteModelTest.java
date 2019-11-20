@@ -35,10 +35,11 @@ public class SiteModelTest {
         WeblogListGenerator mockWeblogListGenerator = mock(WeblogListGenerator.class);
         WeblogTemplate testTemplate = new WeblogTemplate();
         testTemplate.setName("bar2");
-        WeblogPageRequest wpr = new WeblogPageRequest(mock(PageModel.class));
+        Weblog weblog = new Weblog();
+        weblog.setHandle("testweblog");
+        WeblogPageRequest wpr = new WeblogPageRequest(weblog.getHandle(), null, mock(PageModel.class));
         wpr.setTemplate(testTemplate);
         wpr.setPageNum(5);
-        Weblog weblog = new Weblog();
         wpr.setWeblog(weblog);
         URLService mockUrlService = mock(URLService.class);
         when(mockUrlService.getCustomPageURL(weblog, "bar2", null))

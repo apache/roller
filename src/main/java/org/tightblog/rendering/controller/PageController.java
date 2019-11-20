@@ -224,7 +224,7 @@ public class PageController extends AbstractController {
                 incomingRequest.setTemplate(template);
                 return handleRequest(incomingRequest, null, request);
             } else {
-                log.warn("For weblog {},  invalid or non-external page {} requested, returning home page instead.",
+                log.warn("For weblog {}, invalid or non-external page {} requested, returning home page instead.",
                         weblogHandle, customPage);
                 return getHomePage(weblogHandle, request, principal);
             }
@@ -288,44 +288,48 @@ public class PageController extends AbstractController {
             rendererOutput = weblogPageCache.get(cacheKey, lastModified);
         }
 
-        try {
-            if (rendererOutput == null) {
-                newContent = true;
+        if (rendererOutput == null) {
+            newContent = true;
 
-                // use default template if not yet earlier determined
-                if (incomingRequest.getTemplate() == null) {
-                    incomingRequest.setTemplate(
-                            themeManager.getWeblogTheme(incomingRequest.getWeblog()).getTemplateByRole(Role.WEBLOG));
-                }
-
-                if (incomingRequest.getTemplate() == null) {
-                    log.warn("For weblog {}, no WEBLOG template defined, returning 404",
-                            incomingRequest.getWeblog());
-                    return ResponseEntity.notFound().build();
-                }
-
-                // populate the rendering model
-                Map<String, Object> initData = new HashMap<>();
-                initData.put("parsedRequest", incomingRequest);
-
-                // if we're handling comments, add the comment form
-                if (commentForm != null) {
-                    incomingRequest.setCommentForm(commentForm);
-                }
-
-                Map<String, Object> model = getModelMap("pageModelSet", initData);
-                model.put("model", incomingRequest);
-
-                // Load special models for site-wide blog
-                if (incomingRequest.isSiteWide()) {
-                    model.put("site", siteModelFactory.apply(incomingRequest));
-                }
-
-                // render content
-                rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
+            // use default template if not yet earlier determined
+            if (incomingRequest.getTemplate() == null) {
+                incomingRequest.setTemplate(
+                        themeManager.getWeblogTheme(incomingRequest.getWeblog()).getTemplateByRole(Role.WEBLOG));
             }
 
-            if (rendererOutput.getRole().isIncrementsHitCount()) {
+            if (incomingRequest.getTemplate() == null) {
+                log.warn("For weblog {}, no WEBLOG template defined, returning 404",
+                        incomingRequest.getWeblog());
+                return ResponseEntity.notFound().build();
+            }
+
+            // populate the rendering model
+            Map<String, Object> initData = new HashMap<>();
+            initData.put("parsedRequest", incomingRequest);
+
+            // if we're handling comments, add the comment form
+            if (commentForm != null) {
+                incomingRequest.setCommentForm(commentForm);
+            }
+
+            Map<String, Object> model = getModelMap("pageModelSet", initData);
+            model.put("model", incomingRequest);
+
+            // Load special models for site-wide blog
+            if (incomingRequest.isSiteWide()) {
+                model.put("site", siteModelFactory.apply(incomingRequest));
+            }
+
+            try {
+                // render content
+                rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
+            } catch (Exception e) {
+                log.error("Rendering error for {}", incomingRequest, e);
+            }
+        }
+
+        if (rendererOutput != null) {
+            if (commentForm == null && rendererOutput.getRole().isIncrementsHitCount()) {
                 weblogManager.incrementHitCount(incomingRequest.getWeblog());
             }
 
@@ -341,9 +345,8 @@ public class PageController extends AbstractController {
                     // no-cache: browser may cache but must validate with server each time before using (check for 304 response)
                     .cacheControl(CacheControl.noCache())
                     .body(new ByteArrayResource(rendererOutput.getContent()));
-
-        } catch (Exception e) {
-            log.error("Error during rendering for {}", incomingRequest, e);
+        } else {
+            log.error("Unable to rendering anything for {}, returning 404", incomingRequest);
             return ResponseEntity.notFound().build();
         }
     }
