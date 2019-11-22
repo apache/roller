@@ -51,6 +51,7 @@ public class CommentAuthenticatorServlet extends HttpServlet {
      *
      * We only handle get requests.
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws IOException, ServletException {
 
@@ -69,6 +70,7 @@ public class CommentAuthenticatorServlet extends HttpServlet {
     /** 
      * Initialization.
      */
+    @Override
     public void init(ServletConfig config) throws ServletException {
         
         super.init(config);
@@ -90,6 +92,7 @@ public class CommentAuthenticatorServlet extends HttpServlet {
     /** 
      * Destruction.
      */
+    @Override
     public void destroy() {}
     
 }

@@ -49,6 +49,7 @@ public class RequestMappingFilter implements Filter {
     // list of RequestMappers that want to inspect the request
     private final List<RequestMapper> requestMappers = new ArrayList<RequestMapper>();
     
+    @Override
     public void init(FilterConfig filterConfig) {
         
         // lookup set of request mappers we are going to use
@@ -134,7 +135,8 @@ public class RequestMappingFilter implements Filter {
         log.debug("exiting");
     }
     
-    
+
+    @Override
     public void destroy() {}
     
 }

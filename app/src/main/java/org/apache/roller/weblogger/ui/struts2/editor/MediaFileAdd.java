@@ -74,6 +74,7 @@ public class MediaFileAdd extends MediaFileBase {
     /**
      * Prepares action class
      */
+    @Override
     public void myPrepare() {
         log.debug("Into myprepare");
         refreshAllDirectories();
@@ -116,6 +117,7 @@ public class MediaFileAdd extends MediaFileBase {
      * @return String The result of the action.
      */
     @SkipValidation
+    @Override
     public String execute() {
         return INPUT;
     }

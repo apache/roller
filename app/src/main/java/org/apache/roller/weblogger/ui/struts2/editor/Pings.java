@@ -75,6 +75,7 @@ public class Pings extends UIAction {
     }
     
     
+    @Override
     public void myPrepare() {
         
         PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
@@ -101,6 +102,7 @@ public class Pings extends UIAction {
     /*
      * Display the common ping targets with page
      */
+    @Override
     public String execute() {
         
         // load map of enabled auto pings

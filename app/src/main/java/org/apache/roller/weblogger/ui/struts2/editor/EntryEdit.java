@@ -91,6 +91,7 @@ public final class EntryEdit extends UIAction {
         return Collections.singletonList(WeblogPermission.EDIT_DRAFT);
     }
 
+    @Override
     public void myPrepare() {
         if (getBean().getId() == null) {
             // Create and initialize new, not-yet-saved Weblog Entry
@@ -118,6 +119,7 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     @SkipValidation
+    @Override
     public String execute() {
         if (getActionName().equals("entryEdit")) {
             // load bean with pojo data

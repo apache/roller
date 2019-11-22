@@ -52,10 +52,12 @@ public class PingTargetEdit extends UIAction {
     }
 
     // no weblog required
+    @Override
     public boolean isWeblogRequired() {
         return false;
     }
 
+    @Override
     public void myPrepare() {
         PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
 
@@ -80,6 +82,7 @@ public class PingTargetEdit extends UIAction {
     /**
      * Save ping target.
      */
+    @Override
     public String execute() {
         myValidate();
 

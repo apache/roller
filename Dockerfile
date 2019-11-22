@@ -31,7 +31,7 @@ WORKDIR /tmp
 RUN apt-get update && apt-get install -y git
 RUN git clone https://github.com/apache/roller.git
 WORKDIR /tmp/roller
-RUN git checkout bootstrap-ui; \
+RUN git checkout master; \
 mvn -Duser.home=/builder/home -DskipTests=true -B clean install
 
 

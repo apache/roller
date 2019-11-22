@@ -16,10 +16,10 @@
 # directory of this distribution.
 
 
-# Example Docker Compose setup for running Roller and PostreSQL locally
+# Example Docker Compose setup for running Roller and PostgreSQL locally
 
 
-version: '3.2'
+version: '3.7'
 
 services:
 
@@ -37,8 +37,7 @@ services:
          - POSTGRES_PASSWORD=tiger
 
    roller:
-      image:
-         build: .
+      build: .
       ports:
          - "8080:8080"
       volumes:

@@ -84,18 +84,22 @@ public class SearchResultsFeedPager extends AbstractPager {
         return this.entries;
     }
     
+    @Override
     public boolean hasMoreItems() {
         return this.moreResults;
     }
     
+    @Override
     public String getHomeLink() {
         return urlStrategy.getWeblogURL(weblog, weblog.getLocale(), false);
     }
 
+    @Override
     public String getHomeName() {
         return messageUtils.getString("searchPager.home");
     }  
     
+    @Override
     protected String createURL(String url, Map params) {
         String category = feedRequest.getWeblogCategoryName();
         if(category != null && category.trim().length() > 0) {
@@ -115,6 +119,7 @@ public class SearchResultsFeedPager extends AbstractPager {
         return super.createURL(url, params);
     }
     
+    @Override
     public String getUrl() {
         return createURL(url, new HashMap());
     }

@@ -79,9 +79,11 @@ public class InitFilter implements Filter {
                 request.getRequestURI(), request.getRequestURL().toString());
     }
 
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
+    @Override
     public void destroy() {
     }
 

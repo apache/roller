@@ -93,6 +93,7 @@ public class RollerContext extends ContextLoaderListener
     /**
      * Responds to app-init event and triggers startup procedures.
      */
+    @Override
     public void contextInitialized(ServletContextEvent sce) {
 
         // First, initialize everything that requires no database
@@ -194,6 +195,7 @@ public class RollerContext extends ContextLoaderListener
     /**
      * Responds to app-destroy event and triggers shutdown sequence.
      */
+    @Override
     public void contextDestroyed(ServletContextEvent sce) {
         WebloggerFactory.getWeblogger().shutdown();
         // do we need a more generic mechanism for presentation layer shutdown?

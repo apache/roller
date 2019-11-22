@@ -74,6 +74,7 @@ public class ValidateSaltFilter implements Filter {
         chain.doFilter(request, response);
     }
 
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
         // Construct our list of ignored urls
@@ -84,6 +85,7 @@ public class ValidateSaltFilter implements Filter {
         }
     }
 
+    @Override
     public void destroy() {
     }
 

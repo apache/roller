@@ -80,6 +80,7 @@ public class MediaFilesPager extends AbstractPager {
     }
     
     
+    @Override
     public boolean hasMoreItems() {
         return false;
     }

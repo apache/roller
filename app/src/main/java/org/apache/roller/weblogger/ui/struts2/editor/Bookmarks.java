@@ -67,6 +67,7 @@ public class Bookmarks extends UIAction {
         this.pageTitle = "bookmarksForm.rootTitle";
     }
 
+    @Override
     public void myPrepare() {
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
@@ -86,6 +87,7 @@ public class Bookmarks extends UIAction {
     /**
      * Present the bookmarks available in the folder specified by the request.
      */
+    @Override
     public String execute() {
 
         // build list of folders that the user can navigate to

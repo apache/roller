@@ -42,6 +42,7 @@ public class PreviewPageModel extends PageModel {
     /** 
      * Init model.
      */
+    @Override
     public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
@@ -69,12 +70,14 @@ public class PreviewPageModel extends PageModel {
     }    
     
     
+    @Override
     public boolean isPermalink() {
         return (previewRequest.getPreviewEntry() != null ||
                 previewRequest.getWeblogAnchor() != null);
     }
     
     
+    @Override
     public WeblogEntryWrapper getWeblogEntry() {
         
         if(previewRequest.getPreviewEntry() != null ||
@@ -90,6 +93,7 @@ public class PreviewPageModel extends PageModel {
      * pager for preview pages which can display things that we don't want
      * available on the "live" weblog, like DRAFT entries.
      */
+    @Override
     public WeblogEntriesPager getWeblogEntriesPager(String catArgument) {
         
         String anchor = previewRequest.getPreviewEntry();

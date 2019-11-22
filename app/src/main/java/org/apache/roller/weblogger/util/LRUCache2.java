@@ -160,6 +160,7 @@ public class LRUCache2
             this.maxsize = maxsize;
         }
 
+        @Override
         protected boolean removeEldestEntry(Map.Entry eldest)
         {
             return this.size() > this.maxsize;

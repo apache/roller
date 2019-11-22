@@ -32,6 +32,7 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
      * Get URL configured for Planet.
      * @param planet There's only one planet in Roller, so this is ignored.
      */
+    @Override
     public String getPlanetURL(String planet) {
         StringBuilder url = new StringBuilder();
         url.append(WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
@@ -45,6 +46,7 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
      * @param group   Handle of planet group (or null for default group).
      * @param pageNum Page number of results to return.
      */
+    @Override
     public String getPlanetGroupURL(String planet, String group, int pageNum) {
 
         StringBuilder url = new StringBuilder();
@@ -73,6 +75,7 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
      * @param group Handle of planet group (or null for default group).
      * @param format  Feed format to be returned (ignored, currently only RSS is supported).
      */
+    @Override
     public String getPlanetGroupFeedURL(String planet, String group, String format) {
         
         StringBuilder url = new StringBuilder();
@@ -95,6 +98,7 @@ public class PlanetURLStrategy extends MultiPlanetURLStrategy {
      * @param planet There's only one planet in Roller, so this is ignored.
      * @param group Handle of planet group.
      */
+    @Override
     public String getPlanetGroupOpmlURL(String planet, String group) {
         return null;
     }

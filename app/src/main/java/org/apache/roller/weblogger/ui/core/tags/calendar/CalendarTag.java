@@ -356,11 +356,13 @@ public class CalendarTag extends TagSupport {
         return toString();
     }
     
+    @Override
     public int doStartTag() throws JspException {
         return doStartTag( new PrintWriter( pageContext.getOut(), true) );
     }
     
-    
+
+    @Override
     public int doEndTag() throws JspException {
         return doEndTag( new PrintWriter( pageContext.getOut(), true) );
     }

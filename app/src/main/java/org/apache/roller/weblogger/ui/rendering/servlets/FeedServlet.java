@@ -64,6 +64,7 @@ public class FeedServlet extends HttpServlet {
     /**
      * Init method for this servlet
      */
+    @Override
     public void init(ServletConfig servletConfig) throws ServletException {
 
         super.init(servletConfig);
@@ -81,6 +82,7 @@ public class FeedServlet extends HttpServlet {
     /**
      * Handle GET requests for weblog feeds.
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
