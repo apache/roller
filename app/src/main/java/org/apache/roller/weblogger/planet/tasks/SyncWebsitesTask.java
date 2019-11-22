@@ -90,6 +90,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
         this.init(RefreshRollerPlanetTask.NAME);
     }
 
+    @Override
     public void init(String name) throws WebloggerException {
         super.init(name);
 

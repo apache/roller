@@ -62,6 +62,7 @@ public class CategoryEdit extends UIAction {
     }
     
     
+    @Override
     public void myPrepare() {
 
         if ( isAdd() ) {
@@ -84,6 +85,7 @@ public class CategoryEdit extends UIAction {
      * Show category form.
      */
     @SkipValidation
+    @Override
     public String execute() {
         if (!isAdd()) {
             // make sure bean is properly loaded from pojo data

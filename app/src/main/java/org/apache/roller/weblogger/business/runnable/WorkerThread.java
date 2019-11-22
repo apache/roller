@@ -59,6 +59,7 @@ public class WorkerThread extends Thread {
      *
      * We just execute the job we were given if it's non-null.
      */
+    @Override
     public void run() {
         
         // we only run once

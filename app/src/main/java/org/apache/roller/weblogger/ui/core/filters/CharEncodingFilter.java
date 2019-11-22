@@ -46,12 +46,14 @@ public class CharEncodingFilter implements Filter {
     /**
      * init
      */
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
     
     /**
      * destroy
      */
+    @Override
     public void destroy() {
     }
     

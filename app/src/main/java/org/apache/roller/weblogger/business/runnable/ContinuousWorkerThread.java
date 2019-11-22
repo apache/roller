@@ -56,6 +56,7 @@ public class ContinuousWorkerThread extends WorkerThread {
      *
      * If we ever get interrupted then we quit.
      */
+    @Override
     public void run() {
         
         mLogger.info(this.id+" Started.");

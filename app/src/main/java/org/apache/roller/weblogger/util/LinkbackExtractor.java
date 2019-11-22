@@ -104,6 +104,7 @@ public class LinkbackExtractor
         // Ignore inaccurate Sonar complaint about useless overriding method:
         //    http://jira.codehaus.org/browse/SONARJAVA-287
         Parser parser = (new HTMLEditorKit() {
+            @Override
             public Parser getParser() {
                 return super.getParser();
             }
@@ -254,6 +255,7 @@ public class LinkbackExtractor
          * @param pos
          *            Tag's position in file
          */
+        @Override
         public void handleStartTag(Tag tag, MutableAttributeSet atts, int pos)
         {
             if (mList.contains(tag) && !mFound)
@@ -288,6 +290,7 @@ public class LinkbackExtractor
         /**
          * Needed to handle SPAN tag.
          */
+        @Override
         public void handleSimpleTag(Tag tag, MutableAttributeSet atts, int pos)
         {
             if (mList.contains(tag) && mFound && mEnd == 0)
@@ -353,6 +356,7 @@ public class LinkbackExtractor
          * @param pos
          *            Position in HTML file
          */
+        @Override
         public void handleEndTag(Tag tag, int pos)
         {
             if (mList.contains(tag) && mFound && mEnd == 0)
@@ -372,6 +376,7 @@ public class LinkbackExtractor
         /**
          * Get the page title
          */
+        @Override
         public void handleText(char[] data, int pos)
         {
             if (mCurrentTag != null && mCurrentTag.equals(Tag.TITLE))

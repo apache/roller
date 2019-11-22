@@ -59,6 +59,7 @@ public class MediaFileImageChooser extends MediaFileBase {
     /**
      * Prepares view action
      */
+    @Override
     public void myPrepare() {
         refreshAllDirectories();
     }
@@ -75,6 +76,7 @@ public class MediaFileImageChooser extends MediaFileBase {
      * @return String The result of the action.
      */
     @SkipValidation
+    @Override
     public String execute() {
         MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
         try {

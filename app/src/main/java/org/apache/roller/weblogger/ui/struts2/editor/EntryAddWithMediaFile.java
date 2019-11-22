@@ -56,6 +56,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
      * @return String The result of the action.
      */
     @SkipValidation
+    @Override
     public String execute() {
         MediaFileManager manager =
              WebloggerFactory.getWeblogger().getMediaFileManager();
@@ -134,6 +135,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
     /**
      * @return the weblog
      */
+    @Override
     public String getWeblog() {
         return weblog;
     }
@@ -141,6 +143,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
     /**
      * @param weblog the weblog to set
      */
+    @Override
     public void setWeblog(String weblog) {
         this.weblog = weblog;
     }

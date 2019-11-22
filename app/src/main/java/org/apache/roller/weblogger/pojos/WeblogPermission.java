@@ -115,6 +115,7 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
         return false;
     }
     
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("GlobalPermission: ");

@@ -64,6 +64,7 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
     }
 
     // load folder to edit
+    @Override
     public void myPrepare() {
         if (StringUtils.isEmpty(bean.getId())) {
             // Create and initialize new folder but don't save yet
@@ -89,6 +90,7 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
      * Show folder edit page.
      */
     @SkipValidation
+    @Override
     public String execute() {
         if (!isAdd()) {
             // load bean with database values during initial load

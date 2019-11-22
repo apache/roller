@@ -83,6 +83,7 @@ public class PageServlet extends HttpServlet {
     /**
      * Init method for this servlet
      */
+    @Override
     public void init(ServletConfig servletConfig) throws ServletException {
 
         super.init(servletConfig);
@@ -128,6 +129,7 @@ public class PageServlet extends HttpServlet {
     /**
      * Handle GET requests for weblog pages.
      */
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -553,6 +555,7 @@ public class PageServlet extends HttpServlet {
      * want to revisit this approach in the future and see if we can do this in
      * a different way, but for now this is the easy way.
      */
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 

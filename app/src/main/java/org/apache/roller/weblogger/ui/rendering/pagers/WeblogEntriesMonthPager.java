@@ -147,16 +147,19 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     }
     
     
+    @Override
     public String getHomeLink() {
         return createURL(0, 0, weblog, locale, pageLink, null, null, catName, tags);
     }
     
     
+    @Override
     public String getHomeName() {
         return messageUtils.getString("weblogEntriesPager.month.home");
     }
     
     
+    @Override
     public String getNextLink() {
         if (more) {
             return createURL(page, 1, weblog, locale, pageLink, null, dateString, catName, tags);
@@ -165,6 +168,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     }
     
     
+    @Override
     public String getNextName() {
         if (getNextLink() != null) {
             return messageUtils.getString("weblogEntriesPager.month.next", new Object[] {monthFormat.format(month)});
@@ -173,6 +177,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     }
     
     
+    @Override
     public String getPrevLink() {
         if (offset > 0) {
             return createURL(page, -1, weblog, locale, pageLink, null, dateString, catName, tags);
@@ -181,6 +186,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     }
     
     
+    @Override
     public String getPrevName() {
         if (getPrevLink() != null) {
             return messageUtils.getString("weblogEntriesPager.month.prev", new Object[] {monthFormat.format(month)});
@@ -189,6 +195,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     }
     
     
+    @Override
     public String getNextCollectionLink() {
         if (nextMonth != null) {
             String next = DateUtil.format6chars(nextMonth, weblog.getTimeZoneInstance());
@@ -198,6 +205,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     }
     
     
+    @Override
     public String getNextCollectionName() {
         if (nextMonth != null) {
             return messageUtils.getString("weblogEntriesPager.month.nextCollection", new Object[] {monthFormat.format(nextMonth)});
@@ -205,7 +213,8 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
         return null;
     }
     
-    
+
+    @Override
     public String getPrevCollectionLink() {
         if (prevMonth != null) {
             String prev = DateUtil.format6chars(prevMonth, weblog.getTimeZoneInstance());
@@ -215,6 +224,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     }
     
     
+    @Override
     public String getPrevCollectionName() {
         if (prevMonth != null) {
             return messageUtils.getString("weblogEntriesPager.month.prevCollection", new Object[] {monthFormat.format(prevMonth)});

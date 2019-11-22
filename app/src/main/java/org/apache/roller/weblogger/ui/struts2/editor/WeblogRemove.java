@@ -43,6 +43,7 @@ public class WeblogRemove extends UIAction {
     /**
      * Show weblog remove confirmation.
      */
+    @Override
     public String execute() {
         return "confirm";
     }

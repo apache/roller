@@ -47,21 +47,25 @@ public class CacheInfo extends UIAction {
     }
     
     
+    @Override
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
     
+    @Override
     public boolean isWeblogRequired() {
         return false;
     }
     
     
+    @Override
     public void myPrepare() {
         Map cacheStats = CacheManager.getStats();
         setStats(cacheStats);
     }
     
     
+    @Override
     public String execute() {
         return SUCCESS;
     }

@@ -75,6 +75,7 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
         this.init(ResetHitCountsTask.NAME);
     }
 
+    @Override
     public void init(String name) throws WebloggerException {
         super.init(name);
         

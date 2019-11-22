@@ -126,6 +126,7 @@ public class CommentsPager extends AbstractPager {
     }
     
     
+    @Override
     public boolean hasMoreItems() {
         return more;
     }
