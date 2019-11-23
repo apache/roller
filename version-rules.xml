@@ -1,0 +1,16 @@
+<ruleset comparisonMethod="maven"
+         xmlns="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0 http://mojo.codehaus.org/versions-maven-plugin/xsd/rule-2.0.0.xsd">
+    <ignoreVersions>
+        <!--only release builds-->
+        <ignoreVersion type="regex">.*(alpha|ALPHA|beta|BETA|b|rc|RC|M).*</ignoreVersion>
+        
+        <!--ignore some specific version strings which don't follow the common version format-->
+        <ignoreVersion type="exact">20020829</ignoreVersion>
+        <ignoreVersion type="exact">20040616</ignoreVersion>
+        <ignoreVersion type="exact">20040102.233541</ignoreVersion>
+        <ignoreVersion type="exact">20031027.000000</ignoreVersion>
+        <ignoreVersion type="exact">20030418.083655</ignoreVersion>
+    </ignoreVersions>
+
+</ruleset>
