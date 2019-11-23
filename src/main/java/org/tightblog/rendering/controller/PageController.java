@@ -78,7 +78,7 @@ import java.util.function.Function;
  */
 @RestController
 @EnableConfigurationProperties(DynamicProperties.class)
-@RequestMapping(path = "/tb-ui/rendering/page")
+@RequestMapping(path = PageController.PATH)
 public class PageController extends AbstractController {
 
     private static Logger log = LoggerFactory.getLogger(PageController.class);

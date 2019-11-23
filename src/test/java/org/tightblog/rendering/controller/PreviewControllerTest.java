@@ -68,11 +68,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class PreviewProcessorTest {
+public class PreviewControllerTest {
 
-    private static Logger log = LoggerFactory.getLogger(PreviewProcessorTest.class);
+    private static Logger log = LoggerFactory.getLogger(PreviewControllerTest.class);
 
-    private PreviewProcessor processor;
+    private PreviewController processor;
     private Weblog weblog;
     private SharedTheme sharedTheme;
 
@@ -119,7 +119,7 @@ public class PreviewProcessorTest {
 
             Function<WeblogPageRequest, SiteModel> siteModelFactory = new WebConfig().siteModelFactory();
 
-            processor = new PreviewProcessor(mockWD, mockRenderer, mockThemeManager, mockUM, mock(PageModel.class),
+            processor = new PreviewController(mockWD, mockRenderer, mockThemeManager, mockUM, mock(PageModel.class),
                     mockWEM, siteModelFactory);
 
             mockApplicationContext = mock(ApplicationContext.class);

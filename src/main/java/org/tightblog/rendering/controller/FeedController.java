@@ -61,7 +61,7 @@ import java.util.Map;
  */
 @RestController
 @EnableConfigurationProperties(DynamicProperties.class)
-@RequestMapping(path = "/tb-ui/rendering/feed")
+@RequestMapping(path = FeedController.PATH)
 public class FeedController extends AbstractController {
 
     private static Logger log = LoggerFactory.getLogger(FeedController.class);
@@ -87,7 +87,7 @@ public class FeedController extends AbstractController {
         this.dp = dp;
     }
 
-    @GetMapping("/{weblogHandle}/feed")
+    @GetMapping("/{weblogHandle}")
     ResponseEntity<Resource> getFeed(@PathVariable String weblogHandle,
                                      @RequestParam(value = "category", required = false) String category,
                                      @RequestParam(value = "tag", required = false) String tag,

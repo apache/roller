@@ -83,6 +83,9 @@ public class WeblogPageRequest extends WeblogRequest {
         this.pageModel = pageModel;
     }
 
+    public WeblogPageRequest() {
+    }
+
     public void setWeblogEntryAnchor(String weblogEntryAnchor) {
         this.weblogEntryAnchor = weblogEntryAnchor;
     }
@@ -96,10 +99,6 @@ public class WeblogPageRequest extends WeblogRequest {
             WeblogPageRequest weblogPageRequest = new WeblogPageRequest(null, null, pageModel);
             weblogPageRequest.preview = true;
             weblogPageRequest.noIndex = true;
-            return process(weblogPageRequest, servletRequest);
-        }
-
-        private static WeblogPageRequest process(WeblogPageRequest weblogPageRequest, HttpServletRequest servletRequest) {
             WeblogRequest.parseRequest(weblogPageRequest, servletRequest);
             weblogPageRequest.parseExtraPathInfo();
             return weblogPageRequest;

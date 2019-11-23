@@ -21,6 +21,7 @@
 package org.tightblog.rendering.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.service.UserManager;
@@ -39,7 +40,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.dao.WeblogDao;
 
@@ -66,10 +66,10 @@ import java.util.function.Function;
  * having at least EDIT_DRAFT rights on the blog being previewed.
  */
 @RestController
-@RequestMapping(path = "/tb-ui/authoring/preview/**")
-public class PreviewProcessor extends AbstractController {
+@RequestMapping(path = "/tb-ui/authoring/preview")
+public class PreviewController extends AbstractController {
 
-    private static Logger log = LoggerFactory.getLogger(PreviewProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(PreviewController.class);
 
     private WeblogDao weblogDao;
 
@@ -81,9 +81,9 @@ public class PreviewProcessor extends AbstractController {
     private Function<WeblogPageRequest, SiteModel> siteModelFactory;
 
     @Autowired
-    PreviewProcessor(WeblogDao weblogDao, @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
-                     ThemeManager themeManager, UserManager userManager, PageModel pageModel,
-                     WeblogEntryManager weblogEntryManager, Function<WeblogPageRequest, SiteModel> siteModelFactory) {
+    PreviewController(WeblogDao weblogDao, @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer,
+                      ThemeManager themeManager, UserManager userManager, PageModel pageModel,
+                      WeblogEntryManager weblogEntryManager, Function<WeblogPageRequest, SiteModel> siteModelFactory) {
         this.weblogDao = weblogDao;
         this.thymeleafRenderer = thymeleafRenderer;
         this.themeManager = themeManager;
@@ -93,7 +93,7 @@ public class PreviewProcessor extends AbstractController {
         this.siteModelFactory = siteModelFactory;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping(path = "/{weblogHandle}/entry/{anchor}")
     void getPreviewPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WeblogPageRequest incomingRequest = WeblogPageRequest.Creator.createPreview(request, pageModel);
 

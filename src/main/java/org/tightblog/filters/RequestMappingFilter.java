@@ -26,7 +26,7 @@ import org.tightblog.rendering.controller.CommentController;
 import org.tightblog.rendering.controller.FeedController;
 import org.tightblog.rendering.controller.MediaFileController;
 import org.tightblog.rendering.controller.PageController;
-import org.tightblog.rendering.controller.SearchProcessor;
+import org.tightblog.rendering.controller.SearchController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,18 +184,16 @@ public class RequestMappingFilter implements Filter {
                 forwardUrl = generateForwardUrl(CommentController.PATH, handle, "entry", data);
             }
         } else {
-            // no context means weblog homepage
-            // providing the context in feed and search seems redundant but allows for the
-            // "extrainfo" (ending part of URL) determination in WeblogRequest to be common for all.
+            // null context means weblog homepage
             if (context == null || context.equals("page") || context.equals("entry") ||
                     context.equals("date") || context.equals("category") || context.equals("tag")) {
                 forwardUrl = generateForwardUrl(PageController.PATH, handle, context, data);
             } else if (context.equals("feed")) {
-                forwardUrl = generateForwardUrl(FeedController.PATH, handle, context, data);
+                forwardUrl = generateForwardUrl(FeedController.PATH, handle, null, data);
             } else if (context.equals("mediafile")) {
                 forwardUrl = generateForwardUrl(MediaFileController.PATH, handle, null, data);
             } else if (context.equals("search")) {
-                forwardUrl = generateForwardUrl(SearchProcessor.PATH, handle, context, null);
+                forwardUrl = generateForwardUrl(SearchController.PATH, handle, null, null);
             }
         }
 

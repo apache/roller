@@ -87,7 +87,7 @@ import java.util.Map;
 @RestController("RenderingCommentController")
 @EnableConfigurationProperties(DynamicProperties.class)
 // how @RequestMapping is combined at the class- and method-levels: http://stackoverflow.com/q/22702568
-@RequestMapping(path = "/tb-ui/rendering/comment")
+@RequestMapping(path = CommentController.PATH)
 public class CommentController extends AbstractController {
 
     private static Logger log = LoggerFactory.getLogger(CommentController.class);

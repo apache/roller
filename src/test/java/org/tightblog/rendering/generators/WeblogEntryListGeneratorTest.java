@@ -78,7 +78,7 @@ public class WeblogEntryListGeneratorTest {
 
     @Test
     public void getSearchPager() {
-        WeblogSearchRequest wsr = new WeblogSearchRequest(null);
+        WeblogSearchRequest wsr = new WeblogSearchRequest(weblog.getHandle(), null, null);
         wsr.setWeblog(weblog);
         wsr.setSearchPhrase("my query");
         wsr.setCategory("coins");

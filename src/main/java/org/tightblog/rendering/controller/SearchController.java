@@ -21,6 +21,13 @@
 package org.tightblog.rendering.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.tightblog.domain.WeblogTheme;
 import org.tightblog.rendering.model.SearchResultsModel;
 import org.tightblog.rendering.model.SiteModel;
@@ -35,13 +42,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.dao.WeblogDao;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -50,10 +54,10 @@ import java.util.function.Function;
  * Handles search queries for weblogs.
  */
 @RestController
-@RequestMapping(path = "/tb-ui/rendering/search/**")
-public class SearchProcessor extends AbstractController {
+@RequestMapping(path = SearchController.PATH)
+public class SearchController extends AbstractController {
 
-    private static Logger log = LoggerFactory.getLogger(SearchProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(SearchController.class);
 
     public static final String PATH = "/tb-ui/rendering/search";
 
@@ -64,10 +68,10 @@ public class SearchProcessor extends AbstractController {
     private Function<WeblogPageRequest, SiteModel> siteModelFactory;
 
     @Autowired
-    SearchProcessor(WeblogDao weblogDao,
-                    @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer, ThemeManager themeManager,
-                    SearchResultsModel searchResultsModel,
-                    Function<WeblogPageRequest, SiteModel> siteModelFactory) {
+    SearchController(WeblogDao weblogDao,
+                     @Qualifier("blogRenderer") ThymeleafRenderer thymeleafRenderer, ThemeManager themeManager,
+                     SearchResultsModel searchResultsModel,
+                     Function<WeblogPageRequest, SiteModel> siteModelFactory) {
         this.weblogDao = weblogDao;
         this.thymeleafRenderer = thymeleafRenderer;
         this.themeManager = themeManager;
@@ -75,16 +79,27 @@ public class SearchProcessor extends AbstractController {
         this.siteModelFactory = siteModelFactory;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    void getSearchResults(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogPageRequest searchRequest = WeblogSearchRequest.create(request, searchResultsModel);
+    @GetMapping(path = "/{weblogHandle}")
+    ResponseEntity<Resource> getSearchResults(@PathVariable String weblogHandle,
+                                              @RequestParam(value = "q") String query,
+                                              @RequestParam(value = "cat", required = false) String category,
+                                              @RequestParam(value = "page", required = false) Integer pageNum,
+                                              Principal principal) {
+        WeblogSearchRequest searchRequest = new WeblogSearchRequest(weblogHandle, principal, searchResultsModel);
 
         Weblog weblog = weblogDao.findByHandleAndVisibleTrue(searchRequest.getWeblogHandle());
         if (weblog == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
+            return ResponseEntity.notFound().build();
         } else {
             searchRequest.setWeblog(weblog);
+        }
+
+        searchRequest.setCategory(category);
+        searchRequest.setSearchPhrase(query);
+        searchRequest.setNoIndex(true);
+
+        if (pageNum != null) {
+            searchRequest.setPageNum(pageNum);
         }
 
         // determine template to use for rendering, look for search results override first
@@ -97,8 +112,7 @@ public class SearchProcessor extends AbstractController {
         }
 
         if (searchRequest.getTemplate() == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
+            return ResponseEntity.notFound().build();
         }
 
         // populate the rendering model
@@ -116,12 +130,12 @@ public class SearchProcessor extends AbstractController {
         // render content
         try {
             CachedContent rendererOutput = thymeleafRenderer.render(searchRequest.getTemplate(), model);
-            response.setContentType(rendererOutput.getRole().getContentType());
-            response.setContentLength(rendererOutput.getContent().length);
-            response.getOutputStream().write(rendererOutput.getContent());
+            return ResponseEntity.ok().contentType(MediaType.valueOf(rendererOutput.getRole().getContentType()))
+                    .contentLength(rendererOutput.getContent().length)
+                    .body(new ByteArrayResource(rendererOutput.getContent()));
         } catch (Exception e) {
             log.error("Error during rendering of template {}", searchRequest.getTemplate().getId(), e);
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
     }
 }

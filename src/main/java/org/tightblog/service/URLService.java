@@ -276,7 +276,7 @@ public class URLService {
         if (category != null && dateString == null) {
             pathinfo += "category/" + Utilities.encode(category);
             if (tag != null) {
-                pathinfo += "/tag/" + Utilities.encode(tag);
+                params.put("tag", Utilities.encode(tag));
             }
         } else if (dateString != null && category == null) {
             pathinfo += "date/" + dateString;
