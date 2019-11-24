@@ -20,7 +20,6 @@
  */
 package org.tightblog.rendering.requests;
 
-import org.apache.commons.lang3.StringUtils;
 import org.tightblog.domain.CalendarData;
 import org.tightblog.domain.CommentSearchCriteria;
 import org.tightblog.domain.Template;
@@ -32,14 +31,9 @@ import org.tightblog.domain.WeblogEntryTagAggregate;
 import org.tightblog.domain.WeblogRole;
 import org.tightblog.rendering.generators.WeblogEntryListGenerator;
 import org.tightblog.rendering.model.PageModel;
-import org.tightblog.util.Utilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,19 +46,16 @@ import java.util.stream.Collectors;
  */
 public class WeblogPageRequest extends WeblogRequest {
 
-    private static Logger log = LoggerFactory.getLogger(WeblogPageRequest.class);
-
     static final int MAX_ENTRIES = 100;
 
     // lightweight attributes
-    private String context;
-
     private String weblogEntryAnchor;
     private String customPageName;
     protected String category;
     private String weblogDate;
     private String tag;
-
+    private HttpServletRequest request;
+    private String queryString;
     private boolean preview;
 
     // whether a robots meta tag with value "noindex" should be added to discourage search engines from indexing page
@@ -78,9 +69,14 @@ public class WeblogPageRequest extends WeblogRequest {
     protected WeblogEntryListGenerator.WeblogEntryListData pager;
 
     public WeblogPageRequest(String weblogHandle, Principal principal, PageModel pageModel) {
-        setPrincipal(principal);
+        super(principal);
         setWeblogHandle(weblogHandle);
         this.pageModel = pageModel;
+    }
+
+    public WeblogPageRequest(String weblogHandle, Principal principal, PageModel pageModel, boolean preview) {
+        this(weblogHandle, principal, pageModel);
+        this.preview = preview;
     }
 
     public WeblogPageRequest() {
@@ -94,108 +90,12 @@ public class WeblogPageRequest extends WeblogRequest {
         this.tag = tag;
     }
 
-    public static class Creator {
-        public static WeblogPageRequest createPreview(HttpServletRequest servletRequest, PageModel pageModel) {
-            WeblogPageRequest weblogPageRequest = new WeblogPageRequest(null, null, pageModel);
-            weblogPageRequest.preview = true;
-            weblogPageRequest.noIndex = true;
-            WeblogRequest.parseRequest(weblogPageRequest, servletRequest);
-            weblogPageRequest.parseExtraPathInfo();
-            return weblogPageRequest;
-        }
-    }
-
-    private void parseExtraPathInfo() {
-        /*
-         * This subclass handles the following forms of url:
-         *
-         * /entry/<anchor> - permalink
-         * /date/<YYYYMMDD> - date collection view
-         * /tag/<tag> - tag
-         * /category/<category> - category collection view
-         * /category/<category>/tag/<tag> - tag under a category
-         * /page/<pagelink> - custom page
-         * /search?q=xyz[&cat=Sports] - search on xyz (optionally under given category)
-         * path info may be null, which indicates the weblog homepage
-         *
-         * If invalid or incomplete values given, processing will ignore the values (as if not provided)
-         */
-        if (StringUtils.isNotBlank(extraPathInfo)) {
-
-            // potential 5th item is unused below but split out so not part of the 4th element
-            String[] pathElements = extraPathInfo.split("/", 5);
-
-            // the first part of the path always represents the context
-            this.context = pathElements[0];
-
-            // now check the rest of the path and extract other details
-            if (pathElements.length >= 2) {
-                if ("entry".equals(this.context)) {
-                    this.weblogEntryAnchor = Utilities.decode(pathElements[1]);
-                } else if ("category".equals(this.context)) {
-                        this.category = Utilities.decode(pathElements[1]);
-
-                        if (pathElements.length >= 4 && "tag".equals(pathElements[2])) {
-                            tag = pathElements[3];
-                        }
-                } else if ("date".equals(this.context)) {
-                    if (isValidDateString(pathElements[1])) {
-                        this.weblogDate = pathElements[1];
-                    }
-                    // discourage date-based URLs from appearing in search engine results
-                    // (encourages appearance of blog home URL or permalinks instead)
-                    noIndex = true;
-                } else if ("page".equals(this.context)) {
-                    this.customPageName = pathElements[1];
-
-                    // Custom pages may have a date parameter, e.g., the month to display on a blog archive page
-                    String date = getRequestParameter("date");
-                    if (isValidDateString(date)) {
-                        this.weblogDate = date;
-                    }
-                } else if ("tag".equals(this.context)) {
-                    tag = pathElements[1];
-                }
-            }
-        }
-
-        if (getPageNum() > 0) {
-            // only index first pages (i.e., those without this parameter)
-            noIndex = true;
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug(toString());
-        }
-    }
-
-    public static boolean isValidDateString(String dateString) {
-        boolean valid = false;
-
-        if (StringUtils.isNumeric(dateString) && (dateString.length() == 6 || dateString.length() == 8)) {
-            try {
-                if (dateString.length() == 6) {
-                    LocalDate.parse(dateString + "01", Utilities.YMD_FORMATTER);
-                } else {
-                    LocalDate.parse(dateString, Utilities.YMD_FORMATTER);
-                }
-                valid = true;
-            } catch (DateTimeParseException ignored) {
-            }
-        }
-        return valid;
-    }
-
     public void setNoIndex(boolean noIndex) {
         this.noIndex = noIndex;
     }
 
     public boolean isPreview() {
         return preview;
-    }
-
-    public String getContext() {
-        return context;
     }
 
     public String getWeblogEntryAnchor() {
@@ -250,10 +150,27 @@ public class WeblogPageRequest extends WeblogRequest {
         return noIndex;
     }
 
+    /* Supports custom parameters often needed by custom external pages */
+    public String getRequestParameter(String paramName) {
+        return request.getParameter(paramName);
+    }
+
+    public void setRequest(HttpServletRequest request) {
+        this.request = request;
+    }
+
+    public String getQueryString() {
+        return queryString;
+    }
+
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
+
     @Override
     public String toString() {
-        return String.format("WeblogPageRequest: context=%s anchor=%s date=%s category=%s tag=%s customPageName=%s",
-                context, weblogEntryAnchor, weblogDate, category, tag, customPageName);
+        return String.format("WeblogPageRequest: anchor=%s date=%s category=%s tag=%s customPageName=%s",
+                weblogEntryAnchor, weblogDate, category, tag, customPageName);
     }
 
     public WeblogEntryComment getCommentForm() {

@@ -447,7 +447,7 @@ public class PageControllerTest {
 
     @Test
     public void testModelSetCorrectlyFilled() throws IOException {
-        URLModel urlModel = new URLModel(null, null);
+        URLModel urlModel = new URLModel(null);
         Set<Model> pageModelSet = new HashSet<>();
         pageModelSet.add(urlModel);
         when(mockApplicationContext.getBean(eq("pageModelSet"), eq(Set.class))).thenReturn(pageModelSet);
@@ -545,4 +545,17 @@ public class PageControllerTest {
         assertEquals("bobsblog/page/mytemplate/date/20171006/cat/finance/tag/" +
                 "taxes/page=5/query=a=foo&b=123/deviceType=MOBILE/lastUpdate=" + testTime.toEpochMilli(), test1);
     }
+
+    @Test
+    public void testIsValidDateString() {
+        assertTrue(PageController.isValidDateString("20160229"));
+        assertFalse(PageController.isValidDateString("20170229"));
+        assertTrue(PageController.isValidDateString("201805"));
+        assertFalse(PageController.isValidDateString("201815"));
+        assertFalse(PageController.isValidDateString("20180547"));
+        assertFalse(PageController.isValidDateString("2018"));
+        assertFalse(PageController.isValidDateString("201805011"));
+        assertFalse(PageController.isValidDateString("pumpkin"));
+    }
+
 }

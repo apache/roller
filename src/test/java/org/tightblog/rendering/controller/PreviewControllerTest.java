@@ -21,11 +21,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.tightblog.TestUtils;
-import org.tightblog.WebloggerTest;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.tightblog.config.WebConfig;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.rendering.model.PageModel;
@@ -46,45 +45,39 @@ import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 import org.tightblog.dao.WeblogDao;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PreviewControllerTest {
 
-    private static Logger log = LoggerFactory.getLogger(PreviewControllerTest.class);
+    private static final String BLOG_HANDLE = "myblog";
+    private static final String ENTRY_ANCHOR = "entry-anchor";
 
-    private PreviewController processor;
+    private PreviewController controller;
     private Weblog weblog;
     private SharedTheme sharedTheme;
 
-    private HttpServletRequest mockRequest;
-    private HttpServletResponse mockResponse;
     private WeblogEntryManager mockWEM;
     private UserManager mockUM;
     private WeblogDao mockWD;
     private ThymeleafRenderer mockRenderer;
-    private ThemeManager mockThemeManager;
     private WeblogTheme mockTheme;
     private ApplicationContext mockApplicationContext;
+    private Principal mockPrincipal;
 
     @Captor
     ArgumentCaptor<Map<String, Object>> stringObjectMapCaptor;
@@ -92,11 +85,12 @@ public class PreviewControllerTest {
     @Before
     public void initializeMocks() {
         try {
-            mockRequest = TestUtils.createMockServletRequestForWeblogEntryRequest();
+            mockPrincipal = mock(Principal.class);
+            when(mockPrincipal.getName()).thenReturn("bob");
 
             mockWD = mock(WeblogDao.class);
             weblog = new Weblog();
-            when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(weblog);
+            when(mockWD.findByHandleAndVisibleTrue(BLOG_HANDLE)).thenReturn(weblog);
 
             mockUM = mock(UserManager.class);
             when(mockUM.checkWeblogRole("bob", weblog, WeblogRole.EDIT_DRAFT)).thenReturn(true);
@@ -105,11 +99,11 @@ public class PreviewControllerTest {
             CachedContent cachedContent = new CachedContent(Template.Role.JAVASCRIPT);
             when(mockRenderer.render(any(), any())).thenReturn(cachedContent);
 
-            mockThemeManager = mock(ThemeManager.class);
+            ThemeManager mockThemeManager = mock(ThemeManager.class);
             mockWEM = mock(WeblogEntryManager.class);
             WeblogEntry entry = new WeblogEntry();
             entry.setStatus(WeblogEntry.PubStatus.PUBLISHED);
-            when(mockWEM.getWeblogEntryByAnchor(weblog, "entry-anchor")).thenReturn(entry);
+            when(mockWEM.getWeblogEntryByAnchor(weblog, ENTRY_ANCHOR)).thenReturn(entry);
 
             mockTheme = mock(WeblogTheme.class);
             when(mockThemeManager.getWeblogTheme(weblog)).thenReturn(mockTheme);
@@ -119,16 +113,12 @@ public class PreviewControllerTest {
 
             Function<WeblogPageRequest, SiteModel> siteModelFactory = new WebConfig().siteModelFactory();
 
-            processor = new PreviewController(mockWD, mockRenderer, mockThemeManager, mockUM, mock(PageModel.class),
+            controller = new PreviewController(mockWD, mockRenderer, mockThemeManager, mockUM, mock(PageModel.class),
                     mockWEM, siteModelFactory);
 
             mockApplicationContext = mock(ApplicationContext.class);
             when(mockApplicationContext.getBean(anyString(), eq(Set.class))).thenReturn(new HashSet());
-            processor.setApplicationContext(mockApplicationContext);
-
-            mockResponse = mock(HttpServletResponse.class);
-            ServletOutputStream mockSOS = mock(ServletOutputStream.class);
-            when(mockResponse.getOutputStream()).thenReturn(mockSOS);
+            controller.setApplicationContext(mockApplicationContext);
 
             MockitoAnnotations.initMocks(this);
         } catch (IOException e) {
@@ -139,134 +129,50 @@ public class PreviewControllerTest {
     @Test
     public void test404OnMissingWeblog() throws IOException {
         when(mockWD.findByHandleAndVisibleTrue("myblog")).thenReturn(null);
-        processor.getPreviewPage(mockRequest, mockResponse);
-        verify(mockResponse).sendError(SC_NOT_FOUND);
+        ResponseEntity<Resource> result = controller.getEntryPreview("myblog", "myanchor", mockPrincipal, null);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     @Test
     public void test403WithUnauthorizedUser() throws IOException {
         when(mockUM.checkWeblogRole("bob", weblog, WeblogRole.EDIT_DRAFT)).thenReturn(false);
-        processor.getPreviewPage(mockRequest, mockResponse);
-        verify(mockResponse).sendError(HttpServletResponse.SC_FORBIDDEN);
-    }
-
-    @Test
-    public void test404OnUnknownTheme() throws IOException {
-        when(mockRequest.getParameter("theme")).thenReturn("testTheme");
-        when(mockThemeManager.getSharedTheme(any())).thenThrow(new IllegalArgumentException());
-        processor.getPreviewPage(mockRequest, mockResponse);
-        verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
-    }
-
-    @Test
-    public void testThemePreviewCausesThemeSwitch() throws IOException {
-        weblog.setTheme("currentThemeId");
-
-        // no theme override so use weblog's theme
-        when(mockRequest.getParameter("theme")).thenReturn(null);
-        Template template = new SharedTemplate();
-        when(mockTheme.getTemplateByRole(any())).thenReturn(template);
-
-        processor.getPreviewPage(mockRequest, mockResponse);
-        WeblogPageRequest wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
-        assertEquals(weblog, wpr.getWeblog());
-        assertEquals(template, wpr.getTemplate());
-        assertFalse(wpr.getWeblog().isUsedForThemePreview());
-
-        // now check that preview theme used instead when defined
-        SharedTheme themeToPreview = new SharedTheme();
-        themeToPreview.setId("previewThemeId");
-        String previewThemeName = "previewThemeName";
-        themeToPreview.setName(previewThemeName);
-        when(mockRequest.getParameter("theme")).thenReturn(previewThemeName);
-        when(mockThemeManager.getSharedTheme(previewThemeName)).thenReturn(themeToPreview);
-
-        Mockito.clearInvocations(mockResponse, mockRenderer);
-        processor.getPreviewPage(mockRequest, mockResponse);
-        wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
-        assertEquals("previewThemeId", wpr.getWeblog().getTheme());
-        assertTrue(wpr.getWeblog().isUsedForThemePreview());
+        ResponseEntity<Resource> result = controller.getEntryPreview("myblog", "myanchor", mockPrincipal, null);
+        assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());
     }
 
     @Test
     public void testCorrectTemplatesChosen() throws IOException {
-        // Custom External retrieved
-        mockRequest = TestUtils.createMockServletRequestForCustomPageRequest();
-        SharedTemplate sharedTemplate = new SharedTemplate();
-        sharedTemplate.setRole(Template.Role.CUSTOM_EXTERNAL);
-        sharedTemplate.setName("my-custom-page");
-        when(mockTheme.getTemplateByName(any())).thenReturn(sharedTemplate);
-
-        processor.getPreviewPage(mockRequest, mockResponse);
-        ArgumentCaptor<Template> templateCaptor = ArgumentCaptor.forClass(Template.class);
-        verify(mockRenderer).render(templateCaptor.capture(), any());
-        Template results = templateCaptor.getValue();
-        assertEquals("my-custom-page", results.getName());
-        assertEquals(Template.Role.CUSTOM_EXTERNAL, results.getRole());
-
-        // Custom Internal blocked -- 404 returned
-        Mockito.clearInvocations(mockResponse, mockRenderer);
-        sharedTemplate.setRole(Template.Role.CUSTOM_INTERNAL);
-        processor.getPreviewPage(mockRequest, mockResponse);
-        verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
-
-        // now test with a null template
-        Mockito.clearInvocations(mockResponse);
-        when(mockTheme.getTemplateByName(any())).thenReturn(null);
-        processor.getPreviewPage(mockRequest, mockResponse);
-        verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
-
-        // Weblog template retrieved if no entry anchor
-        mockRequest = TestUtils.createMockServletRequestForWeblogHomePageRequest();
-        Mockito.clearInvocations(mockResponse, mockRenderer);
         SharedTemplate weblogTemplate = new SharedTemplate();
         weblogTemplate.setRole(Template.Role.WEBLOG);
         weblogTemplate.setName("myweblogtemplate");
         when(mockTheme.getTemplateByRole(Template.Role.WEBLOG)).thenReturn(weblogTemplate);
-        processor.getPreviewPage(mockRequest, mockResponse);
-        templateCaptor = ArgumentCaptor.forClass(Template.class);
-        verify(mockRenderer).render(templateCaptor.capture(), any());
-        results = templateCaptor.getValue();
-        assertEquals("myweblogtemplate", results.getName());
-        assertEquals(Template.Role.WEBLOG, results.getRole());
 
         // Permalink template retrieved for a weblog entry
-        mockRequest = TestUtils.createMockServletRequestForWeblogEntryRequest();
-        Mockito.clearInvocations(mockResponse, mockRenderer);
+        Mockito.clearInvocations(mockRenderer);
         SharedTemplate permalinkTemplate = new SharedTemplate();
         permalinkTemplate.setRole(Template.Role.PERMALINK);
         permalinkTemplate.setName("mypermalinktemplate");
         when(mockTheme.getTemplateByRole(Template.Role.PERMALINK)).thenReturn(permalinkTemplate);
-        processor.getPreviewPage(mockRequest, mockResponse);
-        templateCaptor = ArgumentCaptor.forClass(Template.class);
+        controller.getEntryPreview(BLOG_HANDLE, ENTRY_ANCHOR, mockPrincipal, null);
+        ArgumentCaptor<Template> templateCaptor = ArgumentCaptor.forClass(Template.class);
         verify(mockRenderer).render(templateCaptor.capture(), any());
-        results = templateCaptor.getValue();
-        assertEquals("mypermalinktemplate", results.getName());
+        Template results = templateCaptor.getValue();
+        assertEquals(permalinkTemplate.getName(), results.getName());
         assertEquals(Template.Role.PERMALINK, results.getRole());
 
         // Weblog template retrieved for a weblog entry if no permalink template
         when(mockTheme.getTemplateByRole(Template.Role.PERMALINK)).thenReturn(null);
-        Mockito.clearInvocations(mockResponse, mockRenderer);
-        processor.getPreviewPage(mockRequest, mockResponse);
-        templateCaptor = ArgumentCaptor.forClass(Template.class);
+        Mockito.clearInvocations(mockRenderer);
+        ResponseEntity<Resource> result = controller.getEntryPreview(BLOG_HANDLE, ENTRY_ANCHOR, mockPrincipal, null);
         verify(mockRenderer).render(templateCaptor.capture(), any());
         results = templateCaptor.getValue();
-        assertEquals("myweblogtemplate", results.getName());
+        assertEquals(weblogTemplate.getName(), results.getName());
         assertEquals(Template.Role.WEBLOG, results.getRole());
 
-        // test 404 if exception during rendering
-        WebloggerTest.logExpectedException(log, "IllegalArgumentException");
-        Mockito.clearInvocations(mockResponse);
-        doThrow(new IllegalArgumentException()).when(mockRenderer).render(any(), any());
-        processor.getPreviewPage(mockRequest, mockResponse);
-        verify(mockResponse, never()).setContentType(anyString());
-        verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
-
         // not found returned if no weblog entry for given anchor
-        when(mockWEM.getWeblogEntryByAnchor(weblog, "entry-anchor")).thenReturn(null);
-        Mockito.clearInvocations(mockResponse);
-        processor.getPreviewPage(mockRequest, mockResponse);
-        verify(mockResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
+        when(mockWEM.getWeblogEntryByAnchor(weblog, ENTRY_ANCHOR)).thenReturn(null);
+        result = controller.getEntryPreview(BLOG_HANDLE, ENTRY_ANCHOR, mockPrincipal, null);
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     @Test
@@ -283,7 +189,7 @@ public class PreviewControllerTest {
         // testing that sitewide themes get the "site" & (page) "model" added to the rendering map.
         sharedTheme.setSiteWide(true);
         when(mockTheme.getTemplateByRole(Template.Role.PERMALINK)).thenReturn(sharedTemplate);
-        processor.getPreviewPage(mockRequest, mockResponse);
+        controller.getEntryPreview(BLOG_HANDLE, ENTRY_ANCHOR, mockPrincipal, null);
 
         // set up captors on thymeleafRenderer.render()
         verify(mockRenderer).render(eq(sharedTemplate), stringObjectMapCaptor.capture());
@@ -291,10 +197,10 @@ public class PreviewControllerTest {
         assertTrue(results.containsKey("model"));
         assertTrue(results.containsKey("site"));
 
-        Mockito.clearInvocations(mockResponse, mockRenderer);
+        Mockito.clearInvocations(mockRenderer);
         // testing that non-sitewide themes just get "model" added to the rendering map.
         sharedTheme.setSiteWide(false);
-        processor.getPreviewPage(mockRequest, mockResponse);
+        controller.getEntryPreview(BLOG_HANDLE, ENTRY_ANCHOR, mockPrincipal, null);
         verify(mockRenderer).render(eq(sharedTemplate), stringObjectMapCaptor.capture());
 
         results = stringObjectMapCaptor.getValue();

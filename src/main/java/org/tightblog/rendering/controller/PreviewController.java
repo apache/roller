@@ -21,14 +21,20 @@
 package org.tightblog.rendering.controller;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mobile.device.Device;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogEntryManager;
-import org.tightblog.domain.SharedTheme;
 import org.tightblog.service.ThemeManager;
-import org.tightblog.domain.Template;
 import org.tightblog.domain.Template.Role;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
@@ -42,25 +48,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.dao.WeblogDao;
+import org.tightblog.util.Utilities;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Responsible for rendering weblog page previews, for either of two purposes:
- *
- * - Preview of what a weblog will look like with a given shared theme, used
- *   when blogger is evaluating switching themes.  Here, a URL parameter with
- *   the shared theme name will be provided.  (Although a preview is normally
- *   given just for the home page, any preview URL with the theme name parameter
- *   will provide a preview of that URL--preview by category, date, blog entry, etc.)
- *
- * - Preview of a blog entry prior to publishing, with the user's current theme.
- *   No URL parameter for the theme provided.
+ * Shows preview of a blog entry prior to publishing.
  *
  * Previews are obtainable only through the authoring interface by a logged-in user
  * having at least EDIT_DRAFT rights on the blog being previewed.
@@ -94,72 +91,46 @@ public class PreviewController extends AbstractController {
     }
 
     @GetMapping(path = "/{weblogHandle}/entry/{anchor}")
-    void getPreviewPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WeblogPageRequest incomingRequest = WeblogPageRequest.Creator.createPreview(request, pageModel);
+    ResponseEntity<Resource> getEntryPreview(@PathVariable String weblogHandle, @PathVariable String anchor,
+                                            Principal principal, Device device) throws IOException {
 
-        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(incomingRequest.getWeblogHandle());
+        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(weblogHandle);
         if (weblog == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        } else {
-            incomingRequest.setWeblog(weblog);
+            return ResponseEntity.notFound().build();
         }
 
         // User must have access rights on blog being previewed
-        if (!userManager.checkWeblogRole(incomingRequest.getAuthenticatedUser(), weblog, WeblogRole.EDIT_DRAFT)) {
+        if (!userManager.checkWeblogRole(principal.getName(), weblog, WeblogRole.EDIT_DRAFT)) {
             log.warn("User {} attempting to preview blog {} without access rights, blocking",
-                    incomingRequest.getAuthenticatedUser(), weblog.getHandle());
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
+                    principal.getName(), weblog.getHandle());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        // if theme provided, indicates a theme preview rather than an entry draft preview
-        String previewThemeName = request.getParameter("theme");
-        if (previewThemeName != null) {
-            try {
-                SharedTheme previewTheme = themeManager.getSharedTheme(previewThemeName);
-                Weblog previewWeblog = new Weblog(weblog);
-                previewWeblog.setTheme(previewTheme.getId());
-                previewWeblog.setUsedForThemePreview(true);
-                incomingRequest.setWeblog(previewWeblog);
-                weblog = previewWeblog;
-            } catch (IllegalArgumentException tnfe) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
-        }
+        WeblogPageRequest incomingRequest = new WeblogPageRequest(weblogHandle, principal, pageModel, true);
+        incomingRequest.setNoIndex(true);
+        incomingRequest.setWeblog(weblog);
+        incomingRequest.setWeblogEntryAnchor(Utilities.decode(anchor));
+        incomingRequest.setDeviceType(Utilities.getDeviceType(device));
 
-        // figure out what template to use
-        if (incomingRequest.getCustomPageName() != null) {
-            Template template = themeManager.getWeblogTheme(weblog).getTemplateByName(incomingRequest.getCustomPageName());
+        WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog,
+                incomingRequest.getWeblogEntryAnchor());
 
-            // block internal custom pages from appearing directly
-            if (template != null && template.getRole().isAccessibleViaUrl()) {
-                incomingRequest.setTemplate(template);
-            }
+        if (entry == null) {
+            log.warn("For weblog {}, invalid entry {} requested, returning 404", weblogHandle, anchor);
+            return ResponseEntity.notFound().build();
         } else {
-            boolean invalid = false;
+            incomingRequest.setWeblogEntry(entry);
+            incomingRequest.setTemplate(
+                    themeManager.getWeblogTheme(weblog).getTemplateByRole(Role.PERMALINK));
 
-            if (incomingRequest.getWeblogEntryAnchor() != null) {
-                WeblogEntry entry = weblogEntryManager.getWeblogEntryByAnchor(weblog, incomingRequest.getWeblogEntryAnchor());
-
-                if (entry == null) {
-                    invalid = true;
-                } else {
-                    incomingRequest.setWeblogEntry(entry);
-                    incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByRole(Role.PERMALINK));
-                }
-            }
-
-            // use default template for other contexts (or, for entries, if PERMALINK template is undefined)
-            if (!invalid && incomingRequest.getTemplate() == null) {
+            if (incomingRequest.getTemplate() == null) {
                 incomingRequest.setTemplate(themeManager.getWeblogTheme(weblog).getTemplateByRole(Role.WEBLOG));
             }
-        }
 
-        if (incomingRequest.getTemplate() == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
+            if (incomingRequest.getTemplate() == null) {
+                log.warn("For weblog {}, entry {}, no template available, returning 404", weblogHandle, anchor);
+                return ResponseEntity.notFound().build();
+            }
         }
 
         // populate the rendering model
@@ -175,16 +146,12 @@ public class PreviewController extends AbstractController {
             model.put("site", siteModelFactory.apply(incomingRequest));
         }
 
-        try {
-            CachedContent rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
-            response.setContentType(rendererOutput.getRole().getContentType());
-            response.setContentLength(rendererOutput.getContent().length);
-            // no-store: must pull each time from server when requested
-            response.setHeader("Cache-Control", "no-store");
-            response.getOutputStream().write(rendererOutput.getContent());
-        } catch (Exception e) {
-            log.error("Error during rendering for page {}", incomingRequest.getTemplate().getId(), e);
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
+        CachedContent rendererOutput = thymeleafRenderer.render(incomingRequest.getTemplate(), model);
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(rendererOutput.getRole().getContentType()))
+                .contentLength(rendererOutput.getContent().length)
+                // no-store: must pull each time from server when requested
+                .cacheControl(CacheControl.noStore())
+                .body(new ByteArrayResource(rendererOutput.getContent()));
     }
 }

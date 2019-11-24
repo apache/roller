@@ -93,8 +93,6 @@ public class Weblog {
     // temporary non-persisted fields used for form entry & retrieving associated data
     private int unapprovedComments;
 
-    // is this weblog instance used for previewing a theme?
-    private boolean usedForThemePreview;
     private Locale localeInstance;
 
     private String absoluteURL;
@@ -159,7 +157,6 @@ public class Weblog {
         this.setLastModified(other.getLastModified());
         this.setWeblogCategories(other.getWeblogCategories());
         this.setAnalyticsCode(other.getAnalyticsCode());
-        this.setUsedForThemePreview(other.isUsedForThemePreview());
         this.setBookmarks(other.getBookmarks());
     }
 
@@ -516,15 +513,6 @@ public class Weblog {
             }
         }
         return null;
-    }
-
-    @Transient
-    public boolean isUsedForThemePreview() {
-        return usedForThemePreview;
-    }
-
-    public void setUsedForThemePreview(boolean usedForThemePreview) {
-        this.usedForThemePreview = usedForThemePreview;
     }
 
     // convenience methods for populating fields from forms

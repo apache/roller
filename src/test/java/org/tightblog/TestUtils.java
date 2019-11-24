@@ -55,10 +55,6 @@ public class TestUtils {
         return createBaseMockServletRequest(addBlogHandle("feed/%s"));
     }
 
-    public static HttpServletRequest createMockServletRequestForCustomPageRequest() {
-        return createBaseMockServletRequest(addBlogHandle("page/%s/page/my-custom-page"));
-    }
-
     private static String addBlogHandle(String urlPath) {
         return String.format("/tb-ui/rendering/" + urlPath, BLOG_HANDLE);
     }

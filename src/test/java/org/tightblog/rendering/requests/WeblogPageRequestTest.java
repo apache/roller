@@ -71,18 +71,6 @@ public class WeblogPageRequestTest {
     }
 
     @Test
-    public void testIsValidDateString() {
-        assertTrue(WeblogPageRequest.isValidDateString("20160229"));
-        assertFalse(WeblogPageRequest.isValidDateString("20170229"));
-        assertTrue(WeblogPageRequest.isValidDateString("201805"));
-        assertFalse(WeblogPageRequest.isValidDateString("201815"));
-        assertFalse(WeblogPageRequest.isValidDateString("20180547"));
-        assertFalse(WeblogPageRequest.isValidDateString("2018"));
-        assertFalse(WeblogPageRequest.isValidDateString("201805011"));
-        assertFalse(WeblogPageRequest.isValidDateString("pumpkin"));
-    }
-
-    @Test
     public void testGetCommentForm() {
         WeblogPageRequest wpr = new WeblogPageRequest("myblog", null, pageModel);
 
@@ -116,7 +104,7 @@ public class WeblogPageRequestTest {
 
         // return empty string if preview
         when(pageModel.getAnalyticsTrackingCode(wpr.getWeblog(), true)).thenReturn("");
-        wpr = WeblogPageRequest.Creator.createPreview(mockRequest, pageModel);
+        wpr = new WeblogPageRequest("myblog", null, pageModel, true);
         assertEquals("", wpr.getAnalyticsTrackingCode());
     }
 
@@ -207,7 +195,7 @@ public class WeblogPageRequestTest {
         Principal mockPrincipal = mock(Principal.class);
         when(mockRequest.getUserPrincipal()).thenReturn(mockPrincipal);
 
-        WeblogPageRequest wpr = WeblogPageRequest.Creator.createPreview(mockRequest, pageModel);
+        WeblogPageRequest wpr = new WeblogPageRequest("myblog", null, pageModel, true);
 
         // if preview, always false
         assertFalse(wpr.isUserBlogOwner());

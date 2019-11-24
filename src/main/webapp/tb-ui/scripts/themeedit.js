@@ -35,10 +35,6 @@ tightblogApp.controller('PageController', ['$http',
             )
         }
 
-        this.previewTheme = function() {
-            window.open(contextPath  + '/tb-ui/authoring/preview/' + weblogHandle + '?theme=' + this.selectedTheme);
-        }
-
         this.commonErrorResponse = function(response) {
             if (response.status == 408) {
                window.location.replace($('#refreshURL').attr('value'));

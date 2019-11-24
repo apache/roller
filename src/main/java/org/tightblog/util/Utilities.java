@@ -317,8 +317,21 @@ public final class Utilities {
                 return DeviceType.TABLET;
             }
         }
+        return getDeviceType(currentDevice);
+    }
+
+    public static DeviceType getDeviceType(Device device) {
+        if (device != null) {
+            if (device.isMobile()) {
+                return DeviceType.MOBILE;
+            }
+            if (device.isTablet()) {
+                return DeviceType.TABLET;
+            }
+        }
         return DeviceType.NORMAL;
     }
+
 
     /**
      * Parse date as either 6-char or 8-char format.  Use current date if date not provided

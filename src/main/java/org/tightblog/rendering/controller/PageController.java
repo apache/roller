@@ -60,6 +60,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
@@ -167,7 +169,7 @@ public class PageController extends AbstractController {
         WeblogPageRequest incomingRequest = new WeblogPageRequest(weblogHandle, principal, pageModel);
         // discourage date-based URLs from appearing in search engines
         incomingRequest.setNoIndex(true);
-        if (WeblogPageRequest.isValidDateString(date)) {
+        if (isValidDateString(date)) {
             incomingRequest.setWeblogDate(date);
         }
 
@@ -202,11 +204,14 @@ public class PageController extends AbstractController {
 
     @GetMapping(path = "/{weblogHandle}/page/{customPage}")
     ResponseEntity<Resource> getByCustomPage(@PathVariable String weblogHandle, @PathVariable String customPage,
-                                       @RequestParam(value = "date", required = false) String date,
-                                       HttpServletRequest request, Principal principal) {
+                                             @RequestParam(value = "date", required = false) String date,
+                                             HttpServletRequest hsr, Principal principal) {
         WeblogPageRequest incomingRequest = new WeblogPageRequest(weblogHandle, principal, pageModel);
+        incomingRequest.setQueryString(hsr.getQueryString());
+        incomingRequest.setRequest(hsr);
+
         incomingRequest.setCustomPageName(customPage);
-        if (date != null && WeblogPageRequest.isValidDateString(date)) {
+        if (date != null && isValidDateString(date)) {
             incomingRequest.setWeblogDate(date);
         }
 
@@ -222,11 +227,11 @@ public class PageController extends AbstractController {
             // block internal custom pages from appearing directly
             if (template != null && template.getRole().isAccessibleViaUrl()) {
                 incomingRequest.setTemplate(template);
-                return handleRequest(incomingRequest, null, request);
+                return handleRequest(incomingRequest, null, hsr);
             } else {
                 log.warn("For weblog {}, invalid or non-external page {} requested, returning home page instead.",
                         weblogHandle, customPage);
-                return getHomePage(weblogHandle, request, principal);
+                return getHomePage(weblogHandle, hsr, principal);
             }
         }
     }
@@ -245,6 +250,7 @@ public class PageController extends AbstractController {
         }
 
         weblogPageCache.incrementIncomingRequests();
+        incomingRequest.setDeviceType(Utilities.getDeviceType(request));
 
         // TODO: handle pagenums in the callers
         if (pageNum != null) {
@@ -405,4 +411,22 @@ public class PageController extends AbstractController {
         }
         return key.toString();
     }
+
+    public static boolean isValidDateString(String dateString) {
+        boolean valid = false;
+
+        if (StringUtils.isNumeric(dateString) && (dateString.length() == 6 || dateString.length() == 8)) {
+            try {
+                if (dateString.length() == 6) {
+                    LocalDate.parse(dateString + "01", Utilities.YMD_FORMATTER);
+                } else {
+                    LocalDate.parse(dateString, Utilities.YMD_FORMATTER);
+                }
+                valid = true;
+            } catch (DateTimeParseException ignored) {
+            }
+        }
+        return valid;
+    }
+
 }

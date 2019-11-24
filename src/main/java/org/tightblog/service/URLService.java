@@ -39,23 +39,12 @@ import java.util.Map;
 @EnableConfigurationProperties(DynamicProperties.class)
 public class URLService {
 
-    private final String previewTheme;
-
     private static final String PREVIEW_URL_SEGMENT = "/tb-ui/authoring/preview/";
-
-    private boolean isThemePreview;
 
     @Autowired
     private DynamicProperties dp;
 
     public URLService() {
-        previewTheme = null;
-    }
-
-    public URLService(String previewTheme, boolean isThemePreview, DynamicProperties dynamicProperties) {
-        this.previewTheme = previewTheme;
-        this.isThemePreview = isThemePreview;
-        this.dp = dynamicProperties;
     }
 
     /**
@@ -248,11 +237,7 @@ public class URLService {
 
     /* Weblog URL before any params added */
     private String getWeblogRootURL(Weblog weblog) {
-        if (previewTheme == null) {
-            return dp.getAbsoluteUrl() + "/" + weblog.getHandle() + "/";
-        } else {
-            return dp.getAbsoluteUrl() + PREVIEW_URL_SEGMENT + weblog.getHandle() + "/";
-        }
+        return dp.getAbsoluteUrl() + "/" + weblog.getHandle() + "/";
     }
 
     /**
@@ -261,7 +246,6 @@ public class URLService {
     public String getWeblogEntryURL(WeblogEntry entry) {
         String url = getWeblogRootURL(entry.getWeblog()) + "entry/" + Utilities.encode(entry.getAnchor());
         Map<String, String> params = new HashMap<>();
-        addThemeOverrideIfPresent(params);
         return url + Utilities.getQueryString(params);
     }
 
@@ -295,7 +279,6 @@ public class URLService {
             params.put("page", Integer.toString(pageNum));
         }
 
-        addThemeOverrideIfPresent(params);
         return pathinfo + Utilities.getQueryString(params);
     }
 
@@ -325,7 +308,6 @@ public class URLService {
             }
         }
 
-        addThemeOverrideIfPresent(params);
         return url + Utilities.getQueryString(params);
     }
 
@@ -348,7 +330,6 @@ public class URLService {
             }
         }
 
-        addThemeOverrideIfPresent(params);
         return url + Utilities.getQueryString(params);
     }
 
@@ -366,9 +347,4 @@ public class URLService {
         return dp.getAbsoluteUrl() + "/blogthemes/" + theme + "/" + filePath;
     }
 
-    private void addThemeOverrideIfPresent(Map<String, String> params) {
-        if (isThemePreview) {
-            params.put("theme", Utilities.encode(previewTheme));
-        }
-    }
 }

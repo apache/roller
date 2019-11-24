@@ -19,9 +19,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
+import org.springframework.mobile.device.DeviceWebArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.mvc.method.annotation.ServletWebArgumentResolverAdapter;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
@@ -38,6 +41,7 @@ import org.tightblog.rendering.thymeleaf.ThemeTemplateResolver;
 import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -63,6 +67,14 @@ public class WebConfig implements WebMvcConfigurer {
         TilesConfigurer tconf = new TilesConfigurer();
         tconf.setDefinitions("/WEB-INF/tiles.xml");
         return tconf;
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        // Adding Spring mobile argument resolvers (allowing use of Device argument in Controller methods)
+        resolvers.add(
+                new ServletWebArgumentResolverAdapter(
+                        new DeviceWebArgumentResolver()));
     }
 
     // To process resources in the webapp/thymeleaf folder: Atom feeds,

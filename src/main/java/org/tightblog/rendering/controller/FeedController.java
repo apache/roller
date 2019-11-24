@@ -95,7 +95,6 @@ public class FeedController extends AbstractController {
                                      Principal principal, HttpServletRequest request) {
 
         WeblogFeedRequest feedRequest = new WeblogFeedRequest(feedModel);
-        feedRequest.setPrincipal(principal);
         feedRequest.setWeblogHandle(weblogHandle);
 
         if (category != null) {

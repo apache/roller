@@ -72,21 +72,18 @@ public class WeblogTheme {
      * for the purpose of switching the SHARED derivation to OVERRIDDEN if appropriate.
      */
     public List<? extends Template> getTemplates() {
-        Map<String, Template> pageMap = new TreeMap<>();
 
         // first get shared theme pages (non-db)
-        pageMap.putAll(this.sharedTheme.getTemplatesByName());
+        Map<String, Template> pageMap = new TreeMap<>(this.sharedTheme.getTemplatesByName());
 
-        // now, unless in preview mode, overwrite individual templates with blog-specific ones stored in the DB
-        if (!weblog.isUsedForThemePreview()) {
-            for (WeblogTemplate template : weblogTemplateDao.getWeblogTemplateMetadata(this.weblog)) {
-                if (pageMap.get(template.getName()) != null) {
-                    // mark weblog template as an override
-                    template.setDerivation(Derivation.OVERRIDDEN);
-                }
-                // add new or replace shared template
-                pageMap.put(template.getName(), template);
+        // overwrite individual templates with blog-specific ones stored in the DB
+        for (WeblogTemplate template : weblogTemplateDao.getWeblogTemplateMetadata(this.weblog)) {
+            if (pageMap.get(template.getName()) != null) {
+                // mark weblog template as an override
+                template.setDerivation(Derivation.OVERRIDDEN);
             }
+            // add new or replace shared template
+            pageMap.put(template.getName(), template);
         }
 
         return new ArrayList<>(pageMap.values());
@@ -98,11 +95,8 @@ public class WeblogTheme {
      * Returns null if the template cannot be found.
      */
     public Template getTemplateByRole(Role role) {
-        Template template = null;
+        Template template = weblogTemplateDao.findByWeblogAndRole(this.weblog, role);
 
-        if (!weblog.isUsedForThemePreview()) {
-            template = weblogTemplateDao.findByWeblogAndRole(this.weblog, role);
-        }
         if (template == null) {
             template = sharedTheme.getTemplateByRole(role);
         }
@@ -114,11 +108,8 @@ public class WeblogTheme {
      * Returns null if the template cannot be found.
      */
     public Template getTemplateByName(String name) {
-        Template template = null;
+        Template template = weblogTemplateDao.findByWeblogAndName(this.weblog, name);
 
-        if (!weblog.isUsedForThemePreview()) {
-            template = weblogTemplateDao.findByWeblogAndName(this.weblog, name);
-        }
         if (template == null) {
             template = sharedTheme.getTemplateByName(name);
         }

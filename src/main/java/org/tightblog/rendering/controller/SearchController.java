@@ -25,6 +25,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mobile.device.Device;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.dao.WeblogDao;
+import org.tightblog.util.Utilities;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -84,10 +86,12 @@ public class SearchController extends AbstractController {
                                               @RequestParam(value = "q") String query,
                                               @RequestParam(value = "cat", required = false) String category,
                                               @RequestParam(value = "page", required = false) Integer pageNum,
-                                              Principal principal) {
+                                              Principal principal, Device device) {
         WeblogSearchRequest searchRequest = new WeblogSearchRequest(weblogHandle, principal, searchResultsModel);
+        searchRequest.setDeviceType(Utilities.getDeviceType(device));
 
         Weblog weblog = weblogDao.findByHandleAndVisibleTrue(searchRequest.getWeblogHandle());
+
         if (weblog == null) {
             return ResponseEntity.notFound().build();
         } else {

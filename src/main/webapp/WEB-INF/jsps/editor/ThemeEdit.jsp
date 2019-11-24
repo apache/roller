@@ -83,7 +83,6 @@ var templatePageUrl = "<c:url value='/tb-ui/app/authoring/templates'/>?weblogId=
 
     <div class="control">
         <span style="padding-left:7px">
-            <button ng-click="ctrl.previewTheme()"><fmt:message key='themeEdit.preview' /></button>
             <button data-toggle="modal" data-target="#switchThemeModal"><fmt:message key='themeEdit.save' /></button>
         </span>
     </div>
