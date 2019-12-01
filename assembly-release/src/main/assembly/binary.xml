@@ -19,7 +19,7 @@
 -->
 
 <assembly>
-    <id>standard</id>
+    <id>binary</id>
     <formats>
         <format>zip</format>
         <format>tar.gz</format>
