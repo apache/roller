@@ -796,11 +796,4 @@ limitations under the License.
 
     </build>
 
-    <repositories>
-        <repository>
-            <id>struts-staging</id>
-            <url>https://repository.apache.org/content/groups/staging/</url>
-        </repository>
-    </repositories>
-
 </project>
