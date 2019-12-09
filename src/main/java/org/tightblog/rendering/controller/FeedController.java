@@ -77,7 +77,7 @@ public class FeedController extends AbstractController {
 
     @Autowired
     public FeedController(WeblogDao weblogDao, LazyExpiringCache weblogFeedCache,
-                          @Qualifier("atomRenderer") ThymeleafRenderer thymeleafRenderer,
+                          @Qualifier("standardRenderer") ThymeleafRenderer thymeleafRenderer,
                           ThemeManager themeManager, FeedModel feedModel, DynamicProperties dp) {
         this.weblogDao = weblogDao;
         this.weblogFeedCache = weblogFeedCache;
@@ -97,6 +97,13 @@ public class FeedController extends AbstractController {
         WeblogFeedRequest feedRequest = new WeblogFeedRequest(feedModel);
         feedRequest.setWeblogHandle(weblogHandle);
 
+        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(weblogHandle);
+        if (weblog == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            feedRequest.setWeblog(weblog);
+        }
+
         if (category != null) {
             feedRequest.setCategoryName(Utilities.decode(category));
         } else if (tag != null) {
@@ -107,23 +114,16 @@ public class FeedController extends AbstractController {
             feedRequest.setPageNum(page);
         }
 
-        Weblog weblog = weblogDao.findByHandleAndVisibleTrue(weblogHandle);
-        if (weblog == null) {
-            return ResponseEntity.notFound().build();
-        } else {
-            feedRequest.setWeblog(weblog);
-        }
-
         weblogFeedCache.incrementIncomingRequests();
 
         // Is this the site-wide weblog? If so, make a combined feed using all blogs...
         feedRequest.setSiteWide(themeManager.getSharedTheme(weblog.getTheme()).isSiteWide());
 
         // determine the lastModified date for this content
-        Instant lastModified = (feedRequest.isSiteWide()) ? dp.getLastSitewideChange() : weblog.getLastModified();
+        Instant objectLastChanged = (feedRequest.isSiteWide()) ? dp.getLastSitewideChange() : weblog.getLastModified();
 
         // DB stores last modified in millis, browser if-modified-since in seconds, so need to truncate millis from the former.
-        long inDb = lastModified.truncatedTo(ChronoUnit.SECONDS).toEpochMilli();
+        long inDb = objectLastChanged.truncatedTo(ChronoUnit.SECONDS).toEpochMilli();
         long inBrowser = getBrowserCacheExpireDate(request);
 
         if (inDb <= inBrowser) {
@@ -133,7 +133,7 @@ public class FeedController extends AbstractController {
 
         // check cache before manually generating
         String cacheKey = generateKey(feedRequest, feedRequest.isSiteWide());
-        CachedContent rendererOutput = weblogFeedCache.get(cacheKey, lastModified);
+        CachedContent rendererOutput = weblogFeedCache.get(cacheKey, objectLastChanged);
 
         boolean newContent = false;
         try {
@@ -158,7 +158,7 @@ public class FeedController extends AbstractController {
             return ResponseEntity.ok()
                     .contentType(MediaType.valueOf(rendererOutput.getRole().getContentType()))
                     .contentLength(rendererOutput.getContent().length)
-                    .lastModified(lastModified.toEpochMilli())
+                    .lastModified(objectLastChanged.toEpochMilli())
                     .cacheControl(CacheControl.noCache())
                     .body(new ByteArrayResource(rendererOutput.getContent()));
 

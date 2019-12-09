@@ -21,7 +21,6 @@
 package org.tightblog.rendering.cache;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import org.apache.commons.lang3.time.DateUtils;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +31,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class LazyExpiringCache {
+
+    public LazyExpiringCache(String cacheHandlerId, int maxEntries, long timeoutInHours) {
+        this.cacheHandlerId = cacheHandlerId;
+        this.maxEntries = maxEntries;
+        this.timeoutInHours = timeoutInHours;
+    }
+
     private static Logger log = LoggerFactory.getLogger(LazyExpiringCache.class);
 
     private String cacheHandlerId;
@@ -58,10 +64,6 @@ public class LazyExpiringCache {
 
     public String getCacheHandlerId() {
         return cacheHandlerId;
-    }
-
-    public void setCacheHandlerId(String cacheHandlerId) {
-        this.cacheHandlerId = cacheHandlerId;
     }
 
     private int maxEntries;
@@ -98,11 +100,7 @@ public class LazyExpiringCache {
         return contentCache == null ? 0 : contentCache.estimatedSize();
     }
 
-    private long timeoutInMS;
-
-    public void setTimeoutSec(int timeoutSec) {
-        this.timeoutInMS = timeoutSec * DateUtils.MILLIS_PER_SECOND;
-    }
+    private long timeoutInHours;
 
     private Cache<String, Object> contentCache;
 
@@ -110,7 +108,7 @@ public class LazyExpiringCache {
     void init() {
         if (maxEntries > 0) {
             contentCache = Caffeine.newBuilder()
-                    .expireAfterWrite(timeoutInMS, TimeUnit.MILLISECONDS)
+                    .expireAfterWrite(timeoutInHours, TimeUnit.HOURS)
                     .maximumSize(maxEntries)
                     .recordStats()
                     .build();
@@ -120,22 +118,14 @@ public class LazyExpiringCache {
         }
     }
 
-    public CachedContent get(String key, Instant lastModified) {
+    public CachedContent get(String key, Instant objectLastChanged) {
         if (maxEntries > 0) {
-            CachedContent entry = null;
-            LazyExpiringCacheEntry lazyEntry = (LazyExpiringCacheEntry) this.contentCache.getIfPresent(key);
-            if (lazyEntry != null) {
-                entry = lazyEntry.getValue(lastModified);
-
-                if (entry != null) {
-                    log.trace("HIT {}", key);
-                } else {
-                    log.trace("HIT-EXPIRED {}", key);
-                }
-            } else {
-                log.trace("MISS {}", key);
+            CachedContent content = null;
+            LazyExpiringCacheEntry entry = (LazyExpiringCacheEntry) this.contentCache.getIfPresent(key);
+            if (entry != null) {
+                content = entry.getValueIfFresh(objectLastChanged);
             }
-            return entry;
+            return content;
         } else {
             return null;
         }

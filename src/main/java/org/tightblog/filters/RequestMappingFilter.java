@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.tightblog.rendering.controller.CommentController;
 import org.tightblog.rendering.controller.FeedController;
+import org.tightblog.rendering.controller.ExternalSourceController;
 import org.tightblog.rendering.controller.MediaFileController;
 import org.tightblog.rendering.controller.PageController;
 import org.tightblog.rendering.controller.SearchController;
@@ -194,6 +195,8 @@ public class RequestMappingFilter implements Filter {
                 forwardUrl = generateForwardUrl(MediaFileController.PATH, handle, null, data);
             } else if (context.equals("search")) {
                 forwardUrl = generateForwardUrl(SearchController.PATH, handle, null, null);
+            } else if (context.equals("external")) {
+                forwardUrl = generateForwardUrl(ExternalSourceController.PATH, null, null, data);
             }
         }
 
@@ -201,7 +204,7 @@ public class RequestMappingFilter implements Filter {
     }
 
     String generateForwardUrl(String processor, String handle, String context, String data) {
-        String forwardUrl = processor + "/" + handle;
+        String forwardUrl = processor + (handle != null ? ("/" + handle) : "");
         if (context != null) {
             forwardUrl += "/" + context;
         }

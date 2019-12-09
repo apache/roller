@@ -2,8 +2,12 @@
 <span th:replace="fragments :: MetaDescription"></span>
 <meta name="viewport" content="initial-scale=1.0">
 
+<!-- Google Code Prettify -->
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/google/code-prettify@master/styles/desert.css"/>
+
 <!-- Bootstrap core CSS -->
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
 <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" th:href="${url.getThemeResourceURL('gaurav', 'style.css')}" />
+<link rel="stylesheet" th:href='${url.getCustomPageURL("style.css")}'/>

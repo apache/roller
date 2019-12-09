@@ -110,17 +110,25 @@ public class WebConfig implements WebMvcConfigurer {
         return engine;
     }
 
+    /**
+     * Standard renderer uses a hardcoded template independent of any specific blog.
+     * Examples: Atom feeds and the ExternalSourceController (embedded GitHub code).
+     */
+    @Bean
+    public ThymeleafRenderer standardRenderer(SpringTemplateEngine standardTemplateEngine) {
+        ThymeleafRenderer tr = new ThymeleafRenderer();
+        tr.setTemplateEngine(standardTemplateEngine);
+        return tr;
+    }
+
+    /**
+     * The blog renderer is for generation of blog-specific pages, and has a more complex
+     * strategy for determining the proper templates to use (default or blogger-overridden),
+     */
     @Bean
     public ThymeleafRenderer blogRenderer(SpringTemplateEngine blogTemplateEngine) {
         ThymeleafRenderer tr = new ThymeleafRenderer();
         tr.setTemplateEngine(blogTemplateEngine);
-        return tr;
-    }
-
-    @Bean
-    public ThymeleafRenderer atomRenderer(SpringTemplateEngine standardTemplateEngine) {
-        ThymeleafRenderer tr = new ThymeleafRenderer();
-        tr.setTemplateEngine(standardTemplateEngine);
         return tr;
     }
 

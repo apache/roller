@@ -142,8 +142,8 @@ public class URLModel implements Model {
         return urlService.getCustomPageURL(weblog, pageLink, null);
     }
 
-    public String getThemeResourceURL(String theme, String filePath) {
-        return urlService.getThemeResourceURL(theme, filePath);
+    public String getThemeResourceURL(String filePath) {
+        return urlService.getThemeResourceURL(weblog.getTheme(), filePath);
     }
 
     public String getConfigURL() {

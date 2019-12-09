@@ -263,12 +263,12 @@ public class PageController extends AbstractController {
 
         // is this the site-wide weblog?
         incomingRequest.setSiteWide(themeManager.getSharedTheme(incomingRequest.getWeblog().getTheme()).isSiteWide());
-        Instant lastModified = (incomingRequest.isSiteWide()) ?
+        Instant objectLastChanged = (incomingRequest.isSiteWide()) ?
                 dp.getLastSitewideChange() : incomingRequest.getWeblog().getLastModified();
 
         // Respond with 304 Not Modified if it is not modified.
         // DB stores last modified in millis, browser if-modified-since in seconds, so need to truncate millis from the former.
-        long inDb = lastModified.truncatedTo(ChronoUnit.SECONDS).toEpochMilli();
+        long inDb = objectLastChanged.truncatedTo(ChronoUnit.SECONDS).toEpochMilli();
         long inBrowser = getBrowserCacheExpireDate(request);
 
         if (inDb <= inBrowser) {
@@ -291,7 +291,7 @@ public class PageController extends AbstractController {
         boolean newContent = false;
         if (commentForm == null) {
             cacheKey = generateKey(incomingRequest);
-            rendererOutput = weblogPageCache.get(cacheKey, lastModified);
+            rendererOutput = weblogPageCache.get(cacheKey, objectLastChanged);
         }
 
         if (rendererOutput == null) {
@@ -347,7 +347,7 @@ public class PageController extends AbstractController {
             return ResponseEntity.ok()
                     .contentType(MediaType.valueOf(rendererOutput.getRole().getContentType()))
                     .contentLength(rendererOutput.getContent().length)
-                    .lastModified(lastModified.toEpochMilli())
+                    .lastModified(objectLastChanged.toEpochMilli())
                     // no-cache: browser may cache but must validate with server each time before using (check for 304 response)
                     .cacheControl(CacheControl.noCache())
                     .body(new ByteArrayResource(rendererOutput.getContent()));

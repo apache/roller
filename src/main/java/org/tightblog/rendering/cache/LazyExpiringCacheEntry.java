@@ -38,11 +38,6 @@ import java.time.Instant;
  * instead of actively purging lots of cached objects from the cache at
  * invalidation time, we can now be lazy and just invalidate them when we
  * actually try to retrieve the cached object.
- * <p>
- * This is useful for TightBlog because we will no longer have to iterate through
- * the list of cached objects and inspect the keys to figure out what items to
- * invalidate.  Instead we can just sit back and let the items be invalidated as
- * we try to use them.
  */
 class LazyExpiringCacheEntry {
 
@@ -59,15 +54,15 @@ class LazyExpiringCacheEntry {
      * <p>
      * If the value has expired then we return null.
      */
-    public CachedContent getValue(Instant lastInvalidated) {
-        return isValid(lastInvalidated) ? value : null;
+    public CachedContent getValueIfFresh(Instant objectLastChanged) {
+        return isFresh(objectLastChanged) ? value : null;
     }
 
     /**
-     * Determine if this cache entry has expired.
+     * Determine if this cache entry is still usable.
      */
-    private boolean isValid(Instant lastInvalidated) {
-        return lastInvalidated == null || timeCached.isAfter(lastInvalidated);
+    private boolean isFresh(Instant objectLastChanged) {
+        return objectLastChanged == null || timeCached.isAfter(objectLastChanged);
     }
 
 }

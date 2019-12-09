@@ -161,7 +161,7 @@
 
             <th:block th:switch="${model.canSubmitNewComments(entry)}">
                 <div class="card-body" th:block th:case="${true}">
-                    <span class="card-text" th:class="${cform.invalid ? 'error' : (!#strings.isEmpty(cform.submitResponseMessage) ? 'status' : null)}"
+                    <span class="card-text" th:classappend="${cform.invalid} ? 'error' : (${!#strings.isEmpty(cform.submitResponseMessage)} ? 'status' : '')"
                           th:utext="${cform.submitResponseMessage}">xxx</span>
 
                     <form method="post" focus="name" name="commentForm">

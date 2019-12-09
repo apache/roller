@@ -11,6 +11,31 @@ span.searchword {
     background-color:yellow;
 }
 
+/* google code prettify, line nos on every line without alternate coloring every other line */
+div.github-source li.L0,
+div.github-source li.L1,
+div.github-source li.L2,
+div.github-source li.L3,
+div.github-source li.L4,
+div.github-source li.L5,
+div.github-source li.L6,
+div.github-source li.L7,
+div.github-source li.L8,
+div.github-source li.L9 {
+    background: inherit;
+    list-style-type: decimal !important;
+}
+
+div.github-meta {
+    background-color: #f7f7f7;
+    padding: 5px;
+    font-size: 0.8em;
+}
+
+div.github-meta a {
+    color: #369;
+}
+
 /* Calendar */
 .hCalendarTableBig {
     width: 100%;

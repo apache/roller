@@ -31,16 +31,16 @@ public class LazyExpiringCacheEntryTest {
     public void testGetNonexpiredValue() {
         CachedContent testContent = new CachedContent(Template.Role.ATOMFEED);
         LazyExpiringCacheEntry entry = new LazyExpiringCacheEntry(testContent);
-        assertEquals(testContent, entry.getValue(twentySecondsAgo));
+        assertEquals(testContent, entry.getValueIfFresh(twentySecondsAgo));
 
         // test get value of any age
-        assertEquals(testContent, entry.getValue(null));
+        assertEquals(testContent, entry.getValueIfFresh(null));
     }
 
     @Test
     public void testExpiredValueReturnsNull() {
         CachedContent testContent = new CachedContent(Template.Role.ATOMFEED);
         LazyExpiringCacheEntry entry = new LazyExpiringCacheEntry(testContent);
-        assertNull(entry.getValue(twentySecondsLater));
+        assertNull(entry.getValueIfFresh(twentySecondsLater));
     }
 }

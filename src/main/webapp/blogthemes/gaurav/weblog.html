@@ -1,8 +1,8 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-	<span th:replace="${model.getTemplateIdByName('common_html_head')}"></span>
-	<title th:utext="${model.weblog.name + ': ' + model.weblog.tagline}">xxx</title>
+    <span th:replace="${model.getTemplateIdByName('common_html_head')}"></span>
+    <title th:utext="${model.weblog.name + ': ' + model.weblog.tagline}">xxx</title>
     <link rel="shortcut icon" th:href="${url.getSiteHome() + '/favicon.ico'}">
     <span th:replace="fragments :: AutoDiscoveryLinks"></span>
     <meta th:if="${model.noIndex}" name="robots" content="noindex">
@@ -57,7 +57,7 @@
 
 						<div id="subscribe">
 							<a th:href="${url.atomFeedURL}">
-								<img th:src="${url.getThemeResourceURL('gaurav', 'icons/feed-icon-28x28.png')}" title="RSS/Atom feed icon" alt="RSS/Atom feed icon" /></a>&nbsp;
+								<img th:src="${url.getThemeResourceURL('icons/feed-icon-28x28.png')}" title="RSS/Atom feed icon" alt="RSS/Atom feed icon" /></a>&nbsp;
 							<a th:href="${url.atomFeedURL}">Subscribe to this blog</a>
 						</div>
 					</div>

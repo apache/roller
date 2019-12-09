@@ -31,10 +31,7 @@ public class LazyExpiringCacheTest {
 
     @Before
     public void initialize() {
-        cache = new LazyExpiringCache();
-        cache.setMaxEntries(10);
-        cache.setTimeoutSec(3600);
-        cache.setCacheHandlerId("testCache");
+        cache = new LazyExpiringCache("testCache", 10, 3600);
         cache.init();
     }
 
