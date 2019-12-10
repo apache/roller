@@ -276,7 +276,7 @@ public class EmailService {
         String msg = standardTemplateEngine.process("emails/PendingCommentNotice", ctx);
 
         String subject = messages.getMessage("email.comment.moderate.title", null, weblog.getLocaleInstance());
-        subject += entry.getTitle();
+        subject = String.format("%s: %s", subject, entry.getTitle());
 
         List<UserWeblogRole> bloggerList = userWeblogRoleDao.findByWeblogAndEmailCommentsTrue(weblog);
 

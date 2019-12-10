@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<span th:replace="${model.getTemplateIdByName('common_html_head')}"></span>
-	<title th:utext="${model.weblog.name + ': Archives'}">xxx</title>
+	<title th:utext="|${model.weblog.name}: Archives|">xxx</title>
 </head>
 <body>
 
@@ -14,7 +14,7 @@
 	
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="pb-2 mt-4 mb-2 border-bottom" th:utext="${model.weblog.name + ' '}">
+				<h1 class="pb-2 mt-4 mb-2 border-bottom" th:utext="|${model.weblog.name} |">
 				    <small th:utext="${model.weblog.tagline}">xxx</small>
 				</h1>
 			</div>
@@ -24,10 +24,10 @@
 	  
 	  		<!-- BODY MAIN-->
 		   	<div class="col-lg-8">
-				<h5 th:utext="${'Browse the ' + model.weblog.name + ' archives'}">xxx</h5>
+				<h5 th:utext="|Browse the ${model.weblog.name} archives|">xxx</h5>
 				<div>
-					<p class="text-info" th:utext="${'Browse the <b>' + model.weblog.name + '</b> archive in month view, search for specific keywords
-					   or jump to the most recent posts listed in the right sidebar.'}">xxx</p>
+					<p class="text-info" th:utext="|Browse the <b>${model.weblog.name}</b> archive in month view, search for specific keywords
+					   or jump to the most recent posts listed in the right sidebar.|">xxx</p>
 
 					<div th:replace="fragments :: Calendar(true)"></div>
 				</div>
@@ -38,7 +38,7 @@
 				<div class="card">
 					<h5 class="card-header">Welcome</h5>
 					<div class="card-body">
-						<p class="text-muted" th:utext="${'You''re on the Archives page of the weblog <b>' + model.weblog.name + '</b>.'}"></p>
+						<p class="text-muted" th:utext="|You''re on the Archives page of the weblog <b>${model.weblog.name}</b>}|"></p>
 
 						<p class="text-muted">
 						From here you can browse via the calendar, follow the links below or

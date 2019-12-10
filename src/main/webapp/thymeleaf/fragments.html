@@ -4,8 +4,8 @@
     <!--/* usage of th:block instead of div & remove tag did not work */-->
     <div th:fragment="AutoDiscoveryLinks" th:remove="tag">
         <link rel="alternate" type="application/atom+xml" title="Recent Entries (Atom)"  th:href="${url.atomFeedURL}" />
-        <link th:if="${model.tag}" rel="alternate" type="application/atom+xml" th:title="${'Entries tagged ' + model.tag + ' (Atom)'}"  th:href="${url.getAtomFeedURLForTag(model.tag)}"/>
-        <link th:if="${model.category}" rel="alternate" type="application/atom+xml" th:title="${'Entries for category ' + model.category + ' (Atom)'}" th:href="${url.getAtomFeedURLForCategory(model.category)}"/>
+        <link th:if="${model.tag}" rel="alternate" type="application/atom+xml" th:title="|Entries tagged ${model.tag} (Atom)|"  th:href="${url.getAtomFeedURLForTag(model.tag)}"/>
+        <link th:if="${model.category}" rel="alternate" type="application/atom+xml" th:title="|Entries for category ${model.category} (Atom)|" th:href="${url.getAtomFeedURLForCategory(model.category)}"/>
     </div>
     <div th:fragment="MetaDescription" th:remove="tag">
         <th:block th:switch="${model.weblogEntry != null && !#strings.isEmpty(model.weblogEntry.searchDescription)}">
@@ -130,7 +130,7 @@
 
             <th:block th:with="comments=${model.commentForm.preview ? model.commentForm : entry.getComments()}">
                 <th:block th:each="comment : ${comments}" th:if="${comment.approved || model.commentForm.preview}">
-                    <div class="card-body" th:id="${'comment-' + comment.timestamp}">
+                    <div class="card-body" th:id="|comment-${comment.timestamp}|">
 
                         <span class="card-text" th:utext="${comment.content}">xxx</span>
 
@@ -148,8 +148,8 @@
 
     <div th:fragment="TagCloud(myTags)" th:remove="tag">
         <div id="tagcloud">
-            <a th:each="tag : ${myTags}" th:class="${'tag tc' + tag.intensity}"
-               th:href="${url.getEntriesURLForTag(tag.name, null)}" th:title="${tag.total}" th:utext="${tag.name + ' '}">xxx</a>
+            <a th:each="tag : ${myTags}" th:class="|tag tc${tag.intensity}|"
+               th:href="${url.getEntriesURLForTag(tag.name, null)}" th:title="${tag.total}" th:utext="|${tag.name} |">xxx</a>
         </div>
     </div>
 
@@ -192,7 +192,7 @@
                             <label for="notifyId" class="form-check-label" th:utext="${utils.msg('macro.weblog.notifyMeOfComments')}">xxx</label>
                         </div>
                         <th:block th:if="${model.blogger == null}">
-                            <script th:src="${url.getSiteHome() + '/scripts/clientSideInclude.js'}"></script>
+                            <script th:src="|${url.getSiteHome()}/scripts/clientSideInclude.js|"></script>
                             <div class="form-group" id="commentAuthenticator">
                                 <label for="answerId" th:utext="${utils.msg('macro.weblog.name')}">xxx</label>
                                 <input type="text" id="answerId" name="name" class="form-control" th:value="${formName}" size="50" maxlength="255" required th:readonly="${model.blogger!=null}">

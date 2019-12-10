@@ -9,7 +9,7 @@
     <div class="card">
         <h5 class="card-header">About Me</h5>
         <div class="card-body">
-            <center><em th:utext="${'Today''s Blog Hits: ' + model.weblog.hitsToday}"></em></center></p>
+            <center><em th:utext="|Today''s Blog Hits: ${model.weblog.hitsToday}|"></em></center></p>
         </div>
     </div>
 

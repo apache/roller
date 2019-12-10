@@ -5,9 +5,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="robots" content="noindex">
 	<span th:replace="${model.getTemplateIdByName('common_html_head')}"></span>
-	<title th:utext="${model.weblog.name + ': Search Results for ' + model.searchPhrase}">xxx</title>
+	<title th:utext="|${model.weblog.name}: Search Results for ${model.searchPhrase}|">xxx</title>
 	<th:block th:if="${model.resultCount > 0}">
-		<script type="application/x-javascript" th:src="${url.getSiteHome() + '/scripts/searchhi.js'}"></script>
+		<script type="application/x-javascript" th:src="|${url.getSiteHome()}/scripts/searchhi.js|"></script>
 		<script>
 			function loadSearchHighlight() {
 				searchhi.highlightWord(document.getElementsByClassName("searchable_text"), '[(${model.searchPhrase})]');
@@ -25,7 +25,7 @@
 	
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="pb-2 mt-4 mb-2 border-bottom" th:utext="${model.weblog.name + ' '}">
+                <h1 class="pb-2 mt-4 mb-2 border-bottom" th:utext="|${model.weblog.name} |">
                     <small th:utext="${model.weblog.tagline}">xxx</small>
                 </h1>
             </div>
@@ -36,7 +36,7 @@
 			<!-- BODY MAIN-->
 			<div class="col-lg-8">
 				<div class="alert alert-info">
-					<p th:utext="${'Search Results for ' + model.searchPhrase}">xxx</p>
+					<p th:utext="|Search Results for ${model.searchPhrase}|">xxx</p>
 					<span th:utext="${utils.msg('macro.weblog.searchhits', model.searchPhrase, T(Math).max(model.resultCount, 0))}">xxx</span>
 				</div>
 				<th:block th:switch="${model.resultCount > 0}">
@@ -45,8 +45,8 @@
 
 						 <div th:replace="fragments :: WeblogEntriesPager"></div>
 						 <ul class="pager" th:with="pager=${model.getWeblogEntriesPager()}">
-							<li th:if="${pager.prevLink != null}" class="previous"><a th:href="${pager.prevLink}" th:utext="${'← ' + pager.prevLabel"}>xxx</a></li>
-							<li th:if="${pager.nextLink != null}" class="next"><a th:href="${pager.nextLink}" th:utext="${pager.nextLabel + ' →'">xxx</a></li>
+							<li th:if="${pager.prevLink != null}" class="previous"><a th:href="${pager.prevLink}" th:utext="|← ${pager.prevLabel}|"}>xxx</a></li>
+							<li th:if="${pager.nextLink != null}" class="next"><a th:href="${pager.nextLink}" th:utext="|${pager.nextLabel} →|">xxx</a></li>
 						 </ul>
 					</div>
 					<div th:case="${false}"><br><h3>Sorry, your search returned no results</h3><br>

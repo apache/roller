@@ -4,7 +4,7 @@
         <a th:href="${entries != null && entries.size() > 0 ? url.getURL(entries[0])
             : url.getEntriesURLForDate($utils.formatTemporal($day, $utils.msg('macro.weblog.datelinkpattern')))}">
             <img border="0"
-                 th:src="${url.getSiteHome() + '/images/permalink.gif'}"
+                 th:src="|${url.getSiteHome()}/images/permalink.gif|"
                  th:title="${utils.msg('macro.weblog.daypermalink.title')}"
                  th:alt="${url.getEntriesURLForDate(utils.formatTemporal(day, 'yyyyMMdd'))}"/></a>
             <span th:text="${utils.formatTemporal(day, utils.msg('macro.weblog.datepattern'))}"></span>
@@ -14,7 +14,7 @@
         <h5 class="card-title searchable_text" th:utext="${entry.title}">xxx</h5>
         <th:block th:switch="${model.permalink || #strings.isEmpty(entry.summary)}">
             <div class="card-text searchable_text" th:case="${true}" th:utext="${model.getTransformedText(entry)}"></div>
-            <div class="card-text searchable_text" th:case="${false}" th:utext="${model.getTransformedSummary(entry) + ' ' + utils.msg('macro.weblog.readMoreLink', url.getURL(entry))}"></div>
+            <div class="card-text searchable_text" th:case="${false}" th:utext="|${model.getTransformedSummary(entry)} ${utils.msg('macro.weblog.readMoreLink', url.getURL(entry))}|"></div>
         </th:block>
         <p class="pubInfo">
             Posted by <span th:utext="${entry.creator.screenName}">xxx</span> in <span class="category" th:utext="${entry.category.name}">xxx</span>
@@ -29,7 +29,7 @@
                 | <a th:href="${url.getEntryEditURL(entry)}" th:utext="${utils.msg('generic.edit')}">xxx</a>
             </span>
             <span th:if="${model.canSubmitNewComments(entry) || entry.commentCount > 0}">
-                | <a th:href="${url.getCommentsURL(entry)}" th:utext="${utils.msg('macro.weblog.comments') + '[' + entry.commentCount + ']'}">xxx</a>
+                | <a th:href="${url.getCommentsURL(entry)}" th:utext="|${utils.msg('macro.weblog.comments')}[${entry.commentCount}]|">xxx</a>
             </span>
         </p>
     </div>

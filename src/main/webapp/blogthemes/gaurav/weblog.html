@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <span th:replace="${model.getTemplateIdByName('common_html_head')}"></span>
-    <title th:utext="${model.weblog.name + ': ' + model.weblog.tagline}">xxx</title>
-    <link rel="shortcut icon" th:href="${url.getSiteHome() + '/favicon.ico'}">
+    <title th:utext="|${model.weblog.name}: ${model.weblog.tagline}|">xxx</title>
+    <link rel="shortcut icon" th:href="|${url.getSiteHome()}/favicon.ico|">
     <span th:replace="fragments :: AutoDiscoveryLinks"></span>
     <meta th:if="${model.noIndex}" name="robots" content="noindex">
     <span th:utext="${model.analyticsTrackingCode}" th:remove="tag"></span>
@@ -19,7 +19,7 @@
 		
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="pb-2 mt-4 mb-2 border-bottom" th:utext="${model.weblog.name + ' '}">
+				<h1 class="pb-2 mt-4 mb-2 border-bottom" th:utext="|${model.weblog.name} |">
 				    <small th:utext="${model.weblog.tagline}">xxx</small>
 				</h1>
 			</div>
@@ -33,10 +33,10 @@
 
 				<ul class="pager" th:with="pager = ${model.getWeblogEntriesPager()}">
 	        		<li th:if="${!#strings.isEmpty(pager.prevLink)}" class="previous">
-	        		    <a th:href="${pager.prevLink}" th:utext="${'← ' + pager.prevLabel}">xxx</a>
+	        		    <a th:href="${pager.prevLink}" th:utext="|← ${pager.prevLabel}|">xxx</a>
 	        		</li>
                     <li th:if=${!#strings.isEmpty(pager.nextLink)} class="next">
-                        <a th:href="${pager.nextLink}" th:utext="${pager.nextLabel + ' →'}">xxx</a>
+                        <a th:href="${pager.nextLink}" th:utext="|${pager.nextLabel} →|">xxx</a>
                     </li>
 				</ul>
 			</div>

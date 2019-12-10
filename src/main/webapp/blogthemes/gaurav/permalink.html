@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
     <span th:replace="${model.getTemplateIdByName('common_html_head')}"></span>
-    <title th:utext="${model.weblog.name + ': ' + model.weblog.tagline}">xxx</title>
+    <title th:utext="|${model.weblog.name}: ${model.weblog.tagline}|">xxx</title>
     <meta th:if="${model.noIndex}" name="robots" content="noindex">
     <span th:utext="${model.analyticsTrackingCode}" th:remove="tag"></span>
     <span th:replace="fragments :: MetaDescription"></span>
@@ -17,7 +17,7 @@
 	
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="pb-2 mt-4 mb-2 border-bottom" th:utext="${model.weblog.name + ' '}">
+				<h1 class="pb-2 mt-4 mb-2 border-bottom" th:utext="|${model.weblog.name} |">
 				    <small th:utext="${model.weblog.tagline}">xxx</small>
 				</h1>
 			</div>
@@ -30,10 +30,10 @@
 
                 <div class="d-flex justify-content-between" th:with="pager = ${model.getWeblogEntriesPager()}">
                     <span th:if="${!#strings.isEmpty(pager.prevLink)}" style="text-align:left">
-                        <a th:href="${pager.prevLink}" th:utext="${'← ' + pager.prevLabel}">xxx</a>
+	        		    <a th:href="${pager.prevLink}" th:utext="|← ${pager.prevLabel}|">xxx</a>
                     </span>
                     <span th:if="${!#strings.isEmpty(pager.nextLink)}" style="text-align:right">
-                        <a th:href="${pager.nextLink}" th:utext="${pager.nextLabel + ' →'}">xxx</a>
+                        <a th:href="${pager.nextLink}" th:utext="|${pager.nextLabel} →|">xxx</a>
                     </span>
                 </div>
 
@@ -51,14 +51,14 @@
                     <th:block th:with="comments=${model.commentForm.preview ? model.commentForm : entry.getComments()}">
                         <div class="panel-body">
                             <th:block th:each="comment,iterStat : ${comments}" th:if="${comment.approved || model.commentForm.preview}">
-                                <div th:id="${'comment-' + comment.timestamp}" th:class="${iterStat.even}? 'even' : 'odd'">
+                                <div th:id="|comment-${comment.timestamp}|" th:class="${iterStat.even}? 'even' : 'odd'">
                                     <p th:utext="${comment.content}">xxx</p>
                                     <p class="small">
                                     <span th:utext="${utils.msg('macro.weblog.postedby')}">xxx</span>
                                         <a rel="nofollow" th:href="${comment.url}" th:remove="${#strings.isEmpty(comment.url)} ? 'tag' : 'none'">
                                             <b th:utext="${comment.name}">xxx</b>
                                         </a>
-                                    <span th:utext="${utils.msg('macro.weblog.on') + ' ' + utils.formatTemporal(comment.postTime, utils.msg('macro.weblog.datetimepattern'))}">xxx</span>
+                                    <span th:utext="|${utils.msg('macro.weblog.on')} ${utils.formatTemporal(comment.postTime, utils.msg('macro.weblog.datetimepattern'))}|">xxx</span>
                                     <a th:href="${url.getCommentURL(entry, comment.timestamp)}"
                                        class="entrypermalink" th:title="${utils.msg('macro.weblog.commentpermalink.title')}">#</a>
                                     </p>
@@ -76,7 +76,7 @@
                         </div>
                         <div class="panel-body">
                             <div th:if="${!#strings.isEmpty(cform.submitResponseMessage)}"
-                                  th:class="${'alert ' + (cform.invalid ? 'alert-danger' : (!#strings.isEmpty(cform.submitResponseMessage) ? 'alert-success' : ''))}"
+                                  class="alert" th:classappend="${cform.invalid ? 'alert-danger' : (!#strings.isEmpty(cform.submitResponseMessage) ? 'alert-success' : '')}"
                                   th:utext="${cform.submitResponseMessage}">xxx</div>
 
                             <form method="post" focus="name" name="commentForm">
@@ -113,7 +113,7 @@
                                     </div>
 
                                     <div class="form-group col-lg-12">
-                                       <script th:if="${model.blogger == null}" th:src="${url.getSiteHome() + '/scripts/clientSideInclude.js'}"></script>
+                                       <script th:if="${model.blogger == null}" th:src="|${url.getSiteHome()}/scripts/clientSideInclude.js|"></script>
                                        <div id="commentAuthenticator" th:if="${model.blogger == null}"></div>
                                        <input type="submit" th:formaction="${url.getWeblogEntryPreviewCommentURL(entry)}" class="btn btn-primary"
                                                name="post" th:value="${utils.msg('macro.weblog.postpreview')}">

@@ -5,12 +5,12 @@
 </head>
 <body style="background:white;color:black;font-size:12px">
 <div>
-<span th:text="${comment.name} + ' ' + #{email.comment.wrote} + ': '">
+<span th:text="|${comment.name} #{email.comment.wrote}: |">
     A user wrote
 </span><br><br>
 <span th:utext="${comment.content}">(comment text)</span>
 <br><br><hr>
-<span style="font-size:11px" th:text="#{email.comment.reply} + ': '"><br>
+<span style="font-size:11px" th:text="|#{email.comment.reply}: |"><br>
     Reply:
 </span>
 <a th:href="${commentURL}" th:text="${commentURL}">replyurl</a>

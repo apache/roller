@@ -19,7 +19,7 @@
                         </div>
                     </li>
                 </th:block>
-                <li th:each="page : ${model.customPages}" th:class="${'nav-item ' + model.template != null && page.id == model.template.id} ? 'active'">
+                <li th:each="page : ${model.customPages}" class="nav-item" th:classappend="${model.template != null && page.id == model.template.id} ? 'active'">
                     <a class="nav-link" th:href='${url.getCustomPageURL(page.name)}' th:text="${page.name}">xxx</a>
                 </li>
                 <th:block th:if="${model.isUserBlogPublisher()}">

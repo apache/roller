@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title th:utext="${model.weblog.name}">xxx</title>
-        <link rel="shortcut icon" th:href="${url.getSiteHome() + '/favicon.ico'}">
+        <link rel="shortcut icon" th:href="|${url.getSiteHome()}/favicon.ico|">
         <link rel="stylesheet" th:href="${url.getCustomPageURL('frontpage.css')}">
         <!--/* replace/insert within a fragment seems to work only with th:block */-->
         <th:block th:replace="fragments :: AutoDiscoveryLinks"></th:block>
@@ -19,7 +19,7 @@
                     <td class="bannerLeft"></td>
                     <td class="bannerRight">
                         <a th:href="${url.getSiteHome()}" th:text="${utils.msg('navigationBar.homePage')}">xxx</a> |
-                        <a th:href="${url.getSiteHome() + '/tb-ui/app/home'}">Main Menu</a> |
+                        <a th:href="|${url.getSiteHome()}/tb-ui/app/home|">Main Menu</a> |
                         <th:block th:switch="${model.authenticatedUser != null}">
                             <th:block th:case="${false}">
                                 <a th:href="${url.getLoginURL()}">Login</a> |
@@ -42,7 +42,7 @@
             <span th:text="${entry.category.name + ' |'}">xxx</span>
             <span th:if="${entry.pubTime != null}" th:text="${utils.formatTemporal(entry.pubTime, utils.msg('macro.weblog.datepattern')) + ' |'}">xxx</span>
             <span th:if="${entry.pubTime == null}" th:text="${utils.msg('macro.weblog.unpublished') + ' |'}">xxx</span>
-            <span th:text="${'By ' + entry.creator.screenName}">xxx</span>
+            <span th:text="|By ${entry.creator.screenName}|">xxx</span>
             <br/>
         </p>
         <p class="entryDescription">

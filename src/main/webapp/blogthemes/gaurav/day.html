@@ -9,10 +9,9 @@
         <hr>
           <p>
               <i class="icon-time"></i>
-              <span th:utext="${'Posted on ' + utils.formatTemporal(day, utils.msg('macro.weblog.datepattern'))
-                + ' at ' + (entry.pubTime != null ? utils.formatTemporal(entry.pubTime, utils.msg('macro.weblog.timepattern'))
-                : utils.msg('macro.weblog.unpublished'))
-                + ' in ' + entry.category.name}">xxx</span>
+              <span th:utext="|Posted on ${utils.formatTemporal(day, utils.msg('macro.weblog.datepattern'))}
+                at ${entry.pubTime != null ? utils.formatTemporal(entry.pubTime, utils.msg('macro.weblog.timepattern')) : utils.msg('macro.weblog.unpublished')}
+                in ${entry.category.name}|">xxx</span>
           </p>
         <hr>
 
@@ -33,7 +32,7 @@
 
         <p class="entryInfo" style="clear: right" th:with="commentCount = ${entry.commentCount}">
             <th:block th:if="${model.canSubmitNewComments(entry) || commentCount > 0}">
-                <a th:href="${url.getCommentsURL(entry)}" th:utext="${utils.msg('macro.weblog.comments') + '[' + commentCount + ']'}">xxx</a>
+                <a th:href="${url.getCommentsURL(entry)}" th:utext="|${utils.msg('macro.weblog.comments')}[${commentCount}]|">xxx</a>
             </th:block>
 
             <th:block th:if="${model.isUserBlogPublisher()}">
