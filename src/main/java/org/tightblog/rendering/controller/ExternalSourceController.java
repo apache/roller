@@ -111,10 +111,14 @@ public class ExternalSourceController {
             // need to check if path2 passes whitelist if latter defined
             if (whitelistPatterns.size() > 0) {
                 boolean allowed = false;
-                for (Pattern pattern : whitelistPatterns) {
-                    if (pattern.matcher(path2).matches()) {
-                        allowed = true;
-                        break;
+
+                // block attempts to move up a directory to circumvent whitelist
+                if (!path2.contains("..")) {
+                    for (Pattern pattern : whitelistPatterns) {
+                        if (pattern.matcher(path2).matches()) {
+                            allowed = true;
+                            break;
+                        }
                     }
                 }
                 if (!allowed) {
