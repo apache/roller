@@ -2,6 +2,10 @@ h1, h2, h3, h4, h5 {
     color: blue;
 }
 
+div.github-file {
+    margin-bottom: 1rem;
+}
+
 /* google code prettify, line nos on every line without alternate coloring every other line */
 div.github-source li.L0,
 div.github-source li.L1,

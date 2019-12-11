@@ -11,6 +11,10 @@ span.searchword {
     background-color:yellow;
 }
 
+div.github-file {
+    margin-bottom: 1rem;
+}
+
 /* google code prettify, line nos on every line without alternate coloring every other line */
 div.github-source li.L0,
 div.github-source li.L1,
