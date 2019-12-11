@@ -107,24 +107,3 @@ th.hCalendarDayNameRow {
   text-align : center;
   font-style : italic;
 }
-
-/* Used for gist-it: https://gist-it.appspot.com/ */
-div.size300 pre.prettyprint, div.size300 div.gist div.file-data {
-    height:300px
-}
-
-div.size350 pre.prettyprint, div.size350 div.gist div.file-data {
-    height:350px
-}
-
-div.size400 pre.prettyprint, div.size400 div.gist div.file-data {
-    height:400px
-}
-
-div.size450 pre.prettyprint, div.size450 div.gist div.file-data {
-    height:450px
-}
-
-div.size500 pre.prettyprint, div.size500 div.gist div.file-data {
-    height:500px
-}
