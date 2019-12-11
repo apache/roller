@@ -159,7 +159,7 @@ public class PageControllerTest {
     @Test
     public void test404OnMissingWeblog() {
         when(mockWD.findByHandleAndVisibleTrue(TEST_BLOG_HANDLE)).thenReturn(null);
-        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
+        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, 0, mockRequest,
                 mockPrincipal);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         verify(mockCache, never()).incrementIncomingRequests();
@@ -172,7 +172,7 @@ public class PageControllerTest {
         // date header more recent than last change, so should return 304
         when(mockRequest.getDateHeader(any())).thenReturn(Instant.now().toEpochMilli());
 
-        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
+        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, 0, mockRequest,
                 mockPrincipal);
         verify(mockRequest).getDateHeader(any());
         assertEquals(HttpStatus.NOT_MODIFIED, result.getStatusCode());
@@ -189,7 +189,7 @@ public class PageControllerTest {
         cachedContent.setContent(TEST_GENERATED_PAGE.getBytes(StandardCharsets.UTF_8));
         when(mockCache.get(any(), any())).thenReturn(cachedContent);
 
-        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
+        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, 0, mockRequest,
                 mockPrincipal);
 
         // verify cached content being returned
@@ -207,7 +207,7 @@ public class PageControllerTest {
     @Test
     public void testNonExistentTemplateRequestReturns404() throws IOException {
         when(mockWeblogTheme.getTemplateByRole(Role.WEBLOG)).thenReturn(null);
-        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
+        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, 0, mockRequest,
                 mockPrincipal);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
 
@@ -245,7 +245,7 @@ public class PageControllerTest {
 
     @Test
     public void testGetHomePage() throws IOException {
-        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest, mockPrincipal);
+        ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, 0, mockRequest, mockPrincipal);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         WeblogPageRequest wpr = TestUtils.extractWeblogPageRequestFromMockRenderer(mockRenderer);
         assertNull(wpr.getWeblogEntry());
@@ -330,7 +330,7 @@ public class PageControllerTest {
         Mockito.clearInvocations(mockWM, mockCache);
 
         WebloggerTest.logExpectedException(log, "IllegalArgumentException");
-        result = controller.getHomePage(TEST_BLOG_HANDLE, mockRequest,
+        result = controller.getHomePage(TEST_BLOG_HANDLE, 0, mockRequest,
                 mockPrincipal);
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
@@ -505,7 +505,7 @@ public class PageControllerTest {
     public void testCommentFormsSkipCache() throws IOException {
         WeblogEntryComment wec = new WeblogEntryComment();
         when(mockRequest.getAttribute("commentForm")).thenReturn(wec);
-        controller.getHomePage(TEST_BLOG_HANDLE, mockRequest, mockPrincipal);
+        controller.getHomePage(TEST_BLOG_HANDLE, 0, mockRequest, mockPrincipal);
         verify(mockWM, never()).incrementHitCount(any());
         verify(mockCache, never()).get(any(), any());
         verify(mockCache, never()).put(any(), any());

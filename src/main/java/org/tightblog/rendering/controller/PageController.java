@@ -125,11 +125,12 @@ public class PageController extends AbstractController {
 
     @GetMapping(path = "/{weblogHandle}")
     ResponseEntity<Resource> getHomePage(@PathVariable String weblogHandle,
-                                              HttpServletRequest request, Principal principal) {
+                                         @RequestParam(value = "page", required = false) Integer page,
+                                         HttpServletRequest request, Principal principal) {
         WeblogPageRequest incomingRequest = new WeblogPageRequest(weblogHandle, principal, pageModel);
 
         // weblog template
-        return handleRequest(incomingRequest, null, request);
+        return handleRequest(incomingRequest, page, request);
     }
 
     @RequestMapping(path = "/{weblogHandle}/entry/{anchor}", method = {RequestMethod.GET, RequestMethod.POST})
@@ -151,7 +152,7 @@ public class PageController extends AbstractController {
             if (entry == null || !entry.isPublished()) {
                 log.warn("For weblog {}, invalid or not yet published entry {} requested, returning home page instead.",
                         weblogHandle, anchor);
-                return getHomePage(weblogHandle, request, principal);
+                return getHomePage(weblogHandle, 0, request, principal);
             } else {
                 incomingRequest.setWeblogEntry(entry);
                 incomingRequest.setTemplate(
@@ -173,7 +174,7 @@ public class PageController extends AbstractController {
             incomingRequest.setWeblogDate(date);
         }
 
-        return handleRequest(incomingRequest, null, request);
+        return handleRequest(incomingRequest, page, request);
     }
 
     @GetMapping(path = "/{weblogHandle}/category/{category}")
@@ -183,8 +184,7 @@ public class PageController extends AbstractController {
                                            HttpServletRequest request, Principal principal) {
         WeblogPageRequest incomingRequest = new WeblogPageRequest(weblogHandle, principal, pageModel);
 
-        // TODO: Validate category
-        incomingRequest.setCategory(category);
+        incomingRequest.setCategory(Utilities.decode(category));
         if (tag != null) {
             incomingRequest.setTag(tag);
         }
@@ -231,7 +231,7 @@ public class PageController extends AbstractController {
             } else {
                 log.warn("For weblog {}, invalid or non-external page {} requested, returning home page instead.",
                         weblogHandle, customPage);
-                return getHomePage(weblogHandle, hsr, principal);
+                return getHomePage(weblogHandle, 0, hsr, principal);
             }
         }
     }
