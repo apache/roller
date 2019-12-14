@@ -30,7 +30,7 @@
     <p><s:text name="pagesForm.themesReminder"><s:param value="actionWeblog.editorTheme"/></s:text></p>
 </s:if>
 
-<s:form action="templateRemove!remove" theme="bootstrap" cssClass="form-horizontal">
+<s:form action="templates!remove" theme="bootstrap" cssClass="form-horizontal">
     <s:hidden name="salt"/>
     <s:hidden name="weblog" value="%{actionWeblog.handle}"/>
     <s:hidden name="removeId" id="removeId"/>
@@ -104,8 +104,7 @@
     function confirmTemplateDelete(templateId, templateName) {
         $('#removeId').val(templateId);
         if (window.confirm('<s:text name="pageRemove.confirm"/>: \'' + templateName + '\'?')) {
-            document.templateRemove.action = "<s:url action='templateRemove!remove' />";
-            document.templateRemove.submit();
+            document.getElementById("templates").submit();
         }
     }
 </script>

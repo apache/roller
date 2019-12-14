@@ -556,9 +556,9 @@
         <action name="templates"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Templates">
             <result name="list" type="tiles">.Templates</result>
-            <allowed-methods>add,execute</allowed-methods>
+            <allowed-methods>add,remove,execute</allowed-methods>
         </action>
-        
+
         <action name="templateEdit"
                 class="org.apache.roller.weblogger.ui.struts2.editor.TemplateEdit">
             <result name="list" type="chain">templates</result>
