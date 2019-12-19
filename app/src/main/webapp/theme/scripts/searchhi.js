@@ -76,8 +76,8 @@ function highlightTerm() {
     // ensure this only executes when showing search results
     if (document.getElementById("searchAgain")) {
         var searchTerm = document.getElementById("q").value;
-        words = unescape(searchTerm.replace(/\+/g,' ')).split(/\s+/);
-        for (w=0;w<words.length;w++) {
+        var words = unescape(searchTerm.replace(/\+/g,' ')).split(/\s+/);
+        for (var w=0;w<words.length;w++) {
             highlightWord(document.getElementsByTagName("body")[0],words[w]);
         }
     }
