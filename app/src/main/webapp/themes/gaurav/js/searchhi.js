@@ -5,7 +5,7 @@
 /* Modified 20081218 to scroll to first hit like
    http://www.woolyss.free.fr/js/searchhi_Woolyss.js and say when not found */
 
-searchhi = {
+var searchhi = {
   highlightWord: function(node,word) {
     // Iterate into this nodes childNodes
     if (node.hasChildNodes) {
@@ -16,8 +16,8 @@ searchhi = {
 
     // And do this node itself
     if (node.nodeType == 3) { // text node
-	    tempNodeVal = node.nodeValue.toLowerCase();
-	    tempWordVal = word.toLowerCase();
+	    var tempNodeVal = node.nodeValue.toLowerCase();
+	    var tempWordVal = word.toLowerCase();
 	    if (tempNodeVal.indexOf(tempWordVal) != -1) {
 		    var pn = node.parentNode;
 		    // check if we're inside a "nosearchhi" zone
@@ -70,7 +70,7 @@ searchhi = {
   process: function(wordstring) {
     searchhi.found = 0;
     var words = wordstring.split(/\s+/);
-    for (w=0;w<words.length;w++) {
+    for (var w=0;w<words.length;w++) {
 	    searchhi.highlightWord(document.getElementsByTagName("body")[0],words[w]);
     }
     if (searchhi.found === 0) {

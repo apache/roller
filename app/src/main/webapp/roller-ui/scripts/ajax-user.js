@@ -37,30 +37,30 @@ var userURL = "<%= request.getContextPath() %>" + "/roller-ui/authoring/userdata
 function onUserNameFocus(enabled) {
     if (!init) {
         init = true;
-        u = userURL;
+        var u = userURL;
         if (enabled != null) u = u + "&enabled=" + enabled;
         sendUserRequest(u);
     } else {
-        userSubmitButton = document.getElementById("user-submit");
+        var userSubmitButton = document.getElementById("user-submit");
         userSubmitButton.disabled = true;
     }
 }
 
 function onUserNameChange(enabled) {
-    u = userURL;
+    var u = userURL;
     if (enabled != null) u = u + "&enabled=" + enabled;
-    userName = document.getElementById("userName");
+    var userName = document.getElementById("userName");
     if (userName.value.length > 0) u = u + "&startsWith=" + userName.value;
     sendUserRequest(u);
 }
 
 function onUserSelected() {
-    userList = document.getElementById("userList");
-    user = userList.options[userList.options.selectedIndex];
-    userName = document.getElementById("userName");
+    var userList = document.getElementById("userList");
+    var user = userList.options[userList.options.selectedIndex];
+    var userName = document.getElementById("userName");
     userName.value = user.value;
 
-    userSubmitButton = document.getElementById("user-submit");
+    var userSubmitButton = document.getElementById("user-submit");
     userSubmitButton.disabled = false;
 }
 
@@ -74,21 +74,21 @@ function sendUserRequest(url) {
 
 function handleUserResponse() {
     if (http.readyState === 4) {
-        userList = document.getElementById("userList");
-        for (i = userList.options.length; i >= 0; i--) {
+        var userList = document.getElementById("userList");
+        for (var i = userList.options.length; i >= 0; i--) {
             userList.options[i] = null;
-        }   
-        data = http.responseText;
+        }
+        var data = http.responseText;
         if (data.indexOf("\n") !== -1) {
-            lines = data.split('\n');
-            for (i = 0; i < lines.length; i++) {
+            var lines = data.split('\n');
+            for (var i = 0; i < lines.length; i++) {
                 if (lines[i].indexOf(',') !== -1) {
-                   userArray = lines[i].split(',');
-                   userList.options[userList.length] = 
+                   var userArray = lines[i].split(',');
+                   userList.options[userList.length] =
                       new Option(userArray[0] + " (" + userArray[1] + ")", userArray[0]);
                 }
             }
-        }  
+        }
 
     }
     isBusy = false;
