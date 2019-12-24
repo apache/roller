@@ -3,8 +3,8 @@ and new functionality added in (see below for details).  Its goal is to satisfy 
 serving as a reliable starting point for other developers to fork and add additional customized features.  
 
 After contributing for about 2 1/2 years on Roller, I forked the codebase in May 2015 after I was unable to
-get team approval for simplifications I felt vital for the long-term growth of the project.  As of June 16, 2019, 
-<a href="https://github.com/gmazza/tightblog/releases">Release 3.5</a> is available.
+get team approval for simplifications I felt vital for the long-term growth of the project.  As of December 11, 2019, 
+<a href="https://github.com/gmazza/tightblog/releases">Release 3.6</a> is available.
 
 Screen shots for the TightBlog UI are [here](https://github.com/gmazza/tightblog/wiki/Screenshots), the twelve-table database model is
 [here](https://github.com/gmazza/tightblog/blob/master/app/src/main/resources/dbscripts/createdb.vm), see also [my blog](https://glenmazza.net/blog/) for an example
