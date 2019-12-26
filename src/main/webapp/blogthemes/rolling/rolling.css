@@ -52,13 +52,6 @@ div.entry h5.card-title {
     color: darkgray;
 }
 
-pre.code {
-    background-color: lightblue;
-    padding: .25em .5em .5em .5em !important;
-}
-
-/* tagcloud */
-
 #tagcloud {
     text-align: justify;
     margin: 1em;

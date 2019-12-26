@@ -21,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.tightblog.domain.Weblog;
@@ -56,7 +55,6 @@ public interface WeblogDao extends JpaRepository<Weblog, String> {
     @Transactional(value = "transactionManager")
     @Modifying
     @Query("UPDATE Weblog w SET w.hitsToday = 0, w.lastModified = CURRENT_TIMESTAMP")
-    @Scheduled(cron = "${cron.reset.hit.counts}")
     void resetDailyHitCounts();
 
     // note due to default proxy advice mode @Cacheable and @CacheEvict annotations are ignored on methods called

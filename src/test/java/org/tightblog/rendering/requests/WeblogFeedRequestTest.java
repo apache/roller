@@ -19,8 +19,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
+import org.tightblog.rendering.service.WeblogEntryListGenerator;
+import org.tightblog.rendering.service.WeblogEntryListGenerator.WeblogEntryListData;
 import org.tightblog.rendering.model.FeedModel;
 import org.tightblog.service.URLService;
 

@@ -21,7 +21,7 @@ import org.tightblog.config.DynamicProperties;
 import org.tightblog.service.URLService;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.domain.Weblog;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.service.WeblogEntryListGenerator;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

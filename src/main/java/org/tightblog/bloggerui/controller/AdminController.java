@@ -38,11 +38,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.bloggerui.model.GlobalConfigMetadata;
 import org.tightblog.bloggerui.model.SuccessResponse;
 import org.tightblog.bloggerui.model.ValidationErrorResponse;
+import org.tightblog.rendering.service.CommentSpamChecker;
 import org.tightblog.service.LuceneIndexer;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.rendering.cache.LazyExpiringCache;
-import org.tightblog.rendering.comment.BlacklistCommentValidator;
 import org.tightblog.dao.WeblogDao;
 import org.tightblog.dao.WebloggerPropertiesDao;
 import org.tightblog.util.HTMLSanitizer;
@@ -72,19 +72,19 @@ public class AdminController {
 
     private Set<LazyExpiringCache> cacheSet;
     private LuceneIndexer luceneIndexer;
-    private BlacklistCommentValidator blacklistCommentValidator;
+    private CommentSpamChecker commentValidator;
     private WeblogDao weblogDao;
     private WebloggerPropertiesDao webloggerPropertiesDao;
     private MessageSource messages;
 
     @Autowired
     public AdminController(Set<LazyExpiringCache> cacheSet, LuceneIndexer luceneIndexer,
-                           BlacklistCommentValidator blacklistCommentValidator, WeblogDao weblogDao,
+                           CommentSpamChecker commentValidator, WeblogDao weblogDao,
                            MessageSource messages,
                            WebloggerPropertiesDao webloggerPropertiesDao) {
         this.cacheSet = cacheSet;
         this.luceneIndexer = luceneIndexer;
-        this.blacklistCommentValidator = blacklistCommentValidator;
+        this.commentValidator = commentValidator;
         this.weblogDao = weblogDao;
         this.webloggerPropertiesDao = webloggerPropertiesDao;
         this.messages = messages;
@@ -145,7 +145,7 @@ public class AdminController {
     @PostMapping(value = "/webloggerproperties")
     public ResponseEntity updateProperties(@Valid @RequestBody WebloggerProperties properties, Locale locale) {
         webloggerPropertiesDao.saveAndFlush(properties);
-        blacklistCommentValidator.setGlobalCommentFilter(properties.getCommentSpamFilter());
+        commentValidator.refreshGlobalBlacklist();
         return SuccessResponse.textMessage(messages.getMessage("generic.changes.saved", null, locale));
     }
 
@@ -171,13 +171,17 @@ public class AdminController {
 
         gcm.getCommentHtmlLevels().putAll(Arrays.stream(HTMLSanitizer.Level.values())
                 .filter(r -> !r.equals(HTMLSanitizer.Level.NONE))
-                .filter(r -> r.getSanitizingLevel() <= HTMLSanitizer.Level.BASIC_IMAGES.getSanitizingLevel())
+                .filter(r -> r.getSanitizingLevel() < HTMLSanitizer.Level.BASIC_IMAGES.getSanitizingLevel())
                 .collect(Utilities.toLinkedHashMap(HTMLSanitizer.Level::name,
                     e -> messages.getMessage(e.getDescription(), null, null))));
 
         gcm.getCommentOptions().putAll(Arrays.stream(WebloggerProperties.CommentPolicy.values())
                 .collect(Utilities.toLinkedHashMap(WebloggerProperties.CommentPolicy::name,
-                    e -> messages.getMessage(e.getSiteDescription(), null, null))));
+                    e -> messages.getMessage(e.getLabel(), null, null))));
+
+        gcm.getSpamOptions().putAll(Arrays.stream(WebloggerProperties.SpamPolicy.values())
+                .collect(Utilities.toLinkedHashMap(WebloggerProperties.SpamPolicy::name,
+                        e -> messages.getMessage(e.getLabel(), null, null))));
 
         return gcm;
     }

@@ -24,6 +24,7 @@ public class GlobalConfigMetadata {
     private Map<String, String> blogHtmlLevels;
     private Map<String, String> commentOptions;
     private Map<String, String> commentHtmlLevels;
+    private Map<String, String> spamOptions;
 
     public Map<String, String> getWeblogList() {
         if (weblogList == null) {
@@ -60,4 +61,10 @@ public class GlobalConfigMetadata {
         return commentHtmlLevels;
     }
 
+    public Map<String, String> getSpamOptions() {
+        if (spamOptions == null) {
+            spamOptions = new LinkedHashMap<>();
+        }
+        return spamOptions;
+    }
 }

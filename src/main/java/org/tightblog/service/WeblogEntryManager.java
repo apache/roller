@@ -23,7 +23,6 @@ package org.tightblog.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -34,7 +33,6 @@ import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogCategory;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntryComment;
-import org.tightblog.domain.WeblogEntryComment.ValidationResult;
 import org.tightblog.domain.WeblogEntrySearchCriteria;
 import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.dao.WeblogEntryCommentDao;
@@ -52,15 +50,10 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -87,7 +80,6 @@ public class WeblogEntryManager {
     private WeblogEntryCommentDao weblogEntryCommentDao;
     private WebloggerPropertiesDao webloggerPropertiesDao;
     private URLService urlService;
-    private String akismetApiKey;
     private LuceneIndexer luceneIndexer;
 
     @PersistenceContext
@@ -97,15 +89,13 @@ public class WeblogEntryManager {
     public WeblogEntryManager(WeblogManager weblogManager, WeblogEntryDao weblogEntryDao,
                               WeblogEntryCommentDao weblogEntryCommentDao,
                               URLService urlService, @Lazy LuceneIndexer luceneIndexer,
-                              WebloggerPropertiesDao webloggerPropertiesDao,
-                              @Value("${akismet.apiKey:#{null}}") String akismetApiKey) {
+                              WebloggerPropertiesDao webloggerPropertiesDao) {
         this.luceneIndexer = luceneIndexer;
         this.weblogManager = weblogManager;
         this.weblogEntryDao = weblogEntryDao;
         this.weblogEntryCommentDao = weblogEntryCommentDao;
         this.webloggerPropertiesDao = webloggerPropertiesDao;
         this.urlService = urlService;
-        this.akismetApiKey = akismetApiKey;
     }
 
     /**
@@ -753,33 +743,4 @@ public class WeblogEntryManager {
         return Pair.of(blogEntryTitle, found);
     }
 
-    public ValidationResult makeAkismetCall(String apiRequestBody) throws IOException {
-        if (!StringUtils.isBlank(akismetApiKey)) {
-            URL url = new URL("http://" + akismetApiKey + ".rest.akismet.com/1.1/comment-check");
-            URLConnection conn = url.openConnection();
-            conn.setDoOutput(true);
-
-            conn.setRequestProperty("User_Agent", "TightBlog");
-            conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded;charset=utf8");
-            conn.setRequestProperty("Content-length", Integer.toString(apiRequestBody.length()));
-
-            OutputStreamWriter osr = new OutputStreamWriter(conn.getOutputStream(), StandardCharsets.UTF_8);
-            osr.write(apiRequestBody, 0, apiRequestBody.length());
-            osr.flush();
-            osr.close();
-
-            try (InputStreamReader isr = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
-                    BufferedReader br = new BufferedReader(isr)) {
-                String response = br.readLine();
-                if ("true".equals(response)) {
-                    if ("discard".equalsIgnoreCase(conn.getHeaderField("X-akismet-pro-tip"))) {
-                        return ValidationResult.BLATANT_SPAM;
-                    }
-                    return ValidationResult.SPAM;
-                }
-            }
-        }
-
-        return ValidationResult.NOT_SPAM;
-    }
 }

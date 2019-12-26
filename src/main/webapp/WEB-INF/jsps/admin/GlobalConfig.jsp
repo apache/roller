@@ -123,7 +123,7 @@
             </td>
             <td class="description"></td>
         </tr>
-        <tr>
+        <tr ng-show="ctrl.webloggerProps.commentPolicy != 'NONE'">
             <td class="label"><fmt:message key="globalConfig.commentHtmlWhitelistLevel" /></td>
             <td class="field">
                 <select ng-model="ctrl.webloggerProps.commentHtmlPolicy" size="1" required>
@@ -132,19 +132,23 @@
             </td>
             <td class="description"><fmt:message key="globalConfig.tip.commentHtmlWhitelistLevel"/></td>
         </tr>
-        <tr>
-            <td class="label"><fmt:message key="globalConfig.ignoreSpamComments" /></td>
-            <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.autodeleteSpam"></td>
-            <td class="description"><fmt:message key="globalConfig.tip.ignoreSpamComments"/></td>
+        <tr ng-show="ctrl.webloggerProps.commentPolicy != 'NONE'">
+            <td class="label"><fmt:message key="globalConfig.spamPolicy" /></td>
+            <td class="field">
+                <select ng-model="ctrl.webloggerProps.spamPolicy" size="1" required>
+                    <option ng-repeat="(key, value) in ctrl.metadata.spamOptions" value="{{key}}">{{value}}</option>
+                </select>
+            </td>
+            <td class="description"><fmt:message key="globalConfig.tip.spamPolicy"/></td>
         </tr>
-        <tr>
+        <tr ng-show="ctrl.webloggerProps.commentPolicy != 'NONE'">
             <td class="label"><fmt:message key="globalConfig.emailComments" /></td>
             <td class="field"><input type="checkbox" ng-model="ctrl.webloggerProps.usersCommentNotifications"></td>
             <td class="description"><fmt:message key="globalConfig.tip.emailComments"/></td>
         </tr>
-        <tr>
+        <tr ng-show="ctrl.webloggerProps.commentPolicy != 'NONE'">
             <td class="label"><fmt:message key="globalConfig.ignoreUrls" /></td>
-            <td class="field"><textarea rows="7" cols="80" ng-model="ctrl.webloggerProps.commentSpamFilter"></textarea></td>
+            <td class="field"><textarea rows="7" cols="80" ng-model="ctrl.webloggerProps.globalSpamFilter"></textarea></td>
             <td class="description"><fmt:message key="globalConfig.tip.ignoreUrls"/></td>
         </tr>
     <tr>

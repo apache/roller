@@ -164,13 +164,12 @@ public class URLService {
     /**
      * Get the POST url for a weblog entry comment.
      * @param entry weblog entry where comment is being placed
-     * @param isPreview true if commenter wishes to preview (not yet submit) comment
      */
-    public String getWeblogEntryPostCommentURL(WeblogEntry entry, boolean isPreview) {
+    public String getWeblogEntryPostCommentURL(WeblogEntry entry) {
         String url = "";
         if (entry != null) {
             url = getWeblogURL(entry.getWeblog()) + "entrycomment/"
-                    + Utilities.encode(entry.getAnchor()) + (isPreview ? "?preview=true" : "");
+                    + Utilities.encode(entry.getAnchor());
         }
         return url;
     }

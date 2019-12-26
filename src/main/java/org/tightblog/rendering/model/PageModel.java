@@ -29,8 +29,8 @@ import org.tightblog.service.WeblogManager;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntryTagAggregate;
-import org.tightblog.rendering.generators.CalendarGenerator;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.service.CalendarGenerator;
+import org.tightblog.rendering.service.WeblogEntryListGenerator;
 
 import java.util.List;
 

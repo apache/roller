@@ -23,7 +23,8 @@ package org.tightblog.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.tightblog.domain.WebloggerProperties.CommentPolicy;
-import org.tightblog.rendering.comment.BlacklistCommentValidator;
+import org.tightblog.domain.WebloggerProperties.SpamPolicy;
+import org.tightblog.rendering.service.CommentSpamChecker;
 import org.tightblog.util.Utilities;
 
 import javax.validation.constraints.NotBlank;
@@ -71,7 +72,8 @@ public class Weblog {
     private String tagline;
     private EditFormat editFormat = EditFormat.HTML;
     private String blacklist;
-    private CommentPolicy allowComments = CommentPolicy.MUSTMODERATE;
+    private CommentPolicy allowComments = CommentPolicy.MODERATE_NONPUB;
+    private SpamPolicy spamPolicy = SpamPolicy.NO_EMAIL;
     @NotBlank(message = "{weblogConfig.error.themeNull}")
     private String theme;
     private String locale;
@@ -148,6 +150,7 @@ public class Weblog {
         this.setEditFormat(other.getEditFormat());
         this.setBlacklist(other.getBlacklist());
         this.setAllowComments(other.getAllowComments());
+        this.setSpamPolicy(other.getSpamPolicy());
         this.setTheme(other.getTheme());
         this.setLocale(other.getLocale());
         this.setTimeZone(other.getTimeZone());
@@ -240,7 +243,7 @@ public class Weblog {
 
     public void setBlacklist(String blacklist) {
         this.blacklist = blacklist;
-        blacklistRegexRules = BlacklistCommentValidator.populateSpamRules(blacklist);
+        blacklistRegexRules = CommentSpamChecker.compileBlacklist(blacklist);
     }
 
     @Transient
@@ -257,6 +260,16 @@ public class Weblog {
 
     public void setAllowComments(CommentPolicy allowComments) {
         this.allowComments = allowComments;
+    }
+
+    @Column(name = "spam_policy", nullable = false)
+    @Enumerated(EnumType.STRING)
+    public SpamPolicy getSpamPolicy() {
+        return this.spamPolicy;
+    }
+
+    public void setSpamPolicy(SpamPolicy spamPolicy) {
+        this.spamPolicy = spamPolicy;
     }
 
     @Column(name = "commentdays", nullable = false)

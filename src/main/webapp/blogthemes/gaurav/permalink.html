@@ -41,12 +41,10 @@
 
 				<div class="panel panel-primary">
 					<div class="panel-heading comments-head" id="comments" th:utext="${
-                            model.commentForm.preview ? utils.msg('macro.weblog.preview')
-                                :
-                            (entry.commentCount > 0 ?
-                                (utils.msg('macro.weblog.comments') + ':')
+                            entry.commentCount > 0 ?
+                                 utils.msg('macro.weblog.commentNs')
                                     :
-                                 utils.msg('macro.weblog.nocommentsyet'))}">
+                                 utils.msg('macro.weblog.nocommentsyet')}">
                     </div>
                     <th:block th:with="comments=${model.commentForm.preview ? model.commentForm : entry.getComments()}">
                         <div class="panel-body">
@@ -115,8 +113,6 @@
                                     <div class="form-group col-lg-12">
                                        <script th:if="${model.blogger == null}" th:src="|${url.getSiteHome()}/scripts/clientSideInclude.js|"></script>
                                        <div id="commentAuthenticator" th:if="${model.blogger == null}"></div>
-                                       <input type="submit" th:formaction="${url.getWeblogEntryPreviewCommentURL(entry)}" class="btn btn-primary"
-                                               name="post" th:value="${utils.msg('macro.weblog.postpreview')}">
                                        <input type="submit" th:formaction="${url.getWeblogEntryPostCommentURL(entry)}" class="btn btn-success"
                                                name="post" th:value="${utils.msg('macro.weblog.post')}">
                                     </div>

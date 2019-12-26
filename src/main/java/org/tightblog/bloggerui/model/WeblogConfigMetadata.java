@@ -26,6 +26,7 @@ public class WeblogConfigMetadata {
     private Map<String, String> locales;
     private Map<String, String> timezones;
     private Map<String, String> commentOptions;
+    private Map<String, String> spamOptions;
     private Map<String, String> commentDayOptions;
 
     private String absoluteSiteURL;
@@ -58,6 +59,13 @@ public class WeblogConfigMetadata {
             commentOptions = new LinkedHashMap<>();
         }
         return commentOptions;
+    }
+
+    public Map<String, String> getSpamOptions() {
+        if (spamOptions == null) {
+            spamOptions = new LinkedHashMap<>();
+        }
+        return spamOptions;
     }
 
     public Map<String, String> getCommentDayOptions() {

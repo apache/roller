@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tightblog.rendering.generators;
+package org.tightblog.rendering.service;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.tightblog.domain.User;
 import org.tightblog.domain.Weblog;
 
-import org.tightblog.rendering.generators.WeblogListGenerator.WeblogListData;
+import org.tightblog.rendering.service.WeblogListGenerator.WeblogListData;
 import org.tightblog.dao.WeblogDao;
 
 import java.time.Instant;

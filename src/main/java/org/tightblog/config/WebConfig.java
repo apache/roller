@@ -37,8 +37,8 @@ import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.model.URLModel;
 import org.tightblog.rendering.model.UtilitiesModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.tightblog.rendering.thymeleaf.ThemeTemplateResolver;
-import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.rendering.service.ThemeTemplateResolver;
+import org.tightblog.rendering.service.ThymeleafRenderer;
 
 import java.util.HashSet;
 import java.util.List;

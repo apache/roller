@@ -22,13 +22,17 @@ package org.tightblog.rendering.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.tightblog.config.DynamicProperties;
 import org.tightblog.rendering.model.PageModel;
+import org.tightblog.rendering.service.CommentSpamChecker;
 import org.tightblog.service.EmailService;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogEntryManager;
@@ -40,9 +44,9 @@ import org.tightblog.domain.WeblogEntryComment.ApprovalStatus;
 import org.tightblog.domain.WeblogRole;
 import org.tightblog.domain.WebloggerProperties;
 import org.tightblog.domain.WebloggerProperties.CommentPolicy;
-import org.tightblog.rendering.comment.CommentAuthenticator;
-import org.tightblog.rendering.comment.CommentValidator;
-import org.tightblog.domain.WeblogEntryComment.ValidationResult;
+import org.tightblog.domain.WebloggerProperties.SpamPolicy;
+import org.tightblog.rendering.service.CommentAuthenticator;
+import org.tightblog.domain.WeblogEntryComment.SpamCheckResult;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.dao.UserDao;
 import org.tightblog.dao.WeblogDao;
@@ -64,12 +68,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Handles all incoming weblog entry comment posts.
@@ -85,7 +91,6 @@ import java.util.Map;
  * an email sent to the blog owner and all who have commented on the same post.
  */
 @RestController("RenderingCommentController")
-@EnableConfigurationProperties(DynamicProperties.class)
 // how @RequestMapping is combined at the class- and method-levels: http://stackoverflow.com/q/22702568
 @RequestMapping(path = CommentController.PATH)
 public class CommentController extends AbstractController {
@@ -106,7 +111,7 @@ public class CommentController extends AbstractController {
     private MessageSource messages;
     private PageModel pageModel;
     private WebloggerPropertiesDao webloggerPropertiesDao;
-    private DynamicProperties dp;
+    private CommentSpamChecker commentSpamChecker;
 
     private EntityManager entityManager;
 
@@ -118,8 +123,9 @@ public class CommentController extends AbstractController {
     @Autowired
     public CommentController(WeblogDao weblogDao, UserDao userDao, LuceneIndexer luceneIndexer,
                              WeblogEntryManager weblogEntryManager, UserManager userManager,
-                             EmailService emailService, DynamicProperties dp,
+                             EmailService emailService,
                              MessageSource messages, PageModel pageModel,
+                             CommentSpamChecker commentSpamChecker,
                              WebloggerPropertiesDao webloggerPropertiesDao) {
         this.webloggerPropertiesDao = webloggerPropertiesDao;
         this.weblogDao = weblogDao;
@@ -130,7 +136,7 @@ public class CommentController extends AbstractController {
         this.pageModel = pageModel;
         this.emailService = emailService;
         this.messages = messages;
-        this.dp = dp;
+        this.commentSpamChecker = commentSpamChecker;
     }
 
     @Autowired(required = false)
@@ -138,13 +144,6 @@ public class CommentController extends AbstractController {
 
     void setCommentAuthenticator(CommentAuthenticator commentAuthenticator) {
         this.commentAuthenticator = commentAuthenticator;
-    }
-
-    @Autowired
-    private List<CommentValidator> commentValidators;
-
-    void setCommentValidators(List<CommentValidator> commentValidators) {
-        this.commentValidators = commentValidators;
     }
 
     /**
@@ -160,8 +159,8 @@ public class CommentController extends AbstractController {
         WebloggerProperties.CommentPolicy commentOption = props.getCommentPolicy();
 
         if (WebloggerProperties.CommentPolicy.NONE.equals(commentOption)) {
-            log.info("Getting comment post even though commenting is disabled -- returning 403");
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            log.info("Getting comment post even though commenting is disabled -- returning 404");
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
@@ -203,7 +202,7 @@ public class CommentController extends AbstractController {
 
         if (!weblogEntryManager.canSubmitNewComments(incomingRequest.getWeblogEntry())) {
             errorProperty = "comments.disabled";
-        } else if (commentAuthenticator != null && !incomingComment.isPreview() && incomingRequest.getBlogger() == null
+        } else if (commentAuthenticator != null && incomingRequest.getBlogger() == null
                 && !commentAuthenticator.authenticate(request)) {
             errorValue = request.getParameter("answer");
             errorProperty = "error.commentAuthFailed";
@@ -212,66 +211,66 @@ public class CommentController extends AbstractController {
         }
 
         if (errorProperty != null) {
-            // return error due to bad input
+            // return error due to bad/missing input
             incomingComment.setStatus(ApprovalStatus.INVALID);
             incomingComment.setSubmitResponseMessage(messages.getMessage(errorProperty, new Object[]{errorValue},
                     request.getLocale()));
-        } else if (!incomingComment.isPreview()) {
-            // Otherwise next check comment for spam
+        } else {
+            // Otherwise next check if comment needs moderation (approval)
             boolean ownComment = userManager.checkWeblogRole(incomingRequest.getBlogger(), weblog,
                     WeblogRole.POST);
 
-            boolean commentRequiresApproval = !ownComment && (CommentPolicy.MUSTMODERATE.equals(commentOption) ||
-                    CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments()));
-
-            Map<String, List<String>> spamEvaluations = new HashMap<>();
-            ValidationResult valResult = ownComment ? ValidationResult.NOT_SPAM : runSpamCheckers(incomingComment,
-                    spamEvaluations);
+            boolean skipModeration = ownComment ||
+                    (CommentPolicy.MODERATE_NONAUTH.equals(commentOption) && incomingRequest.getAuthenticatedUser() != null);
 
             String commentStatusKey;
 
-            if (valResult == ValidationResult.NOT_SPAM) {
-                if (commentRequiresApproval) {
-                    // Valid comments go into moderation if required
-                    incomingComment.setStatus(ApprovalStatus.PENDING);
-                    commentStatusKey = "commentServlet.submittedToModerator";
-                } else {
-                    // else they're approved
-                    incomingComment.setStatus(ApprovalStatus.APPROVED);
-                    commentStatusKey = "commentServlet.commentAccepted";
-                }
+            // most restrictive policy between weblog and global in effect
+            SpamPolicy spamPolicy = Stream.of(incomingComment.getWeblog().getSpamPolicy(), props.getSpamPolicy())
+                    .max(Comparator.comparing(Enum::ordinal))
+                    .orElse(SpamPolicy.MARK_SPAM);
+            Map<String, List<String>> spamEvaluations = new HashMap<>();
+
+            if (skipModeration) {
+                // else they're approved
+                incomingComment.setStatus(ApprovalStatus.APPROVED);
+                commentStatusKey = "commentServlet.commentAccepted";
             } else {
-                // Invalid comments are marked as spam, but just a moderation message sent to spammer
-                // Informing the spammer the reasons for its detection encourages the spammer to modify
-                // the spam message so it will pass through; also indicating that the message is subject
-                // to moderation (and sure refusal) discourages future spamming attempts.
-                incomingComment.setStatus(ApprovalStatus.SPAM);
+                incomingComment.setStatus(ApprovalStatus.PENDING);
                 commentStatusKey = "commentServlet.submittedToModerator";
+
+                if (spamPolicy.getLevel() > SpamPolicy.DONT_CHECK.getLevel()) {
+                    SpamCheckResult valResult = commentSpamChecker.evaluate(incomingComment, spamEvaluations);
+
+                    if (valResult == SpamCheckResult.SPAM) {
+                        incomingComment.setStatus(ApprovalStatus.SPAM);
+                    }
+                }
             }
 
             incomingComment.setSubmitResponseMessage(messages.getMessage(commentStatusKey, null,
                     request.getLocale()));
 
-            // Don't save spam if evaluated as blatant or if blog server configured to ignore all spam.
-            if (!ValidationResult.BLATANT_SPAM.equals(valResult) &&
-                    (!ApprovalStatus.SPAM.equals(incomingComment.getStatus())
-                            || !props.isAutodeleteSpam())) {
+            ApprovalStatus status = incomingComment.getStatus();
 
-                // if spam, requires approval
-                commentRequiresApproval |= ApprovalStatus.SPAM.equals(incomingComment.getStatus());
+            // Don't save spam if blog configured to ignore it
+            if (!ApprovalStatus.SPAM.equals(status) || !SpamPolicy.JUST_DELETE.equals(spamPolicy)) {
 
-                weblogEntryManager.saveComment(incomingComment, !commentRequiresApproval);
-                dp.updateLastSitewideChange();
+                weblogEntryManager.saveComment(incomingComment, ApprovalStatus.APPROVED.equals(status));
 
-                if (commentRequiresApproval) {
-                    emailService.sendPendingCommentNotice(incomingComment, spamEvaluations);
-                } else {
+                // now email and index
+                if (ApprovalStatus.APPROVED.equals(status)) {
                     emailService.sendNewPublishedCommentNotification(incomingComment);
 
                     if (luceneIndexer.isIndexComments()) {
                         luceneIndexer.updateIndex(incomingRequest.getWeblogEntry(), false);
                     }
+                } else if (!ApprovalStatus.SPAM.equals(status) || spamPolicy.getLevel() < SpamPolicy.NO_EMAIL.getLevel()) {
+                    emailService.sendPendingCommentNotice(incomingComment, spamEvaluations);
                 }
+            } else {
+                log.info("Incoming comment from {} ({}) for blog {} judged to be spam, deleted per blog's spam policy",
+                        incomingComment.getName(), incomingComment.getEmail(), incomingComment.getWeblog().getHandle());
             }
 
             // detach comment object in case of comment approvals, allows for comment to appear in comment list
@@ -313,14 +312,6 @@ public class CommentController extends AbstractController {
     WeblogEntryComment createCommentFromRequest(HttpServletRequest request, WeblogPageRequest pageRequest,
                                                 HTMLSanitizer.Level sanitizerLevel) {
 
-        /*
-         * Convert request parameters into a WeblogEntryComment object.  Params used:
-         *   name - comment author
-         *   email - comment email
-         *   url - comment referring url
-         *   content - comment contents
-         *   notify - if commenter wants to receive notifications
-         */
         WeblogEntryComment comment = new WeblogEntryComment();
         comment.setNotify(request.getParameter("notify") != null);
         comment.setName(Utilities.removeHTML(request.getParameter("name")));
@@ -329,9 +320,7 @@ public class CommentController extends AbstractController {
         comment.setRemoteHost(request.getRemoteHost());
         comment.setPostTime(Instant.now());
         comment.setBlogger(pageRequest.getBlogger());
-
-        String previewCheck = request.getParameter("preview");
-        comment.setPreview(previewCheck != null && !"false".equalsIgnoreCase(previewCheck));
+        comment.setWeblog(pageRequest.getWeblog());
 
         // Validate url
         comment.setUrl(Utilities.removeHTML(request.getParameter("url")));
@@ -339,7 +328,7 @@ public class CommentController extends AbstractController {
         if (StringUtils.isNotBlank(urlCheck)) {
             urlCheck = urlCheck.trim().toLowerCase();
             if (!urlCheck.startsWith("http://") && !urlCheck.startsWith("https://")) {
-                urlCheck = "http://" + urlCheck;
+                urlCheck = "https://" + urlCheck;
             }
             comment.setUrl(urlCheck);
         }
@@ -368,37 +357,15 @@ public class CommentController extends AbstractController {
      * still set the comment authentication section dynamically.
      */
     @GetMapping(value = "/authform")
-    void generateAuthForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    ResponseEntity<Resource> generateAuthForm(HttpServletRequest request) {
+        byte[] html = (commentAuthenticator == null ? "" : commentAuthenticator.getHtml(request))
+                .getBytes(StandardCharsets.UTF_8);
 
-        response.setContentType("text/html; charset=utf-8");
-
-        // Convince proxies and browsers not to cache this.
-        response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        response.addHeader("Pragma", "no-cache");
-        response.addHeader("Expires", "-1");
-
-        PrintWriter out = response.getWriter();
-        out.println(commentAuthenticator == null ? "" : commentAuthenticator.getHtml(request));
-    }
-
-    ValidationResult runSpamCheckers(WeblogEntryComment comment, Map<String, List<String>> validationMessages) {
-        boolean spamDetected = false;
-
-        ValidationResult singleResponse;
-        if (commentValidators.size() > 0) {
-            for (CommentValidator val : commentValidators) {
-                log.debug("Invoking comment validator {}", val.getClass().getName());
-                singleResponse = val.validate(comment, validationMessages);
-                if (ValidationResult.BLATANT_SPAM.equals(singleResponse)) {
-                    return ValidationResult.BLATANT_SPAM;
-                } else if (ValidationResult.SPAM.equals(singleResponse)) {
-                    spamDetected = true;
-                }
-            }
-            return spamDetected ? ValidationResult.SPAM : ValidationResult.NOT_SPAM;
-        } else {
-            // When no validators: consider all comments valid
-            return ValidationResult.NOT_SPAM;
-        }
+        return ResponseEntity.ok()
+                // https://www.baeldung.com/spring-security-cache-control-headers
+                .cacheControl(CacheControl.noStore())
+                .contentType(MediaType.TEXT_HTML)
+                .contentLength(html.length)
+                .body(new ByteArrayResource(html));
     }
 }

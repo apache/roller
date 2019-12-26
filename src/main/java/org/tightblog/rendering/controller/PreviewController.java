@@ -40,7 +40,7 @@ import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogRole;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.rendering.service.ThymeleafRenderer;
 import org.tightblog.rendering.cache.CachedContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -497,4 +497,10 @@ public class WeblogManager {
         weblogTemplateDao.evictWeblogTemplateByName(weblog, templateName);
         weblogTemplateDao.evictWeblogTemplateByRole(weblog, role);
     }
+
+     @Scheduled(cron = "${cron.reset.hit.counts}")
+     public void resetHitCounts() {
+         log.info("Resetting daily hit counts...");
+         weblogDao.resetDailyHitCounts();
+     }
 }

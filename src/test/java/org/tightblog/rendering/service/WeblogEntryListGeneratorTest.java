@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tightblog.rendering.generators;
+package org.tightblog.rendering.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -30,7 +30,7 @@ import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntry.PubStatus;
 import org.tightblog.domain.WeblogEntrySearchCriteria;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
+import org.tightblog.rendering.service.WeblogEntryListGenerator.WeblogEntryListData;
 
 import java.time.Instant;
 import java.time.LocalDate;

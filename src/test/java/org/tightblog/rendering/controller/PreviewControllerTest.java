@@ -42,7 +42,7 @@ import org.tightblog.domain.WeblogTheme;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.model.Model;
 import org.tightblog.rendering.model.SiteModel;
-import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.rendering.service.ThymeleafRenderer;
 import org.tightblog.dao.WeblogDao;
 
 import java.io.IOException;

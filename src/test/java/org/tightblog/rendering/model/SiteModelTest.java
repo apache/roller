@@ -16,11 +16,11 @@
 package org.tightblog.rendering.model;
 
 import org.junit.Test;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.service.WeblogEntryListGenerator;
 import org.tightblog.service.URLService;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogTemplate;
-import org.tightblog.rendering.generators.WeblogListGenerator;
+import org.tightblog.rendering.service.WeblogListGenerator;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.service.WeblogManager;
 

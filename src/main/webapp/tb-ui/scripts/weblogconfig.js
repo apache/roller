@@ -9,10 +9,10 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce', '$fi
            "timeZone" : "America/New_York",
            "editFormat" : "HTML",
            "allowComments" : "NONE",
-           "emailComments" : false,
+           "spamPolicy"    : "NO_EMAIL",
            "visible" : true,
            "entriesPerPage" : 12,
-           "defaultCommentDays" : "-1"
+           "defaultCommentDays" : -1
         };
         this.errorObj = {};
 

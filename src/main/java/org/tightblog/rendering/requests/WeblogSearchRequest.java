@@ -27,7 +27,7 @@ import org.apache.lucene.search.TopFieldDocs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tightblog.domain.WeblogEntry;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.service.WeblogEntryListGenerator;
 import org.tightblog.rendering.model.SearchResultsModel;
 import org.tightblog.service.indexer.FieldConstants;
 import org.tightblog.service.indexer.SearchTask;

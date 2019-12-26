@@ -119,11 +119,7 @@ public class URLModel implements Model {
     }
 
     public String getWeblogEntryPostCommentURL(WeblogEntry entry) {
-        return urlService.getWeblogEntryPostCommentURL(entry, false);
-    }
-
-    public String getWeblogEntryPreviewCommentURL(WeblogEntry entry) {
-        return urlService.getWeblogEntryPostCommentURL(entry, true);
+        return urlService.getWeblogEntryPostCommentURL(entry);
     }
 
     public String getCommentAuthenticatorURL() {

@@ -162,6 +162,7 @@ public class WeblogController {
             weblog.setEntriesPerPage(newData.getEntriesPerPage());
             weblog.setBlacklist(newData.getBlacklist());
             weblog.setAllowComments(newData.getAllowComments());
+            weblog.setSpamPolicy(newData.getSpamPolicy());
             weblog.setLocale(newData.getLocale());
             weblog.setTimeZone(newData.getTimeZone());
 
@@ -245,7 +246,15 @@ public class WeblogController {
         metadata.getCommentOptions().putAll(Arrays.stream(WebloggerProperties.CommentPolicy.values())
                 .filter(co -> co.getLevel() <= globalCommentPolicy.getLevel())
                 .collect(Utilities.toLinkedHashMap(WebloggerProperties.CommentPolicy::name,
-                        co -> messages.getMessage(co.getWeblogDescription(), null, locale))));
+                        co -> messages.getMessage(co.getLabel(), null, locale))));
+
+        WebloggerProperties.SpamPolicy globalSpamPolicy =
+                webloggerPropertiesDao.findOrNull().getSpamPolicy();
+
+        metadata.getSpamOptions().putAll(Arrays.stream(WebloggerProperties.SpamPolicy.values())
+                .filter(opt -> opt.getLevel() >= globalSpamPolicy.getLevel())
+                .collect(Utilities.toLinkedHashMap(WebloggerProperties.SpamPolicy::name,
+                        opt -> messages.getMessage(opt.getLabel(), null, locale))));
 
         metadata.getCommentDayOptions().putAll(Arrays.stream(WeblogEntry.CommentDayOption.values())
                 .collect(Utilities.toLinkedHashMap(cdo -> Integer.toString(cdo.getDays()),

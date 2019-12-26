@@ -33,7 +33,6 @@ import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
 import org.tightblog.domain.WeblogEntryComment;
 import org.tightblog.domain.WeblogRole;
-import org.tightblog.domain.WebloggerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailAuthenticationException;
@@ -45,6 +44,7 @@ import org.tightblog.dao.UserDao;
 import org.tightblog.dao.UserWeblogRoleDao;
 import org.tightblog.dao.WeblogEntryCommentDao;
 import org.tightblog.dao.WebloggerPropertiesDao;
+import org.tightblog.domain.WebloggerProperties.CommentPolicy;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -333,9 +333,17 @@ public class EmailService {
         String subject = messages.getMessage("email.comment.title", new Object[] {entry.getTitle()},
                 weblog.getLocaleInstance());
 
-        // send message to blog members (same email for everyone)
-        if (// if must moderate on, blogger(s) already got pending email, good enough.
-                !WebloggerProperties.CommentPolicy.MUSTMODERATE.equals(weblog.getAllowComments())) {
+        // Send notification to blog's members?
+        // if email was moderated, blogger(s) already got pending email, good enough.
+
+        boolean commenterIsPublisher =
+                userManager.checkWeblogRole(comment.getEmail(), comment.getWeblog(), WeblogRole.POST);
+
+        boolean commenterIsNonPublisherUser = !commenterIsPublisher &&
+                userDao.findEnabledByUserName(comment.getEmail()) != null;
+
+        // MODERATE_NONAUTH = some non-blog publishers may have sent non-moderated comments, so send email
+        if (commenterIsNonPublisherUser && CommentPolicy.MODERATE_NONAUTH.equals(weblog.getAllowComments())) {
             List<UserWeblogRole> bloggerList = userWeblogRoleDao.findByWeblogAndEmailCommentsTrue(weblog);
 
             Context ctx = getPublishedCommentNotificationContext(comment, null);

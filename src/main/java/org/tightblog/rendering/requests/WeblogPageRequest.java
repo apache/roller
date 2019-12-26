@@ -29,7 +29,7 @@ import org.tightblog.domain.WeblogEntryComment;
 import org.tightblog.domain.WeblogEntrySearchCriteria;
 import org.tightblog.domain.WeblogEntryTagAggregate;
 import org.tightblog.domain.WeblogRole;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.service.WeblogEntryListGenerator;
 import org.tightblog.rendering.model.PageModel;
 
 import javax.servlet.http.HttpServletRequest;

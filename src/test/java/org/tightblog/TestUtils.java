@@ -19,7 +19,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 import org.tightblog.rendering.requests.WeblogSearchRequest;
-import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.rendering.service.ThymeleafRenderer;
 
 import javax.servlet.http.HttpServletRequest;
 

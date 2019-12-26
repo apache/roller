@@ -21,7 +21,7 @@ import org.tightblog.domain.SharedTemplate;
 import org.tightblog.domain.Template;
 import org.tightblog.rendering.cache.CachedContent;
 import org.tightblog.rendering.cache.LazyExpiringCache;
-import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.rendering.service.ThymeleafRenderer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;

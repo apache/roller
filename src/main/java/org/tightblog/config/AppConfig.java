@@ -66,5 +66,4 @@ public class AppConfig {
             @Value("${githubSourceCache.timeoutHours:6}") int timeoutHours) {
         return new LazyExpiringCache("cache.githubsource", maxEntries, timeoutHours);
     }
-
 }

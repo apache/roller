@@ -122,14 +122,14 @@
         </ul>
     </div>
     <div th:fragment="WeblogEntryComments" th:remove="tag" th:with="entry=${model.weblogEntry}">
-        <div class="card" id="comments">
+        <div class="card" id="comments" th:if="${entry.commentCount > 0}">
 
             <div class="card-header">
-                <h5 th:utext="${utils.msg(model.commentForm.preview ? 'macro.weblog.preview' : 'macro.weblog.comments')}">xxx</h5>
+                <h5 th:utext="${utils.msg('macro.weblog.comments')}">xxx</h5>
             </div>
 
-            <th:block th:with="comments=${model.commentForm.preview ? model.commentForm : entry.getComments()}">
-                <th:block th:each="comment : ${comments}" th:if="${comment.approved || model.commentForm.preview}">
+            <th:block th:with="comments=${entry.getComments()}">
+                <th:block th:each="comment : ${comments}" th:if="${comment.approved}">
                     <div class="card-body" th:id="|comment-${comment.timestamp}|">
 
                         <span class="card-text" th:utext="${comment.content}">xxx</span>
@@ -153,14 +153,14 @@
         </div>
     </div>
 
-    <div th:fragment="WeblogEntryCommentForm" th:remove="tag">
-        <div class="card" th:with="entry=${model.weblogEntry}, cform = ${model.getCommentForm()}">
+    <div th:fragment="WeblogEntryCommentForm" th:remove="tag" th:with="entry=${model.weblogEntry}, cform = ${model.getCommentForm()}">
+        <div class="card">
             <div class="card-header">
                 <h5 span th:utext="${utils.msg('macro.weblog.postcommentHeader')}">xxx</h5>
             </div>
 
             <th:block th:switch="${model.canSubmitNewComments(entry)}">
-                <div class="card-body" th:block th:case="${true}">
+                <div class="card-body" th:case="${true}">
                     <span class="card-text" th:classappend="${cform.invalid} ? 'error' : (${!#strings.isEmpty(cform.submitResponseMessage)} ? 'status' : '')"
                           th:utext="${cform.submitResponseMessage}">xxx</span>
 
@@ -198,8 +198,6 @@
                                 <input type="text" id="answerId" name="name" class="form-control" th:value="${formName}" size="50" maxlength="255" required th:readonly="${model.blogger!=null}">
                             </div>
                         </th:block>
-                        <button type="submit" class="btn btn-secondary" th:formaction="${url.getWeblogEntryPreviewCommentURL(entry)}"
-                                name="post" th:text="${utils.msg('macro.weblog.postpreview')}"></button>
                         <button type="submit" class="btn btn-primary" th:formaction="${url.getWeblogEntryPostCommentURL(entry)}"
                                 name="post" th:text="${utils.msg('macro.weblog.post')}"></button>
 
@@ -207,9 +205,8 @@
                     <script>
                         clientSideInclude('commentAuthenticator', '[(${url.getCommentAuthenticatorURL()})]');
                     </script>
-
-                    <span class="status card-text" th:case="${false}" th:utext="${utils.msg('comments.disabled')}">xxx</span>
                 </div>
+                <span class="status card-text" th:case="${false}" th:utext="${utils.msg('comments.disabled')}">xxx</span>
             </th:block>
         </div>
     </div>

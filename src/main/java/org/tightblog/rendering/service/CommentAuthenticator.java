@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.tightblog.rendering.comment;
+package org.tightblog.rendering.service;
 
 import javax.servlet.http.HttpServletRequest;
 

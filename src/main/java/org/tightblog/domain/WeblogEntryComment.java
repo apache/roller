@@ -45,18 +45,17 @@ public class WeblogEntryComment {
         INVALID,
         // Comment identified as spam, either deleted or subject to moderation depending on blog config.
         SPAM,
-        // Comment not identified as spam, subject to moderation.  If blog so configured, email sent
-        // to commenter upon approval.
+        // Comment not identified as spam, subject to moderation.
         PENDING,
-        // Comment approved and currently visible (published)
+        // Comment approved and visible (published)
         APPROVED,
         // Approved comment subsequently disapproved and not viewable on blog.  No email notification
         // sent to commenter if re-approved.
         DISAPPROVED
     }
 
-    public enum ValidationResult {
-        BLATANT_SPAM, SPAM, NOT_SPAM
+    public enum SpamCheckResult {
+        SPAM, NOT_SPAM
     }
 
     // attributes
@@ -82,8 +81,11 @@ public class WeblogEntryComment {
     public WeblogEntryComment() {
     }
 
-    // transient fields involved during comment submittal
-    private boolean preview;
+    public WeblogEntryComment(String content) {
+        this.content = content;
+    }
+
+    // transient field involved during comment submittal
     private String submitResponseMessage;
 
     @Id
@@ -259,15 +261,6 @@ public class WeblogEntryComment {
 
     public void setSubmitResponseMessage(String submitResponseMessage) {
         this.submitResponseMessage = submitResponseMessage;
-    }
-
-    @Transient
-    public boolean isPreview() {
-        return preview;
-    }
-
-    public void setPreview(boolean preview) {
-        this.preview = preview;
     }
 
     public void initializeFormFields() {

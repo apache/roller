@@ -25,10 +25,10 @@ public class WebloggerProperties {
     private String defaultAnalyticsCode;
     private boolean usersOverrideAnalyticsCode;
     private CommentPolicy commentPolicy;
+    private SpamPolicy spamPolicy;
     private HTMLSanitizer.Level commentHtmlPolicy;
-    private boolean autodeleteSpam;
     private boolean usersCommentNotifications;
-    private String commentSpamFilter;
+    private String globalSpamFilter;
     private int maxFileUploadsSizeMb;
 
     @Id
@@ -136,13 +136,14 @@ public class WebloggerProperties {
         this.commentHtmlPolicy = commentHtmlPolicy;
     }
 
-    @Column(name = "autodelete_spam")
-    public boolean isAutodeleteSpam() {
-        return autodeleteSpam;
+    @Column(name = "spam_policy", nullable = false)
+    @Enumerated(EnumType.STRING)
+    public SpamPolicy getSpamPolicy() {
+        return spamPolicy;
     }
 
-    public void setAutodeleteSpam(boolean autodeleteSpam) {
-        this.autodeleteSpam = autodeleteSpam;
+    public void setSpamPolicy(SpamPolicy spamPolicy) {
+        this.spamPolicy = spamPolicy;
     }
 
     @Column(name = "users_comment_notifications")
@@ -155,12 +156,12 @@ public class WebloggerProperties {
     }
 
     @Column(name = "comment_spam_filter")
-    public String getCommentSpamFilter() {
-        return commentSpamFilter;
+    public String getGlobalSpamFilter() {
+        return globalSpamFilter;
     }
 
-    public void setCommentSpamFilter(String commentSpamFilter) {
-        this.commentSpamFilter = commentSpamFilter;
+    public void setGlobalSpamFilter(String globalSpamFilter) {
+        this.globalSpamFilter = globalSpamFilter;
     }
 
     @Column(name = "max_file_uploads_size_mb")
@@ -188,32 +189,50 @@ public class WebloggerProperties {
     }
 
     public enum CommentPolicy {
-        NONE(0, "generic.no", "generic.no"),
-        MUSTMODERATE(1, "globalConfig.mustModerateComments", "weblogConfig.mustModerateComments"),
-        YES(2, "globalConfig.commentsOK", "weblogConfig.commentsOK");
+        NONE(0, "generic.no"),
+        MODERATE_NONPUB(1, "globalConfig.nonPubMustModerate"),
+        MODERATE_NONAUTH(2, "globalConfig.nonAuthMustModerate");
 
-        private String siteDescription;
-
-        private String weblogDescription;
+        private String label;
 
         private int level;
 
-        CommentPolicy(int level, String siteDescription, String weblogDescription) {
+        CommentPolicy(int level, String label) {
             this.level = level;
-            this.siteDescription = siteDescription;
-            this.weblogDescription = weblogDescription;
+            this.label = label;
         }
 
-        public String getWeblogDescription() {
-            return weblogDescription;
-        }
-
-        public String getSiteDescription() {
-            return siteDescription;
+        public String getLabel() {
+            return label;
         }
 
         public int getLevel() {
             return level;
         }
     }
+
+    public enum SpamPolicy {
+        DONT_CHECK(0, "globalConfig.spam.skipCheck"),
+        MARK_SPAM(1, "globalConfig.spam.markAsSpam"),
+        NO_EMAIL(2, "globalConfig.spam.noEmailNotification"),
+        JUST_DELETE(3, "globalConfig.spam.autoDelete");
+
+        private String label;
+
+        private int level;
+
+        SpamPolicy(int level, String label) {
+            this.level = level;
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public int getLevel() {
+            return level;
+        }
+    }
+
 }

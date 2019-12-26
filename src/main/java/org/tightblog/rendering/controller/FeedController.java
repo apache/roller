@@ -38,7 +38,7 @@ import org.tightblog.service.ThemeManager;
 import org.tightblog.domain.Template;
 import org.tightblog.domain.Weblog;
 import org.tightblog.rendering.requests.WeblogFeedRequest;
-import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.rendering.service.ThymeleafRenderer;
 import org.tightblog.dao.WeblogDao;
 import org.tightblog.util.Utilities;
 import org.tightblog.rendering.cache.CachedContent;

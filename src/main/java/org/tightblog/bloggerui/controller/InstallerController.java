@@ -68,6 +68,9 @@ public class InstallerController {
     private Environment environment;
     private LuceneIndexer luceneIndexer;
 
+    @Value("${weblogger.version}")
+    private String tightblogVersion;
+
     @Autowired
     public InstallerController(DataSource tbDataSource, MessageSource messages,
                                LuceneIndexer luceneIndexer, DynamicProperties dynamicProperties,
@@ -82,7 +85,7 @@ public class InstallerController {
     @Value("${tightblog.database.expected.version:0}")
     private int expectedDatabaseVersion;
 
-    private enum StartupStatus {
+    public enum StartupStatus {
         databaseError(true, "installer.databaseConnectionError"),
         tablesMissing(false, "installer.noDatabaseTablesFound"),
         databaseVersionError(true, "installer.databaseVersionError"),
@@ -118,6 +121,7 @@ public class InstallerController {
         Map<String, Object> map = initializeMap();
         List<String> messageList = new ArrayList<>();
         map.put("messages", messageList);
+        map.put("tightblogVersion", tightblogVersion);
 
         // is database accessible?
         try {
@@ -158,6 +162,7 @@ public class InstallerController {
         Map<String, Object> map = initializeMap();
         List<String> messageList = new ArrayList<>(100);
         map.put("messages", messageList);
+        map.put("tightblogVersion", tightblogVersion);
 
         String scriptPath = "";
         try (Connection conn = tbDataSource.getConnection()) {

@@ -17,13 +17,13 @@ package org.tightblog.rendering.model;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.tightblog.rendering.generators.CalendarGenerator;
+import org.tightblog.rendering.service.CalendarGenerator;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogEntryManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.service.LuceneIndexer;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.service.WeblogEntryListGenerator;
 import org.tightblog.dao.WeblogEntryDao;
 
 import static org.junit.Assert.*;

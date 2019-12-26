@@ -184,35 +184,45 @@
 <c:if test="${globalCommentPolicy != 'NONE'}">
 
     <tr>
-    <td colspan="3"><h2><fmt:message key="weblogConfig.commentSettings"/></h2></td>
+        <td colspan="3"><h2><fmt:message key="weblogConfig.commentSettings"/></h2></td>
     </tr>
 
     <tr>
-    <td class="label"><fmt:message key="weblogConfig.allowComments"/></td>
-    <td class="field">
-        <select ng-model="ctrl.weblog.allowComments" size="1">
-            <option ng-repeat="(key, value) in ctrl.metadata.commentOptions" value="{{key}}">{{value}}</option>
-        </select>
-    </td>
+        <td class="label"><fmt:message key="weblogConfig.allowComments"/></td>
+        <td class="field">
+            <select ng-model="ctrl.weblog.allowComments" size="1">
+                <option ng-repeat="(key, value) in ctrl.metadata.commentOptions" value="{{key}}">{{value}}</option>
+            </select>
+        </td>
     </tr>
 
-    <tr>
-    <td class="label"><fmt:message key="weblogConfig.defaultCommentDays"/></td>
-    <td class="field">
-        <select ng-model="ctrl.weblog.defaultCommentDays" size="1">
-            <option ng-repeat="(key, value) in ctrl.metadata.commentDayOptions" ng-value="{{key-0}}">{{value}}</option>
-        </select>
-    </td>
+    <tr ng-show="ctrl.weblog.allowComments != 'NONE'">
+        <td class="label"><fmt:message key="weblogConfig.defaultCommentDays"/></td>
+        <td class="field">
+            <select ng-model="ctrl.weblog.defaultCommentDays" size="1">
+                <option ng-repeat="(key, value) in ctrl.metadata.commentDayOptions" ng-value="{{key-0}}">{{value}}</option>
+            </select>
+        </td>
     </tr>
 
-    <tr ng-if="ctrl.weblog.id != null">
+    <tr ng-if="ctrl.weblog.allowComments != 'NONE' && ctrl.weblog.id != null">
         <td class="label"><fmt:message key="weblogConfig.applyCommentDefaults"/></td>
         <td class="field"><input type="checkbox" ng-model="ctrl.weblog.applyCommentDefaults"></td>
     </tr>
 
-    <tr>
+    <tr ng-show="ctrl.weblog.allowComments != 'NONE'">
+        <td class="label"><fmt:message key="globalConfig.spamPolicy"/></td>
+        <td class="field">
+            <select ng-model="ctrl.weblog.spamPolicy" size="1">
+                <option ng-repeat="(key, value) in ctrl.metadata.spamOptions" value="{{key}}">{{value}}</option>
+            </select>
+        </td>
+        <td class="description"><fmt:message key="weblogConfig.tip.spamPolicy"/></td>
+    </tr>
+
+    <tr ng-show="ctrl.weblog.allowComments != 'NONE'">
         <td class="label"><fmt:message key="globalConfig.ignoreUrls"/></td>
-        <td class="field"><textarea ng-model="ctrl.weblog.blacklist" rows="7" cols="40"></textarea></td>
+        <td class="field"><textarea ng-model="ctrl.weblog.blacklist" rows="7" cols="70"></textarea></td>
         <td class="description"><fmt:message key="weblogConfig.tip.ignoreUrls"/></td>
     </tr>
 

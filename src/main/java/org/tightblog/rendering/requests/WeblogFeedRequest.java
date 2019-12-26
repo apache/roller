@@ -21,7 +21,7 @@
 package org.tightblog.rendering.requests;
 
 import org.tightblog.domain.WeblogEntry;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.service.WeblogEntryListGenerator;
 import org.tightblog.rendering.model.FeedModel;
 
 import java.time.format.DateTimeFormatter;

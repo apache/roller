@@ -25,9 +25,9 @@ import org.tightblog.service.URLService;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.domain.Template;
 import org.tightblog.domain.Weblog;
-import org.tightblog.rendering.generators.WeblogListGenerator;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator.WeblogEntryListData;
+import org.tightblog.rendering.service.WeblogListGenerator;
+import org.tightblog.rendering.service.WeblogEntryListGenerator;
+import org.tightblog.rendering.service.WeblogEntryListGenerator.WeblogEntryListData;
 import org.tightblog.rendering.requests.WeblogPageRequest;
 
 import java.util.List;

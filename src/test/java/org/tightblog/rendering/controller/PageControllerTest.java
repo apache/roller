@@ -34,7 +34,7 @@ import org.tightblog.WebloggerTest;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.config.WebConfig;
 import org.tightblog.domain.Template;
-import org.tightblog.rendering.generators.WeblogEntryListGenerator;
+import org.tightblog.rendering.service.WeblogEntryListGenerator;
 import org.tightblog.rendering.model.SiteModel;
 import org.tightblog.rendering.model.URLModel;
 import org.tightblog.dao.UserDao;
@@ -54,7 +54,7 @@ import org.tightblog.rendering.cache.LazyExpiringCache;
 import org.tightblog.rendering.model.Model;
 import org.tightblog.rendering.model.PageModel;
 import org.tightblog.rendering.requests.WeblogPageRequest;
-import org.tightblog.rendering.thymeleaf.ThymeleafRenderer;
+import org.tightblog.rendering.service.ThymeleafRenderer;
 import org.tightblog.dao.WeblogDao;
 
 import javax.servlet.http.HttpServletRequest;
@@ -98,7 +98,6 @@ public class PageControllerTest {
     private WeblogDao mockWD;
     private ThymeleafRenderer mockRenderer;
     private ThemeManager mockThemeManager;
-    private PageModel mockPageModel;
     private ApplicationContext mockApplicationContext;
 
     @Captor
@@ -137,7 +136,7 @@ public class PageControllerTest {
 
         Function<WeblogPageRequest, SiteModel> siteModelFactory = new WebConfig().siteModelFactory();
 
-        mockPageModel = mock(PageModel.class);
+        PageModel mockPageModel = mock(PageModel.class);
         mockWELG = mock(WeblogEntryListGenerator.class);
         when(mockPageModel.getWeblogEntryListGenerator()).thenReturn(mockWELG);
 
@@ -181,7 +180,7 @@ public class PageControllerTest {
     }
 
     @Test
-    public void testCachedPageReturned() throws IOException {
+    public void testCachedPageReturned() {
         Instant twoDaysAgo = Instant.now().minus(2, ChronoUnit.DAYS);
         weblog.setLastModified(twoDaysAgo);
 
@@ -205,7 +204,7 @@ public class PageControllerTest {
     }
 
     @Test
-    public void testNonExistentTemplateRequestReturns404() throws IOException {
+    public void testNonExistentTemplateRequestReturns404() {
         when(mockWeblogTheme.getTemplateByRole(Role.WEBLOG)).thenReturn(null);
         ResponseEntity<Resource> result = controller.getHomePage(TEST_BLOG_HANDLE, 0, mockRequest,
                 mockPrincipal);
@@ -502,7 +501,7 @@ public class PageControllerTest {
     }
 
     @Test
-    public void testCommentFormsSkipCache() throws IOException {
+    public void testCommentFormsSkipCache() {
         WeblogEntryComment wec = new WeblogEntryComment();
         when(mockRequest.getAttribute("commentForm")).thenReturn(wec);
         controller.getHomePage(TEST_BLOG_HANDLE, 0, mockRequest, mockPrincipal);

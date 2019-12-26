@@ -64,8 +64,8 @@ public class WeblogEntry {
         SEVEN(7, "entryEdit.days7"),
         FOURTEEN(14, "entryEdit.days14"),
         THIRTY(30, "entryEdit.days30"),
-        SIXTY(60, "entryEdit.days60"),
-        NINETY(90, "entryEdit.days90");
+        NINETY(90, "entryEdit.days90"),
+        ONEYEAR(365, "entryEdit.days365");
 
         int days;
 
