@@ -252,7 +252,7 @@ public class Weblog {
         return blacklistRegexRules;
     }
 
-    @Basic(optional = false)
+    @Column(name = "comment_policy", nullable = false)
     @Enumerated(EnumType.STRING)
     public CommentPolicy getAllowComments() {
         return this.allowComments;

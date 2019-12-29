@@ -33,7 +33,7 @@ create table weblog (
     creatorid         varchar(48) not null,
     datecreated       datetime(3) not null,
     lastmodified      datetime(3) not null,
-    allowcomments     varchar(20) not null,
+    comment_policy    varchar(20) not null,
     spam_policy       varchar(20) not null,
     commentdays       integer default 7 not null,
     analyticscode     text,
