@@ -72,7 +72,7 @@ public class CommentSpamChecker {
             @Value("${weblogger.version}") String webloggerVersion,
             @Value("${commentSpamChecker.excessSize.enabled:true}") boolean excessSizeEnabled,
             @Value("${commentSpamChecker.blacklist.enabled:true}") boolean blacklistEnabled,
-            @Value("${commentSpamChecker.akismet.enabled:true}") boolean akismetEnabled,
+            @Value("${commentSpamChecker.akismet.enabled:false}") boolean akismetEnabled,
             @Value("${commentSpamChecker.excessSize.sizeLimit:1000}") int sizeLimit,
             @Value("${commentSpamChecker.excessSize.linksLimit:3}") int linksLimit,
             @Value("${commentSpamChecker.akismet.apiKey:}") String akismetApiKey,
