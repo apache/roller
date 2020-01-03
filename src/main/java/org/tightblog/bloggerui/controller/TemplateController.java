@@ -21,6 +21,7 @@
 package org.tightblog.bloggerui.controller;
 
 import org.springframework.context.MessageSource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.bloggerui.model.SuccessResponse;
@@ -31,12 +32,10 @@ import org.tightblog.service.WeblogManager;
 import org.tightblog.domain.SharedTheme;
 import org.tightblog.service.ThemeManager;
 import org.tightblog.domain.Template;
-import org.tightblog.domain.User;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogRole;
 import org.tightblog.domain.WeblogTemplate;
 import org.tightblog.domain.WeblogTheme;
-import org.tightblog.dao.UserDao;
 import org.tightblog.dao.WeblogDao;
 import org.tightblog.dao.WeblogTemplateDao;
 import org.tightblog.bloggerui.model.ValidationErrorResponse;
@@ -65,7 +64,6 @@ public class TemplateController {
 
     private WeblogDao weblogDao;
     private WeblogTemplateDao weblogTemplateDao;
-    private UserDao userDao;
     private UserManager userManager;
     private WeblogManager weblogManager;
     private ThemeManager themeManager;
@@ -73,11 +71,10 @@ public class TemplateController {
 
     @Autowired
     public TemplateController(WeblogDao weblogDao, WeblogTemplateDao weblogTemplateDao,
-                              UserDao userDao, UserManager userManager, WeblogManager weblogManager,
+                              UserManager userManager, WeblogManager weblogManager,
                               ThemeManager themeManager, MessageSource messages) {
         this.weblogDao = weblogDao;
         this.weblogTemplateDao = weblogTemplateDao;
-        this.userDao = userDao;
         this.userManager = userManager;
         this.weblogManager = weblogManager;
         this.themeManager = themeManager;
@@ -85,82 +82,40 @@ public class TemplateController {
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}/templates")
-    public WeblogTemplateData getWeblogTemplates(@PathVariable String id, Principal principal,
-                                                 Locale locale, HttpServletResponse response) {
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #id, 'OWNER')")
+    public WeblogTemplateData getWeblogTemplates(@PathVariable String id, Principal p, Locale locale) {
 
-        Weblog weblog = weblogDao.findById(id).orElse(null);
-        User user = userDao.findEnabledByUserName(principal.getName());
+        Weblog weblog = weblogDao.getOne(id);
+        WeblogTheme theme = new WeblogTheme(weblogTemplateDao, weblog, themeManager.getSharedTheme(weblog.getTheme()));
 
-        if (weblog != null && user != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
-            WeblogTemplateData wtd = new WeblogTemplateData();
+        WeblogTemplateData wtd = new WeblogTemplateData();
+        wtd.getTemplates().addAll(theme.getTemplates());
 
-            WeblogTheme theme = new WeblogTheme(weblogTemplateDao, weblog,
-                    themeManager.getSharedTheme(weblog.getTheme()));
+        // build list of template role types that may be added
+        List<Template.Role> availableRoles = Arrays.stream(Template.Role.values()).
+                filter(Template.Role::isBlogComponent).
+                collect(Collectors.toList());
 
-            wtd.getTemplates().addAll(theme.getTemplates());
+        // remove from above list any already existing for the theme
+        wtd.getTemplates().stream().filter(t -> t.getRole().isSingleton()).forEach(t ->
+                availableRoles.removeIf(r -> r.name().equals(t.getRole().name())));
 
-            // build list of template role types that may be added
-            List<Template.Role> availableRoles = Arrays.stream(Template.Role.values()).
-                    filter(Template.Role::isBlogComponent).
-                    collect(Collectors.toList());
-
-            // remove from above list any already existing for the theme
-            wtd.getTemplates().stream().filter(p -> p.getRole().isSingleton()).forEach(p ->
-                    availableRoles.removeIf(r -> r.name().equals(p.getRole().name())));
-
-            availableRoles.forEach(role -> wtd.getAvailableTemplateRoles().put(role.getName(), role.getReadableName()));
-            availableRoles.forEach(role -> wtd.getTemplateRoleDescriptions().put(role.getName(),
-                    messages.getMessage(role.getDescriptionProperty(), null, locale)));
-            return wtd;
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return null;
-        }
-    }
-
-    private void deleteTemplate(@PathVariable String id, Principal p, HttpServletResponse response) {
-        log.info("Deleting template with ID {}...", id);
-        WeblogTemplate template = weblogTemplateDao.findById(id).orElse(null);
-        if (template != null) {
-            if (userManager.checkWeblogRole(p.getName(), template.getWeblog(), WeblogRole.OWNER)) {
-                weblogTemplateDao.delete(template);
-                weblogManager.evictWeblogTemplateCaches(template.getWeblog(), template.getName(), template.getRole());
-                weblogManager.saveWeblog(template.getWeblog(), true);
-                response.setStatus(HttpServletResponse.SC_OK);
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            }
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-    }
-
-    @PostMapping(value = "/tb-ui/authoring/rest/templates/delete")
-    public void deleteTemplates(@RequestBody List<String> ids, Principal p, HttpServletResponse response) {
-        if (ids != null && ids.size() > 0) {
-            for (String id : ids) {
-                deleteTemplate(id, p, response);
-            }
-        }
-        response.setStatus(HttpServletResponse.SC_OK);
+        availableRoles.forEach(role -> wtd.getAvailableTemplateRoles().put(role.getName(), role.getReadableName()));
+        availableRoles.forEach(role -> wtd.getTemplateRoleDescriptions().put(role.getName(),
+                messages.getMessage(role.getDescriptionProperty(), null, locale)));
+        return wtd;
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/template/{id}")
-    public WeblogTemplate getWeblogTemplate(@PathVariable String id, Principal p, HttpServletResponse response) {
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.WeblogTemplate), #id, 'OWNER')")
+    public WeblogTemplate getWeblogTemplate(@PathVariable String id, Principal p) {
 
-        WeblogTemplate template = weblogTemplateDao.findById(id).orElse(null);
+        WeblogTemplate template = weblogTemplateDao.getOne(id);
 
-        boolean permitted = template != null &&
-                userManager.checkWeblogRole(p.getName(), template.getWeblog(), WeblogRole.POST);
-        if (permitted) {
-            if (themeManager.getSharedTheme(template.getWeblog().getTheme()).getTemplateByName(template.getName()) != null) {
-                template.setDerivation(Template.Derivation.OVERRIDDEN);
-            }
-            return template;
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return null;
+        if (themeManager.getSharedTheme(template.getWeblog().getTheme()).getTemplateByName(template.getName()) != null) {
+            template.setDerivation(Template.Derivation.OVERRIDDEN);
         }
+        return template;
     }
 
     // Used to obtain shared templates not yet customized for a particular weblog
@@ -168,82 +123,67 @@ public class TemplateController {
     // none of other solutions (http://stackoverflow.com/questions/16332092/spring-mvc-pathvariable-with-dot-is-getting-truncated)
     // seemed to work.
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templatename/{templateName}/")
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'OWNER')")
     public WeblogTemplate getWeblogTemplateByName(@PathVariable String weblogId, @PathVariable String templateName, Principal p,
                                                   HttpServletResponse response) {
 
-        Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-        if (weblog != null) {
-            // First-time override of a shared template
-            SharedTheme sharedTheme = themeManager.getSharedTheme(weblog.getTheme());
-            Template sharedTemplate = sharedTheme.getTemplateByName(templateName);
-
-            boolean permitted = sharedTemplate != null &&
-                    userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST);
-            if (permitted) {
-                return themeManager.createWeblogTemplate(weblog, sharedTemplate);
-            }
+        Weblog weblog = weblogDao.getOne(weblogId);
+        SharedTheme sharedTheme = themeManager.getSharedTheme(weblog.getTheme());
+        Template sharedTemplate = sharedTheme.getTemplateByName(templateName);
+        if (sharedTemplate != null) {
+            return themeManager.createWeblogTemplate(weblog, sharedTemplate);
         }
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return null;
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates", consumes = { "application/json" })
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'OWNER')")
     public ResponseEntity postTemplate(@PathVariable String weblogId, @Valid @RequestBody WeblogTemplate templateData,
                                       Principal p, Locale locale) {
 
+        Weblog weblog = weblogDao.getOne(weblogId);
         WeblogTemplate templateToSave = weblogTemplateDao.findById(templateData.getId()).orElse(null);
 
-        // Check user permissions
-        User user = userDao.findEnabledByUserName(p.getName());
-        Weblog weblog = (templateToSave == null) ? weblogDao.findById(weblogId).orElse(null)
-                : templateToSave.getWeblog();
-
-        if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.OWNER)) {
-
-            // create new?
-            if (templateToSave == null) {
-                templateToSave = new WeblogTemplate();
-                templateToSave.setWeblog(weblog);
-                if (templateData.getRole() != null) {
-                    templateToSave.setRole(templateData.getRole());
-                } else {
-                    templateToSave.setRole(Template.Role.valueOf(templateData.getRoleName()));
-                }
-                templateToSave.setTemplate(templateData.getTemplate());
+        // create new?
+        if (templateToSave == null) {
+            templateToSave = new WeblogTemplate();
+            if (templateData.getRole() != null) {
+                templateToSave.setRole(templateData.getRole());
             } else {
-                templateToSave.setTemplate(templateData.getTemplate());
+                templateToSave.setRole(Template.Role.valueOf(templateData.getRoleName()));
             }
-
-            // some properties relevant only for certain template roles
-            if (!templateToSave.getRole().isSingleton()) {
-                templateToSave.setDescription(templateData.getDescription());
-            }
-
-            String originalName = templateToSave.getName();
-            if (Template.Derivation.SPECIFICBLOG.equals(templateToSave.getDerivation())) {
-                templateToSave.setName(templateData.getName());
-            }
-
-            templateToSave.setLastModified(Instant.now());
-
-            List<Violation> violations = validateTemplates(templateToSave, locale);
-            if (violations.size() > 0) {
-                return ValidationErrorResponse.badRequest(violations);
-            }
-
-            weblogTemplateDao.save(templateToSave);
-            weblogManager.evictWeblogTemplateCaches(templateToSave.getWeblog(), templateToSave.getName(),
-                    templateToSave.getRole());
-            if (originalName != null) {
-                weblogTemplateDao.evictWeblogTemplateByName(templateToSave.getWeblog(), originalName);
-            }
-            weblogManager.saveWeblog(templateToSave.getWeblog(), true);
-
-            return SuccessResponse.textMessage(templateToSave.getId());
-        } else {
-            return ResponseEntity.status(403).body(messages.getMessage("error.title.403", null,
-                    locale));
         }
+
+        templateToSave.setWeblog(weblog);
+        templateToSave.setTemplate(templateData.getTemplate());
+
+        // some properties relevant only for certain template roles
+        if (!templateToSave.getRole().isSingleton()) {
+            templateToSave.setDescription(templateData.getDescription());
+        }
+
+        String originalName = templateToSave.getName();
+        if (Template.Derivation.SPECIFICBLOG.equals(templateToSave.getDerivation())) {
+            templateToSave.setName(templateData.getName());
+        }
+
+        templateToSave.setLastModified(Instant.now());
+
+        List<Violation> violations = validateTemplates(templateToSave, locale);
+        if (violations.size() > 0) {
+            return ValidationErrorResponse.badRequest(violations);
+        }
+
+        weblogTemplateDao.save(templateToSave);
+        weblogManager.evictWeblogTemplateCaches(templateToSave.getWeblog(), templateToSave.getName(),
+                templateToSave.getRole());
+        if (originalName != null) {
+            weblogTemplateDao.evictWeblogTemplateByName(templateToSave.getWeblog(), originalName);
+        }
+        weblogManager.saveWeblog(templateToSave.getWeblog(), true);
+
+        return SuccessResponse.textMessage(templateToSave.getId());
     }
 
     private List<Violation> validateTemplates(WeblogTemplate templateToCheck, Locale locale) {
@@ -264,5 +204,29 @@ public class TemplateController {
         }
 
         return violations;
+    }
+
+    @PostMapping(value = "/tb-ui/authoring/rest/templates/delete")
+    public void deleteTemplates(@RequestBody List<String> ids, Principal p, HttpServletResponse response) {
+        for (String id : ids) {
+            deleteTemplate(id, p, response);
+        }
+    }
+
+    private void deleteTemplate(@PathVariable String id, Principal p, HttpServletResponse response) {
+        log.info("Deleting template with ID {}...", id);
+        WeblogTemplate template = weblogTemplateDao.getOne(id);
+        if (template != null) {
+            if (userManager.checkWeblogRole(p.getName(), template.getWeblog(), WeblogRole.OWNER)) {
+                weblogTemplateDao.delete(template);
+                weblogManager.evictWeblogTemplateCaches(template.getWeblog(), template.getName(), template.getRole());
+                weblogManager.saveWeblog(template.getWeblog(), true);
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            }
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 }

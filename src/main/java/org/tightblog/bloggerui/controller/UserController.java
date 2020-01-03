@@ -22,6 +22,7 @@ package org.tightblog.bloggerui.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -164,34 +165,29 @@ public class UserController {
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/potentialmembers")
-    public Map<String, String> getPotentialNewBlogMembers(@PathVariable String weblogId, Principal p,
-                                                          HttpServletResponse response) {
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'OWNER')")
+    public Map<String, String> getPotentialNewBlogMembers(@PathVariable String weblogId, Principal p) {
 
-        Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-            // member list excludes inactive accounts
-            List<User> potentialUsers = userDao.findByStatusEnabled();
+        Weblog weblog = weblogDao.getOne(weblogId);
+        // member list excludes inactive accounts
+        List<User> potentialUsers = userDao.findByStatusEnabled();
 
-            // filter out people already members
-            ListIterator<User> potentialIter = potentialUsers.listIterator();
-            List<UserWeblogRole> currentUserList = userWeblogRoleDao.findByWeblog(weblog);
-            while (potentialIter.hasNext() && !currentUserList.isEmpty()) {
-                User su = potentialIter.next();
-                ListIterator<UserWeblogRole> alreadyIter = currentUserList.listIterator();
-                while (alreadyIter.hasNext()) {
-                    UserWeblogRole au = alreadyIter.next();
-                    if (su.getId().equals(au.getUser().getId())) {
-                        potentialIter.remove();
-                        alreadyIter.remove();
-                        break;
-                    }
+        // filter out people already members
+        ListIterator<User> potentialIter = potentialUsers.listIterator();
+        List<UserWeblogRole> currentUserList = userWeblogRoleDao.findByWeblog(weblog);
+        while (potentialIter.hasNext() && !currentUserList.isEmpty()) {
+            User su = potentialIter.next();
+            ListIterator<UserWeblogRole> alreadyIter = currentUserList.listIterator();
+            while (alreadyIter.hasNext()) {
+                UserWeblogRole au = alreadyIter.next();
+                if (su.getId().equals(au.getUser().getId())) {
+                    potentialIter.remove();
+                    alreadyIter.remove();
+                    break;
                 }
             }
-            return createUserMap(potentialUsers);
-        } else {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return null;
         }
+        return createUserMap(potentialUsers);
     }
 
     private Map<String, String> createUserMap(List<User> users) {
@@ -299,15 +295,10 @@ public class UserController {
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/members")
-    public List<UserWeblogRole> getWeblogMembers(@PathVariable String weblogId, Principal p, HttpServletResponse response) {
-
-        Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-            return userWeblogRoleDao.findByWeblog(weblog);
-        } else {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return null;
-        }
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'OWNER')")
+    public List<UserWeblogRole> getWeblogMembers(@PathVariable String weblogId, Principal p) {
+        Weblog weblog = weblogDao.getOne(weblogId);
+        return userWeblogRoleDao.findByWeblog(weblog);
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/user/{userId}/role/{role}/attach")

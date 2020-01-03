@@ -27,6 +27,8 @@ public interface WeblogCategoryDao extends JpaRepository<WeblogCategory, String>
 
     WeblogCategory findByWeblogAndName(Weblog weblog, String name);
 
+    WeblogCategory findByIdAndWeblog(String id, Weblog weblog);
+
     List<WeblogCategory> findByWeblogOrderByPosition(Weblog weblog);
 
     default WeblogCategory findByIdOrNull(String id) {

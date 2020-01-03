@@ -36,7 +36,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "weblog_category")
-public class WeblogCategory implements Comparable<WeblogCategory> {
+public class WeblogCategory implements Comparable<WeblogCategory>, WeblogOwned {
 
     // unique internal ID of object
     private String id = Utilities.generateUUID();

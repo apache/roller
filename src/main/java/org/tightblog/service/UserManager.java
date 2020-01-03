@@ -24,6 +24,7 @@ import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.tightblog.domain.GlobalRole;
+import org.tightblog.domain.WeblogOwned;
 import org.tightblog.domain.User;
 import org.tightblog.domain.UserCredentials;
 import org.tightblog.domain.UserWeblogRole;
@@ -86,15 +87,17 @@ public class UserManager {
      * overload for callers having the weblog but not the user object.
      *
      * @param username Username whose role is being checked
-     * @param weblog   Target weblog of the role
+     * @param weblogItem  Weblog-owning object whose weblog is being checked
      * @param role     Minimum WeblogRole being checked for
      * @return false if user cannot be identified from the passed in username,
      * otherwise whatever checkWeblogRole(User, Weblog, WeblogRole) would return.
      */
-    public boolean checkWeblogRole(String username, Weblog weblog, WeblogRole role) {
-        User userToCheck = userDao.findEnabledByUserName(username);
-        if (userToCheck != null) {
-            return checkWeblogRole(userToCheck, weblog, role);
+    public boolean checkWeblogRole(String username, WeblogOwned weblogItem, WeblogRole role) {
+        if (weblogItem != null) {
+            User userToCheck = userDao.findEnabledByUserName(username);
+            if (userToCheck != null) {
+                return checkWeblogRole(userToCheck, weblogItem.getWeblog(), role);
+            }
         }
         return false;
     }

@@ -38,7 +38,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "weblog_entry_comment")
-public class WeblogEntryComment {
+public class WeblogEntryComment implements WeblogOwned {
 
     public enum ApprovalStatus {
         // Comment missing required fields like name or email.  Not serialized to database.

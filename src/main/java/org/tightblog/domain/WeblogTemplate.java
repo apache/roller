@@ -46,7 +46,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "weblog_template")
-public class WeblogTemplate implements Template {
+public class WeblogTemplate implements Template, WeblogOwned {
 
     // attributes
     private String id = Utilities.generateUUID();

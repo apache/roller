@@ -22,6 +22,7 @@ package org.tightblog.bloggerui.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -38,15 +39,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.dao.BlogrollLinkDao;
 import org.tightblog.dao.WeblogDao;
 
-import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 public class BlogrollController {
-
     private static Logger log = LoggerFactory.getLogger(BlogrollController.class);
 
     private WeblogDao weblogDao;
@@ -64,17 +62,36 @@ public class BlogrollController {
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}/bookmarks")
-    public List<WeblogBookmark> getWeblogBookmarks(@PathVariable String id, HttpServletResponse response) {
-        Weblog weblog = weblogDao.findById(id).orElse(null);
-        if (weblog != null) {
-            return weblog.getBookmarks()
-                    .stream()
-                    .peek(bkmk -> bkmk.setWeblog(null))
-                    .collect(Collectors.toList());
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return null;
-        }
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #id, 'OWNER')")
+    public List<WeblogBookmark> getBookmarks(@PathVariable String id, Principal p) {
+
+        return weblogDao.getOne(id).getBookmarks()
+                .stream()
+                .peek(bkmk -> bkmk.setWeblog(null))
+                .collect(Collectors.toList());
+    }
+
+    @PutMapping(value = "/tb-ui/authoring/rest/bookmarks")
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'OWNER')")
+    public void addBookmark(@RequestParam(name = "weblogId") String weblogId, @RequestBody WeblogBookmark newData,
+                            Principal p) {
+
+        Weblog weblog = weblogDao.getOne(weblogId);
+        WeblogBookmark bookmark = new WeblogBookmark(weblog, newData.getName(),
+                newData.getUrl(), newData.getDescription());
+        weblog.addBookmark(bookmark);
+        weblogManager.saveWeblog(weblog, true);
+    }
+
+    @PutMapping(value = "/tb-ui/authoring/rest/bookmark/{id}")
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.WeblogBookmark), #id, 'OWNER')")
+    public void updateBookmark(@PathVariable String id, @RequestBody WeblogBookmark newData, Principal p) {
+
+        WeblogBookmark bookmark = blogrollLinkDao.getOne(id);
+        bookmark.setName(newData.getName());
+        bookmark.setUrl(newData.getUrl());
+        bookmark.setDescription(newData.getDescription());
+        weblogManager.saveWeblog(bookmark.getWeblog(), true);
     }
 
     private void deleteBookmark(String id, Principal p) {
@@ -85,7 +102,7 @@ public class BlogrollController {
                 weblog.getBookmarks().remove(itemToRemove);
                 weblogManager.saveWeblog(weblog, true);
             } else {
-                log.warn("Effort to delete bookmark {} by user {} failed, insufficent access rights",
+                log.warn("Effort to delete bookmark {} by user {} failed, insufficient access rights",
                         itemToRemove, p.getName());
             }
         } else {
@@ -95,55 +112,11 @@ public class BlogrollController {
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/bookmarks/delete")
-    public void deleteBookmarks(@RequestBody List<String> bookmarkIds, Principal p,
-                                HttpServletResponse response) {
+    public void deleteBookmarks(@RequestBody List<String> bookmarkIds, Principal p) {
         if (bookmarkIds != null && bookmarkIds.size() > 0) {
             for (String bookmarkId : bookmarkIds) {
                 deleteBookmark(bookmarkId, p);
             }
         }
     }
-
-    @PutMapping(value = "/tb-ui/authoring/rest/bookmark/{id}")
-    public void updateBookmark(@PathVariable String id, @RequestBody WeblogBookmark newData, Principal p,
-                               HttpServletResponse response) {
-        try {
-            WeblogBookmark bookmark = blogrollLinkDao.getOne(id);
-            Weblog weblog = bookmark.getWeblog();
-            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-                WeblogBookmark bookmarkFromWeblog = weblog.getBookmarks().stream()
-                        .filter(wb -> wb.getId().equals(bookmark.getId())).findFirst().orElse(null);
-                if (bookmarkFromWeblog != null) {
-                    bookmarkFromWeblog.setName(newData.getName());
-                    bookmarkFromWeblog.setUrl(newData.getUrl());
-                    bookmarkFromWeblog.setDescription(newData.getDescription());
-                    weblogManager.saveWeblog(weblog, true);
-                    response.setStatus(HttpServletResponse.SC_OK);
-                } else {
-                    // should never happen
-                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                }
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            }
-        } catch (EntityNotFoundException e) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-    }
-
-    @PutMapping(value = "/tb-ui/authoring/rest/bookmarks")
-    public void addBookmark(@RequestParam(name = "weblogId") String weblogId, @RequestBody WeblogBookmark newData, Principal p,
-                            HttpServletResponse response) {
-        Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-            WeblogBookmark bookmark = new WeblogBookmark(weblog, newData.getName(),
-                    newData.getUrl(), newData.getDescription());
-            weblog.addBookmark(bookmark);
-            weblogManager.saveWeblog(weblog, true);
-            response.setStatus(HttpServletResponse.SC_OK);
-        } else {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        }
-    }
-
 }

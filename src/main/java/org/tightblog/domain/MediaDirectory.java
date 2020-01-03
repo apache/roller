@@ -51,7 +51,7 @@ import java.util.Set;
                 query = "SELECT d FROM MediaDirectory d WHERE d.weblog = ?1 AND d.name = ?2")
 })
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MediaDirectory implements Comparable<MediaDirectory> {
+public class MediaDirectory implements Comparable<MediaDirectory>, WeblogOwned {
 
     @NotBlank
     private String id = Utilities.generateUUID();

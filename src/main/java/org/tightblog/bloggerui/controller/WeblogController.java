@@ -30,11 +30,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.tightblog.bloggerui.model.WeblogConfigMetadata;
-import org.tightblog.service.UserManager;
 import org.tightblog.service.WeblogManager;
 import org.tightblog.config.DynamicProperties;
 import org.tightblog.domain.SharedTheme;
@@ -43,7 +43,6 @@ import org.tightblog.domain.GlobalRole;
 import org.tightblog.domain.User;
 import org.tightblog.domain.Weblog;
 import org.tightblog.domain.WeblogEntry;
-import org.tightblog.domain.WeblogRole;
 import org.tightblog.dao.UserDao;
 import org.tightblog.dao.WeblogEntryDao;
 import org.tightblog.dao.WeblogDao;
@@ -60,7 +59,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.tightblog.domain.WebloggerProperties;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
@@ -72,7 +70,6 @@ public class WeblogController {
     private UserDao userDao;
     private WeblogManager weblogManager;
     private ThemeManager themeManager;
-    private UserManager userManager;
     private DynamicProperties dp;
     private WeblogDao weblogDao;
     private WeblogEntryDao weblogEntryDao;
@@ -83,8 +80,8 @@ public class WeblogController {
     private int maxEntriesPerPage;
 
     @Autowired
-    public WeblogController(UserDao userDao, WeblogManager weblogManager, ThemeManager themeManager,
-                            UserManager userManager, DynamicProperties dp,
+    public WeblogController(UserDao userDao, WeblogManager weblogManager,
+                            ThemeManager themeManager, DynamicProperties dp,
                             WeblogDao weblogDao, MessageSource messages,
                             WebloggerPropertiesDao webloggerPropertiesDao,
                             WeblogEntryDao weblogEntryDao) {
@@ -92,7 +89,6 @@ public class WeblogController {
         this.userDao = userDao;
         this.weblogManager = weblogManager;
         this.themeManager = themeManager;
-        this.userManager = userManager;
         this.dp = dp;
         this.weblogDao = weblogDao;
         this.weblogEntryDao = weblogEntryDao;
@@ -105,13 +101,10 @@ public class WeblogController {
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
-    public ResponseEntity getWeblogData(@PathVariable String id, Principal p, HttpServletResponse response) {
-        Weblog weblog = getWeblogIfOwner(id, p);
-        if (weblog != null) {
-            return ResponseEntity.ok(weblog);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #id, 'OWNER')")
+    public ResponseEntity getWeblogData(@PathVariable String id, Principal p) {
+        Weblog weblog = weblogDao.getOne(id);
+        return ResponseEntity.ok(weblog);
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblogs")
@@ -139,12 +132,9 @@ public class WeblogController {
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #id, 'OWNER')")
     public ResponseEntity updateWeblog(@PathVariable String id, @Valid @RequestBody Weblog newData, Principal p) {
-        Weblog weblog = getWeblogIfOwner(id, p);
-        if (weblog == null) {
-            return ResponseEntity.notFound().build();
-        }
-
+        Weblog weblog = weblogDao.getOne(id);
         return saveWeblog(weblog, newData, false);
     }
 
@@ -196,22 +186,11 @@ public class WeblogController {
     }
 
     @DeleteMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
-    public ResponseEntity deleteWeblog(@PathVariable String id, Principal p, HttpServletResponse response) {
-        Weblog weblog = getWeblogIfOwner(id, p);
-        if (weblog == null) {
-            return ResponseEntity.notFound().build();
-        }
-
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #id, 'OWNER')")
+    public ResponseEntity deleteWeblog(@PathVariable String id, Principal p) {
+        Weblog weblog = weblogDao.getOne(id);
         weblogManager.removeWeblog(weblog);
         return ResponseEntity.noContent().build();
-    }
-
-    private Weblog getWeblogIfOwner(String weblogId, Principal p) {
-        Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.OWNER)) {
-            return weblog;
-        }
-        return null;
     }
 
     @GetMapping(value = "/tb-ui/authoring/rest/weblogconfig/metadata")

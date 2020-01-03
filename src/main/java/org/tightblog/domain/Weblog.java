@@ -60,7 +60,7 @@ import java.util.TimeZone;
 @Entity
 @Table(name = "weblog")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Weblog {
+public class Weblog implements WeblogOwned {
 
     private String id = Utilities.generateUUID();
     private int hashCode;
@@ -566,5 +566,11 @@ public class Weblog {
 
     public void setUnapprovedComments(int unapprovedComments) {
         this.unapprovedComments = unapprovedComments;
+    }
+
+    @Override
+    @JsonIgnore
+    public Weblog getWeblog() {
+        return this;
     }
 }

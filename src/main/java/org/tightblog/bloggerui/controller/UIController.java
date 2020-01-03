@@ -352,13 +352,13 @@ public class UIController {
         Weblog weblog = weblogDao.findById(weblogId).orElse(null);
 
         boolean isAdmin = user.hasEffectiveGlobalRole(GlobalRole.ADMIN);
-        UserWeblogRole weblogRole = userWeblogRoleDao.findByUserAndWeblog(user, weblog);
-        if (isAdmin || (weblogRole != null && weblogRole.hasEffectiveWeblogRole(requiredRole))) {
+        UserWeblogRole uwr = userWeblogRoleDao.findByUserAndWeblog(user, weblog);
+        if (isAdmin || (uwr != null && uwr.hasEffectiveWeblogRole(requiredRole))) {
             if (map == null) {
                 map = new HashMap<>();
             }
 
-            WeblogRole menuRole = isAdmin ? WeblogRole.OWNER : weblogRole.getWeblogRole();
+            WeblogRole menuRole = isAdmin ? WeblogRole.OWNER : uwr.getWeblogRole();
             map.put("menu", getMenu(user, actionName, menuRole));
             map.put("weblogId", weblogId);
             return tightblogModelAndView(actionName, map, user, weblog);

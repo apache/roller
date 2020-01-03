@@ -284,10 +284,6 @@ public class WeblogManager {
      * @param weblog weblog whose categories are desired
      */
     public List<WeblogCategory> getWeblogCategories(Weblog weblog) {
-        if (weblog == null) {
-            throw new IllegalArgumentException("weblog is null");
-        }
-
         List<WeblogCategory> categories = weblogCategoryDao.findByWeblogOrderByPosition(weblog);
 
         // obtain usage stats

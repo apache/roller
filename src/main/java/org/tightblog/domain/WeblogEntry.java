@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
  */
 @Entity
 @Table(name = "weblog_entry")
-public class WeblogEntry {
+public class WeblogEntry implements WeblogOwned {
 
     public enum PubStatus { DRAFT, PUBLISHED, PENDING, SCHEDULED }
 

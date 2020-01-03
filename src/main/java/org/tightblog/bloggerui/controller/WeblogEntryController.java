@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -82,7 +83,7 @@ import java.util.stream.Stream;
 @RestController
 @EnableConfigurationProperties(DynamicProperties.class)
 @RequestMapping(path = "/tb-ui/authoring/rest/weblogentries")
-public class WeblogEntryController {
+public class  WeblogEntryController {
 
     private static Logger log = LoggerFactory.getLogger(WeblogEntryController.class);
 
@@ -133,93 +134,56 @@ public class WeblogEntryController {
     private static final int ITEMS_PER_PAGE = 30;
 
     @PostMapping(value = "/{weblogId}/page/{page}")
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'POST')")
     public WeblogEntryData getWeblogEntries(@PathVariable String weblogId, @PathVariable int page,
-                                            @RequestBody WeblogEntrySearchCriteria criteria, Principal principal,
-                                            HttpServletResponse response) {
+                                            @RequestBody WeblogEntrySearchCriteria criteria, Principal p) {
 
-        Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-        if (weblog != null && userManager.checkWeblogRole(principal.getName(), weblog, WeblogRole.POST)) {
+        Weblog weblog = weblogDao.getOne(weblogId);
 
-            WeblogEntryData data = new WeblogEntryData();
+        criteria.setWeblog(weblog);
+        criteria.setOffset(page * ITEMS_PER_PAGE);
+        criteria.setMaxResults(ITEMS_PER_PAGE + 1);
+        criteria.setCalculatePermalinks(true);
+        List<WeblogEntry> rawEntries = weblogEntryManager.getWeblogEntries(criteria);
 
-            criteria.setWeblog(weblog);
-            criteria.setOffset(page * ITEMS_PER_PAGE);
-            criteria.setMaxResults(ITEMS_PER_PAGE + 1);
-            criteria.setCalculatePermalinks(true);
-            List<WeblogEntry> rawEntries = weblogEntryManager.getWeblogEntries(criteria);
-            data.getEntries().addAll(rawEntries.stream()
-                    .peek(re -> re.setWeblog(null))
-                    .peek(re -> re.getCategory().setWeblog(null))
-                    .collect(Collectors.toList()));
+        WeblogEntryData data = new WeblogEntryData();
+        data.getEntries().addAll(rawEntries.stream()
+                .peek(re -> re.setWeblog(null))
+                .peek(re -> re.getCategory().setWeblog(null))
+                .collect(Collectors.toList()));
 
-            if (rawEntries.size() > ITEMS_PER_PAGE) {
-                data.getEntries().remove(data.getEntries().size() - 1);
-                data.setHasMore(true);
-            }
-
-            response.setStatus(HttpServletResponse.SC_OK);
-            return data;
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return null;
+        if (rawEntries.size() > ITEMS_PER_PAGE) {
+            data.getEntries().remove(data.getEntries().size() - 1);
+            data.setHasMore(true);
         }
+
+        return data;
     }
 
     @GetMapping(value = "/{weblogId}/searchfields")
-    public WeblogEntrySearchFields getWeblogEntrySearchFields(@PathVariable String weblogId, Principal principal,
-                                                              HttpServletResponse response, Locale locale) {
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'POST')")
+    public WeblogEntrySearchFields getWeblogEntrySearchFields(@PathVariable String weblogId, Principal p, Locale locale) {
 
-        // Get user permissions and locale
-        User user = userDao.findEnabledByUserName(principal.getName());
-        Weblog weblog = weblogDao.findById(weblogId).orElse(null);
+        Weblog weblog = weblogDao.getOne(weblogId);
 
-        if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.POST)) {
-            WeblogEntrySearchFields fields = new WeblogEntrySearchFields();
+        // categories
+        WeblogEntrySearchFields fields = new WeblogEntrySearchFields();
+        fields.getCategories().put("", "(Any)");
+        weblog.getWeblogCategories().forEach(cat -> fields.getCategories().put(cat.getName(), cat.getName()));
 
-            // categories
-            fields.getCategories().put("", "(Any)");
-            weblog.getWeblogCategories().forEach(cat -> fields.getCategories().put(cat.getName(), cat.getName()));
+        // sort by options
+        fields.getSortByOptions().put(WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME.name(),
+                messages.getMessage("entries.label.pubTime", null, locale));
+        fields.getSortByOptions().put(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.name(),
+                messages.getMessage("entries.label.updateTime", null, locale));
 
-            // sort by options
-            fields.getSortByOptions().put(WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME.name(),
-                    messages.getMessage("entries.label.pubTime", null, locale));
-            fields.getSortByOptions().put(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME.name(),
-                    messages.getMessage("entries.label.updateTime", null, locale));
-
-            // status options
-            fields.getStatusOptions().put("", messages.getMessage("entries.label.allEntries", null, locale));
-            fields.getStatusOptions().put("DRAFT", messages.getMessage("entries.label.draftOnly", null, locale));
-            fields.getStatusOptions().put("PUBLISHED", messages.getMessage("entries.label.publishedOnly", null, locale));
-            fields.getStatusOptions().put("PENDING", messages.getMessage("entries.label.pendingOnly", null, locale));
-            fields.getStatusOptions().put("SCHEDULED", messages.getMessage("entries.label.scheduledOnly", null, locale));
-            return fields;
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return null;
-        }
-
-    }
-
-    @DeleteMapping(value = "/{id}")
-    public void deleteWeblogEntry(@PathVariable String id, Principal p, HttpServletResponse response) {
-        log.info("Call to remove entry {}", id);
-        WeblogEntry itemToRemove = weblogEntryDao.findByIdOrNull(id);
-        if (itemToRemove != null) {
-            Weblog weblog = itemToRemove.getWeblog();
-            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
-                // remove from search index
-                if (itemToRemove.isPublished()) {
-                    luceneIndexer.updateIndex(itemToRemove, true);
-                }
-                weblogEntryManager.removeWeblogEntry(itemToRemove);
-                dp.updateLastSitewideChange();
-                response.setStatus(HttpServletResponse.SC_OK);
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            }
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
+        // status options
+        fields.getStatusOptions().put("", messages.getMessage("entries.label.allEntries", null, locale));
+        fields.getStatusOptions().put("DRAFT", messages.getMessage("entries.label.draftOnly", null, locale));
+        fields.getStatusOptions().put("PUBLISHED", messages.getMessage("entries.label.publishedOnly", null, locale));
+        fields.getStatusOptions().put("PENDING", messages.getMessage("entries.label.pendingOnly", null, locale));
+        fields.getStatusOptions().put("SCHEDULED", messages.getMessage("entries.label.scheduledOnly", null, locale));
+        return fields;
     }
 
     @GetMapping(value = "/{id}/tagdata")
@@ -264,70 +228,57 @@ public class WeblogEntryController {
     }
 
     @GetMapping(value = "/{id}")
-    public WeblogEntry getWeblogEntry(@PathVariable String id, Principal p, HttpServletResponse response) {
-        WeblogEntry entry = weblogEntryDao.findByIdOrNull(id);
-        if (entry != null) {
-            Weblog weblog = entry.getWeblog();
-            if (userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.EDIT_DRAFT)) {
-                entry.setCommentsUrl(urlService.getCommentManagementURL(weblog.getId(), entry.getId()));
-                entry.setPermalink(urlService.getWeblogEntryURL(entry));
-                entry.setPreviewUrl(urlService.getWeblogEntryDraftPreviewURL(entry));
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.WeblogEntry), #id, 'EDIT_DRAFT')")
+    public WeblogEntry getWeblogEntry(@PathVariable String id, Principal p) {
 
-                if (entry.getPubTime() != null) {
-                    log.debug("entry pubtime is {}", entry.getPubTime());
-                    ZonedDateTime zdt = entry.getPubTime().atZone(entry.getWeblog().getZoneId());
-                    entry.setHours(zdt.getHour());
-                    entry.setMinutes(zdt.getMinute());
-                    entry.setCreator(null);
-                    entry.setDateString(pubDateFormat.format(zdt.toLocalDate()));
-                }
+        WeblogEntry entry = weblogEntryDao.getOne(id);
+        Weblog weblog = entry.getWeblog();
+        entry.setCommentsUrl(urlService.getCommentManagementURL(weblog.getId(), entry.getId()));
+        entry.setPermalink(urlService.getWeblogEntryURL(entry));
+        entry.setPreviewUrl(urlService.getWeblogEntryDraftPreviewURL(entry));
 
-                response.setStatus(HttpServletResponse.SC_OK);
-                return entry;
-            } else {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            }
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        if (entry.getPubTime() != null) {
+            log.debug("entry pubtime is {}", entry.getPubTime());
+            ZonedDateTime zdt = entry.getPubTime().atZone(entry.getWeblog().getZoneId());
+            entry.setHours(zdt.getHour());
+            entry.setMinutes(zdt.getMinute());
+            entry.setCreator(null);
+            entry.setDateString(pubDateFormat.format(zdt.toLocalDate()));
         }
-        return null;
+
+        return entry;
     }
 
     @GetMapping(value = "/{weblogId}/entryeditmetadata")
-    public EntryEditMetadata getEntryEditMetadata(@PathVariable String weblogId, Principal principal,
-                                                  Locale locale, HttpServletResponse response) {
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'EDIT_DRAFT')")
+    public EntryEditMetadata getEntryEditMetadata(@PathVariable String weblogId, Principal p, Locale locale) {
 
         // Get user permissions and locale
-        User user = userDao.findEnabledByUserName(principal.getName());
-        Weblog weblog = weblogDao.findById(weblogId).orElse(null);
+        User user = userDao.findEnabledByUserName(p.getName());
+        Weblog weblog = weblogDao.getOne(weblogId);
 
-        if (weblog != null && userManager.checkWeblogRole(user, weblog, WeblogRole.EDIT_DRAFT)) {
-            EntryEditMetadata fields = new EntryEditMetadata();
+        EntryEditMetadata fields = new EntryEditMetadata();
 
-            // categories
-            weblog.getWeblogCategories().forEach(cat -> fields.getCategories().put(cat.getId(), cat.getName()));
+        // categories
+        weblog.getWeblogCategories().forEach(cat -> fields.getCategories().put(cat.getId(), cat.getName()));
 
-            fields.setAuthor(userManager.checkWeblogRole(user, weblog, WeblogRole.POST));
-            fields.setCommentingEnabled(!WebloggerProperties.CommentPolicy.NONE.equals(
-                    webloggerPropertiesDao.findOrNull().getCommentPolicy()) &&
-                    !WebloggerProperties.CommentPolicy.NONE.equals(weblog.getAllowComments()));
-            fields.setDefaultCommentDays(weblog.getDefaultCommentDays());
-            fields.setDefaultEditFormat(weblog.getEditFormat());
-            fields.setTimezone(weblog.getTimeZone());
+        fields.setAuthor(userManager.checkWeblogRole(user, weblog, WeblogRole.POST));
+        fields.setCommentingEnabled(!WebloggerProperties.CommentPolicy.NONE.equals(
+                webloggerPropertiesDao.findOrNull().getCommentPolicy()) &&
+                !WebloggerProperties.CommentPolicy.NONE.equals(weblog.getAllowComments()));
+        fields.setDefaultCommentDays(weblog.getDefaultCommentDays());
+        fields.setDefaultEditFormat(weblog.getEditFormat());
+        fields.setTimezone(weblog.getTimeZone());
 
-            Stream.of(Weblog.EditFormat.values()).forEach(fmt -> fields.getEditFormatDescriptions().put(fmt,
-                    messages.getMessage(fmt.getDescriptionKey(), null, locale)));
+        Stream.of(Weblog.EditFormat.values()).forEach(fmt -> fields.getEditFormatDescriptions().put(fmt,
+                messages.getMessage(fmt.getDescriptionKey(), null, locale)));
 
-            // comment day options
-            fields.getCommentDayOptions().putAll(Arrays.stream(WeblogEntry.CommentDayOption.values())
-                    .collect(Utilities.toLinkedHashMap(cdo -> Integer.toString(cdo.getDays()),
-                            cdo -> messages.getMessage(cdo.getDescriptionKey(), null, locale))));
+        // comment day options
+        fields.getCommentDayOptions().putAll(Arrays.stream(WeblogEntry.CommentDayOption.values())
+                .collect(Utilities.toLinkedHashMap(cdo -> Integer.toString(cdo.getDays()),
+                        cdo -> messages.getMessage(cdo.getDescriptionKey(), null, locale))));
 
-            return fields;
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return null;
-        }
+        return fields;
     }
 
     // publish
@@ -471,5 +422,19 @@ public class WeblogEntryController {
             }
         }
         return pubtime;
+    }
+
+    @DeleteMapping(value = "/{id}")
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.WeblogEntry), #id, 'POST')")
+    public void deleteWeblogEntry(@PathVariable String id, Principal p) {
+        log.info("Call to remove entry {}", id);
+        WeblogEntry itemToRemove = weblogEntryDao.getOne(id);
+
+        // remove from search index
+        if (itemToRemove.isPublished()) {
+            luceneIndexer.updateIndex(itemToRemove, true);
+        }
+        weblogEntryManager.removeWeblogEntry(itemToRemove);
+        dp.updateLastSitewideChange();
     }
 }

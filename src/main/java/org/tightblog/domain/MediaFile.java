@@ -20,6 +20,7 @@
  */
 package org.tightblog.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.validation.constraints.NotBlank;
@@ -46,7 +47,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "media_file")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MediaFile implements Comparable<MediaFile> {
+public class MediaFile implements Comparable<MediaFile>, WeblogOwned {
 
     public static final MediaType THUMBNAIL_CONTENT_TYPE = MediaType.IMAGE_PNG;
     public static final int MAX_THUMBNAIL_WIDTH = 120;
@@ -336,5 +337,11 @@ public class MediaFile implements Comparable<MediaFile> {
     @Override
     public int compareTo(MediaFile o) {
         return COMPARATOR.compare(this, o);
+    }
+
+    @Override
+    @JsonIgnore
+    public Weblog getWeblog() {
+        return directory.getWeblog();
     }
 }

@@ -36,7 +36,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "blogroll_link")
-public class WeblogBookmark implements Comparable<WeblogBookmark> {
+public class WeblogBookmark implements Comparable<WeblogBookmark>, WeblogOwned {
 
     private String id = Utilities.generateUUID();
     private int hashCode;
