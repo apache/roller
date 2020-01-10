@@ -7,7 +7,7 @@ get team approval for simplifications I felt vital for the long-term growth of t
 <a href="https://github.com/gmazza/tightblog/releases">Release 3.7</a> is available.
 
 Screen shots for the TightBlog UI are [here](https://github.com/gmazza/tightblog/wiki/Screenshots), the twelve-table database model is
-[here](https://github.com/gmazza/tightblog/blob/master/app/src/main/resources/dbscripts/createdb.vm), see also [my blog](https://glenmazza.net/blog/) for an example
+[here](https://github.com/gmazza/tightblog/blob/master/etc/sqlgen/src/main/resources/createdb.vm), see also [my blog](https://glenmazza.net/blog/) for an example
 of a TightBlog-powered blog.  TightBlog ships with three blog themes, for which bloggers may use directly, modify them per-blog, or create their own themes from scratch.
 
 The table below shows the streamlining TightBlog has gone through in its first three releases since forking.  Eliminating
@@ -44,6 +44,8 @@ Some changes and new functionality added to TightBlog post-fork:
 * Login Multifactor Authentication (MFA) with smartphone authenticator support added (Admin setting available to disable if desired).
 * Much improved database and generated webpage caching and, for the latter, improved cache statistics gathering.
 * A "search.enabled" setting has been added to static configuration allowing for shutting off the Lucene indexer used for blog searching, useful in saving processing/space when using third party indexing tools like Google Custom Search instead.
+* An <a href="https://github.com/gmazza/tightblog/wiki/Embedding-GitHub-Source-in-blog-entries">endpoint</a> is provided for embedding GitHub code segments within blog entries, allowing you to blog code tutorials without needing to duplicate project code within the article.
+
 
 To obtain the source code:
 * 3.x branch (current): git clone git@github.com:gmazza/tightblog.git
