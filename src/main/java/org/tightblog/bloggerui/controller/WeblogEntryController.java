@@ -31,6 +31,7 @@ import org.tightblog.bloggerui.model.Violation;
 import org.tightblog.bloggerui.model.WeblogEntryData;
 import org.tightblog.bloggerui.model.WeblogEntrySaveResponse;
 import org.tightblog.bloggerui.model.WeblogEntrySearchFields;
+import org.tightblog.dao.WeblogEntryCommentDao;
 import org.tightblog.service.EmailService;
 import org.tightblog.service.URLService;
 import org.tightblog.service.UserManager;
@@ -64,7 +65,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.time.Instant;
@@ -83,7 +83,7 @@ import java.util.stream.Stream;
 @RestController
 @EnableConfigurationProperties(DynamicProperties.class)
 @RequestMapping(path = "/tb-ui/authoring/rest/weblogentries")
-public class  WeblogEntryController {
+public class WeblogEntryController {
 
     private static Logger log = LoggerFactory.getLogger(WeblogEntryController.class);
 
@@ -101,6 +101,7 @@ public class  WeblogEntryController {
     private EmailService emailService;
     private MessageSource messages;
     private WebloggerPropertiesDao webloggerPropertiesDao;
+    private WeblogEntryCommentDao weblogEntryCommentDao;
     private DynamicProperties dp;
 
     // Max Tag options to display for autocomplete
@@ -113,6 +114,7 @@ public class  WeblogEntryController {
                                  URLService urlService, EmailService emailService, MessageSource messages,
                                  WebloggerPropertiesDao webloggerPropertiesDao,
                                  WeblogEntryDao weblogEntryDao, DynamicProperties dp,
+                                 WeblogEntryCommentDao weblogEntryCommentDao,
                                  @Value("${max.autocomplete.tags:20}") int maxAutocompleteTags) {
         this.weblogDao = weblogDao;
         this.weblogEntryDao = weblogEntryDao;
@@ -127,15 +129,39 @@ public class  WeblogEntryController {
         this.emailService = emailService;
         this.messages = messages;
         this.dp = dp;
+        this.weblogEntryCommentDao = weblogEntryCommentDao;
         this.maxAutocompleteTags = maxAutocompleteTags;
     }
 
     // number of entries to show per page
     private static final int ITEMS_PER_PAGE = 30;
 
+    @GetMapping(value = "/{id}")
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.WeblogEntry), #id, 'EDIT_DRAFT')")
+    public WeblogEntry getWeblogEntry(@PathVariable String id, Principal p) {
+
+        WeblogEntry entry = weblogEntryDao.getOne(id);
+        Weblog weblog = entry.getWeblog();
+        entry.setWeblogEntryCommentDao(weblogEntryCommentDao);
+        entry.setCommentsUrl(urlService.getCommentManagementURL(weblog.getId(), entry.getId()));
+        entry.setPermalink(urlService.getWeblogEntryURL(entry));
+        entry.setPreviewUrl(urlService.getWeblogEntryDraftPreviewURL(entry));
+
+        if (entry.getPubTime() != null) {
+            log.debug("entry pubtime is {}", entry.getPubTime());
+            ZonedDateTime zdt = entry.getPubTime().atZone(entry.getWeblog().getZoneId());
+            entry.setHours(zdt.getHour());
+            entry.setMinutes(zdt.getMinute());
+            entry.setCreator(null);
+            entry.setDateString(pubDateFormat.format(zdt.toLocalDate()));
+        }
+
+        return entry;
+    }
+
     @PostMapping(value = "/{weblogId}/page/{page}")
     @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'POST')")
-    public WeblogEntryData getWeblogEntries(@PathVariable String weblogId, @PathVariable int page,
+    public WeblogEntryData getWeblogEntriesExternal(@PathVariable String weblogId, @PathVariable int page,
                                             @RequestBody WeblogEntrySearchCriteria criteria, Principal p) {
 
         Weblog weblog = weblogDao.getOne(weblogId);
@@ -158,6 +184,28 @@ public class  WeblogEntryController {
         }
 
         return data;
+    }
+
+    @GetMapping(value = "/{weblogId}/recententries/{pubStatus}")
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'EDIT_DRAFT')")
+    public List<WeblogEntry> getRecentEntries(@PathVariable String weblogId, @PathVariable PubStatus pubStatus,
+                                              Principal p) {
+
+        Weblog weblog = weblogDao.getOne(weblogId);
+        boolean needsPostRole = !(pubStatus == PubStatus.DRAFT || pubStatus == PubStatus.PENDING);
+
+        List<WeblogEntry> entries = new ArrayList<>();
+        if (!needsPostRole || userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.POST)) {
+            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+            wesc.setWeblog(weblog);
+            wesc.setMaxResults(20);
+            wesc.setStatus(pubStatus);
+
+            List<WeblogEntry> fullEntries = weblogEntryManager.getWeblogEntries(wesc);
+            entries.addAll(fullEntries.stream().map(e -> new WeblogEntry(e.getTitle(),
+                    urlService.getEntryEditURL(e))).collect(Collectors.toList()));
+        }
+        return entries;
     }
 
     @GetMapping(value = "/{weblogId}/searchfields")
@@ -198,57 +246,6 @@ public class  WeblogEntryController {
         return wtd;
     }
 
-    @GetMapping(value = "/{weblogId}/recententries/{pubStatus}")
-    private List<WeblogEntry> getRecentEntries(@PathVariable String weblogId,
-                                                         @PathVariable WeblogEntry.PubStatus pubStatus,
-                                               Principal p, HttpServletResponse response) {
-
-        Weblog weblog = weblogDao.findById(weblogId).orElse(null);
-        WeblogRole minimumRole = (pubStatus == PubStatus.DRAFT || pubStatus == PubStatus.PENDING) ?
-                WeblogRole.EDIT_DRAFT : WeblogRole.POST;
-        if (userManager.checkWeblogRole(p.getName(), weblog, minimumRole)) {
-            WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-            wesc.setWeblog(weblog);
-            wesc.setMaxResults(20);
-            wesc.setStatus(pubStatus);
-            List<WeblogEntry> entries = weblogEntryManager.getWeblogEntries(wesc);
-            List<WeblogEntry> recentEntries = entries.stream().map(e -> new WeblogEntry(e.getTitle(),
-                    urlService.getEntryEditURL(e))).collect(Collectors.toList());
-            response.setStatus(HttpServletResponse.SC_OK);
-            return recentEntries;
-        } else if (WeblogRole.POST.equals(minimumRole) &&
-                userManager.checkWeblogRole(p.getName(), weblog, WeblogRole.EDIT_DRAFT)) {
-            // contributors get empty array for certain pub statuses
-            response.setStatus(HttpServletResponse.SC_OK);
-            return new ArrayList<>();
-        } else {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return null;
-        }
-    }
-
-    @GetMapping(value = "/{id}")
-    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.WeblogEntry), #id, 'EDIT_DRAFT')")
-    public WeblogEntry getWeblogEntry(@PathVariable String id, Principal p) {
-
-        WeblogEntry entry = weblogEntryDao.getOne(id);
-        Weblog weblog = entry.getWeblog();
-        entry.setCommentsUrl(urlService.getCommentManagementURL(weblog.getId(), entry.getId()));
-        entry.setPermalink(urlService.getWeblogEntryURL(entry));
-        entry.setPreviewUrl(urlService.getWeblogEntryDraftPreviewURL(entry));
-
-        if (entry.getPubTime() != null) {
-            log.debug("entry pubtime is {}", entry.getPubTime());
-            ZonedDateTime zdt = entry.getPubTime().atZone(entry.getWeblog().getZoneId());
-            entry.setHours(zdt.getHour());
-            entry.setMinutes(zdt.getMinute());
-            entry.setCreator(null);
-            entry.setDateString(pubDateFormat.format(zdt.toLocalDate()));
-        }
-
-        return entry;
-    }
-
     @GetMapping(value = "/{weblogId}/entryeditmetadata")
     @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'EDIT_DRAFT')")
     public EntryEditMetadata getEntryEditMetadata(@PathVariable String weblogId, Principal p, Locale locale) {
@@ -285,7 +282,7 @@ public class  WeblogEntryController {
     // save
     // submit for review
     @PostMapping(value = "/{weblogId}/entries")
-    public ResponseEntity postEntry(@PathVariable String weblogId, @Valid @RequestBody WeblogEntry entryData,
+    public ResponseEntity<?> postEntry(@PathVariable String weblogId, @Valid @RequestBody WeblogEntry entryData,
                                        Locale locale, Principal p) {
 
         boolean createNew = false;

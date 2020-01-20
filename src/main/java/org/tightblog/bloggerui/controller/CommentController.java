@@ -107,7 +107,7 @@ public class CommentController {
     }
 
     @PostMapping(value = "/{weblogId}/page/{page}")
-    @PreAuthorize("@securityService.hasAccess(#p.name, #weblogId, T(org.tightblog.domain.Weblog), #p.name, 'POST')")
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'POST')")
     public CommentData getWeblogComments(@PathVariable String weblogId, @PathVariable int page,
                                          @RequestParam(required = false) String entryId,
                                          @RequestBody CommentSearchCriteria criteria, Principal p) {

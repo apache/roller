@@ -133,12 +133,12 @@ public class WeblogController {
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
     @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #id, 'OWNER')")
-    public ResponseEntity updateWeblog(@PathVariable String id, @Valid @RequestBody Weblog newData, Principal p) {
+    public ResponseEntity<Weblog> updateWeblog(@PathVariable String id, @Valid @RequestBody Weblog newData, Principal p) {
         Weblog weblog = weblogDao.getOne(id);
         return saveWeblog(weblog, newData, false);
     }
 
-    private ResponseEntity saveWeblog(Weblog weblog, Weblog newData, boolean newWeblog) {
+    private ResponseEntity<Weblog> saveWeblog(Weblog weblog, Weblog newData, boolean newWeblog) {
         if (weblog != null) {
 
             if (newData.getAnalyticsCode() != null) {
@@ -187,7 +187,7 @@ public class WeblogController {
 
     @DeleteMapping(value = "/tb-ui/authoring/rest/weblog/{id}")
     @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #id, 'OWNER')")
-    public ResponseEntity deleteWeblog(@PathVariable String id, Principal p) {
+    public ResponseEntity<String> deleteWeblog(@PathVariable String id, Principal p) {
         Weblog weblog = weblogDao.getOne(id);
         weblogManager.removeWeblog(weblog);
         return ResponseEntity.noContent().build();

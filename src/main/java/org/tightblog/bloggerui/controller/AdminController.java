@@ -98,7 +98,7 @@ public class AdminController {
     }
 
     @PostMapping(value = "/cache/{cacheName}/clear")
-    public ResponseEntity emptyOneCache(@PathVariable String cacheName, Locale locale) {
+    public ResponseEntity<String> emptyOneCache(@PathVariable String cacheName, Locale locale) {
         Optional<LazyExpiringCache> maybeCache = cacheSet.stream()
                 .filter(c -> c.getCacheHandlerId().equalsIgnoreCase(cacheName)).findFirst();
         maybeCache.ifPresent(LazyExpiringCache::invalidateAll);
@@ -107,7 +107,7 @@ public class AdminController {
     }
 
     @PostMapping(value = "/resethitcount")
-    public ResponseEntity resetHitCount(Locale locale) {
+    public ResponseEntity<String> resetHitCount(Locale locale) {
         weblogDao.resetDailyHitCounts();
         log.info("daily hit counts manually reset by administrator");
         return SuccessResponse.textMessage(
@@ -125,7 +125,7 @@ public class AdminController {
     }
 
     @PostMapping(value = "/weblog/{handle}/rebuildindex")
-    public ResponseEntity rebuildIndex(@PathVariable String handle, Locale locale) {
+    public ResponseEntity<? extends Object> rebuildIndex(@PathVariable String handle, Locale locale) {
         Weblog weblog = weblogDao.findByHandle(handle);
         if (weblog != null) {
             luceneIndexer.updateIndex(weblog, false);
@@ -143,7 +143,7 @@ public class AdminController {
     }
 
     @PostMapping(value = "/webloggerproperties")
-    public ResponseEntity updateProperties(@Valid @RequestBody WebloggerProperties properties, Locale locale) {
+    public ResponseEntity<String> updateProperties(@Valid @RequestBody WebloggerProperties properties, Locale locale) {
         webloggerPropertiesDao.saveAndFlush(properties);
         commentValidator.refreshGlobalBlacklist();
         return SuccessResponse.textMessage(messages.getMessage("generic.changes.saved", null, locale));

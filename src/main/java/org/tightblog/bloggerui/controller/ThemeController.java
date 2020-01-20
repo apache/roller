@@ -51,7 +51,7 @@ public class ThemeController {
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/switchtheme/{newThemeId}")
     @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'OWNER')")
-    public ResponseEntity switchTheme(@PathVariable String weblogId, @PathVariable String newThemeId, Principal p,
+    public ResponseEntity<?> switchTheme(@PathVariable String weblogId, @PathVariable String newThemeId, Principal p,
                                       Locale locale) {
 
         Weblog weblog = weblogDao.getOne(weblogId);

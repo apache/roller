@@ -15,8 +15,6 @@
  */
 package org.tightblog.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration;
@@ -44,8 +42,6 @@ import java.util.Map;
 )
 @EnableTransactionManagement
 public class DBConfig extends JpaBaseConfiguration {
-
-    private static Logger log = LoggerFactory.getLogger(DBConfig.class);
 
     @Autowired
     private DataSource dataSource;

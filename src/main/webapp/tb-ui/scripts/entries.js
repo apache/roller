@@ -76,7 +76,7 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         this.searchParams.endDate = this.dateToSeconds(this.searchParams.endDateString, true);
 
         $http.post(this.urlRoot + weblogId + '/page/' + this.pageNum, JSON.stringify(this.searchParams)).then(
-        function(response) {
+          function(response) {
             self.entriesData = response.data;
           },
           self.commonErrorResponse

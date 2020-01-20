@@ -47,40 +47,39 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ValidationErrorResponse handleException(MethodArgumentNotValidException e) {
-        ValidationErrorResponse error = new ValidationErrorResponse();
-        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
-            error.getErrors().add(
-                    new Violation(fieldError.getField(), fieldError.getDefaultMessage()));
+    public ValidationErrorResponse handleException(final MethodArgumentNotValidException e) {
+        final ValidationErrorResponse error = new ValidationErrorResponse();
+        for (final FieldError fieldError : e.getBindingResult().getFieldErrors()) {
+            error.getErrors().add(new Violation(fieldError.getField(), fieldError.getDefaultMessage()));
         }
         return error;
     }
 
-    // for path and query variables: https://reflectoring.io/bean-validation-with-spring-boot/
+    // for path and query variables:
+    // https://reflectoring.io/bean-validation-with-spring-boot/
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ValidationErrorResponse handleException(ConstraintViolationException e) {
-        ValidationErrorResponse error = new ValidationErrorResponse();
-        for (ConstraintViolation violation : e.getConstraintViolations()) {
-            error.getErrors().add(
-                    new Violation(violation.getPropertyPath().toString(), violation.getMessage()));
+    public ValidationErrorResponse handleException(final ConstraintViolationException e) {
+        final ValidationErrorResponse error = new ValidationErrorResponse();
+        for (final ConstraintViolation<?> violation : e.getConstraintViolations()) {
+            error.getErrors().add(new Violation(violation.getPropertyPath().toString(), violation.getMessage()));
         }
         return error;
     }
 
     // for system errors
     @ExceptionHandler(value = Exception.class)
-    // avoiding use of ResponseStatus as it activates Tomcat HTML page (see ResponseStatus JavaDoc)
-    public ResponseEntity<ValidationErrorResponse> handleException(Exception ex, Locale locale) {
-        UUID errorUUID = UUID.randomUUID();
+    // avoiding use of ResponseStatus as it activates Tomcat HTML page (see
+    // ResponseStatus JavaDoc)
+    public ResponseEntity<ValidationErrorResponse> handleException(final Exception ex, final Locale locale) {
+        final UUID errorUUID = UUID.randomUUID();
         log.error("Internal Server Error (ID: {}) processing REST call", errorUUID, ex);
 
-        ValidationErrorResponse error = new ValidationErrorResponse();
+        final ValidationErrorResponse error = new ValidationErrorResponse();
         error.getErrors().add(new Violation(messages.getMessage(
                 "generic.error.check.logs", new Object[] {errorUUID}, locale)));
 
         return ResponseEntity.status(500).body(error);
     }
-
 }

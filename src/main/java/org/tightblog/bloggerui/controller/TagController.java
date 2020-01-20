@@ -58,7 +58,7 @@ public class TagController {
     private static final int ITEMS_PER_PAGE = 30;
 
     @GetMapping(value = "/{weblogId}/page/{page}")
-    @PreAuthorize("@securityService.hasAccess(#p.name, #weblogId, T(org.tightblog.domain.Weblog), #p.name, 'POST')")
+    @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'POST')")
     public WeblogTagSummaryData getTags(@PathVariable String weblogId, @PathVariable int page, Principal p) {
 
         Weblog weblog = weblogDao.getOne(weblogId);

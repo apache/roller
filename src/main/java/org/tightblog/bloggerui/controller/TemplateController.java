@@ -139,7 +139,7 @@ public class TemplateController {
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/templates", consumes = { "application/json" })
     @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'OWNER')")
-    public ResponseEntity postTemplate(@PathVariable String weblogId, @Valid @RequestBody WeblogTemplate templateData,
+    public ResponseEntity<?> postTemplate(@PathVariable String weblogId, @Valid @RequestBody WeblogTemplate templateData,
                                       Principal p, Locale locale) {
 
         Weblog weblog = weblogDao.getOne(weblogId);

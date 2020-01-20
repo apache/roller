@@ -230,7 +230,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/tb-ui/register/rest/registeruser")
-    public ResponseEntity registerUser(@Valid @RequestBody UserData newData, Locale locale, HttpServletResponse response) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserData newData, Locale locale, HttpServletResponse response) {
         List<Violation> errors = validateUser(null, newData, true, locale);
         if (errors.size() > 0) {
             return ValidationErrorResponse.badRequest(errors);
@@ -267,7 +267,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/userprofile/{id}")
-    public ResponseEntity updateUserProfile(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
+    public ResponseEntity<?> updateUserProfile(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
                                             Locale locale, HttpServletResponse response) {
         User user = userDao.findByIdOrNull(id);
         User authenticatedUser = userDao.findEnabledByUserName(p.getName());
@@ -284,7 +284,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/tb-ui/admin/rest/useradmin/user/{id}")
-    public ResponseEntity updateUser(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
+    public ResponseEntity<?> updateUser(@PathVariable String id, @Valid @RequestBody UserData newData, Principal p,
                                      Locale locale, HttpServletResponse response) {
         User user = userDao.findByIdOrNull(id);
         List<Violation> errors = validateUser(user, newData, false, locale);
@@ -302,7 +302,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/user/{userId}/role/{role}/attach")
-    public ResponseEntity addUserToWeblog(@PathVariable String weblogId, @PathVariable String userId,
+    public ResponseEntity<String> addUserToWeblog(@PathVariable String weblogId, @PathVariable String userId,
                                           @PathVariable WeblogRole role, Principal p, Locale locale) {
 
         User requestor = userDao.findEnabledByUserName(p.getName());
@@ -319,7 +319,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/memberupdate")
-    public ResponseEntity updateWeblogMembership(@PathVariable String weblogId, Principal p, Locale locale,
+    public ResponseEntity<?> updateWeblogMembership(@PathVariable String weblogId, Principal p, Locale locale,
                                                  @RequestBody List<UserWeblogRole> uwrs) {
 
         Weblog weblog = weblogDao.findById(weblogId).orElse(null);

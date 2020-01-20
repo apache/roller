@@ -117,7 +117,7 @@ public class MediaFileController {
     }
 
     @PostMapping(value = "/tb-ui/authoring/rest/mediafiles", consumes = {"multipart/form-data"})
-    public ResponseEntity postMediaFile(Principal p, @Valid @RequestPart("mediaFileData") MediaFile mediaFileData,
+    public ResponseEntity<?> postMediaFile(Principal p, @Valid @RequestPart("mediaFileData") MediaFile mediaFileData,
                                         Locale locale,
                                         @RequestPart(name = "uploadFile", required = false) MultipartFile uploadedFile)
             throws IOException {
@@ -190,7 +190,7 @@ public class MediaFileController {
 
     @PutMapping(value = "/tb-ui/authoring/rest/weblog/{weblogId}/mediadirectories")
     @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'OWNER')")
-    public ResponseEntity addMediaDirectory(@PathVariable String weblogId, @RequestBody TextNode directoryName,
+    public ResponseEntity<?> addMediaDirectory(@PathVariable String weblogId, @RequestBody TextNode directoryName,
                                     Principal p, Locale locale) {
         try {
             Weblog weblog = weblogDao.getOne(weblogId);
@@ -203,7 +203,7 @@ public class MediaFileController {
 
     @DeleteMapping(value = "/tb-ui/authoring/rest/mediadirectory/{id}")
     @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.MediaDirectory), #id, 'OWNER')")
-    public ResponseEntity deleteMediaDirectory(@PathVariable String id, Principal p, Locale locale) {
+    public ResponseEntity<String> deleteMediaDirectory(@PathVariable String id, Principal p, Locale locale) {
 
         MediaDirectory itemToRemove = mediaDirectoryDao.getOne(id);
         Weblog weblog = itemToRemove.getWeblog();
@@ -217,7 +217,7 @@ public class MediaFileController {
 
     @PostMapping(value = "/tb-ui/authoring/rest/mediafiles/weblog/{weblogId}")
     @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'OWNER')")
-    public ResponseEntity deleteMediaFiles(@PathVariable String weblogId, @RequestBody List<String> fileIdsToDelete,
+    public ResponseEntity<String> deleteMediaFiles(@PathVariable String weblogId, @RequestBody List<String> fileIdsToDelete,
                                  Principal p, Locale locale) {
 
         if (fileIdsToDelete != null && fileIdsToDelete.size() > 0) {
@@ -238,7 +238,7 @@ public class MediaFileController {
 
     @PostMapping(value = "/tb-ui/authoring/rest/mediafiles/weblog/{weblogId}/todirectory/{directoryId}")
     @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'OWNER')")
-    public ResponseEntity moveMediaFiles(@PathVariable String weblogId, @PathVariable String directoryId,
+    public ResponseEntity<String> moveMediaFiles(@PathVariable String weblogId, @PathVariable String directoryId,
                                @RequestBody List<String> fileIdsToMove, Principal p, Locale locale) {
 
         if (fileIdsToMove != null && fileIdsToMove.size() > 0) {
