@@ -161,7 +161,7 @@ public class WeblogEntryController {
 
     @PostMapping(value = "/{weblogId}/page/{page}")
     @PreAuthorize("@securityService.hasAccess(#p.name, T(org.tightblog.domain.Weblog), #weblogId, 'POST')")
-    public WeblogEntryData getWeblogEntriesExternal(@PathVariable String weblogId, @PathVariable int page,
+    public WeblogEntryData getWeblogEntries(@PathVariable String weblogId, @PathVariable int page,
                                             @RequestBody WeblogEntrySearchCriteria criteria, Principal p) {
 
         Weblog weblog = weblogDao.getOne(weblogId);

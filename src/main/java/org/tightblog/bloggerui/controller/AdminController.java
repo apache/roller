@@ -125,7 +125,7 @@ public class AdminController {
     }
 
     @PostMapping(value = "/weblog/{handle}/rebuildindex")
-    public ResponseEntity<? extends Object> rebuildIndex(@PathVariable String handle, Locale locale) {
+    public ResponseEntity<?> rebuildIndex(@PathVariable String handle, Locale locale) {
         Weblog weblog = weblogDao.findByHandle(handle);
         if (weblog != null) {
             luceneIndexer.updateIndex(weblog, false);
