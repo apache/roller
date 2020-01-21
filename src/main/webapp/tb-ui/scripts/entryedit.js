@@ -99,7 +99,6 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
         this.recentEntries = {};
         this.urlRoot = contextPath + '/tb-ui/authoring/rest/weblogentries/';
         this.entry = { commentCountIncludingUnapproved : 0, category : {} };
-        this.quillEditor = null;
         this.errorObj = {};
 
         this.getRecentEntries = function(entryType) {
@@ -109,16 +108,6 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
               }
             )
         };
-
-        this.initializeQuill = function() {
-            this.quillEditor = new Quill("#editor_quill", {
-              modules: {
-                'toolbar': { container: '#toolbar_quill' },
-                'link-tooltip': true
-              },
-              theme: 'snow'
-            });
-        }
 
         this.loadMetadata = function() {
             $http.get(this.urlRoot + weblogId + '/entryeditmetadata').then(
@@ -130,26 +119,16 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
                     self.entry.commentDays = "" + self.metadata.defaultCommentDays;
                     self.entry.editFormat = self.metadata.defaultEditFormat;
                 }
-                // initialize RTE
-                if ('RICHTEXT' == self.entry.editFormat) {
-                    self.initializeQuill();
-                }
               },
               self.commonErrorResponse
             )
         };
 
         this.insertMediaFile = function(anchorTag) {
-            if ('RICHTEXT' == self.entry.editFormat) {
-                var html = $("#ql-editor-1").html();
-                self.entry.text = html + anchorTag;
-                $("#ql-editor-1").html(self.entry.text);
+            if (self.entry.text) {
+                self.entry.text += anchorTag;
             } else {
-                if (self.entry.text) {
-                    self.entry.text += anchorTag;
-                } else {
-                    self.entry.text = anchorTag;
-                }
+                self.entry.text = anchorTag;
             }
         }
 
@@ -160,14 +139,6 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
                  self.commentCountMsg = $sce.trustAsHtml($interpolate(msg.commentCountTmpl)
                     ({commentCount:self.entry.commentCountIncludingUnapproved}));
                  self.entry.commentDays = "" + self.entry.commentDays;
-
-                 // move into RTE.
-                 if ('RICHTEXT' == self.entry.editFormat) {
-                     if (!self.quillEditor) {
-                         self.initializeQuill();
-                     }
-                     $("#ql-editor-1").html(self.entry.text);
-                 }
               }
             )
         };
@@ -178,12 +149,6 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
 
             oldStatus = self.entry.status;
             self.entry.status = saveType;
-
-            // get text from RTE
-            if ('RICHTEXT' == self.entry.editFormat) {
-                var html = $("#ql-editor-1").html();
-                self.entry.text = html;
-            }
 
             $http.post(self.urlRoot + urlStem, JSON.stringify(self.entry)).then(
               function(response) {

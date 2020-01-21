@@ -28,7 +28,7 @@ public class EntryEditMetadata {
     private boolean commentingEnabled;
     private int defaultCommentDays = -1;
     private Weblog.EditFormat defaultEditFormat;
-    private Map<Weblog.EditFormat, String> editFormatDescriptions = new HashMap<>();
+    private Map<String, String> editFormats;
     private String timezone;
 
     // getters needed for JSON serialization: http://stackoverflow.com/a/35822500
@@ -78,11 +78,11 @@ public class EntryEditMetadata {
         this.defaultEditFormat = defaultEditFormat;
     }
 
-    public Map<Weblog.EditFormat, String> getEditFormatDescriptions() {
-        if (editFormatDescriptions == null) {
-            editFormatDescriptions = new HashMap<>();
+    public Map<String, String> getEditFormats() {
+        if (editFormats == null) {
+            editFormats = new LinkedHashMap<>();
         }
-        return editFormatDescriptions;
+        return editFormats;
     }
 
     public String getTimezone() {

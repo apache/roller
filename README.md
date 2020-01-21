@@ -32,7 +32,7 @@ more streamlined TightBlog is over its predecessor:
 
 Some changes and new functionality added to TightBlog post-fork:
 
-* Bloggers may blog using <a href="http://commonmark.org/">CommonMark</a> in addition to standard HTML and Rich Text Editors.
+* Bloggers may blog using <a href="http://commonmark.org/">CommonMark</a> in addition to pure HTML.
 * Blog entries have an unseen "notes" field to store anything helpful in maintaining the article.
 * There is a new BLOGCREATOR global role separated from the earlier BLOGGER role.  While both roles allow a blogger full administration of his weblog once created, those with the latter role will need to have their blog(s) created first by an administrator.   
 * New Tag management screen for renaming, merging, and deleting tags attached to blog entries, as well as adding a new tag to entries having a given tag.

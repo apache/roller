@@ -267,8 +267,9 @@ public class WeblogEntryController {
         fields.setDefaultEditFormat(weblog.getEditFormat());
         fields.setTimezone(weblog.getTimeZone());
 
-        Stream.of(Weblog.EditFormat.values()).forEach(fmt -> fields.getEditFormatDescriptions().put(fmt,
-                messages.getMessage(fmt.getDescriptionKey(), null, locale)));
+        fields.getEditFormats().putAll(Arrays.stream(Weblog.EditFormat.values())
+                .collect(Utilities.toLinkedHashMap(Weblog.EditFormat::name,
+                        eF -> messages.getMessage(eF.getDescriptionKey(), null, locale))));
 
         // comment day options
         fields.getCommentDayOptions().putAll(Arrays.stream(WeblogEntry.CommentDayOption.values())
@@ -307,7 +308,6 @@ public class WeblogEntryController {
                 entry = new WeblogEntry();
                 entry.setCreator(user);
                 entry.setWeblog(weblog);
-                entry.setEditFormat(entryData.getEditFormat());
                 entryData.setWeblog(weblog);
             }
 
@@ -320,6 +320,7 @@ public class WeblogEntryController {
                 entryData.setStatus(PubStatus.SCHEDULED);
             }
 
+            entry.setEditFormat(entryData.getEditFormat());
             entry.setStatus(entryData.getStatus());
             entry.setTitle(entryData.getTitle());
             entry.setText(entryData.getText());

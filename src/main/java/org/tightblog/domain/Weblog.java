@@ -100,17 +100,13 @@ public class Weblog implements WeblogOwned {
     private String absoluteURL;
 
     public enum EditFormat {
-        HTML("weblogConfig.editFormat.html", true),
-        COMMONMARK("weblogConfig.editFormat.commonMark", true),
-        RICHTEXT("weblogConfig.editFormat.richText", false);
+        HTML("weblogConfig.editFormat.html"),
+        COMMONMARK("weblogConfig.editFormat.commonMark");
 
         private String descriptionKey;
 
-        private boolean usesPlainEditor;
-
-        EditFormat(String descriptionKey, boolean usesPlainEditor) {
+        EditFormat(String descriptionKey) {
             this.descriptionKey = descriptionKey;
-            this.usesPlainEditor = usesPlainEditor;
         }
 
         public String getDescriptionKey() {

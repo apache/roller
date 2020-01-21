@@ -20,13 +20,11 @@
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
 <link rel="stylesheet" media="all" href='<c:url value="/tb-ui/jquery-ui-1.11.4/jquery-ui.min.css"/>' />
-<link rel="stylesheet" href="//cdn.quilljs.com/0.20.1/quill.snow.css">
 
 <script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
 <script src="<c:url value='/tb-ui/jquery-ui-1.11.4/jquery-ui.min.js'/>"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-sanitize.min.js"></script>
-<script src="//cdn.quilljs.com/0.20.1/quill.js"></script>
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
@@ -141,8 +139,10 @@
             <td class="entryEditFormLabel">
                 <label for="title"><fmt:message key="entryEdit.editFormat" /></label>
             </td>
-            <td>
-                <span style="font-weight:bold">{{ctrl.metadata.editFormatDescriptions[ctrl.entry.editFormat]}}</span>
+            <td ng-cloak>
+                <select ng-model="ctrl.entry.editFormat" size="1" required>
+                   <option ng-repeat="(key, value) in ctrl.metadata.editFormats" value="{{key}}">{{value}}</option>
+                </select>
             </td>
         </tr>
 
@@ -163,52 +163,7 @@
             </c:if>
         </h3>
         <div>
-
-            <span ng-show="ctrl.entry.editFormat == 'RICHTEXT'">
-                <div id="toolbar_quill" class="toolbar">
-                    <span class="ql-format-group">
-                        <select title="Font" class="ql-font">
-                            <option value="sans-serif" selected="">Sans Serif</option>
-                            <option value="serif">Serif</option>
-                            <option value="monospace">Monospace</option>
-                        </select>
-                        <select title="Size" class="ql-size">
-                            <option value="10px">Small</option>
-                            <option value="13px" selected="">Normal</option>
-                            <option value="18px">Large</option>
-                            <option value="32px">Huge</option>
-                        </select>
-                    </span>
-                    <span class="ql-format-group">
-                        <span title="Bold" class="ql-format-button ql-bold"></span>
-                        <span class="ql-format-separator"></span>
-                        <span title="Italic" class="ql-format-button ql-italic"></span>
-                        <span class="ql-format-separator"></span>
-                        <span title="Underline" class="ql-format-button ql-underline"></span>
-                        <span class="ql-format-separator"></span>
-                        <span title="Strikethrough" class="ql-format-button ql-strike"></span>
-                    </span>
-                    <span class="ql-format-group">
-                        <span title="List" class="ql-format-button ql-list"></span>
-                        <span class="ql-format-separator"></span>
-                        <span title="Bullet" class="ql-format-button ql-bullet"></span>
-                        <span class="ql-format-separator"></span>
-                        <select title="Text Alignment" class="ql-align">
-                            <option value="left" label="Left" selected=""></option>
-                            <option value="center" label="Center"></option>
-                            <option value="right" label="Right"></option>
-                            <option value="justify" label="Justify"></option>
-                        </select>
-                    </span>
-                    <span class="ql-format-group">
-                        <span title="Link" class="ql-format-button ql-link"></span>
-                    </span>
-                </div>
-                <div id="editor_quill"></div>
-            </span>
-            <span ng-show="ctrl.entry.editFormat != 'RICHTEXT'">
-                <textarea id="edit_content" cols="75" rows="25" style="width:100%" ng-model="ctrl.entry.text" tabindex="5"></textarea>
-            </span>
+            <textarea id="edit_content" cols="75" rows="25" style="width:100%" ng-model="ctrl.entry.text" tabindex="5"></textarea>
         </div>
         <h3><fmt:message key="entryEdit.summary"/><tags:help key="entryEdit.summary.tooltip"/></h3>
         <div>
