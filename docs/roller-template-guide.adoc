@@ -76,7 +76,7 @@ the name of the weblog.
 Note that *$model* is something special. Roller makes a set of objects,
 known as _models_, available to page templates. In the example above, we
 see only the $model object, but here are others. You’ll learn more about
-models in Section 4 and Section 5 provides a complete reference.
+models in Section 5 and Section 6 provides a complete reference.
 
 === The Velocity template language
 
@@ -117,7 +117,7 @@ _#showBookmarkLinksList()_ macro to display it as an HTML _<ul>_ list.
 </html>
 ----
 
-You’ll learn more about macros in Section 4 and Section 7 provides a
+You’ll learn more about macros in Section 5 and Section 8 provides a
 complete reference to the standard Roller macros. If you want more
 information on Velocity, see http://wiki.apache.org/velocity/.
 
@@ -402,16 +402,16 @@ specifically from your Roller weblog. A model object returns data
 objects or collections or data objects. [#anchor-1]##**Model objects**:
 Model objects provide access to data from Roller and specifically from
 your Roller weblog. A model object returns data objects or collections
-or data objects. In Section 6, we’ll describe each model, it’s
+or data objects. In Section 7, we’ll describe each model, it’s
 properties and methods.
 * *Data objects*: Data objects each represent an item of data within
 your Roller weblog, for example there is a _Weblog_ object that
 represents your weblog, _WeblogEntry_ objects which represent individual
 weblog entries and _Bookmark_ objects that represent items in your
-blogroll. In Section 7, we’ll describe each data object, it’s properties
+blogroll. In Section 8, we’ll describe each data object, it’s properties
 and methods.
 * *Macros*. A macro is Velocity routine that generates HTML based on a
-data object or a collection of data objects. In Section 8 we’ll describe
+data object or a collection of data objects. In Section 9 we’ll describe
 each of Roller’s build-in macros.
 
 Let’s discuss how to access data via models and data objects.
@@ -562,7 +562,7 @@ your weblog entries, the weblog entry referenced by the request, the
 category object referenced by the request and the weblog itself.
 
 The diagram below show the objects you can get from the *$model* and the
-collections of objects that you can get from those. See Section 6 for a
+collections of objects that you can get from those. See Section 7 for a
 complete reference to the data objects and their properties.
 
 Now let’s the details of the $model object, starting with properties.
