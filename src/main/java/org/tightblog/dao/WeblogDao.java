@@ -55,6 +55,7 @@ public interface WeblogDao extends JpaRepository<Weblog, String> {
     @Transactional(value = "transactionManager")
     @Modifying
     @Query("UPDATE Weblog w SET w.hitsToday = 0, w.lastModified = CURRENT_TIMESTAMP")
+    @CacheEvict(cacheNames = {"visibleWeblogs"}, allEntries = true)
     void resetDailyHitCounts();
 
     // note due to default proxy advice mode @Cacheable and @CacheEvict annotations are ignored on methods called
