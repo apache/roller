@@ -36,14 +36,14 @@ provide a reference to the objects and macros that you can use in your
 templates.
 
 NOTE: If you have only AUTHOR or LIMITED permissions within a weblog
-then you won’t have access to the Design->Theme or
-Design->Templates pages and you won’t be able to change or
+then you won’t have access to the Design -> Theme or
+Design -> Templates pages and you won’t be able to change or
 customize your theme. You need to have ADMIN permission within a weblog
 to be able to do the things described in this guide.
 
 NOTE: It is possible for a Roller site administrator to disable theme
 customization. So if you do have ADMIN permission in your weblog and you
-still don’t see the Design->Templates page, perhaps your Roller
+still don’t see the Design -> Templates page, perhaps your Roller
 site does not allow customization.
 
 == The Roller template system
@@ -127,9 +127,9 @@ templates.
 
 == Editing and creating page templates
 
-After you’ve used Roller *Design->Themes* page to customize your
+After you’ve used Roller *Design -> Themes* page to customize your
 weblog theme, you can edit and create page templates through the
-*Design->Templates* page. We’ll show you how to do that, but first
+*Design -> Templates* page. We’ll show you how to do that, but first
 you need to understand how the required pages, found in every theme,
 work together to display a weblog.
 
@@ -330,10 +330,10 @@ Before you can customize your theme, you’ve got to get your own copy of
 the theme’s page templates like so:
 
 
-1) *Go to the Design->Theme page.*
+1) *Go to the Design -> Theme page.*
 
 Login to Roller and go to your
-weblog’s *Design->Theme* page and select the 'Custom Theme' option.
+weblog’s *Design -> Theme* page and select the 'Custom Theme' option.
 
 image::customize-theme-1.png[]
 
@@ -352,11 +352,11 @@ image::customize-theme-2.png[]
 
 
 3) *Customize your theme by editing and creating page templates.*
-Go to the Design->Templates page, edit your page templates and add new
+Go to the Design -> Templates page, edit your page templates and add new
 ones as needed – as described in the next section.
 
 And if you get tired of your customized theme, just use the
-*Design->Theme* page to switch back to a shared theme – or pick
+*Design -> Theme* page to switch back to a shared theme – or pick
 another one to customize. Now let’s discuss editing and creating
 templates.
 
@@ -364,7 +364,7 @@ templates.
 
 Once you’ve got the page templates copied into your weblog, you can do
 just about anything you want to your theme. You can use the
-*Design->Templates* page, shown below, to create a new page, delete
+*Design -> Templates* page, shown below, to create a new page, delete
 a page or choose a page to edit.
 
 image::templates.png[]
@@ -381,7 +381,7 @@ name.
 display or just as a reminder to yourself as to the purpose of the page.
 
 For new templates that you add, you’ll be able to edit all of those
-properties using the *Design->Template->Edit Template* page (shown
+properties using the *Design -> Template* page (shown
 below).
 
 image::template-edit.png[]
