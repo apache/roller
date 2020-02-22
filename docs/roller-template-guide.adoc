@@ -329,19 +329,25 @@ you’ll get those automatically. But you can’t customize a shared theme.
 Before you can customize your theme, you’ve got to get your own copy of
 the theme’s page templates like so:
 
-[arabic]
-. *Go to the Preferences->Theme page.* Login to Roller and go to your
+
+1) *Go to the Preferences->Theme page.* Login to Roller and go to your
 weblog’s *Preferences->Themes* page. Shown below.
-. *Pick and save the theme you’d like to customize.* If you want to
+
+image::customize-theme-1.png[]
+image::customize-theme-2.png[]
+
+2) *Pick and save the theme you’d like to customize.* If you want to
 customize your weblog’s current theme, then you can skip this step. If
 you have’t decided which theme to customize, then use the preview
 combo-box to pick the theme that you’d like to use as your starting
 point. Once you’ve picked your theme, click the Save button to save it
 as your current theme.
-. *Click the Customize button.* Click the Customize button to customize
+
+3) *Click the Customize button.* Click the Customize button to customize
 your theme. When you do this, copies of the themes page templates will
 be copied into your weblog so you can edit them.
-. *Customize your theme by editing and creating page templates.* Go to
+
+4) *Customize your theme by editing and creating page templates.* Go to
 the Preferences->Templates page, edit your page templates and add new
 ones as needed – as described in the next section.
 
@@ -356,6 +362,8 @@ Once you’ve got the page templates copied into your weblog, you can do
 just about anything you want to your theme. You can use the
 *Preferences->Templates* page, shown below, to create a new page, delete
 a page or choose a page to edit.
+
+image::templates.png[]
 
 Now might be a good time to describe the _page template properties_
 since you can see them in the table above. The properties are name,
@@ -380,6 +388,8 @@ possible to access via URL.
 For new templates that you add, you’ll be able to edit all of those
 properties using the *Preferences->Template->Edit Template* page (shown
 below).
+
+image::template-edit.png[]
 
 But the rules for _required pages_ are different. The weblog pages named
 Weblog, _day and _css are considered to be required pages. You can
@@ -611,7 +621,7 @@ property as an integer.
 
 === $model
 
-The **$model **object provides you with access to all of the data
+The **$model** object provides you with access to all of the data
 objects that make up your weblog. You can get a pager object to access
 your weblog entries, the weblog entry referenced by the request, the
 category object referenced by the request and the weblog itself.
@@ -619,6 +629,8 @@ category object referenced by the request and the weblog itself.
 The diagram below show the objects you can get from the *$model* and the
 collections of objects that you can get from those. See Section 7 for a
 complete reference to the data objects and their properties.
+
+image::model-object.png[]
 
 Now let’s the details of the $model object, starting with properties.
 
