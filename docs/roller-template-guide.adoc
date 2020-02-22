@@ -371,7 +371,7 @@ image::templates.png[]
 
 Now might be a good time to describe the _page template properties_
 since you can see them in the table above. The properties are name,
-description, link, navbar and hidden. Let’s explain each:
+description. Let’s explain each:
 
 * *Name*: Each template has a name, which you can display in your
 templates. You can also use the _#includeTemplate()_ macro to include
