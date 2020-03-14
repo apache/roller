@@ -42,8 +42,6 @@
 
         </div>
 
-        <%-- <s:text name="userRegister.tip.userName" /> --%>
-
     </s:if>
     <s:else>
         <s:textfield label="%{getText('userSettings.username')}"
@@ -65,7 +63,7 @@
     <s:textfield label="%{getText('userSettings.email')}"
                  tooltip="%{getText('userRegister.tip.email')}"
                  onkeyup="onChange()"
-                 name="bean.emailAddress" size="40" maxlength="40" />
+                 name="bean.emailAddress" size="40" maxlength="255" />
 
     <s:if test="authMethod != 'LDAP'">
 
