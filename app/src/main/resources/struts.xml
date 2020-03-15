@@ -221,6 +221,9 @@
             <param name="pageTitle">userAdmin.title.createNewUser</param>
             <result name="input" type="tiles">.UserEdit</result>
             <result name="success" type="tiles">.UserAdmin</result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">userAdmin</param>
+            </result>
             <allowed-methods>execute,firstSave,save</allowed-methods>
         </action>
 
