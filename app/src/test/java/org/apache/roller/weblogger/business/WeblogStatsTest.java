@@ -48,6 +48,9 @@ public class WeblogStatsTest  {
 
     @BeforeEach
     public void setUp() throws Exception {
+
+        TestUtils.setupWeblogger();
+
         // create weblog with three entries and two comments per entry
         user1 = TestUtils.setupUser("a_commentCountTestUser");
         user2 = TestUtils.setupUser("b_commentCountTestUser");
