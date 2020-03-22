@@ -284,11 +284,6 @@ public class UIController {
         return getBlogOwnerPage(principal, null, weblogId, "templateEdit");
     }
 
-    @RequestMapping(value = "/authoring/mediaFileChooser")
-    public ModelAndView mediaFileChooser(Principal principal, @RequestParam String weblogId) {
-        return getBlogContributorPage(principal, null, weblogId, "mediaFileChooser");
-    }
-
     @RequestMapping(value = "/authoring/mediaFileView")
     public ModelAndView mediaFileView(Principal principal, @RequestParam String weblogId) {
         return getBlogPublisherPage(principal, weblogId, "mediaFileView");

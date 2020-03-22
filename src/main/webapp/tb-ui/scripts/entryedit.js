@@ -6,31 +6,6 @@ function extractLast( term ) {
     return split( term ).pop();
 }
 
-function onClickAddImage(){
-    $("#mediaFileChooser" ).attr('src', mediaFileChooserUrl);
-    $("#insertMediaFileModal").modal('show');
-}
-
-function onSelectMediaFile(name, url, alt, title, anchor, isImage) {
-    $("#insertMediaFileModal").modal('hide');
-    $("#mediaFileChooser").attr('src','about:blank');
-    var anchorTag;
-    if (isImage === true) {
-        anchorTag = (anchor ? '<a href="' + anchor + '">' : '') +
-        '<img src="' + url + '"' +
-        ' alt="' + (alt ? alt : name) + '"' +
-         (title ? ' title="' + title + '"' : '') +
-         '>' +
-        (anchor ? '</a>' : '');
-    } else {
-        anchorTag = '<a href="' + url + '"' +
-         (title ? ' title="' + title + '"' : '') +
-        '>' + (alt ? alt : name) + '</a>';
-    }
-    angular.element('#ngapp-div').scope().ctrl.insertMediaFile(anchorTag);
-    angular.element('#ngapp-div').scope().$apply();
-}
-
 $(function() {
     $( "#accordion" ).accordion({});
 
@@ -123,14 +98,6 @@ tightblogApp.controller('PageController', ['$http', '$interpolate', '$sce',
               self.commonErrorResponse
             )
         };
-
-        this.insertMediaFile = function(anchorTag) {
-            if (self.entry.text) {
-                self.entry.text += anchorTag;
-            } else {
-                self.entry.text = anchorTag;
-            }
-        }
 
         this.getEntry = function() {
             $http.get(this.urlRoot + entryId).then(

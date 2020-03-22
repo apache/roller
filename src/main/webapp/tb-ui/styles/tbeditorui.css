@@ -395,9 +395,6 @@ div.optioner {
     display:inline;
     float:left;
     margin:5px;
-    list-style-type:none;
-    width:140px;
-    height:140px;
     border: 1px solid #ccc;
 }
 
@@ -418,7 +415,7 @@ div.optioner {
 
 .mediaObject {
      width:120px;
-     height:120px;
+     height:110px;
 }
 .mediaObjectInfo {
     clear:left;

@@ -92,8 +92,7 @@
                          alt='{{mediaFile.altText}}'
                          title='{{mediaFile.name}}'>
 
-                    <c:url var="mediaFileURL" value="/images/page_white.png"/>
-                    <img ng-if="!mediaFile.imageFile" ng-src='<c:out value="${mediaFileURL}" />'
+                    <img ng-if="!mediaFile.imageFile" ng-src='<c:out value="/images/page_white.png" />'
                          alt='{{mediaFile.altText}}'
                          style="padding:40px 50px;">
                 </a>
@@ -106,7 +105,13 @@
                        value="{{mediaFile.id}}">
 
                 {{mediaFile.name | limitTo: 47}}
-           </div>
+
+                <span style="float:right">
+                    <input type="image" ng-click="ctrl.copyToClipboard(mediaFile)"
+                        src='<c:url value="/images/copy_to_clipboard.png"/>'
+                           alt="Copy URL to clipboard" title="Copy URL to clipboard">
+                </span>
+            </div>
         </li>
     </ul>
 </div>

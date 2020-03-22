@@ -60,6 +60,29 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
         return null;
     }
 
+    this.copyToClipboard = function(mediaFile) {
+        const textarea = document.createElement('textarea');
+        document.body.appendChild(textarea);
+
+        if (mediaFile.imageFile === true) {
+            anchorTag = (mediaFile.anchor ? '<a href="' + mediaFile.anchor + '">' : '') +
+            '<img src="' + mediaFile.permalink + '"' +
+            ' alt="' + (mediaFile.altText ? mediaFile.altText : mediaFile.name) + '"' +
+             (mediaFile.titleText ? ' title="' + mediaFile.titleText + '"' : '') +
+             '>' +
+            (mediaFile.anchor ? '</a>' : '');
+        } else {
+            anchorTag = '<a href="' + mediaFile.permalink + '"' +
+             (mediaFile.titleText ? ' title="' + mediaFile.titleText + '"' : '') +
+            '>' + (mediaFile.altText ? mediaFile.altText : mediaFile.name) + '</a>';
+        }
+
+        textarea.value = anchorTag;
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+    }
+
     this.filesSelected = function() {
         return $('input[name="idSelections"]:checked').size() > 0;
     }

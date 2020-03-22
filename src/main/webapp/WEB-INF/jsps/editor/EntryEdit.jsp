@@ -37,7 +37,6 @@
         commentCountTmpl: "<fmt:message key='entryEdit.hasComments'/>",
         sessionTimeoutTmpl: "<fmt:message key='entryEdit.sessionTimedOut'/>"
     };
-    var mediaFileChooserUrl = "<c:url value='/tb-ui/app/authoring/mediaFileChooser'/>?weblogId=" + weblogId;
 </script>
 
 <script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
@@ -156,11 +155,6 @@
     <div id="accordion">
         <h3>
             <fmt:message key="entryEdit.content" />
-            <c:if test="${showMediaFileTab}">
-                <span style="font-weight:normal;float:right;">
-                    <a href="#" onClick="onClickAddImage();"><fmt:message key="entryEdit.insertMediaFile" /></a>
-                </span>
-            </c:if>
         </h3>
         <div>
             <textarea id="edit_content" cols="75" rows="25" style="width:100%" ng-model="ctrl.entry.text" tabindex="5"></textarea>
@@ -248,31 +242,6 @@
             <input type="button" value="<fmt:message key='entryEdit.deleteEntry'/>" data-title="{{ctrl.entry.title}}" data-toggle="modal" data-target="#deleteEntryModal"/>
         </span>
     </div>
-</div>
-
-<!-- Choose media file modal -->
-<div class="modal fade" id="insertMediaFileModal" tabindex="-1" role="dialog" aria-labelledby="insertMediaFileModalTitle" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="insertMediaFileModalTitle"><fmt:message key='entryEdit.insertMediaFile'/></h5>
-      </div>
-      <div class="modal-body">
-        <div class="embed-responsive embed-responsive-16by9">
-            <iframe class="embed-responsive-item" id="mediaFileChooser"
-                    style="visibility:inherit"
-                    height="100%"
-                    width="100%"
-                    frameborder="no"
-                    scrolling="auto">
-            </iframe>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal"><fmt:message key='generic.cancel'/></button>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- Delete entry modal -->

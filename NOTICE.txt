@@ -17,3 +17,5 @@ OTHER NOTICES
 
 * Roller includes icons by Mark James (http://www.famfamfam.com/lab/icons)
 
+* Octicon "clippy" (copy to clipboard) icon used:
+  GitHub [MIT (http://opensource.org/licenses/mit-license.php)]
