@@ -84,6 +84,7 @@
         var userName = $('#userList').children("option:selected").val();
         if (userName !== '') {
             $('#inviteButton').attr("disabled", false);
+            $('#userName').val(userName);
         }
     }
 
