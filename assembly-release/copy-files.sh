@@ -1,1 +1,0 @@
-cp target/roller-release
