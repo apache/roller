@@ -568,6 +568,13 @@
             <result name="input" type="tiles">.TemplateEdit</result>
             <allowed-methods>execute,save</allowed-methods>
         </action>
+        
+        <action name="templateRemove"
+                class="org.apache.roller.weblogger.ui.struts2.editor.TemplateRemove">
+            <result name="confirm" type="tiles">.TemplateRemove</result>
+            <result name="success" type="chain">templates</result>
+            <allowed-methods>execute,remove</allowed-methods>
+        </action>
 
         <action name="members"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Members">
