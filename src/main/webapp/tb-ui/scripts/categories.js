@@ -37,14 +37,6 @@ tightblogApp.controller('PageController', ['$http', function PageController($htt
     var self = this;
     this.errorObj = {};
 
-    this.formatDate = function(inDate) {
-        if (inDate) {
-            return inDate[0] + '-' + ("00" + inDate[1]).slice(-2) + '-' + ("00" + inDate[2]).slice(-2);
-        } else {
-            return '';
-        }
-    }
-
     this.updateItem = function(obj) {
         this.messageClear();
         // https://stackoverflow.com/a/18030442/1207540

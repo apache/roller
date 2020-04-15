@@ -91,8 +91,8 @@
             </td>
             <td>{{tag.name}}</td>
             <td>{{tag.total}}</td>
-            <td>{{ctrl.formatDate(tag.firstEntry)}}</td>
-            <td>{{ctrl.formatDate(tag.lastEntry)}}</td>
+            <td>{{tag.firstEntry | date:'d MMM y' }}</td>
+            <td>{{tag.lastEntry | date:'d MMM y' }}</td>
 
             <td>
                 <a ng-href='{{tag.viewUrl}}' target="_blank"><fmt:message key="tags.column.view" /></a>

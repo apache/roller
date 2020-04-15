@@ -130,6 +130,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-mail')
 	compile('org.springframework.boot:spring-boot-starter-log4j2')
+	compile('org.springframework.boot:spring-boot-starter-validation')
     compile('org.springframework.security:spring-security-taglibs:5.1.0.RELEASE')
 	compile('org.springframework.mobile:spring-mobile-device:1.1.5.RELEASE')
 	compile('org.apache.commons:commons-lang3:3.7')

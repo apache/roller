@@ -23,14 +23,6 @@ tightblogApp.controller('PageController', ['$http',
     this.urlRoot = contextPath + '/tb-ui/authoring/rest/tags/';
     this.resultsMap = {};
 
-    this.formatDate = function(inDate) {
-        if (inDate) {
-            return inDate[0] + '-' + ("00" + inDate[1]).slice(-2) + '-' + ("00" + inDate[2]).slice(-2);
-        } else {
-            return '';
-        }
-    }
-
     this.tagsSelected = function() {
         return $('input[name="idSelections"]:checked').size() > 0;
     }

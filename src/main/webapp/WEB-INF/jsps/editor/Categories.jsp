@@ -65,8 +65,8 @@
           <tr ng-repeat="item in ctrl.items | orderBy:'position'">
               <td>{{item.name}}</td>
               <td>{{item.numEntries}}</td>
-              <td>{{ctrl.formatDate(item.firstEntry)}}</td>
-              <td>{{ctrl.formatDate(item.lastEntry)}}</td>
+              <td>{{item.firstEntry | date:'d MMM y' }}</td>
+              <td>{{item.lastEntry | date:'d MMM y' }}</td>
               <td class="buttontd">
                   <button class="btn btn-warning" data-category-id="{{item.id}}" data-category-name="{{item.name}}" data-action="rename"
                       data-toggle="modal" data-target="#editCategoryModal"><fmt:message key="generic.rename" /></button>

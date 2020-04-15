@@ -20,15 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.AbstractJpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
@@ -44,11 +40,9 @@ import java.util.Map;
 public class DBConfig extends JpaBaseConfiguration {
 
     @Autowired
-    private DataSource dataSource;
-
-    @Autowired
     private Environment environment;
 
+    @Autowired
     protected DBConfig(DataSource dataSource, JpaProperties properties,
                                        ObjectProvider<JtaTransactionManager> jtaTransactionManagerProvider,
                                        ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers) {
@@ -77,24 +71,6 @@ public class DBConfig extends JpaBaseConfiguration {
             vendorProperties.put("eclipselink.logging.level", val);
         }
         return vendorProperties;
-    }
-
-    @Autowired
-    @Bean
-    // https://docs.spring.io/spring-boot/docs/current/reference/html/howto-data-access.html#howto-use-custom-entity-manager
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean lEMF =  new LocalContainerEntityManagerFactoryBean();
-        lEMF.setDataSource(dataSource);
-        lEMF.setPersistenceUnitName("TightBlogPU");
-        lEMF.setPersistenceXmlLocation("persistence.xml");
-        return lEMF;
-    }
-
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-        JpaTransactionManager tm = new JpaTransactionManager();
-        tm.setEntityManagerFactory(entityManagerFactory().getObject());
-        return tm;
     }
 
 }

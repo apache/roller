@@ -15,11 +15,13 @@
  */
 package org.tightblog.config;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.mobile.device.DeviceResolverHandlerInterceptor;
 import org.springframework.mobile.device.DeviceWebArgumentResolver;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -60,6 +62,14 @@ public class WebConfig implements WebMvcConfigurer {
         tilesViewResolver.setCacheUnresolved(false);
         tilesViewResolver.setOrder(0);
         return tilesViewResolver;
+    }
+
+    // https://www.baeldung.com/spring-custom-validation-message-source#defining-localvalidatorfactorybean
+    @Bean
+    public LocalValidatorFactoryBean getValidator(MessageSource messageSource) {
+        LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
+        bean.setValidationMessageSource(messageSource);
+        return bean;
     }
 
     @Bean
