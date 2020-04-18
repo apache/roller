@@ -63,7 +63,7 @@
               label="%{getText('createWebsite.locale')}"/>
 
     <s:select name="bean.timeZone" list="timeZonesList"
-              label="%{getText('createWebsite.timeZone')}"/>
+              label="%{getText('createWebsite.timezone')}"/>
 
     <s:checkbox name="bean.enableMultiLang"
                 label="%{getText('websiteSettings.enableMultiLang')}"/>
