@@ -145,7 +145,7 @@ authentication. With OpenID you will not provide a password (as you will
 be logging into another system to authenticate) but just your OpenID
 account name, whose format will vary based on the OpenID provider. For
 example, using Google+ as your OpenID provider will result in an account
-name similar to https://profiles.google.com/<numeric ID>, where the
+name similar to https://profiles.google.com/&lt;numeric-ID &gt;, where the
 numeric identifier can be determined simply by Googling your name along
 with "google plus". (Note the OpenID string does _not_ use the
 plus.google.com domain returned by this query.)
@@ -179,7 +179,7 @@ your way around using Roller’s tabbed menu. To provide a little extra
 assistance, Roller displays a status bar at the top of each editor page.
 
 For example, the status bar below indicates that you are logged in as
-user `admin' and you are not editing a weblog. You can go directly to
+user 'admin' and you are not editing a weblog. You can go directly to
 the front page of the site by clicking the first link on the right (it
 might not be labelled Front Page on your site), to the main menu with
 the second link and you can log out entirely by using the Logout.
@@ -187,7 +187,7 @@ the second link and you can log out entirely by using the Logout.
 image::user-guide-4-statusbar.png[]
 
 For example, the status bar below indicates that you are logged in as
-user `admin' and you are editing a weblog with the handle `adminblog'.
+user 'admin' and you are editing a weblog with the handle 'adminblog'.
 
 image::user-guide-5-statusbar-webblog.png[]
 
@@ -290,9 +290,9 @@ that you’ve used before.
 * *Content* – This is the main body of your weblog entry, in HTML
 format. We try to make that easy by providing two ways to edit the
 content. Via the Settings page, you can pick either of these:
-* *Rich Text Editor (Xinha) *– a rich-text editor that’s designed to
+* *Rich Text Editor (Xinha)* – a rich-text editor that’s designed to
 make editing HTML as easy as using MS Word or Open Office.
-* *Text Editor *– a plain-text editor that you can use to edit the raw
+* *Text Editor* – a plain-text editor that you can use to edit the raw
 HTML markup of your weblog entries. Don’t use this unless you know HTML.
 * *Summary* – (optional) If you wish, you can enter a short summary of
 your weblog post. If you do so, then the short summary will be displayed
@@ -310,17 +310,17 @@ and make it visible to the world. Make sure you’re happy with your post
 before you publish because once something is published on the web, and
 grabbed by the blog aggregators and search engines, _there’s really no
 way to un-publish_ it.
-* *Submit for review *– if you’re just a limited blogger, you won’t see
+* *Submit for review* – if you’re just a limited blogger, you won’t see
 the Post to weblog button because you cannot post to the web. Instead,
 you’ll see a Submit for review button which you can use to send your
 entry to the author/admin of the blog that you are working in. If they
 like the post, they can publish it – or they can return it to you for
 further edits.
-* *Save as draft *– this will save your weblog post for later editing,
+* *Save as draft* – this will save your weblog post for later editing,
 but will _not_ publish it to the web. When you’re working on a new
 weblog entry, use Save as draft often so you won’t lose your post in the
 event of internet connection loss or session time-out.
-* *Delete entry *– use this to delete the current weblog entry, you’ll
+* *Delete entry* – use this to delete the current weblog entry, you’ll
 be asked to confirm.
 * *Full preview* – You won’t see this button until you’ve saved your
 entry as a draft. It allows you to view, in a separate window, a preview
@@ -347,10 +347,10 @@ All of these are optional settings.
 * *Pub Time* – if you’d like to set the publication time of your weblog
 entry to a specific time, possibly one in the future, you can do so
 here.
-* *Allow comments for *– this setting allows you to turn comments on/off
+* *Allow comments for* – this setting allows you to turn comments on/off
 for your weblog entry and to limit the number of days that comments are
 allowed.
-* *Text reads left-to-right *– this settings allows you to set the reads
+* *Text reads left-to-right* – this settings allows you to set the reads
 left-to-right flag for a weblog entry. Currently, none of the stock
 Roller templates respect this setting.
 * Pinned to main – only Global Administrators will see this setting.
@@ -707,7 +707,6 @@ available in the context of a weblog.
 
 There are two forms of comment spam that can affect your weblog:
 
-* {blank}
 ** _Comment spam_: spam that arrives via the comment form on your
 weblog. Sometimes spam comments are added by a human and sometimes by a
 computer program known as a _spambot._
@@ -748,11 +747,6 @@ comments on your weblog. None of the measures are 100% effective. If you
 are really concerned about displaying offensive content on your weblog
 even for a short time, then enable comment moderation on your weblog.
 
-[arabic]
-. {blank}
-[arabic]
-.. {blank}
-
 Roller uses a _blacklist_, a lists of words which are used to check
 incoming comments, trackbacks and requestors for spam URLs. If the name,
 URL or content of a comment or trackback includes one of the blacklist
@@ -762,7 +756,6 @@ the comment management page to unmark it.
 
 Actually, there are three levels of blacklist:
 
-* {blank}
 ** Level 1 blacklist: This is the built-in blacklist, the one that comes
 with Roller. This can only be changed by somebody with root access to
 the Roller server itself.
@@ -776,18 +769,13 @@ blacklist. Incoming web page requests, however, are only checked against
 the levels 2 and 3 blacklist and will receive a 403 (forbidden) message
 if found.
 
-[arabic]
-. {blank}
-[arabic]
-.. {blank}
-
 If you have a spam problem on your weblog and you’d like to add words to
 the blacklist, it’s probably better for you to ask your administrator to
 add the words to the level 2 blacklist for you. That way, every blogger
 on the site will benefit from the addition. If you must do it yourself,
 here’s how you do it:
 
-* {blank}
+
 ** Go to the Weblog Settings page and scroll down to the blacklist
 fields
 ** Enter your spam words, one per line
@@ -895,7 +883,6 @@ otherwise Roller’s email features will not work.
 * *Weblog editor page to be used* - Choose a weblog editor page, some
 are rich-text editors:
 
-* {blank}
 ** editor-text.jsp: Simple text editor, you must enter HTML
 ** editor-rte.jsp: Rich text editor (works in Firefox and IE but not
 Safari)
@@ -1062,7 +1049,7 @@ will be present at the top of the Main Menu page. Example:
 
 image::user-guide-22-invite-member.png[]
 
-Click `accept' to become a member of the group blog or `decline' to turn
+Click 'accept' to become a member of the group blog or 'decline' to turn
 down the invitation.
 
 *Contribute to a group blog*
@@ -1081,7 +1068,7 @@ are participating in and what privileges you have on each weblog.
 *Resign from a Group Blog*
 
 To resign from a group blog, login, on the Main Menu page, navigate to
-the blog information for which you wish to resign. Select `Resign'.
+the blog information for which you wish to resign. Select 'Resign'.
 
 == Using weblog pings
 
@@ -1139,7 +1126,7 @@ When you have enabled automatic pinging for a ping target, Roller will
 automatically send a ping to that site whenever you publish a new weblog
 entry or update a published weblog entry.
 
-_*Note:* In actuality, Roller queues a request to send the ping and
+NOTE: In actuality, Roller queues a request to send the ping and
 processes this request in the background, so that you can get on with
 your blogging. The ping queue is processed at an interval configured by
 the site administrator; this interval is 5 minutes in a default
@@ -1506,7 +1493,7 @@ configuration property.
 of common ping targets. The value consists of a comma-separated list of
 ping targets, where each ping target is specified in the form
 
-\{\{name}\{url}}
+{{name}{url}}
 
 This value is used every time Roller starts _and finds an empty list of
 common ping targets._ Normally, this is only the first time Roller is
