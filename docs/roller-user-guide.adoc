@@ -1270,7 +1270,7 @@ the banner that appears at the top of every page in the Roller
 editor/admin UI.
 * *Site description*: description of site, to be included in site-wide
 newsfeeds (RSS and Atom) and on the default front page of the site.
-* *Site Administrator’s email Address*: admin’s email address, to be
+* *Site Administrator’s emailConfiguring Roller Address*: admin’s email address, to be
 include in side-side newsfeeds (RSS and Atom)
 * *Handle of weblog to serve as frontpage blog*: specify the weblog that
 is to be displayed as the frontpage of this Roller site.
@@ -1282,6 +1282,9 @@ URLs. Required for Roller’s Planet aggregator feature.
 * *Suspend all ping processing*: Allows you to turn off all (outgoing)
 weblogs pings for all weblogs in the system.
 * *Enable debug mode*: currently not used.
+
+image::user-guide-27-comments.png[]
+
 * *Allow New Users*: Set this to enable the _register as new user_ link
 on the main page. If you turnoff user creation, you’ll only be able to
 create new users via the *Global Admin->User Admin* page.
@@ -1309,6 +1312,9 @@ installation guide.
 checks each incoming trackback to verify that the site sending the
 trackback actually links to the specific weblog entry that is the target
 of the trackback.
+
+image::user-guide-28-feed.png[]
+
 * *Default number of entries*: default number of entries to appear in
 each newsfeed (RSS and Atom).
 * *Maximum number of entries*: maximum number of entries to be allowed
@@ -1316,6 +1322,9 @@ in each newsfeed (RSS and Atom).
 * *Display styled newsfeeds for browsers*: Set to true to enable
 user-friendly RSS and Atom feed display, so that users don’t see raw XML
 when they load the feed in their browsers.
+
+image::user-guide-29-fileupload.png[]
+
 * *Enable File Uploads*: Are users allowed to upload files?
 * *Allowed Extensions*: Comma-separated list of file extensions that
 users are allowed to upload.
@@ -1347,6 +1356,8 @@ Common ping targets are ping targets that are shared by all users. You
 can create and edit common ping targets using the *Global Admin->Ping
 Targets* page.
 
+image::user-guide-30-ping.png[]
+
 You can create and edit common ping in the same way that regular users
 create and edit custom ping targets, but keep in mind that common ping
 targets are shared amongst all users, and that your changes affect all
@@ -1369,6 +1380,8 @@ the aggregator’s web site, the site may not support pinging.
 Click the *Add New* button to add a new ping target. This will bring up
 a form with a *Name* field and a *Ping URL* field. Fill in both fields,
 and click the *Save* button.
+
+image::user-guide-31-add-ping.png[]
 
 Once the new ping target has been created, it will be listed for all
 blogs on their *Weblog:Pings* page with the default activation status
@@ -1513,10 +1526,9 @@ Roller includes an optional weblog export feature that allows you to
 export your weblog entries and uploaded Media Files to a format that is
 compatible with both Wordpress and MovableType. You can use the *Create
 & Edit -> Export* menu to do this. When you click one of the Export
-buttons, you will be prompted to download the resulting file.Here’s the
-Export page:
+buttons, you will be prompted to download the resulting file.
 
-Enabling Weblog Export
+*Enabling Weblog Export*
 
 Export is an optional feature that is disabled by default.
 
@@ -1544,6 +1556,8 @@ If you’ve got Planet enabled, when you login as a global admin you’ll
 see a Planet Administration link on the Roller Main Menu page. Click
 that link to view the *Planet Admin->Configuration* page, shown below.
 
+image::user-guide-32-planet-config.png[]
+
 [#anchor-4]##To configure Planet Roller, you must:
 
 * Ensure that your site has an absolute URL in the *Global
@@ -1566,7 +1580,9 @@ http://localhost:8080/roller/planetrss
 This section describes how to add and remove weblogs using the *Planet
 Admin->Subscriptions* page, shown below.
 
-Adding an external weblog to Planet Roller
+image::user-guide-33-subscription.png[]
+
+*Adding an external weblog to Planet Roller*
 
 To add an externally hosted weblog to the Planet, use the *Planet
 Admin->Subscriptions* page. Enter its title, newsfeed URL and website
