@@ -1,0 +1,1613 @@
+= User Guide
+Apache Roller Weblogger
+:toc:
+:sectnums:
+:imagesdir: ./images
+
+== Overview
+
+This document is a user guide to the Apache Roller Weblogger, the
+Java-based and open source weblog server that is produced by the Apache
+Roller project of the Apache Software Foundation.
+
+There are separate guides available on other topics; a Template Guide
+for those who wish to customize the layout and design of their weblog
+pages and an Installation Guide for those installing the Roller software
+on a web server.
+
+=== Copyright and trademark information
+
+The contents of this document are subject to the terms of the Apache
+Software License.
+
+All trademarks within this document belong to legitimate owners.
+
+=== Feedback
+
+Please direct any comments or suggestions about this document to:
+dev@roller.apache.org
+
+== Introduction
+
+This user guide describes how to use the Apache Roller Weblogger or
+Roller for short, a web application that can support a single user
+weblog, thousands of weblogs and/or group weblogs.
+
+You’ll learn how to register as a new user. You’ll learn how to create
+one or more weblogs for yourself or a group of your friends. You’ll
+learn how to create, edit and post weblog entries. We will also cover
+more advanced topics such as adjusting your weblog’s settings, how to
+customize your blogroller, how to manage weblog pings and more.
+
+First, let’s get some terminology out of the way because there’s a lot
+of jargon in weblogging. Here’s a list of some of the terms we use in
+this manual without a whole lot of background.
+
+* *Weblog*: A set of web pages and RSS/Atom feeds that display weblog
+entries written by one or more authors, uploaded images, bookmarks and
+comments posted by visitors. Weblog entries are displayed on the main
+page of the weblog and in the weblog’s feeds in reverse chronological
+order.
+* *Weblog entry*. A single weblog entry with a title, publication
+timestamp, summary, content and some settings that indicate if and when
+comments are allowed.
+* *Comment*. A comment posted by a visitor to a weblog and regarding one
+specific weblog post. A comment has an email address, a publication
+timestamp and some content.
+* *Trackback*. A comment posted by a remote weblog regarding one
+specific weblog post. Trackbacks are stored as comments by Roller.
+* *Templates*. Each Roller weblog is defined by a set of HTML and CSS
+templates that provide the layout and styles for the weblog. Normally
+templates are authored using Velocity template language, but other
+languages are possible via plugins (i.e. Groovy Server Pages, JRuby,
+etc.)
+* *Feed*. A feed is an XML representation of the most recent entries,
+comments or other data. Folks can subscribe to your feed to be alerted
+of new weblog entries and comments posted. Roller supports both RSS and
+Atom formats for feeds.
+* *Feed reader*. Software that makes it easy to subscribe to and read
+feeds, e.g. Google Reader, Net News Wire, Feed Demon, etc.
+* *Blog client*. Software that makes it easy to post to your weblog,
+e.g. Ecto and Mars Edit.
+
+With that out of the way, let’s get started blogging with Roller.
+
+== Getting started with Roller
+
+Getting started with Roller means different things to different people.
+If you are using an existing Roller server, then getting started means
+registering a new user and creating or joining a weblog. If that’s the
+case for you, skip ahead to section 3.2. If you just finished setting up
+your own Roller installation on your own web server, then getting
+started means a little bit more. You’ve got a little post installation
+work to do.
+
+=== Getting started with a new Roller installation
+
+Once you’ve got Roller up and running you will see a screen like the one
+below, which explains exactly what you’ve got to do to get started with
+Roller. First, create a new user so you can login. Second, login and
+create a weblog for yourself or one to server as the front page of the
+site or both. Third, designate which weblog is the front page weblog.
+
+image::user-guide-1-welcome.png[]
+
+**Creating the first user. **Your first step is to create a new user.
+Remember, the first user you create will be given administrative
+privileges. You might want to use the username "admin" or something
+similar. Later, you can login as the admin user when you need to change
+site-wide settings. If you wish, you can grant other users admin
+privileges so they can help out with admin duties. Let’s take a look at
+the user registration page. You can see the new user registration form
+in the next section.
+
+**Create the first weblog(s). **Next you should create at least one
+weblog. See section 3.2 below for some more information the create
+weblog page. If you are running a personal blog site, then you might
+want your weblog to serve as the front page of your site. In that case,
+create a weblog, use a normal weblog theme (i.e. not the Roller Homepage
+theme) and assign your weblog as the front page weblog of the site.
+
+If you are running a community weblog site with multiple weblogs, then
+you will probably want to create a weblog to serve as the front page of
+the site. Create a new weblog, name it "main" or "community" or
+something suitable because its name will appear in URLs. And we
+recommend that you use the Roller Homepage theme because it is specially
+designed to serve as a weblog community front page, aggregating all of
+the site’s weblogs together but having no content of its own.
+
+**Designate a front page weblog. **Once you’ve created a front page
+weblog, whether it be a personal weblog or a community aggregator, you
+need to tell Roller. So, select your front page weblog and, if you are
+running a community site then set the _Enable aggregated site-wide
+frontpage_ checkbox before you click Save.
+
+If you’ve read this far, you’ve probably created your own user and
+weblog and if so you can skip the next section.
+
+=== Creating a new user and weblog
+
+To create a new user use the Register link, which can be found in the
+top right of the Roller login page. That link will take you to the New
+User Registration page shown below.
+
+image::user-guide-2-registration.png[]
+
+The New User Registration form is pretty self-explanatory, but keep in
+mind that your username cannot be changed; it is your unique identifier
+in the system. But that’s OK because your screen name is the name that
+will be displayed on your weblog and in your feeds and you _can_ change
+it later if you wish.
+
+Instead of username and password, the Roller administrator may provide
+(or require) OpenID (http://openid.net/[http://openid.net])
+authentication. With OpenID you will not provide a password (as you will
+be logging into another system to authenticate) but just your OpenID
+account name, whose format will vary based on the OpenID provider. For
+example, using Google+ as your OpenID provider will result in an account
+name similar to https://profiles.google.com/&lt;numeric-ID &gt;, where the
+numeric identifier can be determined simply by Googling your name along
+with "google plus". (Note the OpenID string does _not_ use the
+plus.google.com domain returned by this query.)
+
+**Picking your language and timezone. **You can set your language of
+choice and timezone too, but these values don’t do much in Roller. The
+locale and timezone of your weblog are really what matter. The values
+you set here will be used as your defaults when you create your weblog.
+
+**Creating a weblog . **Once you’ve created a user, then log in and
+you’ll see the Roller Main Menu page and a greeting that reads:
+
+You’ve got a user account, but no weblog. Would you like to _create
+one_?
+
+Follow that link to create your first weblog. You’ll see the form below.
+
+image::user-guide-3-webblog.png[]
+
+The form is designed to be self-explanatory. Note that you can change
+everything later, except for the weblog handle, which is the unique
+identifier for your weblog.
+
+Now that you’ve got a user and a weblog, let’s discuss how to get around
+in the Roller interface.
+
+=== Getting around in Roller
+
+Once you’ve logged into Roller’s editor pages you should be able to find
+your way around using Roller’s tabbed menu. To provide a little extra
+assistance, Roller displays a status bar at the top of each editor page.
+
+For example, the status bar below indicates that you are logged in as
+user 'admin' and you are not editing a weblog. You can go directly to
+the front page of the site by clicking the first link on the right (it
+might not be labelled Front Page on your site), to the main menu with
+the second link and you can log out entirely by using the Logout.
+
+image::user-guide-4-statusbar.png[]
+
+For example, the status bar below indicates that you are logged in as
+user 'admin' and you are editing a weblog with the handle 'adminblog'.
+
+image::user-guide-5-statusbar-webblog.png[]
+
+If you are not logged into Roller then you can either access the login
+link directly or use a Login link from one of the weblogs on the site.
+The login link is of this form:
+
+_http://hostname/roller-ui/login-redirect.rol_
+
+Or this form if Roller is installed under its own context:
+
+_http://hostname/roller/roller-ui/login-redirect.rol_
+
+You probably won’t need to cut-and-paste that link because most weblogs
+display an author menu like so:
+
+image::user-guide-6-navigation.png[]
+
+Now that we’ve covered the basics of registering a new user, creating a
+new weblog and finding your way around let’s start blogging.
+
+== Creating and editing your weblog
+
+First, you log in to Roller. What happens next depends on the number of
+weblogs that you have. If you have one weblog, you’ll be taken directly
+to the *New Entry* page for that weblog.
+
+If you have more than one weblog or none at all, then you’ll be taken to
+the *Main Menu* page, shown below, so you can pick which weblog to edit
+and/or create new weblogs.
+
+image::user-guide-7-main-menu.png[]
+
+The main menu page lists all of your weblogs and for each, shows you
+links to its New Entry, Entries, Comments, Theme and Settings pages. You
+can also create a new weblog, edit your user profile.
+
+If you are logged in as a Global Administrator, you will also see a
+Server Admin link in the actions side-bar. And if you have Roller’s
+Planet aggregator enabled, then you will also see a Planet Admin link
+there as well.
+
+=== Creating and editing a weblog entry
+
+Use the *Create & Edit -> New Entry* page (also known as the Weblog
+editor page) to create, edit and publish weblog entries. Using this
+page, shown below in illustration 7, you can set entry title, category,
+content and summary. You can also set some advanced settings by
+expanding the _Plugins To Apply_ and _Advanced Settings_ controls at the
+bottom of the page. Let’s review those fields, buttons and settings.
+
+image::user-guide-8-editor.png[]
+
+==== Weblog editor fields
+
+Let’s discuss each of the fields on the New Entry page, so you know how
+to use them.
+
+* *Title* – Each weblog entry must have a title. Be careful when you
+pick your title, it will be used in the permalink (URL) for your weblog
+entry (up to the first five words of the blog title, separated by
+hyphens). For best results, _do_ use titles that are short and
+to-the-point. __Don’t __include any HTML in your titles, just plain text
+– if you want your titles to be bold, then customize your templates
+instead of embedding HTML in your titles.
++
+To generate a permalink different from the actual blog title, first type
+in the desired permalink, then hit Save As Draft which will create the
+permalink. Then change the blog title to whatever desired for the blog
+entry prior to publishing it—the permalink won’t change.
+* *Status* – This read-only field tells you about the current state of
+the weblog entry that you are editing. There are three possible status
+settings:
+
+* _Not Saved_ – the entry has never been saved
+* _Draft_ – the entry is saved as a draft and is not yet visible to your
+weblog’s readers
+* _Published_ – the entry has been published and is visible to your
+weblog’s readers
+* *Permalink* – this read-only field is the permalink link to your
+weblog entry. It is set the first time that you save an entry, based on
+the title at the time you save (see Title section above), and it cannot
+be changed later. As a workaround for getting a new permalink, the text
+of a blog entry can be copied to a new blog entry with the desired
+permalink and the published date set back to that of the original blog
+entry (Advanced settings). Once the new blog entry is published, then
+just delete the old blog entry with the undesired URL. However, be
+cautious about changing a permalink in this manner because all external
+links to original blog entry will be broken as a result.
+* *Category* – You can pick one category for your weblog entry.
+Categories are for folks who want to organize their weblog entries by
+subject. You can add and remove categories via the Categories page.
+* *Tags* – (optional) In addition to assigning each of your weblog
+entries to a category you can also tag them. You can assign a list of
+tags to each entry. You can use any tag name you want. Separate your
+tags with spaces. Currently, the only way to do multi-word tags is to
+use an underbar, for example to tag something with "apache roller" you
+would use the tag apache_roller. As you type, Roller may suggest tags
+that you’ve used before.
+* *Content* – This is the main body of your weblog entry, in HTML
+format. We try to make that easy by providing two ways to edit the
+content. Via the Settings page, you can pick either of these:
+* *Rich Text Editor (Xinha)* – a rich-text editor that’s designed to
+make editing HTML as easy as using MS Word or Open Office.
+* *Text Editor* – a plain-text editor that you can use to edit the raw
+HTML markup of your weblog entries. Don’t use this unless you know HTML.
+* *Summary* – (optional) If you wish, you can enter a short summary of
+your weblog post. If you do so, then the short summary will be displayed
+on the main page of your weblog and your readers will have to click a
+Read More link to get to the full-content. Some bloggers like to do this
+when they have very long post and they don’t want that long post to
+dominate the main page of their weblog.
+
+==== Weblog editor buttons
+
+Here’s a guide to the buttons that appear on the Weblog editor page.
+
+* *Post to weblog* – Using this button will publish your weblog entry
+and make it visible to the world. Make sure you’re happy with your post
+before you publish because once something is published on the web, and
+grabbed by the blog aggregators and search engines, _there’s really no
+way to un-publish_ it.
+* *Submit for review* – if you’re just a limited blogger, you won’t see
+the Post to weblog button because you cannot post to the web. Instead,
+you’ll see a Submit for review button which you can use to send your
+entry to the author/admin of the blog that you are working in. If they
+like the post, they can publish it – or they can return it to you for
+further edits.
+* *Save as draft* – this will save your weblog post for later editing,
+but will _not_ publish it to the web. When you’re working on a new
+weblog entry, use Save as draft often so you won’t lose your post in the
+event of internet connection loss or session time-out.
+* *Delete entry* – use this to delete the current weblog entry, you’ll
+be asked to confirm.
+* *Full preview* – You won’t see this button until you’ve saved your
+entry as a draft. It allows you to view, in a separate window, a preview
+of your entry, displayed using the layout and style of your blog.
+
+==== Weblog editor plugin settings
+
+If you expand the _Plugins to Apply_ control, you’ll see a set of
+check-boxes, one for each Weblog Entry Plugin that is available. Check
+the ones that you’d like to apply to your current weblog entry. If you
+have a favorite plugin, one that you want to use on every entry, then
+you can set it as a default on your weblog’s Settings page.
+
+image::user-guide-plugin.png[]
+
+==== Weblog editor advanced settings
+
+If you expand the _Advanced Settings_ control, you’ll see what’s below.
+
+image::user-guide-settings.png[]
+
+All of these are optional settings.
+
+* *Pub Time* – if you’d like to set the publication time of your weblog
+entry to a specific time, possibly one in the future, you can do so
+here.
+* *Allow comments for* – this setting allows you to turn comments on/off
+for your weblog entry and to limit the number of days that comments are
+allowed.
+* *Text reads left-to-right* – this settings allows you to set the reads
+left-to-right flag for a weblog entry. Currently, none of the stock
+Roller templates respect this setting.
+* Pinned to main – only Global Administrators will see this setting.
+It’s a way to indicate that a post is a __special announcement __that
+should be pinned to the top of the front-page of a weblog site. The
+front-page theme respects this setting.
+* *Enclosure URL*: if you’d like to include a audio, video or image file
+as a p__odcast__ in your weblog’s RSS feed, then enter the URL of that
+file here.
+
+=== Finding and editing weblog entries
+
+All of your weblog entries are saved in a database. Once your entries
+scroll off the front page or off the recent entries list of the weblog
+editor page, they are still available via next and previous links
+displayed on your weblog and via the weblog calendar that is included in
+most weblog themes.
+
+You can also access your entries via the Edit Entries page, which allows
+you to search entries via keyword, category, tags, date and status.
+
+image::user-guide-9-entries.png[]
+
+=== Managing categories
+
+Each weblog can define its own unique list of categories to be used for
+categorizing weblog entries, using the Categories page shown below. When
+you or another author of your weblog creates a new entry you _must_
+choose one of the categories you have defined.
+
+image::user-guide-10-categories.png[]
+
+You can use the Categories page to add new categories and to edit your
+existing ones. You can change category names if you wish. And you can
+also delete categories and if a category is in use you will be asked to
+re-categorize the entries in that category.
+
+You can also define icons for each category, but support for icon images
+has not been coded in most Roller themes, requiring you to do template
+customization if you wish to display them.
+
+=== Managing your weblog’s blogroll
+
+Roller makes it easy to maintain a _blogroll_, that is, a list of your
+favorite weblogs and web sites that is displayed in the sidebar of your
+weblog. Individual blogroll items are known as _bookmarks_. Use the *Create &
+Edit:Blogroll* page to add, edit and delete bookmarks and bookmark
+folders in your blogroll.
+
+image::user-guide-11-blogroll.png[]
+
+=== Uploading images and other files to your weblog
+
+If you’d like to upload images or other files for use in your weblog, go
+to your weblog’s *Create & Edit -> Media Files* page. From there you can
+upload files, browse and search files. You can also manage your files,
+organize them into directories and post them to your weblog.
+
+image::user-guide-12-media.png[]
+
+You can see the Media File View page above. Below we’ll discuss all of
+the things you can do with Media Files via the Media File View page and
+the new Media File browser that we’ve added to the Weblog Editor.
+
+==== How to upload files
+
+To upload files you follow the *Add Media File* link in the top right of
+the page. You will see the Media File Add page, which is pictured below.
+
+image::user-guide-13-add-media.png[]
+
+You can upload up to five files at a time and you can enter information
+about the images including title, description, copyright statement and
+tags. You can pick which directory should receive the uploaded images.
+
+You can also decide whether or not you want your images to be included
+in the Gallery, which means that they will be made available in the
+Media File Feed for your blog.
+
+After your file upload completes, Roller will show you the *Upload
+Complete* page (below) with the files that you uploaded and will offer
+to include them in a new weblog post for you. You can choose any or all
+of the images, or you can skip this step and return to the Media File
+View.
+
+image::user-guide-14-upload-complete.png[]
+
+==== How to edit and update files
+
+From the Media File View page, you can edit any Media File simply by
+clicking on it. When you click you will be shown the Media File Edit
+page (below). From this page, you can edit the same information that you
+entered when you uploaded the file.
+
+You can also upload a new version of the file. The file will maintain
+the same URL as before the update, so no worries about broken links. If
+the file is an image, a new thumbnail will be generated for you and
+image size information will be updated.
+
+image::user-guide-15-edit-media.png[]
+
+==== How to use Media File Directories
+
+You can use directories to organize your Media Files. You can move files
+around and not worry about breaking any links because directory and file
+names are not part of URLs.
+
+To create a new directory, enter a new directory name in the new
+directory control, and click the create button.
+
+image::user-guide-media-directory.png[]
+
+To navigate into a directory in the Media File View page, simply click
+on the directory.
+
+==== How to delete Media Files
+
+To delete Media Files, go to the *Media File View* page, select the
+checkboxes of the files you wish to delete and then click the Delete
+button. You will have to confirm the delete before it executes.
+
+==== How to delete Media File Directories
+
+To delete Media File Directories you must first empty them out. You can
+only delete directories that are empty.
+
+==== How to post media files to your weblog
+
+We explained above how to post images during the upload process. From
+the Blog entry edit page, click on the "Add Media File" link located
+above and to the right of the Content field. Roller will insert the
+media file at the cursor location in the content field. If there’s a
+problem with the insertion location, hit Ctrl-Z to undo the action and
+try again.
+
+==== How to post a podcast to your weblog
+
+Upon uploading a non-image media file, such as a podcast, Roller
+provides you an option to create a new blog entry with that media file
+(podcast). If chosen, Roller will include the media file in the post
+content and in the Enclosure URL field in the Advanced Settings section
+of the Blog Edit Entry page. The Enclosure URL field is used just for
+your blog’s RSS and Atom feeds, it will include the podcast as a feed
+enclosure (http://en.wikipedia.org/wiki/RSS_enclosure) to make it easy
+for podcast readers to fetch it.
+
+Alternatively, you can select an podcast from the Add Media File link
+referenced in the previous section, which will add its URL to the post
+content, and then copy that URL to the Enclosure URL field in the
+Advanced Settings section if you wish to add it to your blog’s RSS
+and/or Atom feeds.
+
+=== Podcasting with Roller
+
+Roller includes support for _podcasting_, a way to distribute files
+through your weblog’s newsfeed. Typically, folks use podcasting to
+distribute audio files, but the technique can be used to distribute any
+type of file. Specialized podcast client software downloads the audio
+files that are referenced in your newsfeed and copies them to an music
+player, such as an MP3 player.
+
+This section assumes that you want to upload your podcasts to some other
+server, one with lots of space and bandwidth, and not to Roller. If you
+want to upload your podcasts to Roller, then see *Section 4.5.7* for an
+explanation of posting a Media File to your weblog as a podcast.
+
+==== *How to create a podcast feed with Roller*
+
+In Roller a Podcast is like an attachment to a weblog entry. Here are
+the steps involved in Podcasting with Roller:
+
+* Record an interesting Podcast (that’s the hard part, by the way) and
+save your Podcast in MP3 format or whatever format you prefer.
+
+* Upload your Podcast to a web server somewhere and take note of your
+Podcast’s URL. For example, if you were to upload a file to Roller, then
+the URL might look something like this:
+
+_http://hostname/roller/yourname/resource/mycast.mp3_
+
+* Create a new Roller weblog entry announcing your new Podcast. You
+might want to provide a link to it so that those without a Podcast
+client can click to download it directly. For example:
+
+Hey now! I just created my first Podcast you can download it here: <a
+href="http://hostname/roller/yourname/resource/mycast.mp3">mycast.mp3</a>
+
+* And the most important step: in the lower-half of the weblog editor
+page, you’ll see an expandable control labelled _Advanced Settings_.
+Click on that to expand the control and paste in the URL of your
+podcast.
+
+* Once your blog post is ready, save it as a draft or publish it. Once
+you’ve done that you’ll see that the Advanced Settings control has
+picked up the content-type and file-size of your podcast. If not, then
+Roller could not access your podcast due to network problems or perhaps
+a bad URL. Make sure the URL is correct and save again. If your podcast
+is OK, you’ll see something like this:
+
+image::user-guide-podcast.png[]
+
+* Roller will add the podcast to your RSS newsfeed as an _<enclosure>_.
+You can check this by looking at your RSS newsfeed and any podcast
+software that is subscribed to your feed will pick it up automatically.
+
+<enclosure url="http://example.com/roller/nina/resource/mycast.mp3"
+
+type="audio/x-mpeg" length="3409127" />
+
+=== Using a weblog client with Roller
+
+Using a nice weblog client like Ecto or MarsEdit can make it easier for
+you to post to your Roller weblog. You can also post to your weblog
+remotely from services like Flickr.com and del.icio.us. This is possible
+because Roller supports a standard publishing protocols such as the
+MetaWeblog API and the Atom Publishing Protocol. Here’s how to set up a
+weblog client to post to Roller.
+
+Configuring a weblog client for use with Roller
+
+First, make sure to enable weblog client API support in your weblog via
+your weblog’s Weblog Settings page.
+
+image::user-guide-17-api.png[]
+
+Next, start your blogging client, find the preferences or account setup
+dialog. You’ll need to set the following parameters:
+
+* *Username*: your Roller username
+* *Password*: your Roller password
+* *BlogID*: the handle of your Roller weblog
+* *URL*: the URL of Roller’s web services end-point
+
+Note that you may not need to enter your BlogID because some blog
+clients will login to Roller and then present you with a list of the
+weblogs that are available to your user.
+
+*A blogs.sun.com example*. For example, if you have an account on
+blogs.sun.com, your username is fred and your blog’s handle is fredsblog
+(i.e. your weblog’s URL is _http://blogs.sun.com/fredsblog_), then your
+parameters would be:
+
+* *Username*: fred
+* *Password*: (your password)
+* *BlogID*: fredsblog
+* *URL*: http://blogs.sun.com/roller-services/xmlrpc
+
+You may not need to enter your BlogID because some blog clients will
+login to Roller and then present you with a list of the weblogs that are
+available to your user.
+
+*A jroller.com example*. If you have an account on jroller.com, your
+username is fred and your blog’s handle is fredsblog (i.e. your weblog’s
+URL is _http://jroller.com/fredsblog_), then your parameters would be:
+
+* *Username*: fred
+* *Password*: (your password)
+* *BlogID*: fredsblog
+* *URL*: http://jroller.com/roller-services/xmlrpc
+
+== Working with comments and trackbacks
+
+Roller supports weblog comments and _trackbacks_, which provide a way
+for other bloggers to add comments to your blog remotely. By default
+comments and trackbacks are enabled, but you can turn them off on your
+weblog’s Weblog Settings page of your weblog. Note that turning off
+comments will disable both comments and trackbacks.
+
+=== Comment notification via email
+
+If you’re going to leave comments turn on then take the time to read
+them, to respond where appropriate and, when you receive spam or other
+forms of offensive comments, delete them from your weblog. You can’t
+respond to comments if you don’t know when you get one, so make sure you
+enable email notification of comments. You can do that on the Weblog
+Settings page.
+
+If you’ve got email turned on then you’ll receive an email every time
+you get a new comment and the email will include the text of the
+comment, a link to the entry that was commented upon and a link to the
+comment management page, shown below, where you may choose to approve,
+mark as spam or even delete the new comment.
+
+=== Comment management
+
+You can use the Comments page to manage your weblog comments. You can
+mark comments as spam or delete them entirely. You can search comments
+by keyword, date and status. If you’ve got comment moderation turned on,
+you will use the Comments page to approve new comments.
+
+image::user-guide-18-comments.png[]
+
+*A word about status*
+
+You can’t edit comments, but you can mark them as spam or dis-approve
+them. Someday, Roller may provide some spam filtering based on data
+collected from comments marked as spam but currently, marking as spam
+and dis-approving of a comment do the same thing – they prevent the
+comment from being displayed on your weblog.
+
+*How to get to the Comments page*
+
+There are a couple of ways to get to the Comments page. You can use
+Roller’s tabbed menu to go there and manage comment across your entire
+weblog. If you’ve got email notification of new comments turned on, the
+you might arrive at the Comments page via a link sent to you in your
+email.
+
+You can also manage comments for just one weblog. When you are editing a
+weblog entry with comments you’ll see a link in the top-right corner of
+the weblog editor page like the one below, which you can use to access
+the entry’s comments.
+
+=== Comment moderation
+
+If you’d like to preview and approve comments before they are displayed
+on your weblog, then you’ll want to turn on _comment moderation_ via
+Weblog Settings page. When comment moderation is enabled, then each new
+comment will be marked as pending and unapproved and will not appear on
+your weblog. To check for new comments, go to the Comments page to check
+for and either approve or delete new comments. If you’ve got comment
+notification enabled, make sure you also enable comment notification so
+you’ll know when new comments arrive. To moderate comments, use the
+comment management page, described below.
+
+How to moderate comments
+
+* Review each new comment and decide if it is to be approved for
+display, marked as spam and hidden or deleted entirely.
+* Only comments that are marked as approved and are not spam will be
+displayed on your weblog. So set (or unset) the corresponding checkboxes
+for each comment, or leave them the way they are.
+* When you are done. Click the save changes button at the bottom of the
+page. You’ll see that comments that were pending are no longer pending
+and those that you marked for delete will be gone.
+
+=== Global comment management
+
+If your user has global administration privileges, then you can manage
+comments across the entire Roller site, including every weblog. To do
+this, go to the *Server Administration:Comments* page and you’ll see a
+page that is almost identical to the weblog-specific comment management
+page.
+
+Limitations of global comment management
+
+You can use this page to mark as spam or delete any comment in the
+system, however you cannot change the approval status of comments
+through this interface. Approving comments for display is the duty and
+responsibility of the individual webloggers, so comment approval is only
+available in the context of a weblog.
+
+=== *Preventing weblog spam*
+
+There are two forms of comment spam that can affect your weblog:
+
+** _Comment spam_: spam that arrives via the comment form on your
+weblog. Sometimes spam comments are added by a human and sometimes by a
+computer program known as a _spambot._
+** _Trackback spam_: spam that arrives via trackbacks sent by a spambot.
+
+Fortunately, there are counter-measures for each type of spam. Here are
+Roller’s built in spam prevention measures:
+
+* _Pluggable comment authentication_. By default, Roller asks each
+commenter a simple math question to ensure that they are a person and
+not a spam robot. Your site administrator can turn this off or replace
+it with another form of authentication.
+* _Pluggable comment validation_. Roller includes five comment
+validators below. Your site administrator can adjust the settings for
+these validators and can enable/disable them as needed by overriding
+Roller’s configuration properties (see the Installation Guide for more
+information).
+** Excess links validator will mark comments with more than three links
+as spam (default: on)
+** Excess size validator marks any comment with more than 1000
+characters as spam (default: on)
+** Blacklist validator marks comments containing any of your site’s
+designated bad words as spam (default: on)
+** Trackback verification validator will check incoming trackbacks to
+ensure that they link to you.
+** Akismet validator allows you to use the Akismet.com spam prevention
+service.
+* _Comment throttling_. If your site is being abused by a spam robot
+your site administrator can set up throttling, which will watch for
+abusers and ban IP addresses that are posting too many comments too
+quickly.
+
+But nothing beats comment moderation
+
+Even if you’ve got all of those measures enabled you should still enable
+email notification of comments so that you are constantly aware of new
+comments on your weblog. None of the measures are 100% effective. If you
+are really concerned about displaying offensive content on your weblog
+even for a short time, then enable comment moderation on your weblog.
+
+Roller uses a _blacklist_, a lists of words which are used to check
+incoming comments, trackbacks and requestors for spam URLs. If the name,
+URL or content of a comment or trackback includes one of the blacklist
+words or matches one of the expressions then that comment or trackback
+is marked as spam and is not displayed on your weblog, unless you use
+the comment management page to unmark it.
+
+Actually, there are three levels of blacklist:
+
+** Level 1 blacklist: This is the built-in blacklist, the one that comes
+with Roller. This can only be changed by somebody with root access to
+the Roller server itself.
+** Level 2 blacklist: This is the site wide blacklist, which can only be
+edited by a global administrator via the Server Admin page.
+** Level 3 blacklist: Weblog specific blacklist, which you control in
+the Weblog Settings page of your weblog.
+
+Incoming comments and trackbacks are checked against all three levels of
+blacklist. Incoming web page requests, however, are only checked against
+the levels 2 and 3 blacklist and will receive a 403 (forbidden) message
+if found.
+
+If you have a spam problem on your weblog and you’d like to add words to
+the blacklist, it’s probably better for you to ask your administrator to
+add the words to the level 2 blacklist for you. That way, every blogger
+on the site will benefit from the addition. If you must do it yourself,
+here’s how you do it:
+
+
+** Go to the Weblog Settings page and scroll down to the blacklist
+fields
+** Enter your spam words, one per line
+** Lines that begin with a left parenthesis will be treated as regular
+expressions (see the Java API documentation for
+_javax.util.regex.Pattern_ for a guide to regular expressions). Don’t
+try to use a regular expression unless you really know what you’re
+doing.
+
+=== Sending trackbacks
+
+If you are writing about something you read on another weblog, you want
+to let the author and readers of that weblog know that you are doing so,
+and that other weblog is trackback enabled, then you should send that
+weblog a trackback ping. Here’s a story that illustrates how trackback
+works:
+
+* You read an interesting blog entry on Otto’s blog. You notice that
+Otto’s blog entry has a trackback URL, so instead of leaving a comment
+on Otto’s blog you decide to comment by writing a blog entry in your own
+blog. You copy that trackback URL (using ALT-C, or right-click-copy, or
+whatever) cause you’ll need it later.
+
+* You go to your blog and write a new blog entry in response to Otto’s
+entry. Click the Post to Weblog button to publish your new entry. After
+you publish, scroll down on the New Entry page until you see the
+following text field and button:
+* Enter the trackback URL from Otto’s blog entry into the text field and
+click the Send Trackback button. Roller will respond by printing the
+response received from Otto’s blog server. If the trackback was
+successful, you should see something like this:
+* You should now see your trackback listed among the comments on Otto’s
+blog entry.
+
+== Choosing your weblog theme
+
+A weblog theme is a set of templates, style-sheets and image that
+determine how your weblog will be displayed. A theme can define both the
+layout and color-scheme of your weblog. You can pick from one of a
+number of predefined themes. Some themes will allow you to control
+design by using a stylesheet. Other themes require you to edit the
+templates that define the theme if you want to customize them.
+
+You can access Roller’s theme and template features for your weblog via
+the Design menu, shown below:
+
+image::user-guide-20-design-menu.png[]
+
+The Theme menu leads you to the theme chooser page, shown below. Using
+this page you can pick from one or more different themes for your
+weblog. If none of the themes are appealing to you, then speak to your
+site administrator about obtaining or developing some additional themes.
+The Roller Support project is one place where you can obtain additional
+themes (_http://roller.dev.java.net_, _not_ an Apache site).
+
+image::user-guide-design-theme.png[]
+
+For more information on customizing Roller themes refer to the Template
+Guide.
+
+== Managing your weblog preferences
+
+As a Roller user, you are free to customize the settings of your weblog
+as you wish. When you establish your Roller user account, you can choose
+one of the dozen or so stock themes for your website. Later, you can use
+the theme switcher to switch to a different theme. Or, if you know
+something about HTML and CSS you can customize the look-and-feel and
+layout of your weblog yourself by modifying the page templates that make
+up your site and by adding new pages. Best of all, you can do all of
+this through the web-based Roller Editor UI.
+
+=== Weblog settings
+
+The *Preferences:Settings* page allows you to set the configuration
+parameters for your weblog.
+
+Here is an explanation of each of the settings on the weblog
+*Preferences:Settings* page:
+
+==== *General settings*
+
+image::user-guide-settings.png[]
+
+* *Title* - The title of your weblog may include HTML, but the HTML will
+be stripped out in your RSS feed. You can access your title in a page
+template with the expression _#showWebsiteTitle()_
+
+* *Tagline* – Short description or sub title of your weblog. May include
+HTML, but the HTML will be stripped out in your RSS feed. You can access
+your tagline in a page template with the expression
+_#showWebsiteDescription()_.
+* *Icon* - The image file name (ex: thumbnail.jpg) or image url (ex:
+http://yoursite/thumbnail.com) that shows on some of the default themes.
+You’ll need to upload the image via the *Create & Edit:File Uploads* tab
+first.
+* About your blog – A more detailed description of the blog or blog
+author(s) that shows on some of the default themes.
+
+* *Email address of weblog owner*: Enter the email address that you
+would like people to use to contact the person in charge of your blog;
+usually that’s you. To thwart spammers, your email address will be
+obfuscated when displayed on your blog. Please enter a valid address,
+otherwise Roller’s email features will not work.
+
+* *Weblog editor page to be used* - Choose a weblog editor page, some
+are rich-text editors:
+
+** editor-text.jsp: Simple text editor, you must enter HTML
+** editor-rte.jsp: Rich text editor (works in Firefox and IE but not
+Safari)
+* **Weblog is active: **un-check this box to indicate that your weblog
+is no longer active and should not appear in hot-blog and other weblog
+listing on the site. You might want to do this if you take a very long
+vacation or if you have decided to stop updating your weblog for some
+other reason.
+* *Number of entries to display on weblog*: Enter the maximum number of
+entries to be displayed on your weblog.
+
+==== Internationalization Settings
+
+image::user-guide-internationalization.png[]
+
+* I publish my weblog in multiple languages: check this box if you blog
+in multiple languages and would like to specify a language locale for
+each of your weblog entries.
+* Show my weblog entries from all languages on my home page: check this
+box if you’d like your weblog’s main page to show your posts in all
+languages. If you don’t check it, then readers will only see weblog
+entries from your default locale.
+* Locale set the default locale for your weblog.
+* Timezone: the timezone to be used in your weblog.
+
+==== Comments and default comment settings
+
+image::user-guide-comments.png[]
+
+* *Allow comments for your weblog?* – Check this box to allow visitors
+to leave comments on your weblog.
+* *Moderate comments* – Check this box to enable comment moderation
+(i.e. you must approve each comment before it is displayed).
+
+Note the next two options are visible only if the Roller Administrator
+has enabled email notifications for user blogs (See Section 9.2, Roller
+Administration):
+
+* *Email notification of comments?* – Check this box to receive an email
+notification of each new comments.
+* *Default from e-mail address for comments* – This will be used as the
+from address in comment emails sent by Roller.
+* *By default, allow comments for new entries* – Check this box to
+enable comments on your weblog. You can also control comments on each
+individual weblog entry.
+* Default time to allow comments for new entries – Choose the default
+amount of time to allow comments for new blog entries. This setting may
+also be overridden using the Comment Settings section of the New Entry
+page.
+* *Apply comment defaults to all existing entries? *- If you check this
+box, when you click the Save button the comment defaults you have set
+will be applied to all existing comments.
+
+==== *Weblog client API*
+
+image::user-guide-17-api.png[]
+
+* *Enable Blogger API for your weblog* - Set to true to enable
+weblogging via the MetaWeblog API. This will allow you to use handy
+blogging clients like Ecto to post to your weblog.
+
+* *Category for posts received via Blogger API* - Choose the category
+for incoming posts made via the Blogger API. This only applies if you
+blogging client does not support categories
+
+==== *Formatting*
+
+image::user-guide-formatting.png[]
+
+* **Default entry formatters: **this is the list of plug-ins to be
+enabled by default on a new weblog entry.
+
+==== *Spam prevention*
+
+image::user-guide-spam.png[]
+
+* **Ignore incoming URLs that contain any of these words - **you can use
+this to filter out what commentors, trackbacks, and referrers (web page
+requestors) are accepted. See Section
+[link:#5.5.Preventing%20weblog%20spam%20%7Coutline[5.5]]for more
+information on spam prevention.
+
+==== Web Analytics
+
+If you wish to use Web Analytics software tools such as Google Analytics
+(a fuller list of services is here:
+http://en.wikipedia.org/wiki/List_of_web_analytics_software) to track
+blog readers you can place your tracking code (usually a JavaScript
+snippet including the <script> element that contains it) in this field.
+Then, add the “#showAnalyticsTrackingCode($model.weblog)” macro to an
+appropriate area in your blog’s template (the HTML <head/> section is
+a good place) and this tracking code will be active for your blog.
+(Most if not all of the blog templates pre-packaged with Roller
+will already have this macro present; it will not output anything
+if no tracking code is provided.)
+
+This option will be available only if it has been activated by the blog
+server administrator; alternatively, the tracking code can be directly
+placed within the blog template if your administrator has enabled
+template customization for blog owners. The blog server administrator
+may configure a blog server-level default tracking key that will hold
+for all blogs or alternatively just for blogs which haven’t overwritten
+this default key.
+
+=== Weblog members: managing a group blog
+
+To create a group blog, create a new weblog or log into an existing
+weblog that you’d like members to contribute to. Creating a weblog for
+group blogging is the same a creating a personal weblog (see section
+http://www.rollerweblogger.org/wiki/Wiki.jsp?page=UserGuide_2.x#ref-UserGuide_2.x-3[[3]]
+for instructions). Navigate to the *Members* menu item in the
+*Preferences* tab. The *Preferences:Members* page enables weblog admins
+to invite members to a group blog and manage the group blog user access.
+
+image::user-guide-21-member.png[]
+
+You can use the *Invite new member* link to invite any Roller user to
+join your weblog, but before you do you should understand the three
+different permission levels allowed for members of a weblog. They are:
+
+* *Admin*: an admin can create/edit weblog entries and publish them to
+the web. They can also manage the weblog by changing the theme, editing
+the page templates that define the look of the blog, and managing the
+users of the blog. Roller will grant you admin rights in any weblog you
+create. Admin users can see both the Create & Edit tab and the
+Preferences tab of Roller.
+* *Author*: author permission allows users to create entries, edit
+entries and upload files. But authors cannot change weblog settings,
+modify the theme or manage users. Authors can see the weblog Create &
+Edit tab, but not the weblog Preferences tab.
+
+* *Limited*: limited bloggers can create and edit blog entries and save
+them as drafts, but cannot publish them to the web.
+
+Select *Invite new member* from the right navigation to invite Admins,
+Authors, and Limited authors to join the group blog. You’ll need to know
+the users individual blog username to find them in the list of users.
+You may scroll through the list, but it’s best to begin typing their
+username to locate them. Set the users Permissions by selecting Admin,
+Author, or Limited. Click on *Send Invitation*. If Roller is not
+configured to talk to the mail server, you may get the following
+messages:
+
+User successfully invited.
+
+ERROR: Notification email(s) not sent, due to Roller configuration or
+mail server problem.
+
+As long as the first message is present, the invite is successful. The
+next time the user logs into the blog site, they will see the message
+show in the screenshot below asking them to accept or decline your
+invitation.
+
+Once a user is a member of your blog, you can change their permissions.
+Just click the appropriate radio button in the table and click the
+*Save* button. You can also remove users from the site, but note that
+you cannot reduce your own permissions or remove yourself from the
+weblog.
+
+*Accept or Decline a Group Blog Invitation*
+
+If you are invited to become a member of a group blog, an invitation
+will be present at the top of the Main Menu page. Example:
+
+image::user-guide-22-invite-member.png[]
+
+Click 'accept' to become a member of the group blog or 'decline' to turn
+down the invitation.
+
+*Contribute to a group blog*
+
+Once you’re a member of a group blog, contributing is as easy as
+creating blog entry content. To access the group blog, login, from the
+*Main Menu* navigate to the group blog you’d like to contribute to and
+select any of the following: New Entry, Edit Entries, Settings (weblog
+admins only).
+
+For users who participate in multiple weblogs it is important to note
+that the Main Menu page is how you switch between the various weblogs
+you can author to. The Main Menu will always show you what weblogs you
+are participating in and what privileges you have on each weblog.
+
+*Resign from a Group Blog*
+
+To resign from a group blog, login, on the Main Menu page, navigate to
+the blog information for which you wish to resign. Select 'Resign'.
+
+== Using weblog pings
+
+Weblog update pings provide a means for you to notify aggregation and
+indexing sites (for example Weblogs.com, Technorati and javablogs.com)
+that your weblog has changed so that they will pick up your latest
+content from your RSS feed.
+
+Roller supports the conventional XML-RPC weblog update ping mechanism
+used by many sites for such notifications.
+
+=== Registering with an Aggregator
+
+Generally speaking, aggregation sites first require you to register your
+weblog with their site. During this registration process you normally
+provide both the HTTP URL and the RSS feed URL for your weblog. This is
+important because the ping message conveys only the normal HTTP URL of
+your site, and the site will use that to lookup the registered RSS feed
+URL to fetch from.
+
+Aggregation sites that accept ping notifications generally publish the
+ping URL to use to ping their site on their (human-readable) web site.
+Once you have registered your site with an aggregator, you can set up
+your weblog to deliver pings to that site.
+
+=== Ping Targets, Common and Custom
+
+You can set up the Roller server to ping sites of your choice
+automatically whenever you post published updates to your weblog.
+
+Roller uses the term *ping target* to refer to a site, such as an
+aggregator, that accepts weblog update ping notifications. A ping target
+is configured with a (display) name and the ping URL needed to reach the
+site. Before you can send a ping to a site, you must configure a ping
+target in Roller for the site. Roller comes pre-shipped with multiple
+ping targets and the Roller administrator can configure additional ones
+as desired.
+
+=== Setting up Automated Pings
+
+Once a ping target has been configured for the site that you wish to
+ping, you can use the *Weblog:Pings* page (shown below) to enable
+automatic pings and send manual pings.
+
+image::user-guide-23-ping.png[]
+
+To enable automatic pings to a ping target, find the ping target on the
+page and click the *Enable* link in the Automatic column. The status
+indicator turns to *ON* and the link changes to *Disable* (as shown for
+some sites in the screenshot above). To disable automatic pings to a
+ping target click the *Disable* link in the Automatic column. The status
+indicator turns to *OFF* and the link changes to *Enable*.
+
+When you have enabled automatic pinging for a ping target, Roller will
+automatically send a ping to that site whenever you publish a new weblog
+entry or update a published weblog entry.
+
+NOTE: In actuality, Roller queues a request to send the ping and
+processes this request in the background, so that you can get on with
+your blogging. The ping queue is processed at an interval configured by
+the site administrator; this interval is 5 minutes in a default
+configuration. In case the aggregator site is temporarily unreachable,
+Roller will requeue your ping request and retry on subsequent passes
+through the queue; in a default configuration the ping is requeued for
+up to 3 ping attempts._
+
+=== Sending a Manual Ping
+
+You can also send a manual ping to a ping target using the *Send Ping
+Now* link listed for the target on the *Weblog:Pings* page. When you
+send a manual ping the ping is not queued, it is sent immediately and
+attempted only once. Roller shows you the response status (success or a
+failure message) that results from the ping.
+
+You do not need to enable automatic pinging in order to send manual
+pings. You can send a manual ping whether or not you have enabled
+automatic pinging for that target.
+
+You can use manual pings if you ping a site very rarely, or if you are
+feeling a bit impatient, and you don’t want to wait for the next queue
+processing interval.
+
+If you don’t find a ping target listed for the site you wish to ping,
+you can request that your administrator add a a new one for all blogs to
+have available. See Chapter 10 for more information on adding ping
+targets.
+
+=== More on Registering with an Aggregator
+
+When you register with an aggregator, you will usually need to provide
+two pieces of information as part of the registration, your blog’s base
+(HTML) url and your RSS feed (XML) URL. Make sure to read the
+aggregator’s documentation and help on registering.
+
+For Roller weblogs, you get your weblog’s base URL by viewing your
+weblog and taking the URL to the point just following your weblog’s
+handle. (In other words it should end with _page_/_handlenamehere_).
+
+The RSS feed URL for your whole feed can be obtained by substituting
+_page_ in your weblog’s URL with _RSS_. Most browsers will display this
+link in the status bar when you place your mouse over RSS badge (the
+little orange XML box) on your weblog page.
+
+You also have category-specific feeds, which are useful for registering
+with topical aggregators like *java.blogs*. To get a category-specific
+feed URL, just append _?catname=/categoryname_ substituting _name_ for
+the category name. The "basic" theme has some category RSS feeds just
+below the RSS badge in the right-hand vertical bar.
+
+Some aggregators can also scrape (read and parse the HTML of your
+weblog) to discover the feed URL automatically when provided with the
+HTML URL. The default Roller theme template pages include hints in the
+form of tags that many sites can use to determine the feed URL
+automatically.
+
+== Roller administration
+
+This section of the Roller user guide is for users with the global admin
+role. How do you get the admin role? The first user created in a Roller
+system gets that role and then can grant it to other users via the
+*Global Admin->User Admin* page, which just happens to be the first
+topic we’ll cover in the section.
+
+We’ll also describe how to configure Roller via the **Global
+Admin->Configuration **page and how to configure Roller’s custom ping
+facility via the *Global Admin->Ping Targets* page.
+
+=== Managing users
+
+The *Global Admin->User Admin* page, shown below, allows you to find
+users, edit users and create new users.
+
+image::user-guide-24-user-admin.png[]
+
+To find a user, just enter the user’s username in the username in the
+the Username field and click the edit button. If you don’t know the
+user’s username, then start typing what you think might be the first
+letters of her username or email address and the list-box will be
+populated with all users whose usernames or email addresses match. When
+you see the user you want in the list box, click her and then click the
+Edit button to edit her user information.
+
+You can also create a new user by clicking the *create a new user link*.
+
+When a user is loaded into the *Global Admin->User Admin* page, or when
+you create a new user, you’ll see the form shown below. You can set the
+user’s full name, email address, locale and timezone. You can also reset
+the user’s password, if you enter both a password and password
+confirmation fields.
+
+image::user-guide-25-user-admin.png[]
+
+You can also disable a user, which will prevent the user from logging
+into Roller.
+
+Or you can check the Administrator checkbox to grant grant the user
+Global Admin privileges.
+
+At the bottom of the page, there’s a *Users Weblogs* section, which you
+can use to edit any of the user’s weblogs. This feature is here to make
+it easy for Global Admin’s to help users who are having trouble with any
+of Roller’s features, so please use it for that reason only; don’t use
+it to invade your user’s privacy.
+
+NOTE: you can disable a user but there is no way to remove a user from
+Roller.
+
+=== Configuring Roller
+
+The *Global Admin->Configuration* page allows you to set Roller’s
+runtime configuration properties. It is a big page, so we will discuss
+each section separately below.
+
+image::user-guide-26-site-setting.png[]
+
+* *Site name*: name of the site, to be included in site-wide newsfeeds
+(RSS and Atom) and on the default front page of the Roller.
+* *Short name*: short name of the site, to be included as the link in
+the banner that appears at the top of every page in the Roller
+editor/admin UI.
+* *Site description*: description of site, to be included in site-wide
+newsfeeds (RSS and Atom) and on the default front page of the site.
+* *Site Administrator’s emailConfiguring Roller Address*: admin’s email address, to be
+include in side-side newsfeeds (RSS and Atom)
+* *Handle of weblog to serve as frontpage blog*: specify the weblog that
+is to be displayed as the frontpage of this Roller site.
+* *Enable aggregated frontpage feeds*: Set this to true if you would
+like the frontpage weblog’s RSS and Atom feeds to be an aggregation of
+all weblogs on the Roller site.
+* *Absolute URL to this site*: to be used as basis for creating absolute
+URLs. Required for Roller’s Planet aggregator feature.
+* *Suspend all ping processing*: Allows you to turn off all (outgoing)
+weblogs pings for all weblogs in the system.
+* *Enable debug mode*: currently not used.
+
+image::user-guide-27-comments.png[]
+
+* *Allow New Users*: Set this to enable the _register as new user_ link
+on the main page. If you turnoff user creation, you’ll only be able to
+create new users via the *Global Admin->User Admin* page.
+
+* *External registration URL*: Controls the URL of Roller’s "Register
+as new users" link. If you use an external system to create Roller
+users and blogs, set the URL of that system here.
+* Editor pages: this is the list of weblog editors to be provided to
+users.
+
+* *Allow weblog comments*: By un-setting this you can turn off weblog
+comments on all weblogs in the system.
+* *Allow trackbacks*: By un-setting this you can turn off incoming
+trackbacks on all weblogs in the system.
+* *Autoformat comments*: If this is on, Roller will auto-format comments
+by adding in line-breaks where appropriate.
+* *Escape comment HTML*: By setting this, you can disallow HTML in
+comments and thereby protect your site from malicious JavaScript and
+some forms of cross-site scripting.
+* *E-mail notification of comments*: set this to enable email
+notification of new comments. This won’t work unless you configured
+Roller properly for sending email as described in the Roller
+installation guide.
+* *Enable verification of trackback links*: Trackback verification
+checks each incoming trackback to verify that the site sending the
+trackback actually links to the specific weblog entry that is the target
+of the trackback.
+
+image::user-guide-28-feed.png[]
+
+* *Default number of entries*: default number of entries to appear in
+each newsfeed (RSS and Atom).
+* *Maximum number of entries*: maximum number of entries to be allowed
+in each newsfeed (RSS and Atom).
+* *Display styled newsfeeds for browsers*: Set to true to enable
+user-friendly RSS and Atom feed display, so that users don’t see raw XML
+when they load the feed in their browsers.
+
+image::user-guide-29-fileupload.png[]
+
+* *Enable File Uploads*: Are users allowed to upload files?
+* *Allowed Extensions*: Comma-separated list of file extensions that
+users are allowed to upload.
+* *Forbidden Extensions*: Comma-separated list of file extensions that
+users are NOT allowed to upload.
+* *Max File Size (MB)*: Maximum size of file that users are allowed to
+upload.
+* *Max Directory Size (MB)*: Total upload directory size per user.
+
+The We Analytics section allows you to provide a JavaScript snippet if
+you wish to activate Google Analytics or other tracking services. The
+value you place here will hold for all blogs, unless you enable the
+individual blog overriding option in this section; in the latter case
+the default key will be used only for blogs which don’t have their own
+defined. Note that even if individual overrides are disallowed bloggers
+can still place their own tracking code within their blog templates if
+you enable custom themes (in the "Theme Settings" section on this
+configuration page.)
+
+== Weblog update ping administration
+
+This section, intended for Roller administrators, describes how the
+Roller weblog update ping feature works and how to configure and
+administer it.
+
+=== Creating and editing common ping targets
+
+Common ping targets are ping targets that are shared by all users. You
+can create and edit common ping targets using the *Global Admin->Ping
+Targets* page.
+
+image::user-guide-30-ping.png[]
+
+You can create and edit common ping in the same way that regular users
+create and edit custom ping targets, but keep in mind that common ping
+targets are shared amongst all users, and that your changes affect all
+users using the ping target. Administrators should make sure to test new
+common ping targets after creating them.
+
+Before adding a ping target, the administrator must determine the proper
+ping URL for the site that you wish to ping. This information can be
+obtained from the aggregator’s web site or from another knowledgeable
+source.
+
+It can be hard to find the aggregator’s documentation for the specific
+ping URL to use to notify their site. Commonly aggregators list this on
+their web site under a topic providing help about registering your feed,
+or under a topic providing information for developers. Keep in mind that
+some aggregators only use periodic polling and do not accept ping
+notifications at all. If you can’t find any information about pinging on
+the aggregator’s web site, the site may not support pinging.
+
+Click the *Add New* button to add a new ping target. This will bring up
+a form with a *Name* field and a *Ping URL* field. Fill in both fields,
+and click the *Save* button.
+
+image::user-guide-31-add-ping.png[]
+
+Once the new ping target has been created, it will be listed for all
+blogs on their *Weblog:Pings* page with the default activation status
+defined by the administrator. From this page, individual users can
+override the ping target’s enable status for their own blog as well as
+send manual pings to the new target.
+
+=== How Roller Processes Weblog Update Pings
+
+Roller processes weblog update pings in the background. When a user
+updates his or her weblog, Roller automatically queues any required
+automated pings on a queue. Roller only keeps one ping queue entry for a
+given user weblog and ping target. Subsequent updates to a weblog
+occurring before the ping is processed will not cause additional pings
+to be queued.
+
+Roller makes a full pass through the ping queue at regular intervals.
+(Configuration of this interval is discussed below) In each pass, Roller
+will attempt to send every queued ping request once. If any send fails
+(and provided the failure appears to be a transient one), the ping
+request will be re-queued, until the ping succeeds or a configured
+number of attempts has been made. Note that when a ping request fails
+and is re-queued, it is processed again only on subsequent ping passes.
+If the number of attempts to reach a given ping target reaches the
+maximum without succeeding, then an error message is logged and the ping
+request is dropped.
+
+There is currently no mechanism for alerting users of failing ping
+targets (though we plan some improvements in subsequent releases to
+provide condition information on the weblog *Preferences->Pings* page,
+as well as a failure policy to deactivate persistently failing ping
+targets).
+
+=== Configuration Properties Controlling Ping Processing
+
+These properties control processing of the ping queue. They are
+configured in the __roller.properties __file.
+
+**pings.queueProcessingIntervalMins **The interval in minutes between
+ping queue processing runs. This must be a value in the range 0 to 120.
+The default value is 5 minutes. We think the default value should work
+for most sites, and is tolerable for most users. The number of users
+publishing or updating entries in a given interval determines the length
+of the queue, and Roller requires enough time in an interval to process
+the queue once. We think that for all but the largest and most active
+sites, it can probably be lowered as low as 1 minute if desired.
+*IMPORTANT*: The value 0 (zero) has a special meaning. If the processing
+interval is set to 0, ping queue processing is disabled on the server.
+This can be used to exclude all but one host from sending pings in a
+clustered environment where multiple Roller servers are sharing one
+database schema. *Make sure to retain one host in the cluster that does
+process the ping queue!* If multiple hosts in a cluster process the ping
+queue, you may send duplicate pings and failing ping requests may drop
+out of the queue sooner than the expected maximum (configured by the
+next parameter). If no hosts in a cluster process the ping queue, auto
+ping requests will accumulate in the queue and this will eventually
+cause the database to run out of space, so don’t try to use this as a
+way to disable ping features. You can use the properties described in
+the following sections to disable ping features.
+
+**pings.maxPingAttempts **The maximum number of ping attempts made
+before the ping request will no longer be requeued and will instead be
+dropped from the queue. The default value is 3. We think this value is
+fine for most sites.
+
+=== Suspending all ping processing
+
+Administrators can suspend all ping processing at runtime by checking
+the *Suspend ping processing?* checkbox under the *Site Settings*
+heading on the *Global Admin->Configuration* page and saving that form.
+
+When this checkbox is set, all ping processing is suspended. New
+automatic ping requests are not added to the queue, and existing entries
+on the queue are not processed. Manual pings are not sent either; they
+result in a message telling the user that ping processing has been
+suspended. Suspending ping processing is appropriate to temporarily stop
+all ping processing if problems are encountered.
+
+Unchecking the checkbox and saving allows normal ping processing to
+resume. Note, however, that autopings for weblogs that are updated while
+ping processing is suspended will never be queued and hence never sent,
+but pings queued before the suspension are sent once the suspension is
+lifted.
+
+=== Controlling and disabling ping usage
+
+Since use of a ping target causes an outbound network connection to the
+ping site, some administrators may not want to allow users to create
+their own custom ping targets. It is possible to enable or disable the
+use of custom ping targets across the whole site and also to disable all
+ping usage. The following two properties are used to control this.
+
+**pings.disallowCustomTargets. **This property controls whether users
+are allowed to create custom ping targets. If set to true, all existing
+custom ping targets are _removed_, and the *Weblog:Custom Ping Targets*
+page and the associated actions are disabled preventing any
+configuration of custom ping targets. *Note:* __Setting this to true
+this will cause the Roller server to __remove _any custom ping targets
+that users have created when Roller is next started._
+
+Administrators may also wish to disable ping functionality entirely. The
+following property, used in conjunction with the above property, can be
+used to do this.
+
+**pings.disablePingUsage. **This property controls whether users are
+allowed to set up automatic pings or send manual pings. If set to true,
+all existing autoping configurations are removed (i.e. disabled), the
+weblog *Preferences->Pings* page and associated actions are disabled,
+preventing any use of the ping features by regular users. *Note:*
+__Setting this to true will cause the Roller server to __remove _any
+autopings that users have configured when Roller is next started._
+
+If both of the above properties are set to true, all ping functionality
+is effectively disabled for regular users. The *Global Admin:Ping
+Targets* page is still accessible (to administrators); you can use that
+page to clear out any common targets if you wish. No user (including
+administrators) will be able to configure automatic pings or send pings.
+Ping queue processing continues but the queue will always be empty; you
+can safely disable ping queue processing (by setting the processing
+interval to zero) in this situation.
+
+=== Initialization of common ping targets
+
+The initial set of common ping targets is determined by the following
+configuration property.
+
+**pings.initialCommonTargets. **This value is used to initialize the set
+of common ping targets. The value consists of a comma-separated list of
+ping targets, where each ping target is specified in the form
+
+{{name}{url}}
+
+This value is used every time Roller starts _and finds an empty list of
+common ping targets._ Normally, this is only the first time Roller is
+started on a fresh or upgraded database; note, however, that if you
+really want to maintain an empty list of common ping targets, you will
+need to comment out this value or set it to an empty string.
+
+== Weblog Export
+
+Roller includes an optional weblog export feature that allows you to
+export your weblog entries and uploaded Media Files to a format that is
+compatible with both Wordpress and MovableType. You can use the *Create
+& Edit -> Export* menu to do this. When you click one of the Export
+buttons, you will be prompted to download the resulting file.
+
+*Enabling Weblog Export*
+
+Export is an optional feature that is disabled by default.
+
+If you do not see it in Roller, as your Roller admin to enable it by
+setting the _weblog.export.enabled_ property to _true_ in the
+**roller-custom.properties **file.
+
+== Planet Roller administration
+
+Roller includes an aggregator known as Planet Roller, which makes it
+possible for you to aggregate together weblogs from a Roller server with
+weblogs that are hosted elsewhere. You can create multiple aggregation
+groups each with its own set of feeds, you can display aggregation
+groups on your weblog pages and Roller provides an RSS feed for each
+group you create.
+
+Roller’s aggregator is not enabled by default. If you want to use it,
+you’ll have to ask your site administrator to enable and configure it
+for you. Please refer to the Roller Installation Guide for more
+information on that topic.
+
+=== Configuring Planet Roller
+
+If you’ve got Planet enabled, when you login as a global admin you’ll
+see a Planet Administration link on the Roller Main Menu page. Click
+that link to view the *Planet Admin->Configuration* page, shown below.
+
+image::user-guide-32-planet-config.png[]
+
+To configure Planet Roller, you must:
+
+* Ensure that your site has an absolute URL in the *Global
+Admin->Configuration* page in the Site Settings section.
+
+* If you are behind a proxy, you must enter proxy settings in the
+*Planet Admin->Configuration* page.
+
+=== Adding external weblogs to Planet Roller
+
+Planet Roller allows you to create multiple aggregation groups each
+containing a different set of feeds, but there is also a special group
+known the _external_ group that is managed by Roller. The external group
+includes all weblogs on your Roller server plus any externally hosted
+weblogs you choose to add. The RSS feed for the external group is
+available at /planetrss, so on a default Roller install its URL will be:
+
+http://localhost:8080/roller/planetrss
+
+This section describes how to add and remove weblogs using the *Planet
+Admin->Subscriptions* page, shown below.
+
+image::user-guide-33-subscription.png[]
+
+*Adding an external weblog to Planet Roller*
+
+To add an externally hosted weblog to the Planet, use the *Planet
+Admin->Subscriptions* page. Enter its title, newsfeed URL and website
+URL and click the Save button.
+
+NOTE: Planet Roller only supports Atom and RSS newsfeeds that include
+entry level date information. If you enter a subscription that does not
+include dates, Planet Roller will accept it, but you may not see entries
+from the feed because Roller will assume that its entries are at least
+one day old.
+
+Removing an external weblog from Planet Roller
+
+You can select an existing subscription and edit it or delete it. The
+change will not be evident on the front page until the next scheduled
+Refresh Entries task runs.
+
+=== Adding custom groups to Planet Roller
+
+You can also add custom aggregation groups and Planet Roller will
+provide an RSS newsfeed for each group you add. For example, if you add
+groups with the handles _music_ and _politics_, then you’ll get two
+feeds at URLs like this:
+
+http://localhost:8080/roller/planetrss?group=music
+
+http://localhost:8080/roller/planetrss?group=politics
+
+To add new custom groups just use the *Planet Admin->Custom Groups*
+page, shown below.
+
+To create a custom group
+
+Go to the *Planet Admin->Custom Groups* page and enter the title and
+enter a title for the group, one that is appropriate for display in the
+group’s RSS feed. Enter a handle a one word name for the group, which
+you’ll use to refer to the group in your page templates. When you’re
+done click the Save button
+
+You’ll see your new group appear in the Existing Custom Aggregation
+Groups table. Click on the Subscriptions icons for your new group and
+you’ll be taken to the *Planet Admin->Subscriptions* page so you can add
+feed subscriptions to the group.
+
+Enter the title, newsfeed URL and website URL for the feed you’d like to
+add and click the Save button to add it to the feeds list. Repeat once
+for each subscription you’d like to add to the group.
