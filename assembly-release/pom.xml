@@ -79,7 +79,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <sourceDirectory>../docs/adoc</sourceDirectory>
+                    <sourceDirectory>../docs</sourceDirectory>
                     <attributes>
                         <sourcedir>${project.build.sourceDirectory}</sourcedir>
                     </attributes>
