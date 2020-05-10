@@ -53,7 +53,7 @@ public class WeblogListGenerator {
 
         List<Weblog> rawWeblogs;
         if (letter == null) {
-            rawWeblogs = weblogDao.findByVisibleTrue(PageRequest.of(pageNum, maxBlogs + 1));
+            rawWeblogs = weblogDao.findByVisibleTrueOrderByHandle(PageRequest.of(pageNum, maxBlogs + 1));
         } else {
             rawWeblogs = weblogDao.findByLetterOrderByHandle(letter,
                     PageRequest.of(pageNum * maxBlogs, maxBlogs + 1));

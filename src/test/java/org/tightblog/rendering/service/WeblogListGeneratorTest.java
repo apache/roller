@@ -99,7 +99,7 @@ public class WeblogListGeneratorTest {
 
         when(mockWeblogDao.findByLetterOrderByHandle('M', PageRequest.of(30, 11)))
                 .thenReturn(oneWeblogList);
-        when(mockWeblogDao.findByVisibleTrue(any())).thenReturn(weblogList);
+        when(mockWeblogDao.findByVisibleTrueOrderByHandle(any())).thenReturn(weblogList);
 
         // test if letter and pageNum > 0 get one weblog and prev link
         WeblogListData data = weblogListGenerator.getWeblogsByLetter("http://www.foo.com", 'M',

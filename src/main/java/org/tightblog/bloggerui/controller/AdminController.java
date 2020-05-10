@@ -91,10 +91,8 @@ public class AdminController {
     }
 
     @GetMapping(value = "/caches")
-    public Map<String, LazyExpiringCache> getCacheData() {
-        Map<String, LazyExpiringCache> cacheMap = new HashMap<>();
-        cacheSet.forEach(c -> cacheMap.put(c.getCacheHandlerId(), c));
-        return cacheMap;
+    public List<LazyExpiringCache> getCacheData() {
+        return new ArrayList<>(cacheSet);
     }
 
     @PostMapping(value = "/cache/{cacheName}/clear")
@@ -114,10 +112,10 @@ public class AdminController {
                 messages.getMessage("cachedData.message.reset", null, locale));
     }
 
-    @GetMapping(value = "/webloglist")
-    public List<String> getWeblogHandles() {
+    @GetMapping(value = "/visibleWeblogHandles")
+    public List<String> getVisibleWeblogHandles() {
         List<String> weblogHandles = new ArrayList<>();
-        Page<Weblog> weblogs = weblogDao.findAll(Pageable.unpaged());
+        List<Weblog> weblogs = weblogDao.findByVisibleTrueOrderByHandle(Pageable.unpaged());
         for (Weblog weblog : weblogs) {
             weblogHandles.add(weblog.getHandle());
         }

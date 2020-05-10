@@ -34,6 +34,10 @@
         <put-attribute name="useAngularHeader" value="true" />
     </definition>
 
+    <definition name=".tiles-vue-tabbedpage" extends=".tiles-tabbedpage">
+        <put-attribute name="useAngularHeader" value="false" />
+    </definition>
+
     <definition name=".tiles-simplepage" template="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
         <put-attribute name="bannerStatus" value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
@@ -117,7 +121,7 @@
         <put-attribute name="content" value="/WEB-INF/jsps/admin/UserAdmin.jsp" />
     </definition>
 
-    <definition name=".cachedData" extends=".tiles-tabbedpage" >
+    <definition name=".cachedData" extends=".tiles-vue-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/CachedData.jsp" />
     </definition>
 

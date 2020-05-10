@@ -19,8 +19,12 @@
   are also under Apache License.
 --%>
 <%@ include file="/WEB-INF/jsps/tightblog-taglibs.jsp" %>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!--script-- src="https://cdn.jsdelivr.net/npm/vue"></!--script-->
+
 <script src="<c:url value='/tb-ui/scripts/jquery-2.2.3.min.js'/>"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.min.js"></script>
 
 <script>
     var contextPath = "${pageContext.request.contextPath}";
@@ -30,25 +34,22 @@
     };
 </script>
 
-<script src="<c:url value='/tb-ui/scripts/commonangular.js'/>"></script>
-<script src="<c:url value='/tb-ui/scripts/cacheddata.js'/>"></script>
+<div id="template">
 
 <input id="refreshURL" type="hidden" value="<c:url value='/tb-ui/app/admin/cachedData'/>"/>
 
-<div id="successMessageDiv" class="alert alert-success" role="alert" ng-show="ctrl.successMessage" ng-cloak>
-    {{ctrl.successMessage}}
-    <button type="button" class="close" data-ng-click="ctrl.successMessage = null" aria-label="Close">
+<div id="successMessageDiv" class="alert alert-success" role="alert" v-if="successMessage" ng-cloak>
+    {{successMessage}}
+    <button type="button" class="close" v-on:click="successMessage = null" aria-label="Close">
        <span aria-hidden="true">&times;</span>
     </button>
 </div>
 
-<div id="errorMessageDiv" class="alert alert-danger" role="alert" ng-show="ctrl.errorObj.errors" ng-cloak>
-    <button type="button" class="close" data-ng-click="ctrl.errorObj.errors = null" aria-label="Close">
+<div id="errorMessageDiv" class="alert alert-danger" role="alert" v-if="errorMessage" v-cloak>
+    {{errorMessage}}
+    <button type="button" class="close" v-on:click="errorMessage = null" aria-label="Close">
        <span aria-hidden="true">&times;</span>
     </button>
-    <ul class="list-unstyled">
-       <li ng-repeat="item in ctrl.errorObj.errors">{{item.message}}</li>
-    </ul>
 </div>
 
 <p class="subtitle">
@@ -75,39 +76,44 @@
         <th style="width:9%"></th>
     </tr>
 </thead>
-<tbody id="tableBody" ng-cloak>
-      <tr ng-repeat="(key,item) in ctrl.cacheData">
-        <td>{{key}}</td>
+<tbody id="tableBody" v-cloak>
+    <tr v-for="item in cacheData">
+        <td>{{item.cacheHandlerId}}</td>
         <td>{{item.maxEntries}}</td>
         <td>{{item.estimatedSize}}</td>
         <td>{{item.incomingRequests}}</td>
         <td>{{item.requestsHandledBy304}}</td>
         <td>{{item.cacheHitCount}}</td>
         <td>{{item.cacheMissCount}}</td>
-        <td>{{item.incomingRequests > 0 ? (item.requestsHandledBy304 / item.incomingRequests | number:3) : ''}}</td>
-        <td>{{item.cacheRequestCount > 0 ? (item.cacheHitRate | number:3) : ''}}</td>
-        <td>{{item.incomingRequests > 0 ? ((item.requestsHandledBy304 + item.cacheHitCount) / item.incomingRequests | number:3) : ''}}</td>
+        <td>{{item.incomingRequests > 0 ? (item.requestsHandledBy304 / item.incomingRequests).toFixed(3) : ''}}</td>
+        <td>{{item.cacheRequestCount > 0 ? item.cacheHitRate.toFixed(3) : ''}}</td>
+        <td>{{item.incomingRequests > 0 ? ((item.requestsHandledBy304 + item.cacheHitCount) / item.incomingRequests).toFixed(3) : ''}}</td>
         <td class="buttontd">
-            <input type="button" value="<fmt:message key='cachedData.clear'/>" ng-click="ctrl.clearCache(key)" ng-disabled="item.maxEntries == 0"/>
+            <input v-if="item.maxEntries > 0" type="button" value="<fmt:message key='cachedData.clear'/>" v-on:click="clearCache(item.cacheHandlerId)"/>
         </td>
        </tr>
 </tbody>
 </table>
 
 <div class="control clearfix">
-  <input ng-click="ctrl.loadItems()" type="button" value="<fmt:message key='generic.refresh'/>"/>
+    <input v-on:click="loadCacheData()" type="button" value="<fmt:message key='generic.refresh'/>"/>
+</div>
+  
+<div v-if="metadata.weblogList">
+    <br><br>
+    <fmt:message key="cachedData.prompt.reset"/>:
+    <br>
+    <input v-on:click="resetHitCounts()" type="button" value="<fmt:message key='cachedData.button.reset'/>"/>
+    <br><br>
+
+    <fmt:message key="cachedData.prompt.index"/>:
+    <br>
+    <select v-model="weblogToReindex" size="1" required>
+        <option v-for="value in metadata.weblogList" v-bind:value="value">{{value}}</option>
+    </select>
+    <input v-on:click="reindexWeblog()" type="button" value="<fmt:message key='cachedData.button.index'/>"/>
 </div>
 
-<br><br>
-<fmt:message key="cachedData.prompt.reset"/>:
-<br><br>
-<input ng-click="ctrl.resetHitCounts()" type="button" value="<fmt:message key='cachedData.button.reset'/>"/>
+</div>
 
-<br><br>
-<fmt:message key="cachedData.prompt.index"/>:
-<br><br>
-<select ng-model="ctrl.weblogToReindex" size="1" required>
-    <option ng-repeat="(key, value) in ctrl.metadata.weblogList" value="{{value}}">{{value}}</option>
-</select>
-<input ng-click="ctrl.reindexWeblog()" type="button" value="<fmt:message key='cachedData.button.index'/>"/>
-<br><br>
+<script src="<c:url value='/tb-ui/scripts/cacheddata.js'/>"></script>
