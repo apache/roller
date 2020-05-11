@@ -21,18 +21,18 @@
 
 <br/>
 
-<s:form action="createWeblog!save" theme="bootstrap" cssClass="form-horizontal">
+<s:form action="createWeblog!save" theme="bootstrap" cssClass="form-horizontal validate-form">
 
     <s:hidden name="salt"/>
 
     <s:textfield label="%{getText('generic.name')}"
                  tooltip="%{getText('createWebsite.tip.name')}" onkeyup="formChanged()"
-                 name="bean.name" size="30" maxlength="30"/>
+                 name="bean.name" size="30" maxlength="30" requiredLabel="Name is a required field" required="required"/>
 
     <s:textfield label="%{getText('createWebsite.handle')}"
                  tooltip="%{getText('createWebsite.tip.handle')}"
                  name="bean.handle" size="30" maxlength="30"
-                 onkeyup="handlePreview(this)"/>
+                 onkeyup="handlePreview(this)" requiredLabel="Handle is a required field" required="required"/>
 
     <div class="form-group">
         <label class="col-sm-3"></label>
@@ -99,11 +99,13 @@
         previewImage('<s:property value="bean.theme"/>');
         </s:else>
 
-        formChanged()
+        // TODO Remove custom validation code
+        // formChanged()
     });
 
     function formChanged() {
-        var valid = false;
+        // TODO Remove custom validation code
+        /*var valid = false;
 
         var name   = $("#createWeblog_bean_name:first").val();
         var handle = $("#createWeblog_bean_handle:first").val();
@@ -117,7 +119,7 @@
             saveButton.attr("disabled", false);
         } else {
             saveButton.attr("disabled", true);
-        }
+        }*/
     }
 
     function handlePreview(handle) {

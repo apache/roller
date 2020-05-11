@@ -260,6 +260,11 @@ limitations under the License.
         </dependency>
 
         <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery-validation</artifactId>
+            <version>1.19.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
             <scope>compile</scope>
