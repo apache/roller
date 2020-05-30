@@ -20,8 +20,3 @@ The product includes snippets of code from Spring Mobile
 Copyright (c) 2010-2014 Pivotal, Inc. All Rights Reserved.
 
 The product includes icons by Mark James (http://www.famfamfam.com/lab/icons)
-
-The product includes snippets of code from the JavaMail
-COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.1
-Copyright (c) 1997-2011 Oracle and/or its affiliates. All rights reserved.
-https://glassfish.java.net/public/CDDL+GPL_1_1.html
