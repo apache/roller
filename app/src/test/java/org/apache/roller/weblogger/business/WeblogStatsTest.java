@@ -21,9 +21,7 @@ package org.apache.roller.weblogger.business;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.*;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +29,8 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
 public class WeblogStatsTest  {
     
     private User user1, user2;
@@ -48,6 +48,9 @@ public class WeblogStatsTest  {
 
     @BeforeEach
     public void setUp() throws Exception {
+
+        TestUtils.setupWeblogger();
+
         // create weblog with three entries and two comments per entry
         user1 = TestUtils.setupUser("a_commentCountTestUser");
         user2 = TestUtils.setupUser("b_commentCountTestUser");

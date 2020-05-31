@@ -21,9 +21,7 @@ import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Test Subscription functionality.
  */
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
 public class SubscriptionFunctionalTests  {
     
     private Planet testPlanet = null;

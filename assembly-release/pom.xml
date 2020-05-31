@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>6.0.1-SNAPSHOT</version>
+        <version>6.0.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -79,7 +79,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <sourceDirectory>../docs/adoc</sourceDirectory>
+                    <sourceDirectory>../docs</sourceDirectory>
                     <attributes>
                         <sourcedir>${project.build.sourceDirectory}</sourcedir>
                     </attributes>

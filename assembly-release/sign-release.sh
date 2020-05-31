@@ -1,31 +1,31 @@
 #!/usr/bin/env bash
 
-export rcstring="-rc-1"
-export vstring="6.0.0"
+export rcstring=""
+export vstring="6.0.2-SNAPSHOT"
 
 # for rc releases we rename the release files
 if [ rcstring != "" ]; then
-    mv target/roller-release-${vstring}-source.tar.gz   target/roller-release-${vstring}${rcstring}-source.tar.gz
-    mv target/roller-release-${vstring}-source.zip      target/roller-release-${vstring}${rcstring}-source.zip
-    mv target/roller-release-${vstring}-standard.tar.gz target/roller-release-${vstring}${rcstring}-standard.tar.gz
-    mv target/roller-release-${vstring}-standard.zip    target/roller-release-${vstring}${rcstring}-standard.zip
+    mv target/apache-roller-${vstring}-source.tar.gz   target/apache-roller-${vstring}${rcstring}-source.tar.gz
+    mv target/apache-roller-${vstring}-source.zip      target/apache-roller-${vstring}${rcstring}-source.zip
+    mv target/apache-roller-${vstring}-binary.tar.gz target/apache-roller-${vstring}${rcstring}-binary.tar.gz
+    mv target/apache-roller-${vstring}-binary.zip    target/apache-roller-${vstring}${rcstring}-binary.zip
 fi
 
-gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-standard.tar.gz
-gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-standard.zip
-gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-source.tar.gz
-gpg --armor --detach-sig target/roller-release-${vstring}${rcstring}-source.zip
+gpg --armor --detach-sig target/apache-roller-${vstring}${rcstring}-binary.tar.gz
+gpg --armor --detach-sig target/apache-roller-${vstring}${rcstring}-binary.zip
+gpg --armor --detach-sig target/apache-roller-${vstring}${rcstring}-source.tar.gz
+gpg --armor --detach-sig target/apache-roller-${vstring}${rcstring}-source.zip
 
-gpg --print-md sha256 target/roller-release-${vstring}${rcstring}-standard.tar.gz > \
-target/roller-release-${vstring}${rcstring}-standard.tar.gz.sha256
+gpg --print-md sha256 target/apache-roller-${vstring}${rcstring}-binary.tar.gz > \
+target/apache-roller-${vstring}${rcstring}-binary.tar.gz.sha256
 
-gpg --print-md sha256 target/roller-release-${vstring}${rcstring}-standard.zip > \
-target/roller-release-${vstring}${rcstring}-standard.zip.sha256
+gpg --print-md sha256 target/apache-roller-${vstring}${rcstring}-binary.zip > \
+target/apache-roller-${vstring}${rcstring}-binary.zip.sha256
 
-gpg --print-md sha256 target/roller-release-${vstring}${rcstring}-source.tar.gz > \
-target/roller-release-${vstring}${rcstring}-source.tar.gz.sha256
+gpg --print-md sha256 target/apache-roller-${vstring}${rcstring}-source.tar.gz > \
+target/apache-roller-${vstring}${rcstring}-source.tar.gz.sha256
 
-gpg --print-md sha256 target/roller-release-${vstring}${rcstring}-source.zip > \
-target/roller-release-${vstring}${rcstring}-source.zip.sha256
+gpg --print-md sha256 target/apache-roller-${vstring}${rcstring}-source.zip > \
+target/apache-roller-${vstring}${rcstring}-source.zip.sha256
 
 

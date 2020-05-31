@@ -66,7 +66,6 @@ public class CommentDataServlet extends HttpServlet {
                 Weblog weblog = c.getWeblogEntry().getWebsite();
                 if (weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST)) {
                     String content = Utilities.escapeHTML(c.getContent());
-                    content = WordUtils.wrap(content, 72);
                     content = StringEscapeUtils.escapeEcmaScript(content);
                     String json = "{ id: \"" + c.getId() + "\"," + "content: \"" + content + "\" }";
                     response.setStatus(HttpServletResponse.SC_OK);

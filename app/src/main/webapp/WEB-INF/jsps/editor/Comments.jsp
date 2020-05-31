@@ -411,7 +411,7 @@
 
     function editComment(id) {
         // make sure we have the full comment
-        if ($("#link-" + id).size() > 0) readMoreComment(id, editComment);
+        if ($("#link-" + id).length > 0) readMoreComment(id, editComment);
 
         // save the original comment value
         comments[id] = $("#comment-" + id).html();

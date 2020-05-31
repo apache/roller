@@ -20,7 +20,7 @@
 <h3><s:text name="pagesForm.addNewPage"/></h3>
 <hr size="1" noshade="noshade"/>
 
-<s:form action="templates!add" theme="bootstrap" cssClass="form-horizontal">
+<s:form action="templates!add" theme="bootstrap" cssClass="form-horizontal" id="templateAdd">
     <s:hidden name="salt"/>
     <s:hidden name="weblog"/>
 

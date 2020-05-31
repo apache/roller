@@ -23,14 +23,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
+import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
-import org.apache.roller.weblogger.pojos.WeblogTemplate;
-import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 
 import java.util.ArrayList;
@@ -57,6 +57,9 @@ public class Templates extends UIAction {
     // name and action of new template if we are adding a template
     private String newTmplName = null;
     private ComponentType newTmplAction = null;
+
+    // id of template to remove
+    private String removeId = null;
 
     public Templates() {
         this.actionName = "templates";
@@ -201,6 +204,68 @@ public class Templates extends UIAction {
         return execute();
     }
 
+    /**
+     * Remove a new template.
+     */
+    public String remove() {
+
+        WeblogTemplate template = null;
+        try {
+            template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(getRemoveId());
+        } catch (WebloggerException e) {
+            addError("Error deleting template - check Roller logs");
+        }
+
+        if (template != null) {
+            try {
+                if (!template.isRequired()
+                    || !WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {
+
+                    WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+
+                    // if weblog template remove custom style sheet also
+                    if (template.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
+
+                        Weblog weblog = getActionWeblog();
+
+                        ThemeTemplate stylesheet = getActionWeblog().getTheme().getStylesheet();
+
+                        // Delete style sheet if the same name
+                        if (stylesheet != null
+                            && getActionWeblog().getTheme().getStylesheet() != null
+                            && stylesheet.getLink().equals(
+                            getActionWeblog().getTheme().getStylesheet().getLink())) {
+
+                            // Same so OK to delete
+                            WeblogTemplate css =
+                                mgr.getTemplateByLink(getActionWeblog(), stylesheet.getLink());
+
+                            if (css != null) {
+                                mgr.removeTemplate(css);
+                            }
+                        }
+                    }
+
+                    // notify cache
+                    CacheManager.invalidate(template);
+                    mgr.removeTemplate(template);
+                    WebloggerFactory.getWeblogger().flush();
+
+                } else {
+                    addError("editPages.remove.requiredTemplate");
+                }
+
+            } catch (Exception ex) {
+                log.error("Error removing page - " + getRemoveId(), ex);
+                addError("editPages.remove.error");
+            }
+        } else {
+            addError("editPages.remove.error");
+        }
+
+        return execute();
+    }
+
     // validation when adding a new template
     private void myValidate() {
 
@@ -270,4 +335,11 @@ public class Templates extends UIAction {
         this.newTmplAction = newTmplAction;
     }
 
+    public String getRemoveId() {
+        return removeId;
+    }
+
+    public void setRemoveId(String removeId) {
+        this.removeId = removeId;
+    }
 }
