@@ -212,4 +212,23 @@ function validateEmail(email) {
 }
 $(document).ready(function () {
     jQuery("form.validate-form").validate();
+    // Added method to check valid email address and add a custom error message
+    jQuery.validator.addMethod(
+        "regex",
+        function(value, element, regexp)  {
+            if (regexp && regexp.constructor != RegExp) {
+                regexp = new RegExp(regexp);
+            } else if (regexp.global) {
+                regexp.lastIndex = 0;
+            }
+            return this.optional(element) || regexp.test(value);
+        }
+    );
+    // Applied email rules to field with class name validate-email
+    jQuery( ".validate-email" ).rules( "add", {
+        minlength: 3,
+        maxlength: 255,
+        email: true,
+        regex: /^\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i
+    });
 });

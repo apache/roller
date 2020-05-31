@@ -26,13 +26,13 @@
     <s:hidden name="salt"/>
 
     <s:textfield label="%{getText('generic.name')}"
-                 tooltip="%{getText('createWebsite.tip.name')}" onkeyup="formChanged()"
-                 name="bean.name" size="30" maxlength="30" requiredLabel="Name is a required field" required="required"/>
+                 tooltip="%{getText('createWebsite.tip.name')}"
+                 name="bean.name" size="30" maxlength="30" data-msg-required="%{getText('CreateWeblog.error.nameNull')}" required="required"/>
 
     <s:textfield label="%{getText('createWebsite.handle')}"
                  tooltip="%{getText('createWebsite.tip.handle')}"
                  name="bean.handle" size="30" maxlength="30"
-                 onkeyup="handlePreview(this)" requiredLabel="Handle is a required field" required="required"/>
+                 onkeyup="handlePreview(this)" data-msg-required="%{getText('CreateWeblog.error.handleNull')}" required="required"/>
 
     <div class="form-group">
         <label class="col-sm-3"></label>
@@ -47,8 +47,8 @@
         </div>
     </div>
 
-    <s:textfield label="%{getText('createWebsite.emailAddress')}"
-                 tooltip="%{getText('createWebsite.tip.email')}" onkeyup="formChanged()"
+    <s:textfield label="%{getText('createWebsite.emailAddress')}" cssClass="validate-email" data-msg="%{getText('CreateWeblog.error.emailAddressInvalid')}"
+                 tooltip="%{getText('createWebsite.tip.email')}" data-msg-required="%{getText('CreateWeblog.error.emailAddressNull')}" required="required"
                  name="bean.emailAddress" size="40" maxlength="50"/>
 
     <s:select label="%{getText('createWebsite.locale')}"
@@ -99,28 +99,7 @@
         previewImage('<s:property value="bean.theme"/>');
         </s:else>
 
-        // TODO Remove custom validation code
-        // formChanged()
     });
-
-    function formChanged() {
-        // TODO Remove custom validation code
-        /*var valid = false;
-
-        var name   = $("#createWeblog_bean_name:first").val();
-        var handle = $("#createWeblog_bean_handle:first").val();
-        var email  = $("#createWeblog_bean_emailAddress:first").val();
-
-        valid = !!(name && name.trim().length > 0
-            && handle && handle.trim().length > 0
-            && email && email.trim().length > 0 && validateEmail(email));
-
-        if ( valid ) {
-            saveButton.attr("disabled", false);
-        } else {
-            saveButton.attr("disabled", true);
-        }*/
-    }
 
     function handlePreview(handle) {
         previewSpan = document.getElementById("handlePreview");
@@ -140,8 +119,6 @@
                 $('#themeThumbnail').attr('src','<s:property value="siteURL" />' + data.previewPath);
             }
         });
-        formChanged();
     }
 
 </script>
-
