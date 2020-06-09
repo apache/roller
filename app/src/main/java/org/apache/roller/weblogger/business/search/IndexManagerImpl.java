@@ -61,30 +61,22 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  */
 @com.google.inject.Singleton
 public class IndexManagerImpl implements IndexManager {
-    // ~ Static fields/initializers
-    // =============================================
 
     private IndexReader reader;
     private final Weblogger roller;
 
-    static Log mLogger = LogFactory.getFactory().getInstance(
-            IndexManagerImpl.class);
-
-    // ~ Instance fields
-    // ========================================================
+    private final static Log mLogger = LogFactory.getFactory().getInstance(IndexManagerImpl.class);
 
     private boolean searchEnabled = true;
 
-    private final File indexConsistencyMarker;
+    private final String indexDir;
 
-    private String indexDir = null;
+    private final File indexConsistencyMarker;
 
     private boolean inconsistentAtStartup = false;
 
     private final ReadWriteLock rwl = new ReentrantReadWriteLock();
 
-    // ~ Constructors
-    // ===========================================================
 
     /**
      * Creates a new lucene index manager. This should only be created once.
@@ -178,48 +170,34 @@ public class IndexManagerImpl implements IndexManager {
 
     }
 
-    // ~ Methods
-    // ================================================================
-
     @Override
     public void rebuildWebsiteIndex() throws WebloggerException {
-        scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this,
-                null));
+        scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this, null));
     }
 
     @Override
     public void rebuildWebsiteIndex(Weblog website) throws WebloggerException {
-        scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this,
-                website));
+        scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this, website));
     }
 
     @Override
     public void removeWebsiteIndex(Weblog website) throws WebloggerException {
-        scheduleIndexOperation(new RemoveWebsiteIndexOperation(roller, this,
-                website));
+        scheduleIndexOperation(new RemoveWebsiteIndexOperation(roller, this, website));
     }
 
     @Override
-    public void addEntryIndexOperation(WeblogEntry entry)
-            throws WebloggerException {
-        AddEntryOperation addEntry = new AddEntryOperation(roller, this, entry);
-        scheduleIndexOperation(addEntry);
+    public void addEntryIndexOperation(WeblogEntry entry) throws WebloggerException {
+        scheduleIndexOperation(new AddEntryOperation(roller, this, entry));
     }
 
     @Override
-    public void addEntryReIndexOperation(WeblogEntry entry)
-            throws WebloggerException {
-        ReIndexEntryOperation reindex = new ReIndexEntryOperation(roller, this,
-                entry);
-        scheduleIndexOperation(reindex);
+    public void addEntryReIndexOperation(WeblogEntry entry) throws WebloggerException {
+        scheduleIndexOperation(new ReIndexEntryOperation(roller, this, entry));
     }
 
     @Override
-    public void removeEntryIndexOperation(WeblogEntry entry)
-            throws WebloggerException {
-        RemoveEntryOperation removeOp = new RemoveEntryOperation(roller, this,
-                entry);
-        executeIndexOperationNow(removeOp);
+    public void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException {
+        executeIndexOperationNow(new RemoveEntryOperation(roller, this, entry));
     }
 
     public ReadWriteLock getReadWriteLock() {
