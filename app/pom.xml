@@ -39,22 +39,22 @@ limitations under the License.
         <java-mail.version>1.4.7</java-mail.version>
         <jstl.version>1.2</jstl.version>
         <angular.version>1.7.8</angular.version>
-        <ant.version>1.10.7</ant.version>
-        <asm.version>7.2</asm.version>
+        <ant.version>1.10.8</ant.version>
+        <asm.version>8.0.1</asm.version>
         <commons-validator.version>1.6</commons-validator.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
-        <commons-codec.version>1.13</commons-codec.version>
-        <eclipse-link.version>2.7.5</eclipse-link.version>
-        <guice.version>4.2.2</guice.version>
+        <commons-codec.version>1.14</commons-codec.version>
+        <eclipse-link.version>2.7.7</eclipse-link.version>
+        <guice.version>4.2.3</guice.version>
         <log4j.version>1.2.17</log4j.version>
         <log4j2.version>2.10.0</log4j2.version>
-        <lucene.version>8.3.0</lucene.version>
+        <lucene.version>8.5.1</lucene.version>
         <oauth-core.version>20100527</oauth-core.version>
         <maven-war.version>3.2.3</maven-war.version>
         <maven-surefire.version>2.17</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
-        <rome.version>1.12.2</rome.version>
+        <rome.version>1.13.1</rome.version>
         <slf4j.version>1.7.26</slf4j.version>
         <spring.version>4.1.4.RELEASE</spring.version>
         <spring.security.version>3.2.5.RELEASE</spring.security.version>
@@ -264,9 +264,17 @@ limitations under the License.
             <artifactId>jquery-validation</artifactId>
             <version>1.19.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers-common</artifactId>
+            <scope>compile</scope>
+            <version>${lucene.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-backward-codecs</artifactId>
             <scope>compile</scope>
             <version>${lucene.version}</version>
         </dependency>
