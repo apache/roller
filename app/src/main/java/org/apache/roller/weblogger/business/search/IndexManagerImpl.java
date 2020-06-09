@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -74,7 +75,7 @@ public class IndexManagerImpl implements IndexManager {
 
     private boolean searchEnabled = true;
 
-    File indexConsistencyMarker;
+    private final File indexConsistencyMarker;
 
     private String indexDir = null;
 
@@ -125,15 +126,11 @@ public class IndexManagerImpl implements IndexManager {
         // only initialize the index if search is enabled
         if (this.searchEnabled) {
 
-            // 1. If inconsistency marker exists.
-            // Delete index
-            // 2. if we're using RAM index
-            // load ram index wrapper around index
-            //
+            // delete index if inconsistency marker exists
             if (indexConsistencyMarker.exists()) {
-                getFSDirectory(true);
-                inconsistentAtStartup = true;
                 mLogger.debug("Index inconsistent: marker exists");
+                inconsistentAtStartup = true;
+                deleteIndex();
             } else {
                 try {
                     File makeIndexDir = new File(indexDir);
@@ -153,26 +150,26 @@ public class IndexManagerImpl implements IndexManager {
                 // test if the index is readable, if the version is outdated or it fails we rebuild.
                 try {
                     synchronized(this) {
-                        reader = DirectoryReader.open(getFSDirectory(false));
+                        reader = DirectoryReader.open(getIndexDirectory());
                     }
-                } catch (IOException ex) {
-                    mLogger.warn("Error opening search index, scheduling rebuild.", ex);
-                    getFSDirectory(true);
+                } catch (IOException | IllegalArgumentException ex) {  // IAE for incompatible codecs
+                    mLogger.warn("Failed to open search index, scheduling rebuild.", ex);
                     inconsistentAtStartup = true;
+                    deleteIndex();
                 }
             } else {
                 mLogger.debug("Creating index");
                 inconsistentAtStartup = true;
-
-                createIndex(getFSDirectory(true));
+                deleteIndex();
+                createIndex(getIndexDirectory());
             }
 
-            if (isInconsistentAtStartup()) {
+            if (inconsistentAtStartup) {
                 mLogger.info("Index was inconsistent. Rebuilding index in the background...");
                 try {
                     rebuildWebsiteIndex();
-                } catch (WebloggerException e) {
-                    mLogger.error("ERROR: scheduling re-index operation");
+                } catch (WebloggerException ex) {
+                    mLogger.error("ERROR: scheduling re-index operation", ex);
                 }
             } else {
                 mLogger.info("Index initialized and ready for use.");
@@ -314,7 +311,13 @@ public class IndexManagerImpl implements IndexManager {
      * @return Directory The directory containing the index, or null if error.
      */
     public Directory getIndexDirectory() {
-        return getFSDirectory(false);
+
+        try {
+            return FSDirectory.open(Path.of(indexDir));
+        } catch (IOException e) {
+            mLogger.error("Problem accessing index directory", e);
+        }
+        return null;
     }
 
     private boolean indexExists() {
@@ -326,30 +329,18 @@ public class IndexManagerImpl implements IndexManager {
         return false;
     }
 
-    private FSDirectory getFSDirectory(boolean delete) {
-
-        FSDirectory directory = null;
-
-        try {
-
-            directory = FSDirectory.open(Path.of(indexDir));
-
-            if (delete && directory != null) {
-                // clear old files
-                String[] files = directory.listAll();
-                for (int i = 0; i < files.length; i++) {
-                    File file = new File(indexDir, files[i]);
-                    if (!file.delete()) {
-                        throw new IOException("couldn't delete " + files[i]);
-                    }
-                }
+    
+    private void deleteIndex() {
+        
+        try(FSDirectory directory = FSDirectory.open(Path.of(indexDir))) {
+            
+            String[] files = directory.listAll();
+            for (String file : files) {
+                Files.delete(Path.of(indexDir, file));
             }
-
-        } catch (IOException e) {
-            mLogger.error("Problem accessing index directory", e);
+        } catch (IOException ex) {
+             mLogger.error("Problem accessing index directory", ex);
         }
-
-        return directory;
 
     }
 
