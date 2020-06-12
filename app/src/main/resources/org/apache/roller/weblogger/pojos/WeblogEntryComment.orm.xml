@@ -106,6 +106,7 @@
             <transient name="spam"/>
             <transient name="pending"/>
             <transient name="approved"/>
+            <transient name="emptyString"/>
         </attributes>
     </entity>
 </entity-mappings>
