@@ -25,20 +25,20 @@ import org.springframework.security.authentication.RememberMeAuthenticationProvi
 
 
 public class RollerRememberMeAuthenticationProvider extends RememberMeAuthenticationProvider {
-    private static final Log log = LogFactory.getLog(RollerRememberMeServices.class);
+    private static final Log log = LogFactory.getLog(RollerRememberMeAuthenticationProvider.class);
 
 
     public RollerRememberMeAuthenticationProvider() {
+        
+        super(WebloggerConfig.getProperty("rememberme.key", "springRocks"));
+        
         log.debug("initializing: RollerRememberMeAuthenticationProvider");
 
-        String key = WebloggerConfig.getProperty("rememberme.key", "springRocks");
-
-        if ("springRocks".equals(key)) {
+        if (WebloggerConfig.getBooleanProperty("rememberme.enabled") && "springRocks".equals(getKey())) {
             throw new RuntimeException(
                 "If remember-me is to be enabled, rememberme.key must be specified in the roller " +
                 "properties file. Make sure it is a secret and make sure it is NOT springRocks");
         }
-        setKey(key);
 
         log.debug("initialized: RollerRememberMeAuthenticationProvider with key: " + getKey());
     }

@@ -20,15 +20,15 @@
        xmlns:beans="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+          http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
           http://www.springframework.org/schema/security
-          http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+          http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
     <http pattern="/images/**" security="none"/>
     <http pattern="/scripts/**" security="none"/>
     <http pattern="/styles/**" security="none"/>
 
-    <http auto-config="false" access-decision-manager-ref="accessDecisionManager">
+    <http auto-config="false" access-decision-manager-ref="accessDecisionManager" use-expressions="false">
         <intercept-url pattern="/roller-ui/login-redirect**" access="admin,editor"/>
         <intercept-url pattern="/roller-ui/profile**" access="admin,editor"/>
         <intercept-url pattern="/roller-ui/createWeblog**" access="admin,editor"/>
@@ -38,6 +38,8 @@
         <intercept-url pattern="/rewrite-status*" access="admin"/>
 
         <form-login login-page="/roller-ui/login.rol"
+                    username-parameter="j_username" 
+                    password-parameter="j_password" 
                     authentication-failure-url="/roller-ui/login.rol?error=true"
                     login-processing-url="/roller_j_security_check"/>
 
@@ -45,15 +47,14 @@
                      key="715F2448-3176-11DD-ABC6-9CD955D89593"/>
 
         <custom-filter ref="openidAuthenticationProcessingFilter" position="OPENID_FILTER"/>
+        
+        <!-- roller already uses its own salt based CSRF protection-->
+        <csrf disabled="true"/>
     </http>
 
     <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+        <beans:constructor-arg ref="roleVoter"/>
         <beans:property name="allowIfAllAbstainDecisions" value="false"/>
-        <beans:property name="decisionVoters">
-            <beans:list>
-                <beans:ref bean="roleVoter"/>
-            </beans:list>
-        </beans:property>
     </beans:bean>
 
     <beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter">
@@ -78,13 +79,11 @@
 
     <beans:bean id="rollerRememberMeServices"
                 class="org.apache.roller.weblogger.ui.core.security.RollerRememberMeServices">
-        <beans:property name="key" value="ignored"/>
-        <beans:property name="userDetailsService" ref="rollerUserService"/>
+        <beans:constructor-arg name="userDetailsService" ref="rollerUserService"/>
     </beans:bean>
 
     <beans:bean id="rememberMeAuthenticationProvider"
                 class="org.apache.roller.weblogger.ui.core.security.RollerRememberMeAuthenticationProvider">
-        <beans:property name="key" value="ignored"/>
     </beans:bean>
 
     <beans:bean id = "openIDAuthProvider" class="org.springframework.security.openid.OpenIDAuthenticationProvider">
