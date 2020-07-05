@@ -20,6 +20,8 @@ package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +34,7 @@ import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
+import org.apache.velocity.util.ExtProperties;
 
 /**
  * Loads Velocity resources from the webapp.
@@ -76,7 +79,8 @@ public class WebappResourceLoader extends ResourceLoader {
 	 *            the {@link ExtendedProperties} associated with this resource
 	 *            loader.
 	 */
-	public void init(ExtendedProperties configuration) {
+    @Override
+	public void init(ExtProperties configuration) {
 
 		if (log.isDebugEnabled()) {
 			log.debug("WebappResourceLoader: initialization starting.");
@@ -117,15 +121,16 @@ public class WebappResourceLoader extends ResourceLoader {
 	}
 
 	/**
-	 * Get an InputStream so that the Runtime can build a template with it.
+	 * Get an Reader so that the Runtime can build a template with it.
 	 * 
 	 * @param name
 	 *            name of template to get
-	 * @return InputStream containing the template
+	 * @return Reader containing the template
 	 * @throws ResourceNotFoundException if template not found in classpath.
 	 *
 	 */
-	public InputStream getResourceStream(String name) {
+    @Override
+	public Reader getResourceReader(String name, String encoding) {
 
 		InputStream result = null;
 		Exception exception = null;
@@ -189,7 +194,7 @@ public class WebappResourceLoader extends ResourceLoader {
 			}
 		}
 
-		return result;
+		return new InputStreamReader(result);
 	}
 
 	/**
@@ -228,6 +233,7 @@ public class WebappResourceLoader extends ResourceLoader {
 	 * 
 	 * @return boolean True if the resource has been modified
 	 */
+    @Override
 	public boolean isSourceModified(Resource resource) {
 
 		String rootPath = servletContext.getRealPath("/");
@@ -282,6 +288,7 @@ public class WebappResourceLoader extends ResourceLoader {
 	 * @return long The time when the resource was last modified or 0 if the
 	 *         file can't be read
 	 */
+    @Override
 	public long getLastModified(Resource resource) {
 
 		String rootPath = servletContext.getRealPath("/");

@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 
