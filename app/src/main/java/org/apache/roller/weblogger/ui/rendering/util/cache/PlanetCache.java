@@ -52,7 +52,7 @@ public final class PlanetCache {
     private long timeout = RollerConstants.FIFTEEN_MIN_IN_MS;
     
     // reference to our singleton instance
-    private static PlanetCache singletonInstance = new PlanetCache();
+    private static final PlanetCache singletonInstance = new PlanetCache();
 
     private PlanetCache() {
         
@@ -194,17 +194,17 @@ public final class PlanetCache {
         
         StringBuilder key = new StringBuilder();
         
-        key.append(CACHE_ID).append(":");
+        key.append(CACHE_ID).append(':');
         key.append(planetRequest.getContext());
-        key.append("/");
+        key.append('/');
         key.append(planetRequest.getType());
         
         if(planetRequest.getFlavor() != null) {
-            key.append("/").append(planetRequest.getFlavor());
+            key.append('/').append(planetRequest.getFlavor());
         }
         
         // add language
-        key.append("/").append(planetRequest.getLanguage());
+        key.append('/').append(planetRequest.getLanguage());
         
         if(planetRequest.getFlavor() != null) {
             // add excerpts

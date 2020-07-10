@@ -45,9 +45,9 @@ public final class SaltCache {
     private Cache contentCache = null;
     
     // reference to our singleton instance
-    private static SaltCache singletonInstance = new SaltCache();
+    private static final SaltCache singletonInstance = new SaltCache();
 
-	    private SaltCache() {
+    private SaltCache() {
         
         Map cacheProps = new HashMap();
         cacheProps.put("id", CACHE_ID);

@@ -51,7 +51,7 @@ public final class WeblogPageCache {
     private Cache contentCache = null;
     
     // reference to our singleton instance
-    private static WeblogPageCache singletonInstance = new WeblogPageCache();
+    private static final WeblogPageCache singletonInstance = new WeblogPageCache();
     
     
     private WeblogPageCache() {
@@ -166,9 +166,9 @@ public final class WeblogPageCache {
      */
     public String generateKey(WeblogPageRequest pageRequest) {
         
-        StringBuilder key = new StringBuilder();
+        StringBuilder key = new StringBuilder(128);
         
-        key.append(this.CACHE_ID).append(":");
+        key.append(this.CACHE_ID).append(':');
         key.append(pageRequest.getWeblogHandle());
         
         if(pageRequest.getWeblogAnchor() != null) {
@@ -189,7 +189,7 @@ public final class WeblogPageCache {
             }
             
             if(pageRequest.getWeblogDate() != null) {
-                key.append("/").append(pageRequest.getWeblogDate());
+                key.append('/').append(pageRequest.getWeblogDate());
             }
             
             if(pageRequest.getWeblogCategoryName() != null) {
@@ -201,7 +201,7 @@ public final class WeblogPageCache {
                     // ignored
                 }
                 
-                key.append("/").append(cat);
+                key.append('/').append(cat);
             }
             
             if("tags".equals(pageRequest.getContext())) {
@@ -215,7 +215,7 @@ public final class WeblogPageCache {
         }
         
         if(pageRequest.getLocale() != null) {
-            key.append("/").append(pageRequest.getLocale());
+            key.append('/').append(pageRequest.getLocale());
         }
         
         // add page number when applicable
@@ -251,7 +251,7 @@ public final class WeblogPageCache {
 
         for (Map.Entry<String, String[]> entry : map.entrySet()) {
             if(entry.getKey() != null) {
-                string.append(",").append(entry.getKey()).append("=").append(entry.getValue()[0]);
+                string.append(',').append(entry.getKey()).append('=').append(entry.getValue()[0]);
             }
         }
 

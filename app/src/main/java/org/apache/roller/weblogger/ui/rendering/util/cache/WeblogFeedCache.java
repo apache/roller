@@ -51,7 +51,7 @@ public final class WeblogFeedCache {
     private Cache contentCache = null;
     
     // reference to our singleton instance
-    private static WeblogFeedCache singletonInstance = new WeblogFeedCache();
+    private static final WeblogFeedCache singletonInstance = new WeblogFeedCache();
     
     
     private WeblogFeedCache() {
@@ -162,13 +162,13 @@ public final class WeblogFeedCache {
      */
     public String generateKey(WeblogFeedRequest feedRequest) {
         
-        StringBuilder key = new StringBuilder();
+        StringBuilder key = new StringBuilder(128);
         
-        key.append(this.CACHE_ID).append(":");
+        key.append(this.CACHE_ID).append(':');
         key.append(feedRequest.getWeblogHandle());
         
-        key.append("/").append(feedRequest.getType());
-        key.append("/").append(feedRequest.getFormat());
+        key.append('/').append(feedRequest.getType());
+        key.append('/').append(feedRequest.getFormat());
         
         if (feedRequest.getTerm() != null) {
             key.append("/search/").append(feedRequest.getTerm());
@@ -182,7 +182,7 @@ public final class WeblogFeedCache {
                 // should never happen, utf-8 is always supported
             }
             
-            key.append("/").append(cat);
+            key.append('/').append(cat);
         }
         
         if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
@@ -192,7 +192,7 @@ public final class WeblogFeedCache {
         }        
         
         if(feedRequest.getLocale() != null) {
-            key.append("/").append(feedRequest.getLocale());
+            key.append('/').append(feedRequest.getLocale());
         }
         
         if(feedRequest.isExcerpts()) {

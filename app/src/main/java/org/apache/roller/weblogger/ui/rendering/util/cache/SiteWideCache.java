@@ -67,7 +67,7 @@ public final class SiteWideCache implements CacheHandler {
     private ExpiringCacheEntry lastUpdateTime = null;
 
     // reference to our singleton instance
-    private static SiteWideCache singletonInstance = new SiteWideCache();
+    private static final SiteWideCache singletonInstance = new SiteWideCache();
     
     
     private SiteWideCache() {
@@ -193,9 +193,9 @@ public final class SiteWideCache implements CacheHandler {
      */
     public String generateKey(WeblogPageRequest pageRequest) {
         
-        StringBuilder key = new StringBuilder();
+        StringBuilder key = new StringBuilder(128);
         
-        key.append(CACHE_ID).append(":");
+        key.append(CACHE_ID).append(':');
         key.append("page/");
         key.append(pageRequest.getWeblogHandle());
         
@@ -216,7 +216,7 @@ public final class SiteWideCache implements CacheHandler {
             }
             
             if(pageRequest.getWeblogDate() != null) {
-                key.append("/").append(pageRequest.getWeblogDate());
+                key.append('/').append(pageRequest.getWeblogDate());
             }
             
             if(pageRequest.getWeblogCategoryName() != null) {
@@ -228,7 +228,7 @@ public final class SiteWideCache implements CacheHandler {
                     // ignored
                 }
                 
-                key.append("/").append(cat);
+                key.append('/').append(cat);
             }
             
             if("tags".equals(pageRequest.getContext())) {
@@ -242,7 +242,7 @@ public final class SiteWideCache implements CacheHandler {
         }
         
         if(pageRequest.getLocale() != null) {
-            key.append("/").append(pageRequest.getLocale());
+            key.append('/').append(pageRequest.getLocale());
         }
         
         // add page number when applicable
@@ -283,14 +283,14 @@ public final class SiteWideCache implements CacheHandler {
      */
     public String generateKey(WeblogFeedRequest feedRequest) {
         
-        StringBuilder key = new StringBuilder();
+        StringBuilder key = new StringBuilder(128);
         
-        key.append(CACHE_ID).append(":");
+        key.append(CACHE_ID).append(':');
         key.append("feed/");
         key.append(feedRequest.getWeblogHandle());
         
-        key.append("/").append(feedRequest.getType());
-        key.append("/").append(feedRequest.getFormat());
+        key.append('/').append(feedRequest.getType());
+        key.append('/').append(feedRequest.getFormat());
         
         if (feedRequest.getTerm() != null) {
             key.append("/search/").append(feedRequest.getTerm());
@@ -304,11 +304,11 @@ public final class SiteWideCache implements CacheHandler {
                 // should never happen, utf-8 is always supported
             }
             
-            key.append("/").append(cat);
+            key.append('/').append(cat);
         }
         
         if(feedRequest.getLocale() != null) {
-            key.append("/").append(feedRequest.getLocale());
+            key.append('/').append(feedRequest.getLocale());
         }
         
         if(feedRequest.isExcerpts()) {
@@ -421,7 +421,7 @@ public final class SiteWideCache implements CacheHandler {
         
         for (Map.Entry<String, String[]> entry : map.entrySet()) {
             if(entry.getValue() != null) {
-                string.append(",").append(entry.getKey()).append("=").append(entry.getValue()[0]);
+                string.append(',').append(entry.getKey()).append('=').append(entry.getValue()[0]);
             }
         }
         
