@@ -50,6 +50,11 @@
         
         <!-- roller already uses its own salt based CSRF protection-->
         <csrf disabled="true"/>
+        
+        <!-- some roller UI (i.e. media file editor) uses iframes -->
+        <headers>
+            <frame-options policy="SAMEORIGIN"/>
+        </headers>
     </http>
 
     <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
