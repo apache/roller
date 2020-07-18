@@ -15,18 +15,77 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<Configuration status="WARN">
+
+<!-- to customize logging:
+    - copy this file into the servers classpath and tweak it
+    - set the log4j.configurationFile system property via roller-custom.properties or -D JVM arg -->
+
+<!--useful for testing: monitorInterval="10" -->
+<Configuration status="warn" name="Apache Roller" >
+    
+    <!-- folder is automatically created if needed -->
+    <properties>
+        <property name="logging.dir">logs</property>
+        <property name="logging.pattern">%-5p %d{yyyy-MM-dd HH:mm:ss} [%t] %c{1} - %m%n</property>
+    </properties>
+
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+
+        <!-- use as appenderRef if you like to log to console instead of files -->
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${logging.pattern}"/>
         </Console>
+        
+        <RollingFile name="roller"
+                     fileName="${logging.dir}/roller.log" 
+                     filePattern="${logging.dir}/roller-%d{yyyy-MM-dd-HHmmss}.log.gz"
+                     ignoreExceptions="false">
+            <PatternLayout pattern="${logging.pattern}"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="8 MB"/>
+            </Policies>
+        </RollingFile>
+
+        <!-- if you use this log4j2 config in the server classpath.
+        <RollingFile name="server"
+                     fileName="${logging.dir}/server.log" 
+                     filePattern="${logging.dir}/server-%d{yyyy-MM-dd-HHmmss}.log.gz"
+                     ignoreExceptions="false">
+            <PatternLayout pattern="${logging.pattern}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="8 MB"/>
+            </Policies>
+            
+        </RollingFile>
+        -->
+        <!-- uses queue + thread for non blocking file IO -->
+        <Async name="asyncRoller">
+            <AppenderRef ref="roller"/>
+        </Async>
+        
     </Appenders>
+
     <Loggers>
-        <Root level="error">
-            <AppenderRef ref="Console"/>
+        
+        <!-- roller.log; everything not defined here will end up in server.log -->
+        <Logger name="org.apache.roller"       level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        <Logger name="org.apache.velocity"     level="error" additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        <Logger name="org.springframework"     level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        <Logger name="org.apache.struts2"      level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        <Logger name="org.openid4java"         level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        <Logger name="org.apache.tiles"        level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        <Logger name="org.eclipse.persistence" level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        <Logger name="com.opensymphony"        level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        <Logger name="com.rometools"           level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        <Logger name="org.webjars"             level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        
+        <!-- server.log catches everything that hasn't been logged yet-->
+        <Root level="info">
+        <!--<AppenderRef ref="server"/> -->
+            <AppenderRef ref="console"/>
         </Root>
-        <Logger name="org.apache.struts2" level="warn">
-            <AppenderRef ref="Console"/>
-        </Logger>
+        
     </Loggers>
+
 </Configuration>

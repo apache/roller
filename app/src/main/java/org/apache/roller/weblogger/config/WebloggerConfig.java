@@ -40,7 +40,7 @@ public final class WebloggerConfig {
 
     private final static Properties config;
 
-    private final static Log log = LogFactory.getLog(WebloggerConfig.class);
+    private final static Log log;
     
 
     /*
@@ -120,32 +120,36 @@ public final class WebloggerConfig {
                     }
                 }
             }
-            
-            // initialize logging subsystem via WebloggerConfig
-            try {
-                Class.forName("org.apache.log4j.PropertyConfigurator")
-                        .getMethod("configure", Properties.class)
-                        .invoke(null, WebloggerConfig.getPropertiesStartingWith("log4j."));
-            }catch(ClassNotFoundException ignored) {
-                // must be using a different framework
-            }
-            
-            // finally we can start logging...
-
-            // some debugging for those that want it
-            if(log.isDebugEnabled()) {
-                log.debug("WebloggerConfig looks like this ...");
-
-                String key = null;
-                Enumeration keys = config.keys();
-                while(keys.hasMoreElements()) {
-                    key = (String) keys.nextElement();
-                    log.debug(key+"="+config.getProperty(key));
-                }
-            }
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        // tell log4j2 to use the optionally specified config file instead of Roller's,
+        // but only if it hasn't already been set with -D at JVM startup.
+        String log4j2ConfigKey = "log4j.configurationFile";
+        String customLog4j2File = config.getProperty(log4j2ConfigKey);
+        if(customLog4j2File != null && !customLog4j2File.isBlank() && System.getProperty(log4j2ConfigKey) == null) {
+            System.setProperty(log4j2ConfigKey, customLog4j2File);
+        }
+        
+        // this bridges java.util.logging -> SLF4J which ends up being log4j2, probably.
+        org.slf4j.bridge.SLF4JBridgeHandler.removeHandlersForRootLogger();
+        org.slf4j.bridge.SLF4JBridgeHandler.install();
+        
+        // finally we can start logging...
+        log = LogFactory.getLog(WebloggerConfig.class);
+
+        // some debugging for those that want it
+        if(log.isDebugEnabled()) {
+            log.debug("WebloggerConfig looks like this ...");
+
+            String key;
+            Enumeration keys = config.keys();
+            while(keys.hasMoreElements()) {
+                key = (String) keys.nextElement();
+                log.debug(key+"="+config.getProperty(key));
+            }
         }
 
     }
@@ -154,7 +158,14 @@ public final class WebloggerConfig {
     // no, you may not instantiate this class :p
     private WebloggerConfig() {}
 
-
+    /**
+     * Loads Roller's configuration.
+     * Call this as early as possible in the lifecycle.
+     */
+    public static void init() {
+        // triggers static block
+    }
+    
     /**
      * Retrieve a property value
      * @param     key Name of the property
@@ -230,21 +241,7 @@ public final class WebloggerConfig {
      **/
     public static Enumeration keys() {
         return config.keys();
-    }
-    
-    
-    /**
-     * Get properties starting with a specified string.
-     */
-    public static Properties getPropertiesStartingWith(String startingWith) {
-        Properties props = new Properties();
-        for (Enumeration it = config.keys(); it.hasMoreElements();) {
-            String key = (String)it.nextElement();
-            props.put(key, config.get(key));
-        }
-        return props;
-    }
-    
+    } 
 
     /**
      * Set the "uploads.dir" property at runtime.

@@ -49,11 +49,16 @@ public class RollerSession
     // the id of the user represented by this session
     private String userName = null;
     
-    private static Log log = LogFactory.getLog(RollerSession.class);
+    private static final Log log;
     
     public static final String ROLLER_SESSION = "org.apache.roller.weblogger.rollersession";
     public static final String ERROR_MESSAGE   = "rollererror_message";
     public static final String STATUS_MESSAGE  = "rollerstatus_message";
+    
+    static{
+        WebloggerConfig.init(); // must be called before calls to logging APIs
+        log = LogFactory.getLog(RollerSession.class);
+    }
    
     /**
      * Get RollerSession from request (and add user if not already present).
