@@ -48,12 +48,12 @@ limitations under the License.
         <eclipse-link.version>2.7.7</eclipse-link.version>
         <guice.version>4.2.3</guice.version>
         <log4j2.version>2.12.1</log4j2.version>
-        <lucene.version>8.5.1</lucene.version>
+        <lucene.version>8.6.0</lucene.version>
         <oauth-core.version>20100527</oauth-core.version>
         <maven-war.version>3.2.3</maven-war.version>
         <maven-surefire.version>2.17</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
-        <rome.version>1.13.1</rome.version>
+        <rome.version>1.15.0</rome.version>
         <slf4j.version>1.7.30</slf4j.version>
         <spring.version>5.2.7.RELEASE</spring.version>
         <spring.security.version>5.3.3.RELEASE</spring.security.version>
@@ -95,6 +95,12 @@ limitations under the License.
             <artifactId>mail</artifactId>
             <version>${java-mail.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -178,12 +184,6 @@ limitations under the License.
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity-engine-core</artifactId>
             <version>${velocity.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-collections</groupId>
-                    <artifactId>commons-collections</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         
         <dependency>
@@ -427,12 +427,6 @@ limitations under the License.
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>aopalliance</groupId>
-                    <artifactId>aopalliance</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -473,12 +467,6 @@ limitations under the License.
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
             <version>${spring.security.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-web</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -500,6 +488,12 @@ limitations under the License.
             <artifactId>guice</artifactId>
             <version>${guice.version}</version>
             <classifier>no_aop</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>aopalliance</groupId>
+                    <artifactId>aopalliance</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
