@@ -114,7 +114,7 @@ public class CommentValidatorTest  {
         comment.setContent("nice friendly stuff"); 
         assertEquals(100, mgr.validateComment(comment, msgs));
 
-        comment.setContent("blah blah www.mybannedwordslistedsite.com blah");
+        comment.setContent("blah blah viagra.com blah");
         assertTrue(mgr.validateComment(comment, msgs) != 100);
     }
     
