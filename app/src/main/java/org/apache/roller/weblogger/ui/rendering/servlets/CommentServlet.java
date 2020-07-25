@@ -65,7 +65,7 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  * We validate each incoming comment based on various comment settings and if
  * all checks are passed then the comment is saved.
  * 
- * Incoming comments are tested against the MT Blacklist. If they are found to
+ * Incoming comments are tested against the MT Bannedwordslist. If they are found to
  * be spam, then they are marked as spam and hidden from view.
  * 
  * If email notification is turned on, each new comment will result in an email

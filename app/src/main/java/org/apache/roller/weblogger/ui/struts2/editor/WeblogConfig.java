@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.Blacklist;
+import org.apache.roller.weblogger.util.Bannedwordslist;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -185,16 +185,16 @@ public class WeblogConfig extends UIAction {
             addError("websiteSettings.error.entryDisplayCount");
         }
         
-        // check blacklist
+        // check bannedwordslist
         List regexRules = new ArrayList();
         List stringRules = new ArrayList();
         try {
             // just for testing/counting, this does not persist rules in any way
-            Blacklist.populateSpamRules(getBean().getBlacklist(), stringRules, regexRules, null);
-            addMessage("websiteSettings.acceptedBlacklist",
+            Bannedwordslist.populateSpamRules(getBean().getBannedwordslist(), stringRules, regexRules, null);
+            addMessage("websiteSettings.acceptedBannedwordslist",
                     Arrays.asList(new String[] {""+stringRules.size(), ""+regexRules.size()}));
         } catch (Exception e) {
-            addError("websiteSettings.error.processingBlacklist", e.getMessage());
+            addError("websiteSettings.error.processingBannedwordslist", e.getMessage());
         }
     }
     

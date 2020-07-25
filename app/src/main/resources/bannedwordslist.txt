@@ -1,7 +1,7 @@
 #
 #   List of domains to block from blog comments
 #
-#   Following format of discontinued MT-Blacklist (last updated in 2005)
+#   Following format of discontinued MT-Bannedwordslist (last updated in 2005)
 #   Add entries to this file of unwanted domains in blog comments
 #   without the "www." part, i.e., unwanted.com, or using regular
 #   expressions as shown below.

@@ -79,7 +79,7 @@ create table weblog (
     visible           $db.BOOLEAN_SQL_TYPE_TRUE not null,
     isactive          $db.BOOLEAN_SQL_TYPE_TRUE not null,
     datecreated          $db.TIMESTAMP_SQL_TYPE not null,
-    blacklist            $db.TEXT_SQL_TYPE,
+    bannedwordslist            $db.TEXT_SQL_TYPE,
     defaultallowcomments $db.BOOLEAN_SQL_TYPE_TRUE not null,
     defaultcommentdays   integer default 7 not null,
     commentmod           $db.BOOLEAN_SQL_TYPE_FALSE not null,

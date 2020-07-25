@@ -30,20 +30,20 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test blacklist functionality.
+ * Test bannedwordslist functionality.
  */
-public class BlacklistTest  {
-    public static Log log = LogFactory.getLog(BlacklistTest.class);
+public class BannedwordslistTest  {
+    public static Log log = LogFactory.getLog(BannedwordslistTest.class);
     
-    private Blacklist blacklist;
+    private Bannedwordslist bannedwordslist;
     
     @BeforeEach
     public void setUp() throws Exception {
-        blacklist = Blacklist.getBlacklist();
+        bannedwordslist = Bannedwordslist.getBannedwordslist();
         String FS = File.separator;
-        String blacklistName = System.getProperty("project.build.directory") + FS + "classes" + "blacklist.txt";
-        log.info("Processing Blacklist file: " + blacklistName);
-        blacklist.loadBlacklistFromFile(blacklistName);
+        String bannedwordslistName = System.getProperty("project.build.directory") + FS + "classes" + "bannedwordslist.txt";
+        log.info("Processing Banned-words list file: " + bannedwordslistName);
+        bannedwordslist.loadBannedwordslistFromFile(bannedwordslistName);
     }
 
     @AfterEach
@@ -51,38 +51,32 @@ public class BlacklistTest  {
     }
 
     @Test
-    public void testIsBlacklisted0() {
-        assertFalse(blacklist.isBlacklisted("four score and seven years ago.com"));
-    }
-    
-    // test non-regex
-    @Test
-    public void testIsBlacklisted1() {
-        assertTrue(blacklist.isBlacklisted("www.myblacklistedsite.com"));
+    public void testIsBannedwordslisted0() {
+        assertFalse(bannedwordslist.isBannedwordslisted("four score and seven years ago.com"));
     }
     
     // test the regex patterns
     @Test
-    public void testIsBlacklisted2() {
-        assertTrue(blacklist.isBlacklisted("www.lsotr.com"));
+    public void testIsBannedwordslisted2() {
+        assertTrue(bannedwordslist.isBannedwordslisted("www.lsotr.com"));
     }
     
     // test the regex patterns
     @Test
-    public void testIsBlacklisted3() {
-        assertTrue(blacklist.isBlacklisted("buymoreonline.com"));
+    public void testIsBannedwordslisted3() {
+        assertTrue(bannedwordslist.isBannedwordslisted("buymoreonline.com"));
     }
     
     // test the regex patterns
     @Test
-    public void testIsBlacklisted4() {
-        assertTrue(blacklist.isBlacklisted("diet-enlargement.com"));
+    public void testIsBannedwordslisted4() {
+        assertTrue(bannedwordslist.isBannedwordslisted("diet-enlargement.com"));
     }
     
     // test the regex patterns
     @Test
-    public void testIsBlacklisted5() {
-        assertTrue(blacklist.isBlacklisted("viagra.com"));
+    public void testIsBannedwordslisted5() {
+        assertTrue(bannedwordslist.isBannedwordslisted("viagra.com"));
     }
     
 

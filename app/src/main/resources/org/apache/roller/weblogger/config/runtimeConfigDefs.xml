@@ -238,7 +238,7 @@
    <!-- Spam Prevention Settings Group -->
    <display-group name="spamSettings" key="websiteSettings.spamPrevention" >
    
-      <property-def  name="spam.blacklist"  key="websiteSettings.ignoreUrls">
+      <property-def  name="spam.bannedwordslist"  key="websiteSettings.ignoreUrls">
          <type>text</type>
          <default-value/>
          <rows>7</rows>

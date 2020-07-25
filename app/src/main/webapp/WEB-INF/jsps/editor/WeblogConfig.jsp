@@ -129,7 +129,7 @@
 
     <h3><s:text name="websiteSettings.spamPrevention"/></h3>
 
-    <s:textarea name="bean.blacklist" rows="7" cols="40"
+    <s:textarea name="bean.bannedwordslist" rows="7" cols="40"
                 label="%{getText('websiteSettings.analyticsTrackingCode')}"/>
 
     <%-- ***** Web analytics settings ***** --%>
