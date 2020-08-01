@@ -23,21 +23,21 @@ import java.util.ResourceBundle;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.BlacklistChecker;
+import org.apache.roller.weblogger.util.BannedwordslistChecker;
 
 /**
- * Validates comment if comment does not contain blacklisted words.
+ * Validates comment if comment does not contain bannedwordslisted words.
  */
-public class BlacklistCommentValidator implements CommentValidator {
+public class BannedwordslistCommentValidator implements CommentValidator {
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");       
 
     public String getName() {
-        return bundle.getString("comment.validator.blacklistName");
+        return bundle.getString("comment.validator.bannedwordslistName");
     }
 
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
-        if (BlacklistChecker.checkComment(comment)) {
-            messages.addError("comment.validator.blacklistMessage");
+        if (BannedwordslistChecker.checkComment(comment)) {
+            messages.addError("comment.validator.bannedwordslistMessage");
             return 0;
         }
         return RollerConstants.PERCENT_100;

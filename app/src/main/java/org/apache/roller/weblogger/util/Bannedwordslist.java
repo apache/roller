@@ -46,76 +46,76 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.util.DateUtil;
 
 /**
- * Loads MT-Blacklist style blacklist from disk and allows callers to test
- * strings against the blacklist and (optionally) addition blacklists.
+ * Loads MT-Bannedwordslist style bannedwordslist from disk and allows callers to test
+ * strings against the bannedwordslist and (optionally) addition bannedwordslists.
  * <br />
- * First looks for blacklist.txt in uploads directory, than in classpath 
- * as /blacklist.txt. Download from web feature disabled.
+ * First looks for bannedwordslist.txt in uploads directory, than in classpath
+ * as /bannedwordslist.txt. Download from web feature disabled.
  * <br />
- * Blacklist is formatted one entry per line. 
+ * Bannedwordslist is formatted one entry per line.
  * Any line that begins with # is considered to be a comment. 
  * Any line that begins with ( is considered to be a regex expression. 
  * <br />
- * For more information on the (discontinued) MT-Blacklist service:
- * http://www.jayallen.org/projects/mt-blacklist. 
+ * For more information on the (discontinued) MT-Bannedwordslist service:
+ * http://www.jayallen.org/projects/mt-bannedwordslist.
  *
  * @author Lance Lavandowska
  * @author Allen Gilliland
  */
-public final class Blacklist {
+public final class Bannedwordslist {
     
-    private static Log mLogger = LogFactory.getLog(Blacklist.class);
+    private static Log mLogger = LogFactory.getLog(Bannedwordslist.class);
     
-    private static Blacklist blacklist;
-    private static final String BLACKLIST_FILE = "blacklist.txt";
+    private static Bannedwordslist bannedwordslist;
+    private static final String BANNEDWORDSLIST_FILE = "bannedwordslist.txt";
     private static final String LAST_UPDATE_STR = "Last update:";
 
-    /** We no longer have a blacklist update URL */
-    private static final String BLACKLIST_URL = null;
+    /** We no longer have a bannedwordslist update URL */
+    private static final String BANNEDWORDSLIST_URL = null;
 
     private Date lastModified = null;
-    private List<String> blacklistStr = new LinkedList<String>();
-    private List<Pattern> blacklistRegex = new LinkedList<Pattern>();
+    private List<String> bannedwordslistStr = new LinkedList<String>();
+    private List<Pattern> bannedwordslistRegex = new LinkedList<Pattern>();
     
     // setup our singleton at class loading time
     static {
-        mLogger.info("Initializing MT Blacklist");
-        blacklist = new Blacklist();
-        blacklist.loadBlacklistFromFile(null);
+        mLogger.info("Initializing MT Bannedwordslist");
+        bannedwordslist = new Bannedwordslist();
+        bannedwordslist.loadBannedwordslistFromFile(null);
     }
     
     /** Hide constructor */
-    private Blacklist() {
+    private Bannedwordslist() {
     }
       
     /** Singleton factory method. */
-    public static Blacklist getBlacklist() {
-        return blacklist;
+    public static Bannedwordslist getBannedwordslist() {
+        return bannedwordslist;
     }
     
     /** Non-Static update method. */
     public void update() {
-        if (BLACKLIST_URL != null) {
-            boolean blacklist_updated = this.downloadBlacklist();
-            if (blacklist_updated) {
-                this.loadBlacklistFromFile(null);
+        if (BANNEDWORDSLIST_URL != null) {
+            boolean bannedwordslist_updated = this.downloadBannedwordslist();
+            if (bannedwordslist_updated) {
+                this.loadBannedwordslistFromFile(null);
             }
         }
     }
         
-    /** Download the MT blacklist from the web to our uploads directory. */
-    private boolean downloadBlacklist() {
+    /** Download the MT bannedwordslist from the web to our uploads directory. */
+    private boolean downloadBannedwordslist() {
         
-        boolean blacklistUpdated = false;
+        boolean bannedwordslistUpdated = false;
         try {
-            mLogger.debug("Attempting to download MT blacklist");
+            mLogger.debug("Attempting to download MT bannedwordslist");
             
-            URL url = new URL(BLACKLIST_URL);
+            URL url = new URL(BANNEDWORDSLIST_URL);
             HttpURLConnection connection = 
                     (HttpURLConnection) url.openConnection();
             
             // after spending way too much time debugging i've discovered
-            // that the blacklist server is selective based on the User-Agent
+            // that the bannedwordslist server is selective based on the User-Agent
             // header.  without this header set i always get a 403 response :(
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
             
@@ -130,7 +130,7 @@ public final class Blacklist {
             
             // did the connection return NotModified? If so, no need to parse
             if (responseCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                mLogger.debug("MT blacklist site says we are current");
+                mLogger.debug("MT bannedwordslist site says we are current");
                 return false;
             }
             
@@ -147,14 +147,14 @@ public final class Blacklist {
                         this.lastModified.getTime()));
                 mLogger.debug("MT last modified = " + lastModifiedLong);
                 
-                // save the new blacklist
+                // save the new bannedwordslist
                 InputStream instream = connection.getInputStream();
                 
                 String uploadDir = WebloggerConfig.getProperty("uploads.dir");
-                String path = uploadDir + File.separator + BLACKLIST_FILE;
+                String path = uploadDir + File.separator + BANNEDWORDSLIST_FILE;
                 FileOutputStream outstream = new FileOutputStream(path);
                 
-                mLogger.debug("writing updated MT blacklist to "+path);
+                mLogger.debug("writing updated MT bannedwordslist to "+path);
                 
                 // read from url and write to file
                 byte[] buf = new byte[RollerConstants.FOUR_KB_IN_BYTES];
@@ -166,64 +166,64 @@ public final class Blacklist {
                 outstream.close();
                 instream.close();
                 
-                blacklistUpdated = true;
+                bannedwordslistUpdated = true;
                 
-                mLogger.debug("MT blacklist download completed.");
+                mLogger.debug("MT bannedwordslist download completed.");
                 
             } else {
-                mLogger.debug("blacklist *NOT* saved, assuming we are current");
+                mLogger.debug("bannedwordslist *NOT* saved, assuming we are current");
             }
             
         } catch (Exception e) {
-            mLogger.error("error downloading blacklist", e);
+            mLogger.error("error downloading bannedwordslist", e);
         }
         
-        return blacklistUpdated;
+        return bannedwordslistUpdated;
     }
         
     /**
-     * Load the MT blacklist from the file system.
-     * We look for a previously downloaded version of the blacklist first and
-     * if it's not found then we load the default blacklist packed with Roller.
+     * Load the MT bannedwordslist from the file system.
+     * We look for a previously downloaded version of the bannedwordslist first and
+     * if it's not found then we load the default bannedwordslist packed with Roller.
      * Only public for purposes of unit testing.
      */
-    public void loadBlacklistFromFile(String blacklistFilePath) {
+    public void loadBannedwordslistFromFile(String bannedwordslistFilePath) {
         
         InputStream txtStream;
         try {
-            String path = blacklistFilePath;
+            String path = bannedwordslistFilePath;
             if (path == null) {
                 String uploadDir = WebloggerConfig.getProperty("uploads.dir");
-                path = uploadDir + File.separator + BLACKLIST_FILE;
+                path = uploadDir + File.separator + BANNEDWORDSLIST_FILE;
             }
-            File blacklistFile = new File(path);
+            File bannedwordslistFile = new File(path);
             
             // check our lastModified date to see if we need to re-read the file
             if (this.lastModified != null &&
-                    this.lastModified.getTime() >= blacklistFile.lastModified()) {               
-                mLogger.debug("Blacklist is current, no need to load again");
+                    this.lastModified.getTime() >= bannedwordslistFile.lastModified()) {
+                mLogger.debug("Bannedwordslist is current, no need to load again");
                 return;
             } else {
-                this.lastModified = new Date(blacklistFile.lastModified());
+                this.lastModified = new Date(bannedwordslistFile.lastModified());
             }           
-            txtStream = new FileInputStream(blacklistFile);           
-            mLogger.info("Loading blacklist from "+path);
+            txtStream = new FileInputStream(bannedwordslistFile);
+            mLogger.info("Loading bannedwordslist from "+path);
             
         } catch (Exception e) {
             // Roller keeps a copy in the webapp just in case
-            txtStream = getClass().getResourceAsStream("/blacklist.txt");           
+            txtStream = getClass().getResourceAsStream("/bannedwordslist.txt");
             mLogger.warn(
-                "Couldn't find downloaded blacklist, loaded blacklist.txt from classpath instead");
+                "Couldn't find downloaded bannedwordslist, loaded bannedwordslist.txt from classpath instead");
         }
         
         if (txtStream != null) {
             readFromStream(txtStream, false);
         } else {
-            mLogger.error("Couldn't load a blacklist file from anywhere, "
-                        + "this means blacklist checking is disabled for now.");
+            mLogger.error("Couldn't load a bannedwordslist file from anywhere, "
+                        + "this means bannedwordslist checking is disabled for now.");
         }
-        mLogger.info("Number of blacklist string rules: "+blacklistStr.size());
-        mLogger.info("Number of blacklist regex rules: "+blacklistRegex.size());
+        mLogger.info("Number of bannedwordslist string rules: "+bannedwordslistStr.size());
+        mLogger.info("Number of bannedwordslist regex rules: "+bannedwordslistRegex.size());
     }
        
     /**
@@ -280,9 +280,9 @@ public final class Blacklist {
         // regex rule?
         if (rule.indexOf( '(' ) > -1) {
             // pre-compile patterns since they will be frequently used
-            blacklistRegex.add(Pattern.compile(rule));
+            bannedwordslistRegex.add(Pattern.compile(rule));
         } else if (StringUtils.isNotEmpty(rule)) {
-            blacklistStr.add(rule);
+            bannedwordslistStr.add(rule);
         }
     }
         
@@ -302,52 +302,52 @@ public final class Blacklist {
     }
        
     /** 
-     * Does the String argument match any of the rules in the built-in blacklist? 
+     * Does the String argument match any of the rules in the built-in bannedwordslist?
      */
-    public boolean isBlacklisted(String str) {
-        return isBlacklisted(str, null, null);
+    public boolean isBannedwordslisted(String str) {
+        return isBannedwordslisted(str, null, null);
     }
     
     /** 
-     * Does the String argument match any of the rules in the built-in blacklist
-     * plus additional blacklists provided by caller?
-     * @param str             String to be checked against blacklist
+     * Does the String argument match any of the rules in the built-in bannedwordslist
+     * plus additional bannedwordslists provided by caller?
+     * @param str             String to be checked against bannedwordslist
      * @param moreStringRules Additional string rules to consider
      * @param moreRegexRules  Additional regex rules to consider 
      */
-    public boolean isBlacklisted(
+    public boolean isBannedwordslisted(
          String str, List<String> moreStringRules, List<Pattern> moreRegexRules) {
         if (str == null || StringUtils.isEmpty(str)) {
             return false;
         }
 
-        // First iterate over blacklist, doing indexOf.
-        // Then iterate over blacklistRegex and test.
+        // First iterate over bannedwordslist, doing indexOf.
+        // Then iterate over bannedwordslistRegex and test.
         // As soon as there is a hit in either case return true
         
         // test plain String.indexOf
-        List<String> stringRules = blacklistStr;
+        List<String> stringRules = bannedwordslistStr;
         if (moreStringRules != null && moreStringRules.size() > 0) {
             stringRules = new ArrayList<String>();
             stringRules.addAll(moreStringRules);
-            stringRules.addAll(blacklistStr);
+            stringRules.addAll(bannedwordslistStr);
         }
         if (testStringRules(str, stringRules)) {
             return true;
         }
         
-        // test regex blacklisted
-        List<Pattern> regexRules = blacklistRegex;
+        // test regex bannedwordslisted
+        List<Pattern> regexRules = bannedwordslistRegex;
         if (moreRegexRules != null && moreRegexRules.size() > 0) {
             regexRules = new ArrayList<Pattern>();
             regexRules.addAll(moreRegexRules);
-            regexRules.addAll(blacklistRegex);
+            regexRules.addAll(bannedwordslistRegex);
         }
         return testRegExRules(str, regexRules);
     }      
 
     /** 
-     * Test string only against rules provided by caller, NOT against built-in blacklist.
+     * Test string only against rules provided by caller, NOT against built-in bannedwordslist.
      * @param str             String to be checked against rules
      * @param stringRules String rules to consider
      * @param regexRules  Regex rules to consider
@@ -431,10 +431,10 @@ public final class Blacklist {
         return matches;
     }   
     
-    /** Utility method to populate lists based a blacklist in string form */
+    /** Utility method to populate lists based a bannedwordslist in string form */
     public static void populateSpamRules(
-        String blacklist, List<String> stringRules, List<Pattern> regexRules, String addendum) {
-        String weblogWords = blacklist;
+        String bannedwordslist, List<String> stringRules, List<Pattern> regexRules, String addendum) {
+        String weblogWords = bannedwordslist;
         weblogWords = (weblogWords == null) ? "" : weblogWords;
         String siteWords = (addendum != null) ? addendum : "";
         StringTokenizer toker = new StringTokenizer(siteWords + "\n" + weblogWords, "\n");
@@ -453,8 +453,8 @@ public final class Blacklist {
         
     /** Return pretty list of String and RegEx rules. */
     public String toString() {
-        String val = "blacklist " + blacklistStr;
-        val += "\nRegex blacklist " + blacklistRegex;
+        String val = "bannedwordslist " + bannedwordslistStr;
+        val += "\nRegex bannedwordslist " + bannedwordslistRegex;
         return val;
     }
 }

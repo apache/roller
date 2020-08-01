@@ -46,7 +46,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
 import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
-import org.apache.roller.weblogger.util.BlacklistChecker;
+import org.apache.roller.weblogger.util.BannedwordslistChecker;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 
@@ -101,7 +101,7 @@ public class PageServlet extends HttpServlet {
 
         // see if built-in referrer spam check is enabled
         this.processReferrers = WebloggerConfig
-                .getBooleanProperty("site.blacklist.enable.referrers");
+                .getBooleanProperty("site.bannedwordslist.enable.referrers");
 
         log.info("Referrer spam check enabled = " + this.processReferrers);
 
@@ -658,7 +658,7 @@ public class PageServlet extends HttpServlet {
                     String requestSite = requestUrl.substring(0, lastSlash);
 
                     if (!referrerUrl.matches(requestSite + ".*\\.rol.*") &&
-                            BlacklistChecker.checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
+                            BannedwordslistChecker.checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
                         return true;
                     }
                 }

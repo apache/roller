@@ -728,7 +728,7 @@ information).
 as spam (default: on)
 ** Excess size validator marks any comment with more than 1000
 characters as spam (default: on)
-** Blacklist validator marks comments containing any of your site’s
+** Bannedwordslist validator marks comments containing any of your site’s
 designated bad words as spam (default: on)
 ** Trackback verification validator will check incoming trackbacks to
 ensure that they link to you.
@@ -747,36 +747,36 @@ comments on your weblog. None of the measures are 100% effective. If you
 are really concerned about displaying offensive content on your weblog
 even for a short time, then enable comment moderation on your weblog.
 
-Roller uses a _blacklist_, a lists of words which are used to check
+Roller uses a _bannedwordslist_, a lists of words which are used to check
 incoming comments, trackbacks and requestors for spam URLs. If the name,
-URL or content of a comment or trackback includes one of the blacklist
+URL or content of a comment or trackback includes one of the bannedwordslist
 words or matches one of the expressions then that comment or trackback
 is marked as spam and is not displayed on your weblog, unless you use
 the comment management page to unmark it.
 
-Actually, there are three levels of blacklist:
+Actually, there are three levels of bannedwordslist:
 
-** Level 1 blacklist: This is the built-in blacklist, the one that comes
+** Level 1 bannedwordslist: This is the built-in bannedwordslist, the one that comes
 with Roller. This can only be changed by somebody with root access to
 the Roller server itself.
-** Level 2 blacklist: This is the site wide blacklist, which can only be
+** Level 2 bannedwordslist: This is the site wide bannedwordslist, which can only be
 edited by a global administrator via the Server Admin page.
-** Level 3 blacklist: Weblog specific blacklist, which you control in
+** Level 3 bannedwordslist: Weblog specific bannedwordslist, which you control in
 the Weblog Settings page of your weblog.
 
 Incoming comments and trackbacks are checked against all three levels of
-blacklist. Incoming web page requests, however, are only checked against
-the levels 2 and 3 blacklist and will receive a 403 (forbidden) message
+bannedwordslist. Incoming web page requests, however, are only checked against
+the levels 2 and 3 bannedwordslist and will receive a 403 (forbidden) message
 if found.
 
 If you have a spam problem on your weblog and you’d like to add words to
-the blacklist, it’s probably better for you to ask your administrator to
-add the words to the level 2 blacklist for you. That way, every blogger
+the bannedwordslist, it’s probably better for you to ask your administrator to
+add the words to the level 2 bannedwordslist for you. That way, every blogger
 on the site will benefit from the addition. If you must do it yourself,
 here’s how you do it:
 
 
-** Go to the Weblog Settings page and scroll down to the blacklist
+** Go to the Weblog Settings page and scroll down to the bannedwordslist
 fields
 ** Enter your spam words, one per line
 ** Lines that begin with a left parenthesis will be treated as regular

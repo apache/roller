@@ -128,8 +128,8 @@ public final class WeblogWrapper {
         return this.pojo.getEditorPage();
     }
 
-    public String getBlacklist() {
-        return this.pojo.getBlacklist();
+    public String getBannedwordslist() {
+        return this.pojo.getBannedwordslist();
     }
     
     

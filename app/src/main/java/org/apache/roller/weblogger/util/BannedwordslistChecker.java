@@ -31,71 +31,71 @@ import org.apache.roller.weblogger.pojos.Weblog;
  * @author Lance Lavandowska
  * @author Dave Johnson
  */
-public final class BlacklistChecker {
+public final class BannedwordslistChecker {
 
-    private BlacklistChecker() {
+    private BannedwordslistChecker() {
         // never instantiable
         throw new AssertionError();
     }
 
     /**
-     * Test comment, applying all blacklists, if configured 
-     * @return True if comment matches blacklist term
+     * Test comment, applying all bannedwordslists, if configured
+     * @return True if comment matches bannedwordslist term
      */
     public static boolean checkComment(WeblogEntryComment comment) {
-        if (WebloggerConfig.getBooleanProperty("site.blacklist.enable.comments")) {
+        if (WebloggerConfig.getBooleanProperty("site.bannedwordslist.enable.comments")) {
             return testComment(comment);
         }
         return false;
     }
     
     /** 
-     * Test trackback comment, applying all blacklists, if configured 
-     * @return True if comment matches blacklist term
+     * Test trackback comment, applying all bannedwordslists, if configured
+     * @return True if comment matches bannedwordslist term
      */
     public static boolean checkTrackback(WeblogEntryComment comment) {
-        if (WebloggerConfig.getBooleanProperty("site.blacklist.enable.trackbacks")) {
+        if (WebloggerConfig.getBooleanProperty("site.bannedwordslist.enable.trackbacks")) {
             return testComment(comment);
         }
         return false;
     }
 
     /** 
-     * Test referrer URL, applying blacklist and website blacklist only if configured 
-     * @return True if comment matches blacklist term
+     * Test referrer URL, applying bannedwordslist and website bannedwordslist only if configured
+     * @return True if comment matches bannedwordslist term
      */
     public static boolean checkReferrer(Weblog website, String referrerURL) {
-        if (WebloggerConfig.getBooleanProperty("site.blacklist.enable.referrers")) {
+        if (WebloggerConfig.getBooleanProperty("site.bannedwordslist.enable.referrers")) {
             List<String> stringRules = new ArrayList<String>();
             List<Pattern> regexRules = new ArrayList<Pattern>();
-            Blacklist.populateSpamRules(
-                website.getBlacklist(), stringRules, regexRules, null);
-            if (WebloggerRuntimeConfig.getProperty("spam.blacklist") != null) {
-                Blacklist.populateSpamRules(
-                    WebloggerRuntimeConfig.getProperty("spam.blacklist"), stringRules, regexRules, null);
+            Bannedwordslist.populateSpamRules(
+                website.getBannedwordslist(), stringRules, regexRules, null);
+            if (WebloggerRuntimeConfig.getProperty("spam.bannedwordslist") != null) {
+                Bannedwordslist.populateSpamRules(
+                    WebloggerRuntimeConfig.getProperty("spam.bannedwordslist"), stringRules, regexRules, null);
             }
-            return Blacklist.matchesRulesOnly(referrerURL, stringRules, regexRules);
+            return Bannedwordslist.matchesRulesOnly(referrerURL, stringRules, regexRules);
         }
         return false;
     }
 
     /** 
-     * Test comment against built in blacklist, site blacklist and website blacklist 
-     * @return True if comment matches blacklist term
+     * Test comment against built in bannedwordslist, site bannedwordslist and website bannedwordslist
+     * @return True if comment matches bannedwordslist term
      */
     private static boolean testComment(WeblogEntryComment c) {
         boolean ret = false;
         List<String> stringRules = new ArrayList<String>();
         List<Pattern> regexRules = new ArrayList<Pattern>();
         Weblog website = c.getWeblogEntry().getWebsite();
-        Blacklist.populateSpamRules(
-            website.getBlacklist(), stringRules, regexRules, 
-            WebloggerRuntimeConfig.getProperty("spam.blacklist"));
-        Blacklist blacklist = Blacklist.getBlacklist();
-        if (   blacklist.isBlacklisted(c.getUrl(),     stringRules, regexRules)
-            || blacklist.isBlacklisted(c.getEmail(),   stringRules, regexRules)
-            || blacklist.isBlacklisted(c.getName(),    stringRules, regexRules)
-            || blacklist.isBlacklisted(c.getContent(), stringRules, regexRules)) {
+        Bannedwordslist.populateSpamRules(
+            website.getBannedwordslist(), stringRules, regexRules,
+            WebloggerRuntimeConfig.getProperty("spam.bannedwordslist"));
+        Bannedwordslist bannedwordslist = Bannedwordslist.getBannedwordslist();
+        if (   bannedwordslist.isBannedwordslisted(c.getUrl(),     stringRules, regexRules)
+            || bannedwordslist.isBannedwordslisted(c.getEmail(),   stringRules, regexRules)
+            || bannedwordslist.isBannedwordslisted(c.getName(),    stringRules, regexRules)
+            || bannedwordslist.isBannedwordslisted(c.getContent(), stringRules, regexRules)) {
             ret = true;
         }
         return ret;
