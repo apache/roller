@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.pojos.wrapper;
 
 import java.sql.Timestamp;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.plugins.PluginManager;

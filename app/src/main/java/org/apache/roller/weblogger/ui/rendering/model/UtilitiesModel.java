@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -253,7 +253,7 @@ public class UtilitiesModel implements Model {
     }
     
     public String escapeXML(String str) {
-        return StringEscapeUtils.escapeXml(str);
+        return StringEscapeUtils.escapeXml11(str);
     }
     
     public String unescapeXML(String str) {

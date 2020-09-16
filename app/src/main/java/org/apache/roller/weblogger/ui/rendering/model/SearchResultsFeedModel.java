@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
@@ -240,7 +240,7 @@ public class SearchResultsFeedModel implements Model {
 	public String getTerm() {
 		String query =feedRequest.getTerm() ;
 		return (query == null) 
-			? "" : StringEscapeUtils.escapeXml(Utilities.escapeHTML(query));
+			? "" : StringEscapeUtils.escapeXml11(Utilities.escapeHTML(query));
 	}
 
 	public int getHits() {
