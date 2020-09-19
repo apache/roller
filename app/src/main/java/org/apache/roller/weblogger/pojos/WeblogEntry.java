@@ -752,6 +752,7 @@ public class WeblogEntry implements Serializable {
      * Returns entry permalink, relative to Roller context.
      * @deprecated Use getPermalink() instead.
      */
+    @Deprecated
     public String getPermaLink() {
         String lAnchor = this.getAnchor();        
         try {
@@ -766,6 +767,7 @@ public class WeblogEntry implements Serializable {
      * Get relative URL to comments page.
      * @deprecated Use commentLink() instead
      */
+    @Deprecated
     public String getCommentsLink() {
         return getPermaLink() + "#comments";
     }

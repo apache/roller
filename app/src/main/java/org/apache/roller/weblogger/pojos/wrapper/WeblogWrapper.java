@@ -210,6 +210,7 @@ public final class WeblogWrapper {
     }
 
     /* deprecated in Roller 5.1 */
+    @Deprecated
     public Boolean getEnabled() {
         return getVisible();
     }
