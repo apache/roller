@@ -73,17 +73,20 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 	}
 
 	// @Override
+    @Override
 	public RenditionType getType() {
 		return type;
 	}
 
 	// @Override
+    @Override
 	public void setType(RenditionType type) {
 		this.type = type;
 	}
 
 	// ------------------------------------------------------- Good citizenship
 
+    @Override
 	public String toString() {
         return "{" + getId()
                 + ", " + getWeblogTemplate().getId()
@@ -91,6 +94,7 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
                 + "] , " + getType() + "}";
 	}
 
+    @Override
 	public boolean equals(Object other) {
 		if (other == this) {
             return true;
@@ -103,17 +107,20 @@ public class CustomTemplateRendition implements Serializable, TemplateRendition 
 				.append(getTemplate(), o.getTemplate()).isEquals();
 	}
 
+    @Override
 	public int hashCode() {
 		return new HashCodeBuilder().append(getWeblogTemplate().getId())
 				.append(getTemplate()).toHashCode();
 	}
 
 	// @Override
+    @Override
 	public TemplateLanguage getTemplateLanguage() {
 		return templateLanguage;
 	}
 
 	// @Override
+    @Override
 	public void setTemplateLanguage(TemplateLanguage templateLanguage) {
 		this.templateLanguage = templateLanguage;
 	}

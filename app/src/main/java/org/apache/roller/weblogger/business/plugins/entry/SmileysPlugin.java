@@ -61,11 +61,13 @@ public class SmileysPlugin implements WeblogEntryPlugin {
     }
     
     
+    @Override
     public String getName() {
         return name;
     }
     
     
+    @Override
     public String getDescription() {
         return StringEscapeUtils.escapeEcmaScript(description);
     }
@@ -76,6 +78,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
      * later use.  Need an HttpServletRequest though so that we can
      * get the ServletContext Path.  But only do it once.
      */
+    @Override
     public synchronized void init(Weblog website) throws WebloggerException {
         // don't do this work if Smileys already loaded
         if (SmileysPlugin.smileyPatterns.length < 1) {
@@ -108,6 +111,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
     /**
      * Find occurences of ascii emoticons and turn them into HTML image pointers.
      */
+    @Override
     public String render(WeblogEntry entry, String text) {
         Matcher matcher = null;
         for (int i=0; i<smileyPatterns.length; i++) {

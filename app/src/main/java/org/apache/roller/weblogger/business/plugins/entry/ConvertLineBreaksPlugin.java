@@ -55,16 +55,19 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
     }
     
     
+    @Override
     public String getName() {
         return NAME;
     }
     
     
+    @Override
     public String getDescription() {
         return DESCRIPTION;
     }
     
     
+    @Override
     public void init(Weblog website) throws WebloggerException {
         // we don't need to do any init.
         mLogger.debug("initing");
@@ -75,6 +78,7 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
      * Transform the given plain text into html text by inserting p and br
      * tags around paragraphs and after line breaks.
      */
+    @Override
     public String render(WeblogEntry entry, String str) {
         
         if(str == null || str.isBlank()) {

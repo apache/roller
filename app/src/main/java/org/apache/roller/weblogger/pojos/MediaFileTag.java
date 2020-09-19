@@ -70,11 +70,13 @@ public class MediaFileTag implements Serializable {
 
     // ------------------------------------------------------- Good citizenship
 
+    @Override
     public String toString() {
         return "MediaFileTag [id=" + getId() + ", name=" + getName() + ", mediaFile="
                 + getMediaFile() + "]";
     }
 
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -87,6 +89,7 @@ public class MediaFileTag implements Serializable {
                 .append(getMediaFile(), o.getMediaFile()).isEquals();
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder().append(getName()).append(getMediaFile())
                 .toHashCode();

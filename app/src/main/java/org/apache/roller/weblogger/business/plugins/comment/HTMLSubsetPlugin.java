@@ -39,21 +39,25 @@ public class HTMLSubsetPlugin implements WeblogEntryCommentPlugin {
     /**
      * Unique identifier.  This should never change. 
      */
+    @Override
     public String getId() {
         return "HTMLSubset";
     }
     
     
+    @Override
     public String getName() {
         return "HTML Subset Restriction";
     }
     
     
+    @Override
     public String getDescription() {
         return "Transforms the given comment body into a subset of HTML";
     }
     
     
+    @Override
     public String render(final WeblogEntryComment comment, String text) {
         String output = text;
         

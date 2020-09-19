@@ -517,11 +517,13 @@ public class MediaFile implements Serializable {
 
     // ------------------------------------------------------- Good citizenship
 
+    @Override
     public String toString() {
         return "MediaFile [name=" + getName() + ", directory=" + getDirectory()
                 + ", weblog=" + getWeblog() + "]";
     }
 
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -533,6 +535,7 @@ public class MediaFile implements Serializable {
         return new EqualsBuilder().append(getId(), o.getId()).isEquals();
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder().append(getId()).toHashCode();
     }

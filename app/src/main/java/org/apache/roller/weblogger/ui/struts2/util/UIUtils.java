@@ -67,6 +67,7 @@ public final class UIUtils {
     
     // special comparator for sorting LOCALES
     private static final class LocaleComparator implements Comparator {
+        @Override
         public int compare(Object obj1, Object obj2) {
             if (obj1 instanceof Locale && obj2 instanceof Locale) {
                 Locale locale1 = (Locale)obj1;

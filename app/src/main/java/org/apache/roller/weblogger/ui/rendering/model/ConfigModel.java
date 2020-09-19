@@ -30,12 +30,14 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 public class ConfigModel implements Model {
     
     /** Template context name to be used for model */
+    @Override
     public String getModelName() {
         return "config";
     }
     
     
     /** Init model */
+    @Override
     public void init(Map map) throws WebloggerException {
         // no-op
     }

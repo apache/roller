@@ -44,16 +44,19 @@ public abstract class AbstractPager implements Pager {
     }
     
     
+    @Override
     public String getHomeLink() {
         return url;
     }
     
     
+    @Override
     public String getHomeName() {
         return "Home";
     }
     
     
+    @Override
     public String getNextLink() {
         if(hasMoreItems()) {
             int nextPage = page + 1;
@@ -65,6 +68,7 @@ public abstract class AbstractPager implements Pager {
     }
     
     
+    @Override
     public String getNextName() {
         if(hasMoreItems()) {
             return "Next";
@@ -73,6 +77,7 @@ public abstract class AbstractPager implements Pager {
     }
     
     
+    @Override
     public String getPrevLink() {
         if (page > 0) {
             int prevPage = page - 1;
@@ -84,6 +89,7 @@ public abstract class AbstractPager implements Pager {
     }
     
     
+    @Override
     public String getPrevName() {
         if (page > 0) {
             return "Previous";

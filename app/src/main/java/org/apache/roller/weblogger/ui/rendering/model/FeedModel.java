@@ -48,6 +48,7 @@ public class FeedModel implements Model {
     private Weblog weblog = null;
     
     
+    @Override
     public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
@@ -77,6 +78,7 @@ public class FeedModel implements Model {
     
     
     /** Template context name to be used for model */
+    @Override
     public String getModelName() {
         return "model";
     }

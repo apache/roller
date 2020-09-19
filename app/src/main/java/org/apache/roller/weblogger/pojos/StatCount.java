@@ -101,6 +101,7 @@ public class StatCount {
     
     //------------------------------------------------------- Good citizenship
 
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("{");
@@ -110,6 +111,7 @@ public class StatCount {
         return buf.toString();
     }
 
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -124,6 +126,7 @@ public class StatCount {
             .isEquals();
     }
     
+    @Override
     public int hashCode() { 
         return new HashCodeBuilder()
             .append(getSubjectId())

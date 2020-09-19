@@ -121,12 +121,14 @@ public class Weblog implements Serializable {
     
     //------------------------------------------------------- Good citizenship
 
+    @Override
     public String toString() {
         return  "{" + getId() + ", " + getHandle()
         + ", " + getName() + ", " + getEmailAddress()
         + ", " + getLocale() + ", " + getTimeZone() + "}";
     }
 
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -140,6 +142,7 @@ public class Weblog implements Serializable {
             .isEquals();
     }
     
+    @Override
     public int hashCode() { 
         return new HashCodeBuilder()
             .append(getHandle())

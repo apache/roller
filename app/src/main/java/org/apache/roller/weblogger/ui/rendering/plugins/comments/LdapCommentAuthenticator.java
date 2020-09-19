@@ -59,6 +59,7 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 
 	private static Log LOG = LogFactory.getLog(LdapCommentAuthenticator.class);
 
+    @Override
 	public String getHtml(HttpServletRequest request) {
 		String ldapUser = "";
 		String ldapPass  = "";
@@ -96,6 +97,7 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 		return sb.toString();
 	}
 
+    @Override
 	public boolean authenticate(HttpServletRequest request) {
 		boolean validUser = false;
 		LdapContext context = null;

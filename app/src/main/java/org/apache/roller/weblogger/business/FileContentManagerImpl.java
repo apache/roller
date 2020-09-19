@@ -77,6 +77,7 @@ public class FileContentManagerImpl implements FileContentManager {
      * @see org.apache.roller.weblogger.business.FileContentManager#getFileContent(Weblog,
      *      String)
      */
+    @Override
     public FileContent getFileContent(Weblog weblog, String fileId)
             throws FileNotFoundException, FilePathException {
 
@@ -97,6 +98,7 @@ public class FileContentManagerImpl implements FileContentManager {
      * @see org.apache.roller.weblogger.business.FileContentManager#saveFileContent(Weblog,
      *      String, java.io.InputStream)
      */
+    @Override
     public void saveFileContent(Weblog weblog, String fileId, InputStream is)
             throws FileNotFoundException, FilePathException, FileIOException {
 
@@ -136,6 +138,7 @@ public class FileContentManagerImpl implements FileContentManager {
      * @see org.apache.roller.weblogger.business.FileContentManager#deleteFile(Weblog,
      *      String)
      */
+    @Override
     public void deleteFile(Weblog weblog, String fileId)
             throws FileNotFoundException, FilePathException, FileIOException {
 
@@ -150,6 +153,7 @@ public class FileContentManagerImpl implements FileContentManager {
     /**
      * @inheritDoc
      */
+    @Override
     public void deleteAllFiles(Weblog weblog) throws FileIOException {
         // TODO: Implement
     }
@@ -157,6 +161,7 @@ public class FileContentManagerImpl implements FileContentManager {
     /**
      * @see org.apache.roller.weblogger.business.FileContentManager#overQuota(Weblog)
      */
+    @Override
     public boolean overQuota(Weblog weblog) {
 
         String maxDir = WebloggerRuntimeConfig
@@ -180,6 +185,7 @@ public class FileContentManagerImpl implements FileContentManager {
         }
     }
 
+    @Override
     public void release() {
     }
 
@@ -187,6 +193,7 @@ public class FileContentManagerImpl implements FileContentManager {
      * @see org.apache.roller.weblogger.business.FileContentManager#canSave(Weblog,
      *      String, String, long, RollerMessages)
      */
+    @Override
     public boolean canSave(Weblog weblog, String fileName, String contentType,
             long size, RollerMessages messages) {
 

@@ -75,6 +75,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
 
     //------------------------------------------------------- Good citizenship
 
+    @Override
     public String toString() {
         return "{" + getId() + ", " + getName() + "}";
     }
@@ -107,6 +108,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
+    @Override
     public int compareTo(WeblogCategory other) {
         return getName().compareTo(other.getName());
     }

@@ -175,6 +175,7 @@ public class WeblogCalendarModel implements CalendarModel {
         }
     }
 
+    @Override
     public void setDay(String month) throws Exception {
         SimpleDateFormat fmt = DateUtil.get8charDateFormat();
         fmt.setCalendar(getCalendar());
@@ -182,6 +183,7 @@ public class WeblogCalendarModel implements CalendarModel {
         initDay( fmt.parse( month, pos ) );
     }
     
+    @Override
     public Date getDay() {
         return (Date)day.clone();
     }
@@ -252,6 +254,7 @@ public class WeblogCalendarModel implements CalendarModel {
      * @param alwaysURL Always return a URL, never return null
      * @return          URL for day, or null if no weblog entry on that day
      */
+    @Override
     public String computeUrl(Date day, boolean monthURL, boolean alwaysURL) {
         String url = null;
         // get the 8 char YYYYMMDD datestring for day
@@ -278,30 +281,37 @@ public class WeblogCalendarModel implements CalendarModel {
         return url;
     }
     
+    @Override
     public String getContent(Date day) {
         return null;
     }
     
+    @Override
     public Calendar getCalendar() {
         return (Calendar)calendar.clone();
     }
     
+    @Override
     public Date getNextMonth() {
         return nextMonth;
     }
 
+    @Override
     public Date getPrevMonth() {
         return prevMonth;
     }
        
+    @Override
     public String computeNextMonthUrl() {
         return computeUrl(nextMonth, true, true);
     }
 
+    @Override
     public String computePrevMonthUrl() {
         return computeUrl(prevMonth, true, true);
     }
     
+    @Override
     public String computeTodayMonthUrl() {
     	String url;
         if (pageLink == null) {

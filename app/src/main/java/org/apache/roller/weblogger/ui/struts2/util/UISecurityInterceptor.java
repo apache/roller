@@ -38,6 +38,7 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
     private static final long serialVersionUID = -7787813271277874462L;
     private static Log log = LogFactory.getLog(UISecurityInterceptor.class);
 
+    @Override
     public String doIntercept(ActionInvocation invocation) throws Exception {
 
         if (log.isDebugEnabled()) {

@@ -38,6 +38,7 @@ public class WeblogHitCount implements Serializable {
     
     //------------------------------------------------------- Good citizenship
 
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("{");
@@ -47,6 +48,7 @@ public class WeblogHitCount implements Serializable {
         return buf.toString();
     }
     
+    @Override
     public boolean equals(Object other) {
         
         if(this == other) {
@@ -61,6 +63,7 @@ public class WeblogHitCount implements Serializable {
         return this.getWeblog().equals(that.getWeblog());
     }
        
+    @Override
     public int hashCode() { 
         return new HashCodeBuilder()
             .append(getWeblog())

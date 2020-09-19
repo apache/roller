@@ -110,6 +110,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		}
 	}
 
+    @Override
 	public void initialize() throws InitializationException {
 
 		log.debug("Initializing Theme Manager");
@@ -126,6 +127,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	/**
 	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getTheme(java.lang.String)
 	 */
+    @Override
 	public SharedTheme getTheme(String id) throws WebloggerException {
 
 		// try to lookup theme from library
@@ -142,6 +144,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	/**
 	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getTheme(Weblog)
 	 */
+    @Override
 	public WeblogTheme getTheme(Weblog weblog) throws WebloggerException {
 
 		if (weblog == null) {
@@ -174,6 +177,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	/**
 	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#getEnabledThemesList()
 	 */
+    @Override
 	public List<SharedTheme> getEnabledThemesList() {
 		List<SharedTheme> allThemes = new ArrayList<SharedTheme>(this.themes.values());
 
@@ -187,6 +191,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	 * @see org.apache.roller.weblogger.business.themes.ThemeManager#importTheme(Weblog,
 	 *      SharedTheme, boolean)
 	 */
+    @Override
 	public void importTheme(Weblog weblog, SharedTheme theme, boolean skipStylesheet)
 			throws WebloggerException {
 
@@ -374,6 +379,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		File themesdir = new File(this.themeDir);
 		FilenameFilter filter = new FilenameFilter() {
 
+            @Override
 			public boolean accept(File dir, String name) {
 				File file = new File(dir.getAbsolutePath() + File.separator
 						+ name);
@@ -407,6 +413,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	/**
 	 * @see ThemeManager#reLoadThemeFromDisk(String)
 	 */
+    @Override
 	public boolean reLoadThemeFromDisk(String reloadTheme) {
 
 		boolean reloaded = false;

@@ -37,6 +37,7 @@ public abstract class RollerPermission extends java.security.Permission {
             
     public abstract void setActions(String actions); 
 
+    @Override
     public abstract String getActions();
 
     public List<String> getActionsAsList() {

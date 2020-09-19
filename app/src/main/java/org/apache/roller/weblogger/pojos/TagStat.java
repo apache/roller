@@ -53,6 +53,7 @@ public class TagStat implements java.io.Serializable {
         this.count = count;
     }
 
+    @Override
     public String toString() {
         StringBuilder str = new StringBuilder("{");
 

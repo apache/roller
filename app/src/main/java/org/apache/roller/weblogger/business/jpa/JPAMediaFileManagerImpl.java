@@ -85,6 +85,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      * Initialize manager; deal with upgrade/migration if 'uploads.migrate.auto'
      * is true.
      */
+    @Override
     public void initialize() {
         boolean autoUpgrade = WebloggerConfig
                 .getBooleanProperty("uploads.migrate.auto");
@@ -96,12 +97,14 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * Release resources; currently a no-op.
      */
+    @Override
     public void release() {
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void moveMediaFiles(Collection<MediaFile> mediaFiles,
             MediaFileDirectory targetDirectory) throws WebloggerException {
 
@@ -133,6 +136,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void moveMediaFile(MediaFile mediaFile,
             MediaFileDirectory targetDirectory) throws WebloggerException {
         moveMediaFiles(Arrays.asList(mediaFile), targetDirectory);
@@ -141,6 +145,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createMediaFileDirectory(MediaFileDirectory directory)
             throws WebloggerException {
         this.strategy.store(directory);
@@ -155,6 +160,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public MediaFileDirectory createMediaFileDirectory(Weblog weblog,
             String requestedName) throws WebloggerException {
 
@@ -184,6 +190,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public MediaFileDirectory createDefaultMediaFileDirectory(Weblog weblog)
             throws WebloggerException {
         MediaFileDirectory defaultDirectory = new MediaFileDirectory(weblog, "default",
@@ -195,6 +202,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void createMediaFile(Weblog weblog, MediaFile mediaFile,
             RollerMessages errors) throws WebloggerException {
 
@@ -221,6 +229,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
     }
 
+    @Override
     public void createThemeMediaFile(Weblog weblog, MediaFile mediaFile,
                                 RollerMessages errors) throws WebloggerException {
 
@@ -287,6 +296,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void updateMediaFile(Weblog weblog, MediaFile mediaFile)
             throws WebloggerException {
         mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
@@ -303,6 +313,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void updateMediaFile(Weblog weblog, MediaFile mediaFile,
             InputStream is) throws WebloggerException {
         mediaFile.setLastUpdated(new Timestamp(System.currentTimeMillis()));
@@ -332,6 +343,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public MediaFile getMediaFile(String id) throws WebloggerException {
         return getMediaFile(id, false);
     }
@@ -339,6 +351,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public MediaFile getMediaFile(String id, boolean includeContent)
             throws WebloggerException {
         MediaFile mediaFile = (MediaFile) this.strategy.load(MediaFile.class,
@@ -370,6 +383,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public MediaFileDirectory getMediaFileDirectoryByName(Weblog weblog,
             String name) throws WebloggerException {
 
@@ -391,6 +405,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public MediaFile getMediaFileByPath(Weblog weblog, String path)
             throws WebloggerException {
 
@@ -412,6 +427,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public MediaFile getMediaFileByOriginalPath(Weblog weblog, String origpath)
             throws WebloggerException {
 
@@ -444,6 +460,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public MediaFileDirectory getMediaFileDirectory(String id)
             throws WebloggerException {
         return (MediaFileDirectory) this.strategy.load(
@@ -453,6 +470,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public MediaFileDirectory getDefaultMediaFileDirectory(Weblog weblog)
             throws WebloggerException {
         return getMediaFileDirectoryByName(weblog, "default");
@@ -461,6 +479,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<MediaFileDirectory> getMediaFileDirectories(Weblog weblog)
             throws WebloggerException {
 
@@ -473,6 +492,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void removeMediaFile(Weblog weblog, MediaFile mediaFile)
             throws WebloggerException {
         FileContentManager cmgr = WebloggerFactory.getWeblogger()
@@ -498,6 +518,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<MediaFile> fetchRecentPublicMediaFiles(int length)
             throws WebloggerException {
 
@@ -511,6 +532,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<MediaFile> searchMediaFiles(Weblog weblog,
             MediaFileFilter filter) throws WebloggerException {
 
@@ -830,10 +852,12 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
     }
 
+    @Override
     public void removeAllFiles(Weblog website) throws WebloggerException {
         removeMediaFileDirectory(getDefaultMediaFileDirectory(website));
     }
 
+    @Override
     public void removeMediaFileDirectory(MediaFileDirectory dir)
             throws WebloggerException {
         if (dir == null) {
@@ -864,6 +888,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         roller.flush();
     }
 
+    @Override
     public void removeMediaFileTag(String name, MediaFile entry)
             throws WebloggerException {
 

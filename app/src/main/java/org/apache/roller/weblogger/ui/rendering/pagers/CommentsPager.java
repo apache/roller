@@ -75,6 +75,7 @@ public class CommentsPager extends AbstractPager {
     }
     
     
+    @Override
     public List<WeblogEntryCommentWrapper> getItems() {
         
         if (comments == null) {

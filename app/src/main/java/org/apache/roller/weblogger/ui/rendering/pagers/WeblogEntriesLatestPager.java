@@ -66,6 +66,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
     }
     
     
+    @Override
     public Map<Date, List<WeblogEntryWrapper>> getEntries() {
         
         if (entries == null) {

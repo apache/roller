@@ -27,14 +27,17 @@ public class TextEditor implements WeblogEntryEditor {
     public TextEditor() {}
     
     
+    @Override
     public String getId() {
         return "editor-text.jsp";
     }
     
+    @Override
     public String getName() {
         return "editor.text.name";
     }
     
+    @Override
     public String getJspPage() {
         return "/WEB-INF/jsps/editor/EntryEditor.jsp";
     }

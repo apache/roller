@@ -32,6 +32,7 @@ public class RollerAtomHandlerFactory extends AtomHandlerFactory {
     /**
      * Create new AtomHandler.
      */
+    @Override
     public AtomHandler newAtomHandler(
             HttpServletRequest req, HttpServletResponse res) {
         return new RollerAtomHandler(req, res);

@@ -35,12 +35,14 @@ public class MessageModel implements Model {
     
     
     /** Template context name to be used for model */
+    @Override
     public String getModelName() {
         return "text";
     }
     
     
     /** Init page model based on request */
+    @Override
     public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object

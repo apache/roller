@@ -25,6 +25,7 @@ import java.util.Locale;
 
 public class ContentModuleParser implements ModuleParser {
 
+    @Override
     public String getNamespaceUri() {
         return ContentModule.URI;
     }
@@ -32,6 +33,7 @@ public class ContentModuleParser implements ModuleParser {
     public Namespace getContentNamespace() {
         return Namespace.getNamespace(ContentModule.URI);
     }
+    @Override
     public Module parse(Element element, Locale locale) {
         boolean foundSomething = false;
         ContentModule fm = new ContentModuleImpl();

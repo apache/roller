@@ -58,18 +58,22 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         this.strategy = strategy;
     }
 
+    @Override
     public AutoPing getAutoPing(String id) throws WebloggerException {
         return (AutoPing) strategy.load(AutoPing.class, id);
     }
 
+    @Override
     public void saveAutoPing(AutoPing autoPing) throws WebloggerException {
         strategy.store(autoPing);
     }
 
+    @Override
     public void removeAutoPing(AutoPing autoPing) throws WebloggerException {
         strategy.remove(autoPing);
     }
 
+    @Override
     public void removeAutoPing(PingTarget pingTarget, Weblog website) throws WebloggerException {
         Query q = strategy.getNamedUpdate("AutoPing.removeByPingTarget&Website");
         q.setParameter(1, pingTarget);
@@ -77,15 +81,18 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         q.executeUpdate();
     }
 
+    @Override
     public void removeAutoPings(Collection<AutoPing> autopings) throws WebloggerException {
         strategy.removeAll(autopings);
     }
 
+    @Override
     public void removeAllAutoPings() throws WebloggerException {
         TypedQuery<AutoPing> q = strategy.getNamedQueryCommitFirst("AutoPing.getAll", AutoPing.class);
         removeAutoPings(q.getResultList());
     }
 
+    @Override
     public void queueApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException {
         if (PingConfig.getSuspendPingProcessing()) {
             if (logger.isDebugEnabled()) {
@@ -101,22 +108,26 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
         }
     }
 
+    @Override
     public List<AutoPing> getAutoPingsByWebsite(Weblog website) throws WebloggerException {
         TypedQuery<AutoPing> q = strategy.getNamedQuery("AutoPing.getByWebsite", AutoPing.class);
         q.setParameter(1, website);
         return q.getResultList();
     }
 
+    @Override
     public List<AutoPing> getAutoPingsByTarget(PingTarget pingTarget) throws WebloggerException {
         TypedQuery<AutoPing> q = strategy.getNamedQuery("AutoPing.getByPingTarget", AutoPing.class);
         q.setParameter(1, pingTarget);
         return q.getResultList();
     }
 
+    @Override
     public List<AutoPing> getApplicableAutoPings(WeblogEntry changedWeblogEntry) throws WebloggerException {
         return getAutoPingsByWebsite(changedWeblogEntry.getWebsite());
     }
 
+    @Override
     public void release() {
     }
 }

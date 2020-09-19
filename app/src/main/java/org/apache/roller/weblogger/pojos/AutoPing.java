@@ -116,6 +116,7 @@ public class AutoPing implements Serializable {
 
     //------------------------------------------------------- Good citizenship
 
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("{");
@@ -124,6 +125,7 @@ public class AutoPing implements Serializable {
         return buf.toString();
     }
     
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -139,6 +141,7 @@ public class AutoPing implements Serializable {
             .isEquals();
     }
     
+    @Override
     public int hashCode() { 
         return new HashCodeBuilder().append(getId()).toHashCode();
     }

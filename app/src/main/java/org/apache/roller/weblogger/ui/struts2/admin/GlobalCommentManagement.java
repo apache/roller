@@ -378,6 +378,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
         this.pager = pager;
     }
 
+    @Override
     public void setServletRequest(HttpServletRequest req) {
         httpMethod = req.getMethod();
     }

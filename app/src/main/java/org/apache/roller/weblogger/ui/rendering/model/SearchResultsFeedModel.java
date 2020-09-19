@@ -79,10 +79,12 @@ public class SearchResultsFeedModel implements Model {
 
 	private int entryCount = 0;
 
+    @Override
 	public String getModelName() {
 		return "model";
 	}
 
+    @Override
 	public void init(Map initData) throws WebloggerException {
 
 		// we expect the init data to contain a weblogRequest object

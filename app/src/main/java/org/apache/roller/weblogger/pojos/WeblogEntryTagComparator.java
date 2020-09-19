@@ -39,6 +39,7 @@ public class WeblogEntryTagComparator implements Comparator<WeblogEntryTag>,
      * Compares two <em>WeblogEntryTag</em> instances according to their tag
      * name.
      */
+    @Override
     public int compare(WeblogEntryTag o1, WeblogEntryTag o2) {
         return o1.getName().compareTo(o2.getName());
     }

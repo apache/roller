@@ -33,6 +33,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
     /**
      * Get root url for a given weblog.  Optionally for a certain locale.
      */
+    @Override
     public String getPlanetURL(String planet) {
         
         if(planet == null) {
@@ -50,6 +51,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
     /**
      * Get url for a single weblog entry on a given weblog.
      */
+    @Override
     public String getPlanetGroupURL(String planet, String group, int pageNum) {
         
         if(planet == null || group == null) {
@@ -73,6 +75,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
     /**
      * Get url for a feed on a given weblog.
      */
+    @Override
     public String getPlanetGroupFeedURL(String planet, String group, String format) {
         
         if(planet == null || group == null) {
@@ -90,6 +93,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
     /**
      * Get url for opml file on a given planet group.
      */
+    @Override
     public String getPlanetGroupOpmlURL(String planet, String group) {
         
         if(planet == null || group == null) {
@@ -107,6 +111,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
     /**
      * Compose a map of key=value params into a query string.
      */
+    @Override
     public String getQueryString(Map<String, String> params) {
         
         if(params == null) {
@@ -135,6 +140,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
     /**
      * URL encode a string using UTF-8.
      */
+    @Override
     public String encode(String str) {
         String encodedStr = str;
         try {
@@ -149,6 +155,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
     /**
      * URL decode a string using UTF-8.
      */
+    @Override
     public String decode(String str) {
         String decodedStr = str;
         try {

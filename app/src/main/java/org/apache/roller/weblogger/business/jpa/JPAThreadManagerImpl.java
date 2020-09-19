@@ -189,6 +189,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     /**
      * @inheritDoc
      */
+    @Override
     public TaskLock getTaskLockByName(String name) throws WebloggerException {
         // do lookup
         TypedQuery<TaskLock> q = strategy.getNamedQuery("TaskLock.getByName", TaskLock.class);
@@ -204,6 +205,7 @@ public class JPAThreadManagerImpl extends ThreadManagerImpl {
     /**
      * @inheritDoc
      */
+    @Override
     public void saveTaskLock(TaskLock data) throws WebloggerException {
         this.strategy.store(data);
     }

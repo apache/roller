@@ -146,6 +146,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getThreadManager()
      */
+    @Override
     public ThreadManager getThreadManager() {
         return threadManager;
     }
@@ -156,6 +157,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getIndexManager()
      */
+    @Override
     public IndexManager getIndexManager() {
         return indexManager;
     }
@@ -166,6 +168,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getThemeManager()
      */
+    @Override
     public ThemeManager getThemeManager() {
         return themeManager;
     }
@@ -176,6 +179,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getUserManager()
      */
+    @Override
     public UserManager getUserManager() {
         return userManager;
     }
@@ -186,6 +190,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getBookmarkManager()
      */
+    @Override
     public BookmarkManager getBookmarkManager() {
         return bookmarkManager;
     }
@@ -196,6 +201,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getMediaFileManager()
      */
+    @Override
     public MediaFileManager getMediaFileManager() {
         return mediaFileManager;
     }
@@ -205,6 +211,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getFileContentManager()
      */
+    @Override
     public FileContentManager getFileContentManager() {
         return fileContentManager;
     }
@@ -215,6 +222,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getWeblogEntryManager()
      */
+    @Override
     public WeblogEntryManager getWeblogEntryManager() {
         return weblogEntryManager;
     }
@@ -225,6 +233,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getWeblogManager()
      */
+    @Override
     public WeblogManager getWeblogManager() {
         return weblogManager;
     }
@@ -235,6 +244,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getPropertiesManager()
      */
+    @Override
     public PropertiesManager getPropertiesManager() {
         return propertiesManager;
     }
@@ -245,6 +255,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
      */
+    @Override
     public PingQueueManager getPingQueueManager() {
         return pingQueueManager;
     }
@@ -255,6 +266,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
      */
+    @Override
     public AutoPingManager getAutopingManager() {
         return autoPingManager;
     }
@@ -265,6 +277,7 @@ public abstract class WebloggerImpl implements Weblogger {
      * 
      * @see org.apache.roller.weblogger.business.Weblogger#getPingTargetManager()
      */
+    @Override
     public PingTargetManager getPingTargetManager() {
         return pingTargetManager;
     }
@@ -275,6 +288,7 @@ public abstract class WebloggerImpl implements Weblogger {
      *
      * @see org.apache.roller.weblogger.business.Weblogger#getPluginManager()
      */
+    @Override
     public PluginManager getPluginManager() {
         return pluginManager;
     }
@@ -285,6 +299,7 @@ public abstract class WebloggerImpl implements Weblogger {
      *
      * @see org.apache.roller.weblogger.business.Weblogger#getOAuthManager()
      */
+    @Override
     public OAuthManager getOAuthManager() {
         return oauthManager;
     }
@@ -293,18 +308,22 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * @inheritDoc
      */
+    @Override
     public URLStrategy getUrlStrategy() {
         return urlStrategy;
     }
 	
+    @Override
     public FeedFetcher getFeedFetcher() {
         return feedFetcher;
     }
 
+    @Override
     public PlanetManager getPlanetManager() {
         return planetManager;
     }
 
+    @Override
 	public org.apache.roller.planet.business.PlanetURLStrategy getPlanetURLStrategy() {
 		return planetUrlStrategy;
 	}
@@ -312,6 +331,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * @inheritDoc
      */
+    @Override
     public void release() {
         try {
             autoPingManager.release();
@@ -333,6 +353,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * @inheritDoc
      */
+    @Override
     public void initialize() throws InitializationException {
         
         log.info("Initializing Roller Weblogger business tier");
@@ -393,6 +414,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * @inheritDoc
      */
+    @Override
     public void shutdown() {
         try {
             HitCountQueue.getInstance().shutdown();
@@ -411,6 +433,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * Weblogger version
      */
+    @Override
     public String getVersion() {
         return version;
     }
@@ -418,6 +441,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * Get source code repository revision # used to create build
      */
+    @Override
     public String getRevision() {
         return revision;
     }
@@ -425,6 +449,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * Weblogger build time
      */
+    @Override
     public String getBuildTime() {
         return buildTime;
     }
@@ -433,6 +458,7 @@ public abstract class WebloggerImpl implements Weblogger {
     /**
      * Get username that built Weblogger
      */
+    @Override
     public String getBuildUser() {
         return buildUser;
     }

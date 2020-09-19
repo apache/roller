@@ -76,6 +76,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
     // ~ Methods
     // ================================================================
 
+    @Override
     public void doRun() {
 
         Date start = new Date();

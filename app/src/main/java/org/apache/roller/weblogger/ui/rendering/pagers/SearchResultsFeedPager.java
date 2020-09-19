@@ -80,6 +80,7 @@ public class SearchResultsFeedPager extends AbstractPager {
         this.messageUtils = I18nMessages.getMessages(viewLocale);
     }
     
+    @Override
     public List getItems() {
         return this.entries;
     }

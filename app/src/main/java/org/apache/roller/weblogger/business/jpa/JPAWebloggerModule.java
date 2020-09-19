@@ -59,6 +59,7 @@ import org.apache.roller.weblogger.planet.business.WebloggerRomeFeedFetcher;
  */
 public class JPAWebloggerModule implements Module {
 
+    @Override
     public void configure(Binder binder) {
 
         binder.bind(Weblogger.class).to(JPAWebloggerImpl.class);

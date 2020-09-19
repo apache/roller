@@ -76,6 +76,7 @@ public class WeblogEntryAttribute implements Comparable<WeblogEntryAttribute> {
     
     //------------------------------------------------------- Good citizenship
     
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("{");
@@ -86,6 +87,7 @@ public class WeblogEntryAttribute implements Comparable<WeblogEntryAttribute> {
         return buf.toString();
     }
     
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -100,6 +102,7 @@ public class WeblogEntryAttribute implements Comparable<WeblogEntryAttribute> {
         .isEquals();
     }
     
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
         .append(getName())
@@ -107,6 +110,7 @@ public class WeblogEntryAttribute implements Comparable<WeblogEntryAttribute> {
         .toHashCode();
     }
     
+    @Override
     public int compareTo(WeblogEntryAttribute att) {
         return getName().compareTo(att.getName());
     }

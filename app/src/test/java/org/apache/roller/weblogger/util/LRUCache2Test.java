@@ -95,6 +95,7 @@ public class LRUCache2Test  {
     
     public static class TestEnvironment implements LRUCache2.Environment {
         public long time = 0;
+        @Override
         public long getCurrentTimeInMillis() {
             return time;
         }

@@ -69,6 +69,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     }
     
     
+    @Override
     public Map getEntries() {
         if (entries == null) {
             try {

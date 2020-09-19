@@ -328,6 +328,7 @@ public final class SiteWideCache implements CacheHandler {
     /**
      * A weblog entry has changed.
      */
+    @Override
     public void invalidate(WeblogEntry entry) {
         
         if (!cacheEnabled) {
@@ -342,6 +343,7 @@ public final class SiteWideCache implements CacheHandler {
     /**
      * A weblog has changed.
      */
+    @Override
     public void invalidate(Weblog website) {
         
         if (!cacheEnabled) {
@@ -356,6 +358,7 @@ public final class SiteWideCache implements CacheHandler {
     /**
      * A bookmark has changed.
      */
+    @Override
     public void invalidate(WeblogBookmark bookmark) {
         if(WebloggerRuntimeConfig.isSiteWideWeblog(bookmark.getWebsite().getHandle())) {
             invalidate(bookmark.getWebsite());
@@ -366,6 +369,7 @@ public final class SiteWideCache implements CacheHandler {
     /**
      * A folder has changed.
      */
+    @Override
     public void invalidate(WeblogBookmarkFolder folder) {
         if(WebloggerRuntimeConfig.isSiteWideWeblog(folder.getWeblog().getHandle())) {
             invalidate(folder.getWeblog());
@@ -376,6 +380,7 @@ public final class SiteWideCache implements CacheHandler {
     /**
      * A comment has changed.
      */
+    @Override
     public void invalidate(WeblogEntryComment comment) {
         if(WebloggerRuntimeConfig.isSiteWideWeblog(comment.getWeblogEntry().getWebsite().getHandle())) {
             invalidate(comment.getWeblogEntry().getWebsite());
@@ -386,6 +391,7 @@ public final class SiteWideCache implements CacheHandler {
     /**
      * A user profile has changed.
      */
+    @Override
     public void invalidate(User user) {
         // ignored
     }
@@ -394,6 +400,7 @@ public final class SiteWideCache implements CacheHandler {
     /**
      * A category has changed.
      */
+    @Override
     public void invalidate(WeblogCategory category) {
         if(WebloggerRuntimeConfig.isSiteWideWeblog(category.getWeblog().getHandle())) {
             invalidate(category.getWeblog());
@@ -404,6 +411,7 @@ public final class SiteWideCache implements CacheHandler {
     /**
      * A weblog template has changed.
      */
+    @Override
     public void invalidate(WeblogTemplate template) {
         if(WebloggerRuntimeConfig.isSiteWideWeblog(template.getWeblog().getHandle())) {
             invalidate(template.getWeblog());

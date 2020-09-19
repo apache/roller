@@ -87,6 +87,7 @@ public class GuiceWebloggerProvider implements WebloggerProvider {
     /**
      * @inheritDoc
      */
+    @Override
     public void bootstrap() {
         webloggerInstance =  injector.getInstance(Weblogger.class);
     }
@@ -95,6 +96,7 @@ public class GuiceWebloggerProvider implements WebloggerProvider {
     /**
      * @inheritDoc
      */
+    @Override
     public Weblogger getWeblogger() {
         return webloggerInstance;
     }

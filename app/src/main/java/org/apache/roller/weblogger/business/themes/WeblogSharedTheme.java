@@ -49,26 +49,32 @@ public class WeblogSharedTheme extends WeblogTheme {
     }
     
     
+    @Override
     public String getId() {
         return this.theme.getId();
     }
     
+    @Override
     public String getName() {
         return this.theme.getName();
     }
 
+    @Override
     public String getDescription() {
         return this.theme.getDescription();
     }
     
+    @Override
     public Date getLastModified() {
         return this.theme.getLastModified();
     }
     
+    @Override
     public boolean isEnabled() {
         return this.theme.isEnabled();
     }
 
+    @Override
     public int compareTo(Theme other) {
         return theme.compareTo(other);
     }
@@ -76,6 +82,7 @@ public class WeblogSharedTheme extends WeblogTheme {
     /**
      * Get the collection of all templates associated with this Theme.
      */
+    @Override
     public List<ThemeTemplate> getTemplates() throws WebloggerException {
         
         Map<String, ThemeTemplate> pages = new TreeMap<String, ThemeTemplate>();
@@ -111,6 +118,7 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the stylesheet template for this theme.
      * Returns null if no stylesheet can be found.
      */
+    @Override
      public ThemeTemplate getStylesheet() throws WebloggerException {
         // stylesheet is handled differently than other templates because with
         // the stylesheet we want to return the weblog custom version if it
@@ -133,6 +141,7 @@ public class WeblogSharedTheme extends WeblogTheme {
     /**
      * Lookup the default template.
      */
+    @Override
     public ThemeTemplate getDefaultTemplate() throws WebloggerException {
         return this.theme.getDefaultTemplate();
     }
@@ -142,6 +151,7 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the specified template by action.
      * Returns null if the template cannot be found.
      */
+    @Override
     public ThemeTemplate getTemplateByAction(ComponentType action) throws WebloggerException {
         
         if (action == null) {
@@ -159,6 +169,7 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the specified template by name.
      * Returns null if the template cannot be found.
      */
+    @Override
     public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
         
         if (name == null) {
@@ -190,6 +201,7 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
+    @Override
      public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
 
         if (link == null) {
@@ -222,6 +234,7 @@ public class WeblogSharedTheme extends WeblogTheme {
      * Lookup the specified resource by path.
      * Returns null if the resource cannot be found.
      */
+    @Override
     public ThemeResource getResource(String path) {
         
         if (path == null) {

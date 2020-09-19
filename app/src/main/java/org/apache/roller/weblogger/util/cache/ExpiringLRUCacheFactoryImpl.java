@@ -38,6 +38,7 @@ public class ExpiringLRUCacheFactoryImpl implements CacheFactory {
     /**
      * Construct a new instance of a Roller Expiring LRUCache.
      */
+    @Override
     public Cache constructCache(Map properties) {
         
         int size = 100;

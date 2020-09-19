@@ -66,6 +66,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
    
+    @Override
     public void saveBookmark(WeblogBookmark bookmark) throws WebloggerException {
         boolean exists = getBookmark(bookmark.getId()) != null;
         if (!exists) {
@@ -83,10 +84,12 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         roller.getWeblogManager().saveWeblog(bookmark.getWebsite());
     }
 
+    @Override
     public WeblogBookmark getBookmark(String id) throws WebloggerException {
         return (WeblogBookmark) strategy.load(WeblogBookmark.class, id);
     }
 
+    @Override
     public void removeBookmark(WeblogBookmark bookmark) throws WebloggerException {
         Weblog weblog = bookmark.getWebsite();
         
@@ -100,6 +103,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         roller.getWeblogManager().saveWeblog(weblog);
     }
 
+    @Override
     public void saveFolder(WeblogBookmarkFolder folder) throws WebloggerException {
 
         // If new folder make sure name is unique
@@ -113,6 +117,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         roller.getWeblogManager().saveWeblog(folder.getWeblog());
     }
 
+    @Override
     public void removeFolder(WeblogBookmarkFolder folder) throws WebloggerException {
         Weblog weblog = folder.getWeblog();
         weblog.getBookmarkFolders().remove(folder);
@@ -125,11 +130,13 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     /**
      * Retrieve folder and lazy-load its bookmarks.
      */
+    @Override
     public WeblogBookmarkFolder getFolder(String id) throws WebloggerException {
         return (WeblogBookmarkFolder) strategy.load(WeblogBookmarkFolder.class, id);
     }
 
     
+    @Override
     public void importBookmarks(
             Weblog website, String folderName, String opml)
             throws WebloggerException {
@@ -220,6 +227,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
      * @see org.apache.roller.weblogger.business.BookmarkManager#getBookmarks(
      *      org.apache.roller.weblogger.pojos.WeblogBookmarkFolder)
      */
+    @Override
     public List<WeblogBookmark> getBookmarks(WeblogBookmarkFolder folder)
             throws WebloggerException {
         TypedQuery<WeblogBookmark> query;
@@ -232,6 +240,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         return results;
     }
 
+    @Override
     public WeblogBookmarkFolder getFolder(Weblog website, String name)
             throws WebloggerException {
 
@@ -247,6 +256,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         }
     }
 
+    @Override
     public WeblogBookmarkFolder getDefaultFolder(Weblog weblog)
             throws WebloggerException {
 
@@ -265,6 +275,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         }
     }
 
+    @Override
     public List<WeblogBookmarkFolder> getAllFolders(Weblog website)
             throws WebloggerException {
         if (website == null) {
@@ -289,6 +300,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
 
+    @Override
     public void release() {}
     
 }

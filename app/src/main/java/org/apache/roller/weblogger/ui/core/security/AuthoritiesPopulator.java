@@ -47,6 +47,7 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
     /* (non-Javadoc)
      * @see org.springframework.security.ldap.LdapAuthoritiesPopulator#getGrantedAuthorities(org.springframework.ldap.core.DirContextOperations, String)
      */
+    @Override
     public Collection<GrantedAuthority> getGrantedAuthorities(DirContextOperations userData, String username) {
 
         // This check is probably unnecessary.

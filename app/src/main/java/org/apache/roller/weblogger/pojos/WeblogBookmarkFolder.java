@@ -62,6 +62,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
         
     //------------------------------------------------------- Good citizenship
 
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("{");
@@ -71,6 +72,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
         return buf.toString();
     }
     
+    @Override
     public boolean equals(Object other) {
         
         if (other == null) {
@@ -89,6 +91,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     }    
     
     
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
             .append(getName())
@@ -99,6 +102,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
+    @Override
     public int compareTo(WeblogBookmarkFolder other) {
         return getName().compareTo(other.getName());
     }

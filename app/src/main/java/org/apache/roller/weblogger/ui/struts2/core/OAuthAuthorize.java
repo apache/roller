@@ -89,6 +89,7 @@ public class OAuthAuthorize extends UIAction implements ServletRequestAware {
         return getAuthenticatedUser().getUserName();
     }
 
+    @Override
     public void setServletRequest(HttpServletRequest request) {
         this.appDesc = (String)request.getAttribute("CONS_DESC");
         this.token = (String)request.getAttribute("TOKEN");

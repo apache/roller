@@ -59,6 +59,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     /**
      * Compare planet entries by comparing permalinks.
      */
+    @Override
     public int compareTo(SubscriptionEntry other) {
         return getPermalink().compareTo(other.getPermalink());
     }
@@ -66,6 +67,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     /**
      * Compare planet entries by comparing permalinks.
      */
+    @Override
     public boolean equals(Object other) {        
         if (this == other) {
             return true;
@@ -80,6 +82,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     /**
      * Generate hash code based on permalink.
      */
+    @Override
     public int hashCode() {
         return getPermalink().hashCode();
     }

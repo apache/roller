@@ -38,6 +38,7 @@ public class LRUCacheFactoryImpl implements CacheFactory {
     /**
      * Construct a new instance of a Roller LRUCache.
      */
+    @Override
     public Cache constructCache(Map properties) {
         int size = 100;
         String id = "unknown";

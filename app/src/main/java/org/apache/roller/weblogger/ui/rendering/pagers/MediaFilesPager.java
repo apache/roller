@@ -59,6 +59,7 @@ public class MediaFilesPager extends AbstractPager {
     }
     
     
+    @Override
     public List<MediaFile> getItems() {
         
         if (this.mediaFiles == null) {

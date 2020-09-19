@@ -30,6 +30,7 @@ public class ContentModuleGenerator implements ModuleGenerator {
     private static final Namespace CONTENT_NS  = 
         Namespace.getNamespace(ContentModule.URI);
 
+    @Override
     public String getNamespaceUri() {
         return ContentModule.URI;
     }
@@ -42,10 +43,12 @@ public class ContentModuleGenerator implements ModuleGenerator {
         NAMESPACES = Collections.unmodifiableSet(nss);
     }
 
+    @Override
     public Set getNamespaces() {
         return NAMESPACES;
     }
 
+    @Override
     public void generate(Module module, Element element) {
         ContentModule fm = (ContentModule)module;
         if (fm.getEncoded() != null) {

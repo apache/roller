@@ -67,6 +67,7 @@ public class StandaloneWebappClassLoader extends URLClassLoader {
     private static void addURLs(String dirPath, List urlList) throws Exception {
         File libDir = new File(dirPath);
         String[] libJarNames = libDir.list(new FilenameFilter() {
+            @Override
             public boolean accept(File dir, String pathname) {
                 if (pathname.endsWith(".jar")) {
                     return true;

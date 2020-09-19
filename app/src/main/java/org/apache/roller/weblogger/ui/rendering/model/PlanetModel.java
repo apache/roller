@@ -57,10 +57,12 @@ public class PlanetModel implements Model {
     private org.apache.roller.planet.business.PlanetURLStrategy planetUrlStrategy = null;
     
     
+    @Override
     public String getModelName() {
         return "planet";
     }
     
+    @Override
     public void init(Map initData) throws WebloggerException {
 
         if (!WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {

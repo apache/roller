@@ -65,22 +65,27 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
     // lease time given to ping task lock, default is 30 minutes
     private int leaseTime = RollerTaskWithLeasing.DEFAULT_LEASE_MINS;
 
+    @Override
     public String getClientId() {
         return clientId;
     }
 
+    @Override
     public Date getStartTime(Date currentTime) {
         return getAdjustedTime(currentTime, startTimeDesc);
     }
 
+    @Override
     public String getStartTimeDesc() {
         return startTimeDesc;
     }
 
+    @Override
     public int getInterval() {
         return this.interval;
     }
 
+    @Override
     public int getLeaseTime() {
         return this.leaseTime;
     }
@@ -134,6 +139,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
     /**
      * Ensure there's a subscription in the "all" group for every Roller weblog.
      */
+    @Override
     public void runTask() {
 
         log.info("Syncing local weblogs with planet subscriptions list");

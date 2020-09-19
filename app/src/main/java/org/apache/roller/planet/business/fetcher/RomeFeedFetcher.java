@@ -62,6 +62,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
     /**
      * @inheritDoc
      */
+    @Override
     public Subscription fetchSubscription(String feedURL) 
             throws FetcherException {
         return fetchSubscription(feedURL, null);
@@ -71,6 +72,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
     /**
      * @inheritDoc
      */
+    @Override
     public Subscription fetchSubscription(String feedURL, Date lastModified) 
             throws FetcherException {
         

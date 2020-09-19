@@ -43,6 +43,7 @@ public class GeneratePlanetTask extends PlanetTask {
     private static Log log = LogFactory.getLog(GeneratePlanetTask.class);
     
     
+    @Override
     public void run() {
         try {            
 //          PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();

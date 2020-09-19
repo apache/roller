@@ -53,6 +53,7 @@ public class StaticTemplate implements Template, Serializable {
     }
     
     
+    @Override
     public String getId() {
         return id;
     }
@@ -61,6 +62,7 @@ public class StaticTemplate implements Template, Serializable {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -69,6 +71,7 @@ public class StaticTemplate implements Template, Serializable {
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -77,6 +80,7 @@ public class StaticTemplate implements Template, Serializable {
         this.description = description;
     }
 
+    @Override
     public Date getLastModified() {
         return lastModified;
     }
@@ -85,10 +89,12 @@ public class StaticTemplate implements Template, Serializable {
         this.lastModified = lastModified;
     }
 
+    @Override
     public String getOutputContentType() {
         return outputContentType;
     }
 
+    @Override
     public TemplateRendition getTemplateRendition(RenditionType type) throws WebloggerException {
         // only one rendition for now
         return templateRendition;

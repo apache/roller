@@ -126,6 +126,7 @@ public class WeblogsPager extends AbstractPager {
     }
     
     
+    @Override
     public List<WeblogWrapper> getItems() {
         
         if (weblogs == null) {

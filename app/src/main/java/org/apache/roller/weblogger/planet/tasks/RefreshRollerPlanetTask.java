@@ -59,22 +59,27 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
     private int leaseTime = 10;
 
 
+    @Override
     public String getClientId() {
         return clientId;
     }
 
+    @Override
     public Date getStartTime(Date currentTime) {
         return getAdjustedTime(currentTime, startTimeDesc);
     }
 
+    @Override
     public String getStartTimeDesc() {
         return startTimeDesc;
     }
 
+    @Override
     public int getInterval() {
         return this.interval;
     }
 
+    @Override
     public int getLeaseTime() {
         return this.leaseTime;
     }
@@ -124,6 +129,7 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
     }
 
 
+    @Override
     public void runTask() {
         try {
             log.info("Refreshing Planet subscriptions");

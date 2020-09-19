@@ -38,6 +38,7 @@ public class RefreshPlanetTask extends PlanetTask {
     private static Log log = LogFactory.getLog(RefreshPlanetTask.class);
     
     
+    @Override
     public void run() {
         try {            
             // Update all feeds in planet

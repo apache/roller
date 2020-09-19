@@ -60,6 +60,7 @@ public class PluginManagerImpl implements PluginManager {
     }
     
     
+    @Override
     public boolean hasPagePlugins() {
         log.debug("mPluginClasses.size(): " + mPagePlugins.size());
         return mPagePlugins != null && !mPagePlugins.isEmpty();
@@ -69,6 +70,7 @@ public class PluginManagerImpl implements PluginManager {
     /**
      * Create and init plugins for processing entries in a specified website.
      */
+    @Override
     public Map<String, WeblogEntryPlugin> getWeblogEntryPlugins(Weblog website) {
         Map<String, WeblogEntryPlugin> ret = new LinkedHashMap<String, WeblogEntryPlugin>();
         for (Class pluginClass : PluginManagerImpl.mPagePlugins.values()) {
@@ -83,6 +85,7 @@ public class PluginManagerImpl implements PluginManager {
         return ret;
     }
     
+    @Override
     public String applyWeblogEntryPlugins(Map pagePlugins, WeblogEntry entry, String str) {
 
         String ret = str;
@@ -107,6 +110,7 @@ public class PluginManagerImpl implements PluginManager {
     /**
      * @inheritDoc
      */
+    @Override
     public List<WeblogEntryCommentPlugin> getCommentPlugins() {
         return commentPlugins;
     }
@@ -115,6 +119,7 @@ public class PluginManagerImpl implements PluginManager {
     /**
      * @inheritDoc
      */
+    @Override
     public String applyCommentPlugins(WeblogEntryComment comment, String text) {
         
         if(comment == null || text == null) {
@@ -228,6 +233,7 @@ public class PluginManagerImpl implements PluginManager {
     }
     
     
+    @Override
     public void release() {
         // no op
     }

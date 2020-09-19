@@ -85,6 +85,7 @@ public class WeblogRequestMapper implements RequestMapper {
     }
     
     
+    @Override
     public boolean handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         

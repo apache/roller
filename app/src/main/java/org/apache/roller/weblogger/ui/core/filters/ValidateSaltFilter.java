@@ -47,6 +47,7 @@ public class ValidateSaltFilter implements Filter {
 
     private Set<String> ignored = Collections.emptySet();
 
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpReq = (HttpServletRequest) request;

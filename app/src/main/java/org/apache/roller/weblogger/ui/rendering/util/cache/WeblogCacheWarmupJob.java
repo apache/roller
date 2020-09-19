@@ -54,6 +54,7 @@ public class WeblogCacheWarmupJob implements Job {
     private Map<String, Object> inputs = null;
     
     
+    @Override
     public void execute() {
         
         log.debug("starting");
@@ -82,11 +83,13 @@ public class WeblogCacheWarmupJob implements Job {
     }
     
     
+    @Override
     public Map<String, Object> output() {
        return null; 
     }
     
     
+    @Override
     public void input(Map<String, Object> input) {
         this.inputs = input;
     }

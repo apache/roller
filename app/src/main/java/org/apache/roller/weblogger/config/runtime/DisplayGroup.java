@@ -57,6 +57,7 @@ public class DisplayGroup {
     }
     
 
+    @Override
     public String toString() {
         return name+","+key;
     }

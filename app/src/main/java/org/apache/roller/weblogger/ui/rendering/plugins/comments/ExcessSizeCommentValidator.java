@@ -36,10 +36,12 @@ public class ExcessSizeCommentValidator implements CommentValidator {
         threshold = WebloggerConfig.getIntProperty("comment.validator.excessSize.threshold");
     }
     
+    @Override
     public String getName() {
         return bundle.getString("comment.validator.excessSizeName");
     }
 
+    @Override
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
         if (comment.getContent() != null && comment.getContent().length() > threshold) {
             messages.addError("comment.validator.excessSizeMessage", Integer.toString(threshold));

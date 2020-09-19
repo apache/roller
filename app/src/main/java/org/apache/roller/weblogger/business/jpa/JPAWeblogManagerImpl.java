@@ -91,18 +91,21 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
     
     
+    @Override
     public void release() {}
     
     
     /**
      * Update existing weblog.
      */
+    @Override
     public void saveWeblog(Weblog weblog) throws WebloggerException {
         
         weblog.setLastModified(new java.util.Date());
         strategy.store(weblog);
     }
     
+    @Override
     public void removeWeblog(Weblog weblog) throws WebloggerException {
         
         // remove contents first, then remove weblog
@@ -237,6 +240,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @see org.apache.roller.weblogger.business.WeblogManager#saveTemplate(WeblogTemplate)
      */
+    @Override
     public void saveTemplate(WeblogTemplate template) throws WebloggerException {
         this.strategy.store(template);
         
@@ -244,6 +248,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         roller.getWeblogManager().saveWeblog(template.getWeblog());
     }
 
+    @Override
     public void saveTemplateRendition(CustomTemplateRendition rendition) throws WebloggerException {
         this.strategy.store(rendition);
 
@@ -251,12 +256,14 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         roller.getWeblogManager().saveWeblog(rendition.getWeblogTemplate().getWeblog());
     }
     
+    @Override
     public void removeTemplate(WeblogTemplate template) throws WebloggerException {
         this.strategy.remove(template);
         // update weblog last modified date.  date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(template.getWeblog());
     }
     
+    @Override
     public void addWeblog(Weblog newWeblog) throws WebloggerException {
         this.strategy.store(newWeblog);
         this.strategy.flush();
@@ -341,10 +348,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
     }
     
+    @Override
     public Weblog getWeblog(String id) throws WebloggerException {
         return (Weblog) this.strategy.load(Weblog.class, id);
     }
     
+    @Override
     public Weblog getWeblogByHandle(String handle) throws WebloggerException {
         return getWeblogByHandle(handle, Boolean.TRUE);
     }
@@ -352,6 +361,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * Return weblog specified by handle.
      */
+    @Override
     public Weblog getWeblogByHandle(String handle, Boolean visible)
     throws WebloggerException {
         
@@ -402,6 +412,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * Get weblogs of a user
      */
+    @Override
     public List<Weblog> getWeblogs(
             Boolean enabled, Boolean active,
             Date startDate, Date endDate, int offset, int length) throws WebloggerException {
@@ -462,6 +473,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return query.getResultList();
     }
 
+    @Override
     public List<Weblog> getUserWeblogs(User user, boolean enabledOnly) throws WebloggerException {
         List<Weblog> weblogs = new ArrayList<Weblog>();
         if (user == null) {
@@ -477,6 +489,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return weblogs;
     }
     
+    @Override
     public List<User> getWeblogUsers(Weblog weblog, boolean enabledOnly) throws WebloggerException {
         List<User> users = new ArrayList<User>();
         List<WeblogPermission> perms = roller.getUserManager().getWeblogPermissions(weblog);
@@ -493,6 +506,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return users;
     }
 
+    @Override
     public WeblogTemplate getTemplate(String id) throws WebloggerException {
         // Don't hit database for templates stored on disk
         if (id != null && id.endsWith(".vm")) {
@@ -505,6 +519,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * Use JPA directly because Weblogger's Query API does too much allocation.
      */
+    @Override
     public WeblogTemplate getTemplateByLink(Weblog weblog, String templateLink)
     throws WebloggerException {
         
@@ -530,6 +545,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @see org.apache.roller.weblogger.business.WeblogManager#getTemplateByAction(Weblog, ComponentType)
      */
+    @Override
     public WeblogTemplate getTemplateByAction(Weblog weblog, ComponentType action)
             throws WebloggerException {
         
@@ -555,6 +571,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @see org.apache.roller.weblogger.business.WeblogManager#getTemplateByName(Weblog, java.lang.String)
      */
+    @Override
     public WeblogTemplate getTemplateByName(Weblog weblog, String templateName)
     throws WebloggerException {
         
@@ -580,6 +597,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * @see org.apache.roller.weblogger.business.WeblogManager#getTemplates(Weblog)
      */
+    @Override
     public List<WeblogTemplate> getTemplates(Weblog weblog) throws WebloggerException {
         if (weblog == null) {
             throw new WebloggerException("weblog is null");
@@ -591,6 +609,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     }
 
     
+    @Override
     public Map<String, Long> getWeblogHandleLetterMap() throws WebloggerException {
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Map<String, Long> results = new TreeMap<String, Long>();
@@ -606,6 +625,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return results;
     }
     
+    @Override
     public List<Weblog> getWeblogsByLetter(char letter, int offset, int length)
     throws WebloggerException {
         TypedQuery<Weblog> query = strategy.getNamedQuery(
@@ -620,6 +640,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         return query.getResultList();
     }
     
+    @Override
     public List<StatCount> getMostCommentedWeblogs(Date startDate, Date endDate,
             int offset, int length)
             throws WebloggerException {
@@ -675,6 +696,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     /**
      * Get count of weblogs, active and inactive
      */
+    @Override
     public long getWeblogCount() throws WebloggerException {
         List<Long> results = strategy.getNamedQuery(
                 "Weblog.getCountAllDistinct", Long.class).getResultList();

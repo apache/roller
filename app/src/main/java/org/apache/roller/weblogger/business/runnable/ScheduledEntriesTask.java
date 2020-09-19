@@ -57,22 +57,27 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
     private int leaseTime = RollerTaskWithLeasing.DEFAULT_LEASE_MINS;
 
 
+    @Override
     public String getClientId() {
         return clientId;
     }
 
+    @Override
     public Date getStartTime(Date currentTime) {
         return getAdjustedTime(currentTime, startTimeDesc);
     }
 
+    @Override
     public String getStartTimeDesc() {
         return startTimeDesc;
     }
 
+    @Override
     public int getInterval() {
         return this.interval;
     }
 
+    @Override
     public int getLeaseTime() {
         return this.leaseTime;
     }
@@ -126,6 +131,7 @@ public class ScheduledEntriesTask extends RollerTaskWithLeasing {
     /**
      * Execute the task.
      */
+    @Override
     public void runTask() {
 
         log.debug("task started");

@@ -141,6 +141,7 @@ public class RollerSession
     
     
     /** Init session as if it was new */
+    @Override
     public void sessionDidActivate(HttpSessionEvent se) {
     }
     

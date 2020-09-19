@@ -58,6 +58,7 @@ public class StaticTemplate implements Template, Serializable {
         return null;
     }
     
+    @Override
     public String getId() {
         return id;
     }
@@ -106,6 +107,7 @@ public class StaticTemplate implements Template, Serializable {
         this.lastModified = lastModified;
     }
 
+    @Override
     public String getTemplateLanguage() {
         return templateLanguage;
     }

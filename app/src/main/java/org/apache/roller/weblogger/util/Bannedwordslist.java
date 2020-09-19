@@ -452,6 +452,7 @@ public final class Bannedwordslist {
     }
         
     /** Return pretty list of String and RegEx rules. */
+    @Override
     public String toString() {
         String val = "bannedwordslist " + bannedwordslistStr;
         val += "\nRegex bannedwordslist " + bannedwordslistRegex;

@@ -92,6 +92,7 @@ public class GlobalPermission extends RollerPermission {
         setActionsAsList(actions);
     }
         
+    @Override
     public boolean implies(Permission perm) {
         if (getActionsAsList().isEmpty()) {
             // new, unsaved user.

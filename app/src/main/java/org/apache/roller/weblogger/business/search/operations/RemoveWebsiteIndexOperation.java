@@ -71,6 +71,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
     // ~ Methods
     // ================================================================
 
+    @Override
     public void doRun() {
         Date start = new Date();
 

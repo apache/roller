@@ -54,6 +54,7 @@ public class SharedThemeResourceFromDir
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
+    @Override
     public int compareTo(ThemeResource other) {
         return getPath().compareTo(other.getPath());
     }
@@ -64,22 +65,27 @@ public class SharedThemeResourceFromDir
     }
     
     
+    @Override
     public String getName() {
         return resourceFile.getName();
     }
     
+    @Override
     public String getPath() {
         return relativePath;
     }
     
+    @Override
     public long getLastModified() {
         return resourceFile.lastModified();
     }
     
+    @Override
     public long getLength() {
         return resourceFile.length();
     }
     
+    @Override
     public boolean isDirectory() {
         return resourceFile.isDirectory();
     }
@@ -88,6 +94,7 @@ public class SharedThemeResourceFromDir
         return resourceFile.isFile();
     }
     
+    @Override
     public InputStream getInputStream() {
         try {
             return new FileInputStream(resourceFile);

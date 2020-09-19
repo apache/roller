@@ -88,6 +88,7 @@ public class WeblogEntriesListPager extends AbstractPager {
     }
     
     
+    @Override
     public List<WeblogEntryWrapper> getItems() {
         
         if (entries == null) {

@@ -62,12 +62,14 @@ public final class UIPluginManagerImpl implements UIPluginManager {
     }
     
     
+    @Override
     public List getWeblogEntryEditors() {
         // TODO: sort list of returned editors
         return new ArrayList(this.editors.values());
     }
     
     
+    @Override
     public WeblogEntryEditor getWeblogEntryEditor(String id) {
         
         WeblogEntryEditor editor = null;

@@ -63,6 +63,7 @@ public class RemoveEntryOperation extends WriteToIndexOperation {
     // ~ Methods
     // ================================================================
 
+    @Override
     public void doRun() {
 
         // since this operation can be run on a separate thread we must treat

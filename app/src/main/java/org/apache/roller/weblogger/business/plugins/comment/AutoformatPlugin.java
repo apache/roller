@@ -42,21 +42,25 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
     /**
      * Unique identifier.  This should never change. 
      */
+    @Override
     public String getId() {
         return "AutoFormat";
     }
     
     
+    @Override
     public String getName() {
         return "Auto Format";
     }
     
     
+    @Override
     public String getDescription() {
         return "Converts plain text style paragraphs into html paragraphs.";
     }
     
     
+    @Override
     public String render(final WeblogEntryComment comment, String text) {
         
         LOG.debug("starting value:\n" + text);

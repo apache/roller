@@ -46,6 +46,7 @@ public class MediaFileDirectoryComparator implements Comparator<MediaFileDirecto
 	 * Compares directories based on the attribute associated with this comparator
 	 * 
 	 */
+    @Override
 	public int compare(MediaFileDirectory dir1, MediaFileDirectory dir2) {
 		switch (this.type) {
 		    case NAME: return dir1.getName().compareTo(dir2.getName());

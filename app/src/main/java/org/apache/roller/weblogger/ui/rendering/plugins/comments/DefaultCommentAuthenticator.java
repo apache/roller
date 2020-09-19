@@ -27,11 +27,13 @@ import javax.servlet.http.HttpServletRequest;
 public class DefaultCommentAuthenticator implements CommentAuthenticator {
     
     
+    @Override
     public String getHtml(HttpServletRequest request) {
         return "<!-- custom authenticator would go here -->";
     }
     
     
+    @Override
     public boolean authenticate(HttpServletRequest request) {
         return true;
     }

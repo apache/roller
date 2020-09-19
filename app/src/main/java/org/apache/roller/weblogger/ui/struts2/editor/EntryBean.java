@@ -394,6 +394,7 @@ public class EntryBean {
     }
     
     
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         

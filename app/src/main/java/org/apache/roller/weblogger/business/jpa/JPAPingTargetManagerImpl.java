@@ -47,6 +47,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     
+    @Override
     public void removePingTarget(PingTarget pingTarget) 
             throws WebloggerException {
         // remove contents and then target
@@ -71,16 +72,19 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         q.executeUpdate();
     }
 
+    @Override
     public void savePingTarget(PingTarget pingTarget)
             throws WebloggerException {
         strategy.store(pingTarget);
     }
 
+    @Override
     public PingTarget getPingTarget(String id)
             throws WebloggerException {
         return (PingTarget)strategy.load(PingTarget.class, id);
     }
 
+    @Override
     public boolean targetNameExists(String pingTargetName)
             throws WebloggerException {
 
@@ -97,6 +101,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     
+    @Override
     public boolean isUrlWellFormed(String url)
             throws WebloggerException {
 
@@ -116,6 +121,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     
+    @Override
     public boolean isHostnameKnown(String url)
             throws WebloggerException {
         if (url == null || url.isBlank()) {
@@ -136,6 +142,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         }
     }
 
+    @Override
     public List<PingTarget> getCommonPingTargets()
             throws WebloggerException {
         TypedQuery<PingTarget> q = strategy.getNamedQuery(
@@ -143,6 +150,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         return q.getResultList();
     }
 
+    @Override
     public void release() {}
     
 }

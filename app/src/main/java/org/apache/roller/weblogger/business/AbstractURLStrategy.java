@@ -36,6 +36,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     /**
      * Url to login page.
      */
+    @Override
     public String getLoginURL(boolean absolute) {
 
         StringBuilder url = new StringBuilder();
@@ -55,6 +56,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     /**
      * Url to logout page.
      */
+    @Override
     public String getLogoutURL(boolean absolute) {
 
         StringBuilder url = new StringBuilder();
@@ -73,6 +75,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     /**
      * Url to register page.
      */
+    @Override
     public String getRegisterURL(boolean absolute) {
 
         StringBuilder url = new StringBuilder();
@@ -93,6 +96,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
      * Get a url to a UI action in a given namespace, optionally specifying
      * a weblogHandle parameter if that is needed by the action.
      */
+    @Override
     public String getActionURL(String action,
                                             String namespace,
                                             String weblogHandle,
@@ -132,6 +136,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     /**
      * Get a url to add a new weblog entry.
      */
+    @Override
     public String getEntryAddURL(String weblogHandle,
                                               boolean absolute) {
 
@@ -155,6 +160,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     /**
      * Get a url to edit a specific weblog entry.
      */
+    @Override
     public String getEntryEditURL(String weblogHandle,
                                                String entryId,
                                                boolean absolute) {
@@ -180,6 +186,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     /**
      * Get a url to weblog config page.
      */
+    @Override
     public String getWeblogConfigURL(String weblogHandle,
                                                   boolean absolute) {
 
@@ -200,6 +207,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     }
     
     
+    @Override
     public String getXmlrpcURL(boolean absolute) {
 
         StringBuilder url = new StringBuilder();
@@ -216,6 +224,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
     }
     
     
+    @Override
     public String getAtomProtocolURL(boolean absolute) {
 
         StringBuilder url = new StringBuilder();

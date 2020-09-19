@@ -73,6 +73,7 @@ public class PlanetEntriesPager extends AbstractPager {
     }
     
     
+    @Override
     public List<SubscriptionEntry> getItems() {
         
         if (entries == null) {

@@ -66,6 +66,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         this.validator = validator;
     }
     
+    @Override
     public OAuthServiceProvider getServiceProvider() {
         return new OAuthServiceProvider(
             roller.getUrlStrategy().getOAuthRequestTokenURL(),
@@ -73,10 +74,12 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             roller.getUrlStrategy().getOAuthAccessTokenURL());
     }
 
+    @Override
     public OAuthValidator getValidator() {
         return validator;
     }
 
+    @Override
     public OAuthConsumer getConsumer(
             OAuthMessage requestMessage)
             throws IOException, OAuthProblemException {
@@ -97,6 +100,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
     /**
      * Get the access token and token secret for the given oauth_token. 
      */
+    @Override
     public OAuthAccessor getAccessor(OAuthMessage requestMessage)
             throws IOException, OAuthProblemException {
 
@@ -121,6 +125,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
     /**
      * Set the access token 
      */
+    @Override
     public void markAsAuthorized(OAuthAccessor accessor, String userId)
             throws OAuthException {
         try {
@@ -139,6 +144,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
      * Generate a fresh request token and secret for a consumer.
      * @throws OAuthException
      */
+    @Override
     public void generateRequestToken(
             OAuthAccessor accessor)
             throws OAuthException {
@@ -166,6 +172,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
      * Generate a fresh request token and secret for a consumer.
      * @throws OAuthException
      */
+    @Override
     public void generateAccessToken(OAuthAccessor accessor)
             throws OAuthException {
 
@@ -190,6 +197,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         }
     }
 
+    @Override
     public OAuthConsumer addConsumer(String username, String consumerKey) throws OAuthException {
 
         OAuthConsumerRecord record = new OAuthConsumerRecord();
@@ -209,6 +217,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             getServiceProvider());
     }
 
+    @Override
     public OAuthConsumer addConsumer(String consumerKey) 
             throws OAuthException, WebloggerException {
         if (getConsumer() == null) {
@@ -218,6 +227,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         }
     }
 
+    @Override
     public OAuthConsumer getConsumer() throws WebloggerException {
         OAuthConsumerRecord record = null;
         try {
@@ -238,6 +248,7 @@ public class JPAOAuthManagerImpl implements OAuthManager {
         return null;
     }
 
+    @Override
     public OAuthConsumer getConsumerByUsername(String username) throws WebloggerException {
         OAuthConsumerRecord record = null;
         try {

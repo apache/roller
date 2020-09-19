@@ -437,6 +437,7 @@ public class Register extends UIAction implements ServletRequestAware {
         return servletRequest;
     }
 
+    @Override
     public void setServletRequest(HttpServletRequest servletRequest) {
         this.servletRequest = servletRequest;
     }

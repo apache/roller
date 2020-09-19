@@ -242,6 +242,7 @@ public class User implements Serializable {
     
     //------------------------------------------------------- Good citizenship
     
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("{");
@@ -255,6 +256,7 @@ public class User implements Serializable {
         return buf.toString();
     }
     
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -266,6 +268,7 @@ public class User implements Serializable {
         return new EqualsBuilder().append(getUserName(), o.getUserName()).isEquals();
     }
     
+    @Override
     public int hashCode() {
         return new HashCodeBuilder().append(getUserName()).toHashCode();
     }
