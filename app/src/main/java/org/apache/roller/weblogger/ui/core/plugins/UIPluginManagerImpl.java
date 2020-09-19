@@ -113,7 +113,7 @@ public final class UIPluginManagerImpl implements UIPluginManager {
             }
         }
         
-        if(this.editors.size() < 1) {
+        if(this.editors.isEmpty()) {
             log.warn("No entry editors configured, this means that publishing "+
                     "entries will be impossible.");
             return;

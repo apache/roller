@@ -94,7 +94,7 @@ public class JPAUserManagerImpl implements UserManager {
         boolean adminUser = false;
         List existingUsers = this.getUsers(Boolean.TRUE, null, null, 0, 1);
         boolean firstUserAdmin = WebloggerConfig.getBooleanProperty("users.firstUserAdmin");
-        if (existingUsers.size() == 0 && firstUserAdmin) {
+        if (existingUsers.isEmpty() && firstUserAdmin) {
             // Make first user an admin
             adminUser = true;
 

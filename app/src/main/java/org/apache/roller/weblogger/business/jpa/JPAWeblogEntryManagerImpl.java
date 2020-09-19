@@ -577,7 +577,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             q.setParameter(2, name);
             List results = q.getResultList();
             
-            if (results.size() < 1) {
+            if (results.isEmpty()) {
                 break;
             } else {
                 count++;

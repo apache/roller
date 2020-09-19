@@ -57,7 +57,7 @@ public class SharedThemeFromDir extends SharedTheme {
     private Map<String, ThemeTemplate> templatesByLink = new HashMap<String, ThemeTemplate>();
 
     // we keep templates in a Map for faster lookups by action
-    private Map<ComponentType, ThemeTemplate> templatesByAction = new HashMap<ComponentType, ThemeTemplate>();
+    private Map<ComponentType, ThemeTemplate> templatesByAction = new EnumMap<ComponentType, ThemeTemplate>(ComponentType.class);
 
     // we keep resources in a Map for faster lookups by path
     // the Map contains ... (resource path, ThemeResource)

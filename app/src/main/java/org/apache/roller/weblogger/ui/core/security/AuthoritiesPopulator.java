@@ -77,7 +77,7 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
             authorities.add(defaultRole);
         }
 
-        if (authorities.size() == 0) {
+        if (authorities.isEmpty()) {
             // TODO: This doesn't seem like the right type of exception to throw here, but retained it, fixed the message
             throw new UsernameNotFoundException("User " + username + " has no roles granted and there is no default role set.");
         }

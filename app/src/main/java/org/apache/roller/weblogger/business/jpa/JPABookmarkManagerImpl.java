@@ -191,7 +191,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             xmlUrl = xmlUrl.substring(0, maxLength);
         }
 
-        if (elem.getChildren().size()==0) {
+        if (elem.getChildren().isEmpty()) {
             // Leaf element.  Store a bookmark
             // Currently bookmarks must have at least a name and 
             // HTML url to be stored. Previous logic was

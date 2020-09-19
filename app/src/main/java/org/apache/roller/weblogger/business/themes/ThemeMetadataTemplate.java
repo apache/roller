@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.business.themes;
 
+import java.util.EnumMap;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 
@@ -39,7 +40,7 @@ public class ThemeMetadataTemplate {
 
     // Hash table to keep metadata about parsed template code files
     private Map<RenditionType, ThemeMetadataTemplateRendition> templateRenditionTable
-            = new HashMap<RenditionType, ThemeMetadataTemplateRendition>();
+            = new EnumMap<RenditionType, ThemeMetadataTemplateRendition>(RenditionType.class);
 
     public ComponentType getAction() {
         return action;

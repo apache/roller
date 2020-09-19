@@ -17,8 +17,7 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import java.util.ResourceBundle;
 import org.apache.commons.lang3.StringUtils;
@@ -184,11 +183,7 @@ public class MediaFileSearchBean {
         }
 
         if (!StringUtils.isEmpty(this.tags)) {
-            List<String> tagsSet = new ArrayList<String>();
-            for (String tag : this.tags.split(" ")) {
-                tagsSet.add(tag);
-            }
-            dataHolder.setTags(tagsSet);
+            dataHolder.setTags(Arrays.asList(this.tags.split(" ")));
         }
 
         dataHolder.setStartIndex(pageNum * PAGE_SIZE);

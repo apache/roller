@@ -92,7 +92,7 @@ public class RequestMappingFilter implements Filter {
             }
         }
         
-        if(requestMappers.size() < 1) {
+        if(requestMappers.isEmpty()) {
             // hmm ... failed to load any request mappers?
             log.warn("Failed to load any request mappers.  "+
                     "Weblog urls probably won't function as you expect.");

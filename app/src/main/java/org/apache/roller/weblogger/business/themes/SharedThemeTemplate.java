@@ -25,6 +25,7 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private String type = null;
 
     //hash map to cache template Code objects parsed
-    private Map<RenditionType, TemplateRendition> templateRenditionHashMap = new HashMap<RenditionType, TemplateRendition>();
+    private Map<RenditionType, TemplateRendition> templateRenditionHashMap = new EnumMap<RenditionType, TemplateRendition>(RenditionType.class);
     
     public SharedThemeTemplate() {}
     

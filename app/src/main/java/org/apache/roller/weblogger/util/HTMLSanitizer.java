@@ -361,7 +361,7 @@ public class HTMLSanitizer {
         }
 
         //set boolean value
-        ret.isValid = ret.invalidTags.size() == 0;
+        ret.isValid = ret.invalidTags.isEmpty();
 
         return ret;
     }

@@ -83,7 +83,7 @@ public final class RendererManager {
             }
         }
 
-        if (rendererFactories.size() < 1) {
+        if (rendererFactories.isEmpty()) {
             // hmm ... failed to load any renderer factories?
             log.warn("Failed to load any renderer factories.  "
                     + "Rendering probably won't function as you expect.");
