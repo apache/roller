@@ -40,7 +40,7 @@ public class WeblogEntryTagComparator implements Comparator<WeblogEntryTag>,
      * name.
      */
     public int compare(WeblogEntryTag o1, WeblogEntryTag o2) {
-        return o1.getName().toString().compareTo(o2.getName().toString());
+        return o1.getName().compareTo(o2.getName());
     }
 
 }
