@@ -275,13 +275,13 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         url.append("feed/").append(type).append("/").append(format);
         
         Map params = new HashMap();
-        if(category != null && category.trim().length() > 0) {
+        if(category != null && !category.isBlank()) {
             params.put("cat", URLUtilities.encode(category));
         }
         if(tags != null && tags.size() > 0) {
           params.put("tags", URLUtilities.getEncodedTagsString(tags));
         }
-        if(term != null && term.trim().length() > 0) {
+        if(term != null && !term.isBlank()) {
             params.put("q", URLUtilities.encode(term.trim()));
         }
         if(excerpts) {

@@ -100,7 +100,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     public boolean isUrlWellFormed(String url)
             throws WebloggerException {
 
-        if (url == null || url.trim().length() == 0) {
+        if (url == null || url.isBlank()) {
             return false;
         }
         try {
@@ -108,8 +108,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
             // OK.  If we get here, it parses ok.  Now just check 
             // that the protocol is http and there is a host portion.
             boolean isHttp = parsedUrl.getProtocol().equals("http");
-            boolean hasHost = (parsedUrl.getHost() != null) && 
-                (parsedUrl.getHost().trim().length() > 0);
+            boolean hasHost = parsedUrl.getHost() != null && !parsedUrl.getHost().isBlank();
             return isHttp && hasHost;
         } catch (MalformedURLException e) {
             return false;
@@ -119,13 +118,13 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     
     public boolean isHostnameKnown(String url)
             throws WebloggerException {
-        if (url == null || url.trim().length() == 0) {
+        if (url == null || url.isBlank()) {
             return false;
         }
         try {
             URL parsedUrl = new URL(url);
             String host = parsedUrl.getHost();
-            if (host == null || host.trim().length() == 0) {
+            if (host == null || host.isBlank()) {
                 return false;
             }
             InetAddress addr = InetAddress.getByName(host);

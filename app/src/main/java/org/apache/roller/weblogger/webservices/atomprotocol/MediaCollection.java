@@ -253,7 +253,7 @@ public class MediaCollection {
                 } catch (Exception ingored) {}
             }
             String path = filePathFromPathInfo(pathInfo);
-            if (!path.equals("")) {
+            if (!path.isEmpty()) {
                 path = path + File.separator;
             }
             
@@ -579,7 +579,7 @@ public class MediaCollection {
         String[] typeTokens = contentType.split("/");
         String ext = typeTokens[1];
         
-        if (title != null && !title.trim().equals("")) {
+        if (title != null && !title.isBlank()) {
             // We've got a title, so use it to build file name
             StringTokenizer toker = new StringTokenizer(title);
             String tmp = null;

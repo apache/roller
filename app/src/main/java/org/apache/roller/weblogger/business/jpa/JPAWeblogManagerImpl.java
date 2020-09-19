@@ -278,7 +278,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (cats != null) {
             String[] splitcats = cats.split(",");
             for (String split : splitcats) {
-                if (split.trim().length() == 0) {
+                if (split.isBlank()) {
                     continue;
                 }
                 WeblogCategory c = new WeblogCategory(

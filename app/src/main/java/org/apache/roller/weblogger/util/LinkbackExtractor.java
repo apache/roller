@@ -162,7 +162,7 @@ public class LinkbackExtractor
             if (item.getDescription().getValue().contains(requestURL)) {
                 mFound = true;
                 mPermalink = item.getLink();
-                if (feedTitle != null && feedTitle.trim().length() > 0) {
+                if (feedTitle != null && !feedTitle.isBlank()) {
                     mTitle = feedTitle + ": " + item.getTitle();
                 } else {
                     mTitle = item.getTitle();

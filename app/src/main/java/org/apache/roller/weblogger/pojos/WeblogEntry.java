@@ -212,7 +212,7 @@ public class WeblogEntry implements Serializable {
     
     public void setId(String id) {
         // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) {
+        if (id != null && id.isBlank()) {
             return;
         }
         this.id = id;
@@ -777,7 +777,7 @@ public class WeblogEntry implements Serializable {
      * @return String
      */
     public String getDisplayTitle() {
-        if ( getTitle()==null || getTitle().trim().equals("") ) {
+        if ( getTitle()==null || getTitle().isBlank() ) {
             return StringUtils.left(Utilities.removeHTML(getText()), RollerConstants.TEXTWIDTH_255);
         }
         return Utilities.removeHTML(getTitle());
@@ -985,8 +985,7 @@ public class WeblogEntry implements Serializable {
         
         String displayContent = null;
         
-        if(readMoreLink == null || readMoreLink.trim().length() < 1 || 
-                "nil".equals(readMoreLink)) {
+        if(readMoreLink == null || readMoreLink.isBlank() || "nil".equals(readMoreLink)) {
             
             // no readMore link means permalink, so prefer text over summary
             if(StringUtils.isNotEmpty(this.getText())) {

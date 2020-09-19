@@ -169,7 +169,7 @@ public final class PingConfig {
      */
     public static void initializeCommonTargets() throws WebloggerException {
         String configuredVal = WebloggerConfig.getProperty(PINGS_INITIAL_COMMON_TARGETS_PROP);
-        if (configuredVal == null || configuredVal.trim().length() == 0) {
+        if (configuredVal == null || configuredVal.isBlank()) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("No (or empty) value of " + PINGS_INITIAL_COMMON_TARGETS_PROP + " present in the configuration.  Skipping initialization of commmon targets.");
             }
@@ -210,7 +210,7 @@ public final class PingConfig {
      */
     public static void initializePingVariants() {
         String configuredVal = WebloggerConfig.getProperty(PINGS_VARIANT_OPTIONS_PROP);
-        if (configuredVal == null || configuredVal.trim().length() == 0) {
+        if (configuredVal == null || configuredVal.isBlank()) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("No (or empty) value of " + PINGS_VARIANT_OPTIONS_PROP + " present in the configuration.  Skipping initialization of ping variants.");
             }

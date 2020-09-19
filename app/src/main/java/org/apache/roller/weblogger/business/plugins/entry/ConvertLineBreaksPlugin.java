@@ -77,7 +77,7 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
      */
     public String render(WeblogEntry entry, String str) {
         
-        if(str == null || str.trim().equals("")) {
+        if(str == null || str.isBlank()) {
             return "";
         }
         
@@ -96,16 +96,16 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
             boolean insidePara = false;
             while((line = br.readLine()) != null) {
                 
-                if(!insidePara && line.trim().length() > 0) {
+                if(!insidePara && !line.isBlank()) {
                     // start of a new paragraph
                     buf.append("\n<p>");
                     buf.append(line);
                     insidePara = true;
-                } else if(insidePara && line.trim().length() > 0) {
+                } else if(insidePara && !line.isBlank()) {
                     // another line in an existing paragraph
                     buf.append("<br/>\n");
                     buf.append(line);
-                } else if(insidePara && line.trim().length() < 1) {
+                } else if(insidePara && line.isBlank()) {
                     // end of a paragraph
                     buf.append("</p>\n\n");
                     insidePara = false;

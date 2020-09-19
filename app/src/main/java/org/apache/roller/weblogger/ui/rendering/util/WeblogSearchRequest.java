@@ -81,8 +81,7 @@ public class WeblogSearchRequest extends WeblogRequest {
          *   pageNum - specifies what pageNum # to display
          *   cat - limit results to a certain weblogCategoryName
          */
-        if(request.getParameter("q") != null &&
-                request.getParameter("q").trim().length() > 0) {
+        if(request.getParameter("q") != null && !request.getParameter("q").isBlank()) {
             this.query = request.getParameter("q");
         }
         
@@ -95,8 +94,7 @@ public class WeblogSearchRequest extends WeblogRequest {
             }
         }
         
-        if(request.getParameter("cat") != null &&
-                request.getParameter("cat").trim().length() > 0) {
+        if(request.getParameter("cat") != null && !request.getParameter("cat").isBlank()) {
             this.weblogCategoryName =
                     URLUtilities.decode(request.getParameter("cat"));
         }

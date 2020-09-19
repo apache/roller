@@ -76,7 +76,7 @@ public class WeblogTrackbackRequest extends WeblogRequest {
          *
          * /entry/<anchor> - permalink
          */
-        if(pathInfo != null && pathInfo.trim().length() > 0) {
+        if(pathInfo != null && !pathInfo.isBlank()) {
             
             // we should only ever get 2 path elements
             String[] pathElements = pathInfo.split("/");

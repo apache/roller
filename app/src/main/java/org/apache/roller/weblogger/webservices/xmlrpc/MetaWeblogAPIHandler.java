@@ -160,7 +160,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             Timestamp current =
                     new Timestamp(System.currentTimeMillis());
             
-            if ( !title.equals("") ) {
+            if ( !title.isEmpty() ) {
                 entry.setTitle(title);
             }
             entry.setText(description);

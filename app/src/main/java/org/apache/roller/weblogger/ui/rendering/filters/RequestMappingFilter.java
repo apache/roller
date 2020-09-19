@@ -57,7 +57,7 @@ public class RequestMappingFilter implements Filter {
         String userMappers = WebloggerConfig.getProperty("rendering.userRequestMappers");
         
         // instantiate user defined request mapper classes
-        if(userMappers != null && userMappers.trim().length() > 0) {
+        if(userMappers != null && !userMappers.isBlank()) {
             RequestMapper requestMapper;
             String[] uMappers = userMappers.split(",");
             for (String uMapper : uMappers) {
@@ -75,7 +75,7 @@ public class RequestMappingFilter implements Filter {
         }
         
         // instantiate roller standard request mapper classes
-        if(rollerMappers != null && rollerMappers.trim().length() > 0) {
+        if(rollerMappers != null && !rollerMappers.isBlank()) {
             RequestMapper requestMapper;
             String[] rMappers = rollerMappers.split(",");
             for (String rMapper : rMappers) {

@@ -167,7 +167,7 @@ public class Pings extends UIAction {
                     WeblogUpdatePinger.PingResult pingResult = WeblogUpdatePinger.sendPing(getPingTarget(), getActionWeblog());
                     if (pingResult.isError()) {
                         log.debug("Ping Result: " + pingResult);
-                        if (pingResult.getMessage() != null && pingResult.getMessage().trim().length() > 0) {
+                        if (pingResult.getMessage() != null && !pingResult.getMessage().isBlank()) {
                             addError("ping.transmittedButError");
                             addError(pingResult.getMessage());
                         } else {

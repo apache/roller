@@ -163,7 +163,7 @@ public class CreateWeblog extends UIAction {
     public void myValidate()  {
         
         String allowed = WebloggerConfig.getProperty("username.allowedChars");
-        if(allowed == null || allowed.trim().length() == 0) {
+        if(allowed == null || allowed.isBlank()) {
             allowed = Register.DEFAULT_ALLOWED_CHARS;
         }
         
