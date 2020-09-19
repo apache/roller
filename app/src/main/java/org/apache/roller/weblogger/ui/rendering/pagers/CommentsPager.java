@@ -136,7 +136,7 @@ public class CommentsPager extends AbstractPager {
         if (lastUpdated == null) {
             // feeds are sorted by pubtime, so first might not be last updated
             List<WeblogEntryCommentWrapper> items = getItems();
-            if (getItems() != null && getItems().size() > 0) {
+            if (getItems() != null && !getItems().isEmpty()) {
                 Timestamp newest = (getItems().get(0)).getPostTime();
                 for (WeblogEntryCommentWrapper c : items) {
                     if (c.getPostTime().after(newest)) {

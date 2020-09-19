@@ -224,7 +224,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
     public Category getCategory() {
         Category cat = null;
         List cats = getCategories();
-        if (cats.size() > 0) {
+        if (!cats.isEmpty()) {
             cat = (Category)cats.get(0);
         }
         return cat;

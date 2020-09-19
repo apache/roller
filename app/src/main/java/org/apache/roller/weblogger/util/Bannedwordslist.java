@@ -327,7 +327,7 @@ public final class Bannedwordslist {
         
         // test plain String.indexOf
         List<String> stringRules = bannedwordslistStr;
-        if (moreStringRules != null && moreStringRules.size() > 0) {
+        if (moreStringRules != null && !moreStringRules.isEmpty()) {
             stringRules = new ArrayList<String>();
             stringRules.addAll(moreStringRules);
             stringRules.addAll(bannedwordslistStr);
@@ -338,7 +338,7 @@ public final class Bannedwordslist {
         
         // test regex bannedwordslisted
         List<Pattern> regexRules = bannedwordslistRegex;
-        if (moreRegexRules != null && moreRegexRules.size() > 0) {
+        if (moreRegexRules != null && !moreRegexRules.isEmpty()) {
             regexRules = new ArrayList<Pattern>();
             regexRules.addAll(moreRegexRules);
             regexRules.addAll(bannedwordslistRegex);

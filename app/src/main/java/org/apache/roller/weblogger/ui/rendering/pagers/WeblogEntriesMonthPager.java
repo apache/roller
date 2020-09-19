@@ -135,7 +135,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
                     }
                     
                     // done with that day, put it in the map
-                    if (wrapped.size() > 0) {
+                    if (!wrapped.isEmpty()) {
                         entries.put(entry.getKey(), wrapped);
                     }
                 }

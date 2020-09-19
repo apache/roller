@@ -108,7 +108,7 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
                 PingQueueEntry.class);
         q.setParameter(1, autoPing.getPingTarget());
         q.setParameter(2, autoPing.getWebsite());
-        return q.getResultList().size() > 0;
+        return !q.getResultList().isEmpty();
     }
 
     public void release() {}

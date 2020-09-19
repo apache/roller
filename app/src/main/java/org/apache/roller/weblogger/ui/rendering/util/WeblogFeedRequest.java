@@ -150,7 +150,7 @@ public class WeblogFeedRequest extends WeblogRequest {
             this.term = URLUtilities.decode(request.getParameter("q"));
         }        
         
-        if((this.tags != null && this.tags.size() > 0) && this.weblogCategoryName != null) {
+        if(this.tags != null && !this.tags.isEmpty() && this.weblogCategoryName != null) {
             throw new InvalidRequestException("please specify either category or tags but not both, " + request.getRequestURL());            
         }
         

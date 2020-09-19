@@ -105,7 +105,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     public void removeWeblogCategory(WeblogCategory cat)
     throws WebloggerException {
-        if(cat.retrieveWeblogEntries(false).size() > 0) {
+        if(!cat.retrieveWeblogEntries(false).isEmpty()) {
             throw new WebloggerException("Cannot remove category with entries");
         }
 
@@ -858,7 +858,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             String catName, String locale) throws WebloggerException {
         WeblogEntry entry = null;
         List entryList = getNextPrevEntries(current, catName, locale, 1, true);
-        if (entryList != null && entryList.size() > 0) {
+        if (entryList != null && !entryList.isEmpty()) {
             entry = (WeblogEntry)entryList.get(0);
         }
         return entry;
@@ -871,7 +871,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             String catName, String locale) throws WebloggerException {
         WeblogEntry entry = null;
         List entryList = getNextPrevEntries(current, catName, locale, 1, false);
-        if (entryList != null && entryList.size() > 0) {
+        if (entryList != null && !entryList.isEmpty()) {
             entry = (WeblogEntry)entryList.get(0);
         }
         return entry;

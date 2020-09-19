@@ -232,7 +232,7 @@ public class Pings extends UIAction {
             }
         }
 
-        if (isEnabled.size() > 0) {
+        if (!isEnabled.isEmpty()) {
             setPingStatus(isEnabled);
         }
     }

@@ -313,7 +313,7 @@ public class BookmarkTest  {
         
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
         fd = getRoller().getBookmarkManager().getFolder(testWeblog, "ZZZ_imports_ZZZ");
-        assertTrue(fd.retrieveBookmarks().size() > 0 );
+        assertTrue(!fd.retrieveBookmarks().isEmpty());
         getRoller().getBookmarkManager().removeFolder(fd);
         TestUtils.endSession(true);
     }

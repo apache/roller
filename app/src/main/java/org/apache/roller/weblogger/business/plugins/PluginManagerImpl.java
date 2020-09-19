@@ -62,7 +62,7 @@ public class PluginManagerImpl implements PluginManager {
     
     public boolean hasPagePlugins() {
         log.debug("mPluginClasses.size(): " + mPagePlugins.size());
-        return (mPagePlugins != null && mPagePlugins.size() > 0);
+        return mPagePlugins != null && !mPagePlugins.isEmpty();
     }
     
     
@@ -123,7 +123,7 @@ public class PluginManagerImpl implements PluginManager {
         
         String content = text;
         
-        if (commentPlugins.size() > 0) {
+        if (!commentPlugins.isEmpty()) {
             for (WeblogEntryCommentPlugin plugin : commentPlugins) {
                 if(comment.getPlugins() != null &&
                         comment.getPlugins().contains(plugin.getId())) {

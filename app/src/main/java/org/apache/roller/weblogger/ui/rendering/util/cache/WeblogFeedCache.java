@@ -185,7 +185,7 @@ public final class WeblogFeedCache {
             key.append("/").append(cat);
         }
         
-        if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
+        if(feedRequest.getTags() != null && !feedRequest.getTags().isEmpty()) {
           Set ordered = new TreeSet(feedRequest.getTags());
           String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);  
           key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));

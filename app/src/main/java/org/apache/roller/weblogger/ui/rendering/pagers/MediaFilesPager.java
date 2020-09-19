@@ -90,7 +90,7 @@ public class MediaFilesPager extends AbstractPager {
         if (lastUpdated == null) {
             // feeds are sorted by pubtime, so first might not be last updated
             List<MediaFile> items = getItems();
-            if (items != null && items.size() > 0) {
+            if (items != null && !items.isEmpty()) {
                 Timestamp newest = items.get(0).getLastUpdated();
                 for (MediaFile file : items) {
                     if (file.getLastUpdated().after(newest)) {

@@ -162,7 +162,7 @@ public class FeedModel implements Model {
         @Override
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
-            if(tags != null && tags.size() > 0) {
+            if(tags != null && !tags.isEmpty()) {
                 params.put("tags", URLUtilities.getEncodedTagsString(tags));
             }
             String category = feedRequest.getWeblogCategoryName();
@@ -196,7 +196,7 @@ public class FeedModel implements Model {
         @Override
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
-            if(tags != null && tags.size() > 0) {
+            if(tags != null && !tags.isEmpty()) {
                 params.put("tags", URLUtilities.getEncodedTagsString(tags));
             }
             String category = feedRequest.getWeblogCategoryName();
@@ -230,7 +230,7 @@ public class FeedModel implements Model {
         @Override
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
-            if(tags != null && tags.size() > 0) {
+            if(tags != null && !tags.isEmpty()) {
                 params.put("tags", URLUtilities.getEncodedTagsString(tags));
             }
             String category = feedRequest.getWeblogCategoryName();

@@ -117,7 +117,7 @@ public class WeblogCalendarModel implements CalendarModel {
             wesc.setMaxResults(1);
             List prevEntries = mgr.getWeblogEntries(wesc);
 
-            if (prevEntries.size() > 0) {
+            if (!prevEntries.isEmpty()) {
                 WeblogEntry prevEntry = (WeblogEntry)prevEntries.get(0);
                 prevMonth = DateUtil.getStartOfMonth(new Date(prevEntry.getPubTime().getTime()),getCalendar());
             }
@@ -140,7 +140,7 @@ public class WeblogCalendarModel implements CalendarModel {
             wesc.setLocale(locale);
             wesc.setMaxResults(1);
             List nextEntries = mgr.getWeblogEntries(wesc);
-            if (nextEntries.size() > 0) {
+            if (!nextEntries.isEmpty()) {
                 WeblogEntry nextEntry = (WeblogEntry)nextEntries.get(0);
                 nextMonth = DateUtil.getStartOfMonth(new Date(nextEntry.getPubTime().getTime()),getCalendar());
             }

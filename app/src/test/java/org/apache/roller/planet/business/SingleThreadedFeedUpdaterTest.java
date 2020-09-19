@@ -79,7 +79,7 @@ public class SingleThreadedFeedUpdaterTest  {
         assertEquals("https://rollerweblogger.org/roller/", sub.getSiteURL());
         assertEquals("Blogging Roller", sub.getTitle());
         assertNotNull(sub.getLastUpdated());
-        assertTrue(sub.getEntries().size() > 0);
+        assertTrue(!sub.getEntries().isEmpty());
     }
     
 }

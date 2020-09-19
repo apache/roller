@@ -381,8 +381,7 @@ public class PageServlet extends HttpServlet {
             if (pageRequest.getWeblogCategory() == null) {
                 invalid = true;
             }
-        } else if (pageRequest.getTags() != null
-                && pageRequest.getTags().size() > 0) {
+        } else if (pageRequest.getTags() != null && !pageRequest.getTags().isEmpty()) {
 
             try {
                 // tags specified. make sure they exist.

@@ -190,8 +190,7 @@ public class FeedServlet extends HttpServlet {
                 invalid = true;
             }
 
-        } else if (feedRequest.getTags() != null
-                && feedRequest.getTags().size() > 0) {
+        } else if (feedRequest.getTags() != null && !feedRequest.getTags().isEmpty()) {
 
             try {
                 // tags specified. make sure they exist.

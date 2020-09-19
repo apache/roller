@@ -108,7 +108,7 @@ public class Bookmarks extends UIAction {
             addError("Error building folders list");
         }
 
-        if (newFolders.size() > 0) {
+        if (!newFolders.isEmpty()) {
             setAllFolders(newFolders);
         }
 

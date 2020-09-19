@@ -226,7 +226,7 @@ public class SearchResultsModel extends PageModel {
 				}
 			}
 
-			if (categorySet.size() > 0) {
+			if (!categorySet.isEmpty()) {
 				this.categories = categorySet;
 			}
 		} catch (IOException e) {

@@ -233,7 +233,7 @@ public final class SiteWideCache implements CacheHandler {
             
             if("tags".equals(pageRequest.getContext())) {
                 key.append("/tags/");
-                if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
+                if(pageRequest.getTags() != null && !pageRequest.getTags().isEmpty()) {
                     Set ordered = new TreeSet(pageRequest.getTags());
                     String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
                     key.append(Utilities.stringArrayToString(tags,"+"));
@@ -258,7 +258,7 @@ public final class SiteWideCache implements CacheHandler {
         key.append("/deviceType=").append(pageRequest.getDeviceType().toString());
 
         // we allow for arbitrary query params for custom pages
-        if(pageRequest.getCustomParams().size() > 0) {
+        if(!pageRequest.getCustomParams().isEmpty()) {
             String queryString = paramsToString(pageRequest.getCustomParams());
             
             key.append("/qp=").append(queryString);
@@ -315,7 +315,7 @@ public final class SiteWideCache implements CacheHandler {
             key.append("/excerpts");
         }
         
-        if(feedRequest.getTags() != null && feedRequest.getTags().size() > 0) {
+        if(feedRequest.getTags() != null && !feedRequest.getTags().isEmpty()) {
           String[] tags = new String[feedRequest.getTags().size()];
           new TreeSet(feedRequest.getTags()).toArray(tags);
           key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));

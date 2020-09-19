@@ -226,7 +226,7 @@ public class EntryCollection {
                 prevLink.setHref(url);
                 links.add(prevLink);
             }
-            if (links.size() > 0) {
+            if (!links.isEmpty()) {
                 feed.setOtherLinks(links);
             }
             // Use collection URI as id
@@ -399,7 +399,7 @@ public class EntryCollection {
             updateTime = new Timestamp( entry.getUpdated().getTime() );
         }
         rollerEntry.setTitle(entry.getTitle());
-        if (entry.getContents() != null && entry.getContents().size() > 0) {
+        if (entry.getContents() != null && !entry.getContents().isEmpty()) {
             Content content = entry.getContents().get(0);
             rollerEntry.setText(content.getValue());
         }
@@ -422,7 +422,7 @@ public class EntryCollection {
         // Atom supports multiple cats, but Weblogger supports one/entry
         // so here we take accept the first category that exists.
         List<Category> categories = entry.getCategories();
-        if (categories != null && categories.size() > 0) {
+        if (categories != null && !categories.isEmpty()) {
             for (Category cat : categories) {
                 if (cat.getScheme() != null && cat.getScheme().equals(
                         RollerAtomService.getWeblogCategoryScheme(rollerEntry.getWebsite()))) {
@@ -449,7 +449,7 @@ public class EntryCollection {
         // Atom categories with no scheme are considered tags.
         String tags = "";
         StringBuilder buff = new StringBuilder();
-        if (categories != null && categories.size() > 0) {
+        if (categories != null && !categories.isEmpty()) {
             for (Category cat : categories) {
                 if (cat.getScheme() == null) {
                     buff.append(" ").append(cat.getTerm());

@@ -122,7 +122,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         // Refresh associated parent for changes
         roller.flush();
-        if (moved.size() > 0) {
+        if (!moved.isEmpty()) {
             strategy.refresh(moved.get(0).getDirectory());
         }
 

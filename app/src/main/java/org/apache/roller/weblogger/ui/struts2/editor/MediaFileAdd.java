@@ -214,7 +214,7 @@ public class MediaFileAdd extends MediaFileBase {
                     addError(msg.getKey(), Arrays.asList(msg.getArgs()));
                 }
 
-                if (uploaded.size() > 0 && !this.errorsExist()) {
+                if (!uploaded.isEmpty() && !this.errorsExist()) {
                     addMessage("uploadFiles.uploadedFiles");
                     for (MediaFile upload : uploaded) {
                         addMessage("uploadFiles.uploadedFile",

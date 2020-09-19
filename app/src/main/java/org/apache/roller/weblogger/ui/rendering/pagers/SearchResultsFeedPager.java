@@ -110,7 +110,7 @@ public class SearchResultsFeedPager extends AbstractPager {
             params.put("q", URLUtilities.encode(term.trim()));
         }     
         List tags = feedRequest.getTags();
-        if(tags != null && tags.size() > 0) {
+        if(tags != null && !tags.isEmpty()) {
             params.put("tags", URLUtilities.getEncodedTagsString(tags));
         }
         if(feedRequest.isExcerpts()) {

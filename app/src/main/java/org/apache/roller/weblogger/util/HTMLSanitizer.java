@@ -353,7 +353,7 @@ public class HTMLSanitizer {
         }
 
         // must close remaining tags
-        while (openTags.size() > 0) {
+        while (!openTags.isEmpty()) {
             //pop all elements before tag and close it
             String poppedTag = openTags.pop();
             ret.html = ret.html + "</" + poppedTag + ">";
