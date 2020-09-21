@@ -161,3 +161,17 @@ alter table $tableName alter column $columnName $columnType;
 -- You should alter type of column $columnName of table $tableName to $columnType
 #end
 #end
+
+#**
+Rename a table column.
+this is trivial generic SQL - this should work everywhere, right?
+**#
+#macro(alterColumnName $tableName $columnName $newColumnName)
+#if ($db.DBTYPE == "MSSQL")
+sp_rename '$tableName.$columnName', '$newColumnName', 'COLUMN';
+#elseif ($db.DBTYPE == "HSQLDB")
+alter table $tableName alter column $columnName rename to $newColumnName;
+#else
+alter table $tableName rename column $columnName to $newColumnName;
+#end
+#end

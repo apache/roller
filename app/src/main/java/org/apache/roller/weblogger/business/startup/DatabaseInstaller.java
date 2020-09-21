@@ -246,6 +246,10 @@ public class DatabaseInstaller {
                 upgradeTo520(con, runScripts);
                 dbversion = 520;
             }
+            if(dbversion < 610) {
+                upgradeTo610(con, runScripts);
+                dbversion = 610;
+            }
 
             // make sure the database version is the exact version
             // we are upgrading too.
@@ -709,80 +713,56 @@ public class DatabaseInstaller {
      * Upgrade database to Roller 5.0
      */
     private void upgradeTo500(Connection con, boolean runScripts) throws StartupException {
-
-        // first we need to run upgrade scripts
-        SQLScriptRunner runner = null;
-        try {
-            if (runScripts) {
-                String handle = getDatabaseHandle(con);
-                String scriptPath = handle + "/400-to-500-migration.sql";
-                successMessage("Running database upgrade script: "+scriptPath);
-                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
-                runner.runScript(con, true);
-                messages.addAll(runner.getMessages());
-            }
-        } catch(Exception ex) {
-            log.error("ERROR running 500 database upgrade script", ex);
-            if (runner != null) {
-                messages.addAll(runner.getMessages());
-            }
-
-            errorMessage("Problem upgrading database to version 500", ex);
-            throw new StartupException("Problem upgrading database to version 500", ex);
-        }
+        simpleUpgrade(con, 400, 500, runScripts);      
     }
 
     /**
      * Upgrade database to Roller 5.1
      */
 	private void upgradeTo510(Connection con, boolean runScripts) throws StartupException {
-
-        // first we need to run upgrade scripts
-        SQLScriptRunner runner = null;
-        try {
-            if (runScripts) {
-                String handle = getDatabaseHandle(con);
-                String scriptPath = handle + "/500-to-510-migration.sql";
-                successMessage("Running database upgrade script: "+scriptPath);
-                runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
-                runner.runScript(con, true);
-                messages.addAll(runner.getMessages());
-            }
-        } catch(Exception ex) {
-            log.error("ERROR running 510 database upgrade script", ex);
-            if (runner != null) {
-                messages.addAll(runner.getMessages());
-            }
-
-            errorMessage("Problem upgrading database to version 510", ex);
-            throw new StartupException("Problem upgrading database to version 510", ex);
-        }
+        simpleUpgrade(con, 500, 510, runScripts);
 	}
 
     /**
      * Upgrade database to Roller 5.2
      */
     private void upgradeTo520(Connection con, boolean runScripts) throws StartupException {
+        simpleUpgrade(con, 510, 520, runScripts);
+    }
+
+    /**
+     * Upgrade database to Roller 6.1
+     */
+    private void upgradeTo610(Connection con, boolean runScripts) throws StartupException {
+        simpleUpgrade(con, 520, 610, runScripts);
+    }
+    
+    /**
+     * Simple upgrade using single SQL migration script.
+     */
+    private void simpleUpgrade(Connection con, int fromVersion, int toVersion, boolean runScripts) throws StartupException {
 
         // first we need to run upgrade scripts
         SQLScriptRunner runner = null;
         try {
             if (runScripts) {
                 String handle = getDatabaseHandle(con);
-                String scriptPath = handle + "/510-to-520-migration.sql";
+                String scriptPath = handle + "/"+fromVersion+"-to-"+toVersion+"-migration.sql";
+                
                 successMessage("Running database upgrade script: "+scriptPath);
+                
                 runner = new SQLScriptRunner(scripts.getDatabaseScript(scriptPath));
                 runner.runScript(con, true);
                 messages.addAll(runner.getMessages());
             }
         } catch(Exception ex) {
-            log.error("ERROR running 520 database upgrade script", ex);
+            log.error("ERROR running "+fromVersion+"->"+toVersion+" database upgrade script", ex);
             if (runner != null) {
                 messages.addAll(runner.getMessages());
             }
 
-            errorMessage("Problem upgrading database to version 520", ex);
-            throw new StartupException("Problem upgrading database to version 520", ex);
+            errorMessage("Problem upgrading database to version "+toVersion, ex);
+            throw new StartupException("Problem upgrading database to version "+toVersion, ex);
         }
     }
 

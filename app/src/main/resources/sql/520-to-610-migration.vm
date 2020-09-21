@@ -1,0 +1,7 @@
+#**
+ 520-to-610-migration.vm: Velocity template that generates vendor-specific database scripts
+
+ DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
+ **#
+
+#alterColumnName('weblog' 'blacklist' 'bannedwordslist')
