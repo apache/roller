@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -72,8 +72,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 @com.google.inject.Singleton
 public class JPAWeblogManagerImpl implements WeblogManager {
     
-    /** The logger instance for this class. */
-    private static Log log = LogFactory.getLog(JPAWeblogManagerImpl.class);
+    private static final Log log = LogFactory.getLog(JPAWeblogManagerImpl.class);
     
     private static final Comparator<StatCount> STAT_COUNT_COUNT_REVERSE_COMPARATOR =
             Collections.reverseOrder(StatCountCountComparator.getInstance());
@@ -82,7 +81,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of weblogHandles -> weblogIds
-    private Map<String,String> weblogHandleToIdMap = new Hashtable<String,String>();
+    private final Map<String,String> weblogHandleToIdMap = Collections.synchronizedMap(new HashMap<String,String>());
 
     @com.google.inject.Inject
     protected JPAWeblogManagerImpl(Weblogger roller, JPAPersistenceStrategy strat) {
