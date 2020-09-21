@@ -59,4 +59,9 @@
         <s:iterator value="messages"><s:property/><br/></s:iterator>
     </pre>
 
+    <s:form action="install!bootstrap" class="form-horizontal">
+        <s:hidden name="salt"/>
+        <s:submit value="%{getText('installer.finishUpgrade')}" cssClass="btn btn-primary" />
+    </s:form>
+
 </s:else>
