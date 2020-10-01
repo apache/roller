@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -60,30 +61,22 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  */
 @com.google.inject.Singleton
 public class IndexManagerImpl implements IndexManager {
-    // ~ Static fields/initializers
-    // =============================================
 
     private IndexReader reader;
     private final Weblogger roller;
 
-    static Log mLogger = LogFactory.getFactory().getInstance(
-            IndexManagerImpl.class);
-
-    // ~ Instance fields
-    // ========================================================
+    private final static Log mLogger = LogFactory.getFactory().getInstance(IndexManagerImpl.class);
 
     private boolean searchEnabled = true;
 
-    File indexConsistencyMarker;
+    private final String indexDir;
 
-    private String indexDir = null;
+    private final File indexConsistencyMarker;
 
     private boolean inconsistentAtStartup = false;
 
     private final ReadWriteLock rwl = new ReentrantReadWriteLock();
 
-    // ~ Constructors
-    // ===========================================================
 
     /**
      * Creates a new lucene index manager. This should only be created once.
@@ -125,15 +118,11 @@ public class IndexManagerImpl implements IndexManager {
         // only initialize the index if search is enabled
         if (this.searchEnabled) {
 
-            // 1. If inconsistency marker exists.
-            // Delete index
-            // 2. if we're using RAM index
-            // load ram index wrapper around index
-            //
+            // delete index if inconsistency marker exists
             if (indexConsistencyMarker.exists()) {
-                getFSDirectory(true);
-                inconsistentAtStartup = true;
                 mLogger.debug("Index inconsistent: marker exists");
+                inconsistentAtStartup = true;
+                deleteIndex();
             } else {
                 try {
                     File makeIndexDir = new File(indexDir);
@@ -153,26 +142,26 @@ public class IndexManagerImpl implements IndexManager {
                 // test if the index is readable, if the version is outdated or it fails we rebuild.
                 try {
                     synchronized(this) {
-                        reader = DirectoryReader.open(getFSDirectory(false));
+                        reader = DirectoryReader.open(getIndexDirectory());
                     }
-                } catch (IOException ex) {
-                    mLogger.warn("Error opening search index, scheduling rebuild.", ex);
-                    getFSDirectory(true);
+                } catch (IOException | IllegalArgumentException ex) {  // IAE for incompatible codecs
+                    mLogger.warn("Failed to open search index, scheduling rebuild.", ex);
                     inconsistentAtStartup = true;
+                    deleteIndex();
                 }
             } else {
                 mLogger.debug("Creating index");
                 inconsistentAtStartup = true;
-
-                createIndex(getFSDirectory(true));
+                deleteIndex();
+                createIndex(getIndexDirectory());
             }
 
-            if (isInconsistentAtStartup()) {
+            if (inconsistentAtStartup) {
                 mLogger.info("Index was inconsistent. Rebuilding index in the background...");
                 try {
                     rebuildWebsiteIndex();
-                } catch (WebloggerException e) {
-                    mLogger.error("ERROR: scheduling re-index operation");
+                } catch (WebloggerException ex) {
+                    mLogger.error("ERROR: scheduling re-index operation", ex);
                 }
             } else {
                 mLogger.info("Index initialized and ready for use.");
@@ -181,48 +170,34 @@ public class IndexManagerImpl implements IndexManager {
 
     }
 
-    // ~ Methods
-    // ================================================================
-
     @Override
     public void rebuildWebsiteIndex() throws WebloggerException {
-        scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this,
-                null));
+        scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this, null));
     }
 
     @Override
     public void rebuildWebsiteIndex(Weblog website) throws WebloggerException {
-        scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this,
-                website));
+        scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this, website));
     }
 
     @Override
     public void removeWebsiteIndex(Weblog website) throws WebloggerException {
-        scheduleIndexOperation(new RemoveWebsiteIndexOperation(roller, this,
-                website));
+        scheduleIndexOperation(new RemoveWebsiteIndexOperation(roller, this, website));
     }
 
     @Override
-    public void addEntryIndexOperation(WeblogEntry entry)
-            throws WebloggerException {
-        AddEntryOperation addEntry = new AddEntryOperation(roller, this, entry);
-        scheduleIndexOperation(addEntry);
+    public void addEntryIndexOperation(WeblogEntry entry) throws WebloggerException {
+        scheduleIndexOperation(new AddEntryOperation(roller, this, entry));
     }
 
     @Override
-    public void addEntryReIndexOperation(WeblogEntry entry)
-            throws WebloggerException {
-        ReIndexEntryOperation reindex = new ReIndexEntryOperation(roller, this,
-                entry);
-        scheduleIndexOperation(reindex);
+    public void addEntryReIndexOperation(WeblogEntry entry) throws WebloggerException {
+        scheduleIndexOperation(new ReIndexEntryOperation(roller, this, entry));
     }
 
     @Override
-    public void removeEntryIndexOperation(WeblogEntry entry)
-            throws WebloggerException {
-        RemoveEntryOperation removeOp = new RemoveEntryOperation(roller, this,
-                entry);
-        executeIndexOperationNow(removeOp);
+    public void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException {
+        executeIndexOperationNow(new RemoveEntryOperation(roller, this, entry));
     }
 
     public ReadWriteLock getReadWriteLock() {
@@ -314,7 +289,13 @@ public class IndexManagerImpl implements IndexManager {
      * @return Directory The directory containing the index, or null if error.
      */
     public Directory getIndexDirectory() {
-        return getFSDirectory(false);
+
+        try {
+            return FSDirectory.open(Path.of(indexDir));
+        } catch (IOException e) {
+            mLogger.error("Problem accessing index directory", e);
+        }
+        return null;
     }
 
     private boolean indexExists() {
@@ -326,30 +307,18 @@ public class IndexManagerImpl implements IndexManager {
         return false;
     }
 
-    private FSDirectory getFSDirectory(boolean delete) {
-
-        FSDirectory directory = null;
-
-        try {
-
-            directory = FSDirectory.open(Path.of(indexDir));
-
-            if (delete && directory != null) {
-                // clear old files
-                String[] files = directory.listAll();
-                for (int i = 0; i < files.length; i++) {
-                    File file = new File(indexDir, files[i]);
-                    if (!file.delete()) {
-                        throw new IOException("couldn't delete " + files[i]);
-                    }
-                }
+    
+    private void deleteIndex() {
+        
+        try(FSDirectory directory = FSDirectory.open(Path.of(indexDir))) {
+            
+            String[] files = directory.listAll();
+            for (String file : files) {
+                Files.delete(Path.of(indexDir, file));
             }
-
-        } catch (IOException e) {
-            mLogger.error("Problem accessing index directory", e);
+        } catch (IOException ex) {
+             mLogger.error("Problem accessing index directory", ex);
         }
-
-        return directory;
 
     }
 

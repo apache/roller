@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.util.cache;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -31,8 +30,8 @@ import org.apache.roller.util.RollerConstants;
  */
 public class LRUCacheImpl implements Cache {
     
-    private String id = null;
-    private Map cache = null;
+    private final String id;
+    private final Map cache;
     
     // for metrics
     protected double hits = 0;
@@ -44,18 +43,18 @@ public class LRUCacheImpl implements Cache {
     
     protected LRUCacheImpl(String id) {
         
-        this.id = id;
-        this.cache = Collections.synchronizedMap(new LRULinkedHashMap(100));
+        this(id, 100);
     }
     
     
     protected LRUCacheImpl(String id, int maxsize) {
         
         this.id = id;
-        this.cache = Collections.synchronizedMap(new LRULinkedHashMap(maxsize));
+        this.cache = new LRULinkedHashMap(maxsize);
     }
     
     
+    @Override
     public String getId() {
         return this.id;
     }
@@ -64,6 +63,7 @@ public class LRUCacheImpl implements Cache {
     /**
      * Store an entry in the cache.
      */
+    @Override
     public synchronized void put(String key, Object value) {
         
         this.cache.put(key, value);
@@ -74,6 +74,7 @@ public class LRUCacheImpl implements Cache {
     /**
      * Retrieve an entry from the cache.
      */
+    @Override
     public synchronized Object get(String key) {
         
         Object obj = this.cache.get(key);
@@ -89,6 +90,7 @@ public class LRUCacheImpl implements Cache {
     }
     
     
+    @Override
     public synchronized void remove(String key) {
         
         this.cache.remove(key);
@@ -96,6 +98,7 @@ public class LRUCacheImpl implements Cache {
     }
     
     
+    @Override
     public synchronized void clear() {
         
         this.cache.clear();
@@ -109,6 +112,7 @@ public class LRUCacheImpl implements Cache {
     }
     
     
+    @Override
     public Map<String, Object> getStats() {
         
         Map<String, Object> stats = new HashMap<String, Object>();
