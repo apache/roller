@@ -72,7 +72,7 @@
 
         <div class="controls col-sm-9">
 
-            <input type="text" id="clip_text" size="80"
+            <input type="text" id="clip_text" size="57" 
                    value='<s:property value="bean.permalink" />' readonly />
 
             <s:url var="linkIconURL" value="/roller-ui/images/clippy.svg"/>

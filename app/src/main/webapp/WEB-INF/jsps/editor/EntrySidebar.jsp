@@ -57,7 +57,7 @@
                             <s:param name="bean.id" value="#post.id" />
                         </s:url>
                         <span class="glyphicon glyphicon-lock" aria-hidden="true"> </span> 
-                        <s:a href="%{editUrl}"><str:truncateNicely lower="60">
+                        <s:a href="%{editUrl}"><str:truncateNicely lower="40">
                              <s:property value="#post.title" /></str:truncateNicely></s:a>
                     </span><br />
                 </s:iterator>
@@ -78,7 +78,7 @@
                             <s:param name="bean.id" value="#post.id" />
                         </s:url>
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"> </span> 
-                        <s:a href="%{editUrl}"><str:truncateNicely lower="60">
+                        <s:a href="%{editUrl}"><str:truncateNicely lower="40">
                              <s:property value="#post.title" /></str:truncateNicely></s:a>
                     </span><br />
                 </s:iterator>
@@ -102,7 +102,7 @@
                                 <s:param name="bean.id" value="#post.id" />
                             </s:url>
                             <span class="glyphicon glyphicon-book" aria-hidden="true"> </span> 
-                            <s:a href="%{editUrl}"><str:truncateNicely lower="60">
+                            <s:a href="%{editUrl}"><str:truncateNicely lower="40">
                                 <s:property value="#post.title" /></str:truncateNicely></s:a>
                         </span><br />
                     </s:iterator>
@@ -124,7 +124,7 @@
                                 <s:param name="bean.id" value="#post.id" />
                             </s:url>
                             <span class="glyphicon glyphicon-time" aria-hidden="true"> </span>
-                            <s:a href="%{editUrl}"><str:truncateNicely lower="60">
+                            <s:a href="%{editUrl}"><str:truncateNicely lower="40">
                                 <s:property value="#post.title" /></str:truncateNicely></s:a>
                         </span><br />
                     </s:iterator>
