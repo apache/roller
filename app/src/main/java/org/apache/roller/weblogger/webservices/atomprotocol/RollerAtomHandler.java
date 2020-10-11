@@ -29,7 +29,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.WSSEUtilities;
 import com.rometools.propono.atom.common.AtomService;
 import com.rometools.propono.atom.server.AtomException;
@@ -48,6 +47,7 @@ import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.ui.core.RollerContext;
 
 
 /**
@@ -448,7 +448,6 @@ public class RollerAtomHandler implements AtomHandler {
     public String authenticateBASIC(HttpServletRequest request) {
         boolean valid = false;
         String userID = null;
-        String password = null;
         try {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null) {
@@ -462,17 +461,9 @@ public class RollerAtomHandler implements AtomHandler {
                         if (p != -1) {
                             userID = userPass.substring(0, p);
                             User inUser = roller.getUserManager().getUserByUserName(userID);
-                            boolean enabled = inUser.getEnabled();
-                            if (enabled) {
-                                // are passwords encrypted?
-                                String encrypted =
-                                        WebloggerConfig.getProperty("passwds.encryption.enabled");
-                                password = userPass.substring(p+1);
-                                if ("true".equalsIgnoreCase(encrypted)) {
-                                    password = Utilities.encodePassword(password,
-                                            WebloggerConfig.getProperty("passwds.encryption.algorithm"));
-                                }
-                                valid = inUser.getPassword().equals(password);
+                            if (inUser.getEnabled()) {
+                                String password = userPass.substring(p+1);
+                                valid = RollerContext.getPasswordEncoder().matches(password, user.getPassword());
                             }
                         }
                     }

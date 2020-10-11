@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
@@ -33,17 +34,17 @@ public class RollerRememberMeServices extends TokenBasedRememberMeServices {
     private static final Log log = LogFactory.getLog(RollerRememberMeServices.class);
 
 
-    public RollerRememberMeServices() {
+    public RollerRememberMeServices(UserDetailsService userDetailsService) {
+        
+        super(WebloggerConfig.getProperty("rememberme.key", "springRocks"), userDetailsService);
+        
         log.debug("initializing: RollerRememberMeServices");
 
-        String key = WebloggerConfig.getProperty("rememberme.key", "springRocks");
-
-        if ("springRocks".equals(key)) {
+        if (WebloggerConfig.getBooleanProperty("rememberme.enabled") && "springRocks".equals(getKey())) {
             throw new RuntimeException(
                 "If remember-me is to be enabled, rememberme.key must be specified in the roller " +
                     "properties file. Make sure it is a secret and make sure it is NOT springRocks");
         }
-        setKey(key);
 
         log.debug("initialized: RollerRememberMeServices with key");
     }

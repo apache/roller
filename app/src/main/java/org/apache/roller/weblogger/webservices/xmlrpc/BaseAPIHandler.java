@@ -25,15 +25,14 @@ import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlrpc.XmlRpcException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.util.cache.CacheManager;
-import org.apache.roller.weblogger.util.Utilities;
 import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
 
 /**
@@ -104,9 +103,9 @@ public class BaseAPIHandler implements Serializable {
     //------------------------------------------------------------------------
     /**
      * Returns website, but only if user authenticates and is authorized to edit.
-     * @param blogid   Blogid sent in request (used as website's hanldle)
+     * @param blogid   Blogid sent in request (used as website's handle)
      * @param username Username sent in request
-     * @param password Password sent in requeset
+     * @param password Password sent in request
      */
     protected Weblog validate(String blogid, String username, String password)
     throws Exception {
@@ -116,12 +115,10 @@ public class BaseAPIHandler implements Serializable {
         boolean apiEnabled = false;
         boolean weblogFound = false;
         Weblog website = null;
-        User user = null;
         try {
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
             WeblogManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            user = userMgr.getUserByUserName(username);
-            userEnabled = user.getEnabled();
+            User user = userMgr.getUserByUserName(username);
             
             website = weblogMgr.getWeblogByHandle(blogid);
             if (website != null) {
@@ -132,15 +129,8 @@ public class BaseAPIHandler implements Serializable {
             }
             
             if (user != null) {
-                // are passwords encrypted
-                String encrypted =
-                        WebloggerConfig.getProperty("passwds.encryption.enabled");
-                //System.out.print("password was [" + password + "] ");
-                if ("true".equalsIgnoreCase(encrypted)) {
-                    password = Utilities.encodePassword(password,
-                            WebloggerConfig.getProperty("passwds.encryption.algorithm"));
-                }
-                authenticated = password.equals(user.getPassword());
+                userEnabled = user.getEnabled();
+                authenticated = RollerContext.getPasswordEncoder().matches(password, user.getPassword());
             }
         } catch (Exception e) {
             mLogger.error("ERROR internal error validating user", e);
@@ -168,31 +158,21 @@ public class BaseAPIHandler implements Serializable {
     /**
      * Returns true if username/password are valid and user is not disabled.
      * @param username Username sent in request
-     * @param password Password sent in requeset
+     * @param password Password sent in request
      */
     protected boolean validateUser(String username, String password)
     throws Exception {
         boolean authenticated = false;
         boolean enabled = false;
         boolean apiEnabled = false;
-        User user = null;
         try {
             
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            user = userMgr.getUserByUserName(username);
+            User user = userMgr.getUserByUserName(username);
             
-            enabled = user.getEnabled();
-            if (enabled) {
-                // are passwords encrypted?
-                String encrypted =
-                        WebloggerConfig.getProperty("passwds.encryption.enabled");
-                //System.out.print("password was [" + password + "] ");
-                if ("true".equalsIgnoreCase(encrypted)) {
-                    password = Utilities.encodePassword(password,
-                            WebloggerConfig.getProperty("passwds.encryption.algorithm"));
-                }
-                //System.out.println("is now [" + password + "]");
-                authenticated = user.getPassword().equals(password);
+            if (user != null) {
+                enabled = user.getEnabled();
+                authenticated = RollerContext.getPasswordEncoder().matches(password, user.getPassword());
                 
                 apiEnabled = WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc");
             }
@@ -200,12 +180,12 @@ public class BaseAPIHandler implements Serializable {
             mLogger.error("ERROR internal error validating user", e);
         }
         
-        if ( !enabled ) {
-            throw new XmlRpcNotAuthorizedException(USER_DISABLED_MSG);
-        }
-        
         if ( !authenticated ) {
             throw new XmlRpcNotAuthorizedException(AUTHORIZATION_EXCEPTION_MSG);
+        }
+        
+        if ( !enabled ) {
+            throw new XmlRpcNotAuthorizedException(USER_DISABLED_MSG);
         }
         
         if ( !apiEnabled ) {

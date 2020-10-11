@@ -31,8 +31,7 @@ import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.struts2.convention.annotation.AllowedMethods;
-import org.springframework.beans.factory.access.BootstrapException;
+import org.springframework.beans.FatalBeanException;
 
 
 /**
@@ -173,8 +172,8 @@ public class Install extends UIAction {
             log.info("EXITING - Bootstrap successful, forwarding to Roller");
             return SUCCESS;
 
-        } catch (BootstrapException ex) {
-            log.error("BootstrapException", ex);
+        } catch (FatalBeanException ex) {
+            log.error("FatalBeanException", ex);
             rootCauseException = ex;
         } catch (WebloggerException ex) {
             log.error("WebloggerException", ex);

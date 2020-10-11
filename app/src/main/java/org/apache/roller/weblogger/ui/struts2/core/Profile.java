@@ -28,7 +28,6 @@ import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -105,21 +104,13 @@ public class Profile extends UIAction {
             if (authMethod.equals(AuthMethod.OPENID) ||
                     (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
                 String randomString = RandomStringUtils.randomAlphanumeric(255);
-                try {
-                    existingUser.resetPassword(randomString);
-                } catch (WebloggerException e) {
-                    addMessage("yourProfile.passwordResetError");
-                }
+                existingUser.resetPassword(randomString);
             }
 
             // If user set both password and passwordConfirm then reset password
             if (!StringUtils.isEmpty(getBean().getPasswordText()) &&
                     !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
-                try {
-                    existingUser.resetPassword(getBean().getPasswordText());
-                } catch (WebloggerException e) {
-                    addMessage("yourProfile.passwordResetError");
-                }
+                existingUser.resetPassword(getBean().getPasswordText());
             }
 
             try {

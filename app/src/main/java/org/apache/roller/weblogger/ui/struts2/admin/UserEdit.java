@@ -39,7 +39,6 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -159,21 +158,13 @@ public class UserEdit extends UIAction {
             // User.password does not allow null, so generate one
             if (authMethod.equals(AuthMethod.OPENID) ||
                     (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
-                try {
-                    String randomString = RandomStringUtils.randomAlphanumeric(255);
-                    user.resetPassword(randomString);
-                } catch (WebloggerException e) {
-                    addMessage("yourProfile.passwordResetError");
-                }
+                String randomString = RandomStringUtils.randomAlphanumeric(255);
+                user.resetPassword(randomString);
             }
 
             // reset password if set
             if (!StringUtils.isEmpty(getBean().getPassword())) {
-                try {
-                    user.resetPassword(getBean().getPassword());
-                } catch (WebloggerException e) {
-                    addMessage("yourProfile.passwordResetError");
-                }
+                user.resetPassword(getBean().getPassword());
             }
 
             try {
