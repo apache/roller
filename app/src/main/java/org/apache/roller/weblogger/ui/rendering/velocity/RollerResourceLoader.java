@@ -18,12 +18,13 @@
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
-import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -31,6 +32,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
+import org.apache.velocity.util.ExtProperties;
 
 /**
  * The RollerResourceLoader is a Velocity template loader which loads templates
@@ -46,21 +48,23 @@ public class RollerResourceLoader extends ResourceLoader {
 
 	private static Log logger = LogFactory.getLog(RollerResourceLoader.class);
 
-	public void init(ExtendedProperties configuration) {
+    @Override
+	public void init(ExtProperties configuration) {
 		if (logger.isDebugEnabled()) {
 			logger.debug(configuration);
 		}
 	}
 
 	/**
-	 * Get an InputStream so that the Runtime can build a template with it.
+	 * Get an Reader so that the Runtime can build a template with it.
 	 * 
 	 * @param name
 	 *            name of template
-	 * @return InputStream containing template
+	 * @return Reader containing template
      * @throws ResourceNotFoundException
 	 */
-	public InputStream getResourceStream(String name) {
+    @Override
+    public Reader getResourceReader(String name, String encoding) {
 
 		logger.debug("Looking for: " + name);
 
@@ -96,7 +100,7 @@ public class RollerResourceLoader extends ResourceLoader {
 			if (templateCode != null) {
 				contents = templateCode.getTemplate();
 			}
-			return new ByteArrayInputStream(contents.getBytes("UTF-8"));
+			return new InputStreamReader(new ByteArrayInputStream(contents.getBytes(encoding)));
 
 		} catch (UnsupportedEncodingException uex) {
 			// This should never actually happen. We expect UTF-8 in all JRE
@@ -105,7 +109,7 @@ public class RollerResourceLoader extends ResourceLoader {
 			logger.error(uex);
 			throw new RuntimeException(uex);
 
-		} catch (Exception re) {
+		} catch (WebloggerException | ResourceNotFoundException re) {
 			String msg = "RollerResourceLoader Error: "
 					+ "database problem trying to load resource " + name;
 			logger.error(msg, re);
@@ -120,6 +124,7 @@ public class RollerResourceLoader extends ResourceLoader {
 	 * 
 	 * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#isSourceModified(org.apache.velocity.runtime.resource.Resource)
 	 */
+    @Override
 	public boolean isSourceModified(Resource resource) {
 		return false;
 	}
@@ -129,6 +134,7 @@ public class RollerResourceLoader extends ResourceLoader {
 	 * 
 	 * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#getLastModified(org.apache.velocity.runtime.resource.Resource)
 	 */
+    @Override
 	public long getLastModified(Resource resource) {
 		return 0;
 	}

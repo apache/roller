@@ -24,9 +24,9 @@
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -39,6 +39,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import org.apache.velocity.util.ExtProperties;
 
 /**
  * The ThemeResourceLoader is a Velocity template loader which loads templates
@@ -51,14 +52,16 @@ public class ThemeResourceLoader extends ResourceLoader {
     private static Log logger = LogFactory.getFactory().getInstance(
             ThemeResourceLoader.class);
 
-    public void init(ExtendedProperties configuration) {
+    @Override
+    public void init(ExtProperties configuration) {
         logger.debug(configuration);
     }
 
     /**
      * @throws ResourceNotFoundException
      */
-    public InputStream getResourceStream(String name) {
+    @Override
+    public Reader getResourceReader(String name, String encoding) {
 
         if (log.isDebugEnabled()) {
             logger.debug("Looking for: " + name);
@@ -115,7 +118,7 @@ public class ThemeResourceLoader extends ResourceLoader {
             }
 
             // return the input stream
-            return new ByteArrayInputStream(contents.getBytes("UTF-8"));
+            return new InputStreamReader(new ByteArrayInputStream(contents.getBytes(encoding)));
 
         } catch (UnsupportedEncodingException uex) {
             // We expect UTF-8 in all JRE installation.
@@ -142,6 +145,7 @@ public class ThemeResourceLoader extends ResourceLoader {
      * 
      * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#isSourceModified(org.apache.velocity.runtime.resource.Resource)
      */
+    @Override
     public boolean isSourceModified(Resource resource) {
         return false;
     }
@@ -149,6 +153,7 @@ public class ThemeResourceLoader extends ResourceLoader {
     /**
      * @see org.apache.velocity.runtime.resource.loader.ResourceLoader#getLastModified(org.apache.velocity.runtime.resource.Resource)
      */
+    @Override
     public long getLastModified(Resource resource) {
         return 0;
     }
