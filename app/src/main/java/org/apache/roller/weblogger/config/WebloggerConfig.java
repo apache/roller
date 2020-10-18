@@ -25,7 +25,6 @@ import java.util.Enumeration;
 import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.roller.util.PropertyExpander;
 
 
@@ -34,15 +33,14 @@ import org.apache.roller.util.PropertyExpander;
  */
 public final class WebloggerConfig {
     
-    private static String default_config = "/org/apache/roller/weblogger/config/roller.properties";
-    private static String custom_config = "/roller-custom.properties";
-    private static String junit_config = "/roller-junit.properties";
-    private static String custom_jvm_param = "roller.custom.config";
-    private static File custom_config_file = null;
+    private final static String default_config = "/org/apache/roller/weblogger/config/roller.properties";
+    private final static String custom_config = "/roller-custom.properties";
+    private final static String junit_config = "/roller-junit.properties";
+    private final static String custom_jvm_param = "roller.custom.config";
 
-    private static Properties config;
+    private final static Properties config;
 
-    private static Log log = LogFactory.getLog(WebloggerConfig.class);
+    private final static Log log;
     
 
     /*
@@ -58,48 +56,47 @@ public final class WebloggerConfig {
             Class configClass = Class.forName("org.apache.roller.weblogger.config.WebloggerConfig");
 
             // first, lets load our default properties
-            InputStream is = configClass.getResourceAsStream(default_config);
-            config.load(is);
+            try (InputStream is = configClass.getResourceAsStream(default_config)) {
+                config.load(is);
+            }
             
             // first, see if we can find our junit testing config
-            is = configClass.getResourceAsStream(junit_config);
-            if (is != null) {
+            try (InputStream test = configClass.getResourceAsStream(junit_config)) {
+                
+                if (test != null) {
 
-                config.load(is);
-                System.out
-                        .println("Roller Weblogger: Successfully loaded junit properties file from classpath");
-                System.out.println("File path : "
-                        + configClass.getResource(junit_config).getFile());
+                    config.load(test);
+                    System.out.println("Roller Weblogger: Successfully loaded junit properties file from classpath");
+                    System.out.println("File path : " + configClass.getResource(junit_config).getFile());
 
-            } else {
-
-                // now, see if we can find our custom config
-                is = configClass.getResourceAsStream(custom_config);
-
-                if (is != null) {
-                    config.load(is);
-                    System.out
-                            .println("Roller Weblogger: Successfully loaded custom properties file from classpath");
-                    System.out.println("File path : "
-                            + configClass.getResource(custom_config).getFile());
                 } else {
-                    System.out
-                            .println("Roller Weblogger: No custom properties file found in classpath");
-                }
 
-                System.out
-                .println("(To run eclipse junit local tests see docs/testing/roller-junit.properties)");
+                    // now, see if we can find our custom config
+                    try(InputStream custom = configClass.getResourceAsStream(custom_config)) {
+
+                        if (custom != null) {
+                            config.load(custom);
+                            System.out.println("Roller Weblogger: Successfully loaded custom properties file from classpath");
+                            System.out.println("File path : " + configClass.getResource(custom_config).getFile());
+                        } else {
+                            System.out.println("Roller Weblogger: No custom properties file found in classpath");
+                        }
+
+                        System.out.println("(To run eclipse junit local tests see docs/testing/roller-junit.properties)");
+                    }
+                }
             }
 
             // finally, check for an external config file
             String env_file = System.getProperty(custom_jvm_param);
             if(env_file != null && env_file.length() > 0) {
-                custom_config_file = new File(env_file);
+                File custom_config_file = new File(env_file);
 
                 // make sure the file exists, then try and load it
-                if(custom_config_file != null && custom_config_file.exists()) {
-                    is = new FileInputStream(custom_config_file);
-                    config.load(is);
+                if(custom_config_file.exists()) {
+                    try(InputStream is = new FileInputStream(custom_config_file)) {
+                        config.load(is);
+                    }
                     System.out.println("Roller Weblogger: Successfully loaded custom properties from "+
                             custom_config_file.getAbsolutePath());
                 } else {
@@ -123,26 +120,36 @@ public final class WebloggerConfig {
                     }
                 }
             }
-            
-            // initialize logging subsystem via WebloggerConfig
-            PropertyConfigurator.configure(WebloggerConfig.getPropertiesStartingWith("log4j."));
-            
-            // finally we can start logging...
-
-            // some debugging for those that want it
-            if(log.isDebugEnabled()) {
-                log.debug("WebloggerConfig looks like this ...");
-
-                String key = null;
-                Enumeration keys = config.keys();
-                while(keys.hasMoreElements()) {
-                    key = (String) keys.nextElement();
-                    log.debug(key+"="+config.getProperty(key));
-                }
-            }
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        // tell log4j2 to use the optionally specified config file instead of Roller's,
+        // but only if it hasn't already been set with -D at JVM startup.
+        String log4j2ConfigKey = "log4j.configurationFile";
+        String customLog4j2File = config.getProperty(log4j2ConfigKey);
+        if(customLog4j2File != null && !customLog4j2File.isBlank() && System.getProperty(log4j2ConfigKey) == null) {
+            System.setProperty(log4j2ConfigKey, customLog4j2File);
+        }
+        
+        // this bridges java.util.logging -> SLF4J which ends up being log4j2, probably.
+        org.slf4j.bridge.SLF4JBridgeHandler.removeHandlersForRootLogger();
+        org.slf4j.bridge.SLF4JBridgeHandler.install();
+        
+        // finally we can start logging...
+        log = LogFactory.getLog(WebloggerConfig.class);
+
+        // some debugging for those that want it
+        if(log.isDebugEnabled()) {
+            log.debug("WebloggerConfig looks like this ...");
+
+            String key;
+            Enumeration keys = config.keys();
+            while(keys.hasMoreElements()) {
+                key = (String) keys.nextElement();
+                log.debug(key+"="+config.getProperty(key));
+            }
         }
 
     }
@@ -151,15 +158,22 @@ public final class WebloggerConfig {
     // no, you may not instantiate this class :p
     private WebloggerConfig() {}
 
-
+    /**
+     * Loads Roller's configuration.
+     * Call this as early as possible in the lifecycle.
+     */
+    public static void init() {
+        // triggers static block
+    }
+    
     /**
      * Retrieve a property value
      * @param     key Name of the property
      * @return    String Value of property requested, null if not found
      */
     public static String getProperty(String key) {
-        log.debug("Fetching property ["+key+"="+config.getProperty(key)+"]");
         String value = config.getProperty(key);
+        log.debug("Fetching property ["+key+"="+value+"]");
         return value == null ? null : value.trim();
     }
     
@@ -170,8 +184,8 @@ public final class WebloggerConfig {
      * @return    String Value of property requested or defaultValue
      */
     public static String getProperty(String key, String defaultValue) {
-        log.debug("Fetching property ["+key+"="+config.getProperty(key)+",defaultValue="+defaultValue+"]");
         String value = config.getProperty(key);
+        log.debug("Fetching property ["+key+"="+value+",defaultValue="+defaultValue+"]");
         if (value == null) {
             return defaultValue;
         }
@@ -227,21 +241,7 @@ public final class WebloggerConfig {
      **/
     public static Enumeration keys() {
         return config.keys();
-    }
-    
-    
-    /**
-     * Get properties starting with a specified string.
-     */
-    public static Properties getPropertiesStartingWith(String startingWith) {
-        Properties props = new Properties();
-        for (Enumeration it = config.keys(); it.hasMoreElements();) {
-            String key = (String)it.nextElement();
-            props.put(key, config.get(key));
-        }
-        return props;
-    }
-    
+    } 
 
     /**
      * Set the "uploads.dir" property at runtime.
