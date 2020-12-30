@@ -18,9 +18,6 @@
 package org.apache.roller.selenium.editor;
 
 import org.apache.roller.selenium.AbstractRollerPage;
-import org.openqa.selenium.WebDriver;
-
-import java.lang.String;
 
 /**
  * Base class for the new/edit entry pages

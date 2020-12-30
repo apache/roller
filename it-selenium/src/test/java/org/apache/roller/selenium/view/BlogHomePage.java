@@ -21,8 +21,6 @@ import org.apache.roller.selenium.AbstractRollerPage;
 import org.apache.roller.selenium.editor.EntryAddPage;
 import org.openqa.selenium.WebDriver;
 
-import java.lang.String;
-
 /**
  * Represents a URL for the home page of a blog
  * (URL similar to http://localhost:8080/roller/myblog)

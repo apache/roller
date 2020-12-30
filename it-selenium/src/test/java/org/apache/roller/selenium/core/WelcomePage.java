@@ -20,8 +20,6 @@ package org.apache.roller.selenium.core;
 import org.apache.roller.selenium.AbstractRollerPage;
 import org.openqa.selenium.WebDriver;
 
-import java.lang.String;
-
 /**
  * represents core/Welcome.jsp
  * Page Object after creation of a new user account (RegisterPage)

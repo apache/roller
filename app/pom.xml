@@ -55,7 +55,6 @@ limitations under the License.
         <maven-antrun.version>1.0b3</maven-antrun.version>
         <rome.version>1.13.1</rome.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <spring.version>5.2.7.RELEASE</spring.version>
         <spring.security.version>5.3.3.RELEASE</spring.security.version>
         <struts.version>2.5.22</struts.version>
         <velocity.version>2.2</velocity.version>
@@ -87,6 +86,7 @@ limitations under the License.
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>${jstl.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -105,7 +105,7 @@ limitations under the License.
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
+            <version>${jaxb.version}</version>
             <exclusions>
                 <exclusion>
                     <!--api is already in the javax.activation artifact-->
@@ -492,7 +492,6 @@ limitations under the License.
             </exclusions>
         </dependency>
 
-
         <!-- Other deps include Guice and ROME -->
 
         <dependency>
@@ -598,7 +597,7 @@ limitations under the License.
                     <webApp>
                         <contextPath>/roller</contextPath>
                     </webApp>
-                    <jettyXml>src/test/resources/jetty.xml</jettyXml>
+                    <jettyXmls>src/test/resources/jetty.xml</jettyXmls>
                     <systemProperties>
                         <systemProperty>
                             <name>roller.custom.config</name>

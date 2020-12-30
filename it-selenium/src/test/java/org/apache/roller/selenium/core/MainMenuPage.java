@@ -21,8 +21,6 @@ import org.apache.roller.selenium.AbstractRollerPage;
 import org.apache.roller.selenium.editor.EntryAddPage;
 import org.openqa.selenium.WebDriver;
 
-import java.lang.String;
-
 /**
  * represents core/MainMenu.jsp
  * Post-login page object to create, choose, configure blogs.
@@ -32,7 +30,7 @@ public class MainMenuPage extends AbstractRollerPage {
 
     public MainMenuPage(WebDriver driver) {
         this.driver = driver;
-        pageTitle = "Front Page: Main Menu";
+        pageTitle = "Front Page: Your Weblogs";
     }
 
     public CreateWeblogPage createWeblog() {
