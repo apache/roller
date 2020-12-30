@@ -56,7 +56,7 @@ public abstract class AbstractRollerPage {
     */
     protected void verifyIdOnPage(String idOnPage) {
         try {
-            WebElement div = driver.findElement(By.id(idOnPage));
+            driver.findElement(By.id(idOnPage));
         } catch (NoSuchElementException e) {
             throw new IllegalStateException("HTML ID: " + idOnPage + " not found.");
         }

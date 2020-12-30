@@ -48,7 +48,7 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>3.14.0</version>
+            <version>3.141.59</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.commons</groupId>
@@ -88,6 +88,9 @@
                     <artifactId>javax.activation-api</artifactId>
                 </exclusion>
             </exclusions>
+=======
+            <version>3.141.59</version>
+>>>>>>> master
         </dependency>
 
         <!-- Will bring in once we configure a Chrome option -->
@@ -100,6 +103,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.13</version>
             <scope>test</scope>
             <version>4.12</version>
         </dependency>
@@ -124,7 +128,11 @@
             <!-- Activates integration tests (by default, classes under tests that end with "IT") -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
+<<<<<<< HEAD
                 <version>2.22.2</version>
+=======
+                <version>3.0.0-M5</version>
+>>>>>>> master
                 <executions>
                     <execution>
                         <goals>
@@ -133,6 +141,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>2.3.1</version>
+                    </dependency>
+                </dependencies>                    
             </plugin>
 
             <!-- Activates the Derby database during the integration test phase -->
@@ -209,6 +224,12 @@
                     </execution>
                 </executions>
                 <dependencies>
+                            
+                    <dependency>
+                        <groupId>commons-dbcp</groupId>
+                        <artifactId>commons-dbcp</artifactId>
+                        <version>1.4</version>
+                    </dependency>
 
                     <dependency>
                         <groupId>org.apache.derby</groupId>
