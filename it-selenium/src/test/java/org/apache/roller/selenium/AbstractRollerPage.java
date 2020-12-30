@@ -56,7 +56,7 @@ public abstract class AbstractRollerPage {
     */
     protected void verifyIdOnPage(String idOnPage) {
         try {
-            WebElement div = driver.findElement(By.id(idOnPage));
+            driver.findElement(By.id(idOnPage));
         } catch (NoSuchElementException e) {
             throw new IllegalStateException("HTML ID: " + idOnPage + " not found.");
         }
@@ -70,14 +70,14 @@ public abstract class AbstractRollerPage {
 
     protected void clickById(String buttonId) {
         WebElement element = driver.findElement(By.id(buttonId));
+        System.out.println("clicking element " + element.getTagName() + " id:" + element.getAttribute("id"));
         element.click();
-        System.out.println("Element " + element.getTagName() + " id:" + element.getAttribute("id") + " clicked");
     }
 
     protected void clickByLinkText(String buttonText) {
         WebElement element = driver.findElement(By.linkText(buttonText));
+        System.out.println("clicking element " + element.getTagName() + " id:" + element.getAttribute("id"));
         element.click();
-        System.out.println("Element " + element.getTagName() + " id:" + element.getAttribute("id") + " clicked");
     }
 
     protected String getTextByCSS(String cssSelector) {
