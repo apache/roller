@@ -46,9 +46,8 @@ Compile and build Roller:
     $ cd roller
     $ mvn -DskipTests=true install
 
-Run Roller in Jetty with Derby database:
+Run Roller in Jetty with an embedded Derby database (for testing only):
 
-    $ cd app
     $ mvn jetty:run
 
 Once Jetty is up and running browse to <http://localhost:8080/roller> to try to Roller.
