@@ -70,13 +70,13 @@ public abstract class AbstractRollerPage {
 
     protected void clickById(String buttonId) {
         WebElement element = driver.findElement(By.id(buttonId));
-        System.out.println("Clinking Element " + element.getTagName() + " id:" + element.getAttribute("id"));
+        System.out.println("clinking element " + element.getTagName() + " id:" + element.getAttribute("id"));
         element.click();
     }
 
     protected void clickByLinkText(String buttonText) {
         WebElement element = driver.findElement(By.linkText(buttonText));
-        System.out.println("Clicking Element " + element.getTagName() + " id:" + element.getAttribute("id"));
+        System.out.println("clicking element " + element.getTagName() + " id:" + element.getAttribute("id"));
         element.click();
     }
 

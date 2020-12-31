@@ -36,7 +36,6 @@ public class SetupPage extends AbstractRollerPage {
 
     public RegisterPage createNewUser() {
         verifyPageTitle("Front Page: Welcome to Roller!");
-        System.out.println("Current URL = " + driver.getCurrentUrl());
         clickById("a_createUser");
         return new RegisterPage(driver);
     }
