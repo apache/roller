@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-firefox-driver</artifactId>
-            <version>3.14.0</version>
+            <version>3.141.59</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.servlet</groupId>
@@ -88,9 +88,6 @@
                     <artifactId>javax.activation-api</artifactId>
                 </exclusion>
             </exclusions>
-=======
-            <version>3.141.59</version>
->>>>>>> master
         </dependency>
 
         <!-- Will bring in once we configure a Chrome option -->
@@ -105,7 +102,6 @@
             <artifactId>junit</artifactId>
             <version>4.13</version>
             <scope>test</scope>
-            <version>4.12</version>
         </dependency>
 
         <!--
@@ -128,11 +124,7 @@
             <!-- Activates integration tests (by default, classes under tests that end with "IT") -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-<<<<<<< HEAD
-                <version>2.22.2</version>
-=======
                 <version>3.0.0-M5</version>
->>>>>>> master
                 <executions>
                     <execution>
                         <goals>
