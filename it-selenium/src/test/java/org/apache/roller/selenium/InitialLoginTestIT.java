@@ -18,9 +18,6 @@
 package org.apache.roller.selenium;
 
 import java.util.concurrent.TimeUnit;
-import org.junit.*;
-import org.openqa.selenium.*;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.apache.roller.selenium.core.CreateWeblogPage;
 import org.apache.roller.selenium.core.LoginPage;
 import org.apache.roller.selenium.core.MainMenuPage;
@@ -31,10 +28,20 @@ import org.apache.roller.selenium.editor.EntryAddPage;
 import org.apache.roller.selenium.editor.EntryEditPage;
 import org.apache.roller.selenium.view.BlogHomePage;
 import org.apache.roller.selenium.view.SingleBlogEntryPage;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoAlertPresentException;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class InitialLoginTestIT {
     private WebDriver driver;
@@ -44,7 +51,6 @@ public class InitialLoginTestIT {
 
     @Before
     public void setUp() throws Exception {
-
         FirefoxProfile profile = new FirefoxProfile();
         profile.setPreference("intl.accept_languages", "en_US");
         
@@ -55,7 +61,6 @@ public class InitialLoginTestIT {
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS)
                                   .pageLoadTimeout(5, TimeUnit.SECONDS)
                                   .setScriptTimeout(5, TimeUnit.SECONDS);
-        
         baseUrl = "http://localhost:8080/roller/";
     }
 

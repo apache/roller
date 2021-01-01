@@ -19,8 +19,6 @@ package org.apache.roller.selenium.editor;
 
 import org.openqa.selenium.WebDriver;
 
-import java.lang.String;
-
 /**
  * represents editor/EntryAddPage.jsp
  * Page for adding a new blog entry

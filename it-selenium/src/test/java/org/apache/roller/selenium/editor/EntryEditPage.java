@@ -20,8 +20,6 @@ package org.apache.roller.selenium.editor;
 import org.apache.roller.selenium.view.SingleBlogEntryPage;
 import org.openqa.selenium.WebDriver;
 
-import java.lang.String;
-
 /**
  * represents editor/EntryEditPage.jsp
  * Page for editing an already saved (draft or posted) blog entry

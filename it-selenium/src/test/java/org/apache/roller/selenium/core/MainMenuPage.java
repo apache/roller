@@ -21,7 +21,6 @@ import org.apache.roller.selenium.AbstractRollerPage;
 import org.apache.roller.selenium.editor.EntryAddPage;
 import org.openqa.selenium.WebDriver;
 
-
 /**
  * represents core/MainMenu.jsp
  * Post-login page object to create, choose, configure blogs.

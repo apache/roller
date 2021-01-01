@@ -20,8 +20,6 @@ package org.apache.roller.selenium.view;
 import org.apache.roller.selenium.AbstractRollerPage;
 import org.openqa.selenium.WebDriver;
 
-import java.lang.String;
-
 /**
  * represents a URL that displays a single blog entry
  * (URL similar to http://localhost:8080/roller/myblog/entry/my_blog_entry)

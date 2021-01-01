@@ -61,6 +61,33 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-firefox-driver</artifactId>
             <version>3.141.59</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb.version}</version>
+            <exclusions>
+                <exclusion>
+                    <!--api is already in the javax.activation artifact-->
+                    <groupId>javax.activation</groupId>
+                    <artifactId>javax.activation-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Will bring in once we configure a Chrome option -->
@@ -94,8 +121,7 @@
     <build>
         <plugins>
 
-            <!-- Activates integration tests (by default, classes under tests that end with "IT")
-            -->
+            <!-- Activates integration tests (by default, classes under tests that end with "IT") -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.0.0-M5</version>
@@ -135,7 +161,7 @@
                             <port>4224</port>
                             <sources>
                                 <script>
-                                    <sourceFile>target/roller-selenium-tests-${project.version}/WEB-INF/classes/dbscripts/derby/createdb.sql</sourceFile>
+                                    <sourceFile>${project.basedir}/target/roller-selenium-tests-${project.version}/WEB-INF/classes/dbscripts/derby/createdb.sql</sourceFile>
                                 </script>
                             </sources>
                         </configuration>
@@ -163,7 +189,7 @@
                         <contextPath>/roller</contextPath>
                     </webApp>
                     <webAppSourceDirectory>target/roller-selenium-tests-${project.version}</webAppSourceDirectory>
-                    <jettyXml>../app/src/test/resources/jetty.xml</jettyXml>
+                    <jettyXmls>${project.parent.basedir}/app/src/test/resources/jetty.xml</jettyXmls>
                     <systemProperties>
                         <systemProperty>
                             <name>roller.custom.config</name>
@@ -179,8 +205,6 @@
                             <goal>start</goal>
                         </goals>
                         <configuration>
-                            <scanIntervalSeconds>0</scanIntervalSeconds>
-                            <!-- <daemon>true</daemon> -->
                         </configuration>
                     </execution>
                     <execution>
@@ -212,9 +236,29 @@
                     </dependency>
 
                     <dependency>
+                        <groupId>commons-dbcp</groupId>
+                        <artifactId>commons-dbcp</artifactId>
+                        <version>1.4</version>
+                        <scope>runtime</scope>
+                    </dependency>
+
+                    <dependency>
                         <groupId>javax.mail</groupId>
                         <artifactId>mail</artifactId>
                         <version>1.4.7</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>${jaxb.version}</version>
+                        <exclusions>
+                            <exclusion>
+                                <!--api is already in the javax.activation artifact-->
+                                <groupId>javax.activation</groupId>
+                                <artifactId>javax.activation-api</artifactId>
+                            </exclusion>
+                        </exclusions>
                     </dependency>
 
                 </dependencies>
