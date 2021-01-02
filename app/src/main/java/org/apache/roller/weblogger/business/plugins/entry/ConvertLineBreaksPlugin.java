@@ -51,7 +51,7 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
     
     
     public ConvertLineBreaksPlugin() {
-        mLogger.debug("Instantiating ConvertLineBreaksPlugin v"+this.VERSION);
+        mLogger.debug("Instantiating ConvertLineBreaksPlugin v"+ ConvertLineBreaksPlugin.VERSION);
     }
     
     
