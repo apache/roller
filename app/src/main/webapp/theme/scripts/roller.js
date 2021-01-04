@@ -127,11 +127,12 @@ function folderPreference(folderId) {
 }
 
 function toggleNextRow(e) {
+    var checked;
     if (e.type === "checkbox") {
-        var checked = e.checked;
+        checked = e.checked;
     } else if (e.type === "radio") {
         var v = e.value;
-        var checked = (v === "1" || v === "y" || v === "true");
+        checked = (v === "1" || v === "y" || v === "true");
     }
     // var nextRow = e.parentNode.parentNode.nextSibling;
     // the above doesn't work on Mozilla since it treats white space as nodes
