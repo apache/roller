@@ -37,43 +37,43 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 public class PingQueueTask extends RollerTaskWithLeasing {
     private static Log log = LogFactory.getLog(PingQueueTask.class);
 
-    public static String NAME = "PingQueueTask";
+    public static final String NAME = "PingQueueTask";
 
     // a unique id for this specific task instance
     // this is meant to be unique for each client in a clustered environment
     private String clientId = null;
-    
+
     // a String description of when to start this task
     private String startTimeDesc = "immediate";
-    
+
     // interval at which the task is run, default is 5 minutes
     private int interval = 5;
-    
+
     // lease time given to task lock
     private int leaseTime = RollerTaskWithLeasing.DEFAULT_LEASE_MINS;
-    
-    
+
+
     public String getClientId() {
         return clientId;
     }
-    
+
     public Date getStartTime(Date currentTime) {
         return getAdjustedTime(currentTime, startTimeDesc);
     }
-    
+
     public String getStartTimeDesc() {
         return startTimeDesc;
     }
-    
+
     public int getInterval() {
         return this.interval;
     }
-    
+
     public int getLeaseTime() {
         return this.leaseTime;
     }
-    
-    
+
+
     public void init() throws WebloggerException {
         this.init(PingQueueTask.NAME);
     }
@@ -84,19 +84,19 @@ public class PingQueueTask extends RollerTaskWithLeasing {
 
         // get relevant props
         Properties props = this.getTaskProperties();
-        
+
         // extract clientId
         String client = props.getProperty("clientId");
         if(client != null) {
             this.clientId = client;
         }
-        
+
         // extract start time
         String startTimeStr = props.getProperty("startTime");
         if(startTimeStr != null) {
             this.startTimeDesc = startTimeStr;
         }
-        
+
         // extract interval
         String intervalStr = props.getProperty("interval");
         if(intervalStr != null) {
@@ -106,7 +106,7 @@ public class PingQueueTask extends RollerTaskWithLeasing {
                 log.warn("Invalid interval: "+intervalStr);
             }
         }
-        
+
         // extract lease time
         String leaseTimeStr = props.getProperty("leaseTime");
         if(leaseTimeStr != null) {
@@ -116,25 +116,25 @@ public class PingQueueTask extends RollerTaskWithLeasing {
                 log.warn("Invalid leaseTime: "+leaseTimeStr);
             }
         }
-        
+
         // initialize queue processor
         PingQueueProcessor.init();
     }
-    
+
 
     /**
      * Run the task once.
      */
     public void runTask() {
-        
+
         try {
             log.debug("task started");
-            
+
             PingQueueProcessor.getInstance().processQueue();
             WebloggerFactory.getWeblogger().flush();
-            
+
             log.debug("task completed");
-            
+
         } catch (WebloggerException e) {
             log.error("Error while processing ping queue", e);
         } catch (Exception ee) {
@@ -143,10 +143,10 @@ public class PingQueueTask extends RollerTaskWithLeasing {
             // always release
             WebloggerFactory.getWeblogger().release();
         }
-        
+
     }
-    
-    
+
+
     /**
      * Main method so that this task may be run from outside the webapp.
      */
@@ -161,5 +161,5 @@ public class PingQueueTask extends RollerTaskWithLeasing {
             System.exit(-1);
         }
     }
-    
+
 }

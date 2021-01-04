@@ -33,44 +33,44 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 public class ResetHitCountsTask extends RollerTaskWithLeasing {
     private static Log log = LogFactory.getLog(ResetHitCountsTask.class);
 
-    public static String NAME = "ResetHitCountsTask";
+    public static final String NAME = "ResetHitCountsTask";
 
 
     // a unique id for this specific task instance
     // this is meant to be unique for each client in a clustered environment
     private String clientId = null;
-    
+
     // a String description of when to start this task
     private String startTimeDesc = "startOfDay";
-    
+
     // interval at which the task is run, default is 1 day
     private int interval = RollerTask.DEFAULT_INTERVAL_MINS;
-    
+
     // lease time given to task lock, default is 30 minutes
     private int leaseTime = RollerTaskWithLeasing.DEFAULT_LEASE_MINS;
-    
-    
+
+
     public String getClientId() {
         return clientId;
     }
-    
+
     public Date getStartTime(Date currentTime) {
         return getAdjustedTime(currentTime, startTimeDesc);
     }
-    
+
     public String getStartTimeDesc() {
         return startTimeDesc;
     }
-    
+
     public int getInterval() {
         return this.interval;
     }
-    
+
     public int getLeaseTime() {
         return this.leaseTime;
     }
-    
-    
+
+
     public void init() throws WebloggerException {
         this.init(ResetHitCountsTask.NAME);
     }
@@ -78,22 +78,22 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
     @Override
     public void init(String name) throws WebloggerException {
         super.init(name);
-        
+
         // get relevant props
         Properties props = this.getTaskProperties();
-        
+
         // extract clientId
         String client = props.getProperty("clientId");
         if(client != null) {
             this.clientId = client;
         }
-        
+
         // extract start time
         String startTimeStr = props.getProperty("startTime");
         if(startTimeStr != null) {
             this.startTimeDesc = startTimeStr;
         }
-        
+
         // extract interval
         String intervalStr = props.getProperty("interval");
         if(intervalStr != null) {
@@ -103,7 +103,7 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
                 log.warn("Invalid interval: "+intervalStr);
             }
         }
-        
+
         // extract lease time
         String leaseTimeStr = props.getProperty("leaseTime");
         if(leaseTimeStr != null) {
@@ -114,22 +114,22 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
             }
         }
     }
-    
-    
+
+
     /**
      * Execute the task.
      */
     public void runTask() {
-        
+
         try {
             log.info("task started");
-            
+
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             mgr.resetAllHitCounts();
             WebloggerFactory.getWeblogger().flush();
-            
+
             log.info("task completed");
-            
+
         } catch (WebloggerException e) {
             log.error("Error while resetting hit counts", e);
         } catch (Exception ee) {
@@ -138,10 +138,10 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
             // always release
             WebloggerFactory.getWeblogger().release();
         }
-        
+
     }
-    
-    
+
+
     /**
      * Main method so that this task may be run from outside the webapp.
      */
@@ -156,5 +156,5 @@ public class ResetHitCountsTask extends RollerTaskWithLeasing {
             System.exit(-1);
         }
     }
-    
+
 }

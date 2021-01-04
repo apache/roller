@@ -22,7 +22,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 
 public class TestTask extends RollerTaskWithLeasing {
-    public static String NAME = "TestTask";
+    public static final String NAME = "TestTask";
 
     public TestTask() {}
 

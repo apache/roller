@@ -44,48 +44,48 @@ import org.apache.roller.weblogger.pojos.Weblog;
 
 /**
  * This tasks is responsible for ensuring that the planet group 'all' contains
- * a subscription for every weblogs in the Roller system. It also takes care 
+ * a subscription for every weblogs in the Roller system. It also takes care
  * of deleting subsctiptions for weblogs that no longer exist.
  */
 public class SyncWebsitesTask extends RollerTaskWithLeasing {
     private static Log log = LogFactory.getLog(SyncWebsitesTask.class);
 
-    public static String NAME = "SyncWebsitesTask";
+    public static final String NAME = "SyncWebsitesTask";
 
     // a unique id for this specific task instance
     // this is meant to be unique for each client in a clustered environment
     private String clientId = "unspecifiedClientId";
-    
+
     // a String description of when to start this task
     private String startTimeDesc = "startOfDay";
-    
+
     // interval at which the task is run, default is 1 day
     private int interval = RollerTask.DEFAULT_INTERVAL_MINS;
-    
+
     // lease time given to ping task lock, default is 30 minutes
     private int leaseTime = RollerTaskWithLeasing.DEFAULT_LEASE_MINS;
-    
+
     public String getClientId() {
         return clientId;
     }
-    
+
     public Date getStartTime(Date currentTime) {
         return getAdjustedTime(currentTime, startTimeDesc);
     }
-    
+
     public String getStartTimeDesc() {
         return startTimeDesc;
     }
-    
+
     public int getInterval() {
         return this.interval;
     }
-    
+
     public int getLeaseTime() {
         return this.leaseTime;
     }
-    
-    
+
+
     public void init() throws WebloggerException {
         this.init(RefreshRollerPlanetTask.NAME);
     }
@@ -96,19 +96,19 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
 
         // get relevant props
         Properties props = this.getTaskProperties();
-        
+
         // extract clientId
         String client = props.getProperty("clientId");
         if(client != null) {
             this.clientId = client;
         }
-        
+
         // extract start time
         String startTimeStr = props.getProperty("startTime");
         if(startTimeStr != null) {
             this.startTimeDesc = startTimeStr;
         }
-        
+
         // extract interval
         String intervalStr = props.getProperty("interval");
         if(intervalStr != null) {
@@ -118,7 +118,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
                 log.warn("Invalid interval: "+intervalStr);
             }
         }
-        
+
         // extract lease time
         String leaseTimeStr = props.getProperty("leaseTime");
         if(leaseTimeStr != null) {
@@ -129,18 +129,18 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             }
         }
     }
-    
-    
+
+
     /**
      * Ensure there's a subscription in the "all" group for every Roller weblog.
      */
     public void runTask() {
-        
+
         log.info("Syncing local weblogs with planet subscriptions list");
-        
+
         try {
             PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
-            
+
             // first, make sure there is an "all" pmgr group
             Planet planetObject = pmgr.getWebloggerById("zzz_default_planet_zzz");
             PlanetGroup group = pmgr.getGroup(planetObject, "all");
@@ -152,24 +152,24 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
                 pmgr.saveGroup(group);
                 WebloggerFactory.getWeblogger().flush();
             }
-            
+
             // walk through all enable weblogs and add/update subs as needed
             List<String> liveUserFeeds = new ArrayList<String>();
             List<Weblog> websites = WebloggerFactory.getWeblogger()
                     .getWeblogManager().getWeblogs(Boolean.TRUE, Boolean.TRUE, null, null, 0, -1);
             for ( Weblog weblog : websites ) {
-                
+
                 log.debug("processing weblog - "+weblog.getHandle());
                 String feedUrl = "weblogger:"+weblog.getHandle();
-                
+
                 // add feed url to the "live" list
                 liveUserFeeds.add(feedUrl);
-                
+
                 // if sub already exists then update it, otherwise add it
                 Subscription sub = pmgr.getSubscription(feedUrl);
                 if (sub == null) {
                     log.debug("ADDING feed: "+feedUrl);
-                    
+
                     sub = new Subscription();
                     sub.setTitle(weblog.getName());
                     sub.setFeedURL(feedUrl);
@@ -178,7 +178,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
                     sub.setAuthor(weblog.getName());
                     sub.setLastUpdated(new Date(0));
                     pmgr.saveSubscription(sub);
-                    
+
                     sub.getGroups().add(group);
                     group.getSubscriptions().add(sub);
 
@@ -186,30 +186,30 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
 
                 } else {
                     log.debug("UPDATING feed: "+feedUrl);
-                    
+
                     sub.setTitle(weblog.getName());
                     sub.setAuthor(weblog.getName());
-                    
+
                     pmgr.saveSubscription(sub);
                 }
-                
+
                 // save as we go
                 WebloggerFactory.getWeblogger().flush();
             }
-            
+
             // new subs added, existing subs updated, now delete old subs
             Set<Subscription> deleteSubs = new HashSet<Subscription>();
             Set<Subscription> subs = group.getSubscriptions();
             for (Subscription sub : subs) {
                 // only delete subs from the group if ...
                 // 1. they are local
-                // 2. they are no longer listed as a weblog 
-                if (sub.getFeedURL().startsWith("weblogger:") && 
+                // 2. they are no longer listed as a weblog
+                if (sub.getFeedURL().startsWith("weblogger:") &&
                         !liveUserFeeds.contains(sub.getFeedURL())) {
                     deleteSubs.add(sub);
                 }
             }
-            
+
             // now go back through deleteSubs and do actual delete
             // this is required because deleting a sub in the loop above
             // causes a ConcurrentModificationException because we can't
@@ -219,11 +219,11 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
                 pmgr.deleteSubscription(deleteSub);
                 group.getSubscriptions().remove(deleteSub);
             }
-            
+
             // all done, lets save
             pmgr.saveGroup(group);
             WebloggerFactory.getWeblogger().flush();
-            
+
         } catch (RollerException e) {
             log.error("ERROR refreshing entries", e);
         } finally {
@@ -231,24 +231,24 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
             WebloggerFactory.getWeblogger().release();
         }
     }
-    
-    
-    /** 
-     * Task may be run from the command line 
+
+
+    /**
+     * Task may be run from the command line
      */
     public static void main(String[] args) throws Exception {
-        
+
         // before we can do anything we need to bootstrap the planet backend
         WebloggerStartup.prepare();
-        
+
         // we need to use our own planet provider for integration
         String guiceModule = WebloggerConfig.getProperty("planet.aggregator.guice.module");
         WebloggerProvider provider = new GuiceWebloggerProvider(guiceModule);
         WebloggerFactory.bootstrap(provider);
-        
+
         SyncWebsitesTask task = new SyncWebsitesTask();
         task.init();
         task.run();
     }
-    
+
 }
