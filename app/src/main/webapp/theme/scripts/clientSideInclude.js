@@ -34,7 +34,7 @@ function clientSideInclude(id, url) {
     } catch (e) {
       try {
         req = new ActiveXObject("Microsoft.XMLHTTP");
-      } catch (e) {
+      } catch (er) {
         req = false;
       }
     }
@@ -68,4 +68,4 @@ function processReqChange() {
                 req.statusText);
          }
     }
-} 
+}
