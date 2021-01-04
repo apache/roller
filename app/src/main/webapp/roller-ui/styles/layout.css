@@ -44,15 +44,13 @@ layout.css: Base CSS layout for Roller's web UI (position and sizing only)
 #menu {
     padding: 0px 10px 0px 10px;
 }
-#content {
-}
-/*  
+/*
     NOTE: these wrap divs are kinda lame, however they are necessary.
     the problem is that when 2 divs are floated side-by-side then the
     calculation of their widths does not include padding or margins.
 
     so without the wrap divs then putting a margin or padding value in any
-    of the XXXcontent divs forces the width calculation to be > 100% and 
+    of the XXXcontent divs forces the width calculation to be > 100% and
     the divs don't fit next to each other anymore :(
 
     to get around this we put a XXXcontent_wrap around the XXXcontent divs

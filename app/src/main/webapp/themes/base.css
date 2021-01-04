@@ -22,10 +22,6 @@ a {
     font-weight: normal;
     text-decoration: underline;
 }
-a:active {}
-a:link {}
-a:visited {}
-a:hover {}
 body {
     font-family: verdana, sans-serif;
     font-size: small;
@@ -49,7 +45,7 @@ pre {
 }
 img {
     border: 0px;
-    margin: 0px; 
+    margin: 0px;
 }
 
 /* bookmark.vm */
@@ -136,7 +132,7 @@ div.comments-head {
 }
 /* actual comment content */
 .comment {
-    margin: 5px 10px 10px 5px; 
+    margin: 5px 10px 10px 5px;
 }
 /* commenter info */
 p.comment-details {
@@ -194,8 +190,6 @@ textarea.commentFormTextarea {
     color: red;
     font-style: italic;
 }
-div.commentBody {}
-div.commentByline {}
 div.commentAuthor {
     border: none;
 }
@@ -213,8 +207,6 @@ span.disabled {
 }
 span.enabled {
     color: green;
-}
-form#searchForm {
 }
 div#searchAgain {
   border: 1px solid #999;
@@ -299,8 +291,6 @@ table.hCalendarTable {
 td.hCalendarMonthYearRow {
     font-weight: bold;
 }
-a.hCalendarNavBar {
-}
 th.hCalendarDayNameRow {
     text-align : center;
     font-size : x-small;
@@ -334,7 +324,7 @@ td.hCalendarDay {
     font-size : x-small;
 }
 
-/* BigWeblogCalendarModel */ 
+/* BigWeblogCalendarModel */
 
 div.hCalendarDayTitleBig {
   position: relative;
