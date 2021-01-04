@@ -75,13 +75,13 @@ function sendUserRequest(url) {
 function handleUserResponse() {
     if (http.readyState === 4) {
         var userList = document.getElementById("userList");
-        for (var i = userList.options.length; i >= 0; i--) {
+        for (let i = userList.options.length; i >= 0; i--) {
             userList.options[i] = null;
         }
         var data = http.responseText;
         if (data.indexOf("\n") !== -1) {
             var lines = data.split('\n');
-            for (var i = 0; i < lines.length; i++) {
+            for (let i = 0; i < lines.length; i++) {
                 if (lines[i].indexOf(',') !== -1) {
                    var userArray = lines[i].split(',');
                    userList.options[userList.length] =
