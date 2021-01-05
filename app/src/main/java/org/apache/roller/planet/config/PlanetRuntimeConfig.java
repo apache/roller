@@ -76,7 +76,7 @@ public class PlanetRuntimeConfig {
         if(value == null)
             return false;
 
-        return (new Boolean(value)).booleanValue();
+        return Boolean.parseBoolean(value);
     }
 
 
