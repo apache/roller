@@ -37,7 +37,7 @@ public class PlanetRuntimeConfig {
 
     private static Log log = LogFactory.getLog(PlanetRuntimeConfig.class);
 
-    private static String runtime_config = "/org/apache/roller/planet/config/planetRuntimeConfigDefs.xml";
+    private static String runtimeConfig = "/org/apache/roller/planet/config/planetRuntimeConfigDefs.xml";
     private static RuntimeConfigDefs configDefs = null;
 
     // prevent instantiations
@@ -109,7 +109,7 @@ public class PlanetRuntimeConfig {
             // unmarshall the config defs file
             try {
                 InputStream is =
-                        PlanetRuntimeConfig.class.getResourceAsStream(runtime_config);
+                        PlanetRuntimeConfig.class.getResourceAsStream(runtimeConfig);
 
                 RuntimeConfigDefsParser parser = new RuntimeConfigDefsParser();
                 configDefs = parser.unmarshall(is);
@@ -139,7 +139,7 @@ public class PlanetRuntimeConfig {
 
         try {
             InputStreamReader reader =
-                    new InputStreamReader(PlanetConfig.class.getResourceAsStream(runtime_config));
+                    new InputStreamReader(PlanetConfig.class.getResourceAsStream(runtimeConfig));
             StringWriter configString = new StringWriter();
 
             char[] buf = new char[8196];
