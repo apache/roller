@@ -910,8 +910,7 @@ public class DatabaseInstaller {
     private void setDatabaseVersion(Connection con, int version)
             throws StartupException {
 
-        try {
-            PreparedStatement stmt = con.prepareStatement("insert into roller_properties values(?,?)");
+        try (PreparedStatement stmt = con.prepareStatement("insert into roller_properties values(?,?)")) {
             stmt.setString(1, DBVERSION_PROP);
             stmt.setString(2, String.valueOf(version));
             stmt.executeUpdate();
@@ -929,8 +928,7 @@ public class DatabaseInstaller {
     private void updateDatabaseVersion(Connection con, int version)
             throws StartupException {
 
-        try {
-            PreparedStatement stmt = con.prepareStatement("update roller_properties set value = ? where name = ?");
+        try (PreparedStatement stmt = con.prepareStatement("update roller_properties set value = ? where name = ?")) {
             stmt.setString(1, String.valueOf(version));
             stmt.setString(2, DBVERSION_PROP);
             stmt.executeUpdate();
