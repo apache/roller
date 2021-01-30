@@ -37,73 +37,73 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  * automatically re-read the file and update the list when that happens.
  */
 public final class IPBanList {
-    
+
     private static Log log = LogFactory.getLog(IPBanList.class);
-    
+
     // set of ips that are banned, use a set to ensure uniqueness
     private Set bannedIps = new HashSet();
-    
+
     // file listing the ips that are banned
     private ModifiedFile bannedIpsFile = null;
-    
+
     // reference to our singleton instance
     private static IPBanList instance = null;
-    
-    
+
+
     static {
         instance = new IPBanList();
     }
-    
-    
+
+
     // private because we are a singleton
     private IPBanList() {
-        
+
         log.debug("INIT");
-        
+
         // load up set of denied ips
         String banIpsFilePath = WebloggerConfig.getProperty("ipbanlist.file");
         if(banIpsFilePath != null) {
             ModifiedFile banIpsFile = new ModifiedFile(banIpsFilePath);
-            
+
             if(banIpsFile.exists() && banIpsFile.canRead()) {
                 this.bannedIpsFile = banIpsFile;
                 this.loadBannedIps();
             }
         }
     }
-    
-    
+
+
     // access to the singleton instance
     public static IPBanList getInstance() {
         return instance;
     }
-    
-    
+
+
     public boolean isBanned(String ip) {
-        
+
         // update the banned ips list if needed
         this.loadBannedIpsIfNeeded(false);
-        
+
         if(ip != null) {
             return this.bannedIps.contains(ip);
         } else {
             return false;
         }
     }
-    
-    
+
+
     public void addBannedIp(String ip) {
-        
+
         if(ip == null) {
             return;
         }
-        
+
         // update the banned ips list if needed
         this.loadBannedIpsIfNeeded(false);
-        
-        if(!this.bannedIps.contains(ip) && 
+
+        if(!this.bannedIps.contains(ip) &&
                 (bannedIpsFile != null && bannedIpsFile.canWrite())) {
-            
+
             try {
                 synchronized(this) {
                     // add to file
@@ -111,86 +111,82 @@ public final class IPBanList {
                     out.println(ip);
                     out.close();
                     this.bannedIpsFile.clearChanged();
-                    
+
                     // add to Set
                     this.bannedIps.add(ip);
                 }
-                
+
                 log.debug("ADDED "+ip);
             } catch(Exception e) {
                 log.error("Error adding banned ip to file", e);
             }
         }
     }
-    
-    
+
+
     /**
      * Check if the banned ips file has changed and needs to be reloaded.
      */
     private void loadBannedIpsIfNeeded(boolean forceLoad) {
-        
-        if(bannedIpsFile != null && 
+
+        if(bannedIpsFile != null &&
                 (bannedIpsFile.hasChanged() || forceLoad)) {
-            
+
             // need to reload
             this.loadBannedIps();
         }
     }
-    
-    
+
+
     /**
      * Load the list of banned ips from a file.  This clears the old list and
      * loads exactly what is in the file.
      */
     private synchronized void loadBannedIps() {
-        
+
         if(bannedIpsFile != null) {
-            
-            try {
+
+            // TODO: optimize this
+            try (BufferedReader in = new BufferedReader(new FileReader(this.bannedIpsFile))) {
                 HashSet newBannedIpList = new HashSet();
-                
-                // TODO: optimize this
-                BufferedReader in = new BufferedReader(new FileReader(this.bannedIpsFile));
-                
+
                 String ip = null;
                 while((ip = in.readLine()) != null) {
                     newBannedIpList.add(ip);
                 }
-                
-                in.close();
-                
+
                 // list updated, reset modified file
                 this.bannedIps = newBannedIpList;
                 this.bannedIpsFile.clearChanged();
-                
+
                 log.info(this.bannedIps.size()+" banned ips loaded");
             } catch(Exception ex) {
                log.error("Error loading banned ips from file", ex);
             }
-            
+
         }
     }
-    
-    
-    // a simple extension to the File class which tracks if the file has 
+
+
+    // a simple extension to the File class which tracks if the file has
     // changed since the last time we checked
     private class ModifiedFile extends java.io.File {
-        
+
         private long myLastModified = 0;
-        
+
         public ModifiedFile(String filePath) {
             super(filePath);
-            
+
             this.myLastModified = lastModified();
         }
 
         public boolean hasChanged() {
             return lastModified() != myLastModified;
         }
-        
+
         public void clearChanged() {
             myLastModified = lastModified();
         }
     }
-    
+
 }
