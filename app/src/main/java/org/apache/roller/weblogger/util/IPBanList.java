@@ -24,6 +24,8 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -51,17 +53,17 @@ public final class IPBanList {
 
 
     static {
-        instance = new IPBanList();
+        instance = new IPBanList(() -> WebloggerConfig.getProperty("ipbanlist.file"));
     }
 
 
-    // private because we are a singleton
-    private IPBanList() {
+    // package-private for unit tests
+    IPBanList(Supplier<String> banIpsFilePathSupplier) {
 
         log.debug("INIT");
 
         // load up set of denied ips
-        String banIpsFilePath = WebloggerConfig.getProperty("ipbanlist.file");
+        String banIpsFilePath = banIpsFilePathSupplier.get();
         if(banIpsFilePath != null) {
             ModifiedFile banIpsFile = new ModifiedFile(banIpsFilePath);
 
