@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -43,7 +44,7 @@ public final class IPBanList {
     private static Log log = LogFactory.getLog(IPBanList.class);
 
     // set of ips that are banned, use a set to ensure uniqueness
-    private Set bannedIps = new HashSet();
+    private volatile Set<String> bannedIps = Collections.synchronizedSet(new HashSet<>());
 
     // file listing the ips that are banned
     private ModifiedFile bannedIpsFile = null;
@@ -150,7 +151,7 @@ public final class IPBanList {
 
             // TODO: optimize this
             try (BufferedReader in = new BufferedReader(new FileReader(this.bannedIpsFile))) {
-                HashSet newBannedIpList = new HashSet();
+                Set<String> newBannedIpList = new HashSet<>();
 
                 String ip = null;
                 while((ip = in.readLine()) != null) {
@@ -158,7 +159,7 @@ public final class IPBanList {
                 }
 
                 // list updated, reset modified file
-                this.bannedIps = newBannedIpList;
+                this.bannedIps = Collections.synchronizedSet(newBannedIpList);
                 this.bannedIpsFile.clearChanged();
 
                 log.info(this.bannedIps.size()+" banned ips loaded");
