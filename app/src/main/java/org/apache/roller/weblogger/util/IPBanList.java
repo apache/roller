@@ -22,9 +22,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 import org.apache.commons.logging.Log;
@@ -44,7 +43,7 @@ public final class IPBanList {
     private static final Log log = LogFactory.getLog(IPBanList.class);
 
     // set of ips that are banned, use a set to ensure uniqueness
-    private volatile Set<String> bannedIps = Collections.synchronizedSet(new HashSet<>());
+    private volatile Set<String> bannedIps = newThreadSafeSet();
 
     // file listing the ips that are banned
     private ModifiedFile bannedIpsFile = null;
@@ -151,7 +150,7 @@ public final class IPBanList {
 
             // TODO: optimize this
             try (BufferedReader in = new BufferedReader(new FileReader(this.bannedIpsFile))) {
-                Set<String> newBannedIpList = new HashSet<>();
+                Set<String> newBannedIpList = newThreadSafeSet();
 
                 String ip = null;
                 while((ip = in.readLine()) != null) {
@@ -159,7 +158,7 @@ public final class IPBanList {
                 }
 
                 // list updated, reset modified file
-                this.bannedIps = Collections.synchronizedSet(newBannedIpList);
+                this.bannedIps = newBannedIpList;
                 this.bannedIpsFile.clearChanged();
 
                 log.info(this.bannedIps.size()+" banned ips loaded");
@@ -192,4 +191,7 @@ public final class IPBanList {
         }
     }
 
+    private static <T> Set<T> newThreadSafeSet() {
+        return ConcurrentHashMap.newKeySet();
+    }
 }
