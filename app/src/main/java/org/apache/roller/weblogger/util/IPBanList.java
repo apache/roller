@@ -41,7 +41,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  */
 public final class IPBanList {
 
-    private static Log log = LogFactory.getLog(IPBanList.class);
+    private static final Log log = LogFactory.getLog(IPBanList.class);
 
     // set of ips that are banned, use a set to ensure uniqueness
     private volatile Set<String> bannedIps = Collections.synchronizedSet(new HashSet<>());
@@ -173,7 +173,7 @@ public final class IPBanList {
 
     // a simple extension to the File class which tracks if the file has
     // changed since the last time we checked
-    private class ModifiedFile extends java.io.File {
+    private static class ModifiedFile extends java.io.File {
 
         private long myLastModified = 0;
 
