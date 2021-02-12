@@ -84,7 +84,7 @@ public final class IPBanList {
     public boolean isBanned(String ip) {
 
         // update the banned ips list if needed
-        this.loadBannedIpsIfNeeded(false);
+        this.loadBannedIpsIfNeeded();
 
         if(ip != null) {
             return this.bannedIps.contains(ip);
@@ -101,7 +101,7 @@ public final class IPBanList {
         }
 
         // update the banned ips list if needed
-        this.loadBannedIpsIfNeeded(false);
+        this.loadBannedIpsIfNeeded();
 
         if(!this.bannedIps.contains(ip) &&
                 (bannedIpsFile != null && bannedIpsFile.canWrite())) {
@@ -129,10 +129,10 @@ public final class IPBanList {
     /**
      * Check if the banned ips file has changed and needs to be reloaded.
      */
-    private void loadBannedIpsIfNeeded(boolean forceLoad) {
+    private void loadBannedIpsIfNeeded() {
 
         if(bannedIpsFile != null &&
-                (bannedIpsFile.hasChanged() || forceLoad)) {
+                (bannedIpsFile.hasChanged())) {
 
             // need to reload
             this.loadBannedIps();
