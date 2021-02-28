@@ -205,7 +205,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
     }
     
     public List<String> getGroupHandles(Planet planet) throws RollerException {
-        List<String> handles = new ArrayList<String>();
+        List<String> handles = new ArrayList<>();
         for (PlanetGroup group : getGroups(planet)) {
             handles.add(group.getHandle());
         }
@@ -283,7 +283,7 @@ public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetM
             long startTime = System.currentTimeMillis();
             
             StringBuilder sb = new StringBuilder();
-            List<Object> params = new ArrayList<Object>();
+            List<Object> params = new ArrayList<>();
             int size = 0;
             sb.append("SELECT e FROM SubscriptionEntry e ");
             sb.append("JOIN e.subscription.groups g ");
