@@ -27,8 +27,7 @@ div.menu-tl {
     margin: 0px; 
     padding: 0px; 
     width: 100%;
-    background: url("../images/menutab-tl.gif") no-repeat top left;   
-    background-repeat: no-repeat;
+    background: url("../images/menutab-tl.gif") no-repeat top left;
     vertical-align: middle;
     display: table;
 }
@@ -36,8 +35,7 @@ div.menu-tr {
     margin: 0px; 
     padding: 0px; 
     width: 100%;
-    background: url("../images/menutab-tr.gif") no-repeat top right;    
-    background-repeat: no-repeat;
+    background: url("../images/menutab-tr.gif") no-repeat top right;
 }
 
 td div.menu-tr div.menu-tl a {
