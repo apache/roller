@@ -81,10 +81,12 @@ public class RuntimeConfigProperty implements Serializable {
     
     //------------------------------------------------------- Good citizenship
     
+    @Override
     public String toString() {
         return (getName() + "=" + getValue());
     }
     
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -98,6 +100,7 @@ public class RuntimeConfigProperty implements Serializable {
         .isEquals();
     }
     
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
         .append(getName())

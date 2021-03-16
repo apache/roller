@@ -62,6 +62,7 @@ public class LiteDeviceResolver implements DeviceResolver {
 		this.normalUserAgentKeywords.addAll(normalUserAgentKeywords);
 	}
 
+    @Override
 	public Device resolveDevice(HttpServletRequest request) {
 		String userAgent = request.getHeader("User-Agent");
 		// UserAgent keyword detection of Normal devices

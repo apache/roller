@@ -31,10 +31,12 @@ import org.apache.roller.weblogger.util.BannedwordslistChecker;
 public class BannedwordslistCommentValidator implements CommentValidator {
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");       
 
+    @Override
     public String getName() {
         return bundle.getString("comment.validator.bannedwordslistName");
     }
 
+    @Override
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
         if (BannedwordslistChecker.checkComment(comment)) {
             messages.addError("comment.validator.bannedwordslistMessage");

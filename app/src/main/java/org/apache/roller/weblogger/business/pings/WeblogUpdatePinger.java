@@ -79,6 +79,7 @@ public final class WeblogUpdatePinger {
             this.message = message;
         }
 
+        @Override
         public String toString() {
             return "PingResult{" + "error=" + error + ", message='" + message + "'" + "}";
         }

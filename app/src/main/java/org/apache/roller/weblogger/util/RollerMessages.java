@@ -73,6 +73,7 @@ public class RollerMessages
     {
         return mMessages.size();
     }
+    @Override
     public String toString() 
     {
         StringBuilder sb = new StringBuilder();

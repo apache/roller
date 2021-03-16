@@ -33,6 +33,7 @@ public class WeblogEntryWrapperComparator implements Comparator, Serializable
 {
     static final long serialVersionUID = -9067148992322255150L;
     
+    @Override
     public int compare(Object val1, Object val2) {
         WeblogEntryWrapper entry1 = (WeblogEntryWrapper)val1;
         WeblogEntryWrapper entry2 = (WeblogEntryWrapper)val2;

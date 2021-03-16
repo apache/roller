@@ -206,7 +206,7 @@ public final class WeblogPageCache {
             
             if("tags".equals(pageRequest.getContext())) {
                 key.append("/tags/");
-                if(pageRequest.getTags() != null && pageRequest.getTags().size() > 0) {
+                if(pageRequest.getTags() != null && !pageRequest.getTags().isEmpty()) {
                     Set ordered = new TreeSet(pageRequest.getTags());
                     String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
                     key.append(Utilities.stringArrayToString(tags,"+"));
@@ -231,8 +231,7 @@ public final class WeblogPageCache {
         key.append("/deviceType=").append(pageRequest.getDeviceType().toString());
         
         // we allow for arbitrary query params for custom pages
-        if(pageRequest.getWeblogPageName() != null &&
-                pageRequest.getCustomParams().size() > 0) {
+        if(pageRequest.getWeblogPageName() != null && !pageRequest.getCustomParams().isEmpty()) {
             String queryString = paramsToString(pageRequest.getCustomParams());
             
             key.append("/qp=").append(queryString);

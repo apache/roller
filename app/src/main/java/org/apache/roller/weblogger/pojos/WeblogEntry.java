@@ -172,6 +172,7 @@ public class WeblogEntry implements Serializable {
     
     //------------------------------------------------------- Good citizenship
 
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("{");
@@ -183,6 +184,7 @@ public class WeblogEntry implements Serializable {
         return buf.toString();
     }
 
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -197,6 +199,7 @@ public class WeblogEntry implements Serializable {
             .isEquals();
     }
     
+    @Override
     public int hashCode() { 
         return new HashCodeBuilder()
             .append(getAnchor())
@@ -212,7 +215,7 @@ public class WeblogEntry implements Serializable {
     
     public void setId(String id) {
         // Form bean workaround: empty string is never a valid id
-        if (id != null && id.trim().length() == 0) {
+        if (id != null && id.isBlank()) {
             return;
         }
         this.id = id;
@@ -752,6 +755,7 @@ public class WeblogEntry implements Serializable {
      * Returns entry permalink, relative to Roller context.
      * @deprecated Use getPermalink() instead.
      */
+    @Deprecated
     public String getPermaLink() {
         String lAnchor = this.getAnchor();        
         try {
@@ -766,6 +770,7 @@ public class WeblogEntry implements Serializable {
      * Get relative URL to comments page.
      * @deprecated Use commentLink() instead
      */
+    @Deprecated
     public String getCommentsLink() {
         return getPermaLink() + "#comments";
     }
@@ -777,7 +782,7 @@ public class WeblogEntry implements Serializable {
      * @return String
      */
     public String getDisplayTitle() {
-        if ( getTitle()==null || getTitle().trim().equals("") ) {
+        if ( getTitle()==null || getTitle().isBlank() ) {
             return StringUtils.left(Utilities.removeHTML(getText()), RollerConstants.TEXTWIDTH_255);
         }
         return Utilities.removeHTML(getTitle());
@@ -985,8 +990,7 @@ public class WeblogEntry implements Serializable {
         
         String displayContent = null;
         
-        if(readMoreLink == null || readMoreLink.trim().length() < 1 || 
-                "nil".equals(readMoreLink)) {
+        if(readMoreLink == null || readMoreLink.isBlank() || "nil".equals(readMoreLink)) {
             
             // no readMore link means permalink, so prefer text over summary
             if(StringUtils.isNotEmpty(this.getText())) {

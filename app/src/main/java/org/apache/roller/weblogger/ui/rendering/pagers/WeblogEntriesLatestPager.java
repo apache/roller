@@ -66,6 +66,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
     }
     
     
+    @Override
     public Map<Date, List<WeblogEntryWrapper>> getEntries() {
         
         if (entries == null) {
@@ -97,7 +98,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
                     }
                     
                     // done with that day, put it in the map
-                    if (wrapped.size() > 0) {
+                    if (!wrapped.isEmpty()) {
                         entries.put(entry.getKey(), wrapped);
                     }
                 }

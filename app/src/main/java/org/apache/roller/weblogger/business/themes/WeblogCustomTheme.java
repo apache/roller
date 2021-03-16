@@ -42,10 +42,12 @@ public class WeblogCustomTheme extends WeblogTheme {
         super(weblog);
     }
 
+    @Override
     public String getId() {
         return CUSTOM;
     }
     
+    @Override
     public String getName() {
         return CUSTOM;
     }
@@ -54,6 +56,7 @@ public class WeblogCustomTheme extends WeblogTheme {
         return CUSTOM;
     }
 
+    @Override
     public String getDescription() {
         return CUSTOM;
     }
@@ -62,14 +65,17 @@ public class WeblogCustomTheme extends WeblogTheme {
         return "N/A";
     }
     
+    @Override
     public Date getLastModified() {
         return this.weblog.getLastModified();
     }
     
+    @Override
     public boolean isEnabled() {
         return true;
     }
 
+    @Override
     public int compareTo(Theme other) {
         return getName().compareTo(other.getName());
     }
@@ -77,6 +83,7 @@ public class WeblogCustomTheme extends WeblogTheme {
     /**
      * Get the collection of all templates associated with this Theme.
      */
+    @Override
     public List<? extends ThemeTemplate> getTemplates() throws WebloggerException {
         return WebloggerFactory.getWeblogger().getWeblogManager().getTemplates(this.weblog);
     }
@@ -86,6 +93,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Lookup the stylesheet template for this theme.
      * Returns null if no stylesheet can be found.
      */
+    @Override
     public ThemeTemplate getStylesheet() throws WebloggerException {
         return getTemplateByAction(ComponentType.STYLESHEET);
     }
@@ -95,6 +103,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Lookup the default template.
      * Returns null if the template cannot be found.
      */
+    @Override
     public ThemeTemplate getDefaultTemplate() throws WebloggerException {
         return WebloggerFactory.getWeblogger().getWeblogManager()
                 .getTemplateByAction(this.weblog, ComponentType.WEBLOG);
@@ -105,6 +114,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Lookup the specified template by action.
      * Returns null if the template cannot be found.
      */
+    @Override
     public ThemeTemplate getTemplateByAction(ComponentType action) throws WebloggerException {
         if (action == null) {
             return null;
@@ -117,6 +127,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Lookup the specified template by name.
      * Returns null if the template cannot be found.
      */
+    @Override
     public ThemeTemplate getTemplateByName(String name) throws WebloggerException {
         if (name == null) {
             return null;
@@ -129,6 +140,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Lookup the specified template by link.
      * Returns null if the template cannot be found.
      */
+    @Override
     public ThemeTemplate getTemplateByLink(String link) throws WebloggerException {
         if (link == null) {
             return null;
@@ -141,6 +153,7 @@ public class WeblogCustomTheme extends WeblogTheme {
      * Lookup the specified resource by path.
      * Returns null if the resource cannot be found.
      */
+    @Override
     public ThemeResource getResource(String path) {
         ThemeResource resource = null;
         try {

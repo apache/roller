@@ -27,14 +27,17 @@ public class Summernote implements WeblogEntryEditor {
     public Summernote() {}
     
     
+    @Override
     public String getId() {
         return "editor-xinha.jsp";
     }
     
+    @Override
     public String getName() {
         return "editor.summernote.name";
     }
     
+    @Override
     public String getJspPage() {
         return "/WEB-INF/jsps/editor/EntryEditor.jsp";
     }

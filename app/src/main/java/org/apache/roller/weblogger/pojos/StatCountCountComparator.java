@@ -38,6 +38,7 @@ public final class StatCountCountComparator implements Comparator<StatCount>, Se
      * @throws ClassCastException if arguments are not instances of <em>StatCount</em>
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
+    @Override
     public int compare(StatCount sc1, StatCount sc2) {
         int compVal = sc1.getCount() < sc2.getCount() ? -1 :
                 (sc1.getCount() == sc2.getCount() ? 0 : 1);

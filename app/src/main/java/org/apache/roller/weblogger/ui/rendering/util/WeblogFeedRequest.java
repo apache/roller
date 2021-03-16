@@ -146,12 +146,11 @@ public class WeblogFeedRequest extends WeblogRequest {
             }
         }     
         
-        if(request.getParameter("q") != null &&
-                request.getParameter("q").trim().length() > 0) {
+        if(request.getParameter("q") != null && !request.getParameter("q").isBlank()) {
             this.term = URLUtilities.decode(request.getParameter("q"));
         }        
         
-        if((this.tags != null && this.tags.size() > 0) && this.weblogCategoryName != null) {
+        if(this.tags != null && !this.tags.isEmpty() && this.weblogCategoryName != null) {
             throw new InvalidRequestException("please specify either category or tags but not both, " + request.getRequestURL());            
         }
         

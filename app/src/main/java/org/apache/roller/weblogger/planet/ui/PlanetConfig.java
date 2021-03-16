@@ -178,6 +178,7 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
         return parameters;
     }
 
+    @Override
     public void setParameters(Map parameters) {
         this.parameters = parameters;
     }

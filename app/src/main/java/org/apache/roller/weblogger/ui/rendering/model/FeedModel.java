@@ -48,6 +48,7 @@ public class FeedModel implements Model {
     private Weblog weblog = null;
     
     
+    @Override
     public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
@@ -77,6 +78,7 @@ public class FeedModel implements Model {
     
     
     /** Template context name to be used for model */
+    @Override
     public String getModelName() {
         return "model";
     }
@@ -162,11 +164,11 @@ public class FeedModel implements Model {
         @Override
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
-            if(tags != null && tags.size() > 0) {
+            if(tags != null && !tags.isEmpty()) {
                 params.put("tags", URLUtilities.getEncodedTagsString(tags));
             }
             String category = feedRequest.getWeblogCategoryName();
-            if(category != null && category.trim().length() > 0) {
+            if(category != null && !category.isBlank()) {
                 params.put("cat", URLUtilities.encode(category));
             }  
             if(feedRequest.isExcerpts()) {
@@ -196,11 +198,11 @@ public class FeedModel implements Model {
         @Override
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
-            if(tags != null && tags.size() > 0) {
+            if(tags != null && !tags.isEmpty()) {
                 params.put("tags", URLUtilities.getEncodedTagsString(tags));
             }
             String category = feedRequest.getWeblogCategoryName();
-            if(category != null && category.trim().length() > 0) {
+            if(category != null && !category.isBlank()) {
                 params.put("cat", URLUtilities.encode(category));
             }  
             if(feedRequest.isExcerpts()) {
@@ -230,11 +232,11 @@ public class FeedModel implements Model {
         @Override
         protected String createURL(String url, Map params) {
             List tags = feedRequest.getTags();
-            if(tags != null && tags.size() > 0) {
+            if(tags != null && !tags.isEmpty()) {
                 params.put("tags", URLUtilities.getEncodedTagsString(tags));
             }
             String category = feedRequest.getWeblogCategoryName();
-            if(category != null && category.trim().length() > 0) {
+            if(category != null && !category.isBlank()) {
                 params.put("cat", URLUtilities.encode(category));
             }  
             if(feedRequest.isExcerpts()) {

@@ -109,7 +109,7 @@ public class WeblogPageRequest extends WeblogRequest {
          * 
          * path info may be null, which indicates the weblog homepage
          */
-        if (pathInfo != null && pathInfo.trim().length() > 0) {
+        if (pathInfo != null && !pathInfo.isBlank()) {
 
             // all views use 2 path elements
             String[] pathElements = pathInfo.split("/", 2);

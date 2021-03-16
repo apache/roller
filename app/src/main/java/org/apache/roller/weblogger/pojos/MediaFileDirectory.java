@@ -171,6 +171,7 @@ public class MediaFileDirectory {
                 .append(getDescription(), o.getDescription()).isEquals();
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder().append(getId()).append(getName())
                 .append(getDescription()).toHashCode();

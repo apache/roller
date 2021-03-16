@@ -158,7 +158,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         } else if(dateString != null && cat == null) {
             pathinfo.append("date/").append(dateString);  
         
-        } else if(tags != null && tags.size() > 0) {
+        } else if(tags != null && !tags.isEmpty()) {
             pathinfo.append("tags/").append(URLUtilities.getEncodedTagsString(tags));
         } else {
             if (dateString != null) {
@@ -228,7 +228,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             if(category != null) {
                 params.put("cat", URLUtilities.encode(category));
             }
-            if(tags != null && tags.size() > 0) {
+            if(tags != null && !tags.isEmpty()) {
                 params.put("tags", URLUtilities.getEncodedTagsString(tags));
             }
             if(pageNum > 0) {

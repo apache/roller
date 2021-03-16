@@ -70,7 +70,7 @@ public class WeblogRequestMapper implements RequestMapper {
         // build roller restricted list
         String restrictList = 
                 WebloggerConfig.getProperty("rendering.weblogMapper.rollerProtectedUrls");
-        if(restrictList != null && restrictList.trim().length() > 0) {
+        if(restrictList != null && !restrictList.isBlank()) {
             String[] restrict = restrictList.split(",");
             this.restricted.addAll(Arrays.asList(restrict));
         }
@@ -78,13 +78,14 @@ public class WeblogRequestMapper implements RequestMapper {
         // add user restricted list
         restrictList = 
                 WebloggerConfig.getProperty("rendering.weblogMapper.userProtectedUrls");
-        if(restrictList != null && restrictList.trim().length() > 0) {
+        if(restrictList != null && !restrictList.isBlank()) {
             String[] restrict = restrictList.split(",");
             this.restricted.addAll(Arrays.asList(restrict));
         }
     }
     
     
+    @Override
     public boolean handleRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         

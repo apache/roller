@@ -156,6 +156,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     
     //------------------------------------------------------- Good citizenship
     
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("{");
@@ -165,6 +166,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         return buf.toString();
     }
     
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -180,6 +182,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         .isEquals();
     }
     
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
         .append(getName())
@@ -191,6 +194,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
+    @Override
     public int compareTo(WeblogBookmark o) {
         return priority.compareTo(o.getPriority());
     }

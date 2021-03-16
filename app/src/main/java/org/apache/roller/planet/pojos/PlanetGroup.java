@@ -62,6 +62,7 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     /**
      * For comparing groups and sorting, ordered by Title.
      */
+    @Override
     public int compareTo(PlanetGroup other) {
         return getTitle().compareTo(other.getTitle());
     }

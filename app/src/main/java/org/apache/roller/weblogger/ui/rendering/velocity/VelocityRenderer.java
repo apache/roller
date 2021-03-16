@@ -121,6 +121,7 @@ public class VelocityRenderer implements Renderer {
      * @see org.apache.roller.weblogger.ui.rendering.Renderer#render(java.util.Map,
      *      java.io.Writer)
      */
+    @Override
     public void render(Map<String, Object> model, Writer out)
             throws RenderingException {
 

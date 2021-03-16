@@ -61,6 +61,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
     }
     
     
+    @Override
     public void initialize() throws InitializationException {
                     
         // initialize tasks, making sure that each task has a tasklock record in the db
@@ -121,12 +122,14 @@ public abstract class ThreadManagerImpl implements ThreadManager {
     }
     
     
+    @Override
     public void executeInBackground(Runnable runnable)
             throws InterruptedException {
         serviceScheduler.submit(runnable);
     }
     
     
+    @Override
     public void executeInForeground(Runnable runnable)
             throws InterruptedException {
         Future task = serviceScheduler.submit(runnable);
@@ -140,6 +143,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
     }
     
     
+    @Override
     public void shutdown() {
         
         LOG.debug("starting shutdown sequence");
@@ -166,6 +170,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
     }
     
     
+    @Override
     public void release() {
         // no-op
     }
@@ -177,6 +182,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
      * Subclasses should override this method if they plan to run in an
      * environment that supports clustered deployments.
      */
+    @Override
     public boolean registerLease(RollerTask task) {
         return true;
     }
@@ -188,6 +194,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
      * Subclasses should override this method if they plan to run in an
      * environment that supports clustered deployments.
      */
+    @Override
     public boolean unregisterLease(RollerTask task) {
         return true;
     }

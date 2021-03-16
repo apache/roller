@@ -462,7 +462,7 @@ public class MailUtil {
             }
 
             // now send to subscribers
-            if (notifySubscribers && subscribers.size() > 0) {
+            if (notifySubscribers && !subscribers.isEmpty()) {
                 // Form array of commenter addrs
                 String[] commenterAddrs = subscribers.toArray(new String[subscribers.size()]);
 

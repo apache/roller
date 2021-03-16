@@ -49,6 +49,7 @@ public class PropertyDef {
     /** Creates a new instance of PropertyDef */
     public PropertyDef() {}
 
+    @Override
     public String toString() {
         return "["+name+","+key+","+type+","+defaultValue+","+rows+","+cols+"]";
     }

@@ -37,10 +37,12 @@ public class TrackbackLinkbackCommentValidator implements CommentValidator {
     
     private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
     
+    @Override
     public String getName() {
         return bundle.getString("comment.validator.trackbackLinkbackName");
     }
     
+    @Override
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
         
         // linkback validation can be toggled at runtime, so check if it's enabled

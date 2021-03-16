@@ -43,6 +43,7 @@ public class BasicUserAutoProvision implements AutoProvision {
 	 * 
 	 * @see org.apache.roller.weblogger.ui.core.security.AutoProvision#execute()
 	 */
+    @Override
 	public boolean execute(HttpServletRequest request) {
 		User ud = CustomUserRegistry.getUserDetailsFromAuthentication(request);
 

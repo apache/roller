@@ -25,16 +25,19 @@ package org.apache.roller.planet.business;
  */
 public abstract class AbstractManagerImpl implements Manager {
     
+    @Override
     public void initialize() throws Exception {
         // no-op
     }
     
     
+    @Override
     public void release() {
         // no-op
     }
     
     
+    @Override
     public void shutdown() {
         // no-op
     }

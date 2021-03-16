@@ -76,7 +76,7 @@ public class CommentValidationManager {
      */
     public int validateComment(WeblogEntryComment comment, RollerMessages messages) {
         int total = 0;
-        if (validators.size() > 0) {
+        if (!validators.isEmpty()) {
             for (CommentValidator val : validators) {
                 log.debug("Invoking comment validator "+val.getName());
                 total += val.validate(comment, messages);

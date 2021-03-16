@@ -95,6 +95,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     }
     
     
+    @Override
     public Map<Date, List<WeblogEntryWrapper>> getEntries() {
         Date date = parseDate(dateString);
         Calendar cal = Calendar.getInstance(weblog.getTimeZoneInstance());
@@ -135,7 +136,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
                     }
                     
                     // done with that day, put it in the map
-                    if (wrapped.size() > 0) {
+                    if (!wrapped.isEmpty()) {
                         entries.put(entry.getKey(), wrapped);
                     }
                 }

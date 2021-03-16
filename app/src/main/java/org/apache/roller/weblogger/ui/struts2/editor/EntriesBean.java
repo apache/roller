@@ -141,6 +141,7 @@ public class EntriesBean {
     
     //------------------------------------------------------- Good citizenship
     
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         

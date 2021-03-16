@@ -126,6 +126,7 @@ public class OAuthAccessorRecord implements Serializable {
 
     //------------------------------------------------------- Good citizenship
 
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("{");
@@ -134,6 +135,7 @@ public class OAuthAccessorRecord implements Serializable {
         return buf.toString();
     }
 
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -147,6 +149,7 @@ public class OAuthAccessorRecord implements Serializable {
             .isEquals();
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder().append(getConsumerKey()).toHashCode();
     }

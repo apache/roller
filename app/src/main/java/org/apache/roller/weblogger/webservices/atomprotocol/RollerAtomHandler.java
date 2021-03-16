@@ -142,6 +142,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Return weblogHandle of authenticated user or null if there is none.
      */
+    @Override
     public String getAuthenticatedUsername() {
         String ret = null;
         if (this.user != null) {
@@ -156,6 +157,7 @@ public class RollerAtomHandler implements AtomHandler {
      * Return Atom service document for site, getting blog-name from pathInfo.
      * The workspace will contain collections for entries, categories and resources.
      */
+    @Override
     public AtomService getAtomService(AtomRequest areq) throws AtomException {
         try {
             return new RollerAtomService(user, atomURL);
@@ -170,6 +172,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Create entry in the entry collection (a Weblogger blog has only one).
      */
+    @Override
     public Entry postEntry(AtomRequest areq, Entry entry) throws AtomException {
         EntryCollection ecol = new EntryCollection(user, atomURL);
         return ecol.postEntry(areq, entry);
@@ -182,6 +185,7 @@ public class RollerAtomHandler implements AtomHandler {
      * TODO: do we need to handle mutli-part MIME uploads?
      * TODO: use Jakarta Commons File-upload?
      */
+    @Override
     public Entry postMedia(AtomRequest areq, Entry entry)
             throws AtomException {
         MediaCollection mcol = new MediaCollection(user, atomURL);
@@ -201,6 +205,7 @@ public class RollerAtomHandler implements AtomHandler {
      *    /<blog-name>/resources/offset
      * </pre>
      */
+    @Override
     public Feed getCollection(AtomRequest areq) throws AtomException {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
 
@@ -216,6 +221,7 @@ public class RollerAtomHandler implements AtomHandler {
     }
 
 
+    @Override
     public Categories getCategories(AtomRequest arg0) throws AtomException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -224,6 +230,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Retrieve entry, URI like this /blog-name/entry/id
      */
+    @Override
     public Entry getEntry(AtomRequest areq) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
@@ -243,6 +250,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Expects pathInfo of form /blog-name/resource/path/name
      */
+    @Override
     public AtomMediaResource getMediaResource(AtomRequest areq) throws AtomException {
         MediaCollection mcol = new MediaCollection(user, atomURL);
         return mcol.getMediaResource(areq);
@@ -254,6 +262,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Update entry, URI like this /blog-name/entry/id
      */
+    @Override
     public void putEntry(AtomRequest areq, Entry entry) throws AtomException {
         EntryCollection ecol = new EntryCollection(user, atomURL);
         ecol.putEntry(areq, entry);
@@ -264,6 +273,7 @@ public class RollerAtomHandler implements AtomHandler {
      * Update resource specified by pathInfo using data from input stream.
      * Expects pathInfo of form /blog-name/resource/path/name
      */
+    @Override
     public void putMedia(AtomRequest areq) throws AtomException {
         MediaCollection mcol = new MediaCollection(user, atomURL);
         mcol.putMedia(areq);
@@ -275,6 +285,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Delete entry, URI like this /blog-name/entry/id
      */
+    @Override
     public void deleteEntry(AtomRequest areq) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
@@ -299,6 +310,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * True if URL is the introspection URI.
      */
+    @Override
     public boolean isAtomServiceURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         return pathInfo.length == 0;
@@ -307,6 +319,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * True if URL is a entry URI.
      */
+    @Override
     public boolean isEntryURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         if (pathInfo.length > 2 && pathInfo[1].equals("entry")) {
@@ -321,6 +334,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * True if URL is media edit URI. Media can be updated, but not metadata.
      */
+    @Override
     public boolean isMediaEditURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         if (pathInfo.length > 1 && pathInfo[1].equals("resource")) {
@@ -332,6 +346,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * True if URL is a collection URI of any sort.
      */
+    @Override
     public boolean isCollectionURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         if (pathInfo.length > 1 && pathInfo[1].equals("entries")) {
@@ -346,6 +361,7 @@ public class RollerAtomHandler implements AtomHandler {
         return false;
     }
 
+    @Override
     public boolean isCategoriesURI(AtomRequest arg0) {
         return false;
     }

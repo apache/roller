@@ -58,6 +58,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
     }
     
     
+    @Override
     public String getId() {
         return id;
     }
@@ -66,6 +67,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -74,6 +76,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -82,6 +85,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.description = description;
     }
 
+    @Override
     public Date getLastModified() {
         return lastModified;
     }
@@ -98,6 +102,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.templateLanguage = templateLanguage;
     }
     
+    @Override
     public String getOutputContentType() {
         return outputContentType;
     }
@@ -106,6 +111,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         return type;
     }
 
+    @Override
     public TemplateRendition getTemplateRendition(RenditionType type) throws WebloggerException {
         return null;
     }
@@ -118,6 +124,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.outputContentType = outputContentType;
     }
 
+    @Override
     public ComponentType getAction() {
         return action;
     }
@@ -126,6 +133,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.action = action;
     }
 
+    @Override
     public String getLink() {
         return link;
     }
@@ -134,6 +142,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.link = link;
     }
 
+    @Override
     public boolean isHidden() {
         return hidden;
     }
@@ -142,6 +151,7 @@ public class StaticThemeTemplate implements ThemeTemplate, Serializable {
         this.hidden = hidden;
     }
 
+    @Override
     public boolean isNavbar() {
         return navbar;
     }

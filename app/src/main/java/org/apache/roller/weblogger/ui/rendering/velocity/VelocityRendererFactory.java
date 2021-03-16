@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 public class VelocityRendererFactory implements RendererFactory {
     private static Log log = LogFactory.getLog(VelocityRendererFactory.class);
     
+    @Override
     public Renderer getRenderer(Template template, 
 			MobileDeviceRepository.DeviceType deviceType) {
         Renderer renderer = null;

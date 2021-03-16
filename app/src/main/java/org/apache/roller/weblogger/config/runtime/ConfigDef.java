@@ -55,6 +55,7 @@ public class ConfigDef {
     }
 
 
+    @Override
     public String toString() {
         return name;
     }

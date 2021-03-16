@@ -39,10 +39,12 @@ public class ExcessLinksCommentValidator implements CommentValidator {
         threshold = WebloggerConfig.getIntProperty("comment.validator.excessLinks.threshold");
     }
         
+    @Override
     public String getName() {
         return bundle.getString("comment.validator.excessLinksName");
     }
 
+    @Override
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
         Matcher m = linkPattern.matcher(comment.getContent());
         int count = 0;

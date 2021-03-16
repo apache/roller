@@ -136,6 +136,7 @@ public class WeblogEntryTag implements Serializable {
     
     //------------------------------------------------------- Good citizenship
     
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("{");
@@ -146,6 +147,7 @@ public class WeblogEntryTag implements Serializable {
         return buf.toString();
     }
     
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -160,6 +162,7 @@ public class WeblogEntryTag implements Serializable {
         .isEquals();
     }
     
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
         .append(getName())

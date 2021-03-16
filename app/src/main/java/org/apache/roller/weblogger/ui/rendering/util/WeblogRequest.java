@@ -85,7 +85,7 @@ public class WeblogRequest extends ParsedRequest {
             }
             
             String[] pathElements = path.split("/", 2);
-            if(pathElements[0].trim().length() > 0) {
+            if(!pathElements[0].isBlank()) {
                 this.weblogHandle = pathElements[0];
             } else {
                 // no weblogHandle in path info
@@ -102,7 +102,7 @@ public class WeblogRequest extends ParsedRequest {
         }
         
         // second, check if we have a locale, everything else is extra path info
-        if(path != null && path.trim().length() > 0) {
+        if(path != null && !path.isBlank()) {
             
             String[] pathElements = path.split("/", 2);
             if(this.isLocale(pathElements[0])) {

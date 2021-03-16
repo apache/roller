@@ -39,14 +39,17 @@ class LiteDevice implements Device {
 	public static final LiteDevice TABLET_INSTANCE = new LiteDevice(
 			DeviceType.TABLET);
 
+    @Override
 	public boolean isNormal() {
 		return this.deviceType == DeviceType.NORMAL;
 	}
 
+    @Override
 	public boolean isMobile() {
 		return this.deviceType == DeviceType.MOBILE;
 	}
 
+    @Override
 	public boolean isTablet() {
 		return this.deviceType == DeviceType.TABLET;
 	}
@@ -55,6 +58,7 @@ class LiteDevice implements Device {
 		return this.deviceType;
 	}
 
+    @Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[LiteDevice ");

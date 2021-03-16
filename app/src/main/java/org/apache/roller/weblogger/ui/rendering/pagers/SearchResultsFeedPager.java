@@ -80,6 +80,7 @@ public class SearchResultsFeedPager extends AbstractPager {
         this.messageUtils = I18nMessages.getMessages(viewLocale);
     }
     
+    @Override
     public List getItems() {
         return this.entries;
     }
@@ -102,15 +103,15 @@ public class SearchResultsFeedPager extends AbstractPager {
     @Override
     protected String createURL(String url, Map params) {
         String category = feedRequest.getWeblogCategoryName();
-        if(category != null && category.trim().length() > 0) {
+        if(category != null && !category.isBlank()) {
             params.put("cat", URLUtilities.encode(category));
         }
         String term = feedRequest.getTerm();
-        if(term != null && term.trim().length() > 0) {
+        if(term != null && !term.isBlank()) {
             params.put("q", URLUtilities.encode(term.trim()));
         }     
         List tags = feedRequest.getTags();
-        if(tags != null && tags.size() > 0) {
+        if(tags != null && !tags.isEmpty()) {
             params.put("tags", URLUtilities.getEncodedTagsString(tags));
         }
         if(feedRequest.isExcerpts()) {

@@ -112,7 +112,7 @@ public class Comments extends UIAction {
             List<WeblogEntryComment> rawComments = wmgr.getComments(csc);
             comments = new ArrayList<WeblogEntryComment>();
             comments.addAll(rawComments);
-            if (comments.size() > 0) {
+            if (!comments.isEmpty()) {
                 if (comments.size() > COUNT) {
                     comments.remove(comments.size() - 1);
                     hasMore = true;
@@ -279,7 +279,7 @@ public class Comments extends UIAction {
 
             // delete all comments with delete box checked
             List<String> deletes = Arrays.asList(getBean().getDeleteComments());
-            if (deletes.size() > 0) {
+            if (!deletes.isEmpty()) {
                 log.debug("Processing deletes - " + deletes.size());
 
                 WeblogEntryComment deleteComment = null;

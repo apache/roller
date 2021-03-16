@@ -46,18 +46,21 @@ public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
     /**
      * Unique identifier.  This should never change. 
      */
+    @Override
     public String getId() {
         return "LinkMarkup";
     }
     
     
     /** Returns the display name of this Plugin. */
+    @Override
     public String getName() {
         return "Link Markup";
     }
     
     
     /** Briefly describes the function of the Plugin.  May contain HTML. */
+    @Override
     public String getDescription() {
         return "Automatically creates hyperlinks out of embedded URLs.";
     }
@@ -71,6 +74,7 @@ public class LinkMarkupPlugin implements WeblogEntryCommentPlugin {
      *
      * @return Results of applying plugin to string.
      */
+    @Override
     public String render(final WeblogEntryComment comment, String text) {
         StringBuilder result;
         result = new StringBuilder();

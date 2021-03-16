@@ -49,10 +49,12 @@ public class AkismetCommentValidator implements CommentValidator {
         apikey = WebloggerConfig.getProperty("comment.validator.akismet.apikey");
     }
 
+    @Override
     public String getName() {
         return bundle.getString("comment.validator.akismetName");
     }
 
+    @Override
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
         StringBuilder sb = new StringBuilder();
         sb.append("blog=").append(

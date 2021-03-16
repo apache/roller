@@ -250,6 +250,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     }
 
 
+    @Override
     public void setParameters(Map<String, String[]> parameters) {
         this.params = parameters;
 
@@ -308,6 +309,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
         this.commentPlugins = commentPlugins.clone();
     }
 
+    @Override
     public void setServletRequest(HttpServletRequest req) {
         httpMethod = req.getMethod();
     }

@@ -92,6 +92,7 @@ public class JPAWebloggerImpl extends WebloggerImpl {
     }
     
     
+    @Override
     public void flush() throws WebloggerException {
         this.strategy.flush();
     }

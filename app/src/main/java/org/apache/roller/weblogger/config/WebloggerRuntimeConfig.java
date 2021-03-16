@@ -196,7 +196,7 @@ public final class WebloggerRuntimeConfig {
         
         // db prop takes priority if it exists
         String absURL = getProperty("site.absoluteurl");
-        if(absURL != null && absURL.trim().length() > 0) {
+        if(absURL != null && !absURL.isBlank()) {
             return absURL;
         }
         

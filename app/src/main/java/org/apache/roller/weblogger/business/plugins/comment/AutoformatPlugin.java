@@ -42,21 +42,25 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
     /**
      * Unique identifier.  This should never change. 
      */
+    @Override
     public String getId() {
         return "AutoFormat";
     }
     
     
+    @Override
     public String getName() {
         return "Auto Format";
     }
     
     
+    @Override
     public String getDescription() {
         return "Converts plain text style paragraphs into html paragraphs.";
     }
     
     
+    @Override
     public String render(final WeblogEntryComment comment, String text) {
         
         LOG.debug("starting value:\n" + text);
@@ -75,16 +79,16 @@ public class AutoformatPlugin implements WeblogEntryCommentPlugin {
             boolean insidePara = false;
             while((line = br.readLine()) != null) {
                 
-                if(!insidePara && line.trim().length() > 0) {
+                if(!insidePara && !line.isBlank()) {
                     // start of a new paragraph
                     buf.append("\n<p>");
                     buf.append(line);
                     insidePara = true;
-                } else if(insidePara && line.trim().length() > 0) {
+                } else if(insidePara && !line.isBlank()) {
                     // another line in an existing paragraph
                     buf.append("<br/>\n");
                     buf.append(line);
-                } else if(insidePara && line.trim().length() < 1) {
+                } else if(insidePara && line.isBlank()) {
                     // end of a paragraph
                     buf.append("</p>\n\n");
                     insidePara = false;

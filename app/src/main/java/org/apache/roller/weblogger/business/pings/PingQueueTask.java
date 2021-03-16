@@ -53,22 +53,27 @@ public class PingQueueTask extends RollerTaskWithLeasing {
     private int leaseTime = RollerTaskWithLeasing.DEFAULT_LEASE_MINS;
 
 
+    @Override
     public String getClientId() {
         return clientId;
     }
 
+    @Override
     public Date getStartTime(Date currentTime) {
         return getAdjustedTime(currentTime, startTimeDesc);
     }
 
+    @Override
     public String getStartTimeDesc() {
         return startTimeDesc;
     }
 
+    @Override
     public int getInterval() {
         return this.interval;
     }
 
+    @Override
     public int getLeaseTime() {
         return this.leaseTime;
     }
@@ -125,6 +130,7 @@ public class PingQueueTask extends RollerTaskWithLeasing {
     /**
      * Run the task once.
      */
+    @Override
     public void runTask() {
 
         try {

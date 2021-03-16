@@ -60,15 +60,17 @@ public class PluginManagerImpl implements PluginManager {
     }
     
     
+    @Override
     public boolean hasPagePlugins() {
         log.debug("mPluginClasses.size(): " + mPagePlugins.size());
-        return (mPagePlugins != null && mPagePlugins.size() > 0);
+        return mPagePlugins != null && !mPagePlugins.isEmpty();
     }
     
     
     /**
      * Create and init plugins for processing entries in a specified website.
      */
+    @Override
     public Map<String, WeblogEntryPlugin> getWeblogEntryPlugins(Weblog website) {
         Map<String, WeblogEntryPlugin> ret = new LinkedHashMap<String, WeblogEntryPlugin>();
         for (Class pluginClass : PluginManagerImpl.mPagePlugins.values()) {
@@ -83,6 +85,7 @@ public class PluginManagerImpl implements PluginManager {
         return ret;
     }
     
+    @Override
     public String applyWeblogEntryPlugins(Map pagePlugins, WeblogEntry entry, String str) {
 
         String ret = str;
@@ -107,6 +110,7 @@ public class PluginManagerImpl implements PluginManager {
     /**
      * @inheritDoc
      */
+    @Override
     public List<WeblogEntryCommentPlugin> getCommentPlugins() {
         return commentPlugins;
     }
@@ -115,6 +119,7 @@ public class PluginManagerImpl implements PluginManager {
     /**
      * @inheritDoc
      */
+    @Override
     public String applyCommentPlugins(WeblogEntryComment comment, String text) {
         
         if(comment == null || text == null) {
@@ -123,7 +128,7 @@ public class PluginManagerImpl implements PluginManager {
         
         String content = text;
         
-        if (commentPlugins.size() > 0) {
+        if (!commentPlugins.isEmpty()) {
             for (WeblogEntryCommentPlugin plugin : commentPlugins) {
                 if(comment.getPlugins() != null &&
                         comment.getPlugins().contains(plugin.getId())) {
@@ -228,6 +233,7 @@ public class PluginManagerImpl implements PluginManager {
     }
     
     
+    @Override
     public void release() {
         // no op
     }

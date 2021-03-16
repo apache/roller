@@ -116,16 +116,19 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     }
     
     
+    @Override
     public String getHomeLink() {
         return createURL(0, 0, weblog, locale, pageLink, entryAnchor, dateString, catName, tags);
     }
     
     
+    @Override
     public String getHomeName() {
         return messageUtils.getString("weblogEntriesPager.latest.home");
     }
     
     
+    @Override
     public String getNextLink() {
         if (hasMoreEntries()) {
             return createURL(page, 1, weblog, locale, pageLink, entryAnchor, dateString, catName, tags);
@@ -134,6 +137,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     }
     
     
+    @Override
     public String getNextName() {
         if (hasMoreEntries()) {
             return messageUtils.getString("weblogEntriesPager.latest.next");
@@ -142,6 +146,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     }
     
     
+    @Override
     public String getPrevLink() {
         if (page > 0) {
             return createURL(page, -1, weblog, locale, pageLink, entryAnchor, dateString, catName, tags);
@@ -150,6 +155,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     }
     
     
+    @Override
     public String getPrevName() {
         if (page > 0) {
             return messageUtils.getString("weblogEntriesPager.latest.prev");
@@ -158,21 +164,25 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     }
     
     
+    @Override
     public String getNextCollectionLink() {
         return null;
     }
     
     
+    @Override
     public String getNextCollectionName() {
         return null;
     }
     
     
+    @Override
     public String getPrevCollectionLink() {
         return null;
     }
     
     
+    @Override
     public String getPrevCollectionName() {
         return null;
     }

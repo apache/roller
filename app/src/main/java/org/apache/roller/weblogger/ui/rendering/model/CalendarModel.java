@@ -45,12 +45,14 @@ public class CalendarModel implements Model {
     
     
     /** Template context name to be used for model */
+    @Override
     public String getModelName() {
         return "calendarModel";
     }
     
     
     /** Init page model based on request */
+    @Override
     public void init(Map initData) throws WebloggerException {
         
         // extract page context

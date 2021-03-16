@@ -48,6 +48,7 @@ public class Planet implements Comparable<Planet> {
     /**
      * For comparing planets and sorting, ordered by Title.
      */
+    @Override
     public int compareTo(Planet other) {
         return getTitle().compareTo(other.getTitle());
     }

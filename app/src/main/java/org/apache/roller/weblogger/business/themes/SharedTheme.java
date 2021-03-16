@@ -43,10 +43,12 @@ public abstract class SharedTheme implements Theme, Serializable {
     
     public abstract ThemeResource getPreviewImage();
 
+    @Override
     public int compareTo(Theme other) {
         return getName().compareTo(other.getName());
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -55,6 +57,7 @@ public abstract class SharedTheme implements Theme, Serializable {
         this.id = id;
     }
     
+    @Override
     public String getName() {
         return name;
     }
@@ -63,6 +66,7 @@ public abstract class SharedTheme implements Theme, Serializable {
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
@@ -79,6 +83,7 @@ public abstract class SharedTheme implements Theme, Serializable {
         this.author = author;
     }
     
+    @Override
     public Date getLastModified() {
         return lastModified;
     }
@@ -87,6 +92,7 @@ public abstract class SharedTheme implements Theme, Serializable {
         this.lastModified = lastModified;
     }
     
+    @Override
     public boolean isEnabled() {
         return enabled;
     }

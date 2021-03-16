@@ -92,7 +92,7 @@ public final class URLUtilities {
     
     public static String getEncodedTagsString(List tags) {
         StringBuilder tagsString = new StringBuilder();
-        if(tags != null && tags.size() > 0) {
+        if(tags != null && !tags.isEmpty()) {
             String tag;
             Iterator tagsIT = tags.iterator();
             

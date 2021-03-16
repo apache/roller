@@ -61,7 +61,7 @@ public class RomeFeedFetcherTest  {
             assertEquals("https://rollerweblogger.org/roller/", sub.getSiteURL());
             assertEquals("Blogging Roller", sub.getTitle());
             assertNotNull(sub.getLastUpdated());
-            assertTrue(sub.getEntries().size() > 0);
+            assertTrue(!sub.getEntries().isEmpty());
 
         } catch (FetcherException ex) {
             log.error("Error fetching feed", ex);
@@ -83,7 +83,7 @@ public class RomeFeedFetcherTest  {
             assertEquals("https://rollerweblogger.org/roller/", sub.getSiteURL());
             assertEquals("Blogging Roller", sub.getTitle());
             assertNotNull(sub.getLastUpdated());
-            assertTrue(sub.getEntries().size() > 0);
+            assertTrue(!sub.getEntries().isEmpty());
             
             // now do a conditional fetch and we should get back null
             Subscription updatedSub = feedFetcher.fetchSubscription(feed_url, sub.getLastUpdated());

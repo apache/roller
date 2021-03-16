@@ -99,7 +99,7 @@ public final class CacheManager {
         
         // add custom handlers
         String customHandlers = WebloggerConfig.getProperty("cache.customHandlers");
-        if(customHandlers != null && customHandlers.trim().length() > 0) {
+        if(customHandlers != null && !customHandlers.isBlank()) {
             
             String[] cHandlers = customHandlers.split(",");
             for (String cHandler : cHandlers) {

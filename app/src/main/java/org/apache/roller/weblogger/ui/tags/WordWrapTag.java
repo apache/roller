@@ -134,6 +134,7 @@ public class WordWrapTag extends StringTagSupport {
         this.delimiterInside = delimiterInside;
     }
 
+    @Override
     public String changeString(String text) throws JspException {
         return wordWrap(text, NumberUtils.toInt(width), delimiter, split, delimiterInside);
     }

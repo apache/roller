@@ -95,12 +95,14 @@ public class UtilitiesModel implements Model {
     
     
     /** Template context name to be used for model */
+    @Override
     public String getModelName() {
         return "utils";
     }
     
     
     /** Init page model based on request */
+    @Override
     public void init(Map initData) throws WebloggerException {      
         
         // we expect the init data to contain a parsedRequest object

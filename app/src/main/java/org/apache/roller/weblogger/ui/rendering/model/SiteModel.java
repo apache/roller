@@ -72,10 +72,12 @@ public class SiteModel implements Model {
     private URLStrategy urlStrategy = null;
     
     
+    @Override
     public String getModelName() {
         return "site";
     }
     
+    @Override
     public void init(Map initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object

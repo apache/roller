@@ -39,6 +39,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * @inheritDoc
      */
+    @Override
     public URLStrategy getPreviewURLStrategy(String previewTheme) {
         return new PreviewURLStrategy(previewTheme);
     }
@@ -47,6 +48,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get root url for a given weblog.  Optionally for a certain locale.
      */
+    @Override
     public String getWeblogURL(Weblog weblog,
                                             String locale,
                                             boolean absolute) {
@@ -77,6 +79,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get url for a single weblog entry on a given weblog.
      */
+    @Override
     public String getWeblogEntryURL(Weblog weblog,
                                                  String locale,
                                                  String entryAnchor,
@@ -98,6 +101,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get url for a single weblog media file on a given weblog.
      */
+    @Override
     public String getMediaFileURL(
             Weblog weblog,
             String fileAnchor,
@@ -120,6 +124,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get url for a single weblog media file on a given weblog.
      */
+    @Override
     public String getMediaFileThumbnailURL(Weblog weblog,
             String fileAnchor,
             boolean absolute) {
@@ -131,6 +136,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get url for a single weblog entry comments on a given weblog.
      */
+    @Override
     public String getWeblogCommentsURL(Weblog weblog,
                                                     String locale,
                                                     String entryAnchor,
@@ -143,6 +149,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get url for a single weblog entry comment on a given weblog.
      */
+    @Override
     public String getWeblogCommentURL(Weblog weblog,
                                                    String locale,
                                                    String entryAnchor,
@@ -156,6 +163,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get url for a collection of entries on a given weblog.
      */
+    @Override
     public String getWeblogCollectionURL(Weblog weblog,
                                                       String locale,
                                                       String category,
@@ -186,7 +194,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         } else if(dateString != null && cat == null) {
             pathinfo.append("date/").append(dateString);  
         
-        } else if(tags != null && tags.size() > 0) {
+        } else if(tags != null && !tags.isEmpty()) {
             pathinfo.append("tags/").append(URLUtilities.getEncodedTagsString(tags));
         } else {
             if(dateString != null) {
@@ -208,6 +216,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get url for a custom page on a given weblog.
      */
+    @Override
     public String getWeblogPageURL(Weblog weblog,
                                                 String locale,
                                                 String pageLink,
@@ -237,7 +246,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             if(category != null) {
                 params.put("cat", URLUtilities.encode(category));
             }
-            if(tags != null && tags.size() > 0) {
+            if(tags != null && !tags.isEmpty()) {
                 params.put("tags", URLUtilities.getEncodedTagsString(tags));
             }
             if(pageNum > 0) {
@@ -255,6 +264,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get url for a feed on a given weblog.
      */
+    @Override
     public String getWeblogFeedURL(Weblog weblog,
                                                 String locale,
                                                 String type,
@@ -275,13 +285,13 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         url.append("feed/").append(type).append("/").append(format);
         
         Map params = new HashMap();
-        if(category != null && category.trim().length() > 0) {
+        if(category != null && !category.isBlank()) {
             params.put("cat", URLUtilities.encode(category));
         }
-        if(tags != null && tags.size() > 0) {
+        if(tags != null && !tags.isEmpty()) {
           params.put("tags", URLUtilities.getEncodedTagsString(tags));
         }
-        if(term != null && term.trim().length() > 0) {
+        if(term != null && !term.isBlank()) {
             params.put("q", URLUtilities.encode(term.trim()));
         }
         if(excerpts) {
@@ -295,6 +305,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get url to search endpoint on a given weblog.
      */
+    @Override
     public String getWeblogSearchURL(Weblog weblog,
                                                   String locale,
                                                   String query,
@@ -331,6 +342,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get url to a resource on a given weblog.
      */
+    @Override
     public String getWeblogResourceURL(Weblog weblog,
                                                     String filePath,
                                                     boolean absolute) {
@@ -357,6 +369,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get url to rsd file on a given weblog.
      */
+    @Override
     public String getWeblogRsdURL(Weblog weblog,
                                                boolean absolute) {
         
@@ -371,6 +384,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     /**
      * Get url to JSON tags service url, optionally for a given weblog.
      */
+    @Override
     public String getWeblogTagsJsonURL(Weblog weblog,
                                                     boolean absolute,
                                                     int pageNum) {
@@ -401,6 +415,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     }
 
     
+    @Override
     public String getWeblogSearchFeedURLTemplate(Weblog weblog) {
         if(weblog == null) {
             return null;
@@ -419,6 +434,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     }
 
     
+    @Override
     public String getWeblogSearchPageURLTemplate(Weblog weblog) {
         if(weblog == null) {
             return null;
@@ -437,23 +453,28 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
     }
 
 
+    @Override
     public String getOpenSearchSiteURL() {
         return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/opensearch/";
     }
 
 
+    @Override
     public String getOpenSearchWeblogURL(String weblogHandle) {
         return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/opensearch/" + weblogHandle;
     }
 
+    @Override
     public String getOAuthRequestTokenURL() {
         return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/oauth/requestToken";
     }
 
+    @Override
     public String getOAuthAuthorizationURL() {
         return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/oauth/authorize";
     }
 
+    @Override
     public String getOAuthAccessTokenURL() {
         return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/oauth/accessToken";
     }

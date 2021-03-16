@@ -39,6 +39,7 @@ public class TagStatComparator implements Comparator<TagStat>, Serializable {
      * @throws ClassCastException if arguments are not instances of <em>TagStat</em>
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
+    @Override
     public int compare(TagStat ts1, TagStat ts2) {
         return ts1.getName().compareToIgnoreCase(ts2.getName());
     }

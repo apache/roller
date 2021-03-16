@@ -32,6 +32,7 @@ public class UIActionPrepareInterceptor extends MethodFilterInterceptor {
     private static Log log = LogFactory
             .getLog(UIActionPrepareInterceptor.class);
 
+    @Override
     public String doIntercept(ActionInvocation invocation) throws Exception {
 
         if (log.isDebugEnabled()) {

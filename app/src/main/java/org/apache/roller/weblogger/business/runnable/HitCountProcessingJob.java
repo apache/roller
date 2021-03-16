@@ -50,6 +50,7 @@ public class HitCountProcessingJob implements Job {
      * We want to extract the currently queued hits from the HitCounter and
      * then propogate them to the db for persistent storage.
      */
+    @Override
     public void execute() {
         
         WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
@@ -105,10 +106,12 @@ public class HitCountProcessingJob implements Job {
     }
     
     
+    @Override
     public void input(Map<String, Object> input) {
         // no-op
     }
     
+    @Override
     public Map<String, Object> output() {
         return null;
     }

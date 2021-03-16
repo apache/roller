@@ -347,7 +347,7 @@ public class Register extends UIAction implements ServletRequestAware {
         }
         
         String allowed = WebloggerConfig.getProperty("username.allowedChars");
-        if (allowed == null || allowed.trim().length() == 0) {
+        if (allowed == null || allowed.isBlank()) {
             allowed = DEFAULT_ALLOWED_CHARS;
         }
         
@@ -437,6 +437,7 @@ public class Register extends UIAction implements ServletRequestAware {
         return servletRequest;
     }
 
+    @Override
     public void setServletRequest(HttpServletRequest servletRequest) {
         this.servletRequest = servletRequest;
     }

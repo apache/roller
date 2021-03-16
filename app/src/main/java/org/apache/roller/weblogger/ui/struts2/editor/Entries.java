@@ -103,7 +103,7 @@ public class Entries extends UIAction {
             List<WeblogEntry> rawEntries = wmgr.getWeblogEntries(wesc);
             entries = new ArrayList<WeblogEntry>();
             entries.addAll(rawEntries);
-            if (entries.size() > 0) {
+            if (!entries.isEmpty()) {
                 log.debug("query found "+rawEntries.size()+" results");
                 
                 if(rawEntries.size() > COUNT) {

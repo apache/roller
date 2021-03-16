@@ -45,19 +45,23 @@ public class ObfuscateEmailPlugin implements WeblogEntryPlugin {
     }
     
     
+    @Override
     public String getName() {
         return name;
     }
     
     
+    @Override
     public String getDescription() {
         return StringEscapeUtils.escapeEcmaScript(description);
     }
     
     
+    @Override
     public void init(Weblog website) throws WebloggerException {}
     
     
+    @Override
     public String render(WeblogEntry entry, String str) {
         return RegexUtil.encodeEmail(str);
     }

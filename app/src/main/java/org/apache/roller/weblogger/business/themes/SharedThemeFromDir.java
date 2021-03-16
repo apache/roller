@@ -57,7 +57,7 @@ public class SharedThemeFromDir extends SharedTheme {
     private Map<String, ThemeTemplate> templatesByLink = new HashMap<String, ThemeTemplate>();
 
     // we keep templates in a Map for faster lookups by action
-    private Map<ComponentType, ThemeTemplate> templatesByAction = new HashMap<ComponentType, ThemeTemplate>();
+    private Map<ComponentType, ThemeTemplate> templatesByAction = new EnumMap<ComponentType, ThemeTemplate>(ComponentType.class);
 
     // we keep resources in a Map for faster lookups by path
     // the Map contains ... (resource path, ThemeResource)
@@ -75,6 +75,7 @@ public class SharedThemeFromDir extends SharedTheme {
     /**
      * Get a resource representing the preview image for this theme.
      */
+    @Override
     public ThemeResource getPreviewImage() {
         return this.previewImage;
     }
@@ -82,6 +83,7 @@ public class SharedThemeFromDir extends SharedTheme {
     /**
      * Get the collection of all templates associated with this Theme.
      */
+    @Override
     public List<ThemeTemplate> getTemplates() {
         return new ArrayList<ThemeTemplate>(this.templatesByName.values());
     }
@@ -89,6 +91,7 @@ public class SharedThemeFromDir extends SharedTheme {
     /**
      * Lookup the stylesheet. Returns null if no stylesheet defined.
      */
+    @Override
     public ThemeTemplate getStylesheet() {
         return this.stylesheet;
     }
@@ -97,6 +100,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * Looup the default template, action = weblog. Returns null if the template
      * cannot be found.
      */
+    @Override
     public ThemeTemplate getDefaultTemplate() {
         return this.templatesByAction.get(ComponentType.WEBLOG);
     }
@@ -105,6 +109,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * Lookup the specified template by name. Returns null if the template
      * cannot be found.
      */
+    @Override
     public ThemeTemplate getTemplateByName(String name) {
         return this.templatesByName.get(name);
     }
@@ -113,6 +118,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * Lookup the specified template by link. Returns null if the template
      * cannot be found.
      */
+    @Override
     public ThemeTemplate getTemplateByLink(String link) {
         return this.templatesByLink.get(link);
     }
@@ -121,6 +127,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * Lookup the specified template by action. Returns null if the template
      * cannot be found.
      */
+    @Override
     public ThemeTemplate getTemplateByAction(ComponentType action) {
         return this.templatesByAction.get(action);
     }
@@ -130,6 +137,7 @@ public class SharedThemeFromDir extends SharedTheme {
      * 
      * It is assured that the resources are returned sorted by pathname.
      */
+    @Override
     public List<ThemeResource> getResources() {
 
         List<ThemeResource> myResources = new ArrayList<ThemeResource>(this.resources.values());
@@ -143,10 +151,12 @@ public class SharedThemeFromDir extends SharedTheme {
      * Lookup the specified resource by path. Returns null if the resource
      * cannot be found.
      */
+    @Override
     public ThemeResource getResource(String path) {
         return this.resources.get(path);
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(name);

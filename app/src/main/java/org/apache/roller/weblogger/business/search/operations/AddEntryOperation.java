@@ -58,6 +58,7 @@ public class AddEntryOperation extends WriteToIndexOperation {
     
     //~ Methods ================================================================
     
+    @Override
     public void doRun() {
         IndexWriter writer = beginWriting();
         

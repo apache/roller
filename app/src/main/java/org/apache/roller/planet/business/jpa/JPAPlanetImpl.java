@@ -89,6 +89,7 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
     }
     
     
+    @Override
     public void flush() throws RollerException {
 		this.strategy.flush();
     }
@@ -109,6 +110,7 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
     /**
      * @see org.apache.roller.weblogger.business.Weblogger#getBookmarkManager()
      */
+    @Override
     public PlanetManager getWebloggerManager() {
         return planetManager;
     }
@@ -117,16 +119,19 @@ public class JPAPlanetImpl extends AbstractManagerImpl implements Planet {
     /**
      * @see org.apache.roller.weblogger.business.Weblogger#getBookmarkManager()
      */
+    @Override
     public PropertiesManager getPropertiesManager() {
         return propertiesManager;
     }
     
     
+    @Override
     public PlanetURLStrategy getURLStrategy() {
         return this.urlStrategy;
     }
     
     
+    @Override
     public FeedFetcher getFeedFetcher() {
         return this.feedFetcher;
     }

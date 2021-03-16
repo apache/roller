@@ -219,7 +219,7 @@ public class UserEdit extends UIAction {
     private void myValidate() {
         if (isAdd()) {
             String allowed = WebloggerConfig.getProperty("username.allowedChars");
-            if(allowed == null || allowed.trim().length() == 0) {
+            if(allowed == null || allowed.isBlank()) {
                 allowed = Register.DEFAULT_ALLOWED_CHARS;
             }
             String safe = CharSetUtils.keep(getBean().getUserName(), allowed);

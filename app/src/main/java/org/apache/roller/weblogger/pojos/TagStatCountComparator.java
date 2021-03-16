@@ -43,6 +43,7 @@ public class TagStatCountComparator implements Comparator<TagStat>, Serializable
      * @throws ClassCastException if arguments are not instances of <em>TagStat</em>
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
+    @Override
     public int compare(TagStat st1, TagStat st2) {
         int compVal = st1.getCount() < st2.getCount() ? -1 :
                 (st1.getCount() == st2.getCount() ? 0 : 1);

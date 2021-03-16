@@ -48,6 +48,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
     /**
      * @inheritDoc
      */
+    @Override
     public void updateSubscription(Subscription sub) throws UpdaterException {
         
         if (sub == null) {
@@ -95,7 +96,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
         int entries = 0;
         Set<SubscriptionEntry> newEntries = updatedSub.getEntries();
         log.debug("newEntries.size() = " + newEntries.size());
-        if (newEntries.size() > 0) {
+        if (!newEntries.isEmpty()) {
             try {
                 PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
 
@@ -128,6 +129,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
     /**
      * @inheritDoc
      */
+    @Override
     public void updateSubscriptions() throws UpdaterException {
         
         updateProxySettings();
@@ -153,6 +155,7 @@ public class SingleThreadedFeedUpdater implements FeedUpdater {
     /**
      * @inheritDoc
      */
+    @Override
     public void updateSubscriptions(PlanetGroup group) throws UpdaterException {
         
         if(group == null) {

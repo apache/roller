@@ -65,6 +65,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
 
     public WeblogTemplate() {}
     
+    @Override
     public String getId() {
         return this.id;
     }
@@ -81,6 +82,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.weblog = website;
     }
     
+    @Override
     public ComponentType getAction() {
         return action;
     }
@@ -89,6 +91,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.action = action;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
@@ -97,6 +100,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return this.description;
     }
@@ -105,6 +109,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.description = description;
     }
 
+    @Override
     public String getLink() {
         return this.link;
     }
@@ -113,6 +118,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.link = link;
     }
 
+    @Override
     public Date getLastModified() {
         return lastModified;
     }
@@ -121,6 +127,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         lastModified = newtime;
     }
 
+    @Override
     public boolean isNavbar() {
         return navbar;
     }
@@ -129,6 +136,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.navbar = navbar;
     }
 
+    @Override
     public boolean isHidden() {
         return hidden;
     }
@@ -140,6 +148,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     /**
      * Content-type rendered by template or null for auto-detection by link extension.
      */
+    @Override
     public String getOutputContentType() {
         return outputContentType;
     }
@@ -185,6 +194,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.templateRenditions = templateRenditions;
     }
 
+    @Override
     public CustomTemplateRendition getTemplateRendition(CustomTemplateRendition.RenditionType desiredType) throws WebloggerException {
         for (CustomTemplateRendition rnd : templateRenditions) {
             if (rnd.getType().equals(desiredType)) {
@@ -213,10 +223,12 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
 
     //------------------------------------------------------- Good citizenship
 
+    @Override
     public String toString() {
         return "{" + getId() + ", " + getName() + ", " + getLink() + "}";
     }
 
+    @Override
     public boolean equals(Object other) {
         if (other == this) {
             return true;
@@ -231,6 +243,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
             .isEquals();
     }
     
+    @Override
     public int hashCode() { 
         return new HashCodeBuilder()
             .append(getName())

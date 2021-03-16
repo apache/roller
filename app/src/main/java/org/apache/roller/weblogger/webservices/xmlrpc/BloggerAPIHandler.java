@@ -239,7 +239,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             }
             
             while (toker.hasMoreTokens()) {
-                if ( !lastname.equals("") ) {
+                if ( !lastname.isEmpty() ) {
                     lastname += " ";
                 }
                 lastname += toker.nextToken();

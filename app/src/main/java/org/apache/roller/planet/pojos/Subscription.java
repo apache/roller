@@ -51,6 +51,7 @@ public class Subscription implements Serializable, Comparable<Subscription> {
      * This ensures that feeds are sorted by title, but that identical titles 
      * don't make feeds equal.
      */
+    @Override
     public int compareTo(Subscription other) {
         String otherString = other.getTitle() + other.getFeedURL();
         String thisString = getTitle() + getFeedURL();
@@ -60,6 +61,7 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     /**
      * Determines if subscriptions are equal by comparing feed URLs.
      */
+    @Override
     public boolean equals(Object other) {        
         if (this == other) {
             return true;
@@ -71,10 +73,12 @@ public class Subscription implements Serializable, Comparable<Subscription> {
         return this.feedUrl.equals(that.getFeedURL());
     }
     
+    @Override
     public int hashCode() {
         return this.feedUrl.hashCode();
     }
     
+    @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
 

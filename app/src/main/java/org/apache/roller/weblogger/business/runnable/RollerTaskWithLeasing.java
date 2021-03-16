@@ -48,6 +48,7 @@ public abstract class RollerTaskWithLeasing extends RollerTask {
      *
      * Roller tasks should put their logic in the runTask() method.
      */
+    @Override
     public final void run() {
         
         ThreadManager mgr = WebloggerFactory.getWeblogger().getThreadManager();

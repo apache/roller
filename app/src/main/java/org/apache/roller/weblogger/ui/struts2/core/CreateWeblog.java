@@ -79,7 +79,7 @@ public class CreateWeblog extends UIAction {
             if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 List<WeblogPermission> permissions = mgr.getWeblogPermissions(user);
-                if (permissions.size() > 0) {
+                if (!permissions.isEmpty()) {
                     // sneaky user trying to get around 1 blog limit that applies
                     // only when group blogging is disabled
                     addError("createWebsite.oneBlogLimit");
@@ -108,7 +108,7 @@ public class CreateWeblog extends UIAction {
             if (!WebloggerConfig.getBooleanProperty("groupblogging.enabled")) {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 List<WeblogPermission> permissions = mgr.getWeblogPermissions(user);
-                if (permissions.size() > 0) {
+                if (!permissions.isEmpty()) {
                     // sneaky user trying to get around 1 blog limit that applies
                     // only when group blogging is disabled
                     addError("createWebsite.oneBlogLimit");
@@ -163,7 +163,7 @@ public class CreateWeblog extends UIAction {
     public void myValidate()  {
         
         String allowed = WebloggerConfig.getProperty("username.allowedChars");
-        if(allowed == null || allowed.trim().length() == 0) {
+        if(allowed == null || allowed.isBlank()) {
             allowed = Register.DEFAULT_ALLOWED_CHARS;
         }
         

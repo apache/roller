@@ -43,21 +43,25 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 	}
 
 	// @Override
+    @Override
 	public String getTemplate() {
 		return template;
 	}
 
 	// @Override
+    @Override
 	public void setTemplate(String template) {
 		this.template = template;
 	}
 
 	// @Override
+    @Override
 	public RenditionType getType() {
 		return type;
 	}
 
 	// @Override
+    @Override
 	public void setType(RenditionType type) {
 		this.type = type;
 	}
@@ -83,10 +87,12 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 
 	// ------------------------------------------------------- Good citizenship
 
+    @Override
 	public String toString() {
         return "{" + this.template + ", [ " + this.template +"] , " + this.type + "}";
 	}
 
+    @Override
 	public boolean equals(Object other) {
 		if (other == this) {
             return true;
@@ -99,17 +105,20 @@ public class SharedThemeTemplateRendition implements Serializable, TemplateRendi
 				.append(template, o.getTemplate()).isEquals();
 	}
 
+    @Override
 	public int hashCode() {
 		return new HashCodeBuilder()
 				.append(getTemplate()).toHashCode();
 	}
 
 	// @Override
+    @Override
 	public TemplateLanguage getTemplateLanguage() {
 		return templateLanguage;
 	}
 
 	// @Override
+    @Override
 	public void setTemplateLanguage(TemplateLanguage templateLanguage) {
 		this.templateLanguage = templateLanguage;
 	}

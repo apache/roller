@@ -80,10 +80,12 @@ public abstract class UIAction extends ActionSupport
 
     protected String salt = null;
     
+    @Override
     public void myPrepare() {
         // no-op
     }
 	
+    @Override
 	public void setRequest(Map<String, Object> map) {
 		this.salt = (String) map.get("salt");
 	}
@@ -102,21 +104,25 @@ public abstract class UIAction extends ActionSupport
     }
 
     // default action permissions, user is required
+    @Override
     public boolean isUserRequired() {
         return true;
     }
     
     
     // default action permissions, weblog is required
+    @Override
     public boolean isWeblogRequired() {
         return true;
     }
     
     // Default is ADMIN for safety, if a subclasser forgets to override this only admins can use.
+    @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.ADMIN);
     }
 
+    @Override
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.LOGIN);
     }

@@ -46,6 +46,7 @@ public class MediaFileComparator implements Comparator<MediaFile> {
 	 * Compares media files based on the attribute associated with this comparator
 	 * 
 	 */
+    @Override
 	public int compare(MediaFile file1, MediaFile file2) {
 		switch (this.type) {
 		    case NAME: return file1.getName().compareTo(file2.getName());

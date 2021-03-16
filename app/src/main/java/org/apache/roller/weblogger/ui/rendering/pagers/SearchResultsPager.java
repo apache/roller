@@ -82,20 +82,24 @@ public class SearchResultsPager implements WeblogEntriesPager {
     }
     
     
+    @Override
     public Map getEntries() {
         return entries;
     }
     
     
+    @Override
     public String getHomeLink() {
         return urlStrategy.getWeblogURL(weblog, locale, false);
     }
 
+    @Override
     public String getHomeName() {
         return messageUtils.getString("searchPager.home");
     }
 
     
+    @Override
     public String getNextLink() {
         if(moreResults) {
             return urlStrategy.getWeblogSearchURL(weblog, locale, query, category, page + 1, false);
@@ -103,6 +107,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
         return null;
     }
 
+    @Override
     public String getNextName() {
         if (getNextLink() != null) {
             return messageUtils.getString("searchPager.next");
@@ -110,6 +115,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
         return null;
     }
 
+    @Override
     public String getPrevLink() {
         if(page > 0) {
             return urlStrategy.getWeblogSearchURL(weblog, locale, query, category, page - 1, false);
@@ -117,6 +123,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
         return null;
     }
 
+    @Override
     public String getPrevName() {
         if (getPrevLink() != null) {
             return messageUtils.getString("searchPager.prev");
@@ -125,18 +132,22 @@ public class SearchResultsPager implements WeblogEntriesPager {
     }
 
     
+    @Override
     public String getNextCollectionLink() {
         return null;
     }
 
+    @Override
     public String getNextCollectionName() {
         return null;
     }
 
+    @Override
     public String getPrevCollectionLink() {
         return null;
     }
 
+    @Override
     public String getPrevCollectionName() {
         return null;
     }

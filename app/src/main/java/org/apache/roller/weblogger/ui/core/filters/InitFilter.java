@@ -45,6 +45,7 @@ public class InitFilter implements Filter {
 
     private boolean initialized = false;
 
+    @Override
     public void doFilter(ServletRequest req, ServletResponse res,
             FilterChain chain) throws IOException, ServletException {
 

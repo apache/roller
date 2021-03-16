@@ -54,18 +54,21 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
     }
 
     
+    @Override
     public PingQueueEntry getQueueEntry(String id) 
             throws WebloggerException {
         return (PingQueueEntry)strategy.load(
             PingQueueEntry.class, id);
     }
 
+    @Override
     public void saveQueueEntry(PingQueueEntry pingQueueEntry) 
             throws WebloggerException {
         log.debug("Storing ping queue entry: " + pingQueueEntry);
         strategy.store(pingQueueEntry);
     }
 
+    @Override
     public void removeQueueEntry(PingQueueEntry pingQueueEntry) 
             throws WebloggerException {
         log.debug("Removing ping queue entry: " + pingQueueEntry);
@@ -73,6 +76,7 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
     }
 
     
+    @Override
     public void addQueueEntry(AutoPing autoPing) throws WebloggerException {
         log.debug("Creating new ping queue entry for auto ping configuration: " 
             + autoPing);
@@ -93,6 +97,7 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
         this.saveQueueEntry(pingQueueEntry);
     }
 
+    @Override
     public List<PingQueueEntry> getAllQueueEntries()
             throws WebloggerException {
         return strategy.getNamedQuery("PingQueueEntry.getAllOrderByEntryTime",
@@ -108,9 +113,10 @@ public class JPAPingQueueManagerImpl implements PingQueueManager {
                 PingQueueEntry.class);
         q.setParameter(1, autoPing.getPingTarget());
         q.setParameter(2, autoPing.getWebsite());
-        return q.getResultList().size() > 0;
+        return !q.getResultList().isEmpty();
     }
 
+    @Override
     public void release() {}
     
 

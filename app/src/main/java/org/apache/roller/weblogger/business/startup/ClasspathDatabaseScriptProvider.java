@@ -29,6 +29,7 @@ public class ClasspathDatabaseScriptProvider implements DatabaseScriptProvider {
     /**
      * @see org.apache.roller.weblogger.business.startup.DatabaseScriptProvider#getDatabaseScript(java.lang.String)
      */
+    @Override
     public InputStream getDatabaseScript(String path) {
         String resourcePath = "/dbscripts/" + path;
         return this.getClass().getResourceAsStream(resourcePath);

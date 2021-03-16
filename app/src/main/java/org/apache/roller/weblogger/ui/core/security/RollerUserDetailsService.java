@@ -25,6 +25,7 @@ public class RollerUserDetailsService implements UserDetailsService {
     /**
      * @throws UsernameNotFoundException, DataAccessException
      */
+    @Override
     public UserDetails loadUserByUsername(String userName) {
         Weblogger roller;
         try {

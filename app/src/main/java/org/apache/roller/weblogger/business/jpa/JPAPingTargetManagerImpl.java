@@ -47,6 +47,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     
+    @Override
     public void removePingTarget(PingTarget pingTarget) 
             throws WebloggerException {
         // remove contents and then target
@@ -71,16 +72,19 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         q.executeUpdate();
     }
 
+    @Override
     public void savePingTarget(PingTarget pingTarget)
             throws WebloggerException {
         strategy.store(pingTarget);
     }
 
+    @Override
     public PingTarget getPingTarget(String id)
             throws WebloggerException {
         return (PingTarget)strategy.load(PingTarget.class, id);
     }
 
+    @Override
     public boolean targetNameExists(String pingTargetName)
             throws WebloggerException {
 
@@ -97,10 +101,11 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     
+    @Override
     public boolean isUrlWellFormed(String url)
             throws WebloggerException {
 
-        if (url == null || url.trim().length() == 0) {
+        if (url == null || url.isBlank()) {
             return false;
         }
         try {
@@ -108,8 +113,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
             // OK.  If we get here, it parses ok.  Now just check 
             // that the protocol is http and there is a host portion.
             boolean isHttp = parsedUrl.getProtocol().equals("http");
-            boolean hasHost = (parsedUrl.getHost() != null) && 
-                (parsedUrl.getHost().trim().length() > 0);
+            boolean hasHost = parsedUrl.getHost() != null && !parsedUrl.getHost().isBlank();
             return isHttp && hasHost;
         } catch (MalformedURLException e) {
             return false;
@@ -117,15 +121,16 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
     }
 
     
+    @Override
     public boolean isHostnameKnown(String url)
             throws WebloggerException {
-        if (url == null || url.trim().length() == 0) {
+        if (url == null || url.isBlank()) {
             return false;
         }
         try {
             URL parsedUrl = new URL(url);
             String host = parsedUrl.getHost();
-            if (host == null || host.trim().length() == 0) {
+            if (host == null || host.isBlank()) {
                 return false;
             }
             InetAddress addr = InetAddress.getByName(host);
@@ -137,6 +142,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         }
     }
 
+    @Override
     public List<PingTarget> getCommonPingTargets()
             throws WebloggerException {
         TypedQuery<PingTarget> q = strategy.getNamedQuery(
@@ -144,6 +150,7 @@ public class JPAPingTargetManagerImpl implements PingTargetManager {
         return q.getResultList();
     }
 
+    @Override
     public void release() {}
     
 }
