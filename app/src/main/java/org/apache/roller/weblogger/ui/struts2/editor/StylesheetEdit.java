@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
@@ -31,7 +30,6 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
-import org.apache.struts2.convention.annotation.AllowedMethods;
 
 import java.util.Date;
 
@@ -66,24 +64,29 @@ public class StylesheetEdit extends UIAction {
 
         sharedThemeStylesheet = false;
 
-        WeblogManager weblogManager = WebloggerFactory.getWeblogger().getWeblogManager();
-        ThemeManager themeManager = WebloggerFactory.getWeblogger().getThemeManager();
+        try {
+            ThemeTemplate stylesheet;
 
-        if ( isSharedTheme() ) {
-            try {
+            if ( isSharedTheme() ) {
+                ThemeManager themeManager = WebloggerFactory.getWeblogger().getThemeManager();
                 SharedTheme themeName = themeManager.getTheme(getActionWeblog().getEditorTheme());
+
                 sharedThemeStylesheet = themeName.getStylesheet() != null;
 
-                ThemeTemplate themeStylesheet  = themeName.getStylesheet();
-
-                WeblogTemplate weblogStylesheet =
-                    weblogManager.getTemplateByLink(getActionWeblog(), themeStylesheet.getLink());
-
-                setTemplate( weblogStylesheet );
-
-            } catch (WebloggerException ex) {
-                log.error("Error looking up shared theme name on weblog - " + getActionWeblog().getHandle(), ex);
+                stylesheet = themeName.getStylesheet();
+            } else { // custom theme
+                stylesheet = getActionWeblog().getTheme().getStylesheet();
             }
+
+            if(stylesheet == null) {
+                throw new WebloggerException("no stylesheet found");
+            }
+
+            WeblogManager weblogManager = WebloggerFactory.getWeblogger().getWeblogManager();
+            setTemplate(weblogManager.getTemplateByLink(getActionWeblog(), stylesheet.getLink()));
+
+        } catch (WebloggerException ex) {
+            log.error("Error looking up stylesheet on weblog - " + getActionWeblog().getHandle(), ex);
         }
     }
 

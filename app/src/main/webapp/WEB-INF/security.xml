@@ -22,7 +22,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
           http://www.springframework.org/schema/security
-          http://www.springframework.org/schema/security/spring-security-5.3.xsd">
+          http://www.springframework.org/schema/security/spring-security-5.4.xsd">
 
     <http pattern="/images/**" security="none"/>
     <http pattern="/scripts/**" security="none"/>

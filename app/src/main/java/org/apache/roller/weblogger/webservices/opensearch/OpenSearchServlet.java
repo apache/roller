@@ -23,7 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -79,24 +79,24 @@ public class OpenSearchServlet extends HttpServlet {
         } catch (WebloggerException ex) {
             throw new ServletException("ERROR: fetching specified weblog");
         }
-        searchPage = StringEscapeUtils.escapeXml(
+        searchPage = StringEscapeUtils.escapeXml11(
                 strat.getWeblogSearchPageURLTemplate(weblog));
-        searchFeed = StringEscapeUtils.escapeXml(
+        searchFeed = StringEscapeUtils.escapeXml11(
                 strat.getWeblogSearchFeedURLTemplate(weblog));
 
         boolean siteWide = WebloggerRuntimeConfig.isSiteWideWeblog(handle);
         if (siteWide) {
-            shortName = "[Search Descriptor] " + StringEscapeUtils.escapeXml(
+            shortName = "[Search Descriptor] " + StringEscapeUtils.escapeXml11(
                     WebloggerRuntimeConfig.getProperty("site.shortName"));
-            description = StringEscapeUtils.escapeXml(
+            description = StringEscapeUtils.escapeXml11(
                     WebloggerRuntimeConfig.getProperty("site.description"));
-            contact = StringEscapeUtils.escapeXml(
+            contact = StringEscapeUtils.escapeXml11(
                     WebloggerRuntimeConfig.getProperty("site.adminemail"));
                     
         } else {
-            shortName = StringEscapeUtils.escapeXml(weblog.getName());
-            description = StringEscapeUtils.escapeXml(weblog.getTagline());
-            contact = StringEscapeUtils.escapeXml(weblog.getEmailAddress());
+            shortName = StringEscapeUtils.escapeXml11(weblog.getName());
+            description = StringEscapeUtils.escapeXml11(weblog.getTagline());
+            contact = StringEscapeUtils.escapeXml11(weblog.getEmailAddress());
         }
 
         response.setContentType("application/opensearchdescription+xml");
