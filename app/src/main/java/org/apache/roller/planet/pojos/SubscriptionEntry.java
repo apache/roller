@@ -209,7 +209,7 @@ public class SubscriptionEntry implements Serializable, Comparable<SubscriptionE
      * Returns categories as list of WeblogCategoryData objects.
      */
     public List<Category> getCategories() {
-        List<Category> list = new ArrayList<Category>();
+        List<Category> list = new ArrayList<>();
         if (getCategoriesString() != null) {
             String[] catArray = Utilities.stringToStringArray(getCategoriesString(),",");
             for (String catName : catArray) {

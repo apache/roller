@@ -47,7 +47,7 @@ public class PlanetGroup implements Serializable, Comparable<PlanetGroup> {
     
     // associations
     private Planet planet = null;
-    private Set<Subscription> subscriptions = new TreeSet<Subscription>();
+    private Set<Subscription> subscriptions = new TreeSet<>();
     
     
     public PlanetGroup() {}
