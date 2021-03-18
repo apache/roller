@@ -27,11 +27,11 @@ body {
     font-size: small;
 }
 p {
-    margin:10px 10px 10px 10px;
+    margin:10px;
     text-align: left;
 }
 pre {
-    margin:0px 10px 0px 10px;
+    margin:0px 10px;
     overflow: auto;
 }
 .code {
@@ -122,7 +122,7 @@ a.entrycommentslink {
 }
 /* master containing div or ul */
 .comments {
-  margin: 10px 5px 10px 5px;
+  margin: 10px 5px;
 }
 /* Preview / Comments Header */
 div.comments-head {
@@ -142,7 +142,7 @@ p.comment-details {
 }
 div.comments-form {
   font-weight:normal;
-  margin: 15px 15px 15px 15px;
+  margin: 15px;
 }
 span.comments-syntax-indicator {
     display: block;
@@ -243,7 +243,7 @@ li.linkblog {
 }
 .next-previous {
     text-align: center;
-    padding: 1em 0 1em 0;
+    padding: 1em 0;
 }
 .error {
     display: block;
@@ -331,7 +331,7 @@ div.hCalendarDayTitleBig {
   left: 0;
   top: 0;
   width: 25%;
-  padding: 3px 0 3px 0;
+  padding: 3px 0px;
   background: transparent;
   color: #050505;
   border-right: 1px solid #050505;
@@ -342,6 +342,6 @@ div.hCalendarDayTitleBig {
 }
 div.bCalendarDayContentBig {
   font-size: x-small;
-  padding: 3px 0px 3px 0px;
+  padding: 3px 0px;
 }
 

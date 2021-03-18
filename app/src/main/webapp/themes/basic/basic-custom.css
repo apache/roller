@@ -41,7 +41,7 @@ div.dayTitle {
 div.next-previous {
     font-size: 80%;
     text-align: center;
-    padding: .5em 0 .5em 0;
+    padding: .5em 0;
 
 }
 
@@ -163,7 +163,7 @@ form .info p{ font-size: 1em; line-height: 1.3em; margin: 0 0 8px 0; }
 textarea.textarea{margin-bottom: 1px;}
 textarea.textarea[class]{font-family: "Lucida Grande", Tahoma, "Trebuchet MS", Verdana, sans-serif;}
 select.select{ padding: 1px 0 0 0; margin: 1px 0 3px 0; }
-select.select[class]{ margin: 0; padding: 1px 0 1px 0; }
+select.select[class]{ margin: 0; padding: 1px 0; }
 form .small{ width: 70px; }
 form .medium{ width: 170px; }
 form .large, form textarea.textarea{ width: 340px; }
