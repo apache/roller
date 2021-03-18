@@ -54,7 +54,7 @@ public class CommentsPager {
     public String getNextLink() {
         if(isMoreItems()) {
             int nextPage = pageNum + 1;
-            Map<String, String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<>();
             params.put("bean.page", ""+nextPage);
             return createURL(baseUrl, params);
         }
@@ -65,7 +65,7 @@ public class CommentsPager {
     public String getPrevLink() {
         if (pageNum > 0) {
             int prevPage = pageNum - 1;
-            Map<String, String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<>();
             params.put("bean.page", ""+prevPage);
             return createURL(baseUrl, params);
         }
