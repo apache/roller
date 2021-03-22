@@ -371,9 +371,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // check cache first
         // NOTE: if we ever allow changing handles then this needs updating
-        if(this.weblogHandleToIdMap.containsKey(handle)) {
+        String blogID = this.weblogHandleToIdMap.get(handle);
+        if(blogID != null) {
             
-            Weblog weblog = this.getWeblog(this.weblogHandleToIdMap.get(handle));
+            Weblog weblog = this.getWeblog(blogID);
             if (weblog != null) {
                 // only return weblog if enabled status matches
                 if(visible == null || visible.equals(weblog.getVisible())) {
