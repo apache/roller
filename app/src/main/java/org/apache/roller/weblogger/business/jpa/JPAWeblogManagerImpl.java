@@ -362,11 +362,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
      * Return weblog specified by handle.
      */
     @Override
-    public Weblog getWeblogByHandle(String handle, Boolean visible)
-    throws WebloggerException {
+    public Weblog getWeblogByHandle(String handle, Boolean visible) throws WebloggerException {
         
-        if (handle==null) {
+        if (handle == null) {
             throw new WebloggerException("Handle cannot be null");
+        } else if (!isAlphanumeric(handle)) {
+            throw new WebloggerException("Invalid handle: '"+handle+"'");
         }
         
         // check cache first
@@ -702,6 +703,21 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         List<Long> results = strategy.getNamedQuery(
                 "Weblog.getCountAllDistinct", Long.class).getResultList();
         return results.get(0);
+    }
+
+    /**
+     * Returns true if alphanumeric or '_'.
+     */
+    private boolean isAlphanumeric(String str) {
+        if (str == null) {
+            return false;
+        }
+        for (int i = 0; i < str.length(); i++) {
+            if (!Character.isLetterOrDigit(str.charAt(i)) && str.charAt(i) != '_') {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

@@ -28,16 +28,18 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
 class CommentAuthenticatorUtils {
-    private static Log log = LogFactory.getLog(CommentAuthenticatorUtils.class);
+    private static final Log log = LogFactory.getLog(CommentAuthenticatorUtils.class);
 
     public static Locale getLocale(HttpServletRequest request) {
         String handle = request.getParameter("weblog");
         try {
             Weblog weblog = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
-            return weblog.getLocaleInstance();
+            if(weblog != null) {
+                return weblog.getLocaleInstance();
+            }
         } catch (WebloggerException e) {
             log.debug("Failed to determine weblog's locale. fallback to the locale of the request", e);
-            return request.getLocale();
         }
+        return request.getLocale();
     }
 }

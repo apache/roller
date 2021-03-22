@@ -73,7 +73,7 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  */
 public class CommentServlet extends HttpServlet {
 
-    private static Log log = LogFactory.getLog(CommentServlet.class);
+    private static final Log log = LogFactory.getLog(CommentServlet.class);
 
     private CommentAuthenticator authenticator = null;
     private CommentValidationManager commentValidationManager = null;
@@ -202,9 +202,7 @@ public class CommentServlet extends HttpServlet {
         try {
             commentRequest = new WeblogCommentRequest(request);
 
-            // lookup weblog specified by comment request
-            weblog = WebloggerFactory.getWeblogger().getWeblogManager()
-                    .getWeblogByHandle(commentRequest.getWeblogHandle());
+            weblog = commentRequest.getWeblog();
 
             if (weblog == null) {
                 throw new WebloggerException("unable to lookup weblog: "
