@@ -120,7 +120,14 @@
 
     <build>
         <plugins>
-
+            
+            <!-- bump plugin version for JDK 16 compatibility (old guice version),
+                 can be removed once maven itself bumped the version -->
+            <plugin>
+               <artifactId>maven-war-plugin</artifactId>
+               <version>3.3.1</version>
+            </plugin>
+             
             <!-- Activates integration tests (by default, classes under tests that end with "IT") -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
