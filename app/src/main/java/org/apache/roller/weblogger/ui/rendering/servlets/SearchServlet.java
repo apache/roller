@@ -59,7 +59,7 @@ public class SearchServlet extends HttpServlet {
 
     private static final long serialVersionUID = 6246730804167411636L;
 
-    private static Log log = LogFactory.getLog(SearchServlet.class);
+    private static final Log log = LogFactory.getLog(SearchServlet.class);
 
     // Development theme reloading
     Boolean themeReload = false;
@@ -87,20 +87,19 @@ public class SearchServlet extends HttpServlet {
 
         log.debug("Entering");
 
-        Weblog weblog = null;
-        WeblogSearchRequest searchRequest = null;
+        Weblog weblog;
+        WeblogSearchRequest searchRequest;
 
         // first off lets parse the incoming request and validate it
         try {
             searchRequest = new WeblogSearchRequest(request);
 
             // now make sure the specified weblog really exists
-            weblog = WebloggerFactory
-                    .getWeblogger()
-                    .getWeblogManager()
-                    .getWeblogByHandle(searchRequest.getWeblogHandle(),
-                            Boolean.TRUE);
-
+            weblog = searchRequest.getWeblog();
+            if (weblog == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Weblog not found");
+                return;
+            }
         } catch (Exception e) {
             // invalid search request format or weblog doesn't exist
             log.debug("error creating weblog search request", e);
@@ -229,7 +228,7 @@ public class SearchServlet extends HttpServlet {
         }
 
         // lookup Renderer we are going to use
-        Renderer renderer = null;
+        Renderer renderer;
         try {
             log.debug("Looking up renderer");
             renderer = RendererManager.getRenderer(page, deviceType);
