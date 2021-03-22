@@ -383,7 +383,7 @@
     });
 
     function fullPreviewMode() {
-        window.open('<s:property value="previewURL" />');
+        window.open('<s:property value="previewURL" />', 'roller-preview');
     }
 
     $(function () {
