@@ -19,7 +19,7 @@ body {
 div.next-previous {
     font-size: 80%;
     text-align: center;
-    padding: .5em 0 .5em 0;
+    padding: .5em 0;
 }
 
 /* category chooser ----------------------------------------------- */
@@ -44,7 +44,7 @@ li.selected {
 .ui-page .ui-content .ui-listview .ui-li-desc, .box .ui-li-desc, .ui-popup .ui-title {
     white-space: normal;
     font-size: 16px;
-    margin: 0.5em 0 0.5em 0;
+    margin: 0.5em 0;
 }
 
 
