@@ -26,6 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -44,7 +46,7 @@ import org.apache.roller.weblogger.util.Utilities;
  * These URLs are supported:
  * <ul>
  * <li>/roller-services/tagdata - get tag data for entire site</li>
- * <li>/roller-services/tagdata/weblogs/[handle] - get tag data for specific weblog</li>
+ * <li>/roller-services/tagdata/weblog/[handle] - get tag data for specific weblog</li>
  * </ul>
  * See the <a href="http://cwiki.apache.org/confluence/display/ROLLER/Proposal+Tag+Data+API">
  * Tag Data API</a> proposal for details.
@@ -70,36 +72,56 @@ public class TagDataServlet extends HttpServlet {
             HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
-        String[] pathInfo = new String[0];
-        boolean siteWide;
-        String handle;
-        String prefix;
-        String format = "json";
-        int page = 0;
-        
         // TODO: last modified or ETag support, caching, etc.
 
+        String[] pathInfo = new String[0];
+        
         if (request.getPathInfo() != null) {
             pathInfo = Utilities.stringToStringArray(request.getPathInfo(),"/");
         }
+        
+        boolean siteWide;
+        String handle;
+
         if (pathInfo.length == 0) {
             siteWide = true;
             // we'll use the front-page weblog to form URLs
             handle = WebloggerRuntimeConfig.getProperty("site.frontpage.weblog.handle");
-        } else if (pathInfo.length == 2 && "weblog".equals(pathInfo[0])) {
+        } else if (pathInfo.length == 2 && "weblog".equals(pathInfo[0]) && StringUtils.isAlphanumeric(pathInfo[1])) {
             siteWide = false;
             handle = pathInfo[1];
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed URL");
             return;
         }
-        prefix = request.getParameter("prefix");
-        if (request.getParameter("format") != null) {
-            format = request.getParameter("format");
+
+        String prefix = request.getParameter("prefix");
+
+        if(prefix != null && !StringUtils.isAlphanumeric(prefix)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed URL");
+            return;
         }
-        try {
-            page = Integer.parseInt(request.getParameter("page"));
-        } catch (Exception ignored) {}
+        
+        String format = "json";  // default
+        
+        if (request.getParameter("format") != null) {
+            
+            format = request.getParameter("format");
+            if(!format.equals("json") || !format.equals("xml")) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed URL");
+                return;
+            }
+        }
+        
+        int page = 0;
+        if(request.getParameter("page") != null) {
+            try {
+                page = Integer.parseInt(request.getParameter("page"));
+            } catch (NumberFormatException notIgnored) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed URL");
+                return;
+            }
+        }
 
         Weblogger roller = WebloggerFactory.getWeblogger();
         List<TagStat> tags;
@@ -108,6 +130,10 @@ public class TagDataServlet extends HttpServlet {
             WeblogManager wmgr = roller.getWeblogManager();
             WeblogEntryManager emgr = roller.getWeblogEntryManager();
             weblog = wmgr.getWeblogByHandle(handle);
+            if(weblog == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Weblog not found");
+                return;
+            }
             // get tags, if site-wide then don't specify weblog
             tags = emgr.getTags(siteWide ? null : weblog, null, prefix, page * MAX, MAX + 1);
 
@@ -119,8 +145,8 @@ public class TagDataServlet extends HttpServlet {
         if ("json".equals(format)) {
             response.setContentType("application/json; charset=utf-8");
             PrintWriter pw = response.getWriter();
-            pw.println("{ \"prefix\": \"" + (prefix == null ? "" : prefix) + "\",");
-            pw.println("  \"weblog\": \"" + (!siteWide ? handle : "") + "\",");
+            pw.println("{ \"prefix\": \"" + (prefix == null ? "" : StringEscapeUtils.escapeJson(prefix)) + "\",");
+            pw.println("  \"weblog\": \"" + (!siteWide ? weblog.getHandle() : "") + "\",");
             pw.println("  \"tagcounts\": [" );
             int count = 0;
             for (Iterator it = tags.iterator(); it.hasNext();) {
@@ -177,8 +203,6 @@ public class TagDataServlet extends HttpServlet {
             }
             pw.println("</categories>");
             response.flushBuffer();
-        } else {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed URL");
         }
     }
 }
