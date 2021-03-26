@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
+import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.planet.tasks.RefreshRollerPlanetTask;
 import org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask;
@@ -119,6 +120,14 @@ public class PlanetManagerLocalTest  {
         try {
             TestUtils.teardownWeblog(testWeblog.getId());
             TestUtils.teardownUser(testUser.getUserName());
+            
+            // remove subscriptions which were added in testRefreshEntries()
+            PlanetManager m = WebloggerFactory.getWeblogger().getPlanetManager();
+            PlanetGroup all = m.getGroup(m.getWebloggerById("zzz_default_planet_zzz"), "all");
+            for (Subscription sub : all.getSubscriptions()) {
+                m.deleteSubscription(sub);
+            }
+
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error(ex);
