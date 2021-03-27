@@ -658,7 +658,7 @@ setup Roller to use server-provided resources.
 Roller includes a RSS/Atom feed aggregator that makes it possible to run
 a site like https://blogs.oracle.com/ which provides weblogs for
 thousands of writers and an aggregated front-page that displays the most
-recent posts form those plus dozens of Sun bloggers from other sites
+recent posts from those plus dozens of Sun bloggers from other sites
 such as blogger.com, typepad.com and other services. Here’s what you
 need to do.
 
