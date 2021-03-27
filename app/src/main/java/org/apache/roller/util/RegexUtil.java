@@ -84,7 +84,7 @@ public final class RegexUtil {
      * @return List of matched groups from the pattern.
      */
     public static List<String> getMatches(Pattern pattern, String match, int group) {
-        List<String> matches = new ArrayList<String>();
+        List<String> matches = new ArrayList<>();
         Matcher matcher = pattern.matcher(match);
         while (matcher.find()) {
             matches.add( matcher.group(group) );
