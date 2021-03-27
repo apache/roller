@@ -50,7 +50,7 @@ public class JPAPersistenceStrategy {
     /**
      * The thread local EntityManager.
      */
-    private final ThreadLocal<EntityManager> threadLocalEntityManager = new ThreadLocal<EntityManager>();
+    private final ThreadLocal<EntityManager> threadLocalEntityManager = new ThreadLocal<>();
     
     /**
      * The EntityManagerFactory for this Roller instance.
