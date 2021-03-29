@@ -49,7 +49,7 @@ public class SharedThemeTemplate implements ThemeTemplate, Serializable {
     private String type = null;
 
     //hash map to cache template Code objects parsed
-    private Map<RenditionType, TemplateRendition> templateRenditionHashMap = new EnumMap<RenditionType, TemplateRendition>(RenditionType.class);
+    private Map<RenditionType, TemplateRendition> templateRenditionHashMap = new EnumMap<>(RenditionType.class);
     
     public SharedThemeTemplate() {}
     

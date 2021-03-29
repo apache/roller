@@ -85,7 +85,7 @@ public class WeblogSharedTheme extends WeblogTheme {
     @Override
     public List<ThemeTemplate> getTemplates() throws WebloggerException {
         
-        Map<String, ThemeTemplate> pages = new TreeMap<String, ThemeTemplate>();
+        Map<String, ThemeTemplate> pages = new TreeMap<>();
         
         // first get the pages from the db
         try {
