@@ -86,7 +86,7 @@ public class WeblogConfig extends UIAction {
             // set plugins list
             PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
             Map<String, WeblogEntryPlugin> pluginsMap = ppmgr.getWeblogEntryPlugins(getActionWeblog());
-            List<WeblogEntryPlugin> plugins = new ArrayList<WeblogEntryPlugin>();
+            List<WeblogEntryPlugin> plugins = new ArrayList<>();
             for (WeblogEntryPlugin entryPlugin : pluginsMap.values()) {
                 plugins.add(entryPlugin);
             }

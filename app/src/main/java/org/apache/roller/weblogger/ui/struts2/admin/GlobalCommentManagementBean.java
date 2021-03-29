@@ -50,8 +50,8 @@ public class GlobalCommentManagementBean {
     
     public void loadCheckboxes(List<WeblogEntryComment> comments) {
         
-        List<String> allComments = new ArrayList<String>();
-        List<String> spamList = new ArrayList<String>();
+        List<String> allComments = new ArrayList<>();
+        List<String> spamList = new ArrayList<>();
         
         for (WeblogEntryComment comment : comments) {
             allComments.add(comment.getId());

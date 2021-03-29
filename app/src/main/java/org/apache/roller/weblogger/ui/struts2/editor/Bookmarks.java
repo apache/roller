@@ -91,7 +91,7 @@ public class Bookmarks extends UIAction {
     public String execute() {
 
         // build list of folders that the user can navigate to
-        List<WeblogBookmarkFolder> newFolders = new ArrayList<WeblogBookmarkFolder>();
+        List<WeblogBookmarkFolder> newFolders = new ArrayList<>();
 
         try {
             // Build list of all folders, except for current one

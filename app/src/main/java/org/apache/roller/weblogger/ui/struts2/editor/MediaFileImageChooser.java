@@ -125,7 +125,7 @@ public class MediaFileImageChooser extends MediaFileBase {
      * displaying path information as breadcrumb.
      */
     public List<KeyValueObject> getCurrentDirectoryHierarchy() {
-        List<KeyValueObject> directoryHierarchy = new ArrayList<KeyValueObject>();
+        List<KeyValueObject> directoryHierarchy = new ArrayList<>();
 
         String fullPath = "/" + this.currentDirectory.getName();
         if (fullPath.length() > 1) {

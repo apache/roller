@@ -175,7 +175,7 @@ public class TemplateEdit extends UIAction {
     }
 
     public Map<TemplateLanguage, String> getTemplateLanguages() {
-        Map<TemplateLanguage, String> langMap = new EnumMap<TemplateLanguage, String>(TemplateLanguage.class);
+        Map<TemplateLanguage, String> langMap = new EnumMap<>(TemplateLanguage.class);
         for (TemplateLanguage lang : TemplateLanguage.values()) {
             langMap.put(lang, lang.getReadableName());
         }
