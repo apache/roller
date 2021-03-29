@@ -42,10 +42,10 @@ public class PluginManagerImpl implements PluginManager {
     private static Log log = LogFactory.getLog(PluginManagerImpl.class);
     
     // Plugin classes keyed by plugin name
-    static Map<String, Class> mPagePlugins = new LinkedHashMap<String, Class>();
+    static Map<String, Class> mPagePlugins = new LinkedHashMap<>();
     
     // Comment plugins
-    private List<WeblogEntryCommentPlugin> commentPlugins = new ArrayList<WeblogEntryCommentPlugin>();
+    private List<WeblogEntryCommentPlugin> commentPlugins = new ArrayList<>();
     
     
     /**
@@ -72,7 +72,7 @@ public class PluginManagerImpl implements PluginManager {
      */
     @Override
     public Map<String, WeblogEntryPlugin> getWeblogEntryPlugins(Weblog website) {
-        Map<String, WeblogEntryPlugin> ret = new LinkedHashMap<String, WeblogEntryPlugin>();
+        Map<String, WeblogEntryPlugin> ret = new LinkedHashMap<>();
         for (Class pluginClass : PluginManagerImpl.mPagePlugins.values()) {
             try {
                 WeblogEntryPlugin plugin = (WeblogEntryPlugin)pluginClass.newInstance();
