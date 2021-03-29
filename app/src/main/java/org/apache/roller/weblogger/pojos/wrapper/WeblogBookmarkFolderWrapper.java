@@ -55,7 +55,7 @@ public final class WeblogBookmarkFolderWrapper {
 
     public List<WeblogBookmarkWrapper> getBookmarks() {
         // iterate through and wrap
-        List<WeblogBookmarkWrapper> wrappedCollection = new ArrayList<WeblogBookmarkWrapper>(this.pojo.getBookmarks().size());
+        List<WeblogBookmarkWrapper> wrappedCollection = new ArrayList<>(this.pojo.getBookmarks().size());
         for (WeblogBookmark bookmark : this.pojo.getBookmarks()) {
             wrappedCollection.add(WeblogBookmarkWrapper.wrap(bookmark));
         }
