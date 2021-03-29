@@ -56,7 +56,7 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
         }
 
         User user;
-        List<String> roles = new ArrayList<String>();
+        List<String> roles = new ArrayList<>();
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
@@ -69,7 +69,7 @@ public class AuthoritiesPopulator implements LdapAuthoritiesPopulator {
         }
 
         int roleCount = roles.size() + (defaultRole != null ? 1 : 0);
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(roleCount);
+        List<GrantedAuthority> authorities = new ArrayList<>(roleCount);
         for (String role : roles) {
             authorities.add(new SimpleGrantedAuthority(role));
         }

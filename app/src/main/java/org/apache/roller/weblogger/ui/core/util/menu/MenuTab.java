@@ -30,7 +30,7 @@ public class MenuTab {
     private String key = null;
     private String action = null;
     private boolean selected = false;
-    private List<MenuTabItem> items = new ArrayList<MenuTabItem>();
+    private List<MenuTabItem> items = new ArrayList<>();
     
     
     public void addItem(MenuTabItem item) {

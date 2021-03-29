@@ -33,7 +33,7 @@ public class ParsedTab {
     private String enabledProperty = null;
     private String disabledProperty = null;
     
-    private List<ParsedTabItem> tabItems = new ArrayList<ParsedTabItem>();
+    private List<ParsedTabItem> tabItems = new ArrayList<>();
     
     public void addItem(ParsedTabItem item) {
         this.tabItems.add(item);

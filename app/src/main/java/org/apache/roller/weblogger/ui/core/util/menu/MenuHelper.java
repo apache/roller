@@ -54,10 +54,10 @@ public final class MenuHelper {
 
     private static Log log = LogFactory.getLog(MenuHelper.class);
 
-    private static Map<String, ParsedMenu> menus = new HashMap<String, ParsedMenu>();
+    private static Map<String, ParsedMenu> menus = new HashMap<>();
 
     // menu, menuName, tabName action/subaction check
-    private static Map<String, HashMap<String, HashSet<String>>> itemMenu = new HashMap<String, HashMap<String, HashSet<String>>>();
+    private static Map<String, HashMap<String, HashSet<String>>> itemMenu = new HashMap<>();
 
     private MenuHelper() {
     }
@@ -432,7 +432,7 @@ public final class MenuHelper {
 
         String subActions = element.getAttributeValue("subactions");
         if (subActions != null) {
-            Set<String> set = new HashSet<String>();
+            Set<String> set = new HashSet<>();
             for (String string : Utilities.stringToStringList(subActions, ",")) {
                 set.add(string);
             }
