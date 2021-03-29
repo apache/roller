@@ -96,7 +96,7 @@ public class PlanetGroups extends PlanetUIAction  implements ServletRequestAware
     }
 
     public List<PlanetGroup> getGroups() {
-        List<PlanetGroup> displayGroups = new ArrayList<PlanetGroup>();
+        List<PlanetGroup> displayGroups = new ArrayList<>();
 
         for (PlanetGroup planetGroup : getPlanet().getGroups()) {
             // The "all" group is considered a special group and cannot be managed independently
