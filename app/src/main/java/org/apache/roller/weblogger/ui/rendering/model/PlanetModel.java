@@ -177,7 +177,7 @@ public class PlanetModel implements Model {
      * @param length         Max number of results to return
      */
     public List<Subscription> getRankedSubscriptions(String groupHandle, int sinceDays, int length) {
-        List<Subscription> list = new ArrayList<Subscription>();
+        List<Subscription> list = new ArrayList<>();
         try {
             PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
             Planet defaultPlanet = planetManager.getWeblogger(DEFAULT_PLANET_HANDLE);

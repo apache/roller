@@ -67,7 +67,7 @@ public class SearchResultsFeedModel implements Model {
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsFeedPager pager = null;
 
-	private List<WeblogEntryWrapper> results = new LinkedList<WeblogEntryWrapper>();
+	private List<WeblogEntryWrapper> results = new LinkedList<>();
 
 	private Set categories = new TreeSet();
 
@@ -195,7 +195,7 @@ public class SearchResultsFeedModel implements Model {
 		}
 
 		try {
-			TreeSet<String> categorySet = new TreeSet<String>();
+			TreeSet<String> categorySet = new TreeSet<>();
 			Weblogger roller = WebloggerFactory.getWeblogger();
 			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 

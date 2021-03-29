@@ -38,7 +38,7 @@ public final class RendererManager {
 
     private static Log log = LogFactory.getLog(RendererManager.class);
     // a set of all renderer factories we are consulting
-    private static Set<RendererFactory> rendererFactories = new HashSet<RendererFactory>();
+    private static Set<RendererFactory> rendererFactories = new HashSet<>();
 
     static {
         // lookup set of renderer factories we are going to use

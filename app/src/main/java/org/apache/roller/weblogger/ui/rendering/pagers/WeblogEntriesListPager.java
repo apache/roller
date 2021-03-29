@@ -95,7 +95,7 @@ public class WeblogEntriesListPager extends AbstractPager {
             // calculate offset
             int offset = getPage() * length;
 
-            List<WeblogEntryWrapper> results = new ArrayList<WeblogEntryWrapper>();
+            List<WeblogEntryWrapper> results = new ArrayList<>();
             
             Date startDate = null;
             if(sinceDays > 0) {

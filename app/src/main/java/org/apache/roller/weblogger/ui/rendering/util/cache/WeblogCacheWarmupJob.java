@@ -117,8 +117,8 @@ public class WeblogCacheWarmupJob implements Job {
                 
                 
                 // populate the rendering model
-                Map<String, Object> modelMap = new HashMap<String, Object>();
-                Map<String, WeblogFeedRequest> initData = new HashMap<String, WeblogFeedRequest>();
+                Map<String, Object> modelMap = new HashMap<>();
+                Map<String, WeblogFeedRequest> initData = new HashMap<>();
                 initData.put("request", null);
                 initData.put("feedRequest", feedRequest);
                 initData.put("weblogRequest", feedRequest);

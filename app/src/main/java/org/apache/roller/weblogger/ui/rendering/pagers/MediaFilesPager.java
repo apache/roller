@@ -66,7 +66,7 @@ public class MediaFilesPager extends AbstractPager {
             // calculate offset
             //int offset = getPage() * length;
             
-            List<MediaFile> results = new ArrayList<MediaFile>();
+            List<MediaFile> results = new ArrayList<>();
             
             try {
                 MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();

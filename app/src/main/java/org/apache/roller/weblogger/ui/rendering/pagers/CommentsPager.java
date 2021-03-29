@@ -82,7 +82,7 @@ public class CommentsPager extends AbstractPager {
             // calculate offset
             int offset = getPage() * length;
             
-            List<WeblogEntryCommentWrapper> results = new ArrayList<WeblogEntryCommentWrapper>();
+            List<WeblogEntryCommentWrapper> results = new ArrayList<>();
             
             Date startDate = null;
             if(sinceDays > 0) {

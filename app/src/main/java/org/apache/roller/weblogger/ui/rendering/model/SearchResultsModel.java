@@ -66,7 +66,7 @@ public class SearchResultsModel extends PageModel {
 
 	// the actual search results mapped by Day -> Set of entries
     private Map<Date, TreeSet<WeblogEntryWrapper>> results
-            = new TreeMap<Date, TreeSet<WeblogEntryWrapper>>(Collections.reverseOrder());
+            = new TreeMap<>(Collections.reverseOrder());
 
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsPager pager = null;
@@ -196,7 +196,7 @@ public class SearchResultsModel extends PageModel {
 		}
 
 		try {
-			TreeSet<String> categorySet = new TreeSet<String>();
+			TreeSet<String> categorySet = new TreeSet<>();
 			Weblogger roller = WebloggerFactory.getWeblogger();
 			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 

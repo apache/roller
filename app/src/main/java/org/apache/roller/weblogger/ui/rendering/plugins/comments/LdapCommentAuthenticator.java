@@ -117,7 +117,7 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 		
 		if(rollerPropertiesValid && userDataValid){
 			try {
-				Hashtable<String,String> env = new Hashtable<String,String>();
+				Hashtable<String,String> env = new Hashtable<>();
 				env.put(Context.INITIAL_CONTEXT_FACTORY,  
 						"com.sun.jndi.ldap.LdapCtxFactory"); 
 				if(ldapSecurityLevel != null 

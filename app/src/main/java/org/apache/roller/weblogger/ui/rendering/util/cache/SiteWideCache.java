@@ -74,7 +74,7 @@ public final class SiteWideCache implements CacheHandler {
         
         cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
         
-        Map<String, String> cacheProps = new HashMap<String, String>();
+        Map<String, String> cacheProps = new HashMap<>();
         cacheProps.put("id", CACHE_ID);
         Enumeration allProps = WebloggerConfig.keys();
         String prop = null;

@@ -96,7 +96,7 @@ public class WeblogsPager extends AbstractPager {
         if(letter != null) {
             int page = getPage() + 1;
             if(hasMoreItems()) {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("page", ""+page);
                 params.put("letter", letter);
                 return createURL(getUrl(), params);
@@ -114,7 +114,7 @@ public class WeblogsPager extends AbstractPager {
         if(letter != null) {
             int page = getPage() - 1;
             if (page >= 0) {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("page", ""+page);
                 params.put("letter", letter);
                 return createURL(getUrl(), params);
@@ -133,7 +133,7 @@ public class WeblogsPager extends AbstractPager {
             // calculate offset
             int offset = getPage() * length;
             
-            List<WeblogWrapper> results = new ArrayList<WeblogWrapper>();
+            List<WeblogWrapper> results = new ArrayList<>();
             Date startDate = null;
             if (sinceDays != -1) {
                 Calendar cal = Calendar.getInstance();

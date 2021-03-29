@@ -128,7 +128,7 @@ public class UsersPager extends AbstractPager {
             // calculate offset
             int offset = getPage() * length;
             
-            List<UserWrapper> results = new ArrayList<UserWrapper>();
+            List<UserWrapper> results = new ArrayList<>();
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 UserManager umgr = roller.getUserManager();
