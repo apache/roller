@@ -74,8 +74,8 @@ public final class Bannedwordslist {
     private static final String BANNEDWORDSLIST_URL = null;
 
     private Date lastModified = null;
-    private List<String> bannedwordslistStr = new LinkedList<String>();
-    private List<Pattern> bannedwordslistRegex = new LinkedList<Pattern>();
+    private List<String> bannedwordslistStr = new LinkedList<>();
+    private List<Pattern> bannedwordslistRegex = new LinkedList<>();
     
     // setup our singleton at class loading time
     static {

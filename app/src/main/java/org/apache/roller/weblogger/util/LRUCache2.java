@@ -97,7 +97,7 @@ public class LRUCache2
 
     public synchronized void purge(String[] patterns)
     {
-        List<String> purgeList = new ArrayList<String>();
+        List<String> purgeList = new ArrayList<>();
         for (Object objKey : cache.keySet()) {
             String key = (String) objKey;
             for (String s : patterns) {

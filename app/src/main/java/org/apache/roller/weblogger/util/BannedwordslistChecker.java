@@ -66,8 +66,8 @@ public final class BannedwordslistChecker {
      */
     public static boolean checkReferrer(Weblog website, String referrerURL) {
         if (WebloggerConfig.getBooleanProperty("site.bannedwordslist.enable.referrers")) {
-            List<String> stringRules = new ArrayList<String>();
-            List<Pattern> regexRules = new ArrayList<Pattern>();
+            List<String> stringRules = new ArrayList<>();
+            List<Pattern> regexRules = new ArrayList<>();
             Bannedwordslist.populateSpamRules(
                 website.getBannedwordslist(), stringRules, regexRules, null);
             if (WebloggerRuntimeConfig.getProperty("spam.bannedwordslist") != null) {
@@ -85,8 +85,8 @@ public final class BannedwordslistChecker {
      */
     private static boolean testComment(WeblogEntryComment c) {
         boolean ret = false;
-        List<String> stringRules = new ArrayList<String>();
-        List<Pattern> regexRules = new ArrayList<Pattern>();
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
         Weblog website = c.getWeblogEntry().getWebsite();
         Bannedwordslist.populateSpamRules(
             website.getBannedwordslist(), stringRules, regexRules,

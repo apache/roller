@@ -122,7 +122,7 @@ public class HTMLSanitizer {
 
     public static SanitizeResult sanitizer(String html, Pattern allowedTags, Pattern forbiddenTags) {
         SanitizeResult ret = new SanitizeResult();
-        Stack<String> openTags = new Stack<String>();
+        Stack<String> openTags = new Stack<>();
 
 
         List<String> tokens = tokenize(html);
@@ -453,7 +453,7 @@ public class HTMLSanitizer {
         public String text = "";
         public String val = "";
         public boolean isValid = true;
-        public List<String> invalidTags = new ArrayList<String>();
+        public List<String> invalidTags = new ArrayList<>();
     }
 
     public static String encode(String s) {

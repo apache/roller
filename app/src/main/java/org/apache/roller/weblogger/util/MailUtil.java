@@ -95,7 +95,7 @@ public class MailUtil {
             String content;
             
             // list of enabled website authors and admins
-            List<String> reviewers = new ArrayList<String>();
+            List<String> reviewers = new ArrayList<>();
             List<User> websiteUsers = wmgr.getWeblogUsers(entry.getWebsite(), true);
             
             // build list of reviewers (website users with author permission)
@@ -277,7 +277,7 @@ public class MailUtil {
         }
 
         // build list of email addresses to send notification to
-        Set<String> subscribers = new TreeSet<String>();
+        Set<String> subscribers = new TreeSet<>();
         
         // If we are to notify subscribers, then...
         if (commentObject.getApproved() && notifySubscribers) {
@@ -402,7 +402,7 @@ public class MailUtil {
             ownermsg.append(resources.getString("email.comment.management.link") + ": ");
             ownermsg.append((isPlainText) ? "\n" : "<br/>");
 
-            Map<String, String> parameters = new HashMap<String, String>();
+            Map<String, String> parameters = new HashMap<>();
             parameters.put("bean.entryId", entry.getId());
             String deleteURL = WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL(
                     "comments", "/roller-ui/authoring", weblog.getHandle(), parameters, true);

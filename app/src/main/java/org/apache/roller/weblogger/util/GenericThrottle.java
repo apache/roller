@@ -63,7 +63,7 @@ public class GenericThrottle {
         }
         
         // cache props
-        Map<String,String> cacheProps = new HashMap<String,String>();
+        Map<String,String> cacheProps = new HashMap<>();
         cacheProps.put("id", "throttle");
         cacheProps.put("size", ""+maxEntries);
         cacheProps.put("timeout", ""+this.interval);
