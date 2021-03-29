@@ -65,7 +65,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
     public void initialize() throws InitializationException {
                     
         // initialize tasks, making sure that each task has a tasklock record in the db
-        List<RollerTask> webloggerTasks = new ArrayList<RollerTask>();
+        List<RollerTask> webloggerTasks = new ArrayList<>();
         String tasksStr = WebloggerConfig.getProperty("tasks.enabled");
         String[] tasks = StringUtils.stripAll(StringUtils.split(tasksStr, ","));
         for ( String taskName : tasks ) {
