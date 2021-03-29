@@ -157,7 +157,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
         this.outputContentType = outputContentType;
     }
 
-    private List<CustomTemplateRendition> templateRenditions = new ArrayList<CustomTemplateRendition>();
+    private List<CustomTemplateRendition> templateRenditions = new ArrayList<>();
 
     /**
      * Determine if this WeblogTemplate is required or not.

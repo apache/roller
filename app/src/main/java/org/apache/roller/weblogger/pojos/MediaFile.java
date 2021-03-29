@@ -74,9 +74,9 @@ public class MediaFile implements Serializable {
     // TODO: anchor to be populated
     // private String anchor;
 
-    private Set<MediaFileTag> tagSet = new HashSet<MediaFileTag>();
-    private Set<String> removedTags = new HashSet<String>();
-    private Set<String> addedTags = new HashSet<String>();
+    private Set<MediaFileTag> tagSet = new HashSet<>();
+    private Set<String> removedTags = new HashSet<>();
+    private Set<String> addedTags = new HashSet<>();
 
     public MediaFile() {
     }
@@ -253,7 +253,7 @@ public class MediaFile implements Serializable {
             return;
         }
 
-        HashSet<String> newTags = new HashSet<String>(updatedTags.size());
+        HashSet<String> newTags = new HashSet<>(updatedTags.size());
         Locale localeObject = getWeblog() != null ? getWeblog()
                 .getLocaleInstance() : Locale.getDefault();
 
@@ -261,7 +261,7 @@ public class MediaFile implements Serializable {
             newTags.add(Utilities.normalizeTag(inName, localeObject));
         }
 
-        HashSet<String> removeTags = new HashSet<String>();
+        HashSet<String> removeTags = new HashSet<>();
 
         // remove old ones no longer passed.
         for (MediaFileTag tag : getTags()) {
