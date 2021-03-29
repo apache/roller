@@ -158,7 +158,7 @@ public final class TestUtils {
                         + scriptProvider.getScriptURL(scriptFile));
 
                 // Loop script and remove invalid lines
-                List<String> updatedCommands = new ArrayList<String>();
+                List<String> updatedCommands = new ArrayList<>();
                 List<String> commands = runner.getCommands();
                 for (String command : commands) {
                     if (!command.startsWith("--")) {
