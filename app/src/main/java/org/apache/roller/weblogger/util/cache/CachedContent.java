@@ -15,15 +15,15 @@ import org.apache.roller.util.RollerConstants;
 /**
  * A utility class for storing cached content written to a java.io.Writer.
  */
-public class CachedContent implements Serializable {
+public class CachedContent implements AutoCloseable, Serializable {
     
-    private static Log log = LogFactory.getLog(CachedContent.class);
+    private static final Log log = LogFactory.getLog(CachedContent.class);
     
     // the byte array we use to maintain the cached content
     private byte[] content = new byte[0];
     
     // content-type of data in byte array
-    private String contentType = null;
+    private final String contentType;
     
     // Use a byte array output stream to cached the output bytes
     private transient ByteArrayOutputStream outstream = null;
@@ -33,7 +33,10 @@ public class CachedContent implements Serializable {
     
     
     public CachedContent(int size) {
-        
+        this(size, null);
+    }
+    
+    public CachedContent(int size, String contentType) {
         // construct output stream
         if(size > 0) {
             this.outstream = new ByteArrayOutputStream(size);
@@ -49,10 +52,7 @@ public class CachedContent implements Serializable {
             // shouldn't be possible, java always supports utf-8
             throw new RuntimeException("Encoding problem", e);
         }
-    }
-    
-    public CachedContent(int size, String contentType) {
-        this(size);
+
         this.contentType = contentType;
     }
     
@@ -117,6 +117,7 @@ public class CachedContent implements Serializable {
     /**
      * Close this CachedContent from further writing.
      */
+    @Override
     public void close() throws IOException {
         
         if(this.cachedWriter != null) {
@@ -126,7 +127,10 @@ public class CachedContent implements Serializable {
         }
         
         if(this.outstream != null) {
-            this.content = this.outstream.toByteArray();
+            // avoid copying the content again if it hasn't changed since last flush
+            if(this.content.length != this.outstream.size()) {
+                this.content = this.outstream.toByteArray();
+            }
             this.outstream.close();
             this.outstream = null;
         }
