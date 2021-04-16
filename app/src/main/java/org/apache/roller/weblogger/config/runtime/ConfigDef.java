@@ -39,7 +39,7 @@ public class ConfigDef {
     
     
     public ConfigDef() {
-        this.displayGroups = new ArrayList<DisplayGroup>();
+        this.displayGroups = new ArrayList<>();
     }
 
     public ConfigDef(List<DisplayGroup> displaygroups) {

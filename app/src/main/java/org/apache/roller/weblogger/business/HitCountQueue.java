@@ -94,7 +94,7 @@ public final class HitCountQueue {
     
     
     public List<String> getHits() {
-        return new ArrayList<String>(this.queue);
+        return new ArrayList<>(this.queue);
     }
     
     

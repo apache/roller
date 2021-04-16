@@ -212,7 +212,7 @@ public class MediaFileView extends MediaFileBase {
             this.directoryId = directory.getId();
             this.directoryName = directory.getName();
 
-            this.childFiles = new ArrayList<MediaFile>();
+            this.childFiles = new ArrayList<>();
             this.childFiles.addAll(directory.getMediaFiles());
 
             if ("type".equals(sortBy)) {

@@ -181,6 +181,6 @@ public class Members extends UIAction implements ParameterAware {
             // serious problem, but not much we can do here
             log.error("ERROR getting weblog permissions", ex);
         }
-        return new ArrayList<WeblogPermission>();
+        return new ArrayList<>();
     }
 }

@@ -201,8 +201,8 @@ public class MediaFile implements Serializable {
 
     private void setTags(Set<MediaFileTag> tagSet) throws WebloggerException {
         this.tagSet = tagSet;
-        this.removedTags = new HashSet<String>();
-        this.addedTags = new HashSet<String>();
+        this.removedTags = new HashSet<>();
+        this.addedTags = new HashSet<>();
     }
 
     /**

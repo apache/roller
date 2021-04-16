@@ -85,7 +85,7 @@ public class SharedThemeFromDir extends SharedTheme {
      */
     @Override
     public List<ThemeTemplate> getTemplates() {
-        return new ArrayList<ThemeTemplate>(this.templatesByName.values());
+        return new ArrayList<>(this.templatesByName.values());
     }
 
     /**

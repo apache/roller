@@ -40,7 +40,7 @@ public class DisplayGroup {
     
     
     public DisplayGroup() {
-        this.propertyDefs = new ArrayList<PropertyDef>();
+        this.propertyDefs = new ArrayList<>();
     }
     
     public DisplayGroup(List<PropertyDef> propdefs) {

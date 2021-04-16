@@ -116,7 +116,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
         endDate = DateUtil.getEndOfDay(endDate, cal);
         
         if (entries == null) {
-            entries = new TreeMap<Date, List<WeblogEntryWrapper>>(Collections.reverseOrder());
+            entries = new TreeMap<>(Collections.reverseOrder());
             try {
                 WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
                 wesc.setWeblog(weblog);

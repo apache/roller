@@ -375,7 +375,7 @@ public final class MenuHelper {
         // Build our tab action relation
         HashMap<String, HashSet<String>> menu = itemMenu.get(menuId);
         if (menu == null) {
-            menu = new HashMap<String, HashSet<String>>();
+            menu = new HashMap<>();
         }
 
         for (Element e : menuItems) {
@@ -388,7 +388,7 @@ public final class MenuHelper {
                     item.add(tabItem.getAction());
                 }
             } else {
-                item = new HashSet<String>();
+                item = new HashSet<>();
                 item.add(tabItem.getAction());
             }
 

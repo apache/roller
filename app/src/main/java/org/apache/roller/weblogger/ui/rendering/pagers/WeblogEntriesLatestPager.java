@@ -70,7 +70,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
     public Map<Date, List<WeblogEntryWrapper>> getEntries() {
         
         if (entries == null) {
-            entries = new TreeMap<Date, List<WeblogEntryWrapper>>(Collections.reverseOrder());
+            entries = new TreeMap<>(Collections.reverseOrder());
             try {
                 WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
                 wesc.setWeblog(weblog);

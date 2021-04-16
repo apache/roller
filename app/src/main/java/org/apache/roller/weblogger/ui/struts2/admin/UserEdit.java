@@ -277,7 +277,7 @@ public class UserEdit extends UIAction {
         } catch (WebloggerException ex) {
             log.error("ERROR getting permissions for user " + user.getUserName(), ex);
         }
-        return new ArrayList<WeblogPermission>();
+        return new ArrayList<>();
     }
 
     public String getAuthMethod() {

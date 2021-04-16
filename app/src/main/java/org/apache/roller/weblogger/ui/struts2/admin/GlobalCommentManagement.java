@@ -114,7 +114,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             csc.setMaxResults(COUNT+1);
 
             List<WeblogEntryComment> rawComments = wmgr.getComments(csc);
-            comments = new ArrayList<WeblogEntryComment>();
+            comments = new ArrayList<>();
             comments.addAll(rawComments);   
             
             if(!comments.isEmpty()) {

@@ -101,7 +101,7 @@ public class Entries extends UIAction {
             wesc.setOffset(getBean().getPage() * COUNT);
             wesc.setMaxResults(COUNT + 1);
             List<WeblogEntry> rawEntries = wmgr.getWeblogEntries(wesc);
-            entries = new ArrayList<WeblogEntry>();
+            entries = new ArrayList<>();
             entries.addAll(rawEntries);
             if (!entries.isEmpty()) {
                 log.debug("query found "+rawEntries.size()+" results");

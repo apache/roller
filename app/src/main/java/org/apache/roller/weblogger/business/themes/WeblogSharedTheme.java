@@ -110,7 +110,7 @@ public class WeblogSharedTheme extends WeblogTheme {
             log.error(e);
         }
         
-        return new ArrayList<ThemeTemplate>(pages.values());
+        return new ArrayList<>(pages.values());
     }
     
     

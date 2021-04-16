@@ -244,7 +244,7 @@ public class SearchResultsModel extends PageModel {
 		TreeSet<WeblogEntryWrapper> set = this.results.get(midnight);
 		if (set == null) {
 			// date is not mapped yet, so we need a new Set
-			set = new TreeSet<WeblogEntryWrapper>(new WeblogEntryWrapperComparator());
+			set = new TreeSet<>(new WeblogEntryWrapperComparator());
 			this.results.put(midnight, set);
 		}
 		set.add(entry);

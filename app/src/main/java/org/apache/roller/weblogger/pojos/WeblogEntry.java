@@ -536,8 +536,8 @@ public class WeblogEntry implements Serializable {
     @SuppressWarnings("unused")
     private void setTags(Set<WeblogEntryTag> tagSet) throws WebloggerException {
          this.tagSet = tagSet;
-         this.removedTags = new HashSet<WeblogEntryTag>();
-         this.addedTags = new HashSet<WeblogEntryTag>();
+         this.removedTags = new HashSet<>();
+         this.addedTags = new HashSet<>();
     }
      
     /**
@@ -882,7 +882,7 @@ public class WeblogEntry implements Serializable {
         if (getPlugins() != null) {
             return Arrays.asList( StringUtils.split(getPlugins(), ",") );
         }
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     /** Convenience method for checking status */

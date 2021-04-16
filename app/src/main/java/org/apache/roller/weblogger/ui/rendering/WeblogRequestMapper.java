@@ -65,7 +65,7 @@ public class WeblogRequestMapper implements RequestMapper {
     
     public WeblogRequestMapper() {
         
-        this.restricted = new HashSet<String>();
+        this.restricted = new HashSet<>();
         
         // build roller restricted list
         String restrictList = 

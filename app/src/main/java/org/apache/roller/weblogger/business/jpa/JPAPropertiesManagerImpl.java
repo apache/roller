@@ -156,7 +156,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
     private Map initializeMissingProps(Map<String, RuntimeConfigProperty> props) {
 
         if(props == null) {
-            props = new HashMap<String, RuntimeConfigProperty>();
+            props = new HashMap<>();
         }
 
         // start by getting our runtimeConfigDefs
