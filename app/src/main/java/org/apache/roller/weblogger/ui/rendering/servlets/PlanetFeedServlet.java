@@ -130,7 +130,7 @@ public class PlanetFeedServlet extends HttpServlet {
         }
 
         // looks like we need to render content
-        HashMap<String, Object> model = new HashMap<String, Object>();
+        HashMap<String, Object> model = new HashMap<>();
         try {
 
             // populate the rendering model

@@ -448,7 +448,7 @@ public final class EntryEdit extends UIAction {
                     .getWeblogEntryPlugins(getActionWeblog());
 
             if (!plugins.isEmpty()) {
-                availablePlugins = new ArrayList<WeblogEntryPlugin>();
+                availablePlugins = new ArrayList<>();
                 for (WeblogEntryPlugin plugin : plugins.values()) {
                     availablePlugins.add(plugin);
                 }

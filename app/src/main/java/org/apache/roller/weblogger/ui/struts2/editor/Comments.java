@@ -110,7 +110,7 @@ public class Comments extends UIAction {
             csc.setMaxResults(COUNT + 1);
 
             List<WeblogEntryComment> rawComments = wmgr.getComments(csc);
-            comments = new ArrayList<WeblogEntryComment>();
+            comments = new ArrayList<>();
             comments.addAll(rawComments);
             if (!comments.isEmpty()) {
                 if (comments.size() > COUNT) {
@@ -137,7 +137,7 @@ public class Comments extends UIAction {
     // query data
     private String buildBaseUrl() {
 
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
 
         if (!StringUtils.isEmpty(getBean().getEntryId())) {
             params.put("bean.entryId", getBean().getEntryId());
@@ -223,7 +223,7 @@ public class Comments extends UIAction {
 
             // if search is enabled, we will need to re-index all entries with
             // comments that have been deleted, so build a list of those entries
-            Set<WeblogEntry> reindexEntries = new HashSet<WeblogEntry>();
+            Set<WeblogEntry> reindexEntries = new HashSet<>();
             if (WebloggerConfig.getBooleanProperty("search.enabled")) {
 
                 CommentSearchCriteria csc = getCommentSearchCriteria();
@@ -270,12 +270,12 @@ public class Comments extends UIAction {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
-            List<WeblogEntryComment> flushList = new ArrayList<WeblogEntryComment>();
+            List<WeblogEntryComment> flushList = new ArrayList<>();
 
             // if search is enabled, we will need to re-index all entries with
             // comments that have been approved, so build a list of those
             // entries
-            Set<WeblogEntry> reindexList = new HashSet<WeblogEntry>();
+            Set<WeblogEntry> reindexList = new HashSet<>();
 
             // delete all comments with delete box checked
             List<String> deletes = Arrays.asList(getBean().getDeleteComments());
@@ -302,7 +302,7 @@ public class Comments extends UIAction {
             log.debug(spamIds.size() + " comments marked as spam");
 
             // track comments approved via moderation
-            List<WeblogEntryComment> approvedComments = new ArrayList<WeblogEntryComment>();
+            List<WeblogEntryComment> approvedComments = new ArrayList<>();
 
             String[] ids = Utilities.stringToStringArray(getBean().getIds(),
                     ",");
@@ -409,7 +409,7 @@ public class Comments extends UIAction {
 
     public List<KeyValueObject> getCommentStatusOptions() {
 
-        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
+        List<KeyValueObject> opts = new ArrayList<>();
 
         opts.add(new KeyValueObject("ALL", getText("generic.all")));
         opts.add(new KeyValueObject("ONLY_PENDING", getText("commentManagement.onlyPending")));

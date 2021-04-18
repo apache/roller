@@ -71,7 +71,7 @@ public class Members extends UIAction implements ParameterAware {
         int numAdmins = 0; // make sure at least one admin
         int removed = 0;
         int changed = 0;
-        List<WeblogPermission> permsList = new ArrayList<WeblogPermission>();
+        List<WeblogPermission> permsList = new ArrayList<>();
         try {
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();   
             List<WeblogPermission> permsFromDB = userMgr.getWeblogPermissionsIncludingPending(getActionWeblog());
@@ -181,6 +181,6 @@ public class Members extends UIAction implements ParameterAware {
             // serious problem, but not much we can do here
             log.error("ERROR getting weblog permissions", ex);
         }
-        return new ArrayList<WeblogPermission>();
+        return new ArrayList<>();
     }
 }

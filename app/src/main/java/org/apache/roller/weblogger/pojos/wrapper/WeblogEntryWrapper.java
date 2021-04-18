@@ -209,7 +209,7 @@ public final class WeblogEntryWrapper {
     
     public List getTags() {
         // Sort by name
-        Set<WeblogEntryTag> initialCollection = new TreeSet<WeblogEntryTag>(new WeblogEntryTagComparator());
+        Set<WeblogEntryTag> initialCollection = new TreeSet<>(new WeblogEntryTagComparator());
         initialCollection.addAll(this.pojo.getTags());
         
         // iterate through and wrap

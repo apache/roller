@@ -114,7 +114,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             csc.setMaxResults(COUNT+1);
 
             List<WeblogEntryComment> rawComments = wmgr.getComments(csc);
-            comments = new ArrayList<WeblogEntryComment>();
+            comments = new ArrayList<>();
             comments.addAll(rawComments);   
             
             if(!comments.isEmpty()) {
@@ -140,7 +140,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
     // use the action data to build a url representing this action, including query data
     private String buildBaseUrl() {
         
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         
         if(!StringUtils.isEmpty(getBean().getSearchString())) {
             params.put("bean.searchString", getBean().getSearchString());
@@ -252,7 +252,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
-            List<Weblog> flushList = new ArrayList<Weblog>();
+            List<Weblog> flushList = new ArrayList<>();
             
             // delete all comments with delete box checked
             List<String> deletes = Arrays.asList(getBean().getDeleteComments());
@@ -328,7 +328,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
     
     public List<KeyValueObject> getCommentStatusOptions() {
         
-        List<KeyValueObject> opts = new ArrayList<KeyValueObject>();
+        List<KeyValueObject> opts = new ArrayList<>();
         
         opts.add(new KeyValueObject("ALL", getText("generic.all")));
         opts.add(new KeyValueObject("ONLY_PENDING", getText("commentManagement.onlyPending")));

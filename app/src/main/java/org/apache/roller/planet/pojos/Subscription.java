@@ -40,8 +40,8 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     private int inboundblogs = 0;
 
     // associations
-    private Set<PlanetGroup> groups = new HashSet<PlanetGroup>();
-    private Set<SubscriptionEntry> entries = new HashSet<SubscriptionEntry>();
+    private Set<PlanetGroup> groups = new HashSet<>();
+    private Set<SubscriptionEntry> entries = new HashSet<>();
     
     
     public Subscription() {}

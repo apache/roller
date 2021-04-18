@@ -33,7 +33,7 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class CommentValidationManager {
     private static Log log = LogFactory.getLog(CommentValidationManager.class);
-    private List<CommentValidator> validators = new ArrayList<CommentValidator>();
+    private List<CommentValidator> validators = new ArrayList<>();
 
     public CommentValidationManager() {
         

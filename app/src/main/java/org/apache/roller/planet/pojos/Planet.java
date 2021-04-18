@@ -31,7 +31,7 @@ public class Planet implements Comparable<Planet> {
     private String handle = null;
     private String title = null;
     private String description = null;
-    private Set<PlanetGroup> groups = new TreeSet<PlanetGroup>();
+    private Set<PlanetGroup> groups = new TreeSet<>();
     
     
     public Planet() {

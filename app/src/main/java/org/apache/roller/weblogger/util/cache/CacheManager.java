@@ -59,10 +59,10 @@ public final class CacheManager {
     private static CacheFactory cacheFactory = null;
     
     // a set of all registered cache handlers
-    private static Set<CacheHandler> cacheHandlers = new HashSet<CacheHandler>();
+    private static Set<CacheHandler> cacheHandlers = new HashSet<>();
     
     // a map of all registered caches
-    private static Map<String, Cache> caches = new HashMap<String, Cache>();
+    private static Map<String, Cache> caches = new HashMap<>();
     
     
     static {
@@ -309,7 +309,7 @@ public final class CacheManager {
      * something a bit more elaborate, like JMX.
      */
     public static Map<String, Map<String, Object>> getStats() {
-        Map<String, Map<String, Object>> allStats = new HashMap<String, Map<String, Object>>();
+        Map<String, Map<String, Object>> allStats = new HashMap<>();
         for (Cache cache : caches.values()) {
             allStats.put(cache.getId(), cache.getStats());
         }

@@ -33,7 +33,7 @@ public class MediaFileDirectory {
     String name;
     String description;
     Weblog weblog;
-    Set<MediaFile> mediaFiles = new HashSet<MediaFile>();
+    Set<MediaFile> mediaFiles = new HashSet<>();
 
     public MediaFileDirectory() {
     }

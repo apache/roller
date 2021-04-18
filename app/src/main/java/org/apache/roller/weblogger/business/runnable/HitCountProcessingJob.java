@@ -65,7 +65,7 @@ public class HitCountProcessingJob implements Job {
         hitCounter.resetHits();
         
         // tally the counts, grouped by weblog handle
-        Map<String, Long> hitsTally = new HashMap<String, Long>();
+        Map<String, Long> hitsTally = new HashMap<>();
         for (String weblogHandle : currentHits) {
             Long count = hitsTally.get(weblogHandle);
             if(count == null) {

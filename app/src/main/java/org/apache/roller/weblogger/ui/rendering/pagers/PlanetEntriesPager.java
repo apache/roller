@@ -88,7 +88,7 @@ public class PlanetEntriesPager extends AbstractPager {
                 startDate = cal.getTime();
             }
             
-            List<SubscriptionEntry> results = new ArrayList<SubscriptionEntry>();
+            List<SubscriptionEntry> results = new ArrayList<>();
             try {
                 PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
                 Planet planet = planetManager.getWeblogger("default");

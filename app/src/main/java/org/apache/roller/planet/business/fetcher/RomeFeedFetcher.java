@@ -229,7 +229,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         
         // copy categories
         if (!romeEntry.getCategories().isEmpty()) {
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             for (Object cat : romeEntry.getCategories()) {
                 list.add(((SyndCategory) cat).getName());
             }

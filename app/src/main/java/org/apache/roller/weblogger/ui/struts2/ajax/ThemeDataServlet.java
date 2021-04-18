@@ -63,7 +63,7 @@ public class ThemeDataServlet extends HttpServlet {
         if (themeId == null) {
             themes = themeMgr.getEnabledThemesList();
         } else {
-            themes = new ArrayList<SharedTheme>(1);
+            themes = new ArrayList<>(1);
             try {
                 SharedTheme theme = themeMgr.getTheme(themeId);
                 themes.add(theme);

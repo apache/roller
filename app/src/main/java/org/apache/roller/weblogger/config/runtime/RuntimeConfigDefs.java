@@ -38,7 +38,7 @@ public class RuntimeConfigDefs {
     
     
     public RuntimeConfigDefs() {
-        this.configDefs = new ArrayList<ConfigDef>();
+        this.configDefs = new ArrayList<>();
     }
 
     public RuntimeConfigDefs(List<ConfigDef> configs) {

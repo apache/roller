@@ -212,7 +212,7 @@ public class MediaFileView extends MediaFileBase {
             this.directoryId = directory.getId();
             this.directoryName = directory.getName();
 
-            this.childFiles = new ArrayList<MediaFile>();
+            this.childFiles = new ArrayList<>();
             this.childFiles.addAll(directory.getMediaFiles());
 
             if ("type".equals(sortBy)) {
@@ -282,7 +282,7 @@ public class MediaFileView extends MediaFileBase {
             try {
                 List<MediaFile> rawResults = manager.searchMediaFiles(getActionWeblog(), filter);
                 boolean hasMore = false;
-                List<MediaFile> results = new ArrayList<MediaFile>();
+                List<MediaFile> results = new ArrayList<>();
                 results.addAll(rawResults);
                 if (results.size() > MediaFileSearchBean.PAGE_SIZE) {
                     results.remove(results.size() - 1);

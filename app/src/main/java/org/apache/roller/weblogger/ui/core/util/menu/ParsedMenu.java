@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class ParsedMenu {
     
-    private List<ParsedTab> tabs = new ArrayList<ParsedTab>();
+    private List<ParsedTab> tabs = new ArrayList<>();
     
     public void addTab(ParsedTab tab) {
         this.tabs.add(tab);

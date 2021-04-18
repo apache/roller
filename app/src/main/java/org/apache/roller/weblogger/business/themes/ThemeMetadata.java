@@ -33,8 +33,8 @@ public class ThemeMetadata {
     private String previewImage = null;
     private Boolean dualTheme = false;
     private ThemeMetadataTemplate stylesheet = null;
-    private Set<ThemeMetadataTemplate> templates = new HashSet<ThemeMetadataTemplate>();
-    private Set<String> resources = new HashSet<String>();
+    private Set<ThemeMetadataTemplate> templates = new HashSet<>();
+    private Set<String> resources = new HashSet<>();
 
     public ThemeMetadata() {
     }

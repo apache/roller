@@ -179,7 +179,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	 */
     @Override
 	public List<SharedTheme> getEnabledThemesList() {
-		List<SharedTheme> allThemes = new ArrayList<SharedTheme>(this.themes.values());
+		List<SharedTheme> allThemes = new ArrayList<>(this.themes.values());
 
 		// sort 'em ... default ordering for themes is by name
 		Collections.sort(allThemes);
@@ -373,7 +373,7 @@ public class ThemeManagerImpl implements ThemeManager {
 	 */
 	private Map<String, SharedTheme> loadAllThemesFromDisk() {
 
-		Map<String, SharedTheme> themeMap = new HashMap<String, SharedTheme>();
+		Map<String, SharedTheme> themeMap = new HashMap<>();
 
 		// first, get a list of the themes available
 		File themesdir = new File(this.themeDir);

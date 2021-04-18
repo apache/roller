@@ -391,7 +391,7 @@ public class SiteModel implements Model {
      * @param len      Max number of results to return
      */
     public List<WeblogWrapper> getNewWeblogs(int sinceDays, int length) {
-        List<WeblogWrapper> results = new ArrayList<WeblogWrapper>();
+        List<WeblogWrapper> results = new ArrayList<>();
         Date startDate = JPAWeblogEntryManagerImpl.getStartDateNow(sinceDays);
         try {            
             List<Weblog> weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogs(
@@ -412,7 +412,7 @@ public class SiteModel implements Model {
      * @param len      Max number of results to return
      */
     public List<UserWrapper> getNewUsers(int sinceDays, int length) {
-        List<UserWrapper> results = new ArrayList<UserWrapper>();
+        List<UserWrapper> results = new ArrayList<>();
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
@@ -434,7 +434,7 @@ public class SiteModel implements Model {
      */
     public List<StatCount> getHotWeblogs(int sinceDays, int length) {
         
-        List<StatCount> results = new ArrayList<StatCount>();
+        List<StatCount> results = new ArrayList<>();
         try {
             WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List<WeblogHitCount> hotBlogs = mgr.getHotWeblogs(sinceDays, 0, length);
@@ -504,7 +504,7 @@ public class SiteModel implements Model {
      * @param length    Max number of results to return
      */
     public List<WeblogEntryWrapper> getPinnedWeblogEntries(int length) {
-        List<WeblogEntryWrapper> results = new ArrayList<WeblogEntryWrapper>();
+        List<WeblogEntryWrapper> results = new ArrayList<>();
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();

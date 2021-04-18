@@ -44,7 +44,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
 
     // associations
     private Weblog weblog = null;
-    private List<WeblogBookmark> bookmarks = new ArrayList<WeblogBookmark>();
+    private List<WeblogBookmark> bookmarks = new ArrayList<>();
     
     
     public WeblogBookmarkFolder() {

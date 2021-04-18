@@ -40,7 +40,7 @@ public class ThemeMetadataTemplate {
 
     // Hash table to keep metadata about parsed template code files
     private Map<RenditionType, ThemeMetadataTemplateRendition> templateRenditionTable
-            = new EnumMap<RenditionType, ThemeMetadataTemplateRendition>(RenditionType.class);
+            = new EnumMap<>(RenditionType.class);
 
     public ComponentType getAction() {
         return action;

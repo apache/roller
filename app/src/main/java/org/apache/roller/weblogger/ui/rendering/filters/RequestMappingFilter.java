@@ -47,7 +47,7 @@ public class RequestMappingFilter implements Filter {
     private static Log log = LogFactory.getLog(RequestMappingFilter.class);
     
     // list of RequestMappers that want to inspect the request
-    private final List<RequestMapper> requestMappers = new ArrayList<RequestMapper>();
+    private final List<RequestMapper> requestMappers = new ArrayList<>();
     
     @Override
     public void init(FilterConfig filterConfig) {

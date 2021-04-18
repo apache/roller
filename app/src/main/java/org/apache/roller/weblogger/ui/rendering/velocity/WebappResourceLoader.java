@@ -113,7 +113,7 @@ public class WebappResourceLoader extends ResourceLoader {
         }
 
 		// init the template paths map
-		templatePaths = new HashMap<String, String>();
+		templatePaths = new HashMap<>();
 
 		if (log.isDebugEnabled()) {
             log.debug("WebappResourceLoader: initialization complete.");

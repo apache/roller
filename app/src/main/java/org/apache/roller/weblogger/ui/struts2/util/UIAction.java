@@ -203,7 +203,7 @@ public abstract class UIAction extends ActionSupport
 
     @Override
     public String getText(String aTextName, List<?> args) {
-        List<Object> cleanedArgs = new ArrayList<Object>(args.size());
+        List<Object> cleanedArgs = new ArrayList<>(args.size());
         for (Object el : args) {
             cleanedArgs.add(el instanceof String ? cleanTextArg((String) el) : el);
         }
@@ -221,7 +221,7 @@ public abstract class UIAction extends ActionSupport
 
     @Override
     public String getText(String aTextName, String defaultValue, List<?> args) {
-        List<Object> cleanedArgs = new ArrayList<Object>(args.size());
+        List<Object> cleanedArgs = new ArrayList<>(args.size());
         for (Object el : args) {
             cleanedArgs.add(el instanceof String ? cleanTextArg((String) el) : el);
         }

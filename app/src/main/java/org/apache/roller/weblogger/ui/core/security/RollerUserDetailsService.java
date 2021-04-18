@@ -61,7 +61,7 @@ public class RollerUserDetailsService implements UserDetailsService {
                 // openid authentication in order to receive OpenID Simple Registration (SREG)
                 // attributes from the authentication filter and save them
                 if (userData == null) {
-                     authorities = new ArrayList<SimpleGrantedAuthority>(1);
+                     authorities = new ArrayList<>(1);
                      SimpleGrantedAuthority g = new SimpleGrantedAuthority("rollerOpenidLogin");
                      authorities.add(g);
                      name = "openid";
@@ -96,7 +96,7 @@ public class RollerUserDetailsService implements UserDetailsService {
         
      private List<SimpleGrantedAuthority> getAuthorities(User userData, UserManager umgr) throws WebloggerException {
          List<String> roles = umgr.getRoles(userData);
-         List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>(roles.size());
+         List<SimpleGrantedAuthority> authorities = new ArrayList<>(roles.size());
          for (String role : roles) {
              authorities.add(new SimpleGrantedAuthority(role));
          }

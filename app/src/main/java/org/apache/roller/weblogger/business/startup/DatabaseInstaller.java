@@ -43,7 +43,7 @@ public class DatabaseInstaller {
     private final DatabaseProvider db;
     private final DatabaseScriptProvider scripts;
     private final String version;
-    private List<String> messages = new ArrayList<String>();
+    private List<String> messages = new ArrayList<>();
 
     // the name of the property which holds the dbversion value
     private static final String DBVERSION_PROP = "roller.database.version";

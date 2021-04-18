@@ -51,17 +51,17 @@ public class SharedThemeFromDir extends SharedTheme {
     private ThemeTemplate stylesheet = null;
 
     // we keep templates in a Map for faster lookups by name
-    private Map<String, ThemeTemplate> templatesByName = new HashMap<String, ThemeTemplate>();
+    private Map<String, ThemeTemplate> templatesByName = new HashMap<>();
 
     // we keep templates in a Map for faster lookups by link
-    private Map<String, ThemeTemplate> templatesByLink = new HashMap<String, ThemeTemplate>();
+    private Map<String, ThemeTemplate> templatesByLink = new HashMap<>();
 
     // we keep templates in a Map for faster lookups by action
-    private Map<ComponentType, ThemeTemplate> templatesByAction = new EnumMap<ComponentType, ThemeTemplate>(ComponentType.class);
+    private Map<ComponentType, ThemeTemplate> templatesByAction = new EnumMap<>(ComponentType.class);
 
     // we keep resources in a Map for faster lookups by path
     // the Map contains ... (resource path, ThemeResource)
-    private Map<String, ThemeResource> resources = new HashMap<String, ThemeResource>();
+    private Map<String, ThemeResource> resources = new HashMap<>();
 
     public SharedThemeFromDir(String themeDirPath)
             throws ThemeInitializationException {
@@ -85,7 +85,7 @@ public class SharedThemeFromDir extends SharedTheme {
      */
     @Override
     public List<ThemeTemplate> getTemplates() {
-        return new ArrayList<ThemeTemplate>(this.templatesByName.values());
+        return new ArrayList<>(this.templatesByName.values());
     }
 
     /**
@@ -140,7 +140,7 @@ public class SharedThemeFromDir extends SharedTheme {
     @Override
     public List<ThemeResource> getResources() {
 
-        List<ThemeResource> myResources = new ArrayList<ThemeResource>(this.resources.values());
+        List<ThemeResource> myResources = new ArrayList<>(this.resources.values());
         // make sure resources are sorted.
         Collections.sort(myResources);
 
@@ -215,7 +215,7 @@ public class SharedThemeFromDir extends SharedTheme {
         }
 
         // available types with Roller
-        List<RenditionType> availableTypesList = new ArrayList<RenditionType>();
+        List<RenditionType> availableTypesList = new ArrayList<>();
         availableTypesList.add(RenditionType.STANDARD);
         if (themeMetadata.getDualTheme()) {
             availableTypesList.add(RenditionType.MOBILE);

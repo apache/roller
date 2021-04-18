@@ -112,7 +112,7 @@ public class RSDServlet extends HttpServlet {
         response.setContentType("application/rsd+xml; charset=utf-8");
 
         // populate the model
-        HashMap<String, Object> model = new HashMap<String, Object>();
+        HashMap<String, Object> model = new HashMap<>();
         model.put("website", weblog);
         model.put("absBaseURL", WebloggerRuntimeConfig.getAbsoluteContextURL());
 

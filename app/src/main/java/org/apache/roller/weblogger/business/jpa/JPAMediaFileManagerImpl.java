@@ -108,7 +108,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public void moveMediaFiles(Collection<MediaFile> mediaFiles,
             MediaFileDirectory targetDirectory) throws WebloggerException {
 
-        List<MediaFile> moved = new ArrayList<MediaFile>();
+        List<MediaFile> moved = new ArrayList<>();
         moved.addAll(mediaFiles);
 
         for (MediaFile mediaFile : moved) {
@@ -536,7 +536,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public List<MediaFile> searchMediaFiles(Weblog weblog,
             MediaFileFilter filter) throws WebloggerException {
 
-        List<Object> params = new ArrayList<Object>();
+        List<Object> params = new ArrayList<>();
         int size = 0;
         String queryString = "SELECT m FROM MediaFile m WHERE ";
         StringBuilder whereClause = new StringBuilder();
@@ -673,7 +673,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      * creates migration status file only when work is complete.
      */
     public List<String> upgradeFileStorage() {
-        List<String> msgs = new ArrayList<String>();
+        List<String> msgs = new ArrayList<>();
         String oldDirName = WebloggerConfig.getProperty("uploads.dir");
         String FS = File.separator;
 

@@ -134,7 +134,7 @@ public class RollerAtomService extends AtomService {
      * from site's file-upload allowed extensions.
      */
     private List<String> getAcceptedContentTypeRange() throws WebloggerException {
-        List<String> accepts = new ArrayList<String>();
+        List<String> accepts = new ArrayList<>();
         Weblogger roller = WebloggerFactory.getWeblogger();
         Map config = roller.getPropertiesManager().getProperties();        
         String allows = ((RuntimeConfigProperty)config.get("uploads.types.allowed")).getValue();

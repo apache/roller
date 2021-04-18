@@ -307,7 +307,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         TypedQuery<WeblogEntry> query;
         WeblogCategory category;
         
-        List<Object> params = new ArrayList<Object>();
+        List<Object> params = new ArrayList<>();
         int size = 0;
         String queryString = "SELECT e FROM WeblogEntry e WHERE ";
         StringBuilder whereClause = new StringBuilder();
@@ -385,7 +385,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             cat = getWeblogCategoryByName(wesc.getWeblog(), wesc.getCatName());
         }
 
-        List<Object> params = new ArrayList<Object>();
+        List<Object> params = new ArrayList<>();
         int size = 0;
         StringBuilder queryString = new StringBuilder();
         
@@ -629,7 +629,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     @Override
     public List<WeblogEntryComment> getComments(CommentSearchCriteria csc) throws WebloggerException {
         
-        List<Object> params = new ArrayList<Object>();
+        List<Object> params = new ArrayList<>();
         int size = 0;
         StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT c FROM WeblogEntryComment c ");
@@ -790,7 +790,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      */
     @Override
     public Map<Date, String> getWeblogEntryStringMap(WeblogEntrySearchCriteria wesc) throws WebloggerException {
-        TreeMap<Date, String> map = new TreeMap<Date, String>(Collections.reverseOrder());
+        TreeMap<Date, String> map = new TreeMap<>(Collections.reverseOrder());
 
         List<WeblogEntry> entries = getWeblogEntries(wesc);
 
@@ -853,7 +853,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         setFirstMax( query, offset, length);
         queryResults = query.getResultList();
-        List<StatCount> results = new ArrayList<StatCount>();
+        List<StatCount> results = new ArrayList<>();
         if (queryResults != null) {
             for (Object obj : queryResults) {
                 Object[] row = (Object[]) obj;
@@ -965,7 +965,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         double min = Integer.MAX_VALUE;
         double max = Integer.MIN_VALUE;
         
-        List<TagStat> results = new ArrayList<TagStat>(limit >= 0 ? limit : 25);
+        List<TagStat> results = new ArrayList<>(limit >= 0 ? limit : 25);
         
         if (queryResults != null) {
             for (Object obj : queryResults) {
@@ -1005,7 +1005,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         List queryResults;
         boolean sortByName = sortBy == null || !sortBy.equals("count");
                 
-        List<Object> params = new ArrayList<Object>();
+        List<Object> params = new ArrayList<>();
         int size = 0;
         StringBuilder queryString = new StringBuilder();
         queryString.append("SELECT w.name, SUM(w.total) FROM WeblogEntryTagAggregate w WHERE ");
@@ -1036,7 +1036,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         setFirstMax( query, offset, limit);
         queryResults = query.getResultList();
         
-        List<TagStat> results = new ArrayList<TagStat>();
+        List<TagStat> results = new ArrayList<>();
         if (queryResults != null) {
             for (Object obj : queryResults) {
                 Object[] row = (Object[]) obj;
@@ -1073,7 +1073,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         queryString.append("FROM WeblogEntryTagAggregate w WHERE w.name IN (");
         // Append tags as parameter markers to avoid potential escaping issues
         // The IN clause would be of form (?1, ?2, ?3, ..)
-        List<Object> params = new ArrayList<Object>(tags.size() + 1);
+        List<Object> params = new ArrayList<>(tags.size() + 1);
         final String paramSeparator = ", ";
         int i;
         for (i=0; i < tags.size(); i++) {

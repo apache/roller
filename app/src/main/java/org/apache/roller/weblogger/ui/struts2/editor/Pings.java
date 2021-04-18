@@ -211,7 +211,7 @@ public class Pings extends UIAction {
         AutoPingManager autoPingMgr = WebloggerFactory.getWeblogger().getAutopingManager();
         
         // Build isEnabled map (keyed by ping target id and values Boolean.TRUE/Boolean.FALSE)
-        Map<String, Boolean> isEnabled = new HashMap<String, Boolean>();
+        Map<String, Boolean> isEnabled = new HashMap<>();
         
         List<AutoPing> autoPings = Collections.emptyList();
         try {

@@ -115,7 +115,7 @@ public abstract class AbstractURLStrategy implements URLStrategy {
         url.append("/").append(action).append(".rol");
         
         // put weblog handle parameter, if necessary
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         if(weblogHandle != null) {
             params.put("weblog", weblogHandle);
         }

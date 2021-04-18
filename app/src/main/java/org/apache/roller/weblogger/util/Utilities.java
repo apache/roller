@@ -326,7 +326,7 @@ public class Utilities {
     /** Convert string with delimiters to string list.
      */
     public static List<String> stringToStringList(String instr, String delim) {
-        List<String> stringList = new ArrayList<String>();
+        List<String> stringList = new ArrayList<>();
         String[] str = StringUtils.split(instr, delim);
         Collections.addAll(stringList, str);
         return stringList;

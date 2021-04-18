@@ -76,7 +76,7 @@ public class Templates extends UIAction {
             // get current list of templates, minus custom stylesheet
             List<WeblogTemplate> raw = WebloggerFactory.getWeblogger()
                 .getWeblogManager().getTemplates(getActionWeblog());
-            List<WeblogTemplate> pages = new ArrayList<WeblogTemplate>();
+            List<WeblogTemplate> pages = new ArrayList<>();
             pages.addAll(raw);
 
             // Remove style sheet from list so not to show when theme is
@@ -88,7 +88,7 @@ public class Templates extends UIAction {
             setTemplates(pages);
 
             // build list of action types that may be added
-            Map<ComponentType, String> actionsMap = new EnumMap<ComponentType, String>(ComponentType.class);
+            Map<ComponentType, String> actionsMap = new EnumMap<>(ComponentType.class);
             addComponentTypeToMap(actionsMap, ComponentType.CUSTOM);
 
             if (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())) {

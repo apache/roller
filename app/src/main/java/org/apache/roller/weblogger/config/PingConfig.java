@@ -90,7 +90,7 @@ public final class PingConfig {
     // This was introduced in order to support certain buggy (but popular) ping
     // targets that implement minor variants of the WeblogUpdates.ping call.
     // This is initialized once at startup, and referenced when pings are made.
-    private static final Map<String, Set<String>> CONFIGURED_VARIANTS = new HashMap<String, Set<String>>();
+    private static final Map<String, Set<String>> CONFIGURED_VARIANTS = new HashMap<>();
     
     // Pattern used to parse common ping targets as well as ping variants.
     // Each initial commmon ping target is specified in the format {{name}{url}}
@@ -226,7 +226,7 @@ public final class PingConfig {
             if (m.matches() && m.groupCount() == 2) {
                 String url = m.group(1).trim();
                 String optionsList = m.group(2).trim();
-                Set<String> variantOptions = new HashSet<String>();
+                Set<String> variantOptions = new HashSet<>();
                 String[] options = optionsList.split(",");
                 for (int j = 0; j < options.length; j++) {
                     String option = options[j].trim().toLowerCase();

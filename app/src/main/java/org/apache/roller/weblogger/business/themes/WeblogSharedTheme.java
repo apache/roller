@@ -85,7 +85,7 @@ public class WeblogSharedTheme extends WeblogTheme {
     @Override
     public List<ThemeTemplate> getTemplates() throws WebloggerException {
         
-        Map<String, ThemeTemplate> pages = new TreeMap<String, ThemeTemplate>();
+        Map<String, ThemeTemplate> pages = new TreeMap<>();
         
         // first get the pages from the db
         try {
@@ -110,7 +110,7 @@ public class WeblogSharedTheme extends WeblogTheme {
             log.error(e);
         }
         
-        return new ArrayList<ThemeTemplate>(pages.values());
+        return new ArrayList<>(pages.values());
     }
     
     

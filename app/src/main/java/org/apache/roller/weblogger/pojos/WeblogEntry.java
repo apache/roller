@@ -102,11 +102,11 @@ public class WeblogEntry implements Serializable {
     private WeblogCategory category = null;
     
     // Collection of name/value entry attributes
-    private Set<WeblogEntryAttribute> attSet = new TreeSet<WeblogEntryAttribute>();
+    private Set<WeblogEntryAttribute> attSet = new TreeSet<>();
     
-    private Set<WeblogEntryTag> tagSet = new HashSet<WeblogEntryTag>();
-    private Set<WeblogEntryTag> removedTags = new HashSet<WeblogEntryTag>();
-    private Set<WeblogEntryTag> addedTags = new HashSet<WeblogEntryTag>();
+    private Set<WeblogEntryTag> tagSet = new HashSet<>();
+    private Set<WeblogEntryTag> removedTags = new HashSet<>();
+    private Set<WeblogEntryTag> addedTags = new HashSet<>();
     
     //----------------------------------------------------------- Construction
     
@@ -234,7 +234,7 @@ public class WeblogEntry implements Serializable {
      * Added for symmetry with PlanetEntryData object.
      */
     public List<WeblogCategory> getCategories() {
-        List<WeblogCategory> cats = new ArrayList<WeblogCategory>();
+        List<WeblogCategory> cats = new ArrayList<>();
         cats.add(getCategory());
         return cats;
     }
@@ -536,8 +536,8 @@ public class WeblogEntry implements Serializable {
     @SuppressWarnings("unused")
     private void setTags(Set<WeblogEntryTag> tagSet) throws WebloggerException {
          this.tagSet = tagSet;
-         this.removedTags = new HashSet<WeblogEntryTag>();
-         this.addedTags = new HashSet<WeblogEntryTag>();
+         this.removedTags = new HashSet<>();
+         this.addedTags = new HashSet<>();
     }
      
     /**
@@ -581,7 +581,7 @@ public class WeblogEntry implements Serializable {
     public String getTagsAsString() {
         StringBuilder sb = new StringBuilder();
         // Sort by name
-        Set<WeblogEntryTag> tmp = new TreeSet<WeblogEntryTag>(new WeblogEntryTagComparator());
+        Set<WeblogEntryTag> tmp = new TreeSet<>(new WeblogEntryTagComparator());
         tmp.addAll(getTags());
         for (WeblogEntryTag entryTag : tmp) {
             sb.append(entryTag.getName()).append(" ");
@@ -601,7 +601,7 @@ public class WeblogEntry implements Serializable {
         }
 
         List<String> updatedTags = Utilities.splitStringAsTags(tags);
-        Set<String> newTags = new HashSet<String>(updatedTags.size());
+        Set<String> newTags = new HashSet<>(updatedTags.size());
         Locale localeObject = getWebsite() != null ? getWebsite().getLocaleInstance() : Locale.getDefault();
 
         for (String name : updatedTags) {
@@ -724,7 +724,7 @@ public class WeblogEntry implements Serializable {
      * TODO: why is this method exposed to users with ability to get spam/non-approved comments?
      */
     public List<WeblogEntryComment> getComments(boolean ignoreSpam, boolean approvedOnly) {
-        List<WeblogEntryComment> list = new ArrayList<WeblogEntryComment>();
+        List<WeblogEntryComment> list = new ArrayList<>();
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
@@ -882,7 +882,7 @@ public class WeblogEntry implements Serializable {
         if (getPlugins() != null) {
             return Arrays.asList( StringUtils.split(getPlugins(), ",") );
         }
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     /** Convenience method for checking status */
@@ -1005,7 +1005,7 @@ public class WeblogEntry implements Serializable {
                 displayContent = this.getTransformedSummary();
                 if(StringUtils.isNotEmpty(this.getText())) {
                     // add read more
-                    List<String> args = new ArrayList<String>();
+                    List<String> args = new ArrayList<>();
                     args.add(readMoreLink);
                     
                     // TODO: we need a more appropriate way to get the view locale here

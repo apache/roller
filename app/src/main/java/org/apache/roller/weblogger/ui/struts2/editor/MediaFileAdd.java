@@ -59,9 +59,9 @@ public class MediaFileAdd extends MediaFileBase {
     // an array of filenames for uploaded files
     private String[] uploadedFilesFileName = null;
 
-    private List<MediaFile> newImages = new ArrayList<MediaFile>();
+    private List<MediaFile> newImages = new ArrayList<>();
 
-    private List<MediaFile> newFiles = new ArrayList<MediaFile>();
+    private List<MediaFile> newFiles = new ArrayList<>();
 
     private String directoryName = null;
 
