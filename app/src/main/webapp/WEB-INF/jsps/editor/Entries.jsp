@@ -63,11 +63,11 @@
 <table class="rollertable table table-striped" width="100%">
 
 <tr>
-    <th class="rollertable" width="5%"> </th>
-    <th class="rollertable" width="5%">
+    <th class="rollertable" width="3%"> </th>
+    <th class="rollertable" width="7%">
         <s:text name="weblogEntryQuery.pubTime" />
     </th>
-    <th class="rollertable" width="5%">
+    <th class="rollertable" width="7%">
         <s:text name="weblogEntryQuery.updateTime" />
     </th>
     <th class="rollertable">
@@ -76,7 +76,7 @@
     <th class="rollertable" width="15%">
         <s:text name="weblogEntryQuery.category" />
     </th>
-    <th class="rollertable" width="5%"> </th>
+    <th class="rollertable" width="3%"> </th>
 </tr>
 
 <s:iterator var="post" value="pager.items">
