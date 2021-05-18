@@ -23,7 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -31,10 +31,11 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.util.Utilities;
 
+import static org.apache.commons.text.StringEscapeUtils.escapeXml11;
 
 /**
  * Return OpenSearch descriptor that describes Roller's search facilities.
- * For more informaton see the 
+ * For more information see the 
  * <a href="http://cwiki.apache.org/confluence/display/ROLLER/Proposal+OpenSearch">OpenSearch proposal</a>.
  * @author Dave Johnson (<a href="mailto:davidm.johnson@sun.com">davidm.johnson@sun.com</a>)
  */
@@ -46,18 +47,19 @@ public class OpenSearchServlet extends HttpServlet {
             throws ServletException, IOException {
         
         String[] pathInfo = new String[0];
-        String handle = null;
         
         // Will return descriptor for searching specified blog
         if (request.getPathInfo() != null) {
             pathInfo = Utilities.stringToStringArray(request.getPathInfo(), "/");
         }
 
+        String handle;
+
         if (pathInfo.length == 0) {
             // URL format: [context]/roller-services/opensearch
             handle = WebloggerRuntimeConfig.getProperty("site.frontpage.weblog.handle");
 
-        } else if (pathInfo.length == 1) {
+        } else if (pathInfo.length == 1 && StringUtils.isAlphanumeric(pathInfo[0])) {
             // URL format: [context]/roller-services/opensearch/[weblog-handle]
             handle = pathInfo[0];
 
@@ -65,43 +67,44 @@ public class OpenSearchServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed URL");
             return;
         }
-
-        String shortName = null;
-        String description = null;
-        String contact = null;
-        String searchFeed = null;
-        String searchPage = null;
         
-        URLStrategy strat = WebloggerFactory.getWeblogger().getUrlStrategy();
-        Weblog weblog = null;
+        Weblog weblog;
+
         try {
             weblog = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
+            if (weblog == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Weblog not found");
+                return;
+            }
         } catch (WebloggerException ex) {
-            throw new ServletException("ERROR: fetching specified weblog");
+            throw new ServletException("ERROR: fetching specified weblog", ex);
         }
-        searchPage = StringEscapeUtils.escapeXml11(
-                strat.getWeblogSearchPageURLTemplate(weblog));
-        searchFeed = StringEscapeUtils.escapeXml11(
-                strat.getWeblogSearchFeedURLTemplate(weblog));
 
-        boolean siteWide = WebloggerRuntimeConfig.isSiteWideWeblog(handle);
-        if (siteWide) {
-            shortName = "[Search Descriptor] " + StringEscapeUtils.escapeXml11(
-                    WebloggerRuntimeConfig.getProperty("site.shortName"));
-            description = StringEscapeUtils.escapeXml11(
-                    WebloggerRuntimeConfig.getProperty("site.description"));
-            contact = StringEscapeUtils.escapeXml11(
-                    WebloggerRuntimeConfig.getProperty("site.adminemail"));
-                    
+        String shortName;
+        String description;
+        String contact;
+        String searchFeed;
+        String searchPage;
+
+        URLStrategy strat = WebloggerFactory.getWeblogger().getUrlStrategy();
+        searchPage = escapeXml11(strat.getWeblogSearchPageURLTemplate(weblog));
+        searchFeed = escapeXml11(strat.getWeblogSearchFeedURLTemplate(weblog));
+
+        if (WebloggerRuntimeConfig.isSiteWideWeblog(handle)) {
+
+            shortName = "[Search Descriptor] " + escapeXml11(WebloggerRuntimeConfig.getProperty("site.shortName"));
+            description = escapeXml11(WebloggerRuntimeConfig.getProperty("site.description"));
+            contact = escapeXml11(WebloggerRuntimeConfig.getProperty("site.adminemail"));
+
         } else {
-            shortName = StringEscapeUtils.escapeXml11(weblog.getName());
-            description = StringEscapeUtils.escapeXml11(weblog.getTagline());
-            contact = StringEscapeUtils.escapeXml11(weblog.getEmailAddress());
+            shortName = escapeXml11(weblog.getName());
+            description = escapeXml11(weblog.getTagline());
+            contact = escapeXml11(weblog.getEmailAddress());
         }
 
         response.setContentType("application/opensearchdescription+xml");
         
-        PrintWriter pw = new PrintWriter(response.getWriter());
+        PrintWriter pw = response.getWriter();
         pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         pw.println("<OpenSearchDescription xmlns=\"http://a9.com/-/spec/opensearch/1.1/\">");
         pw.println("   <ShortName>" + shortName + "</ShortName>");
@@ -112,8 +115,7 @@ public class OpenSearchServlet extends HttpServlet {
         pw.println("   <Url type=\"text/html\" ");
         pw.println("      template=\"" + searchPage + "\"/>");
         pw.println("</OpenSearchDescription>");
-        pw.flush();            
-        pw.close();
+        pw.flush();
     }
 }
 

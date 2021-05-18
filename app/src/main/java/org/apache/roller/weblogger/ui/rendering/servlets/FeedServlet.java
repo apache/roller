@@ -55,7 +55,7 @@ import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
  */
 public class FeedServlet extends HttpServlet {
 
-    private static Log log = LogFactory.getLog(FeedServlet.class);
+    private static final Log log = LogFactory.getLog(FeedServlet.class);
 
     private WeblogFeedCache weblogFeedCache = null;
     private SiteWideCache siteWideCache = null;
