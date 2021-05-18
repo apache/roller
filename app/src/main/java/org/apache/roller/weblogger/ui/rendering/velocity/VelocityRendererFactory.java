@@ -28,44 +28,45 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererFactory;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.apache.velocity.exception.ResourceNotFoundException;
 
 
 /**
  * RendererFactory for Velocity, creates VelocityRenderers.
  */
 public class VelocityRendererFactory implements RendererFactory {
-    private static Log log = LogFactory.getLog(VelocityRendererFactory.class);
+    private static final Log log = LogFactory.getLog(VelocityRendererFactory.class);
     
     @Override
     public Renderer getRenderer(Template template, 
 			MobileDeviceRepository.DeviceType deviceType) {
-        Renderer renderer = null;
-        TemplateRendition tr;
 
+        // nothing we can do with null values
         if (template == null || template.getId() == null) {
             return null;
         }
 
-        // nothing we can do with null values
+        TemplateRendition tr;
         try {
             tr = template.getTemplateRendition(RenditionType.STANDARD);
+            if (tr == null) {
+                return null;
+            }
         } catch (WebloggerException e) {
             return null;
         }
 
-        if (tr == null) {
-            return null;
-        }
+        Renderer renderer = null;
         
         if (TemplateLanguage.VELOCITY.equals(tr.getTemplateLanguage())) {
             // standard velocity template
             try {
                renderer = new VelocityRenderer(template, deviceType);
+            } catch (ResourceNotFoundException ex) {
+                // allready logged in VelocityRenderer
             } catch(Exception ex) {
-				log.error("ERROR creating VelocityRenderer", ex);
                 // some kind of exception so we don't have a renderer
-                // we do catching/logging in VelocityRenderer constructor
-                return null;
+				log.error("ERROR creating VelocityRenderer", ex);
             }            
         }
         return renderer;

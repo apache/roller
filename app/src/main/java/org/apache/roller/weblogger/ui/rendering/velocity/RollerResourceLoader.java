@@ -46,7 +46,7 @@ import org.apache.velocity.util.ExtProperties;
  */
 public class RollerResourceLoader extends ResourceLoader {
 
-	private static Log logger = LogFactory.getLog(RollerResourceLoader.class);
+	private static final Log logger = LogFactory.getLog(RollerResourceLoader.class);
 
     @Override
 	public void init(ExtProperties configuration) {
@@ -105,15 +105,14 @@ public class RollerResourceLoader extends ResourceLoader {
 		} catch (UnsupportedEncodingException uex) {
 			// This should never actually happen. We expect UTF-8 in all JRE
 			// installation.
-			// This rethrows as a Runtime exception after logging.
-			logger.error(uex);
+//			logger.error(uex);
 			throw new RuntimeException(uex);
 
 		} catch (WebloggerException | ResourceNotFoundException re) {
 			String msg = "RollerResourceLoader Error: "
 					+ "database problem trying to load resource " + name;
-			logger.error(msg, re);
-			throw new ResourceNotFoundException(msg);
+//			logger.error(msg, re);
+			throw new ResourceNotFoundException(msg, re);
 		}
 	}
 
