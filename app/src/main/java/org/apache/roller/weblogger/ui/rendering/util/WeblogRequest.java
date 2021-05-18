@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.rendering.util;
 
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -48,7 +49,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public class WeblogRequest extends ParsedRequest {
     
-    private static Log log = LogFactory.getLog(WeblogRequest.class);
+    private static final Log log = LogFactory.getLog(WeblogRequest.class);
     
     // lightweight attributes
     private String weblogHandle = null;
@@ -85,12 +86,11 @@ public class WeblogRequest extends ParsedRequest {
             }
             
             String[] pathElements = path.split("/", 2);
-            if(!pathElements[0].isBlank()) {
+            if(StringUtils.isAlphanumeric(pathElements[0])) {
                 this.weblogHandle = pathElements[0];
             } else {
-                // no weblogHandle in path info
-                throw new InvalidRequestException("not a weblog request, "+
-                        request.getRequestURL());
+                // no or invalid weblogHandle in path info
+                throw new InvalidRequestException("not a valid weblog request: "+request.getRequestURL());
             }
             
             // if there is more left of the path info then hold onto it

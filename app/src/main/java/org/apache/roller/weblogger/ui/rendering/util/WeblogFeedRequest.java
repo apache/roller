@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -43,7 +44,7 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class WeblogFeedRequest extends WeblogRequest {
     
-    private static Log log = LogFactory.getLog(WeblogFeedRequest.class);
+    private static final Log log = LogFactory.getLog(WeblogFeedRequest.class);
     
     private static final String FEED_SERVLET = "/roller-ui/rendering/feed";
     
@@ -97,7 +98,9 @@ public class WeblogFeedRequest extends WeblogRequest {
         if(pathInfo != null && pathInfo.trim().length() > 1) {
             
             String[] pathElements = pathInfo.split("/");
-            if(pathElements.length == 2) {
+            if(pathElements.length == 2
+                    && StringUtils.isAlphanumeric(pathElements[0])
+                    && StringUtils.isAlphanumeric(pathElements[1])) {
                 this.type = pathElements[0];
                 this.format = pathElements[1];
             } else {
