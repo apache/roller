@@ -47,7 +47,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
  */
 public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
     
-    private static Log log = LogFactory.getLog(WebloggerRomeFeedFetcher.class); 
+    private static final Log log = LogFactory.getLog(WebloggerRomeFeedFetcher.class); 
     
     
     /**
@@ -135,7 +135,7 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
             Map pagePlugins = ppmgr.getWeblogEntryPlugins(localWeblog);
             for ( WeblogEntry rollerEntry : entries ) {
                 SubscriptionEntry entry = new SubscriptionEntry();
-                String content = "";
+                String content;
                 if (!StringUtils.isEmpty(rollerEntry.getText())) {
                     content = rollerEntry.getText();
                 } else {
