@@ -23,16 +23,16 @@ import com.rometools.rome.feed.synd.SyndCategory;
 import com.rometools.rome.feed.synd.SyndContent;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.fetcher.FeedFetcher;
-import com.rometools.fetcher.impl.FeedFetcherCache;
-import com.rometools.fetcher.impl.HttpURLFeedFetcher;
-import com.rometools.fetcher.impl.SyndFeedInfo;
-import com.rometools.fetcher.impl.DiskFeedInfoCache;
+import com.rometools.rome.io.FeedException;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.XmlReader;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,28 +43,35 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.Subscription;
-import org.apache.roller.weblogger.config.WebloggerConfig;
+
+import static java.net.http.HttpResponse.BodyHandlers.ofInputStream;
 
 
 /**
- * A FeedFetcher based on the ROME RSS/Atom feed parser (http://rome.dev.java.net).
+ * A FeedFetcher based on Apache ROME and {@link java.net.http.HttpClient}.
  */
-public class RomeFeedFetcher implements org.apache.roller.planet.business.fetcher.FeedFetcher {
+public class RomeFeedFetcher implements FeedFetcher {
     
-    private static Log log = LogFactory.getLog(RomeFeedFetcher.class);
+    private static final Log log = LogFactory.getLog(RomeFeedFetcher.class);
     
+    // mutable, copy() first
+    private static final HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                                .timeout(Duration.ofSeconds(3))
+                                .header("User-Agent", "RollerPlanetAggregator");
+    
+    private final HttpClient client;
     
     public RomeFeedFetcher() {
-        // no-op
+        // immutable + thread safe, prefers HTTP/2, no redirects
+        this.client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(3)).build();
     }
-    
     
     /**
      * @inheritDoc
      */
     @Override
-    public Subscription fetchSubscription(String feedURL) 
-            throws FetcherException {
+    public Subscription fetchSubscription(String feedURL) throws FetcherException {
         return fetchSubscription(feedURL, null);
     }
     
@@ -73,22 +80,18 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
      * @inheritDoc
      */
     @Override
-    public Subscription fetchSubscription(String feedURL, Date lastModified) 
-            throws FetcherException {
-        
+    public Subscription fetchSubscription(String feedURL, Date lastModified) throws FetcherException {
+
         if(feedURL == null) {
             throw new IllegalArgumentException("feed url cannot be null");
         }
-        
-        // setup Rome feed fetcher
-        FeedFetcher feedFetcher = getRomeFetcher();
         
         // fetch the feed
         log.debug("Fetching feed: "+feedURL);
         SyndFeed feed;
         try {
-            feed = feedFetcher.retrieveFeed(new URL(feedURL));
-        } catch (Exception ex) {
+            feed = fetchFeed(feedURL);
+        } catch (FeedException | IOException | InterruptedException ex) {
             throw new FetcherException("Error fetching subscription - "+feedURL, ex);
         }
         
@@ -111,21 +114,6 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         if(newSub.getAuthor() == null) {
             // set the author to the title
             newSub.setAuthor(newSub.getTitle());
-        }
-        if(newSub.getLastUpdated() == null) {
-            // no update time specified in feed, so try consulting feed info cache
-            FeedFetcherCache feedCache = getRomeFetcherCache();
-            try {
-                SyndFeedInfo feedInfo = feedCache.getFeedInfo(new URL(newSub.getFeedURL()));
-                if(feedInfo.getLastModified() != null) {
-                    long lastUpdatedLong = (Long) feedInfo.getLastModified();
-                    if (lastUpdatedLong != 0) {
-                        newSub.setLastUpdated(new Date(lastUpdatedLong));
-                    }
-                }
-            } catch (MalformedURLException ex) {
-                // should never happen since we check this above
-            }
         }
         
         // check if feed is unchanged and bail now if so
@@ -162,9 +150,7 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
                 cal.add(Calendar.DATE, -1);
             }
             
-            if(newEntry != null) {
-                newSub.addEntry(newEntry);
-            }
+            newSub.addEntry(newEntry);
         }
         
         log.debug(feedEntries.size()+" entries included");
@@ -230,8 +216,8 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         // copy categories
         if (!romeEntry.getCategories().isEmpty()) {
             List<String> list = new ArrayList<>();
-            for (Object cat : romeEntry.getCategories()) {
-                list.add(((SyndCategory) cat).getName());
+            for (SyndCategory cat : romeEntry.getCategories()) {
+                list.add(cat.getName());
             }
             newEntry.setCategoriesString(list);
         }
@@ -239,68 +225,14 @@ public class RomeFeedFetcher implements org.apache.roller.planet.business.fetche
         return newEntry;
     }
     
-    
-    // get a feed fetcher cache, if possible
-    private FeedFetcherCache getRomeFetcherCache() {
+    private SyndFeed fetchFeed(String url) throws IOException, InterruptedException, FeedException {
         
-        String cacheDirPath = WebloggerConfig.getProperty("cache.dir");
+        HttpRequest request = requestBuilder.copy().uri(URI.create(url)).build();
         
-        // can't continue without cache dir
-        if (cacheDirPath == null) {
-            log.warn("Planet cache directory not set, feeds cannot be cached.");
-            return null;
+        try(XmlReader reader = new XmlReader(client.send(request, ofInputStream()).body())) {
+            return new SyndFeedInput().build(reader);
         }
-        
-        // allow ${user.home} in cache dir property
-        String cacheDirName = cacheDirPath.replaceFirst(
-                "\\$\\{user.home}",System.getProperty("user.home"));
-        
-        // allow ${catalina.home} in cache dir property
-        if (System.getProperty("catalina.home") != null) {
-            cacheDirName = cacheDirName.replaceFirst(
-                    "\\$\\{catalina.home}",System.getProperty("catalina.home"));
-        }
-        
-        // create cache  dir if it does not exist
-        File cacheDir = null;
-        try {
-            cacheDir = new File(cacheDirName);
-            if (!cacheDir.exists()) {
-                cacheDir.mkdirs();
-            }
-        } catch (Exception e) {
-            log.error("Unable to create planet cache directory: " +
-                    ((cacheDir != null) ? cacheDir.getPath() : null), e);
-            return null;
-        }
-        
-        // abort if cache dir is not writable
-        if (!cacheDir.canWrite()) {
-            log.error("Planet cache directory is not writable: " + cacheDir.getPath());
-            return null;
-        }
-        
-        return new DiskFeedInfoCache(cacheDirName);
-    }
-
-
-    // get a feed fetcher
-    private FeedFetcher getRomeFetcher() {
-        
-        FeedFetcherCache feedCache = getRomeFetcherCache();
-        
-        FeedFetcher feedFetcher;
-        if(feedCache != null) {
-            feedFetcher = new HttpURLFeedFetcher(feedCache);
-        } else {
-            feedFetcher = new HttpURLFeedFetcher();
-        }
-        
-        // set options
-        feedFetcher.setUsingDeltaEncoding(false);
-        feedFetcher.setUserAgent("RollerPlanetAggregator");
-        
-        return feedFetcher;
+       
     }
     
 }
