@@ -429,7 +429,7 @@ public class RollerAtomHandler implements AtomHandler {
             if (index != -1) {
                 String key = tokens[i].substring(0, index).trim();
                 String value = tokens[i].substring(index + 1).trim();
-                value = value.replaceAll("\"", "");
+                value = value.replace("\"", "");
                 if (key.startsWith("UsernameToken")) {
                     userName = value;
                 } else if (key.equalsIgnoreCase("nonce")) {
