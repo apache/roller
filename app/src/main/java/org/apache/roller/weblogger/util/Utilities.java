@@ -713,12 +713,12 @@ public class Utilities {
      */
     private static String stripLineBreaks(String str) {
         // TODO: use a string buffer, ignore case !
-        str = str.replaceAll("<br>", "");
-        str = str.replaceAll("<br/>", "");
-        str = str.replaceAll("<br />", "");
-        str = str.replaceAll("<p></p>", "");
-        str = str.replaceAll("<p/>", "");
-        str = str.replaceAll("<p />", "");
+        str = str.replace("<br>", "");
+        str = str.replace("<br/>", "");
+        str = str.replace("<br />", "");
+        str = str.replace("<p></p>", "");
+        str = str.replace("<p/>", "");
+        str = str.replace("<p />", "");
         return str;
     }
 
@@ -1035,9 +1035,9 @@ public class Utilities {
         }
 
         // escaped angle brackets
-        s = s.replaceAll("&amp;lt;", "&lt;");
-        s = s.replaceAll("&amp;gt;", "&gt;");
-        s = s.replaceAll("&amp;#", "&#");
+        s = s.replace("&amp;lt;", "&lt;");
+        s = s.replace("&amp;gt;", "&gt;");
+        s = s.replace("&amp;#", "&#");
 
         return s;
     }

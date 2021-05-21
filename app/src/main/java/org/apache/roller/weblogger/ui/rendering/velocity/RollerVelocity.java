@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -40,9 +41,9 @@ public class RollerVelocity {
     
     public static final String VELOCITY_CONFIG = "/WEB-INF/velocity.properties";
     
-    private static Log log = LogFactory.getLog(RollerVelocity.class);
+    private static final Log log = LogFactory.getLog(RollerVelocity.class);
     
-    private static VelocityEngine velocityEngine = null;
+    private static final VelocityEngine velocityEngine;
     
     
     static {
@@ -52,11 +53,11 @@ public class RollerVelocity {
         Properties velocityProps = new Properties();
         
         try {
-            InputStream instream =
-                    RollerContext.getServletContext().getResourceAsStream(VELOCITY_CONFIG);
-            
-            velocityProps.load(instream);
-            
+            try (InputStream instream =
+                    RollerContext.getServletContext().getResourceAsStream(VELOCITY_CONFIG)) {
+                velocityProps.load(instream);
+            }
+
             // Development theme reloading
             Boolean themeReload = WebloggerConfig.getBooleanProperty("themes.reload.mode");
             
@@ -77,7 +78,7 @@ public class RollerVelocity {
             // init velocity with our properties
             velocityEngine.init(velocityProps);
             
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

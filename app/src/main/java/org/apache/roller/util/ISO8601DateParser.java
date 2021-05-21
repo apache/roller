@@ -115,7 +115,7 @@ public class ISO8601DateParser {
 
         String result = s0 + s1;
 
-        result = result.replaceAll( "UTC", "+00:00" );
+        result = result.replace( "UTC", "+00:00" );
         
         return result;
         

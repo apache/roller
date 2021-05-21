@@ -32,8 +32,8 @@ import org.apache.roller.weblogger.util.I18nMessages;
  * Asks the commenter to answer a simple math question.
  */
 public class MathCommentAuthenticator implements CommentAuthenticator {
-    private Random ran = new SecureRandom();
-    private static Log mLogger = LogFactory.getLog(MathCommentAuthenticator.class);
+    private final Random ran = new SecureRandom();
+    private static final Log mLogger = LogFactory.getLog(MathCommentAuthenticator.class);
 
 
     @Override
@@ -55,12 +55,12 @@ public class MathCommentAuthenticator implements CommentAuthenticator {
             String answerString = request.getParameter("answer");
             try {
                 answer = Integer.parseInt(answerString);
-            } catch (Throwable intentionallyIgnored) {}
+            } catch (NumberFormatException intentionallyIgnored) {}
         }
 
         // pull existing values out of session
-        Integer value1o = (Integer)request.getSession().getAttribute("mathValue1");
-        Integer value2o = (Integer)request.getSession().getAttribute("mathValue2");
+        Integer value1o = (Integer)session.getAttribute("mathValue1");
+        Integer value2o = (Integer)session.getAttribute("mathValue2");
 
         Locale locale = CommentAuthenticatorUtils.getLocale(request);
         I18nMessages messages = I18nMessages.getMessages(locale);

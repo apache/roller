@@ -365,7 +365,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         Weblog website = validate(blogid, userid, password);
         try {
             String name = (String) struct.get("name");
-            name = name.replaceAll("/","_");
+            name = name.replace("/","_");
             String type = (String) struct.get("type");
             mLogger.debug("newMediaObject name: " + name);
             mLogger.debug("newMediaObject type: " + type);

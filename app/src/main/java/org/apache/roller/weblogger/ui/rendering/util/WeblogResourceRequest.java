@@ -73,7 +73,7 @@ public class WeblogResourceRequest extends WeblogRequest {
             // who upload files with plus signs expect them to work without
             // escaping. This is essentially what other systems do (e.g. JIRA) to
             // enable this.
-            this.resourcePath = this.resourcePath.replaceAll("\\+", "%2B");
+            this.resourcePath = this.resourcePath.replace("+", "%2B");
             
             // now we really decode the URL
             this.resourcePath = URLUtilities.decode(this.resourcePath);
