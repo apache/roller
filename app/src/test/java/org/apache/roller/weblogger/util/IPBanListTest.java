@@ -11,7 +11,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IPBanListTest {
 
@@ -32,7 +34,9 @@ class IPBanListTest {
     void addBannedAddsToFile() {
         sut.addBannedIp("10.0.0.1");
 
-        assertThat(readIpBanList()).containsOnly("10.0.0.1");
+        List<String> ipBanList = readIpBanList();
+        assertTrue(ipBanList.contains("10.0.0.1"));
+        assertEquals(1, ipBanList.size());
     }
 
     @Test
@@ -40,7 +44,7 @@ class IPBanListTest {
     void addBannedIgnoresNulls() {
         sut.addBannedIp(null);
 
-        assertThat(readIpBanList()).isEmpty();
+        assertTrue(readIpBanList().isEmpty());
     }
 
     @Test
@@ -48,19 +52,19 @@ class IPBanListTest {
     void isBanned() {
         sut.addBannedIp("10.0.0.1");
 
-        assertThat(sut.isBanned("10.0.0.1")).isTrue();
+        assertTrue(sut.isBanned("10.0.0.1"));
     }
 
     @Test
     @DisplayName("isBanned() returns false if the given IP address it not banned")
     void isBanned2() {
-        assertThat(sut.isBanned("10.0.0.1")).isFalse();
+        assertFalse(sut.isBanned("10.0.0.1"));
     }
 
     @Test
     @DisplayName("isBanned() returns false if the given IP address is null")
     void isBanned3() {
-        assertThat(sut.isBanned(null)).isFalse();
+        assertFalse(sut.isBanned(null));
     }
 
     @Test
@@ -68,7 +72,7 @@ class IPBanListTest {
     void isBanned4() {
         writeIpBanList("10.0.0.1");
 
-        assertThat(sut.isBanned("10.0.0.1")).isTrue();
+        assertTrue(sut.isBanned("10.0.0.1"));
     }
 
     private void writeIpBanList(String ipAddress) {
