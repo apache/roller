@@ -22,8 +22,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -38,10 +40,10 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  */
 public final class IPBanList {
 
-    private static Log log = LogFactory.getLog(IPBanList.class);
+    private static final Log log = LogFactory.getLog(IPBanList.class);
 
     // set of ips that are banned, use a set to ensure uniqueness
-    private Set bannedIps = new HashSet();
+    private volatile Set<String> bannedIps = newThreadSafeSet();
 
     // file listing the ips that are banned
     private ModifiedFile bannedIpsFile = null;
@@ -51,17 +53,17 @@ public final class IPBanList {
 
 
     static {
-        instance = new IPBanList();
+        instance = new IPBanList(() -> WebloggerConfig.getProperty("ipbanlist.file"));
     }
 
 
-    // private because we are a singleton
-    private IPBanList() {
+    // package-private for unit tests
+    IPBanList(Supplier<String> banIpsFilePathSupplier) {
 
         log.debug("INIT");
 
         // load up set of denied ips
-        String banIpsFilePath = WebloggerConfig.getProperty("ipbanlist.file");
+        String banIpsFilePath = banIpsFilePathSupplier.get();
         if(banIpsFilePath != null) {
             ModifiedFile banIpsFile = new ModifiedFile(banIpsFilePath);
 
@@ -82,7 +84,7 @@ public final class IPBanList {
     public boolean isBanned(String ip) {
 
         // update the banned ips list if needed
-        this.loadBannedIpsIfNeeded(false);
+        this.loadBannedIpsIfNeeded();
 
         if(ip != null) {
             return this.bannedIps.contains(ip);
@@ -99,7 +101,7 @@ public final class IPBanList {
         }
 
         // update the banned ips list if needed
-        this.loadBannedIpsIfNeeded(false);
+        this.loadBannedIpsIfNeeded();
 
         if(!this.bannedIps.contains(ip) &&
                 (bannedIpsFile != null && bannedIpsFile.canWrite())) {
@@ -127,10 +129,10 @@ public final class IPBanList {
     /**
      * Check if the banned ips file has changed and needs to be reloaded.
      */
-    private void loadBannedIpsIfNeeded(boolean forceLoad) {
+    private void loadBannedIpsIfNeeded() {
 
         if(bannedIpsFile != null &&
-                (bannedIpsFile.hasChanged() || forceLoad)) {
+                (bannedIpsFile.hasChanged())) {
 
             // need to reload
             this.loadBannedIps();
@@ -148,7 +150,7 @@ public final class IPBanList {
 
             // TODO: optimize this
             try (BufferedReader in = new BufferedReader(new FileReader(this.bannedIpsFile))) {
-                HashSet newBannedIpList = new HashSet();
+                Set<String> newBannedIpList = newThreadSafeSet();
 
                 String ip = null;
                 while((ip = in.readLine()) != null) {
@@ -170,7 +172,7 @@ public final class IPBanList {
 
     // a simple extension to the File class which tracks if the file has
     // changed since the last time we checked
-    private class ModifiedFile extends java.io.File {
+    private static class ModifiedFile extends java.io.File {
 
         private long myLastModified = 0;
 
@@ -189,4 +191,7 @@ public final class IPBanList {
         }
     }
 
+    private static <T> Set<T> newThreadSafeSet() {
+        return ConcurrentHashMap.newKeySet();
+    }
 }
