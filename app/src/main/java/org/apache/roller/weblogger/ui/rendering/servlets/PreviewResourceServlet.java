@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.rendering.servlets;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -30,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -50,7 +48,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewResourceReques
  */
 public class PreviewResourceServlet extends HttpServlet {
 
-    private static Log log = LogFactory.getLog(PreviewResourceServlet.class);
+    private static final Log log = LogFactory.getLog(PreviewResourceServlet.class);
 
     private ServletContext context = null;
 
@@ -123,6 +121,9 @@ public class PreviewResourceServlet extends HttpServlet {
             } catch (Exception ex) {
                 // hmmm, some kind of error getting theme. that's an error.
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                if(resourceStream != null) {
+                    resourceStream.close();
+                }
                 return;
             }
         }
@@ -141,6 +142,9 @@ public class PreviewResourceServlet extends HttpServlet {
                 // still not found? then we don't have it, 404.
                 log.debug("Unable to get resource", ex);
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                if(resourceStream != null) {
+                    resourceStream.close();
+                }
                 return;
             }
         }
@@ -159,21 +163,11 @@ public class PreviewResourceServlet extends HttpServlet {
         response.setContentType(this.context.getMimeType(resourceRequest
                 .getResourcePath()));
 
-        OutputStream out;
         try {
             // ok, lets serve up the file
-            byte[] buf = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
-            int length;
-            out = response.getOutputStream();
-            while ((length = resourceStream.read(buf)) > 0) {
-                out.write(buf, 0, length);
-            }
+            resourceStream.transferTo(response.getOutputStream());
 
-            // cleanup
-            out.close();
-            resourceStream.close();
-
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             log.error("Error writing resource file", ex);
             if (!response.isCommitted()) {
                 response.reset();

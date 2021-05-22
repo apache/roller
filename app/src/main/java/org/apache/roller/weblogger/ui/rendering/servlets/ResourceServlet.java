@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.rendering.servlets;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -31,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -50,7 +48,7 @@ public class ResourceServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1350679411381917714L;
 
-    private static Log log = LogFactory.getLog(ResourceServlet.class);
+    private static final Log log = LogFactory.getLog(ResourceServlet.class);
 
     private ServletContext context = null;
 
@@ -120,6 +118,9 @@ public class ResourceServlet extends HttpServlet {
                 response.reset();
             }
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            if(resourceStream != null) {
+                resourceStream.close();
+            }
             return;
         }
 
@@ -140,6 +141,9 @@ public class ResourceServlet extends HttpServlet {
                 }
                 log.debug("Unable to get resource", ex);
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                if(resourceStream != null) {
+                    resourceStream.close();
+                }
                 return;
             }
         }
@@ -158,20 +162,11 @@ public class ResourceServlet extends HttpServlet {
         response.setContentType(this.context.getMimeType(resourceRequest
                 .getResourcePath()));
 
-        OutputStream out;
         try {
             // ok, lets serve up the file
-            byte[] buf = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
-            int length;
-            out = response.getOutputStream();
-            while ((length = resourceStream.read(buf)) > 0) {
-                out.write(buf, 0, length);
-            }
+            resourceStream.transferTo(response.getOutputStream());
 
-            // close output stream
-            out.close();
-
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             if (!response.isCommitted()) {
                 response.reset();
             }
