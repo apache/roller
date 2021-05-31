@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -611,7 +613,15 @@ public class PageServlet extends HttpServlet {
             }
         }
 
-        String referrerUrl = request.getHeader("Referer");
+        String referrerUrl = null;
+        try {
+            URL requestUrl = new URL(request.getHeader("Referer"));
+            referrerUrl = requestUrl.toString();
+        } catch (MalformedURLException e) {
+            log.debug("Failed to parse referrer: " + request.getHeader("Referer"));
+        }
+        log.debug("referrer = " + referrerUrl);
+
         StringBuffer reqsb = request.getRequestURL();
         if (request.getQueryString() != null) {
             reqsb.append("?");
@@ -619,7 +629,6 @@ public class PageServlet extends HttpServlet {
         }
         String requestUrl = reqsb.toString();
 
-        log.debug("referrer = " + referrerUrl);
 
         // if this came from persons own blog then don't process it
         String selfSiteFragment = "/" + pageRequest.getWeblogHandle();
