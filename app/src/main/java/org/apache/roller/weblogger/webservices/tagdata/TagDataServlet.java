@@ -107,7 +107,7 @@ public class TagDataServlet extends HttpServlet {
         if (request.getParameter("format") != null) {
             
             format = request.getParameter("format");
-            if(!format.equals("json") || !format.equals("xml")) {
+            if(!format.equals("json") && !format.equals("xml")) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed URL");
                 return;
             }
