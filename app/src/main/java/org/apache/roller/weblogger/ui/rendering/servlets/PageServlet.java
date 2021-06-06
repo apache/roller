@@ -23,6 +23,7 @@ import java.net.URL;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.HitCountQueue;
@@ -614,11 +615,10 @@ public class PageServlet extends HttpServlet {
         }
 
         String referrerUrl = null;
-        try {
-            URL requestUrl = new URL(request.getHeader("Referer"));
-            referrerUrl = requestUrl.toString();
-        } catch (MalformedURLException e) {
-            log.debug("Failed to parse referrer: " + request.getHeader("Referer"));
+        String[] schemes = {"http", "https"};
+        UrlValidator urlValidator = new UrlValidator(schemes);
+        if (urlValidator.isValid(request.getHeader("Referer"))) {
+            referrerUrl = request.getHeader("Referer");
         }
         log.debug("referrer = " + referrerUrl);
 
