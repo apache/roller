@@ -39,11 +39,10 @@ limitations under the License.
         <java-mail.version>1.4.7</java-mail.version>
         <jstl.version>1.2</jstl.version>
         <angular.version>1.7.8</angular.version>
-        <ant.version>1.10.9</ant.version>
+        <ant.version>1.10.10</ant.version>
         <asm.version>9.1</asm.version>
         <commons-validator.version>1.7</commons-validator.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
-        <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-codec.version>1.15</commons-codec.version>
         <eclipse-link.version>2.7.8</eclipse-link.version>
         <guice.version>5.0.1</guice.version>
@@ -55,13 +54,12 @@ limitations under the License.
         <maven-antrun.version>1.0b3</maven-antrun.version>
         <rome.version>1.15.0</rome.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <spring.version>5.3.7</spring.version>
+        <spring.version>5.3.8</spring.version>
         <spring.security.version>5.4.6</spring.security.version>
         <struts.version>2.5.26</struts.version>
         <velocity.version>2.3</velocity.version>
         <webjars.version>1.5</webjars.version>
         <ws-commons-util.version>1.0.2</ws-commons-util.version>
-        <xml-security.version>1.3.0</xml-security.version>
         <xmlrpc-version>3.1.3</xmlrpc-version>
     </properties>
 
@@ -184,12 +182,6 @@ limitations under the License.
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity-engine-core</artifactId>
             <version>${velocity.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2.2</version>
         </dependency>
         
         <!-- explicitly adding newest asm lib to improve compatibility with latest JDKs -->
@@ -359,18 +351,6 @@ limitations under the License.
         </dependency>
 
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>${commons-httpclient.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>${commons-codec.version}</version>
@@ -381,12 +361,6 @@ limitations under the License.
             <artifactId>commons-text</artifactId>
             <version>1.9</version>
          </dependency>
-
-        <dependency>
-            <groupId>xml-security</groupId>
-            <artifactId>xmlsec</artifactId>
-            <version>${xml-security.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.xmlrpc</groupId>
@@ -405,10 +379,6 @@ limitations under the License.
             <artifactId>xmlrpc-server</artifactId>
             <version>${xmlrpc-version}</version>
             <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
@@ -440,6 +410,13 @@ limitations under the License.
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
+            <exclusions>
+                <!-- in jcl-over-slf4j  -->
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jcl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -452,6 +429,14 @@ limitations under the License.
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
             <version>${spring.security.version}</version>
+            <exclusions>
+                <!-- all classes of spring-security-crypto-x.x.x.jar are already in 
+                                    spring-security-core-x.x.x.jar -->
+                <exclusion>
+                    <groupId>org.springframework.security</groupId>
+                    <artifactId>spring-security-crypto</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -505,13 +490,18 @@ limitations under the License.
                     <groupId>aopalliance</groupId>
                     <artifactId>aopalliance</artifactId>
                 </exclusion>
+                <!-- this removes an empty jar guava depends on -->
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>listenablefuture</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.jgeppert.struts2.bootstrap</groupId>
             <artifactId>struts2-bootstrap-plugin</artifactId>
-            <version>2.5.2</version>
+            <version>4.0.0</version>
         </dependency>
 
         <dependency>
@@ -519,8 +509,15 @@ limitations under the License.
             <artifactId>rome-fetcher</artifactId>
             <version>${rome.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
+        <!-- todo: remove/replace propono -->
         <dependency>
             <groupId>com.rometools</groupId>
             <artifactId>rome-propono</artifactId>
@@ -528,12 +525,8 @@ limitations under the License.
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>xmlrpc</groupId>
-                    <artifactId>xmlrpc-common</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xmlrpc</groupId>
-                    <artifactId>xmlrpc-client</artifactId>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -675,7 +668,7 @@ limitations under the License.
 
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.2.0</version>
 
                 <executions>
 
@@ -757,7 +750,7 @@ limitations under the License.
 
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.8</version>
+                <version>3.0.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>ant-contrib</groupId>
@@ -815,7 +808,7 @@ limitations under the License.
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.3</version>
+                <version>1.4</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
