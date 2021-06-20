@@ -85,7 +85,6 @@ limitations under the License.
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>${jstl.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
