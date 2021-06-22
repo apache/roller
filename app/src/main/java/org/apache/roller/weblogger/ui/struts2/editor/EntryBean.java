@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -28,6 +29,7 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
+import org.apache.roller.weblogger.util.Utilities;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -45,7 +47,7 @@ import java.util.TimeZone;
  */
 public class EntryBean {
     
-    private static Log log = LogFactory.getLog(EntryBean.class);
+    private static final Log log = LogFactory.getLog(EntryBean.class);
     
     private String id = null;
     private String title = null;
@@ -290,12 +292,12 @@ public class EntryBean {
     
     public void copyTo(WeblogEntry entry) throws WebloggerException {
         
-        entry.setTitle(getTitle());
+        entry.setTitle(StringEscapeUtils.escapeHtml4(getTitle()));
         entry.setStatus(PubStatus.valueOf(getStatus()));
         entry.setLocale(getLocale());
         entry.setSummary(getSummary());
         entry.setText(getText());
-        entry.setTagsAsString(getTagsAsString());
+        entry.setTagsAsString(Utilities.replaceNonAlphanumeric(getTagsAsString(), ' '));
         entry.setSearchDescription(getSearchDescription());
         
         // figure out the category selected
@@ -337,7 +339,7 @@ public class EntryBean {
     public void copyFrom(WeblogEntry entry, Locale locale) {
         
         setId(entry.getId());
-        setTitle(entry.getTitle());
+        setTitle(StringEscapeUtils.unescapeHtml4(entry.getTitle()));
         setLocale(entry.getLocale());
         setStatus(entry.getStatus().name());
         setSummary(entry.getSummary());
