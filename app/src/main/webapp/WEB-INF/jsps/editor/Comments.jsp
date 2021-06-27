@@ -211,16 +211,16 @@
                         <%-- only blog admins (not the global admin) can approve blog comments --%>
                         <td>
                             <s:checkboxlist name="bean.approvedComments" cssClass="comment-select"
-                                            list="#comment" listKey="id" listValue="emptyString" />
+                                            list="#comment" listKey="id" listValue="" />
                         </td>
                     </s:if>
                     <td>
                         <s:checkboxlist name="bean.spamComments" cssClass="comment-select"
-                                        list="#comment" listKey="id" listValue="emptyString"  />
+                                        list="#comment" listKey="id" listValue="" />
                     </td>
                     <td>
                         <s:checkboxlist name="bean.deleteComments" cssClass="comment-select"
-                                        list="#comment" listKey="id" listValue="emptyString"  />
+                                        list="#comment" listKey="id" listValue="" />
                     </td>
 
                         <%-- ======================================================== --%>
