@@ -291,10 +291,6 @@ public class WeblogEntryComment implements Serializable {
     public Boolean getApproved() {
         return ApprovalStatus.APPROVED.equals(getStatus());
     }
-
-    public String getEmptyString() {
-        return "";
-    }
     
     
     /**
