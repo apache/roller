@@ -45,8 +45,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.validator.UrlValidator;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
 public class HTMLSanitizer {
@@ -56,21 +55,21 @@ public class HTMLSanitizer {
     public static Pattern allowedTags = Pattern.compile("^(b|p|i|s|a|img|table|thead|tbody|tfoot|tr|th|td|dd|dl|dt|em|h1|h2|h3|h4|h5|h6|li|ul|ol|span|div|strike|strong|"
             + "sub|sup|pre|del|code|blockquote|kbd|br|hr|area|map|object|embed|param|link|form|small|big)$");
     // <!--.........>
-    private static Pattern commentPattern = Pattern.compile("<!--.*");
+    private static final Pattern commentPattern = Pattern.compile("<!--.*");
     // <tag ....props.....>
-    private static Pattern tagStartPattern = Pattern.compile("<(?i)(\\w+\\b)\\s*(.*)/?>$");
+    private static final Pattern tagStartPattern = Pattern.compile("<(?i)(\\w+\\b)\\s*(.*)/?>$");
     // </tag .........>
-    private static Pattern tagClosePattern = Pattern.compile("</(?i)(\\w+\\b)\\s*>$");
-    private static Pattern standAloneTags = Pattern.compile("^(img|br|hr)$");
-    private static Pattern selfClosed = Pattern.compile("<.+/>");
+    private static final Pattern tagClosePattern = Pattern.compile("</(?i)(\\w+\\b)\\s*>$");
+    private static final Pattern standAloneTags = Pattern.compile("^(img|br|hr)$");
+    private static final Pattern selfClosed = Pattern.compile("<.+/>");
     // prop="...."
-    private static Pattern attributesPattern = Pattern.compile("(\\w*)\\s*=\\s*\"([^\"]*)\"");
+    private static final Pattern attributesPattern = Pattern.compile("(\\w*)\\s*=\\s*\"([^\"]*)\"");
     // color:red;
-    private static Pattern stylePattern = Pattern.compile("([^\\s^:]+)\\s*:\\s*([^;]+);?");
+    private static final Pattern stylePattern = Pattern.compile("([^\\s^:]+)\\s*:\\s*([^;]+);?");
     // url('....')"
-    private static Pattern urlStylePattern = Pattern.compile("(?i).*\\b\\s*url\\s*\\(['\"]([^)]*)['\"]\\)");
+    private static final Pattern urlStylePattern = Pattern.compile("(?i).*\\b\\s*url\\s*\\(['\"]([^)]*)['\"]\\)");
     // expression(....)"   thanks to Ben Summer
-    private static Pattern forbiddenStylePattern = Pattern.compile("(?:(expression|eval|javascript))\\s*\\(");
+    private static final Pattern forbiddenStylePattern = Pattern.compile("(?:(expression|eval|javascript))\\s*\\(");
 
     /**
      * This method should be used to test input.
@@ -373,7 +372,7 @@ public class HTMLSanitizer {
      * @return a list of token
      */
     private static List<String> tokenize(String html) {
-        ArrayList tokens = new ArrayList();
+        List<String> tokens = new ArrayList<>();
         int pos = 0;
         String token = "";
         int len = html.length();
