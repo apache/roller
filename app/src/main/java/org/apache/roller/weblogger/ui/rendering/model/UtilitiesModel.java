@@ -47,49 +47,6 @@ public class UtilitiesModel implements Model {
     
     private static final Log log = LogFactory.getLog(UtilitiesModel.class);
     
-    private static Pattern mLinkPattern =
-            Pattern.compile("<a href=.*?>", Pattern.CASE_INSENSITIVE);    
-    private static final Pattern OPENING_B_TAG_PATTERN = 
-            Pattern.compile("&lt;b&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_B_TAG_PATTERN = 
-            Pattern.compile("&lt;/b&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_I_TAG_PATTERN = 
-            Pattern.compile("&lt;i&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_I_TAG_PATTERN = 
-            Pattern.compile("&lt;/i&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_BLOCKQUOTE_TAG_PATTERN = 
-            Pattern.compile("&lt;blockquote&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_BLOCKQUOTE_TAG_PATTERN = 
-            Pattern.compile("&lt;/blockquote&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern BR_TAG_PATTERN = 
-            Pattern.compile("&lt;br */*&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_P_TAG_PATTERN = 
-            Pattern.compile("&lt;p&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_P_TAG_PATTERN = 
-            Pattern.compile("&lt;/p&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_PRE_TAG_PATTERN = 
-            Pattern.compile("&lt;pre&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_PRE_TAG_PATTERN = 
-            Pattern.compile("&lt;/pre&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_UL_TAG_PATTERN = 
-            Pattern.compile("&lt;ul&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_UL_TAG_PATTERN = 
-            Pattern.compile("&lt;/ul&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_OL_TAG_PATTERN = 
-            Pattern.compile("&lt;ol&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_OL_TAG_PATTERN = 
-            Pattern.compile("&lt;/ol&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_LI_TAG_PATTERN = 
-            Pattern.compile("&lt;li&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_LI_TAG_PATTERN = 
-            Pattern.compile("&lt;/li&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_A_TAG_PATTERN = 
-            Pattern.compile("&lt;/a&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_A_TAG_PATTERN = 
-            Pattern.compile("&lt;a href=.*?&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern QUOTE_PATTERN = 
-            Pattern.compile("&quot;", Pattern.CASE_INSENSITIVE);
-    
     private ParsedRequest parsedRequest = null;
     private Weblog weblog = null;
     
