@@ -45,7 +45,7 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class UtilitiesModel implements Model {
     
-    private static Log log = LogFactory.getLog(UtilitiesModel.class); 
+    private static final Log log = LogFactory.getLog(UtilitiesModel.class);
     
     private static Pattern mLinkPattern =
             Pattern.compile("<a href=.*?>", Pattern.CASE_INSENSITIVE);    
@@ -103,7 +103,7 @@ public class UtilitiesModel implements Model {
     
     /** Init page model based on request */
     @Override
-    public void init(Map initData) throws WebloggerException {      
+    public void init(Map<String, Object> initData) throws WebloggerException {      
         
         // we expect the init data to contain a parsedRequest object
         parsedRequest = (ParsedRequest) initData.get("parsedRequest");

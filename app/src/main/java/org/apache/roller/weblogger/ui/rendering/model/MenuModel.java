@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  */
 public class MenuModel implements Model {
     
-    private static Log logger = LogFactory.getLog(MenuModel.class);
+    private static final Log logger = LogFactory.getLog(MenuModel.class);
     
     private WeblogPageRequest pageRequest = null;
     
@@ -52,7 +52,7 @@ public class MenuModel implements Model {
     
     /** Init page model based on request */
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map<String, Object> initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");

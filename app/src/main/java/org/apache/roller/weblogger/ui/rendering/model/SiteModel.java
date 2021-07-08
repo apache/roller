@@ -20,8 +20,8 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +43,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
@@ -60,12 +61,12 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  */
 public class SiteModel implements Model {
     
-    private static Log log = LogFactory.getLog(SiteModel.class);   
+    private static final Log log = LogFactory.getLog(SiteModel.class);   
     
     private Weblog weblog = null;
     private WeblogRequest weblogRequest = null;
     private WeblogFeedRequest feedRequest = null;
-    private List tags = new ArrayList();
+    private List<String> tags = Collections.emptyList();
     private String pageLink = null;
     private int pageNum = 0;
     
@@ -78,7 +79,7 @@ public class SiteModel implements Model {
     }
     
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map<String, Object> initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
         this.weblogRequest = (WeblogRequest) initData.get("parsedRequest");
@@ -114,7 +115,7 @@ public class SiteModel implements Model {
      * @param sinceDays Limit to past X days in past (or -1 for no limit)
      * @param length    Max number of results to return
      */
-    public Pager getWeblogEntriesPager(int sinceDays, int length) {
+    public Pager<WeblogEntryWrapper> getWeblogEntriesPager(int sinceDays, int length) {
         
         String pagerUrl;
         
@@ -147,7 +148,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(WeblogWrapper queryWeblog, int sinceDays, int length) {
+    public Pager<WeblogEntryWrapper> getWeblogEntriesPager(WeblogWrapper queryWeblog, int sinceDays, int length) {
         return getWeblogEntriesPager(queryWeblog, null, null, sinceDays, length);
     }
 
@@ -159,7 +160,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(WeblogWrapper queryWeblog, User user, int sinceDays, int length) {
+    public Pager<WeblogEntryWrapper> getWeblogEntriesPager(WeblogWrapper queryWeblog, User user, int sinceDays, int length) {
         return getWeblogEntriesPager(queryWeblog, user, null, sinceDays, length);
     }
 
@@ -172,7 +173,7 @@ public class SiteModel implements Model {
      * @param sinceDays   Limit to past X days in past (or -1 for no limit)
      * @param length      Max number of results to return
      */   
-    public Pager getWeblogEntriesPager(WeblogWrapper queryWeblog, User user, String cat, int sinceDays, int length) {
+    public Pager<WeblogEntryWrapper> getWeblogEntriesPager(WeblogWrapper queryWeblog, User user, String cat, int sinceDays, int length) {
         
         String pagerUrl;
         if (feedRequest != null) {
@@ -203,7 +204,7 @@ public class SiteModel implements Model {
      * @param offset   Offset into results (for paging)
      * @param len      Max number of results to return
      */
-    public Pager getCommentsPager(int sinceDays, int length) {
+    public Pager<WeblogEntryCommentWrapper> getCommentsPager(int sinceDays, int length) {
         
         String pagerUrl;
         if (feedRequest != null) {
@@ -228,7 +229,7 @@ public class SiteModel implements Model {
     
     
     /* Get pager of users whose names begin with specified letter */
-    public Pager getUsersByLetterPager(String letter, int sinceDays, int length) {
+    public Pager<UserWrapper> getUsersByLetterPager(String letter, int sinceDays, int length) {
         
         String pagerUrl;
         if (feedRequest != null) {
@@ -257,7 +258,7 @@ public class SiteModel implements Model {
     
     
     /** Get pager of weblogs whose handles begin with specified letter */
-    public Pager getWeblogsByLetterPager(String letter, int sinceDays, int length) {
+    public Pager<WeblogWrapper> getWeblogsByLetterPager(String letter, int sinceDays, int length) {
         
         String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
@@ -284,16 +285,15 @@ public class SiteModel implements Model {
      * containing integers reflecting the number of users whose
      * names start with each letter.
      */
-    public Map getUserNameLetterMap() {
-        Map results = new HashMap();
-        try {            
+    public Map<String, Long> getUserNameLetterMap() {
+        try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
-            results = umgr.getUserNameLetterMap();
+            return umgr.getUserNameLetterMap();
         } catch (Exception e) {
             log.error("ERROR: fetching username letter map", e);
         }
-        return results;
+        return Collections.emptyMap();
     }
     
     
@@ -302,23 +302,22 @@ public class SiteModel implements Model {
      * containing integers reflecting the number of weblogs whose
      * names start with each letter.
      */
-    public Map getWeblogHandleLetterMap() {
-        Map results = new HashMap();
-        try {            
-            results = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogHandleLetterMap();
+    public Map<String, Long> getWeblogHandleLetterMap() {
+        try {
+            return WebloggerFactory.getWeblogger().getWeblogManager().getWeblogHandleLetterMap();
         } catch (Exception e) {
             log.error("ERROR: fetching weblog handle letter map", e);
         }
-        return results;
+        return Collections.emptyMap();
     }
     
 
     /** 
      * Return list of weblogs that user belongs to.
      */
-    public List getUsersWeblogs(String userName) {
-        List results = new ArrayList();
-        try {            
+    public List<WeblogWrapper> getUsersWeblogs(String userName) {
+        List<WeblogWrapper> results = new ArrayList<>();
+        try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
             User user = umgr.getUserByUserName(userName);
@@ -336,9 +335,9 @@ public class SiteModel implements Model {
     /** 
      * Return list of users that belong to website.
      */
-    public List getWeblogsUsers(String handle) {
-        List results = new ArrayList();
-        try {            
+    public List<UserWrapper> getWeblogsUsers(String handle) {
+        List<UserWrapper> results = new ArrayList<>();
+        try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             UserManager umgr = roller.getUserManager();
             Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
@@ -464,16 +463,15 @@ public class SiteModel implements Model {
      * @param sinceDays Only consider weblogs updated in the last sinceDays
      * @param length   Max number of results to return
      */
-    public List getMostCommentedWeblogs(int sinceDays , int length) {
-        List results = new ArrayList();
+    public List<StatCount> getMostCommentedWeblogs(int sinceDays , int length) {
         Date startDate = JPAWeblogEntryManagerImpl.getStartDateNow(sinceDays);
-        try {            
-            results = WebloggerFactory.getWeblogger().getWeblogManager().getMostCommentedWeblogs(
+        try {
+            return WebloggerFactory.getWeblogger().getWeblogManager().getMostCommentedWeblogs(
                     startDate, new Date(), 0, length);
         } catch (Exception e) {
             log.error("ERROR: fetching commented weblog list", e);
         }
-        return results;
+        return Collections.emptyList();
     }
     
     
@@ -484,19 +482,17 @@ public class SiteModel implements Model {
      * @param cats     To limit results to list of category names
      * @param length      Max number of results to return
      */
-    public List getMostCommentedWeblogEntries(
-            List cats, int sinceDays, int length) {
-        List results = new ArrayList();
+    public List<StatCount> getMostCommentedWeblogEntries(List cats, int sinceDays, int length) {
         Date startDate = JPAWeblogEntryManagerImpl.getStartDateNow(sinceDays);
-        try {            
+        try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-            results = wmgr.getMostCommentedWeblogEntries(
+            return wmgr.getMostCommentedWeblogEntries(
                     null, startDate, new Date(), 0, length);
         } catch (Exception e) {
             log.error("ERROR: fetching commented weblog entries list", e);
         }
-        return results;
+        return Collections.emptyList();
     }
     
     /**
@@ -525,7 +521,6 @@ public class SiteModel implements Model {
      * @return
      */
     public List<TagStat> getPopularTags(int sinceDays, int length) {
-        List results = new ArrayList();
         Date startDate = null;
         if(sinceDays > 0) {
             Calendar cal = Calendar.getInstance();
@@ -537,11 +532,11 @@ public class SiteModel implements Model {
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-            results = wmgr.getPopularTags(null, startDate, 0, length);
+            return wmgr.getPopularTags(null, startDate, 0, length);
         } catch (Exception e) {
             log.error("ERROR: fetching site tags list", e);
         }
-        return results;
+        return Collections.emptyList();
     }   
     
     

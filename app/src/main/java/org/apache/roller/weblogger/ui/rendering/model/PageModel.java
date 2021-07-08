@@ -48,12 +48,12 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  */
 public class PageModel implements Model {
     
-    private static Log log = LogFactory.getLog(PageModel.class);
+    private static final Log log = LogFactory.getLog(PageModel.class);
     
     private WeblogPageRequest pageRequest = null;
     private URLStrategy urlStrategy = null;
     private WeblogEntryCommentForm commentForm = null;
-    private Map requestParameters = null;
+    private Map<String, String[]> requestParameters = null;
     private Weblog weblog = null;
     private DeviceType deviceType = null;
     
@@ -79,7 +79,8 @@ public class PageModel implements Model {
      * Init page model based on request. 
      */
     @Override
-    public void init(Map initData) throws WebloggerException {
+    @SuppressWarnings("unchecked")
+    public void init(Map<String, Object> initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
@@ -100,7 +101,7 @@ public class PageModel implements Model {
         this.commentForm = (WeblogEntryCommentForm) initData.get("commentForm");
         
         // custom request parameters
-        this.requestParameters = (Map)initData.get("requestParameters");
+        this.requestParameters = (Map<String, String[]>) initData.get("requestParameters");
         
         // look for url strategy
         urlStrategy = (URLStrategy) initData.get("urlStrategy");
@@ -191,7 +192,7 @@ public class PageModel implements Model {
     /**
      * Returns the list of tags specified in the request /tags/foo+bar
      */
-    public List getTags() {
+    public List<String> getTags() {
         return pageRequest.getTags();
     }
     
@@ -245,9 +246,9 @@ public class PageModel implements Model {
             cat = catArgument;
         }
         
-        List tags = pageRequest.getTags();
+        List<String> tags = pageRequest.getTags();
         if (tagArgument != null && !StringUtils.isEmpty(tagArgument) && !"nil".equals(tagArgument)) {
-            tags = new ArrayList();
+            tags = new ArrayList<>();
             tags.add(tagArgument);
         }
         
@@ -321,7 +322,7 @@ public class PageModel implements Model {
      */
     public String getRequestParameter(String paramName) {
         if (requestParameters != null) {
-            String[] values = (String[])requestParameters.get(paramName);
+            String[] values = requestParameters.get(paramName);
             if (values != null && values.length > 0) {
                 return values[0];
             }
