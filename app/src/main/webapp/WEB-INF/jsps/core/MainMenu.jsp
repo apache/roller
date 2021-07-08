@@ -72,9 +72,9 @@
             <p><s:property value="#perms.weblog.about" escapeHtml="false" /></p>
 
             <p>You have 
-            <s:if test='#perms.hasAction("admin")'>ADMIN</s:if>
-            <s:if test='#perms.hasAction("post")'>AUTHOR</s:if>
-            <s:if test='#perms.hasAction("edit_draft")'>LIMITED</s:if>
+            <s:if test='#perms.hasAction("admin")'>ADMIN </s:if>
+            <s:if test='#perms.hasAction("post")'>AUTHOR </s:if>
+            <s:if test='#perms.hasAction("edit_draft")'>LIMITED </s:if>
             <s:text name='yourWebsites.permission'/></p>
             
             <div class="btn-group" role="group" aria-label="...">
