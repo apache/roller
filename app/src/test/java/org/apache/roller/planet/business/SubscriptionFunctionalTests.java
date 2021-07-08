@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Test Subscription functionality.
  */
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class SubscriptionFunctionalTests  {
     
     private Planet testPlanet = null;
