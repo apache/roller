@@ -39,7 +39,7 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
  */
 public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
     
-    private static Log log = LogFactory.getLog(WeblogEntriesLatestPager.class);
+    private static final Log log = LogFactory.getLog(WeblogEntriesLatestPager.class);
     
     // collection for the pager
     private Map<Date, List<WeblogEntryWrapper>> entries = null;
@@ -56,7 +56,7 @@ public class WeblogEntriesLatestPager extends AbstractWeblogEntriesPager {
             String             entryAnchor,
             String             dateString,
             String             catName,
-            List               tags,
+            List<String>       tags,
             int                page) {
         
         super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);

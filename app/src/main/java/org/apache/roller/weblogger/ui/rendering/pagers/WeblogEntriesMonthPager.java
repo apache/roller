@@ -37,7 +37,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
  */
 public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
     
-    private static Log log = LogFactory.getLog(WeblogEntriesMonthPager.class);
+    private static final Log log = LogFactory.getLog(WeblogEntriesMonthPager.class);
     
     private SimpleDateFormat monthFormat = new SimpleDateFormat();
     
@@ -60,7 +60,7 @@ public class WeblogEntriesMonthPager extends AbstractWeblogEntriesPager {
             String             entryAnchor,
             String             dateString,
             String             catName,
-            List               tags,
+            List<String>       tags,
             int                page) {
         
         super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);

@@ -36,9 +36,9 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 /**
  * Paging through a collection of planet entries.
  */
-public class PlanetEntriesPager extends AbstractPager {
+public class PlanetEntriesPager extends AbstractPager<SubscriptionEntry> {
     
-    private static Log log = LogFactory.getLog(PlanetEntriesPager.class);
+    private static final Log log = LogFactory.getLog(PlanetEntriesPager.class);
     
     private String feedURL = null;
     private String groupHandle = null;

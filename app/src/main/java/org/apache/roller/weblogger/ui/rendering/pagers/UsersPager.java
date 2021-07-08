@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -35,12 +34,12 @@ import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
 /**
  * Paging through a collection of users.
  */
-public class UsersPager extends AbstractPager {
+public class UsersPager extends AbstractPager<UserWrapper> {
     
-    private static Log log = LogFactory.getLog(UsersPager.class);
+    private final static Log log = LogFactory.getLog(UsersPager.class);
     
     private String letter = null;
-    private int length = 0;
+    private final int length;
     
     // collection for the pager
     private List<UserWrapper> users;
@@ -91,10 +90,7 @@ public class UsersPager extends AbstractPager {
         if(letter != null) {
             int page = getPage() + 1;
             if(hasMoreItems()) {
-                Map params = new HashMap();
-                params.put("page", ""+page);
-                params.put("letter", letter);
-                return createURL(getUrl(), params);
+                return createURL(getUrl(), Map.of("page", ""+page, "letter", letter));
             }
             return null;
         } else {
@@ -109,10 +105,7 @@ public class UsersPager extends AbstractPager {
         if(letter != null) {
             int page = getPage() - 1;
             if (page >= 0) {
-                Map params = new HashMap();
-                params.put("page", ""+page);
-                params.put("letter", letter);
-                return createURL(getUrl(), params);
+                return createURL(getUrl(), Map.of("page", ""+page, "letter", letter));
             }
             return null;
         } else {

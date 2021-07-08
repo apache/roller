@@ -43,7 +43,7 @@ import org.apache.roller.weblogger.business.URLStrategy;
  */
 public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
-    private static Log log = LogFactory.getLog(WeblogEntriesDayPager.class);
+    private static final Log log = LogFactory.getLog(WeblogEntriesDayPager.class);
     
     private SimpleDateFormat dayFormat = new SimpleDateFormat();
     
@@ -66,7 +66,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
             String             entryAnchor,
             String             dateString,
             String             catName,
-            List               tags,
+            List<String>       tags,
             int                page) {
         
         super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);

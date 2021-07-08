@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.URLUtilities;
@@ -32,23 +33,23 @@ import org.apache.roller.weblogger.util.URLUtilities;
 /**
  * Pager for navigating through search results feeds.
  */
-public class SearchResultsFeedPager extends AbstractPager {
+public class SearchResultsFeedPager extends AbstractPager<WeblogEntryWrapper> {
     
     // message utils for doing i18n messages
     I18nMessages messageUtils = null;
     
-    private List entries = null;
+    private final List<WeblogEntryWrapper> entries;
     
-    private Weblog weblog = null;
-    private boolean     moreResults = false;
+    private final Weblog weblog;
+    private final boolean moreResults;
     
-    private WeblogFeedRequest feedRequest = null;
+    private final WeblogFeedRequest feedRequest;
     
-    private String url = null;
+    private final String url;
     
             
     public SearchResultsFeedPager(URLStrategy strat, String baseUrl, int pageNum,
-            WeblogFeedRequest feedRequest, List entries, boolean more) {
+            WeblogFeedRequest feedRequest, List<WeblogEntryWrapper> entries, boolean more) {
         
         super(strat, baseUrl, pageNum);
         
@@ -81,7 +82,7 @@ public class SearchResultsFeedPager extends AbstractPager {
     }
     
     @Override
-    public List getItems() {
+    public List<WeblogEntryWrapper> getItems() {
         return this.entries;
     }
     
@@ -101,7 +102,7 @@ public class SearchResultsFeedPager extends AbstractPager {
     }  
     
     @Override
-    protected String createURL(String url, Map params) {
+    protected String createURL(String url, Map<String, String> params) {
         String category = feedRequest.getWeblogCategoryName();
         if(category != null && !category.isBlank()) {
             params.put("cat", URLUtilities.encode(category));
@@ -110,7 +111,7 @@ public class SearchResultsFeedPager extends AbstractPager {
         if(term != null && !term.isBlank()) {
             params.put("q", URLUtilities.encode(term.trim()));
         }     
-        List tags = feedRequest.getTags();
+        List<String> tags = feedRequest.getTags();
         if(tags != null && !tags.isEmpty()) {
             params.put("tags", URLUtilities.getEncodedTagsString(tags));
         }
@@ -122,6 +123,6 @@ public class SearchResultsFeedPager extends AbstractPager {
     
     @Override
     public String getUrl() {
-        return createURL(url, new HashMap());
+        return createURL(url, new HashMap<>());
     }
 }
