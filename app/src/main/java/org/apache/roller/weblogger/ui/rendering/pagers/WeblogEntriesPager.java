@@ -18,7 +18,10 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 
 /**
  * Pager for weblog entries, handles latest, single-entry, month and day views.
@@ -33,7 +36,7 @@ public interface WeblogEntriesPager {
      * The collection is grouped by days of entries.  Each value is a list of
      * entry objects keyed by the date they were published.
      */
-    Map getEntries();
+    Map<Date, ? extends Collection<WeblogEntryWrapper>> getEntries();
         
     /**
      * Link value for returning to pager home

@@ -19,10 +19,9 @@
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.sql.Timestamp;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.URLStrategy;
@@ -43,7 +42,7 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
  */
 public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
     
-    private static Log log = LogFactory.getLog(WeblogEntriesPreviewPager.class);
+    private static final Log log = LogFactory.getLog(WeblogEntriesPreviewPager.class);
     
     
     public WeblogEntriesPreviewPager(
@@ -54,7 +53,7 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
             String             entryAnchor,
             String             dateString,
             String             catName,
-            List               tags,
+            List<String>       tags,
             int                page) {
         
         super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);
@@ -62,7 +61,7 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
     
     
     @Override
-    public Map getEntries() {
+    public Map<Date, List<WeblogEntryWrapper>> getEntries() {
         if (entries == null) {
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
@@ -80,8 +79,7 @@ public class WeblogEntriesPreviewPager extends WeblogEntriesPermalinkPager {
                     }
 
                     // store the entry in the collection
-                    entries = new TreeMap();
-                    entries.put(tmpEntry.getPubTime(),Collections.singletonList(WeblogEntryWrapper.wrap(tmpEntry, urlStrategy)));
+                    entries = Map.of(tmpEntry.getPubTime(), List.of(WeblogEntryWrapper.wrap(tmpEntry, urlStrategy)));
                 }
             } catch (Exception e) {
                 log.error("ERROR: fetching entry", e);

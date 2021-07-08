@@ -18,7 +18,6 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
-import java.util.HashMap;
 import java.util.Map;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.util.URLUtilities;
@@ -27,7 +26,7 @@ import org.apache.roller.weblogger.util.URLUtilities;
 /**
  * Abstract base for simple pagers.
  */
-public abstract class AbstractPager implements Pager {
+public abstract class AbstractPager<T> implements Pager<T> {
     
     final URLStrategy urlStrategy;
     private String url = null;
@@ -60,9 +59,7 @@ public abstract class AbstractPager implements Pager {
     public String getNextLink() {
         if(hasMoreItems()) {
             int nextPage = page + 1;
-            Map params = new HashMap();
-            params.put("page", ""+nextPage);
-            return createURL(url, params);
+            return createURL(url, Map.of("page", ""+nextPage));
         }
         return null;
     }
@@ -81,9 +78,7 @@ public abstract class AbstractPager implements Pager {
     public String getPrevLink() {
         if (page > 0) {
             int prevPage = page - 1;
-            Map params = new HashMap();
-            params.put("page", ""+prevPage);
-            return createURL(url, params);
+            return createURL(url, Map.of("page", ""+prevPage));
         }
         return null;
     }
@@ -103,8 +98,7 @@ public abstract class AbstractPager implements Pager {
     }
     
     
-    protected String createURL(String url, Map params) {
-        
+    protected String createURL(String url, Map<String, String> params) {
         return url + URLUtilities.getQueryString(params);
     }
 

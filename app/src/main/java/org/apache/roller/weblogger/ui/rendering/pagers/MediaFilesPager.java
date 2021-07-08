@@ -34,9 +34,9 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 /**
  * Paging through a collection of media files.
  */
-public class MediaFilesPager extends AbstractPager {
+public class MediaFilesPager extends AbstractPager<MediaFile> {
     
-    private static Log log = LogFactory.getLog(MediaFilesPager.class);
+    private static final Log log = LogFactory.getLog(MediaFilesPager.class);
     private int length = 0;
     
     // the collection for the pager

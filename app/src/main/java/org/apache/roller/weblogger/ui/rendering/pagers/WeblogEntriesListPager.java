@@ -37,9 +37,9 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 /**
  * Simple pager for list of weblog entries.
  */
-public class WeblogEntriesListPager extends AbstractPager {
+public class WeblogEntriesListPager extends AbstractPager<WeblogEntryWrapper> {
     
-    private static Log log = LogFactory.getLog(WeblogEntriesListPager.class);
+    private static final Log log = LogFactory.getLog(WeblogEntriesListPager.class);
     
     private String locale = null;
     private int sinceDays = -1;

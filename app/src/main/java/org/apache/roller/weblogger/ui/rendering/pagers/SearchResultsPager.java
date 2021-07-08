@@ -18,10 +18,13 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
 
@@ -31,24 +34,21 @@ import org.apache.roller.weblogger.util.I18nMessages;
 public class SearchResultsPager implements WeblogEntriesPager {
     
     // message utils for doing i18n messages
-    I18nMessages messageUtils = null;
+    final I18nMessages messageUtils;
     
     // url strategy
-    URLStrategy urlStrategy = null;
+    final URLStrategy urlStrategy;
     
-    private Map entries = null;
+    private final Map<Date, Set<WeblogEntryWrapper>> entries;
     
-    private Weblog weblog = null;
-    private String      locale = null;
-    private String      query = null;
-    private String      category = null;
-    private int         page = 0;
-    private boolean     moreResults = false;
+    private final Weblog weblog;
+    private final String locale;
+    private final String query;
+    private final String category;
+    private final int page;
+    private final boolean moreResults;
     
-    
-    public SearchResultsPager() {}
-    
-    public SearchResultsPager(URLStrategy strat, WeblogSearchRequest searchRequest, Map entries, boolean more) {
+    public SearchResultsPager(URLStrategy strat, WeblogSearchRequest searchRequest, Map<Date, Set<WeblogEntryWrapper>> entries, boolean more) {
         
         // url strategy for building urls
         this.urlStrategy = strat;
@@ -83,7 +83,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     
     @Override
-    public Map getEntries() {
+    public Map<Date, Set<WeblogEntryWrapper>> getEntries() {
         return entries;
     }
     
