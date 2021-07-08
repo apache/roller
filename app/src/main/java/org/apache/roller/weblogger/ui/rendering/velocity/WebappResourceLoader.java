@@ -27,7 +27,6 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.ui.core.RollerContext;
@@ -62,7 +61,7 @@ import org.apache.velocity.util.ExtProperties;
  */
 public class WebappResourceLoader extends ResourceLoader {
 
-	private static Log log = LogFactory.getLog(WebappResourceLoader.class);
+	private static final Log log = LogFactory.getLog(WebappResourceLoader.class);
 
 	// The root paths for templates (relative to webapp's root).
 	protected String[] paths = null;
@@ -76,7 +75,7 @@ public class WebappResourceLoader extends ResourceLoader {
 	 * "javax.servlet.ServletContext").
 	 * 
 	 * @param configuration
-	 *            the {@link ExtendedProperties} associated with this resource
+	 *            the {@link ExtProperties} associated with this resource
 	 *            loader.
 	 */
     @Override
