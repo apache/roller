@@ -38,7 +38,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  */
 public class CalendarModel implements Model {
     
-    private static Log log = LogFactory.getLog(CalendarModel.class);
+    private static final Log log = LogFactory.getLog(CalendarModel.class);
     
     private PageContext pageContext = null;
     private WeblogPageRequest pageRequest = null;
@@ -53,7 +53,7 @@ public class CalendarModel implements Model {
     
     /** Init page model based on request */
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map<String, Object> initData) throws WebloggerException {
         
         // extract page context
         this.pageContext = (PageContext) initData.get("pageContext");

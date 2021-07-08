@@ -20,8 +20,9 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,9 +68,9 @@ public class SearchResultsFeedModel implements Model {
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsFeedPager pager = null;
 
-	private List<WeblogEntryWrapper> results = new LinkedList<>();
+	private final List<WeblogEntryWrapper> results = new ArrayList<>();
 
-	private Set categories = new TreeSet();
+	private Set<String> categories = Collections.emptySet();
 
 	private boolean websiteSpecificSearch = true;
 
@@ -85,7 +86,7 @@ public class SearchResultsFeedModel implements Model {
 	}
 
     @Override
-	public void init(Map initData) throws WebloggerException {
+	public void init(Map<String, Object> initData) throws WebloggerException {
 
 		// we expect the init data to contain a weblogRequest object
 		WeblogRequest weblogRequest = (WeblogRequest) initData
@@ -165,7 +166,7 @@ public class SearchResultsFeedModel implements Model {
 				(hits > (offset + limit)));
 	}
 
-	public Pager getSearchResultsPager() {
+	public Pager<WeblogEntryWrapper> getSearchResultsPager() {
 		return pager;
 	}
 
@@ -261,11 +262,11 @@ public class SearchResultsFeedModel implements Model {
 		return limit;
 	}
 
-	public List getResults() {
+	public List<WeblogEntryWrapper> getResults() {
 		return results;
 	}
 
-	public Set getCategories() {
+	public Set<String> getCategories() {
 		return categories;
 	}
 

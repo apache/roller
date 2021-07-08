@@ -38,7 +38,7 @@ public class PreviewURLModel extends URLModel {
     
     
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map<String, Object> initData) throws WebloggerException {
         
         // need a weblog request so that we can know the weblog and locale
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");

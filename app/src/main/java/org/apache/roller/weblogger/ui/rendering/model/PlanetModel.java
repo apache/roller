@@ -34,7 +34,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.ThemeTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.PlanetEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
@@ -46,7 +45,7 @@ public class PlanetModel implements Model {
     
     public static final String DEFAULT_PLANET_HANDLE = "default";   
     
-    private static Log log = LogFactory.getLog(PlanetModel.class);
+    private static final Log log = LogFactory.getLog(PlanetModel.class);
     
     private WeblogRequest  weblogRequest = null; 
     private String         pageLink = null;
@@ -63,7 +62,7 @@ public class PlanetModel implements Model {
     }
     
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map<String, Object> initData) throws WebloggerException {
 
         if (!WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
             return;
@@ -99,7 +98,7 @@ public class PlanetModel implements Model {
      * 'exernal' Planet groups. in reverse chrono order.
      * @param length      Max number of results to return
      */
-    public Pager getAggregationPager(int sinceDays, int length) {
+    public PlanetEntriesPager getAggregationPager(int sinceDays, int length) {
         
         String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
@@ -121,7 +120,7 @@ public class PlanetModel implements Model {
      * Planet groups in reverse chrono order.
      * @param length      Max number of results to return
      */
-    public Pager getAggregationPager(String groupHandle, int sinceDays, int length) {
+    public PlanetEntriesPager getAggregationPager(String groupHandle, int sinceDays, int length) {
         
         String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
@@ -143,7 +142,7 @@ public class PlanetModel implements Model {
      * Planet feed in reverse chrono order.
      * @param length      Max number of results to return
      */
-    public Pager getFeedPager(String feedURL, int length) {
+    public PlanetEntriesPager getFeedPager(String feedURL, int length) {
         
         String pagerUrl = urlStrategy.getWeblogPageURL(weblog, 
                 weblogRequest.getLocale(), pageLink, 
@@ -199,7 +198,7 @@ public class PlanetModel implements Model {
      * @return List of Planet groups defined.
      */
     public List<PlanetGroup> getGroups() {
-        List list = new ArrayList<PlanetGroup>();
+        List<PlanetGroup> list = new ArrayList<>();
         try {
             PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
             Planet defaultPlanet = planetManager.getWeblogger(DEFAULT_PLANET_HANDLE);

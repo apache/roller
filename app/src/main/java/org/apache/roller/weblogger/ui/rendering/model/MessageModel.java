@@ -43,7 +43,7 @@ public class MessageModel implements Model {
     
     /** Init page model based on request */
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map<String, Object> initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
@@ -63,7 +63,7 @@ public class MessageModel implements Model {
     
     
     /** Return parameterized message string */
-    public String get(String key, List args) {
+    public String get(String key, List<Object> args) {
         return messages.getString(key, args);
     }
 

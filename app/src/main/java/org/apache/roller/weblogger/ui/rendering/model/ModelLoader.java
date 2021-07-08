@@ -39,7 +39,7 @@ public class ModelLoader {
      * the Model instances.
      */
     public static void loadModels(String modelsString, Map<String, Object> modelMap,
-            Map initData, boolean fail) throws WebloggerException {
+            Map<String, Object> initData, boolean fail) throws WebloggerException {
         
         String[] models = Utilities.stringToStringArray(modelsString, ",");
         if (models != null) {

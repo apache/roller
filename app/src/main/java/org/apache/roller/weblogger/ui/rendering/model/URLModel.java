@@ -49,7 +49,7 @@ import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
  */
 public class URLModel implements Model {
     
-    private static Log log = LogFactory.getLog(URLModel.class);
+    private static final Log log = LogFactory.getLog(URLModel.class);
     
     protected Weblog weblog = null;
     protected String locale = null;
@@ -65,7 +65,7 @@ public class URLModel implements Model {
     }
     
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map<String, Object> initData) throws WebloggerException {
         
         // need a weblog request so that we can know the weblog and locale
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
@@ -219,12 +219,12 @@ public class URLModel implements Model {
     }    
     
     
-    public String tags(List tags) {
+    public String tags(List<String> tags) {
         return urlStrategy.getWeblogCollectionURL(weblog, locale, null, null, tags , -1, true);
     }
     
     
-    public String tags(List tags, int pageNum) {
+    public String tags(List<String> tags, int pageNum) {
         return urlStrategy.getWeblogCollectionURL(weblog, locale, null, null, tags, -1, true);
     }
     
@@ -344,7 +344,7 @@ public class URLModel implements Model {
             return urlStrategy.getWeblogFeedURL(weblog, locale, "entries", "rss", catName, null, null, excerpts, true);
         }
         
-        public String rssByTags(List tags, boolean excerpts) {
+        public String rssByTags(List<String> tags, boolean excerpts) {
             return urlStrategy.getWeblogFeedURL(weblog, locale, "entries", "rss", null, null, tags, excerpts, true);
         }
         
@@ -360,7 +360,7 @@ public class URLModel implements Model {
             return urlStrategy.getWeblogFeedURL(weblog, locale, "entries", "atom", catName, term, null, false, true);
         }        
         
-        public String atomByTags(List tags, boolean excerpts) {
+        public String atomByTags(List<String> tags, boolean excerpts) {
             return urlStrategy.getWeblogFeedURL(weblog, locale, "entries", "atom", null, null, tags, excerpts, true);
         }
     }
