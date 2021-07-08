@@ -18,13 +18,11 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 
 /**
@@ -79,23 +77,10 @@ public final class WeblogCategoryWrapper {
         return WeblogWrapper.wrap(this.pojo.getWeblog(), urlStrategy);
     }
 
-    public List retrieveWeblogEntries(boolean publishedOnly)
-            throws WebloggerException {
-        
-        List initialCollection = this.pojo.retrieveWeblogEntries(publishedOnly);
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryWrapper.wrap((WeblogEntry) it.next(), urlStrategy));
-            i++;
-        }
-        
-        return wrappedCollection;
+    public List<WeblogEntryWrapper> retrieveWeblogEntries(boolean publishedOnly) throws WebloggerException {
+        return this.pojo.retrieveWeblogEntries(publishedOnly).stream()
+                .map(entry -> WeblogEntryWrapper.wrap(entry, urlStrategy))
+                .collect(Collectors.toList());
     }
     
     

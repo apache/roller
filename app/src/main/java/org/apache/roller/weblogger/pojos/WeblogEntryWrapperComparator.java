@@ -29,14 +29,12 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
  * 
  * @author lance.lavandowska
  */
-public class WeblogEntryWrapperComparator implements Comparator, Serializable
-{
+public class WeblogEntryWrapperComparator implements Comparator<WeblogEntryWrapper>, Serializable {
+    
     static final long serialVersionUID = -9067148992322255150L;
     
     @Override
-    public int compare(Object val1, Object val2) {
-        WeblogEntryWrapper entry1 = (WeblogEntryWrapper)val1;
-        WeblogEntryWrapper entry2 = (WeblogEntryWrapper)val2;
+    public int compare(WeblogEntryWrapper entry1, WeblogEntryWrapper entry2) {
         long pubTime1 = entry1.getPubTime().getTime();
         long pubTime2 = entry2.getPubTime().getTime();
 
