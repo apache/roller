@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.business;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             return null;
         }
         
-        StringBuilder url = new StringBuilder();
+        StringBuilder url = new StringBuilder(URL_BUFFER_SIZE);
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -59,18 +60,18 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
-        url.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
+        url.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append('/');
         
         if(locale != null) {
-            url.append(locale).append("/");
+            url.append(locale).append('/');
         }
         
-        Map params = new HashMap();
+        Map<String, String> params = Collections.emptyMap();
         if(previewTheme != null) {
-            params.put("theme", URLUtilities.encode(previewTheme));
+            params = Map.of("theme", URLUtilities.encode(previewTheme));
         }
         
-        return url.toString() + URLUtilities.getQueryString(params);
+        return url.append(URLUtilities.getQueryString(params)).toString();
     }
     
     
@@ -88,7 +89,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             return null;
         }
 
-        StringBuilder url = new StringBuilder();
+        StringBuilder url = new StringBuilder(URL_BUFFER_SIZE);
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -96,13 +97,13 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
-        url.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
+        url.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append('/');
         
         if(locale != null) {
-            url.append(locale).append("/");
+            url.append(locale).append('/');
         }
         
-        Map params = new HashMap();
+        Map<String, String> params = new HashMap<>();
         if(previewTheme != null) {
             params.put("theme", URLUtilities.encode(previewTheme));
         }
@@ -110,7 +111,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             params.put("previewEntry", URLUtilities.encode(previewAnchor));
         }
         
-        return url.toString() + URLUtilities.getQueryString(params);
+        return url.append(URLUtilities.getQueryString(params)).toString();
     }
     
     
@@ -122,7 +123,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
                                                       String locale,
                                                       String category,
                                                       String dateString,
-                                                      List tags,
+                                                      List<String> tags,
                                                       int pageNum,
                                                       boolean absolute) {
         
@@ -130,8 +131,8 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             return null;
         }
 
-        StringBuilder pathinfo = new StringBuilder();
-        Map params = new HashMap();
+        StringBuilder pathinfo = new StringBuilder(URL_BUFFER_SIZE);
+        Map<String, String> params = new HashMap<>();
         
         if(absolute) {
         	pathinfo.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -139,10 +140,10 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
         	pathinfo.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
-        pathinfo.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
+        pathinfo.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append('/');
         
         if(locale != null) {
-        	pathinfo.append(locale).append("/");
+        	pathinfo.append(locale).append('/');
         }
 
         String cat;
@@ -177,7 +178,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             params.put("theme", URLUtilities.encode(previewTheme));
         }
 
-        return pathinfo.toString() + URLUtilities.getQueryString(params);
+        return pathinfo.append(URLUtilities.getQueryString(params)).toString();
     }
     
 
@@ -191,7 +192,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
                                                 String entryAnchor,
                                                 String category,
                                                 String dateString,
-                                                List tags,
+                                                List<String> tags,
                                                 int pageNum,
                                                 boolean absolute) {
         
@@ -199,8 +200,8 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             return null;
         }
         
-        StringBuilder pathinfo = new StringBuilder();
-        Map params = new HashMap();
+        StringBuilder pathinfo = new StringBuilder(URL_BUFFER_SIZE);
+        Map<String, String> params = new HashMap<>();
         
         if(absolute) {
             pathinfo.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -208,10 +209,10 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             pathinfo.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
-        pathinfo.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append("/");
+        pathinfo.append(PREVIEW_URL_SEGMENT).append(weblog.getHandle()).append('/');
         
         if(locale != null) {
-            pathinfo.append(locale).append("/");
+            pathinfo.append(locale).append('/');
         }
         
         if(previewTheme != null) {
@@ -239,7 +240,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             return getWeblogCollectionURL(weblog, locale, category, dateString, tags, pageNum, absolute);
         }
         
-        return pathinfo.toString() + URLUtilities.getQueryString(params);
+        return pathinfo.append(URLUtilities.getQueryString(params)).toString();
     }
     
     
@@ -253,7 +254,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             return null;
         }
         
-        StringBuilder url = new StringBuilder();
+        StringBuilder url = new StringBuilder(URL_BUFFER_SIZE);
         
         if(absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -261,7 +262,7 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
         
-        url.append("/roller-ui/authoring/previewresource/").append(weblog.getHandle()).append("/");
+        url.append("/roller-ui/authoring/previewresource/").append(weblog.getHandle()).append('/');
         
         if(filePath.startsWith("/")) {
             url.append(filePath.substring(1));
@@ -269,12 +270,12 @@ public class PreviewURLStrategy extends MultiWeblogURLStrategy {
             url.append(filePath);
         }
         
-        Map params = new HashMap();
+        Map<String, String> params = Collections.emptyMap();
         if(previewTheme != null && !WeblogTheme.CUSTOM.equals(previewTheme)) {
-            params.put("theme", URLUtilities.encode(previewTheme));
+            params = Map.of("theme", URLUtilities.encode(previewTheme));
         }
         
-        return url.toString() + URLUtilities.getQueryString(params);
+        return url.append(URLUtilities.getQueryString(params)).toString();
     }
     
 }
