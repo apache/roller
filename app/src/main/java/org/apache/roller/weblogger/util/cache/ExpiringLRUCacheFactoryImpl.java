@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ExpiringLRUCacheFactoryImpl implements CacheFactory {
     
-    private static Log log = LogFactory.getLog(ExpiringLRUCacheFactoryImpl.class);
+    private static final Log log = LogFactory.getLog(ExpiringLRUCacheFactoryImpl.class);
     
     
     // protected so only the CacheManager can instantiate us
@@ -39,7 +39,7 @@ public class ExpiringLRUCacheFactoryImpl implements CacheFactory {
      * Construct a new instance of a Roller Expiring LRUCache.
      */
     @Override
-    public Cache constructCache(Map properties) {
+    public Cache constructCache(Map<String, ?> properties) {
         
         int size = 100;
         long timeout = 15 * 60;
@@ -48,13 +48,13 @@ public class ExpiringLRUCacheFactoryImpl implements CacheFactory {
         try {
             size = Integer.parseInt((String) properties.get("size"));
         } catch(Exception e) {
-            // ignored
+            log.warn("invalid size property", e);
         }
         
         try {
             timeout = Long.parseLong((String) properties.get("timeout"));
         } catch(Exception e) {
-            // ignored
+            log.warn("invalid timeout property", e);
         }
         
         String cacheId = (String) properties.get("id");

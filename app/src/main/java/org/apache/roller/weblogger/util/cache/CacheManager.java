@@ -139,7 +139,7 @@ public final class CacheManager {
      * see fit.  It also allows users to write their own caching modifications
      * and have them used only by specific caches.
      */
-    public static Cache constructCache(CacheHandler handler, Map properties) {
+    public static Cache constructCache(CacheHandler handler, Map<String, String> properties) {
         
         log.debug("Constructing new cache with props "+properties);
         
@@ -147,7 +147,7 @@ public final class CacheManager {
         
         if(properties != null && properties.containsKey("factory")) {
             // someone wants a custom cache instance
-            String classname = (String) properties.get("factory");
+            String classname = properties.get("factory");
             
             try {
                 // use reflection to instantiate the factory class

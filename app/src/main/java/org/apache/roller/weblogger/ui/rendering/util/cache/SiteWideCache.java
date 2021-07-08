@@ -20,12 +20,11 @@ package org.apache.roller.weblogger.ui.rendering.util.cache;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
@@ -53,7 +52,7 @@ import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
  */
 public final class SiteWideCache implements CacheHandler {
     
-    private static Log log = LogFactory.getLog(SiteWideCache.class);
+    private static final Log log = LogFactory.getLog(SiteWideCache.class);
     
     // a unique identifier for this cache, this is used as the prefix for
     // roller config properties that apply to this cache
@@ -76,8 +75,8 @@ public final class SiteWideCache implements CacheHandler {
         
         Map<String, String> cacheProps = new HashMap<>();
         cacheProps.put("id", CACHE_ID);
-        Enumeration allProps = WebloggerConfig.keys();
-        String prop = null;
+        Enumeration<Object> allProps = WebloggerConfig.keys();
+        String prop;
         while(allProps.hasMoreElements()) {
             prop = (String) allProps.nextElement();
             
@@ -234,9 +233,9 @@ public final class SiteWideCache implements CacheHandler {
             if("tags".equals(pageRequest.getContext())) {
                 key.append("/tags/");
                 if(pageRequest.getTags() != null && !pageRequest.getTags().isEmpty()) {
-                    Set ordered = new TreeSet(pageRequest.getTags());
-                    String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
-                    key.append(Utilities.stringArrayToString(tags,"+"));
+                    String[] tags = pageRequest.getTags().toArray(new String[0]);
+                    Arrays.sort(tags);
+                    key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
                 }
             }
         }
@@ -316,9 +315,9 @@ public final class SiteWideCache implements CacheHandler {
         }
         
         if(feedRequest.getTags() != null && !feedRequest.getTags().isEmpty()) {
-          String[] tags = new String[feedRequest.getTags().size()];
-          new TreeSet(feedRequest.getTags()).toArray(tags);
-          key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
+            String[] tags = feedRequest.getTags().toArray(new String[0]);
+            Arrays.sort(tags);
+            key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
         }       
         
         return key.toString();
