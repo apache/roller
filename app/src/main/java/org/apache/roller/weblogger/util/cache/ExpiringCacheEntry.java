@@ -29,19 +29,14 @@ import java.io.Serializable;
  */
 public class ExpiringCacheEntry implements Serializable {
     
-    private Object value;
-    private long timeCached = -1;
-    private long timeout = 0;
+    private final Object value;
+    private final long timeCached;
+    private final long timeout;
     
     
     public ExpiringCacheEntry(Object value, long timeout) {
         this.value = value;
-        
-        // make sure that we don't support negative values
-        if(timeout > 0) {
-            this.timeout = timeout;
-        }
-        
+        this.timeout = Math.max(0, timeout);  // make sure that we don't support negative values
         this.timeCached = System.currentTimeMillis();
     }
     

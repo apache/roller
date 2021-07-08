@@ -48,7 +48,7 @@ import org.apache.roller.weblogger.util.cache.CachedContent;
  */
 public class WeblogCacheWarmupJob implements Job {
     
-    private static Log log = LogFactory.getLog(WeblogCacheWarmupJob.class);
+    private static final Log log = LogFactory.getLog(WeblogCacheWarmupJob.class);
     
     // inputs from the user
     private Map<String, Object> inputs = null;
@@ -63,6 +63,7 @@ public class WeblogCacheWarmupJob implements Job {
         if(inputs != null) {
             
             // what weblogs will we handle?
+            @SuppressWarnings("unchecked")
             List<String> weblogs = (List<String>) inputs.get("weblogs");
             if(weblogs == null) {
                 return;
@@ -118,7 +119,7 @@ public class WeblogCacheWarmupJob implements Job {
                 
                 // populate the rendering model
                 Map<String, Object> modelMap = new HashMap<>();
-                Map<String, WeblogFeedRequest> initData = new HashMap<>();
+                Map<String, Object> initData = new HashMap<>();
                 initData.put("request", null);
                 initData.put("feedRequest", feedRequest);
                 initData.put("weblogRequest", feedRequest);
