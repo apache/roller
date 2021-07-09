@@ -59,7 +59,7 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
  */
 public class PreviewServlet extends HttpServlet {
     
-    private static Log log = LogFactory.getLog(PreviewServlet.class);
+    private static final Log log = LogFactory.getLog(PreviewServlet.class);
     
     
     /**
@@ -208,7 +208,7 @@ public class PreviewServlet extends HttpServlet {
         }
         
         // looks like we need to render content
-        Map model = new HashMap();
+        Map<String, Object> model = new HashMap<>();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory().getPageContext(
                     this, request, response,"", false, RollerConstants.EIGHT_KB_IN_BYTES, true);
@@ -217,7 +217,7 @@ public class PreviewServlet extends HttpServlet {
             request.setAttribute("pageRequest", previewRequest);
             
             // populate the rendering model
-            Map initData = new HashMap();
+            Map<String, Object> initData = new HashMap<>();
             initData.put("parsedRequest", previewRequest);
             initData.put("pageContext", pageContext);
             

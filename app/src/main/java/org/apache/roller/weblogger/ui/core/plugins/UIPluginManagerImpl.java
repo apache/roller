@@ -33,13 +33,13 @@ import org.apache.commons.lang3.StringUtils;
  */
 public final class UIPluginManagerImpl implements UIPluginManager {
     
-    private static Log log = LogFactory.getLog(UIPluginManagerImpl.class);
+    private static final Log log = LogFactory.getLog(UIPluginManagerImpl.class);
     
     // singleton instance
-    private static UIPluginManagerImpl instance = null;
+    private static final UIPluginManagerImpl instance;
     
     // list of configured WeblogEntryEditor classes
-    private Map editors = new LinkedHashMap();
+    private final Map<String, WeblogEntryEditor> editors = new LinkedHashMap<>();
     
     // the default WeblogEntryEditor
     WeblogEntryEditor defaultEditor = null;
@@ -63,19 +63,19 @@ public final class UIPluginManagerImpl implements UIPluginManager {
     
     
     @Override
-    public List getWeblogEntryEditors() {
+    public List<WeblogEntryEditor> getWeblogEntryEditors() {
         // TODO: sort list of returned editors
-        return new ArrayList(this.editors.values());
+        return new ArrayList<>(this.editors.values());
     }
     
     
     @Override
     public WeblogEntryEditor getWeblogEntryEditor(String id) {
         
-        WeblogEntryEditor editor = null;
+        WeblogEntryEditor editor;
         
         // see if this editor is configured
-        editor = (id == null) ? null : (WeblogEntryEditor) this.editors.get(id);
+        editor = (id == null) ? null : this.editors.get(id);
         if(editor == null) {
             editor = this.defaultEditor;
         }
@@ -124,7 +124,7 @@ public final class UIPluginManagerImpl implements UIPluginManager {
         // make sure the default editor is defined
         String defaultEditorId = WebloggerConfig.getProperty("plugins.defaultEditor");
         if(defaultEditorId != null) {
-            this.defaultEditor = (WeblogEntryEditor) this.editors.get(defaultEditorId);
+            this.defaultEditor = this.editors.get(defaultEditorId);
         }
         
         if(this.defaultEditor == null) {
@@ -132,8 +132,7 @@ public final class UIPluginManagerImpl implements UIPluginManager {
             // guess we'll just have to pick one for them
             log.warn("Default editor was not properly configured, picking one at random instead.");
             
-            Object editor = this.editors.values().iterator().next();
-            this.defaultEditor = (WeblogEntryEditor) editor;
+            this.defaultEditor = this.editors.values().iterator().next();
         }
     }
     

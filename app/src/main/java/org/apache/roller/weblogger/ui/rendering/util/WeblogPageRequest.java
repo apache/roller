@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.util;
 
+import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,9 +58,9 @@ public class WeblogPageRequest extends WeblogRequest {
     private String weblogPageName = null;
     private String weblogCategoryName = null;
     private String weblogDate = null;
-    private List tags = null;
+    private List<String> tags = null;
     private int pageNum = 0;
-    private Map customParams = new HashMap();
+    private Map<String, String[]> customParams = Collections.emptyMap();
 
     // heavyweight attributes
     private WeblogEntry weblogEntry = null;
@@ -247,7 +248,7 @@ public class WeblogPageRequest extends WeblogRequest {
 
         // build customParams Map, we remove built-in params because we only
         // want this map to represent params defined by the template author
-        customParams = new HashMap(request.getParameterMap());
+        customParams = new HashMap<>(request.getParameterMap());
         customParams.remove("entry");
         customParams.remove("anchor");
         customParams.remove("date");
@@ -324,19 +325,19 @@ public class WeblogPageRequest extends WeblogRequest {
         this.pageNum = pageNum;
     }
 
-    public Map getCustomParams() {
+    public Map<String, String[]> getCustomParams() {
         return customParams;
     }
 
-    public void setCustomParams(Map customParams) {
+    public void setCustomParams(Map<String, String[]> customParams) {
         this.customParams = customParams;
     }
 
-    public List getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(List tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 

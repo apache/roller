@@ -35,9 +35,13 @@ import org.apache.struts2.interceptor.RequestAware;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Extends the Struts2 ActionSupport class to add in support for handling an
@@ -203,20 +207,12 @@ public abstract class UIAction extends ActionSupport
 
     @Override
     public String getText(String aTextName, List<?> args) {
-        List<Object> cleanedArgs = new ArrayList<>(args.size());
-        for (Object el : args) {
-            cleanedArgs.add(el instanceof String ? cleanTextArg((String) el) : el);
-        }
-        return super.getText(cleanTextKey(aTextName), cleanedArgs);
+        return super.getText(cleanTextKey(aTextName), cleanArgs(args));
     }
 
     @Override
     public String getText(String key, String[] args) {
-        String[] cleanedArgs = new String[args.length];
-        for (int i = 0; i < args.length; ++i) {
-            cleanedArgs[i] = cleanTextArg(args[i]);
-        }
-        return super.getText(cleanTextKey(key), cleanedArgs);
+        return super.getText(cleanTextKey(key), cleanArgs(Arrays.asList(args)));
     }
 
     @Override
@@ -338,8 +334,7 @@ public abstract class UIAction extends ActionSupport
     
     
     public String getShortDateFormat() {
-        DateFormat sdf = DateFormat.getDateInstance(
-                DateFormat.SHORT, getLocale());
+        DateFormat sdf = DateFormat.getDateInstance(DateFormat.SHORT, getLocale());
         if (sdf instanceof SimpleDateFormat) {
             return ((SimpleDateFormat)sdf).toPattern();
         }
@@ -347,39 +342,30 @@ public abstract class UIAction extends ActionSupport
     }
     
     public String getMediumDateFormat() {
-        DateFormat sdf = DateFormat.getDateInstance(
-                DateFormat.MEDIUM, getLocale());
+        DateFormat sdf = DateFormat.getDateInstance(DateFormat.MEDIUM, getLocale());
         if (sdf instanceof SimpleDateFormat) {
             return ((SimpleDateFormat)sdf).toPattern();
         }
         return "MMM dd, yyyy";
     }
     
-    public List getLocalesList() {
+    public List<Locale> getLocalesList() {
         return UIUtils.getLocales();
     }
     
-    public List getTimeZonesList() {
+    public List<String> getTimeZonesList() {
         return UIUtils.getTimeZones();
     }
     
-    public List getHoursList() {
-        List ret = new ArrayList();
-        for (int i=0; i<24; i++) {
-            ret.add(i);
-        }
-        return ret;
+    public List<Integer> getHoursList() {
+        return IntStream.range(0, 24).boxed().collect(Collectors.toList());
     }
     
-    public List getMinutesList() {
-        List ret = new ArrayList();
-        for (int i=0; i<60; i++) {
-            ret.add(i);
-        }
-        return ret;
+    public List<Integer> getMinutesList() {
+        return IntStream.range(0, 60).boxed().collect(Collectors.toList());
     }
     
-    public List getSecondsList() {
+    public List<Integer> getSecondsList() {
         return getMinutesList();
     }
     
@@ -416,5 +402,13 @@ public abstract class UIAction extends ActionSupport
             return s;
         }
         return StringEscapeUtils.escapeHtml4(s);
+    }
+
+    private List<?> cleanArgs(List<?> args) {
+        List<Object> cleanedArgs = new ArrayList<>(args.size());
+        for (Object arg : args) {
+            cleanedArgs.add(arg instanceof String ? cleanTextArg((String) arg) : arg);
+        }
+        return cleanedArgs;
     }
 }
