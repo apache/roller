@@ -43,8 +43,7 @@ public class MediaFile implements Serializable {
 
     private static final long serialVersionUID = -6704258422169734004L;
 
-    private static Log log = LogFactory.getFactory().getInstance(
-            MediaFile.class);
+    private static final Log log = LogFactory.getFactory().getInstance(MediaFile.class);
 
     private String id = UUIDGenerator.generateUUID();
 
@@ -226,12 +225,7 @@ public class MediaFile implements Serializable {
             }
         }
 
-        MediaFileTag tag = new MediaFileTag();
-        tag.setName(name);
-        tag.setMediaFile(this);
-
-        tagSet.add(tag);
-
+        tagSet.add(new MediaFileTag(name, this));
         addedTags.add(name);
     }
 
@@ -239,11 +233,11 @@ public class MediaFile implements Serializable {
         removedTags.add(name);
     }
 
-    public Set getAddedTags() {
+    public Set<String> getAddedTags() {
         return addedTags;
     }
 
-    public Set getRemovedTags() {
+    public Set<String> getRemovedTags() {
         return removedTags;
     }
 
