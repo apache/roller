@@ -22,6 +22,10 @@ table {
     border:0;
 }
 
+p {
+    margin: 10px 0 10px;
+}
+
 .container {
     margin: 1em;
 }
@@ -249,7 +253,7 @@ body {
     margin:5px;
     list-style-type:none;
     width:140px;
-    height:140px;
+    height:160px;
     border: 1px solid #ccc;
     text-align: center;
 }
@@ -269,14 +273,11 @@ body {
 .mediaObject {
     width:120px;
     height:120px;
-    text-align: center;
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
 .mediaObjectInfo {
-    clear:left;
-    width:130px;
-    margin-left:5px;
-    margin-top:3px;
     font-size:11px;
 }
 
