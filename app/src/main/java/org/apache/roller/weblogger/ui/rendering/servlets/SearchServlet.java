@@ -174,14 +174,14 @@ public class SearchServlet extends HttpServlet {
         response.setContentType("text/html; charset=utf-8");
 
         // looks like we need to render content
-        Map model = new HashMap();
+        Map<String, Object> model = new HashMap<>();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory()
                     .getPageContext(this, request, response, "", false, RollerConstants.EIGHT_KB_IN_BYTES,
                             true);
 
             // populate the rendering model
-            Map initData = new HashMap();
+            Map<String, Object> initData = new HashMap<>();
             initData.put("request", request);
             initData.put("pageContext", pageContext);
 

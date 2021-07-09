@@ -19,10 +19,10 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
@@ -31,8 +31,10 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
+import org.apache.roller.weblogger.ui.core.plugins.WeblogEntryEditor;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Bannedwordslist;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -46,19 +48,19 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 // TODO: make this work @AllowedMethods({"execute","save"})
 public class WeblogConfig extends UIAction {
     
-    private static Log log = LogFactory.getLog(WeblogConfig.class);
+    private static final Log log = LogFactory.getLog(WeblogConfig.class);
     
     // bean for managing submitted data
     private WeblogConfigBean bean = new WeblogConfigBean();
     
     // categories list
-    private List weblogCategories = Collections.emptyList();
+    private List<WeblogCategory> weblogCategories = Collections.emptyList();
     
     // list of available editors
-    private List editorsList = Collections.emptyList();
+    private List<WeblogEntryEditor> editorsList = Collections.emptyList();
     
     // list of available plugins
-    private List pluginsList = Collections.emptyList();
+    private List<WeblogEntryPlugin> pluginsList = Collections.emptyList();
     
     
     public WeblogConfig() {
@@ -78,7 +80,7 @@ public class WeblogConfig extends UIAction {
             
             // set the Editor Page list
             UIPluginManager pmgr = RollerContext.getUIPluginManager();
-            List editorList = pmgr.getWeblogEntryEditors();
+            List<WeblogEntryEditor> editorList = pmgr.getWeblogEntryEditors();
             if(editorList != null) {
                 setEditorsList(editorList);
             }
@@ -186,13 +188,12 @@ public class WeblogConfig extends UIAction {
         }
         
         // check bannedwordslist
-        List regexRules = new ArrayList();
-        List stringRules = new ArrayList();
+        List<Pattern> regexRules = new ArrayList<>();
+        List<String> stringRules = new ArrayList<>();
         try {
             // just for testing/counting, this does not persist rules in any way
             Bannedwordslist.populateSpamRules(getBean().getBannedwordslist(), stringRules, regexRules, null);
-            addMessage("websiteSettings.acceptedBannedwordslist",
-                    Arrays.asList(new String[] {""+stringRules.size(), ""+regexRules.size()}));
+            addMessage("websiteSettings.acceptedBannedwordslist", List.of(""+stringRules.size(), ""+regexRules.size()));
         } catch (Exception e) {
             addError("websiteSettings.error.processingBannedwordslist", e.getMessage());
         }
@@ -207,27 +208,27 @@ public class WeblogConfig extends UIAction {
         this.bean = bean;
     }
 
-    public List getWeblogCategories() {
+    public List<WeblogCategory> getWeblogCategories() {
         return weblogCategories;
     }
 
-    public void setWeblogCategories(List weblogCategories) {
+    public void setWeblogCategories(List<WeblogCategory> weblogCategories) {
         this.weblogCategories = weblogCategories;
     }
 
-    public List getEditorsList() {
+    public List<WeblogEntryEditor> getEditorsList() {
         return editorsList;
     }
     
-    public void setEditorsList(List editorsList) {
+    public void setEditorsList(List<WeblogEntryEditor> editorsList) {
         this.editorsList = editorsList;
     }
 
-    public List getPluginsList() {
+    public List<WeblogEntryPlugin> getPluginsList() {
         return pluginsList;
     }
 
-    public void setPluginsList(List pluginsList) {
+    public void setPluginsList(List<WeblogEntryPlugin> pluginsList) {
         this.pluginsList = pluginsList;
     }
     

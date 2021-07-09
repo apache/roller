@@ -31,7 +31,7 @@ public interface UIPluginManager {
      *
      * @return List of all configure WeblogEntryEditor objects.
      */
-    List getWeblogEntryEditors();
+    List<WeblogEntryEditor> getWeblogEntryEditors();
     
     
     /**

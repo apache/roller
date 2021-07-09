@@ -109,39 +109,28 @@ public class CommentServlet extends HttpServlet {
 
             int threshold = 25;
             try {
-                threshold = Integer.parseInt(WebloggerConfig
-                        .getProperty("comment.throttle.threshold"));
-            } catch (Exception e) {
-                log.warn(
-                        "bad input for config property comment.throttle.threshold",
-                        e);
+                threshold = Integer.parseInt(WebloggerConfig.getProperty("comment.throttle.threshold"));
+            } catch (NumberFormatException e) {
+                log.warn("bad input for config property comment.throttle.threshold", e);
             }
 
             int interval = RollerConstants.MIN_IN_MS;
             try {
-                interval = Integer.parseInt(WebloggerConfig
-                        .getProperty("comment.throttle.interval"));
+                interval = Integer.parseInt(WebloggerConfig.getProperty("comment.throttle.interval"));
                 // convert from seconds to milliseconds
                 interval = interval * RollerConstants.SEC_IN_MS;
-            } catch (Exception e) {
-                log.warn(
-                        "bad input for config property comment.throttle.interval",
-                        e);
+            } catch (NumberFormatException e) {
+                log.warn("bad input for config property comment.throttle.interval", e);
             }
 
             int maxEntries = 250;
             try {
-                maxEntries = Integer.parseInt(WebloggerConfig
-                        .getProperty("comment.throttle.maxentries"));
-            } catch (Exception e) {
-                log.warn(
-                        "bad input for config property comment.throttle.maxentries",
-                        e);
+                maxEntries = Integer.parseInt(WebloggerConfig.getProperty("comment.throttle.maxentries"));
+            } catch (NumberFormatException e) {
+                log.warn("bad input for config property comment.throttle.maxentries", e);
             }
 
-            commentThrottle = new GenericThrottle(threshold, interval,
-                    maxEntries);
-
+            commentThrottle = new GenericThrottle(threshold, interval, maxEntries);
             log.info("Comment Throttling ENABLED");
         } else {
             log.info("Comment Throttling DISABLED");
@@ -346,13 +335,13 @@ public class CommentServlet extends HttpServlet {
 
                 // add specific error messages if they exist
                 if (messages.getErrorCount() > 0) {
-                    Iterator errors = messages.getErrors();
+                    Iterator<RollerMessage> errors = messages.getErrors();
                     RollerMessage errorKey;
 
                     StringBuilder buf = new StringBuilder();
                     buf.append("<ul>");
                     while (errors.hasNext()) {
-                        errorKey = (RollerMessage) errors.next();
+                        errorKey = errors.next();
 
                         buf.append("<li>");
                         if (errorKey.getArgs() != null) {

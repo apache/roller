@@ -52,7 +52,7 @@ public class WeblogFeedRequest extends WeblogRequest {
     private String type = null;
     private String format = null;
     private String weblogCategoryName = null;
-    private List   tags = null;
+    private List<String> tags = null;
     private int    page = 0;
     private boolean excerpts = false;
     private String term = null;
@@ -190,11 +190,11 @@ public class WeblogFeedRequest extends WeblogRequest {
         this.weblogCategoryName = weblogCategory;
     }
     
-    public List getTags() {
+    public List<String> getTags() {
       return tags;
     }
 
-    public void setTags(List tags) {
+    public void setTags(List<String> tags) {
       this.tags = tags;
     }
 
