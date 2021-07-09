@@ -53,7 +53,7 @@ public final class WebloggerConfig {
 
         try {
             // we'll need this to get at our properties files in the classpath
-            Class configClass = Class.forName("org.apache.roller.weblogger.config.WebloggerConfig");
+            Class<?> configClass = Class.forName("org.apache.roller.weblogger.config.WebloggerConfig");
 
             // first, lets load our default properties
             try (InputStream is = configClass.getResourceAsStream(default_config)) {
@@ -116,7 +116,7 @@ public final class WebloggerConfig {
                     String initialValue = (String) config.get(propName);
                     if (initialValue != null) {
                         String expandedValue = PropertyExpander.expandSystemProperties(initialValue);
-                        config.put(propName,expandedValue);
+                        config.setProperty(propName, expandedValue);
                     }
                 }
             }
@@ -145,7 +145,7 @@ public final class WebloggerConfig {
             log.debug("WebloggerConfig looks like this ...");
 
             String key;
-            Enumeration keys = config.keys();
+            Enumeration<Object> keys = config.keys();
             while(keys.hasMoreElements()) {
                 key = (String) keys.nextElement();
                 log.debug(key+"="+config.getProperty(key));
@@ -239,7 +239,7 @@ public final class WebloggerConfig {
      * Retrieve all property keys
      * @return Enumeration A list of all keys
      **/
-    public static Enumeration keys() {
+    public static Enumeration<Object> keys() {
         return config.keys();
     } 
 

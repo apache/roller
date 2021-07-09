@@ -34,7 +34,7 @@ public class ContentModuleImpl extends ModuleImpl implements ContentModule {
         this.encoded = encoded;
     }
 	@Override
-    public Class getInterface() {
+    public Class<? extends CopyFrom> getInterface() {
         return ContentModule.class;
     }
 

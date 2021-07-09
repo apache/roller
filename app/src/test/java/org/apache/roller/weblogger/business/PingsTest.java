@@ -262,7 +262,7 @@ public class PingsTest  {
             assertNull(testAutoPing);
 
             // remove a collection
-            List autoPings = new ArrayList();
+            List<AutoPing> autoPings = new ArrayList<>();
             autoPing2 = mgr.getAutoPing(autoPing2.getId()); //Get managed version of autoPing2
             autoPings.add(autoPing2);
             autoPing3 = mgr.getAutoPing(autoPing3.getId()); //Get managed version of autoPing2

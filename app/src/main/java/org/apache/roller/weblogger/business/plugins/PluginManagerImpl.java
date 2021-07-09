@@ -89,7 +89,7 @@ public class PluginManagerImpl implements PluginManager {
     }
     
     @Override
-    public String applyWeblogEntryPlugins(Map pagePlugins, WeblogEntry entry, String str) {
+    public String applyWeblogEntryPlugins(Map<String, WeblogEntryPlugin> pagePlugins, WeblogEntry entry, String str) {
 
         String ret = str;
         WeblogEntry copy = new WeblogEntry(entry);
@@ -97,7 +97,7 @@ public class PluginManagerImpl implements PluginManager {
 
         if (entryPlugins != null) {
             for (String key : entryPlugins) {
-                WeblogEntryPlugin pagePlugin = (WeblogEntryPlugin) pagePlugins.get(key);
+                WeblogEntryPlugin pagePlugin = pagePlugins.get(key);
                 if (pagePlugin != null) {
                     ret = pagePlugin.render(entry, ret);
                 } else {

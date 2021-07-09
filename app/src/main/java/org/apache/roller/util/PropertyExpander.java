@@ -56,7 +56,7 @@ public final class PropertyExpander {
      * @return the result of replacing property expressions with the values of the corresponding properties from the
      *         supplied property map, null if the input string is null.
      */
-    public static String expandProperties(String input, Map props) {
+    public static String expandProperties(String input, Map<?, ?> props) {
         
         if (input == null) {
             return null;
@@ -64,7 +64,7 @@ public final class PropertyExpander {
         
         Matcher matcher = EXPANSION_PATTERN.matcher(input);
 
-        StringBuffer expanded = new StringBuffer(input.length());
+        StringBuilder expanded = new StringBuilder(input.length());
         while (matcher.find()) {
             String propName = matcher.group(2);
             String value = (String) props.get(propName);

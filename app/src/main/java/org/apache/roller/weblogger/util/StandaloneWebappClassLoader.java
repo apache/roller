@@ -48,7 +48,7 @@ public class StandaloneWebappClassLoader extends URLClassLoader {
     
     private static URL[] buildURLsArray(String webappDir, String jarsDir) throws Exception {
         // Create collection of URLs needed for classloader
-        List urlList = new ArrayList();
+        List<URL> urlList = new ArrayList<>();
 
         // Add WEB-INF/lib jars
         String libPath = webappDir + FS + "WEB-INF" + FS + "lib";
@@ -61,10 +61,10 @@ public class StandaloneWebappClassLoader extends URLClassLoader {
         // Add additional jars
         addURLs(jarsDir, urlList);
                 
-        return (URL[])urlList.toArray(new URL[urlList.size()]);  
+        return urlList.toArray(new URL[0]);  
     }
     
-    private static void addURLs(String dirPath, List urlList) throws Exception {
+    private static void addURLs(String dirPath, List<URL> urlList) throws Exception {
         File libDir = new File(dirPath);
         String[] libJarNames = libDir.list(new FilenameFilter() {
             @Override
