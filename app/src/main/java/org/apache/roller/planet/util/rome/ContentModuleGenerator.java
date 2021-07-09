@@ -16,8 +16,6 @@
  */
 package org.apache.roller.planet.util.rome;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.jdom2.Element;
@@ -27,24 +25,18 @@ import com.rometools.rome.feed.module.Module;
 import com.rometools.rome.io.ModuleGenerator;
 
 public class ContentModuleGenerator implements ModuleGenerator {
-    private static final Namespace CONTENT_NS  = 
-        Namespace.getNamespace(ContentModule.URI);
+    
+    private static final Namespace CONTENT_NS = Namespace.getNamespace(ContentModule.URI);
+
+    private static final Set<Namespace> NAMESPACES = Set.of(CONTENT_NS);
 
     @Override
     public String getNamespaceUri() {
         return ContentModule.URI;
     }
 
-    private static final Set NAMESPACES;
-
-    static {
-        Set nss = new HashSet();
-        nss.add(CONTENT_NS);
-        NAMESPACES = Collections.unmodifiableSet(nss);
-    }
-
     @Override
-    public Set getNamespaces() {
+    public Set<Namespace> getNamespaces() {
         return NAMESPACES;
     }
 

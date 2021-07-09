@@ -101,10 +101,10 @@ public final class WeblogUpdatePinger {
     public static PingResult sendPing(PingTarget pingTarget, Weblog website) throws IOException, XmlRpcException {
         String websiteUrl = website.getAbsoluteURL();
         String pingTargetUrl = pingTarget.getPingUrl();
-        Set variantOptions = PingConfig.getVariantOptions(pingTargetUrl);
+        Set<String> variantOptions = PingConfig.getVariantOptions(pingTargetUrl);
 
         // Set up the ping parameters.
-        List params = new ArrayList();
+        List<String> params = new ArrayList<>();
         if (!variantOptions.contains("noname")) {
             // ping variant for icerocket and anyone with similar bug, where we must omit the blog name.
             params.add(website.getName());
@@ -134,7 +134,7 @@ public final class WeblogUpdatePinger {
         }
         try {
             // normal case: response is a struct (represented as a Map) with Boolean flerror and String fields.
-            Map result = (Map) obj;
+            Map<?, ?> result = (Map<?, ?>) obj;
             return new PingResult((Boolean) result.get("flerror"), (String) result.get("message"));
         } catch (Exception ex) {
             // exception case:  The caller responded with an unexpected type, though parsed at the basic XML RPC level.

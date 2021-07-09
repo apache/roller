@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -111,11 +110,10 @@ public class Trackback {
         String blog_name = entry.getWebsite().getName();
         
         // build trackback post parameters as query string
-        Map params = new HashMap();
-        params.put("title", URLUtilities.encode(title));
-        params.put("excerpt", URLUtilities.encode(excerpt));
-        params.put("url", URLUtilities.encode(url));
-        params.put("blog_name", URLUtilities.encode(blog_name));
+        Map<String, String> params = Map.of("title", URLUtilities.encode(title),
+                                            "excerpt", URLUtilities.encode(excerpt),
+                                            "url", URLUtilities.encode(url),
+                                            "blog_name", URLUtilities.encode(blog_name));
         String queryString = URLUtilities.getQueryString(params);
         
         LOG.debug("query string - " + queryString);

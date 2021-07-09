@@ -90,19 +90,19 @@ public final class URLUtilities {
     }
     
     
-    public static String getEncodedTagsString(List tags) {
+    public static String getEncodedTagsString(List<String> tags) {
         StringBuilder tagsString = new StringBuilder();
         if(tags != null && !tags.isEmpty()) {
             String tag;
-            Iterator tagsIT = tags.iterator();
+            Iterator<String> tagsIT = tags.iterator();
             
             // do first tag
-            tag = (String) tagsIT.next();
+            tag = tagsIT.next();
             tagsString.append(encode(tag));
             
             // do rest of tags, joining them with a '+'
             while(tagsIT.hasNext()) {
-                tag = (String) tagsIT.next();
+                tag = tagsIT.next();
                 tagsString.append("+");
                 tagsString.append(encode(tag));
             }
