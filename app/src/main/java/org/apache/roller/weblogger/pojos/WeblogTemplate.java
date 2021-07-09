@@ -26,7 +26,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +40,7 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
     public static final long serialVersionUID = -613737191638263428L;
     public static final String DEFAULT_PAGE = "Weblog";
     
-    private static Set<String> requiredTemplates = null;
+    private static final Set<String> requiredTemplates = Set.of("Weblog", "_day");
     
     // attributes
     private String id = UUIDGenerator.generateUUID();
@@ -56,12 +55,6 @@ public class WeblogTemplate implements ThemeTemplate, Serializable {
 
     // associations
     private Weblog weblog = null;
-
-    static {
-        requiredTemplates = new HashSet<>();
-        requiredTemplates.add("Weblog");
-        requiredTemplates.add("_day");
-    }
 
     public WeblogTemplate() {}
     
