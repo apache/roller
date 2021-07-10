@@ -100,8 +100,8 @@ public final class UIPluginManagerImpl implements UIPluginManager {
                 log.debug("trying editor " + editorList[i]);
                 
                 try {
-                    Class editorClass = Class.forName(editorList[i]);
-                    WeblogEntryEditor editor = (WeblogEntryEditor) editorClass.newInstance();
+                    WeblogEntryEditor editor = (WeblogEntryEditor) Class.forName(editorList[i])
+                            .getDeclaredConstructor().newInstance();
                     
                     // looks okay, add it to the map
                     this.editors.put(editor.getId(), editor);

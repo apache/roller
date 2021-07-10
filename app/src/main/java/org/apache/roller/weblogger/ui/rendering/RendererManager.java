@@ -36,9 +36,9 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
  */
 public final class RendererManager {
 
-    private static Log log = LogFactory.getLog(RendererManager.class);
+    private static final Log log = LogFactory.getLog(RendererManager.class);
     // a set of all renderer factories we are consulting
-    private static Set<RendererFactory> rendererFactories = new HashSet<>();
+    private static final Set<RendererFactory> rendererFactories = new HashSet<>();
 
     static {
         // lookup set of renderer factories we are going to use
@@ -52,13 +52,12 @@ public final class RendererManager {
             String[] uFactories = userFactories.split(",");
             for (String uFactory :uFactories) {
                 try {
-                    Class factoryClass = Class.forName(uFactory);
-                    rendererFactory = (RendererFactory) factoryClass.newInstance();
+                    rendererFactory = (RendererFactory) Class.forName(uFactory).getDeclaredConstructor().newInstance();
                     rendererFactories.add(rendererFactory);
                 } catch (ClassCastException cce) {
                     log.error("It appears that your factory does not implement "
                             + "the RendererFactory interface", cce);
-                } catch (Exception e) {
+                } catch (ReflectiveOperationException e) {
                     log.error("Unable to instantiate renderer factory [" + uFactory + "]", e);
                 }
             }
@@ -71,13 +70,12 @@ public final class RendererManager {
             String[] rFactories = rollerFactories.split(",");
             for (String rFactory : rFactories) {
                 try {
-                    Class factoryClass = Class.forName(rFactory);
-                    rendererFactory = (RendererFactory) factoryClass.newInstance();
+                    rendererFactory = (RendererFactory) Class.forName(rFactory).getDeclaredConstructor().newInstance();
                     rendererFactories.add(rendererFactory);
                 } catch (ClassCastException cce) {
                     log.error("It appears that your factory does not implement "
                             + "the RendererFactory interface", cce);
-                } catch (Exception e) {
+                } catch (ReflectiveOperationException e) {
                     log.error("Unable to instantiate renderer factory [" + rFactory + "]", e);
                 }
             }

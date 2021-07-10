@@ -91,13 +91,14 @@ public class CommentServlet extends HttpServlet {
 
         // lookup the authenticator we are going to use and instantiate it
         try {
-            String name = WebloggerConfig
-                    .getProperty("comment.authenticator.classname");
-            Class clazz = Class.forName(name);
-            this.authenticator = (CommentAuthenticator) clazz.newInstance();
-        } catch (Exception e) {
+            String name = WebloggerConfig.getProperty("comment.authenticator.classname");
+            this.authenticator = (CommentAuthenticator) Class.forName(name).getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
             log.error(e);
-            this.authenticator = new DefaultCommentAuthenticator();
+        } finally {
+            if(this.authenticator == null) {
+                this.authenticator = new DefaultCommentAuthenticator();
+            }
         }
 
         // instantiate a comment validation manager for comment spam checking

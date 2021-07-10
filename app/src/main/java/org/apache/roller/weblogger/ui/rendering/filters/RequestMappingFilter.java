@@ -44,7 +44,7 @@ import org.apache.roller.weblogger.ui.rendering.RequestMapper;
  */
 public class RequestMappingFilter implements Filter {
     
-    private static Log log = LogFactory.getLog(RequestMappingFilter.class);
+    private static final Log log = LogFactory.getLog(RequestMappingFilter.class);
     
     // list of RequestMappers that want to inspect the request
     private final List<RequestMapper> requestMappers = new ArrayList<>();
@@ -62,13 +62,12 @@ public class RequestMappingFilter implements Filter {
             String[] uMappers = userMappers.split(",");
             for (String uMapper : uMappers) {
                 try {
-                    Class mapperClass = Class.forName(uMapper);
-                    requestMapper = (RequestMapper) mapperClass.newInstance();
+                    requestMapper = (RequestMapper) Class.forName(uMapper).getDeclaredConstructor().newInstance();
                     requestMappers.add(requestMapper);
                 } catch(ClassCastException cce) {
                     log.error("It appears that your mapper does not implement "+
                             "the RequestMapper interface", cce);
-                } catch(Exception e) {
+                } catch(ReflectiveOperationException e) {
                     log.error("Unable to instantiate request mapper ["+uMapper+"]", e);
                 }
             }
@@ -80,13 +79,12 @@ public class RequestMappingFilter implements Filter {
             String[] rMappers = rollerMappers.split(",");
             for (String rMapper : rMappers) {
                 try {
-                    Class mapperClass = Class.forName(rMapper);
-                    requestMapper = (RequestMapper) mapperClass.newInstance();
+                    requestMapper = (RequestMapper) Class.forName(rMapper).getDeclaredConstructor().newInstance();
                     requestMappers.add(requestMapper);
                 } catch(ClassCastException cce) {
                     log.error("It appears that your mapper does not implement "+
                             "the RequestMapper interface", cce);
-                } catch(Exception e) {
+                } catch(ReflectiveOperationException e) {
                     log.error("Unable to instantiate request mapper ["+rMapper+"]", e);
                 }
             }

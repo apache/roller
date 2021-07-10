@@ -84,9 +84,8 @@ public final class WebloggerFactory {
         String providerClassname = WebloggerConfig.getProperty("weblogger.provider.class");
         if(providerClassname != null) {
             try {
-                Class providerClass = Class.forName(providerClassname);
-                defaultProvider = (WebloggerProvider) providerClass.newInstance();
-            } catch (Exception ex) {
+                defaultProvider = (WebloggerProvider) Class.forName(providerClassname).getDeclaredConstructor().newInstance();
+            } catch (ReflectiveOperationException ex) {
                 throw new BootstrapException("Error instantiating default provider: " + providerClassname + "; exception message: " + ex.getMessage(), ex);
             }
         } else {
