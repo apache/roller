@@ -20,13 +20,13 @@ package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Responsible for loading validators and using them to validate comments.
@@ -40,22 +40,13 @@ public class CommentValidationManager {
         
         // instantiate the validators that are configured
         try {
-            String vals = WebloggerConfig.getProperty("comment.validator.classnames");
-            String[] valsarray = Utilities.stringToStringArray(vals, ",");
-            for (String arrayVal : valsarray) {
-                try {
-                    CommentValidator val = (CommentValidator) Class.forName(arrayVal).getDeclaredConstructor().newInstance();
-                    validators.add(val);
-                    log.info("Configured CommentValidator: " + val.getName() + " / " + val.getClass().getName());
-                } catch (ReflectiveOperationException ex) {
-                    log.warn("Error creating comment validator: " + arrayVal, ex);
-                }
-            }
-                        
-        } catch (Exception e) {
-            log.error("Error instantiating comment validators");
+            validators.addAll(Reflection.newInstancesFromProperty("comment.validator.classnames"));
+        } catch (ReflectiveOperationException ex) {
+            log.error("Error instantiating comment validators", ex);
         }
+        
         log.info("Configured " + validators.size() + " CommentValidators");
+        log.info(validators.stream().map(t -> t.getClass().toString()).collect(Collectors.joining(",", "[", "]")));
     }
     
     /**

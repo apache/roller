@@ -18,6 +18,7 @@
 package org.apache.roller.weblogger.business.runnable;
         
 import java.io.File;
+import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.StandaloneWebappClassLoader;
 
 /**
@@ -57,7 +58,7 @@ public class TaskRunner {
         Thread.currentThread().setContextClassLoader(cl);
 
         // Go!
-        Runnable task = (Runnable)Class.forName(taskClassName).getDeclaredConstructor().newInstance();
+        Runnable task = (Runnable) Reflection.newInstance(taskClassName);
         task.run();
     }
 }

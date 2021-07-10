@@ -17,14 +17,15 @@
  */
 package org.apache.roller.weblogger.ui.rendering;
 
+import java.util.ArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Template;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.apache.roller.weblogger.util.Reflection;
 
 /**
  * Returns Renderer for Template via configured RendererFactories.
@@ -37,48 +38,22 @@ import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 public final class RendererManager {
 
     private static final Log log = LogFactory.getLog(RendererManager.class);
+    
     // a set of all renderer factories we are consulting
-    private static final Set<RendererFactory> rendererFactories = new HashSet<>();
+    private static final List<RendererFactory> rendererFactories = new ArrayList<>();
 
     static {
+        
         // lookup set of renderer factories we are going to use
-        String rollerFactories = WebloggerConfig.getProperty("rendering.rollerRendererFactories");
-        String userFactories = WebloggerConfig.getProperty("rendering.userRendererFactories");
-
-        // instantiate user defined renderer factory classes
-        if (userFactories != null && !userFactories.isBlank()) {
-
-            RendererFactory rendererFactory;
-            String[] uFactories = userFactories.split(",");
-            for (String uFactory :uFactories) {
-                try {
-                    rendererFactory = (RendererFactory) Class.forName(uFactory).getDeclaredConstructor().newInstance();
-                    rendererFactories.add(rendererFactory);
-                } catch (ClassCastException cce) {
-                    log.error("It appears that your factory does not implement "
-                            + "the RendererFactory interface", cce);
-                } catch (ReflectiveOperationException e) {
-                    log.error("Unable to instantiate renderer factory [" + uFactory + "]", e);
-                }
-            }
+        try {
+            rendererFactories.addAll(Reflection.newInstancesFromProperty("rendering.userRendererFactories"));
+        } catch (ReflectiveOperationException ex) {
+            log.error("Unable to create user rendering factories", ex);
         }
-
-        // instantiate roller standard renderer factory classes
-        if (rollerFactories != null && !rollerFactories.isBlank()) {
-
-            RendererFactory rendererFactory;
-            String[] rFactories = rollerFactories.split(",");
-            for (String rFactory : rFactories) {
-                try {
-                    rendererFactory = (RendererFactory) Class.forName(rFactory).getDeclaredConstructor().newInstance();
-                    rendererFactories.add(rendererFactory);
-                } catch (ClassCastException cce) {
-                    log.error("It appears that your factory does not implement "
-                            + "the RendererFactory interface", cce);
-                } catch (ReflectiveOperationException e) {
-                    log.error("Unable to instantiate renderer factory [" + rFactory + "]", e);
-                }
-            }
+        try {
+            rendererFactories.addAll(Reflection.newInstancesFromProperty("rendering.rollerRendererFactories"));
+        } catch (ReflectiveOperationException ex) {
+            log.error("Unable to create roller rendering factories", ex);
         }
 
         if (rendererFactories.isEmpty()) {
@@ -87,7 +62,9 @@ public final class RendererManager {
                     + "Rendering probably won't function as you expect.");
         }
 
-        log.info("Renderer Manager Initialized.");
+        log.info("Renderer Manager Initialized, "+ rendererFactories.size()+" factories configured.");
+        log.info(rendererFactories.stream().map(t -> t.getClass().toString()).collect(Collectors.joining(",", "[", "]")));
+        
     }
 
     // this class is non-instantiable
@@ -115,7 +92,6 @@ public final class RendererManager {
             }
         }
 
-        throw new RenderingException("No renderer found for template "
-                + template.getId() + "!");
+        throw new RenderingException("No renderer found for template " + template.getId() + "!");
     }
 }

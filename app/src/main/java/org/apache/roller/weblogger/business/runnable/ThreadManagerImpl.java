@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.TaskLock;
+import org.apache.roller.weblogger.util.Reflection;
 
 import static org.apache.roller.util.RollerConstants.GRACEFUL_SHUTDOWN_WAIT_IN_MILLISECONDS;
 import static org.apache.roller.util.RollerConstants.GRACEFUL_SHUTDOWN_WAIT_IN_SECONDS;
@@ -75,7 +76,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
                 LOG.info("Initializing task: " + taskName);
                 
                 try {
-                    RollerTask task = (RollerTask) Class.forName(taskClassName).getDeclaredConstructor().newInstance();
+                    RollerTask task = (RollerTask) Reflection.newInstance(taskClassName);
                     task.init(taskName);
                     
                     // make sure there is a tasklock record in the db

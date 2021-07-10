@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.ui.rendering.filters;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -31,8 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.RequestMapper;
+import org.apache.roller.weblogger.util.Reflection;
 
 /**
  * Provides generalized request mapping capabilities.
@@ -52,42 +53,16 @@ public class RequestMappingFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {
         
-        // lookup set of request mappers we are going to use
-        String rollerMappers = WebloggerConfig.getProperty("rendering.rollerRequestMappers");
-        String userMappers = WebloggerConfig.getProperty("rendering.userRequestMappers");
-        
-        // instantiate user defined request mapper classes
-        if(userMappers != null && !userMappers.isBlank()) {
-            RequestMapper requestMapper;
-            String[] uMappers = userMappers.split(",");
-            for (String uMapper : uMappers) {
-                try {
-                    requestMapper = (RequestMapper) Class.forName(uMapper).getDeclaredConstructor().newInstance();
-                    requestMappers.add(requestMapper);
-                } catch(ClassCastException cce) {
-                    log.error("It appears that your mapper does not implement "+
-                            "the RequestMapper interface", cce);
-                } catch(ReflectiveOperationException e) {
-                    log.error("Unable to instantiate request mapper ["+uMapper+"]", e);
-                }
-            }
+        // instantiate user defined and standard roller request mapper classes
+        try {
+            requestMappers.addAll(Reflection.newInstancesFromProperty("rendering.userRequestMappers"));
+        } catch (ReflectiveOperationException ex) {
+            log.error("Unable to load user request mappers", ex);
         }
-        
-        // instantiate roller standard request mapper classes
-        if(rollerMappers != null && !rollerMappers.isBlank()) {
-            RequestMapper requestMapper;
-            String[] rMappers = rollerMappers.split(",");
-            for (String rMapper : rMappers) {
-                try {
-                    requestMapper = (RequestMapper) Class.forName(rMapper).getDeclaredConstructor().newInstance();
-                    requestMappers.add(requestMapper);
-                } catch(ClassCastException cce) {
-                    log.error("It appears that your mapper does not implement "+
-                            "the RequestMapper interface", cce);
-                } catch(ReflectiveOperationException e) {
-                    log.error("Unable to instantiate request mapper ["+rMapper+"]", e);
-                }
-            }
+        try {
+            requestMappers.addAll(Reflection.newInstancesFromProperty("rendering.rollerRequestMappers"));
+        } catch (ReflectiveOperationException ex) {
+            log.error("Unable to load roller request mappers", ex);
         }
         
         if(requestMappers.isEmpty()) {
@@ -96,8 +71,9 @@ public class RequestMappingFilter implements Filter {
                     "Weblog urls probably won't function as you expect.");
         }
         
-        log.info("Request mapping filter initialized, "+requestMappers.size()+
-                " mappers configured.");
+        log.info("Request mapping filter initialized, "+requestMappers.size()+" mappers configured.");
+        log.info(requestMappers.stream().map(t -> t.getClass().toString()).collect(Collectors.joining(",", "[", "]")));
+        
     }
     
     

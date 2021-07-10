@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.weblogger.util.Reflection;
 
 
 /**
@@ -91,28 +91,14 @@ public final class UIPluginManagerImpl implements UIPluginManager {
         
         log.debug("Initializing entry editor plugins");
         
-        String editorStr = WebloggerConfig.getProperty("plugins.weblogEntryEditors");
-        if (editorStr != null) {
-            
-            String[] editorList = StringUtils.stripAll(StringUtils.split(editorStr, ","));
-            for (int i=0; i < editorList.length; i++) {
-                
-                log.debug("trying editor " + editorList[i]);
-                
-                try {
-                    WeblogEntryEditor editor = (WeblogEntryEditor) Class.forName(editorList[i])
-                            .getDeclaredConstructor().newInstance();
-                    
-                    // looks okay, add it to the map
-                    this.editors.put(editor.getId(), editor);
-                    
-                } catch(ClassCastException cce) {
-                    log.error("It appears that your editor does not implement "+
-                            "the WeblogEntryEditor interface", cce);
-                } catch(Exception e) {
-                    log.error("Unable to instantiate editor ["+editorList[i]+"]", e);
-                }
-            }
+        try {
+            Reflection.<WeblogEntryEditor>newInstancesFromProperty("plugins.weblogEntryEditors")
+                    .forEach(editor -> this.editors.put(editor.getId(), editor));
+        } catch(ClassCastException cce) {
+            log.error("It appears that your editor does not implement "+
+                    "the WeblogEntryEditor interface", cce);
+        } catch(Exception e) {
+            log.error("Unable to instantiate editors", e);
         }
         
         if(this.editors.isEmpty()) {
