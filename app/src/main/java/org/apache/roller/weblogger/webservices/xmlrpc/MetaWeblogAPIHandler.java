@@ -85,7 +85,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         Weblog website = validate(blogid, userid,password);
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {
-            Hashtable result = new Hashtable();
+            Hashtable<String, Object> result = new Hashtable<>();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             List<WeblogCategory> cats = weblogMgr.getWeblogCategories(website);
             for (WeblogCategory category : cats) {
@@ -395,7 +395,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
 
             roller.flush();
             
-            Hashtable returnStruct = new Hashtable(1);
+            Hashtable<String, String> returnStruct = new Hashtable<>(1);
             returnStruct.put("url", fileLink);
             return returnStruct;
             
@@ -428,7 +428,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         Weblog website = validate(blogid, userid,password);
         
         try {
-            Vector results = new Vector();
+            Vector<Object> results = new Vector<>();
             
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
@@ -453,12 +453,12 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     }
     
     
-    private Hashtable createPostStruct(WeblogEntry entry, String userid) {
+    private Hashtable<String, Object> createPostStruct(WeblogEntry entry, String userid) {
         
         String permalink =
             WebloggerRuntimeConfig.getAbsoluteContextURL() + entry.getPermaLink();
         
-        Hashtable struct = new Hashtable();
+        Hashtable<String, Object> struct = new Hashtable<>();
         struct.put("title", entry.getTitle());
         if (entry.getLink() != null) {
             struct.put("link", Utilities.escapeHTML(entry.getLink()));
@@ -476,7 +476,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         struct.put("author", entry.getCreator().getEmailAddress());
        
         if ( entry.getCategory() != null ) {
-            Vector catArray = new Vector();
+            Vector<Object> catArray = new Vector<>();
             catArray.addElement(entry.getCategory().getName());
             struct.put("categories", catArray);
 
@@ -488,9 +488,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
     }
     
     
-    private Hashtable createCategoryStruct(WeblogCategory category, String userid) {
+    private Hashtable<String, String> createCategoryStruct(WeblogCategory category, String userid) {
         
-        Hashtable struct = new Hashtable();
+        Hashtable<String, String> struct = new Hashtable<>();
         struct.put("title", category.getName());
         struct.put("description", category.getName());
         
