@@ -289,7 +289,7 @@ public class MediaCollection {
             }
             Set<MediaFile> files = dir.getMediaFiles();
 
-            SortedSet sortedSet = new TreeSet(new Comparator() {
+            SortedSet<MediaFile> sortedSet = new TreeSet<>(new Comparator<Object>() {
                 @Override
                 public int compare(Object o1, Object o2) {
                     MediaFile f1 = (MediaFile)o1;
@@ -313,7 +313,7 @@ public class MediaCollection {
                 int count = 0;
                 MediaFile[] sortedResources =
                    (MediaFile[])sortedSet.toArray(new MediaFile[sortedSet.size()]);
-                List atomEntries = new ArrayList();
+                List<Entry> atomEntries = new ArrayList<>();
                 for (int i=start; i<(start + max) && i<(sortedResources.length); i++) {
                     Entry entry = createAtomResourceEntry(website, sortedResources[i]);
                     atomEntries.add(entry);
@@ -324,7 +324,7 @@ public class MediaCollection {
                     count++;
                 }
 
-                List otherLinks = new ArrayList();
+                List<Link> otherLinks = new ArrayList<>();
                 if (start + count < files.size()) {
                     // add next link
                     int nextOffset = start + max;
@@ -500,11 +500,11 @@ public class MediaCollection {
         Link altlink = new Link();
         altlink.setRel("alternate");
         altlink.setHref(file.getPermalink());
-        List altlinks = new ArrayList();
+        List<Link> altlinks = new ArrayList<>();
         altlinks.add(altlink);
         entry.setAlternateLinks(altlinks);
 
-        List otherlinks = new ArrayList();
+        List<Link> otherlinks = new ArrayList<>();
         entry.setOtherLinks(otherlinks);
         Link editlink = new Link();
             editlink.setRel("edit");
@@ -518,11 +518,11 @@ public class MediaCollection {
         Content content = new Content();
         content.setSrc(file.getPermalink());
         content.setType(contentType);
-        List contents = new ArrayList();
+        List<Content> contents = new ArrayList<>();
         contents.add(content);
         entry.setContents(contents);
         
-        List modules = new ArrayList();
+        List<com.rometools.rome.feed.module.Module> modules = new ArrayList<>();
         AppModule app = new AppModuleImpl();
         app.setDraft(false);
         app.setEdited(entry.getUpdated());
