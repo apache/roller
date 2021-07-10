@@ -241,7 +241,7 @@ public abstract class UIAction extends ActionSupport
         addActionError(getText(errorKey, errorKey, param));
     }
     
-    public void addError(String errorKey, List args) {
+    public void addError(String errorKey, List<?> args) {
         addActionError(getText(errorKey, args));
     }
     
@@ -263,7 +263,7 @@ public abstract class UIAction extends ActionSupport
         addActionMessage(getText(msgKey, msgKey, param));
     }
     
-    public void addMessage(String msgKey, List args) {
+    public void addMessage(String msgKey, List<?> args) {
         addActionMessage(getText(msgKey, args));
     }
     

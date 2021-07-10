@@ -283,8 +283,7 @@ public interface WeblogEntryManager {
      * @return True if tags exist, false otherwise.
      * @throws WebloggerException If there is any problem doing the operation.
      */
-    boolean getTagComboExists(List tags, Weblog weblog)
-        throws WebloggerException;
+    boolean getTagComboExists(List<String> tags, Weblog weblog) throws WebloggerException;
     
     /**
      * Get a HitCountData by id.

@@ -160,7 +160,7 @@ public class ThemeManagerImpl implements ThemeManager {
 
 			// otherwise we are returning a WeblogSharedTheme
 		} else {
-			SharedTheme staticTheme = (SharedTheme) this.themes.get(weblog.getEditorTheme());
+			SharedTheme staticTheme = this.themes.get(weblog.getEditorTheme());
 			if (staticTheme != null) {
 				weblogTheme = new WeblogSharedTheme(weblog, staticTheme);
 			} else {
@@ -377,15 +377,10 @@ public class ThemeManagerImpl implements ThemeManager {
 
 		// first, get a list of the themes available
 		File themesdir = new File(this.themeDir);
-		FilenameFilter filter = new FilenameFilter() {
-
-            @Override
-			public boolean accept(File dir, String name) {
-				File file = new File(dir.getAbsolutePath() + File.separator
-						+ name);
-				return file.isDirectory() && !file.getName().startsWith(".");
-			}
-		};
+		FilenameFilter filter = (File dir, String name) -> {
+            File file = new File(dir.getAbsolutePath() + File.separator + name);
+            return file.isDirectory() && !file.getName().startsWith(".");
+        };
 		String[] themenames = themesdir.list(filter);
 
 		if (themenames == null) {

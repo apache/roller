@@ -158,7 +158,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         // Remove the weblog's ping queue entries
         TypedQuery<PingQueueEntry> q = strategy.getNamedQuery("PingQueueEntry.getByWebsite", PingQueueEntry.class);
         q.setParameter(1, weblog);
-        List queueEntries = q.getResultList();
+        List<PingQueueEntry> queueEntries = q.getResultList();
         for (Object obj : queueEntries) {
             this.strategy.remove(obj);
         }
@@ -620,8 +620,8 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         for (int i=0; i<26; i++) {
             char currentChar = lc.charAt(i);
             query.setParameter(1, currentChar + "%");
-            List row = query.getResultList();
-            Long count = (Long) row.get(0);
+            List<Long> row = query.getResultList();
+            Long count = row.get(0);
             results.put(String.valueOf(currentChar), count);
         }
         return results;
@@ -672,7 +672,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (length != -1) {
             query.setMaxResults(length);
         }
-        List queryResults = query.getResultList();
+        List<?> queryResults = query.getResultList();
         List<StatCount> results = new ArrayList<>();
         if (queryResults != null) {
             for (Object obj : queryResults) {

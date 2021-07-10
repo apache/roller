@@ -149,8 +149,8 @@ public class TagDataServlet extends HttpServlet {
             pw.println("  \"weblog\": \"" + (!siteWide ? weblog.getHandle() : "") + "\",");
             pw.println("  \"tagcounts\": [" );
             int count = 0;
-            for (Iterator it = tags.iterator(); it.hasNext();) {
-                TagStat stat = (TagStat) it.next();
+            for (Iterator<TagStat> it = tags.iterator(); it.hasNext();) {
+                TagStat stat = it.next();
                 pw.print("    { \"tag\" : \"");
                 pw.print(stat.getName());
                 pw.print("\", ");

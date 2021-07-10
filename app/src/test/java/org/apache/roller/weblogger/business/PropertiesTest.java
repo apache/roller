@@ -73,14 +73,14 @@ public class PropertiesTest  {
         assertEquals("testtest", prop.getValue());
         
         // get all properties
-        Map props = mgr.getProperties();
+        Map<String, RuntimeConfigProperty> props = mgr.getProperties();
         assertNotNull(props);
         assertTrue(props.containsKey("site.name"));
         
         // update multiple properties
-        prop = (RuntimeConfigProperty) props.get("site.name");
+        prop = props.get("site.name");
         prop.setValue("foofoo");
-        prop = (RuntimeConfigProperty) props.get("site.description");
+        prop = props.get("site.description");
         prop.setValue("blahblah");
         mgr.saveProperties(props);
         TestUtils.endSession(true);
@@ -88,8 +88,8 @@ public class PropertiesTest  {
         // make sure all properties were updated
         props = mgr.getProperties();
         assertNotNull(props);
-        assertEquals("foofoo", ((RuntimeConfigProperty)props.get("site.name")).getValue());
-        assertEquals("blahblah", ((RuntimeConfigProperty)props.get("site.description")).getValue());
+        assertEquals("foofoo", props.get("site.name").getValue());
+        assertEquals("blahblah", props.get("site.description").getValue());
     }
     
 }

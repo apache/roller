@@ -136,8 +136,8 @@ public class RollerAtomService extends AtomService {
     private List<String> getAcceptedContentTypeRange() throws WebloggerException {
         List<String> accepts = new ArrayList<>();
         Weblogger roller = WebloggerFactory.getWeblogger();
-        Map config = roller.getPropertiesManager().getProperties();        
-        String allows = ((RuntimeConfigProperty)config.get("uploads.types.allowed")).getValue();
+        Map<String, RuntimeConfigProperty> config = roller.getPropertiesManager().getProperties();        
+        String allows = config.get("uploads.types.allowed").getValue();
         String[] rules = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
         if (rules != null) {
             for (String rule : rules) {
