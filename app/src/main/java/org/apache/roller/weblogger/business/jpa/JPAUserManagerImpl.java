@@ -96,7 +96,7 @@ public class JPAUserManagerImpl implements UserManager {
         }
         
         boolean adminUser = false;
-        List existingUsers = this.getUsers(Boolean.TRUE, null, null, 0, 1);
+        List<User> existingUsers = this.getUsers(Boolean.TRUE, null, null, 0, 1);
         boolean firstUserAdmin = WebloggerConfig.getBooleanProperty("users.firstUserAdmin");
         if (existingUsers.isEmpty() && firstUserAdmin) {
             // Make first user an admin
@@ -299,8 +299,8 @@ public class JPAUserManagerImpl implements UserManager {
         for (int i=0; i<26; i++) {
             char currentChar = lc.charAt(i);
             query.setParameter(1, currentChar + "%");
-            List row = query.getResultList();
-            Long count = (Long) row.get(0);
+            List<Long> row = query.getResultList();
+            Long count = row.get(0);
             results.put(String.valueOf(currentChar), count);
         }
         return results;

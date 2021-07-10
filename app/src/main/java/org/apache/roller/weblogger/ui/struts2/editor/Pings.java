@@ -47,7 +47,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 // TODO: make this work @AllowedMethods({"execute","enable","disable","pingNow"})
 public class Pings extends UIAction {
     
-    private static Log log = LogFactory.getLog(Pings.class);
+    private static final Log log = LogFactory.getLog(Pings.class);
     
     // ping target id to work on
     private String pingTargetId = null;
@@ -59,7 +59,7 @@ public class Pings extends UIAction {
     private List<PingTarget> commonPingTargets = Collections.emptyList();
     
     // track the enabled/disabled status for pings
-    private Map pingStatus = Collections.EMPTY_MAP;
+    private Map<String, Boolean> pingStatus = Collections.emptyMap();
     
     
     public Pings() {
@@ -262,11 +262,11 @@ public class Pings extends UIAction {
         this.commonPingTargets = commonPingTargets;
     }
 
-    public Map getPingStatus() {
+    public Map<String, Boolean> getPingStatus() {
         return pingStatus;
     }
 
-    public void setPingStatus(Map pingStatus) {
+    public void setPingStatus(Map<String, Boolean> pingStatus) {
         this.pingStatus = pingStatus;
     }
 }

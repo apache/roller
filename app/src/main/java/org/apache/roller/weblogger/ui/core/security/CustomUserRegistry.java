@@ -203,7 +203,7 @@ public class CustomUserRegistry {
         if (attrObj instanceof String) {
             attr = (String)attrObj;
         } else if (attrObj instanceof Set) {
-            Set attrSet = (Set)attrObj;           
+            Set<?> attrSet = (Set)attrObj;           
             if (!attrSet.isEmpty()) {
                 attr = (String)attrSet.iterator().next();
             }

@@ -68,7 +68,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of entryAnchors -> entryIds
-    private Map<String, String> entryAnchorToIdMap = Collections.synchronizedMap(new HashMap<String, String>());
+    private final Map<String, String> entryAnchorToIdMap = Collections.synchronizedMap(new HashMap<String, String>());
     
     private static final Comparator<TagStat> TAG_STAT_NAME_COMPARATOR = new TagStatComparator();
     
@@ -276,8 +276,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         
         // remove attributes
         if (entry.getEntryAttributes() != null) {
-            for (Iterator it = entry.getEntryAttributes().iterator(); it.hasNext(); ) {
-                WeblogEntryAttribute att = (WeblogEntryAttribute) it.next();
+            for (Iterator<WeblogEntryAttribute> it = entry.getEntryAttributes().iterator(); it.hasNext(); ) {
+                WeblogEntryAttribute att = it.next();
                 it.remove();
                 this.strategy.remove(att);
             }
@@ -295,7 +295,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         this.entryAnchorToIdMap.remove(entry.getWebsite().getHandle()+":"+entry.getAnchor());
     }
     
-    private List getNextPrevEntries(WeblogEntry current, String catName,
+    private List<WeblogEntry> getNextPrevEntries(WeblogEntry current, String catName,
             String locale, int maxEntries, boolean next)
             throws WebloggerException {
 
@@ -496,8 +496,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
 
         // seems silly, why is this not done in WeblogEntry?
 
-        for (Iterator it = entry.getEntryAttributes().iterator(); it.hasNext();) {
-            WeblogEntryAttribute entryAttribute = (WeblogEntryAttribute) it.next();
+        for (Iterator<WeblogEntryAttribute> it = entry.getEntryAttributes().iterator(); it.hasNext();) {
+            WeblogEntryAttribute entryAttribute = it.next();
             if (entryAttribute.getName().equals(name)) {
 
                 //Remove it from database
@@ -587,7 +587,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
                     "WeblogEntry.getByWebsite&Anchor", WeblogEntry.class);
             q.setParameter(1, entry.getWebsite());
             q.setParameter(2, name);
-            List results = q.getResultList();
+            List<WeblogEntry> results = q.getResultList();
             
             if (results.isEmpty()) {
                 break;
@@ -819,7 +819,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             Date startDate, Date endDate, int offset,
             int length) throws WebloggerException {
         TypedQuery<WeblogEntryComment> query;
-        List queryResults;
+        List<WeblogEntryComment> queryResults;
 
         Timestamp end = new Timestamp(endDate != null? endDate.getTime() : new Date().getTime());
 
@@ -881,9 +881,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public WeblogEntry getNextEntry(WeblogEntry current,
             String catName, String locale) throws WebloggerException {
         WeblogEntry entry = null;
-        List entryList = getNextPrevEntries(current, catName, locale, 1, true);
+        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, locale, 1, true);
         if (entryList != null && !entryList.isEmpty()) {
-            entry = (WeblogEntry)entryList.get(0);
+            entry = entryList.get(0);
         }
         return entry;
     }
@@ -895,9 +895,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public WeblogEntry getPreviousEntry(WeblogEntry current,
             String catName, String locale) throws WebloggerException {
         WeblogEntry entry = null;
-        List entryList = getNextPrevEntries(current, catName, locale, 1, false);
+        List<WeblogEntry> entryList = getNextPrevEntries(current, catName, locale, 1, false);
         if (entryList != null && !entryList.isEmpty()) {
-            entry = (WeblogEntry)entryList.get(0);
+            entry = entryList.get(0);
         }
         return entry;
     }
@@ -934,7 +934,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public List<TagStat> getPopularTags(Weblog website, Date startDate, int offset, int limit)
     throws WebloggerException {
         TypedQuery<TagStat> query;
-        List queryResults;
+        List<TagStat> queryResults;
         
         if (website != null) {
             if (startDate != null) {
@@ -1002,7 +1002,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public List<TagStat> getTags(Weblog website, String sortBy,
             String startsWith, int offset, int limit) throws WebloggerException {
         Query query;
-        List queryResults;
+        List<?> queryResults;
         boolean sortByName = sortBy == null || !sortBy.equals("count");
                 
         List<Object> params = new ArrayList<>();
@@ -1062,7 +1062,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
      * @inheritDoc
      */
     @Override
-    public boolean getTagComboExists(List tags, Weblog weblog) throws WebloggerException{
+    public boolean getTagComboExists(List<String> tags, Weblog weblog) throws WebloggerException{
         
         if (tags == null || tags.isEmpty()) {
             return false;

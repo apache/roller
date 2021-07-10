@@ -40,7 +40,7 @@ import org.apache.roller.util.DateUtil;
  */
 public class BigWeblogCalendarModel extends WeblogCalendarModel {
     
-    private static Log mLogger = LogFactory.getLog(BigWeblogCalendarModel.class);
+    private static final Log mLogger = LogFactory.getLog(BigWeblogCalendarModel.class);
 
     protected final SimpleDateFormat starDateFormat =
             DateUtil.get8charDateFormat();
@@ -71,7 +71,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             monthMap = mgr.getWeblogEntryObjectMap(wesc);
         } catch (WebloggerException e) {
             mLogger.error(e);
-            monthMap = new HashMap();
+            monthMap = new HashMap<>();
         }
     }
     
@@ -85,7 +85,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
             // get the 8 char YYYYMMDD datestring for day, returns null
             // if no weblog entry on that day
             String dateString;
-            List entries = (List)monthMap.get(day);
+            List<?> entries = (List<?>)monthMap.get(day);
             if ( entries != null ) {
                 dateString = starDateFormat.format(
                         ((WeblogEntry)entries.get(0)).getPubTime());
@@ -144,7 +144,7 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
         // get the 8 char YYYYMMDD datestring for day, returns null
         // if no weblog entry on that day
         String dateString = null;
-        List entries = (List)monthMap.get( day );
+        List<?> entries = (List<?>)monthMap.get( day );
         if ( entries != null && day != null ) {
             WeblogEntry entry = (WeblogEntry)entries.get(0);
             dateString = starDateFormat.format(entry.getPubTime());

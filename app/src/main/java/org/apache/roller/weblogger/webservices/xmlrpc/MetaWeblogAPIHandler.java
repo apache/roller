@@ -113,14 +113,14 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
      * @return
      */
     public boolean editPost(String postid, String userid, String password,
-            Hashtable struct, int publish) throws Exception {
+            Hashtable<String, ?> struct, int publish) throws Exception {
         
         return editPost(postid, userid, password, struct, publish > 0);
     }
     
     
     public boolean editPost(String postid, String userid, String password,
-            Hashtable struct, boolean publish) throws Exception {
+            Hashtable<String, ?> struct, boolean publish) throws Exception {
         
         mLogger.debug("editPost() Called ========[ SUPPORTED ]=====");
         mLogger.debug("     PostId: " + postid);
@@ -133,7 +133,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         
         validate(entry.getWebsite().getHandle(), userid,password);
         
-        Hashtable postcontent = struct;
+        Hashtable<String, ?> postcontent = struct;
         String description = (String)postcontent.get("description");
         String title = (String)postcontent.get("title");
         if (title == null) {
@@ -213,14 +213,14 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
      * @return
      */
     public String newPost(String blogid, String userid, String password,
-            Hashtable struct, int publish) throws Exception {
+            Hashtable<String, ?> struct, int publish) throws Exception {
         
         return newPost(blogid, userid, password, struct, publish > 0);
     }
     
     
     public String newPost(String blogid, String userid, String password,
-            Hashtable struct, boolean publish) throws Exception {
+            Hashtable<String, ?> struct, boolean publish) throws Exception {
         
         mLogger.debug("newPost() Called ===========[ SUPPORTED ]=====");
         mLogger.debug("     BlogId: " + blogid);
@@ -229,7 +229,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         
         Weblog website = validate(blogid, userid, password);
         
-        Hashtable postcontent = struct;
+        Hashtable<String, ?> postcontent = struct;
         String description = (String)postcontent.get("description");
         String title = (String)postcontent.get("title");
         if (StringUtils.isEmpty(title) && StringUtils.isEmpty(description)) {
@@ -355,7 +355,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
      * placed in the user's upload diretory.
      */
     public Object newMediaObject(String blogid, String userid, String password,
-            Hashtable struct) throws Exception {
+            Hashtable<String, ?> struct) throws Exception {
         
         mLogger.debug("newMediaObject() Called =[ SUPPORTED ]=====");
         mLogger.debug("     BlogId: " + blogid);

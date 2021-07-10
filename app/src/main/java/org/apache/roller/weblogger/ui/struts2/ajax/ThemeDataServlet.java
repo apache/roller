@@ -78,8 +78,8 @@ public class ThemeDataServlet extends HttpServlet {
         if (themeId == null) {
             pw.println("[" );
         }
-        for (Iterator it = themes.iterator(); it.hasNext();) {
-            SharedTheme theme = (SharedTheme) it.next();
+        for (Iterator<SharedTheme> it = themes.iterator(); it.hasNext();) {
+            SharedTheme theme = it.next();
             pw.print("    { \"id\" : \"");
             pw.print(theme.getId());
             pw.print("\", ");

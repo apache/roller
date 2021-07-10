@@ -482,7 +482,7 @@ public class SiteModel implements Model {
      * @param cats     To limit results to list of category names
      * @param length      Max number of results to return
      */
-    public List<StatCount> getMostCommentedWeblogEntries(List cats, int sinceDays, int length) {
+    public List<StatCount> getMostCommentedWeblogEntries(List<String> cats, int sinceDays, int length) {
         Date startDate = JPAWeblogEntryManagerImpl.getStartDateNow(sinceDays);
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();

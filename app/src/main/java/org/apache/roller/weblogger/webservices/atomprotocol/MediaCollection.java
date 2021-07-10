@@ -91,7 +91,7 @@ public class MediaCollection {
             // get incoming slug from HTTP header
             String slug = areq.getHeader("Slug");
 
-            Content content = (Content)entry.getContents().get(0); 
+            Content content = entry.getContents().get(0); 
             String contentType = content.getType();
             InputStream is = areq.getInputStream();
             String title = entry.getTitle() != null ? entry.getTitle() : slug;
@@ -312,7 +312,7 @@ public class MediaCollection {
                 }
                 int count = 0;
                 MediaFile[] sortedResources =
-                   (MediaFile[])sortedSet.toArray(new MediaFile[sortedSet.size()]);
+                        sortedSet.toArray(new MediaFile[sortedSet.size()]);
                 List<Entry> atomEntries = new ArrayList<>();
                 for (int i=start; i<(start + max) && i<(sortedResources.length); i++) {
                     Entry entry = createAtomResourceEntry(website, sortedResources[i]);

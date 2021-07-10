@@ -47,9 +47,9 @@ import org.apache.roller.util.DateUtil;
  */
 public class WeblogCalendarModel implements CalendarModel {
     
-    private static Log log = LogFactory.getLog(WeblogCalendarModel.class);
+    private static final Log log = LogFactory.getLog(WeblogCalendarModel.class);
     
-    protected Map               monthMap;
+    protected Map<Date, ?>      monthMap;
     protected Date              day;
     protected String            cat = null;
     protected String            pageLink = null;
@@ -115,10 +115,10 @@ public class WeblogCalendarModel implements CalendarModel {
             wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.DESCENDING);
             wesc.setLocale(locale);
             wesc.setMaxResults(1);
-            List prevEntries = mgr.getWeblogEntries(wesc);
+            List<WeblogEntry> prevEntries = mgr.getWeblogEntries(wesc);
 
             if (!prevEntries.isEmpty()) {
-                WeblogEntry prevEntry = (WeblogEntry)prevEntries.get(0);
+                WeblogEntry prevEntry = prevEntries.get(0);
                 prevMonth = DateUtil.getStartOfMonth(new Date(prevEntry.getPubTime().getTime()),getCalendar());
             }
         } catch (WebloggerException e) {
@@ -139,9 +139,9 @@ public class WeblogCalendarModel implements CalendarModel {
             wesc.setSortOrder(WeblogEntrySearchCriteria.SortOrder.ASCENDING);
             wesc.setLocale(locale);
             wesc.setMaxResults(1);
-            List nextEntries = mgr.getWeblogEntries(wesc);
+            List<WeblogEntry> nextEntries = mgr.getWeblogEntries(wesc);
             if (!nextEntries.isEmpty()) {
-                WeblogEntry nextEntry = (WeblogEntry)nextEntries.get(0);
+                WeblogEntry nextEntry = nextEntries.get(0);
                 nextMonth = DateUtil.getStartOfMonth(new Date(nextEntry.getPubTime().getTime()),getCalendar());
             }
         } catch (WebloggerException e) {
@@ -171,7 +171,7 @@ public class WeblogCalendarModel implements CalendarModel {
             monthMap = mgr.getWeblogEntryStringMap(wesc);
         } catch (WebloggerException e) {
             log.error(e);
-            monthMap = new HashMap<Date, String>();
+            monthMap = new HashMap<>();
         }
     }
 
