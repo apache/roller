@@ -50,7 +50,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public final class CacheManager {
     
-    private static Log log = LogFactory.getLog(CacheManager.class);
+    private final static Log log = LogFactory.getLog(CacheManager.class);
     
     private static final String DEFAULT_FACTORY = 
             "org.apache.roller.weblogger.util.cache.ExpiringLRUCacheFactoryImpl";
@@ -71,12 +71,11 @@ public final class CacheManager {
         
         // use reflection to instantiate our factory class
         try {
-            Class factoryClass = Class.forName(classname);
-            cacheFactory = (CacheFactory) factoryClass.newInstance();
+            cacheFactory = (CacheFactory) Class.forName(classname).getDeclaredConstructor().newInstance();
         } catch(ClassCastException cce) {
             log.error("It appears that your factory does not implement "+
                     "the CacheFactory interface",cce);
-        } catch(Exception e) {
+        } catch(ReflectiveOperationException e) {
             log.error("Unable to instantiate cache factory ["+classname+"]"+
                     " falling back on default", e);
         }
@@ -85,9 +84,8 @@ public final class CacheManager {
             try {
                 // hmm ... failed to load the specified cache factory
                 // lets try our default
-                Class factoryClass = Class.forName(DEFAULT_FACTORY);
-                cacheFactory = (CacheFactory) factoryClass.newInstance();
-            } catch(Exception e) {
+                cacheFactory = (CacheFactory) Class.forName(DEFAULT_FACTORY).getDeclaredConstructor().newInstance();
+            } catch(ReflectiveOperationException e) {
                 log.fatal("Failed to instantiate a cache factory", e);
                 throw new RuntimeException(e);
             }
@@ -105,15 +103,13 @@ public final class CacheManager {
             for (String cHandler : cHandlers) {
                 // use reflection to instantiate the handler class
                 try {
-                    Class handlerClass = Class.forName(cHandler);
-                    CacheHandler customHandler = 
-                            (CacheHandler) handlerClass.newInstance();
+                    CacheHandler customHandler = (CacheHandler) Class.forName(cHandler).getDeclaredConstructor().newInstance();
                     
                     cacheHandlers.add(customHandler);
                 } catch(ClassCastException cce) {
                     log.error("It appears that your handler does not implement "+
                             "the CacheHandler interface",cce);
-                } catch(Exception e) {
+                } catch(ReflectiveOperationException e) {
                     log.error("Unable to instantiate cache handler ["+cHandler+"]", e);
                 }
             }
@@ -155,15 +151,14 @@ public final class CacheManager {
             
             try {
                 // use reflection to instantiate the factory class
-                Class factoryClass = Class.forName(classname);
-                CacheFactory factory = (CacheFactory) factoryClass.newInstance();
+                CacheFactory factory = (CacheFactory) Class.forName(classname).getDeclaredConstructor().newInstance();
                 
                 // now ask for a new cache
                 cache = factory.constructCache(properties);
             } catch(ClassCastException cce) {
                 log.error("It appears that your factory ["+classname+
                         "] does not implement the CacheFactory interface",cce);
-            } catch(Exception e) {
+            } catch(ReflectiveOperationException e) {
                 log.error("Unable to instantiate cache factory ["+classname+
                         "] falling back on default", e);
             }

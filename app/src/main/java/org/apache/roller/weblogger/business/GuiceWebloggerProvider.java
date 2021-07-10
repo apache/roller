@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.business;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import java.util.Objects;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
@@ -41,22 +42,9 @@ public class GuiceWebloggerProvider implements WebloggerProvider {
      * configured in WebloggerConfig via 'guice.backend.module' property.
      */
     public GuiceWebloggerProvider() {
-        
-        String moduleClassname = WebloggerConfig.getProperty("guice.backend.module");
-        if(moduleClassname == null) {
-            throw new NullPointerException("unable to lookup default guice module via property 'guice.backend.module'");
-        }
-        
-        try {
-            Class moduleClass = Class.forName(moduleClassname);
-            Module module = (Module)moduleClass.newInstance();
-            injector = Guice.createInjector(module);
-        } catch (ThreadDeath t) {
-            throw t;
-        } catch (Throwable e) {
-            // Fatal misconfiguration, cannot recover
-            throw new RuntimeException("Error instantiating backend module " + moduleClassname + "; exception message: " + e.getMessage(), e);
-        }
+        this(Objects.requireNonNull(
+                WebloggerConfig.getProperty("guice.backend.module"),
+                "unable to lookup default guice module via property 'guice.backend.module'"));
     }
     
     
@@ -67,13 +55,10 @@ public class GuiceWebloggerProvider implements WebloggerProvider {
      */
     public GuiceWebloggerProvider(String moduleClassname) {
         
-        if(moduleClassname == null) {
-            throw new NullPointerException("moduleClassname cannot be null");
-        }
+        Objects.requireNonNull(moduleClassname, "moduleClassname cannot be null");
         
         try {
-            Class moduleClass = Class.forName(moduleClassname);
-            Module module = (Module)moduleClass.newInstance();
+            Module module = (Module) Class.forName(moduleClassname).getDeclaredConstructor().newInstance();
             injector = Guice.createInjector(module);
         } catch (ThreadDeath t) {
             throw t;

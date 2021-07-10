@@ -75,8 +75,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
                 LOG.info("Initializing task: " + taskName);
                 
                 try {
-                    Class taskClass = Class.forName(taskClassName);
-                    RollerTask task = (RollerTask) taskClass.newInstance();
+                    RollerTask task = (RollerTask) Class.forName(taskClassName).getDeclaredConstructor().newInstance();
                     task.init(taskName);
                     
                     // make sure there is a tasklock record in the db
@@ -102,7 +101,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
                     LOG.warn("Task does not extend RollerTask class", ex);
                 } catch (WebloggerException ex) {
                     LOG.error("Error scheduling task", ex);
-                } catch (Exception ex) {
+                } catch (ReflectiveOperationException ex) {
                     LOG.error("Error instantiating task", ex);
                 }
             }

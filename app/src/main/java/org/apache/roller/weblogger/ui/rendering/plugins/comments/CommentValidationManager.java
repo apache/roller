@@ -32,8 +32,9 @@ import org.apache.roller.weblogger.util.Utilities;
  * Responsible for loading validators and using them to validate comments.
  */
 public class CommentValidationManager {
-    private static Log log = LogFactory.getLog(CommentValidationManager.class);
-    private List<CommentValidator> validators = new ArrayList<>();
+
+    private static final Log log = LogFactory.getLog(CommentValidationManager.class);
+    private final List<CommentValidator> validators = new ArrayList<>();
 
     public CommentValidationManager() {
         
@@ -43,16 +44,11 @@ public class CommentValidationManager {
             String[] valsarray = Utilities.stringToStringArray(vals, ",");
             for (String arrayVal : valsarray) {
                 try {
-                    Class valClass = Class.forName(arrayVal);
-                    CommentValidator val = (CommentValidator) valClass.newInstance();
+                    CommentValidator val = (CommentValidator) Class.forName(arrayVal).getDeclaredConstructor().newInstance();
                     validators.add(val);
-                    log.info("Configured CommentValidator: " + val.getName() + " / " + valClass.getName());
-                } catch (ClassNotFoundException cnfe) {
-                    log.warn("Error finding comment validator: " + arrayVal);
-                } catch (InstantiationException ie) {
-                    log.warn("Error insantiating comment validator: " + arrayVal);
-                } catch (IllegalAccessException iae) {
-                    log.warn("Error accessing comment validator: " + arrayVal);
+                    log.info("Configured CommentValidator: " + val.getName() + " / " + val.getClass().getName());
+                } catch (ReflectiveOperationException ex) {
+                    log.warn("Error creating comment validator: " + arrayVal, ex);
                 }
             }
                         
