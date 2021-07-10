@@ -37,6 +37,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import java.util.List;
+import org.apache.roller.weblogger.business.themes.SharedTheme;
 
 
 /**
@@ -45,7 +46,7 @@ import java.util.List;
 // TODO: make this work @AllowedMethods({"execute","save"})
 public class CreateWeblog extends UIAction {
     
-    private static Log log = LogFactory.getLog(CreateWeblog.class);
+    private static final Log log = LogFactory.getLog(CreateWeblog.class);
     private static final String DISABLED_RETURN_CODE = "disabled";
 
     private CreateWeblogBean bean = new CreateWeblogBean();
@@ -192,7 +193,7 @@ public class CreateWeblog extends UIAction {
     }
     
     
-    public List getThemes() {
+    public List<SharedTheme> getThemes() {
         ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
         return themeMgr.getEnabledThemesList();
     }

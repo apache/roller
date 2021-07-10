@@ -34,7 +34,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
 public class CacheInfo extends UIAction {
     
     // map of stats to display
-    private Map stats = Collections.EMPTY_MAP;
+    private Map<String, Map<String, Object>> stats = Collections.emptyMap();
     
     // cache which we would clear when clear() is called
     private String cache = null;
@@ -60,8 +60,7 @@ public class CacheInfo extends UIAction {
     
     @Override
     public void myPrepare() {
-        Map cacheStats = CacheManager.getStats();
-        setStats(cacheStats);
+        setStats(CacheManager.getStats());
     }
     
     
@@ -94,11 +93,11 @@ public class CacheInfo extends UIAction {
     }
 
     
-    public Map getStats() {
+    public Map<String, Map<String, Object>> getStats() {
         return stats;
     }
 
-    public void setStats(Map stats) {
+    public void setStats(Map<String, Map<String, Object>> stats) {
         this.stats = stats;
     }
 

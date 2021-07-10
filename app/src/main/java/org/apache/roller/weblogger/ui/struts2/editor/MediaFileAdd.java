@@ -36,7 +36,6 @@ import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -46,7 +45,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 // TODO: make this work @AllowedMethods({"execute","save"})
 public class MediaFileAdd extends MediaFileBase {
 
-    private static Log log = LogFactory.getLog(MediaFileAdd.class);
+    private static final Log log = LogFactory.getLog(MediaFileAdd.class);
     private MediaFileBean bean = new MediaFileBean();
     private MediaFileDirectory directory;
 
@@ -136,7 +135,7 @@ public class MediaFileAdd extends MediaFileBase {
             MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
 
             RollerMessages errors = new RollerMessages();
-            List<MediaFile> uploaded = new ArrayList();
+            List<MediaFile> uploaded = new ArrayList<>();
             File[] uploads = getUploadedFiles();
 
             if (uploads != null && uploads.length > 0) {
@@ -209,8 +208,8 @@ public class MediaFileAdd extends MediaFileBase {
                     }
                 }
 
-                for (Iterator it = errors.getErrors(); it.hasNext();) {
-                    RollerMessage msg = (RollerMessage) it.next();
+                for (Iterator<RollerMessage> it = errors.getErrors(); it.hasNext();) {
+                    RollerMessage msg = it.next();
                     addError(msg.getKey(), Arrays.asList(msg.getArgs()));
                 }
 

@@ -31,7 +31,7 @@ import org.apache.roller.util.RollerConstants;
 public class LRUCacheImpl implements Cache {
     
     private final String id;
-    private final Map cache;
+    private final Map<String, Object> cache;
     
     // for metrics
     protected double hits = 0;
@@ -50,7 +50,7 @@ public class LRUCacheImpl implements Cache {
     protected LRUCacheImpl(String id, int maxsize) {
         
         this.id = id;
-        this.cache = new LRULinkedHashMap(maxsize);
+        this.cache = new LRULinkedHashMap<>(maxsize);
     }
     
     
@@ -133,7 +133,7 @@ public class LRUCacheImpl implements Cache {
     
     
     // David Flanaghan: http://www.davidflanagan.com/blog/000014.html
-    private static class LRULinkedHashMap extends LinkedHashMap {
+    private static class LRULinkedHashMap<K, V> extends LinkedHashMap<K, V> {
         protected int maxsize;
         
         public LRULinkedHashMap(int maxsize) {
@@ -142,7 +142,7 @@ public class LRUCacheImpl implements Cache {
         }
         
         @Override
-        protected boolean removeEldestEntry(Map.Entry eldest) {
+        protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
             return this.size() > this.maxsize;
         }
     }

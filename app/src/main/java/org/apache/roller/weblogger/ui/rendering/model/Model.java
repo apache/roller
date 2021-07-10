@@ -36,6 +36,6 @@ public interface Model {
     /**
      * Initialize.
      */
-    void init(Map params) throws WebloggerException;
+    void init(Map<String, Object> params) throws WebloggerException;
     
 }

@@ -43,7 +43,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
     
-    private static Log mLogger = LogFactory.getLog(ConvertLineBreaksPlugin.class);
+    private static final Log mLogger = LogFactory.getLog(ConvertLineBreaksPlugin.class);
     
     private static final String NAME = "Convert Line Breaks";
     private static final String DESCRIPTION = "Convert plain text paragraphs to html by adding p and br tags";
@@ -96,7 +96,7 @@ public class ConvertLineBreaksPlugin implements WeblogEntryPlugin {
         try {
             BufferedReader br = new BufferedReader(new StringReader(str));
             
-            String line = null;
+            String line;
             boolean insidePara = false;
             while((line = br.readLine()) != null) {
                 

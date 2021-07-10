@@ -137,7 +137,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      * Save all properties.
      */
     @Override
-    public void saveProperties(Map properties) throws WebloggerException {
+    public void saveProperties(Map<String, RuntimeConfigProperty> properties) throws WebloggerException {
 
         // just go through the list and saveProperties each property
         for (Object prop : properties.values()) {
@@ -153,7 +153,7 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
      *
      * If the Map of props is empty/null then we will initialize all properties.
      **/
-    private Map initializeMissingProps(Map<String, RuntimeConfigProperty> props) {
+    private Map<String, RuntimeConfigProperty> initializeMissingProps(Map<String, RuntimeConfigProperty> props) {
 
         if(props == null) {
             props = new HashMap<>();

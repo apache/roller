@@ -38,7 +38,7 @@ public class ConfigModel implements Model {
     
     /** Init model */
     @Override
-    public void init(Map map) throws WebloggerException {
+    public void init(Map<String, Object> map) throws WebloggerException {
         // no-op
     }
     

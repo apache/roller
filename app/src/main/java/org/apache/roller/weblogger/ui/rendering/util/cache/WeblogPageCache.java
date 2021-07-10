@@ -20,11 +20,10 @@ package org.apache.roller.weblogger.ui.rendering.util.cache;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -40,7 +39,7 @@ import org.apache.roller.weblogger.util.cache.LazyExpiringCacheEntry;
  */
 public final class WeblogPageCache {
     
-    private static Log log = LogFactory.getLog(WeblogPageCache.class);
+    private static final Log log = LogFactory.getLog(WeblogPageCache.class);
     
     // a unique identifier for this cache, this is used as the prefix for
     // roller config properties that apply to this cache
@@ -58,10 +57,10 @@ public final class WeblogPageCache {
         
         cacheEnabled = WebloggerConfig.getBooleanProperty(CACHE_ID+".enabled");
         
-        Map cacheProps = new HashMap();
+        Map<String, String> cacheProps = new HashMap<>();
         cacheProps.put("id", CACHE_ID);
-        Enumeration allProps = WebloggerConfig.keys();
-        String prop = null;
+        Enumeration<Object> allProps = WebloggerConfig.keys();
+        String prop;
         while(allProps.hasMoreElements()) {
             prop = (String) allProps.nextElement();
             
@@ -95,8 +94,7 @@ public final class WeblogPageCache {
         
         Object entry = null;
         
-        LazyExpiringCacheEntry lazyEntry =
-                (LazyExpiringCacheEntry) this.contentCache.get(key);
+        LazyExpiringCacheEntry lazyEntry = (LazyExpiringCacheEntry) this.contentCache.get(key);
         if(lazyEntry != null) {
             entry = lazyEntry.getValue(lastModified);
             
@@ -168,7 +166,7 @@ public final class WeblogPageCache {
         
         StringBuilder key = new StringBuilder(128);
         
-        key.append(this.CACHE_ID).append(':');
+        key.append(CACHE_ID).append(':');
         key.append(pageRequest.getWeblogHandle());
         
         if(pageRequest.getWeblogAnchor() != null) {
@@ -207,9 +205,9 @@ public final class WeblogPageCache {
             if("tags".equals(pageRequest.getContext())) {
                 key.append("/tags/");
                 if(pageRequest.getTags() != null && !pageRequest.getTags().isEmpty()) {
-                    Set ordered = new TreeSet(pageRequest.getTags());
-                    String[] tags = (String[]) ordered.toArray(new String[ordered.size()]);
-                    key.append(Utilities.stringArrayToString(tags,"+"));
+                    String[] tags = pageRequest.getTags().toArray(new String[0]);
+                    Arrays.sort(tags);
+                    key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
                 }
             }
         }

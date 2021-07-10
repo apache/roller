@@ -40,22 +40,22 @@ limitations under the License.
         <jstl.version>1.2</jstl.version>
         <angular.version>1.7.8</angular.version>
         <ant.version>1.10.10</ant.version>
-        <asm.version>9.1</asm.version>
+        <asm.version>9.2</asm.version>
         <commons-validator.version>1.7</commons-validator.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <commons-codec.version>1.15</commons-codec.version>
-        <eclipse-link.version>2.7.8</eclipse-link.version>
+        <eclipse-link.version>2.7.9</eclipse-link.version>
         <guice.version>5.0.1</guice.version>
         <log4j2.version>2.14.1</log4j2.version>
-        <lucene.version>8.8.2</lucene.version>
+        <lucene.version>8.9.0</lucene.version>
         <oauth-core.version>20100527</oauth-core.version>
         <maven-war.version>3.2.3</maven-war.version>
         <maven-surefire.version>2.22.2</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
-        <rome.version>1.15.0</rome.version>
-        <slf4j.version>1.7.30</slf4j.version>
+        <rome.version>1.16.0</rome.version>
+        <slf4j.version>1.7.31</slf4j.version>
         <spring.version>5.3.8</spring.version>
-        <spring.security.version>5.4.6</spring.security.version>
+        <spring.security.version>5.5.1</spring.security.version>
         <struts.version>2.5.26</struts.version>
         <velocity.version>2.3</velocity.version>
         <webjars.version>1.5</webjars.version>
@@ -428,14 +428,6 @@ limitations under the License.
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
             <version>${spring.security.version}</version>
-            <exclusions>
-                <!-- all classes of spring-security-crypto-x.x.x.jar are already in 
-                                    spring-security-core-x.x.x.jar -->
-                <exclusion>
-                    <groupId>org.springframework.security</groupId>
-                    <artifactId>spring-security-crypto</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -744,6 +736,7 @@ limitations under the License.
                             <value>${basedir}/target</value>
                         </property>
                     </systemProperties>
+                    <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>
 

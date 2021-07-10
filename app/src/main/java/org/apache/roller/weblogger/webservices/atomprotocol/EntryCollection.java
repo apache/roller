@@ -339,7 +339,7 @@ public class EntryCollection {
         SyndPerson author = new Person();
         author.setName(         creator.getUserName());
         author.setEmail(        creator.getEmailAddress());
-        atomEntry.setAuthors(   (List<SyndPerson>)Collections.singletonList(author));
+        atomEntry.setAuthors(Collections.singletonList(author));
         
         // Add Atom category for Weblogger category, using category scheme
         List<Category> categories = new ArrayList<>();

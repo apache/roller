@@ -25,7 +25,10 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.MediaFilesPager;
@@ -41,7 +44,7 @@ import org.apache.roller.weblogger.util.URLUtilities;
  */
 public class FeedModel implements Model {
     
-    private static int DEFAULT_ENTRIES = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
+    private static final int DEFAULT_ENTRIES = WebloggerRuntimeConfig.getIntProperty("site.newsfeeds.defaultEntries");
     
     private WeblogFeedRequest feedRequest = null;
     private URLStrategy urlStrategy = null;
@@ -49,7 +52,7 @@ public class FeedModel implements Model {
     
     
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map<String, Object> initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");
@@ -119,7 +122,7 @@ public class FeedModel implements Model {
      * Gets most recent entries limited by: weblog and category specified in 
      * request plus the weblog.entryDisplayCount.
      */
-    public Pager getWeblogEntriesPager() {
+    public Pager<WeblogEntryWrapper> getWeblogEntriesPager() {
         return new FeedEntriesPager(feedRequest);        
     }
     
@@ -128,7 +131,7 @@ public class FeedModel implements Model {
      * Gets most recent comments limited by: weblog specified in request and 
      * the weblog.entryDisplayCount.
      */
-    public Pager getCommentsPager() {
+    public Pager<WeblogEntryCommentWrapper> getCommentsPager() {
         return new FeedCommentsPager(feedRequest);
     }    
         
@@ -136,7 +139,7 @@ public class FeedModel implements Model {
      * Gets most recently uploaded media files limited by: weblog specified 
      * in request and the weblog.entryDisplayCount.
      */
-    public Pager getMediaFilesPager() {
+    public Pager<MediaFile> getMediaFilesPager() {
         return new FeedFilesPager(feedRequest);
     }    
         
@@ -144,13 +147,13 @@ public class FeedModel implements Model {
      * Returns the list of tags specified in the request /?tags=foo+bar
      * @return
      */
-    public List getTags() {
+    public List<String> getTags() {
         return feedRequest.getTags();
     }    
 
     public class FeedEntriesPager extends WeblogEntriesListPager {
         
-        private WeblogFeedRequest feedRequest;
+        private final WeblogFeedRequest feedRequest;
         
         public FeedEntriesPager(WeblogFeedRequest feedRequest) {
             super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
@@ -162,8 +165,8 @@ public class FeedModel implements Model {
         }
         
         @Override
-        protected String createURL(String url, Map params) {
-            List tags = feedRequest.getTags();
+        protected String createURL(String url, Map<String, String> params) {
+            List<String> tags = feedRequest.getTags();
             if(tags != null && !tags.isEmpty()) {
                 params.put("tags", URLUtilities.getEncodedTagsString(tags));
             }
@@ -179,13 +182,13 @@ public class FeedModel implements Model {
         
         @Override
         public String getUrl() {
-            return createURL(super.getUrl(), new HashMap());
+            return createURL(super.getUrl(), new HashMap<>());
         }
     }
     
     public class FeedCommentsPager extends CommentsPager {
         
-        private WeblogFeedRequest feedRequest;
+        private final WeblogFeedRequest feedRequest;
         
         public FeedCommentsPager(WeblogFeedRequest feedRequest) {            
             super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
@@ -196,8 +199,8 @@ public class FeedModel implements Model {
         }
         
         @Override
-        protected String createURL(String url, Map params) {
-            List tags = feedRequest.getTags();
+        protected String createURL(String url, Map<String, String> params) {
+            List<String> tags = feedRequest.getTags();
             if(tags != null && !tags.isEmpty()) {
                 params.put("tags", URLUtilities.getEncodedTagsString(tags));
             }
@@ -213,13 +216,13 @@ public class FeedModel implements Model {
         
         @Override
         public String getUrl() {
-            return createURL(super.getUrl(), new HashMap());
+            return createURL(super.getUrl(), new HashMap<>());
         }
     }      
 
     public class FeedFilesPager extends MediaFilesPager {
         
-        private WeblogFeedRequest feedRequest;
+        private final WeblogFeedRequest feedRequest;
         
         public FeedFilesPager(WeblogFeedRequest feedRequest) {            
             super(urlStrategy, urlStrategy.getWeblogFeedURL(feedRequest.getWeblog(), 
@@ -230,8 +233,8 @@ public class FeedModel implements Model {
         }
         
         @Override
-        protected String createURL(String url, Map params) {
-            List tags = feedRequest.getTags();
+        protected String createURL(String url, Map<String, String> params) {
+            List<String> tags = feedRequest.getTags();
             if(tags != null && !tags.isEmpty()) {
                 params.put("tags", URLUtilities.getEncodedTagsString(tags));
             }
@@ -247,7 +250,7 @@ public class FeedModel implements Model {
         
         @Override
         public String getUrl() {
-            return createURL(super.getUrl(), new HashMap());
+            return createURL(super.getUrl(), new HashMap<>());
         }
     }      
 }

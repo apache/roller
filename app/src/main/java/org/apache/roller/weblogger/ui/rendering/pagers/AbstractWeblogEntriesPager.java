@@ -20,8 +20,8 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -42,21 +42,23 @@ import org.apache.roller.weblogger.util.I18nMessages;
 public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     
     // message utils for doing i18n messages
-    I18nMessages messageUtils = null;
+    final I18nMessages messageUtils;
     
     // url strategy for building urls
-    URLStrategy urlStrategy = null;
+    final URLStrategy urlStrategy;
     
-    Weblog weblog = null;
-    String locale = null;
-    String pageLink = null;
-    String entryAnchor = null;
-    String dateString = null;
-    String catName = null;
-    List tags = new ArrayList();
-    int offset = 0;
-    int page = 0;
-    int length = 0;
+    final Weblog weblog;
+    final String locale;
+    final String pageLink;
+    final String entryAnchor;
+    final String dateString;
+    final String catName;
+    
+    final int offset;
+    final int page;
+    final int length;
+    
+    final List<String> tags;
     
     
     public AbstractWeblogEntriesPager(
@@ -67,7 +69,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
             String             entryAnchor,
             String             dateString,
             String             catName,
-            List               tags,
+            List<String>       tags,
             int                page) {
         
         this.urlStrategy = strat;
@@ -79,20 +81,13 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
         this.dateString = dateString;
         this.catName = catName;
         
-        if (tags != null) {
-            this.tags = tags;
-        }
+        this.tags = tags != null ? tags : Collections.emptyList();
         
         // make sure offset, length, and page are valid
         int maxLength = WebloggerRuntimeConfig.getIntProperty("site.pages.maxEntries");
-        length = weblog.getEntryDisplayCount();
-        if(length > maxLength) {
-            length = maxLength;
-        }
+        this.length = Math.min(weblog.getEntryDisplayCount(), maxLength);
         
-        if(page > 0) {
-            this.page = page;
-        }
+        this.page = Math.max(0, page);
         this.offset = length * page;
         
         // get a message utils instance to handle i18n of messages
@@ -231,9 +226,7 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
      * Return today based on current blog's timezone/locale.
      */
     protected Date getToday() {
-        Calendar todayCal = Calendar.getInstance();
-        todayCal = Calendar.getInstance(
-                weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
+        Calendar todayCal = Calendar.getInstance(weblog.getTimeZoneInstance(), weblog.getLocaleInstance());
         todayCal.setTime(new Date());
         return todayCal.getTime();
     }
@@ -246,13 +239,13 @@ public abstract class AbstractWeblogEntriesPager implements WeblogEntriesPager {
     protected String createURL(
             int                page,
             int                pageAdd,
-            Weblog        website,
+            Weblog             website,
             String             locale,
             String             pageLink,
             String             entryAnchor,
             String             dateString,
             String             catName,
-            List               tags) {
+            List<String>       tags) {
         
         int pageNum = page + pageAdd;
         

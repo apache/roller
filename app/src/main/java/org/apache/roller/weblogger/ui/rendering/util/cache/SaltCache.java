@@ -36,7 +36,8 @@ import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
  * cache, e.g. memcached
  */
 public final class SaltCache {
-    private static Log log = LogFactory.getLog(SaltCache.class);
+    
+    private static final Log log = LogFactory.getLog(SaltCache.class);
     
     // a unique identifier for this cache, this is used as the prefix for
     // roller config properties that apply to this cache
@@ -49,10 +50,10 @@ public final class SaltCache {
 
     private SaltCache() {
         
-        Map cacheProps = new HashMap();
+        Map<String, String> cacheProps = new HashMap<>();
         cacheProps.put("id", CACHE_ID);
-        Enumeration allProps = WebloggerConfig.keys();
-        String prop = null;
+        Enumeration<Object> allProps = WebloggerConfig.keys();
+        String prop;
         while(allProps.hasMoreElements()) {
             prop = (String) allProps.nextElement();
             
@@ -78,8 +79,7 @@ public final class SaltCache {
         
         Object entry = null;
         
-        ExpiringCacheEntry lazyEntry =
-                (ExpiringCacheEntry) this.contentCache.get(key);
+        ExpiringCacheEntry lazyEntry = (ExpiringCacheEntry) this.contentCache.get(key);
         if(lazyEntry != null) {
             entry = lazyEntry.getValue();
             if(entry != null) {

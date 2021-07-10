@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.util.Reflection;
 
 
 /**
@@ -84,9 +85,8 @@ public final class WebloggerFactory {
         String providerClassname = WebloggerConfig.getProperty("weblogger.provider.class");
         if(providerClassname != null) {
             try {
-                Class providerClass = Class.forName(providerClassname);
-                defaultProvider = (WebloggerProvider) providerClass.newInstance();
-            } catch (Exception ex) {
+                defaultProvider = (WebloggerProvider) Reflection.newInstance(providerClassname);
+            } catch (ReflectiveOperationException ex) {
                 throw new BootstrapException("Error instantiating default provider: " + providerClassname + "; exception message: " + ex.getMessage(), ex);
             }
         } else {

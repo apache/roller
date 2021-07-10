@@ -195,7 +195,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             csc.setStatus(getBean().getStatus());
             csc.setReverseChrono(true);
 
-            List allMatchingComments = wmgr.getComments(csc);
+            List<WeblogEntryComment> allMatchingComments = wmgr.getComments(csc);
 
             if(allMatchingComments.size() > COUNT) {
                 setBulkDeleteCount(allMatchingComments.size());
@@ -268,7 +268,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
             }
             
             // loop through IDs of all comments displayed on page
-            List spamIds = Arrays.asList(getBean().getSpamComments());
+            List<String> spamIds = Arrays.asList(getBean().getSpamComments());
             log.debug(spamIds.size()+" comments marked as spam");
             
             String[] ids = Utilities.stringToStringArray(getBean().getIds(),",");

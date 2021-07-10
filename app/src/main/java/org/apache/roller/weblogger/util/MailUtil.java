@@ -107,7 +107,7 @@ public class MailUtil {
                 }
             }
 
-            to = (String[])reviewers.toArray(new String[reviewers.size()]);
+            to = reviewers.toArray(new String[reviewers.size()]);
             
             // Figure URL to entry edit page
             String editURL = WebloggerFactory.getWeblogger().getUrlStrategy().getEntryEditURL(entry.getWebsite().getHandle(), entry.getId(), true);
@@ -359,8 +359,8 @@ public class MailUtil {
                 ownermsg.append((isPlainText) ? "\n\n" : "</p>");
                 ownermsg.append((isPlainText) ? "" : "<ul>");
             }
-            for (Iterator it = messages.getMessages(); it.hasNext();) {
-                RollerMessage rollerMessage = (RollerMessage)it.next();
+            for (Iterator<RollerMessage> it = messages.getMessages(); it.hasNext();) {
+                RollerMessage rollerMessage = it.next();
                 ownermsg.append((isPlainText) ? "" : "<li>");
                 ownermsg.append(MessageFormat.format(resources.getString(
                     rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );
@@ -377,8 +377,8 @@ public class MailUtil {
                 ownermsg.append((isPlainText) ? "\n\n" : "</p>");
                 ownermsg.append((isPlainText) ? "" : "<ul>");
             }
-            for (Iterator it = messages.getErrors(); it.hasNext();) {
-                RollerMessage rollerMessage = (RollerMessage)it.next();
+            for (Iterator<RollerMessage> it = messages.getErrors(); it.hasNext();) {
+                RollerMessage rollerMessage = it.next();
                 ownermsg.append((isPlainText) ? "" : "<li>");
                 ownermsg.append(MessageFormat.format(resources.getString(
                     rollerMessage.getKey()), (Object[])rollerMessage.getArgs()) );

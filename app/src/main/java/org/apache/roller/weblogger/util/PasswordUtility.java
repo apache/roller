@@ -177,7 +177,7 @@ public class PasswordUtility
             String passphrase = users.getString(2);
             props.put(username, passphrase);
         }
-        Enumeration usernames = props.keys();
+        Enumeration<Object> usernames = props.keys();
         while (usernames.hasMoreElements())
         {
             String username = (String)usernames.nextElement();
@@ -201,7 +201,7 @@ public class PasswordUtility
 
         Properties props = new Properties();
         props.load(new FileInputStream(fileName));
-        Enumeration usernames = props.keys();
+        Enumeration<Object> usernames = props.keys();
         while (usernames.hasMoreElements())
         {
             String username = (String)usernames.nextElement();

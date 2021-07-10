@@ -37,7 +37,7 @@ import org.apache.roller.weblogger.util.cache.ExpiringCacheEntry;
  */
 public final class PlanetCache {
     
-    private static Log log = LogFactory.getLog(PlanetCache.class);
+    private static final Log log = LogFactory.getLog(PlanetCache.class);
     
     // a unique identifier for this cache, this is used as the prefix for
     // roller config properties that apply to this cache
@@ -60,7 +60,7 @@ public final class PlanetCache {
         
         Map<String, String> cacheProps = new HashMap<>();
         cacheProps.put("id", CACHE_ID);
-        Enumeration allProps = WebloggerConfig.keys();
+        Enumeration<Object> allProps = WebloggerConfig.keys();
         String prop;
         while(allProps.hasMoreElements()) {
             prop = (String) allProps.nextElement();
@@ -192,7 +192,7 @@ public final class PlanetCache {
      */
     public String generateKey(PlanetRequest planetRequest) {
         
-        StringBuilder key = new StringBuilder();
+        StringBuilder key = new StringBuilder(128);
         
         key.append(CACHE_ID).append(':');
         key.append(planetRequest.getContext());

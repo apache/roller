@@ -241,7 +241,7 @@ public class LinkbackExtractor
                                           Tag.H2, Tag.H3, Tag.H4, Tag.H5,
                                           Tag.H6 };
 
-        private List  mList       = Arrays.asList(mDivTags);
+        private List<Tag> mList = Arrays.asList(mDivTags);
 
         private Tag   mCurrentTag = null;
 

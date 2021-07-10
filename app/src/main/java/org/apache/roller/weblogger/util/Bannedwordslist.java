@@ -33,7 +33,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -64,9 +63,9 @@ import org.apache.roller.util.DateUtil;
  */
 public final class Bannedwordslist {
     
-    private static Log mLogger = LogFactory.getLog(Bannedwordslist.class);
+    private static final Log mLogger = LogFactory.getLog(Bannedwordslist.class);
     
-    private static Bannedwordslist bannedwordslist;
+    private static final Bannedwordslist bannedwordslist;
     private static final String BANNEDWORDSLIST_FILE = "bannedwordslist.txt";
     private static final String LAST_UPDATE_STR = "Last update:";
 
@@ -74,8 +73,8 @@ public final class Bannedwordslist {
     private static final String BANNEDWORDSLIST_URL = null;
 
     private Date lastModified = null;
-    private List<String> bannedwordslistStr = new LinkedList<>();
-    private List<Pattern> bannedwordslistRegex = new LinkedList<>();
+    private final List<String> bannedwordslistStr = new ArrayList<>();
+    private final List<Pattern> bannedwordslistRegex = new ArrayList<>();
     
     // setup our singleton at class loading time
     static {
@@ -388,12 +387,10 @@ public final class Bannedwordslist {
      *
      * @return true if a match was found, otherwise false
      */
-    private static boolean testStringRules(String source, List rules) {
+    private static boolean testStringRules(String source, List<String> rules) {
         boolean matches = false;
         
-        for (Object ruleObj : rules) {
-            String rule;
-            rule = (String) ruleObj;
+        for (String rule : rules) {
 
             try {
                 StringBuilder patternBuilder;

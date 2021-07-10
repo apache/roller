@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class FileContentManagerTest  {
 
-    private static Log log = LogFactory.getLog(FileContentManagerTest.class);
+    private static final Log log = LogFactory.getLog(FileContentManagerTest.class);
     User testUser = null;
     Weblog testWeblog = null;
 
@@ -54,11 +54,11 @@ public class FileContentManagerTest  {
     @AfterEach
     public void tearDown() throws Exception {
         PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-        Map config = pmgr.getProperties();
-        ((RuntimeConfigProperty) config.get("uploads.dir.maxsize")).setValue("30000");
-        ((RuntimeConfigProperty) config.get("uploads.types.forbid")).setValue("");
-        ((RuntimeConfigProperty) config.get("uploads.types.allowed")).setValue("");
-        ((RuntimeConfigProperty) config.get("uploads.enabled")).setValue("true");
+        Map<String, RuntimeConfigProperty> config = pmgr.getProperties();
+        config.get("uploads.dir.maxsize").setValue("30000");
+        config.get("uploads.types.forbid").setValue("");
+        config.get("uploads.types.allowed").setValue("");
+        config.get("uploads.enabled").setValue("true");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
     }
@@ -79,10 +79,10 @@ public class FileContentManagerTest  {
 
         // update roller properties to prepare for test
         PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-        Map config = pmgr.getProperties();
-        ((RuntimeConfigProperty) config.get("uploads.enabled")).setValue("true");
-        ((RuntimeConfigProperty) config.get("uploads.types.allowed")).setValue("opml");
-        ((RuntimeConfigProperty) config.get("uploads.dir.maxsize")).setValue("1.00");
+        Map<String, RuntimeConfigProperty> config = pmgr.getProperties();
+        config.get("uploads.enabled").setValue("true");
+        config.get("uploads.types.allowed").setValue("opml");
+        config.get("uploads.dir.maxsize").setValue("1.00");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
 
@@ -141,16 +141,16 @@ public class FileContentManagerTest  {
 
         FileContentManager fmgr = WebloggerFactory.getWeblogger().getFileContentManager();
         PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-        Map config = pmgr.getProperties();
-        ((RuntimeConfigProperty) config.get("uploads.dir.maxsize")).setValue("1.00");
-        ((RuntimeConfigProperty) config.get("uploads.types.forbid")).setValue("");
-        ((RuntimeConfigProperty) config.get("uploads.types.allowed")).setValue("");
-        ((RuntimeConfigProperty) config.get("uploads.enabled")).setValue("true");
+        Map<String, RuntimeConfigProperty> config = pmgr.getProperties();
+        config.get("uploads.dir.maxsize").setValue("1.00");
+        config.get("uploads.types.forbid").setValue("");
+        config.get("uploads.types.allowed").setValue("");
+        config.get("uploads.enabled").setValue("true");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
 
         config = pmgr.getProperties();
-        ((RuntimeConfigProperty) config.get("uploads.dir.maxsize")).setValue("1.00");
+        config.get("uploads.dir.maxsize").setValue("1.00");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
 
@@ -159,7 +159,7 @@ public class FileContentManagerTest  {
         assertFalse(canSave);
 
         config = pmgr.getProperties();
-        ((RuntimeConfigProperty) config.get("uploads.types.forbid")).setValue("gif");
+        config.get("uploads.types.forbid").setValue("gif");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
 
@@ -170,7 +170,7 @@ public class FileContentManagerTest  {
 
 
         config = pmgr.getProperties();
-        ((RuntimeConfigProperty) config.get("uploads.enabled")).setValue("false");
+        config.get("uploads.enabled").setValue("false");
         pmgr.saveProperties(config);
         TestUtils.endSession(true);
 

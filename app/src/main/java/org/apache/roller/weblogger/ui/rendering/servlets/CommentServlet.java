@@ -53,6 +53,7 @@ import org.apache.roller.weblogger.util.GenericThrottle;
 import org.apache.roller.weblogger.util.IPBanList;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.URLUtilities;
@@ -91,13 +92,14 @@ public class CommentServlet extends HttpServlet {
 
         // lookup the authenticator we are going to use and instantiate it
         try {
-            String name = WebloggerConfig
-                    .getProperty("comment.authenticator.classname");
-            Class clazz = Class.forName(name);
-            this.authenticator = (CommentAuthenticator) clazz.newInstance();
-        } catch (Exception e) {
+            String name = WebloggerConfig.getProperty("comment.authenticator.classname");
+            this.authenticator = (CommentAuthenticator) Reflection.newInstance(name);
+        } catch (ReflectiveOperationException e) {
             log.error(e);
-            this.authenticator = new DefaultCommentAuthenticator();
+        } finally {
+            if(this.authenticator == null) {
+                this.authenticator = new DefaultCommentAuthenticator();
+            }
         }
 
         // instantiate a comment validation manager for comment spam checking
@@ -108,39 +110,28 @@ public class CommentServlet extends HttpServlet {
 
             int threshold = 25;
             try {
-                threshold = Integer.parseInt(WebloggerConfig
-                        .getProperty("comment.throttle.threshold"));
-            } catch (Exception e) {
-                log.warn(
-                        "bad input for config property comment.throttle.threshold",
-                        e);
+                threshold = Integer.parseInt(WebloggerConfig.getProperty("comment.throttle.threshold"));
+            } catch (NumberFormatException e) {
+                log.warn("bad input for config property comment.throttle.threshold", e);
             }
 
             int interval = RollerConstants.MIN_IN_MS;
             try {
-                interval = Integer.parseInt(WebloggerConfig
-                        .getProperty("comment.throttle.interval"));
+                interval = Integer.parseInt(WebloggerConfig.getProperty("comment.throttle.interval"));
                 // convert from seconds to milliseconds
                 interval = interval * RollerConstants.SEC_IN_MS;
-            } catch (Exception e) {
-                log.warn(
-                        "bad input for config property comment.throttle.interval",
-                        e);
+            } catch (NumberFormatException e) {
+                log.warn("bad input for config property comment.throttle.interval", e);
             }
 
             int maxEntries = 250;
             try {
-                maxEntries = Integer.parseInt(WebloggerConfig
-                        .getProperty("comment.throttle.maxentries"));
-            } catch (Exception e) {
-                log.warn(
-                        "bad input for config property comment.throttle.maxentries",
-                        e);
+                maxEntries = Integer.parseInt(WebloggerConfig.getProperty("comment.throttle.maxentries"));
+            } catch (NumberFormatException e) {
+                log.warn("bad input for config property comment.throttle.maxentries", e);
             }
 
-            commentThrottle = new GenericThrottle(threshold, interval,
-                    maxEntries);
-
+            commentThrottle = new GenericThrottle(threshold, interval, maxEntries);
             log.info("Comment Throttling ENABLED");
         } else {
             log.info("Comment Throttling DISABLED");
@@ -345,13 +336,13 @@ public class CommentServlet extends HttpServlet {
 
                 // add specific error messages if they exist
                 if (messages.getErrorCount() > 0) {
-                    Iterator errors = messages.getErrors();
+                    Iterator<RollerMessage> errors = messages.getErrors();
                     RollerMessage errorKey;
 
                     StringBuilder buf = new StringBuilder();
                     buf.append("<ul>");
                     while (errors.hasNext()) {
-                        errorKey = (RollerMessage) errors.next();
+                        errorKey = errors.next();
 
                         buf.append("<li>");
                         if (errorKey.getArgs() != null) {

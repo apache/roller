@@ -18,9 +18,8 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
-import java.util.ArrayList;
 import java.util.List;
-import org.apache.roller.weblogger.pojos.WeblogBookmark;
+import java.util.stream.Collectors;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 
 
@@ -54,12 +53,9 @@ public final class WeblogBookmarkFolderWrapper {
     }
 
     public List<WeblogBookmarkWrapper> getBookmarks() {
-        // iterate through and wrap
-        List<WeblogBookmarkWrapper> wrappedCollection = new ArrayList<>(this.pojo.getBookmarks().size());
-        for (WeblogBookmark bookmark : this.pojo.getBookmarks()) {
-            wrappedCollection.add(WeblogBookmarkWrapper.wrap(bookmark));
-        }
-        return wrappedCollection;
+        return this.pojo.getBookmarks().stream()
+                .map(WeblogBookmarkWrapper::wrap)
+                .collect(Collectors.toList());
     }    
 
 }

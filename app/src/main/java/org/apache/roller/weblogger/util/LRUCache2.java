@@ -162,7 +162,7 @@ public class LRUCache2
         }
 
         @Override
-        protected boolean removeEldestEntry(Map.Entry eldest)
+        protected boolean removeEldestEntry(Map.Entry<Object, CacheEntry> eldest)
         {
             return this.size() > this.maxsize;
         }

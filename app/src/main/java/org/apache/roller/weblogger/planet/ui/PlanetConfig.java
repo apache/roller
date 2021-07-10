@@ -30,7 +30,9 @@ import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
-import org.apache.struts2.interceptor.ParameterAware;
+import org.apache.struts2.interceptor.HttpParametersAware;
+import org.apache.struts2.dispatcher.HttpParameters;
+import org.apache.struts2.dispatcher.Parameter;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,12 +45,12 @@ import java.util.Map;
  * Handles editing of planet global runtime properties.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class PlanetConfig extends PlanetUIAction implements ParameterAware {
+public class PlanetConfig extends PlanetUIAction implements HttpParametersAware {
     
-    private static Log log = LogFactory.getLog(PlanetConfig.class);
+    private static final Log log = LogFactory.getLog(PlanetConfig.class);
     
     // original request parameters
-    private Map parameters = Collections.EMPTY_MAP;
+    private HttpParameters parameters = HttpParameters.create().build();
     
     // runtime properties data
     private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
@@ -128,10 +130,10 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
                             getProperties().put( propName, updProp);
                         }
 
-                        String[] propValues = (String[]) getParameters().get(updProp.getName());
-                        if (propValues != null && propValues.length > 0) {
+                        Parameter param = getParameters().get(updProp.getName());
+                        if (param != null && param.getValue() != null) {
                             // we don't deal with multi-valued props
-                            incomingProp = propValues[0];
+                            incomingProp = param.getValue();
                         }
 
                         // some special treatment for booleans
@@ -174,12 +176,12 @@ public class PlanetConfig extends PlanetUIAction implements ParameterAware {
     }
 
     
-    public Map getParameters() {
+    public HttpParameters getParameters() {
         return parameters;
     }
 
     @Override
-    public void setParameters(Map parameters) {
+    public void setParameters(HttpParameters parameters) {
         this.parameters = parameters;
     }
 

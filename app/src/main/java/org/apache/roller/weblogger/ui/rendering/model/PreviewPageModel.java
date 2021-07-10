@@ -43,7 +43,7 @@ public class PreviewPageModel extends PageModel {
      * Init model.
      */
     @Override
-    public void init(Map initData) throws WebloggerException {
+    public void init(Map<String, Object> initData) throws WebloggerException {
         
         // we expect the init data to contain a weblogRequest object
         WeblogRequest weblogRequest = (WeblogRequest) initData.get("parsedRequest");

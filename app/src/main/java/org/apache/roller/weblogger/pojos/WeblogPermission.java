@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
 import java.security.Permission;
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -36,13 +35,7 @@ public class WeblogPermission extends ObjectPermission implements Serializable {
     public static final String EDIT_DRAFT = "edit_draft";
     public static final String POST = "post";
     public static final String ADMIN = "admin";
-    public static final List<String> ALL_ACTIONS = new ArrayList<>();
-    
-    static {
-        ALL_ACTIONS.add(EDIT_DRAFT);
-        ALL_ACTIONS.add(POST);
-        ALL_ACTIONS.add(ADMIN);
-    }
+    public static final List<String> ALL_ACTIONS = List.of(EDIT_DRAFT, POST, ADMIN);
 
     public WeblogPermission() {
         // required by JPA

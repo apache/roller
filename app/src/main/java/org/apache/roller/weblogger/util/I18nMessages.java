@@ -45,7 +45,7 @@ public final class I18nMessages {
     
     // a map of cached messages instances, keyed by locale
     private static Map<Locale, I18nMessages> messagesMap = 
-            Collections.synchronizedMap(new HashMap());
+            Collections.synchronizedMap(new HashMap<>());
     
     
     private I18nMessages(String locale) {
@@ -131,7 +131,7 @@ public final class I18nMessages {
      * Get a message from the bundle and substitute the given args into
      * the message contents.
      */
-    public String getString(String key, List args) {
+    public String getString(String key, List<?> args) {
         
         try {
             String msg = bundle.getString(key);
@@ -170,12 +170,12 @@ public final class I18nMessages {
 
 		try {
 
-			Class type = ResourceBundle.class;
+			Class<?> type = ResourceBundle.class;
 			Field cacheList = type.getDeclaredField("cacheList");
 
 			synchronized (cacheList) {
 				cacheList.setAccessible(true);
-				((Map) cacheList.get(ResourceBundle.class)).clear();
+				((Map<?, ?>) cacheList.get(ResourceBundle.class)).clear();
 			}
 
 			clearTomcatCache();
@@ -198,7 +198,7 @@ public final class I18nMessages {
 
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		// no need for compilation here.
-		Class cl = loader.getClass();
+		Class<?> cl = loader.getClass();
 
 		try {
 			if ("org.apache.catalina.loader.WebappClassLoader".equals(cl
@@ -215,7 +215,7 @@ public final class I18nMessages {
 		}
 	}
 
-	private static void clearMap(Class cl, Object obj, String name)
+	private static void clearMap(Class<?> cl, Object obj, String name)
 			throws NoSuchFieldException, IllegalAccessException,
 			NoSuchMethodException, InvocationTargetException {
 		Field field = cl.getDeclaredField(name);
@@ -224,7 +224,7 @@ public final class I18nMessages {
 		Object cache = field.get(obj);
 
 		synchronized (cache) {
-			Class ccl = cache.getClass();
+			Class<?> ccl = cache.getClass();
 			Method clearMethod = ccl.getMethod("clear");
 			clearMethod.invoke(cache);
 		}

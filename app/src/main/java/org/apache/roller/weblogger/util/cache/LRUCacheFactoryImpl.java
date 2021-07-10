@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class LRUCacheFactoryImpl implements CacheFactory {
     
-    private static Log log = LogFactory.getLog(LRUCacheFactoryImpl.class);
+    private static final Log log = LogFactory.getLog(LRUCacheFactoryImpl.class);
     
     
     // protected so that only the CacheManager can instantiate us
@@ -39,14 +39,14 @@ public class LRUCacheFactoryImpl implements CacheFactory {
      * Construct a new instance of a Roller LRUCache.
      */
     @Override
-    public Cache constructCache(Map properties) {
+    public Cache constructCache(Map<String, ?> properties) {
         int size = 100;
         String id = "unknown";
         
         try {
             size = Integer.parseInt((String) properties.get("size"));
         } catch(Exception e) {
-            // ignored
+            log.warn("invalide size property", e);
         }
         
         String cacheId = (String) properties.get("id");

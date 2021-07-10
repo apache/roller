@@ -51,7 +51,7 @@ public interface PropertiesManager {
     /**
      * Save a list of properties
      */
-    void saveProperties(Map properties) throws WebloggerException;
+    void saveProperties(Map<String, RuntimeConfigProperty> properties) throws WebloggerException;
     
     
     /**

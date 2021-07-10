@@ -39,7 +39,9 @@ import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.struts2.interceptor.ParameterAware;
+import org.apache.struts2.dispatcher.HttpParameters;
+import org.apache.struts2.dispatcher.Parameter;
+import org.apache.struts2.interceptor.HttpParametersAware;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
 
@@ -47,12 +49,12 @@ import org.apache.struts2.interceptor.ServletRequestAware;
  * Action which handles editing of global configuration.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class GlobalConfig extends UIAction implements ParameterAware, ServletRequestAware {
+public class GlobalConfig extends UIAction implements HttpParametersAware, ServletRequestAware {
 
-    private static Log log = LogFactory.getLog(GlobalConfig.class);
+    private static final Log log = LogFactory.getLog(GlobalConfig.class);
 
     // the request parameters
-    private Map<String, String[]> params = Collections.emptyMap();
+    private HttpParameters params = HttpParameters.create().build();
 
     // map of config properties
     private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
@@ -70,7 +72,7 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
     // GET on the GlobalConfig!save URL and thus sets all checkboxes to false
     private String httpMethod = "GET";
 
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
+    private final ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
 
     // weblogs for frontpage blog chooser
     private Collection<Weblog> weblogs;
@@ -251,26 +253,21 @@ public class GlobalConfig extends UIAction implements ParameterAware, ServletReq
 
 
     @Override
-    public void setParameters(Map<String, String[]> parameters) {
+    public void setParameters(HttpParameters parameters) {
         this.params = parameters;
 
         if (log.isDebugEnabled()) {
             log.debug("Parameter map:");
 
-            for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
-                log.debug(entry.getKey() + " = " + Utilities.stringArrayToString(entry.getValue(),","));
+            for (Map.Entry<String, Parameter> entry : parameters.entrySet()) {
+                log.debug(entry.getKey() + " = " + Utilities.stringArrayToString(entry.getValue().getMultipleValues(), ","));
             }
         }
     }
 
     // convenience method for getting a single parameter as a String
     private String getParameter(String key) {
-
-        String[] p = this.params.get(key);
-        if (p != null && p.length > 0) {
-            return p[0];
-        }
-        return null;
+        return this.params.get(key).getValue();
     }
 
 

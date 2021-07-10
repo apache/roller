@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Common pager interface.
  */
-public interface Pager {
+public interface Pager <T> {
     /**
      * Link value for returning to pager home
      */
@@ -57,6 +57,6 @@ public interface Pager {
     /**
      * Get current list of items available from the pager.
      */
-    List getItems();
+    List<T> getItems();
     
 }

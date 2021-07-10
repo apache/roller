@@ -66,10 +66,10 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             url.append(WebloggerRuntimeConfig.getRelativeContextURL());
         }
 
-        url.append("/").append(weblog.getHandle()).append("/");
+        url.append('/').append(weblog.getHandle()).append('/');
 
         if (locale != null) {
-            url.append(locale).append("/");
+            url.append(locale).append('/');
         }
 
         return url.toString();
@@ -114,7 +114,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         StringBuilder url = new StringBuilder();
         url.append(getWeblogURL(weblog, null, absolute));
         url.append("mediaresource");
-        url.append("/");
+        url.append('/');
         url.append(URLUtilities.encode(fileAnchor));
         
         return url.toString();
@@ -168,7 +168,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                                                       String locale,
                                                       String category,
                                                       String dateString,
-                                                      List tags,
+                                                      List<String> tags,
                                                       int pageNum,
                                                       boolean absolute) {
         
@@ -176,8 +176,8 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuilder pathinfo = new StringBuilder();
-        Map params = new HashMap();
+        StringBuilder pathinfo = new StringBuilder(URL_BUFFER_SIZE);
+        Map<String, String> params = new HashMap<>();
         
         pathinfo.append(getWeblogURL(weblog, locale, absolute));
         
@@ -209,7 +209,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             params.put("page", Integer.toString(pageNum));
         }
         
-        return pathinfo.toString() + URLUtilities.getQueryString(params);
+        return pathinfo.append(URLUtilities.getQueryString(params)).toString();
     }
     
     
@@ -223,7 +223,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                                                 String entryAnchor,
                                                 String category,
                                                 String dateString,
-                                                List tags,
+                                                List<String> tags,
                                                 int pageNum,
                                                 boolean absolute) {
         
@@ -231,8 +231,8 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuilder pathinfo = new StringBuilder();
-        Map params = new HashMap();
+        StringBuilder pathinfo = new StringBuilder(URL_BUFFER_SIZE);
+        Map<String, String> params = new HashMap<>();
         
         pathinfo.append(getWeblogURL(weblog, locale, absolute));
         
@@ -257,7 +257,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return getWeblogCollectionURL(weblog, locale, category, dateString, tags, pageNum, absolute);
         }
         
-        return pathinfo.toString() + URLUtilities.getQueryString(params);
+        return pathinfo.append(URLUtilities.getQueryString(params)).toString();
     }
     
     
@@ -271,7 +271,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
                                                 String format,
                                                 String category,
                                                 String term,
-                                                List tags,
+                                                List<String> tags,
                                                 boolean excerpts,
                                                 boolean absolute) {
         
@@ -279,12 +279,12 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuilder url = new StringBuilder();
+        StringBuilder url = new StringBuilder(URL_BUFFER_SIZE);
         
         url.append(getWeblogURL(weblog, locale, absolute));
-        url.append("feed/").append(type).append("/").append(format);
+        url.append("feed/").append(type).append('/').append(format);
         
-        Map params = new HashMap();
+        Map<String, String> params = new HashMap<>();
         if(category != null && !category.isBlank()) {
             params.put("cat", URLUtilities.encode(category));
         }
@@ -298,7 +298,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             params.put("excerpts", "true");
         }
         
-        return url.toString() + URLUtilities.getQueryString(params);
+        return url.append(URLUtilities.getQueryString(params)).toString();
     }
     
     
@@ -317,12 +317,12 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuilder url = new StringBuilder();
+        StringBuilder url = new StringBuilder(URL_BUFFER_SIZE);
         
         url.append(getWeblogURL(weblog, locale, absolute));
         url.append("search");
         
-        Map params = new HashMap();
+        Map<String, String> params = new HashMap<>();
         if(query != null) {
             params.put("q", URLUtilities.encode(query));
             
@@ -335,7 +335,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             }
         }
         
-        return url.toString() + URLUtilities.getQueryString(params);
+        return url.append(URLUtilities.getQueryString(params)).toString();
     }
     
     
@@ -343,15 +343,13 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
      * Get url to a resource on a given weblog.
      */
     @Override
-    public String getWeblogResourceURL(Weblog weblog,
-                                                    String filePath,
-                                                    boolean absolute) {
+    public String getWeblogResourceURL(Weblog weblog, String filePath, boolean absolute) {
         
         if(weblog == null || StringUtils.isEmpty(filePath)) {
             return null;
         }
         
-        StringBuilder url = new StringBuilder();
+        StringBuilder url = new StringBuilder(URL_BUFFER_SIZE);
         
         url.append(getWeblogURL(weblog, null, absolute));
         url.append("resource/");
@@ -370,8 +368,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
      * Get url to rsd file on a given weblog.
      */
     @Override
-    public String getWeblogRsdURL(Weblog weblog,
-                                               boolean absolute) {
+    public String getWeblogRsdURL(Weblog weblog, boolean absolute) {
         
         if(weblog == null) {
             return null;
@@ -385,11 +382,9 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
      * Get url to JSON tags service url, optionally for a given weblog.
      */
     @Override
-    public String getWeblogTagsJsonURL(Weblog weblog,
-                                                    boolean absolute,
-                                                    int pageNum) {
+    public String getWeblogTagsJsonURL(Weblog weblog, boolean absolute, int pageNum) {
         
-        StringBuilder url = new StringBuilder();
+        StringBuilder url = new StringBuilder(URL_BUFFER_SIZE);
         
         if (absolute) {
             url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
@@ -404,7 +399,7 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         if (weblog != null) {
             url.append("weblog/");
             url.append(weblog.getHandle());
-            url.append("/");
+            url.append('/');
         }
         
         if (pageNum > 0) {
@@ -421,16 +416,14 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuilder url = new StringBuilder();
+        StringBuilder url = new StringBuilder(URL_BUFFER_SIZE);
         
         url.append(getWeblogURL(weblog, null, true));
         url.append("feed/entries/atom");
         
-        Map params = new HashMap();
-        params.put("q", "{searchTerms}");
-        params.put("page", "{startPage}");
+        Map<String, String> params = Map.of("q", "{searchTerms}", "page", "{startPage}");
         
-        return url.toString() + URLUtilities.getQueryString(params);
+        return url.append(URLUtilities.getQueryString(params)).toString();
     }
 
     
@@ -440,16 +433,14 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
             return null;
         }
         
-        StringBuilder url = new StringBuilder();
+        StringBuilder url = new StringBuilder(URL_BUFFER_SIZE);
         
         url.append(getWeblogURL(weblog, null, true));
         url.append("search");
         
-        Map params = new HashMap();
-        params.put("q", "{searchTerms}");
-        params.put("page", "{startPage}");
+        Map<String, String> params = Map.of("q", "{searchTerms}", "page", "{startPage}");
         
-        return url.toString() + URLUtilities.getQueryString(params);
+        return url.append(URLUtilities.getQueryString(params)).toString();
     }
 
 

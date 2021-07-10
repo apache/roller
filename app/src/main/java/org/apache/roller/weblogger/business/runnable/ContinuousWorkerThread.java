@@ -70,7 +70,7 @@ public class ContinuousWorkerThread extends WorkerThread {
             // job is done, lets sleep it off for a bit
             try {
                 mLogger.debug(this.id + " SLEEPING for " + this.sleepTime + " milliseconds ...");
-                this.sleep(this.sleepTime);
+                Thread.sleep(this.sleepTime);
             } catch (InterruptedException e) {
                 mLogger.info(this.id + " INTERRUPT: " + e.getMessage());
                 break;

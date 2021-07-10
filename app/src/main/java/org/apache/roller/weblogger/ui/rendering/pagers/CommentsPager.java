@@ -39,9 +39,9 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
 /**
  * Paging through a collection of comments.
  */
-public class CommentsPager extends AbstractPager {
+public class CommentsPager extends AbstractPager<WeblogEntryCommentWrapper> {
     
-    private static Log log = LogFactory.getLog(CommentsPager.class);
+    private static final Log log = LogFactory.getLog(CommentsPager.class);
     
     private Weblog weblog = null;
     private int sinceDays = -1;

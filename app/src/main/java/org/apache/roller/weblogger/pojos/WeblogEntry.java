@@ -23,7 +23,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -61,8 +60,7 @@ import org.apache.roller.weblogger.util.Utilities;
  * Represents a Weblog Entry.
  */
 public class WeblogEntry implements Serializable {
-    private static Log mLogger =
-            LogFactory.getFactory().getInstance(WeblogEntry.class);
+    private static final Log mLogger = LogFactory.getFactory().getInstance(WeblogEntry.class);
     
     public static final long serialVersionUID = 2341505386843044125L;
 
@@ -234,9 +232,7 @@ public class WeblogEntry implements Serializable {
      * Added for symmetry with PlanetEntryData object.
      */
     public List<WeblogCategory> getCategories() {
-        List<WeblogCategory> cats = new ArrayList<>();
-        cats.add(getCategory());
-        return cats;
+        return List.of(getCategory());
     }
     
     public Weblog getWebsite() {
@@ -356,7 +352,7 @@ public class WeblogEntry implements Serializable {
         return attSet;
     }
 
-    public void setEntryAttributes(Set atts) {
+    public void setEntryAttributes(Set<WeblogEntryAttribute> atts) {
         this.attSet = atts;
     }
     
@@ -609,8 +605,8 @@ public class WeblogEntry implements Serializable {
         }
 
         // remove old ones no longer passed.
-        for (Iterator it = tagSet.iterator(); it.hasNext();) {
-            WeblogEntryTag tag = (WeblogEntryTag) it.next();
+        for (Iterator<WeblogEntryTag> it = tagSet.iterator(); it.hasNext();) {
+            WeblogEntryTag tag = it.next();
             if (!newTags.contains(tag.getName())) {
                 // tag no longer listed in UI, needs removal from DB
                 removedTags.add(tag);
@@ -724,7 +720,6 @@ public class WeblogEntry implements Serializable {
      * TODO: why is this method exposed to users with ability to get spam/non-approved comments?
      */
     public List<WeblogEntryComment> getComments(boolean ignoreSpam, boolean approvedOnly) {
-        List<WeblogEntryComment> list = new ArrayList<>();
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
@@ -734,12 +729,12 @@ public class WeblogEntry implements Serializable {
             csc.setStatus(approvedOnly ? WeblogEntryComment.ApprovalStatus.APPROVED : null);
             return wmgr.getComments(csc);
         } catch (WebloggerException alreadyLogged) {}
-        return list;
+        
+        return Collections.emptyList();
     }
     
     public int getCommentCount() {
-        List comments = getComments(true, true);
-        return comments.size();
+        return getComments(true, true).size();
     }
     
     //------------------------------------------------------------------------
@@ -882,7 +877,7 @@ public class WeblogEntry implements Serializable {
         if (getPlugins() != null) {
             return Arrays.asList( StringUtils.split(getPlugins(), ",") );
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     /** Convenience method for checking status */
@@ -928,7 +923,7 @@ public class WeblogEntry implements Serializable {
             return true;
         }
         
-        WeblogPermission perm = null;
+        WeblogPermission perm;
         try {
             // if user is an author then post status defaults to PUBLISHED, otherwise PENDING
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -954,7 +949,7 @@ public class WeblogEntry implements Serializable {
         mLogger.debug("Applying page plugins to string");
         Map<String, WeblogEntryPlugin> inPlugins = getWebsite().getInitializedPlugins();
         if (str != null && inPlugins != null) {
-            List entryPlugins = getPluginsList();
+            List<String> entryPlugins = getPluginsList();
             
             // if no Entry plugins, don't bother looping.
             if (entryPlugins != null && !entryPlugins.isEmpty()) {
@@ -988,7 +983,7 @@ public class WeblogEntry implements Serializable {
      */
     public String displayContent(String readMoreLink) {
         
-        String displayContent = null;
+        String displayContent;
         
         if(readMoreLink == null || readMoreLink.isBlank() || "nil".equals(readMoreLink)) {
             
@@ -1005,8 +1000,7 @@ public class WeblogEntry implements Serializable {
                 displayContent = this.getTransformedSummary();
                 if(StringUtils.isNotEmpty(this.getText())) {
                     // add read more
-                    List<String> args = new ArrayList<>();
-                    args.add(readMoreLink);
+                    List<String> args = List.of(readMoreLink);
                     
                     // TODO: we need a more appropriate way to get the view locale here
                     String readMore = I18nMessages.getMessages(getWebsite().getLocaleInstance()).getString("macro.weblog.readMoreLink", args);

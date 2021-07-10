@@ -44,7 +44,7 @@ import org.apache.roller.weblogger.business.DatabaseProvider;
 @com.google.inject.Singleton
 public class JPAPersistenceStrategy {
     
-    private static Log logger = 
+    private static final Log logger = 
         LogFactory.getFactory().getInstance(JPAPersistenceStrategy.class);
     
     /**
@@ -78,7 +78,7 @@ public class JPAPersistenceStrategy {
 
             // Add all JPA, OpenJPA, HibernateJPA, etc. properties found
             Properties emfProps = new Properties();
-            Enumeration keys = WebloggerConfig.keys();
+            Enumeration<Object> keys = WebloggerConfig.keys();
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
                 if (       key.startsWith("javax.persistence.") 
@@ -183,7 +183,7 @@ public class JPAPersistenceStrategy {
      * @param id the id of the object to remove
      * @throws WebloggerException on any error deleting object
      */
-    public void remove(Class clazz, String id) throws WebloggerException {
+    public void remove(Class<?> clazz, String id) throws WebloggerException {
         EntityManager em = getEntityManager(true);
         Object po = em.find(clazz, id);
         em.remove(po);
@@ -204,7 +204,7 @@ public class JPAPersistenceStrategy {
      * @param pos the persistent objects to remove
      * @throws org.apache.roller.weblogger.WebloggerException on any error
      */
-    public void removeAll(Collection pos) throws WebloggerException {
+    public void removeAll(Collection<?> pos) throws WebloggerException {
         EntityManager em = getEntityManager(true);
         for (Object obj : pos) {
             em.remove(obj);
@@ -218,8 +218,7 @@ public class JPAPersistenceStrategy {
      * @return the object retrieved
      * @throws WebloggerException on any error retrieving object
      */
-    public Object load(Class clazz, String id)
-    throws WebloggerException {
+    public Object load(Class<?> clazz, String id) throws WebloggerException {
         EntityManager em = getEntityManager(false);
         return em.find(clazz, id);
     }

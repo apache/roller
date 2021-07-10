@@ -19,19 +19,12 @@
 package org.apache.roller.weblogger.pojos.wrapper;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
-import org.apache.roller.weblogger.pojos.WeblogEntryAttribute;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagComparator;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 
@@ -74,21 +67,10 @@ public final class WeblogEntryWrapper {
     }
     
     
-    public List getCategories() {
-        List initialCollection = this.pojo.getCategories();
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogCategoryWrapper.wrap((WeblogCategory) it.next(), urlStrategy));
-            i++;
-        }
-        
-        return wrappedCollection;
+    public List<WeblogCategoryWrapper> getCategories() {      
+        return this.pojo.getCategories().stream()
+                .map(cat -> WeblogCategoryWrapper.wrap(cat, urlStrategy))
+                .collect(Collectors.toList());
     }
     
     
@@ -134,21 +116,10 @@ public final class WeblogEntryWrapper {
     }
     
     
-    public List getEntryAttributes() {
-        Set initialCollection = this.pojo.getEntryAttributes();
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryAttributeWrapper.wrap((WeblogEntryAttribute) it.next()));
-            i++;
-        }
-        
-        return wrappedCollection;
+    public List<WeblogEntryAttributeWrapper> getEntryAttributes() {
+        return this.pojo.getEntryAttributes().stream()
+                .map(WeblogEntryAttributeWrapper::wrap)
+                .collect(Collectors.toList());
     }
     
     
@@ -207,23 +178,11 @@ public final class WeblogEntryWrapper {
     }
     
     
-    public List getTags() {
-        // Sort by name
-        Set<WeblogEntryTag> initialCollection = new TreeSet<>(new WeblogEntryTagComparator());
-        initialCollection.addAll(this.pojo.getTags());
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryTagWrapper.wrap((WeblogEntryTag) it.next()));
-            i++;
-        }
-        
-        return wrappedCollection;
+    public List<WeblogEntryTagWrapper> getTags() {
+        return this.pojo.getTags().stream()
+                .sorted(new WeblogEntryTagComparator()) // by name
+                .map(WeblogEntryTagWrapper::wrap)
+                .collect(Collectors.toList());
     }
     
     
@@ -247,39 +206,17 @@ public final class WeblogEntryWrapper {
     }
     
     
-    public List getComments() {
-        List initialCollection = this.pojo.getComments();
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryCommentWrapper.wrap((WeblogEntryComment) it.next(), urlStrategy));
-            i++;
-        }
-        
-        return wrappedCollection;
+    public List<WeblogEntryCommentWrapper> getComments() {
+        return this.pojo.getComments().stream()
+                .map(comment -> WeblogEntryCommentWrapper.wrap(comment, urlStrategy))
+                .collect(Collectors.toList());
     }
     
     
-    public List getComments(boolean ignoreSpam,boolean approvedOnly) {
-        List initialCollection = this.pojo.getComments(ignoreSpam,approvedOnly);
-        
-        // iterate through and wrap
-        // we force the use of an ArrayList because it should be good enough to cover
-        // for any Collection type we encounter.
-        ArrayList wrappedCollection = new ArrayList(initialCollection.size());
-        Iterator it = initialCollection.iterator();
-        int i = 0;
-        while(it.hasNext()) {
-            wrappedCollection.add(i,WeblogEntryCommentWrapper.wrap((WeblogEntryComment) it.next(), urlStrategy));
-            i++;
-        }
-        
-        return wrappedCollection;
+    public List<WeblogEntryCommentWrapper> getComments(boolean ignoreSpam, boolean approvedOnly) {
+        return this.pojo.getComments(ignoreSpam, approvedOnly).stream()
+                .map(comment -> WeblogEntryCommentWrapper.wrap(comment, urlStrategy))
+                .collect(Collectors.toList());
     }
     
     
@@ -319,7 +256,7 @@ public final class WeblogEntryWrapper {
     
     
     // TODO: check this method for safety
-    public List getPluginsList() {
+    public List<String> getPluginsList() {
         return this.pojo.getPluginsList();
     }
     

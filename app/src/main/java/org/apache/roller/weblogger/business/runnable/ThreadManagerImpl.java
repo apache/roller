@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.TaskLock;
+import org.apache.roller.weblogger.util.Reflection;
 
 import static org.apache.roller.util.RollerConstants.GRACEFUL_SHUTDOWN_WAIT_IN_MILLISECONDS;
 import static org.apache.roller.util.RollerConstants.GRACEFUL_SHUTDOWN_WAIT_IN_SECONDS;
@@ -75,8 +76,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
                 LOG.info("Initializing task: " + taskName);
                 
                 try {
-                    Class taskClass = Class.forName(taskClassName);
-                    RollerTask task = (RollerTask) taskClass.newInstance();
+                    RollerTask task = (RollerTask) Reflection.newInstance(taskClassName);
                     task.init(taskName);
                     
                     // make sure there is a tasklock record in the db
@@ -102,7 +102,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
                     LOG.warn("Task does not extend RollerTask class", ex);
                 } catch (WebloggerException ex) {
                     LOG.error("Error scheduling task", ex);
-                } catch (Exception ex) {
+                } catch (ReflectiveOperationException ex) {
                     LOG.error("Error instantiating task", ex);
                 }
             }
@@ -132,7 +132,7 @@ public abstract class ThreadManagerImpl implements ThreadManager {
     @Override
     public void executeInForeground(Runnable runnable)
             throws InterruptedException {
-        Future task = serviceScheduler.submit(runnable);
+        Future<?> task = serviceScheduler.submit(runnable);
         
         // since this task is really meant to be executed within this calling 
         // thread, here we can add a little code here to loop until it realizes 

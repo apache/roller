@@ -56,7 +56,7 @@ public interface PluginManager {
      * @param str         String to which to apply plugins
      * @return        the transformed text
      */
-    String applyWeblogEntryPlugins(Map pagePlugins,WeblogEntry entry, String str);
+    String applyWeblogEntryPlugins(Map<String, WeblogEntryPlugin> pagePlugins, WeblogEntry entry, String str);
     
     
     /**

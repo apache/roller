@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -132,7 +133,7 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
 
             // Populate subscription object with new entries
             PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
-            Map pagePlugins = ppmgr.getWeblogEntryPlugins(localWeblog);
+            Map<String, WeblogEntryPlugin> pagePlugins = ppmgr.getWeblogEntryPlugins(localWeblog);
             for ( WeblogEntry rollerEntry : entries ) {
                 SubscriptionEntry entry = new SubscriptionEntry();
                 String content;

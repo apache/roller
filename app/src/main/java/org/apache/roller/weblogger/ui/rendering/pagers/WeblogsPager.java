@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -37,7 +36,7 @@ import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 /**
  * Paging through a collection of weblogs.
  */
-public class WeblogsPager extends AbstractPager {
+public class WeblogsPager extends AbstractPager<WeblogWrapper> {
     
     private static Log log = LogFactory.getLog(WeblogsPager.class);
     
@@ -96,10 +95,7 @@ public class WeblogsPager extends AbstractPager {
         if(letter != null) {
             int page = getPage() + 1;
             if(hasMoreItems()) {
-                Map<String, String> params = new HashMap<>();
-                params.put("page", ""+page);
-                params.put("letter", letter);
-                return createURL(getUrl(), params);
+                return createURL(getUrl(), Map.of("page", ""+page, "letter", letter));
             }
             return null;
         } else {
@@ -114,10 +110,7 @@ public class WeblogsPager extends AbstractPager {
         if(letter != null) {
             int page = getPage() - 1;
             if (page >= 0) {
-                Map<String, String> params = new HashMap<>();
-                params.put("page", ""+page);
-                params.put("letter", letter);
-                return createURL(getUrl(), params);
+                return createURL(getUrl(), Map.of("page", ""+page, "letter", letter));
             }
             return null;
         } else {

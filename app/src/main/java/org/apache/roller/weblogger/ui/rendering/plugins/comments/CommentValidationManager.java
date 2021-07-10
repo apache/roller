@@ -20,46 +20,33 @@ package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.Utilities;
 
 /**
  * Responsible for loading validators and using them to validate comments.
  */
 public class CommentValidationManager {
-    private static Log log = LogFactory.getLog(CommentValidationManager.class);
-    private List<CommentValidator> validators = new ArrayList<>();
+
+    private static final Log log = LogFactory.getLog(CommentValidationManager.class);
+    private final List<CommentValidator> validators = new ArrayList<>();
 
     public CommentValidationManager() {
         
         // instantiate the validators that are configured
         try {
-            String vals = WebloggerConfig.getProperty("comment.validator.classnames");
-            String[] valsarray = Utilities.stringToStringArray(vals, ",");
-            for (String arrayVal : valsarray) {
-                try {
-                    Class valClass = Class.forName(arrayVal);
-                    CommentValidator val = (CommentValidator) valClass.newInstance();
-                    validators.add(val);
-                    log.info("Configured CommentValidator: " + val.getName() + " / " + valClass.getName());
-                } catch (ClassNotFoundException cnfe) {
-                    log.warn("Error finding comment validator: " + arrayVal);
-                } catch (InstantiationException ie) {
-                    log.warn("Error insantiating comment validator: " + arrayVal);
-                } catch (IllegalAccessException iae) {
-                    log.warn("Error accessing comment validator: " + arrayVal);
-                }
-            }
-                        
-        } catch (Exception e) {
-            log.error("Error instantiating comment validators");
+            validators.addAll(Reflection.newInstancesFromProperty("comment.validator.classnames"));
+        } catch (ReflectiveOperationException ex) {
+            log.error("Error instantiating comment validators", ex);
         }
+        
         log.info("Configured " + validators.size() + " CommentValidators");
+        log.info(validators.stream().map(t -> t.getClass().toString()).collect(Collectors.joining(",", "[", "]")));
     }
     
     /**

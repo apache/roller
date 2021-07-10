@@ -45,6 +45,7 @@ import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
+import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -63,7 +64,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 public class RollerContext extends ContextLoaderListener
         implements ServletContextListener {
 
-    private static Log log = LogFactory.getLog(RollerContext.class);
+    private static final Log log = LogFactory.getLog(RollerContext.class);
 
     private static ServletContext servletContext = null;
     private static DelegatingPasswordEncoder encoder;
@@ -357,7 +358,7 @@ public class RollerContext extends ContextLoaderListener
             return null;
         }
 
-        Class clazz;
+        Class<?> clazz;
         try {
             clazz = Class.forName(clazzName);
         } catch (ClassNotFoundException e) {
@@ -365,16 +366,11 @@ public class RollerContext extends ContextLoaderListener
             return null;
         }
 
-        Class[] interfaces = clazz.getInterfaces();
-        for (Class clazz2 : interfaces) {
-            if (clazz2.equals(AutoProvision.class)) {
-                try {
-                    return (AutoProvision) clazz.newInstance();
-                } catch (InstantiationException e) {
-                    log.warn("InstantiationException while creating: " + clazzName, e);
-                } catch (IllegalAccessException e) {
-                    log.warn("IllegalAccessException while creating: " + clazzName, e);
-                }
+        if (Reflection.implementsInterface(clazz, AutoProvision.class)) {
+            try {
+                return (AutoProvision) Reflection.newInstance(clazz);
+            } catch (ReflectiveOperationException e) {
+                log.warn("ReflectiveOperationException while creating: " + clazzName, e);
             }
         }
         return null;

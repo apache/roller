@@ -32,7 +32,7 @@ import org.apache.roller.util.RegexUtil;
  */
 public class ObfuscateEmailPlugin implements WeblogEntryPlugin {
     
-    private static Log mLogger = LogFactory.getLog(ObfuscateEmailPlugin.class);
+    private static final Log mLogger = LogFactory.getLog(ObfuscateEmailPlugin.class);
     
     protected String name = "Email Scrambler";
     

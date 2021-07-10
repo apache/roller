@@ -35,15 +35,15 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public class SmileysPlugin implements WeblogEntryPlugin {
     
-    private static Log log = LogFactory.getLog(SmileysPlugin.class);
+    private static final Log log = LogFactory.getLog(SmileysPlugin.class);
 
     // public for tests
     public static Pattern[] smileyPatterns = new Pattern[0];
     static String[] imageTags = new String[0];
-    private static Properties smileyDefs = new Properties();
+    private static final Properties smileyDefs = new Properties();
     
-    private String name = "Emoticons";
-    private String description = "Change ASCII emoticons to graphics.  " +
+    private final String name = "Emoticons";
+    private final String description = "Change ASCII emoticons to graphics.  " +
             ":-) becomes <img src='./images/smileys/smile.gif'>";
     
     
@@ -88,7 +88,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
             String[] tempS = new String[SmileysPlugin.smileyDefs.size()];
             log.debug("# smileys: " + smileyDefs.size());
             int count = 0;
-            Enumeration enum1 = SmileysPlugin.smileyDefs.propertyNames();
+            Enumeration<?> enum1 = SmileysPlugin.smileyDefs.propertyNames();
             while(enum1.hasMoreElements()) {
                 String smiley = (String)enum1.nextElement();
                 String smileyAlt = htmlEscape(smiley);
@@ -113,7 +113,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
      */
     @Override
     public String render(WeblogEntry entry, String text) {
-        Matcher matcher = null;
+        Matcher matcher;
         for (int i=0; i<smileyPatterns.length; i++) {
             matcher = smileyPatterns[i].matcher(text);
             text = matcher.replaceAll(imageTags[i]);
@@ -150,7 +150,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
      * @param smiley
      * @return
      */
-    private static char[] escape_regex = new char[]
+    private static final char[] escape_regex = new char[]
     {'-', '(', ')', '\\', '|', ':', '^', '$', '*', '+', '?',
      '{', '}', '!', '=', '<', '>', '&', '[', ']' };
     

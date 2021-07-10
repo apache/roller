@@ -644,9 +644,8 @@ public class Weblog implements Serializable {
         if (length > MAX_ENTRIES) {
             length = MAX_ENTRIES;
         }
-        List<WeblogEntry> recentEntries = new ArrayList<>();
         if (length < 1) {
-            return recentEntries;
+            return Collections.emptyList();
         }
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -655,11 +654,11 @@ public class Weblog implements Serializable {
             wesc.setCatName(cat);
             wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setMaxResults(length);
-            recentEntries = wmgr.getWeblogEntries(wesc);
+            return wmgr.getWeblogEntries(wesc);
         } catch (WebloggerException e) {
             log.error("ERROR: getting recent entries", e);
         }
-        return recentEntries;
+        return Collections.emptyList();
     }
     
     /**
@@ -675,13 +674,12 @@ public class Weblog implements Serializable {
         if (length > MAX_ENTRIES) {
             length = MAX_ENTRIES;
         }
-        List<WeblogEntry> recentEntries = new ArrayList<>();
-        List<String> tags = new ArrayList<>();
-        if (tag != null) {
-            tags.add(tag);
-        }
         if (length < 1) {
-            return recentEntries;
+            return Collections.emptyList();
+        }
+        List<String> tags = Collections.emptyList();
+        if (tag != null) {
+            tags = List.of(tag);
         }
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -690,11 +688,11 @@ public class Weblog implements Serializable {
             wesc.setTags(tags);
             wesc.setStatus(PubStatus.PUBLISHED);
             wesc.setMaxResults(length);
-            recentEntries = wmgr.getWeblogEntries(wesc);
+            return wmgr.getWeblogEntries(wesc);
         } catch (WebloggerException e) {
             log.error("ERROR: getting recent entries", e);
         }
-        return recentEntries;
+        return Collections.emptyList();
     }   
     
     /**
@@ -706,9 +704,8 @@ public class Weblog implements Serializable {
         if (length > MAX_ENTRIES) {
             length = MAX_ENTRIES;
         }
-        List<WeblogEntryComment> recentComments = new ArrayList<>();
         if (length < 1) {
-            return recentComments;
+            return Collections.emptyList();
         }
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -717,11 +714,11 @@ public class Weblog implements Serializable {
             csc.setStatus(WeblogEntryComment.ApprovalStatus.APPROVED);
             csc.setReverseChrono(true);
             csc.setMaxResults(length);
-            recentComments = wmgr.getComments(csc);
+            return wmgr.getComments(csc);
         } catch (WebloggerException e) {
             log.error("ERROR: getting recent comments", e);
         }
-        return recentComments;
+        return Collections.emptyList();
     }
 
     
@@ -771,7 +768,6 @@ public class Weblog implements Serializable {
      * @return          Collection of WeblogEntryTag objects
      */
     public List<TagStat> getPopularTags(int sinceDays, int length) {
-        List<TagStat> results = new ArrayList<>();
         Date startDate = null;
         if(sinceDays > 0) {
             Calendar cal = Calendar.getInstance();
@@ -782,11 +778,11 @@ public class Weblog implements Serializable {
         try {            
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
-            results = wmgr.getPopularTags(this, startDate, 0, length);
+            return wmgr.getPopularTags(this, startDate, 0, length);
         } catch (Exception e) {
             log.error("ERROR: fetching popular tags for weblog " + this.getName(), e);
         }
-        return results;
+        return Collections.emptyList();
     }      
 
     public long getCommentCount() {

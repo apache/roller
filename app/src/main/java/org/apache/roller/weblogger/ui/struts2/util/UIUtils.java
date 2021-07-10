@@ -31,8 +31,8 @@ import java.util.TimeZone;
  */
 public final class UIUtils {
     
-    private static final List LOCALES;
-    private static final List TIME_ZONES;
+    private static final List<Locale> LOCALES;
+    private static final List<String> TIME_ZONES;
     
     
     // load up the locales and time zones lists
@@ -48,11 +48,11 @@ public final class UIUtils {
     
     
     public static String getLocale(String localeName) {
-        Locale locale = new Locale(localeName,localeName);        
+        Locale locale = new Locale(localeName, localeName); // TODO: is this a bug?
         return locale.toString();        
     }
     
-    public static List getLocales() {
+    public static List<Locale> getLocales() {
         return LOCALES;
     }
     
@@ -60,25 +60,20 @@ public final class UIUtils {
         return TimeZone.getTimeZone(timeZoneName).getID();                
     }
     
-    public static List getTimeZones() {
+    public static List<String> getTimeZones() {
         return TIME_ZONES;
     }
     
     
     // special comparator for sorting LOCALES
-    private static final class LocaleComparator implements Comparator {
+    private static final class LocaleComparator implements Comparator<Locale> {
         @Override
-        public int compare(Object obj1, Object obj2) {
-            if (obj1 instanceof Locale && obj2 instanceof Locale) {
-                Locale locale1 = (Locale)obj1;
-                Locale locale2 = (Locale)obj2;
-                int compName = locale1.getDisplayName().compareTo(locale2.getDisplayName());
-                if (compName == 0) {
-                    return locale1.toString().compareTo(locale2.toString());
-                }
-                return compName;
+        public int compare(Locale locale1, Locale locale2) {
+            int compName = locale1.getDisplayName().compareTo(locale2.getDisplayName());
+            if (compName == 0) {
+                return locale1.toString().compareTo(locale2.toString());
             }
-            return 0;
+            return compName;
         }
     }
     

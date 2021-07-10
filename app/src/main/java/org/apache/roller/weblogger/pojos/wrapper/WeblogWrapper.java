@@ -18,19 +18,19 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
 
-import java.util.*;
-import org.apache.roller.weblogger.pojos.ThemeTemplate;
+import java.util.stream.Collectors;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.pojos.WeblogCategory;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 
 
 /**
@@ -60,37 +60,25 @@ public final class WeblogWrapper {
     }
 
 
-    public ThemeTemplateWrapper getTemplateByAction(ComponentType action)
-            throws WebloggerException {
-        ThemeTemplate templateToWrap = this.pojo.getTheme().getTemplateByAction(action);
-        return ThemeTemplateWrapper.wrap(templateToWrap);
+    public ThemeTemplateWrapper getTemplateByAction(ComponentType action) throws WebloggerException {
+        return ThemeTemplateWrapper.wrap(this.pojo.getTheme().getTemplateByAction(action));
     }
     
     
-    public ThemeTemplateWrapper getTemplateByName(String name)
-            throws WebloggerException {
-       ThemeTemplate templateToWrap = this.pojo.getTheme().getTemplateByName(name);
-        return ThemeTemplateWrapper.wrap(templateToWrap);
+    public ThemeTemplateWrapper getTemplateByName(String name) throws WebloggerException {
+        return ThemeTemplateWrapper.wrap(this.pojo.getTheme().getTemplateByName(name));
     }
     
     
-    public ThemeTemplateWrapper getTemplateByLink(String link)
-            throws WebloggerException {
-        ThemeTemplate templateToWrap = this.pojo.getTheme().getTemplateByLink(link);
-        return ThemeTemplateWrapper.wrap(templateToWrap);
+    public ThemeTemplateWrapper getTemplateByLink(String link) throws WebloggerException {
+        return ThemeTemplateWrapper.wrap(this.pojo.getTheme().getTemplateByLink(link));
     }
     
     
     public List<ThemeTemplateWrapper> getTemplates() throws WebloggerException {
-        List<? extends ThemeTemplate> unwrapped = this.pojo.getTheme().getTemplates();
-        List<ThemeTemplateWrapper> wrapped = new ArrayList<>(unwrapped.size());
-
-        int i = 0;
-        for (ThemeTemplate template : unwrapped) {
-            wrapped.add(i,ThemeTemplateWrapper.wrap(template));
-            i++;
-        }
-        return wrapped;
+        return this.pojo.getTheme().getTemplates().stream()
+                .map(ThemeTemplateWrapper::wrap)
+                .collect(Collectors.toList());
     }
     
     
@@ -292,15 +280,9 @@ public final class WeblogWrapper {
 
 
     public List<WeblogCategoryWrapper> getWeblogCategories() {
-        List<WeblogCategory> unwrapped = this.pojo.getWeblogCategories();
-        List<WeblogCategoryWrapper> wrapped = new ArrayList<>(unwrapped.size());
-
-        int i = 0;
-        for (WeblogCategory category : unwrapped) {
-            wrapped.add(i,WeblogCategoryWrapper.wrap(category, urlStrategy));
-            i++;
-        }
-        return wrapped;
+        return this.pojo.getWeblogCategories().stream()
+                .map(cat -> WeblogCategoryWrapper.wrap(cat, urlStrategy))
+                .collect(Collectors.toList());
     }
 
     public WeblogCategoryWrapper getWeblogCategory(String categoryName) {
@@ -308,42 +290,24 @@ public final class WeblogWrapper {
     }
 
     
-    public List<WeblogEntryWrapper> getRecentWeblogEntries(String cat,int length) {
-        List<WeblogEntry> unwrapped = this.pojo.getRecentWeblogEntries(cat, length);
-        List<WeblogEntryWrapper> wrapped = new ArrayList<>(unwrapped.size());
-
-        int i = 0;
-        for (WeblogEntry we : unwrapped) {
-            wrapped.add(i,WeblogEntryWrapper.wrap(we, urlStrategy));
-            i++;
-        }
-        return wrapped;
+    public List<WeblogEntryWrapper> getRecentWeblogEntries(String cat, int length) {
+        return this.pojo.getRecentWeblogEntries(cat, length).stream()
+                .map(entry -> WeblogEntryWrapper.wrap(entry, urlStrategy))
+                .collect(Collectors.toList());
     }
     
     
-    public List<WeblogEntryWrapper> getRecentWeblogEntriesByTag(String tag,int length) {
-        List<WeblogEntry> unwrapped = pojo.getRecentWeblogEntriesByTag(tag,length);
-        List<WeblogEntryWrapper> wrapped = new ArrayList<>(unwrapped.size());
-
-        int i = 0;
-        for (WeblogEntry we : unwrapped) {
-            wrapped.add(i,WeblogEntryWrapper.wrap(we, urlStrategy));
-            i++;
-        }
-        return wrapped;
+    public List<WeblogEntryWrapper> getRecentWeblogEntriesByTag(String tag, int length) {
+        return this.pojo.getRecentWeblogEntriesByTag(tag, length).stream()
+                .map(entry -> WeblogEntryWrapper.wrap(entry, urlStrategy))
+                .collect(Collectors.toList());
     }
     
     
     public List<WeblogEntryCommentWrapper> getRecentComments(int length) {
-        List<WeblogEntryComment> unwrapped = this.pojo.getRecentComments(length);
-        List<WeblogEntryCommentWrapper> wrapped = new ArrayList<>(unwrapped.size());
-
-        int i = 0;
-        for (WeblogEntryComment wec : unwrapped) {
-            wrapped.add(i, WeblogEntryCommentWrapper.wrap(wec, urlStrategy));
-            i++;
-        }
-        return wrapped;
+        return this.pojo.getRecentComments(length).stream()
+                .map(wec -> WeblogEntryCommentWrapper.wrap(wec, urlStrategy))
+                .collect(Collectors.toList());
     }
     
     

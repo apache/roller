@@ -65,8 +65,7 @@ public class SearchResultsModel extends PageModel {
 	private URLStrategy urlStrategy = null;
 
 	// the actual search results mapped by Day -> Set of entries
-    private Map<Date, TreeSet<WeblogEntryWrapper>> results
-            = new TreeMap<>(Collections.reverseOrder());
+    private final Map<Date, Set<WeblogEntryWrapper>> results = new TreeMap<>(Collections.reverseOrder());
 
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsPager pager = null;
@@ -74,12 +73,12 @@ public class SearchResultsModel extends PageModel {
 	private int hits = 0;
 	private int offset = 0;
 	private int limit = 0;
-	private Set categories = new TreeSet();
+	private Set<String> categories = new TreeSet<String>();
 	private boolean websiteSpecificSearch = true;
 	private String errorMessage = null;
 
 	@Override
-	public void init(Map initData) throws WebloggerException {
+	public void init(Map<String, Object> initData) throws WebloggerException {
 
 		// we expect the init data to contain a searchRequest object
 		searchRequest = (WeblogSearchRequest) initData.get("searchRequest");
@@ -196,7 +195,7 @@ public class SearchResultsModel extends PageModel {
 		}
 
 		try {
-			TreeSet<String> categorySet = new TreeSet<>();
+			Set<String> categorySet = new TreeSet<>();
 			Weblogger roller = WebloggerFactory.getWeblogger();
 			WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 
@@ -241,7 +240,7 @@ public class SearchResultsModel extends PageModel {
 
 		// ensure we do not get duplicates from Lucene by
 		// using a Set Collection. Entries sorted by pubTime.
-		TreeSet<WeblogEntryWrapper> set = this.results.get(midnight);
+		Set<WeblogEntryWrapper> set = this.results.get(midnight);
 		if (set == null) {
 			// date is not mapped yet, so we need a new Set
 			set = new TreeSet<>(new WeblogEntryWrapperComparator());
@@ -273,11 +272,11 @@ public class SearchResultsModel extends PageModel {
 		return limit;
 	}
 
-	public Map getResults() {
+	public Map<Date, Set<WeblogEntryWrapper>> getResults() {
 		return results;
 	}
 
-	public Set getCategories() {
+	public Set<String> getCategories() {
 		return categories;
 	}
 

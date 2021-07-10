@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
@@ -31,8 +30,9 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.struts2.convention.annotation.AllowedMethods;
-import org.apache.struts2.interceptor.ParameterAware;
+import org.apache.struts2.dispatcher.HttpParameters;
+import org.apache.struts2.dispatcher.Parameter;
+import org.apache.struts2.interceptor.HttpParametersAware;
 
 
 /**
@@ -42,12 +42,12 @@ import org.apache.struts2.interceptor.ParameterAware;
  * website.permissions collection when a permission is deleted.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class Members extends UIAction implements ParameterAware {
+public class Members extends UIAction implements HttpParametersAware {
     
-    private static Log log = LogFactory.getLog(Members.class);
+    private static final Log log = LogFactory.getLog(Members.class);
     
     // raw parameters from request
-    private Map parameters = Collections.EMPTY_MAP;
+    private HttpParameters parameters = HttpParameters.create().build();
     
     
     public Members() {
@@ -155,22 +155,16 @@ public class Members extends UIAction implements ParameterAware {
     
     // convenience for accessing a single parameter with a single value
     public String getParameter(String key) {
-        if(key != null) {
-            String[] value = (String[]) getParameters().get(key);
-            if(value != null && value.length > 0) {
-                return value[0];
-            }
-        }
-        return null;
+        return parameters.get(key).getValue();
     }
     
     
-    public Map getParameters() {
+    public Map<String, Parameter> getParameters() {
         return parameters;
     }
 
     @Override
-    public void setParameters(Map parameters) {
+    public void setParameters(HttpParameters parameters) {
         this.parameters = parameters;
     }
     

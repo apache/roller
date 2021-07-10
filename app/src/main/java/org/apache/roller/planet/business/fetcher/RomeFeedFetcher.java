@@ -200,7 +200,7 @@ public class RomeFeedFetcher implements FeedFetcher {
         
         // get content and unescape if it is 'text/plain'
         if (!romeEntry.getContents().isEmpty()) {
-            SyndContent content= (SyndContent)romeEntry.getContents().get(0);
+            SyndContent content= romeEntry.getContents().get(0);
             if (content != null && content.getType().equals("text/plain")) {
                 newEntry.setText(StringEscapeUtils.unescapeHtml4(content.getValue()));
             } else if (content != null) {

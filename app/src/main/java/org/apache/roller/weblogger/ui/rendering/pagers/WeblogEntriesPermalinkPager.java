@@ -18,11 +18,9 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -42,14 +40,14 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
-    private static Log log = LogFactory.getLog(WeblogEntriesPermalinkPager.class);
+    private static final Log log = LogFactory.getLog(WeblogEntriesPermalinkPager.class);
     
     WeblogEntry currEntry = null;
     WeblogEntry nextEntry = null;
     WeblogEntry prevEntry = null;
     
     // collection for the pager
-    Map entries = null;
+    Map<Date, List<WeblogEntryWrapper>> entries = null;
     
     
     public WeblogEntriesPermalinkPager(
@@ -60,7 +58,7 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
             String             entryAnchor,
             String             dateString,
             String             catName,
-            List               tags,
+            List<String>       tags,
             int                page) {
         
         super(strat, weblog, locale, pageLink, entryAnchor, dateString, catName, tags, page);
@@ -70,22 +68,19 @@ public class WeblogEntriesPermalinkPager extends AbstractWeblogEntriesPager {
     
     
     @Override
-    public Map getEntries() {
+    public Map<Date, List<WeblogEntryWrapper>> getEntries() {
         if (entries == null) {
             try {
                 Weblogger roller = WebloggerFactory.getWeblogger();
                 WeblogEntryManager wmgr = roller.getWeblogEntryManager();
                 currEntry = wmgr.getWeblogEntryByAnchor(weblog, entryAnchor);
                 if (currEntry != null && currEntry.getStatus().equals(PubStatus.PUBLISHED)) {
-                    entries = new TreeMap();
-                    entries.put(new Date(currEntry.getPubTime().getTime()),Collections.singletonList(WeblogEntryWrapper.wrap(currEntry, urlStrategy)));
+                    entries = Map.of(new Date(currEntry.getPubTime().getTime()), List.of(WeblogEntryWrapper.wrap(currEntry, urlStrategy)));
                 }
             } catch (Exception e) {
                 log.error("ERROR: fetching entry");
             }
         }
-
-
         
         return entries;
     }

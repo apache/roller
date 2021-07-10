@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -30,7 +31,7 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class ModelLoader {
     
-    private static Log log = LogFactory.getLog(ModelLoader.class);
+    private static final Log log = LogFactory.getLog(ModelLoader.class);
     
     /**
      * Convenience method to load a comma-separated list of page models.
@@ -39,15 +40,13 @@ public class ModelLoader {
      * the Model instances.
      */
     public static void loadModels(String modelsString, Map<String, Object> modelMap,
-                                   Map initData, boolean fail) 
-            throws WebloggerException {
+            Map<String, Object> initData, boolean fail) throws WebloggerException {
         
         String[] models = Utilities.stringToStringArray(modelsString, ",");
         if (models != null) {
             for (String model : models) {
                 try {
-                    Class modelClass = Class.forName(model);
-                    Model pageModel = (Model) modelClass.newInstance();
+                    Model pageModel = (Model) Reflection.newInstance(model);
                     pageModel.init(initData);
                     modelMap.put(pageModel.getModelName(), pageModel);
                 } catch (WebloggerException re) {
@@ -62,17 +61,11 @@ public class ModelLoader {
                     } else {
                         log.warn("Error finding model: " + model);
                     }
-                } catch (InstantiationException ie) {
+                } catch (ReflectiveOperationException ex) {
                     if(fail) {
-                        throw new WebloggerException("Error instantiating model: " + model, ie);
+                        throw new WebloggerException("Error instantiating model: " + model, ex);
                     } else {
                         log.warn("Error instantiating model: " + model);
-                    }
-                } catch (IllegalAccessException iae) {
-                    if(fail) {
-                        throw new WebloggerException("Error accessing model: " + model, iae);
-                    } else {
-                        log.warn("Error accessing model: " + model);
                     }
                 }
             }

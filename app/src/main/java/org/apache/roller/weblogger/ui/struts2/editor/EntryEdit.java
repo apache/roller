@@ -396,8 +396,8 @@ public final class EntryEdit extends UIAction {
             }
 
             if (results != null) {
-                for (Iterator mit = results.getMessages(); mit.hasNext();) {
-                    RollerMessage msg = (RollerMessage) mit.next();
+                for (Iterator<RollerMessage> mit = results.getMessages(); mit.hasNext();) {
+                    RollerMessage msg = mit.next();
                     if (msg.getArgs() == null) {
                         addMessage(msg.getKey());
                     } else {
@@ -405,8 +405,8 @@ public final class EntryEdit extends UIAction {
                     }
                 }
 
-                for (Iterator eit = results.getErrors(); eit.hasNext();) {
-                    RollerMessage err = (RollerMessage) eit.next();
+                for (Iterator<RollerMessage> eit = results.getErrors(); eit.hasNext();) {
+                    RollerMessage err = eit.next();
                     if (err.getArgs() == null) {
                         addError(err.getKey());
                     } else {

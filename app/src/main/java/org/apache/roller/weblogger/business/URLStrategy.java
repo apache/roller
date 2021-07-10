@@ -173,7 +173,7 @@ public interface URLStrategy {
                                                       String locale,
                                                       String category,
                                                       String dateString,
-                                                      List tags,
+                                                      List<String> tags,
                                                       int pageNum,
                                                       boolean absolute);
     
@@ -187,7 +187,7 @@ public interface URLStrategy {
                                                 String entryAnchor,
                                                 String category,
                                                 String dateString,
-                                                List tags,
+                                                List<String> tags,
                                                 int pageNum,
                                                 boolean absolute);
     
@@ -201,7 +201,7 @@ public interface URLStrategy {
                                                 String format,
                                                 String category,
                                                 String term,
-                                                List tags,
+                                                List<String> tags,
                                                 boolean excerpts,
                                                 boolean absolute);
     

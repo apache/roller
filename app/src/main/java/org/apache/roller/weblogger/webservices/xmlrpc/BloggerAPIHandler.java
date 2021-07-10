@@ -247,7 +247,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
 
             // TODO: Should screen name be renamed nickname and used here?
             // populates user information to return as a result
-            Hashtable result = new Hashtable();
+            Hashtable<String, String> result = new Hashtable<>();
             result.put("nickname", user.getUserName());
             result.put("userid", user.getUserName());
             result.put("email", "");
@@ -279,7 +279,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("     Appkey: " + appkey);
         mLogger.debug("     UserId: " + userid);
         
-        Vector result = new Vector();
+        Vector<Object> result = new Vector<>();
         if (validateUser(userid, password)) {
             try {
                 UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -290,7 +290,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 for (Weblog website : websites) {
                     // only include weblog's that have client API support enabled
                     if (Boolean.TRUE.equals(website.getEnableBloggerApi())) {
-                        Hashtable blog = new Hashtable(3);
+                        Hashtable<String, String> blog = new Hashtable<>(3);
                         blog.put("url", website.getURL());
                         blog.put("blogid", website.getHandle());
                         blog.put("blogName", website.getName());
@@ -466,7 +466,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         Weblog weblog = validate(blogid, userid,password);
         
         try {
-            Vector results = new Vector();
+            Vector<Object> results = new Vector<>();
             
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
@@ -478,7 +478,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
 
                 for (List<WeblogEntry> weList : entries.values()) {
                     for (WeblogEntry entry : weList) {
-                        Hashtable result = new Hashtable();
+                        Hashtable<String, Object> result = new Hashtable<>();
                         if (entry.getPubTime() != null) {
                             result.put("dateCreated", entry.getPubTime());
                         }
