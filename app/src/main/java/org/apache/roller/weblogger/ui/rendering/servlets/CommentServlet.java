@@ -53,6 +53,7 @@ import org.apache.roller.weblogger.util.GenericThrottle;
 import org.apache.roller.weblogger.util.IPBanList;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.I18nMessages;
+import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.URLUtilities;
@@ -92,7 +93,7 @@ public class CommentServlet extends HttpServlet {
         // lookup the authenticator we are going to use and instantiate it
         try {
             String name = WebloggerConfig.getProperty("comment.authenticator.classname");
-            this.authenticator = (CommentAuthenticator) Class.forName(name).getDeclaredConstructor().newInstance();
+            this.authenticator = (CommentAuthenticator) Reflection.newInstance(name);
         } catch (ReflectiveOperationException e) {
             log.error(e);
         } finally {

@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -45,7 +46,7 @@ public class ModelLoader {
         if (models != null) {
             for (String model : models) {
                 try {
-                    Model pageModel = (Model) Class.forName(model).getDeclaredConstructor().newInstance();
+                    Model pageModel = (Model) Reflection.newInstance(model);
                     pageModel.init(initData);
                     modelMap.put(pageModel.getModelName(), pageModel);
                 } catch (WebloggerException re) {

@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.Reflection;
 
 
 /**
@@ -50,19 +51,19 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public final class CacheManager {
     
-    private final static Log log = LogFactory.getLog(CacheManager.class);
+    private static final Log log = LogFactory.getLog(CacheManager.class);
     
     private static final String DEFAULT_FACTORY = 
             "org.apache.roller.weblogger.util.cache.ExpiringLRUCacheFactoryImpl";
     
     // a reference to the cache factory in use
-    private static CacheFactory cacheFactory = null;
+    private static final CacheFactory cacheFactory;
     
     // a set of all registered cache handlers
-    private static Set<CacheHandler> cacheHandlers = new HashSet<>();
+    private static final Set<CacheHandler> cacheHandlers = new HashSet<>();
     
     // a map of all registered caches
-    private static Map<String, Cache> caches = new HashMap<>();
+    private static final Map<String, Cache> caches = new HashMap<>();
     
     
     static {
@@ -70,8 +71,9 @@ public final class CacheManager {
         String classname = WebloggerConfig.getProperty("cache.defaultFactory");
         
         // use reflection to instantiate our factory class
+        CacheFactory factory = null;
         try {
-            cacheFactory = (CacheFactory) Class.forName(classname).getDeclaredConstructor().newInstance();
+            factory = (CacheFactory) Reflection.newInstance(classname);
         } catch(ClassCastException cce) {
             log.error("It appears that your factory does not implement "+
                     "the CacheFactory interface",cce);
@@ -80,39 +82,29 @@ public final class CacheManager {
                     " falling back on default", e);
         }
         
-        if(cacheFactory == null) {
+        if(factory == null) {
             try {
                 // hmm ... failed to load the specified cache factory
                 // lets try our default
-                cacheFactory = (CacheFactory) Class.forName(DEFAULT_FACTORY).getDeclaredConstructor().newInstance();
+                factory = (CacheFactory) Reflection.newInstance(DEFAULT_FACTORY);
             } catch(ReflectiveOperationException e) {
                 log.fatal("Failed to instantiate a cache factory", e);
                 throw new RuntimeException(e);
             }
         }
+        cacheFactory = factory;
         
         log.info("Cache Manager Initialized.");
         log.info("Cache Factory = "+cacheFactory.getClass().getName());
         
         
         // add custom handlers
-        String customHandlers = WebloggerConfig.getProperty("cache.customHandlers");
-        if(customHandlers != null && !customHandlers.isBlank()) {
-            
-            String[] cHandlers = customHandlers.split(",");
-            for (String cHandler : cHandlers) {
-                // use reflection to instantiate the handler class
-                try {
-                    CacheHandler customHandler = (CacheHandler) Class.forName(cHandler).getDeclaredConstructor().newInstance();
-                    
-                    cacheHandlers.add(customHandler);
-                } catch(ClassCastException cce) {
-                    log.error("It appears that your handler does not implement "+
-                            "the CacheHandler interface",cce);
-                } catch(ReflectiveOperationException e) {
-                    log.error("Unable to instantiate cache handler ["+cHandler+"]", e);
-                }
-            }
+        try {
+            cacheHandlers.addAll(Reflection.newInstancesFromProperty("cache.customHandlers"));
+        } catch(ClassCastException cce) {
+            log.error("It appears that at least one custom handler does not implement the CacheHandler interface", cce);
+        } catch(ReflectiveOperationException e) {
+            log.error("Unable to instantiate custom cache handlers", e);
         }
     }
     
@@ -151,7 +143,7 @@ public final class CacheManager {
             
             try {
                 // use reflection to instantiate the factory class
-                CacheFactory factory = (CacheFactory) Class.forName(classname).getDeclaredConstructor().newInstance();
+                CacheFactory factory = (CacheFactory) Reflection.newInstance(classname);
                 
                 // now ask for a new cache
                 cache = factory.constructCache(properties);

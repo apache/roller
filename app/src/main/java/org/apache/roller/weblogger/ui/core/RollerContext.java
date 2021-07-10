@@ -45,6 +45,7 @@ import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
+import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -365,14 +366,11 @@ public class RollerContext extends ContextLoaderListener
             return null;
         }
 
-        Class<?>[] interfaces = clazz.getInterfaces();
-        for (Class<?> clazz2 : interfaces) {
-            if (clazz2.equals(AutoProvision.class)) {
-                try {
-                    return (AutoProvision) clazz.getDeclaredConstructor().newInstance();
-                } catch (ReflectiveOperationException e) {
-                    log.warn("ReflectiveOperationException while creating: " + clazzName, e);
-                }
+        if (Reflection.implementsInterface(clazz, AutoProvision.class)) {
+            try {
+                return (AutoProvision) Reflection.newInstance(clazz);
+            } catch (ReflectiveOperationException e) {
+                log.warn("ReflectiveOperationException while creating: " + clazzName, e);
             }
         }
         return null;

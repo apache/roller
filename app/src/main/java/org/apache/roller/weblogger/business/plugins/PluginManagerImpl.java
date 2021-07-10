@@ -23,6 +23,7 @@ import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -33,6 +34,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.plugins.comment.WeblogEntryCommentPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.util.HTMLSanitizer;
+import org.apache.roller.weblogger.util.Reflection;
 
 
 /**
@@ -43,7 +45,7 @@ public class PluginManagerImpl implements PluginManager {
     private static final Log log = LogFactory.getLog(PluginManagerImpl.class);
     
     // Plugin classes keyed by plugin name
-    static Map<String, Class<? extends WeblogEntryPlugin>> mPagePlugins = new LinkedHashMap<>();
+    private static final Map<String, Class<? extends WeblogEntryPlugin>> mPagePlugins = new LinkedHashMap<>();
     
     // Comment plugins
     private final List<WeblogEntryCommentPlugin> commentPlugins = new ArrayList<>();
@@ -78,7 +80,7 @@ public class PluginManagerImpl implements PluginManager {
         
         for (Class<? extends WeblogEntryPlugin> pluginClass : mPagePlugins.values()) {
             try {
-                WeblogEntryPlugin plugin = pluginClass.getDeclaredConstructor().newInstance();
+                WeblogEntryPlugin plugin = Reflection.newInstance(pluginClass);
                 plugin.init(website);
                 ret.put(plugin.getName(), plugin);
             } catch (ReflectiveOperationException | WebloggerException e) {
@@ -92,17 +94,14 @@ public class PluginManagerImpl implements PluginManager {
     public String applyWeblogEntryPlugins(Map<String, WeblogEntryPlugin> pagePlugins, WeblogEntry entry, String str) {
 
         String ret = str;
-        WeblogEntry copy = new WeblogEntry(entry);
-        List<String> entryPlugins = copy.getPluginsList();
+        List<String> plugins = entry.getPluginsList();
 
-        if (entryPlugins != null) {
-            for (String key : entryPlugins) {
-                WeblogEntryPlugin pagePlugin = pagePlugins.get(key);
-                if (pagePlugin != null) {
-                    ret = pagePlugin.render(entry, ret);
-                } else {
-                    log.error("ERROR: plugin not found: " + key);
-                }
+        for (String key : plugins) {
+            WeblogEntryPlugin pagePlugin = pagePlugins.get(key);
+            if (pagePlugin != null) {
+                ret = pagePlugin.render(entry, ret);
+            } else {
+                log.warn("plugin not found: " + key);
             }
         }
 
@@ -159,8 +158,7 @@ public class PluginManagerImpl implements PluginManager {
             log.debug(pluginStr);
         }
         if (pluginStr != null) {
-            String[] plugins = StringUtils.stripAll(
-                    StringUtils.split(pluginStr, ",") );
+            String[] plugins = StringUtils.stripAll(StringUtils.split(pluginStr, ","));
             for (String plugin : plugins) {
                 if (log.isDebugEnabled()) {
                     log.debug("try " + plugin);
@@ -168,10 +166,10 @@ public class PluginManagerImpl implements PluginManager {
                 try {
                     Class<?> clazz = Class.forName(plugin);
                     
-                    if (isPagePlugin(clazz)) {
+                    if (Reflection.implementsInterface(clazz, WeblogEntryPlugin.class)) {
                         @SuppressWarnings("unchecked")
                         Class<? extends WeblogEntryPlugin> pluginClass = (Class<? extends WeblogEntryPlugin>)clazz;
-                        WeblogEntryPlugin weblogEntryPlugin = pluginClass.getDeclaredConstructor().newInstance();
+                        WeblogEntryPlugin weblogEntryPlugin = Reflection.newInstance(pluginClass);
                         mPagePlugins.put(weblogEntryPlugin.getName(), pluginClass);
                     } else {
                         log.warn(clazz + " is not a PagePlugin");
@@ -189,35 +187,14 @@ public class PluginManagerImpl implements PluginManager {
      */
     private void loadCommentPlugins() {
         
-        log.debug("Initializing comment plugins");
-        
-        String pluginStr = WebloggerConfig.getProperty("comment.formatter.classnames");
-        if (pluginStr != null) {
-            String[] plugins = StringUtils.stripAll(StringUtils.split(pluginStr, ","));
-            for (int i=0; i < plugins.length; i++) {
-                log.debug("trying " + plugins[i]);
-                
-                try {
-                    WeblogEntryCommentPlugin plugin = (WeblogEntryCommentPlugin) Class.forName(plugins[i]).getDeclaredConstructor().newInstance();
-                    
-                    // make sure and maintain ordering
-                    commentPlugins.add(i, plugin);
-                    
-                    log.debug("Configured comment plugin: "+plugins[i]);
-                    
-                } catch (ReflectiveOperationException e) {
-                    log.error("unable to create " + plugins[i]);
-                }
-            }
+        try {
+            commentPlugins.addAll(Reflection.newInstancesFromProperty("comment.formatter.classnames"));
+        } catch (ReflectiveOperationException e) {
+            log.error("unable to create comment plugins", e);
         }
         
-    }
-    
-    private static boolean isPagePlugin(Class<?> clazz) {
-        for (Class<?> inter : clazz.getInterfaces())
-            if (inter.equals(WeblogEntryPlugin.class))
-                return true;
-        return false;
+        log.info("Configured comment plugins");
+        log.info(commentPlugins.stream().map(t -> t.getClass().toString()).collect(Collectors.joining(",", "[", "]")));
     }
     
     @Override

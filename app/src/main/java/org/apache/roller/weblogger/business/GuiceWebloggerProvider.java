@@ -23,6 +23,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import java.util.Objects;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.util.Reflection;
 
 
 /**
@@ -58,7 +59,7 @@ public class GuiceWebloggerProvider implements WebloggerProvider {
         Objects.requireNonNull(moduleClassname, "moduleClassname cannot be null");
         
         try {
-            Module module = (Module) Class.forName(moduleClassname).getDeclaredConstructor().newInstance();
+            Module module = (Module) Reflection.newInstance(moduleClassname);
             injector = Guice.createInjector(module);
         } catch (ThreadDeath t) {
             throw t;

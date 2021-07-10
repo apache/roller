@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.DefaultCommentAuthenticator;
+import org.apache.roller.weblogger.util.Reflection;
 
 
 /**
@@ -77,7 +78,7 @@ public class CommentAuthenticatorServlet extends HttpServlet {
         // lookup the authenticator we are going to use and instantiate it
         try {
             String name = WebloggerConfig.getProperty("comment.authenticator.classname");
-            this.authenticator = (CommentAuthenticator) Class.forName(name).getDeclaredConstructor().newInstance();
+            this.authenticator = (CommentAuthenticator) Reflection.newInstance(name);
             
         } catch(ReflectiveOperationException e) {
             mLogger.error(e);
