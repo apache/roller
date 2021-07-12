@@ -40,7 +40,7 @@ import org.apache.velocity.app.VelocityEngine;
  */
 public class GeneratePlanetTask extends PlanetTask {
     
-    private static Log log = LogFactory.getLog(GeneratePlanetTask.class);
+    private static final Log log = LogFactory.getLog(GeneratePlanetTask.class);
     
     
     @Override
@@ -68,7 +68,7 @@ public class GeneratePlanetTask extends PlanetTask {
 
             // Fire up Velocity engine, point it at templates and init
             VelocityEngine engine = new VelocityEngine();
-            engine.setProperty("resource.loader","file");
+            engine.setProperty("resource.loaders", "file");
             engine.setProperty("file.resource.loader.class",
               "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
             engine.setProperty("file.resource.loader.path", templateDir);
