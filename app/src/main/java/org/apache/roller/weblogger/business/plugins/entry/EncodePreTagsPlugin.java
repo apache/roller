@@ -28,9 +28,9 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import static java.util.regex.Pattern.*;
 
 /**
- * Escapes angle brackets inside pre tags (code tags which follow right after pre are not escaped).
+ * Encodes angle brackets inside pre tags (code tags which follow right after pre are not encoded).
  */
-public class EscapeSourceCodePlugin implements WeblogEntryPlugin {
+public class EncodePreTagsPlugin implements WeblogEntryPlugin {
     
     private static final String LT = "&lt;"; // '<'
 
@@ -42,12 +42,12 @@ public class EscapeSourceCodePlugin implements WeblogEntryPlugin {
     
     @Override
     public String getName() {
-        return "Sourcecode Escaper";
+        return "Pre Tag Encoder";
     }
 
     @Override
     public String getDescription() {
-        return "Escapes angle brackets inside pre tags, code tags are retained.";
+        return "Encodes angle brackets inside pre tags, code tags are kept unaltered.";
     }
 
     @Override
@@ -69,9 +69,9 @@ public class EscapeSourceCodePlugin implements WeblogEntryPlugin {
             
             if (code_matcher.find()) {
                 String code_inner = code_matcher.group(1);
-                pre_matcher.appendReplacement(result, pre_full.replace(code_inner, escape(code_inner)));
+                pre_matcher.appendReplacement(result, pre_full.replace(code_inner, encode(code_inner)));
             } else {
-                pre_matcher.appendReplacement(result, pre_full.replace(pre_inner, escape(pre_inner)));
+                pre_matcher.appendReplacement(result, pre_full.replace(pre_inner, encode(pre_inner)));
             }
             
         }
@@ -80,8 +80,8 @@ public class EscapeSourceCodePlugin implements WeblogEntryPlugin {
         return result.toString();
     }
 
-    // we only have to escape the opening angle bracket for valid html/xhtml
-    private static String escape(String code_inner) {
+    // we only have to encode the opening angle bracket for valid html/xhtml
+    private static String encode(String code_inner) {
         return code_inner.replace("<", LT);
     }
 
