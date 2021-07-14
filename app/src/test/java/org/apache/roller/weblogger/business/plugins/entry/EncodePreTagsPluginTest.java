@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author mbien
  */
-public class EscapeSourceCodePluginTest {
+public class EncodePreTagsPluginTest {
     
     @Test
     public void passthrough() {
 
-        EscapeSourceCodePlugin instance = new EscapeSourceCodePlugin();
+        EncodePreTagsPlugin instance = new EncodePreTagsPlugin();
         
         String input = "Stay a while and listen.";
         assertEquals(input, instance.render(null, input));
@@ -63,7 +63,7 @@ public class EscapeSourceCodePluginTest {
     @Test
     public void substitution1() {
 
-        EscapeSourceCodePlugin instance = new EscapeSourceCodePlugin();
+        EncodePreTagsPlugin instance = new EncodePreTagsPlugin();
         
         String input = "<pre><></pre>";
         String expected = "<pre>&lt;></pre>";
@@ -75,7 +75,7 @@ public class EscapeSourceCodePluginTest {
     @Test
     public void substitution2() {
 
-        EscapeSourceCodePlugin instance = new EscapeSourceCodePlugin();
+        EncodePreTagsPlugin instance = new EncodePreTagsPlugin();
         
         String input = "\n<!DOCTYPE html>\n" +
                 "<html>\n" +
@@ -103,7 +103,7 @@ public class EscapeSourceCodePluginTest {
     @Test
     public void substitution3() {
 
-        EscapeSourceCodePlugin instance = new EscapeSourceCodePlugin();
+        EncodePreTagsPlugin instance = new EncodePreTagsPlugin();
         
         String input = "<!DOCTYPE html>\n" +
                 "<html>\n" +
