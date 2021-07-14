@@ -449,6 +449,9 @@
 
     <session-config>
         <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only> <!-- prohibit JS access -->
+        </cookie-config>
     </session-config>
 
     <welcome-file-list>

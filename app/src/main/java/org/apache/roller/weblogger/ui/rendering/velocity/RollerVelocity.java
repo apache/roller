@@ -63,10 +63,10 @@ public class RollerVelocity {
             
             // Override for theme reloading
             if (themeReload) {
-                velocityProps.setProperty("class.resource.loader.cache", "false");
-                velocityProps.setProperty("class.resource.loader.modificationCheckInterval", "2");
-                velocityProps.setProperty("webapp.resource.loader.cache", "false");
-                velocityProps.setProperty("webapp.resource.loader.modificationCheckInterval", "2");
+                velocityProps.setProperty("resource.loader.class.cache", "false");
+                velocityProps.setProperty("resource.loader.class.modification_check_interval", "2");
+                velocityProps.setProperty("resource.loader.webapp.cache", "false");
+                velocityProps.setProperty("resource.loader.webapp.modification_check_interval", "2");
                 velocityProps.setProperty("velocimacro.library.autoreload", "true");
             }
            

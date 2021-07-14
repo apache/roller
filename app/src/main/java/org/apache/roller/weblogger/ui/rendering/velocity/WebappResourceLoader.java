@@ -49,15 +49,15 @@ import org.apache.velocity.util.ExtProperties;
  * 
  * The default search path is '/' (relative to the webapp root), but you can
  * change this behaviour by specifying one or more paths by mean of as many
- * webapp.resource.loader.path properties as needed in the velocity.properties
+ * resource.loader.webapp.path properties as needed in the velocity.properties
  * file.
  * 
  * All paths must be relative to the root of the webapp.
  * 
- * To enable caching and cache refreshing the webapp.resource.loader.cache and
- * webapp.resource.loader.modificationCheckInterval properties need to be set in
+ * To enable caching and cache refreshing the resource.loader.webapp.cache and
+ * resource.loader.webapp.modification_check_interval properties need to be set in
  * the velocity.properties file ... auto-reloading of global macros requires the
- * webapp.resource.loader.cache property to be set to 'false'.
+ * resource.loader.webapp.cache property to be set to 'false'.
  * 
  */
 public class WebappResourceLoader extends ResourceLoader {

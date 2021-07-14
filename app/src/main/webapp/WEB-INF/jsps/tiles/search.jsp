@@ -34,7 +34,7 @@
         style="margin: 0; padding: 0" onsubmit="return validateSearch(this)">
         <input type="text" id="q" name="q" size="20"
             maxlength="255" value="<c:out value="${param.q}" />" />
-        <input value="&nbsp;»&nbsp;" class="searchButton" type="submit">
+        <input value="&nbsp;Â»&nbsp;" class="searchButton" type="submit">
      </form>
      <script type="text/javascript"> 
         // <!--
