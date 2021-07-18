@@ -620,8 +620,6 @@ public class PageServlet extends HttpServlet {
         }
         String requestUrl = reqsb.toString();
 
-        log.debug("referrer = " + referrerUrl);
-
         // if this came from persons own blog then don't process it
         String selfSiteFragment = "/" + pageRequest.getWeblogHandle();
         if (referrerUrl != null && referrerUrl.contains(selfSiteFragment)) {
@@ -657,10 +655,9 @@ public class PageServlet extends HttpServlet {
                     }
                     String requestSite = requestUrl.substring(0, lastSlash);
 
-                    if (!referrerUrl.matches(requestSite + ".*\\.rol.*") &&
-                            BlacklistChecker.checkReferrer(pageRequest.getWeblog(), referrerUrl)) {
-                        return true;
-                    }
+                    return !(referrerUrl.startsWith(requestSite)
+                        && referrerUrl.indexOf(".rol") >= requestSite.length())
+                        && BlacklistChecker.checkReferrer(pageRequest.getWeblog(), referrerUrl);
                 }
             } else {
                 log.debug("Ignoring referer = " + referrerUrl);
