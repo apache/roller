@@ -17,24 +17,24 @@
  */
 package org.apache.roller.weblogger.ui.rendering.mobile;
 
+import java.util.regex.Pattern;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import static org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType.*;
 
 public class MobileDeviceRepository {
 
-    private static Log log = LogFactory.getLog(MobileDeviceRepository.class);
 
     public enum DeviceType {
         standard, mobile
     }
 
-    public static final String POSSIBLE_DEVICES_1 = ".*(android|avantgo|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)"
+    public static final Pattern POSSIBLE_DEVICES_1 = Pattern.compile(".*(android|avantgo|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)"
             + "|iris|kindle|lge |maemo|midp|mmp|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\\\\/|"
-            + "plucker|pocket|psp|symbian|treo|up\\\\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino).*";
-    public static final String POSSIBLE_DEVICES_2 = "\"1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\\\\-)|"
+            + "plucker|pocket|psp|symbian|treo|up\\\\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino).*");
+
+    public static final Pattern POSSIBLE_DEVICES_2 = Pattern.compile("\"1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\\\\-)|"
             + "ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\\\\-m|r |s )|"
             + "avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\\\\-(n|u)|c55\\\\/|capi|ccwa|cdm\\\\-|"
             + "cell|chtm|cldc|cmd\\\\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\\\\-s|devi|dica|dmob|do(c|p)o|ds(12|\\\\-d)|"
@@ -53,7 +53,8 @@ public class MobileDeviceRepository {
             + "ta(gt|lk)|tcl\\\\-|tdg\\\\-|tel(i|m)|tim\\\\-|t\\\\-mo|to(pl|sh)|ts(70|m\\\\-|m3|m5)|tx\\\\-9|"
             + "up(\\\\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\\\\-v)|vm40|voda|vulc|"
             + "vx(52|53|60|61|70|80|81|83|85|98)|w3c(\\\\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|xda(\\\\-|2|g)|"
-            + "yas\\\\-|your|zeto|zte\\\\-";
+            + "yas\\\\-|your|zeto|zte\\\\-");
+
     public static final String USER_REQUEST_TYPE = "roller_user_request_type";
     public static final String USER_AGENT_PARAMETER = "deviceType";
 
@@ -67,45 +68,35 @@ public class MobileDeviceRepository {
     public static boolean isMobileDevice(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
         if (userAgent != null) {
-            userAgent = request.getHeader("User-Agent").toLowerCase();
+            userAgent = userAgent.toLowerCase();
 
-            try {
-                return (userAgent.matches(POSSIBLE_DEVICES_1) || userAgent
-                        .substring(0, 4).matches(POSSIBLE_DEVICES_2));
-            } catch (StringIndexOutOfBoundsException e) {
-                // invalid device
-                log.error("ERROR invalid userAgent type : " + userAgent);
-                return false;
-            }
-
+            return POSSIBLE_DEVICES_1.matcher(userAgent).matches()
+                || (userAgent.length() >= 4 &&
+                    POSSIBLE_DEVICES_2.matcher(userAgent.substring(0, 4)).matches());
         }
         return false;
     }
 
     public static DeviceType getRequestType(HttpServletRequest request) {
-        DeviceType type = DeviceType.standard;
 
         String deviceTypeParam = request.getParameter(USER_AGENT_PARAMETER);
         if (deviceTypeParam != null) {
-            return deviceTypeParam.trim().equals("standard") ? DeviceType.standard
-                    : DeviceType.mobile;
+            return deviceTypeParam.trim().equals("standard") ? standard : mobile;
         }
 
-        String cookie = getCookieValue(request.getCookies(), USER_REQUEST_TYPE,
-                null);
+        String cookie = getCookieValue(request.getCookies(), USER_REQUEST_TYPE, null);
         if (cookie != null) {
-            return cookie.equals("standard") ? DeviceType.standard
-                    : DeviceType.mobile;
+            return cookie.equals("standard") ? standard : mobile;
         }
 
         if (isMobileDevice(request)) {
-            type = DeviceType.mobile;
+            return mobile;
         }
-        return type;
+
+        return standard;
     }
 
-    private static String getCookieValue(Cookie[] cookies, String cookieName,
-            String defaultValue) {
+    private static String getCookieValue(Cookie[] cookies, String cookieName, String defaultValue) {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookieName.equals(cookie.getName())) {
