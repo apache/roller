@@ -84,6 +84,8 @@ public class EncodePreTagsPluginTest {
                 "  </head>\n" +
                 "  <body>\n" +
                 "      <pre><code class='language-java'>private final Map<String, List<?>> map = new HashMap<>();</code></pre>\n"+
+                "      <pre><code class='language-bash'>$JDK/bin/java -version</code></pre>\n"+
+                "      <pre><code class='language-slash'>\\\\</code></pre>\n"+
                 "  </body>\n" +
                 "</html>";
         
@@ -94,6 +96,8 @@ public class EncodePreTagsPluginTest {
                 "  </head>\n" +
                 "  <body>\n" +
                 "      <pre><code class='language-java'>private final Map&lt;String, List&lt;?>> map = new HashMap&lt;>();</code></pre>\n"+
+                "      <pre><code class='language-bash'>$JDK/bin/java -version</code></pre>\n"+
+                "      <pre><code class='language-slash'>\\\\</code></pre>\n"+
                 "  </body>\n" +
                 "</html>";
         assertEquals(expected, instance.render(null, input));
