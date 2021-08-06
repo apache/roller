@@ -82,7 +82,7 @@ public class EncodePreTagsPlugin implements WeblogEntryPlugin {
 
     // we only have to encode the opening angle bracket for valid html/xhtml
     private static String encode(String code_inner) {
-        return code_inner.replace("<", LT);
+        return Matcher.quoteReplacement(code_inner.replace("<", LT)); // matchers hate $ and \
     }
 
 }
