@@ -288,15 +288,14 @@
 
                     <input id="moveButton" type="button" class="btn btn-primary" style="display: inline"
                            value='<s:text name="mediaFileView.moveSelected" />' onclick="onMoveSelected()"/>
-
                 </s:if>
 
                 <s:select id="moveTargetMenu" name="selectedDirectory" cssStyle="display: inline; width: 15em"
                           list="allDirectories" listKey="id" listValue="name"/>
 
                 <s:if test="currentDirectory.name != 'default' && !pager">
-                    <s:submit value="%{getText('mediaFileView.deleteFolder')}" cssClass="btn"
-                              action="mediaFileView!deleteFolder" onclick="onDeleteFolder();return false;"/>
+                    <input id="deleteFolderButton" type="button" class="btn" style="display: inline"
+                           value='<s:text name="mediaFileView.deleteFolder" />' onclick="onDeleteFolder()"/>
                 </s:if>
 
             </div>
@@ -394,8 +393,8 @@
 
     function onDeleteFolder() {
         if (confirm("<s:text name='mediaFile.deleteFolder.confirm' />")) {
-            document.bookmarks.action = '<s:url action="mediaFileView!deleteFolder" />';
-            document.bookmarks.submit();
+            document.mediaFileViewForm.action = '<s:url action="mediaFileView!deleteFolder" />';
+            document.mediaFileViewForm.submit();
         }
     }
 
