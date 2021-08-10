@@ -342,13 +342,13 @@
 
 
 <script>
-    toggleState = 'Off'
+    toggleState = 'Off';
 
     function onClickEdit(mediaFileId, mediaFileName) {
         <s:url var="mediaFileEditURL" action="mediaFileEdit">
         <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
-        $('#edit-subtitle').html(mediaFileName)
+        $('#edit-subtitle').html(mediaFileName);
         $('#mediaFileEditor').attr('src', '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
         $('#mediafile_edit_lightbox').modal({show: true});
     }
@@ -380,7 +380,7 @@
             toggleFunction(false, 'selectedMediaFiles');
             $("#deleteButton").attr('disabled', true);
             $("#moveButton").attr('disabled', true);
-            $("#moveTargetMenu").attr('disabled', true)
+            $("#moveTargetMenu").attr('disabled', true);
         }
     }
 
@@ -425,11 +425,11 @@
             if (count === 0) {
                 $("#deleteButton").attr('disabled', true);
                 $("#moveButton").attr('disabled', true);
-                $("#moveTargetMenu").attr('disabled', true)
+                $("#moveTargetMenu").attr('disabled', true);
             } else {
                 $("#deleteButton").attr('disabled', false);
                 $("#moveButton").attr('disabled', false);
-                $("#moveTargetMenu").attr('disabled', false)
+                $("#moveTargetMenu").attr('disabled', false);
             }
         });
     });
