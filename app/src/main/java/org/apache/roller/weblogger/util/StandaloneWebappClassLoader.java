@@ -60,7 +60,7 @@ public class StandaloneWebappClassLoader extends URLClassLoader {
         // Add additional jars
         addURLs(jarsDir, urlList);
                 
-        return urlList.toArray(new URL[0]);  
+        return urlList.toArray(URL[]::new);  
     }
     
     private static void addURLs(String dirPath, List<URL> urlList) throws Exception {

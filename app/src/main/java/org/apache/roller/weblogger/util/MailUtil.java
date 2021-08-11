@@ -107,7 +107,7 @@ public class MailUtil {
                 }
             }
 
-            to = reviewers.toArray(new String[reviewers.size()]);
+            to = reviewers.toArray(String[]::new);
             
             // Figure URL to entry edit page
             String editURL = WebloggerFactory.getWeblogger().getUrlStrategy().getEntryEditURL(entry.getWebsite().getHandle(), entry.getId(), true);
@@ -464,7 +464,7 @@ public class MailUtil {
             // now send to subscribers
             if (notifySubscribers && !subscribers.isEmpty()) {
                 // Form array of commenter addrs
-                String[] commenterAddrs = subscribers.toArray(new String[subscribers.size()]);
+                String[] commenterAddrs = subscribers.toArray(String[]::new);
 
                 if (isHtml) {
                     sendHTMLMessage(

@@ -312,7 +312,7 @@ public class MediaCollection {
                 }
                 int count = 0;
                 MediaFile[] sortedResources =
-                        sortedSet.toArray(new MediaFile[sortedSet.size()]);
+                        sortedSet.toArray(MediaFile[]::new);
                 List<Entry> atomEntries = new ArrayList<>();
                 for (int i=start; i<(start + max) && i<(sortedResources.length); i++) {
                     Entry entry = createAtomResourceEntry(website, sortedResources[i]);

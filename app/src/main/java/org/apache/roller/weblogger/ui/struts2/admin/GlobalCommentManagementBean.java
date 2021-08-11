@@ -61,10 +61,9 @@ public class GlobalCommentManagementBean {
             }
         }
 
-        String[] idArray = allComments.toArray(new String[allComments.size()]);
-        this.setIds(Utilities.stringArrayToString(idArray,","));
+        this.setIds(Utilities.stringListToString(allComments, ","));
         
-        spamComments = spamList.toArray(new String[spamList.size()]);
+        spamComments = spamList.toArray(String[]::new);
     }
     
     

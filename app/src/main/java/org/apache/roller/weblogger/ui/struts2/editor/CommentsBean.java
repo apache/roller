@@ -67,14 +67,13 @@ public class CommentsBean {
         }
         
         // list of ids we are working on
-        String[] idArray = allComments.toArray(new String[allComments.size()]);
-        setIds(Utilities.stringArrayToString(idArray,","));
+        setIds(Utilities.stringListToString(allComments, ","));
         
         // approved ids list
-        setApprovedComments(approvedList.toArray(new String[approvedList.size()]));
+        setApprovedComments(approvedList.toArray(String[]::new));
         
         // spam ids list
-        setSpamComments(spamList.toArray(new String[spamList.size()]));
+        setSpamComments(spamList.toArray(String[]::new));
     }
     
     
