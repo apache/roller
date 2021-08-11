@@ -18,8 +18,8 @@
 
 package org.apache.roller.weblogger.ui.rendering.util.cache;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -175,13 +175,7 @@ public final class WeblogFeedCache {
         }
         
         if(feedRequest.getWeblogCategoryName() != null) {
-            String cat = feedRequest.getWeblogCategoryName();
-            try {
-                cat = URLEncoder.encode(cat, "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                // should never happen, utf-8 is always supported
-            }
-            
+            String cat = URLEncoder.encode(feedRequest.getWeblogCategoryName(), StandardCharsets.UTF_8);
             key.append('/').append(cat);
         }
         

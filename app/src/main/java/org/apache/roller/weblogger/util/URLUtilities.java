@@ -18,9 +18,9 @@
 
 package org.apache.roller.weblogger.util;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -66,13 +66,7 @@ public final class URLUtilities {
      * URL encode a string using UTF-8.
      */
     public static String encode(String str) {
-        String encodedStr = str;
-        try {
-            encodedStr = URLEncoder.encode(str, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            // ignored
-        }
-        return encodedStr;
+        return URLEncoder.encode(str, StandardCharsets.UTF_8);
     }
     
     
@@ -80,13 +74,7 @@ public final class URLUtilities {
      * URL decode a string using UTF-8.
      */
     public static String decode(String str) {
-        String decodedStr = str;
-        try {
-            decodedStr = URLDecoder.decode(str, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            // ignored
-        }
-        return decodedStr;
+        return URLDecoder.decode(str, StandardCharsets.UTF_8);
     }
     
     

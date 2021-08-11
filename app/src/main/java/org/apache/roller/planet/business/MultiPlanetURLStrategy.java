@@ -18,9 +18,9 @@
 
 package org.apache.roller.planet.business;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
@@ -42,7 +42,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
         
         StringBuilder url = new StringBuilder();
         url.append(WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
-        url.append("/").append(planet).append("/");
+        url.append('/').append(planet).append('/');
         
         return url.toString();
     }
@@ -61,7 +61,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
         StringBuilder url = new StringBuilder();
         
         url.append(getPlanetURL(planet));
-        url.append("group/").append(group).append("/");
+        url.append("group/").append(group).append('/');
         
         if(pageNum > 0) {
             url.append("?page=");
@@ -123,13 +123,13 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
         for (Map.Entry<String, String> entry : params.entrySet()) {
 
             if (queryString.length() == 0) {
-                queryString.append("?");
+                queryString.append('?');
             } else {
-                queryString.append("&");
+                queryString.append('&');
             }
 
             queryString.append(entry.getKey());
-            queryString.append("=");
+            queryString.append('=');
             queryString.append(entry.getValue());
         }
 
@@ -142,13 +142,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
      */
     @Override
     public String encode(String str) {
-        String encodedStr = str;
-        try {
-            encodedStr = URLEncoder.encode(str, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            // ignored
-        }
-        return encodedStr;
+        return URLEncoder.encode(str, StandardCharsets.UTF_8);
     }
     
     
@@ -157,13 +151,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
      */
     @Override
     public String decode(String str) {
-        String decodedStr = str;
-        try {
-            decodedStr = URLDecoder.decode(str, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            // ignored
-        }
-        return decodedStr;
+        return URLDecoder.decode(str, StandardCharsets.UTF_8);
     }
     
 }

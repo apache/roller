@@ -37,6 +37,7 @@ import com.rometools.propono.atom.server.AtomMediaResource;
 import com.rometools.propono.atom.server.AtomNotFoundException;
 import com.rometools.rome.feed.atom.Entry;
 import com.rometools.rome.feed.atom.Feed;
+import java.nio.charset.StandardCharsets;
 import javax.servlet.http.HttpServletResponse;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthMessage;
@@ -444,10 +445,9 @@ public class RollerAtomHandler implements AtomHandler {
         String digest = null;
         try {
             User inUser = roller.getUserManager().getUserByUserName(userName);
-            digest = WSSEUtilities.generateDigest(
-                    WSSEUtilities.base64Decode(nonce),
-                    created.getBytes("UTF-8"),
-                    inUser.getPassword().getBytes("UTF-8"));
+            digest = WSSEUtilities.generateDigest(WSSEUtilities.base64Decode(nonce),
+                    created.getBytes(StandardCharsets.UTF_8),
+                    inUser.getPassword().getBytes(StandardCharsets.UTF_8));
             if (digest.equals(passwordDigest)) {
                 ret = userName;
             }

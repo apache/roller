@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.ThemeResource;
@@ -408,7 +409,7 @@ public class SharedThemeFromDir extends SharedTheme {
         try {
             chars = new char[(int) templateFile.length()];
             FileInputStream stream = new FileInputStream(templateFile);
-            InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
+            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
             length = reader.read(chars);
         } catch (Exception noprob) {
             log.error("Exception reading theme [" + this.getName()

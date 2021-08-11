@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -235,7 +236,7 @@ public final class Bannedwordslist {
         BufferedReader in = null;
         try {
             in = new BufferedReader(
-                    new InputStreamReader( txtStream, "UTF-8" ) );
+                    new InputStreamReader( txtStream, StandardCharsets.UTF_8) );
             while ((line = in.readLine()) != null) {
                 if (line.startsWith("#")) {
                     readComment(line);

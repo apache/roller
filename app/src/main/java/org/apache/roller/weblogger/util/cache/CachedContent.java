@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * A utility class for storing cached content written to a java.io.Writer.
@@ -45,14 +45,7 @@ public class CachedContent implements AutoCloseable, Serializable {
         }
         
         // construct writer from output stream
-        try {
-            this.cachedWriter =
-                    new PrintWriter(new OutputStreamWriter(this.outstream, "UTF-8"));
-        } catch(UnsupportedEncodingException e) {
-            // shouldn't be possible, java always supports utf-8
-            throw new RuntimeException("Encoding problem", e);
-        }
-
+        this.cachedWriter = new PrintWriter(new OutputStreamWriter(this.outstream, UTF_8));
         this.contentType = contentType;
     }
     
@@ -76,12 +69,7 @@ public class CachedContent implements AutoCloseable, Serializable {
      *       enclosed Writer up until the last call to flush().
      */
     public String getContentAsString() {
-        try {
-            return new String(this.content,"UTF-8");
-        } catch (UnsupportedEncodingException uex) {
-            // shouldn't ever happen - violates Java Spec.
-            throw new RuntimeException(uex);
-        }
+        return new String(this.content, UTF_8);
     }
     
     
