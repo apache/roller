@@ -104,7 +104,7 @@ public class PreviewServlet extends HttpServlet {
         }
         
         // Get the deviceType from user agent
-        MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository.getRequestType(request);
+        MobileDeviceRepository.DeviceType deviceType = previewRequest.getDeviceType();
 
         // for previews we explicitly set the deviceType attribute
         if (request.getParameter("type") != null) {

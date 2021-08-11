@@ -43,7 +43,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
-import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
@@ -129,16 +128,6 @@ public class SearchServlet extends HttpServlet {
             } catch (Exception ex) {
                 log.error("ERROR - reloading theme " + ex);
             }
-        }
-
-        // Get the deviceType from user agent
-        MobileDeviceRepository.DeviceType deviceType = MobileDeviceRepository
-                .getRequestType(request);
-
-        // for previews we explicitly set the deviceType attribute
-        if (request.getParameter("type") != null) {
-            deviceType = request.getParameter("type").equals("standard") ? MobileDeviceRepository.DeviceType.standard
-                    : MobileDeviceRepository.DeviceType.mobile;
         }
 
         // do we need to force a specific locale for the request?
@@ -231,7 +220,7 @@ public class SearchServlet extends HttpServlet {
         Renderer renderer;
         try {
             log.debug("Looking up renderer");
-            renderer = RendererManager.getRenderer(page, deviceType);
+            renderer = RendererManager.getRenderer(page, searchRequest.getDeviceType());
         } catch (Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for rsd template", e);
