@@ -31,8 +31,8 @@ import java.security.NoSuchAlgorithmException;
 
 
 public class RollerRememberMeServices extends TokenBasedRememberMeServices {
-    private static final Log log = LogFactory.getLog(RollerRememberMeServices.class);
 
+    private static final Log log = LogFactory.getLog(RollerRememberMeServices.class);
 
     public RollerRememberMeServices(UserDetailsService userDetailsService) {
         
@@ -51,7 +51,7 @@ public class RollerRememberMeServices extends TokenBasedRememberMeServices {
 
     /**
      * Calculates the digital signature to be put in the cookie. Default value is
-     * MD5 ("username:tokenExpiryTime:password:key")
+     * SHA-512 ("username:tokenExpiryTime:password:key")
      *
      * If LDAP is enabled then a configurable dummy password is used in the calculation.
      */
@@ -70,9 +70,9 @@ public class RollerRememberMeServices extends TokenBasedRememberMeServices {
         String data = username + ":" + tokenExpiryTime + ":" + password + ":" + getKey();
         MessageDigest digest;
         try {
-            digest = MessageDigest.getInstance("MD5");
+            digest = MessageDigest.getInstance("SHA-512");
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("No MD5 algorithm available!");
+            throw new IllegalStateException("Required by Spec.", e);
         }
 
         return new String(Hex.encode(digest.digest(data.getBytes())));
