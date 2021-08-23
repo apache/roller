@@ -186,7 +186,7 @@ public class TagDataServlet extends HttpServlet {
                         0, true);
                 int frequency = stat.getCount();
                 pw.print("<atom:category term=\"" + term + "\" tagdata:frequency=\"" + frequency + "\" ");
-                pw.println("tagdata:href=\"" + viewURI + "\" />");
+                pw.println("tagdata:href=\"" + StringEscapeUtils.escapeXml10(viewURI) + "\" />");
                 if (count++ > MAX) {
                     break;
                 }
@@ -194,12 +194,12 @@ public class TagDataServlet extends HttpServlet {
             if (tags.size() > MAX) {
                 // get next URI, if site-wide then don't specify weblog
                 String nextURI = urlstrat.getWeblogTagsJsonURL(weblog, true, page + 1);
-                pw.println("<atom:link rel=\"next\" href=\"" + nextURI + "\" />");
+                pw.println("<atom:link rel=\"next\" href=\"" + StringEscapeUtils.escapeXml10(nextURI) + "\" />");
             }
             if (page > 0) {
                 // get prev URI, if site-wide then don't specify weblog
                 String prevURI = urlstrat.getWeblogTagsJsonURL(weblog, true, page - 1);
-                pw.println("<atom:link rel=\"previous\" href=\"" + prevURI + "\" />");
+                pw.println("<atom:link rel=\"previous\" href=\"" + StringEscapeUtils.escapeXml10(prevURI) + "\" />");
             }
             pw.println("</categories>");
             response.flushBuffer();
