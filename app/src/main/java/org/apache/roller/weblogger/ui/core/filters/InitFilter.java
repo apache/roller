@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 /**
@@ -41,7 +42,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
  */
 public class InitFilter implements Filter {
 
-    private static Log log = LogFactory.getLog(InitFilter.class);
+    private static final Log log = LogFactory.getLog(InitFilter.class);
 
     private boolean initialized = false;
 
@@ -53,22 +54,29 @@ public class InitFilter implements Filter {
 
             // first request, lets do our initialization
             HttpServletRequest request = (HttpServletRequest) req;
-            // HttpServletResponse response = (HttpServletResponse) res;
+            
+            UrlValidator validator = new UrlValidator(
+                            new String[]{"http", "https"},
+                            UrlValidator.ALLOW_LOCAL_URLS); // for integration tests
 
-            // determine absolute and relative url paths to the app
-            String relPath = request.getContextPath();
-            String absPath = this.getAbsoluteUrl(request);
+            if(validator.isValid(request.getRequestURL().toString())) {
+                
+                // determine absolute and relative url paths to the app
+                String relPath = request.getContextPath();
+                String absPath = this.getAbsoluteUrl(request);
 
-            // set them in our config
-            WebloggerRuntimeConfig.setAbsoluteContextURL(absPath);
-            WebloggerRuntimeConfig.setRelativeContextURL(relPath);
+                // set them in our config
+                WebloggerRuntimeConfig.setAbsoluteContextURL(absPath);
+                WebloggerRuntimeConfig.setRelativeContextURL(relPath);
 
-            if (log.isDebugEnabled()) {
-                log.debug("relPath = " + relPath);
-                log.debug("absPath = " + absPath);
+                if (log.isDebugEnabled()) {
+                    log.debug("relPath = " + relPath);
+                    log.debug("absPath = " + absPath);
+                }
+
+                this.initialized = true;
             }
 
-            this.initialized = true;
         }
 
         chain.doFilter(req, res);
@@ -90,9 +98,9 @@ public class InitFilter implements Filter {
 
     protected static String getAbsoluteUrl(boolean secure, String serverName, String contextPath, String requestURI, String requestURL){
 
-        String url = null;
+        String url;
 
-        String fullUrl = null;
+        String fullUrl;
 
         if (!secure) {
             fullUrl = requestURL;
