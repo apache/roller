@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -104,34 +103,19 @@ public class FileContentManagerImpl implements FileContentManager {
     public void saveFileContent(Weblog weblog, String fileId, InputStream is)
             throws FileNotFoundException, FilePathException, FileIOException {
 
+        checkFileName(fileId);
+
         // make sure uploads area exists for this weblog
         File dirPath = this.getRealFile(weblog, null);
 
         // create File that we are about to save
-        File saveFile = new File(dirPath.getAbsolutePath() + File.separator
-                + fileId);
+        Path saveFile = Path.of(dirPath.getAbsolutePath(), fileId);
 
-        byte[] buffer = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
-        int bytesRead;
-        OutputStream bos = null;
-        try {
-            bos = new FileOutputStream(saveFile);
-            while ((bytesRead = is.read(buffer, 0,
-                    RollerConstants.EIGHT_KB_IN_BYTES)) != -1) {
-                bos.write(buffer, 0, bytesRead);
-            }
-            log.debug("The file has been written to ["
-                    + saveFile.getAbsolutePath() + "]");
-        } catch (Exception e) {
+        try (OutputStream os = Files.newOutputStream(saveFile)) {
+            is.transferTo(os);
+            log.debug("The file has been written to ["+saveFile+"]");
+        } catch (IOException e) {
             throw new FileIOException("ERROR uploading file", e);
-        } finally {
-            try {
-                if (bos != null) {
-                    bos.flush();
-                    bos.close();
-                }
-            } catch (Exception ignored) {
-            }
         }
 
     }
@@ -414,11 +398,7 @@ public class FileContentManagerImpl implements FileContentManager {
         // now form the absolute path
         Path filePath = weblogDir.toAbsolutePath();
         if (fileId != null) {
-            // make sure someone isn't trying to sneek outside the uploads dir
-            if(fileId.contains("..")) {
-                throw new FilePathException("Invalid file name [" + fileId + "], "
-                        + "trying to get outside uploads dir.");
-            }
+            checkFileName(fileId);
             filePath = filePath.resolve(fileId);
         }
 
@@ -429,6 +409,16 @@ public class FileContentManagerImpl implements FileContentManager {
         }
 
         return filePath.toFile();
+    }
+
+    /**
+     * Make sure someone isn't trying to sneak outside the uploads dir.
+     */
+    private static void checkFileName(String fileId) throws FilePathException {
+        if(fileId.contains("..")) {
+            throw new FilePathException("Invalid file name [" + fileId + "], "
+                    + "trying to get outside uploads dir.");
+        }
     }
 
 }
