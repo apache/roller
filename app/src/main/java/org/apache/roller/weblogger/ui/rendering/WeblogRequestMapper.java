@@ -46,7 +46,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
  */
 public class WeblogRequestMapper implements RequestMapper {
     
-    private static Log log = LogFactory.getLog(WeblogRequestMapper.class);
+    private static final Log log = LogFactory.getLog(WeblogRequestMapper.class);
     
     private static final String PAGE_SERVLET = "/roller-ui/rendering/page";
     private static final String FEED_SERVLET = "/roller-ui/rendering/feed";
@@ -199,7 +199,7 @@ public class WeblogRequestMapper implements RequestMapper {
             // this means someone referred to a weblog index page with the 
             // shortest form of url /<weblog> or /<weblog>/<locale> and we need
             // to do a redirect to /<weblog>/ or /<weblog>/<locale>/
-            String redirectUrl = request.getRequestURI() + "/";
+            String redirectUrl = "/" + weblogHandle + "/";
             if(request.getQueryString() != null) {
                 redirectUrl += "?"+request.getQueryString();
             }
