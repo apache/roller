@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -42,7 +44,7 @@ import org.apache.roller.weblogger.util.RollerMessages;
  */
 public class FileContentManagerImpl implements FileContentManager {
 
-    private static Log log = LogFactory.getLog(FileContentManagerImpl.class);
+    private static final Log log = LogFactory.getLog(FileContentManagerImpl.class);
 
     private String storageDir = null;
 
@@ -400,40 +402,33 @@ public class FileContentManagerImpl implements FileContentManager {
             throws FileNotFoundException, FilePathException {
 
         // make sure uploads area exists for this weblog
-        File weblogDir = new File(this.storageDir + weblog.getHandle());
-        if (!weblogDir.exists()) {
-            weblogDir.mkdirs();
+        Path weblogDir = Path.of(this.storageDir, weblog.getHandle());
+        if (!Files.exists(weblogDir)) {
+            try {
+                Files.createDirectories(weblogDir);
+            } catch (IOException ex) {
+                throw new FilePathException("Can't create storage dir [" + weblogDir + "]", ex);
+            }
         }
 
         // now form the absolute path
-        String filePath = weblogDir.getAbsolutePath();
+        Path filePath = weblogDir.toAbsolutePath();
         if (fileId != null) {
-            filePath += File.separator + fileId;
+            // make sure someone isn't trying to sneek outside the uploads dir
+            if(fileId.contains("..")) {
+                throw new FilePathException("Invalid file name [" + fileId + "], "
+                        + "trying to get outside uploads dir.");
+            }
+            filePath = filePath.resolve(fileId);
         }
 
         // make sure path exists and is readable
-        File file = new File(filePath);
-        if (!file.exists()) {
+        if (!Files.isReadable(filePath)) {
             throw new FileNotFoundException("Invalid path [" + filePath + "], "
-                    + "file does not exist.");
-        } else if (!file.canRead()) {
-            throw new FilePathException("Invalid path [" + filePath + "], "
-                    + "cannot read from path.");
+                    + "file does not exist or is not readable.");
         }
 
-        try {
-            // make sure someone isn't trying to sneek outside the uploads dir
-            if (!file.getCanonicalPath().startsWith(
-                    weblogDir.getCanonicalPath())) {
-                throw new FilePathException("Invalid path " + filePath + "], "
-                        + "trying to get outside uploads dir.");
-            }
-        } catch (IOException ex) {
-            // rethrow as FilePathException
-            throw new FilePathException(ex);
-        }
-
-        return file;
+        return filePath.toFile();
     }
 
 }
