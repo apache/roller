@@ -65,7 +65,7 @@ import org.apache.roller.weblogger.util.RollerMessages;
 @com.google.inject.Singleton
 public class ThemeManagerImpl implements ThemeManager {
 
-	static FileTypeMap map = null;
+	private static final FileTypeMap map;
 	static {
 		// TODO: figure out why PNG is missing from Java MIME types
 		map = FileTypeMap.getDefaultFileTypeMap();
@@ -77,7 +77,7 @@ public class ThemeManagerImpl implements ThemeManager {
 		}
 	}
 
-	private static Log log = LogFactory.getLog(ThemeManagerImpl.class);
+	private static final Log log = LogFactory.getLog(ThemeManagerImpl.class);
 	private final Weblogger roller;
 	// directory where themes are kept
 	private String themeDir = null;
@@ -354,7 +354,7 @@ public class ThemeManagerImpl implements ThemeManager {
 				RollerMessages errors = new RollerMessages();
 				fileMgr.createThemeMediaFile(weblog, mf, errors);
 				try {
-					resource.getInputStream().close();
+					is.close();
 				} catch (IOException ex) {
 					errors.addError("error.closingStream");
 					log.debug("ERROR closing inputstream");
