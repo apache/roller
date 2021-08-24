@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 // TODO: make this work @AllowedMethods({"execute","save"})
 public class FolderEdit extends UIAction implements ServletResponseAware {
 
-    private static Log log = LogFactory.getLog(FolderEdit.class);
+    private static final Log log = LogFactory.getLog(FolderEdit.class);
 
     // bean for managing form data
     private FolderBean bean = new FolderBean();
@@ -127,7 +127,10 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
                     addMessage("folderForm.updated");
                 }
 
-                httpServletResponse.addHeader("folderId", folderId );
+                // HTTP response splitting defense
+                String sanetizedFolderID = folderId.replace("\n", "").replace("\r", "");
+
+                httpServletResponse.addHeader("folderId", sanetizedFolderID);
 
                 return SUCCESS;
 
