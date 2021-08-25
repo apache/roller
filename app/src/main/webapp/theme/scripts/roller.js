@@ -16,11 +16,12 @@
 * directory of this distribution.
 */
 /* This function is used to set cookies */
-function setCookie(name,value,expires,path,domain,secure) {
+function setCookie(name, value, expires, path, domain, secure=true, sameSite=true) {
   document.cookie = name + "=" + escape (value) +
     ((expires) ? "; expires=" + expires.toGMTString() : "") +
     ((path) ? "; path=" + path : "") +
-    ((domain) ? "; domain=" + domain : "") + ((secure) ? "; secure" : "");
+    ((domain) ? "; domain=" + domain : "") + ((secure) ? "; secure" : "") +
+    ((sameSite) ? "; SameSite=Strict" : "");
 }
 
 /* This function is used to get cookies */
