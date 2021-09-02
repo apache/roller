@@ -231,7 +231,6 @@ public final class SiteWideCache implements CacheHandler {
             }
             
             if("tags".equals(pageRequest.getContext())) {
-                key.append("/tags/");
                 if(pageRequest.getTags() != null && !pageRequest.getTags().isEmpty()) {
                     String[] tags = pageRequest.getTags().toArray(new String[0]);
                     Arrays.sort(tags);
