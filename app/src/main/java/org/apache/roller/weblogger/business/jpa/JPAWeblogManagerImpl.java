@@ -37,7 +37,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.UserManager;
@@ -614,7 +613,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     @Override
     public Map<String, Long> getWeblogHandleLetterMap() throws WebloggerException {
         String lc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        Map<String, Long> results = new TreeMap<>();
+        Map<String, Long> results = new HashMap<>();
         TypedQuery<Long> query = strategy.getNamedQuery(
                 "Weblog.getCountByHandleLike", Long.class);
         for (int i=0; i<26; i++) {
