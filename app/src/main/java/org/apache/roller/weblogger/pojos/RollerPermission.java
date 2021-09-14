@@ -19,6 +19,8 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.util.Utilities;
@@ -49,14 +51,14 @@ public abstract class RollerPermission extends java.security.Permission {
     }
 
     public boolean hasAction(String action) {
-        List<String> actionList = getActionsAsList();
-        return actionList.contains(action);
+        Set<String> actionSet = new HashSet<>(getActionsAsList());
+        return actionSet.contains(action);
     }
     
     public boolean hasActions(List<String> actionsToCheck) {
-        List<String> actionList = getActionsAsList();
+        Set<String> actionSet = new HashSet<>(getActionsAsList());
         for (String actionToCheck : actionsToCheck) {
-            if (!actionList.contains(actionToCheck)) {
+            if (!actionSet.contains(actionToCheck)) {
                 return false;
             }
         }
@@ -68,9 +70,9 @@ public abstract class RollerPermission extends java.security.Permission {
      */
     public void addActions(ObjectPermission perm) {
         List<String> newActions = perm.getActionsAsList();
-        List<String> updatedActions = getActionsAsList();
+        Set<String> updatedActionSet = new HashSet<>(updatedActions);
         for (String newAction : newActions) {
-            if (!updatedActions.contains(newAction)) {
+            if (!updatedActionSet.contains(newAction)) {
                 updatedActions.add(newAction);
             }
         }
@@ -81,9 +83,9 @@ public abstract class RollerPermission extends java.security.Permission {
      * Merge actions into this permission.
      */
     public void addActions(List<String> newActions) {
-        List<String> updatedActions = getActionsAsList();
+        Set<String> updatedActionSet = new HashSet<>(updatedActions);
         for (String newAction : newActions) {
-            if (!updatedActions.contains(newAction)) {
+            if (!updatedActionSet.contains(newAction)) {
                 updatedActions.add(newAction);
             }
         }
