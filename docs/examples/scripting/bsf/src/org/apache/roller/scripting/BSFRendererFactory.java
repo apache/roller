@@ -20,6 +20,8 @@ package org.apache.roller.scripting;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import org.apache.roller.config.RollerConfig;
 import org.apache.roller.pojos.Template;
 import org.apache.roller.ui.rendering.Renderer;
@@ -31,13 +33,13 @@ import org.apache.roller.util.Utilities;
  */
 public class BSFRendererFactory implements RendererFactory {   
     private static String[] names = {"groovy", "jruby", "javascript"};
-    private static final List bsfLanguages; 
+    private static final Set<String> bsfLanguages; 
     static {
         String value = RollerConfig.getProperty("bsfrenderer.languageNames");
         if (value != null) {
             names = Utilities.stringToStringArray(value,",");            
         } 
-        bsfLanguages = Arrays.asList(names);
+        bsfLanguages = new HashSet<>(Arrays.asList(names));
     }        
     public Renderer getRenderer(Template template) {        
         Renderer renderer = null;
