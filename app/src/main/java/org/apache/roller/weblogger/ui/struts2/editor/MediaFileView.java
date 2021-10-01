@@ -278,8 +278,7 @@ public class MediaFileView extends MediaFileBase {
             try {
                 List<MediaFile> rawResults = manager.searchMediaFiles(getActionWeblog(), filter);
                 boolean hasMore = false;
-                List<MediaFile> results = new ArrayList<>();
-                results.addAll(rawResults);
+                List<MediaFile> results = new ArrayList<>(rawResults);
                 if (results.size() > MediaFileSearchBean.PAGE_SIZE) {
                     results.remove(results.size() - 1);
                     hasMore = true;

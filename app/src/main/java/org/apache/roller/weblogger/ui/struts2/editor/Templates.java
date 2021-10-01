@@ -46,7 +46,7 @@ import java.util.Map;
 // TODO: make this work @AllowedMethods({"execute","add"})
 public class Templates extends UIAction {
 
-    private static Log log = LogFactory.getLog(Templates.class);
+    private static final Log log = LogFactory.getLog(Templates.class);
 
     // list of templates to display
     private List<WeblogTemplate> templates = Collections.emptyList();
@@ -76,8 +76,7 @@ public class Templates extends UIAction {
             // get current list of templates, minus custom stylesheet
             List<WeblogTemplate> raw = WebloggerFactory.getWeblogger()
                 .getWeblogManager().getTemplates(getActionWeblog());
-            List<WeblogTemplate> pages = new ArrayList<>();
-            pages.addAll(raw);
+            List<WeblogTemplate> pages = new ArrayList<>(raw);
 
             // Remove style sheet from list so not to show when theme is
             // selected in shared theme mode
@@ -225,8 +224,6 @@ public class Templates extends UIAction {
 
                     // if weblog template remove custom style sheet also
                     if (template.getName().equals(WeblogTemplate.DEFAULT_PAGE)) {
-
-                        Weblog weblog = getActionWeblog();
 
                         ThemeTemplate stylesheet = getActionWeblog().getTheme().getStylesheet();
 
