@@ -64,7 +64,6 @@ public class SQLScriptRunnerTest  {
         String scriptPath = System.getProperty("project.build.directory")
                 + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-"+dbname+".sql";
         SQLScriptRunner runner = new SQLScriptRunner(scriptPath);
-        assertTrue(runner != null);
         assertTrue(runner.getCommandCount() == 5);        
     }
 
@@ -102,10 +101,9 @@ public class SQLScriptRunnerTest  {
     }
         
     public static boolean tableExists(Connection con, String tableName) throws SQLException {
-        String[] types = {"TABLE"};
         ResultSet rs = con.getMetaData().getTables(null, null, "%", null);
         while (rs.next()) {
-            if (tableName.toLowerCase().equals(rs.getString("TABLE_NAME").toLowerCase())) {
+            if (tableName.equalsIgnoreCase(rs.getString("TABLE_NAME"))) {
                 return true;
             }
         }
