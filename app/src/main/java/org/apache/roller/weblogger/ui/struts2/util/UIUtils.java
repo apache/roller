@@ -39,7 +39,7 @@ public final class UIUtils {
     static {
         // build locales list
         LOCALES = Arrays.asList(Locale.getAvailableLocales());
-        Collections.sort(LOCALES, new LocaleComparator());
+        LOCALES.sort(new LocaleComparator());
         
         // build time zones list
         TIME_ZONES = Arrays.asList(TimeZone.getAvailableIDs());

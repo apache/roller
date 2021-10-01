@@ -325,7 +325,7 @@ public class Utilities {
     public static List<String> stringToStringList(String instr, String delim) {
         List<String> stringList = new ArrayList<>();
         String[] str = StringUtils.split(instr, delim);
-        Collections.addAll(stringList, str);
+        stringList.addAll(Arrays.asList(str));
         return stringList;
     }
 
