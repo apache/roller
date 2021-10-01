@@ -82,12 +82,12 @@ public class MailProvider {
             }
         } else {
             Properties props = new Properties();
-            props.put("mail.smtp.host", mailHostname);
+            props.setProperty("mail.smtp.host", mailHostname);
             if (mailUsername != null && mailPassword != null) {
-                props.put("mail.smtp.auth", "true");   
+                props.setProperty("mail.smtp.auth", "true");   
             }
             if (mailPort != -1) {
-                props.put("mail.smtp.port", ""+mailPort);
+                props.setProperty("mail.smtp.port", ""+mailPort);
             }
             session = Session.getDefaultInstance(props, null);
         }
