@@ -35,9 +35,9 @@ import org.apache.roller.weblogger.planet.ui.PlanetConfig;
  */
 public class PlanetRuntimeConfig {
 
-    private static Log log = LogFactory.getLog(PlanetRuntimeConfig.class);
+    private static final Log log = LogFactory.getLog(PlanetRuntimeConfig.class);
 
-    private static String runtimeConfig = "/org/apache/roller/planet/config/planetRuntimeConfigDefs.xml";
+    private static final String runtimeConfig = "/org/apache/roller/planet/config/planetRuntimeConfigDefs.xml";
     private static RuntimeConfigDefs configDefs = null;
 
     // prevent instantiations
@@ -138,17 +138,10 @@ public class PlanetRuntimeConfig {
         log.debug("Trying to load runtime config defs file");
 
         try {
-            InputStreamReader reader =
-                    new InputStreamReader(PlanetConfig.class.getResourceAsStream(runtimeConfig));
             StringWriter configString = new StringWriter();
-
-            char[] buf = new char[8196];
-            int length = 0;
-            while((length = reader.read(buf)) > 0)
-                configString.write(buf, 0, length);
-
-            reader.close();
-
+            try (InputStreamReader reader = new InputStreamReader(PlanetConfig.class.getResourceAsStream(runtimeConfig))) {
+                reader.transferTo(configString);
+            }
             return configString.toString();
         } catch(Exception e) {
             log.error("Error loading runtime config defs file", e);

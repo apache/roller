@@ -40,7 +40,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.util.DateUtil;
@@ -148,23 +147,17 @@ public final class Bannedwordslist {
                 mLogger.debug("MT last modified = " + lastModifiedLong);
                 
                 // save the new bannedwordslist
-                InputStream instream = connection.getInputStream();
-                
-                String uploadDir = WebloggerConfig.getProperty("uploads.dir");
-                String path = uploadDir + File.separator + BANNEDWORDSLIST_FILE;
-                FileOutputStream outstream = new FileOutputStream(path);
-                
-                mLogger.debug("writing updated MT bannedwordslist to "+path);
-                
-                // read from url and write to file
-                byte[] buf = new byte[RollerConstants.FOUR_KB_IN_BYTES];
-                int length;
-                while((length = instream.read(buf)) > 0) {
-                    outstream.write(buf, 0, length);
+                try (InputStream instream = connection.getInputStream()) {
+                    String uploadDir = WebloggerConfig.getProperty("uploads.dir");
+                    String path = uploadDir + File.separator + BANNEDWORDSLIST_FILE;
+                    
+                    mLogger.debug("writing updated MT bannedwordslist to "+path);
+                    
+                    // read from url and write to file
+                    try (FileOutputStream outstream = new FileOutputStream(path)) {
+                        instream.transferTo(outstream);
+                    }
                 }
-                
-                outstream.close();
-                instream.close();
                 
                 bannedwordslistUpdated = true;
                 
