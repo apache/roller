@@ -42,8 +42,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  * @author Dave Johnson (adapted for Roller)
  */
 public class AccessTokenServlet extends HttpServlet {
-    protected static Log log =
-            LogFactory.getFactory().getInstance(AccessTokenServlet.class);
+    protected static final Log log = LogFactory.getFactory().getInstance(AccessTokenServlet.class);
     
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -77,11 +76,11 @@ public class AccessTokenServlet extends HttpServlet {
             }
 
             response.setContentType("text/plain");
-            OutputStream out = response.getOutputStream();
-            OAuth.formEncode(OAuth.newList(
-                "oauth_token", accessor.accessToken,
-                "oauth_token_secret", accessor.tokenSecret), out);
-            out.close();
+            try (OutputStream out = response.getOutputStream()) {
+                OAuth.formEncode(OAuth.newList(
+                        "oauth_token", accessor.accessToken,
+                        "oauth_token_secret", accessor.tokenSecret), out);
+            }
             
         } catch (Exception e){
             handleException(e, request, response, true);

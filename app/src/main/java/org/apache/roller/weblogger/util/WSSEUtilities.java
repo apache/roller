@@ -24,6 +24,8 @@ import java.util.Date;
 
 import org.apache.commons.codec.binary.Base64;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Utilties to support WSSE authentication.
  * @author Dave Johnson
@@ -47,7 +49,7 @@ public class WSSEUtilities {
         return result;
     }
     public static byte[] base64Decode(String value) throws IOException {
-        return Base64.decodeBase64(value.getBytes("UTF-8"));
+        return Base64.decodeBase64(value.getBytes(UTF_8));
     }
     public static String base64Encode(byte[] value) {
         return new String(Base64.encodeBase64(value));
@@ -62,7 +64,7 @@ public class WSSEUtilities {
         String created = sdf.format(new Date());
         
         String digest = WSSEUtilities.generateDigest(
-                nonceBytes, created.getBytes("UTF-8"), password.getBytes("UTF-8"));
+                nonceBytes, created.getBytes(UTF_8), password.getBytes(UTF_8));
         
         StringBuilder header = new StringBuilder("UsernameToken Username=\"");
         header.append(userName);

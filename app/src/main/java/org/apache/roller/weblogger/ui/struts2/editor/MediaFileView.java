@@ -19,7 +19,6 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -216,18 +215,15 @@ public class MediaFileView extends MediaFileBase {
             this.childFiles.addAll(directory.getMediaFiles());
 
             if ("type".equals(sortBy)) {
-                Collections.sort(this.childFiles, new MediaFileComparator(
-                        MediaFileComparatorType.TYPE));
+                this.childFiles.sort(new MediaFileComparator(MediaFileComparatorType.TYPE));
 
             } else if ("date_uploaded".equals(sortBy)) {
-                Collections.sort(this.childFiles, new MediaFileComparator(
-                        MediaFileComparatorType.DATE_UPLOADED));
+                this.childFiles.sort(new MediaFileComparator(MediaFileComparatorType.DATE_UPLOADED));
 
             } else {
                 // default to sort by name
                 sortBy = "name";
-                Collections.sort(this.childFiles, new MediaFileComparator(
-                        MediaFileComparatorType.NAME));
+                this.childFiles.sort(new MediaFileComparator(MediaFileComparatorType.NAME));
             }
 
             this.currentDirectory = directory;
@@ -282,8 +278,7 @@ public class MediaFileView extends MediaFileBase {
             try {
                 List<MediaFile> rawResults = manager.searchMediaFiles(getActionWeblog(), filter);
                 boolean hasMore = false;
-                List<MediaFile> results = new ArrayList<>();
-                results.addAll(rawResults);
+                List<MediaFile> results = new ArrayList<>(rawResults);
                 if (results.size() > MediaFileSearchBean.PAGE_SIZE) {
                     results.remove(results.size() - 1);
                     hasMore = true;

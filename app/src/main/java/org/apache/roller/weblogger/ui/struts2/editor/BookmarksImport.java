@@ -91,7 +91,7 @@ public final class BookmarksImport extends UIAction {
                     while ((bytesRead=stream.read(buffer,0,RollerConstants.EIGHT_KB_IN_BYTES)) != -1) {
                         baos.write(buffer, 0, bytesRead);
                     }
-                    String data = new String(baos.toByteArray());
+                    String data = baos.toString();
 
                     SimpleDateFormat formatter =
                             new SimpleDateFormat("yyyyMMddHHmmss");

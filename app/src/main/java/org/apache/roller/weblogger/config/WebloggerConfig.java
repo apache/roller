@@ -108,12 +108,12 @@ public final class WebloggerConfig {
 
             // Now expand system properties for properties in the config.expandedProperties list,
             // replacing them by their expanded values.
-            String expandedPropertiesDef = (String) config.get("config.expandedProperties");
+            String expandedPropertiesDef = config.getProperty("config.expandedProperties");
             if (expandedPropertiesDef != null) {
                 String[] expandedProperties = expandedPropertiesDef.split(",");
                 for (int i = 0; i < expandedProperties.length; i++) {
                     String propName = expandedProperties[i].trim();
-                    String initialValue = (String) config.get(propName);
+                    String initialValue = config.getProperty(propName);
                     if (initialValue != null) {
                         String expandedValue = PropertyExpander.expandSystemProperties(initialValue);
                         config.setProperty(propName, expandedValue);

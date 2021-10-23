@@ -39,7 +39,7 @@ limitations under the License.
         <java-mail.version>1.4.7</java-mail.version>
         <jstl.version>1.2</jstl.version>
         <angular.version>1.7.8</angular.version>
-        <ant.version>1.10.10</ant.version>
+        <ant.version>1.10.12</ant.version>
         <asm.version>9.2</asm.version>
         <commons-validator.version>1.7</commons-validator.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
@@ -47,15 +47,15 @@ limitations under the License.
         <eclipse-link.version>2.7.9</eclipse-link.version>
         <guice.version>5.0.1</guice.version>
         <log4j2.version>2.14.1</log4j2.version>
-        <lucene.version>8.9.0</lucene.version>
+        <lucene.version>8.10.1</lucene.version>
         <oauth-core.version>20100527</oauth-core.version>
         <maven-war.version>3.2.3</maven-war.version>
         <maven-surefire.version>2.22.2</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
         <rome.version>1.16.0</rome.version>
-        <slf4j.version>1.7.31</slf4j.version>
-        <spring.version>5.3.8</spring.version>
-        <spring.security.version>5.5.1</spring.security.version>
+        <slf4j.version>1.7.32</slf4j.version>
+        <spring.version>5.3.12</spring.version>
+        <spring.security.version>5.5.3</spring.security.version>
         <struts.version>2.5.26</struts.version>
         <velocity.version>2.3</velocity.version>
         <webjars.version>1.5</webjars.version>
@@ -131,7 +131,7 @@ limitations under the License.
             <artifactId>org.eclipse.persistence.jpa</artifactId>
             <version>${eclipse-link.version}</version>
         </dependency>
-        
+
         <!-- small dependency containing slf4j bridge for eclipselink -->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
@@ -182,7 +182,7 @@ limitations under the License.
             <artifactId>velocity-engine-core</artifactId>
             <version>${velocity.version}</version>
         </dependency>
-        
+
         <!-- explicitly adding newest asm lib to improve compatibility with latest JDKs -->
 
         <dependency>
@@ -202,7 +202,7 @@ limitations under the License.
             <artifactId>asm-tree</artifactId>
             <version>${asm.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-core</artifactId>
@@ -242,7 +242,7 @@ limitations under the License.
             <artifactId>struts2-tiles-plugin</artifactId>
             <version>${struts.version}</version>
         </dependency>
-        
+
         <!-- note: update head.jsp on webjar version change -->
         <dependency>
             <groupId>org.webjars</groupId>
@@ -304,14 +304,14 @@ limitations under the License.
         <!-- slf4j implementing the apache commons-logging interfaces -->
         <!-- note: commons-logging needs to be excluded in all dependencies transitive depending on it.
         See 2006 RFE https://issues.apache.org/jira/browse/MNG-1977 for maven's missing feature of global exclusions -->
-        <dependency> 
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-        
+
         <!-- slf4j implementing java.util.logging interfaces (needed for WebJars, ..) -->
-        <dependency> 
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
             <version>${slf4j.version}</version>
@@ -354,7 +354,7 @@ limitations under the License.
             <artifactId>commons-codec</artifactId>
             <version>${commons-codec.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
@@ -626,6 +626,22 @@ limitations under the License.
             <plugin>
                 <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
                 <artifactId>inmemdb-maven-plugin</artifactId>
+
+                <configuration>
+                    <daemon>true</daemon>
+                    <type>derby</type>
+                    <database>rollerdb</database>
+                    <username>APP</username>
+                    <password>APP</password>
+                    <port>4224</port>
+                    <sources>
+                        <script>
+                            <sourceFile>${project.basedir}/target/dbscripts/derby/createdb.sql</sourceFile>
+                        </script>
+                    </sources>
+                    <skip>${skipTests}</skip>
+                </configuration>
+
                 <executions>
                     <execution>
                         <id>run</id>
@@ -633,19 +649,6 @@ limitations under the License.
                         <goals>
                             <goal>run</goal>
                         </goals>
-                        <configuration>
-                            <daemon>true</daemon>
-                            <type>derby</type>
-                            <database>rollerdb</database>
-                            <username>APP</username>
-                            <password>APP</password>
-                            <port>4224</port>
-                            <sources>
-                                <script>
-                                    <sourceFile>${project.basedir}/target/dbscripts/derby/createdb.sql</sourceFile>
-                                </script>
-                            </sources>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>stop</id>
@@ -655,6 +658,7 @@ limitations under the License.
                         </goals>
                     </execution>
                 </executions>
+
             </plugin>
 
             <plugin>
@@ -697,7 +701,7 @@ limitations under the License.
                             </resources>
                         </configuration>
                     </execution>
-                   
+
                     <execution>
                         <id>copy-resources</id>
                         <phase>process-resources</phase>
@@ -719,7 +723,7 @@ limitations under the License.
                     </execution>
 
                 </executions>
-                
+
                 <configuration>
                     <includeEmptyDirs>true</includeEmptyDirs>
                 </configuration>

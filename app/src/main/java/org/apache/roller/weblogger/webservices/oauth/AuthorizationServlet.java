@@ -35,14 +35,13 @@ import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
 /**
- * Autherization request handler.
+ * Authorization request handler.
  *
  * @author Praveen Alavilli
  * @author Dave Johnson (adapted for Roller)
  */
 public class AuthorizationServlet extends HttpServlet {
-    protected static Log log =
-            LogFactory.getFactory().getInstance(AuthorizationServlet.class);
+    protected static final Log log = LogFactory.getFactory().getInstance(AuthorizationServlet.class);
     
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -136,12 +135,12 @@ public class AuthorizationServlet extends HttpServlet {
         if ( "none".equals(callback) ) {
             // no call back it must be a client
             response.setContentType("text/plain");
-            PrintWriter out = response.getWriter();
-            out.println("You have successfully authorized for consumer key '"
-                    + accessor.consumer.consumerKey
-                    + "'. Please close this browser window and click continue"
-                    + " in the client.");
-            out.close();
+            try (PrintWriter out = response.getWriter()) {
+                out.println("You have successfully authorized for consumer key '"
+                        + accessor.consumer.consumerKey
+                        + "'. Please close this browser window and click continue"
+                                + " in the client.");
+            }
         } else {
             // if callback is not passed in, use the callback from config
             if(callback == null || callback.length() <=0 ) {

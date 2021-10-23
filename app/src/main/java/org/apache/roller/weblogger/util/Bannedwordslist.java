@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,7 +40,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.util.DateUtil;
@@ -147,23 +147,17 @@ public final class Bannedwordslist {
                 mLogger.debug("MT last modified = " + lastModifiedLong);
                 
                 // save the new bannedwordslist
-                InputStream instream = connection.getInputStream();
-                
-                String uploadDir = WebloggerConfig.getProperty("uploads.dir");
-                String path = uploadDir + File.separator + BANNEDWORDSLIST_FILE;
-                FileOutputStream outstream = new FileOutputStream(path);
-                
-                mLogger.debug("writing updated MT bannedwordslist to "+path);
-                
-                // read from url and write to file
-                byte[] buf = new byte[RollerConstants.FOUR_KB_IN_BYTES];
-                int length;
-                while((length = instream.read(buf)) > 0) {
-                    outstream.write(buf, 0, length);
+                try (InputStream instream = connection.getInputStream()) {
+                    String uploadDir = WebloggerConfig.getProperty("uploads.dir");
+                    String path = uploadDir + File.separator + BANNEDWORDSLIST_FILE;
+                    
+                    mLogger.debug("writing updated MT bannedwordslist to "+path);
+                    
+                    // read from url and write to file
+                    try (FileOutputStream outstream = new FileOutputStream(path)) {
+                        instream.transferTo(outstream);
+                    }
                 }
-                
-                outstream.close();
-                instream.close();
                 
                 bannedwordslistUpdated = true;
                 
@@ -235,7 +229,7 @@ public final class Bannedwordslist {
         BufferedReader in = null;
         try {
             in = new BufferedReader(
-                    new InputStreamReader( txtStream, "UTF-8" ) );
+                    new InputStreamReader( txtStream, StandardCharsets.UTF_8) );
             while ((line = in.readLine()) != null) {
                 if (line.startsWith("#")) {
                     readComment(line);

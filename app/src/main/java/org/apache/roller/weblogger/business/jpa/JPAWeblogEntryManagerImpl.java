@@ -869,7 +869,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
         // Original query ordered by desc count.
         // JPA QL doesn't allow queries to be ordered by agregates; do it in memory
-        Collections.sort(results, STAT_COUNT_COUNT_REVERSE_COMPARATOR);
+        results.sort(STAT_COUNT_COUNT_REVERSE_COMPARATOR);
         
         return results;
     }
@@ -990,7 +990,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         // sort results by name, because query had to sort by total
-        Collections.sort(results, TAG_STAT_NAME_COMPARATOR);
+        results.sort(TAG_STAT_NAME_COMPARATOR);
         
         return results;
     }
@@ -1049,9 +1049,9 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         }
 
         if (sortByName) {
-            Collections.sort(results, TAG_STAT_NAME_COMPARATOR);
+            results.sort(TAG_STAT_NAME_COMPARATOR);
         } else {
-            Collections.sort(results, TAG_STAT_COUNT_REVERSE_COMPARATOR);
+            results.sort(TAG_STAT_COUNT_REVERSE_COMPARATOR);
         }
         
         return results;

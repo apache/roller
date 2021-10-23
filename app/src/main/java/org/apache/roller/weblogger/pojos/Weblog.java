@@ -889,7 +889,7 @@ public class Weblog implements Serializable {
      */
     public boolean hasBookmarkFolder(String name) {
         for (WeblogBookmarkFolder folder : this.getBookmarkFolders()) {
-            if(name.toLowerCase().equals(folder.getName().toLowerCase())) {
+            if(name.equalsIgnoreCase(folder.getName())) {
                 return true;
             }
         }

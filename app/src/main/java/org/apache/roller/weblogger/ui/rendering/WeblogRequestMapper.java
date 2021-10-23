@@ -253,9 +253,11 @@ public class WeblogRequestMapper implements RequestMapper {
                                        String handle, String locale,
                                        String context, String data) {
         
-        log.debug(handle+","+locale+","+context+","+data);
+        if(log.isDebugEnabled()) {
+            log.debug(handle+","+locale+","+context+","+data);
+        }
         
-        StringBuilder forwardUrl = new StringBuilder();
+        StringBuilder forwardUrl = new StringBuilder(64);
         
         // POST urls, like comment and trackback servlets
         if("POST".equals(request.getMethod())) {
@@ -265,16 +267,16 @@ public class WeblogRequestMapper implements RequestMapper {
                 if(request.getParameter("excerpt") != null) {
                     
                     forwardUrl.append(TRACKBACK_SERVLET);
-                    forwardUrl.append("/");
+                    forwardUrl.append('/');
                     forwardUrl.append(handle);
                     if(locale != null) {
-                        forwardUrl.append("/");
+                        forwardUrl.append('/');
                         forwardUrl.append(locale);
                     }
-                    forwardUrl.append("/");
+                    forwardUrl.append('/');
                     forwardUrl.append(context);
                     if(data != null) {
-                        forwardUrl.append("/");
+                        forwardUrl.append('/');
                         forwardUrl.append(data);
                     }
                     
@@ -282,16 +284,16 @@ public class WeblogRequestMapper implements RequestMapper {
                 } else if(request.getParameter("content") != null) {
                     
                     forwardUrl.append(COMMENT_SERVLET);
-                    forwardUrl.append("/");
+                    forwardUrl.append('/');
                     forwardUrl.append(handle);
                     if(locale != null) {
-                        forwardUrl.append("/");
+                        forwardUrl.append('/');
                         forwardUrl.append(locale);
                     }
-                    forwardUrl.append("/");
+                    forwardUrl.append('/');
                     forwardUrl.append(context);
                     if(data != null) {
-                        forwardUrl.append("/");
+                        forwardUrl.append('/');
                         forwardUrl.append(data);
                     }
                 }
@@ -306,93 +308,102 @@ public class WeblogRequestMapper implements RequestMapper {
             if(context == null) {
                 
                 forwardUrl.append(PAGE_SERVLET);
-                forwardUrl.append("/");
+                forwardUrl.append('/');
                 forwardUrl.append(handle);
                 if(locale != null) {
-                    forwardUrl.append("/");
+                    forwardUrl.append('/');
                     forwardUrl.append(locale);
                 }
                 
-                // requests handled by PageServlet
-            } else if(context.equals("page") || context.equals("entry") ||
-                    context.equals("date") || context.equals("category")
-                    || context.equals("tags")) {
-                
-                forwardUrl.append(PAGE_SERVLET);
-                forwardUrl.append("/");
-                forwardUrl.append(handle);
-                if(locale != null) {
-                    forwardUrl.append("/");
-                    forwardUrl.append(locale);
-                }
-                forwardUrl.append("/");
-                forwardUrl.append(context);
-                if(data != null) {
-                    forwardUrl.append("/");
-                    forwardUrl.append(data);
-                }
-                
-                // requests handled by FeedServlet
-            } else if(context.equals("feed")) {
-                
-                forwardUrl.append(FEED_SERVLET);
-                forwardUrl.append("/");
-                forwardUrl.append(handle);
-                if(locale != null) {
-                    forwardUrl.append("/");
-                    forwardUrl.append(locale);
-                }
-                if(data != null) {
-                    forwardUrl.append("/");
-                    forwardUrl.append(data);
-                }
-                
-                // requests handled by ResourceServlet
-            } else if(context.equals("resource")) {
-
-                forwardUrl.append(RESOURCE_SERVLET);
-                forwardUrl.append("/");
-                forwardUrl.append(handle);
-                if(data != null) {
-                    forwardUrl.append("/");
-                    forwardUrl.append(data);
-                }
-
-                // requests handled by MediaResourceServlet
-            } else if(context.equals("mediaresource")) {
-
-                forwardUrl.append(MEDIA_SERVLET);
-                forwardUrl.append("/");
-                forwardUrl.append(handle);
-                if(data != null) {
-                    forwardUrl.append("/");
-                    forwardUrl.append(data);
-                }
-
-                // requests handled by SearchServlet
-            } else if(context.equals("search")) {
-                
-                forwardUrl.append(SEARCH_SERVLET);
-                forwardUrl.append("/");
-                forwardUrl.append(handle);
-                if(locale != null) {
-                    forwardUrl.append("/");
-                    forwardUrl.append(locale);
-                }
-                // requests handled by RSDServlet
-            } else if(context.equals("rsd")) {
-                
-                forwardUrl.append(RSD_SERVLET);
-                forwardUrl.append("/");
-                forwardUrl.append(handle);
-                
-                // unsupported url
             } else {
-                return null;
+                
+                switch (context) {
+                    // requests handled by PageServlet
+                    case "page":
+                    case "entry":
+                    case "date":
+                    case "category":
+                    case "tags":
+                        forwardUrl.append(PAGE_SERVLET);
+                        forwardUrl.append('/');
+                        forwardUrl.append(handle);
+                        if(locale != null) {
+                            forwardUrl.append('/');
+                            forwardUrl.append(locale);
+                        }
+                        forwardUrl.append('/');
+                        forwardUrl.append(context);
+                        if(data != null) {
+                            forwardUrl.append('/');
+                            forwardUrl.append(data);
+                        }
+                        break;
+                        
+                    // requests handled by FeedServlet
+                    case "feed":
+                        forwardUrl.append(FEED_SERVLET);
+                        forwardUrl.append('/');
+                        forwardUrl.append(handle);
+                        if(locale != null) {
+                            forwardUrl.append('/');
+                            forwardUrl.append(locale);
+                        }
+                        if(data != null) {
+                            forwardUrl.append('/');
+                            forwardUrl.append(data);
+                        }
+                        break;
+                        
+                    // requests handled by ResourceServlet
+                    case "resource":
+                        forwardUrl.append(RESOURCE_SERVLET);
+                        forwardUrl.append('/');
+                        forwardUrl.append(handle);
+                        if(data != null) {
+                            forwardUrl.append('/');
+                            forwardUrl.append(data);
+                        }
+                        break;
+                        
+                    // requests handled by MediaResourceServlet
+                    case "mediaresource":
+                        forwardUrl.append(MEDIA_SERVLET);
+                        forwardUrl.append('/');
+                        forwardUrl.append(handle);
+                        if(data != null) {
+                            forwardUrl.append('/');
+                            forwardUrl.append(data);
+                        }
+                        break;
+                        
+                    // requests handled by SearchServlet
+                    case "search":
+                        forwardUrl.append(SEARCH_SERVLET);
+                        forwardUrl.append('/');
+                        forwardUrl.append(handle);
+                        if(locale != null) {
+                            forwardUrl.append('/');
+                            forwardUrl.append(locale);
+                        }
+                        break;
+                        
+                    // requests handled by RSDServlet
+                    case "rsd":
+                        forwardUrl.append(RSD_SERVLET);
+                        forwardUrl.append('/');
+                        forwardUrl.append(handle);
+                        break;
+                        
+                    // unsupported url
+                    default:
+                        return null;
+                }
             }
         }
         
-        log.debug("FORWARD_URL "+forwardUrl.toString());
+        if(log.isDebugEnabled()) {
+            log.debug("FORWARD_URL "+forwardUrl.toString());
+        }
         
         return forwardUrl.toString();
     }
@@ -401,8 +412,6 @@ public class WeblogRequestMapper implements RequestMapper {
     /**
      * convenience method which determines if the given string is a valid
      * weblog handle.
-     *
-     * TODO 3.0: some kind of caching
      */
     private boolean isWeblog(String potentialHandle) {
         

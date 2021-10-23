@@ -18,8 +18,8 @@
 
 package org.apache.roller.weblogger.ui.rendering.util.cache;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -170,15 +170,8 @@ public final class WeblogPageCache {
         key.append(pageRequest.getWeblogHandle());
         
         if(pageRequest.getWeblogAnchor() != null) {
-            
-            String anchor = null;
-            try {
-                // may contain spaces or other bad chars
-                anchor = URLEncoder.encode(pageRequest.getWeblogAnchor(), "UTF-8");
-            } catch(UnsupportedEncodingException ex) {
-                // ignored
-            }
-            
+            // may contain spaces or other bad chars
+            String anchor = URLEncoder.encode(pageRequest.getWeblogAnchor(), StandardCharsets.UTF_8);
             key.append("/entry/").append(anchor);
         } else {
             
@@ -191,14 +184,8 @@ public final class WeblogPageCache {
             }
             
             if(pageRequest.getWeblogCategoryName() != null) {
-                String cat = null;
-                try {
-                    // may contain spaces or other bad chars
-                    cat = URLEncoder.encode(pageRequest.getWeblogCategoryName(), "UTF-8");
-                } catch(UnsupportedEncodingException ex) {
-                    // ignored
-                }
-                
+                // may contain spaces or other bad chars
+                String cat = URLEncoder.encode(pageRequest.getWeblogCategoryName(), StandardCharsets.UTF_8);
                 key.append('/').append(cat);
             }
             

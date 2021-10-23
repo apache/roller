@@ -18,8 +18,8 @@
 
 package org.apache.roller.weblogger.ui.rendering.util.cache;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
@@ -199,14 +199,8 @@ public final class SiteWideCache implements CacheHandler {
         key.append(pageRequest.getWeblogHandle());
         
         if(pageRequest.getWeblogAnchor() != null) {
-            String anchor = null;
-            try {
-                // may contain spaces or other bad chars
-                anchor = URLEncoder.encode(pageRequest.getWeblogAnchor(), "UTF-8");
-            } catch(UnsupportedEncodingException ex) {
-                // ignored
-            }
-            
+            // may contain spaces or other bad chars
+            String anchor = URLEncoder.encode(pageRequest.getWeblogAnchor(), StandardCharsets.UTF_8);
             key.append("/entry/").append(anchor);
         } else {
             
@@ -219,14 +213,8 @@ public final class SiteWideCache implements CacheHandler {
             }
             
             if(pageRequest.getWeblogCategoryName() != null) {
-                String cat = null;
-                try {
-                    // may contain spaces or other bad chars
-                    cat = URLEncoder.encode(pageRequest.getWeblogCategoryName(), "UTF-8");
-                } catch(UnsupportedEncodingException ex) {
-                    // ignored
-                }
-                
+                // may contain spaces or other bad chars
+                String cat = URLEncoder.encode(pageRequest.getWeblogCategoryName(), StandardCharsets.UTF_8);
                 key.append('/').append(cat);
             }
             
@@ -295,13 +283,7 @@ public final class SiteWideCache implements CacheHandler {
         }
         
         if(feedRequest.getWeblogCategoryName() != null) {
-            String cat = feedRequest.getWeblogCategoryName();
-            try {
-                cat = URLEncoder.encode(cat, "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                // should never happen, utf-8 is always supported
-            }
-            
+            String cat = URLEncoder.encode(feedRequest.getWeblogCategoryName(), StandardCharsets.UTF_8);
             key.append('/').append(cat);
         }
         
@@ -431,7 +413,7 @@ public final class SiteWideCache implements CacheHandler {
             }
         }
         
-        return Utilities.toBase64(string.toString().substring(1).getBytes());
+        return Utilities.toBase64(string.toString().substring(1).getBytes(StandardCharsets.UTF_8));
     }
     
 }

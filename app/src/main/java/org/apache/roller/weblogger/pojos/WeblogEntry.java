@@ -19,8 +19,8 @@
 package org.apache.roller.weblogger.pojos;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -752,12 +752,7 @@ public class WeblogEntry implements Serializable {
      */
     @Deprecated
     public String getPermaLink() {
-        String lAnchor = this.getAnchor();        
-        try {
-            lAnchor = URLEncoder.encode(getAnchor(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // go with the "no encoding" version
-        }        
+        String lAnchor = URLEncoder.encode(getAnchor(), StandardCharsets.UTF_8);
         return "/" + getWebsite().getHandle() + "/entry/" + lAnchor;
     }
     

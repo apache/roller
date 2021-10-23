@@ -60,7 +60,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  */
 public class DatabaseProvider  {
     
-    private static Log log = LogFactory.getLog(DatabaseProvider.class);
+    private static final Log log = LogFactory.getLog(DatabaseProvider.class);
 
     public enum ConfigurationType {JNDI_NAME, JDBC_PROPERTIES}
     private ConfigurationType type = ConfigurationType.JNDI_NAME;
@@ -115,10 +115,10 @@ public class DatabaseProvider  {
             if (getJdbcUsername() != null || getJdbcPassword() != null) {
                 props = new Properties();
                 if (getJdbcUsername() != null) {
-                    props.put("user", getJdbcUsername());
+                    props.setProperty("user", getJdbcUsername());
                 }
                 if (getJdbcPassword() != null) {
-                    props.put("password", getJdbcPassword());
+                    props.setProperty("password", getJdbcPassword());
                 }
             }
             

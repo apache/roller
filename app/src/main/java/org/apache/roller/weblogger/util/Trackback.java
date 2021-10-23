@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -130,7 +131,7 @@ public class Trackback {
             
             // read response
             byte[] response = method.getResponseBody();
-            String responseString = Utilities.escapeHTML(new String(response, "UTF-8"));
+            String responseString = Utilities.escapeHTML(new String(response, StandardCharsets.UTF_8));
             
             LOG.debug("result = " + statusCode + " " + method.getStatusText());
             LOG.debug("response:\n" + responseString);
@@ -138,7 +139,7 @@ public class Trackback {
             if(statusCode == HttpStatus.SC_OK) {
                 // trackback request succeeded, message will give details
                 try {
-                    messages = parseTrackbackResponse(new String(response, "UTF-8"), messages);
+                    messages = parseTrackbackResponse(new String(response, StandardCharsets.UTF_8), messages);
                 } catch (Exception e) {
                     // Cannot parse response, indicates failure
                     messages.addError("weblogEdit.trackbackErrorParsing", responseString);

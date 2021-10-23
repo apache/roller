@@ -690,7 +690,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // Original query ordered by desc # comments.
         // JPA QL doesn't allow queries to be ordered by aggregates; do it in memory
-        Collections.sort(results, STAT_COUNT_COUNT_REVERSE_COMPARATOR);
+        results.sort(STAT_COUNT_COUNT_REVERSE_COMPARATOR);
         
         return results;
     }

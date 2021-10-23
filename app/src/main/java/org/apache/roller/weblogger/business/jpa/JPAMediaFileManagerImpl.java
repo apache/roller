@@ -67,8 +67,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
-    private static Log log = LogFactory.getFactory().getInstance(
-            JPAMediaFileManagerImpl.class);
+    private static final Log log = LogFactory.getFactory().getInstance(JPAMediaFileManagerImpl.class);
     public static final String MIGRATION_STATUS_FILENAME = "migration-status.properties";
 
     /**
@@ -108,8 +107,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public void moveMediaFiles(Collection<MediaFile> mediaFiles,
             MediaFileDirectory targetDirectory) throws WebloggerException {
 
-        List<MediaFile> moved = new ArrayList<>();
-        moved.addAll(mediaFiles);
+        List<MediaFile> moved = new ArrayList<>(mediaFiles);
 
         for (MediaFile mediaFile : moved) {
             mediaFile.getDirectory().getMediaFiles().remove(mediaFile);

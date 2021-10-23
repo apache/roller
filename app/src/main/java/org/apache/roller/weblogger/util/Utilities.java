@@ -10,9 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,11 +37,11 @@ import org.apache.roller.util.RollerConstants;
  */
 public class Utilities {
     /** The <code>Log</code> instance for this class. */
-    private static Log mLogger = LogFactory.getLog(Utilities.class);
+    private static final Log mLogger = LogFactory.getLog(Utilities.class);
 
     public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
 
-    private static Pattern mLinkPattern = Pattern.compile("<a href=.*?>",
+    private static final Pattern mLinkPattern = Pattern.compile("<a href=.*?>",
             Pattern.CASE_INSENSITIVE);
     private static final Pattern OPENING_B_TAG_PATTERN = Pattern.compile(
             "&lt;b&gt;", Pattern.CASE_INSENSITIVE);
@@ -328,7 +325,7 @@ public class Utilities {
     public static List<String> stringToStringList(String instr, String delim) {
         List<String> stringList = new ArrayList<>();
         String[] str = StringUtils.split(instr, delim);
-        Collections.addAll(stringList, str);
+        stringList.addAll(Arrays.asList(str));
         return stringList;
     }
 
@@ -851,50 +848,6 @@ public class Utilities {
 
     public static String encodeEmail(String str) {
         return str != null ? RegexUtil.encodeEmail(str) : null;
-    }
-
-    /**
-     * URL encoding.
-     * 
-     * @param s
-     *            a string to be URL-encoded
-     * @return URL encoding of s using character encoding UTF-8; null if s is
-     *         null.
-     */
-    public static final String encode(String s) {
-        try {
-            if (s != null) {
-                return URLEncoder.encode(s, "UTF-8");
-            } else {
-                return s;
-            }
-        } catch (UnsupportedEncodingException e) {
-            // Java Spec requires UTF-8 be in all Java environments, so this
-            // should not happen
-            return s;
-        }
-    }
-
-    /**
-     * URL decoding.
-     * 
-     * @param s
-     *            a URL-encoded string to be URL-decoded
-     * @return URL decoded value of s using character encoding UTF-8; null if s
-     *         is null.
-     */
-    public static final String decode(String s) {
-        try {
-            if (s != null) {
-                return URLDecoder.decode(s, "UTF-8");
-            } else {
-                return s;
-            }
-        } catch (UnsupportedEncodingException e) {
-            // Java Spec requires UTF-8 be in all Java environments, so this
-            // should not happen
-            return s;
-        }
     }
 
     /**

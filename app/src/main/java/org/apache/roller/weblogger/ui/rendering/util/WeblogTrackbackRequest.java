@@ -18,8 +18,8 @@
 
 package org.apache.roller.weblogger.ui.rendering.util;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -84,14 +84,7 @@ public class WeblogTrackbackRequest extends WeblogRequest {
                 
                 String context = pathElements[0];
                 if("entry".equals(context)) {
-                    try {
-                        this.weblogAnchor = 
-                                URLDecoder.decode(pathElements[1], "UTF-8");
-                    } catch (UnsupportedEncodingException ex) {
-                        // should never happen
-                        log.error(ex);
-                    }
-                    
+                    this.weblogAnchor = URLDecoder.decode(pathElements[1], StandardCharsets.UTF_8);
                 } else {
                     throw new InvalidRequestException("bad path info, "+
                             request.getRequestURL());
