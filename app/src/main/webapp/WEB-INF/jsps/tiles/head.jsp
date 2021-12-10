@@ -7,8 +7,8 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 
 <script src="<s:url value='/webjars/jquery/3.6.0/jquery.min.js' />"></script>
 
-<script src="<s:url value='/webjars/jquery-ui/1.12.1/jquery-ui.min.js' />"></script>
-<link href="<s:url value='/webjars/jquery-ui/1.12.1/jquery-ui.css' />" rel="stylesheet" />
+<script src="<s:url value='/webjars/jquery-ui/1.13.0/jquery-ui.min.js' />"></script>
+<link href="<s:url value='/webjars/jquery-ui/1.13.0/jquery-ui.css' />" rel="stylesheet" />
 
 <script src="<s:url value='/webjars/jquery-validation/1.19.3/jquery.validate.min.js' />"></script>
 
