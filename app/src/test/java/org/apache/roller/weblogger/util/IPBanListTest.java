@@ -91,7 +91,9 @@ class IPBanListTest {
     @DisplayName("isBanned() reads the file if needed")
     void isBanned4() {
         writeIpBanList("10.0.0.1");
-
+        try { // work around for intermittently failing test
+            Thread.sleep(500);
+        } catch (InterruptedException ignored) {}
         assertTrue(ipBanList.isBanned("10.0.0.1"));
     }
 
