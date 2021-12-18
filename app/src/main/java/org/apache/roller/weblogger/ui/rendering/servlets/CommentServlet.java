@@ -295,8 +295,7 @@ public class CommentServlet extends HttpServlet {
                 log.debug("URL is invalid : " + comment.getUrl());
             // if this is a real comment post then authenticate request
         } else if (!preview && !this.authenticator.authenticate(request)) {
-            String[] msg = { request.getParameter("answer") };
-            error = messageUtils.getString("error.commentAuthFailed", msg);
+            error = messageUtils.getString("error.commentAuthFailed");
             log.debug("Comment failed authentication");
         }
 
