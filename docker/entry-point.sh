@@ -29,6 +29,4 @@ database.jdbc.password=${DATABASE_JDBC_PASSWORD}
 EOF
 
 /usr/local/tomcat/bin/wait-for-it.sh ${DATABASE_HOST}
-/usr/local/tomcat/bin/catalina.sh run
-
-
+exec /usr/local/tomcat/bin/catalina.sh run

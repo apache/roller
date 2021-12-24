@@ -21,9 +21,9 @@
 
 # STAGE 1 - BUILD ------------------------------------------------
 
-FROM maven:3.6.0-jdk-11-slim as builder
+FROM maven:3-openjdk-17-slim as builder
 
-COPY . /project/
+COPY ./docker /project/docker
 
 # Build Apache Roller
 
@@ -31,13 +31,14 @@ WORKDIR /tmp
 RUN apt-get update && apt-get install -y git
 RUN git clone https://github.com/apache/roller.git
 WORKDIR /tmp/roller
-RUN git checkout roller-6.0.x; \
+# change to branch/tag you prefer
+RUN git checkout tags/roller-6.1.0; \
 mvn -Duser.home=/builder/home -DskipTests=true -B clean install
 
 
 # STAGE 2 - PACKAGE ------------------------------------------------
 
-FROM tomcat:9.0.20-jre11-slim
+FROM tomcat:9-jdk17-openjdk-slim
 
 # Remove existing Tomcat webapps
 
@@ -69,9 +70,9 @@ RUN mkdir -p data/mediafiles data/searchindex
 
 WORKDIR /usr/local/tomcat/lib
 RUN apt-get update && apt-get install -y wget
-RUN wget -O postgresql.jar https://jdbc.postgresql.org/download/postgresql-9.4-1202.jdbc4.jar
-RUN wget http://repo2.maven.org/maven2/javax/mail/mail/1.4.1/mail-1.4.1.jar
-RUN wget http://repo2.maven.org/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar
+RUN wget -O postgresql.jar https://jdbc.postgresql.org/download/postgresql-42.3.1.jar
+RUN wget https://repo1.maven.org/maven2/javax/mail/mail/1.4.7/mail-1.4.7.jar
+#RUN wget https://repo1.maven.org/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar
 
 # Add Roller entry-point and go!
 
@@ -81,4 +82,4 @@ RUN chgrp -R 0 /usr/local/tomcat
 RUN chmod -R g+rw /usr/local/tomcat
 
 WORKDIR /usr/local/tomcat
-ENTRYPOINT /usr/local/tomcat/bin/entry-point.sh
+CMD [ "/usr/local/tomcat/bin/entry-point.sh" ]
