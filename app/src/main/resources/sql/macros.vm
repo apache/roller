@@ -164,13 +164,15 @@ alter table $tableName alter column $columnName $columnType;
 
 #**
 Rename a table column.
-this is trivial generic SQL - this should work everywhere, right?
 **#
-#macro(alterColumnName $tableName $columnName $newColumnName)
+#macro(alterColumnName $tableName $columnName $newColumnName $columnType)
 #if ($db.DBTYPE == "MSSQL")
 sp_rename '$tableName.$columnName', '$newColumnName', 'COLUMN';
 #elseif ($db.DBTYPE == "HSQLDB")
 alter table $tableName alter column $columnName rename to $newColumnName;
+#elseif ($db.DBTYPE == "MYSQL")
+#** MySQL 5.7 and earlier need this syntax **#
+alter table $tableName change $columnName $newColumnName $columnType;
 #else
 alter table $tableName rename column $columnName to $newColumnName;
 #end

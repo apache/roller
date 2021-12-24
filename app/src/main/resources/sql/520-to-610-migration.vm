@@ -4,4 +4,4 @@
  DON'T RUN THIS, IT'S NOT A DATABASE CREATION SCRIPT!!!
  **#
 
-#alterColumnName('weblog' 'blacklist' 'bannedwordslist')
+#alterColumnName('weblog' 'blacklist' 'bannedwordslist' $db.TEXT_SQL_TYPE)
