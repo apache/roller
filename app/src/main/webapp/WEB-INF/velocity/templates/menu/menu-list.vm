@@ -6,10 +6,10 @@
 	    #else
 	  	<dl class="menuUnselected">
 	    #end
-	       <dt onmouseover="javascript:showMenu('smenu${velocityCount}');">
+	       <dt onmouseover="javascript:showMenu('smenu${foreach.index}');">
 	          <a href="$menu.getUrl( $ctx )">$text.get($menu.getName())</a>
 	       </dt>
-	       <dd id="smenu${velocityCount}">
+	       <dd id="smenu${foreach.index}">
 	          <ul>
 	          #foreach( $item in $menu.getMenuItems() )
                  #if ( $item.isSelected( $req ) )

@@ -272,14 +272,14 @@ Show comments for weblog entry according to Roller configuration.
         <div class="comments-head">$text.get( "macro.weblog.preview" ):</div>
     #else
         <div class="comments-head">$text.get( "macro.weblog.comments" ):</div>
-        #set($comments = $entry.getComments(true, true))
+        #set($comments = $entry.getComments())
     #end
 
     <br/>
     #foreach( $comment in $comments )
         #if($comment.approved || $model.commentForm.preview)
             <a name="comment-$comment.timestamp" id="comment-$comment.timestamp"></a>
-            <div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
+            <div class="comment#if(${foreach.index} % 2 == 0) even#else odd#end" id="comment${foreach.index}">
 
                 $comment.content
 
@@ -314,7 +314,7 @@ Show comments for weblog entry according to Roller configuration.
       #set($comments = [$model.commentForm.previewComment])
       #set( $heading = $text.get( "macro.weblog.preview" ))
     #else
-      #set($comments = $entry.getComments(true, true))
+      #set($comments = $entry.getComments())
       #set( $heading = $text.get( "macro.weblog.comments" ))
     #end
     #if($comments.size() > 0)
@@ -369,7 +369,7 @@ Show comments form for weblog entry.
 
     #if( $cform.error )
         <span class="error">$cform.message</span>
-    #elseif( !$cform.error && !$utils.isEmpty($cform.message) )
+    #elseif( !$utils.isEmpty($cform.message) )
         <span class="status">$cform.message</span>
     #end
 
@@ -809,8 +809,6 @@ Show search again form for a weblog.
           #end
           <input type="submit" value="$text.get( "macro.weblog.searchbutton" )" class="button" />
         </form>
-
-        $text.get( "macro.weblog.searchgoogle", [$model.term, $url.absoluteSite, $url.site, ${weblog.handle}] )
     </div>
 #end
 ## Mobile Version

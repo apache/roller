@@ -719,6 +719,7 @@ public class WeblogEntry implements Serializable {
     /**
      * TODO: why is this method exposed to users with ability to get spam/non-approved comments?
      */
+    @Deprecated
     public List<WeblogEntryComment> getComments(boolean ignoreSpam, boolean approvedOnly) {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -734,7 +735,7 @@ public class WeblogEntry implements Serializable {
     }
     
     public int getCommentCount() {
-        return getComments(true, true).size();
+        return getComments().size();
     }
     
     //------------------------------------------------------------------------
