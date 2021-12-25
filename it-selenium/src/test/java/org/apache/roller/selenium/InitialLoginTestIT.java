@@ -17,6 +17,7 @@
  */
 package org.apache.roller.selenium;
 
+import java.awt.GraphicsEnvironment;
 import java.util.concurrent.TimeUnit;
 import org.apache.roller.selenium.core.CreateWeblogPage;
 import org.apache.roller.selenium.core.LoginPage;
@@ -55,6 +56,9 @@ public class InitialLoginTestIT {
         profile.setPreference("intl.accept_languages", "en_US");
         
         FirefoxOptions options = new FirefoxOptions();
+        if (GraphicsEnvironment.isHeadless()) {
+            options.addArguments("-headless");
+        }
         options.setProfile(profile);
         
         driver = new FirefoxDriver(options);
