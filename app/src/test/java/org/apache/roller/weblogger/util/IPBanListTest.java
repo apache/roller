@@ -28,6 +28,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import org.junit.jupiter.api.Disabled;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -87,6 +88,7 @@ class IPBanListTest {
         assertFalse(ipBanList.isBanned(null));
     }
 
+    @Disabled
     @Test
     @DisplayName("isBanned() reads the file if needed")
     void isBanned4() {
