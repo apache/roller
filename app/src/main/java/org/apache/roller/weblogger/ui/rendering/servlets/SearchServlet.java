@@ -107,17 +107,13 @@ public class SearchServlet extends HttpServlet {
         }
 
         // Development only. Reload if theme has been modified
-        if (themeReload
-                && !weblog.getEditorTheme().equals(WeblogTheme.CUSTOM)) {
+        if (themeReload && !weblog.getEditorTheme().equals(WeblogTheme.CUSTOM)) {
 
             try {
-                ThemeManager manager = WebloggerFactory.getWeblogger()
-                        .getThemeManager();
-                boolean reloaded = manager.reLoadThemeFromDisk(weblog
-                        .getEditorTheme());
+                ThemeManager manager = WebloggerFactory.getWeblogger().getThemeManager();
+                boolean reloaded = manager.reLoadThemeFromDisk(weblog.getEditorTheme());
                 if (reloaded) {
-                    if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest
-                            .getWeblogHandle())) {
+                    if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
                         SiteWideCache.getInstance().clear();
                     } else {
                         WeblogPageCache.getInstance().clear();
@@ -138,10 +134,8 @@ public class SearchServlet extends HttpServlet {
         // lookup template to use for rendering
         ThemeTemplate page = null;
         try {
-
             // try looking for a specific search page
-            page = weblog.getTheme().getTemplateByAction(
-                    ThemeTemplate.ComponentType.SEARCH);
+            page = weblog.getTheme().getTemplateByAction(ThemeTemplate.ComponentType.SEARCH);
 
             // if not found then fall back on default page
             if (page == null) {
@@ -150,13 +144,10 @@ public class SearchServlet extends HttpServlet {
 
             // if still null then that's a problem
             if (page == null) {
-                throw new WebloggerException("Could not lookup default page "
-                        + "for weblog " + weblog.getHandle());
+                throw new WebloggerException("Could not lookup default page for weblog " + weblog.getHandle());
             }
         } catch (Exception e) {
-            log.error(
-                    "Error getting default page for weblog "
-                            + weblog.getHandle(), e);
+            log.error("Error getting default page for weblog " + weblog.getHandle(), e);
         }
 
         // set the content type
@@ -166,13 +157,7 @@ public class SearchServlet extends HttpServlet {
         Map<String, Object> model = new HashMap<>();
         try {
             PageContext pageContext = JspFactory.getDefaultFactory()
-                    .getPageContext(this, request, response, "", false, RollerConstants.EIGHT_KB_IN_BYTES,
-                            true);
-
-            // populate the rendering model
-            Map<String, Object> initData = new HashMap<>();
-            initData.put("request", request);
-            initData.put("pageContext", pageContext);
+                    .getPageContext(this, request, response, "", false, RollerConstants.EIGHT_KB_IN_BYTES, true);
 
             // this is a little hacky, but nothing we can do about it
             // we need the 'weblogRequest' to be a pageRequest so other models
@@ -183,26 +168,26 @@ public class SearchServlet extends HttpServlet {
             // pageRequest.
             WeblogPageRequest pageRequest = new WeblogPageRequest();
             pageRequest.setWeblogHandle(searchRequest.getWeblogHandle());
-            pageRequest.setWeblogCategoryName(searchRequest
-                    .getWeblogCategoryName());
+            pageRequest.setWeblogCategoryName(searchRequest.getWeblogCategoryName());
             pageRequest.setLocale(searchRequest.getLocale());
             pageRequest.setDeviceType(searchRequest.getDeviceType());
+            pageRequest.setAuthenticUser(searchRequest.getAuthenticUser());
+
+            // populate the rendering model
+            Map<String, Object> initData = new HashMap<>();
+            initData.put("request", request);
+            initData.put("pageContext", pageContext);
             initData.put("parsedRequest", pageRequest);
             initData.put("searchRequest", searchRequest);
-
-            // define url strategy
-            initData.put("urlStrategy", WebloggerFactory.getWeblogger()
-                    .getUrlStrategy());
+            initData.put("urlStrategy", WebloggerFactory.getWeblogger().getUrlStrategy());
 
             // Load models for pages
-            String searchModels = WebloggerConfig
-                    .getProperty("rendering.searchModels");
+            String searchModels = WebloggerConfig.getProperty("rendering.searchModels");
             ModelLoader.loadModels(searchModels, model, initData, true);
 
             // Load special models for site-wide blog
             if (WebloggerRuntimeConfig.isSiteWideWeblog(weblog.getHandle())) {
-                String siteModels = WebloggerConfig
-                        .getProperty("rendering.siteModels");
+                String siteModels = WebloggerConfig.getProperty("rendering.siteModels");
                 ModelLoader.loadModels(siteModels, model, initData, true);
             }
 
