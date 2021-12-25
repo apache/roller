@@ -221,11 +221,12 @@ public class RollerContext extends ContextLoaderListener
         Properties velocityProps = new Properties();
 
         try {
-            InputStream instream = servletContext.getResourceAsStream("/WEB-INF/velocity.properties");
-
-            velocityProps.load(instream);
-
-            log.debug("Velocity props = " + velocityProps);
+            try (InputStream instream = servletContext.getResourceAsStream("/WEB-INF/velocity.properties")) {
+                velocityProps.load(instream);
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Velocity props = " + velocityProps);
+            }
 
             // init velocity
             RuntimeSingleton.init(velocityProps);
