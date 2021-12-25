@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+
+    <action>
+        <actionName>CUSTOM-display-dependency-updates</actionName>
+        <displayName>display-dependency-updates</displayName>
+        <goals>
+            <goal>versions:display-dependency-updates</goal>
+        </goals>
+    </action>
+
+    <action>
+        <actionName>CUSTOM-display-property-updates</actionName>
+        <displayName>display-property-updates</displayName>
+        <goals>
+            <goal>versions:display-property-updates</goal>
+        </goals>
+    </action>
+
+    <action>
+        <actionName>CUSTOM-display-plugin-updates</actionName>
+        <displayName>display-plugin-updates</displayName>
+        <goals>
+            <goal>versions:display-plugin-updates</goal>
+        </goals>
+    </action>
+
+</actions>
