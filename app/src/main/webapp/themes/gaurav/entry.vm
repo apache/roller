@@ -44,7 +44,7 @@
 						<div class="comments-head">$text.get( "macro.weblog.preview" ):</div>
 					#else
 						#if($entry.commentCount > 0)
-							#set($comments = $entry.getComments(true, true))
+							#set($comments = $entry.getComments())
 							<div class="comments-head">$text.get( "macro.weblog.comments" ):</div>
 						#else
 							<div class="comments-head">No one has commented yet.</div>
@@ -56,7 +56,7 @@
 						#foreach( $comment in $comments )
 							#if($comment.approved || $model.commentForm.preview)
 								<a name="comment-$comment.timestamp" id="comment-$comment.timestamp"></a>
-								<div class="comment#if($velocityCount % 2 == 0) even#else odd#end" id="comment${velocityCount}">
+								<div class="comment#if(${foreach.index} % 2 == 0) even#else odd#end" id="comment${foreach.index}">
 									<p>$comment.content</p>
 									<p class="comment-details">
 									$text.get("macro.weblog.postedby")

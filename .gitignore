@@ -11,9 +11,8 @@
 *.iws
 
 # NetBeans
-/nb-configuration.xml
-/app/nb-configuration.xml
-/app/nbactions.xml
+nb-configuration.xml
+nbproject
 
 # Mac
 .DS_Store

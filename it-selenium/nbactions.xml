@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+
+    <action>
+        <actionName>run</actionName>
+        <displayName>clean install with geckos</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>install</goal>
+        </goals>
+        <properties>
+            <!-- change path or copy driver to apache-roller/it-selenium/ -->
+            <webdriver.gecko.driver>geckodriver</webdriver.gecko.driver>
+        </properties>
+    </action>
+
+    <action>
+        <actionName>debug</actionName>
+        <displayName>debug clean install with geckos</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>install</goal>
+        </goals>
+        <properties>
+            <jpda.listen>maven</jpda.listen>
+            <!-- change path or copy driver to apache-roller/it-selenium/ -->
+            <webdriver.gecko.driver>geckodriver</webdriver.gecko.driver>
+        </properties>
+    </action>
+
+</actions>
