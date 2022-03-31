@@ -50,7 +50,9 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -300,9 +302,9 @@ public class RollerContext extends ContextLoaderListener
         // supported encoders
         encoders.put("bcrypt", new BCryptPasswordEncoder());
         encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
-        // requires bouncy castle impl
-//        encoders.put("scrypt", new SCryptPasswordEncoder());
-//        encoders.put("argon2", new Argon2PasswordEncoder());
+        // provided by bouncy castle dependency
+        encoders.put("scrypt", new SCryptPasswordEncoder());
+        encoders.put("argon2", new Argon2PasswordEncoder());
 
         // just for testing
         encoders.put("noop", org.springframework.security.crypto.password.NoOpPasswordEncoder.getInstance());
