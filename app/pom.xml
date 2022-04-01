@@ -41,22 +41,23 @@ limitations under the License.
         <angular.version>1.7.8</angular.version>
         <ant.version>1.10.12</ant.version>
         <asm.version>9.2</asm.version>
+        <bouncycastle.version>1.70</bouncycastle.version>
         <commons-validator.version>1.7</commons-validator.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <commons-codec.version>1.15</commons-codec.version>
         <eclipse-link.version>2.7.10</eclipse-link.version>
-        <guice.version>5.0.1</guice.version>
-        <log4j2.version>2.17.1</log4j2.version>
-        <lucene.version>9.0.0</lucene.version>
+        <guice.version>5.1.0</guice.version>
+        <log4j2.version>2.17.2</log4j2.version>
+        <lucene.version>9.1.0</lucene.version>
         <oauth-core.version>20100527</oauth-core.version>
         <maven-war.version>3.2.3</maven-war.version>
         <maven-surefire.version>2.22.2</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
-        <rome.version>1.17.0</rome.version>
-        <slf4j.version>1.7.32</slf4j.version>
-        <spring.version>5.3.14</spring.version>
-        <spring.security.version>5.6.1</spring.security.version>
-        <struts.version>2.5.28.2</struts.version>
+        <rome.version>1.18.0</rome.version>
+        <slf4j.version>1.7.36</slf4j.version>
+        <spring.version>5.3.18</spring.version>
+        <spring.security.version>5.6.2</spring.security.version>
+        <struts.version>2.5.29</struts.version>
         <velocity.version>2.3</velocity.version>
         <webjars.version>1.6</webjars.version>
         <ws-commons-util.version>1.0.2</ws-commons-util.version>
@@ -533,6 +534,12 @@ limitations under the License.
             <artifactId>oauth-provider</artifactId>
             <scope>compile</scope>
             <version>${oauth-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>${bouncycastle.version}</version>
         </dependency>
 
         <!-- Test deps -->

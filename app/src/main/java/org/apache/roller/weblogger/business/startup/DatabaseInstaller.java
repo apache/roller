@@ -204,8 +204,8 @@ public class DatabaseInstaller {
         int myVersion = parseVersionString(version);
         int dbversion = getDatabaseVersion();
 
-        log.debug("Database version = "+dbversion);
-        log.debug("Desired version = "+myVersion);
+        log.info("Database version = "+dbversion);
+        log.info("Desired version = "+myVersion);
 
         Connection con = null;
         try {
