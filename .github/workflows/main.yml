@@ -34,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '11', '17' ]
+        java: [ '11', '17', '18' ]
 
     steps:
       - name: Set up JDK ${{ matrix.java }} 
@@ -44,7 +44,7 @@ jobs:
           distribution: 'zulu'
 
       - name: Checkout Project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build Roller and run JUnit Tests
         run: mvn -V -ntp install
@@ -55,16 +55,27 @@ jobs:
           bash -c "wget -c https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz -O - | tar -xz"
           mvn -V -ntp install
 
-      - name: Publish JUnit Report
-        uses: mikepenz/action-junit-report@v2
-        if: always()
+# TODO: needs submodule workaround since apache does not allow third party actions anymore
+#      - name: Publish JUnit Report
+#        uses: mikepenz/action-junit-report@v3
+#        if: always()
+#        with:
+#          check_name: JUnit Reports for Linux/JDK ${{ matrix.java }} 
+#          report_paths: 'app/target/surefire-reports/TEST-*.xml'
+#
+#      - name: Publish IT Report
+#        uses: mikepenz/action-junit-report@v3
+#        if: always()
+#        with:
+#          check_name: IT Reports for Linux/JDK ${{ matrix.java }} 
+#          report_paths: 'it-selenium/target/failsafe-reports/TEST-*.xml'
+      
+      # only on integration and only once in this matrix
+      - name: Upload Dev Build on Integration
+        if: ${{ (matrix.java == '11') && (github.event_name == 'push') }}
+        uses: actions/upload-artifact@v3
         with:
-          check_name: JUnit Reports for Linux/JDK ${{ matrix.java }} 
-          report_paths: 'app/target/surefire-reports/TEST-*.xml'
-
-      - name: Publish IT Report
-        uses: mikepenz/action-junit-report@v2
-        if: always()
-        with:
-          check_name: IT Reports for Linux/JDK ${{ matrix.java }} 
-          report_paths: 'it-selenium/target/failsafe-reports/TEST-*.xml'
+          name: dev-build
+          path: ./app/target/roller.war
+          retention-days: 90
+          if-no-files-found: error
