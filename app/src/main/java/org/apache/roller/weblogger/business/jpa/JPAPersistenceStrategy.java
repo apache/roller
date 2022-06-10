@@ -25,15 +25,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
-import javax.persistence.FlushModeType;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceException;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.FlushModeType;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.Query;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.apache.roller.weblogger.business.DatabaseProvider;
 
@@ -81,7 +81,7 @@ public class JPAPersistenceStrategy {
             Enumeration<Object> keys = WebloggerConfig.keys();
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
-                if (       key.startsWith("javax.persistence.") 
+                if (       key.startsWith("jakarta.persistence.")
                         || key.startsWith("openjpa.")
                         || key.startsWith("eclipselink.")
                         || key.startsWith("hibernate.")) {
@@ -92,12 +92,12 @@ public class JPAPersistenceStrategy {
             }
 
             if (dbProvider.getType() == DatabaseProvider.ConfigurationType.JNDI_NAME) {
-                emfProps.setProperty("javax.persistence.nonJtaDataSource", dbProvider.getFullJndiName());
+                emfProps.setProperty("jakarta.persistence.nonJtaDataSource", dbProvider.getFullJndiName());
             } else {
-                emfProps.setProperty("javax.persistence.jdbc.driver", dbProvider.getJdbcDriverClass());
-                emfProps.setProperty("javax.persistence.jdbc.url", dbProvider.getJdbcConnectionURL());
-                emfProps.setProperty("javax.persistence.jdbc.user", dbProvider.getJdbcUsername());
-                emfProps.setProperty("javax.persistence.jdbc.password", dbProvider.getJdbcPassword());
+                emfProps.setProperty("jakarta.persistence.jdbc.driver", dbProvider.getJdbcDriverClass());
+                emfProps.setProperty("jakarta.persistence.jdbc.url", dbProvider.getJdbcConnectionURL());
+                emfProps.setProperty("jakarta.persistence.jdbc.user", dbProvider.getJdbcUsername());
+                emfProps.setProperty("jakarta.persistence.jdbc.password", dbProvider.getJdbcPassword());
             }
 
             try {

@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,7 +49,7 @@ import org.apache.roller.weblogger.business.jpa.JPAPersistenceStrategy;
 @com.google.inject.Singleton
 public class JPAPlanetManagerImpl extends AbstractManagerImpl implements PlanetManager {
     
-    private static Log log = LogFactory.getLog(JPAPlanetManagerImpl.class);
+    private static final Log log = LogFactory.getLog(JPAPlanetManagerImpl.class);
     
     /** The strategy for this manager. */
     private final JPAPersistenceStrategy strategy;
