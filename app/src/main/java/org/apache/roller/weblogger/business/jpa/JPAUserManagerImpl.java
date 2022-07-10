@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import java.sql.Timestamp;
-import javax.persistence.NoResultException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -33,7 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.RollerPermission;
@@ -45,12 +45,12 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 @com.google.inject.Singleton
 public class JPAUserManagerImpl implements UserManager {
-    private static Log log = LogFactory.getLog(JPAUserManagerImpl.class);
+    private static final Log log = LogFactory.getLog(JPAUserManagerImpl.class);
 
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of userNames -> userIds
-    private Map<String, String> userNameToIdMap = Collections.synchronizedMap(new HashMap<String, String>());
+    private final Map<String, String> userNameToIdMap = Collections.synchronizedMap(new HashMap<>());
     
 
     @com.google.inject.Inject

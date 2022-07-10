@@ -37,8 +37,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;

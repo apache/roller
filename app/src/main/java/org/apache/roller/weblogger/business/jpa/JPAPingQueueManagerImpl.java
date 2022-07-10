@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.business.jpa;
 
 import java.sql.Timestamp;
 import java.util.List;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,8 +38,7 @@ import org.apache.roller.weblogger.pojos.PingQueueEntry;
 @com.google.inject.Singleton
 public class JPAPingQueueManagerImpl implements PingQueueManager {
 
-    private static Log log = LogFactory.getLog(
-        JPAPingQueueManagerImpl.class);
+    private static final Log log = LogFactory.getLog(JPAPingQueueManagerImpl.class);
 
     /** The strategy for this manager. */
     private final JPAPersistenceStrategy strategy;

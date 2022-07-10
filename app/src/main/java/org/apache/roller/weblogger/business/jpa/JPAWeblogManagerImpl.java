@@ -26,9 +26,9 @@ import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,7 +81,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     private final JPAPersistenceStrategy strategy;
     
     // cached mapping of weblogHandles -> weblogIds
-    private final Map<String,String> weblogHandleToIdMap = Collections.synchronizedMap(new HashMap<String,String>());
+    private final Map<String, String> weblogHandleToIdMap = Collections.synchronizedMap(new HashMap<>());
 
     @com.google.inject.Inject
     protected JPAWeblogManagerImpl(Weblogger roller, JPAPersistenceStrategy strat) {

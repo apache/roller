@@ -20,8 +20,8 @@ package org.apache.roller.weblogger.business.jpa;
 
 import java.io.StringReader;
 import java.util.List;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,8 +52,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     /**
      * The logger instance for this class.
      */
-    private static Log log = LogFactory
-            .getFactory().getInstance(JPABookmarkManagerImpl.class);
+    private static final Log log = LogFactory.getFactory().getInstance(JPABookmarkManagerImpl.class);
 
     /**
      * Creates a new instance of JPABookmarkManagerImpl

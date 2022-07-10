@@ -20,9 +20,9 @@ package org.apache.roller.weblogger.business.jpa;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DateUtil;

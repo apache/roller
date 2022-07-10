@@ -29,8 +29,8 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import java.util.Collection;
 import java.util.List;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.apache.roller.weblogger.business.Weblogger;
 
 /*
@@ -47,7 +47,7 @@ public class JPAAutoPingManagerImpl implements AutoPingManager {
     /**
      * The logger instance for this class.
      */
-    private static Log logger = LogFactory.getFactory().getInstance(JPAAutoPingManagerImpl.class);
+    private static final Log logger = LogFactory.getFactory().getInstance(JPAAutoPingManagerImpl.class);
 
     /**
      * Creates a new instance of JPAAutoPingManagerImpl

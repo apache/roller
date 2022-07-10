@@ -23,8 +23,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
