@@ -73,13 +73,12 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
 
                 // are we also enforcing global permissions?
                 if (theAction.requiredGlobalPermissionActions() != null
-                        && !theAction.requiredGlobalPermissionActions()
-                                .isEmpty()) {
-                    GlobalPermission perm = new GlobalPermission(
-                            theAction.requiredGlobalPermissionActions());
+                        && !theAction.requiredGlobalPermissionActions().isEmpty()) {
+                    GlobalPermission perm = new GlobalPermission(theAction.requiredGlobalPermissionActions());
                     if (!umgr.checkPermission(perm, authenticatedUser)) {
                         if (log.isDebugEnabled()) {
-                            log.debug("DENIED: user does not have permission = " + perm.toString());
+                            log.debug(String.format("DENIED: user %s does not have permission = %s",
+                                authenticatedUser.getUserName(), perm));
                         }
                         return UIAction.DENIED;
                     }
@@ -92,9 +91,9 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
                             .getActionWeblog();
                     if (actionWeblog == null) {
                         if (log.isWarnEnabled()) {
-                            log.warn("User " + authenticatedUser.getUserName() +
-                                    " unable to process action \"" + ((UIAction) theAction).getActionName() +
-                                    "\" because no weblog was defined (Check JSP form provides weblog value.)");
+                            log.warn(String.format("User %s unable to process action %s " +
+                                    "because no weblog was defined (Check JSP form provides weblog value).",
+                                authenticatedUser.getUserName(), ((UIAction) theAction).getActionName()));
                         }
                         return UIAction.DENIED;
                     }
@@ -109,8 +108,8 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
 
                         if (!umgr.checkPermission(required, authenticatedUser)) {
                             if (log.isDebugEnabled()) {
-                                log.debug("DENIED: user does not have required weblog permissions = "
-                                        + required);
+                                log.debug(String.format("DENIED: user %s does not have required weblog permissions %s",
+                                    authenticatedUser.getUserName(), required));
                             }
                             return UIAction.DENIED;
                         }
