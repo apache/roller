@@ -28,6 +28,8 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,6 +50,7 @@ public class CommentTest  {
     /**
      * All tests in this suite require a user, weblog, and an entry.
      */
+    @BeforeEach
     public void setUp() throws Exception {
         
         // setup weblogger
@@ -63,7 +66,8 @@ public class CommentTest  {
             throw new Exception("Test setup failed", ex);
         }
     }
-    
+
+    @AfterEach
     public void tearDown() throws Exception {
         
         try {
