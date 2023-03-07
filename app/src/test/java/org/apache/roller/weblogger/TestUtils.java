@@ -57,6 +57,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogHitCount;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.util.DerbyManager;
 
 /**
  * Utility class for unit test classes.
@@ -66,9 +67,17 @@ public final class TestUtils {
     // Username prefix we are using (simplifies local testing)
     public static final String JUNIT_PREFIX = "junit_";
 
+    private static DerbyManager derbyManager = null;
+
     public static void setupWeblogger() throws Exception {
 
         if (!WebloggerFactory.isBootstrapped()) {
+            synchronized (TestUtils.class) {
+                if (derbyManager == null) {
+                    derbyManager = new DerbyManager("./target/testdb", "./target/dbscripts", 4224);
+                    derbyManager.startDerby();
+                }
+            }
 
             // do core services preparation
             WebloggerStartup.prepare();
@@ -105,6 +114,8 @@ public final class TestUtils {
 
         // trigger shutdown
         WebloggerFactory.getWeblogger().shutdown();
+
+        derbyManager.stopDerby();
     }
 
     /**

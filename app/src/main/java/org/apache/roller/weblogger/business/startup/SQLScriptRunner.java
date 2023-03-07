@@ -118,10 +118,8 @@ public class SQLScriptRunner {
             try {
                 Statement stmt = con.createStatement();
                 stmt.executeUpdate(command);
-                if (!con.getAutoCommit()) {
-                    con.commit();
-                }
-                
+                con.commit();
+
                 // on success, echo command to messages
                 successMessage(command);
                 
