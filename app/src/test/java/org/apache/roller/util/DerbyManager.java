@@ -51,20 +51,15 @@ public class DerbyManager {
                 //System.setProperty("derby.drda.logConnections","true");
                 NetworkServerControl server = new NetworkServerControl();
                 server.start(new PrintWriter(System.out));
+                
                 try {Thread.sleep(2000);} catch (Exception ignored) {}
                 System.out.println("Runtime Info: " + server.getRuntimeInfo());
-                //System.out.println("System Info:  " + server.getSysinfo());
 
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
                 Connection conn = DriverManager.getConnection(
                     "jdbc:derby://localhost:" + port + "/rollerdb;create=true","APP", "APP");
 
-                //Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-                //Connection conn = DriverManager.getConnection(
-                //"jdbc:derby:rollerdb;create=true","APP", "APP");
-
                 // create roller tables
-
                 SQLScriptRunner runner1 = new SQLScriptRunner(
                     databaseScriptsDir + File.separator + "droptables.sql");
                 runner1.runScript(conn, false);
@@ -85,21 +80,13 @@ public class DerbyManager {
             e.printStackTrace();
             throw new Exception("ERROR starting Derby");
         }
-
     }
 
     public void stopDerby() throws Exception {
         try {
                 Class.forName("org.apache.derby.jdbc.ClientDriver");
-
-                String driverURL =
-                    "jdbc:derby://localhost:" + port + "/rollerdb";
-                Connection conn =
-                    DriverManager.getConnection(driverURL,"APP", "APP");
-
-                //Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-                //Connection conn = DriverManager.getConnection(
-                //"jdbc:derby:rollerdb;create=true","APP", "APP");
+                String driverURL = "jdbc:derby://localhost:" + port + "/rollerdb";
+                Connection conn = DriverManager.getConnection(driverURL,"APP", "APP");
 
                 // drop Roller tables
                 SQLScriptRunner runner = new SQLScriptRunner(
@@ -124,17 +111,6 @@ public class DerbyManager {
                 //System.setProperty("derby.drda.logConnections","true");
                 NetworkServerControl server = new NetworkServerControl();
                 server.shutdown();
-
-                //try {
-                //    while (true) {
-                //       server.ping();
-                //    }
-                //} catch (Exception expected) {}
-
-                // Embedded Derby
-                //DriverManager.getConnection("jdbc:derby:;shutdown=true");
-
-                //try {Thread.sleep(2000);} catch (Exception ignored) {}
 
         } catch (Exception e) {
             e.printStackTrace();
