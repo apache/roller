@@ -38,6 +38,9 @@ drop table roller_mediafiletag;
 drop table roller_mediafile;
 drop table roller_mediafiledir;
 
+-- oauth tables
+drop table roller_oauthconsumer;
+drop table roller_oauthaccessor;
 
 -- core services tables
 drop table roller_hitcounts;
@@ -52,10 +55,6 @@ drop table custom_template_rendition;
 
 -- core platform tables
 drop table roller_permission;
-drop table weblog;
 drop table userrole;
 drop table roller_user;
-
--- oauth tables
-drop table roller_oauthconsumer;
-drop table roller_oauthaccessor;
+drop table weblog;

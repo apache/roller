@@ -121,7 +121,7 @@ public class SQLScriptRunner {
                 if (!con.getAutoCommit()) {
                     con.commit();
                 }
-                
+
                 // on success, echo command to messages
                 successMessage(command);
                 

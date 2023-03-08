@@ -8,7 +8,7 @@ Roller is made up of the following Maven projects:
 * _roller-project_:         Top level project
 * _app_:                    Roller Weblogger webapp, JSP pages, Velocity templates
 * _assembly-release_:       Used to create official distributions of Roller
-* _docs_:                   Roller documentation in ODT format
+* _docs_:                   Roller documentation in ASCII Doc format
 * _it-selenium_:            Integrated browser tests for Roller using Selenium
 
 ## Documentation

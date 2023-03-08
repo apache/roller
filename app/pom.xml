@@ -24,7 +24,7 @@ limitations under the License.
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>6.1.1</version>
+        <version>6.1.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -629,7 +629,7 @@ limitations under the License.
                 </dependencies>
             </plugin>
 
-            <!-- Activates the Derby database for unit tests and mvn jetty:run -->
+            <!-- Activates the Derby database for unit tests and mvn jetty:run
             <plugin>
                 <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
                 <artifactId>inmemdb-maven-plugin</artifactId>
@@ -667,6 +667,7 @@ limitations under the License.
                 </executions>
 
             </plugin>
+            -->
 
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
