@@ -17,6 +17,6 @@
  */
 
 /**
- * Lucene-based search operations.
+ * Lucene search index implementation.
  */
-package org.apache.roller.weblogger.business.search.operations;
+package org.apache.roller.weblogger.business.search.lucene;

@@ -38,9 +38,9 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.search.FieldConstants;
-import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.search.operations.SearchOperation;
+import org.apache.roller.weblogger.business.search.lucene.FieldConstants;
+import org.apache.roller.weblogger.business.search.lucene.LuceneIndexManager;
+import org.apache.roller.weblogger.business.search.lucene.SearchOperation;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryWrapperComparator;
@@ -104,17 +104,16 @@ public class SearchResultsModel extends PageModel {
 		}
 
 		// setup the search
-		IndexManager indexMgr = WebloggerFactory.getWeblogger()
-				.getIndexManager();
+		LuceneIndexManager indexMgr =
+			(LuceneIndexManager)WebloggerFactory.getWeblogger().getIndexManager();
 
 		SearchOperation search = new SearchOperation(indexMgr);
 		search.setTerm(searchRequest.getQuery());
 
-		if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest
-				.getWeblogHandle())) {
+		if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
 			this.websiteSpecificSearch = false;
 		} else {
-			search.setWebsiteHandle(searchRequest.getWeblogHandle());
+			search.setWeblogHandle(searchRequest.getWeblogHandle());
 		}
 
 		if (StringUtils.isNotEmpty(searchRequest.getWeblogCategoryName())) {

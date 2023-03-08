@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 /* Created on Jul 18, 2003 */
-package org.apache.roller.weblogger.business.search.operations;
+package org.apache.roller.weblogger.business.search.lucene;
 
 import java.io.IOException;
 
@@ -34,10 +34,7 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopFieldDocs;
-import org.apache.roller.weblogger.business.search.FieldConstants;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
-import org.apache.roller.weblogger.business.search.IndexUtil;
 
 /**
  * An operation that searches the index.
@@ -49,12 +46,14 @@ public class SearchOperation extends ReadFromIndexOperation {
     // ~ Static fields/initializers
     // =============================================
 
-    private static Log mLogger = LogFactory.getFactory().getInstance(
+    private static Log logger = LogFactory.getFactory().getInstance(
             SearchOperation.class);
 
     private static final String[] SEARCH_FIELDS = new String[] {
-            FieldConstants.CONTENT, FieldConstants.TITLE,
-            FieldConstants.C_CONTENT };
+        FieldConstants.CONTENT,
+        FieldConstants.TITLE,
+        FieldConstants.C_CONTENT
+    };
 
     private static final Sort SORTER = new Sort(new SortField(
             FieldConstants.PUBLISHED, SortField.Type.STRING, true));
@@ -66,7 +65,7 @@ public class SearchOperation extends ReadFromIndexOperation {
     private TopFieldDocs searchresults;
 
     private String term;
-    private String websiteHandle;
+    private String weblogHandle;
     private String category;
     private String locale;
     private String parseError;
@@ -80,7 +79,7 @@ public class SearchOperation extends ReadFromIndexOperation {
     public SearchOperation(IndexManager mgr) {
         // TODO: finish moving IndexManager to backend, so this cast is not
         // needed
-        super((IndexManagerImpl) mgr);
+        super((LuceneIndexManager) mgr);
     }
 
     // ~ Methods
@@ -106,7 +105,7 @@ public class SearchOperation extends ReadFromIndexOperation {
             searcher = new IndexSearcher(reader);
 
             MultiFieldQueryParser multiParser = new MultiFieldQueryParser(
-                    SEARCH_FIELDS, IndexManagerImpl.getAnalyzer());
+                    SEARCH_FIELDS, LuceneIndexManager.getAnalyzer());
 
             // Make it an AND by default. Comment this out for an or (default)
             multiParser.setDefaultOperator(MultiFieldQueryParser.Operator.AND);
@@ -114,37 +113,34 @@ public class SearchOperation extends ReadFromIndexOperation {
             // Create a query object out of our term
             Query query = multiParser.parse(term);
 
-            Term tUsername = IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE,
-                    websiteHandle);
-
-            if (tUsername != null) {
+            Term handleTerm = IndexUtil.getTerm(FieldConstants.WEBSITE_HANDLE, weblogHandle);
+            if (handleTerm != null) {
                 query = new BooleanQuery.Builder()
                     .add(query, BooleanClause.Occur.MUST)
-                    .add(new TermQuery(tUsername), BooleanClause.Occur.MUST)
+                    .add(new TermQuery(handleTerm), BooleanClause.Occur.MUST)
                     .build();
             }
 
             if (category != null) {
-                Term tCategory = new Term(FieldConstants.CATEGORY, category.toLowerCase());
+                Term catTerm = new Term(FieldConstants.CATEGORY, category.toLowerCase());
                 query = new BooleanQuery.Builder()
                     .add(query, BooleanClause.Occur.MUST)
-                    .add(new TermQuery(tCategory), BooleanClause.Occur.MUST)
+                    .add(new TermQuery(catTerm), BooleanClause.Occur.MUST)
                     .build();
             }
 
-            Term tLocale = IndexUtil.getTerm(FieldConstants.LOCALE, locale);
-
-            if (tLocale != null) {
+            Term localeTerm = IndexUtil.getTerm(FieldConstants.LOCALE, locale);
+            if (localeTerm != null) {
                 query = new BooleanQuery.Builder()
                     .add(query, BooleanClause.Occur.MUST)
-                    .add(new TermQuery(tLocale), BooleanClause.Occur.MUST)
+                    .add(new TermQuery(localeTerm), BooleanClause.Occur.MUST)
                     .build();
             }
 
             searchresults = searcher.search(query, docLimit, SORTER);
 
         } catch (IOException e) {
-            mLogger.error("Error searching index", e);
+            logger.error("Error searching index", e);
             parseError = e.getMessage();
 
         } catch (ParseException e) {
@@ -206,11 +202,11 @@ public class SearchOperation extends ReadFromIndexOperation {
     /**
      * Sets the website handle.
      * 
-     * @param websiteHandle
+     * @param weblogHandle
      *            the new website handle
      */
-    public void setWebsiteHandle(String websiteHandle) {
-        this.websiteHandle = websiteHandle;
+    public void setWeblogHandle(String weblogHandle) {
+        this.weblogHandle = weblogHandle;
     }
 
     /**

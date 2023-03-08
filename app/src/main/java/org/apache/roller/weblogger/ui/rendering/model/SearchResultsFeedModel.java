@@ -38,9 +38,9 @@ import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.search.FieldConstants;
-import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.search.operations.SearchOperation;
+import org.apache.roller.weblogger.business.search.lucene.FieldConstants;
+import org.apache.roller.weblogger.business.search.lucene.LuceneIndexManager;
+import org.apache.roller.weblogger.business.search.lucene.SearchOperation;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -130,8 +130,8 @@ public class SearchResultsFeedModel implements Model {
 				.getIntProperty("site.newsfeeds.defaultEntries");
 
 		// setup the search
-		IndexManager indexMgr = WebloggerFactory.getWeblogger()
-				.getIndexManager();
+		LuceneIndexManager indexMgr =
+			(LuceneIndexManager)WebloggerFactory.getWeblogger().getIndexManager();
 
 		SearchOperation search = new SearchOperation(indexMgr);
 		search.setTerm(feedRequest.getTerm());
@@ -140,7 +140,7 @@ public class SearchResultsFeedModel implements Model {
 				.getWeblogHandle())) {
 			this.websiteSpecificSearch = false;
 		} else {
-			search.setWebsiteHandle(feedRequest.getWeblogHandle());
+			search.setWeblogHandle(feedRequest.getWeblogHandle());
 		}
 
 		if (StringUtils.isNotEmpty(feedRequest.getWeblogCategoryName())) {

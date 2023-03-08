@@ -308,6 +308,23 @@ limitations under the License.
             <version>${lucene.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>9.1.1</version>
+            <!-- exclude vulnerable dependencies -->
+            <exclusions>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-codec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-common</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- slf4j implementing the apache commons-logging interfaces -->
         <!-- note: commons-logging needs to be excluded in all dependencies transitive depending on it.
         See 2006 RFE https://issues.apache.org/jira/browse/MNG-1977 for maven's missing feature of global exclusions -->
@@ -365,7 +382,7 @@ limitations under the License.
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.9</version>
+            <version>1.10.0</version>
          </dependency>
 
         <dependency>
@@ -568,6 +585,20 @@ limitations under the License.
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyclient</artifactId>
             <version>${derby.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.2.4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.instancio</groupId>
+            <artifactId>instancio-junit</artifactId>
+            <version>2.9.0</version>
             <scope>test</scope>
         </dependency>
 

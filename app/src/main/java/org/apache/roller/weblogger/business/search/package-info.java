@@ -17,6 +17,6 @@
  */
 
 /**
- * Search index manager implementation uses Lucene.
+ * Search index interface with Lucene and Solr implementations.
  */
 package org.apache.roller.weblogger.business.search;

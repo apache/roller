@@ -15,16 +15,17 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-package org.apache.roller.weblogger.business;
+package org.apache.roller.weblogger.business.search;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
-import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
-import org.apache.roller.weblogger.business.search.operations.SearchOperation;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.search.lucene.LuceneIndexManager;
+import org.apache.roller.weblogger.business.search.lucene.AddEntryOperation;
+import org.apache.roller.weblogger.business.search.lucene.SearchOperation;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -41,10 +42,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test Search Manager business layer operations.
  */
-public class IndexManagerTest  {
+public class LuceneIndexManagerTest  {
     User testUser = null;
     Weblog testWeblog = null;
-    public static Log log = LogFactory.getLog(IndexManagerTest.class);    
+    public static Log log = LogFactory.getLog(LuceneIndexManagerTest.class);
 
     /**
      * All tests in this suite require a user and a weblog.
@@ -106,9 +107,10 @@ public class IndexManagerTest  {
         TestUtils.endSession(true);
         wd1 = TestUtils.getManagedWeblogEntry(wd1);
 
-        IndexManager imgr = WebloggerFactory.getWeblogger().getIndexManager();
+        LuceneIndexManager imgr = (LuceneIndexManager)WebloggerFactory.getWeblogger().getIndexManager();
+
         imgr.executeIndexOperationNow(
-            new AddEntryOperation(WebloggerFactory.getWeblogger(), (IndexManagerImpl)imgr, wd1));
+            new AddEntryOperation(WebloggerFactory.getWeblogger(), imgr, wd1));
 
         WeblogEntry wd2 = new WeblogEntry();
         wd2.setTitle("A Piece of the Action");
@@ -131,7 +133,7 @@ public class IndexManagerTest  {
         wd2 = TestUtils.getManagedWeblogEntry(wd2);
 
          imgr.executeIndexOperationNow(
-             new AddEntryOperation(WebloggerFactory.getWeblogger(), (IndexManagerImpl)imgr, wd2));
+             new AddEntryOperation(WebloggerFactory.getWeblogger(), imgr, wd2));
 
         Thread.sleep(RollerConstants.SEC_IN_MS);
 

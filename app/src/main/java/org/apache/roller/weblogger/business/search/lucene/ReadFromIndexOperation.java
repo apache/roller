@@ -15,21 +15,20 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
-package org.apache.roller.weblogger.business.search.operations;
+package org.apache.roller.weblogger.business.search.lucene;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 
 /**
  * @author aim4min
  */
 public abstract class ReadFromIndexOperation extends IndexOperation {
-    public ReadFromIndexOperation(IndexManagerImpl mgr) {
+    public ReadFromIndexOperation(LuceneIndexManager mgr) {
         super(mgr);
     }
     
-    private static Log mLogger = LogFactory.getFactory().getInstance(
+    private static Log logger = LogFactory.getFactory().getInstance(
             ReadFromIndexOperation.class);
     
     @Override
@@ -39,7 +38,7 @@ public abstract class ReadFromIndexOperation extends IndexOperation {
             doRun();
 
         } catch (Exception e) {
-            mLogger.error("Error acquiring read lock on index", e);
+            logger.error("Error acquiring read lock on index", e);
         } finally {
             manager.getReadWriteLock().readLock().unlock();
         }

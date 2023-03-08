@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business.search;
+package org.apache.roller.weblogger.business.search.lucene;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,12 +42,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
-import org.apache.roller.weblogger.business.search.operations.IndexOperation;
-import org.apache.roller.weblogger.business.search.operations.ReIndexEntryOperation;
-import org.apache.roller.weblogger.business.search.operations.RebuildWebsiteIndexOperation;
-import org.apache.roller.weblogger.business.search.operations.RemoveEntryOperation;
-import org.apache.roller.weblogger.business.search.operations.RemoveWebsiteIndexOperation;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -60,12 +55,12 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  * @author mraible (formatting and making indexDir configurable)
  */
 @com.google.inject.Singleton
-public class IndexManagerImpl implements IndexManager {
+public class LuceneIndexManager implements IndexManager {
 
     private IndexReader reader;
     private final Weblogger roller;
 
-    private final static Log mLogger = LogFactory.getFactory().getInstance(IndexManagerImpl.class);
+    private final static Log logger = LogFactory.getFactory().getInstance(LuceneIndexManager.class);
 
     private boolean searchEnabled = true;
 
@@ -87,7 +82,7 @@ public class IndexManagerImpl implements IndexManager {
      * @param roller - the weblogger instance
      */
     @com.google.inject.Inject
-    protected IndexManagerImpl(Weblogger roller) {
+    protected LuceneIndexManager(Weblogger roller) {
         this.roller = roller;
 
         // check config to see if the internal search is enabled
@@ -102,8 +97,8 @@ public class IndexManagerImpl implements IndexManager {
         this.indexDir = searchIndexDir.replace('/', File.separatorChar);
 
         // a little debugging
-        mLogger.info("search enabled: " + this.searchEnabled);
-        mLogger.info("index dir: " + this.indexDir);
+        logger.info("search enabled: " + this.searchEnabled);
+        logger.info("index dir: " + this.indexDir);
 
         String test = indexDir + File.separator + ".index-inconsistent";
         indexConsistencyMarker = new File(test);
@@ -120,7 +115,7 @@ public class IndexManagerImpl implements IndexManager {
 
             // delete index if inconsistency marker exists
             if (indexConsistencyMarker.exists()) {
-                mLogger.debug("Index inconsistent: marker exists");
+                logger.debug("Index inconsistent: marker exists");
                 inconsistentAtStartup = true;
                 deleteIndex();
             } else {
@@ -129,11 +124,11 @@ public class IndexManagerImpl implements IndexManager {
                     if (!makeIndexDir.exists()) {
                         makeIndexDir.mkdirs();
                         inconsistentAtStartup = true;
-                        mLogger.debug("Index inconsistent: new");
+                        logger.debug("Index inconsistent: new");
                     }
                     indexConsistencyMarker.createNewFile();
                 } catch (IOException e) {
-                    mLogger.error(e);
+                    logger.error(e);
                 }
             }
 
@@ -145,43 +140,43 @@ public class IndexManagerImpl implements IndexManager {
                         reader = DirectoryReader.open(getIndexDirectory());
                     }
                 } catch (IOException | IllegalArgumentException ex) {  // IAE for incompatible codecs
-                    mLogger.warn("Failed to open search index, scheduling rebuild.", ex);
+                    logger.warn("Failed to open search index, scheduling rebuild.", ex);
                     inconsistentAtStartup = true;
                     deleteIndex();
                 }
             } else {
-                mLogger.debug("Creating index");
+                logger.debug("Creating index");
                 inconsistentAtStartup = true;
                 deleteIndex();
                 createIndex(getIndexDirectory());
             }
 
             if (inconsistentAtStartup) {
-                mLogger.info("Index was inconsistent. Rebuilding index in the background...");
+                logger.info("Index was inconsistent. Rebuilding index in the background...");
                 try {
-                    rebuildWebsiteIndex();
+                    rebuildWeblogIndex();
                 } catch (WebloggerException ex) {
-                    mLogger.error("ERROR: scheduling re-index operation", ex);
+                    logger.error("ERROR: scheduling re-index operation", ex);
                 }
             } else {
-                mLogger.info("Index initialized and ready for use.");
+                logger.info("Index initialized and ready for use.");
             }
         }
 
     }
 
     @Override
-    public void rebuildWebsiteIndex() throws WebloggerException {
+    public void rebuildWeblogIndex() throws WebloggerException {
         scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this, null));
     }
 
     @Override
-    public void rebuildWebsiteIndex(Weblog website) throws WebloggerException {
+    public void rebuildWeblogIndex(Weblog website) throws WebloggerException {
         scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this, website));
     }
 
     @Override
-    public void removeWebsiteIndex(Weblog website) throws WebloggerException {
+    public void removeWeblogIndex(Weblog website) throws WebloggerException {
         scheduleIndexOperation(new RemoveWebsiteIndexOperation(roller, this, website));
     }
 
@@ -198,6 +193,11 @@ public class IndexManagerImpl implements IndexManager {
     @Override
     public void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException {
         executeIndexOperationNow(new RemoveEntryOperation(roller, this, entry));
+    }
+
+    @Override
+    public SearchResult search(String term, String weblogHandle, String category, String locale) throws WebloggerException {
+        return null;
     }
 
     public ReadWriteLock getReadWriteLock() {
@@ -224,10 +224,10 @@ public class IndexManagerImpl implements IndexManager {
             final Class<?> clazz = Class.forName(className);
             return (Analyzer) ConstructorUtils.invokeConstructor(clazz, null);
         } catch (final ClassNotFoundException e) {
-            mLogger.error("failed to lookup analyzer class: " + className, e);
+            logger.error("failed to lookup analyzer class: " + className, e);
             return instantiateDefaultAnalyzer();
         } catch (final NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            mLogger.error("failed to instantiate analyzer: " + className, e);
+            logger.error("failed to instantiate analyzer: " + className, e);
             return instantiateDefaultAnalyzer();
         }
     }
@@ -240,29 +240,27 @@ public class IndexManagerImpl implements IndexManager {
         try {
             // only if search is enabled
             if (this.searchEnabled) {
-                mLogger.debug("Starting scheduled index operation: "
+                logger.debug("Starting scheduled index operation: "
                         + op.getClass().getName());
                 roller.getThreadManager().executeInBackground(op);
             }
         } catch (InterruptedException e) {
-            mLogger.error("Error executing operation", e);
+            logger.error("Error executing operation", e);
         }
     }
 
     /**
      * @param op
      */
-    @Override
     public void executeIndexOperationNow(final IndexOperation op) {
         try {
             // only if search is enabled
             if (this.searchEnabled) {
-                mLogger.debug("Executing index operation now: "
-                        + op.getClass().getName());
+                logger.debug("Executing index operation now: " + op.getClass().getName());
                 roller.getThreadManager().executeInForeground(op);
             }
         } catch (InterruptedException e) {
-            mLogger.error("Error executing operation", e);
+            logger.error("Error executing operation", e);
         }
     }
 
@@ -275,7 +273,7 @@ public class IndexManagerImpl implements IndexManager {
             try {
                 reader = DirectoryReader.open(getIndexDirectory());
             } catch (IOException ex) {
-                mLogger.error("Error opening DirectoryReader", ex);
+                logger.error("Error opening DirectoryReader", ex);
                 throw new RuntimeException(ex);
             }
         }
@@ -293,7 +291,7 @@ public class IndexManagerImpl implements IndexManager {
         try {
             return FSDirectory.open(Path.of(indexDir));
         } catch (IOException e) {
-            mLogger.error("Problem accessing index directory", e);
+            logger.error("Problem accessing index directory", e);
         }
         return null;
     }
@@ -302,7 +300,7 @@ public class IndexManagerImpl implements IndexManager {
         try {
             return DirectoryReader.indexExists(getIndexDirectory());
         } catch (IOException e) {
-            mLogger.error("Problem accessing index directory", e);
+            logger.error("Problem accessing index directory", e);
         }
         return false;
     }
@@ -317,7 +315,7 @@ public class IndexManagerImpl implements IndexManager {
                 Files.delete(Path.of(indexDir, file));
             }
         } catch (IOException ex) {
-             mLogger.error("Problem accessing index directory", ex);
+             logger.error("Problem accessing index directory", ex);
         }
 
     }
@@ -329,18 +327,18 @@ public class IndexManagerImpl implements IndexManager {
 
             IndexWriterConfig config = new IndexWriterConfig(
                     new LimitTokenCountAnalyzer(
-                            IndexManagerImpl.getAnalyzer(), 128));
+                            LuceneIndexManager.getAnalyzer(), 128));
 
             writer = new IndexWriter(dir, config);
 
         } catch (IOException e) {
-            mLogger.error("Error creating index", e);
+            logger.error("Error creating index", e);
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
                 } catch (IOException ex) {
-                    mLogger.warn("Unable to close IndexWriter.", ex);
+                    logger.warn("Unable to close IndexWriter.", ex);
                 }
             }
         }
@@ -360,7 +358,7 @@ public class IndexManagerImpl implements IndexManager {
             try {
                 reader.close();
             } catch (IOException ex) {
-                mLogger.error("Unable to close reader.", ex);
+                logger.error("Unable to close reader.", ex);
             }
         }
     }

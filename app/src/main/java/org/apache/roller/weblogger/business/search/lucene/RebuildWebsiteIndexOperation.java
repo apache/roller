@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 /* Created on Jul 16, 2003 */
-package org.apache.roller.weblogger.business.search.operations;
+package org.apache.roller.weblogger.business.search.lucene;
 
 import java.text.MessageFormat;
 import java.util.Date;
@@ -30,9 +30,6 @@ import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.search.FieldConstants;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
-import org.apache.roller.weblogger.business.search.IndexUtil;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -48,7 +45,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
     // ~ Static fields/initializers
     // =============================================
 
-    private static Log mLogger = LogFactory.getFactory().getInstance(
+    private static Log logger = LogFactory.getFactory().getInstance(
             RebuildWebsiteIndexOperation.class);
 
     // ~ Instance fields
@@ -66,7 +63,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
      * @param website
      *            The website to rebuild the index for, or null for all users.
      */
-    public RebuildWebsiteIndexOperation(Weblogger roller, IndexManagerImpl mgr,
+    public RebuildWebsiteIndexOperation(Weblogger roller, LuceneIndexManager mgr,
             Weblog website) {
         super(mgr);
         this.roller = roller;
@@ -85,16 +82,16 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         // the weblog object passed in as a detached object which is proned to
         // lazy initialization problems, so requery for the object now
         if (this.website != null) {
-            mLogger.debug("Reindexining weblog " + website.getHandle());
+            logger.debug("Reindexining weblog " + website.getHandle());
             try {
                 this.website = roller.getWeblogManager().getWeblog(
                         this.website.getId());
             } catch (WebloggerException ex) {
-                mLogger.error("Error getting website object", ex);
+                logger.error("Error getting website object", ex);
                 return;
             }
         } else {
-            mLogger.debug("Reindexining entire site");
+            logger.debug("Reindexining entire site");
         }
 
         IndexWriter writer = beginWriting();
@@ -124,11 +121,11 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                 wesc.setStatus(PubStatus.PUBLISHED);
                 List<WeblogEntry> entries = weblogManager.getWeblogEntries(wesc);
 
-                mLogger.debug("Entries to index: " + entries.size());
+                logger.debug("Entries to index: " + entries.size());
 
                 for (WeblogEntry entry : entries) {
                     writer.addDocument(getDocument(entry));
-                    mLogger.debug(MessageFormat.format(
+                    logger.debug(MessageFormat.format(
                             "Indexed entry {0}: {1}",
                             entry.getPubTime(), entry.getAnchor()));
                 }
@@ -137,7 +134,7 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
                 roller.release();
             }
         } catch (Exception e) {
-            mLogger.error("ERROR adding/deleting doc to index", e);
+            logger.error("ERROR adding/deleting doc to index", e);
         } finally {
             endWriting();
             if (roller != null) {
@@ -149,10 +146,10 @@ public class RebuildWebsiteIndexOperation extends WriteToIndexOperation {
         double length = (end.getTime() - start.getTime()) / (double) RollerConstants.SEC_IN_MS;
 
         if (website == null) {
-            mLogger.info("Completed rebuilding index for all users in '"
+            logger.info("Completed rebuilding index for all users in '"
                     + length + "' secs");
         } else {
-            mLogger.info("Completed rebuilding index for website handle: '"
+            logger.info("Completed rebuilding index for website handle: '"
                     + website.getHandle() + "' in '" + length + "' seconds");
         }
     }

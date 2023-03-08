@@ -16,11 +16,10 @@
  * directory of this distribution.
  */
 /* Created on Aug 12, 2003 */
-package org.apache.roller.weblogger.business.search.operations;
+package org.apache.roller.weblogger.business.search.lucene;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 
 /**
  * An operation that writes to index.
@@ -28,23 +27,23 @@ import org.apache.roller.weblogger.business.search.IndexManagerImpl;
  */
 public abstract class WriteToIndexOperation extends IndexOperation {
     
-    public WriteToIndexOperation(IndexManagerImpl mgr) {
+    public WriteToIndexOperation(LuceneIndexManager mgr) {
         super(mgr);
     }
     
-    private static Log mLogger =
+    private static Log logger =
             LogFactory.getFactory().getInstance(WriteToIndexOperation.class);
     
     @Override
     public void run() {
         try {
             manager.getReadWriteLock().writeLock().lock();
-            mLogger.debug("Starting search index operation");
+            logger.debug("Starting search index operation");
             doRun();
-            mLogger.debug("Search index operation complete");
+            logger.debug("Search index operation complete");
 
         } catch (Exception e) {
-            mLogger.error("Error acquiring write lock on index", e);
+            logger.error("Error acquiring write lock on index", e);
             
         } finally {
             manager.getReadWriteLock().writeLock().unlock();

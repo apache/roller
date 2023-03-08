@@ -19,53 +19,54 @@ package org.apache.roller.weblogger.business.search;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
-import org.apache.roller.weblogger.business.search.operations.IndexOperation;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 /**
- * Interface to Roller's Lucene-based search facility.
+ * Interface to Roller's full-text search facility.
  * @author Dave Johnson
  */
-public interface IndexManager
-{
-    /** Does index need to be rebuild */
-    boolean isInconsistentAtStartup();
-    
-    /** Remove user from index, returns immediately and operates in background */
-    void removeWebsiteIndex(Weblog website) throws WebloggerException;
-    
-    /** Remove entry from index, returns immediately and operates in background */
-    void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
-    
-    /** Add entry to index, returns immediately and operates in background */
-    void addEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
-    
-    /** R-index entry, returns immediately and operates in background */
-    void addEntryReIndexOperation(WeblogEntry entry) throws WebloggerException;
-    
-    /** Execute operation immediately */
-    void executeIndexOperationNow(final IndexOperation op);
+public interface IndexManager {
+
+    /**
+     * Initialize the search system.
+     * @throws InitializationException If there is a problem during initialization.
+     */
+    void initialize() throws InitializationException;
+
+    /** Shutdown to be called on application shutdown */
+    void shutdown();
 
     /**
      * Release all resources associated with Roller session.
      */
     void release();
-    
-    
-    /**
-     * Initialize the search system.
-     *
-     * @throws InitializationException If there is a problem during initialization.
-     */
-    void initialize() throws InitializationException;
-    
-    
-    /** Shutdown to be called on application shutdown */
-    void shutdown();
 
-    void rebuildWebsiteIndex(Weblog website) throws WebloggerException;
+    /** Does index need to be rebuilt */
+    boolean isInconsistentAtStartup();
 
-    void rebuildWebsiteIndex() throws WebloggerException;
+    /** Add entry to index, returns immediately and operates in background */
+    void addEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
+    
+    /** Re-index entry, returns immediately and operates in background */
+    void addEntryReIndexOperation(WeblogEntry entry) throws WebloggerException;
 
+    void rebuildWeblogIndex(Weblog weblog) throws WebloggerException;
+
+    void rebuildWeblogIndex() throws WebloggerException;
+
+    /** Remove weblog from index, returns immediately and operates in background */
+    void removeWeblogIndex(Weblog weblog) throws WebloggerException;
+
+    /** Remove entry from index, returns immediately and operates in background */
+    void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
+
+    SearchResult search(String term, String weblogHandle, String category, String locale) throws WebloggerException;
+
+    interface SearchResult {
+        int getResultsCount();
+
+    }
 }
+
+

@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 /* Created on Jul 20, 2003 */
-package org.apache.roller.weblogger.business.search;
+package org.apache.roller.weblogger.business.search.lucene;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -49,7 +49,7 @@ public final class IndexUtil {
         if (input == null || field == null) {
             return null;
         }
-        Analyzer analyzer = IndexManagerImpl.getAnalyzer();
+        Analyzer analyzer = LuceneIndexManager.getAnalyzer();
         Term term = null;
         try {
             TokenStream tokens = analyzer.tokenStream(field, new StringReader(input));

@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 /* Created on Jul 16, 2003 */
-package org.apache.roller.weblogger.business.search.operations;
+package org.apache.roller.weblogger.business.search.lucene;
 
 import java.io.IOException;
 import java.util.Date;
@@ -28,9 +28,6 @@ import org.apache.lucene.index.Term;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.search.FieldConstants;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
-import org.apache.roller.weblogger.business.search.IndexUtil;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 /**
@@ -43,7 +40,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
     // ~ Static fields/initializers
     // =============================================
 
-    private static Log mLogger = LogFactory.getFactory().getInstance(
+    private static Log logger = LogFactory.getFactory().getInstance(
             RemoveWebsiteIndexOperation.class);
 
     // ~ Instance fields
@@ -61,7 +58,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
      * @param website
      *            The website to rebuild the index for, or null for all sites.
      */
-    public RemoveWebsiteIndexOperation(Weblogger roller, IndexManagerImpl mgr,
+    public RemoveWebsiteIndexOperation(Weblogger roller, LuceneIndexManager mgr,
             Weblog website) {
         super(mgr);
         this.roller = roller;
@@ -82,7 +79,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
             this.website = roller.getWeblogManager().getWeblog(
                     this.website.getId());
         } catch (WebloggerException ex) {
-            mLogger.error("Error getting website object", ex);
+            logger.error("Error getting website object", ex);
             return;
         }
 
@@ -101,7 +98,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
                 }
             }
         } catch (IOException e) {
-            mLogger.info("Problems deleting doc from index", e);
+            logger.info("Problems deleting doc from index", e);
         } finally {
             endWriting();
         }
@@ -110,7 +107,7 @@ public class RemoveWebsiteIndexOperation extends WriteToIndexOperation {
         double length = (end.getTime() - start.getTime()) / (double) RollerConstants.SEC_IN_MS;
 
         if (website != null) {
-            mLogger.info("Completed deleting indices for website '"
+            logger.info("Completed deleting indices for website '"
                     + website.getName() + "' in '" + length + "' seconds");
         }
     }

@@ -16,7 +16,7 @@
  * directory of this distribution.
  */
 /* Created on Jul 19, 2003 */
-package org.apache.roller.weblogger.business.search;
+package org.apache.roller.weblogger.business.search.lucene;
 
 
 /**

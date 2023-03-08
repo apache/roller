@@ -16,88 +16,73 @@
  * directory of this distribution.
  */
 /* Created on Jul 16, 2003 */
-package org.apache.roller.weblogger.business.search.operations;
+package org.apache.roller.weblogger.business.search.lucene;
 
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.search.FieldConstants;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 /**
  * An operation that adds a new log entry into the index.
- * 
- * @author Mindaugas Idzelis (min@idzelis.com)
+ * @author Mindaugas Idzelis  (min@idzelis.com)
  */
-public class ReIndexEntryOperation extends WriteToIndexOperation {
-
-    // ~ Static fields/initializers
-    // =============================================
-
-    private static Log mLogger = LogFactory.getFactory().getInstance(
-            AddEntryOperation.class);
-
-    // ~ Instance fields
-    // ========================================================
-
+public class AddEntryOperation extends WriteToIndexOperation {
+    
+    //~ Static fields/initializers =============================================
+    
+    private static Log logger =
+            LogFactory.getFactory().getInstance(AddEntryOperation.class);
+    
+    //~ Instance fields ========================================================
+    
     private WeblogEntry data;
     private Weblogger roller;
-
-    // ~ Constructors
-    // ===========================================================
-
+    
+    //~ Constructors ===========================================================
+    
     /**
      * Adds a web log entry into the index.
      */
-    public ReIndexEntryOperation(Weblogger roller, IndexManagerImpl mgr,
-            WeblogEntry data) {
+    public AddEntryOperation(Weblogger roller, LuceneIndexManager mgr, WeblogEntry data) {
         super(mgr);
         this.roller = roller;
         this.data = data;
     }
-
-    // ~ Methods
-    // ================================================================
-
+    
+    //~ Methods ================================================================
+    
     @Override
     public void doRun() {
-
+        IndexWriter writer = beginWriting();
+        
         // since this operation can be run on a separate thread we must treat
-        // the weblog object passed in as a detached object which is prone to
+        // the weblog object passed in as a detached object which is proned to
         // lazy initialization problems, so requery for the object now
         try {
             WeblogEntryManager wMgr = roller.getWeblogEntryManager();
             this.data = wMgr.getWeblogEntry(this.data.getId());
         } catch (WebloggerException ex) {
-            mLogger.error("Error getting weblogentry object", ex);
+            logger.error("Error getting weblogentry object", ex);
             return;
         }
-
-        IndexWriter writer = beginWriting();
+        
         try {
             if (writer != null) {
-
-                // Delete Doc
-                Term term = new Term(FieldConstants.ID, data.getId());
-                writer.deleteDocuments(term);
-
-                // Add Doc
                 writer.addDocument(getDocument(data));
             }
         } catch (IOException e) {
-            mLogger.error("Problems adding/deleting doc to index", e);
+            logger.error("Problems adding doc to index", e);
         } finally {
             if (roller != null) {
                 roller.release();
             }
             endWriting();
         }
-    }
+    }   
 }
