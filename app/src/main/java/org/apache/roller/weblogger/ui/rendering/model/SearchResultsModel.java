@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -65,7 +66,7 @@ public class SearchResultsModel extends PageModel {
 	private URLStrategy urlStrategy = null;
 
 	// the actual search results mapped by Day -> Set of entries
-    private final Map<Date, Set<WeblogEntryWrapper>> results = new TreeMap<>(Collections.reverseOrder());
+    private Map<Date, Set<WeblogEntryWrapper>> results = new TreeMap<>(Collections.reverseOrder());
 
 	// the pager used by the 3.0+ rendering system
 	private SearchResultsPager pager = null;
@@ -139,8 +140,18 @@ public class SearchResultsModel extends PageModel {
 			this.hits = search.getResultsCount();
 
 			// Convert the Hits into WeblogEntryData instances.
-			convertHitsToEntries(hitsArr, search);
+			ResultEntries resultEntries = convertHitsToEntries(
+				hitsArr,
+				search,
+				searchRequest.getPageNum(),
+				searchRequest.getWeblogHandle(),
+				websiteSpecificSearch,
+				urlStrategy);
 
+			this.offset = resultEntries.getOffset();
+			this.limit = resultEntries.getLimit();
+			this.results = resultEntries.getResults();
+			this.categories = resultEntries.getCategories();
 		}
 
 		// search completed, setup pager based on results
@@ -178,19 +189,28 @@ public class SearchResultsModel extends PageModel {
 	 * @throws WebloggerException
 	 *             the weblogger exception
 	 */
-	private void convertHitsToEntries(ScoreDoc[] hits, SearchOperation search)
-			throws WebloggerException {
+	static ResultEntries convertHitsToEntries(
+		ScoreDoc[] hits,
+		SearchOperation search,
+		int pageNum,
+		String weblogHandle,
+		boolean websiteSpecificSearch,
+		URLStrategy urlStrategy)
+		throws WebloggerException {
+
+		Set<String> categories = new HashSet<>();
+		Map<Date, Set<WeblogEntryWrapper>> results = new TreeMap<>(Collections.reverseOrder());
 
 		// determine offset
-		this.offset = searchRequest.getPageNum() * RESULTS_PER_PAGE;
-		if (this.offset >= hits.length) {
-			this.offset = 0;
+		int offset = pageNum * RESULTS_PER_PAGE;
+		if (offset >= hits.length) {
+			offset = 0;
 		}
 
 		// determine limit
-		this.limit = RESULTS_PER_PAGE;
-		if (this.offset + this.limit > hits.length) {
-			this.limit = hits.length - this.offset;
+		int limit = RESULTS_PER_PAGE;
+		if (offset + limit > hits.length) {
+			limit = hits.length - offset;
 		}
 
 		try {
@@ -210,7 +230,7 @@ public class SearchResultsModel extends PageModel {
                 entry = weblogMgr.getWeblogEntry(doc.getField(
                         FieldConstants.ID).stringValue());
 
-                if (!(websiteSpecificSearch && handle.equals(searchRequest.getWeblogHandle()))
+                if (!(websiteSpecificSearch && handle.equals(weblogHandle))
                         && doc.getField(FieldConstants.CATEGORY) != null) {
                     categorySet.add(doc.getField(FieldConstants.CATEGORY).stringValue());
                 }
@@ -219,31 +239,58 @@ public class SearchResultsModel extends PageModel {
 				// or entry's user is not the requested user.
 				// but don't return future posts
 				if (entry != null && entry.getPubTime().before(now)) {
-					addEntryToResults(WeblogEntryWrapper.wrap(entry,
-							urlStrategy));
+					addEntryToResults(results, WeblogEntryWrapper.wrap(entry, urlStrategy));
 				}
 			}
 
 			if (!categorySet.isEmpty()) {
-				this.categories = categorySet;
+				categories = categorySet;
 			}
+
+			return new ResultEntries(results, categories, limit, offset);
+
 		} catch (IOException e) {
 			throw new WebloggerException(e);
 		}
 	}
 
-	private void addEntryToResults(WeblogEntryWrapper entry) {
+	static class ResultEntries {
+		int limit;
+		int offset;
+		Set<String> categories;
+		Map<Date, Set<WeblogEntryWrapper>> results;
+	 	public ResultEntries(Map<Date, Set<WeblogEntryWrapper>> results, Set<String> categories, int limit, int offset) {
+			 this.results = results;
+			 this.categories = categories;
+			 this.limit = limit;
+			 this.offset = offset;
+		}
+		public int getLimit() {
+			return limit;
+		}
+		public int getOffset() {
+			return offset;
+		}
+		public Map<Date, Set<WeblogEntryWrapper>> getResults() {
+			return results;
+		}
+		public Set<String> getCategories() {
+			return categories;
+		}
+	}
+
+	static void addEntryToResults(Map<Date, Set<WeblogEntryWrapper>> results, WeblogEntryWrapper entry) {
 
 		// convert entry's each date to midnight (00m 00h 00s)
 		Date midnight = DateUtil.getStartOfDay(entry.getPubTime());
 
 		// ensure we do not get duplicates from Lucene by
 		// using a Set Collection. Entries sorted by pubTime.
-		Set<WeblogEntryWrapper> set = this.results.get(midnight);
+		Set<WeblogEntryWrapper> set = results.get(midnight);
 		if (set == null) {
 			// date is not mapped yet, so we need a new Set
 			set = new TreeSet<>(new WeblogEntryWrapperComparator());
-			this.results.put(midnight, set);
+			results.put(midnight, set);
 		}
 		set.add(entry);
 	}

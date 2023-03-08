@@ -20,6 +20,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.model;
 
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -60,8 +61,8 @@ class SearchResultsModelTest {
     public void setUp() throws Exception {
         TestUtils.setupWeblogger();
         try {
-            testUser = TestUtils.setupUser("entryTestUser");
-            testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);
+            testUser = TestUtils.setupUser("entrytestuser");
+            testWeblog = TestUtils.setupWeblog("entrytestweblog", testUser);
             TestUtils.endSession(true);
         } catch (Exception ex) {
             log.error("ERROR in test setup", ex);
@@ -84,43 +85,53 @@ class SearchResultsModelTest {
     @Test
     void getResults() throws Exception {
 
-        // create some entries and index them
+        // create some weblog entries, two with some Star Trek content
+
         List<WeblogEntry> entries = Instancio.ofList(WeblogEntry.class).size(10).create();
+
         entries.get(0).setTitle("The Tholian Web");
+        entries.get(0).setPubTime(new Timestamp(System.currentTimeMillis()));
         entries.get(0).setText(
             "When the Enterprise attempts to ascertain the fate of the  "
             +"U.S.S. Defiant which vanished 3 weeks ago, the warp engines  "
             +"begin to lose power, and Spock reports strange sensor readings.");
+
+        Thread.sleep(500);
+
         entries.get(1).setTitle("A Piece of the Action");
+        entries.get(1).setPubTime(new Timestamp(System.currentTimeMillis()));
         entries.get(1).setText(
             "The crew of the Enterprise attempts to make contact with "
             +"the inhabitants of planet Sigma Iotia II, and Uhura puts Kirk "
             +"in communication with Boss Oxmyx.");
 
+        // save and index those entries
+
         LuceneIndexManager indexManager =
             (LuceneIndexManager)WebloggerFactory.getWeblogger().getIndexManager();
-
         WeblogEntryManager entryManager = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         for (WeblogEntry entry : entries) {
+
+            // fill in relationship fields to make JPA happy
+
             WeblogCategory cat = entryManager.getWeblogCategory(
                 testWeblog.getWeblogCategory("General").getId());
             entry.setCategory(cat);
             entry.setWebsite(TestUtils.getManagedWebsite(testWeblog));
             entry.setEntryAttributes(Collections.emptySet());
             entry.setTags(Collections.emptySet());
+
             entryManager.saveWeblogEntry(entry);
             TestUtils.endSession(true);
 
-            entry = TestUtils.getManagedWeblogEntry(entry);
             indexManager.executeIndexOperationNow(new AddEntryOperation(
-                WebloggerFactory.getWeblogger(),
-                indexManager,
-                TestUtils.getManagedWeblogEntry(entry)));
+                WebloggerFactory.getWeblogger(), indexManager, entry));
         }
 
         Thread.sleep(RollerConstants.SEC_IN_MS);
 
         try {
+            // verify that Star Trek content is searchable directly
 
             SearchOperation search = new SearchOperation(indexManager);
             search.setTerm("Enterprise");
@@ -133,6 +144,8 @@ class SearchResultsModelTest {
             search2.setWeblogHandle(testWeblog.getHandle());
             indexManager.executeIndexOperationNow(search2);
             assertEquals(1, search2.getResultsCount());
+
+            // verify that Star Trek content is searchable via SearchResultsModel
 
             HttpServletRequest request = mock(HttpServletRequest.class);
             when(request.getServletPath()).thenReturn(SEARCH_SERVLET);
@@ -154,12 +167,13 @@ class SearchResultsModelTest {
             SearchResultsModel model = new SearchResultsModel();
             model.init(initData);
 
-            assertEquals(2, model.getResults().size());
+            assertEquals(1, model.getResults().size());
 
         } finally {
             for (WeblogEntry entry : entries) {
                 indexManager.removeEntryIndexOperation(TestUtils.getManagedWeblogEntry(entry));
             }
+            indexManager.removeWeblogIndex(testWeblog);
         }
     }
 }
