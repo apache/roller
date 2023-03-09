@@ -28,7 +28,6 @@ import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -59,13 +58,9 @@ public class IndexManagerTest {
         TestUtils.setupWeblogger();
         
         try {
-            testUser = TestUtils.setupUser("entryTestUser");
-            testWeblog = TestUtils.setupWeblog("entryTestWeblog", testUser);
+            testUser = TestUtils.setupUser("entrytestuser");
+            testWeblog = TestUtils.setupWeblog("entrytestweblog", testUser);
             TestUtils.endSession(true);
-
-            //WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            //assertEquals(1, wmgr.getWeblogCount());
- 
         } catch (Exception ex) {
             log.error("ERROR in test setup", ex);
             throw new Exception("Test setup failed", ex);
@@ -164,6 +159,8 @@ public class IndexManagerTest {
             entry.setWebsite(TestUtils.getManagedWebsite(testWeblog));
             entry.setEntryAttributes(Collections.emptySet());
             entry.setTags(Collections.emptySet());
+
+            entry.setLocale(testWeblog.getLocale());
 
             entryManager.saveWeblogEntry(entry);
             TestUtils.endSession(true);

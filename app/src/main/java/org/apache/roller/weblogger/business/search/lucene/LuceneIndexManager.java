@@ -230,7 +230,7 @@ public class LuceneIndexManager implements IndexManager {
 
         SearchOperation search = new SearchOperation(this);
         search.setTerm(term);
-        boolean weblogSpecific =!WebloggerRuntimeConfig.isSiteWideWeblog(weblogHandle);
+        boolean weblogSpecific = !WebloggerRuntimeConfig.isSiteWideWeblog(weblogHandle);
         if (weblogSpecific) {
             search.setWeblogHandle(weblogHandle);
         }
@@ -268,7 +268,7 @@ public class LuceneIndexManager implements IndexManager {
 
         SearchOperation search = new SearchOperation(this);
         search.setTerm(term);
-        boolean weblogSpecific =!WebloggerRuntimeConfig.isSiteWideWeblog(weblogHandle);
+        boolean weblogSpecific = !WebloggerRuntimeConfig.isSiteWideWeblog(weblogHandle);
         if (weblogSpecific) {
             search.setWeblogHandle(weblogHandle);
         }
