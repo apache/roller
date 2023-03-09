@@ -27,6 +27,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.search.SearchResultList;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -38,7 +39,6 @@ import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsFeedPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.roller.weblogger.business.search.IndexManager;
 
 /**
  * Extends normal page renderer model to represent search results for Atom
