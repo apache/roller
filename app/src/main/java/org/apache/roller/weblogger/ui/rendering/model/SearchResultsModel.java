@@ -18,42 +18,23 @@
 
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
 import org.apache.commons.text.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopFieldDocs;
-import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
-import org.apache.roller.weblogger.business.WeblogEntryManager;
-import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.search.SearchResult;
-import org.apache.roller.weblogger.business.search.lucene.FieldConstants;
-import org.apache.roller.weblogger.business.search.lucene.LuceneIndexManager;
-import org.apache.roller.weblogger.business.search.lucene.SearchOperation;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogEntryWrapperComparator;
+import org.apache.roller.weblogger.business.search.SearchResultMap;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogCategoryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.rendering.pagers.SearchResultsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.WeblogEntriesPager;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
-import org.apache.roller.weblogger.util.I18nMessages;
-
-import static org.apache.roller.weblogger.business.search.lucene.LuceneIndexManager.convertHitsToEntries;
 
 /**
  * Extends normal page renderer model to represent search results.
@@ -78,8 +59,7 @@ public class SearchResultsModel extends PageModel {
 	private int offset = 0;
 	private int limit = 0;
 	private Set<String> categories = new TreeSet<String>();
-	private boolean websiteSpecificSearch = true;
-	private String errorMessage = null;
+	private String errorMessage = "";
 
 	@Override
 	public void init(Map<String, Object> initData) throws WebloggerException {
@@ -87,8 +67,7 @@ public class SearchResultsModel extends PageModel {
 		// we expect the init data to contain a searchRequest object
 		searchRequest = (WeblogSearchRequest) initData.get("searchRequest");
 		if (searchRequest == null) {
-			throw new WebloggerException(
-					"expected searchRequest from init data");
+			throw new WebloggerException("expected searchRequest from init data");
 		}
 
 		// look for url strategy
@@ -102,64 +81,34 @@ public class SearchResultsModel extends PageModel {
 
 		// if there is no query, then we are done
 		if (searchRequest.getQuery() == null) {
-			pager = new SearchResultsPager(urlStrategy, searchRequest, results,
-					false);
+			pager = new SearchResultsPager(urlStrategy, searchRequest, results, false);
 			return;
 		}
 
 		// setup the search
-		LuceneIndexManager indexMgr =
-			(LuceneIndexManager)WebloggerFactory.getWeblogger().getIndexManager();
-
-		SearchOperation search = new SearchOperation(indexMgr);
-		search.setTerm(searchRequest.getQuery());
-
-		if (WebloggerRuntimeConfig.isSiteWideWeblog(searchRequest.getWeblogHandle())) {
-			this.websiteSpecificSearch = false;
-		} else {
-			search.setWeblogHandle(searchRequest.getWeblogHandle());
-		}
-
-		if (StringUtils.isNotEmpty(searchRequest.getWeblogCategoryName())) {
-			search.setCategory(searchRequest.getWeblogCategoryName());
-		}
-
-		if (searchRequest.getLocale() != null) {
-			search.setLocale(searchRequest.getLocale());
-		}
-
-		// execute search
-		indexMgr.executeIndexOperationNow(search);
-
-		if (search.getResultsCount() == -1) {
-			// this means there has been a parsing (or IO) error
-			this.errorMessage = I18nMessages.getMessages(
-					searchRequest.getLocaleInstance()).getString(
-					"error.searchProblem");
-		} else {
-
-			TopFieldDocs docs = search.getResults();
-			ScoreDoc[] hitsArr = docs.scoreDocs;
-			this.hits = search.getResultsCount();
-
-			// Convert the Hits into WeblogEntryData instances.
-			SearchResult resultEntries = convertHitsToEntries(
-				hitsArr,
-				search,
-				searchRequest.getPageNum(),
+		IndexManager indexMgr = WebloggerFactory.getWeblogger().getIndexManager();
+		try {
+			SearchResultMap searchResultMap = indexMgr.searchByDay(
+				searchRequest.getQuery(),
 				searchRequest.getWeblogHandle(),
-				websiteSpecificSearch,
-				urlStrategy);
+				searchRequest.getWeblogCategoryName(),
+				searchRequest.getLocale(),
+				searchRequest.getPageNum(),
+				urlStrategy
+			);
+			this.hits = searchResultMap.getResults().size();
+			this.offset = searchResultMap.getOffset();
+			this.limit = searchResultMap.getLimit();
+			this.results = searchResultMap.getResults();
+			this.categories = searchResultMap.getCategories();
 
-			this.offset = resultEntries.getOffset();
-			this.limit = resultEntries.getLimit();
-			this.results = resultEntries.getResults();
-			this.categories = resultEntries.getCategories();
+		} catch (WebloggerException we) {
+			errorMessage = we.getMessage();
 		}
 
 		// search completed, setup pager based on results
-		pager = new SearchResultsPager(urlStrategy, searchRequest, results,
-				(hits > (offset + limit)));
+		pager = new SearchResultsPager(
+			urlStrategy, searchRequest, results, (hits > (offset + limit)));
 	}
 
 	/**
@@ -224,8 +173,7 @@ public class SearchResultsModel extends PageModel {
 	@Override
 	public WeblogCategoryWrapper getWeblogCategory() {
 		if (searchRequest.getWeblogCategory() != null) {
-			return WeblogCategoryWrapper.wrap(
-					searchRequest.getWeblogCategory(), urlStrategy);
+			return WeblogCategoryWrapper.wrap(searchRequest.getWeblogCategory(), urlStrategy);
 		}
 		return null;
 	}

@@ -20,17 +20,17 @@
 
 package org.apache.roller.weblogger.business.search;
 
-import java.util.Date;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 
-public class SearchResult {
+public class SearchResultList {
     int limit;
     int offset;
     Set<String> categories;
-    Map<Date, Set<WeblogEntryWrapper>> results;
-    public SearchResult(Map<Date, Set<WeblogEntryWrapper>> results, Set<String> categories, int limit, int offset) {
+    List<WeblogEntryWrapper> results;
+    public SearchResultList(
+        List<WeblogEntryWrapper> results, Set<String> categories, int limit, int offset) {
         this.results = results;
         this.categories = categories;
         this.limit = limit;
@@ -42,7 +42,7 @@ public class SearchResult {
     public int getOffset() {
         return offset;
     }
-    public Map<Date, Set<WeblogEntryWrapper>> getResults() {
+    public List<WeblogEntryWrapper> getResults() {
         return results;
     }
     public Set<String> getCategories() {

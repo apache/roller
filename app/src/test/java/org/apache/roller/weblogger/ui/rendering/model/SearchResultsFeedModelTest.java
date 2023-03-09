@@ -20,11 +20,9 @@
 
 package org.apache.roller.weblogger.ui.rendering.model;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,9 +35,7 @@ import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
-import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
+import org.apache.roller.weblogger.ui.rendering.util.WeblogFeedRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class SearchResultsModelTest {
+class SearchResultsFeedModelTest {
     User testUser = null;
     Weblog testWeblog = null;
     public static Log log = LogFactory.getLog(IndexManagerTest.class);
@@ -83,29 +79,18 @@ class SearchResultsModelTest {
     @Test
     void testBasicOperation() throws Exception {
 
-        IndexManager indexManager = WebloggerFactory.getWeblogger().getIndexManager();
+        IndexManager indexManager =
+            WebloggerFactory.getWeblogger().getIndexManager();
         WeblogEntryManager entryManager = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
         List<WeblogEntry> entries = createWeblogEntries(testWeblog, indexManager, entryManager);
 
         try {
-            SearchResultsModel model = executeSearch("Enterprise");
-            assertEquals(1, model.getResults().size());
-            int count = 0;
-            for (Date midnight : model.getResults().keySet()) {
-                Set<WeblogEntryWrapper> wrappers = model.getResults().get(midnight);
-                count += wrappers.size();
-            }
-            assertEquals(2, count);
+            SearchResultsFeedModel model = executeSearch("Enterprise");
+            assertEquals(2, model.getResults().size());
 
             model = executeSearch("Tholian");
             assertEquals(1, model.getResults().size());
-            count = 0;
-            for (Date midnight : model.getResults().keySet()) {
-                Set<WeblogEntryWrapper> wrappers = model.getResults().get(midnight);
-                count += wrappers.size();
-            }
-            assertEquals(1, count);
 
         } finally {
             for (WeblogEntry entry : entries) {
@@ -115,25 +100,26 @@ class SearchResultsModelTest {
         }
     }
 
-    SearchResultsModel executeSearch(String term) throws WebloggerException {
+    SearchResultsFeedModel executeSearch(String term) throws WebloggerException {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getServletPath()).thenReturn(SEARCH_SERVLET);
         when(request.getRequestURL()).thenReturn(
             new StringBuffer(String.format("http://localhost/%s", SEARCH_SERVLET)));
         when(request.getPathInfo()).thenReturn(null);
 
-        WeblogSearchRequest searchRequest = new WeblogSearchRequest(request);
-        searchRequest.setWeblogHandle(testWeblog.getHandle());
-        searchRequest.setQuery(term);
+//        WeblogSearchRequest searchRequest = new WeblogSearchRequest(request);
+//        searchRequest.setWeblogHandle(testWeblog.getHandle());
+//        searchRequest.setQuery(term);
 
-        WeblogPageRequest pageRequest = new WeblogPageRequest();
+        WeblogFeedRequest feedRequest = new WeblogFeedRequest();
+        feedRequest.setWeblog(testWeblog);
+        feedRequest.setTerm(term);
 
         Map<String, Object> initData = new HashMap<>();
-        initData.put("searchRequest", searchRequest);
-        initData.put("parsedRequest", pageRequest);
-        initData.put("pageRequest", pageRequest);
+        //initData.put("searchRequest", searchRequest);
+        initData.put("parsedRequest", feedRequest);
 
-        SearchResultsModel model = new SearchResultsModel();
+        SearchResultsFeedModel model = new SearchResultsFeedModel();
         model.init(initData);
         return model;
     }

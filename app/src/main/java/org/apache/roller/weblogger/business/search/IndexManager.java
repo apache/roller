@@ -19,6 +19,7 @@ package org.apache.roller.weblogger.business.search;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 
@@ -61,7 +62,24 @@ public interface IndexManager {
     /** Remove entry from index, returns immediately and operates in background */
     void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
 
-    SearchResult search(String term, String weblogHandle, String category, String locale) throws WebloggerException;
+    SearchResultMap searchByDay(
+        String term,
+        String weblogHandle,
+        String category,
+        String locale,
+        int pageNum,
+        URLStrategy urlStrategy
+    ) throws WebloggerException;
+
+    SearchResultList search(
+        String term,
+        String weblogHandle,
+        String category,
+        String locale,
+        int pageNum,
+        int entryCount,
+        URLStrategy urlStrategy
+    ) throws WebloggerException;
 }
 
 

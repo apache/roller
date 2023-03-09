@@ -22,7 +22,10 @@ package org.apache.roller.weblogger.business.search.solr;
 
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.business.search.SearchResultList;
+import org.apache.roller.weblogger.business.search.SearchResultMap;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 
@@ -78,7 +81,13 @@ public class SolrIndexManager implements IndexManager {
     }
 
     @Override
-    public SearchResult search(String term, String weblogHandle, String category, String locale) throws WebloggerException {
+    public SearchResultMap searchByDay(String term, String weblogHandle, String category, String locale, int pageNum, URLStrategy urlStrategy) throws WebloggerException {
         return null;
     }
+
+    @Override
+    public SearchResultList search(String term, String weblogHandle, String category, String locale, int pageNum, int entryCount, URLStrategy urlStrategy) throws WebloggerException {
+        return null;
+    }
+
 }
