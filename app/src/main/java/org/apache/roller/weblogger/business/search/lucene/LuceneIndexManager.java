@@ -24,6 +24,14 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Timestamp;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -33,19 +41,30 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.roller.util.DateUtil;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.business.search.SearchResult;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.WeblogEntryWrapperComparator;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
+
+import static org.apache.roller.weblogger.ui.rendering.model.SearchResultsModel.RESULTS_PER_PAGE;
 
 /**
  * Lucene implementation of IndexManager. This is the central entry point into
@@ -361,6 +380,87 @@ public class LuceneIndexManager implements IndexManager {
                 logger.error("Unable to close reader.", ex);
             }
         }
+    }
+
+    public static SearchResult convertHitsToEntries(
+        ScoreDoc[] hits,
+        SearchOperation search,
+        int pageNum,
+        String weblogHandle,
+        boolean websiteSpecificSearch,
+        URLStrategy urlStrategy)
+        throws WebloggerException {
+
+        Set<String> categories = new HashSet<>();
+        Map<Date, Set<WeblogEntryWrapper>> results = new TreeMap<>(Collections.reverseOrder());
+
+        // determine offset
+        int offset = pageNum * RESULTS_PER_PAGE;
+        if (offset >= hits.length) {
+            offset = 0;
+        }
+
+        // determine limit
+        int limit = RESULTS_PER_PAGE;
+        if (offset + limit > hits.length) {
+            limit = hits.length - offset;
+        }
+
+        try {
+            Set<String> categorySet = new TreeSet<>();
+            Weblogger roller = WebloggerFactory.getWeblogger();
+            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
+
+            WeblogEntry entry;
+            Document doc;
+            String handle;
+            Timestamp now = new Timestamp(new Date().getTime());
+            for (int i = offset; i < offset + limit; i++) {
+                doc = search.getSearcher().doc(hits[i].doc);
+                handle = doc.getField(FieldConstants.WEBSITE_HANDLE)
+                    .stringValue();
+
+                entry = weblogMgr.getWeblogEntry(doc.getField(
+                    FieldConstants.ID).stringValue());
+
+                if (!(websiteSpecificSearch && handle.equals(weblogHandle))
+                    && doc.getField(FieldConstants.CATEGORY) != null) {
+                    categorySet.add(doc.getField(FieldConstants.CATEGORY).stringValue());
+                }
+
+                // maybe null if search result returned inactive user
+                // or entry's user is not the requested user.
+                // but don't return future posts
+                if (entry != null && entry.getPubTime().before(now)) {
+                    addEntryToResults(results, WeblogEntryWrapper.wrap(entry, urlStrategy));
+                }
+            }
+
+            if (!categorySet.isEmpty()) {
+                categories = categorySet;
+            }
+
+            return new SearchResult(results, categories, limit, offset);
+
+        } catch (IOException e) {
+            throw new WebloggerException(e);
+        }
+    }
+
+    static void addEntryToResults(Map<Date, Set<WeblogEntryWrapper>> results, WeblogEntryWrapper entry) {
+
+        // convert entry's each date to midnight (00m 00h 00s)
+        Date midnight = DateUtil.getStartOfDay(entry.getPubTime());
+
+        // ensure we do not get duplicates from Lucene by
+        // using a Set Collection. Entries sorted by pubTime.
+        Set<WeblogEntryWrapper> set = results.get(midnight);
+        if (set == null) {
+            // date is not mapped yet, so we need a new Set
+            set = new TreeSet<>(new WeblogEntryWrapperComparator());
+            results.put(midnight, set);
+        }
+        set.add(entry);
     }
 
 }

@@ -62,11 +62,6 @@ public interface IndexManager {
     void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
 
     SearchResult search(String term, String weblogHandle, String category, String locale) throws WebloggerException;
-
-    interface SearchResult {
-        int getResultsCount();
-
-    }
 }
 
 

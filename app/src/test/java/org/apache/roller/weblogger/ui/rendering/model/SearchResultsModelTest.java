@@ -22,9 +22,11 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.sql.Timestamp;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +42,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
 import org.instancio.Instancio;
@@ -168,6 +171,12 @@ class SearchResultsModelTest {
             model.init(initData);
 
             assertEquals(1, model.getResults().size());
+            int count = 0;
+            for (Date midnight : model.getResults().keySet()) {
+                Set<WeblogEntryWrapper> wrappers = model.getResults().get(midnight);
+                count += wrappers.size();
+            }
+            assertEquals(2, count);
 
         } finally {
             for (WeblogEntry entry : entries) {
