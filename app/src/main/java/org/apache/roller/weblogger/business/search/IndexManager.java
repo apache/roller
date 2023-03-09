@@ -62,15 +62,6 @@ public interface IndexManager {
     /** Remove entry from index, returns immediately and operates in background */
     void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
 
-    SearchResultMap searchByDay(
-        String term,
-        String weblogHandle,
-        String category,
-        String locale,
-        int pageNum,
-        URLStrategy urlStrategy
-    ) throws WebloggerException;
-
     SearchResultList search(
         String term,
         String weblogHandle,

@@ -220,43 +220,6 @@ public class LuceneIndexManager implements IndexManager {
     }
 
     @Override
-    public SearchResultMap searchByDay(
-        String term,
-        String weblogHandle,
-        String category,
-        String locale,
-        int pageNum,
-        URLStrategy urlStrategy) throws WebloggerException {
-
-        SearchOperation search = new SearchOperation(this);
-        search.setTerm(term);
-        boolean weblogSpecific = !WebloggerRuntimeConfig.isSiteWideWeblog(weblogHandle);
-        if (weblogSpecific) {
-            search.setWeblogHandle(weblogHandle);
-        }
-        if (category != null) {
-            search.setCategory(category);
-        }
-        if (locale != null) {
-            search.setLocale(locale);
-        }
-
-        executeIndexOperationNow(search);
-        if (search.getResultsCount() >= 0) {
-            TopFieldDocs docs = search.getResults();
-            ScoreDoc[] hitsArr = docs.scoreDocs;
-            return convertHitsToEntryDateMap(
-                hitsArr,
-                search,
-                pageNum,
-                weblogHandle,
-                weblogSpecific,
-                urlStrategy);
-        }
-        throw new WebloggerException("Error executing search");
-    }
-
-    @Override
     public SearchResultList search(
         String term,
         String weblogHandle,
@@ -458,88 +421,6 @@ public class LuceneIndexManager implements IndexManager {
         }
     }
 
-    private static SearchResultMap convertHitsToEntryDateMap(
-        ScoreDoc[] hits,
-        SearchOperation search,
-        int pageNum,
-        String weblogHandle,
-        boolean websiteSpecificSearch,
-        URLStrategy urlStrategy)
-        throws WebloggerException {
-
-        Set<String> categories = new HashSet<>();
-        Map<Date, Set<WeblogEntryWrapper>> results = new TreeMap<>(Collections.reverseOrder());
-
-        // determine offset
-        int offset = pageNum * RESULTS_PER_PAGE;
-        if (offset >= hits.length) {
-            offset = 0;
-        }
-
-        // determine limit
-        int limit = RESULTS_PER_PAGE;
-        if (offset + limit > hits.length) {
-            limit = hits.length - offset;
-        }
-
-        try {
-            Set<String> categorySet = new TreeSet<>();
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
-
-            WeblogEntry entry;
-            Document doc;
-            String handle;
-            Timestamp now = new Timestamp(new Date().getTime());
-            for (int i = offset; i < offset + limit; i++) {
-                doc = search.getSearcher().doc(hits[i].doc);
-                handle = doc.getField(FieldConstants.WEBSITE_HANDLE)
-                    .stringValue();
-
-                entry = weblogMgr.getWeblogEntry(doc.getField(
-                    FieldConstants.ID).stringValue());
-
-                if (!(websiteSpecificSearch && handle.equals(weblogHandle))
-                    && doc.getField(FieldConstants.CATEGORY) != null) {
-                    categorySet.add(doc.getField(FieldConstants.CATEGORY).stringValue());
-                }
-
-                // maybe null if search result returned inactive user
-                // or entry's user is not the requested user.
-                // but don't return future posts
-                if (entry != null && entry.getPubTime().before(now)) {
-                    addEntryToResults(results, WeblogEntryWrapper.wrap(entry, urlStrategy));
-                }
-            }
-
-            if (!categorySet.isEmpty()) {
-                categories = categorySet;
-            }
-
-            return new SearchResultMap(results, categories, limit, offset);
-
-        } catch (IOException e) {
-            throw new WebloggerException(e);
-        }
-    }
-
-    static void addEntryToResults(Map<Date, Set<WeblogEntryWrapper>> results, WeblogEntryWrapper entry) {
-
-        // convert entry's each date to midnight (00m 00h 00s)
-        Date midnight = DateUtil.getStartOfDay(entry.getPubTime());
-
-        // ensure we do not get duplicates from Lucene by
-        // using a Set Collection. Entries sorted by pubTime.
-        Set<WeblogEntryWrapper> set = results.get(midnight);
-        if (set == null) {
-            // date is not mapped yet, so we need a new Set
-            set = new TreeSet<>(new WeblogEntryWrapperComparator());
-            results.put(midnight, set);
-        }
-        set.add(entry);
-    }
-
-
     /**
      * Convert hits to entries.
      *
@@ -586,11 +467,8 @@ public class LuceneIndexManager implements IndexManager {
             Timestamp now = new Timestamp(new Date().getTime());
             for (int i = offset; i < offset + limit; i++) {
                 doc = search.getSearcher().doc(hits[i].doc);
-                handle = doc.getField(FieldConstants.WEBSITE_HANDLE)
-                    .stringValue();
-
-                entry = weblogMgr.getWeblogEntry(doc.getField(
-                    FieldConstants.ID).stringValue());
+                handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
+                entry = weblogMgr.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue());
 
                 if (!(websiteSpecificSearch && handle.equals(weblogHandle))
                     && doc.getField(FieldConstants.CATEGORY) != null) {

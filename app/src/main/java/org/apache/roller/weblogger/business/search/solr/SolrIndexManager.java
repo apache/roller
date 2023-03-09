@@ -81,11 +81,6 @@ public class SolrIndexManager implements IndexManager {
     }
 
     @Override
-    public SearchResultMap searchByDay(String term, String weblogHandle, String category, String locale, int pageNum, URLStrategy urlStrategy) throws WebloggerException {
-        return null;
-    }
-
-    @Override
     public SearchResultList search(String term, String weblogHandle, String category, String locale, int pageNum, int entryCount, URLStrategy urlStrategy) throws WebloggerException {
         return null;
     }

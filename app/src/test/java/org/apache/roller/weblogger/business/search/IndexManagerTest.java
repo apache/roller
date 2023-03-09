@@ -38,6 +38,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.roller.weblogger.ui.rendering.model.SearchResultsModel.RESULTS_PER_PAGE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -89,29 +90,15 @@ public class IndexManagerTest {
         List<WeblogEntry> entries = createWeblogEntries(testWeblog, indexManager, entryManager);
 
         try {
-            SearchResultMap result = indexManager.searchByDay("Enterprise",
-                testWeblog.getHandle(), null, testWeblog.getLocale(), 0,
+            SearchResultList result = indexManager.search("Enterprise",
+                testWeblog.getHandle(), null, testWeblog.getLocale(), 0, RESULTS_PER_PAGE,
                 WebloggerFactory.getWeblogger().getUrlStrategy());
+            assertEquals(2, result.getResults().size());
 
-            assertEquals(1, result.getResults().size());
-            int count = 0;
-            for (Date midnight : result.getResults().keySet()) {
-                Set<WeblogEntryWrapper> wrappers = result.getResults().get(midnight);
-                count += wrappers.size();
-            }
-            assertEquals(2, count);
-
-            result = indexManager.searchByDay("Tholian",
-                testWeblog.getHandle(), null, testWeblog.getLocale(), 0,
+            result = indexManager.search("Tholian",
+                testWeblog.getHandle(), null, testWeblog.getLocale(), 0, RESULTS_PER_PAGE,
                 WebloggerFactory.getWeblogger().getUrlStrategy());
-
             assertEquals(1, result.getResults().size());
-            count = 0;
-            for (Date midnight : result.getResults().keySet()) {
-                Set<WeblogEntryWrapper> wrappers = result.getResults().get(midnight);
-                count += wrappers.size();
-            }
-            assertEquals(1, count);
 
         } finally {
             for (WeblogEntry entry : entries) {
