@@ -57,7 +57,7 @@ limitations under the License.
         <slf4j.version>1.7.36</slf4j.version>
         <spring.version>5.3.20</spring.version>
         <spring.security.version>5.7.1</spring.security.version>
-        <struts.version>2.5.29</struts.version>
+        <struts.version>6.1.2</struts.version>
         <velocity.version>2.3</velocity.version>
         <webjars.version>1.6</webjars.version>
         <ws-commons-util.version>1.0.2</ws-commons-util.version>
@@ -499,7 +499,7 @@ limitations under the License.
         <dependency>
             <groupId>com.jgeppert.struts2.bootstrap</groupId>
             <artifactId>struts2-bootstrap-plugin</artifactId>
-            <version>4.0.1</version>
+            <version>5.0.0</version>
         </dependency>
 
         <dependency>
