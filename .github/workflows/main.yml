@@ -17,9 +17,6 @@
 
 name: Apache Roller
 
-# junit report action
-# https://github.com/marketplace/actions/junit-report-action
-
 on:
   push:
     branches: [master]
@@ -30,21 +27,30 @@ jobs:
   build-test:
     name: Build+Test on Linux/JDK ${{ matrix.java }} 
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     strategy:
       fail-fast: false
       matrix:
-        java: [ '11', '17', '18' ]
+        java: [ '11', '17', '20' ]
 
     steps:
       - name: Set up JDK ${{ matrix.java }} 
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java }} 
           distribution: 'zulu'
 
+      - name: Setup Xvfb
+        run: |
+          echo "DISPLAY=:99.0" >> $GITHUB_ENV
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
       - name: Checkout Project
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          submodules: false
 
       - name: Build Roller and run JUnit Tests
         run: mvn -V -ntp install
@@ -52,23 +58,19 @@ jobs:
       - name: Run Integration Tests
         run: |
           cd it-selenium
-          bash -c "wget -c https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz -O - | tar -xz"
-          mvn -V -ntp install
+          mvn -V -ntp -Dwebdriver.gecko.driver=$GECKOWEBDRIVER/geckodriver install
 
-# TODO: needs submodule workaround since apache does not allow third party actions anymore
-#      - name: Publish JUnit Report
-#        uses: mikepenz/action-junit-report@v3
-#        if: always()
-#        with:
-#          check_name: JUnit Reports for Linux/JDK ${{ matrix.java }} 
-#          report_paths: 'app/target/surefire-reports/TEST-*.xml'
-#
-#      - name: Publish IT Report
-#        uses: mikepenz/action-junit-report@v3
-#        if: always()
-#        with:
-#          check_name: IT Reports for Linux/JDK ${{ matrix.java }} 
-#          report_paths: 'it-selenium/target/failsafe-reports/TEST-*.xml'
+      - name: Publish JUnit Report
+        uses: test-summary/action@v2
+        if: always()
+        with:
+          paths: "app/target/surefire-reports/TEST-*.xml"
+
+      - name: Publish IT Report
+        uses: test-summary/action@v2
+        if: always()
+        with:
+          paths: "it-selenium/target/failsafe-reports/TEST-*.xml"
       
       # only on integration and only once in this matrix
       - name: Upload Dev Build on Integration

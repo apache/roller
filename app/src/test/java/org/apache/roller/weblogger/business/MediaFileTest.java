@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.*;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,11 +48,9 @@ public class MediaFileTest  {
     public MediaFileTest() {
     }
 
+    @BeforeEach
     public void setUp() throws Exception {
         TestUtils.setupWeblogger();
-    }
-
-    public void tearDown() throws Exception {
     }
 
     /**
