@@ -51,7 +51,7 @@ public class DerbyManager {
                 //System.setProperty("derby.drda.logConnections","true");
                 NetworkServerControl server = new NetworkServerControl();
                 server.start(new PrintWriter(System.out));
-                
+
                 try {Thread.sleep(2000);} catch (Exception ignored) {}
                 System.out.println("Runtime Info: " + server.getRuntimeInfo());
 

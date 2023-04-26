@@ -52,7 +52,7 @@ limitations under the License.
     <Loggers>
         
         <!-- roller.log; everything not defined here will end up in server.log -->
-        <Logger name="org.apache.roller"   level="info"  additivity="false"> <AppenderRef ref="roller"/> </Logger>
+        <Logger name="org.apache.roller"   level="debug"  additivity="false"> <AppenderRef ref="roller"/> </Logger>
         <Logger name="org.apache.velocity" level="info"  additivity="false"> <AppenderRef ref="roller"/> </Logger>
         <Logger name="org.springframework" level="info"  additivity="false"> <AppenderRef ref="roller"/> </Logger>
         <Logger name="org.apache.struts2"  level="debug" additivity="false"> <AppenderRef ref="roller"/> </Logger>

@@ -48,7 +48,7 @@ import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.plugins.PluginManagerImpl;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
+import org.apache.roller.weblogger.business.search.lucene.LuceneIndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.business.themes.ThemeManagerImpl;
 import org.apache.roller.weblogger.planet.business.WebloggerRomeFeedFetcher;
@@ -81,7 +81,7 @@ public class JPAWebloggerModule implements Module {
                 
         binder.bind(MediaFileManager.class).to(    JPAMediaFileManagerImpl.class);
         binder.bind(FileContentManager.class).to(  FileContentManagerImpl.class);
-        binder.bind(IndexManager.class).to(        IndexManagerImpl.class);
+        binder.bind(IndexManager.class).to(        LuceneIndexManager.class);
         binder.bind(PluginManager.class).to(       PluginManagerImpl.class);    
         binder.bind(ThemeManager.class).to(        ThemeManagerImpl.class);
         

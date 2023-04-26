@@ -16,41 +16,49 @@
  * directory of this distribution.
  */
 
-package org.apache.roller.weblogger.business.search;
+package org.apache.roller.weblogger.business.search.lucene;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopFieldDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.InitializationException;
+import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.search.operations.AddEntryOperation;
-import org.apache.roller.weblogger.business.search.operations.IndexOperation;
-import org.apache.roller.weblogger.business.search.operations.ReIndexEntryOperation;
-import org.apache.roller.weblogger.business.search.operations.RebuildWebsiteIndexOperation;
-import org.apache.roller.weblogger.business.search.operations.RemoveEntryOperation;
-import org.apache.roller.weblogger.business.search.operations.RemoveWebsiteIndexOperation;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.business.search.SearchResultList;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 
 /**
  * Lucene implementation of IndexManager. This is the central entry point into
@@ -60,12 +68,12 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
  * @author mraible (formatting and making indexDir configurable)
  */
 @com.google.inject.Singleton
-public class IndexManagerImpl implements IndexManager {
+public class LuceneIndexManager implements IndexManager {
 
     private IndexReader reader;
     private final Weblogger roller;
 
-    private final static Log mLogger = LogFactory.getFactory().getInstance(IndexManagerImpl.class);
+    private final static Log logger = LogFactory.getFactory().getInstance(LuceneIndexManager.class);
 
     private boolean searchEnabled = true;
 
@@ -87,7 +95,7 @@ public class IndexManagerImpl implements IndexManager {
      * @param roller - the weblogger instance
      */
     @com.google.inject.Inject
-    protected IndexManagerImpl(Weblogger roller) {
+    protected LuceneIndexManager(Weblogger roller) {
         this.roller = roller;
 
         // check config to see if the internal search is enabled
@@ -102,8 +110,8 @@ public class IndexManagerImpl implements IndexManager {
         this.indexDir = searchIndexDir.replace('/', File.separatorChar);
 
         // a little debugging
-        mLogger.info("search enabled: " + this.searchEnabled);
-        mLogger.info("index dir: " + this.indexDir);
+        logger.info("search enabled: " + this.searchEnabled);
+        logger.info("index dir: " + this.indexDir);
 
         String test = indexDir + File.separator + ".index-inconsistent";
         indexConsistencyMarker = new File(test);
@@ -120,7 +128,7 @@ public class IndexManagerImpl implements IndexManager {
 
             // delete index if inconsistency marker exists
             if (indexConsistencyMarker.exists()) {
-                mLogger.debug("Index inconsistent: marker exists");
+                logger.debug("Index inconsistent: marker exists");
                 inconsistentAtStartup = true;
                 deleteIndex();
             } else {
@@ -129,11 +137,11 @@ public class IndexManagerImpl implements IndexManager {
                     if (!makeIndexDir.exists()) {
                         makeIndexDir.mkdirs();
                         inconsistentAtStartup = true;
-                        mLogger.debug("Index inconsistent: new");
+                        logger.debug("Index inconsistent: new");
                     }
                     indexConsistencyMarker.createNewFile();
                 } catch (IOException e) {
-                    mLogger.error(e);
+                    logger.error(e);
                 }
             }
 
@@ -145,43 +153,43 @@ public class IndexManagerImpl implements IndexManager {
                         reader = DirectoryReader.open(getIndexDirectory());
                     }
                 } catch (IOException | IllegalArgumentException ex) {  // IAE for incompatible codecs
-                    mLogger.warn("Failed to open search index, scheduling rebuild.", ex);
+                    logger.warn("Failed to open search index, scheduling rebuild.", ex);
                     inconsistentAtStartup = true;
                     deleteIndex();
                 }
             } else {
-                mLogger.debug("Creating index");
+                logger.debug("Creating index");
                 inconsistentAtStartup = true;
                 deleteIndex();
                 createIndex(getIndexDirectory());
             }
 
             if (inconsistentAtStartup) {
-                mLogger.info("Index was inconsistent. Rebuilding index in the background...");
+                logger.info("Index was inconsistent. Rebuilding index in the background...");
                 try {
-                    rebuildWebsiteIndex();
+                    rebuildWeblogIndex();
                 } catch (WebloggerException ex) {
-                    mLogger.error("ERROR: scheduling re-index operation", ex);
+                    logger.error("ERROR: scheduling re-index operation", ex);
                 }
             } else {
-                mLogger.info("Index initialized and ready for use.");
+                logger.info("Index initialized and ready for use.");
             }
         }
 
     }
 
     @Override
-    public void rebuildWebsiteIndex() throws WebloggerException {
+    public void rebuildWeblogIndex() throws WebloggerException {
         scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this, null));
     }
 
     @Override
-    public void rebuildWebsiteIndex(Weblog website) throws WebloggerException {
+    public void rebuildWeblogIndex(Weblog website) throws WebloggerException {
         scheduleIndexOperation(new RebuildWebsiteIndexOperation(roller, this, website));
     }
 
     @Override
-    public void removeWebsiteIndex(Weblog website) throws WebloggerException {
+    public void removeWeblogIndex(Weblog website) throws WebloggerException {
         scheduleIndexOperation(new RemoveWebsiteIndexOperation(roller, this, website));
     }
 
@@ -198,6 +206,45 @@ public class IndexManagerImpl implements IndexManager {
     @Override
     public void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException {
         executeIndexOperationNow(new RemoveEntryOperation(roller, this, entry));
+    }
+
+    @Override
+    public SearchResultList search(
+        String term,
+        String weblogHandle,
+        String category,
+        String locale,
+        int pageNum,
+        int entryCount,
+        URLStrategy urlStrategy) throws WebloggerException {
+
+        SearchOperation search = new SearchOperation(this);
+        search.setTerm(term);
+        boolean weblogSpecific = !WebloggerRuntimeConfig.isSiteWideWeblog(weblogHandle);
+        if (weblogSpecific) {
+            search.setWeblogHandle(weblogHandle);
+        }
+        if (category != null) {
+            search.setCategory(category);
+        }
+        if (locale != null) {
+            search.setLocale(locale);
+        }
+
+        executeIndexOperationNow(search);
+        if (search.getResultsCount() >= 0) {
+            TopFieldDocs docs = search.getResults();
+            ScoreDoc[] hitsArr = docs.scoreDocs;
+            return convertHitsToEntryList(
+                hitsArr,
+                search,
+                pageNum,
+                entryCount,
+                weblogHandle,
+                weblogSpecific,
+                urlStrategy);
+        }
+        throw new WebloggerException("Error executing search");
     }
 
     public ReadWriteLock getReadWriteLock() {
@@ -224,10 +271,10 @@ public class IndexManagerImpl implements IndexManager {
             final Class<?> clazz = Class.forName(className);
             return (Analyzer) ConstructorUtils.invokeConstructor(clazz, null);
         } catch (final ClassNotFoundException e) {
-            mLogger.error("failed to lookup analyzer class: " + className, e);
+            logger.error("failed to lookup analyzer class: " + className, e);
             return instantiateDefaultAnalyzer();
         } catch (final NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            mLogger.error("failed to instantiate analyzer: " + className, e);
+            logger.error("failed to instantiate analyzer: " + className, e);
             return instantiateDefaultAnalyzer();
         }
     }
@@ -240,29 +287,27 @@ public class IndexManagerImpl implements IndexManager {
         try {
             // only if search is enabled
             if (this.searchEnabled) {
-                mLogger.debug("Starting scheduled index operation: "
+                logger.debug("Starting scheduled index operation: "
                         + op.getClass().getName());
                 roller.getThreadManager().executeInBackground(op);
             }
         } catch (InterruptedException e) {
-            mLogger.error("Error executing operation", e);
+            logger.error("Error executing operation", e);
         }
     }
 
     /**
      * @param op
      */
-    @Override
-    public void executeIndexOperationNow(final IndexOperation op) {
+    private void executeIndexOperationNow(final IndexOperation op) {
         try {
             // only if search is enabled
             if (this.searchEnabled) {
-                mLogger.debug("Executing index operation now: "
-                        + op.getClass().getName());
+                logger.debug("Executing index operation now: " + op.getClass().getName());
                 roller.getThreadManager().executeInForeground(op);
             }
         } catch (InterruptedException e) {
-            mLogger.error("Error executing operation", e);
+            logger.error("Error executing operation", e);
         }
     }
 
@@ -275,7 +320,7 @@ public class IndexManagerImpl implements IndexManager {
             try {
                 reader = DirectoryReader.open(getIndexDirectory());
             } catch (IOException ex) {
-                mLogger.error("Error opening DirectoryReader", ex);
+                logger.error("Error opening DirectoryReader", ex);
                 throw new RuntimeException(ex);
             }
         }
@@ -293,7 +338,7 @@ public class IndexManagerImpl implements IndexManager {
         try {
             return FSDirectory.open(Path.of(indexDir));
         } catch (IOException e) {
-            mLogger.error("Problem accessing index directory", e);
+            logger.error("Problem accessing index directory", e);
         }
         return null;
     }
@@ -302,7 +347,7 @@ public class IndexManagerImpl implements IndexManager {
         try {
             return DirectoryReader.indexExists(getIndexDirectory());
         } catch (IOException e) {
-            mLogger.error("Problem accessing index directory", e);
+            logger.error("Problem accessing index directory", e);
         }
         return false;
     }
@@ -317,7 +362,7 @@ public class IndexManagerImpl implements IndexManager {
                 Files.delete(Path.of(indexDir, file));
             }
         } catch (IOException ex) {
-             mLogger.error("Problem accessing index directory", ex);
+             logger.error("Problem accessing index directory", ex);
         }
 
     }
@@ -329,18 +374,18 @@ public class IndexManagerImpl implements IndexManager {
 
             IndexWriterConfig config = new IndexWriterConfig(
                     new LimitTokenCountAnalyzer(
-                            IndexManagerImpl.getAnalyzer(), 128));
+                            LuceneIndexManager.getAnalyzer(), 128));
 
             writer = new IndexWriter(dir, config);
 
         } catch (IOException e) {
-            mLogger.error("Error creating index", e);
+            logger.error("Error creating index", e);
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
                 } catch (IOException ex) {
-                    mLogger.warn("Unable to close IndexWriter.", ex);
+                    logger.warn("Unable to close IndexWriter.", ex);
                 }
             }
         }
@@ -360,9 +405,81 @@ public class IndexManagerImpl implements IndexManager {
             try {
                 reader.close();
             } catch (IOException ex) {
-                mLogger.error("Unable to close reader.", ex);
+                logger.error("Unable to close reader.", ex);
             }
         }
     }
 
+    /**
+     * Convert hits to entries.
+     *
+     * @param hits
+     *            the hits
+     * @param search
+     *            the search
+     * @throws WebloggerException
+     *             the weblogger exception
+     */
+    static SearchResultList convertHitsToEntryList(
+        ScoreDoc[] hits,
+        SearchOperation search,
+        int pageNum,
+        int entryCount,
+        String weblogHandle,
+        boolean websiteSpecificSearch,
+        URLStrategy urlStrategy)
+        throws WebloggerException {
+
+        List<WeblogEntryWrapper> results = new ArrayList<>();
+
+        // determine offset
+        int offset = pageNum * entryCount;
+        if (offset >= hits.length) {
+            offset = 0;
+        }
+
+        // determine limit
+        int limit = entryCount;
+        if (offset + limit > hits.length) {
+            limit = hits.length - offset;
+        }
+
+        try {
+            Set<String> categories = new TreeSet<>();
+            TreeSet<String> categorySet = new TreeSet<>();
+            Weblogger roller = WebloggerFactory.getWeblogger();
+            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
+
+            WeblogEntry entry;
+            Document doc;
+            String handle;
+            Timestamp now = new Timestamp(new Date().getTime());
+            for (int i = offset; i < offset + limit; i++) {
+                doc = search.getSearcher().doc(hits[i].doc);
+                handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
+                entry = weblogMgr.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue());
+
+                if (!(websiteSpecificSearch && handle.equals(weblogHandle))
+                    && doc.getField(FieldConstants.CATEGORY) != null) {
+                    categorySet.add(doc.getField(FieldConstants.CATEGORY).stringValue());
+                }
+
+                // maybe null if search result returned inactive user
+                // or entry's user is not the requested user.
+                // but don't return future posts
+                if (entry != null && entry.getPubTime().before(now)) {
+                    results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
+                }
+            }
+
+            if (!categorySet.isEmpty()) {
+                categories = categorySet;
+            }
+
+            return new SearchResultList(results, categories, limit, offset);
+
+        } catch (IOException e) {
+            throw new WebloggerException(e);
+        }
+    }
 }

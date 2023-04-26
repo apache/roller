@@ -15,8 +15,10 @@
  * copyright in this work, please see the NOTICE file in the top level
  * directory of this distribution.
  */
+
 /* Created on Jul 16, 2003 */
-package org.apache.roller.weblogger.business.search.operations;
+
+package org.apache.roller.weblogger.business.search.lucene;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,8 +34,6 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.util.BytesRef;
-import org.apache.roller.weblogger.business.search.FieldConstants;
-import org.apache.roller.weblogger.business.search.IndexManagerImpl;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
@@ -50,17 +50,17 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
  */
 public abstract class IndexOperation implements Runnable {
 
-    private static Log mLogger = LogFactory.getFactory().getInstance(
+    private static Log logger = LogFactory.getFactory().getInstance(
             IndexOperation.class);
 
     // ~ Instance fields
     // ========================================================
-    protected IndexManagerImpl manager;
+    protected LuceneIndexManager manager;
     private IndexWriter writer;
 
     // ~ Constructors
     // ===========================================================
-    public IndexOperation(IndexManagerImpl manager) {
+    public IndexOperation(LuceneIndexManager manager) {
         this.manager = manager;
     }
 
@@ -172,7 +172,7 @@ public abstract class IndexOperation implements Runnable {
         try {
 
             LimitTokenCountAnalyzer analyzer = new LimitTokenCountAnalyzer(
-                    IndexManagerImpl.getAnalyzer(),
+                    LuceneIndexManager.getAnalyzer(),
                     WebloggerConfig.getIntProperty("lucene.analyzer.maxTokenCount"));
 
             IndexWriterConfig config = new IndexWriterConfig(analyzer);
@@ -180,7 +180,7 @@ public abstract class IndexOperation implements Runnable {
             writer = new IndexWriter(manager.getIndexDirectory(), config);
 
         } catch (IOException e) {
-            mLogger.error("ERROR creating writer", e);
+            logger.error("ERROR creating writer", e);
         }
 
         return writer;
@@ -194,7 +194,7 @@ public abstract class IndexOperation implements Runnable {
             try {
                 writer.close();
             } catch (IOException e) {
-                mLogger.error("ERROR closing writer", e);
+                logger.error("ERROR closing writer", e);
             }
         }
     }

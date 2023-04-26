@@ -530,7 +530,7 @@ public class WeblogEntry implements Serializable {
     }
 
     @SuppressWarnings("unused")
-    private void setTags(Set<WeblogEntryTag> tagSet) throws WebloggerException {
+    public void setTags(Set<WeblogEntryTag> tagSet) throws WebloggerException {
          this.tagSet = tagSet;
          this.removedTags = new HashSet<>();
          this.addedTags = new HashSet<>();
