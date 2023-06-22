@@ -5,7 +5,7 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<script src="<s:url value='/webjars/jquery/3.6.1/jquery.min.js' />"></script>
+<script src="<s:url value='/webjars/jquery/3.6.4/jquery.min.js' />"></script>
 
 <script src="<s:url value='/webjars/jquery-ui/1.13.2/jquery-ui.min.js' />"></script>
 <link href="<s:url value='/webjars/jquery-ui/1.13.2/jquery-ui.css' />" rel="stylesheet" />
@@ -16,7 +16,7 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 <link href="<s:url value='/webjars/bootstrap/3.4.1/css/bootstrap-theme.min.css' />" rel="stylesheet" />
 <script src="<s:url value='/webjars/bootstrap/3.4.1/js/bootstrap.min.js' />"></script>
 
-<script src="<s:url value='/webjars/clipboard.js/2.0.6/clipboard.min.js' />"></script>
+<script src="<s:url value='/webjars/clipboard.js/2.0.11/clipboard.min.js' />"></script>
 
 <script src="<s:url value='/webjars/summernote/0.8.12/dist/summernote.min.js' />"></script>
 <link href="<s:url value='/webjars/summernote/0.8.12/dist/summernote.css' />" rel="stylesheet" />
