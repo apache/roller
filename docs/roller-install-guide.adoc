@@ -55,6 +55,9 @@ will use your Roller site to author HTML, then you should configure
 Roller to sanitize all HTML published by the system. Do this by setting
 the _weblogAdminsUntrusted=true_ property in your
 _roller-custom.properties_ file.
+* *Do not allow File Uploads*. By default Roller allows users to upload
+files for display on their blogs. If don't trust your users, this is unsafe
+and you should disable File Uploads via the Server Administration page.
 * *Do not allow HTML in comments*. Roller can allow users to write
 comments in a safe-subset of HTML, but HTML use in comments is not
 allowed at all because of security concerns with even a so called

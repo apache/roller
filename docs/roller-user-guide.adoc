@@ -890,7 +890,8 @@ Safari)
 is no longer active and should not appear in hot-blog and other weblog
 listing on the site. You might want to do this if you take a very long
 vacation or if you have decided to stop updating your weblog for some
-other reason.
+other reason. Your weblog will still be publicly available, but not
+shown in the main community page of your site (if there is one).
 * *Number of entries to display on weblog*: Enter the maximum number of
 entries to be displayed on your weblog.
 
