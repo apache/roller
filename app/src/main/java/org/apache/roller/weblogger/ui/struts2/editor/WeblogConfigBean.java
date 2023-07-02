@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 
@@ -78,7 +79,7 @@ public class WeblogConfigBean {
     }
     
     public void setTagline( String tagline ) {
-        this.tagline = tagline;
+        this.tagline = tagline.replace("<", "&lt;").replace(">", "&gt;");
     }
     
     public boolean getEnableBloggerApi() {
@@ -214,7 +215,7 @@ public class WeblogConfigBean {
     }
 
     public void setAbout(String about) {
-        this.about = about;
+        this.about = about.replace("<", "&lt;").replace(">", "&gt;");
     }
     
     public String getBloggerCategoryId() {

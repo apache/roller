@@ -3,6 +3,7 @@
     <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src *; base-uri 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'">
     #includeTemplate($model.weblog "standard_head")
     <title>$model.weblog.name: $model.weblog.tagline</title>
     #showAutodiscoveryLinks($model.weblog)

@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -137,8 +138,9 @@ public class CategoryEdit extends UIAction {
     }
 
     public void myValidate() {
-
-        if ( isAdd() ) {
+        if (bean.getName() == null || !bean.getName().equals(StringEscapeUtils.escapeHtml4(bean.getName()))) {
+            addError("categoryForm.error.invalidName");
+        } else if ( isAdd() ) {
             if ( getActionWeblog().hasCategory( bean.getName() ) ) {
                 addError("categoryForm.error.duplicateName", bean.getName());
             }
