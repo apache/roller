@@ -79,7 +79,7 @@ public class WeblogConfigBean {
     }
     
     public void setTagline( String tagline ) {
-        this.tagline = tagline.replace("<", "&lt;").replace(">", "&gt;");
+        this.tagline = tagline;
     }
     
     public boolean getEnableBloggerApi() {
@@ -215,7 +215,7 @@ public class WeblogConfigBean {
     }
 
     public void setAbout(String about) {
-        this.about = about.replace("<", "&lt;").replace(">", "&gt;");
+        this.about = about;
     }
     
     public String getBloggerCategoryId() {

@@ -100,7 +100,7 @@ public class HTMLSanitizer {
     }
 
     /**
-     * Used to get the text,  tags removed or encoded
+     * Used to get the text, tags removed or encoded
      *
      * @param html
      * @return sanitized text

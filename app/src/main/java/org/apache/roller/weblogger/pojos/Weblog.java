@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.util.I18nUtils;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -195,7 +196,7 @@ public class Weblog implements Serializable {
     }
     
     public void setName(String name) {
-        this.name = name;
+        this.name = Utilities.removeHTML(name);
     }
     
     /**
@@ -207,7 +208,7 @@ public class Weblog implements Serializable {
     }
     
     public void setTagline(String tagline) {
-        this.tagline = tagline;
+        this.tagline = Utilities.removeHTML(tagline);
     }
     
     /**
@@ -567,7 +568,7 @@ public class Weblog implements Serializable {
     /**
      * A description for the weblog (its purpose, authors, etc.)
      *
-     * This field is meant to hold a paragraph or two describing the weblog, in contrast
+     * This field is meant to hold a paragraph describing the weblog, in contrast
      * to the short sentence or two 'description' attribute meant for blog taglines
      * and HTML header META description tags.
      *
@@ -577,7 +578,7 @@ public class Weblog implements Serializable {
     }
 
     public void setAbout(String about) {
-        this.about = about;
+        this.about = Utilities.removeHTML(about);
     }
     
     

@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -133,7 +134,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     }
     
     public void setName(String name) {
-        this.name = name;
+        this.name = Utilities.removeHTML(name);
     }
     
     
@@ -145,7 +146,7 @@ public class WeblogCategory implements Serializable, Comparable<WeblogCategory> 
     }
     
     public void setDescription(String description) {
-        this.description = description;
+        this.description = Utilities.removeHTML(description);
     }
 
     /**
