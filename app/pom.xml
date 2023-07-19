@@ -56,7 +56,7 @@ limitations under the License.
         <rome.version>1.19.0</rome.version> <!-- locked in place since next version removes popono -->
         <slf4j.version>1.7.36</slf4j.version>
         <spring.version>5.3.27</spring.version>
-        <spring.security.version>5.8.3</spring.security.version>
+        <spring.security.version>5.8.5</spring.security.version>
         <struts.version>2.5.29</struts.version>
         <velocity.version>2.3</velocity.version>
         <webjars.version>1.6</webjars.version>
