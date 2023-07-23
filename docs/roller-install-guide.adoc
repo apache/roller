@@ -203,9 +203,9 @@ password: *****
 mysql> create database rollerdb DEFAULT CHARACTER SET utf8 DEFAULT
 COLLATE utf8_general_ci;
 
-mysql> grant all on rollerdb.* to scott@`%' identified by `tiger';
+mysql> grant all on rollerdb.* to scott@'%' identified by 'tiger';
 
-mysql> grant all on rollerdb.* to scott@localhost identified by `tiger';
+mysql> grant all on rollerdb.* to scott@localhost identified by 'tiger';
 
 mysql> exit;
 ----
@@ -215,7 +215,7 @@ If you’re using Derby:
 ----
 % ij
 
-ij> connect `jdbc:derby:/path/to/new/MYROLLERDB;create=true';
+ij> connect 'jdbc:derby:/path/to/new/MYROLLERDB;create=true';
 
 ij> quit;
 ----
@@ -408,7 +408,7 @@ on the Tomcat classpath and therefore available to Roller.
 === Using Server-provided database & mail resources (optional)
 
 It’s easiest to setup your Roller for Tomcat database connection using
-the `jdbc' approach and the mail connection using `properties' but in
+the 'jdbc' approach and the mail connection using 'properties' but in
 some cases you might want to use the datasource and/or mail session
 resources provided by your application server instead. For
 authentication-requiring mail connections like Google’s Gmail service,

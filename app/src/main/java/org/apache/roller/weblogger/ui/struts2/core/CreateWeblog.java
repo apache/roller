@@ -172,6 +172,7 @@ public class CreateWeblog extends UIAction {
         String safe = CharSetUtils.keep(getBean().getHandle(), allowed);
         if (!safe.equals(getBean().getHandle()) ) {
             addError("createWeblog.error.invalidHandle");
+            return;
         }
         
         // make sure theme was specified and is a valid value
