@@ -67,7 +67,7 @@
     <s:if test="actionName == 'entryEdit'">
         <div class="form-group">
 
-            <label class="control-label col-md-3" for="entry_bean_permalink">
+            <label class="col-md-3" for="entry_bean_permalink">
                 <s:text name="weblogEdit.permaLink"/>
             </label>
 
@@ -107,7 +107,7 @@
 
     <%-- status --%>
     <div class="form-group">
-        <label class="control-label col-md-3" for="weblogEdit.status"><s:text name="weblogEdit.status"/></label>
+        <label class="col-md-3" for="weblogEdit.status"><s:text name="weblogEdit.status"/></label>
 
         <div class="controls col-md-9">
 
