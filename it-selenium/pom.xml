@@ -152,42 +152,6 @@
                 </dependencies>                    
             </plugin>
 
-            <!-- Activates the Derby database during the integration test phase -->
-            <plugin>
-                <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
-                <artifactId>inmemdb-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>run</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <daemon>true</daemon>
-                            <type>derby</type>
-                            <database>rollerdb</database>
-                            <username>APP</username>
-                            <password>APP</password>
-                            <port>4224</port>
-                            <sources>
-                                <script>
-                                    <sourceFile>${project.basedir}/target/roller-selenium-tests-${project.version}/WEB-INF/classes/dbscripts/derby/createdb.sql</sourceFile>
-                                </script>
-                            </sources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>stop</id>
-                        <!-- Moving later to verify phase from post-integration-test.  Reason: Jetty shutdown wants
-                             to close database or will raise error messages. -->
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- Activates the Roller application during the integration test phase -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>

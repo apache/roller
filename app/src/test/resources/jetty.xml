@@ -20,7 +20,7 @@
 
 <!-- Dummy values used only when testing with Jetty via mvn jetty:run -->
 
-<Configure>
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
 
     <New id="ds" class="org.eclipse.jetty.plus.jndi.Resource">
         <Arg> <Ref id="wac_ds"/> </Arg>
@@ -49,5 +49,11 @@
             </New>
         </Arg>
     </New>
+
+    <Call name="addEventListener">
+        <Arg>
+            <New class="org.apache.roller.testutils.DerbyLifeCycle"/>
+        </Arg>
+    </Call>
 
 </Configure>

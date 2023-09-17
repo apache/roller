@@ -54,7 +54,6 @@ limitations under the License.
         <maven-surefire.version>2.22.2</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
         <rome.version>1.19.0</rome.version> <!-- locked in place since next version removes popono -->
-        <slf4j.version>1.7.36</slf4j.version>
         <spring.version>5.3.27</spring.version>
         <spring.security.version>5.8.3</spring.security.version>
         <struts.version>2.5.29</struts.version>
@@ -611,19 +610,21 @@ limitations under the License.
                     </webApp>
                     <jettyXmls>src/test/resources/jetty.xml</jettyXmls>
                     <systemProperties>
-                        <systemProperty>
-                            <name>roller.custom.config</name>
-                            <value>${project.build.directory}/test-classes/roller-jettyrun.properties</value>
-                        </systemProperty>
+                        <roller.custom.config>
+                            ${project.build.directory}/test-classes/roller-jettyrun.properties
+                        </roller.custom.config>
                     </systemProperties>
                 </configuration>
                 <dependencies>
-                    <!-- Dependencies needed when using mvn jetty:run, not mvn test -->
+                    <dependency>
+                        <groupId>org.apache.roller</groupId>
+                        <artifactId>db-utils</artifactId>
+                        <version>6.1.2</version>
+                    </dependency>
                     <dependency>
                         <groupId>commons-dbcp</groupId>
                         <artifactId>commons-dbcp</artifactId>
                         <version>1.4</version>
-                        <scope>runtime</scope>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>
@@ -643,49 +644,9 @@ limitations under the License.
                 </dependencies>
             </plugin>
 
-            <!-- Activates the Derby database for unit tests and mvn jetty:run
-            <plugin>
-                <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
-                <artifactId>inmemdb-maven-plugin</artifactId>
-
-                <configuration>
-                    <daemon>true</daemon>
-                    <type>derby</type>
-                    <database>rollerdb</database>
-                    <username>APP</username>
-                    <password>APP</password>
-                    <port>4224</port>
-                    <sources>
-                        <script>
-                            <sourceFile>${project.basedir}/target/dbscripts/derby/createdb.sql</sourceFile>
-                        </script>
-                    </sources>
-                    <skip>${skipTests}</skip>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <id>run</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>stop</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-
-            </plugin>
-            -->
-
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.1</version>
 
                 <executions>
 
@@ -714,7 +675,7 @@ limitations under the License.
                         </goals>
                         <configuration>
                             <includeEmptyDirs>true</includeEmptyDirs>
-                            <outputDirectory>${basedir}/target/dbscripts</outputDirectory>
+                            <outputDirectory>${basedir}/target/classes/dbscripts</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${basedir}/src/main/resources/sql</directory>
@@ -724,7 +685,7 @@ limitations under the License.
                         </configuration>
                     </execution>
 
-                    <execution>
+                    <!-- <execution>
                         <id>copy-resources</id>
                         <phase>process-resources</phase>
                         <goals>
@@ -742,7 +703,7 @@ limitations under the License.
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>
+                    </execution> -->
 
                 </executions>
 
@@ -804,7 +765,7 @@ limitations under the License.
                                 <property file="${basedir}/src/main/resources/sql/dbscripts.properties" />
                                 <for list="${databases}" param="database" delimiter=" ">
                                     <sequential>
-                                        <mkdir dir="${basedir}/target/dbscripts/@{database}" />
+                                        <mkdir dir="${basedir}/target/classes/dbscripts/@{database}" />
                                     </sequential>
                                 </for>
 
@@ -815,7 +776,7 @@ limitations under the License.
                                     controlTemplate  ="control.vm"
                                     contextProperties="${basedir}/src/main/resources/sql/dbscripts.properties"
                                     templatePath     ="${basedir}/src/main/resources/sql"
-                                    outputDirectory  ="${basedir}/target/dbscripts"
+                                    outputDirectory  ="${basedir}/target/classes/dbscripts"
                                     outputFile       ="README.txt"/>
                             </target>
                         </configuration>
