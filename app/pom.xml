@@ -36,7 +36,6 @@ limitations under the License.
         <servlet.version>4.0.1</servlet.version>
         <jsp-api.version>2.2</jsp-api.version>
         <java-activation.version>1.2.0</java-activation.version>
-        <java-mail.version>1.4.7</java-mail.version>
         <jstl.version>1.2</jstl.version>
         <angular.version>1.7.8</angular.version>
         <ant.version>1.10.13</ant.version>

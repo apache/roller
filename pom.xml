@@ -40,11 +40,12 @@ limitations under the License.
     </scm>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <derby.version>10.11.1.1</derby.version>
+        <java-mail.version>1.4.7</java-mail.version>
         <jaxb.version>2.3.1</jaxb.version>
         <jetty.plugin.version>10.0.16</jetty.plugin.version> <!-- Jetty 11 requires Jakarta package names -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <roller.version>6.1.2</roller.version>
         <slf4j.version>1.7.36</slf4j.version>
     </properties>

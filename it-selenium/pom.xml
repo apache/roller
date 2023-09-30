@@ -165,10 +165,9 @@
                     <webAppSourceDirectory>target/roller-selenium-tests-${project.version}</webAppSourceDirectory>
                     <jettyXmls>${project.parent.basedir}/app/src/test/resources/jetty.xml</jettyXmls>
                     <systemProperties>
-                        <systemProperty>
-                            <name>roller.custom.config</name>
-                            <value>src/test/resources/roller-jettyrun.properties</value>
-                        </systemProperty>
+                        <roller.custom.config>
+                            src/test/resources/roller-jettyrun.properties
+                        </roller.custom.config>
                     </systemProperties>
                 </configuration>
                 <executions>
@@ -192,51 +191,31 @@
                     </execution>
                 </executions>
                 <dependencies>
-                            
+                    <dependency>
+                        <groupId>org.apache.roller</groupId>
+                        <artifactId>db-utils</artifactId>
+                        <version>6.1.2</version>
+                    </dependency>
                     <dependency>
                         <groupId>commons-dbcp</groupId>
                         <artifactId>commons-dbcp</artifactId>
                         <version>1.4</version>
                     </dependency>
-
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derby</artifactId>
                         <version>${derby.version}</version>
                     </dependency>
-
                     <dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derbyclient</artifactId>
                         <version>${derby.version}</version>
                     </dependency>
-
-                    <dependency>
-                        <groupId>commons-dbcp</groupId>
-                        <artifactId>commons-dbcp</artifactId>
-                        <version>1.4</version>
-                        <scope>runtime</scope>
-                    </dependency>
-
                     <dependency>
                         <groupId>javax.mail</groupId>
                         <artifactId>mail</artifactId>
-                        <version>1.4.7</version>
+                        <version>${java-mail.version}</version>
                     </dependency>
-
-                    <dependency>
-                        <groupId>javax.xml.bind</groupId>
-                        <artifactId>jaxb-api</artifactId>
-                        <version>${jaxb.version}</version>
-                        <exclusions>
-                            <exclusion>
-                                <!--api is already in the javax.activation artifact-->
-                                <groupId>javax.activation</groupId>
-                                <artifactId>javax.activation-api</artifactId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
-
                 </dependencies>
             </plugin>
         </plugins>
