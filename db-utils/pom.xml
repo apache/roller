@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.roller</groupId>
+        <artifactId>roller-project</artifactId>
+        <version>6.1.2</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <name>Apache Roller DB Utilities</name>
+    <artifactId>db-utils</artifactId>
+    <version>6.1.2</version>
+
+    <build>
+        <plugins>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!-- slf4j implementing the apache commons-logging interfaces -->
+        <!-- note: commons-logging needs to be excluded in all dependencies transitive depending on it.
+        See 2006 RFE https://issues.apache.org/jira/browse/MNG-1977 for maven's missing feature of global exclusions -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbynet</artifactId>
+            <version>${derby.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>${derby.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty.plugin.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.1</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+</project>

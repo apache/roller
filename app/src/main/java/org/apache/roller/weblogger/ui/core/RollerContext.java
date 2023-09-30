@@ -157,18 +157,28 @@ public class RollerContext extends ContextLoaderListener
             return;
         }
 
+        final boolean ittest = "ittest".equals(WebloggerConfig.getProperty("installation.type"));
 
         // if preparation failed or is incomplete then we are done,
         // otherwise try to bootstrap the business tier
-        if (!WebloggerStartup.isPrepared()) {
+        if (!WebloggerStartup.isPrepared() && !ittest) {
+
             StringBuilder buf = new StringBuilder();
             buf.append("\n--------------------------------------------------------------");
             buf.append("\nRoller Weblogger startup INCOMPLETE, user interaction required");
             buf.append("\n--------------------------------------------------------------");
             log.info(buf.toString());
-        } else {
-            Weblogger weblogger = null;
 
+        } else {
+            if (ittest) {
+                try {
+                    WebloggerStartup.createDatabase();
+                } catch (StartupException e) {
+                    throw new RuntimeException("Failed to create database to IT testing", e);
+                }
+            }
+
+            Weblogger weblogger = null;
             try {
                 // trigger bootstrapping process
                 WebloggerFactory.bootstrap();
@@ -198,7 +208,6 @@ public class RollerContext extends ContextLoaderListener
         } catch (WebloggerException ex) {
             log.fatal("Error initializing Roller Weblogger web tier", ex);
         }
-
     }
 
 
@@ -211,7 +220,6 @@ public class RollerContext extends ContextLoaderListener
         // do we need a more generic mechanism for presentation layer shutdown?
         CacheManager.shutdown();
     }
-
 
     /**
      * Initialize the Velocity rendering engine.

@@ -34,17 +34,17 @@ public final class WebloggerStartup {
     private static final Log LOG = LogFactory.getLog(WebloggerStartup.class);
     
     private static boolean prepared = false;
-    
+
     private static DatabaseProvider dbProvider = null;
     private static StartupException dbProviderException = null;
-    
+
     private static MailProvider mailProvider = null;
-    
-    
+
+
     // non-instantiable
     private WebloggerStartup() {}
-    
-    
+
+
     /**
      * Is the Roller Weblogger app properly prepared to be bootstrapped?
      */
@@ -182,7 +182,7 @@ public final class WebloggerStartup {
         }
         
         // now we need to deal with database install/upgrade logic
-        if("manual".equals(WebloggerConfig.getProperty("installation.type"))) {
+        if ("manual".equals(WebloggerConfig.getProperty("installation.type"))) {
             
             // if we are doing manual install then all that is needed is the
             // app handled database upgrade work, not the db scripts
@@ -193,7 +193,7 @@ public final class WebloggerStartup {
             
             prepared = true;
             
-        } else {
+        } else if ("auto".equals(WebloggerConfig.getProperty("installation.type"))) {
             
             // we are in auto install mode, so see if there is any work to do
             DatabaseInstaller dbInstaller = getDatabaseInstaller();

@@ -74,7 +74,7 @@ public final class TestUtils {
         if (!WebloggerFactory.isBootstrapped()) {
             synchronized (TestUtils.class) {
                 if (derbyManager == null) {
-                    derbyManager = new DerbyManager("./target/testdb", "./target/dbscripts", 4224);
+                    derbyManager = new DerbyManager("./target/testdb", "./target/classes/dbscripts", 4224);
                     derbyManager.startDerby();
                 }
             }
