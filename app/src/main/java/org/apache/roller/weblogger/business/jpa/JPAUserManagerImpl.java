@@ -67,8 +67,9 @@ public class JPAUserManagerImpl implements UserManager {
     //--------------------------------------------------------------- user CRUD
  
     @Override
-    public void saveUser(User data) throws WebloggerException {
-        this.strategy.store(data);
+    public void saveUser(User user) throws WebloggerException {
+        user.sanitize();
+        this.strategy.store(user);
     }
 
     
@@ -113,6 +114,7 @@ public class JPAUserManagerImpl implements UserManager {
             throw new WebloggerException("error.add.user.userNameInUse");
         }
 
+        newUser.sanitize();
         this.strategy.store(newUser);
 
         grantRole("editor", newUser);

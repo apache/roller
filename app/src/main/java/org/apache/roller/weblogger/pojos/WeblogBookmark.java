@@ -18,10 +18,12 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
+
+import java.io.Serializable;
 
 
 /**
@@ -142,6 +144,12 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     
     public void setFeedUrl(String feedUrl) {
         this.feedUrl = feedUrl;
+    }
+
+    public void sanitize() {
+        // Conditionally sanitize fields not validated by Struts Validator
+        setName(HTMLSanitizer.conditionallySanitize(this.name));
+        setDescription(this.description == null ? "" : HTMLSanitizer.conditionallySanitize(this.description));
     }
     
     //---------------------------------------------------------- Relationships

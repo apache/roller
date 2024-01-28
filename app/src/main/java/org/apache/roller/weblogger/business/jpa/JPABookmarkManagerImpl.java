@@ -104,6 +104,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
     @Override
     public void saveFolder(WeblogBookmarkFolder folder) throws WebloggerException {
+        folder.sanitize();
 
         // If new folder make sure name is unique
         if ((folder.getId() == null || this.getFolder(folder.getId()) == null) && isDuplicateFolderName(folder)) {
@@ -148,15 +149,15 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
             WeblogBookmarkFolder newFolder = getFolder(website, folderName);
             if (newFolder == null) {
-                newFolder = new WeblogBookmarkFolder(
-                        folderName, website);
+                newFolder = new WeblogBookmarkFolder(folderName, website);
+                newFolder.sanitize();
                 this.strategy.store(newFolder);
             }
 
             // Iterate through children of OPML body, importing each
             Element body = doc.getRootElement().getChild("body");
-            for (Object elem : body.getChildren()) {
-                importOpmlElement((Element) elem, newFolder );
+            for (Element elem : body.getChildren()) {
+                importOpmlElement(elem, newFolder );
             }
         } catch (Exception ex) {
             throw new WebloggerException(ex);
@@ -211,13 +212,14 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
                         url,
                         xmlUrl,
                         null);
+                bd.sanitize();
                 folder.addBookmark(bd);
                 this.strategy.store(bd);
             }
         } else {
             // Import suboutline's children into folder
-            for (Object subelem : elem.getChildren("outline")) {
-                importOpmlElement((Element) subelem, folder );
+            for (Element subelem : elem.getChildren("outline")) {
+                importOpmlElement(subelem, folder );
             }
         }
     }
