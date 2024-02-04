@@ -161,7 +161,7 @@ public class WeblogPageTest  {
         assertNotNull(page);
 
         // lookup all pages for weblog
-        List pages = mgr.getTemplates(testWeblog);
+        List<WeblogTemplate> pages = mgr.getTemplates(testWeblog);
         assertNotNull(pages);
         assertEquals(1, pages.size());
         

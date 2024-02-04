@@ -159,7 +159,7 @@ public class PingsTest  {
         assertEquals(testCommonPing.getName(), ping.getName());
         
         // lookup all common pings
-        List commonPings = mgr.getCommonPingTargets();
+        List<PingTarget> commonPings = mgr.getCommonPingTargets();
         assertNotNull(commonPings);
         // correct answer is: 4 pings in config + 1 new one = 5
         assertEquals(5, commonPings.size());
@@ -331,7 +331,7 @@ public class PingsTest  {
         
         // lookup by ping target
         pingTarget = ptmgr.getPingTarget(pingTarget.getId());
-        List autoPings = mgr.getAutoPingsByTarget(pingTarget);
+        List<AutoPing> autoPings = mgr.getAutoPingsByTarget(pingTarget);
         assertNotNull(autoPings);
         assertEquals(1, autoPings.size());
         

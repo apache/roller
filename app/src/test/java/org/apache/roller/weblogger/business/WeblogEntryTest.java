@@ -145,8 +145,8 @@ public class WeblogEntryTest  {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
         WeblogEntry entry;
-        List entries;
-        Map entryMap;
+        List<WeblogEntry> entries;
+        Map<Date, ?> entryMap;
 
         // setup some test entries to use
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
@@ -557,9 +557,9 @@ public class WeblogEntryTest  {
             wesc.setWeblog(testWeblog);
             // tags are always saved lowercase (testTag -> testtag)
             wesc.setTags(Arrays.asList("testtag"));
-            List results = mgr.getWeblogEntries(wesc);
+            List<WeblogEntry> results = mgr.getWeblogEntries(wesc);
             assertEquals(1, results.size());
-            WeblogEntry testEntry = (WeblogEntry) results.iterator().next();
+            WeblogEntry testEntry = results.iterator().next();
             assertEquals(entry, testEntry);
         
             // teardown our test entry
@@ -594,9 +594,9 @@ public class WeblogEntryTest  {
         wesc.setWeblog(testWeblog);
         // tags are always saved lowercase (testTag -> testtag)
         wesc.setTags(Arrays.asList("testtag"));
-        List results = mgr.getWeblogEntries(wesc);
+        List<WeblogEntry> results = mgr.getWeblogEntries(wesc);
         assertEquals(1, results.size());
-        WeblogEntry testEntry = (WeblogEntry) results.iterator().next();
+        WeblogEntry testEntry = results.iterator().next();
         assertEquals(entry, testEntry);
 
         // teardown our test entry

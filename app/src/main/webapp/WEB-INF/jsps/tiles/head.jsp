@@ -5,7 +5,7 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<script src="<s:url value='/webjars/jquery/3.6.4/jquery.min.js' />"></script>
+<script src="<s:url value='/webjars/jquery/3.7.1/jquery.min.js' />"></script>
 
 <script src="<s:url value='/webjars/jquery-ui/1.13.2/jquery-ui.min.js' />"></script>
 <link href="<s:url value='/webjars/jquery-ui/1.13.2/jquery-ui.css' />" rel="stylesheet" />

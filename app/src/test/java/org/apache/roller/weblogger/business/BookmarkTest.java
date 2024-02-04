@@ -205,7 +205,7 @@ public class BookmarkTest  {
         
         // test lookup of all bookmarks in single folder
         WeblogBookmarkFolder testFolder = bmgr.getFolder(f1.getId());
-        List allBookmarks = bmgr.getBookmarks(testFolder);
+        List<WeblogBookmark> allBookmarks = bmgr.getBookmarks(testFolder);
         assertNotNull(allBookmarks);
         assertEquals(2, allBookmarks.size());
         

@@ -205,7 +205,7 @@ public class FolderFunctionalityTest  {
         
         // get all folders, including root
         testWeblog = TestUtils.getManagedWebsite(testWeblog);
-        List allFolders = bmgr.getAllFolders(testWeblog);
+        List<WeblogBookmarkFolder> allFolders = bmgr.getAllFolders(testWeblog);
         assertNotNull(allFolders);
         assertEquals(5, allFolders.size());
         

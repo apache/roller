@@ -17,6 +17,7 @@
  */
 package org.apache.roller.selenium;
 
+import java.time.Duration;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -35,7 +36,7 @@ public abstract class AbstractRollerPage {
 
     protected void verifyPageTitle(String waitForElementId, String pageTitle) {
 
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until( ExpectedConditions.visibilityOf( driver.findElement(By.id(waitForElementId))));
 
         verifyPageTitle(pageTitle);
