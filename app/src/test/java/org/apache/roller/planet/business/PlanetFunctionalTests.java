@@ -74,7 +74,7 @@ public class PlanetFunctionalTests  {
         assertEquals("planetFuncTest", planet.getHandle());
         
         // all planets (should be 2, the default and the one we created)
-        List planets = mgr.getWebloggers();
+        List<Planet> planets = mgr.getWebloggers();
         assertNotNull(planets);
         assertEquals(2, planets.size());
     }

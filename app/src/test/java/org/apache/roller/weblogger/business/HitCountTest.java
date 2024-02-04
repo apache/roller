@@ -286,15 +286,15 @@ public class HitCountTest  {
         assertEquals(30, testCount.getDailyHits());
         
         // get hot weblogs
-        List hotBlogs = mgr.getHotWeblogs(1, 0, 5);
+        List<WeblogHitCount> hotBlogs = mgr.getHotWeblogs(1, 0, 5);
         assertNotNull(hotBlogs);
         assertEquals(3, hotBlogs.size());
         
         // also check ordering and values
         WeblogHitCount hitCount;
-        Iterator it = hotBlogs.iterator();
+        Iterator<WeblogHitCount> it = hotBlogs.iterator();
         for (int i=3; it.hasNext(); i--) {
-            hitCount = (WeblogHitCount) it.next();
+            hitCount = it.next();
             assertEquals(i*10, hitCount.getDailyHits());
         }
         

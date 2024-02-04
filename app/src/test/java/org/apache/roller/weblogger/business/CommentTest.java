@@ -135,7 +135,7 @@ public class CommentTest  {
     public void testCommentLookups() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-        List comments;
+        List<WeblogEntryComment> comments;
         
         // we need some comments to play with
         testEntry = TestUtils.getManagedWeblogEntry(testEntry);

@@ -21,6 +21,7 @@ import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
+import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.planet.tasks.RefreshRollerPlanetTask;
 import org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask;
@@ -155,7 +156,7 @@ public class PlanetManagerLocalTest  {
             
             planetObject = planet.getWeblogger("default");
             group = planet.getGroup(planetObject, "all");
-            List agg = planet.getEntries(group, 0, -1);
+            List<SubscriptionEntry> agg = planet.getEntries(group, 0, -1);
             assertEquals(3, agg.size());
         }
         catch (Exception e) {

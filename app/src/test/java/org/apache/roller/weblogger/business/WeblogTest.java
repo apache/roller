@@ -199,25 +199,25 @@ public class WeblogTest  {
             
             // get all weblogs for user
             weblog = null;
-            List weblogs1 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
+            List<Weblog> weblogs1 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
             assertEquals(2, weblogs1.size());
-            weblog = (Weblog) weblogs1.get(0);
+            weblog = weblogs1.get(0);
             assertNotNull(weblog);           
             
             // make sure disabled weblogs are not returned
             weblog.setVisible(Boolean.FALSE);
             mgr.saveWeblog(weblog);
             TestUtils.endSession(true);
-            List weblogs2 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
+            List<Weblog> weblogs2 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
             assertEquals(1, weblogs2.size());
-            weblog = (Weblog) weblogs2.get(0);
+            weblog = weblogs2.get(0);
             assertNotNull(weblog);
             
             // make sure inactive weblogs are not returned
             weblog.setActive(Boolean.FALSE);
             mgr.saveWeblog(weblog);
             TestUtils.endSession(true);
-            List weblogs3 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
+            List<Weblog> weblogs3 = mgr.getUserWeblogs(TestUtils.getManagedUser(testUser), true);
             assertEquals(0, weblogs3.size());
             
         } finally {
