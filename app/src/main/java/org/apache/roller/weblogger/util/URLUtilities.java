@@ -113,15 +113,6 @@ public final class URLUtilities {
         sb.append(encode(path));
         return sb.toString();
     }
-
-    public static boolean isValid(String url) {
-        try {
-            new java.net.URI(url);
-            return true;
-        } catch (java.net.URISyntaxException e) {
-            return false;
-        }
-    }
 }
 
 
