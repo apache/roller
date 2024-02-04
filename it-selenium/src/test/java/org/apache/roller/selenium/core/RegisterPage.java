@@ -17,6 +17,7 @@
  */
 package org.apache.roller.selenium.core;
 
+import java.time.Duration;
 import org.apache.roller.selenium.AbstractRollerPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -39,7 +40,7 @@ public class RegisterPage extends AbstractRollerPage {
     public WelcomePage submitUserRegistration() {
         clickById("submit");
 
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until( ExpectedConditions.visibilityOf( driver.findElement(By.id("a_clickHere"))));
         driver.findElement(By.id("a_clickHere")).click();
 

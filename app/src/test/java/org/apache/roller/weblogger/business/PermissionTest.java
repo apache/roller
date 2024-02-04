@@ -124,7 +124,7 @@ public class PermissionTest  {
         assertNull(perm);
         
         // create permissions
-        List<String> actions = new ArrayList<String>();
+        List<String> actions = new ArrayList<>();
         actions.add(WeblogPermission.ADMIN);
         actions.add(WeblogPermission.POST);
         mgr.grantWeblogPermission(testWeblog, testUser, actions);
@@ -189,7 +189,7 @@ public class PermissionTest  {
         perms = mgr.getWeblogPermissions(TestUtils.getManagedWebsite(testWeblog));
         assertEquals(1, perms.size());
 
-        List<String> actions = new ArrayList<String>();
+        List<String> actions = new ArrayList<>();
         actions.add(WeblogPermission.POST);
         mgr.grantWeblogPermissionPending(testWeblog, user, actions);
         TestUtils.endSession(true);
@@ -244,11 +244,9 @@ public class PermissionTest  {
 
         WeblogManager wmgr = WebloggerFactory.getWeblogger().getWeblogManager();
         UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-        WeblogPermission perm = null;
-        List perms = null;
 
         // invite user to weblog
-        List<String> actions = new ArrayList<String>();
+        List<String> actions = new ArrayList<>();
         actions.add(WeblogPermission.EDIT_DRAFT);
         umgr.grantWeblogPermissionPending(testWeblog, user, actions);
         TestUtils.endSession(true);
@@ -269,12 +267,12 @@ public class PermissionTest  {
 
         // assert that user is member of weblog
         assertNotNull(umgr.getWeblogPermission(testWeblog, user));
-        List weblogs = wmgr.getUserWeblogs(TestUtils.getManagedUser(user), true);
+        List<Weblog> weblogs = wmgr.getUserWeblogs(TestUtils.getManagedUser(user), true);
         assertEquals(1, weblogs.size());
-        assertEquals(testWeblog.getId(), ((Weblog)weblogs.get(0)).getId());
+        assertEquals(testWeblog.getId(), weblogs.get(0).getId());
 
         // assert that website has user
-        List users = wmgr.getWeblogUsers(testWeblog, true);
+        List<User> users = wmgr.getWeblogUsers(testWeblog, true);
         assertEquals(2, users.size());
 
         // test user can be retired from website

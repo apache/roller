@@ -95,7 +95,7 @@ public class ApplicationResourcesTest {
 					+ bundle
 					+ ".properties"));
 
-		Set keys = baseProps.keySet();
+		Set<Object> keys = baseProps.keySet();
 		boolean missingMessage = false;
 
 		// check Chinese

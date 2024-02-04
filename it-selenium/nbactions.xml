@@ -8,10 +8,6 @@
             <goal>clean</goal>
             <goal>install</goal>
         </goals>
-        <properties>
-            <!-- change path or copy driver to apache-roller/it-selenium/ -->
-            <webdriver.gecko.driver>geckodriver</webdriver.gecko.driver>
-        </properties>
     </action>
 
     <action>
@@ -23,8 +19,6 @@
         </goals>
         <properties>
             <jpda.listen>maven</jpda.listen>
-            <!-- change path or copy driver to apache-roller/it-selenium/ -->
-            <webdriver.gecko.driver>geckodriver</webdriver.gecko.driver>
         </properties>
     </action>
 

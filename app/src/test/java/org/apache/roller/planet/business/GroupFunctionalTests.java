@@ -74,7 +74,7 @@ public class GroupFunctionalTests  {
         
         // lookup all groups in planet
         Planet planet = mgr.getWebloggerById(testPlanet.getId());
-        Set groups = planet.getGroups();
+        Set<PlanetGroup> groups = planet.getGroups();
         assertNotNull(groups);
         assertEquals(2, groups.size());
     }
