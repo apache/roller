@@ -104,7 +104,6 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
     @Override
     public void saveFolder(WeblogBookmarkFolder folder) throws WebloggerException {
-        folder.sanitize();
 
         // If new folder make sure name is unique
         if ((folder.getId() == null || this.getFolder(folder.getId()) == null) && isDuplicateFolderName(folder)) {
@@ -150,7 +149,6 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             WeblogBookmarkFolder newFolder = getFolder(website, folderName);
             if (newFolder == null) {
                 newFolder = new WeblogBookmarkFolder(folderName, website);
-                newFolder.sanitize();
                 this.strategy.store(newFolder);
             }
 
@@ -212,7 +210,6 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
                         url,
                         xmlUrl,
                         null);
-                bd.sanitize();
                 folder.addBookmark(bd);
                 this.strategy.store(bd);
             }

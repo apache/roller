@@ -94,7 +94,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     }
     
     public void setName(String name) {
-        this.name = name;
+        this.name =  HTMLSanitizer.conditionallySanitize(name);
     }
     
     /**
@@ -105,7 +105,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     }
     
     public void setDescription(String description) {
-        this.description = description;
+        this.description =  HTMLSanitizer.conditionallySanitize(description);
     }
     
     /**
@@ -146,12 +146,6 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
         this.feedUrl = feedUrl;
     }
 
-    public void sanitize() {
-        // Conditionally sanitize fields not validated by Struts Validator
-        setName(HTMLSanitizer.conditionallySanitize(this.name));
-        setDescription(this.description == null ? "" : HTMLSanitizer.conditionallySanitize(this.description));
-    }
-    
     //---------------------------------------------------------- Relationships
 
     public org.apache.roller.weblogger.pojos.WeblogBookmarkFolder getFolder() {

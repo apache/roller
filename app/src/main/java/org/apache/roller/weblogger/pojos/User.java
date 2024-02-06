@@ -241,11 +241,6 @@ public class User implements Serializable {
         }
     }
 
-    public void sanitize() {
-        setFullName(HTMLSanitizer.conditionallySanitize(getFullName()));
-        setScreenName(HTMLSanitizer.conditionallySanitize(getScreenName()));
-    }
-    
     //------------------------------------------------------- Good citizenship
     
     @Override

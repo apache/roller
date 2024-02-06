@@ -68,7 +68,6 @@ public class JPAUserManagerImpl implements UserManager {
  
     @Override
     public void saveUser(User user) throws WebloggerException {
-        user.sanitize();
         this.strategy.store(user);
     }
 
@@ -114,7 +113,6 @@ public class JPAUserManagerImpl implements UserManager {
             throw new WebloggerException("error.add.user.userNameInUse");
         }
 
-        newUser.sanitize();
         this.strategy.store(newUser);
 
         grantRole("editor", newUser);

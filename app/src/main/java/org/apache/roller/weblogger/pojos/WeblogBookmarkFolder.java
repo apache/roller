@@ -133,7 +133,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     }
     
     public void setName(String name) {
-        this.name = name;
+        this.name = HTMLSanitizer.conditionallySanitize(name);
     }
     
     /**
@@ -188,10 +188,4 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
         BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
         return bmgr.getBookmarks(this);
     }
-
-    public void sanitize() {
-        // Conditionally sanitize fields not validated by Struts Validator
-        setName(HTMLSanitizer.conditionallySanitize(getName()));
-    }
-
 }
