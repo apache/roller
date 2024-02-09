@@ -58,16 +58,17 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
             String url,
             String feedUrl,
             String image) {
+
+        setName(name);
+        setDescription(desc);
         this.folder = parent;
-        this.name = name;
-        this.description = desc;
         this.url = url;
         this.feedUrl = feedUrl;
         this.image = image;
         folder.addBookmark(this);
         calculatePriority();
     }
-    
+
     //------------------------------------------------------------- Attributes
     public String getId() {
         return this.id;

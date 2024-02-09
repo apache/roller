@@ -61,15 +61,15 @@ public class User implements Serializable {
             String locale, String timeZone,
             Date dateCreated,
             Boolean isEnabled) {
-        //this.id = id;
+
         this.userName = userName;
         this.password = password;
-        this.fullName = fullName;
         this.emailAddress = emailAddress;
         this.dateCreated = (Date)dateCreated.clone();
-        this.locale = locale;
-        this.timeZone = timeZone;
         this.enabled = isEnabled;
+        setFullName(fullName);
+        setLocale(locale);
+        setTimeZone(timeZone);
     }
 
     /**

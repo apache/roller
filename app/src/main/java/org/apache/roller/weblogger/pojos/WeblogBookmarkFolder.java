@@ -55,8 +55,8 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
             String name,
             Weblog weblog) {
         
-        this.name = name;
-        this.weblog = weblog;
+        setName(name);
+        setWeblog(weblog);
         weblog.addBookmarkFolder(this);
     }
     
