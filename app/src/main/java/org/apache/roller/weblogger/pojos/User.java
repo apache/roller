@@ -186,25 +186,25 @@ public class User implements Serializable {
     }
 
     /**
-     * Locale of the user.
+     * Locale of the user, must be valid Java locale.
      */
     public String getLocale() {
         return this.locale;
     }
     
     public void setLocale(String locale) {
-        this.locale =  HTMLSanitizer.conditionallySanitize(locale);
+        this.locale = locale;
     }
 
     /**
-     * Timezone of the user.
+     * Timezone of the user, must be valid Java timezone.
      */
     public String getTimeZone() {
         return this.timeZone;
     }
     
     public void setTimeZone(String timeZone) {
-        this.timeZone =  HTMLSanitizer.conditionallySanitize(timeZone);
+        this.timeZone = timeZone;
     }
     
     

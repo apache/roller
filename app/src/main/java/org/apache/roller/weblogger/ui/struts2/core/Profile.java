@@ -157,6 +157,7 @@ public class Profile extends UIAction {
 
         // validate that bean's timeZone field is a valid time zone
         if (!StringUtils.isEmpty(getBean().getTimeZone())) {
+            // looking up the time zone by id did not work for me
             final Optional<String> first = Arrays.stream(TimeZone.getAvailableIDs())
                     .filter(id -> id.equals(getBean().getTimeZone())).findFirst();
             if (first.isEmpty()) {
@@ -166,8 +167,10 @@ public class Profile extends UIAction {
 
         // validate that bean's locale field is a valid locale
         if (!StringUtils.isEmpty(getBean().getLocale())) {
-            Locale locale = Locale.forLanguageTag(bean.getLocale());
-            if (locale == null || "".equals(locale.getDisplayName())) {
+            // looking up the time zone by id did not work for me
+            final Optional<Locale> first = Arrays.stream(Locale.getAvailableLocales())
+                    .filter(locale -> locale.toString().equals(getBean().getLocale())).findFirst();
+            if (first.isEmpty() || "".equals(first.get().getDisplayName())) {
                 addError("error.add.user.invalid.locale");
             }
         }
