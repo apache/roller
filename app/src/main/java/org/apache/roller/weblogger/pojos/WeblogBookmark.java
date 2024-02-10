@@ -18,10 +18,12 @@
 
 package org.apache.roller.weblogger.pojos;
 
-import java.io.Serializable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
+
+import java.io.Serializable;
 
 
 /**
@@ -56,16 +58,17 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
             String url,
             String feedUrl,
             String image) {
+
+        setName(name);
+        setDescription(desc);
         this.folder = parent;
-        this.name = name;
-        this.description = desc;
         this.url = url;
         this.feedUrl = feedUrl;
         this.image = image;
         folder.addBookmark(this);
         calculatePriority();
     }
-    
+
     //------------------------------------------------------------- Attributes
     public String getId() {
         return this.id;
@@ -92,7 +95,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     }
     
     public void setName(String name) {
-        this.name = name;
+        this.name =  HTMLSanitizer.conditionallySanitize(name);
     }
     
     /**
@@ -103,7 +106,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     }
     
     public void setDescription(String description) {
-        this.description = description;
+        this.description =  HTMLSanitizer.conditionallySanitize(description);
     }
     
     /**
@@ -143,7 +146,7 @@ public class WeblogBookmark implements Serializable, Comparable<WeblogBookmark> 
     public void setFeedUrl(String feedUrl) {
         this.feedUrl = feedUrl;
     }
-    
+
     //---------------------------------------------------------- Relationships
 
     public org.apache.roller.weblogger.pojos.WeblogBookmarkFolder getFolder() {

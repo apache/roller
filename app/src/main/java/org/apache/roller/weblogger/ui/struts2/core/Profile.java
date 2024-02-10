@@ -22,14 +22,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.TimeZone;
 
 /**
  * Allows user to edit his/her profile.
@@ -148,6 +152,26 @@ public class Profile extends UIAction {
             } catch (WebloggerException ex) {
                 log.error("error checking OpenID URL", ex);
                 addError("generic.error.check.logs");
+            }
+        }
+
+        // validate that bean's timeZone field is a valid time zone
+        if (!StringUtils.isEmpty(getBean().getTimeZone())) {
+            // looking up the time zone by id did not work for me
+            final Optional<String> first = Arrays.stream(TimeZone.getAvailableIDs())
+                    .filter(id -> id.equals(getBean().getTimeZone())).findFirst();
+            if (first.isEmpty()) {
+                addError("error.add.user.invalid.timezone");
+            }
+        }
+
+        // validate that bean's locale field is a valid locale
+        if (!StringUtils.isEmpty(getBean().getLocale())) {
+            // looking up the time zone by id did not work for me
+            final Optional<Locale> first = Arrays.stream(Locale.getAvailableLocales())
+                    .filter(locale -> locale.toString().equals(getBean().getLocale())).findFirst();
+            if (first.isEmpty() || "".equals(first.get().getDisplayName())) {
+                addError("error.add.user.invalid.locale");
             }
         }
     }

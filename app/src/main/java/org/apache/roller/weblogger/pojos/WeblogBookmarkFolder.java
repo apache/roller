@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 
 /**
@@ -54,8 +55,8 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
             String name,
             Weblog weblog) {
         
-        this.name = name;
-        this.weblog = weblog;
+        setName(name);
+        setWeblog(weblog);
         weblog.addBookmarkFolder(this);
     }
     
@@ -132,7 +133,7 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
     }
     
     public void setName(String name) {
-        this.name = name;
+        this.name = HTMLSanitizer.conditionallySanitize(name);
     }
     
     /**
@@ -187,5 +188,4 @@ public class WeblogBookmarkFolder implements Serializable, Comparable<WeblogBook
         BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
         return bmgr.getBookmarks(this);
     }
-
 }

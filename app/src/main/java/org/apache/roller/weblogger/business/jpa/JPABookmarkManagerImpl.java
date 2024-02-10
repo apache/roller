@@ -148,15 +148,14 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
             WeblogBookmarkFolder newFolder = getFolder(website, folderName);
             if (newFolder == null) {
-                newFolder = new WeblogBookmarkFolder(
-                        folderName, website);
+                newFolder = new WeblogBookmarkFolder(folderName, website);
                 this.strategy.store(newFolder);
             }
 
             // Iterate through children of OPML body, importing each
             Element body = doc.getRootElement().getChild("body");
-            for (Object elem : body.getChildren()) {
-                importOpmlElement((Element) elem, newFolder );
+            for (Element elem : body.getChildren()) {
+                importOpmlElement(elem, newFolder );
             }
         } catch (Exception ex) {
             throw new WebloggerException(ex);
@@ -216,8 +215,8 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             }
         } else {
             // Import suboutline's children into folder
-            for (Object subelem : elem.getChildren("outline")) {
-                importOpmlElement((Element) subelem, folder );
+            for (Element subelem : elem.getChildren("outline")) {
+                importOpmlElement(subelem, folder );
             }
         }
     }

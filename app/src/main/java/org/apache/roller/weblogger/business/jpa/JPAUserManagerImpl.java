@@ -67,8 +67,8 @@ public class JPAUserManagerImpl implements UserManager {
     //--------------------------------------------------------------- user CRUD
  
     @Override
-    public void saveUser(User data) throws WebloggerException {
-        this.strategy.store(data);
+    public void saveUser(User user) throws WebloggerException {
+        this.strategy.store(user);
     }
 
     

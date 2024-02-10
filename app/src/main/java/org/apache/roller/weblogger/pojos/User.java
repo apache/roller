@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
@@ -36,7 +37,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 public class User implements Serializable {
     
-    public static final long serialVersionUID = -6354583200913127874L;
+    private static final long serialVersionUID = -6354583200913127874L;
     
     private String  id = UUIDGenerator.generateUUID();
     private String  userName;
@@ -60,15 +61,15 @@ public class User implements Serializable {
             String locale, String timeZone,
             Date dateCreated,
             Boolean isEnabled) {
-        //this.id = id;
+
         this.userName = userName;
         this.password = password;
-        this.fullName = fullName;
         this.emailAddress = emailAddress;
         this.dateCreated = (Date)dateCreated.clone();
-        this.locale = locale;
-        this.timeZone = timeZone;
         this.enabled = isEnabled;
+        setFullName(fullName);
+        setLocale(locale);
+        setTimeZone(timeZone);
     }
 
     /**
@@ -91,7 +92,7 @@ public class User implements Serializable {
     }
     
     public void setUserName( String userName ) {
-        this.userName = userName;
+        this.userName =  HTMLSanitizer.conditionallySanitize(userName);
     }
     
     /**
@@ -128,7 +129,7 @@ public class User implements Serializable {
     }
 
     public void setOpenIdUrl(String openIdUrl) {
-        this.openIdUrl = openIdUrl;
+        this.openIdUrl =  HTMLSanitizer.conditionallySanitize(openIdUrl);
     }
 
     /**
@@ -139,7 +140,7 @@ public class User implements Serializable {
     }
     
     public void setScreenName( String screenName ) {
-        this.screenName = screenName;
+        this.screenName =  HTMLSanitizer.conditionallySanitize(screenName);
     }
     
     /**
@@ -150,7 +151,7 @@ public class User implements Serializable {
     }
     
     public void setFullName( String fullName ) {
-        this.fullName = fullName;
+        this.fullName =  HTMLSanitizer.conditionallySanitize(fullName);
     }
 
     /**
@@ -161,7 +162,7 @@ public class User implements Serializable {
     }
     
     public void setEmailAddress( String emailAddress ) {
-        this.emailAddress = emailAddress;
+        this.emailAddress =  HTMLSanitizer.conditionallySanitize(emailAddress);
     }
     
     
@@ -185,7 +186,7 @@ public class User implements Serializable {
     }
 
     /**
-     * Locale of the user.
+     * Locale of the user, must be valid Java locale.
      */
     public String getLocale() {
         return this.locale;
@@ -196,7 +197,7 @@ public class User implements Serializable {
     }
 
     /**
-     * Timezone of the user.
+     * Timezone of the user, must be valid Java timezone.
      */
     public String getTimeZone() {
         return this.timeZone;
@@ -223,7 +224,7 @@ public class User implements Serializable {
     }
     
     public void setActivationCode(String activationCode) {
-        this.activationCode = activationCode;
+        this.activationCode =  HTMLSanitizer.conditionallySanitize(activationCode);
     }
     
      
@@ -239,7 +240,7 @@ public class User implements Serializable {
             return false;
         }
     }
-    
+
     //------------------------------------------------------- Good citizenship
     
     @Override
