@@ -63,7 +63,7 @@ public class CommentAuthenticatorServlet extends HttpServlet {
         response.addHeader("Expires", "Thu, 01 Jan 1970 00:00:00 GMT");
 
         PrintWriter out = response.getWriter();
-        out.println(this.authenticator.getHtml(request));
+        //out.println(this.authenticator.getHtml(request));
     }
     
     
