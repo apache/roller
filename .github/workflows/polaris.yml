@@ -22,13 +22,13 @@ jobs:
     - name: Polaris Scan
       uses: synopsys-sig/synopsys-action@v1.9.0
       with:
-        polaris_serverUrl: ${{ secrets.POLARIS_SERVERURL }}
-        polaris_accessToken: ${{ secrets.POLARIS_ACCESSTOKEN }}
+        polaris_server_url: ${{ secrets.POLARIS_SERVERURL }}
+        polaris_access_token: ${{ secrets.POLARIS_ACCESSTOKEN }}
         polaris_application_name: Hugues2
         polaris_project_name: ${{ github.event.repository.name }}
         polaris_prComment_enabled: 'true'
-        polaris_reports_sarif_create: 'true'
-        polaris_upload_sarif_report: 'true'
+        #polaris_reports_sarif_create: 'true'
+        #polaris_upload_sarif_report: 'true'
         github_token: ${{ secrets.GITHUB_TOKEN }}
 #    - name: Save Logs
 #      if: always()
