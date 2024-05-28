@@ -12,22 +12,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Source
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Setup Java JDK
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: 17
         distribution: microsoft
         cache: maven
     - name: Polaris Scan
-      uses: synopsys-sig/synopsys-action@v1.5.0
+      uses: synopsys-sig/synopsys-action@v1.9.0
       with:
         polaris_serverUrl: ${{ secrets.POLARIS_SERVERURL }}
         polaris_accessToken: ${{ secrets.POLARIS_ACCESSTOKEN }}
         polaris_application_name: Hugues2
         polaris_project_name: ${{ github.event.repository.name }}
-        polaris_assessment_types: 'SAST,SCA'
-        polaris_prComment_enabled: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
+        polaris_prComment_enabled: 'true'
+        polaris_reports_sarif_create: 'true'
+        polaris_upload_sarif_report: 'true'
         github_token: ${{ secrets.GITHUB_TOKEN }}
 #    - name: Save Logs
 #      if: always()
