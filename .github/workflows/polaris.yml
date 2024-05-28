@@ -24,6 +24,7 @@ jobs:
       with:
         polaris_server_url: ${{ secrets.POLARIS_SERVERURL }}
         polaris_access_token: ${{ secrets.POLARIS_ACCESSTOKEN }}
+        polaris_assessment_types: 'SAST,SCA'
         polaris_application_name: Hugues2
         polaris_project_name: ${{ github.event.repository.name }}
         polaris_prComment_enabled: 'true'
