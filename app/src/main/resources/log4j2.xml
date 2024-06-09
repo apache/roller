@@ -70,7 +70,7 @@ limitations under the License.
         
         <!-- roller.log; everything not defined here will end up in server.log -->
         <Logger name="org.apache.roller"       level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
-        <Logger name="org.apache.roller.weblogger.ui.struts2.util.UISecurityInterceptor" level="debug" additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        <Logger name="org.apache.roller.weblogger.ui.struts2.util.UISecurityInterceptor" level="info" additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
         <Logger name="org.apache.velocity"     level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
         <Logger name="org.springframework"     level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
         <Logger name="org.apache.struts2"      level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
