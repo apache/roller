@@ -18,30 +18,30 @@
 
 # Example Docker Compose setup for running Roller and PostgreSQL locally
 
-
 version: '3.7'
 
 services:
 
-   postgresql:
-      image: "postgres:10.0"
-      ports:
-         - "5432:5432"
-      volumes:
-         - type: bind
-           source: ./docker/postgresql-data
-           target: /var/lib/postgresql/data
-      environment:
-         - POSTGRES_DB=rollerdb
-         - POSTGRES_USER=scott
-         - POSTGRES_PASSWORD=tiger
+  postgresql:
+    image: "postgres:10.0"
+    ports:
+      - "5432:5432"
+    volumes:
+      - type: bind
+        source: /vagrant/docker/postgresql-data
+        target: /var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=rollerdb
+      - POSTGRES_USER=scott
+      - POSTGRES_PASSWORD=tiger
 
-   roller:
-      build: .
-      ports:
-         - "8080:8080"
-      volumes:
-         - type: bind
-           source: ./docker/roller-data
-           target: /var/lib/roller/data
-
+  roller:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: /vagrant/docker/roller-data
+        target: /app/data
