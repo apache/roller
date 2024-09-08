@@ -42,29 +42,34 @@ some recommendations for keeping your Roller installation secure:
 * *Perform Roller installation on a secure network*. When you are
 installing Roller it is possible for other users to interfere with your
 installation. If other users have access to the server, one of them
-could create the admin account before you do. So, when you install
-Roller, do so on a server that cannot be accessed by others.
-* *Do not allow open registration of new users*. Roller can offer a
-registration link so that new users can register themselves, but this
-feature is turned off because it is not safe to allow just anybody to
-register for an account on your blog server. If you want to turn it on,
-login as an administrative user, go to Roller’s Server Administration
-page and enable the *Allow New Users* option.
-* *Enable HTML Sanitization*. If you cannot trust the webloggers who
-will use your Roller site to author HTML, then you should configure
-Roller to sanitize all HTML published by the system. Do this by setting
-the _weblogAdminsUntrusted=true_ property in your
-_roller-custom.properties_ file.
-* *Do not allow File Uploads*. By default Roller allows users to upload
-files for display on their blogs. If don't trust your users, this is unsafe
-and you should disable File Uploads via the Server Administration page.
-* *Do not allow HTML in comments*. Roller can allow users to write
-comments in a safe-subset of HTML, but HTML use in comments is not
-allowed at all because of security concerns with even a so called
-safe-subset of HTML. If you want to turn it on, login as an
-administrative user, go to Roller’s Server Administration page, enable
-the *Allow html in comments* option and make sure the *HTML Subset
-Restriction* box is checked.
+could attempt to access the Roller database or files while you are
+installing Roller. To prevent this, install Roller on a secure network
+or at a time when other users are not using the server.
+
+* *Do not allow new user registrations*. By default, Roller allows new
+users to register themselves. This is convenient, but it also means that
+anyone can create an account on your Roller site. If you do not want
+this, go to the Server Administration page and disable the *Allow New
+Users* option.
+
+* *Sanitize all HTML*. By default, Roller sanitizes all HTML published by the system to ensure that user posts are safe and free from malicious content. This is controlled by the _weblogAdminsUntrusted=true_ property in your _roller-custom.properties_ file.
+
+* *Do not allow custom themes*. By default, Roller does not allow users to
+create custom themes. You can enable this via the Server Admin page, but
+don't do it unless you trust your users because it can allow users to
+create custom themes that can be used to compromise your site.
+
+* *Do not allow File Uploads*. By default, Roller does not allow users to upload
+files for display on their blogs. If you trust your users, then you can enable
+file uploads via the Server Admin page.
+
+* *Do not allow HTML in comments*. By default, Roller does not allow users to write
+comments in HTML due to security concerns. This setting helps prevent potential
+security issues related to HTML content in comments.
+
+By following these recommendations, you can help ensure that your Roller
+installation remains secure and protected from common web vulnerabilities.
+
 * *Run Roller over SSL connection*. If you run Roller over a plain old
 HTTP connection, it is possible for others to snoop your password when
 you login, for example over an open WIFI network. To configure Roller to
