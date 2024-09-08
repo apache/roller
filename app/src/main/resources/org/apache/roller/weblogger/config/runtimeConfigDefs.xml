@@ -199,7 +199,7 @@
    
       <property-def  name="uploads.enabled"  key="configForm.enableFileUploads">
          <type>boolean</type>
-         <default-value>false</default-value>
+         <default-value>true</default-value>
       </property-def>
       <property-def  name="uploads.types.allowed"  key="configForm.allowedExtensions">
          <type>string</type>
@@ -230,7 +230,7 @@
       </property-def>
       <property-def  name="themes.customtheme.allowed"  key="configForm.allowCustomTheme">
          <type>boolean</type>
-         <default-value>false</default-value>
+         <default-value>true</default-value>
       </property-def>
       
    </display-group>
