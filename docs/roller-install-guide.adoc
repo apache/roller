@@ -35,53 +35,46 @@ of the Apache Software Foundation.
 
 == Securing Roller
 
-Security should be top-of-mind when setting up any web site, even one
-that is on a private network and internal to your organization. Here are
-some recommendations for keeping your Roller installation secure:
+Security is crucial when setting up any website, even on a private network.
+Here are some recommendations to keep your Roller installation secure:
 
-* *Perform Roller installation on a secure network*. When you are
-installing Roller it is possible for other users to interfere with your
-installation. If other users have access to the server, one of them
-could attempt to access the Roller database or files while you are
-installing Roller. To prevent this, install Roller on a secure network
-or at a time when other users are not using the server.
+* *Install Roller on a secure network*. During installation, other users could
+interfere or access the Roller database or files. To prevent this, install Roller
+on a secure network or when the server is not in use by others.
 
-* *Do not allow new user registrations*. By default, Roller allows new
-users to register themselves. This is convenient, but it also means that
-anyone can create an account on your Roller site. If you do not want
-this, go to the Server Administration page and disable the *Allow New
-Users* option.
+* *Disable new user registrations*. By default, Roller allows self-registration,
+which means anyone can create an account. To prevent this, disable the
+*Allow New Users* option on the Server Administration page.
 
-* *Sanitize all HTML*. By default, Roller sanitizes all HTML published by the system to ensure that user posts are safe and free from malicious content. This is controlled by the _weblogAdminsUntrusted=true_ property in your _roller-custom.properties_ file.
+* *Use SSL for Roller*. Running Roller over HTTP can expose your password
+to snooping, especially on open WIFI networks. To configure SSL (https:// URLs),
+modify the web.xml in the Roller WAR (WEB-INF folder) by uncommenting
+the <security-constraint/> element and following the instructions.
+Then, follow your servlet container’s SSL setup documentation
+(e.g., http://tomcat.apache.org/tomcat-7.0-doc/ssl-howto.html for Tomcat).
+Redeploy Roller and ensure secure pages like the login and registration
+pages are accessible only via https:// URLs.
 
-* *Do not allow custom themes*. By default, Roller does not allow users to
-create custom themes. You can enable this via the Server Admin page, but
-don't do it unless you trust your users because it can allow users to
-create custom themes that can be used to compromise your site.
+Following these recommendations will help secure your Roller installation against
+common web vulnerabilities.
 
-* *Do not allow File Uploads*. By default, Roller does not allow users to upload
-files for display on their blogs. If you trust your users, then you can enable
-file uploads via the Server Admin page.
+=== Safer defaults
 
-* *Do not allow HTML in comments*. By default, Roller does not allow users to write
-comments in HTML due to security concerns. This setting helps prevent potential
-security issues related to HTML content in comments.
+As of Roller 6.1.4, several default settings have been updated to enhance security
+for multi-user weblog sites:
 
-By following these recommendations, you can help ensure that your Roller
-installation remains secure and protected from common web vulnerabilities.
+* *HTML content sanitization*: Roller now sanitizes all HTML content by default
+to prevent malicious content. This is controlled by the _weblogAdminsUntrusted=true_
+property in your _roller-custom.properties_ file.
 
-* *Run Roller over SSL connection*. If you run Roller over a plain old
-HTTP connection, it is possible for others to snoop your password when
-you login, for example over an open WIFI network. To configure Roller to
-work over SSL (i.e., using https:// URLs), first modify the web.xml
-located in the Roller WAR (WEB-INF folder), uncommenting the
-<security-constraint/> element and following the instructions given in
-that file above that element. Next, follow your servlet container’s
-documentation for setting up SSL
-(http://tomcat.apache.org/tomcat-7.0-doc/ssl-howto.html for Tomcat, for
-example.) Then redeploy Roller and confirm that pages containing secure
-data such as the login page and new user registration page are available
-only via https:// URLs.
+* *Custom themes disabled*: By default, users cannot create custom themes.
+This can be enabled via the Server Admin page if you trust your users, as custom themes can pose security risks.
+
+* *File uploads disabled*: By default, file uploads are not allowed.
+If you trust your users, you can enable this feature via the Server Admin page.
+
+NOTE: If you are a solo blogger, you can safely enable un-sanitized HTML,
+file uploads, and custom themes by adjusting the above settings.
 
 == Ready to roll?
 

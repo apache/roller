@@ -41,10 +41,10 @@ Design -> Templates pages and you won’t be able to change or
 customize your theme. You need to have ADMIN permission within a weblog
 to be able to do the things described in this guide.
 
-NOTE: It is possible for a Roller site administrator to disable theme
-customization. So if you do have ADMIN permission in your weblog and you
-still don’t see the Design -> Templates page, perhaps your Roller
-site does not allow customization.
+NOTE: By default, theme customization is disabled in Roller.
+If you do have ADMIN permission in your weblog and you don’t see the
+Design -> Templates page, perhaps your Roller site does not allow customization.
+See your Roller Administrator about enabling custom themes on the Server Admin page.
 
 == The Roller template system
 
