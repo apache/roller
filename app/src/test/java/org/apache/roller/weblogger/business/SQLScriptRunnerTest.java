@@ -30,8 +30,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test parsing and running of SQL scripts
@@ -64,7 +63,7 @@ public class SQLScriptRunnerTest  {
         String scriptPath = System.getProperty("project.build.directory")
                 + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-"+dbname+".sql";
         SQLScriptRunner runner = new SQLScriptRunner(scriptPath);
-        assertTrue(runner.getCommandCount() == 5);        
+        assertEquals(5, runner.getCommandCount());
     }
 
     @Test
@@ -79,10 +78,12 @@ public class SQLScriptRunnerTest  {
             // but some folks test against MySQL
             dbname = "mysql";
         }
-        
+
+        // if you are running the tests in IntelliJ, then you will need to add something like this to your VM options:
+        // -Dproject.build.directory=/Users/dave/src/apache-roller/app/target
+
         // run script to create tables
-        SQLScriptRunner create = 
-            new SQLScriptRunner(System.getProperty("project.build.directory")
+        SQLScriptRunner create = new SQLScriptRunner(System.getProperty("project.build.directory")
                     + "/test-classes/WEB-INF/dbscripts/dummydb/createdb-"+dbname+".sql");
         create.runScript(con, true);
         
