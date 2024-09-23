@@ -59,26 +59,22 @@ public final class SaltCache {
             
             // we are only interested in props for this cache
             if(prop.startsWith(CACHE_ID+".")) {
-                cacheProps.put(prop.substring(CACHE_ID.length()+1), 
-                        WebloggerConfig.getProperty(prop));
+                cacheProps.put(prop.substring(CACHE_ID.length()+1), WebloggerConfig.getProperty(prop));
             }
         }
         
         log.info(cacheProps);
-        
         contentCache = CacheManager.constructCache(null, cacheProps);
     }
-    
     
     public static SaltCache getInstance() {
         return singletonInstance;
     }
     
     
-    public Object get(String key) {
-        
+    public String get(String key) {
         Object entry = null;
-        
+
         ExpiringCacheEntry lazyEntry = (ExpiringCacheEntry) this.contentCache.get(key);
         if(lazyEntry != null) {
             entry = lazyEntry.getValue();
@@ -92,11 +88,11 @@ public final class SaltCache {
             log.debug("MISS "+key);
         }
         
-        return entry;
+        return entry != null ? entry.toString() : null;
     }
     
     
-    public void put(String key, Object value) {
+    public void put(String key, String value) {
 		// expire after 60 minutes
         contentCache.put(key, new ExpiringCacheEntry(value, RollerConstants.HOUR_IN_MS));
         log.debug("PUT "+key);

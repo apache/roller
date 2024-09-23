@@ -51,6 +51,9 @@ public class MediaFileTest  {
     @BeforeEach
     public void setUp() throws Exception {
         TestUtils.setupWeblogger();
+        // allow media uploads for this test
+        Map<String, RuntimeConfigProperty> config = WebloggerFactory.getWeblogger().getPropertiesManager().getProperties();
+        config.get("uploads.enabled").setValue("true");
     }
 
     /**
