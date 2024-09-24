@@ -22,7 +22,7 @@ limitations under the License.
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-project</artifactId>
-    <version>6.1.3</version>
+    <version>6.1.4</version>
     <packaging>pom</packaging>
 
     <name>Roller</name>
@@ -46,7 +46,7 @@ limitations under the License.
         <jetty.plugin.version>10.0.19</jetty.plugin.version> <!-- Jetty 11 requires Jakarta package names -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <roller.version>6.1.3</roller.version>
+        <roller.version>6.1.4</roller.version>
         <slf4j.version>1.7.36</slf4j.version>
     </properties>
 
