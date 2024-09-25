@@ -48,14 +48,14 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.17.0</version>
+            <version>4.23.1</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-firefox-driver</artifactId>
-            <version>4.17.0</version>
+            <version>4.23.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.servlet</groupId>
@@ -128,7 +128,7 @@
             <!-- Activates integration tests (by default, classes under tests that end with "IT") -->
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.2.5</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <goals>

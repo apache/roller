@@ -43,7 +43,7 @@ limitations under the License.
         <derby.version>10.11.1.1</derby.version>
         <java-mail.version>1.4.7</java-mail.version>
         <jaxb.version>2.3.1</jaxb.version>
-        <jetty.plugin.version>10.0.19</jetty.plugin.version> <!-- Jetty 11 requires Jakarta package names -->
+        <jetty.plugin.version>10.0.23</jetty.plugin.version> <!-- Jetty 11 requires Jakarta package names -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <roller.version>6.1.4</roller.version>
@@ -62,7 +62,7 @@ limitations under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.12.1</version>
+                    <version>3.13.0</version>
                     <configuration>
                         <release>11</release>
                         <fork>true</fork>
@@ -93,7 +93,7 @@ limitations under the License.
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.16.2</version>
+                    <version>2.17.1</version>
                     <configuration>
                         <rulesUri>file:version-rules.xml</rulesUri>
                     </configuration>
@@ -107,7 +107,7 @@ limitations under the License.
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
-                <version>5.10.1</version>
+                <version>5.11.0</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
