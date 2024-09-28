@@ -254,7 +254,7 @@
                 
                 <div class="modal-body">
 
-                    <div id="category-in-use" class="alert alert-danger" role="alert" style="display:none">
+                    <div id="category-in-use" style="display:none">
                         <p>
                             <s:text name="categoryDeleteOK.warningCatInUse"/>
                             <s:text name="categoryDeleteOK.youMustMoveEntries"/>

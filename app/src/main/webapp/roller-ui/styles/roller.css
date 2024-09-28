@@ -185,6 +185,13 @@ table.innertable tr .viewbody .bot {
     float: left;
 }
 
+#category-in-use {
+    background-color: #ffcccc;
+    border: 1px solid #ff0000;
+    padding: 10px;
+    border-radius: 5px;
+}
+
 /* sign-in */
 
 body {
