@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export rcstring="rc1"
+export rcstring=""
 export vstring="6.1.4"
 
 # for rc releases we rename the release files
