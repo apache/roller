@@ -431,7 +431,14 @@
             <param name="actionName">categoryAdd</param>
             <param name="pageTitle">categoryForm.add.title</param>
             <result name="input" type="tiles">.CategoryEdit</result>
-            <result name="success" type="chain">categories</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">categories</param>
+                <param name="weblog">${weblog}</param>
+            </result>
+            <result name="cancel" type="redirectAction">
+                <param name="actionName">categories</param>
+                <param name="weblog">${weblog}</param>
+            </result>
             <result name="error" type="chain">categories</result>
             <allowed-methods>execute,save</allowed-methods>
         </action>
@@ -441,22 +448,30 @@
             <param name="actionName">categoryEdit</param>
             <param name="pageTitle">categoryForm.edit.title</param>
             <result name="input" type="tiles">.CategoryEdit</result>
-            <result name="success" type="chain">categories</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">categories</param>
+                <param name="weblog">${weblog}</param>
+            </result>
             <result name="cancel" type="redirectAction">
                 <param name="actionName">categories</param>
                 <param name="weblog">${weblog}</param>
             </result>
+            <result name="error" type="chain">categories</result>
             <allowed-methods>execute,save</allowed-methods>
         </action>
 
         <action name="categoryRemove"
                 class="org.apache.roller.weblogger.ui.struts2.editor.CategoryRemove">
             <result name="input" type="tiles">.CategoryRemove</result>
+            <result name="success" type="redirectAction">
+                <param name="actionName">categories</param>
+                <param name="weblog">${weblog}</param>
+            </result>
             <result name="cancel" type="redirectAction">
                 <param name="actionName">categories</param>
                 <param name="weblog">${weblog}</param>
             </result>
-            <result name="success" type="chain">categories</result>
+            <result name="error" type="chain">categories</result>
             <allowed-methods>execute,remove</allowed-methods>
         </action>
 
