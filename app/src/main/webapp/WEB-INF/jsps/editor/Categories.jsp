@@ -190,7 +190,7 @@
     function submitEditedCategory() {
 
         // if name is empty reject and show error message
-        if ($("#categoryEditForm_bean_name").val().trim() == "") {
+        if ($("#categoryEditForm_bean_name").val().trim() === "") {
             feedbackAreaEdit.html('<s:text name="categoryForm.requiredFields" />');
             feedbackAreaEdit.css("color", "red");
             return;
@@ -296,7 +296,27 @@
             $('#category-in-use').css('display', 'none');
             $('#category-emtpy').css('display', 'block');
         }
+        populateCategorySelect(id);
         $('#delete-category-modal').modal({show: true});
+    }
+
+    function populateCategorySelect(removeId) {
+        const allCategories = [];
+
+        <s:iterator value="allCategories" var="category">
+        allCategories.push({
+            id: '<s:property value="#category.id"/>',
+            name: '<s:property value="#category.name"/>'
+        });
+        </s:iterator>
+
+        const select = $('#categoryRemove_targetCategoryId');
+        select.empty();
+        allCategories.forEach(function(category) {
+            if (category.id !== removeId) {
+                select.append(new Option(category.name, category.id));
+            }
+        });
     }
 
 </script>
