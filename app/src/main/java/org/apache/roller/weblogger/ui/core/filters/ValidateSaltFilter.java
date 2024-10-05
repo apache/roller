@@ -51,7 +51,13 @@ public class ValidateSaltFilter implements Filter {
             FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpReq = (HttpServletRequest) request;
 
-        if ("POST".equals(httpReq.getMethod()) && !isIgnoredURL(httpReq.getServletPath())) {
+        String requestURL = httpReq.getRequestURL().toString();
+        String queryString = httpReq.getQueryString();
+        if (queryString != null) {
+            requestURL += "?" + queryString;
+        }
+
+        if ("POST".equals(httpReq.getMethod()) && !isIgnoredURL(requestURL)) {
             RollerSession rollerSession = RollerSession.getRollerSession(httpReq);
             if (rollerSession != null) {
                 String userId = rollerSession.getAuthenticatedUser() != null ? rollerSession.getAuthenticatedUser().getId() : "";
@@ -88,16 +94,10 @@ public class ValidateSaltFilter implements Filter {
 
     /**
      * Checks if this is an ignored url defined in the salt.ignored.urls property
-     * @param theUrl the the url
+     * @param theUrl the url
      * @return true, if is ignored resource
      */
     private boolean isIgnoredURL(String theUrl) {
-        int i = theUrl.lastIndexOf('/');
-
-        // If it's not a resource then don't ignore it
-        if (i <= 0 || i == theUrl.length() - 1) {
-            return false;
-        }
-        return ignored.contains(theUrl.substring(i + 1));
+        return ignored.contains(theUrl);
     }
 }
