@@ -64,7 +64,6 @@ public class ValidateSaltFilterTest {
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
 
             when(request.getMethod()).thenReturn("POST");
-            when(request.getServletPath()).thenReturn("/someurl");
             when(request.getParameter("salt")).thenReturn("validSalt");
             when(saltCache.get("validSalt")).thenReturn("userId");
             when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
@@ -87,7 +86,6 @@ public class ValidateSaltFilterTest {
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
 
             when(request.getMethod()).thenReturn("POST");
-            when(request.getServletPath()).thenReturn("/someurl");
             when(request.getParameter("salt")).thenReturn("invalidSalt");
             when(saltCache.get("invalidSalt")).thenReturn(null);
             StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");
@@ -108,7 +106,6 @@ public class ValidateSaltFilterTest {
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
 
             when(request.getMethod()).thenReturn("POST");
-            when(request.getServletPath()).thenReturn("/someurl");
             when(request.getParameter("salt")).thenReturn("validSalt");
             when(saltCache.get("validSalt")).thenReturn("differentUserId");
             when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
@@ -130,7 +127,6 @@ public class ValidateSaltFilterTest {
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
 
             when(request.getMethod()).thenReturn("POST");
-            when(request.getServletPath()).thenReturn("/someurl");
             when(request.getParameter("salt")).thenReturn("validSalt");
             when(saltCache.get("validSalt")).thenReturn("");
             StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");
