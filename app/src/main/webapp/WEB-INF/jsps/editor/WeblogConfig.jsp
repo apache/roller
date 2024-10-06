@@ -130,11 +130,11 @@
     <h3><s:text name="websiteSettings.spamPrevention"/></h3>
 
     <s:textarea name="bean.bannedwordslist" rows="7" cols="40"
-                label="%{getText('websiteSettings.analyticsTrackingCode')}"/>
+                label="%{getText('websiteSettings.bannedWordsList')}"/>
 
     <%-- ***** Web analytics settings ***** --%>
 
-    <s:if test="getBooleanProp('analytics.code.override.allowed')">
+    <s:if test="getBooleanProp('analytics.code.override.allowed') && !weblogAdminsUntrusted">
         <h3><s:text name="configForm.webAnalytics"/></h3>
 
         <s:textarea name="bean.analyticsCode" rows="10" cols="70"

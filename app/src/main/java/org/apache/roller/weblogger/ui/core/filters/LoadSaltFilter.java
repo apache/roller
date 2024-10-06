@@ -37,13 +37,14 @@ public class LoadSaltFilter implements Filter {
         throws IOException, ServletException {
 
         HttpServletRequest httpReq = (HttpServletRequest) request;
-        RollerSession rses = RollerSession.getRollerSession(httpReq);
-        String userId = rses != null && rses.getAuthenticatedUser() != null ? rses.getAuthenticatedUser().getId() : "";
-
-        SaltCache saltCache = SaltCache.getInstance();
-        String salt = RandomStringUtils.random(20, 0, 0, true, true, null, new SecureRandom());
-        saltCache.put(salt, userId);
-        httpReq.setAttribute("salt", salt);
+        RollerSession rollerSession = RollerSession.getRollerSession(httpReq);
+        if (rollerSession != null) {
+            String userId = rollerSession.getAuthenticatedUser() != null ? rollerSession.getAuthenticatedUser().getId() : "";
+            SaltCache saltCache = SaltCache.getInstance();
+            String salt = RandomStringUtils.random(20, 0, 0, true, true, null, new SecureRandom());
+            saltCache.put(salt, userId);
+            httpReq.setAttribute("salt", salt);
+        }
 
         chain.doFilter(request, response);
     }

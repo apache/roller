@@ -51,17 +51,31 @@ public class ValidateSaltFilter implements Filter {
             FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpReq = (HttpServletRequest) request;
 
-        if ("POST".equals(httpReq.getMethod()) && !isIgnoredURL(httpReq.getServletPath())) {
-            RollerSession rses = RollerSession.getRollerSession(httpReq);
-            String userId = rses != null && rses.getAuthenticatedUser() != null ? rses.getAuthenticatedUser().getId() : "";
+        String requestURL = httpReq.getRequestURL().toString();
+        String queryString = httpReq.getQueryString();
+        if (queryString != null) {
+            requestURL += "?" + queryString;
+        }
 
-            String salt = httpReq.getParameter("salt");
-            SaltCache saltCache = SaltCache.getInstance();
-            if (salt == null || !Objects.equals(saltCache.get(salt), userId)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Valid salt value not found on POST to URL : " + httpReq.getServletPath());
+        if ("POST".equals(httpReq.getMethod()) && !isIgnoredURL(requestURL)) {
+            RollerSession rollerSession = RollerSession.getRollerSession(httpReq);
+            if (rollerSession != null) {
+                String userId = rollerSession.getAuthenticatedUser() != null ? rollerSession.getAuthenticatedUser().getId() : "";
+
+                String salt = httpReq.getParameter("salt");
+                SaltCache saltCache = SaltCache.getInstance();
+                if (salt == null || !Objects.equals(saltCache.get(salt), userId)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Valid salt value not found on POST to URL : " + httpReq.getServletPath());
+                    }
+                    throw new ServletException("Security Violation");
                 }
-                throw new ServletException("Security Violation");
+
+                // Remove salt from cache after successful validation
+                saltCache.remove(salt);
+                if (log.isDebugEnabled()) {
+                    log.debug("Salt used and invalidated: " + salt);
+                }
             }
         }
 
@@ -70,8 +84,6 @@ public class ValidateSaltFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
-        // Construct our list of ignored urls
         String urls = WebloggerConfig.getProperty("salt.ignored.urls");
         ignored = Set.of(StringUtils.stripAll(StringUtils.split(urls, ",")));
     }
@@ -82,16 +94,10 @@ public class ValidateSaltFilter implements Filter {
 
     /**
      * Checks if this is an ignored url defined in the salt.ignored.urls property
-     * @param theUrl the the url
+     * @param theUrl the url
      * @return true, if is ignored resource
      */
     private boolean isIgnoredURL(String theUrl) {
-        int i = theUrl.lastIndexOf('/');
-
-        // If it's not a resource then don't ignore it
-        if (i <= 0 || i == theUrl.length() - 1) {
-            return false;
-        }
-        return ignored.contains(theUrl.substring(i + 1));
+        return ignored.contains(theUrl);
     }
 }
