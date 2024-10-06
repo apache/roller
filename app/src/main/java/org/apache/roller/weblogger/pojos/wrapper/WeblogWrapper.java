@@ -141,9 +141,8 @@ public final class WeblogWrapper {
     }
 
     public String getAnalyticsCode() {
-        return this.pojo.getAnalyticsCode();
+        return HTMLSanitizer.conditionallySanitize(this.pojo.getAnalyticsCode());
     }
-
 
     public Boolean getEmailComments() {
         return this.pojo.getEmailComments();

@@ -61,6 +61,8 @@ public class WeblogConfig extends UIAction {
     
     // list of available plugins
     private List<WeblogEntryPlugin> pluginsList = Collections.emptyList();
+
+    private boolean weblogAdminsUntrusted = WebloggerRuntimeConfig.getBooleanProperty("weblogAdminsUntrusted");
     
     
     public WeblogConfig() {
@@ -71,7 +73,7 @@ public class WeblogConfig extends UIAction {
 
     @Override
     public void myPrepare() {
-        
+
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             
@@ -231,5 +233,8 @@ public class WeblogConfig extends UIAction {
     public void setPluginsList(List<WeblogEntryPlugin> pluginsList) {
         this.pluginsList = pluginsList;
     }
-    
+
+    public boolean getWeblogAdminsUntrusted() {
+        return weblogAdminsUntrusted;
+    }
 }

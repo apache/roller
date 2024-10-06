@@ -134,7 +134,7 @@
 
     <%-- ***** Web analytics settings ***** --%>
 
-    <s:if test="getBooleanProp('analytics.code.override.allowed')">
+    <s:if test="getBooleanProp('analytics.code.override.allowed') && !weblogAdminsUntrusted">
         <h3><s:text name="configForm.webAnalytics"/></h3>
 
         <s:textarea name="bean.analyticsCode" rows="10" cols="70"
