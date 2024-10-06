@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -62,7 +63,7 @@ public class WeblogConfig extends UIAction {
     // list of available plugins
     private List<WeblogEntryPlugin> pluginsList = Collections.emptyList();
 
-    private boolean weblogAdminsUntrusted = WebloggerRuntimeConfig.getBooleanProperty("weblogAdminsUntrusted");
+    private final boolean weblogAdminsUntrusted = WebloggerConfig.getBooleanProperty("weblogAdminsUntrusted");
     
     
     public WeblogConfig() {
@@ -90,10 +91,7 @@ public class WeblogConfig extends UIAction {
             // set plugins list
             PluginManager ppmgr = WebloggerFactory.getWeblogger().getPluginManager();
             Map<String, WeblogEntryPlugin> pluginsMap = ppmgr.getWeblogEntryPlugins(getActionWeblog());
-            List<WeblogEntryPlugin> plugins = new ArrayList<>();
-            for (WeblogEntryPlugin entryPlugin : pluginsMap.values()) {
-                plugins.add(entryPlugin);
-            }
+            List<WeblogEntryPlugin> plugins = new ArrayList<>(pluginsMap.values());
 
             // sort
             setPluginsList(plugins);
