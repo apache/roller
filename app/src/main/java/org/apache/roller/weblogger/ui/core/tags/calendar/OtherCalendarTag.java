@@ -23,53 +23,48 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DateUtil;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
  * Calendar tag.
  * @jsp.tag name="Calendar"
  */
-public class CalendarTag extends TagSupport {
+public class OtherCalendarTag extends TagSupport {
     private static Log mLogger =
-            LogFactory.getFactory().getInstance(CalendarTag.class);
+            LogFactory.getFactory().getInstance(OtherCalendarTag.class);
 
     private Locale mLocale = Locale.getDefault();
 
     // JSP Attributes
-    
+
     /** @jsp.attribute required="true" */
     public String getName() { return mName; }
     public void setName( String name ) { mName = name; }
     private String mName = null;
-    
+
     /* @jsp.attribute description="Date in yyyyMMdd format"
     public String getDate() { return mDate; }
     public void setDate( String s ) { mDate = s; }
     private String mDate = null;
      */
-    
+
     /** @jsp.attribute */
     public String getModel() { return mModelName; }
     public void setModel( String s ) { mModelName= s; }
     private String mModelName = null;
-    
+
     /** @jsp.attribute */
     public String getClassSuffix() { return mClassSuffix; }
     public void setClassSuffix( String s ) { mClassSuffix= s; }
     private String mClassSuffix = "";
-    
+
     // not a tag attribute
     public void setLocale(Locale locale) {
         if (locale != null) {
@@ -92,10 +87,10 @@ public class CalendarTag extends TagSupport {
         return mTimeZone;
     }
      */
-    
+
     private String[] mDayNames = null;
-    
-    public CalendarTag() {
+
+    public OtherCalendarTag() {
         /*
          * Empty constructor.
          *
@@ -300,7 +295,6 @@ public class CalendarTag extends TagSupport {
             pw.print("<td class=\"hCalendarDayCurrent"
                     +mClassSuffix+"\">");
             pw.print( content );
-            pw.print( "new vuln " + content + " new vuln" );
             pw.print("</td>");
         } else if (url!=null) {
             pw.print("<td class=\"hCalendarDayCurrent"
