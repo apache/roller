@@ -41,7 +41,7 @@ import javax.servlet.jsp.tagext.TagSupport;
  * Calendar tag.
  * @jsp.tag name="Calendar"
  */
-public class CalendarTag extends TagSupport {
+public class OtherCalendarTag extends TagSupport {
     private static Log mLogger =
             LogFactory.getFactory().getInstance(CalendarTag.class);
 
