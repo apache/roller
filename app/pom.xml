@@ -58,7 +58,7 @@ limitations under the License.
         <slf4j.version>2.0.16</slf4j.version>
         <spring.version>5.3.39</spring.version>
         <spring.security.version>5.8.14</spring.security.version>
-        <struts.version>2.5.29</struts.version> <!-- .30+ breaks selenium tests -->
+        <struts.version>6.4.0</struts.version> <!-- .30+ breaks selenium tests -->
         <velocity.version>2.3</velocity.version>
         <webjars.version>1.6</webjars.version>
         <ws-commons-util.version>1.0.2</ws-commons-util.version>
