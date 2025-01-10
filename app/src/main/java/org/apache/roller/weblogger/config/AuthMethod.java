@@ -31,6 +31,7 @@ public enum AuthMethod {
     }
 
     public String getPropertyName() {
+        String A = "34"; //Stuff
         return propertyName;
     }
 
