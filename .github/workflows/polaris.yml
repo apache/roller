@@ -1,39 +1,31 @@
-# example workflow for Polaris scans using the Synopsys Action
-# https://github.com/marketplace/actions/synopsys-action
-name: polaris
+name: CI-Polaris-Basic 
 on:
   push:
     branches: [ main, master, develop, stage, release ]
   pull_request:
     branches: [ main, master, develop, stage, release ]
   workflow_dispatch:
+  
 jobs:
-  polaris:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: [ ubuntu-latest ]
     steps:
-    - name: Checkout Source
-      uses: actions/checkout@v4
-    - name: Setup Java JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: 17
-        distribution: microsoft
-        cache: maven
-    - name: Polaris Scan
-      uses: synopsys-sig/synopsys-action@v1.9.0
-      with:
-        polaris_server_url: ${{ secrets.POLARIS_SERVERURL }}
-        polaris_access_token: ${{ secrets.POLARIS_ACCESSTOKEN }}
-        polaris_assessment_types: 'SAST,SCA'
-        polaris_application_name: Hugues2
-        polaris_project_name: ${{ github.event.repository.name }}
-        polaris_prComment_enabled: 'true'
-        #polaris_reports_sarif_create: 'true'
-        #polaris_upload_sarif_report: 'true'
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-#    - name: Save Logs
-#      if: always()
-#      uses: actions/upload-artifact@v3
-#      with:
-#        name: bridge-logs
-#        path: ${{ github.workspace }}/.bridge
+      - name: Checkout Source
+        uses: actions/checkout@v3
+      - name: Polaris Scan
+        uses: blackduck-inc/black-duck-security-scan@v2.0.0
+        with:
+          ### SCANNING: Required fields
+          polaris_server_url: ${{ vars.POLARIS_SERVER_URL }}
+          polaris_access_token: ${{ secrets.POLARIS_ACCESS_TOKEN }}
+          polaris_assessment_types: "SCA,SAST"
+          
+          ### SCANNING: Optional fields
+          # polaris_application_name: ${{ github.event.repository.name }}
+          # polaris_project_name: ${{ github.event.repository.name }}
+          
+          ### PULL REQUEST COMMENTS: Uncomment below to enable
+          polaris_prComment_enabled: true 
+          github_token: ${{ secrets.GITHUB_TOKEN }} # Required when PR comments is enabled
+
+          
