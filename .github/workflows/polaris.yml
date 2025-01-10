@@ -21,8 +21,8 @@ jobs:
           polaris_assessment_types: "SCA,SAST"
           
           ### SCANNING: Optional fields
-          # polaris_application_name: ${{ github.event.repository.name }}
-          # polaris_project_name: ${{ github.event.repository.name }}
+          polaris_application_name: "App Hugues 2025"
+          polaris_project_name: "Roller CI"
           
           ### PULL REQUEST COMMENTS: Uncomment below to enable
           polaris_prComment_enabled: true 
