@@ -37,6 +37,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.ui.core.RollerSessionManager;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -165,6 +166,18 @@ public class UserEdit extends UIAction {
             // reset password if set
             if (!StringUtils.isEmpty(getBean().getPassword())) {
                 user.resetPassword(getBean().getPassword());
+
+                // invalidate user's session if it's not user executing this action
+                if (!getAuthenticatedUser().getUserName().equals(user.getUserName())) {
+                    RollerSessionManager sessionManager = RollerSessionManager.getInstance();
+                    sessionManager.invalidate(user.getUserName());
+                }
+            }
+
+            // if user is disabled and not the same as the user executing this action, then invalidate their session
+           if (!user.getEnabled() && !getAuthenticatedUser().getUserName().equals(user.getUserName())) {
+                RollerSessionManager sessionManager = RollerSessionManager.getInstance();
+                sessionManager.invalidate(user.getUserName());
             }
 
             try {

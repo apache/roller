@@ -38,23 +38,19 @@ import org.apache.roller.weblogger.ui.core.security.AutoProvision;
 
 /**
  * Roller session handles session startup and shutdown.
- *
- * @web.listener
  */
 public class RollerSession 
         implements HttpSessionListener, HttpSessionActivationListener, Serializable {
     
-    static final long serialVersionUID = 5890132909166913727L;
-    
+    private static final long serialVersionUID = 5890132909166913727L;
+
     // the id of the user represented by this session
     private String userName = null;
     
     private static final Log log;
     
     public static final String ROLLER_SESSION = "org.apache.roller.weblogger.rollersession";
-    public static final String ERROR_MESSAGE   = "rollererror_message";
-    public static final String STATUS_MESSAGE  = "rollerstatus_message";
-    
+
     static{
         WebloggerConfig.init(); // must be called before calls to logging APIs
         log = LogFactory.getLog(RollerSession.class);
@@ -68,12 +64,17 @@ public class RollerSession
         HttpSession session = request.getSession(false);
         if (session != null) {
             rollerSession = (RollerSession)session.getAttribute(ROLLER_SESSION);
-            
+
             if (rollerSession == null) {
-                // HttpSession with no RollerSession?
-                // Must be a session that was de-serialized from a previous run.
                 rollerSession = new RollerSession();
                 session.setAttribute(ROLLER_SESSION, rollerSession);
+            } else if (rollerSession.getAuthenticatedUser() != null) {
+                RollerSessionManager sessionManager = RollerSessionManager.getInstance();
+                if (sessionManager.get(rollerSession.getAuthenticatedUser().getUserName()) == null) {
+                    // session not present in cache means that it is invalid
+                    rollerSession = new RollerSession();
+                    session.setAttribute(ROLLER_SESSION, rollerSession);
+                }
             }
             
             Principal principal = request.getUserPrincipal();
@@ -124,47 +125,14 @@ public class RollerSession
         
         return rollerSession;
     }
-    
-    
-    /** Create session's Roller instance */
-    @Override
-    public void sessionCreated(HttpSessionEvent se) {
-        RollerSession rollerSession = new RollerSession();
-        se.getSession().setAttribute(ROLLER_SESSION, rollerSession);
-    }
 
-
-    @Override
-    public void sessionDestroyed(HttpSessionEvent se) {
-        clearSession(se);
-    }
-    
-    
-    /** Init session as if it was new */
-    @Override
-    public void sessionDidActivate(HttpSessionEvent se) {
-    }
-    
-    
-    /** 
-     * Purge session before passivation. Because Roller currently does not
-     * support session recovery, failover, migration, or whatever you want
-     * to call it when sessions are saved and then restored at some later
-     * point in time.
-     */
-    @Override
-    public void sessionWillPassivate(HttpSessionEvent se) {
-        clearSession(se);
-    }
-    
-    
     /**
      * Authenticated user associated with this session.
      */
     public User getAuthenticatedUser() {
         
         User authenticUser = null;
-        if(userName != null) {
+        if (userName != null) {
             try {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 authenticUser = mgr.getUserByUserName(userName);
@@ -175,16 +143,16 @@ public class RollerSession
         
         return authenticUser;
     }
-    
-    
+
     /**
      * Authenticated user associated with this session.
      */
     public void setAuthenticatedUser(User authenticatedUser) {
         this.userName = authenticatedUser.getUserName();
+        RollerSessionManager sessionManager = RollerSessionManager.getInstance();
+        sessionManager.register(authenticatedUser.getUserName(), this);
     }
-    
-       
+
     private void clearSession(HttpSessionEvent se) {
         HttpSession session = se.getSession();
         try {
