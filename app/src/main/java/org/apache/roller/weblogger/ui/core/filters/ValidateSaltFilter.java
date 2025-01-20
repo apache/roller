@@ -46,12 +46,13 @@ import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
 public class ValidateSaltFilter implements Filter {
     private static final Log log = LogFactory.getLog(ValidateSaltFilter.class);
     private Set<String> ignored = Collections.emptySet();
-    private RollerSession rollerSession;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
+
         HttpServletRequest httpReq = (HttpServletRequest) request;
+        RollerSession rollerSession = UIBeanFactory.getBean(RollerSession.class, httpReq);
 
         String requestURL = httpReq.getRequestURL().toString();
         String queryString = httpReq.getQueryString();
@@ -87,7 +88,6 @@ public class ValidateSaltFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         String urls = WebloggerConfig.getProperty("salt.ignored.urls");
         ignored = Set.of(StringUtils.stripAll(StringUtils.split(urls, ",")));
-        rollerSession = UIBeanFactory.getBean(RollerSession.class);
     }
 
     @Override

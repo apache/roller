@@ -21,7 +21,7 @@
         "http://struts.apache.org/dtds/struts-2.5.dtd">
 <struts>
 
-    <constant name="struts.objectFactory" value="org.apache.roller.weblogger.ui.struts2.util.UICustomObjectFactory"/>
+    <constant name="struts.objectFactory" value="org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory"/>
 
     <!-- Weblogger default package -->
     <package name="weblogger" namespace="/roller-ui" extends="struts-default">

@@ -37,20 +37,24 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.RollerSessionManager;
+import org.apache.roller.weblogger.ui.core.SessionManager;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
  * Action that allows an admin to modify a users profile.
  */
 // TODO: make this work @AllowedMethods({"execute","save","firstSave"})
-public class UserEdit extends UIAction {
+public class UserEdit extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(UserEdit.class);
 
@@ -62,16 +66,10 @@ public class UserEdit extends UIAction {
     
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
-    private RollerSessionManager sessionManager;
+    private HttpServletRequest request;
 
     public UserEdit() {
         this.desiredMenu = "admin";
-        try {
-            sessionManager = UIBeanFactory.getBean(RollerSessionManager.class);
-        } catch (ServletException e) {
-            log.error("Failed to get RollerSessionManager", e);
-            throw new RuntimeException("Failed to get RollerSessionManager", e);
-        }
     }
 
     @Override
@@ -149,6 +147,15 @@ public class UserEdit extends UIAction {
      * Save modified user profile.
      */
     public String save() {
+
+        SessionManager sessionManager;
+        try {
+            sessionManager = UIBeanFactory.getBean(RollerSessionManager.class, request);
+        } catch (ServletException e) {
+            log.error("Failed to get RollerSessionManager", e);
+            throw new RuntimeException("Failed to get RollerSessionManager", e);
+        }
+
         myValidate();
         
         if (!hasActionErrors()) {
@@ -304,5 +311,10 @@ public class UserEdit extends UIAction {
 
     public String getAuthMethod() {
         return authMethod.name();
+    }
+
+    @Override
+    public void setServletRequest(HttpServletRequest httpServletRequest) {
+        this.request = httpServletRequest;
     }
 }

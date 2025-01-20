@@ -18,29 +18,24 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
-import org.apache.roller.weblogger.ui.core.RollerSession;
-
 import com.opensymphony.xwork2.ObjectFactory;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.RollerSessionManager;
+import org.apache.roller.weblogger.ui.core.SessionManager;
+import org.apache.struts2.ServletActionContext;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public class UICustomObjectFactory extends ObjectFactory {
 
-    @Override
-    public Class getClassInstance(String className) throws ClassNotFoundException {
-        if (className.equals(RollerSession.class.getName())) {
-            // Inject our session manager
-            return RollerSession.class;
-        }
-        return super.getClassInstance(className);
+@Override
+public Object buildBean(Class clazz, Map<String, Object> extraContext) throws Exception {
+    if (clazz == RollerSession.class) {
+        HttpServletRequest request = ServletActionContext.getRequest();
+        SessionManager sessionManager = new RollerSessionManager();
+        return new RollerSession(sessionManager, request);
     }
-
-    @Override
-    public Object buildBean(Class clazz, Map<String, Object> extraContext) throws Exception {
-        if (clazz == RollerSession.class) {
-            return new RollerSession(new RollerSessionManager());
-        }
-        return super.buildBean(clazz, extraContext);
-    }
+    return super.buildBean(clazz, extraContext);
+}
 }

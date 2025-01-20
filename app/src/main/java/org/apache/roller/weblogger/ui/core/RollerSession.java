@@ -46,18 +46,14 @@ public class RollerSession implements HttpSessionListener, HttpSessionActivation
 
     // the id of the user represented by this session
     private String userName = null;
-    private final SessionManager sessionManager;
+
+    private SessionManager sessionManager;
 
     public static final String ROLLER_SESSION = "org.apache.roller.weblogger.rollersession";
 
     static{
         WebloggerConfig.init(); // must be called before calls to logging APIs
         log = LogFactory.getLog(RollerSession.class);
-    }
-
-    @Inject
-    public RollerSession(SessionManager sessionManager) {
-        this.sessionManager = sessionManager;
     }
 
     @Inject

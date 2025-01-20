@@ -36,35 +36,33 @@ import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
 /**
  * A struts2 interceptor for configuring specifics of the weblogger ui.
  */
-public class UIActionInterceptor extends MethodFilterInterceptor implements
-        StrutsStatics {
+public class UIActionInterceptor extends MethodFilterInterceptor implements StrutsStatics {
 
     private static final long serialVersionUID = -6452966127207525616L;
     private static Log log = LogFactory.getLog(UIActionInterceptor.class);
-    private RollerSession rollerSession;
 
     @Override
-    public void init() {
-        try {
-            rollerSession = UIBeanFactory.getBean(RollerSession.class);
-        } catch (ServletException e) {
-            log.error("Failed to initialize UIActionInterceptor", e);
-            throw new RuntimeException("Failed to initialize UIActionInterceptor", e);
-        }
-    }
+    public void init() {}
 
     @Override
     public String doIntercept(ActionInvocation invocation) throws Exception {
+
+        final Object action = invocation.getAction();
+        final ActionContext context = invocation.getInvocationContext();
+        HttpServletRequest request = (HttpServletRequest) context.get(HTTP_REQUEST);
+
+        RollerSession rollerSession;
+        try {
+            rollerSession = UIBeanFactory.getBean(RollerSession.class, request);
+        } catch (ServletException e) {
+            log.error("Failed to instantiate RollerSession", e);
+            throw new RuntimeException("Failed to instantiate RollerSession", e);
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("Entering UIActionInterceptor");
         }
 
-        final Object action = invocation.getAction();
-        final ActionContext context = invocation.getInvocationContext();
-
-        HttpServletRequest request = (HttpServletRequest) context
-                .get(HTTP_REQUEST);
 
         // is this one of our own UIAction classes?
         if (action instanceof UIAction) {

@@ -37,6 +37,8 @@ public class RollerSessionManager implements SessionManager {
    public RollerSessionManager() {
       Map<String, String> cacheProps = new HashMap<>();
       cacheProps.put("id", CACHE_ID);
+      cacheProps.put("size", "1000");  // Default cache size
+      cacheProps.put("timeout", "3600"); // Default timeout in seconds
       this.sessionCache = CacheManager.constructCache(null, cacheProps);
       CacheManager.registerHandler(new SessionCacheHandler());
    }

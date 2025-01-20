@@ -32,18 +32,16 @@ import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
 public class LoadSaltFilter implements Filter {
 
     private static final Log log = LogFactory.getLog(LoadSaltFilter.class);
-    private RollerSession rollerSession;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        rollerSession = UIBeanFactory.getBean(RollerSession.class);
-    }
+    public void init(FilterConfig filterConfig) throws ServletException {}
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
         HttpServletRequest httpReq = (HttpServletRequest) request;
+        RollerSession rollerSession = UIBeanFactory.getBean(RollerSession.class, httpReq);
 
         if (rollerSession != null) {
             String userId = rollerSession.getAuthenticatedUser() != null ?

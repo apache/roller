@@ -45,11 +45,9 @@ import org.apache.roller.weblogger.util.Utilities;
 public class CommentDataServlet extends HttpServlet {
 
     private static final Log log = LogFactory.getLog(CommentDataServlet.class);
-    private RollerSession rollerSession;
 
     @Override
     public void init() throws ServletException {
-        rollerSession = UIBeanFactory.getBean(RollerSession.class);
     }
 
     /**
@@ -59,10 +57,9 @@ public class CommentDataServlet extends HttpServlet {
      *    {id : "3454545346", content : "hi there"}
      */
     @Override
-    public void doGet(HttpServletRequest request,
-                      HttpServletResponse response)
-            throws ServletException, IOException {
-        
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RollerSession rollerSession = UIBeanFactory.getBean(RollerSession.class, request);
+
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
@@ -97,9 +94,8 @@ public class CommentDataServlet extends HttpServlet {
      * comment's content with the content in the request.
      */
     @Override
-    public void doPut(HttpServletRequest request,
-                      HttpServletResponse response)
-            throws ServletException, IOException {
+    public void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RollerSession rollerSession = UIBeanFactory.getBean(RollerSession.class, request);
 
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {

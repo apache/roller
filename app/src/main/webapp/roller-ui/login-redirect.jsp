@@ -28,7 +28,7 @@
 
 <%
 Log log = LogFactory.getLog("login-redirect.jsp");
-RollerSession rollerSession = UIBeanFactory.getBean(RollerSession.class);
+RollerSession rollerSession = UIBeanFactory.getBean(RollerSession.class, request);
 User user = rollerSession.getAuthenticatedUser();
 
 List<Weblog> weblogs;

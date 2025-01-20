@@ -1,19 +1,6 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
- * under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.  For additional information regarding
- * copyright in this work, please see the NOTICE file in the top level
- * directory of this distribution.
+ * contributor license agreements.  See the NOTICE file for details.
  */
 
 package org.apache.roller.weblogger.ui.struts2.util;
@@ -21,25 +8,44 @@ package org.apache.roller.weblogger.ui.struts2.util;
 import com.opensymphony.xwork2.ObjectFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts2.ServletActionContext;
+import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.RollerSessionManager;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
-public class UIBeanFactory {
+public class UIBeanFactory extends ObjectFactory {
     private static final Log log = LogFactory.getLog(UIBeanFactory.class);
 
+    @Override
+    public Object buildBean(Class clazz, Map<String, Object> extraContext) throws Exception {
+        if (clazz == RollerSession.class) {
+            return createRollerSession(extraContext);
+        }
+        return super.buildBean(clazz, extraContext);
+    }
+
+    private RollerSession createRollerSession(Map<String, Object> extraContext) {
+        HttpServletRequest request = (HttpServletRequest) extraContext.get("request");
+        return new RollerSession(new RollerSessionManager(), request);
+    }
+
     public static <T> T getBean(Class<T> beanClass) throws ServletException {
+        return getBean(beanClass, null);
+    }
+
+    public static <T> T getBean(Class<T> beanClass, HttpServletRequest request) throws ServletException {
         try {
-            ObjectFactory objectFactory = ServletActionContext.getContext()
-                .getContainer()
-                .getInstance(ObjectFactory.class);
-            return (T) objectFactory.buildBean(beanClass, null);
-        } catch (NullPointerException e) {
-            String msg = "Struts context not initialized for bean type: " + beanClass.getName();
-            log.error(msg, e);
-            throw new ServletException(msg, e);
+            Map<String, Object> context = new HashMap<>();
+            if (request != null) {
+                context.put("request", request);
+            }
+            return (T) new UIBeanFactory().buildBean(beanClass, context);
         } catch (Exception e) {
-            String msg = String.format("Failed to create bean of type %s: %s", beanClass.getName(), e.getMessage());
+            String msg = String.format("Failed to create bean of type %s: %s",
+                beanClass.getName(), e.getMessage());
             log.error(msg, e);
             throw new ServletException(msg, e);
         }
