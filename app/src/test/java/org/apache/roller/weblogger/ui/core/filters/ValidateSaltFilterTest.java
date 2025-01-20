@@ -116,8 +116,11 @@ public class ValidateSaltFilterTest {
 
     @Test
     public void testDoFilterWithPostMethodAndNullRollerSession() throws Exception {
-        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class);
+              MockedStatic<UIBeanFactory> mockedUIBeanFactory = mockStatic(UIBeanFactory.class)) {
+
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerSession.class)).thenReturn(null);
 
             when(request.getMethod()).thenReturn("POST");
             when(request.getParameter("salt")).thenReturn("validSalt");
@@ -125,17 +128,22 @@ public class ValidateSaltFilterTest {
             StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");
             when(request.getRequestURL()).thenReturn(requestURL);
 
+            filter.init(mock(FilterConfig.class));
             filter.doFilter(request, response, chain);
 
-            verify(saltCache, never()).remove("validSalt");
+            verify(chain).doFilter(request, response);
+            verify(saltCache, never()).remove(anyString());
         }
     }
 
     @Test
     public void testDoFilterWithIgnoredURL() throws Exception {
-        try (MockedStatic<WebloggerConfig> mockedWebloggerConfig = mockStatic(WebloggerConfig.class)) {
+        try (MockedStatic<WebloggerConfig> mockedWebloggerConfig = mockStatic(WebloggerConfig.class);
+             MockedStatic<UIBeanFactory> mockedUIBeanFactory = mockStatic(UIBeanFactory.class)) {
+
             mockedWebloggerConfig.when(() -> WebloggerConfig.getProperty("salt.ignored.urls"))
                     .thenReturn("https://example.com/app/ignoredurl?param1=value1&m2=value2");
+            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerSession.class)).thenReturn(rollerSession);
 
             when(request.getMethod()).thenReturn("POST");
             StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");

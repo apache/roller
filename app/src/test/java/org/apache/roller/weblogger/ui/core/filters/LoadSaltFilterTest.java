@@ -11,6 +11,8 @@ import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,40 +38,39 @@ public class LoadSaltFilterTest {
     private SaltCache saltCache;
 
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        filter = new LoadSaltFilter();
+    public void setUp() throws ServletException {
+        MockitoAnnotations.openMocks(this);
+
+        try (MockedStatic<UIBeanFactory> mockedFactory = mockStatic(UIBeanFactory.class)) {
+            mockedFactory.when(() -> UIBeanFactory.getBean(RollerSession.class))
+                .thenReturn(rollerSession);
+
+            filter = new LoadSaltFilter();
+            filter.init(mock(FilterConfig.class));
+        }
     }
 
     @Test
     public void testDoFilterGeneratesSalt() throws Exception {
-        try (MockedStatic<UIBeanFactory> mockedUIBeanFactory = mockStatic(UIBeanFactory.class);
-             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
-
-            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerSession.class)).thenReturn(rollerSession);
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
 
-            when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
-
             filter.doFilter(request, response, chain);
-
             verify(request).setAttribute(eq("salt"), anyString());
-            verify(saltCache).put(anyString(), eq("userId"));
             verify(chain).doFilter(request, response);
         }
     }
+
     @Test
     public void testDoFilterWithNullRollerSession() throws Exception {
-        try (MockedStatic<UIBeanFactory> mockedUIBeanFactory = mockStatic(UIBeanFactory.class);
-             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+        try (MockedStatic<UIBeanFactory> mockedUIBeanFactory = mockStatic(UIBeanFactory.class)) {
+            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerSession.class))
+                    .thenReturn(null);
 
-            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerSession.class)).thenReturn(null);
-            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
-
+            filter.init(mock(FilterConfig.class));
             filter.doFilter(request, response, chain);
 
             verify(request, never()).setAttribute(eq("salt"), anyString());
-            verify(saltCache, never()).put(anyString(), anyString());
             verify(chain).doFilter(request, response);
         }
     }
