@@ -18,31 +18,28 @@
 
 package org.apache.roller.weblogger.ui.core;
 
-import java.io.Serializable;
-import java.security.Principal;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionActivationListener;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-
 import com.opensymphony.xwork2.inject.Inject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionActivationListener;
+import javax.servlet.http.HttpSessionListener;
+import java.io.Serializable;
+import java.security.Principal;
 
 
 /**
  * Roller session handles session startup and shutdown.
  */
-public class RollerSession 
-        implements HttpSessionListener, HttpSessionActivationListener, Serializable {
+public class RollerSession implements HttpSessionListener, HttpSessionActivationListener, Serializable {
     
     private static final long serialVersionUID = 5890132909166913727L;
     private static final Log log;
@@ -58,7 +55,6 @@ public class RollerSession
         log = LogFactory.getLog(RollerSession.class);
     }
 
-
     @Inject
     public RollerSession(SessionManager sessionManager) {
         this.sessionManager = sessionManager;
@@ -68,66 +64,77 @@ public class RollerSession
     public RollerSession(SessionManager sessionManager, HttpServletRequest request) {
         this.sessionManager = sessionManager;
 
+        // No session exists yet, nothing to do
         HttpSession session = request.getSession(false);
-        if (session != null) {
-            RollerSession storedSession = (RollerSession)session.getAttribute(ROLLER_SESSION);
+        if (session == null) {
+            return;
+        }
 
-            if (storedSession == null) {
-                session.setAttribute(ROLLER_SESSION, this);
-            } else if (storedSession.getAuthenticatedUser() != null) {
-                if (sessionManager.get(storedSession.getAuthenticatedUser().getUserName()) == null) {
-                    // override it with the new session
-                    session.setAttribute(ROLLER_SESSION, this);
-                }
-            }
-            
-            Principal principal = request.getUserPrincipal();
+        // Get or create roller session in HTTP session
+        RollerSession storedSession = (RollerSession)session.getAttribute(ROLLER_SESSION);
+        if (storedSession == null) {
+            session.setAttribute(ROLLER_SESSION, this);
+        }
+        // If stored session exists with authenticated user but not in cache, override it
+        else if (storedSession.getAuthenticatedUser() != null
+                && sessionManager.get(storedSession.getAuthenticatedUser().getUserName()) == null) {
+            session.setAttribute(ROLLER_SESSION, this);
+        }
 
-            // If we've got a principal but no user object, then attempt to get
-            // user object from user manager but *only* do this if we have been 
-            // bootstrapped because under an SSO scenario we may have a 
-            // principal even before we have been bootstrapped.
-            if (getAuthenticatedUser() == null && principal != null && WebloggerFactory.isBootstrapped()) {
-                try {
-                    
-                    UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-                    User user = umgr.getUserByUserName(principal.getName());
-                    
-                    // check for OpenID username (in the form of a URL)
-                    if (user == null && principal.getName() != null && principal.getName().startsWith("http://")) {
-                        String openidurl = principal.getName();
-                        if (openidurl.endsWith("/")) {
-                            openidurl = openidurl.substring(0, openidurl.length() - 1);
-                        }
-                        user = umgr.getUserByOpenIdUrl(openidurl);
-                    }
-                    
-                    // try one time to auto-provision, only happens if user==null
-                    // which means installation has LDAP enabled in security.xml
-                    if (user == null && WebloggerConfig.getBooleanProperty("users.ldap.autoProvision.enabled")) {
-                        
-                        // provisioning enabled, get provisioner and execute
-                        AutoProvision provisioner = RollerContext.getAutoProvision();
-                        if(provisioner != null) {
-                            boolean userProvisioned = provisioner.execute(request);
-                            if (userProvisioned) {
-                                // try lookup again real quick
-                                user = umgr.getUserByUserName(principal.getName());
-                            }
-                        }
-                    }
-                    // only set authenticated user if user is enabled
-                    if (user != null && user.getEnabled()) {
-                        setAuthenticatedUser(user);
-                    }
-                    
-                } catch (WebloggerException e) {
-                    log.error("ERROR: getting user object",e);
-                }
+        Principal principal = request.getUserPrincipal();
+
+        // Skip authentication if no principal, user already authenticated, or system not bootstrapped
+        if (getAuthenticatedUser() != null || principal == null || !WebloggerFactory.isBootstrapped()) {
+            return;
+        }
+
+        try {
+            UserManager userManager = WebloggerFactory.getWeblogger().getUserManager();
+            User user = authenticateUser(principal, userManager);
+
+            // Try auto-provisioning if LDAP enabled and user not found
+            if (user == null && WebloggerConfig.getBooleanProperty("users.ldap.autoProvision.enabled")) {
+                user = attemptAutoProvision(request, principal, userManager);
             }
+
+            // Set authenticated user if found and enabled
+            if (user != null && user.getEnabled()) {
+                setAuthenticatedUser(user);
+            }
+        } catch (WebloggerException e) {
+            log.error("Error authenticating user", e);
         }
     }
 
+    /**
+     * Attempts to authenticate user via username or OpenID URL
+     */
+    private User authenticateUser(Principal principal, UserManager userManager) throws WebloggerException {
+        // Try regular username first
+        User user = userManager.getUserByUserName(principal.getName());
+
+        // If not found, try OpenID URL
+        if (user == null && principal.getName() != null && principal.getName().startsWith("http://")) {
+            String openidUrl = principal.getName();
+            if (openidUrl.endsWith("/")) {
+                openidUrl = openidUrl.substring(0, openidUrl.length() - 1);
+            }
+            user = userManager.getUserByOpenIdUrl(openidUrl);
+        }
+        return user;
+    }
+
+    /**
+     * Attempts to auto-provision user via LDAP if enabled
+     */
+    private User attemptAutoProvision(HttpServletRequest request, Principal principal,
+            UserManager userManager) throws WebloggerException {
+        AutoProvision provisioner = RollerContext.getAutoProvision();
+        if (provisioner != null && provisioner.execute(request)) {
+            return userManager.getUserByUserName(principal.getName());
+        }
+        return null;
+    }
     /**
      * Authenticated user associated with this session.
      */
@@ -153,17 +160,4 @@ public class RollerSession
         this.userName = authenticatedUser.getUserName();
         sessionManager.register(authenticatedUser.getUserName(), this);
     }
-
-    private void clearSession(HttpSessionEvent se) {
-        HttpSession session = se.getSession();
-        try {
-            session.removeAttribute(ROLLER_SESSION);
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                // ignore purge exceptions
-                log.debug("EXCEPTION PURGING session attributes",e);
-            }
-        }
-    }
-    
 }
