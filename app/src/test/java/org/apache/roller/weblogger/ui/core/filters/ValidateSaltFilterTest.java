@@ -59,26 +59,37 @@ public class ValidateSaltFilterTest {
 
         verify(chain).doFilter(request, response);
     }
-
     @Test
     public void testDoFilterWithPostMethodAndValidSalt() throws Exception {
-        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
-            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class);
+             MockedStatic<UIBeanFactory> mockedUIBeanFactory = mockStatic(UIBeanFactory.class);
+             MockedStatic<WebloggerConfig> mockedConfig = mockStatic(WebloggerConfig.class)) {
 
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            mockedConfig.when(() -> WebloggerConfig.getProperty("salt.ignored.urls"))
+                       .thenReturn("different/url");
+
+            StringBuffer requestURL = new StringBuffer("https://example.com/roller-ui/test");
+            when(request.getRequestURL()).thenReturn(requestURL);
             when(request.getMethod()).thenReturn("POST");
             when(request.getParameter("salt")).thenReturn("validSalt");
-            when(saltCache.get("validSalt")).thenReturn("userId");
-            when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
-            StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");
-            when(request.getRequestURL()).thenReturn(requestURL);
+            when(saltCache.get("validSalt")).thenReturn("testUser");
 
+            RollerSession rollerSession = mock(RollerSession.class);
+            User user = mock(User.class);
+            when(rollerSession.getAuthenticatedUser()).thenReturn(user);
+            when(user.getId()).thenReturn("testUser");
+
+            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(any(), any())).thenReturn(rollerSession);
+
+            filter = new ValidateSaltFilter();
+            filter.init(mock(FilterConfig.class));
             filter.doFilter(request, response, chain);
 
             verify(chain).doFilter(request, response);
             verify(saltCache).remove("validSalt");
         }
     }
-
     @Test
     public void testDoFilterWithPostMethodAndInvalidSalt() throws Exception {
         try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
