@@ -18,11 +18,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.apache.roller.weblogger.business.*" %>
 <%@ page import="org.apache.roller.weblogger.pojos.*" %>
+<%@ page import="org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory" %>
 <%@ page import="org.apache.roller.weblogger.ui.core.RollerSession" %>
 <%@ page import="java.util.List" %>
+<%@ page import="org.apache.roller.weblogger.WebloggerException" %>
+<%@ page import="java.util.Collections" %>
+<%@ page import="org.apache.commons.logging.Log" %>
+<%@ page import="org.apache.commons.logging.LogFactory" %>
+
 <%
-User user = RollerSession.getRollerSession(request).getAuthenticatedUser();
-List weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getUserWeblogs(user, true);
+Log log = LogFactory.getLog("login-redirect.jsp");
+RollerSession rollerSession = UIBeanFactory.getBean(RollerSession.class);
+User user = rollerSession.getAuthenticatedUser();
+
+List<Weblog> weblogs;
+try {
+    weblogs = WebloggerFactory.getWeblogger().getWeblogManager().getUserWeblogs(user, true);
+} catch (WebloggerException e) {
+    log.error("Error getting user weblogs for user: " + user.getUserName(), e);
+    weblogs = Collections.emptyList();
+}
 
 if (user == null) {
     response.sendRedirect(request.getContextPath()+"/roller-ui/register.rol");

@@ -26,6 +26,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+
+import com.opensymphony.xwork2.inject.Inject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -43,37 +45,39 @@ public class RollerSession
         implements HttpSessionListener, HttpSessionActivationListener, Serializable {
     
     private static final long serialVersionUID = 5890132909166913727L;
+    private static final Log log;
 
     // the id of the user represented by this session
     private String userName = null;
-    
-    private static final Log log;
-    
+    private final SessionManager sessionManager;
+
     public static final String ROLLER_SESSION = "org.apache.roller.weblogger.rollersession";
 
     static{
         WebloggerConfig.init(); // must be called before calls to logging APIs
         log = LogFactory.getLog(RollerSession.class);
     }
-   
-    /**
-     * Get RollerSession from request (and add user if not already present).
-     */
-    public static RollerSession getRollerSession(HttpServletRequest request) {
-        RollerSession rollerSession = null;
+
+
+    @Inject
+    public RollerSession(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+    }
+
+    @Inject
+    public RollerSession(SessionManager sessionManager, HttpServletRequest request) {
+        this.sessionManager = sessionManager;
+
         HttpSession session = request.getSession(false);
         if (session != null) {
-            rollerSession = (RollerSession)session.getAttribute(ROLLER_SESSION);
+            RollerSession storedSession = (RollerSession)session.getAttribute(ROLLER_SESSION);
 
-            if (rollerSession == null) {
-                rollerSession = new RollerSession();
-                session.setAttribute(ROLLER_SESSION, rollerSession);
-            } else if (rollerSession.getAuthenticatedUser() != null) {
-                RollerSessionManager sessionManager = RollerSessionManager.getInstance();
-                if (sessionManager.get(rollerSession.getAuthenticatedUser().getUserName()) == null) {
-                    // session not present in cache means that it is invalid
-                    rollerSession = new RollerSession();
-                    session.setAttribute(ROLLER_SESSION, rollerSession);
+            if (storedSession == null) {
+                session.setAttribute(ROLLER_SESSION, this);
+            } else if (storedSession.getAuthenticatedUser() != null) {
+                if (sessionManager.get(storedSession.getAuthenticatedUser().getUserName()) == null) {
+                    // override it with the new session
+                    session.setAttribute(ROLLER_SESSION, this);
                 }
             }
             
@@ -83,7 +87,7 @@ public class RollerSession
             // user object from user manager but *only* do this if we have been 
             // bootstrapped because under an SSO scenario we may have a 
             // principal even before we have been bootstrapped.
-            if (rollerSession.getAuthenticatedUser() == null && principal != null && WebloggerFactory.isBootstrapped()) { 
+            if (getAuthenticatedUser() == null && principal != null && WebloggerFactory.isBootstrapped()) {
                 try {
                     
                     UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -114,7 +118,7 @@ public class RollerSession
                     }
                     // only set authenticated user if user is enabled
                     if (user != null && user.getEnabled()) {
-                        rollerSession.setAuthenticatedUser(user);
+                        setAuthenticatedUser(user);
                     }
                     
                 } catch (WebloggerException e) {
@@ -122,8 +126,6 @@ public class RollerSession
                 }
             }
         }
-        
-        return rollerSession;
     }
 
     /**
@@ -149,7 +151,6 @@ public class RollerSession
      */
     public void setAuthenticatedUser(User authenticatedUser) {
         this.userName = authenticatedUser.getUserName();
-        RollerSessionManager sessionManager = RollerSessionManager.getInstance();
         sessionManager.register(authenticatedUser.getUserName(), this);
     }
 

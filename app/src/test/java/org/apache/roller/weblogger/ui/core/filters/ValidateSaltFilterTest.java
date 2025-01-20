@@ -4,6 +4,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
+import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -39,9 +40,13 @@ public class ValidateSaltFilterTest {
     private SaltCache saltCache;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws ServletException {
         MockitoAnnotations.openMocks(this);
         filter = new ValidateSaltFilter();
+        try (MockedStatic<UIBeanFactory> mockedUIBeanFactory = mockStatic(UIBeanFactory.class)) {
+            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerSession.class)).thenReturn(rollerSession);
+            filter.init(mock(FilterConfig.class));
+        }
     }
 
     @Test
@@ -57,10 +62,7 @@ public class ValidateSaltFilterTest {
 
     @Test
     public void testDoFilterWithPostMethodAndValidSalt() throws Exception {
-        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
-             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
-
-            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
 
             when(request.getMethod()).thenReturn("POST");
@@ -79,10 +81,7 @@ public class ValidateSaltFilterTest {
 
     @Test
     public void testDoFilterWithPostMethodAndInvalidSalt() throws Exception {
-        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
-             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
-
-            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
 
             when(request.getMethod()).thenReturn("POST");
@@ -99,10 +98,7 @@ public class ValidateSaltFilterTest {
 
     @Test
     public void testDoFilterWithPostMethodAndMismatchedUserId() throws Exception {
-        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
-             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
-
-            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
 
             when(request.getMethod()).thenReturn("POST");
@@ -120,10 +116,7 @@ public class ValidateSaltFilterTest {
 
     @Test
     public void testDoFilterWithPostMethodAndNullRollerSession() throws Exception {
-        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
-             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
-
-            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(null);
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
 
             when(request.getMethod()).thenReturn("POST");
@@ -140,12 +133,7 @@ public class ValidateSaltFilterTest {
 
     @Test
     public void testDoFilterWithIgnoredURL() throws Exception {
-        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
-             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class);
-             MockedStatic<WebloggerConfig> mockedWebloggerConfig = mockStatic(WebloggerConfig.class)) {
-
-            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
-            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+        try (MockedStatic<WebloggerConfig> mockedWebloggerConfig = mockStatic(WebloggerConfig.class)) {
             mockedWebloggerConfig.when(() -> WebloggerConfig.getProperty("salt.ignored.urls"))
                     .thenReturn("https://example.com/app/ignoredurl?param1=value1&m2=value2");
 
@@ -153,7 +141,7 @@ public class ValidateSaltFilterTest {
             StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");
             when(request.getRequestURL()).thenReturn(requestURL);
             when(request.getQueryString()).thenReturn("param1=value1&m2=value2");
-            when(request.getParameter("salt")).thenReturn(null);  // No salt provided
+            when(request.getParameter("salt")).thenReturn(null);
 
             filter.init(mock(FilterConfig.class));
             filter.doFilter(request, response, chain);

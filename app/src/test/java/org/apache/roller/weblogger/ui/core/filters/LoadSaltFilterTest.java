@@ -3,6 +3,7 @@ package org.apache.roller.weblogger.ui.core.filters;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
+import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -42,10 +43,10 @@ public class LoadSaltFilterTest {
 
     @Test
     public void testDoFilterGeneratesSalt() throws Exception {
-        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
+        try (MockedStatic<UIBeanFactory> mockedUIBeanFactory = mockStatic(UIBeanFactory.class);
              MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
 
-            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerSession.class)).thenReturn(rollerSession);
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
 
             when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
@@ -57,13 +58,12 @@ public class LoadSaltFilterTest {
             verify(chain).doFilter(request, response);
         }
     }
-
     @Test
     public void testDoFilterWithNullRollerSession() throws Exception {
-        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
+        try (MockedStatic<UIBeanFactory> mockedUIBeanFactory = mockStatic(UIBeanFactory.class);
              MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
 
-            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(null);
+            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerSession.class)).thenReturn(null);
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
 
             filter.doFilter(request, response, chain);

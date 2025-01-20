@@ -23,6 +23,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.text.WordUtils;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -32,6 +35,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -40,7 +44,12 @@ import org.apache.roller.weblogger.util.Utilities;
  */
 public class CommentDataServlet extends HttpServlet {
 
-    public void checkAuth(HttpServletRequest request, Weblog weblog) {
+    private static final Log log = LogFactory.getLog(CommentDataServlet.class);
+    private RollerSession rollerSession;
+
+    @Override
+    public void init() throws ServletException {
+        rollerSession = UIBeanFactory.getBean(RollerSession.class);
     }
 
     /**
@@ -62,9 +71,8 @@ public class CommentDataServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
                 // need post permission to view comments
-                RollerSession rses = RollerSession.getRollerSession(request);
                 Weblog weblog = c.getWeblogEntry().getWebsite();
-                if (weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST)) {
+                if (weblog.hasUserPermission(rollerSession.getAuthenticatedUser(), WeblogPermission.POST)) {
                     String content = Utilities.escapeHTML(c.getContent());
                     content = StringEscapeUtils.escapeEcmaScript(content);
                     String json = "{ id: \"" + c.getId() + "\"," + "content: \"" + content + "\" }";
@@ -101,9 +109,8 @@ public class CommentDataServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             } else {
                 // need post permission to edit comments
-                RollerSession rses = RollerSession.getRollerSession(request);
                 Weblog weblog = c.getWeblogEntry().getWebsite();
-                if (weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST)) {
+                if (weblog.hasUserPermission(rollerSession.getAuthenticatedUser(), WeblogPermission.POST)) {
                     String content = Utilities.streamToString(request.getInputStream());
                     c.setContent(content);
                     // don't update the posttime when updating the comment

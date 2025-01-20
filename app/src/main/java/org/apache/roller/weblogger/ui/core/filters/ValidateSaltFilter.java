@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
 
 /**
  * Filter checks all POST request for presence of valid salt value and rejects those without
@@ -45,6 +46,7 @@ import org.apache.roller.weblogger.ui.core.RollerSession;
 public class ValidateSaltFilter implements Filter {
     private static final Log log = LogFactory.getLog(ValidateSaltFilter.class);
     private Set<String> ignored = Collections.emptySet();
+    private RollerSession rollerSession;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
@@ -58,9 +60,9 @@ public class ValidateSaltFilter implements Filter {
         }
 
         if ("POST".equals(httpReq.getMethod()) && !isIgnoredURL(requestURL)) {
-            RollerSession rollerSession = RollerSession.getRollerSession(httpReq);
             if (rollerSession != null) {
-                String userId = rollerSession.getAuthenticatedUser() != null ? rollerSession.getAuthenticatedUser().getId() : "";
+                String userId = rollerSession.getAuthenticatedUser() != null ?
+                              rollerSession.getAuthenticatedUser().getId() : "";
 
                 String salt = httpReq.getParameter("salt");
                 SaltCache saltCache = SaltCache.getInstance();
@@ -71,7 +73,6 @@ public class ValidateSaltFilter implements Filter {
                     throw new ServletException("Security Violation");
                 }
 
-                // Remove salt from cache after successful validation
                 saltCache.remove(salt);
                 if (log.isDebugEnabled()) {
                     log.debug("Salt used and invalidated: " + salt);
@@ -86,6 +87,7 @@ public class ValidateSaltFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         String urls = WebloggerConfig.getProperty("salt.ignored.urls");
         ignored = Set.of(StringUtils.stripAll(StringUtils.split(urls, ",")));
+        rollerSession = UIBeanFactory.getBean(RollerSession.class);
     }
 
     @Override

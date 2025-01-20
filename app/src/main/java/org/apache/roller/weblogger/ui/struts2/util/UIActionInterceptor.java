@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +41,17 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements
 
     private static final long serialVersionUID = -6452966127207525616L;
     private static Log log = LogFactory.getLog(UIActionInterceptor.class);
+    private RollerSession rollerSession;
+
+    @Override
+    public void init() {
+        try {
+            rollerSession = UIBeanFactory.getBean(RollerSession.class);
+        } catch (ServletException e) {
+            log.error("Failed to initialize UIActionInterceptor", e);
+            throw new RuntimeException("Failed to initialize UIActionInterceptor", e);
+        }
+    }
 
     @Override
     public String doIntercept(ActionInvocation invocation) throws Exception {
@@ -63,10 +75,8 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements
 
             UIAction theAction = (UIAction) action;
 
-            // extract the authenticated user and set it
-            RollerSession rses = RollerSession.getRollerSession(request);
-            if (rses != null) {
-                theAction.setAuthenticatedUser(rses.getAuthenticatedUser());
+            if (rollerSession != null) {
+                theAction.setAuthenticatedUser(rollerSession.getAuthenticatedUser());
             }
 
             // extract the work weblog and set it
@@ -88,5 +98,4 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements
 
         return invocation.invoke();
     }
-
 }
