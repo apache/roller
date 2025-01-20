@@ -28,14 +28,16 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class RollerSessionManager implements SessionManager {
    private static final Log log = LogFactory.getLog(RollerSessionManager.class);
    private static final String CACHE_ID = "roller.session.cache";
 
    private final Cache sessionCache;
 
-   private class SessionCacheHandler extends CacheHandlerAdapter {
-     public void invalidateUser(User user) {
+   public class SessionCacheHandler extends CacheHandlerAdapter {
+      @Override
+      public void invalidate(User user) {
          if (user != null && user.getUserName() != null) {
             sessionCache.remove(user.getUserName());
          }
