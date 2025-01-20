@@ -18,9 +18,9 @@
 
 package org.apache.roller.weblogger.ui.core;
 
-public interface SessionManager {
-   void register(String userName, RollerSession session);
-   RollerSession get(String userName);
+public interface UISessionManager {
+   void register(String userName, RollerUISession session);
+   RollerUISession get(String userName);
    void invalidate(String userName);
 }
 

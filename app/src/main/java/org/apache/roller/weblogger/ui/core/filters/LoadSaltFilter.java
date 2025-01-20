@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.RollerUISession;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
 
@@ -41,11 +41,11 @@ public class LoadSaltFilter implements Filter {
             throws IOException, ServletException {
 
         HttpServletRequest httpReq = (HttpServletRequest) request;
-        RollerSession rollerSession = UIBeanFactory.getBean(RollerSession.class, httpReq);
+        RollerUISession rollerUISession = UIBeanFactory.getBean(RollerUISession.class, httpReq);
 
-        if (rollerSession != null) {
-            String userId = rollerSession.getAuthenticatedUser() != null ?
-                          rollerSession.getAuthenticatedUser().getId() : "";
+        if (rollerUISession != null) {
+            String userId = rollerUISession.getAuthenticatedUser() != null ?
+                          rollerUISession.getAuthenticatedUser().getId() : "";
             SaltCache saltCache = SaltCache.getInstance();
             String salt = RandomStringUtils.random(20, 0, 0, true, true, null, new SecureRandom());
             saltCache.put(salt, userId);

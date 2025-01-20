@@ -19,17 +19,18 @@
 <%@ page import="org.apache.roller.weblogger.business.*" %>
 <%@ page import="org.apache.roller.weblogger.pojos.*" %>
 <%@ page import="org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory" %>
-<%@ page import="org.apache.roller.weblogger.ui.core.RollerSession" %>
+<%@ page import="org.apache.roller.weblogger.ui.core.RollerUISession" %>
 <%@ page import="java.util.List" %>
 <%@ page import="org.apache.roller.weblogger.WebloggerException" %>
 <%@ page import="java.util.Collections" %>
 <%@ page import="org.apache.commons.logging.Log" %>
 <%@ page import="org.apache.commons.logging.LogFactory" %>
+<%@ page import="org.apache.roller.weblogger.ui.core.RollerUISession" %>
 
 <%
 Log log = LogFactory.getLog("login-redirect.jsp");
-RollerSession rollerSession = UIBeanFactory.getBean(RollerSession.class, request);
-User user = rollerSession.getAuthenticatedUser();
+RollerUISession rollerUISession = UIBeanFactory.getBean(RollerUISession.class, request);
+User user = rollerUISession.getAuthenticatedUser();
 
 List<Weblog> weblogs;
 try {

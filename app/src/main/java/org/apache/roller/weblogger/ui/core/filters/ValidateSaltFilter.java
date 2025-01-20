@@ -36,7 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
-import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.RollerUISession;
 import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
 
 /**
@@ -52,7 +52,7 @@ public class ValidateSaltFilter implements Filter {
             FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest httpReq = (HttpServletRequest) request;
-        RollerSession rollerSession = UIBeanFactory.getBean(RollerSession.class, httpReq);
+        RollerUISession rollerUISession = UIBeanFactory.getBean(RollerUISession.class, httpReq);
 
         String requestURL = httpReq.getRequestURL().toString();
         String queryString = httpReq.getQueryString();
@@ -61,9 +61,9 @@ public class ValidateSaltFilter implements Filter {
         }
 
         if ("POST".equals(httpReq.getMethod()) && !isIgnoredURL(requestURL)) {
-            if (rollerSession != null) {
-                String userId = rollerSession.getAuthenticatedUser() != null ?
-                              rollerSession.getAuthenticatedUser().getId() : "";
+            if (rollerUISession != null) {
+                String userId = rollerUISession.getAuthenticatedUser() != null ?
+                              rollerUISession.getAuthenticatedUser().getId() : "";
 
                 String salt = httpReq.getParameter("salt");
                 SaltCache saltCache = SaltCache.getInstance();

@@ -28,13 +28,13 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RollerSessionManager implements SessionManager {
-   private static final Log log = LogFactory.getLog(RollerSessionManager.class);
+public class RollerUISessionManager implements UISessionManager {
+   private static final Log log = LogFactory.getLog(RollerUISessionManager.class);
    private static final String CACHE_ID = "roller.session.cache";
 
    private final Cache sessionCache;
 
-   public RollerSessionManager() {
+   public RollerUISessionManager() {
       Map<String, String> cacheProps = new HashMap<>();
       cacheProps.put("id", CACHE_ID);
       cacheProps.put("size", "1000");  // Default cache size
@@ -43,7 +43,7 @@ public class RollerSessionManager implements SessionManager {
       CacheManager.registerHandler(new SessionCacheHandler());
    }
 
-   public void register(String userName, RollerSession session) {
+   public void register(String userName, RollerUISession session) {
       if (userName != null && session != null) {
          try {
             this.sessionCache.put(userName, session);
@@ -54,10 +54,10 @@ public class RollerSessionManager implements SessionManager {
       }
    }
 
-   public RollerSession get(String userName) {
+   public RollerUISession get(String userName) {
       if (userName != null) {
          try {
-            return (RollerSession) this.sessionCache.get(userName);
+            return (RollerUISession) this.sessionCache.get(userName);
          } catch (Exception e) {
             log.error("Failed to retrieve session for user: " + userName, e);
          }

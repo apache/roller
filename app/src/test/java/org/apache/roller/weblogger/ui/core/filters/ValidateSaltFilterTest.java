@@ -2,7 +2,7 @@ package org.apache.roller.weblogger.ui.core.filters;
 
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.RollerUISession;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ public class ValidateSaltFilterTest {
     private FilterChain chain;
 
     @Mock
-    private RollerSession rollerSession;
+    private RollerUISession rollerUISession;
 
     @Mock
     private SaltCache saltCache;
@@ -44,7 +44,7 @@ public class ValidateSaltFilterTest {
         MockitoAnnotations.openMocks(this);
         filter = new ValidateSaltFilter();
         try (MockedStatic<UIBeanFactory> mockedUIBeanFactory = mockStatic(UIBeanFactory.class)) {
-            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerSession.class)).thenReturn(rollerSession);
+            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerUISession.class)).thenReturn(rollerUISession);
             filter.init(mock(FilterConfig.class));
         }
     }
@@ -75,12 +75,12 @@ public class ValidateSaltFilterTest {
             when(request.getParameter("salt")).thenReturn("validSalt");
             when(saltCache.get("validSalt")).thenReturn("testUser");
 
-            RollerSession rollerSession = mock(RollerSession.class);
+            RollerUISession rollerUISession = mock(RollerUISession.class);
             User user = mock(User.class);
-            when(rollerSession.getAuthenticatedUser()).thenReturn(user);
+            when(rollerUISession.getAuthenticatedUser()).thenReturn(user);
             when(user.getId()).thenReturn("testUser");
 
-            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(any(), any())).thenReturn(rollerSession);
+            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(any(), any())).thenReturn(rollerUISession);
 
             filter = new ValidateSaltFilter();
             filter.init(mock(FilterConfig.class));
@@ -115,7 +115,7 @@ public class ValidateSaltFilterTest {
             when(request.getMethod()).thenReturn("POST");
             when(request.getParameter("salt")).thenReturn("validSalt");
             when(saltCache.get("validSalt")).thenReturn("differentUserId");
-            when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
+            when(rollerUISession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
             StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");
             when(request.getRequestURL()).thenReturn(requestURL);
 
@@ -131,7 +131,7 @@ public class ValidateSaltFilterTest {
               MockedStatic<UIBeanFactory> mockedUIBeanFactory = mockStatic(UIBeanFactory.class)) {
 
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
-            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerSession.class)).thenReturn(null);
+            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerUISession.class)).thenReturn(null);
 
             when(request.getMethod()).thenReturn("POST");
             when(request.getParameter("salt")).thenReturn("validSalt");
@@ -154,7 +154,7 @@ public class ValidateSaltFilterTest {
 
             mockedWebloggerConfig.when(() -> WebloggerConfig.getProperty("salt.ignored.urls"))
                     .thenReturn("https://example.com/app/ignoredurl?param1=value1&m2=value2");
-            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerSession.class)).thenReturn(rollerSession);
+            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerUISession.class)).thenReturn(rollerUISession);
 
             when(request.getMethod()).thenReturn("POST");
             StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");

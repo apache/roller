@@ -33,11 +33,10 @@ import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.RollerUISession;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
-import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -237,7 +236,7 @@ public class Register extends UIAction implements ServletRequestAware {
                 // Invalidate session, otherwise new user who was originally
                 // authenticated via LDAP/SSO will remain logged in but
                 // without a valid Roller role.
-                getServletRequest().getSession().removeAttribute(RollerSession.ROLLER_SESSION);
+                getServletRequest().getSession().removeAttribute(RollerUISession.ROLLER_SESSION);
                 getServletRequest().getSession().invalidate();
 
                 // set a special page title

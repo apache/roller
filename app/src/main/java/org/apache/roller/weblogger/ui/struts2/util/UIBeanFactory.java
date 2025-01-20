@@ -20,8 +20,8 @@ package org.apache.roller.weblogger.ui.struts2.util;
 import com.opensymphony.xwork2.ObjectFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.ui.core.RollerSession;
-import org.apache.roller.weblogger.ui.core.RollerSessionManager;
+import org.apache.roller.weblogger.ui.core.RollerUISession;
+import org.apache.roller.weblogger.ui.core.RollerUISessionManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,15 +33,15 @@ public class UIBeanFactory extends ObjectFactory {
 
     @Override
     public Object buildBean(Class clazz, Map<String, Object> extraContext) throws Exception {
-        if (clazz == RollerSession.class) {
+        if (clazz == RollerUISession.class) {
             return createRollerSession(extraContext);
         }
         return super.buildBean(clazz, extraContext);
     }
 
-    private RollerSession createRollerSession(Map<String, Object> extraContext) {
+    private RollerUISession createRollerSession(Map<String, Object> extraContext) {
         HttpServletRequest request = (HttpServletRequest) extraContext.get("request");
-        return new RollerSession(new RollerSessionManager(), request);
+        return new RollerUISession(new RollerUISessionManager(), request);
     }
 
     public static <T> T getBean(Class<T> beanClass) throws ServletException {

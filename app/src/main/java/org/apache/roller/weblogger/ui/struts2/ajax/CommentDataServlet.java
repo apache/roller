@@ -34,7 +34,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
-import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.RollerUISession;
 import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -58,7 +58,7 @@ public class CommentDataServlet extends HttpServlet {
      */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RollerSession rollerSession = UIBeanFactory.getBean(RollerSession.class, request);
+        RollerUISession rollerUISession = UIBeanFactory.getBean(RollerUISession.class, request);
 
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {
@@ -69,7 +69,7 @@ public class CommentDataServlet extends HttpServlet {
             } else {
                 // need post permission to view comments
                 Weblog weblog = c.getWeblogEntry().getWebsite();
-                if (weblog.hasUserPermission(rollerSession.getAuthenticatedUser(), WeblogPermission.POST)) {
+                if (weblog.hasUserPermission(rollerUISession.getAuthenticatedUser(), WeblogPermission.POST)) {
                     String content = Utilities.escapeHTML(c.getContent());
                     content = StringEscapeUtils.escapeEcmaScript(content);
                     String json = "{ id: \"" + c.getId() + "\"," + "content: \"" + content + "\" }";
@@ -95,7 +95,7 @@ public class CommentDataServlet extends HttpServlet {
      */
     @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RollerSession rollerSession = UIBeanFactory.getBean(RollerSession.class, request);
+        RollerUISession rollerUISession = UIBeanFactory.getBean(RollerUISession.class, request);
 
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {
@@ -106,7 +106,7 @@ public class CommentDataServlet extends HttpServlet {
             } else {
                 // need post permission to edit comments
                 Weblog weblog = c.getWeblogEntry().getWebsite();
-                if (weblog.hasUserPermission(rollerSession.getAuthenticatedUser(), WeblogPermission.POST)) {
+                if (weblog.hasUserPermission(rollerUISession.getAuthenticatedUser(), WeblogPermission.POST)) {
                     String content = Utilities.streamToString(request.getInputStream());
                     c.setContent(content);
                     // don't update the posttime when updating the comment

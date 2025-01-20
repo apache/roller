@@ -1,7 +1,7 @@
 package org.apache.roller.weblogger.ui.core.filters;
 
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.RollerUISession;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ public class LoadSaltFilterTest {
     private FilterChain chain;
 
     @Mock
-    private RollerSession rollerSession;
+    private RollerUISession rollerUISession;
 
     @Mock
     private SaltCache saltCache;
@@ -42,8 +42,8 @@ public class LoadSaltFilterTest {
         MockitoAnnotations.openMocks(this);
 
         try (MockedStatic<UIBeanFactory> mockedFactory = mockStatic(UIBeanFactory.class)) {
-            mockedFactory.when(() -> UIBeanFactory.getBean(RollerSession.class))
-                .thenReturn(rollerSession);
+            mockedFactory.when(() -> UIBeanFactory.getBean(RollerUISession.class))
+                .thenReturn(rollerUISession);
 
             filter = new LoadSaltFilter();
             filter.init(mock(FilterConfig.class));
@@ -64,7 +64,7 @@ public class LoadSaltFilterTest {
     @Test
     public void testDoFilterWithNullRollerSession() throws Exception {
         try (MockedStatic<UIBeanFactory> mockedUIBeanFactory = mockStatic(UIBeanFactory.class)) {
-            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerSession.class))
+            mockedUIBeanFactory.when(() -> UIBeanFactory.getBean(RollerUISession.class))
                     .thenReturn(null);
 
             filter.init(mock(FilterConfig.class));

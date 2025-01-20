@@ -26,7 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.RollerUISession;
 import org.apache.struts2.StrutsStatics;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -51,9 +51,9 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements Stru
         final ActionContext context = invocation.getInvocationContext();
         HttpServletRequest request = (HttpServletRequest) context.get(HTTP_REQUEST);
 
-        RollerSession rollerSession;
+        RollerUISession rollerUISession;
         try {
-            rollerSession = UIBeanFactory.getBean(RollerSession.class, request);
+            rollerUISession = UIBeanFactory.getBean(RollerUISession.class, request);
         } catch (ServletException e) {
             log.error("Failed to instantiate RollerSession", e);
             throw new RuntimeException("Failed to instantiate RollerSession", e);
@@ -73,8 +73,8 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements Stru
 
             UIAction theAction = (UIAction) action;
 
-            if (rollerSession != null) {
-                theAction.setAuthenticatedUser(rollerSession.getAuthenticatedUser());
+            if (rollerUISession != null) {
+                theAction.setAuthenticatedUser(rollerUISession.getAuthenticatedUser());
             }
 
             // extract the work weblog and set it

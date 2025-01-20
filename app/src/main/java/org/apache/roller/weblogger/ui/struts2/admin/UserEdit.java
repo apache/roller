@@ -37,9 +37,8 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
-import org.apache.roller.weblogger.ui.core.RollerSession;
-import org.apache.roller.weblogger.ui.core.RollerSessionManager;
-import org.apache.roller.weblogger.ui.core.SessionManager;
+import org.apache.roller.weblogger.ui.core.RollerUISessionManager;
+import org.apache.roller.weblogger.ui.core.UISessionManager;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -148,9 +147,9 @@ public class UserEdit extends UIAction implements ServletRequestAware {
      */
     public String save() {
 
-        SessionManager sessionManager;
+        UISessionManager UISessionManager;
         try {
-            sessionManager = UIBeanFactory.getBean(RollerSessionManager.class, request);
+            UISessionManager = UIBeanFactory.getBean(RollerUISessionManager.class, request);
         } catch (ServletException e) {
             log.error("Failed to get RollerSessionManager", e);
             throw new RuntimeException("Failed to get RollerSessionManager", e);
@@ -187,13 +186,13 @@ public class UserEdit extends UIAction implements ServletRequestAware {
 
                 // invalidate user's session if it's not user executing this action
                 if (!getAuthenticatedUser().getUserName().equals(user.getUserName())) {
-                    sessionManager.invalidate(user.getUserName());
+                    UISessionManager.invalidate(user.getUserName());
                 }
             }
 
             // if user is disabled and not the same as the user executing this action, then invalidate their session
            if (!user.getEnabled() && !getAuthenticatedUser().getUserName().equals(user.getUserName())) {
-                sessionManager.invalidate(user.getUserName());
+                UISessionManager.invalidate(user.getUserName());
             }
 
             try {

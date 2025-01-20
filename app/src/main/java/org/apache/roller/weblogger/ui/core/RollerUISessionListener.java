@@ -27,8 +27,8 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 
-public class RollerSessionListener implements HttpSessionListener, HttpSessionActivationListener {
-    private static final Log log = LogFactory.getLog(RollerSessionListener.class);
+public class RollerUISessionListener implements HttpSessionListener, HttpSessionActivationListener {
+    private static final Log log = LogFactory.getLog(RollerUISessionListener.class);
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
@@ -43,7 +43,7 @@ public class RollerSessionListener implements HttpSessionListener, HttpSessionAc
     private void clearSession(HttpSessionEvent se) {
         HttpSession session = se.getSession();
         try {
-            session.removeAttribute(RollerSession.ROLLER_SESSION);
+            session.removeAttribute(RollerUISession.ROLLER_SESSION);
         } catch (Exception e) {
             log.debug("Exception purging session attributes", e);
         }

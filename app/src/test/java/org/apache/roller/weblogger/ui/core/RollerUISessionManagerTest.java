@@ -19,7 +19,6 @@
 package org.apache.roller.weblogger.ui.core;
 
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,15 +30,15 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class RollerSessionManagerTest {
+class RollerUISessionManagerTest {
 
-    private RollerSessionManager sessionManager;
+    private RollerUISessionManager sessionManager;
 
     @Mock
     private Cache mockCache;
 
     @Mock
-    private RollerSession mockSession;
+    private RollerUISession mockSession;
 
     @Mock
     private User mockUser;
@@ -50,7 +49,7 @@ class RollerSessionManagerTest {
         try (MockedStatic<CacheManager> mockedCacheManager = mockStatic(CacheManager.class)) {
             mockedCacheManager.when(() -> CacheManager.constructCache(isNull(), any())).thenReturn(mockCache);
             mockedCacheManager.when(() -> CacheManager.registerHandler(any())).then(invocation -> null);
-            sessionManager = new RollerSessionManager();
+            sessionManager = new RollerUISessionManager();
         }
     }
 
@@ -67,7 +66,7 @@ class RollerSessionManagerTest {
         when(mockUser.getUserName()).thenReturn(userName);
 
         // Create handler directly from instance
-        RollerSessionManager.SessionCacheHandler handler = sessionManager.new SessionCacheHandler();
+        RollerUISessionManager.SessionCacheHandler handler = sessionManager.new SessionCacheHandler();
         handler.invalidate(mockUser);
 
         verify(mockCache).remove(userName);
@@ -90,14 +89,14 @@ class RollerSessionManagerTest {
         String userName = "testUser";
         when(mockCache.get(userName)).thenReturn(mockSession);
 
-        RollerSession result = sessionManager.get(userName);
+        RollerUISession result = sessionManager.get(userName);
         assertEquals(mockSession, result);
         verify(mockCache).get(userName);
     }
 
     @Test
     void testGetSessionNullUserName() {
-        RollerSession result = sessionManager.get(null);
+        RollerUISession result = sessionManager.get(null);
         assertNull(result);
         verify(mockCache, never()).get(any());
     }

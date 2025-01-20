@@ -39,7 +39,7 @@ import java.security.Principal;
 /**
  * Roller session handles session startup and shutdown.
  */
-public class RollerSession implements HttpSessionListener, HttpSessionActivationListener, Serializable {
+public class RollerUISession implements HttpSessionListener, HttpSessionActivationListener, Serializable {
     
     private static final long serialVersionUID = 5890132909166913727L;
     private static final Log log;
@@ -47,18 +47,18 @@ public class RollerSession implements HttpSessionListener, HttpSessionActivation
     // the id of the user represented by this session
     private String userName = null;
 
-    private SessionManager sessionManager;
+    private UISessionManager UISessionManager;
 
     public static final String ROLLER_SESSION = "org.apache.roller.weblogger.rollersession";
 
     static{
         WebloggerConfig.init(); // must be called before calls to logging APIs
-        log = LogFactory.getLog(RollerSession.class);
+        log = LogFactory.getLog(RollerUISession.class);
     }
 
     @Inject
-    public RollerSession(SessionManager sessionManager, HttpServletRequest request) {
-        this.sessionManager = sessionManager;
+    public RollerUISession(UISessionManager UISessionManager, HttpServletRequest request) {
+        this.UISessionManager = UISessionManager;
 
         // No session exists yet, nothing to do
         HttpSession session = request.getSession(false);
@@ -67,13 +67,13 @@ public class RollerSession implements HttpSessionListener, HttpSessionActivation
         }
 
         // Get or create roller session in HTTP session
-        RollerSession storedSession = (RollerSession)session.getAttribute(ROLLER_SESSION);
+        RollerUISession storedSession = (RollerUISession)session.getAttribute(ROLLER_SESSION);
         if (storedSession == null) {
             session.setAttribute(ROLLER_SESSION, this);
         }
         // If stored session exists with authenticated user but not in cache, override it
         else if (storedSession.getAuthenticatedUser() != null
-                && sessionManager.get(storedSession.getAuthenticatedUser().getUserName()) == null) {
+                && UISessionManager.get(storedSession.getAuthenticatedUser().getUserName()) == null) {
             session.setAttribute(ROLLER_SESSION, this);
         }
 
@@ -154,6 +154,6 @@ public class RollerSession implements HttpSessionListener, HttpSessionActivation
      */
     public void setAuthenticatedUser(User authenticatedUser) {
         this.userName = authenticatedUser.getUserName();
-        sessionManager.register(authenticatedUser.getUserName(), this);
+        UISessionManager.register(authenticatedUser.getUserName(), this);
     }
 }
