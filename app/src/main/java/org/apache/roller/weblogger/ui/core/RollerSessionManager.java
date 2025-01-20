@@ -13,7 +13,6 @@ import java.util.Map;
 public class RollerSessionManager {
    private static final Log log = LogFactory.getLog(RollerSessionManager.class);
    private static final String CACHE_ID = "roller.session.cache";
-
    private final Cache sessionCache;
 
    public static RollerSessionManager getInstance() {
@@ -24,20 +23,28 @@ public class RollerSessionManager {
       private static final RollerSessionManager INSTANCE = new RollerSessionManager();
    }
 
-   private class SessionCacheHandler extends CacheHandlerAdapter {
-     public void invalidateUser(User user) {
+   class SessionCacheHandler extends CacheHandlerAdapter {
+     @Override
+     public void invalidate(User user) {
          if (user != null && user.getUserName() != null) {
             sessionCache.remove(user.getUserName());
          }
       }
    }
 
+   /** Testing purpose only */
+   RollerSessionManager(Cache cache) {
+      this.sessionCache = cache;
+      CacheManager.registerHandler(new SessionCacheHandler());
+   }
+
    private RollerSessionManager() {
       Map<String, String> cacheProps = new HashMap<>();
       cacheProps.put("id", CACHE_ID);
+      cacheProps.put("size", "1000");  // Cache up to 1000 sessions
+      cacheProps.put("timeout", "3600"); // Session timeout in seconds (1 hour)
       this.sessionCache = CacheManager.constructCache(null, cacheProps);
-      SessionCacheHandler cacheHandler = new SessionCacheHandler();
-      CacheManager.registerHandler(cacheHandler);
+      CacheManager.registerHandler(new SessionCacheHandler());
    }
 
    public void register(String userName, RollerSession session) {

@@ -66,17 +66,18 @@ public class RollerSession
             rollerSession = (RollerSession)session.getAttribute(ROLLER_SESSION);
 
             if (rollerSession == null) {
+                // Create new session if none exists
                 rollerSession = new RollerSession();
                 session.setAttribute(ROLLER_SESSION, rollerSession);
             } else if (rollerSession.getAuthenticatedUser() != null) {
-                RollerSessionManager sessionManager = RollerSessionManager.getInstance();
-                if (sessionManager.get(rollerSession.getAuthenticatedUser().getUserName()) == null) {
-                    // session not present in cache means that it is invalid
+                // Check if session is still valid in cache
+                RollerSessionManager manager = RollerSessionManager.getInstance();
+                String username = rollerSession.getAuthenticatedUser().getUserName();
+                if (manager.get(username) == null) {
                     rollerSession = new RollerSession();
                     session.setAttribute(ROLLER_SESSION, rollerSession);
                 }
             }
-            
             Principal principal = request.getUserPrincipal();
 
             // If we've got a principal but no user object, then attempt to get
@@ -152,17 +153,4 @@ public class RollerSession
         RollerSessionManager sessionManager = RollerSessionManager.getInstance();
         sessionManager.register(authenticatedUser.getUserName(), this);
     }
-
-    private void clearSession(HttpSessionEvent se) {
-        HttpSession session = se.getSession();
-        try {
-            session.removeAttribute(ROLLER_SESSION);
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                // ignore purge exceptions
-                log.debug("EXCEPTION PURGING session attributes",e);
-            }
-        }
-    }
-    
 }
