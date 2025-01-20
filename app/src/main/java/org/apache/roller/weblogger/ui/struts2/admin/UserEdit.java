@@ -41,6 +41,9 @@ import org.apache.roller.weblogger.ui.core.RollerSessionManager;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.apache.roller.weblogger.ui.struts2.util.UIBeanFactory;
+
+import javax.servlet.ServletException;
 
 
 /**
@@ -59,8 +62,16 @@ public class UserEdit extends UIAction {
     
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
+    private RollerSessionManager sessionManager;
+
     public UserEdit() {
         this.desiredMenu = "admin";
+        try {
+            sessionManager = UIBeanFactory.getBean(RollerSessionManager.class);
+        } catch (ServletException e) {
+            log.error("Failed to get RollerSessionManager", e);
+            throw new RuntimeException("Failed to get RollerSessionManager", e);
+        }
     }
 
     @Override
@@ -169,14 +180,12 @@ public class UserEdit extends UIAction {
 
                 // invalidate user's session if it's not user executing this action
                 if (!getAuthenticatedUser().getUserName().equals(user.getUserName())) {
-                    RollerSessionManager sessionManager = RollerSessionManager.getInstance();
                     sessionManager.invalidate(user.getUserName());
                 }
             }
 
             // if user is disabled and not the same as the user executing this action, then invalidate their session
            if (!user.getEnabled() && !getAuthenticatedUser().getUserName().equals(user.getUserName())) {
-                RollerSessionManager sessionManager = RollerSessionManager.getInstance();
                 sessionManager.invalidate(user.getUserName());
             }
 
