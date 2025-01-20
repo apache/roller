@@ -34,9 +34,14 @@ public class UIBeanFactory {
                 .getContainer()
                 .getInstance(ObjectFactory.class);
             return (T) objectFactory.buildBean(beanClass, null);
+        } catch (NullPointerException e) {
+            String msg = "Struts context not initialized for bean type: " + beanClass.getName();
+            log.error(msg, e);
+            throw new ServletException(msg, e);
         } catch (Exception e) {
-            log.error("Failed to create bean of type " + beanClass.getName(), e);
-            throw new ServletException("Failed to create bean of type " + beanClass.getName(), e);
+            String msg = String.format("Failed to create bean of type %s: %s", beanClass.getName(), e.getMessage());
+            log.error(msg, e);
+            throw new ServletException(msg, e);
         }
     }
 }

@@ -28,48 +28,63 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class RollerSessionManager implements SessionManager {
    private static final Log log = LogFactory.getLog(RollerSessionManager.class);
    private static final String CACHE_ID = "roller.session.cache";
 
    private final Cache sessionCache;
 
-   public class SessionCacheHandler extends CacheHandlerAdapter {
-      @Override
-      public void invalidate(User user) {
-         if (user != null && user.getUserName() != null) {
-            sessionCache.remove(user.getUserName());
-         }
-      }
-   }
-
    public RollerSessionManager() {
       Map<String, String> cacheProps = new HashMap<>();
       cacheProps.put("id", CACHE_ID);
       this.sessionCache = CacheManager.constructCache(null, cacheProps);
-      SessionCacheHandler cacheHandler = new SessionCacheHandler();
-      CacheManager.registerHandler(cacheHandler);
+      CacheManager.registerHandler(new SessionCacheHandler());
    }
 
    public void register(String userName, RollerSession session) {
       if (userName != null && session != null) {
-         this.sessionCache.put(userName, session);
-         log.debug("Registered session for user: " + userName);
+         try {
+            this.sessionCache.put(userName, session);
+            log.debug("Registered session for user: " + userName);
+         } catch (Exception e) {
+            log.error("Failed to register session for user: " + userName, e);
+         }
       }
    }
 
    public RollerSession get(String userName) {
       if (userName != null) {
-         return (RollerSession) this.sessionCache.get(userName);
+         try {
+            return (RollerSession) this.sessionCache.get(userName);
+         } catch (Exception e) {
+            log.error("Failed to retrieve session for user: " + userName, e);
+         }
       }
       return null;
    }
 
    public void invalidate(String userName) {
       if (userName != null) {
-         this.sessionCache.remove(userName);
-         log.debug("Invalidated session for user: " + userName);
+         try {
+            this.sessionCache.remove(userName);
+            log.debug("Invalidated session for user: " + userName);
+         } catch (Exception e) {
+            log.error("Failed to invalidate session for user: " + userName, e);
+         }
+      }
+   }
+
+   class SessionCacheHandler extends CacheHandlerAdapter {
+      @Override
+      public void invalidate(User user) {
+         if (user != null && user.getUserName() != null) {
+            try {
+               sessionCache.remove(user.getUserName());
+               log.debug("Cache handler invalidated session for user: " + user.getUserName());
+            } catch (Exception e) {
+               log.error("Cache handler failed to invalidate session for user: " + user.getUserName(), e);
+            }
+         }
       }
    }
 }
