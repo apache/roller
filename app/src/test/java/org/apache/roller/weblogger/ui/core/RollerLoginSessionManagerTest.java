@@ -28,14 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class RollerSessionManagerTest {
-    private RollerSessionManager sessionManager;
+class RollerLoginSessionManagerTest {
+    private RollerLoginSessionManager sessionManager;
     private Cache mockCache;
 
     @BeforeEach
     void setUp() {
         mockCache = mock(Cache.class);
-        sessionManager = new RollerSessionManager(mockCache);
+        sessionManager = new RollerLoginSessionManager(mockCache);
     }
 
     @Test

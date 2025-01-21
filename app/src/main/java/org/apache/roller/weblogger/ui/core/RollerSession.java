@@ -71,7 +71,7 @@ public class RollerSession
                 session.setAttribute(ROLLER_SESSION, rollerSession);
             } else if (rollerSession.getAuthenticatedUser() != null) {
                 // Check if session is still valid in cache
-                RollerSessionManager manager = RollerSessionManager.getInstance();
+                RollerLoginSessionManager manager = RollerLoginSessionManager.getInstance();
                 String username = rollerSession.getAuthenticatedUser().getUserName();
                 if (manager.get(username) == null) {
                     rollerSession = new RollerSession();
@@ -174,7 +174,7 @@ public class RollerSession
      */
     public void setAuthenticatedUser(User authenticatedUser) {
         this.userName = authenticatedUser.getUserName();
-        RollerSessionManager sessionManager = RollerSessionManager.getInstance();
+        RollerLoginSessionManager sessionManager = RollerLoginSessionManager.getInstance();
         sessionManager.register(authenticatedUser.getUserName(), this);
     }
 

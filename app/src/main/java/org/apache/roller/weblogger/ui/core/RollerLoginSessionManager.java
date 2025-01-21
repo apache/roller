@@ -10,17 +10,17 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RollerSessionManager {
-   private static final Log log = LogFactory.getLog(RollerSessionManager.class);
+public class RollerLoginSessionManager {
+   private static final Log log = LogFactory.getLog(RollerLoginSessionManager.class);
    private static final String CACHE_ID = "roller.session.cache";
    private final Cache sessionCache;
 
-   public static RollerSessionManager getInstance() {
-      return RollerSessionManager.SingletonHolder.INSTANCE;
+   public static RollerLoginSessionManager getInstance() {
+      return RollerLoginSessionManager.SingletonHolder.INSTANCE;
    }
 
    private static class SingletonHolder {
-      private static final RollerSessionManager INSTANCE = new RollerSessionManager();
+      private static final RollerLoginSessionManager INSTANCE = new RollerLoginSessionManager();
    }
 
    class SessionCacheHandler extends CacheHandlerAdapter {
@@ -33,12 +33,12 @@ public class RollerSessionManager {
    }
 
    /** Testing purpose only */
-   RollerSessionManager(Cache cache) {
+   RollerLoginSessionManager(Cache cache) {
       this.sessionCache = cache;
       CacheManager.registerHandler(new SessionCacheHandler());
    }
 
-   private RollerSessionManager() {
+   private RollerLoginSessionManager() {
       Map<String, String> cacheProps = new HashMap<>();
       cacheProps.put("id", CACHE_ID);
       cacheProps.put("size", "1000");  // Cache up to 1000 sessions
