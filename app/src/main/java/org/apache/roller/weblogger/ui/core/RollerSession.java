@@ -127,6 +127,30 @@ public class RollerSession
         return rollerSession;
     }
 
+    /** Create session's Roller instance */
+    @Override
+    public void sessionCreated(HttpSessionEvent se) {
+        RollerSession rollerSession = new RollerSession();
+        se.getSession().setAttribute(ROLLER_SESSION, rollerSession);
+    }
+
+
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se) {
+        clearSession(se);
+    }
+
+    /**
+     * Purge session before passivation. Because Roller currently does not
+     * support session recovery, failover, migration, or whatever you want
+     * to call it when sessions are saved and then restored at some later
+     * point in time.
+     */
+    @Override
+    public void sessionWillPassivate(HttpSessionEvent se) {
+        clearSession(se);
+    }
+
     /**
      * Authenticated user associated with this session.
      */
@@ -152,5 +176,17 @@ public class RollerSession
         this.userName = authenticatedUser.getUserName();
         RollerSessionManager sessionManager = RollerSessionManager.getInstance();
         sessionManager.register(authenticatedUser.getUserName(), this);
+    }
+
+    private void clearSession(HttpSessionEvent se) {
+        HttpSession session = se.getSession();
+        try {
+            session.removeAttribute(ROLLER_SESSION);
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                // ignore purge exceptions
+                log.debug("EXCEPTION PURGING session attributes",e);
+            }
+        }
     }
 }
