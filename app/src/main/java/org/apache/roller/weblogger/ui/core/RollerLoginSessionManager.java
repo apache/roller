@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.util.cache.Cache;
-import org.apache.roller.weblogger.util.cache.CacheHandlerAdapter;
+import org.apache.roller.weblogger.util.cache.CacheHandler;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class RollerLoginSessionManager {
       private static final RollerLoginSessionManager INSTANCE = new RollerLoginSessionManager();
    }
 
-   class SessionCacheHandler extends CacheHandlerAdapter {
+   class SessionCacheHandler implements CacheHandler {
      @Override
      public void invalidate(User user) {
          if (user != null && user.getUserName() != null) {
