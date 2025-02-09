@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.apache.roller</groupId>
         <artifactId>roller-project</artifactId>
-        <version>6.1.4</version>
+        <version>6.1.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <name>Apache Roller DB Utilities</name>
     <artifactId>db-utils</artifactId>
-    <version>6.1.4</version>
+    <version>6.1.5</version>
 
     <build>
         <plugins>
