@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
-// TODO: Multiple tests fixes in this test are disabled due to a bug in the RollerLoginSessionManager class.
 class RollerSessionTest {
 
     @Mock
