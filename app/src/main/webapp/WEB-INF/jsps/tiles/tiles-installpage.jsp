@@ -21,7 +21,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="<%= request.getContextPath() %>/favicon.svg" type="image/x-icon">
     <title><s:property value="pageTitle"/></title>
     <tiles:insertAttribute name="head"/>
     <style>

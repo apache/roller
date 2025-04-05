@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src *; base-uri 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'">
   <title>$model.weblog.name</title>
-  <link href="$url.absoluteSite/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+  <link href="$url.absoluteSite/favicon.svg" rel="shortcut icon" type="image/x-icon" />
   #showAutodiscoveryLinks($model.weblog)
   <style>
   #includeTemplate($model.weblog "_css")

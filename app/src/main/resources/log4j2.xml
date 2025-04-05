@@ -80,7 +80,8 @@ limitations under the License.
         <Logger name="com.opensymphony"        level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
         <Logger name="com.rometools"           level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
         <Logger name="org.webjars"             level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
-        
+        <Logger name="org.apache.roller.weblogger.ui.core.filters.ValidateSaltFilter" level="debug" additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+
         <!-- server.log catches everything that hasn't been logged yet-->
         <Root level="info">
         <!--<AppenderRef ref="server"/> -->
