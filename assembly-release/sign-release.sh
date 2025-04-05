@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-export rcstring="-rc1"
+export rcstring="-rc2"
 export vstring="6.1.5"
 
 # for rc releases we rename the release files
 if [ rcstring != "" ]; then
-    mv target/apache-roller-${vstring}-source.tar.gz   target/apache-roller-${vstring}${rcstring}-source.tar.gz
-    mv target/apache-roller-${vstring}-source.zip      target/apache-roller-${vstring}${rcstring}-source.zip
+    mv target/apache-roller-${vstring}-source.tar.gz target/apache-roller-${vstring}${rcstring}-source.tar.gz
+    mv target/apache-roller-${vstring}-source.zip    target/apache-roller-${vstring}${rcstring}-source.zip
     mv target/apache-roller-${vstring}-binary.tar.gz target/apache-roller-${vstring}${rcstring}-binary.tar.gz
     mv target/apache-roller-${vstring}-binary.zip    target/apache-roller-${vstring}${rcstring}-binary.zip
 fi
