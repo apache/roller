@@ -62,7 +62,9 @@ public class ValidateSaltFilter implements Filter {
             if (rollerSession != null) {
                 String userId = rollerSession.getAuthenticatedUser() != null ? rollerSession.getAuthenticatedUser().getId() : "";
 
-                String salt = httpReq.getParameter("salt");
+                Object saltObject = httpReq.getAttribute("salt"); // multi-form post case
+                String salt = saltObject != null ? saltObject.toString() : null;
+                salt = salt != null ? salt : httpReq.getParameter("salt");
                 SaltCache saltCache = SaltCache.getInstance();
                 if (salt == null || !Objects.equals(saltCache.get(salt), userId)) {
                     if (log.isDebugEnabled()) {
