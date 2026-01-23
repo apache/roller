@@ -33,7 +33,6 @@ limitations under the License.
     <packaging>war</packaging>
 
     <properties>
-  		<sonar.organization>van-123-egg</sonar.organization>
         <servlet.version>4.0.1</servlet.version>
         <jsp-api.version>2.2</jsp-api.version>
         <java-activation.version>1.2.0</java-activation.version>
