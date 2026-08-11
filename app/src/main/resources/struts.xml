@@ -137,18 +137,6 @@
             <allowed-methods>execute,save</allowed-methods>
         </action>
 
-        <action name="oauthKeys"
-                class="org.apache.roller.weblogger.ui.struts2.core.OAuthKeys">
-            <result name="success" type="tiles">.OAuthKeys</result>
-            <allowed-methods>execute</allowed-methods>
-        </action>
-
-        <action name="oauthAuthorize"
-                class="org.apache.roller.weblogger.ui.struts2.core.OAuthAuthorize">
-            <result name="success" type="tiles">.OAuthAuthorize</result>
-            <allowed-methods>execute</allowed-methods>
-        </action>
-
         <action name="createWeblog"
                 class="org.apache.roller.weblogger.ui.struts2.core.CreateWeblog">
             <result name="input" type="tiles">.CreateWeblog</result>

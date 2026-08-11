@@ -50,8 +50,7 @@ limitations under the License.
         <guice.version>7.0.0</guice.version>
         <log4j2.version>2.24.3</log4j2.version>
         <lucene.version>9.12.1</lucene.version> <!-- lucene 10 requires JDK 21 -->
-        <oauth-core.version>20100527</oauth-core.version>
-        <maven-war.version>3.4.0</maven-war.version>
+<maven-war.version>3.4.0</maven-war.version>
         <maven-surefire.version>3.5.2</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
         <rome.version>1.19.0</rome.version> <!-- locked in place since next version removes popono -->
@@ -60,7 +59,6 @@ limitations under the License.
         <spring.security.version>5.8.14</spring.security.version>
         <struts.version>2.5.29</struts.version> <!-- .30+ breaks selenium tests -->
         <velocity.version>2.4.1</velocity.version>
-        <webjars.version>1.6</webjars.version>
         <ws-commons-util.version>1.0.2</ws-commons-util.version>
         <xmlrpc-version>3.1.3</xmlrpc-version>
     </properties>
@@ -249,7 +247,7 @@ limitations under the License.
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-servlet-2.x</artifactId>
-            <version>${webjars.version}</version>
+            <version>1.6</version>
         </dependency>
 
         <dependency>
@@ -452,22 +450,6 @@ limitations under the License.
 
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-openid</artifactId>
-            <version>${spring.security.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.inject</groupId>
-                    <artifactId>guice</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
             <version>${spring.security.version}</version>
         </dependency>
@@ -504,12 +486,6 @@ limitations under the License.
         </dependency>
 
         <dependency>
-            <groupId>com.jgeppert.struts2.bootstrap</groupId>
-            <artifactId>struts2-bootstrap-plugin</artifactId>
-            <version>4.0.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.rometools</groupId>
             <artifactId>rome</artifactId>
             <version>${rome.version}</version>
@@ -534,13 +510,6 @@ limitations under the License.
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>net.oauth.core</groupId>
-            <artifactId>oauth-provider</artifactId>
-            <scope>compile</scope>
-            <version>${oauth-core.version}</version>
         </dependency>
 
         <dependency>

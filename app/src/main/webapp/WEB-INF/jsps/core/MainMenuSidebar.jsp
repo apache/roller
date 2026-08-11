@@ -34,14 +34,6 @@
                 <a href="<s:url action="profile"/>"><s:text name="yourWebsites.editProfile" /></a></h4>
                 <p><s:text name="yourWebsites.editProfile.desc" /></p>
 
-                <%-- Edit profile --%>
-                
-                <s:if test="getBooleanProp('webservices.enableAtomPub') && getProp('webservices.atomPubAuth') == 'oauth'">
-                    <h4><span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
-                    <a href="<s:url action="oauthKeys" />"><s:text name="yourWebsites.oauthKeys" /></a></h4>
-                    <p><s:text name="yourWebsites.oauthKeys.desc" /></p>
-                </s:if>
-
                 <%-- Create weblog --%>
                 
                 <s:if test="getBooleanProp('site.allowUserWeblogCreation') && (getBooleanProp('groupblogging.enabled') || (existingPermissions.isEmpty && pendingPermissions.isEmpty))">

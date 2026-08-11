@@ -46,8 +46,6 @@
         <remember-me services-ref="rollerRememberMeServices"
                      key="715F2448-3176-11DD-ABC6-9CD955D89593"/>
 
-        <custom-filter ref="openidAuthenticationProcessingFilter" position="OPENID_FILTER"/>
-        
         <!-- roller already uses its own salt based CSRF protection-->
         <csrf disabled="true"/>
         
@@ -70,12 +68,11 @@
     <authentication-manager alias='rollerAuthenticationManager'>
         <authentication-provider ref="rememberMeAuthenticationProvider"/>
 
-        <!-- Uncomment one of the three below, based on whether database, LDAP, or
-             OpenID authentication is desired. -->
+        <!-- Uncomment one of the two below, based on whether database or LDAP
+             authentication is desired. -->
         <authentication-provider user-service-ref="rollerUserService"/>
         <!--
         <authentication-provider ref="ldapAuthProvider" />
-        <authentication-provider ref="openIDAuthProvider"/>
         -->
     </authentication-manager>
 
@@ -89,18 +86,6 @@
 
     <beans:bean id="rememberMeAuthenticationProvider"
                 class="org.apache.roller.weblogger.ui.core.security.RollerRememberMeAuthenticationProvider">
-    </beans:bean>
-
-    <beans:bean id = "openIDAuthProvider" class="org.springframework.security.openid.OpenIDAuthenticationProvider">
-        <beans:property name="userDetailsService" ref="rollerUserService"/>
-    </beans:bean>
-
-    <beans:bean id="openidAuthenticationProcessingFilter"
-                class="org.apache.roller.weblogger.ui.core.filters.CustomOpenIDAuthenticationProcessingFilter">
-        <beans:property name="filterProcessesUrl" value="/roller_j_openid_security_check"/>
-        <beans:property name="authenticationManager" ref="rollerAuthenticationManager"/>
-        <beans:property name="authenticationSuccessHandler" ref="myAuthenticationSuccessHandler"/>
-        <beans:property name="authenticationFailureHandler" ref="myAuthenticationFailureHandler"/>
     </beans:bean>
 
     <beans:bean id="myAuthenticationSuccessHandler"
