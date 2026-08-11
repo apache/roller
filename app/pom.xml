@@ -57,6 +57,7 @@ limitations under the License.
         <spring.version>7.0.8</spring.version>
         <spring.security.version>7.0.6</spring.security.version>
         <struts.version>7.1.1</struts.version>
+        <struts-bootstrap.version>6.1.0</struts-bootstrap.version>
         <velocity.version>2.4.1</velocity.version>
         <ws-commons-util.version>1.0.2</ws-commons-util.version>
         <xmlrpc-version>3.1.3</xmlrpc-version>
@@ -246,13 +247,16 @@ limitations under the License.
         </dependency>
 
         <!-- note: update head.jsp on webjar version change -->
-        <!-- TODO: webjars-servlet-2.x still uses javax.servlet; needs forking to jakarta in a follow-up -->
+        <!-- Supplies the "bootstrap" form theme templates the JSPs render with.
+             Maintained at github.com/struts-community-plugins/struts2-bootstrap. -->
         <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>webjars-servlet-2.x</artifactId>
-            <version>1.6</version>
+            <groupId>com.jgeppert.struts2.bootstrap</groupId>
+            <artifactId>struts2-bootstrap-plugin</artifactId>
+            <version>${struts-bootstrap.version}</version>
         </dependency>
 
+        <!-- WebJar assets live under META-INF/resources, which Servlet 3.0+
+             containers serve from the docroot, so no webjars servlet is needed -->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
