@@ -36,6 +36,9 @@
         <intercept-url pattern="/roller-ui/authoring/**" access="hasAnyAuthority('admin','editor')"/>
         <intercept-url pattern="/roller-ui/admin/**" access="hasAuthority('admin')"/>
         <intercept-url pattern="/rewrite-status*" access="hasAuthority('admin')"/>
+        <!-- Spring Security 7's authorization manager denies requests that match
+             no rule, where the old FilterSecurityInterceptor allowed them -->
+        <intercept-url pattern="/**" access="permitAll"/>
 
         <form-login login-page="/roller-ui/login.rol"
                     username-parameter="j_username" 
