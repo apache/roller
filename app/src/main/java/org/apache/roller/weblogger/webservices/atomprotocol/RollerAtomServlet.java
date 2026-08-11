@@ -24,11 +24,11 @@ import java.io.Writer;
 import java.util.Collections;
 import java.util.Locale;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.jdom2.Document;
 import org.jdom2.output.Format;
@@ -42,7 +42,6 @@ import com.rometools.propono.atom.server.AtomException;
 import com.rometools.propono.atom.server.AtomHandler;
 import com.rometools.propono.atom.server.AtomMediaResource;
 import com.rometools.propono.atom.server.AtomRequest;
-import com.rometools.propono.atom.server.AtomRequestImpl;
 import com.rometools.rome.feed.atom.Content;
 import com.rometools.rome.feed.atom.Entry;
 import com.rometools.rome.feed.atom.Feed;
@@ -93,7 +92,7 @@ public class RollerAtomServlet extends HttpServlet {
         final AtomHandler handler = createAtomRequestHandler(req, res);
         final String userName = handler.getAuthenticatedUsername();
         if (userName != null) {
-            final AtomRequest areq = new AtomRequestImpl(req);
+            final AtomRequest areq = new RollerAtomRequestImpl(req);
             try {
                 if (handler.isAtomServiceURI(areq)) {
                     // return an Atom Service document
@@ -174,7 +173,7 @@ public class RollerAtomServlet extends HttpServlet {
         final AtomHandler handler = createAtomRequestHandler(req, res);
         final String userName = handler.getAuthenticatedUsername();
         if (userName != null) {
-            final AtomRequest areq = new AtomRequestImpl(req);
+            final AtomRequest areq = new RollerAtomRequestImpl(req);
             try {
                 if (handler.isCollectionURI(areq)) {
 
@@ -281,7 +280,7 @@ public class RollerAtomServlet extends HttpServlet {
         final AtomHandler handler = createAtomRequestHandler(req, res);
         final String userName = handler.getAuthenticatedUsername();
         if (userName != null) {
-            final AtomRequest areq = new AtomRequestImpl(req);
+            final AtomRequest areq = new RollerAtomRequestImpl(req);
             try {
                 if (handler.isEntryURI(areq)) {
 
@@ -328,7 +327,7 @@ public class RollerAtomServlet extends HttpServlet {
         final AtomHandler handler = createAtomRequestHandler(req, res);
         final String userName = handler.getAuthenticatedUsername();
         if (userName != null) {
-            final AtomRequest areq = new AtomRequestImpl(req);
+            final AtomRequest areq = new RollerAtomRequestImpl(req);
             try {
                 if (handler.isEntryURI(areq)) {
                     handler.deleteEntry(areq);

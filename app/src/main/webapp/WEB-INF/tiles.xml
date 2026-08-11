@@ -16,9 +16,9 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<!DOCTYPE tiles-definitions PUBLIC 
-   "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN" 
-   "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+<!DOCTYPE tiles-definitions PUBLIC
+   "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+   "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
     
     <definition name=".tiles-mainmenupage" template="/WEB-INF/jsps/tiles/tiles-mainmenupage.jsp">

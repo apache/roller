@@ -18,7 +18,9 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
-import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionSupport;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -30,8 +32,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.util.menu.Menu;
 import org.apache.roller.weblogger.ui.core.util.menu.MenuHelper;
-import org.apache.struts2.interceptor.RequestAware;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,7 +39,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -53,7 +52,7 @@ import java.util.stream.IntStream;
  * getText(key) on the param passed into setError() and setSuccess().
  */
 public abstract class UIAction extends ActionSupport
-        implements UIActionPreparable, UISecurityEnforced, RequestAware {
+        implements UIActionPreparable, UISecurityEnforced {
     
     // a result that sends the user to an access denied warning
     public static final String DENIED = "access-denied";
@@ -88,13 +87,14 @@ public abstract class UIAction extends ActionSupport
     public void myPrepare() {
         // no-op
     }
-	
-    @Override
-	public void setRequest(Map<String, Object> map) {
-		this.salt = (String) map.get("salt");
-	}
 
 	public String getSalt() {
+		if (salt == null) {
+			HttpServletRequest request = ActionContext.getContext().getServletRequest();
+			if (request != null) {
+				salt = (String) request.getAttribute("salt");
+			}
+		}
 		return salt;
 	}
 	

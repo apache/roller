@@ -29,9 +29,9 @@
         
         <h2 class="error"><fmt:message key="error.title.403" /></h2>
         
-        <c:set var="status_code" value="${requestScope['javax.servlet.error.status_code']}" />
-        <c:set var="message"     value="${requestScope['javax.servlet.error.message']}" />
-        <c:set var="type"        value="${requestScope['javax.servlet.error.type']}" />
+        <c:set var="status_code" value="${requestScope['jakarta.servlet.error.status_code']}" />
+        <c:set var="message"     value="${requestScope['jakarta.servlet.error.message']}" />
+        <c:set var="type"        value="${requestScope['jakarta.servlet.error.type']}" />
         
         <table width="80%" border="1px" style="border-collapse: collapse;">
             <tr>
