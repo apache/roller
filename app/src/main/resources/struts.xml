@@ -54,7 +54,7 @@
                 <!-- <interceptor-ref name="profiling"/> -->
                 <!-- <interceptor-ref name="scopedModelDriven"/> -->
                 <!-- <interceptor-ref name="modelDriven"/> -->
-                <interceptor-ref name="fileUpload"/>
+                <interceptor-ref name="actionFileUpload"/>
                 <interceptor-ref name="checkbox"/>
                 <interceptor-ref name="multiselect"/>
                 <interceptor-ref name="staticParams"/>
