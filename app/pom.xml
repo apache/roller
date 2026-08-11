@@ -310,6 +310,12 @@ limitations under the License.
             <version>${lucene.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
         <!-- slf4j implementing the apache commons-logging interfaces -->
         <!-- note: commons-logging needs to be excluded in all dependencies transitive depending on it.
         See 2006 RFE https://issues.apache.org/jira/browse/MNG-1977 for maven's missing feature of global exclusions -->
@@ -594,7 +600,9 @@ limitations under the License.
                     <webApp>
                         <contextPath>/roller</contextPath>
                     </webApp>
-                    <jettyXml>src/test/resources/jetty.xml</jettyXml>
+                    <jettyXmls>
+                        <jettyXml>src/test/resources/jetty.xml</jettyXml>
+                    </jettyXmls>
                     <systemProperties>
                         <roller.custom.config>
                             ${project.build.directory}/test-classes/roller-jettyrun.properties
@@ -608,9 +616,9 @@ limitations under the License.
                         <version>6.1.5</version>
                     </dependency>
                     <dependency>
-                        <groupId>commons-dbcp</groupId>
-                        <artifactId>commons-dbcp</artifactId>
-                        <version>1.4</version>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-dbcp2</artifactId>
+                        <version>2.13.0</version>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>
