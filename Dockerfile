@@ -23,17 +23,9 @@
 
 FROM maven:3-eclipse-temurin-17 AS builder
 
-COPY ./docker /project/docker
-
-# Build Apache Roller
-
-WORKDIR /tmp
-RUN apt-get update && apt-get install -y git
-RUN git clone https://github.com/apache/roller.git
-WORKDIR /tmp/roller
-# change to branch/tag you prefer
-RUN git checkout tags/roller-6.1.0; \
-mvn -Duser.home=/builder/home -DskipTests=true -B clean install
+COPY . /project
+WORKDIR /project
+RUN mvn -Duser.home=/builder/home -DskipTests=true -B clean install
 
 
 # STAGE 2 - PACKAGE ------------------------------------------------
@@ -51,7 +43,7 @@ ARG DATABASE_JDBC_DRIVERCLASS=org.postgresql.Driver
 ARG DATABASE_JDBC_CONNECTIONURL=jdbc:postgresql://postgresql/rollerdb
 ARG DATABASE_JDBC_USERNAME=scott
 ARG DATABASE_JDBC_PASSWORD=tiger
-ARG DATABASE_HOST=postgresql:5434
+ARG DATABASE_HOST=postgresql:5432
 
 ENV STORAGE_ROOT ${STORAGE_ROOT}
 ENV DATABASE_JDBC_DRIVERCLASS ${DATABASE_JDBC_DRIVERCLASS}
@@ -63,7 +55,7 @@ ENV DATABASE_HOST ${DATABASE_HOST}
 # install Roller WAR as ROOT.war, create data dirs
 
 WORKDIR /usr/local/roller
-COPY --from=builder /tmp/roller/app/target/roller.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=builder /project/app/target/roller.war /usr/local/tomcat/webapps/ROOT.war
 RUN mkdir -p data/mediafiles data/searchindex
 
 # download PostgreSQL and MySQL drivers plus Mail and Activation JARs
@@ -78,8 +70,8 @@ RUN wget https://repo1.maven.org/maven2/org/eclipse/angus/angus-activation/2.0.2
 
 # Add Roller entry-point and go!
 
-COPY --from=builder /project/docker/entry-point.sh /usr/local/tomcat/bin
-COPY --from=builder /project/docker/wait-for-it.sh /usr/local/tomcat/bin
+COPY docker/entry-point.sh /usr/local/tomcat/bin
+COPY docker/wait-for-it.sh /usr/local/tomcat/bin
 RUN chgrp -R 0 /usr/local/tomcat
 RUN chmod -R g+rw /usr/local/tomcat
 

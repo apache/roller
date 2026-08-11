@@ -26,7 +26,20 @@ database.jdbc.driverClass=${DATABASE_JDBC_DRIVERCLASS}
 database.jdbc.connectionURL=${DATABASE_JDBC_CONNECTIONURL}
 database.jdbc.username=${DATABASE_JDBC_USERNAME}
 database.jdbc.password=${DATABASE_JDBC_PASSWORD}
+authentication.method=${AUTHENTICATION_METHOD:-db}
 EOF
+
+# Register an OIDC provider only when one is configured. The issuer must be
+# reachable under the same URL from both this container and the browser,
+# because the browser is redirected to the endpoints Roller discovers here.
+if [ -n "${OIDC_ISSUER_URI}" ]; then
+cat >> /usr/local/tomcat/lib/roller-custom.properties << EOF
+oidc.${OIDC_PROVIDER_ID:-keycloak}.client-id=${OIDC_CLIENT_ID}
+oidc.${OIDC_PROVIDER_ID:-keycloak}.client-secret=${OIDC_CLIENT_SECRET}
+oidc.${OIDC_PROVIDER_ID:-keycloak}.issuer-uri=${OIDC_ISSUER_URI}
+oidc.${OIDC_PROVIDER_ID:-keycloak}.client-name=${OIDC_CLIENT_NAME:-Keycloak}
+EOF
+fi
 
 /usr/local/tomcat/bin/wait-for-it.sh ${DATABASE_HOST}
 exec /usr/local/tomcat/bin/catalina.sh run
