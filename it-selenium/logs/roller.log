@@ -1,0 +1,199 @@
+INFO  2026-08-11 17:08:26 [main] ContextLoader - Root WebApplicationContext: initialization started
+INFO  2026-08-11 17:08:27 [main] SpringSecurityCoreVersion - You are running with Spring Security Core 7.0.6
+INFO  2026-08-11 17:08:27 [main] HttpSecurityBeanDefinitionParser - Checking sorted filter chain: [Root bean: class=org.springframework.security.web.session.DisableEncodeUrlFilter; scope=; abstract=false; lazyInit=null; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=null; factoryMethodName=null; initMethodNames=null; destroyMethodNames=null, order = 100, Root bean: class=org.springframework.security.web.context.SecurityContextHolderFilter; scope=; abstract=false; lazyInit=null; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=null; factoryMethodName=null; initMethodNames=null; destroyMethodNames=null, order = 500, Root bean: class=org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter; scope=; abstract=false; lazyInit=null; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=null; factoryMethodName=null; initMethodNames=null; destroyMethodNames=null, order = 700, Root bean: class=org.springframework.security.web.header.HeaderWriterFilter; scope=; abstract=false; lazyInit=null; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=null; factoryMethodName=null; initMethodNames=null; destroyMethodNames=null, order = 800, <org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter#0>, order = 2200, Root bean: class=org.springframework.security.web.savedrequest.RequestCacheAwareFilter; scope=; abstract=false; lazyInit=null; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=null; factoryMethodName=null; initMethodNames=null; destroyMethodNames=null, order = 2900, Root bean: class=null; scope=; abstract=false; lazyInit=null; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=org.springframework.security.config.http.HttpConfigurationBuilder$SecurityContextHolderAwareRequestFilterBeanFactory#0; factoryMethodName=getBean; initMethodNames=null; destroyMethodNames=null, order = 3000, Root bean: class=org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter; scope=; abstract=false; lazyInit=null; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=null; factoryMethodName=null; initMethodNames=null; destroyMethodNames=null, order = 3200, Root bean: class=org.springframework.security.web.authentication.AnonymousAuthenticationFilter; scope=; abstract=false; lazyInit=null; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=null; factoryMethodName=null; initMethodNames=null; destroyMethodNames=null, order = 3300, Root bean: class=org.springframework.security.web.access.ExceptionTranslationFilter; scope=; abstract=false; lazyInit=null; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; fallback=false; factoryBeanName=null; factoryMethodName=null; initMethodNames=null; destroyMethodNames=null, order = 3700, <org.springframework.security.web.access.intercept.AuthorizationFilter#0>, order = 3800]
+INFO  2026-08-11 17:08:27 [main] DefaultFilterChainValidator - Checking whether login URL '/roller-ui/login.rol' is accessible with your configuration
+INFO  2026-08-11 17:08:27 [main] ContextLoader - Root WebApplicationContext initialized in 215 ms
+INFO  2026-08-11 17:08:27 [main] DatabaseProvider - SUCCESS: Got parameters. Using configuration type JDBC_PROPERTIES
+INFO  2026-08-11 17:08:27 [main] DatabaseProvider - -- Using JDBC driver class: org.apache.derby.jdbc.ClientDriver
+INFO  2026-08-11 17:08:27 [main] DatabaseProvider - -- Using JDBC connection URL: jdbc:derby://localhost:4224/memory:rollerdb;create=true
+INFO  2026-08-11 17:08:27 [main] DatabaseProvider - -- Using JDBC username: app
+INFO  2026-08-11 17:08:27 [main] DatabaseProvider - -- Using JDBC password: [hidden]
+INFO  2026-08-11 17:08:27 [main] DatabaseProvider - SUCCESS: loaded JDBC driver class [org.apache.derby.jdbc.ClientDriver]
+WARN  2026-08-11 17:08:27 [main] WebloggerStartup - Failed to setup mail provider, continuing anyways.
+Reason: ERROR connecting to mail server
+INFO  2026-08-11 17:08:27 [main] WebloggerStartup - The cause of setting up mail provider error was: 
+org.apache.roller.weblogger.business.startup.StartupException: ERROR connecting to mail server
+	at org.apache.roller.weblogger.business.MailProvider.<init>(MailProvider.java:99) ~[classes/:?]
+	at org.apache.roller.weblogger.business.startup.WebloggerStartup.prepare(WebloggerStartup.java:177) ~[classes/:?]
+	at org.apache.roller.weblogger.ui.core.RollerContext.contextInitialized(RollerContext.java:154) ~[classes/:?]
+	at org.eclipse.jetty.ee10.servlet.ServletContextHandler.callContextInitialized(ServletContextHandler.java:1591) ~[jetty-ee10-servlet-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.ee10.servlet.ServletContextHandler.contextInitialized(ServletContextHandler.java:500) ~[jetty-ee10-servlet-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.ee10.servlet.ServletHandler.initialize(ServletHandler.java:676) ~[jetty-ee10-servlet-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.ee10.servlet.ServletContextHandler.startContext(ServletContextHandler.java:1325) ~[jetty-ee10-servlet-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.ee10.webapp.WebAppContext.startWebapp(WebAppContext.java:1350) ~[jetty-ee10-webapp-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.ee10.webapp.WebAppContext.startContext(WebAppContext.java:1308) ~[jetty-ee10-webapp-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.ee10.servlet.ServletContextHandler.lambda$doStart$0(ServletContextHandler.java:1051) ~[jetty-ee10-servlet-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.server.handler.ContextHandler$ScopedContext.call(ContextHandler.java:1463) [jetty-server-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.ee10.servlet.ServletContextHandler.doStart(ServletContextHandler.java:1048) [jetty-ee10-servlet-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.ee10.webapp.WebAppContext.doStart(WebAppContext.java:504) [jetty-ee10-webapp-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.ee10.maven.plugin.MavenWebAppContext.doStart(MavenWebAppContext.java:312) [jetty-ee10-maven-plugin-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:93) [jetty-util-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:169) [jetty-util-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:120) [jetty-util-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.server.Handler$Abstract.doStart(Handler.java:491) [jetty-server-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:93) [jetty-util-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:169) [jetty-util-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.server.Server.start(Server.java:643) [jetty-server-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:120) [jetty-util-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.server.Handler$Abstract.doStart(Handler.java:491) [jetty-server-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.server.Server.doStart(Server.java:584) [jetty-server-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:93) [jetty-util-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.maven.AbstractJettyEmbedder.doStart(AbstractJettyEmbedder.java:206) [jetty-maven-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:93) [jetty-util-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.ee10.maven.plugin.JettyStartMojo.startJettyEmbedded(JettyStartMojo.java:53) [jetty-ee10-maven-plugin-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.ee10.maven.plugin.AbstractWebAppMojo.startJetty(AbstractWebAppMojo.java:451) [jetty-ee10-maven-plugin-12.0.21.jar:12.0.21]
+	at org.eclipse.jetty.ee10.maven.plugin.AbstractWebAppMojo.execute(AbstractWebAppMojo.java:429) [jetty-ee10-maven-plugin-12.0.21.jar:12.0.21]
+	at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:126) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.lifecycle.internal.MojoExecutor.doExecute2(MojoExecutor.java:328) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.lifecycle.internal.MojoExecutor.doExecute(MojoExecutor.java:316) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:212) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:174) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.lifecycle.internal.MojoExecutor.access$000(MojoExecutor.java:75) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.lifecycle.internal.MojoExecutor$1.run(MojoExecutor.java:162) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.plugin.DefaultMojosExecutionStrategy.execute(DefaultMojosExecutionStrategy.java:39) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:159) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject(LifecycleModuleBuilder.java:105) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject(LifecycleModuleBuilder.java:73) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build(SingleThreadedBuilder.java:53) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.lifecycle.internal.LifecycleStarter.execute(LifecycleStarter.java:118) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.DefaultMaven.doExecute(DefaultMaven.java:261) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.DefaultMaven.doExecute(DefaultMaven.java:173) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.DefaultMaven.execute(DefaultMaven.java:101) [maven-core-3.9.8.jar:3.9.8]
+	at org.apache.maven.cli.MavenCli.execute(MavenCli.java:903) [maven-embedder-3.9.8.jar:3.9.8]
+	at org.apache.maven.cli.MavenCli.doMain(MavenCli.java:280) [maven-embedder-3.9.8.jar:3.9.8]
+	at org.apache.maven.cli.MavenCli.main(MavenCli.java:203) [maven-embedder-3.9.8.jar:3.9.8]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced(Launcher.java:255) [plexus-classworlds-2.8.0.jar:?]
+	at org.codehaus.plexus.classworlds.launcher.Launcher.launch(Launcher.java:201) [plexus-classworlds-2.8.0.jar:?]
+	at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode(Launcher.java:361) [plexus-classworlds-2.8.0.jar:?]
+	at org.codehaus.plexus.classworlds.launcher.Launcher.main(Launcher.java:314) [plexus-classworlds-2.8.0.jar:?]
+INFO  2026-08-11 17:08:27 [main] DatabaseInstaller - Creating Roller Weblogger database tables.
+INFO  2026-08-11 17:08:27 [main] WebloggerFactory - Bootstrapping Roller Weblogger business tier
+INFO  2026-08-11 17:08:27 [main] WebloggerFactory - Weblogger Provider = org.apache.roller.weblogger.business.GuiceWebloggerProvider
+INFO  2026-08-11 17:08:27 [main] DatabaseProvider - SUCCESS: Got parameters. Using configuration type JDBC_PROPERTIES
+INFO  2026-08-11 17:08:27 [main] DatabaseProvider - -- Using JDBC driver class: org.apache.derby.jdbc.ClientDriver
+INFO  2026-08-11 17:08:27 [main] DatabaseProvider - -- Using JDBC connection URL: jdbc:derby://localhost:4224/memory:rollerdb;create=true
+INFO  2026-08-11 17:08:27 [main] DatabaseProvider - -- Using JDBC username: app
+INFO  2026-08-11 17:08:27 [main] DatabaseProvider - -- Using JDBC password: [hidden]
+INFO  2026-08-11 17:08:27 [main] DatabaseProvider - SUCCESS: loaded JDBC driver class [org.apache.derby.jdbc.ClientDriver]
+INFO  2026-08-11 17:08:27 [main] JPAPersistenceStrategy - hibernate.transaction.factory_class: org.hibernate.transaction.JDBCTransactionFactory
+INFO  2026-08-11 17:08:27 [main] JPAPersistenceStrategy - eclipselink.logging.logger: org.eclipse.persistence.logging.slf4j.SLF4JLogger
+INFO  2026-08-11 17:08:27 [main] JPAPersistenceStrategy - hibernate.dialect: org.hibernate.dialect.DerbyDialect
+INFO  2026-08-11 17:08:27 [main] JPAPersistenceStrategy - eclipselink.persistence-context.flush-mode: auto
+INFO  2026-08-11 17:08:27 [main] JPAPersistenceStrategy - hibernate.transaction.manager_lookup_class: org.hibernate.transaction.JBossTransactionManagerLookup
+INFO  2026-08-11 17:08:28 [main] LuceneIndexManager - search enabled: true
+INFO  2026-08-11 17:08:28 [main] LuceneIndexManager - index dir: target/work/search-index
+INFO  2026-08-11 17:08:28 [main] PluginManagerImpl - Configured comment plugins
+INFO  2026-08-11 17:08:28 [main] PluginManagerImpl - [class org.apache.roller.weblogger.business.plugins.comment.LinkMarkupPlugin,class org.apache.roller.weblogger.business.plugins.comment.AutoformatPlugin,class org.apache.roller.weblogger.business.plugins.comment.HTMLSubsetPlugin]
+INFO  2026-08-11 17:08:28 [main] ThreadManagerImpl - Instantiating Thread Manager
+INFO  2026-08-11 17:08:28 [main] WebloggerFactory - Roller Weblogger business tier successfully bootstrapped
+INFO  2026-08-11 17:08:28 [main] WebloggerFactory -    Version: 6.1.5
+INFO  2026-08-11 17:08:28 [main] WebloggerFactory -    Revision: r191ff819fc60942eca485f3de3c356dce54f6441
+INFO  2026-08-11 17:08:28 [main] WebloggerImpl - Initializing Roller Weblogger business tier
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property site.name not yet in roller_properties database table, will store with default value of [Roller Site`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property site.shortName not yet in roller_properties database table, will store with default value of [Front Page`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property site.description not yet in roller_properties database table, will store with default value of [A default install of the Roller Weblogger open source blog server`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property site.frontpage.weblog.handle not yet in roller_properties database table, will store with default value of [`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property site.frontpage.weblog.aggregated not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property site.adminemail not yet in roller_properties database table, will store with default value of [`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property site.absoluteurl not yet in roller_properties database table, will store with default value of [`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property pings.suspendPingProcessing not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property users.registration.enabled not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property user.account.email.activation not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property users.registration.url not yet in roller_properties database table, will store with default value of [`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property site.allowUserWeblogCreation not yet in roller_properties database table, will store with default value of [true`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property users.editor.pages not yet in roller_properties database table, will store with default value of [editor-text.jsp,editor-summernote.jsp`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property webservices.enableXmlRpc not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property webservices.enableAtomPub not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property webservices.atomPubAuth not yet in roller_properties database table, will store with default value of [basic`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property site.pages.maxEntries not yet in roller_properties database table, will store with default value of [30`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property site.newsfeeds.defaultEntries not yet in roller_properties database table, will store with default value of [30`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property site.newsfeeds.styledFeeds not yet in roller_properties database table, will store with default value of [true`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property users.comments.enabled not yet in roller_properties database table, will store with default value of [true`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property comments.ignoreSpam.enabled not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property users.trackbacks.enabled not yet in roller_properties database table, will store with default value of [true`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property trackbacks.ignoreSpam.enabled not yet in roller_properties database table, will store with default value of [true`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property users.comments.htmlenabled not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property users.comments.plugins not yet in roller_properties database table, will store with default value of [HTMLSubset`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property users.comments.emailnotify not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property users.moderation.required not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property site.trackbackVerification.enabled not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property uploads.enabled not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property uploads.types.allowed not yet in roller_properties database table, will store with default value of [`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property uploads.types.forbid not yet in roller_properties database table, will store with default value of [exe`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property uploads.file.maxsize not yet in roller_properties database table, will store with default value of [2.00`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property uploads.dir.maxsize not yet in roller_properties database table, will store with default value of [20.00`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property users.themes.path not yet in roller_properties database table, will store with default value of [/themes`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property themes.customtheme.allowed not yet in roller_properties database table, will store with default value of [false`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property spam.bannedwordslist not yet in roller_properties database table, will store with default value of [`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property analytics.default.tracking.code not yet in roller_properties database table, will store with default value of [`]
+INFO  2026-08-11 17:08:28 [main] JPAPropertiesManagerImpl - Property analytics.code.override.allowed not yet in roller_properties database table, will store with default value of [true`]
+INFO  2026-08-11 17:08:28 [main] ThemeManagerImpl - Loading themes from /Users/mraible/dev/roller-jakarta-check/it-selenium/target/war/work/org.apache.roller/roller-webapp/themes...
+INFO  2026-08-11 17:08:28 [main] ThemeManagerImpl - Loaded theme 'basic'
+INFO  2026-08-11 17:08:28 [main] ThemeManagerImpl - Loaded theme 'basicmobile'
+INFO  2026-08-11 17:08:28 [main] ThemeManagerImpl - Loaded theme 'gaurav'
+INFO  2026-08-11 17:08:28 [main] ThemeManagerImpl - Loaded theme 'fauxcoly'
+INFO  2026-08-11 17:08:28 [main] ThemeManagerImpl - Loaded theme 'frontpage'
+INFO  2026-08-11 17:08:28 [main] ThemeManagerImpl - Successfully loaded 5 themes from disk.
+INFO  2026-08-11 17:08:28 [main] ThreadManagerImpl - Initializing task: ScheduledEntriesTask
+INFO  2026-08-11 17:08:28 [main] ThreadManagerImpl - Initializing task: ResetHitCountsTask
+INFO  2026-08-11 17:08:28 [main] ThreadManagerImpl - Initializing task: PingQueueTask
+INFO  2026-08-11 17:08:28 [main] ThreadManagerImpl - Initializing task: TestTask
+INFO  2026-08-11 17:08:28 [main] LuceneIndexManager - Index initialized and ready for use.
+INFO  2026-08-11 17:08:28 [main] PingConfig - Creating common ping target 'Technorati' from configuration properties.
+INFO  2026-08-11 17:08:28 [main] PingConfig - Creating common ping target 'Weblogs.com' from configuration properties.
+INFO  2026-08-11 17:08:28 [main] PingConfig - Creating common ping target 'blo.gs' from configuration properties.
+INFO  2026-08-11 17:08:28 [main] PingConfig - Creating common ping target 'IceRocket' from configuration properties.
+INFO  2026-08-11 17:08:28 [main] WebloggerImpl - Roller Weblogger business tier successfully initialized
+INFO  2026-08-11 17:08:28 [main] RollerContext - Remember Me enabled: false
+WARN  2026-08-11 17:08:28 [main] RollerContext - New passwords are stored in plain text!
+INFO  2026-08-11 17:08:28 [main] RollerContext - Password Encryption Algorithm set to 'noop'
+INFO  2026-08-11 17:08:28 [main] RollerContext - Initializing Velocity
+INFO  2026-08-11 17:08:28 [main] StrutsTilesListener - Starting Struts Tiles 3 integration ...
+INFO  2026-08-11 17:08:28 [main] TilesAccess - Publishing TilesContext for context: org.apache.struts2.tiles.StrutsWildcardServletApplicationContext
+INFO  2026-08-11 17:08:28 [main] StrutsSpringObjectFactory - Initializing Struts-Spring integration...
+INFO  2026-08-11 17:08:28 [main] SpringObjectFactory - Setting autowire strategy to name
+INFO  2026-08-11 17:08:28 [main] StrutsSpringObjectFactory - ... initialized Struts-Spring integration successfully
+WARN  2026-08-11 17:08:28 [main] ParametersInterceptor - @StrutsParameter annotation requirement is disabled! We strongly recommend keeping it enabled to protect against critical vulnerabilities. Set the configuration `struts.parameters.requireAnnotations=true` to enable it. Please refer to the Struts 7.0 migration guide and security documentation for further information.
+WARN  2026-08-11 17:08:28 [main] DefaultExcludedPatternsChecker - Replacing excluded patterns [[actionErrors|actionMessages|fieldErrors, .*(^|\.|\[|\'|"|get)class(\(\.|\[|\'|").*, (^|\%\{)(#?top\.)[^\s]*, (^|\%\{)((#?)(\[\d\]\.)?)(dojo|struts|session|request|response|application|servlet(Request|Response|Context)|parameters|context|_memberAccess)(\.|\[).*]] with [[^method:.*, ^action:.*]], be aware that this affects all instances and safety of your application!
+WARN  2026-08-11 17:08:28 [main] PackageBasedActionConfigBuilder - The includeJars pattern [false] did not match any jars in the classpath
+INFO  2026-08-11 17:08:28 [main] RequestMappingFilter - Request mapping filter initialized, 1 mappers configured.
+INFO  2026-08-11 17:08:28 [main] RequestMappingFilter - [class org.apache.roller.weblogger.ui.rendering.WeblogRequestMapper]
+INFO  2026-08-11 17:08:28 [main] IPBanFilter - INIT IPBanFilter
+INFO  2026-08-11 17:08:28 [main] FeedServlet - Initializing FeedServlet
+INFO  2026-08-11 17:08:28 [main] WeblogFeedCache - {size=200, id=cache.weblogfeed, enabled=false, timeout=3600}
+WARN  2026-08-11 17:08:28 [main] WeblogFeedCache - Caching has been DISABLED
+INFO  2026-08-11 17:08:28 [main] SiteWideCache - {size=50, id=cache.sitewide, enabled=false, timeout=1800}
+WARN  2026-08-11 17:08:28 [main] SiteWideCache - Caching has been DISABLED
+INFO  2026-08-11 17:08:28 [main] MediaResourceServlet - Initializing ResourceServlet
+INFO  2026-08-11 17:08:28 [main] PageServlet - Initializing PageServlet
+INFO  2026-08-11 17:08:28 [main] WeblogPageCache - {size=400, id=cache.weblogpage, enabled=false, timeout=3600}
+WARN  2026-08-11 17:08:28 [main] WeblogPageCache - Caching has been DISABLED
+INFO  2026-08-11 17:08:28 [main] PageServlet - Referrer spam check enabled = false
+INFO  2026-08-11 17:08:28 [main] ResourceServlet - Initializing ResourceServlet
+INFO  2026-08-11 17:08:28 [main] SearchServlet - Initializing SearchServlet
+INFO  2026-08-11 17:08:28 [main] CommentServlet - Initializing CommentServlet
+INFO  2026-08-11 17:08:28 [main] CommentValidationManager - Configured 3 CommentValidators
+INFO  2026-08-11 17:08:28 [main] CommentValidationManager - [class org.apache.roller.weblogger.ui.rendering.plugins.comments.BannedwordslistCommentValidator,class org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessLinksCommentValidator,class org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessSizeCommentValidator]
+INFO  2026-08-11 17:08:28 [main] CommentServlet - Comment Throttling DISABLED
+INFO  2026-08-11 17:08:28 [main] PlanetFeedServlet - Initializing PlanetRssServlet
+INFO  2026-08-11 17:08:28 [main] PlanetCache - Planet cache = {size=10, id=cache.planet, enabled=false, timeout=1800}
+WARN  2026-08-11 17:08:28 [main] PlanetCache - Caching has been DISABLED
+INFO  2026-08-11 17:08:28 [main] RSDServlet - Initializing RSDServlet
+INFO  2026-08-11 17:08:28 [main] CommentValidationManager - Configured 3 CommentValidators
+INFO  2026-08-11 17:08:28 [main] CommentValidationManager - [class org.apache.roller.weblogger.ui.rendering.plugins.comments.BannedwordslistCommentValidator,class org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessLinksCommentValidator,class org.apache.roller.weblogger.ui.rendering.plugins.comments.ExcessSizeCommentValidator]
+INFO  2026-08-11 17:08:28 [main] PreviewResourceServlet - Initializing PreviewResourceServlet
+INFO  2026-08-11 17:08:28 [main] PreviewServlet - Initializing PreviewServlet
+INFO  2026-08-11 17:08:31 [qtp501254005-77] SaltCache - {size=5000, id=cache.salt, timeout=3600, enabled=true}
+INFO  2026-08-11 17:08:31 [qtp501254005-77] CacheManager - Cache Manager Initialized.
+INFO  2026-08-11 17:08:31 [qtp501254005-77] CacheManager - Cache Factory = org.apache.roller.weblogger.util.cache.ExpiringLRUCacheFactoryImpl
+INFO  2026-08-11 17:08:33 [HitCountQueueProcessor] ContinuousWorkerThread - HitCountQueueProcessor Started.
+INFO  2026-08-11 17:08:33 [qtp501254005-123] RendererManager - Renderer Manager Initialized, 1 factories configured.
+INFO  2026-08-11 17:08:33 [qtp501254005-123] RendererManager - [class org.apache.roller.weblogger.ui.rendering.velocity.VelocityRendererFactory]
+INFO  2026-08-11 17:08:33 [qtp501254005-123] RollerVelocity - Initializing Velocity Rendering Engine
+WARN  2026-08-11 17:08:33 [qtp501254005-123] UIPluginManagerImpl - Default editor was not properly configured, picking one at random instead.
+INFO  2026-08-11 17:08:35 [ShutdownMonitor] TilesAccess - Removing TilesContext for context: org.apache.struts2.tiles.StrutsWildcardServletApplicationContext
+INFO  2026-08-11 17:08:35 [ShutdownMonitor] HitCountQueue - stopping worker HitCountQueueProcessor
+INFO  2026-08-11 17:08:35 [HitCountQueueProcessor] ContinuousWorkerThread - HitCountQueueProcessor INTERRUPT: sleep interrupted
+INFO  2026-08-11 17:08:35 [HitCountQueueProcessor] ContinuousWorkerThread - HitCountQueueProcessor Done.

@@ -143,7 +143,9 @@
                         <contextPath>/roller</contextPath>
                     </webApp>
                     <webAppSourceDirectory>target/roller-selenium-tests-${project.version}</webAppSourceDirectory>
-                    <jettyXml>${project.parent.basedir}/app/src/test/resources/jetty.xml</jettyXml>
+                    <jettyXmls>
+                        <jettyXml>${project.parent.basedir}/app/src/test/resources/jetty.xml</jettyXml>
+                    </jettyXmls>
                     <systemProperties>
                         <roller.custom.config>
                             src/test/resources/roller-jettyrun.properties
@@ -177,9 +179,9 @@
                         <version>6.1.5</version>
                     </dependency>
                     <dependency>
-                        <groupId>commons-dbcp</groupId>
-                        <artifactId>commons-dbcp</artifactId>
-                        <version>1.4</version>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-dbcp2</artifactId>
+                        <version>2.13.0</version>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>
