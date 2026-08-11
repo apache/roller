@@ -27,9 +27,9 @@
 
 <%-- STEP 1: Create a user if you don't already have one --%>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
             <s:text name="index.createUser"/>
             <s:if test="userCount > 0"> -
                 <s:text name="index.createUserDone">
@@ -39,7 +39,7 @@
         </h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
 
         <p><s:text name="index.createUserHelp"/></p>
         <p><s:if test="userCount == 0">
@@ -53,9 +53,9 @@
 
 <%-- STEP 2: Create a weblog if you don't already have one --%>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
             <s:text name="index.createWeblog"/>
             <s:if test="blogCount > 0"> -
                 <s:text name="index.createWeblogDone">
@@ -65,7 +65,7 @@
         </h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
 
         <s:text name="index.createWeblogHelp"/><br/><br/>
         <s:if test="userCount > 0 && blogCount == 0">
@@ -80,14 +80,14 @@
 
 <%-- STEP 3: Designate a weblog to be the frontpage weblog --%>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">
             <s:text name="index.setFrontpage"/>
         </h3>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
 
         <p><s:text name="index.setFrontpageHelp"/></p>
 
@@ -106,7 +106,7 @@
                 <s:checkbox name="aggregated" value="aggregated"
                             label="%{getText('frontpageConfig.frontpageAggregated')}"/>
 
-                <s:submit value="%{getText('generic.save')}" cssClass="btn btn-default"/>
+                <s:submit theme="simple" value="%{getText('generic.save')}" cssClass="btn btn-outline-secondary"/>
 
             </s:form>
 

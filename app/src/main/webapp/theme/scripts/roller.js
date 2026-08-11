@@ -234,3 +234,14 @@ $(document).ready(function () {
         regex: /^\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i
     });
 });
+
+// Bootstrap 5 tooltips are opt-in; field hints come from the form theme.
+// Titles may contain markup, hence html: true.
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof bootstrap === 'undefined' || !bootstrap.Tooltip) {
+        return;
+    }
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+        new bootstrap.Tooltip(el, {html: true, placement: 'right'});
+    });
+});

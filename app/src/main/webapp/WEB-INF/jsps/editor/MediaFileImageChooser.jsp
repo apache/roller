@@ -53,8 +53,8 @@
         <%-- ***************************************************************** --%>
         <%-- Media files grid --%>
 
-        <div id="imageGrid" class="panel panel-default">
-            <div class="panel-body">
+        <div id="imageGrid" class="card">
+            <div class="card-body">
 
                 <ul>
 
@@ -85,7 +85,7 @@
                                     </s:if>
 
                                     <s:else>
-                                        <span class="glyphicon glyphicon-file"></span>
+                                        <span class="bi bi-file-earmark"></span>
                                     </s:else>
 
                                 </div>

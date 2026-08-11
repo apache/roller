@@ -74,13 +74,13 @@
                         '<s:property value="#pingTarget.name" />',
                         '<s:property value="#pingTarget.pingUrl" />'
                         )">
-                    <span class="glyphicon glyphicon-edit" aria-hidden="true"> </span>
+                    <span class="bi bi-pencil-square" aria-hidden="true"> </span>
                 </a>
             </td>
 
             <td class="rollertable" align="center">
                 <a href="#" onclick="showDeleteModal('<s:property value="#pingTarget.id"/>')">
-                    <span class="glyphicon glyphicon-trash" aria-hidden="true"> </span>
+                    <span class="bi bi-trash" aria-hidden="true"> </span>
                 </a>
             </td>
 
@@ -94,7 +94,7 @@
         <s:param name="weblog" value="actionWeblog.handle"/>
     </s:url>
     <a href="#" onclick="showAddEditModal()">
-        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"> </span>
+        <span class="bi bi-plus-circle" aria-hidden="true"> </span>
         <s:text name="pingTarget.addTarget"/>
     </a>
 </div>
@@ -123,9 +123,9 @@
                 </div>
 
                 <div class="modal-footer">
-                    <s:submit cssClass="btn btn-danger"
+                    <s:submit theme="simple" cssClass="btn btn-danger"
                               value="%{getText('generic.yes')}" action="commonPingTargets!delete"/>
-                    <button type="button" class="btn" data-dismiss="modal">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <s:text name="generic.cancel"/>
                     </button>
                 </div>
@@ -190,7 +190,7 @@
                     <s:text name="generic.save"/>
                 </button>
 
-                <button type="button" class="btn" data-dismiss="modal">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                     <s:text name="generic.cancel"/>
                 </button>
 

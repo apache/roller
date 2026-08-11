@@ -20,7 +20,7 @@
 <%-- Prevent annoying scrolling. taken from http://stackoverflow.com/a/10548809/3591946 --%>
 <script type="text/javascript">
     $().ready(function () {
-        $("a[href='#'][data-toggle='collapse']").click(function (e) {
+        $("a[href='#'][data-bs-toggle='collapse']").click(function (e) {
             e.preventDefault();
         });
     });
@@ -65,14 +65,14 @@
 
     <%-- permalink --%>
     <s:if test="actionName == 'entryEdit'">
-        <div class="form-group">
+        <div class="row mb-3">
 
             <label class="col-md-3" for="entry_bean_permalink">
                 <s:text name="weblogEdit.permaLink"/>
             </label>
 
             <div class="controls col-md-9">
-                <p class="form-control-static">
+                <p class="form-control-plaintext">
                     <s:if test="bean.published">
                         <a id="entry_bean_permalink" href='<s:property value="entry.permalink" />'>
                             <s:property value="entry.permalink"/>
@@ -106,42 +106,42 @@
     </s:else>
 
     <%-- status --%>
-    <div class="form-group">
+    <div class="row mb-3">
         <label class="col-md-3" for="weblogEdit.status"><s:text name="weblogEdit.status"/></label>
 
         <div class="controls col-md-9">
 
-            <p class="form-control-static">
+            <p class="form-control-plaintext">
                 <s:if test="bean.published">
-                    <span class="label label-success">
+                    <span class="label text-bg-success">
                         <s:text name="weblogEdit.published"/>
                         (<s:text name="weblogEdit.updateTime"/>
                         <s:date name="entry.updateTime"/>)
                     </span>
                 </s:if>
                 <s:elseif test="bean.draft">
-                    <span class="label label-info">
+                    <span class="label text-bg-info">
                         <s:text name="weblogEdit.draft"/>
                         (<s:text name="weblogEdit.updateTime"/>
                         <s:date name="entry.updateTime"/>)
                     </span>
                 </s:elseif>
                 <s:elseif test="bean.pending">
-                    <span class="label label-warning">
+                    <span class="label text-bg-warning">
                         <s:text name="weblogEdit.pending"/>
                         (<s:text name="weblogEdit.updateTime"/>
                         <s:date name="entry.updateTime"/>)
                     </span>
                 </s:elseif>
                 <s:elseif test="bean.scheduled">
-                    <span class="label label-info">
+                    <span class="label text-bg-info">
                         <s:text name="weblogEdit.scheduled"/>
                         (<s:text name="weblogEdit.updateTime"/>
                         <s:date name="entry.updateTime"/>)
                     </span>
                 </s:elseif>
                 <s:else>
-                    <span class="label label-danger"><s:text name="weblogEdit.unsaved"/></span>
+                    <span class="label text-bg-danger"><s:text name="weblogEdit.unsaved"/></span>
                 </s:else>
             </p>
 
@@ -150,7 +150,7 @@
     </div>
 
 
-    <div class="panel-group" id="accordion">
+    <div class="accordion" id="accordion">
 
             <%-- Weblog editor --%>
 
@@ -160,17 +160,17 @@
 
         <s:if test="!entryPlugins.isEmpty">
 
-            <div class="panel panel-default" id="panel-plugins">
-                <div class="panel-heading">
+            <div class="card" id="panel-plugins">
+                <div class="card-header">
 
-                    <h4 class="panel-title">
-                        <a class="collapsed" data-toggle="collapse" data-target="#collapsePlugins" href="#">
+                    <h4 class="card-title">
+                        <a class="collapsed text-body text-decoration-none" data-bs-toggle="collapse" data-bs-target="#collapsePlugins" href="#">
                             <s:text name="weblogEdit.pluginsToApply"/> </a>
                     </h4>
 
                 </div>
-                <div id="collapsePlugins" class="panel-collapse collapse">
-                    <div class="panel-body">
+                <div id="collapsePlugins" class="collapse">
+                    <div class="card-body">
 
                         <s:checkboxlist name="bean.plugins" list="entryPlugins" listKey="name" listValue="name"/>
 
@@ -182,37 +182,37 @@
 
             <%-- Advanced settings --%>
 
-        <div class="panel panel-default" id="panel-settings">
-            <div class="panel-heading">
+        <div class="card" id="panel-settings">
+            <div class="card-header">
 
-                <h4 class="panel-title">
-                    <a class="collapsed" data-toggle="collapse" data-parent="#collapseAdvanced"
+                <h4 class="card-title">
+                    <a class="collapsed text-body text-decoration-none" data-bs-toggle="collapse" data-bs-parent="#collapseAdvanced"
                        href="#collapseAdvanced">
                         <s:text name="weblogEdit.miscSettings"/> </a>
                 </h4>
 
             </div>
-            <div id="collapseAdvanced" class="panel-collapse collapse">
-                <div class="panel-body">
+            <div id="collapseAdvanced" class="collapse">
+                <div class="card-body">
 
-                    <div class="form-group">
+                    <div class="row mb-3">
 
-                        <label class="control-label col-md-3"><s:text name="weblogEdit.pubTime"/></label>
+                        <label class="col-form-label col-md-3"><s:text name="weblogEdit.pubTime"/></label>
 
                         <div class="controls col-md-9">
 
-                            <s:select theme="simple" name="bean.hours" list="hoursList"/> :
-                            <s:select theme="simple" name="bean.minutes" list="minutesList"/> :
-                            <s:select theme="simple" name="bean.seconds" list="secondsList"/> <br/>
+                            <s:select theme="bootstrap" name="bean.hours" list="hoursList"/> :
+                            <s:select theme="bootstrap" name="bean.minutes" list="minutesList"/> :
+                            <s:select theme="bootstrap" name="bean.seconds" list="secondsList"/> <br/>
 
                             <img src="<s:url value='/roller-ui/images/spacer.png' />"
                                  alt="spacer" style="min-height: 0.3em"/>
 
                             <div class="input-group">
                                 <s:textfield name="bean.dateString" readonly="true" cssStyle="width:15em"
-                                             theme="simple" cssClass="date-picker form-control"/>
-                                <label for="bean.dateString" class="input-group-addon btn" style="width:3em">
-                                    <span class="glyphicon glyphicon-calendar"></span>
+                                             theme="bootstrap" cssClass="date-picker form-control"/>
+                                <label for="bean.dateString" class="input-group-text btn" style="width:3em">
+                                    <span class="bi bi-calendar"></span>
                                 </label>
                             </div>
 
@@ -261,28 +261,28 @@
     <%-- The button box --%>
 
     <%-- save draft --%>
-    <s:submit cssClass="btn btn-warning"
+    <s:submit theme="simple" cssClass="btn btn-warning"
               value="%{getText('weblogEdit.save')}"
               action="%{#mainAction}!saveDraft"/>
 
     <s:if test="actionName == 'entryEdit'">
 
         <%-- preview mode --%>
-        <input class="btn btn-default" type="button" name="fullPreview"
+        <input class="btn btn-outline-secondary" type="button" name="fullPreview"
                value="<s:text name='weblogEdit.fullPreviewMode' />"
                onclick="fullPreviewMode()"/>
     </s:if>
     <s:if test="userAnAuthor">
 
         <%-- publish --%>
-        <s:submit cssClass="btn btn-success"
+        <s:submit theme="simple" cssClass="btn btn-success"
                   value="%{getText('weblogEdit.post')}"
                   action="%{#mainAction}!publish"/>
     </s:if>
     <s:else>
 
         <%-- submit for review --%>
-        <s:submit cssClass="btn btn-info"
+        <s:submit theme="simple" cssClass="btn btn-info"
                   value="%{getText('weblogEdit.submitForReview')}"
                   action="%{#mainAction}!publish"/>
     </s:else>
@@ -339,29 +339,29 @@
 
                 <div class="modal-body">
 
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">
                             <s:text name="weblogEntryRemove.entryTitle"/>
                         </label>
                         <div class="col-sm-9 controls">
-                            <p class="form-control-static" style="padding-top:0px" id="postTitleLabel"></p>
+                            <p class="form-control-plaintext" style="padding-top:0px" id="postTitleLabel"></p>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">
                             <s:text name="weblogEntryRemove.entryId"/>
                         </label>
                         <div class="col-sm-9 controls">
-                            <p class="form-control-static" style="padding-top:0px" id="postIdLabel"></p>
+                            <p class="form-control-plaintext" style="padding-top:0px" id="postIdLabel"></p>
                         </div>
                     </div>
 
                 </div>
 
                 <div class="modal-footer">
-                    <s:submit cssClass="btn" value="%{getText('generic.yes')}"/>
-                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">
+                    <s:submit theme="simple" cssClass="btn btn-outline-secondary" value="%{getText('generic.yes')}"/>
+                    <button type="button" class="btn btn-outline-secondary btn-primary" data-bs-dismiss="modal">
                         <s:text name="generic.no"/>
                     </button>
                 </div>

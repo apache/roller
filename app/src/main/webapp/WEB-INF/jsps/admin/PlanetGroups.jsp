@@ -44,14 +44,14 @@
                         <s:param name="group.id" value="#group.id"/>
                     </s:url>
                     <s:a href="%{groupUrl}">
-                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                        <span class="bi bi-pencil-square" aria-hidden="true"></span>
                         <s:text name='generic.edit'/>
                     </s:a>
                 </td>
 
                 <td>
                     <a href="javascript: void(0);" onclick="confirmDelete('<s:property value="#group.handle"/>')">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"> </span>
+                        <span class="bi bi-x-lg" aria-hidden="true"> </span>
                         <s:text name="generic.delete"/>
                     </a>
                 </td>

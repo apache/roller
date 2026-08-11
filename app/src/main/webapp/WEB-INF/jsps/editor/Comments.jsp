@@ -365,7 +365,7 @@
         <%-- Save changes and cancel buttons --%>
 
         <hr size="1" noshade="noshade"/>
-        <s:submit cssClass="btn btn-primary" value="%{getText('commentManagement.update')}"/>
+        <s:submit theme="simple" cssClass="btn btn-primary" value="%{getText('commentManagement.update')}"/>
 
     </s:form>
 

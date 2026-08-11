@@ -100,7 +100,7 @@
             <s:param name="bean.id" value="#post.id" />
         </s:url>
         <s:a href="%{editUrl}">
-            <span class="glyphicon glyphicon-edit" data-toggle="tooltip" data-placement="top"
+            <span class="bi bi-pencil-square" data-bs-toggle="tooltip" data-bs-placement="top"
                   title="<s:text name='generic.edit'/>">
             </span>
         </s:a>
@@ -142,8 +142,8 @@
         <s:set var="postTitle" value="#post.title" />
         <a href="#"
             onclick="showDeleteModal('<s:property value="postId" />', '<s:property value="postTitle"/>' )">
-            <span class="glyphicon glyphicon-trash"
-                  data-toggle="tooltip" data-placement="top" title="<s:text name='generic.delete'/>">
+            <span class="bi bi-trash"
+                  data-bs-toggle="tooltip" data-bs-placement="top" title="<s:text name='generic.delete'/>">
             </span>
         </a>
     </td>
@@ -201,29 +201,29 @@
                 
                 <div class="modal-body">
 
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">
                             <s:text name="weblogEntryRemove.entryTitle"/>
                         </label>
                         <div class="col-sm-9 controls">
-                            <p class="form-control-static" style="padding-top:0px" id="postTitleLabel"></p>
+                            <p class="form-control-plaintext" style="padding-top:0px" id="postTitleLabel"></p>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label">
+                    <div class="row mb-3">
+                        <label class="col-sm-3 col-form-label">
                             <s:text name="weblogEntryRemove.entryId"/>
                         </label>
                         <div class="col-sm-9 controls">
-                            <p class="form-control-static" style="padding-top:0px" id="postIdLabel"></p>
+                            <p class="form-control-plaintext" style="padding-top:0px" id="postIdLabel"></p>
                         </div>
                     </div>
 
                 </div>
                 
                 <div class="modal-footer">
-                    <s:submit cssClass="btn" value="%{getText('generic.yes')}"/>
-                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">
+                    <s:submit theme="simple" cssClass="btn btn-outline-secondary" value="%{getText('generic.yes')}"/>
+                    <button type="button" class="btn btn-outline-secondary btn-primary" data-bs-dismiss="modal">
                         <s:text name="generic.no" />
                     </button>
                 </div>
