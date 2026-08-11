@@ -588,13 +588,13 @@ limitations under the License.
             </plugin>
 
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-maven-plugin</artifactId>
                 <configuration>
                     <webApp>
                         <contextPath>/roller</contextPath>
                     </webApp>
-                    <jettyXmls>src/test/resources/jetty.xml</jettyXmls>
+                    <jettyXml>src/test/resources/jetty.xml</jettyXml>
                     <systemProperties>
                         <roller.custom.config>
                             ${project.build.directory}/test-classes/roller-jettyrun.properties

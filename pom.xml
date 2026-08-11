@@ -41,9 +41,7 @@ limitations under the License.
 
     <properties>
         <derby.version>10.16.1.1</derby.version>
-        <java-mail.version>1.4.7</java-mail.version>
-        <jaxb.version>2.3.1</jaxb.version>
-        <jetty.plugin.version>10.0.24</jetty.plugin.version> <!-- Jetty 11 requires Jakarta package names -->
+        <jetty.plugin.version>12.0.21</jetty.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <roller.version>6.1.5</roller.version>
@@ -86,8 +84,8 @@ limitations under the License.
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
+                    <groupId>org.eclipse.jetty.ee10</groupId>
+                    <artifactId>jetty-ee10-maven-plugin</artifactId>
                     <version>${jetty.plugin.version}</version>
                 </plugin>
                 <plugin>

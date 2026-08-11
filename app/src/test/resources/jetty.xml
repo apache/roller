@@ -16,14 +16,12 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd">
-
 <!-- Dummy values used only when testing with Jetty via mvn jetty:run -->
 
 <Configure id="Server" class="org.eclipse.jetty.server.Server">
 
     <New id="ds" class="org.eclipse.jetty.plus.jndi.Resource">
-        <Arg> <Ref id="wac_ds"/> </Arg>
+        <Arg><Property name="jetty.webapp.context.path" default="/roller"/></Arg>
         <Arg>jdbc/rollerdb</Arg>
         <Arg>
             <New class="org.apache.commons.dbcp.BasicDataSource">
@@ -36,7 +34,7 @@
     </New>
 
     <New id="mail" class="org.eclipse.jetty.plus.jndi.Resource">
-        <Arg> <Ref id="wac_mail"/> </Arg>
+        <Arg><Property name="jetty.webapp.context.path" default="/roller"/></Arg>
         <Arg>mail/Session</Arg>
         <Arg>
             <New class="org.eclipse.jetty.jndi.factories.MailSessionReference">
