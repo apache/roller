@@ -28,4 +28,9 @@ docker/postgresql-data
 docker/roller-data
 assembly-release/release.sh
 it-selenium/overlays/
+
+# Playwright MCP session output
+.playwright-mcp/
+
+# runtime logs from mvn jetty:run
 logs/

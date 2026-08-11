@@ -22,10 +22,10 @@ on:
     branches: [master]
   pull_request:
     branches: [master, 'feature/**']
-    
+
 jobs:
   build-test:
-    name: Build+Test on Linux/JDK ${{ matrix.java }} 
+    name: Build+Test on Linux/JDK ${{ matrix.java }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -35,16 +35,11 @@ jobs:
         java: [ '17', '21', '25' ]
 
     steps:
-      - name: Set up JDK ${{ matrix.java }} 
+      - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ matrix.java }} 
+          java-version: ${{ matrix.java }}
           distribution: 'zulu'
-
-      - name: Setup Xvfb
-        run: |
-          echo "DISPLAY=:99.0" >> $GITHUB_ENV
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
       - name: Checkout Project
         uses: actions/checkout@v4
@@ -56,23 +51,12 @@ jobs:
       - name: Build Roller and run JUnit Tests
         run: mvn -V -ntp install
 
-      - name: Run Integration Tests
-        run: |
-          cd it-selenium
-          mvn -V -ntp install
-
       - name: Publish JUnit Report
         uses: test-summary/action@v2
         if: always()
         with:
           paths: "app/target/surefire-reports/TEST-*.xml"
 
-      - name: Publish IT Report
-        uses: test-summary/action@v2
-        if: always()
-        with:
-          paths: "it-selenium/target/failsafe-reports/TEST-*.xml"
-      
       # only on integration and only once in this matrix
       - name: Upload Dev Build on Integration
         if: ${{ (matrix.java == '17') && (github.event_name == 'push') }}
@@ -82,3 +66,134 @@ jobs:
           path: ./app/target/roller.war
           retention-days: 90
           if-no-files-found: error
+
+  # Browser tests against Roller's own user database: the new-user journey
+  # (register, create a weblog, publish and read an entry). The OIDC tests
+  # skip themselves on this instance, and roller.expectedAuth turns any other
+  # unexpected skip into a failure.
+  ui-tests-db:
+    name: UI tests (db)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Checkout Project
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: false
+          show-progress: false
+
+      - name: Build Roller
+        run: mvn -V -ntp -DskipTests install
+
+      - name: Start Roller with Jetty and Derby
+        run: |
+          mvn -ntp jetty:run > jetty.log 2>&1 &
+          timeout 300 bash -c 'until curl -sf http://localhost:8080/roller/ > /dev/null; do sleep 5; done'
+
+      - name: Install Playwright browser
+        working-directory: it-playwright
+        run: mvn -ntp test-compile exec:java -Dexec.classpathScope=test -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
+
+      - name: Run UI tests
+        working-directory: it-playwright
+        run: mvn -ntp verify -Droller.expectedAuth=db
+
+      - name: Publish UI Test Report
+        uses: test-summary/action@v2
+        if: always()
+        with:
+          paths: "it-playwright/target/failsafe-reports/TEST-*.xml"
+
+      - name: Upload traces and server log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-tests-db-diagnostics
+          path: |
+            it-playwright/target/playwright-traces
+            jetty.log
+          if-no-files-found: ignore
+
+  # Browser tests against the Docker Compose stack (Tomcat + PostgreSQL +
+  # Keycloak), once per authentication method the stack supports: pure OIDC,
+  # and db-oidc where form login and OIDC are offered side by side. In db-oidc
+  # mode every suite runs: the journey registers the first user through the
+  # form before OIDC sign-in provisions any accounts.
+  ui-tests-oidc:
+    name: UI tests (${{ matrix.auth }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    strategy:
+      fail-fast: false
+      matrix:
+        auth: [ 'oidc', 'db-oidc' ]
+
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Checkout Project
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: false
+          show-progress: false
+
+      # Roller discovers Keycloak's endpoints at http://keycloak:9080 and
+      # redirects the browser to them, so the runner must resolve the compose
+      # hostname too
+      - name: Resolve Keycloak's hostname on the runner
+        run: echo "127.0.0.1 keycloak" | sudo tee -a /etc/hosts
+
+      - name: Build and start Roller, PostgreSQL and Keycloak
+        run: docker compose up -d --build
+        env:
+          AUTHENTICATION_METHOD: ${{ matrix.auth }}
+
+      # a fresh database lands on Roller's auto-installer, which waits for a
+      # click; drive it so the login page is reachable
+      - name: Wait for Roller and install its database
+        run: |
+          timeout 300 bash -c 'until curl -sf http://localhost:8080/ > /dev/null; do sleep 5; done'
+          curl -sf -X POST http://localhost:8080/roller-ui/install/install!create.rol > /dev/null
+          curl -sf -X POST http://localhost:8080/roller-ui/install/install!bootstrap.rol > /dev/null
+
+      - name: Install Playwright browser
+        working-directory: it-playwright
+        run: mvn -ntp test-compile exec:java -Dexec.classpathScope=test -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
+
+      - name: Run UI tests
+        working-directory: it-playwright
+        run: mvn -ntp verify -Droller.baseUrl=http://localhost:8080/ -Droller.expectedAuth=${{ matrix.auth }}
+
+      - name: Publish UI Test Report
+        uses: test-summary/action@v2
+        if: always()
+        with:
+          paths: "it-playwright/target/failsafe-reports/TEST-*.xml"
+
+      - name: Collect container logs
+        if: failure()
+        run: docker compose logs > compose.log
+
+      - name: Upload traces and container logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-tests-${{ matrix.auth }}-diagnostics
+          path: |
+            it-playwright/target/playwright-traces
+            compose.log
+          if-no-files-found: ignore
