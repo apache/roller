@@ -34,6 +34,9 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 /**
  * Builds OAuth2/OIDC client registrations from Roller properties.
  *
+ * <p>OIDC discovery is deferred until first access so the identity provider
+ * does not need to be reachable during application startup.
+ *
  * <p>Properties follow the pattern:
  * <pre>
  * oidc.{registrationId}.client-id=...
@@ -48,40 +51,63 @@ public class RollerClientRegistrationRepository implements ClientRegistrationRep
     private static final Log log = LogFactory.getLog(RollerClientRegistrationRepository.class);
     private static final String PREFIX = "oidc.";
 
-    private final Map<String, ClientRegistration> registrations;
-
-    public RollerClientRegistrationRepository() {
-        this.registrations = buildRegistrations();
-        if (!registrations.isEmpty()) {
-            log.info("Configured OIDC providers: " + registrations.keySet());
-        }
-    }
+    private volatile Map<String, ClientRegistration> registrations;
 
     @Override
     public ClientRegistration findByRegistrationId(String registrationId) {
-        return registrations.get(registrationId);
+        return getRegistrations().get(registrationId);
     }
 
     @Override
     public Iterator<ClientRegistration> iterator() {
-        return registrations.values().iterator();
+        return getRegistrations().values().iterator();
     }
 
+    /**
+     * Discovery runs on first use and the result is cached, but only once every
+     * configured provider resolved. A provider that was unreachable is retried
+     * on the next call rather than being cached as permanently broken.
+     */
     public Map<String, ClientRegistration> getRegistrations() {
-        return Collections.unmodifiableMap(registrations);
+        Map<String, ClientRegistration> cached = registrations;
+        if (cached != null) {
+            return cached;
+        }
+        synchronized (this) {
+            if (registrations != null) {
+                return registrations;
+            }
+            Map<String, ClientRegistration> built = buildRegistrations();
+            if (built.size() < configuredProviderIds().size()) {
+                return Collections.unmodifiableMap(built);
+            }
+            registrations = Collections.unmodifiableMap(built);
+            if (!registrations.isEmpty()) {
+                log.info("Configured OIDC providers: " + registrations.keySet());
+            }
+            return registrations;
+        }
     }
 
-    private Map<String, ClientRegistration> buildRegistrations() {
+    /** Registration ids that have an {@code oidc.<id>.client-id} property set. */
+    static Map<String, String> configuredProviderIds() {
         Map<String, String> registrationIds = new LinkedHashMap<>();
-
         Enumeration<Object> keys = WebloggerConfig.keys();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
             if (key.startsWith(PREFIX) && key.endsWith(".client-id")) {
                 String id = key.substring(PREFIX.length(), key.length() - ".client-id".length());
-                registrationIds.put(id, WebloggerConfig.getProperty(key));
+                String clientId = WebloggerConfig.getProperty(key);
+                if (clientId != null && !clientId.isBlank()) {
+                    registrationIds.put(id, clientId);
+                }
             }
         }
+        return registrationIds;
+    }
+
+    private Map<String, ClientRegistration> buildRegistrations() {
+        Map<String, String> registrationIds = configuredProviderIds();
 
         Map<String, ClientRegistration> result = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : registrationIds.entrySet()) {
@@ -112,7 +138,7 @@ public class RollerClientRegistrationRepository implements ClientRegistrationRep
                 result.put(id, builder.build());
                 log.info("Registered OIDC provider: " + id + " (issuer: " + issuerUri + ")");
             } catch (Exception e) {
-                log.error("Failed to configure OIDC provider '" + id + "' (issuer: " + issuerUri + "): " + e.getMessage());
+                log.error("Failed to configure OIDC provider '" + id + "' (issuer: " + issuerUri + ")", e);
             }
         }
 

@@ -35,9 +35,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
-import org.apache.roller.weblogger.ui.core.security.RollerOAuth2SuccessHandler;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.struts2.ActionContext;
 import org.apache.struts2.convention.annotation.AllowedMethods;
@@ -162,27 +160,6 @@ public class Register extends UIAction {
                 }
             }
 
-            // Pre-populate from OIDC claims if arriving from OIDC login
-            OidcUser oidcUser = (OidcUser) getServletRequest().getSession()
-                    .getAttribute(RollerOAuth2SuccessHandler.OIDC_USER_ATTR);
-            if (oidcUser != null) {
-                if (oidcUser.getEmail() != null) {
-                    getBean().setEmailAddress(oidcUser.getEmail());
-                }
-                if (oidcUser.getFullName() != null) {
-                    getBean().setFullName(oidcUser.getFullName());
-                }
-                if (oidcUser.getPreferredUsername() != null) {
-                    getBean().setUserName(oidcUser.getPreferredUsername());
-                    getBean().setScreenName(oidcUser.getPreferredUsername());
-                }
-                String oidcSubject = (String) getServletRequest().getSession()
-                        .getAttribute(RollerOAuth2SuccessHandler.OIDC_SUBJECT_ATTR);
-                if (oidcSubject != null) {
-                    getBean().setOpenIdUrl(oidcSubject);
-                }
-            }
-            
         } catch (Exception ex) {
             log.error("Error reading SSO user data", ex);
             addError("error.editing.user", ex.toString());

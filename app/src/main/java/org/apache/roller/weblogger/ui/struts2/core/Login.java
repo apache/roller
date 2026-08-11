@@ -19,14 +19,16 @@
 package org.apache.roller.weblogger.ui.struts2.core;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.ui.core.security.RollerClientRegistrationRepository;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 
 /**
  * Handle user logins.
@@ -66,21 +68,22 @@ public class Login extends UIAction {
         return authMethod.name();
     }
 
+    /**
+     * Providers to offer sign-in buttons for. Only registrations the repository
+     * could actually resolve are listed, so the page never advertises a provider
+     * whose discovery endpoint was unreachable.
+     */
     public List<Map<String, String>> getOidcProviders() {
         List<Map<String, String>> providers = new ArrayList<>();
-        Enumeration<Object> keys = WebloggerConfig.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String) keys.nextElement();
-            if (key.startsWith("oidc.") && key.endsWith(".client-id")) {
-                String id = key.substring("oidc.".length(), key.length() - ".client-id".length());
-                String clientId = WebloggerConfig.getProperty(key);
-                if (clientId != null && !clientId.isBlank()) {
-                    Map<String, String> provider = new LinkedHashMap<>();
-                    provider.put("id", id);
-                    provider.put("name", WebloggerConfig.getProperty("oidc." + id + ".client-name", id));
-                    providers.add(provider);
-                }
-            }
+        RollerClientRegistrationRepository repository = RollerContext.getClientRegistrationRepository();
+        if (repository == null) {
+            return providers;
+        }
+        for (ClientRegistration registration : repository.getRegistrations().values()) {
+            Map<String, String> provider = new LinkedHashMap<>();
+            provider.put("id", registration.getRegistrationId());
+            provider.put("name", registration.getClientName());
+            providers.add(provider);
         }
         return providers;
     }
