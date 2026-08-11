@@ -267,7 +267,7 @@
 
     <servlet>
         <servlet-name>AtomServlet</servlet-name>
-        <servlet-class>com.rometools.propono.atom.server.AtomServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.webservices.atomprotocol.RollerAtomServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -292,7 +292,7 @@
 
     <servlet>
         <servlet-name>XmlRpcServlet</servlet-name>
-        <servlet-class>org.apache.xmlrpc.webserver.XmlRpcServlet</servlet-class>
+        <servlet-class>org.apache.roller.weblogger.webservices.xmlrpc.RollerXmlRpcServlet</servlet-class>
         <init-param>
             <description>
                 Sets whether the servlet supports vendor extensions for XML-RPC.

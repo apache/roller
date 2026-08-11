@@ -385,6 +385,12 @@ limitations under the License.
             <version>${xmlrpc-version}</version>
         </dependency>
 
+        <!-- Still needed: RollerXmlRpcServlet/RollerXmlRpcServletServer use
+             server-side classes (PropertyHandlerMapping, XmlRpcHttpServer, etc.)
+             that live in this artifact. The servlet classes themselves have been
+             forked into Roller so their javax.servlet imports can be migrated
+             to jakarta.servlet in Phase 2. TODO ROL-2183: evaluate whether
+             these server classes can also be forked to fully drop this dep. -->
         <dependency>
             <groupId>org.apache.xmlrpc</groupId>
             <artifactId>xmlrpc-server</artifactId>
