@@ -20,8 +20,8 @@ package org.apache.roller.weblogger.config;
 public enum AuthMethod {
     ROLLERDB("db"),
     LDAP("ldap"),
-    OPENID("openid"),
-    DB_OPENID("db-openid"),
+    OIDC("oidc"),
+    DB_OIDC("db-oidc"),
     CMA("cma");
 
     private final String propertyName;

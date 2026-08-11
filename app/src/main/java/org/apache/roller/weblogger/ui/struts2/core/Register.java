@@ -35,7 +35,9 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
+import org.apache.roller.weblogger.ui.core.security.RollerOAuth2SuccessHandler;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.struts2.ActionContext;
 import org.apache.struts2.convention.annotation.AllowedMethods;
@@ -157,6 +159,27 @@ public class Register extends UIAction {
                     // Only detail we get is username, sadly no LDAP attributes
                     getBean().setUserName(getServletRequest().getUserPrincipal().getName());
                     getBean().setScreenName(getServletRequest().getUserPrincipal().getName());
+                }
+            }
+
+            // Pre-populate from OIDC claims if arriving from OIDC login
+            OidcUser oidcUser = (OidcUser) getServletRequest().getSession()
+                    .getAttribute(RollerOAuth2SuccessHandler.OIDC_USER_ATTR);
+            if (oidcUser != null) {
+                if (oidcUser.getEmail() != null) {
+                    getBean().setEmailAddress(oidcUser.getEmail());
+                }
+                if (oidcUser.getFullName() != null) {
+                    getBean().setFullName(oidcUser.getFullName());
+                }
+                if (oidcUser.getPreferredUsername() != null) {
+                    getBean().setUserName(oidcUser.getPreferredUsername());
+                    getBean().setScreenName(oidcUser.getPreferredUsername());
+                }
+                String oidcSubject = (String) getServletRequest().getSession()
+                        .getAttribute(RollerOAuth2SuccessHandler.OIDC_SUBJECT_ATTR);
+                if (oidcSubject != null) {
+                    getBean().setOpenIdUrl(oidcSubject);
                 }
             }
             
@@ -336,7 +359,8 @@ public class Register extends UIAction {
     public void myValidate() {
         
         // if using external auth, we don't want to error on empty password/username from HTML form.
-        boolean usingSSO = authMethod == AuthMethod.LDAP || authMethod == AuthMethod.CMA;
+        boolean usingSSO = authMethod == AuthMethod.LDAP || authMethod == AuthMethod.CMA
+                || authMethod == AuthMethod.OIDC;
         if (usingSSO) {
             // store an unused marker in the Roller DB for the passphrase in
             // the LDAP or CMA cases, as actual passwords are stored externally
@@ -364,9 +388,9 @@ public class Register extends UIAction {
                 return;
         }
         
-        // User.password does not allow null, so generate one
-        if (getAuthMethod().equals(AuthMethod.OPENID.name()) ||
-                (getAuthMethod().equals(AuthMethod.DB_OPENID.name()) && !StringUtils.isEmpty(getBean().getOpenIdUrl()))) {
+        // User.password does not allow null, so generate one for OIDC users
+        if (getAuthMethod().equals(AuthMethod.OIDC.name()) ||
+                (getAuthMethod().equals(AuthMethod.DB_OIDC.name()) && !StringUtils.isEmpty(getBean().getOpenIdUrl()))) {
             String randomString = RandomStringUtils.randomAlphanumeric(255);
             getBean().setPasswordText(randomString);
             getBean().setPasswordConfirm(randomString);

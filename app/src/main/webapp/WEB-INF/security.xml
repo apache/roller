@@ -49,6 +49,12 @@
         <remember-me services-ref="rollerRememberMeServices"
                      key="715F2448-3176-11DD-ABC6-9CD955D89593"/>
 
+        <!-- OAuth2/OIDC login (active only when oidc.*.client-id properties are configured) -->
+        <oauth2-login client-registration-repository-ref="clientRegistrationRepository"
+                      oidc-user-service-ref="rollerOidcUserService"
+                      authentication-success-handler-ref="oidcSuccessHandler"
+                      login-page="/roller-ui/login.rol"/>
+
         <!-- roller already uses its own salt based CSRF protection-->
         <csrf disabled="true"/>
         
@@ -104,6 +110,16 @@
             </beans:props>
         </beans:property>
     </beans:bean>
+
+    <!-- OAuth2/OIDC beans -->
+    <beans:bean id="clientRegistrationRepository"
+                class="org.apache.roller.weblogger.ui.core.security.RollerClientRegistrationRepository"/>
+
+    <beans:bean id="rollerOidcUserService"
+                class="org.apache.roller.weblogger.ui.core.security.RollerOidcUserService"/>
+
+    <beans:bean id="oidcSuccessHandler"
+                class="org.apache.roller.weblogger.ui.core.security.RollerOAuth2SuccessHandler"/>
 
     <!-- Uncomment & customize below beans if using LDAP
     <beans:bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">

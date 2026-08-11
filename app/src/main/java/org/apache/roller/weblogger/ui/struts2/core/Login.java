@@ -18,10 +18,15 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.struts2.convention.annotation.AllowedMethods;
 
 /**
  * Handle user logins.
@@ -36,7 +41,7 @@ import org.apache.struts2.convention.annotation.AllowedMethods;
  */
 // TODO: make this work @AllowedMethods({"execute"})
 public class Login extends UIAction {
-    
+
     private String error = null;
 
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
@@ -50,7 +55,7 @@ public class Login extends UIAction {
     public boolean isUserRequired() {
         return false;
     }
-    
+
     // override default security, we do not require an action weblog
     @Override
     public boolean isWeblogRequired() {
@@ -61,22 +66,37 @@ public class Login extends UIAction {
         return authMethod.name();
     }
 
-    @Override
-    public String execute() {
-        
-        // set action error message if there was login error
-        if(getError() != null) {
-            if (authMethod == AuthMethod.OPENID) {
-                addError("error.unmatched.openid");
-            } else {
-                addError("error.password.mismatch");
+    public List<Map<String, String>> getOidcProviders() {
+        List<Map<String, String>> providers = new ArrayList<>();
+        Enumeration<Object> keys = WebloggerConfig.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            if (key.startsWith("oidc.") && key.endsWith(".client-id")) {
+                String id = key.substring("oidc.".length(), key.length() - ".client-id".length());
+                String clientId = WebloggerConfig.getProperty(key);
+                if (clientId != null && !clientId.isBlank()) {
+                    Map<String, String> provider = new LinkedHashMap<>();
+                    provider.put("id", id);
+                    provider.put("name", WebloggerConfig.getProperty("oidc." + id + ".client-name", id));
+                    providers.add(provider);
+                }
             }
         }
-        
+        return providers;
+    }
+
+    @Override
+    public String execute() {
+
+        // set action error message if there was login error
+        if(getError() != null) {
+            addError("error.password.mismatch");
+        }
+
         return SUCCESS;
     }
 
-    
+
     public String getError() {
         return error;
     }
@@ -84,5 +104,5 @@ public class Login extends UIAction {
     public void setError(String error) {
         this.error = error;
     }
-    
+
 }
