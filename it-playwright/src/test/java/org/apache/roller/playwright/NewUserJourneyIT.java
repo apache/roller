@@ -96,8 +96,13 @@ class NewUserJourneyIT extends BaseIT {
     private static final String MEDIA_UPLOAD_SUBMIT = "#uploadButton";
     private static final String MEDIA_THUMBNAIL = "img.mediaFileImage";
 
+    // OPML bookmark import form
+    private static final String BOOKMARKS_IMPORT_PAGE = "roller-ui/authoring/bookmarksImport.rol?weblog=" + BLOG_HANDLE;
+    private static final String OPML_FILE_INPUT = "input[name='opmlFile']";
+    private static final String OPML_IMPORT_SUBMIT = "input.btn-primary[type='submit']";
+
     @Test
-    @DisplayName("registers an account, creates a weblog, publishes an entry, and uploads a media file")
+    @DisplayName("registers an account, creates a weblog, publishes an entry, uploads a media file, and imports bookmarks")
     void firstUserCanRegisterAndPublish() {
         goTo(LOGIN_PAGE);
         assumeTrue(page.locator(LOGIN_USERNAME).count() > 0,
@@ -110,6 +115,7 @@ class NewUserJourneyIT extends BaseIT {
         assertEntryOnBlog(BLOG_HANDLE, ENTRY_TITLE, ENTRY_TEXT);
         enableUploads();
         uploadMediaFile();
+        importBookmarks();
     }
 
     private void register() {
@@ -191,6 +197,37 @@ class NewUserJourneyIT extends BaseIT {
             Path png = Files.createTempFile("roller-upload", ".png");
             ImageIO.write(new BufferedImage(8, 8, BufferedImage.TYPE_INT_RGB), "png", png.toFile());
             return png;
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private void importBookmarks() {
+        goTo(BOOKMARKS_IMPORT_PAGE);
+        page.locator(OPML_FILE_INPUT).setInputFiles(opmlFile());
+        page.locator(OPML_IMPORT_SUBMIT).click();
+
+        // a successful import lands on the blogroll page with a new
+        // imported-<timestamp> blogroll to switch to; poll rather than
+        // sampling the content once, the redirect can still be rendering
+        assertThat(page).hasTitle(Pattern.compile("Blogroll"));
+        page.waitForFunction("() => /imported-\\d+/.test(document.body.innerHTML)");
+    }
+
+    private Path opmlFile() {
+        try {
+            Path opml = Files.createTempFile("roller-bookmarks", ".opml");
+            Files.writeString(opml, """
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <opml version="1.1">
+                        <head><title>Journey Blogroll</title></head>
+                        <body>
+                            <outline text="Apache Roller" type="link" url="https://roller.apache.org/"/>
+                            <outline text="Apache Software Foundation" type="link" url="https://www.apache.org/"/>
+                        </body>
+                    </opml>
+                    """);
+            return opml;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
