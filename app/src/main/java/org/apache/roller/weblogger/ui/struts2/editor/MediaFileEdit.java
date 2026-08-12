@@ -29,28 +29,27 @@ import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.struts2.action.UploadedFilesAware;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.dispatcher.multipart.UploadedFile;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+
+import java.util.List;
 
 /**
  * Edits metadata for a media file.
  */
 @SuppressWarnings("serial")
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class MediaFileEdit extends MediaFileBase {
+public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
 
     private static Log log = LogFactory.getLog(MediaFileEdit.class);
     private MediaFileBean bean = new MediaFileBean();
     private MediaFileDirectory directory;
 
-    // file uploaded by the user, if applicable
-    private File uploadedFile = null;
-
-    // content types for upload file
-    private String uploadedFileContentType = null;
-
-    // filename for uploaded file
-    private String uploadedFileName = null;
+    // replacement file uploaded by the user, if applicable, injected
+    // by the actionFileUpload interceptor
+    private UploadedFile uploadedFile = null;
 
     public MediaFileEdit() {
         this.actionName = "mediaFileEdit";
@@ -73,6 +72,11 @@ public class MediaFileEdit extends MediaFileBase {
             log.error("Error looking up media file directory", ex);
         }
 
+    }
+
+    @Override
+    public void withUploadedFiles(List<UploadedFile> uploadedFiles) {
+        this.uploadedFile = uploadedFiles.isEmpty() ? null : uploadedFiles.get(0);
     }
 
     /**
@@ -122,11 +126,12 @@ public class MediaFileEdit extends MediaFileBase {
                 MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
                 bean.copyTo(mediaFile);
 
-                if (uploadedFile != null) {
-                    mediaFile.setLength(this.uploadedFile.length());
-                    mediaFile.setContentType(this.uploadedFileContentType);
+                if (uploadedFile != null
+                        && uploadedFile.getContent() instanceof File uploadFile) {
+                    mediaFile.setLength(uploadFile.length());
+                    mediaFile.setContentType(uploadedFile.getContentType());
                     manager.updateMediaFile(getActionWeblog(), mediaFile,
-                            new FileInputStream(this.uploadedFile));
+                            new FileInputStream(uploadFile));
                 } else {
                     manager.updateMediaFile(getActionWeblog(), mediaFile);
                 }
@@ -173,48 +178,4 @@ public class MediaFileEdit extends MediaFileBase {
         this.directory = directory;
     }
 
-    /**
-     * @return the uploadedFile
-     */
-    public File getUploadedFile() {
-        return uploadedFile;
-    }
-
-    /**
-     * @param uploadedFile
-     *            the uploadedFile to set
-     */
-    public void setUploadedFile(File uploadedFile) {
-        this.uploadedFile = uploadedFile;
-    }
-
-    /**
-     * @return the uploadedFileContentType
-     */
-    public String getUploadedFileContentType() {
-        return uploadedFileContentType;
-    }
-
-    /**
-     * @param uploadedFileContentType
-     *            the uploadedFileContentType to set
-     */
-    public void setUploadedFileContentType(String uploadedFileContentType) {
-        this.uploadedFileContentType = uploadedFileContentType;
-    }
-
-    /**
-     * @return the uploadedFileName
-     */
-    public String getUploadedFileName() {
-        return uploadedFileName;
-    }
-
-    /**
-     * @param uploadedFileName
-     *            the uploadedFileName to set
-     */
-    public void setUploadedFileName(String uploadedFileName) {
-        this.uploadedFileName = uploadedFileName;
-    }
 }
