@@ -471,7 +471,7 @@ public class RollerAtomHandler implements AtomHandler {
                             User inUser = roller.getUserManager().getUserByUserName(userID);
                             if (inUser.getEnabled()) {
                                 String password = userPass.substring(p+1);
-                                valid = RollerContext.getPasswordEncoder().matches(password, user.getPassword());
+                                valid = RollerContext.getPasswordEncoder().matches(password, inUser.getPassword());
                             }
                         }
                     }
