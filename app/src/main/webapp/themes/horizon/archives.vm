@@ -1,1 +1,28 @@
-<!doctype html><html lang="en"><head>#includeTemplate($model.weblog "standard_head")<title>Archives — $model.weblog.name</title></head><body>#includeTemplate($model.weblog "standard_header")<main id="content" class="article-shell"><header class="page-heading"><p class="eyebrow">Since the beginning</p><h1>Archives</h1><p>Browse the complete history of $model.weblog.name.</p></header><div class="archive-calendar">#showWeblogEntryCalendarBig($model.weblog "nil")</div><section class="recent"><h2>Recent posts</h2>#set($recentEntries=$model.weblog.getRecentWeblogEntries("nil",30))<ol>#foreach($recentEntry in $recentEntries)<li><a href="$recentEntry.permalink">$recentEntry.title</a></li>#end</ol></section></main>#includeTemplate($model.weblog "standard_footer")</body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>Archives — $model.weblog.name</title>
+  </head>
+  <body>
+    #includeTemplate($model.weblog "standard_header")
+    <main id="content" class="article-shell">
+      <header class="page-heading">
+        <p class="eyebrow">Since the beginning</p>
+        <h1>Archives</h1>
+        <p>Browse the complete history of $model.weblog.name.</p>
+      </header>
+      <div class="archive-calendar">#showWeblogEntryCalendarBig($model.weblog "nil")</div>
+      <section class="recent">
+        <h2>Recent posts</h2>
+        #set($recentEntries=$model.weblog.getRecentWeblogEntries("nil",30))
+        <ol>
+          #foreach($recentEntry in $recentEntries)
+          <li><a href="$recentEntry.permalink">$recentEntry.title</a></li>
+          #end
+        </ol>
+      </section>
+    </main>
+    #includeTemplate($model.weblog "standard_footer")
+  </body>
+</html>

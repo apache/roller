@@ -1,1 +1,38 @@
-<!doctype html><html lang="en"><head>#includeTemplate($model.weblog "standard_head")<title>$model.weblog.name#if($model.weblog.tagline) / $model.weblog.tagline#end</title></head><body>#includeTemplate($model.weblog "standard_header")<main id="content"><header class="issue-header"><div><p class="label">INDEPENDENT WEBLOG / EST. 2002</p><h1>Ideas,<br>adventures,<br><span>&amp; source code.</span></h1></div><div class="issue-note">#if($model.weblog.tagline)<p>$model.weblog.tagline</p>#end<a href="$url.feed.entries.atom">SUBSCRIBE TO THE SIGNAL →</a></div></header><div class="publication-grid">#includeTemplate($model.weblog "sidebar")<section class="entries" aria-label="Latest dispatches">#set($pager=$model.getWeblogEntriesPager())#showWeblogEntriesPager($pager)<nav class="pager">#showNextPrevEntriesControl($pager)</nav></section></div></main>#includeTemplate($model.weblog "standard_footer")</body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>$model.weblog.name#if($model.weblog.tagline) / $model.weblog.tagline#end</title>
+  </head>
+  <body>
+    #includeTemplate($model.weblog "standard_header")
+    <main id="content">
+      <header class="issue-header">
+        <div>
+          <p class="label">INDEPENDENT WEBLOG / EST. 2002</p>
+          <h1>
+            Ideas,
+            <br />
+            adventures,
+            <br />
+            <span>&amp; source code.</span>
+          </h1>
+        </div>
+        <div class="issue-note">
+          #if($model.weblog.tagline)
+          <p>$model.weblog.tagline</p>
+          #end
+          <a href="$url.feed.entries.atom">SUBSCRIBE TO THE SIGNAL →</a>
+        </div>
+      </header>
+      <div class="publication-grid">
+        #includeTemplate($model.weblog "sidebar")
+        <section class="entries" aria-label="Latest dispatches">
+          #set($pager=$model.getWeblogEntriesPager())#showWeblogEntriesPager($pager)
+          <nav class="pager">#showNextPrevEntriesControl($pager)</nav>
+        </section>
+      </div>
+    </main>
+    #includeTemplate($model.weblog "standard_footer")
+  </body>
+</html>

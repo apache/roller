@@ -1,1 +1,11 @@
-<footer class="site-footer"><div><strong>$model.weblog.name</strong><p>#if($model.weblog.tagline)$model.weblog.tagline#else Stories worth keeping.#end</p></div><div class="footer-links"><a href="$url.feed.entries.atom">Atom feed</a><a href="$url.home">Home</a></div><small>&copy; $utils.formatDate($utils.now, "yyyy") $model.weblog.creator.fullName</small></footer>
+<footer class="site-footer">
+  <div>
+    <strong>$model.weblog.name</strong>
+    <p>#if($model.weblog.tagline)$model.weblog.tagline#else Stories worth keeping.#end</p>
+  </div>
+  <div class="footer-links">
+    <a href="$url.feed.entries.atom">Atom feed</a>
+    <a href="$url.home">Home</a>
+  </div>
+  <small>&copy; $utils.formatDate($utils.now, "yyyy") $model.weblog.creator.fullName</small>
+</footer>

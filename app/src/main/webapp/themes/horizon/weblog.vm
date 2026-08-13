@@ -1,6 +1,27 @@
-<!doctype html><html lang="en"><head>#includeTemplate($model.weblog "standard_head")<title>$model.weblog.name#if($model.weblog.tagline) — $model.weblog.tagline#end</title></head><body>
-#includeTemplate($model.weblog "standard_header")
-<main id="content" class="page-shell">
-  <section class="intro"><p class="eyebrow">Notes from the journey</p><h1>$model.weblog.name</h1>#if($model.weblog.tagline)<p class="lede">$model.weblog.tagline</p>#end</section>
-  <div class="layout"><section class="post-stream" aria-label="Latest entries">#set($pager=$model.getWeblogEntriesPager())#showWeblogEntriesPager($pager)<nav class="pager" aria-label="Pagination">#showNextPrevEntriesControl($pager)</nav></section>#includeTemplate($model.weblog "sidebar")</div>
-</main>#includeTemplate($model.weblog "standard_footer")</body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>$model.weblog.name#if($model.weblog.tagline) — $model.weblog.tagline#end</title>
+  </head>
+  <body>
+    #includeTemplate($model.weblog "standard_header")
+    <main id="content" class="page-shell">
+      <section class="intro">
+        <p class="eyebrow">Notes from the journey</p>
+        <h1>$model.weblog.name</h1>
+        #if($model.weblog.tagline)
+        <p class="lede">$model.weblog.tagline</p>
+        #end
+      </section>
+      <div class="layout">
+        <section class="post-stream" aria-label="Latest entries">
+          #set($pager=$model.getWeblogEntriesPager())#showWeblogEntriesPager($pager)
+          <nav class="pager" aria-label="Pagination">#showNextPrevEntriesControl($pager)</nav>
+        </section>
+        #includeTemplate($model.weblog "sidebar")
+      </div>
+    </main>
+    #includeTemplate($model.weblog "standard_footer")
+  </body>
+</html>

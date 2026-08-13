@@ -1,1 +1,19 @@
-<!doctype html><html lang="en"><head>#includeTemplate($model.weblog "standard_head")<title>$model.tags / $model.weblog.name</title></head><body>#includeTemplate($model.weblog "standard_header")<main id="content" class="reading-shell"><header class="page-title"><p class="label">FILTER / TAG</p><h1>$model.tags</h1></header>#set($pager=$model.getWeblogEntriesPager())#showWeblogEntriesPager($pager)<nav class="pager">#showNextPrevEntriesControl($pager)</nav></main>#includeTemplate($model.weblog "standard_footer")</body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>$model.tags / $model.weblog.name</title>
+  </head>
+  <body>
+    #includeTemplate($model.weblog "standard_header")
+    <main id="content" class="reading-shell">
+      <header class="page-title">
+        <p class="label">FILTER / TAG</p>
+        <h1>$model.tags</h1>
+      </header>
+      #set($pager=$model.getWeblogEntriesPager())#showWeblogEntriesPager($pager)
+      <nav class="pager">#showNextPrevEntriesControl($pager)</nav>
+    </main>
+    #includeTemplate($model.weblog "standard_footer")
+  </body>
+</html>

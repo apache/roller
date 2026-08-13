@@ -1,1 +1,30 @@
-#foreach($entry in $entries)<article class="dispatch"><div class="dispatch-number">#if($velocityCount<10)0#end$velocityCount</div><div class="dispatch-copy"><div class="meta"><time datetime="$utils.formatDate($entry.pubTime,'yyyy-MM-dd')">$utils.formatDate($entry.pubTime,"yyyy.MM.dd")</time><a href="$url.category($entry.category.name)">/$entry.category.name</a></div>#if($model.permalink)<h1>$entry.title</h1>#else<h2><a href="$entry.permalink">$entry.title</a></h2>#end<div class="entry-content">#if($model.permalink)$entry.displayContent#else$entry.displayContent($url.entry($entry.anchor))#end</div><footer>#if($entry.tags)#foreach($tag in $entry.tags)<a href="$url.tag($tag.name)">[$tag.name]</a>#end#end#set($commentCount=$entry.commentCount)#if($entry.commentsStillAllowed || $commentCount>0)<a href="$url.comments($entry.anchor)">COMMENTS($commentCount)</a>#end#if($utils.isUserAuthorizedToAuthor($entry.website))<a href="$url.editEntry($entry.anchor)">EDIT</a>#end</footer></div></article>#end
+#foreach($entry in $entries)
+<article class="dispatch">
+  <div class="dispatch-number">#if($velocityCount<10)0#end$velocityCount</div>
+  <div class="dispatch-copy">
+    <div class="meta">
+      <time datetime="$utils.formatDate($entry.pubTime,'yyyy-MM-dd')">
+        $utils.formatDate($entry.pubTime,"yyyy.MM.dd")
+      </time>
+      <a href="$url.category($entry.category.name)">/$entry.category.name</a>
+    </div>
+    #if($model.permalink)
+    <h1>$entry.title</h1>
+    #else
+    <h2><a href="$entry.permalink">$entry.title</a></h2>
+    #end
+    <div class="entry-content">
+      #if($model.permalink)$entry.displayContent#else$entry.displayContent($url.entry($entry.anchor))#end
+    </div>
+    <footer>
+      #if($entry.tags)#foreach($tag in $entry.tags)
+      <a href="$url.tag($tag.name)">[$tag.name]</a>
+      #end#end#set($commentCount=$entry.commentCount)#if($entry.commentsStillAllowed || $commentCount>0)
+      <a href="$url.comments($entry.anchor)">COMMENTS($commentCount)</a>
+      #end#if($utils.isUserAuthorizedToAuthor($entry.website))
+      <a href="$url.editEntry($entry.anchor)">EDIT</a>
+      #end
+    </footer>
+  </div>
+</article>
+#end
