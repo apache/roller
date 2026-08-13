@@ -114,12 +114,21 @@ public class RollerAtomHandler implements AtomHandler {
         roller = WebloggerFactory.getWeblogger();
 
         String userName;
-        if ("wsse".equals(WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))) {
+        String authScheme = WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth");
+        if ("wsse".equals(authScheme)) {
             userName = authenticateWSSE(request);
 
-        } else {
-            // default to basic
+        } else if (authScheme == null || authScheme.isBlank() || "basic".equals(authScheme)) {
             userName = authenticateBASIC(request);
+
+        } else {
+            // an upgraded site may still have "oauth" stored in the runtime
+            // config; refuse authentication instead of silently accepting a
+            // scheme the administrator did not choose
+            log.error("Unsupported webservices.atomPubAuth value '" + authScheme
+                    + "' (OAuth 1.0a support was removed); set it to 'basic' or 'wsse'."
+                    + " Refusing AtomPub authentication until it is corrected.");
+            userName = null;
         }
 
         if (userName != null) {

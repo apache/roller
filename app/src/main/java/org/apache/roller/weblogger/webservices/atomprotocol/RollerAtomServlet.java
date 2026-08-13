@@ -177,7 +177,8 @@ public class RollerAtomServlet extends HttpServlet {
             try {
                 if (handler.isCollectionURI(areq)) {
 
-                    if (req.getContentType().startsWith("application/atom+xml")) {
+                    final String contentType = req.getContentType();
+                    if (contentType != null && contentType.startsWith("application/atom+xml")) {
 
                         // parse incoming entry
                         final Entry entry = Atom10Parser.parseEntry(
@@ -211,7 +212,7 @@ public class RollerAtomServlet extends HttpServlet {
                         Atom10Generator.serializeEntry(newEntry, writer);
                         writer.close();
 
-                    } else if (req.getContentType() != null) {
+                    } else if (contentType != null) {
 
                         // get incoming title and slug from HTTP header
                         final String title = areq.getHeader("Title");
