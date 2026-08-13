@@ -38,6 +38,7 @@ oidc.${OIDC_PROVIDER_ID:-keycloak}.client-id=${OIDC_CLIENT_ID}
 oidc.${OIDC_PROVIDER_ID:-keycloak}.client-secret=${OIDC_CLIENT_SECRET}
 oidc.${OIDC_PROVIDER_ID:-keycloak}.issuer-uri=${OIDC_ISSUER_URI}
 oidc.${OIDC_PROVIDER_ID:-keycloak}.client-name=${OIDC_CLIENT_NAME:-Keycloak}
+users.oidc.autoProvision.enabled=${OIDC_AUTO_PROVISION:-true}
 EOF
 fi
 
