@@ -75,11 +75,11 @@
     </s:if>
 
     <s:if test="authMethod == 'OIDC' || authMethod == 'DB_OIDC'">
-        <%-- assigned by the identity provider at login, so shown read-only --%>
-        <s:textfield name="bean.openIdUrl" size="30" maxlength="255"
+        <%-- editable so an administrator can link an account to its provider
+             identity (issuer#subject), the fix account_link_required asks for --%>
+        <s:textfield name="bean.openIdUrl" size="30" maxlength="255" onkeyup="formChanged()"
                      label="%{getText('userSettings.openIdUrl')}"
-                     tooltip="%{getText('userAdmin.tip.openIdUrl')}"
-                     readonly="true" disabled="true" />
+                     tooltip="%{getText('userAdmin.tip.openIdUrl')}" />
     </s:if>
 
     <s:textfield id="bean_email" name="bean.emailAddress" size="30" maxlength="255" onkeyup="formChanged()"

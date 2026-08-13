@@ -21,7 +21,7 @@
 
 <s:if test="authMethod == 'DB_OIDC'">
     <p class="pagetip">
-        <s:text name="userAdmin.noPasswordForOpenID"/>
+        <s:text name="userAdmin.noPasswordForOidc"/>
     </p>
 </s:if>
 
@@ -68,7 +68,7 @@
         <%-- assigned by the identity provider at login, so shown read-only --%>
         <s:textfield label="%{getText('userSettings.openIdUrl')}"
                      name="bean.openIdUrl" size="40" maxlength="255"
-                     readonly="true" disabled="true"
+                     readonly="true"
                      style="width:75%" id="f_openid_identifier"/>
     </s:if>
 

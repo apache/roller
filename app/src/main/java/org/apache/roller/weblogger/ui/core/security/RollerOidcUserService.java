@@ -124,9 +124,15 @@ public class RollerOidcUserService implements OAuth2UserService<OidcUserRequest,
      */
     private User linkExistingUser(UserManager umgr, OidcUser oidcUser, String oidcSubject) throws Exception {
         String username = usernameOf(oidcUser);
-        User existing = umgr.getUserByUserName(username);
+        // include disabled accounts, otherwise a pending or deactivated user
+        // falls through to provisioning and dies on the username constraint
+        User existing = umgr.getUserByUserName(username, null);
         if (existing == null) {
             return null;
+        }
+        if (!Boolean.TRUE.equals(existing.getEnabled())) {
+            throw new OAuth2AuthenticationException(new OAuth2Error("user_disabled"),
+                    "Roller user is disabled: " + username);
         }
 
         String email = oidcUser.getEmail();

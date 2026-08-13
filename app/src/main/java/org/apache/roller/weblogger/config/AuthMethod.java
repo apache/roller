@@ -17,6 +17,9 @@
  */
 package org.apache.roller.weblogger.config;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public enum AuthMethod {
     ROLLERDB("db"),
     LDAP("ldap"),
@@ -34,7 +37,22 @@ public enum AuthMethod {
         return propertyName;
     }
 
+    private static final Log log = LogFactory.getLog(AuthMethod.class);
+    private static boolean warnedAboutOpenId;
+
     public static AuthMethod getAuthMethod(String propertyName) {
+        // OpenID 2.0 was replaced by OIDC; accept the old property values so
+        // an upgraded install boots instead of failing on every request
+        if ("openid".equals(propertyName) || "db-openid".equals(propertyName)) {
+            AuthMethod replacement = "openid".equals(propertyName) ? OIDC : DB_OIDC;
+            if (!warnedAboutOpenId) {
+                warnedAboutOpenId = true;
+                log.warn("authentication.method=" + propertyName + " is no longer supported and is "
+                        + "treated as " + replacement.getPropertyName() + "; update the property and "
+                        + "configure an oidc.{id}.* provider registration");
+            }
+            return replacement;
+        }
         for (AuthMethod test : AuthMethod.values()) {
             if (test.getPropertyName().equals(propertyName)) {
                 return test;

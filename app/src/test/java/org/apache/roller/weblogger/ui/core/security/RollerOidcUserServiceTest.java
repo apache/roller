@@ -283,7 +283,7 @@ class RollerOidcUserServiceTest {
     void existingUsernameIsLinkedWhenEmailIsVerified() throws Exception {
         try (MockedStatic<WebloggerFactory> factory = bootstrappedRoller()) {
             when(userManager.getUserByOpenIdUrl(SUBJECT)).thenReturn(null);
-            when(userManager.getUserByUserName("matt")).thenReturn(existingUser);
+            when(userManager.getUserByUserName("matt", null)).thenReturn(existingUser);
             when(existingUser.getEmailAddress()).thenReturn("matt@example.com");
             when(existingUser.getEnabled()).thenReturn(Boolean.TRUE);
             when(userManager.getRoles(existingUser)).thenReturn(List.of("editor"));
@@ -304,7 +304,8 @@ class RollerOidcUserServiceTest {
     void existingUsernameIsNotLinkedWhenEmailIsUnverified() throws Exception {
         try (MockedStatic<WebloggerFactory> factory = bootstrappedRoller()) {
             when(userManager.getUserByOpenIdUrl(SUBJECT)).thenReturn(null);
-            when(userManager.getUserByUserName("matt")).thenReturn(existingUser);
+            when(userManager.getUserByUserName("matt", null)).thenReturn(existingUser);
+            when(existingUser.getEnabled()).thenReturn(Boolean.TRUE);
             when(existingUser.getEmailAddress()).thenReturn("matt@example.com");
 
             OidcUser user = oidcUser(Map.of(
@@ -322,7 +323,8 @@ class RollerOidcUserServiceTest {
     void existingUsernameIsNotLinkedWhenEmailDiffers() throws Exception {
         try (MockedStatic<WebloggerFactory> factory = bootstrappedRoller()) {
             when(userManager.getUserByOpenIdUrl(SUBJECT)).thenReturn(null);
-            when(userManager.getUserByUserName("matt")).thenReturn(existingUser);
+            when(userManager.getUserByUserName("matt", null)).thenReturn(existingUser);
+            when(existingUser.getEnabled()).thenReturn(Boolean.TRUE);
             when(existingUser.getEmailAddress()).thenReturn("someone-else@example.com");
 
             OidcUser user = oidcUser(Map.of(
@@ -332,6 +334,32 @@ class RollerOidcUserServiceTest {
 
             assertThrows(OAuth2AuthenticationException.class, () -> service.resolveUser(user));
             verify(userManager, never()).saveUser(any(User.class));
+        }
+    }
+
+    /**
+     * Regression: a disabled or pending-activation account with the same
+     * username must refuse the login, not fall through to provisioning and die
+     * on the username unique constraint.
+     */
+    @Test
+    void linkRefusedWhenSameNameAccountIsDisabled() throws Exception {
+        try (MockedStatic<WebloggerFactory> factory = bootstrappedRoller()) {
+            when(userManager.getUserByOpenIdUrl(SUBJECT)).thenReturn(null);
+            when(userManager.getUserByUserName("matt", null)).thenReturn(existingUser);
+            when(existingUser.getEnabled()).thenReturn(Boolean.FALSE);
+
+            OidcUser user = oidcUser(Map.of(
+                    "preferred_username", "matt",
+                    "email", "matt@example.com",
+                    "email_verified", Boolean.TRUE));
+
+            OAuth2AuthenticationException ex =
+                    assertThrows(OAuth2AuthenticationException.class, () -> service.resolveUser(user));
+
+            assertEquals("user_disabled", ex.getError().getErrorCode());
+            verify(userManager, never()).saveUser(any(User.class));
+            verify(userManager, never()).addUser(any(User.class));
         }
     }
 
