@@ -54,7 +54,7 @@ limitations under the License.
         <maven-war.version>3.4.0</maven-war.version>
         <maven-surefire.version>3.5.2</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
-        <rome.version>1.19.0</rome.version> <!-- locked in place since next version removes popono -->
+        <rome.version>1.19.0</rome.version> <!-- ROME core; used for feeds/planet (AtomPub no longer uses Propono) -->
         <slf4j.version>2.0.16</slf4j.version>
         <spring.version>5.3.39</spring.version>
         <spring.security.version>5.8.14</spring.security.version>
@@ -522,11 +522,12 @@ limitations under the License.
             </exclusions>
         </dependency>
 
-        <!-- todo: remove/replace propono -->
+        <!-- Used by Trackback; previously reached the classpath transitively
+             via rome-propono, now declared explicitly since propono was removed. -->
         <dependency>
-            <groupId>com.rometools</groupId>
-            <artifactId>rome-propono</artifactId>
-            <version>${rome.version}</version>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -589,6 +590,15 @@ limitations under the License.
             <groupId>org.instancio</groupId>
             <artifactId>instancio-junit</artifactId>
             <version>5.3.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Jing: RELAX NG validator, used to check AtomWriter output against
+             the RFC 4287 / RFC 5023 schemas in AtomSchemaValidationTest. -->
+        <dependency>
+            <groupId>com.thaiopensource</groupId>
+            <artifactId>jing</artifactId>
+            <version>20091111</version>
             <scope>test</scope>
         </dependency>
 

@@ -1,0 +1,182 @@
+# RELAX NG Compact Syntax Grammar for the Atom Publishing Protocol service
+# document (RFC 5023, Appendix B, the start = appService grammar). Used by
+# AtomSchemaValidationTest to verify that the service documents produced by
+# AtomWriter conform to RFC 5023.
+
+namespace app = "http://www.w3.org/2007/app"
+namespace atom = "http://www.w3.org/2005/Atom"
+namespace xsd = "http://www.w3.org/2001/XMLSchema"
+namespace xhtml = "http://www.w3.org/1999/xhtml"
+namespace local = ""
+
+start = appService
+
+# common:attrs
+
+atomURI = text
+
+appCommonAttributes =
+   attribute xml:base { atomURI }?,
+   attribute xml:lang { atomLanguageTag  }?,
+   attribute xml:space {"default"|"preserved"}?,
+   undefinedAttribute*
+
+atomCommonAttributes = appCommonAttributes
+
+undefinedAttribute = attribute * - (xml:base | xml:space  | xml:lang
+  | local:*) { text }
+
+atomLanguageTag = xsd:string {
+   pattern = "([A-Za-z]{1,8}(-[A-Za-z0-9]{1,8})*)?"
+}
+
+atomDateConstruct =
+    appCommonAttributes,
+    xsd:dateTime
+
+# app:service
+appService =
+   element app:service {
+      appCommonAttributes,
+      ( appWorkspace+
+        & extensionElement* )
+   }
+
+# app:workspace
+
+appWorkspace =
+   element app:workspace {
+      appCommonAttributes,
+      ( atomTitle
+        & appCollection*
+        & extensionSansTitleElement* )
+   }
+
+atomTitle = element atom:title { atomTextConstruct }
+
+# app:collection
+
+appCollection =
+   element app:collection {
+      appCommonAttributes,
+      attribute href { atomURI  },
+      ( atomTitle
+        & appAccept*
+        & appCategories*
+        & extensionSansTitleElement* )
+   }
+
+# app:categories
+
+atomCategory =
+    element atom:category {
+       atomCommonAttributes,
+       attribute term { text },
+       attribute scheme { atomURI }?,
+       attribute label { text }?,
+       undefinedContent
+    }
+
+appInlineCategories =
+    element app:categories {
+        attribute fixed { "yes" | "no" }?,
+        attribute scheme { atomURI }?,
+        (atomCategory*,
+        undefinedContent)
+    }
+
+appOutOfLineCategories =
+    element app:categories {
+        attribute href { atomURI },
+        undefinedContent
+    }
+
+appCategories = appInlineCategories | appOutOfLineCategories
+
+# app:accept
+
+appAccept =
+   element app:accept {
+         appCommonAttributes,
+         ( text? )
+   }
+
+# Simple Extension
+
+simpleSansTitleExtensionElement =
+   element * - (app:*|atom:title) {
+      text
+   }
+
+simpleExtensionElement =
+   element * - (app:*) {
+      text
+   }
+
+# Structured Extension
+
+structuredSansTitleExtensionElement =
+   element * - (app:*|atom:title) {
+      (attribute * { text }+,
+         (text|anyElement)*)
+    | (attribute * { text }*,
+       (text?, anyElement+, (text|anyElement)*))
+   }
+
+structuredExtensionElement =
+   element * - (app:*) {
+      (attribute * { text }+,
+         (text|anyElement)*)
+    | (attribute * { text }*,
+       (text?, anyElement+, (text|anyElement)*))
+   }
+
+# Other Extensibility
+
+extensionSansTitleElement =
+ simpleSansTitleExtensionElement|structuredSansTitleExtensionElement
+
+extensionElement = simpleExtensionElement |
+   structuredExtensionElement
+
+undefinedContent = (text|anyForeignElement)*
+
+# Extensions
+
+anyElement =
+   element * {
+      (attribute * { text }
+       | text
+       | anyElement)*
+   }
+
+anyForeignElement =
+    element * - app:* {
+       (attribute * { text }
+        | text
+        | anyElement)*
+    }
+
+atomPlainTextConstruct =
+    atomCommonAttributes,
+    attribute type { "text" | "html" }?,
+    text
+
+atomXHTMLTextConstruct =
+    atomCommonAttributes,
+    attribute type { "xhtml" },
+    xhtmlDiv
+
+atomTextConstruct = atomPlainTextConstruct | atomXHTMLTextConstruct
+
+anyXHTML = element xhtml:* {
+    (attribute * { text }
+     | text
+     | anyXHTML)*
+}
+
+xhtmlDiv = element xhtml:div {
+  (attribute * { text }
+   | text
+   | anyXHTML)*
+}
