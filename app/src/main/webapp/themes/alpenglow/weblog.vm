@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>$model.weblog.name#if($model.weblog.tagline) — $model.weblog.tagline#end</title>
+  </head>
+  <body>
+    #includeTemplate($model.weblog "standard_header")
+    <main id="content">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="kicker">From Colorado to everywhere</p>
+          <h1>
+            Life is better
+            <br />
+            with a little
+            <br />
+            <em>altitude.</em>
+          </h1>
+          #if($model.weblog.tagline)
+          <p>$model.weblog.tagline</p>
+          #end
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <span class="sun"></span>
+          <span class="ridge ridge-back"></span>
+          <span class="ridge ridge-front"></span>
+        </div>
+      </section>
+      <div class="content-shell">
+        #includeTemplate($model.weblog "sidebar")
+        <section class="post-grid" aria-label="Latest stories">
+          #set($pager=$model.getWeblogEntriesPager())#showWeblogEntriesPager($pager)
+          <nav class="pager">#showNextPrevEntriesControl($pager)</nav>
+        </section>
+      </div>
+    </main>
+    #includeTemplate($model.weblog "standard_footer")
+  </body>
+</html>

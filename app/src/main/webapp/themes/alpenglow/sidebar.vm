@@ -1,0 +1,23 @@
+<aside class="explore">
+  <div>
+    <p class="kicker">The journal</p>
+    #if($model.weblog.about)
+    <div>$model.weblog.about</div>
+    #else
+    <p>Technology, family, powder days, open roads, and everywhere they lead.</p>
+    #end
+  </div>
+  <form method="get" action="$url.search" role="search">
+    <label for="alpine-search">Find a story</label>
+    <div>
+      <input id="alpine-search" name="q" type="search" placeholder="Java, skiing, travel…" />
+      <button>Go</button>
+    </div>
+  </form>
+  #set($mytags=$model.weblog.getPopularTags(-1,12))
+  <div class="topics">
+    #foreach($tag in $mytags)
+    <a href="$url.tag($tag.name)">$tag.name</a>
+    #end
+  </div>
+</aside>

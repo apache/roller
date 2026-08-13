@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>$model.weblogEntry.title — $model.weblog.name</title>
+  </head>
+  <body>
+    #includeTemplate($model.weblog "standard_header")
+    <main id="content" class="article-shell">
+      #set($pager=$model.getWeblogEntriesPager())#showWeblogEntriesPager($pager)
+      <nav class="pager" aria-label="Adjacent posts">#showNextPrevEntriesControl($pager)</nav>
+      #foreach($entry in $entries)
+      <section class="comments-area">#showWeblogEntryComments($entry)#showWeblogEntryCommentForm($entry)</section>
+      #end
+    </main>
+    #includeTemplate($model.weblog "standard_footer")
+  </body>
+</html>
