@@ -41,7 +41,7 @@ limitations under the License.
 
     <properties>
         <derby.version>10.16.1.1</derby.version>
-        <jetty.plugin.version>12.0.21</jetty.plugin.version>
+        <jetty.plugin.version>12.1.12</jetty.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <roller.version>6.1.5</roller.version>
@@ -84,8 +84,8 @@ limitations under the License.
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.eclipse.jetty.ee10</groupId>
-                    <artifactId>jetty-ee10-maven-plugin</artifactId>
+                    <groupId>org.eclipse.jetty.ee11</groupId>
+                    <artifactId>jetty-ee11-maven-plugin</artifactId>
                     <version>${jetty.plugin.version}</version>
                 </plugin>
                 <plugin>

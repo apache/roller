@@ -33,7 +33,7 @@ limitations under the License.
     <packaging>war</packaging>
 
     <properties>
-        <servlet.version>6.0.0</servlet.version>
+        <servlet.version>6.1.0</servlet.version>
         <jsp-api.version>4.0.0</jsp-api.version>
         <jstl.version>3.0.1</jstl.version>
         <angular.version>1.7.8</angular.version>
@@ -598,8 +598,8 @@ limitations under the License.
             </plugin>
 
             <plugin>
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee11</groupId>
+                <artifactId>jetty-ee11-maven-plugin</artifactId>
                 <configuration>
                     <webApp>
                         <contextPath>/roller</contextPath>

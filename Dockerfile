@@ -38,7 +38,7 @@ mvn -Duser.home=/builder/home -DskipTests=true -B clean install
 
 # STAGE 2 - PACKAGE ------------------------------------------------
 
-FROM tomcat:10.1-jdk17-openjdk-slim
+FROM tomcat:11.0-jdk17-temurin
 
 # Remove existing Tomcat webapps
 
