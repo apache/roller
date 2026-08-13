@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  The ASF licenses this file to You
+  under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.  For additional information regarding
+  copyright in this work, please see the NOTICE file in the top level
+  directory of this distribution.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.apache.roller</groupId>
+    <artifactId>roller-playwright-tests</artifactId>
+    <version>6.1.5</version>
+    <packaging>jar</packaging>
+    <name>Roller Playwright tests</name>
+
+    <!--
+        Browser tests you can point at a running Roller. Deliberately not part
+        of the main build: nothing here ships to end users, and the reactor
+        should not depend on a browser being available.
+
+        Start Roller whichever way you already do, for example:
+
+            mvn jetty:run                          (Derby, http://localhost:8080/roller/)
+            docker compose up -d                   (PostgreSQL + Keycloak, http://localhost:8080/)
+
+        then from this directory:
+
+            mvn verify                             headless
+            mvn verify -Dplaywright.headed=true    watch it run
+            mvn verify -Droller.baseUrl=http://localhost:8080/
+            mvn verify -Droller.expectedAuth=db    fail, not skip, on a mismatched instance
+
+        Playwright downloads the browser it needs on first run. See README.md.
+    -->
+
+    <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <playwright.version>1.62.0</playwright.version>
+        <junit.jupiter.version>5.11.4</junit.jupiter.version>
+        <!-- default matches "mvn jetty:run" -->
+        <roller.baseUrl>http://localhost:8080/roller/</roller.baseUrl>
+        <playwright.headed>false</playwright.headed>
+        <!-- empty means: adapt to whatever the instance offers -->
+        <roller.expectedAuth></roller.expectedAuth>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- lets CI install the browser and its OS packages up front by
+                 running com.microsoft.playwright.CLI through exec:java; see
+                 .github/workflows/main.yml for the exact command -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.5.2</version>
+                <configuration>
+                    <!-- LoginPageIT and NewUserJourneyIT must run before
+                         OidcLoginIT: signing in through the provider creates
+                         users, and the journey needs a userless install -->
+                    <runOrder>alphabetical</runOrder>
+                    <systemPropertyVariables>
+                        <roller.baseUrl>${roller.baseUrl}</roller.baseUrl>
+                        <roller.expectedAuth>${roller.expectedAuth}</roller.expectedAuth>
+                        <playwright.headed>${playwright.headed}</playwright.headed>
+                        <playwright.tracesDir>${project.build.directory}/playwright-traces</playwright.tracesDir>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
