@@ -479,7 +479,7 @@ password in 'mail/Session' Resource.
 ----
 
 The Java mail properties listed above are defined here:
-https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html.
+https://eclipse-ee4j.github.io/mail/docs/api/com/sun/mail/smtp/package-summary.html.
 Note the email account defined above will appear in the "From:" line
 of notification email messages sent to blog owners (and, if they select
 "Notify me of further comments", blog commenters) so take care not to
@@ -523,9 +523,12 @@ subsystem will be able to find and use them. Download them from your
 database vendor/provider and place them in Tomcat’s _lib_ directory.
 * **Java Mail and Activation. **Tomcat does not include the Java Mail
 and Activation jars. Even if you do not plan to use email features, you
-must download those jars and place them in Tomcat’s classpath. Download
-them from Oracle (https://java.net/projects/javamail/pages/Home) and
-place them in Tomcat’s _lib_ directory.
+must download those jars and place them in Tomcat’s classpath because
+Roller uses the JavaMail API for email address validation in its core
+code. Download them from Maven Central and place them in Tomcat’s _lib_
+directory:
+** https://repo1.maven.org/maven2/com/sun/mail/jakarta.mail/1.6.7/jakarta.mail-1.6.7.jar[jakarta.mail-1.6.7.jar]
+** https://repo1.maven.org/maven2/com/sun/activation/jakarta.activation/1.2.2/jakarta.activation-1.2.2.jar[jakarta.activation-1.2.2.jar]
 
 === Tomcat: Set URI Encoding
 
