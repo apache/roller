@@ -91,7 +91,7 @@ public class Profile extends UIAction {
                 }
             }
 
-            if (authMethod == AuthMethod.DB_OPENID) {
+            if (authMethod == AuthMethod.DB_OIDC) {
                 if (StringUtils.isEmpty(existingUser.getPassword())
                         && StringUtils.isEmpty(bean.getPasswordText())
                         && StringUtils.isEmpty(bean.getOpenIdUrl())) {
@@ -105,8 +105,8 @@ public class Profile extends UIAction {
             }
 
             // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OPENID) ||
-                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+            if (authMethod.equals(AuthMethod.OIDC) ||
+                    (authMethod.equals(AuthMethod.DB_OIDC) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
                 String randomString = RandomStringUtils.randomAlphanumeric(255);
                 existingUser.resetPassword(randomString);
             }
@@ -138,7 +138,7 @@ public class Profile extends UIAction {
             if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
                 addError("userRegister.error.mismatchedPasswords");
             }
-            if (authMethod == AuthMethod.OPENID) {
+            if (authMethod == AuthMethod.OIDC) {
                 addError("userRegister.error.missingOpenID");
             }
         } else {

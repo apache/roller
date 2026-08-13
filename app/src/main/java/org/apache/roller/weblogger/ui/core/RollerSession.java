@@ -34,6 +34,9 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
+import org.apache.roller.weblogger.ui.core.security.RollerOidcUserService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 
 /**
@@ -89,6 +92,15 @@ public class RollerSession
                     
                     UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                     User user = umgr.getUserByUserName(principal.getName());
+
+                    // For OIDC-authenticated users, look up by OIDC subject
+                    if (user == null && principal instanceof OAuth2AuthenticationToken oauthToken) {
+                        Object oauthPrincipal = oauthToken.getPrincipal();
+                        if (oauthPrincipal instanceof OidcUser oidcUser) {
+                            String oidcSubject = RollerOidcUserService.toOidcSubject(oidcUser);
+                            user = umgr.getUserByOpenIdUrl(oidcSubject);
+                        }
+                    }
 
                     // try one time to auto-provision, only happens if user==null
                     // which means installation has LDAP enabled in security.xml

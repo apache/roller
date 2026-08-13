@@ -159,7 +159,7 @@ public class Register extends UIAction {
                     getBean().setScreenName(getServletRequest().getUserPrincipal().getName());
                 }
             }
-            
+
         } catch (Exception ex) {
             log.error("Error reading SSO user data", ex);
             addError("error.editing.user", ex.toString());
@@ -336,7 +336,8 @@ public class Register extends UIAction {
     public void myValidate() {
         
         // if using external auth, we don't want to error on empty password/username from HTML form.
-        boolean usingSSO = authMethod == AuthMethod.LDAP || authMethod == AuthMethod.CMA;
+        boolean usingSSO = authMethod == AuthMethod.LDAP || authMethod == AuthMethod.CMA
+                || authMethod == AuthMethod.OIDC;
         if (usingSSO) {
             // store an unused marker in the Roller DB for the passphrase in
             // the LDAP or CMA cases, as actual passwords are stored externally
@@ -364,9 +365,9 @@ public class Register extends UIAction {
                 return;
         }
         
-        // User.password does not allow null, so generate one
-        if (getAuthMethod().equals(AuthMethod.OPENID.name()) ||
-                (getAuthMethod().equals(AuthMethod.DB_OPENID.name()) && !StringUtils.isEmpty(getBean().getOpenIdUrl()))) {
+        // User.password does not allow null, so generate one for OIDC users
+        if (getAuthMethod().equals(AuthMethod.OIDC.name()) ||
+                (getAuthMethod().equals(AuthMethod.DB_OIDC.name()) && !StringUtils.isEmpty(getBean().getOpenIdUrl()))) {
             String randomString = RandomStringUtils.randomAlphanumeric(255);
             getBean().setPasswordText(randomString);
             getBean().setPasswordConfirm(randomString);

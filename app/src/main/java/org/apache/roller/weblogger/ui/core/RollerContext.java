@@ -45,6 +45,7 @@ import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
+import org.apache.roller.weblogger.ui.core.security.RollerClientRegistrationRepository;
 import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
@@ -309,7 +310,10 @@ public class RollerContext extends ContextLoaderListener
         
         // supported encoders
         encoders.put("bcrypt", new BCryptPasswordEncoder());
-        encoders.put("pbkdf2", Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+        // pbkdf2 stores only salt+hash, so its parameters must stay as they were
+        // when existing passwords were encoded or those passwords stop verifying.
+        // scrypt and argon2 encode their parameters, so they can take v5_8.
+        encoders.put("pbkdf2", Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_5());
         // provided by bouncy castle dependency
         encoders.put("scrypt", SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8());
         encoders.put("argon2", Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
@@ -339,6 +343,21 @@ public class RollerContext extends ContextLoaderListener
         return new DelegatingPasswordEncoder(algorithm, encoders);
     }
 
+
+    /**
+     * The OIDC client registrations declared in security.xml, or null when
+     * OIDC is not configured.
+     */
+    public static RollerClientRegistrationRepository getClientRegistrationRepository() {
+        ApplicationContext ctx =
+                WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+        try {
+            return ctx.getBean("clientRegistrationRepository", RollerClientRegistrationRepository.class);
+        } catch (NoSuchBeanDefinitionException exc) {
+            log.debug("No clientRegistrationRepository bean in context", exc);
+            return null;
+        }
+    }
 
     /**
      * Flush user from any caches maintained by security system.
