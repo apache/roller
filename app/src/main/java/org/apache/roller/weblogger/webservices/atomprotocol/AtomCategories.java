@@ -15,27 +15,39 @@
 * copyright in this work, please see the NOTICE file in the top level
 * directory of this distribution.
 */
-
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import com.rometools.propono.atom.server.AtomHandlerFactory;
-import com.rometools.propono.atom.server.AtomHandler;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Extends {@link com.rometools.propono.atom.server.AtomHandlerFactory} to create and return 
- * {@link com.rometools.propono.atom.server.impl.FileBasedAtomHandler}.
+ * An APP categories element (app:categories) describing the categories a
+ * collection accepts. When {@code fixed} is true the listed categories are the
+ * only ones allowed.
  */
-public class RollerAtomHandlerFactory extends AtomHandlerFactory {
-    
-    /**
-     * Create new AtomHandler.
-     */
-    @Override
-    public AtomHandler newAtomHandler(
-            HttpServletRequest req, HttpServletResponse res) {
-        return new RollerAtomHandler(req, res);
-    }    
+public class AtomCategories {
+
+    private boolean fixed;
+    private String scheme;
+    private final List<AtomCategory> categories = new ArrayList<>();
+
+    public boolean isFixed() {
+        return fixed;
+    }
+
+    public void setFixed(boolean fixed) {
+        this.fixed = fixed;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
+
+    public List<AtomCategory> getCategories() {
+        return categories;
+    }
 }
-      
