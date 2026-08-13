@@ -39,7 +39,9 @@ public class RollerAtomRequestImpl implements AtomRequest {
 
     @Override
     public String getPathInfo() {
-        return wrapped.getPathInfo();
+        // the handler splits this without a null check, and a request to the
+        // exact servlet mapping has no path info
+        return wrapped.getPathInfo() != null ? wrapped.getPathInfo() : "";
     }
 
     @Override
