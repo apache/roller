@@ -38,7 +38,7 @@
 
     <s:select class="form-control" id="userList" size="10" onchange="onUserSelected()" list="bean.list" />
 
-    <button type="submit" class="btn btn-default" id="user-submit">
+    <button type="submit" class="btn btn-outline-secondary" id="user-submit">
         <s:text name="generic.edit" />
     </button>
 

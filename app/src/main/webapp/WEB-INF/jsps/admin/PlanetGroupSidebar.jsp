@@ -29,6 +29,6 @@
 </s:url>
 
 <s:a href="%{createNewUrl}">
-    <span class="glyphicon glyphicon-plus" aria-hidden="true"> </span>
+    <span class="bi bi-plus-lg" aria-hidden="true"> </span>
     Create new Custom Planet Group
 </s:a>

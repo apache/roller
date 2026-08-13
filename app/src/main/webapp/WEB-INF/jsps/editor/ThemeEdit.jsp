@@ -31,9 +31,9 @@
 
     <div class="row row-display-flex">
 
-        <div class="col-xs-6">
-            <div class="panel panel-default">
-                <div class="panel-body" id="sharedChooser">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body" id="sharedChooser">
                     <h3>
                         <input id="sharedRadio" type="radio" name="themeType" value="shared"
                             <s:if test="!customTheme">checked</s:if> onclick="proposeThemeTypeChange($(this))"/>&nbsp;
@@ -44,9 +44,9 @@
             </div>
         </div>
 
-        <div class="col-xs-6">
-            <div class="panel panel-default">
-                <div class="panel-body" id="customChooser">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body" id="customChooser">
                     <h3>
                         <input id="customRadio" type="radio" name="themeType" value="custom"
                             <s:if test="customTheme">checked</s:if> onclick="proposeThemeTypeChange($(this))"/>&nbsp;
@@ -89,7 +89,7 @@
                 onchange="proposeSharedThemeChange(this[selectedIndex].value)"/>
         </p>
         <p><s:text name="themeEditor.thisTheme"/> <p id="themeDescription"></p>
-        <p><img id="themeThumbnail" src="" class="img-responsive img-thumbnail" style="max-width: 30em" /></p>
+        <p><img id="themeThumbnail" src="" class="img-fluid img-thumbnail" style="max-width: 30em" /></p>
 
     </div>
 
@@ -103,13 +103,16 @@
 
         <%-- Preview and Update buttons --%>
         <p> <s:text name="themeEditor.previewDescription"/> </p>
-        <input type="button" name="themePreview" class="btn"
+        <input type="button" name="themePreview" class="btn btn-outline-secondary"
             value="<s:text name='themeEditor.preview' />"
             onclick="fullPreview($('#themeSelector').get(0))"/>
 
-        <s:submit cssClass="btn btn-default" value="%{getText('themeEditor.save')}"/>
-
-        <input type="button" class="btn" onclick="cancelChanges()" value="<s:text name='generic.cancel'/>" />
+        <div class="row mb-3">
+            <div class="col-sm-9 offset-sm-3">
+                <s:submit cssClass="btn btn-primary" value="%{getText('themeEditor.save')}" theme="simple"/>
+                <input type="button" class="btn btn-outline-secondary" onclick="cancelChanges()" value="<s:text name='generic.cancel'/>" />
+            </div>
+        </div>
 
     </div>
 
@@ -133,9 +136,12 @@
         </s:else>
 
         <%-- Update button --%>
-        <s:submit cssClass="btn btn-default" value="%{getText('themeEditor.save')}"/>
-
-        <input type="button" class="btn" onclick="cancelChanges()" value="<s:text name='generic.cancel'/>" />
+        <div class="row mb-3">
+            <div class="col-sm-9 offset-sm-3">
+                <s:submit cssClass="btn btn-primary" value="%{getText('themeEditor.save')}" theme="simple"/>
+                <input type="button" class="btn btn-outline-secondary" onclick="cancelChanges()" value="<s:text name='generic.cancel'/>" />
+            </div>
+        </div>
 
     </div>
 
@@ -155,13 +161,16 @@
 
         <%-- Preview and Update buttons --%>
         <p> <s:text name="themeEditor.previewDescription"/> </p>
-        <input type="button" name="themePreview" class="btn"
+        <input type="button" name="themePreview" class="btn btn-outline-secondary"
             value="<s:text name='themeEditor.preview' />"
             onclick="fullPreview($('#themeSelector').get(0))"/>
 
-        <s:submit cssClass="btn btn-default" value="%{getText('themeEditor.save')}"/>
-
-        <input type="button" class="btn" onclick="cancelChanges()" value="<s:text name='generic.cancel'/>" />
+        <div class="row mb-3">
+            <div class="col-sm-9 offset-sm-3">
+                <s:submit cssClass="btn btn-primary" value="%{getText('themeEditor.save')}" theme="simple"/>
+                <input type="button" class="btn btn-outline-secondary" onclick="cancelChanges()" value="<s:text name='generic.cancel'/>" />
+            </div>
+        </div>
 
     </div>
 
@@ -179,7 +188,7 @@
         <s:if test="customTheme">
         originalType = "custom"
         updateView($('#customRadio'));
-        previewImage('<s:property value="themes[0].id"/>');
+        previewImage($('#themeSelector').val());
         </s:if>
 
         <s:else>

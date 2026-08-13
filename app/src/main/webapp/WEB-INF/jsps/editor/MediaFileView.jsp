@@ -147,8 +147,8 @@
             }
         </script>
 
-        <div id="imageGrid" class="panel panel-default">
-            <div class="panel-body">
+        <div id="imageGrid" class="card">
+            <div class="card-body">
 
                 <ul>
 
@@ -280,7 +280,7 @@
             <div class="image-controls">
 
                 <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
-                    <input id="toggleButton" type="button" class="btn" style="display: inline"
+                    <input id="toggleButton" type="button" class="btn btn-outline-secondary" style="display: inline"
                            value='<s:text name="generic.toggle" />' onclick="onToggle()"/>
 
                     <input id="deleteButton" type="button" class="btn btn-danger" style="display: inline"
@@ -294,7 +294,7 @@
                           list="allDirectories" listKey="id" listValue="name"/>
 
                 <s:if test="currentDirectory.name != 'default' && !pager">
-                    <input id="deleteFolderButton" type="button" class="btn" style="display: inline"
+                    <input id="deleteFolderButton" type="button" class="btn btn-outline-secondary" style="display: inline"
                            value='<s:text name="mediaFileView.deleteFolder" />' onclick="onDeleteFolder()"/>
                 </s:if>
 

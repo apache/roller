@@ -33,6 +33,8 @@
     <s:file name="opmlFile" />
     <br />
     <br />
-    <s:submit value="%{getText('bookmarksImport.import')}" />
-    <s:submit value="%{getText('generic.cancel')}" action="bookmarks" />
+    <div class="mb-3">
+        <s:submit theme="simple" cssClass="btn btn-primary" value="%{getText('bookmarksImport.import')}" />
+        <s:submit theme="simple" cssClass="btn btn-outline-secondary" value="%{getText('generic.cancel')}" action="bookmarks" />
+    </div>
 </s:form>

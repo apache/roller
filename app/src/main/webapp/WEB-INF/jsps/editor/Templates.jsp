@@ -75,12 +75,12 @@
                             </s:url>
                             <a href="#" onclick=
                                     "confirmTemplateDelete('<s:property value="#p.id"/>', '<s:property value="#p.name"/>' )">
-                                <span class="glyphicon glyphicon-trash"></span>
+                                <span class="bi bi-trash"></span>
                             </a>
 
                         </s:if>
                         <s:else>
-                            <span class="glyphicon glyphicon-lock"></span>
+                            <span class="bi bi-lock"></span>
                         </s:else>
                     </td>
 

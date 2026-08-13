@@ -34,8 +34,8 @@
 
         <s:iterator value="newImages" var="newImage">
 
-            <div class="panel panel-default">
-                <div class="panel-body">
+            <div class="card">
+                <div class="card-body">
 
                     <div class="row">
 
@@ -89,8 +89,8 @@
         <p><s:text name="mediaFileSuccess.selectEnclosure"/></p>
 
         <s:iterator value="newFiles" var="newFile">
-            <div class="panel panel-default">
-                <div class="panel-body">
+            <div class="card">
+                <div class="card-body">
 
                     <div class="row">
 
@@ -127,8 +127,8 @@
             </div>
         </s:iterator>
 
-        <div class="panel panel-default">
-            <div class="panel-body">
+        <div class="card">
+            <div class="card-body">
                 <div class="row">
 
                     <div class="col-md-1">
@@ -158,14 +158,14 @@
             <s:param name="directoryId" value="%{bean.directoryId}"/>
         </s:url>
 
-        <s:submit cssClass="btn btn-success" id="submit" value="%{getText('mediaFileSuccess.createPost')}"
+        <s:submit theme="simple" cssClass="btn btn-success" id="submit" value="%{getText('mediaFileSuccess.createPost')}"
                   action="entryAddWithMediaFile"/>
 
-        <button class="btn btn-default" onclick='window.load("<s:property value='%{mediaFileAddURL}'/>")'>
+        <button class="btn btn-outline-secondary" onclick='window.load("<s:property value='%{mediaFileAddURL}'/>")'>
             <s:text name="mediaFileSuccess.uploadMore"/>
         </button>
 
-        <button class="btn" onclick='window.load("<s:property value='%{mediaFileViewURL}'/>")'>
+        <button class="btn btn-outline-secondary" onclick='window.load("<s:property value='%{mediaFileViewURL}'/>")'>
             <s:text name="generic.cancel"/>
         </button>
     </div>

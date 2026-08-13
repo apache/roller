@@ -60,7 +60,7 @@
                                 '<s:property value="categoryName"/>',
                                 '<s:property value="categoryDesc"/>',
                                 '<s:property value="categoryImage"/>' )">
-                            <span class="glyphicon glyphicon-edit"></span>
+                            <span class="bi bi-pencil-square"></span>
                         </a>
 
                     </td>
@@ -75,7 +75,7 @@
                                     '<s:property value="categoryId" />',
                                     '<s:property value="categoryName" />',
                                     <s:property value="categoryInUse"/> )" >
-                                <span class="glyphicon glyphicon-trash"></span>
+                                <span class="bi bi-trash"></span>
                             </a>
 
                         </s:if>
@@ -134,7 +134,7 @@
                 <button onclick="submitEditedCategory()" class="btn btn-primary">
                     <s:text name="generic.save"/>
                 </button>
-                <button type="button" class="btn" data-dismiss="modal">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                     <s:text name="generic.cancel"/>
                 </button>
             </div>
@@ -271,8 +271,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <s:submit cssClass="btn btn-danger" value="%{getText('generic.yes')}"/>&nbsp;
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <s:submit theme="simple" cssClass="btn btn-danger" value="%{getText('generic.yes')}"/>&nbsp;
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <s:text name="generic.no" />
                     </button>
                 </div>

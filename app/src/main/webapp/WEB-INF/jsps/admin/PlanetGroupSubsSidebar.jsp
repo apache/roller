@@ -29,7 +29,7 @@
     <s:text name="planetGroupSubs.addFeed"/>
 
     <s:form action="planetGroupSubs!saveSubscription"
-            theme="bootstrap" cssClass="form-horizontal" style="margin-top:1em">
+            theme="bootstrap" style="margin-top:1em" cssClass="form-horizontal">
         <s:hidden name="salt"/>
         <s:hidden name="group.handle"/>
 
@@ -38,7 +38,7 @@
 
         <p id="feedback-area" style="clear:right; width:100%"></p>
 
-        <s:submit value="%{getText('generic.save')}" cssClass="btn btn-default" />
+        <s:submit theme="simple" value="%{getText('generic.save')}" cssClass="btn btn-outline-secondary" />
 
     </s:form>
 

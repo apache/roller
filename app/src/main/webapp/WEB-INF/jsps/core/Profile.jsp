@@ -40,7 +40,7 @@
                  name="bean.screenName" size="30" maxlength="30"/>
 
     <s:textfield label="%{getText('userSettings.fullname')}"
-                 tooltip="%{getText('')}"
+                 tooltip="%{getText('userRegister.tip.fullName')}"
                  onchange="formChanged()" onkeyup="formChanged()"
                  name="bean.fullName" size="30" maxlength="30"/>
 
@@ -66,10 +66,13 @@
 
     <s:if test="authMethod == 'OIDC' || authMethod == 'DB_OIDC'">
         <%-- assigned by the identity provider at login, so shown read-only --%>
-        <s:textfield label="%{getText('userSettings.openIdUrl')}"
-                     name="bean.openIdUrl" size="40" maxlength="255"
-                     readonly="true"
-                     style="width:75%" id="f_openid_identifier"/>
+        <s:hidden name="bean.openIdUrl"/>
+        <s:textfield label="%{getText('userSettings.oidcIssuer')}"
+                     tooltip="%{getText('userSettings.tip.oidcIssuer')}"
+                     name="bean.oidcIssuer" readonly="true" disabled="true"/>
+        <s:textfield label="%{getText('userSettings.oidcSubject')}"
+                     tooltip="%{getText('userSettings.tip.oidcSubject')}"
+                     name="bean.oidcSubject" readonly="true" disabled="true"/>
     </s:if>
 
     <s:select label="%{getText('userSettings.locale')}"
@@ -80,10 +83,13 @@
               tooltip="%{getText('userRegister.tip.timeZone')}"
               name="bean.timeZone" size="1" list="timeZonesList"/>
 
-    <s:submit cssClass="btn btn-default" value="%{getText('generic.save')}"/>
-
-    <input class="btn" type="button" value="<s:text name="generic.cancel"/>"
-           onclick="window.location='<s:url action="menu"/>'"/>
+    <div class="row mb-3">
+        <div class="col-sm-9 offset-sm-3">
+            <s:submit cssClass="btn btn-primary" value="%{getText('generic.save')}" theme="simple"/>
+            <input class="btn btn-outline-secondary" type="button" value="<s:text name="generic.cancel"/>"
+                   onclick="window.location='<s:url action="menu"/>'"/>
+        </div>
+    </div>
 
 </s:form>
 

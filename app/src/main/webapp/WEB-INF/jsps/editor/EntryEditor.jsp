@@ -23,29 +23,29 @@
 
 <%-- content --%>
 <s:textarea id="edit_content" name="bean.text"
-            tabindex="5" rows="18" cssClass="col-sm-12" theme="simple"/>
+            tabindex="5" rows="18" cssClass="col-sm-12" theme="bootstrap"/>
 
 <a href="#" onClick="onClickMediaFileInsert();"><s:text name="weblogEdit.insertMediaFile"/></a><br/>
 <img src="<s:url value='/roller-ui/images/spacer.png' />" alt="spacer" style="min-height: 2em"/>
 
 <%-- summary --%>
 
-<div class="panel panel-default" id="panel-summary">
-    <div class="panel-heading">
+<div class="card" id="panel-summary">
+    <div class="card-header">
 
-        <h4 class="panel-title">
-            <a href="#" class="collapsed"
-               data-toggle="collapse" data-target="#collapseSummaryEditor">
+        <h4 class="card-title">
+            <a href="#" class="collapsed text-body text-decoration-none"
+               data-bs-toggle="collapse" data-bs-target="#collapseSummaryEditor">
                 <s:text name="weblogEdit.summary"/>
             </a>
         </h4>
 
     </div>
-    <div id="collapseSummaryEditor" class="panel-collapse collapse">
-        <div class="panel-body">
+    <div id="collapseSummaryEditor" class="collapse">
+        <div class="card-body">
 
             <s:textarea id="edit_summary" name="bean.summary"
-                        tabindex="6" rows="10" cssClass="col-sm-12" theme="simple"/>
+                        tabindex="6" rows="10" cssClass="col-sm-12" theme="bootstrap"/>
 
         </div>
     </div>
@@ -64,9 +64,7 @@
 
             <div class="modal-header">
                 <h4 class="modal-title"><s:text name='weblogEdit.insertMediaFile'/></h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body">
@@ -80,7 +78,7 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
             </div>
 
         </div>
