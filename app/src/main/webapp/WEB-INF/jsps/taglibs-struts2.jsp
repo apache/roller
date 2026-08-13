@@ -26,7 +26,6 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
 <%@ taglib uri="/struts-tags" prefix="s" %>
-<%@ taglib uri="/struts-bootstrap-tags" prefix="sboo" %>
 
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 

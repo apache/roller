@@ -36,6 +36,8 @@ import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Utilities;
+import org.apache.struts2.action.UploadedFilesAware;
+import org.apache.struts2.dispatcher.multipart.UploadedFile;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -43,20 +45,16 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  */
 @SuppressWarnings("serial")
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class MediaFileAdd extends MediaFileBase {
+public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
 
     private static final Log log = LogFactory.getLog(MediaFileAdd.class);
     private MediaFileBean bean = new MediaFileBean();
     private MediaFileDirectory directory;
 
-    // an array of files uploaded by the user, if applicable
-    private File[] uploadedFiles = null;
-
-    // an array of content types for upload files
-    private String[] uploadedFilesContentType = null;
-
-    // an array of filenames for uploaded files
-    private String[] uploadedFilesFileName = null;
+    // files uploaded by the user, injected by the actionFileUpload interceptor;
+    // deliberately not exposed via a getter/setter pair so the params
+    // interceptor can't collide with the form field of the same name
+    private List<UploadedFile> uploadedFiles = null;
 
     private List<MediaFile> newImages = new ArrayList<>();
 
@@ -112,13 +110,18 @@ public class MediaFileAdd extends MediaFileBase {
 
     /**
      * Show form for adding a new media file.
-     * 
+     *
      * @return String The result of the action.
      */
     @SkipValidation
     @Override
     public String execute() {
         return INPUT;
+    }
+
+    @Override
+    public void withUploadedFiles(List<UploadedFile> uploadedFiles) {
+        this.uploadedFiles = uploadedFiles;
     }
 
     /**
@@ -136,15 +139,16 @@ public class MediaFileAdd extends MediaFileBase {
 
             RollerMessages errors = new RollerMessages();
             List<MediaFile> uploaded = new ArrayList<>();
-            File[] uploads = getUploadedFiles();
 
-            if (uploads != null && uploads.length > 0) {
+            if (uploadedFiles != null && !uploadedFiles.isEmpty()) {
 
                 // loop over uploaded files and try saving them
-                for (int i = 0; i < uploads.length; i++) {
+                for (UploadedFile upload : uploadedFiles) {
 
                     // skip null files
-                    if (uploads[i] == null || !uploads[i].exists()) {
+                    if (upload == null
+                            || !(upload.getContent() instanceof File uploadFile)
+                            || !uploadFile.exists()) {
                         continue;
                     }
 
@@ -152,7 +156,7 @@ public class MediaFileAdd extends MediaFileBase {
                         MediaFile mediaFile = new MediaFile();
                         bean.copyTo(mediaFile);
 
-                        String fileName = getUploadedFilesFileName()[i];
+                        String fileName = upload.getOriginalName();
                         int terminated = fileName.indexOf('\000');
                         if (terminated != -1) {
                             // disallow sneaky null terminated strings
@@ -170,18 +174,15 @@ public class MediaFileAdd extends MediaFileBase {
                         mediaFile.setName(fileName);
                         mediaFile.setDirectory(getDirectory());
                         mediaFile.setWeblog(getActionWeblog());
-                        mediaFile.setLength(this.uploadedFiles[i].length());
-                        mediaFile.setInputStream(new FileInputStream(
-                                this.uploadedFiles[i]));
-                        mediaFile
-                                .setContentType(this.uploadedFilesContentType[i]);
+                        mediaFile.setLength(uploadFile.length());
+                        mediaFile.setInputStream(new FileInputStream(uploadFile));
 
                         // in some cases Struts2 is not able to guess the content
                         // type correctly and assigns the default, which is
                         // octet-stream. So in cases where we see octet-stream
                         // we double check and see if we can guess the content
                         // type via the Java MIME type facilities.
-                        mediaFile.setContentType(this.uploadedFilesContentType[i]);
+                        mediaFile.setContentType(upload.getContentType());
                         if (mediaFile.getContentType() == null
                                 || mediaFile.getContentType().endsWith("/octet-stream")) {
 
@@ -260,30 +261,6 @@ public class MediaFileAdd extends MediaFileBase {
 
     public void setDirectory(MediaFileDirectory directory) {
         this.directory = directory;
-    }
-
-    public File[] getUploadedFiles() {
-        return uploadedFiles;
-    }
-
-    public void setUploadedFiles(File[] uploadedFiles) {
-        this.uploadedFiles = uploadedFiles;
-    }
-
-    public String[] getUploadedFilesContentType() {
-        return uploadedFilesContentType;
-    }
-
-    public void setUploadedFilesContentType(String[] uploadedFilesContentType) {
-        this.uploadedFilesContentType = uploadedFilesContentType;
-    }
-
-    public String[] getUploadedFilesFileName() {
-        return uploadedFilesFileName;
-    }
-
-    public void setUploadedFilesFileName(String[] uploadedFilesFileName) {
-        this.uploadedFilesFileName = uploadedFilesFileName;
     }
 
     /**

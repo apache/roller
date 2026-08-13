@@ -21,7 +21,7 @@
 
 # STAGE 1 - BUILD ------------------------------------------------
 
-FROM maven:3-openjdk-17-slim as builder
+FROM maven:3-eclipse-temurin-17 AS builder
 
 COPY ./docker /project/docker
 
@@ -38,7 +38,7 @@ mvn -Duser.home=/builder/home -DskipTests=true -B clean install
 
 # STAGE 2 - PACKAGE ------------------------------------------------
 
-FROM tomcat:9-jdk17-openjdk-slim
+FROM tomcat:11.0-jdk17-temurin
 
 # Remove existing Tomcat webapps
 
@@ -70,9 +70,11 @@ RUN mkdir -p data/mediafiles data/searchindex
 
 WORKDIR /usr/local/tomcat/lib
 RUN apt-get update && apt-get install -y wget
-RUN wget -O postgresql.jar https://jdbc.postgresql.org/download/postgresql-42.3.1.jar
-RUN wget https://repo1.maven.org/maven2/javax/mail/mail/1.4.7/mail-1.4.7.jar
-#RUN wget https://repo1.maven.org/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar
+RUN wget -O postgresql.jar https://jdbc.postgresql.org/download/postgresql-42.7.4.jar
+RUN wget https://repo1.maven.org/maven2/org/eclipse/angus/angus-mail/2.0.3/angus-mail-2.0.3.jar
+RUN wget https://repo1.maven.org/maven2/jakarta/mail/jakarta.mail-api/2.1.3/jakarta.mail-api-2.1.3.jar
+RUN wget https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api/2.1.3/jakarta.activation-api-2.1.3.jar
+RUN wget https://repo1.maven.org/maven2/org/eclipse/angus/angus-activation/2.0.2/angus-activation-2.0.2.jar
 
 # Add Roller entry-point and go!
 

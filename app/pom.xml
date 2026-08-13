@@ -33,10 +33,9 @@ limitations under the License.
     <packaging>war</packaging>
 
     <properties>
-        <servlet.version>4.0.1</servlet.version>
-        <jsp-api.version>2.2</jsp-api.version>
-        <java-activation.version>1.2.0</java-activation.version>
-        <jstl.version>1.2</jstl.version>
+        <servlet.version>6.1.0</servlet.version>
+        <jsp-api.version>4.0.0</jsp-api.version>
+        <jstl.version>3.0.1</jstl.version>
         <angular.version>1.7.8</angular.version>
         <ant.version>1.10.15</ant.version>
         <asm.version>9.7.1</asm.version>
@@ -46,21 +45,20 @@ limitations under the License.
         <commons-codec.version>1.18.0</commons-codec.version>
         <commons-text.version>1.13.0</commons-text.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
-        <eclipse-link.version>4.0.5</eclipse-link.version>
+        <eclipse-link.version>5.0.1</eclipse-link.version>
         <guice.version>7.0.0</guice.version>
         <log4j2.version>2.24.3</log4j2.version>
         <lucene.version>9.12.1</lucene.version> <!-- lucene 10 requires JDK 21 -->
-        <oauth-core.version>20100527</oauth-core.version>
-        <maven-war.version>3.4.0</maven-war.version>
+<maven-war.version>3.4.0</maven-war.version>
         <maven-surefire.version>3.5.2</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
         <rome.version>1.19.0</rome.version> <!-- locked in place since next version removes popono -->
         <slf4j.version>2.0.16</slf4j.version>
-        <spring.version>5.3.39</spring.version>
-        <spring.security.version>5.8.14</spring.security.version>
-        <struts.version>2.5.29</struts.version> <!-- .30+ breaks selenium tests -->
+        <spring.version>7.0.8</spring.version>
+        <spring.security.version>7.0.6</spring.security.version>
+        <struts.version>7.1.1</struts.version>
+        <struts-bootstrap.version>6.1.0</struts-bootstrap.version>
         <velocity.version>2.4.1</velocity.version>
-        <webjars.version>1.6</webjars.version>
         <ws-commons-util.version>1.0.2</ws-commons-util.version>
         <xmlrpc-version>3.1.3</xmlrpc-version>
     </properties>
@@ -70,55 +68,58 @@ limitations under the License.
         <!-- Java EE deps -->
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <version>${servlet.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
             <version>${jsp-api.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
+            <groupId>jakarta.servlet.jsp.jstl</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+            <version>${jstl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
             <version>${jstl.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>${java-mail.version}</version>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>2.1.3</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>2.0.3</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>javax.activation</artifactId>
-            <version>${java-activation.version}</version>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+            <version>2.1.3</version>
         </dependency>
 
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>${jaxb.version}</version>
-            <exclusions>
-                <exclusion>
-                    <!--api is already in the javax.activation artifact-->
-                    <groupId>javax.activation</groupId>
-                    <artifactId>javax.activation-api</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>4.0.5</version>
         </dependency>
 
         <!-- Eclipselink JPA is the default JPA implementation used by
@@ -246,12 +247,16 @@ limitations under the License.
         </dependency>
 
         <!-- note: update head.jsp on webjar version change -->
+        <!-- Supplies the "bootstrap" form theme templates the JSPs render with.
+             Maintained at github.com/struts-community-plugins/struts2-bootstrap. -->
         <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>webjars-servlet-2.x</artifactId>
-            <version>${webjars.version}</version>
+            <groupId>com.jgeppert.struts2.bootstrap</groupId>
+            <artifactId>struts2-bootstrap-plugin</artifactId>
+            <version>${struts-bootstrap.version}</version>
         </dependency>
 
+        <!-- WebJar assets live under META-INF/resources, which Servlet 3.0+
+             containers serve from the docroot, so no webjars servlet is needed -->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
@@ -309,6 +314,12 @@ limitations under the License.
             <version>${lucene.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
         <!-- slf4j implementing the apache commons-logging interfaces -->
         <!-- note: commons-logging needs to be excluded in all dependencies transitive depending on it.
         See 2006 RFE https://issues.apache.org/jira/browse/MNG-1977 for maven's missing feature of global exclusions -->
@@ -328,7 +339,7 @@ limitations under the License.
         <!-- the actual logging impl below slf4j: log4j2 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
             <version>${log4j2.version}</version>
         </dependency>
 
@@ -387,6 +398,12 @@ limitations under the License.
             <version>${xmlrpc-version}</version>
         </dependency>
 
+        <!-- Still needed: RollerXmlRpcServlet/RollerXmlRpcServletServer use
+             server-side classes (PropertyHandlerMapping, XmlRpcHttpServer, etc.)
+             that live in this artifact. The servlet classes themselves have been
+             forked into Roller so their javax.servlet imports can be migrated
+             to jakarta.servlet in Phase 2. TODO ROL-2183: evaluate whether
+             these server classes can also be forked to fully drop this dep. -->
         <dependency>
             <groupId>org.apache.xmlrpc</groupId>
             <artifactId>xmlrpc-server</artifactId>
@@ -452,22 +469,6 @@ limitations under the License.
 
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-openid</artifactId>
-            <version>${spring.security.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.inject</groupId>
-                    <artifactId>guice</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
             <version>${spring.security.version}</version>
         </dependency>
@@ -504,12 +505,6 @@ limitations under the License.
         </dependency>
 
         <dependency>
-            <groupId>com.jgeppert.struts2.bootstrap</groupId>
-            <artifactId>struts2-bootstrap-plugin</artifactId>
-            <version>4.0.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.rometools</groupId>
             <artifactId>rome</artifactId>
             <version>${rome.version}</version>
@@ -534,13 +529,6 @@ limitations under the License.
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>net.oauth.core</groupId>
-            <artifactId>oauth-provider</artifactId>
-            <scope>compile</scope>
-            <version>${oauth-core.version}</version>
         </dependency>
 
         <dependency>
@@ -581,7 +569,7 @@ limitations under the License.
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.15.2</version>
+            <version>5.23.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -610,13 +598,15 @@ limitations under the License.
             </plugin>
 
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee11</groupId>
+                <artifactId>jetty-ee11-maven-plugin</artifactId>
                 <configuration>
                     <webApp>
                         <contextPath>/roller</contextPath>
                     </webApp>
-                    <jettyXmls>src/test/resources/jetty.xml</jettyXmls>
+                    <jettyXmls>
+                        <jettyXml>src/test/resources/jetty.xml</jettyXml>
+                    </jettyXmls>
                     <systemProperties>
                         <roller.custom.config>
                             ${project.build.directory}/test-classes/roller-jettyrun.properties
@@ -630,9 +620,9 @@ limitations under the License.
                         <version>6.1.5</version>
                     </dependency>
                     <dependency>
-                        <groupId>commons-dbcp</groupId>
-                        <artifactId>commons-dbcp</artifactId>
-                        <version>1.4</version>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-dbcp2</artifactId>
+                        <version>2.13.0</version>
                     </dependency>
                     <dependency>
                         <groupId>org.apache.derby</groupId>
@@ -645,9 +635,9 @@ limitations under the License.
                         <version>${derby.version}</version>
                     </dependency>
                     <dependency>
-	                    <groupId>javax.mail</groupId>
-	                    <artifactId>mail</artifactId>
-	                    <version>${java-mail.version}</version>
+                        <groupId>org.eclipse.angus</groupId>
+                        <artifactId>angus-mail</artifactId>
+                        <version>2.0.3</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -732,6 +722,7 @@ limitations under the License.
                         </property>
                     </systemProperties>
                     <trimStackTrace>false</trimStackTrace>
+                    <argLine>-Djavax.xml.accessExternalSchema=all</argLine>
                 </configuration>
             </plugin>
 

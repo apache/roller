@@ -18,6 +18,7 @@
 package org.apache.roller.selenium.editor;
 
 import org.apache.roller.selenium.AbstractRollerPage;
+import org.openqa.selenium.By;
 
 /**
  * Base class for the new/edit entry pages
@@ -37,7 +38,9 @@ public abstract class AbstractEntryPage extends AbstractRollerPage {
     }
 
     public EntryEditPage postBlogEntry() {
-        clickById("entry_%{#mainAction}!publish");
+        // the publish button is the only success-styled submit on the page;
+        // its generated id changed between form-theme versions
+        driver.findElement(By.cssSelector("input.btn-success[type='submit']")).click();
         return new EntryEditPage(driver);
     }
 }

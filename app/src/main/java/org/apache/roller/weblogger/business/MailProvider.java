@@ -19,9 +19,9 @@
 package org.apache.roller.weblogger.business;
 
 import java.util.Properties;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

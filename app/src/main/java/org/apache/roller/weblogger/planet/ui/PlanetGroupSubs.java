@@ -28,9 +28,10 @@ import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
-import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.Preparable;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 
@@ -38,7 +39,7 @@ import java.util.*;
  * Manage planet group subscriptions, default group is "all".
  */
 // TODO: make this work @AllowedMethods({"execute","saveSubscription","saveGroup","deleteSubscription"})
-public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAware {
+public class PlanetGroupSubs extends PlanetUIAction implements Preparable {
 
     private static final Log log = LogFactory.getLog(PlanetGroupSubs.class);
 
@@ -67,8 +68,14 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
     }
 
 
+    /**
+     * Loads the group being edited. This runs before the params interceptor so
+     * that submitted values are bound onto the loaded group rather than being
+     * overwritten by it.
+     */
     @Override
-    public void setServletRequest(HttpServletRequest request) {
+    public void prepare() {
+        HttpServletRequest request = ActionContext.getContext().getServletRequest();
         if (request.getParameter("createNew") != null) {
             group = new PlanetGroup();
         } else {

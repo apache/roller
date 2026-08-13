@@ -17,9 +17,25 @@
         directory of this distribution.
 -->
 <!DOCTYPE struts PUBLIC
-        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
-        "http://struts.apache.org/dtds/struts-2.5.dtd">
+        "-//Apache Software Foundation//DTD Struts Configuration 6.5//EN"
+        "https://struts.apache.org/dtds/struts-6.5.dtd">
 <struts>
+
+    <!-- Struts 7 denies OGNL access to any class outside this allowlist, which
+         otherwise blocks reads of Roller's own action and bean properties. -->
+    <constant name="struts.allowlist.packageNames"
+              value="org.apache.roller,java.util,java.lang"/>
+
+    <!-- Struts serves its bundled JS/CSS (tooltips, etc.) from this path, which
+         must match the /struts/* filter-mapping in web.xml. Struts defaults it
+         to /static, which Roller does not map. -->
+    <constant name="struts.ui.staticContentPath" value="/struts"/>
+
+    <!-- Struts 7 only binds request parameters to properties annotated with
+         @StrutsParameter. Roller's actions predate that annotation, so without
+         this no form in the application can submit data. Annotating the action
+         beans would be the stricter alternative. -->
+    <constant name="struts.parameters.requireAnnotations" value="false"/>
 
     <!-- Weblogger default package -->
     <package name="weblogger" namespace="/roller-ui" extends="struts-default">
@@ -47,14 +63,16 @@
                 <interceptor-ref name="exception"/>
                 <!-- <interceptor-ref name="alias"/> -->
                 <interceptor-ref name="servletConfig"/>
-                <!-- <interceptor-ref name="prepare"/> -->
+                <!-- runs before "params" so actions can load the object that
+                     request parameters are then bound onto -->
+                <interceptor-ref name="prepare"/>
                 <interceptor-ref name="i18n"/>
                 <interceptor-ref name="chain"/>
                 <!-- <interceptor-ref name="debugging"/> -->
                 <!-- <interceptor-ref name="profiling"/> -->
                 <!-- <interceptor-ref name="scopedModelDriven"/> -->
                 <!-- <interceptor-ref name="modelDriven"/> -->
-                <interceptor-ref name="fileUpload"/>
+                <interceptor-ref name="actionFileUpload"/>
                 <interceptor-ref name="checkbox"/>
                 <interceptor-ref name="multiselect"/>
                 <interceptor-ref name="staticParams"/>
@@ -135,18 +153,6 @@
             <result name="cancel" type="redirectAction">menu</result>
             <result name="success" type="tiles">.MainMenu</result>
             <allowed-methods>execute,save</allowed-methods>
-        </action>
-
-        <action name="oauthKeys"
-                class="org.apache.roller.weblogger.ui.struts2.core.OAuthKeys">
-            <result name="success" type="tiles">.OAuthKeys</result>
-            <allowed-methods>execute</allowed-methods>
-        </action>
-
-        <action name="oauthAuthorize"
-                class="org.apache.roller.weblogger.ui.struts2.core.OAuthAuthorize">
-            <result name="success" type="tiles">.OAuthAuthorize</result>
-            <allowed-methods>execute</allowed-methods>
         </action>
 
         <action name="createWeblog"

@@ -21,11 +21,11 @@ package org.apache.roller.weblogger.ui.core;
 import java.io.Serializable;
 import java.security.Principal;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionActivationListener;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionActivationListener;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -89,16 +89,7 @@ public class RollerSession
                     
                     UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
                     User user = umgr.getUserByUserName(principal.getName());
-                    
-                    // check for OpenID username (in the form of a URL)
-                    if (user == null && principal.getName() != null && principal.getName().startsWith("http://")) {
-                        String openidurl = principal.getName();
-                        if (openidurl.endsWith("/")) {
-                            openidurl = openidurl.substring(0, openidurl.length() - 1);
-                        }
-                        user = umgr.getUserByOpenIdUrl(openidurl);
-                    }
-                    
+
                     // try one time to auto-provision, only happens if user==null
                     // which means installation has LDAP enabled in security.xml
                     if (user == null && WebloggerConfig.getBooleanProperty("users.ldap.autoProvision.enabled")) {

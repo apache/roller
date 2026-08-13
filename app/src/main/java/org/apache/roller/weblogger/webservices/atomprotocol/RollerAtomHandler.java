@@ -19,7 +19,7 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 import com.rometools.propono.atom.common.Categories;
 import com.rometools.propono.atom.server.AtomRequest;
 import java.util.StringTokenizer;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,13 +38,9 @@ import com.rometools.propono.atom.server.AtomNotFoundException;
 import com.rometools.rome.feed.atom.Entry;
 import com.rometools.rome.feed.atom.Feed;
 import java.nio.charset.StandardCharsets;
-import javax.servlet.http.HttpServletResponse;
-import net.oauth.OAuthAccessor;
-import net.oauth.OAuthMessage;
-import net.oauth.server.OAuthServlet;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -118,15 +114,21 @@ public class RollerAtomHandler implements AtomHandler {
         roller = WebloggerFactory.getWeblogger();
 
         String userName;
-        if ("oauth".equals(WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))) {
-            userName = authenticationOAUTH(request, response);
-
-        } else if ("wsse".equals(WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))) {
+        String authScheme = WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth");
+        if ("wsse".equals(authScheme)) {
             userName = authenticateWSSE(request);
 
-        } else {
-            // default to basic
+        } else if (authScheme == null || authScheme.isBlank() || "basic".equals(authScheme)) {
             userName = authenticateBASIC(request);
+
+        } else {
+            // an upgraded site may still have "oauth" stored in the runtime
+            // config; refuse authentication instead of silently accepting a
+            // scheme the administrator did not choose
+            log.error("Unsupported webservices.atomPubAuth value '" + authScheme
+                    + "' (OAuth 1.0a support was removed); set it to 'basic' or 'wsse'."
+                    + " Refusing AtomPub authentication until it is corrected.");
+            userName = null;
         }
 
         if (userName != null) {
@@ -478,7 +480,7 @@ public class RollerAtomHandler implements AtomHandler {
                             User inUser = roller.getUserManager().getUserByUserName(userID);
                             if (inUser.getEnabled()) {
                                 String password = userPass.substring(p+1);
-                                valid = RollerContext.getPasswordEncoder().matches(password, user.getPassword());
+                                valid = RollerContext.getPasswordEncoder().matches(password, inUser.getPassword());
                             }
                         }
                     }
@@ -489,29 +491,6 @@ public class RollerAtomHandler implements AtomHandler {
         }
         if (valid) {
             return userID;
-        }
-        return null;
-    }
-
-
-    private String authenticationOAUTH(
-            HttpServletRequest request, HttpServletResponse response) {
-        try {
-            OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
-            OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
-            OAuthAccessor accessor = omgr.getAccessor(requestMessage);
-            omgr.getValidator().validateMessage(requestMessage, accessor);
-            return (String)accessor.consumer.getProperty("userId");
-
-        } catch (Exception ex) {
-            log.debug("ERROR authenticating user", ex);
-            String realm = (request.isSecure())?"https://":"http://";
-            realm += request.getLocalName();
-            try {
-                OAuthServlet.handleException(response, ex, realm, true);
-            } catch (Exception ioe) {
-                log.debug("ERROR writing error response", ioe);
-            }
         }
         return null;
     }

@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -30,9 +29,8 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
+import org.apache.struts2.ActionContext;
 import org.apache.struts2.dispatcher.HttpParameters;
-import org.apache.struts2.dispatcher.Parameter;
-import org.apache.struts2.interceptor.HttpParametersAware;
 
 
 /**
@@ -42,7 +40,7 @@ import org.apache.struts2.interceptor.HttpParametersAware;
  * website.permissions collection when a permission is deleted.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class Members extends UIAction implements HttpParametersAware {
+public class Members extends UIAction {
     
     private static final Log log = LogFactory.getLog(Members.class);
     
@@ -52,12 +50,17 @@ public class Members extends UIAction implements HttpParametersAware {
     
     public Members() {
         log.debug("Instantiating members action");
-        
+
         this.actionName = "members";
         this.desiredMenu = "editor";
         this.pageTitle = "memberPermissions.title";
     }
-    
+
+    @Override
+    public void myPrepare() {
+        this.parameters = ActionContext.getContext().getParameters();
+    }
+
     @Override
     public String execute() {
         log.debug("Showing weblog members page");
@@ -159,13 +162,8 @@ public class Members extends UIAction implements HttpParametersAware {
     }
     
     
-    public Map<String, Parameter> getParameters() {
+    public HttpParameters getParameters() {
         return parameters;
-    }
-
-    @Override
-    public void setParameters(HttpParameters parameters) {
-        this.parameters = parameters;
     }
     
     public List<WeblogPermission> getWeblogPermissions() {
