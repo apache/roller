@@ -1,0 +1,8 @@
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="site-header">
+  <div class="nav-shell">
+    <a class="brand" href="$url.home" aria-label="$model.weblog.name home">$model.weblog.name</a>
+    <nav class="site-nav" aria-label="Primary navigation">#showPageMenu($model.weblog)</nav>
+    <form class="quick-search" method="get" action="$url.search" role="search"><label class="sr-only" for="site-search">Search</label><input id="site-search" name="q" type="search" placeholder="Search" value="#if($model.term)$model.term#end"></form>
+  </div>
+</header>

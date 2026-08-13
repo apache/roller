@@ -1,0 +1,1 @@
+<footer class="site-footer"><p><strong>$model.weblog.name</strong> — #if($model.weblog.tagline)$model.weblog.tagline#elseField notes from a life in motion.#end</p><nav><a href="$url.home">Home</a><a href="$url.feed.entries.atom">Atom</a></nav></footer>

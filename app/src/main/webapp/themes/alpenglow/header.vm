@@ -1,0 +1,1 @@
+<a class="skip-link" href="#content">Skip to content</a><header class="site-header"><a class="brand" href="$url.home"><span class="brand-mark" aria-hidden="true">▲</span><span>$model.weblog.name</span></a><nav aria-label="Primary">#showPageMenu($model.weblog)</nav><a class="feed-link" href="$url.feed.entries.atom" aria-label="Atom feed">Feed ↗</a></header>

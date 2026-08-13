@@ -1,0 +1,1 @@
+<footer class="site-footer"><span class="status"><i></i> Publishing since the early web</span><strong>$model.weblog.name</strong><span><a href="$url.feed.entries.atom">ATOM.XML</a></span></footer>
