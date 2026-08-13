@@ -91,9 +91,10 @@ public class Login extends UIAction {
     @Override
     public String execute() {
 
-        // set action error message if there was login error
-        if(getError() != null) {
-            addError("error.password.mismatch");
+        // set action error message if there was login error; OAuth2/OIDC
+        // failures redirect here with error=oidc, form login with error=true
+        if (getError() != null) {
+            addError("oidc".equals(getError()) ? "error.oidc.login" : "error.password.mismatch");
         }
 
         return SUCCESS;

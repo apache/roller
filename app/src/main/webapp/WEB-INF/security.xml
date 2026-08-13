@@ -53,6 +53,7 @@
         <oauth2-login client-registration-repository-ref="clientRegistrationRepository"
                       oidc-user-service-ref="rollerOidcUserService"
                       authentication-success-handler-ref="oidcSuccessHandler"
+                      authentication-failure-handler-ref="oidcFailureHandler"
                       login-page="/roller-ui/login.rol"/>
 
         <!-- roller already uses its own salt based CSRF protection-->
@@ -120,6 +121,13 @@
 
     <beans:bean id="oidcSuccessHandler"
                 class="org.apache.roller.weblogger.ui.core.security.RollerOAuth2SuccessHandler"/>
+
+    <!-- send OAuth2/OIDC failures back with their own marker so the login
+         page does not diagnose them as a wrong password -->
+    <beans:bean id="oidcFailureHandler"
+                class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+        <beans:constructor-arg value="/roller-ui/login.rol?error=oidc"/>
+    </beans:bean>
 
     <!-- Uncomment & customize below beans if using LDAP
     <beans:bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">

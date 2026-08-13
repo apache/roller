@@ -61,6 +61,12 @@ public class RollerOidcUserService implements OAuth2UserService<OidcUserRequest,
 
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
+        // hiding the login buttons is not an authentication control: reject the
+        // whole flow server side unless the configured method allows OIDC
+        if (!RollerClientRegistrationRepository.oidcEnabled()) {
+            throw new OAuth2AuthenticationException(new OAuth2Error("oidc_not_enabled"),
+                    "authentication.method does not allow OIDC login");
+        }
         return resolveUser(delegate.loadUser(userRequest));
     }
 
@@ -182,6 +188,9 @@ public class RollerOidcUserService implements OAuth2UserService<OidcUserRequest,
         user.setTimeZone(TimeZone.getDefault().getID());
         user.setEnabled(Boolean.TRUE);
 
+        boolean bootstrapAdmin = umgr.getUserCount() == 0
+                && WebloggerConfig.getBooleanProperty("users.firstUserAdmin");
+
         // grants the "editor" role, and "admin" if this is the first user
         umgr.addUser(user);
 
@@ -193,6 +202,18 @@ public class RollerOidcUserService implements OAuth2UserService<OidcUserRequest,
         if (claimRoles.contains("admin")) {
             umgr.grantRole("admin", user);
             WebloggerFactory.getWeblogger().flush();
+        } else if (bootstrapAdmin
+                && !WebloggerConfig.getBooleanProperty("users.oidc.firstUserAdmin")) {
+            // users.firstUserAdmin makes the first account an administrator,
+            // which for auto-provisioned identities would mean whichever
+            // provider user reaches a fresh install first. That grant needs an
+            // explicit opt-in for OIDC.
+            umgr.revokeRole("admin", user);
+            WebloggerFactory.getWeblogger().flush();
+            log.warn("First user '" + username + "' was auto-provisioned from OIDC and did NOT "
+                    + "receive the admin role. To bootstrap an administrator, assert an 'admin' "
+                    + "role claim at the provider, set users.oidc.firstUserAdmin=true, or create "
+                    + "the account before enabling OIDC.");
         }
         log.info("Auto-provisioned OIDC user '" + username + "' from claims (roles: "
                 + claimRoles + ", subject: " + oidcSubject + ")");

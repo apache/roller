@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
@@ -38,6 +39,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
@@ -368,6 +370,101 @@ class RollerOidcUserServiceTest {
 
             verify(userManager).addUser(any(User.class));
         }
+    }
+
+    @Test
+    void oidcLoginRejectedWhenAuthMethodDoesNotAllowIt() {
+        try (MockedStatic<WebloggerConfig> config = mockStatic(WebloggerConfig.class)) {
+            config.when(WebloggerConfig::getAuthMethod).thenReturn(AuthMethod.ROLLERDB);
+
+            OAuth2AuthenticationException ex = assertThrows(OAuth2AuthenticationException.class,
+                    () -> service.loadUser(mock(OidcUserRequest.class)));
+
+            assertEquals("oidc_not_enabled", ex.getError().getErrorCode());
+        }
+    }
+
+    /**
+     * users.firstUserAdmin makes the first account an administrator, which for
+     * an auto-provisioned identity would be whichever provider user reaches a
+     * fresh install first. The grant must be revoked unless explicitly enabled
+     * for OIDC or asserted by an admin role claim.
+     */
+    @Test
+    void firstProvisionedUserLosesBootstrapAdminByDefault() throws Exception {
+        try (MockedStatic<WebloggerFactory> factory = bootstrappedRoller();
+             MockedStatic<WebloggerConfig> config = oidcBootstrapPolicy(false)) {
+            when(userManager.getUserByOpenIdUrl(SUBJECT)).thenReturn(null);
+            when(userManager.getUserCount()).thenReturn(0L);
+            when(userManager.getRoles(any(User.class))).thenReturn(List.of("editor"));
+
+            service.resolveUser(oidcUser(Map.of(
+                    "preferred_username", "first",
+                    "email", "first@example.com")));
+
+            verify(userManager).revokeRole(eq("admin"), any(User.class));
+        }
+    }
+
+    @Test
+    void firstProvisionedUserKeepsBootstrapAdminWhenOptedIn() throws Exception {
+        try (MockedStatic<WebloggerFactory> factory = bootstrappedRoller();
+             MockedStatic<WebloggerConfig> config = oidcBootstrapPolicy(true)) {
+            when(userManager.getUserByOpenIdUrl(SUBJECT)).thenReturn(null);
+            when(userManager.getUserCount()).thenReturn(0L);
+            when(userManager.getRoles(any(User.class))).thenReturn(List.of("editor"));
+
+            service.resolveUser(oidcUser(Map.of(
+                    "preferred_username", "first",
+                    "email", "first@example.com")));
+
+            verify(userManager, never()).revokeRole(anyString(), any(User.class));
+        }
+    }
+
+    @Test
+    void firstProvisionedUserWithAdminClaimKeepsAdmin() throws Exception {
+        try (MockedStatic<WebloggerFactory> factory = bootstrappedRoller();
+             MockedStatic<WebloggerConfig> config = oidcBootstrapPolicy(false)) {
+            when(userManager.getUserByOpenIdUrl(SUBJECT)).thenReturn(null);
+            when(userManager.getUserCount()).thenReturn(0L);
+            when(userManager.getRoles(any(User.class))).thenReturn(List.of("editor", "admin"));
+
+            service.resolveUser(oidcUser(Map.of(
+                    "preferred_username", "first",
+                    "email", "first@example.com",
+                    "roles", List.of("admin"))));
+
+            verify(userManager).grantRole(eq("admin"), any(User.class));
+            verify(userManager, never()).revokeRole(anyString(), any(User.class));
+        }
+    }
+
+    @Test
+    void laterProvisionedUsersAreNotTouchedByBootstrapPolicy() throws Exception {
+        try (MockedStatic<WebloggerFactory> factory = bootstrappedRoller();
+             MockedStatic<WebloggerConfig> config = oidcBootstrapPolicy(false)) {
+            when(userManager.getUserByOpenIdUrl(SUBJECT)).thenReturn(null);
+            when(userManager.getUserCount()).thenReturn(5L);
+            when(userManager.getRoles(any(User.class))).thenReturn(List.of("editor"));
+
+            service.resolveUser(oidcUser(Map.of(
+                    "preferred_username", "later",
+                    "email", "later@example.com")));
+
+            verify(userManager, never()).revokeRole(anyString(), any(User.class));
+        }
+    }
+
+    private MockedStatic<WebloggerConfig> oidcBootstrapPolicy(boolean firstUserAdminForOidc) {
+        MockedStatic<WebloggerConfig> config = mockStatic(WebloggerConfig.class);
+        config.when(() -> WebloggerConfig.getBooleanProperty("users.oidc.autoProvision.enabled"))
+                .thenReturn(true);
+        config.when(() -> WebloggerConfig.getBooleanProperty("users.firstUserAdmin"))
+                .thenReturn(true);
+        config.when(() -> WebloggerConfig.getBooleanProperty("users.oidc.firstUserAdmin"))
+                .thenReturn(firstUserAdminForOidc);
+        return config;
     }
 
     private MockedStatic<WebloggerFactory> bootstrappedRoller() {

@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.config.AuthMethod;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -27,6 +29,13 @@ public class RollerUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String userName) {
+        // hiding the login form is not an authentication control: refuse
+        // password lookups server side when only OIDC login is configured
+        if (WebloggerConfig.getAuthMethod() == AuthMethod.OIDC) {
+            throw new UsernameNotFoundException(
+                    "form login is disabled: authentication.method is oidc");
+        }
+
         Weblogger roller;
         try {
             roller = WebloggerFactory.getWeblogger();
