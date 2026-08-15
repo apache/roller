@@ -104,7 +104,7 @@ public final class EntryEdit extends UIAction {
                 // retrieve from DB WeblogEntry based on ID
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
-                setEntry(wmgr.getWeblogEntry(getBean().getId()));
+                setEntry(wmgr.getWeblogEntry(getActionWeblog(), getBean().getId()));
             } catch (WebloggerException ex) {
                 log.error(
                         "Error looking up entry by id - " + getBean().getId(),

@@ -81,7 +81,7 @@ public class MediaFileAdd extends MediaFileBase {
             MediaFileManager mgr = WebloggerFactory.getWeblogger()
                     .getMediaFileManager();
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
-                setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
+                setDirectory(mgr.getMediaFileDirectory(getActionWeblog(), bean.getDirectoryId()));
 
             } else if (StringUtils.isNotEmpty(directoryName)) {
                 setDirectory(mgr.getMediaFileDirectoryByName(getActionWeblog(),

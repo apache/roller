@@ -73,7 +73,7 @@ public class CategoryRemove extends UIAction {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             if(!StringUtils.isEmpty(getRemoveId())) {
-                setCategory(wmgr.getWeblogCategory(getRemoveId()));
+                setCategory(wmgr.getWeblogCategory(getActionWeblog(), getRemoveId()));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up category", ex);
@@ -112,7 +112,7 @@ public class CategoryRemove extends UIAction {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
                 if (getTargetCategoryId() != null) {
-                    WeblogCategory target = wmgr.getWeblogCategory(getTargetCategoryId());
+                    WeblogCategory target = wmgr.getWeblogCategory(getActionWeblog(), getTargetCategoryId());
                     wmgr.moveWeblogCategoryContents(getCategory(), target);
                     WebloggerFactory.getWeblogger().flush();
                 }

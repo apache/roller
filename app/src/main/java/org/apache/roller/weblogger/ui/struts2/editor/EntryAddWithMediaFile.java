@@ -71,7 +71,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
 
             if (selectedImages != null) {
                 for (String image : selectedImages) {
-                    MediaFile mediaFile = manager.getMediaFile(image);
+                    MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), image);
                     String link;
 
                     if (mediaFile.isImageFile()) {
