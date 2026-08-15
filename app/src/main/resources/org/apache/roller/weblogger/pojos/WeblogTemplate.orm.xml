@@ -22,6 +22,9 @@
         <named-query name="WeblogTemplate.getByWeblog&amp;Name">
             <query>SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.name= ?2</query>
         </named-query>
+        <named-query name="WeblogTemplate.getByWeblog&amp;Id">
+            <query>SELECT w FROM WeblogTemplate w WHERE w.weblog = ?1 AND w.id = ?2</query>
+        </named-query>
 
         <attributes>
             <id name="id">

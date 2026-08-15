@@ -18,6 +18,9 @@
         <named-query name="WeblogEntry.getByWebsite&amp;Anchor">
             <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.anchor = ?2</query>
         </named-query>
+        <named-query name="WeblogEntry.getByWebsite&amp;Id">
+            <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1 AND w.id = ?2</query>
+        </named-query>
         <named-query name="WeblogEntry.getByWebsite">
             <query>SELECT w FROM WeblogEntry w WHERE w.website = ?1</query>
         </named-query>

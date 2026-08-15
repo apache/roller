@@ -89,6 +89,50 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
     @Override
+    public WeblogBookmark getBookmark(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        if (id == null) {
+            return null;
+        }
+
+        TypedQuery<WeblogBookmark> q = strategy.getNamedQuery(
+                "WeblogBookmark.getByWebsite&Id", WeblogBookmark.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public WeblogBookmarkFolder getFolderById(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        if (id == null) {
+            return null;
+        }
+
+        TypedQuery<WeblogBookmarkFolder> q = strategy.getNamedQuery(
+                "WeblogBookmarkFolder.getByWebsite&Id", WeblogBookmarkFolder.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
     public void removeBookmark(WeblogBookmark bookmark) throws WebloggerException {
         Weblog weblog = bookmark.getWebsite();
         

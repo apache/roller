@@ -74,7 +74,7 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
             // retrieve existing folder data from DB
             try {
                 BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-                folder = bmgr.getFolder(getBean().getId());
+                folder = bmgr.getFolderById(getActionWeblog(), getBean().getId());
             } catch (WebloggerException ex) {
                 log.error("Error looking up folder", ex);
             }

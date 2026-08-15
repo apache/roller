@@ -67,7 +67,7 @@ public class MediaFileEdit extends MediaFileBase {
         try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
-                setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
+                setDirectory(mgr.getMediaFileDirectory(getActionWeblog(), bean.getDirectoryId()));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directory", ex);
@@ -95,7 +95,7 @@ public class MediaFileEdit extends MediaFileBase {
     public String execute() {
         MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
         try {
-            MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
+            MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), getMediaFileId());
             this.bean.copyFrom(mediaFile);
 
         } catch (FileIOException ex) {
@@ -119,7 +119,7 @@ public class MediaFileEdit extends MediaFileBase {
         if (!hasActionErrors()) {
             MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
             try {
-                MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
+                MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), getMediaFileId());
                 bean.copyTo(mediaFile);
 
                 if (uploadedFile != null) {

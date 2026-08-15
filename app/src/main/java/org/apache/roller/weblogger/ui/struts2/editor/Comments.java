@@ -102,7 +102,7 @@ public class Comments extends UIAction {
 
             // lookup weblog entry if necessary
             if (!StringUtils.isEmpty(getBean().getEntryId())) {
-                setQueryEntry(wmgr.getWeblogEntry(getBean().getEntryId()));
+                setQueryEntry(wmgr.getWeblogEntry(getActionWeblog(), getBean().getEntryId()));
             }
 
             CommentSearchCriteria csc = getCommentSearchCriteria();
@@ -284,11 +284,11 @@ public class Comments extends UIAction {
 
                 WeblogEntryComment deleteComment = null;
                 for (String deleteId : deletes) {
-                    deleteComment = wmgr.getComment(deleteId);
+                    deleteComment = wmgr.getComment(getActionWeblog(), deleteId);
 
-                    // make sure comment is tied to action weblog
-                    if (getActionWeblog().equals(
-                            deleteComment.getWeblogEntry().getWebsite())) {
+                    // scoped lookup yields null for ids that do not belong to
+                    // the action weblog, and for ids that do not exist at all
+                    if (deleteComment != null) {
                         flushList.add(deleteComment);
                         reindexList.add(deleteComment.getWeblogEntry());
                         wmgr.removeComment(deleteComment);
@@ -315,11 +315,11 @@ public class Comments extends UIAction {
                     continue;
                 }
 
-                WeblogEntryComment comment = wmgr.getComment(ids[i]);
+                WeblogEntryComment comment = wmgr.getComment(getActionWeblog(), ids[i]);
 
-                // make sure comment is tied to action weblog
-                if (getActionWeblog().equals(
-                        comment.getWeblogEntry().getWebsite())) {
+                // scoped lookup yields null for ids that do not belong to the
+                // action weblog, and for ids that do not exist at all
+                if (comment != null) {
                     // comment approvals and mark/unmark spam
                     if (approvedIds.contains(ids[i])) {
                         // if a comment was previously PENDING then this is

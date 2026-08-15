@@ -62,7 +62,7 @@ public class MediaFileBase extends UIAction {
             log.debug("Processing delete of file id - " + this.mediaFileId);
             MediaFileManager manager = WebloggerFactory.getWeblogger()
                     .getMediaFileManager();
-            MediaFile mediaFile = manager.getMediaFile(this.mediaFileId);
+            MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), this.mediaFileId);
             manager.removeMediaFile(getActionWeblog(), mediaFile);
             // flush changes
             WebloggerFactory.getWeblogger().flush();
@@ -84,7 +84,7 @@ public class MediaFileBase extends UIAction {
                     + this.mediaFileId);
             MediaFileManager manager = WebloggerFactory.getWeblogger()
                     .getMediaFileManager();
-            MediaFile mediaFile = manager.getMediaFile(this.mediaFileId);
+            MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), this.mediaFileId);
             mediaFile.setSharedForGallery(true);
             manager.updateMediaFile(getActionWeblog(), mediaFile);
             // flush changes
@@ -111,7 +111,7 @@ public class MediaFileBase extends UIAction {
                         + " media files.");
                 for (String fileId : fileIds) {
                     log.debug("Deleting media file - " + fileId);
-                    MediaFile mediaFile = manager.getMediaFile(fileId);
+                    MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), fileId);
                     if (mediaFile != null) {
                         manager.removeMediaFile(getActionWeblog(), mediaFile);
                     }
@@ -147,11 +147,11 @@ public class MediaFileBase extends UIAction {
                 log.debug("Processing move of " + fileIds.length
                         + " media files.");
                 MediaFileDirectory targetDirectory = manager
-                        .getMediaFileDirectory(this.selectedDirectory);
+                        .getMediaFileDirectory(getActionWeblog(), this.selectedDirectory);
                 for (String fileId : fileIds) {
                     log.debug("Moving media file - " + fileId
                             + " to directory - " + this.selectedDirectory);
-                    MediaFile mediaFile = manager.getMediaFile(fileId);
+                    MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), fileId);
                     if (mediaFile != null && !mediaFile.getDirectory().getId().equals(targetDirectory.getId())) {
                         manager.moveMediaFile(mediaFile, targetDirectory);
                         movedFiles++;

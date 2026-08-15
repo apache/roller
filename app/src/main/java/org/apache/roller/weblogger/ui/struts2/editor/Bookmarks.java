@@ -72,7 +72,7 @@ public class Bookmarks extends UIAction {
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             if (!StringUtils.isEmpty(getFolderId())) {
-                setFolder(bmgr.getFolder(getFolderId()));
+                setFolder(bmgr.getFolderById(getActionWeblog(), getFolderId()));
             } else {
                 setFolder(bmgr.getDefaultFolder(getActionWeblog()));
                 if (getFolder() != null) {
@@ -134,7 +134,7 @@ public class Bookmarks extends UIAction {
                     if (log.isDebugEnabled()) {
                         log.debug("Deleting bookmark - " + bookmarks[j]);
                     }
-                    bookmark = bmgr.getBookmark(bookmarks[j]);
+                    bookmark = bmgr.getBookmark(getActionWeblog(), bookmarks[j]);
                     if (bookmark != null) {
                         bmgr.removeBookmark(bookmark);
                     }
@@ -160,7 +160,7 @@ public class Bookmarks extends UIAction {
 
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            WeblogBookmarkFolder fd = bmgr.getFolder(getFolderId());
+            WeblogBookmarkFolder fd = bmgr.getFolderById(getActionWeblog(), getFolderId());
 
             if (fd != null) {
 
@@ -203,7 +203,7 @@ public class Bookmarks extends UIAction {
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             if (!StringUtils.isEmpty(viewFolderId)) {
-                setFolder(bmgr.getFolder(viewFolderId));
+                setFolder(bmgr.getFolderById(getActionWeblog(), viewFolderId));
                 setFolderId(viewFolderId);
             }
         } catch (WebloggerException ex) {
@@ -225,12 +225,12 @@ public class Bookmarks extends UIAction {
             }
 
             // Move bookmarks to new parent folder.
-            WeblogBookmarkFolder newFolder = bmgr.getFolder(getTargetFolderId());
+            WeblogBookmarkFolder newFolder = bmgr.getFolderById(getActionWeblog(), getTargetFolderId());
             String bookmarks[] = getSelectedBookmarks();
 
             if (null != bookmarks && bookmarks.length > 0) {
                 for (int j = 0; j < bookmarks.length; j++) {
-                    WeblogBookmark bd = bmgr.getBookmark(bookmarks[j]);
+                    WeblogBookmark bd = bmgr.getBookmark(getActionWeblog(), bookmarks[j]);
                     newFolder.addBookmark(bd);
                     bd.setFolder(newFolder);
                     bmgr.saveBookmark(bd);

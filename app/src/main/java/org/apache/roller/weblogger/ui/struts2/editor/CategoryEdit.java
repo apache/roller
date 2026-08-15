@@ -74,7 +74,7 @@ public class CategoryEdit extends UIAction {
         } else {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                category = wmgr.getWeblogCategory(getBean().getId());
+                category = wmgr.getWeblogCategory(getActionWeblog(), getBean().getId());
             } catch (WebloggerException ex) {
                 log.error("Error looking up category", ex);
             }
