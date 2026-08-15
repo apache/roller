@@ -359,7 +359,7 @@
                 <param name="weblog">${weblog}</param>
                 <param name="bean.id">${bean.id}</param>
             </result>
-            <allowed-methods>execute,firstSave,publish,saveDraft,trackback</allowed-methods>
+            <allowed-methods>execute,firstSave,publish,saveDraft</allowed-methods>
         </action>
 
         <action name="entryEdit"
@@ -371,7 +371,7 @@
                 <param name="actionName">menu</param>
                 <param name="namespace">/roller-ui</param>
             </result>
-            <allowed-methods>execute,firstSave,publish,saveDraft,trackback</allowed-methods>
+            <allowed-methods>execute,firstSave,publish,saveDraft</allowed-methods>
         </action>
         
         <action name="entryRemove"

@@ -297,19 +297,6 @@
         </span>
     </s:if>
 
-
-    <%-- Trackback control
-    <s:if test="actionName == 'entryEdit' && userAnAuthor">
-        <br/>
-        <h2><s:text name="weblogEdit.trackback"/></h2>
-        <s:text name="weblogEdit.trackbackUrl"/>
-        <br/>
-        <s:textfield name="trackbackUrl" size="80" maxlength="255" style="width:35%"/>
-
-        <s:submit value="%{getText('weblogEdit.sendTrackback')}" action="entryEdit!trackback"/>
-    </s:if>
-    --%>
-
 </s:form>
 
 
