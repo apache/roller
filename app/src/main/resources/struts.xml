@@ -37,6 +37,8 @@
                          class="org.apache.roller.weblogger.ui.struts2.util.UISecurityInterceptor" />
             <interceptor name="UIActionPrepareInterceptor" 
                          class="org.apache.roller.weblogger.ui.struts2.util.UIActionPrepareInterceptor" />
+            <interceptor name="ValidateSaltInterceptor"
+                         class="org.apache.roller.weblogger.ui.struts2.util.ValidateSaltInterceptor" />
                          
             <!-- Define a custom interceptor stack for Roller so that we can 
                  add in our own custom interceptors.  We basically copy the 
@@ -55,6 +57,7 @@
                 <!-- <interceptor-ref name="scopedModelDriven"/> -->
                 <!-- <interceptor-ref name="modelDriven"/> -->
                 <interceptor-ref name="fileUpload"/>
+                <interceptor-ref name="ValidateSaltInterceptor"/>
                 <interceptor-ref name="checkbox"/>
                 <interceptor-ref name="multiselect"/>
                 <interceptor-ref name="staticParams"/>

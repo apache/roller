@@ -142,15 +142,15 @@
     </filter-mapping>
 
 	<filter-mapping>
+		<filter-name>ValidateSaltFilter</filter-name>
+		<url-pattern>/roller-ui/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
 		<filter-name>LoadSaltFilter</filter-name>
 		<url-pattern>/roller-ui/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
-
-	<filter-mapping>
-		<filter-name>ValidateSaltFilter</filter-name>
-		<url-pattern>/roller-ui/*</url-pattern>
 	</filter-mapping>
 
     <!-- Request mapping, this is what allows the urls to work -->
