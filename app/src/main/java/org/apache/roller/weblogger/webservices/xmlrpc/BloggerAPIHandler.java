@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -43,6 +42,8 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.xmlrpc.XmlRpcException;
 
@@ -86,14 +87,13 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         
         Weblogger roller = WebloggerFactory.getWeblogger();
         WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
-        WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
-        
-        // Return false if entry not found
+        User user = validateUser(userid, password);
+        WeblogEntry entry = getEntryForWrite(postid, user, null);
+
+        // Return false if entry is not available to this user.
         if (entry == null) {
             return false;
         }
-        
-        validate(entry.getWebsite().getHandle(), userid, password);
         
         try {
             // notify cache
@@ -138,7 +138,8 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("   Template: " + templateData);
         mLogger.debug("       Type: " + templateType);
         
-        validate(blogid, userid, password);
+        Weblog website = validate(blogid, userid, password,
+                WeblogPermission.ADMIN);
         
         if (!templateType.equals("main")) {
             throw new XmlRpcException(
@@ -146,7 +147,13 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         }
         
         try {
-            WeblogTemplate template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(templateType);
+            WeblogTemplate template = WebloggerFactory.getWeblogger()
+                    .getWeblogManager().getTemplateByAction(
+                            website, ComponentType.WEBLOG);
+            if (template == null) {
+                throw new XmlRpcException(UNKNOWN_EXCEPTION,
+                        "Standard rendering of template not found");
+            }
             CustomTemplateRendition ctr = template.getTemplateRendition(RenditionType.STANDARD);
             if (ctr != null) {
                 ctr.setTemplate(templateData);
@@ -186,11 +193,19 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("       Type: " + templateType);
         
-        validate(blogid, userid,password);
+        Weblog website = validate(blogid, userid, password,
+                WeblogPermission.ADMIN);
         
         try {
             CustomTemplateRendition ctr = null;
-            WeblogTemplate template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(templateType);
+            WeblogTemplate template;
+            if ("main".equals(templateType)) {
+                template = WebloggerFactory.getWeblogger().getWeblogManager()
+                        .getTemplateByAction(website, ComponentType.WEBLOG);
+            } else {
+                template = WebloggerFactory.getWeblogger().getWeblogManager()
+                        .getTemplateByName(website, templateType);
+            }
             if (template != null) {
                 ctr = template.getTemplateRendition(RenditionType.STANDARD);
             }
@@ -223,43 +238,33 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("     Appkey: " + appkey);
         mLogger.debug("     UserId: " + userid);
         
-        validateUser(userid, password);
+        User user = validateUser(userid, password);
         
-        try {
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            UserManager userMgr = roller.getUserManager();
-            User user = userMgr.getUserByUserName(userid);
-            
-            // parses full name into two strings, firstname and lastname
-            String firstname = "", lastname = "";
-            StringTokenizer toker = new StringTokenizer(user.getFullName());
-            
-            if (toker.hasMoreTokens()) {
-                firstname = toker.nextToken();
-            }
-            
-            while (toker.hasMoreTokens()) {
-                if ( !lastname.isEmpty() ) {
-                    lastname += " ";
-                }
-                lastname += toker.nextToken();
-            }
+        // parses full name into two strings, firstname and lastname
+        String firstname = "", lastname = "";
+        StringTokenizer toker = new StringTokenizer(user.getFullName());
 
-            // TODO: Should screen name be renamed nickname and used here?
-            // populates user information to return as a result
-            Hashtable<String, String> result = new Hashtable<>();
-            result.put("nickname", user.getUserName());
-            result.put("userid", user.getUserName());
-            result.put("email", "");
-            result.put("lastname", lastname);
-            result.put("firstname", firstname);
-            
-            return result;
-        } catch (WebloggerException e) {
-            String msg = "ERROR in BlooggerAPIHander.getInfo";
-            mLogger.error(msg,e);
-            throw new XmlRpcException(UNKNOWN_EXCEPTION,msg);
+        if (toker.hasMoreTokens()) {
+            firstname = toker.nextToken();
         }
+
+        while (toker.hasMoreTokens()) {
+            if (!lastname.isEmpty()) {
+                lastname += " ";
+            }
+            lastname += toker.nextToken();
+        }
+
+        // TODO: Should screen name be renamed nickname and used here?
+        // populates user information to return as a result
+        Hashtable<String, String> result = new Hashtable<>();
+        result.put("nickname", user.getUserName());
+        result.put("userid", user.getUserName());
+        result.put("email", "");
+        result.put("lastname", lastname);
+        result.put("firstname", firstname);
+
+        return result;
     }
     
     
@@ -280,28 +285,25 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("     UserId: " + userid);
         
         Vector<Object> result = new Vector<>();
-        if (validateUser(userid, password)) {
-            try {
-                UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-                User user = umgr.getUserByUserName(userid);
-                
-                // get list of user's enabled websites
-                List<Weblog> websites = WebloggerFactory.getWeblogger().getWeblogManager().getUserWeblogs(user, true);
-                for (Weblog website : websites) {
-                    // only include weblog's that have client API support enabled
-                    if (Boolean.TRUE.equals(website.getEnableBloggerApi())) {
-                        Hashtable<String, String> blog = new Hashtable<>(3);
-                        blog.put("url", website.getURL());
-                        blog.put("blogid", website.getHandle());
-                        blog.put("blogName", website.getName());
-                        result.add(blog);
-                    }
+        User user = validateUser(userid, password);
+        try {
+            // get list of user's enabled websites
+            List<Weblog> websites = WebloggerFactory.getWeblogger()
+                    .getWeblogManager().getUserWeblogs(user, true);
+            for (Weblog website : websites) {
+                // only include weblogs that have client API support enabled
+                if (Boolean.TRUE.equals(website.getEnableBloggerApi())) {
+                    Hashtable<String, String> blog = new Hashtable<>(3);
+                    blog.put("url", website.getURL());
+                    blog.put("blogid", website.getHandle());
+                    blog.put("blogName", website.getName());
+                    result.add(blog);
                 }
-            } catch (Exception e) {
-                String msg = "ERROR in BlooggerAPIHander.getUsersBlogs";
-                mLogger.error(msg,e);
-                throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
             }
+        } catch (Exception e) {
+            String msg = "ERROR in BlooggerAPIHander.getUsersBlogs";
+            mLogger.error(msg,e);
+            throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
         }
         return result;
     }
@@ -330,36 +332,35 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("    Publish: " + publish);
         mLogger.debug("     Content:\n " + content);
         
-        if (validateUser(userid, password)) {
-            try {
-                Timestamp current = new Timestamp(System.currentTimeMillis());
-                
-                Weblogger roller = WebloggerFactory.getWeblogger();
-                WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
-                WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
-                entry.setText(content);
-                entry.setUpdateTime(current);
-                if (publish) {
-                    entry.setStatus(PubStatus.PUBLISHED);
-                } else {
-                    entry.setStatus(PubStatus.DRAFT);
-                }
-                
-                // save the entry
-                weblogMgr.saveWeblogEntry(entry);
-                roller.flush();
-                
-                // notify cache
-                flushPageCache(entry.getWebsite());
-                
-                return true;
-            } catch (Exception e) {
-                String msg = "ERROR in BlooggerAPIHander.editPost";
-                mLogger.error(msg,e);
-                throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
+        User user = validateUser(userid, password);
+        WeblogEntry entry = validateEntry(postid, user,
+                publish ? WeblogPermission.POST : null);
+        try {
+            Timestamp current = new Timestamp(System.currentTimeMillis());
+
+            Weblogger roller = WebloggerFactory.getWeblogger();
+            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
+            entry.setText(content);
+            entry.setUpdateTime(current);
+            if (publish) {
+                entry.setStatus(PubStatus.PUBLISHED);
+            } else {
+                entry.setStatus(PubStatus.DRAFT);
             }
+
+            // save the entry
+            weblogMgr.saveWeblogEntry(entry);
+            roller.flush();
+
+            // notify cache
+            flushPageCache(entry.getWebsite());
+
+            return true;
+        } catch (Exception e) {
+            String msg = "ERROR in BlooggerAPIHander.editPost";
+            mLogger.error(msg,e);
+            throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
         }
-        return false;
     }
     
     
@@ -386,7 +387,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("    Publish: " + publish);
         mLogger.debug("    Content:\n " + content);
         
-        Weblog website = validate(blogid, userid, password);
+        User user = validateUser(userid, password);
+        Weblog website = validateWeblog(blogid, user,
+                publish ? WeblogPermission.POST : WeblogPermission.EDIT_DRAFT);
         
         // extract the title from the content
         String title = "";
@@ -413,7 +416,6 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             entry.setLocale(website.getLocale());
             entry.setPubTime(current);
             entry.setUpdateTime(current);
-            User user = roller.getUserManager().getUserByUserName(userid);
             entry.setCreatorUserName(user.getUserName());
             entry.setWebsite(website);
             entry.setCategory(website.getBloggerCategory());
@@ -463,7 +465,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("     Number: " + numposts);
         
-        Weblog weblog = validate(blogid, userid,password);
+        User user = validateUser(userid, password);
+        Weblog weblog = validateWeblog(blogid, user,
+                WeblogPermission.EDIT_DRAFT);
         
         try {
             Vector<Object> results = new Vector<>();
@@ -474,10 +478,17 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
                 wesc.setWeblog(weblog);
                 wesc.setEndDate(new Date());
+                if (weblog.hasUserPermission(user, WeblogPermission.POST)) {
+                    wesc.setMaxResults(numposts);
+                }
                 Map<Date, List<WeblogEntry>> entries = weblogMgr.getWeblogEntryObjectMap(wesc);
 
+                outer:
                 for (List<WeblogEntry> weList : entries.values()) {
                     for (WeblogEntry entry : weList) {
+                        if (!entry.hasWritePermissions(user)) {
+                            continue;
+                        }
                         Hashtable<String, Object> result = new Hashtable<>();
                         if (entry.getPubTime() != null) {
                             result.put("dateCreated", entry.getPubTime());
@@ -486,6 +497,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                         result.put("postid", entry.getId());
                         result.put("content", entry.getText());
                         results.add(result);
+                        if (results.size() >= numposts) {
+                            break outer;
+                        }
                     }
                 }
             }

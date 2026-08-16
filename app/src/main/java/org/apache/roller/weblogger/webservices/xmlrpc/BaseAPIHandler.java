@@ -28,9 +28,12 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
@@ -102,53 +105,29 @@ public class BaseAPIHandler implements Serializable {
     
     //------------------------------------------------------------------------
     /**
-     * Returns website, but only if user authenticates and is authorized to edit.
-     * @param blogid   Blogid sent in request (used as website's handle)
-     * @param username Username sent in request
-     * @param password Password sent in request
+     * Returns a weblog only when the authenticated user has the requested
+     * permission and XML-RPC access is enabled for that weblog.
      */
-    protected Weblog validate(String blogid, String username, String password)
-    throws Exception {
-        boolean authenticated = false;
-        boolean userEnabled = false;
-        boolean weblogEnabled = false;
-        boolean apiEnabled = false;
-        boolean weblogFound = false;
-        Weblog website = null;
-        try {
-            UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            WeblogManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            User user = userMgr.getUserByUserName(username);
-            
-            website = weblogMgr.getWeblogByHandle(blogid);
-            if (website != null) {
-                weblogFound = true;
-                weblogEnabled = website.getVisible();
-                apiEnabled = website.getEnableBloggerApi()
-                	&& WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc");
-            }
-            
-            if (user != null) {
-                userEnabled = user.getEnabled();
-                authenticated = RollerContext.getPasswordEncoder().matches(password, user.getPassword());
-            }
-        } catch (Exception e) {
-            mLogger.error("ERROR internal error validating user", e);
-        }
-        
-        if ( !authenticated ) {
-            throw new XmlRpcNotAuthorizedException(AUTHORIZATION_EXCEPTION_MSG);
-        }
-        if ( !userEnabled ) {
-            throw new XmlRpcNotAuthorizedException(USER_DISABLED_MSG);
-        }
-        if ( !weblogEnabled ) {
+    protected Weblog validate(String blogid, String username, String password,
+            String requiredAction) throws Exception {
+        User user = validateUser(username, password);
+        return validateWeblog(blogid, user, requiredAction);
+    }
+
+    /**
+     * Validate a weblog for an already authenticated user.
+     */
+    protected Weblog validateWeblog(String blogid, User user,
+            String requiredAction) throws Exception {
+        WeblogManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogManager();
+        Weblog website = weblogMgr.getWeblogByHandle(blogid);
+
+        // Use one response for missing, unavailable, and inaccessible weblogs.
+        if (!isWeblogAvailable(website)
+                || !website.hasUserPermission(user, requiredAction)) {
             throw new XmlRpcNotAuthorizedException(WEBLOG_DISABLED_MSG);
         }
-        if ( !weblogFound ) {
-            throw new XmlRpcException(WEBLOG_NOT_FOUND, WEBLOG_NOT_FOUND_MSG);
-        }
-        if ( !apiEnabled ) {
+        if (!Boolean.TRUE.equals(website.getEnableBloggerApi())) {
             throw new XmlRpcNotAuthorizedException(BLOGGERAPI_DISABLED_MSG);
         }
         return website;
@@ -156,43 +135,82 @@ public class BaseAPIHandler implements Serializable {
     
     //------------------------------------------------------------------------
     /**
-     * Returns true if username/password are valid and user is not disabled.
+     * Returns the authenticated user if username/password are valid and the
+     * user is not disabled.
      * @param username Username sent in request
      * @param password Password sent in request
      */
-    protected boolean validateUser(String username, String password)
-    throws Exception {
+    protected User validateUser(String username, String password)
+            throws Exception {
+        User user = null;
         boolean authenticated = false;
-        boolean enabled = false;
-        boolean apiEnabled = false;
         try {
-            
             UserManager userMgr = WebloggerFactory.getWeblogger().getUserManager();
-            User user = userMgr.getUserByUserName(username);
-            
-            if (user != null) {
-                enabled = user.getEnabled();
-                authenticated = RollerContext.getPasswordEncoder().matches(password, user.getPassword());
-                
-                apiEnabled = WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc");
+            user = userMgr.getUserByUserName(username);
+            if (user != null && RollerContext.getPasswordEncoder() != null) {
+                authenticated = RollerContext.getPasswordEncoder().matches(
+                        password, user.getPassword());
             }
         } catch (Exception e) {
             mLogger.error("ERROR internal error validating user", e);
         }
-        
-        if ( !authenticated ) {
+
+        if (!authenticated) {
             throw new XmlRpcNotAuthorizedException(AUTHORIZATION_EXCEPTION_MSG);
         }
-        
-        if ( !enabled ) {
+
+        if (!Boolean.TRUE.equals(user.getEnabled())) {
             throw new XmlRpcNotAuthorizedException(USER_DISABLED_MSG);
         }
-        
-        if ( !apiEnabled ) {
+
+        if (!WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc")) {
             throw new XmlRpcNotAuthorizedException(BLOGGERAPI_DISABLED_MSG);
-        }        
-        
-        return authenticated;
+        }
+
+        return user;
+    }
+
+    /**
+     * Returns an entry only when it belongs to an available XML-RPC weblog and
+     * the user may edit it. An optional additional weblog action can be
+     * required for transitions such as publishing.
+     */
+    protected WeblogEntry validateEntry(String postid, User user,
+            String additionalAction) throws Exception {
+        WeblogEntry entry = getEntryForWrite(postid, user, additionalAction);
+        if (entry == null) {
+            throw new XmlRpcException(INVALID_POSTID, INVALID_POSTID_MSG);
+        }
+        return entry;
+    }
+
+    /**
+     * Nullable form used by Blogger.deletePost(), whose public contract
+     * returns false when the entry is unavailable.
+     */
+    protected WeblogEntry getEntryForWrite(String postid, User user,
+            String additionalAction) throws Exception {
+        WeblogEntryManager entryMgr = WebloggerFactory.getWeblogger()
+                .getWeblogEntryManager();
+        WeblogEntry entry = entryMgr.getWeblogEntry(postid);
+        if (entry == null || !isWeblogAvailable(entry.getWebsite())
+                || !Boolean.TRUE.equals(entry.getWebsite().getEnableBloggerApi())
+                || !entry.getWebsite().hasUserPermission(
+                        user, WeblogPermission.EDIT_DRAFT)
+                || !entry.hasWritePermissions(user)) {
+            return null;
+        }
+        if (additionalAction != null
+                && !entry.getWebsite().hasUserPermission(user, additionalAction)) {
+            return null;
+        }
+        return entry;
+    }
+
+    private boolean isWeblogAvailable(Weblog website) {
+        return website != null
+                && Boolean.TRUE.equals(website.getVisible())
+                && Boolean.TRUE.equals(website.getActive());
     }
     
     //------------------------------------------------------------------------
