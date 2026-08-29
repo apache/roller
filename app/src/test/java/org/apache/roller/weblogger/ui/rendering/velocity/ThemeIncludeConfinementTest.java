@@ -45,14 +45,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class ThemeIncludeConfinementTest {
 
-    private static final Path VELOCITY_PROPERTIES =
-            Paths.get("src", "main", "webapp", "WEB-INF", "velocity.properties");
+    /**
+     * Every Velocity configuration in the tree, because a second copy that
+     * still admits the classpath is a copy that can quietly become live.
+     */
+    private static final Path[] VELOCITY_PROPERTIES = {
+            Paths.get("src", "main", "webapp", "WEB-INF", "velocity.properties"),
+            Paths.get("src", "test", "resources", "WEB-INF", "velocity.properties"),
+    };
 
-    private String velocityProperties() throws Exception {
-        assertTrue(Files.isReadable(VELOCITY_PROPERTIES),
-                "cannot read " + VELOCITY_PROPERTIES.toAbsolutePath()
-                        + " (run from the app module)");
-        return new String(Files.readAllBytes(VELOCITY_PROPERTIES), StandardCharsets.UTF_8);
+    private String read(Path path) throws Exception {
+        assertTrue(Files.isReadable(path),
+                "cannot read " + path.toAbsolutePath() + " (run from the app module)");
+        return new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
     }
 
     /**
@@ -61,34 +66,41 @@ public class ThemeIncludeConfinementTest {
      */
     @Test
     public void classpathIsNotAResolvableNamespace() throws Exception {
-        String props = velocityProperties();
-        for (String line : props.split("\n")) {
-            String trimmed = line.trim();
-            if (trimmed.startsWith("resource.loaders")) {
-                assertFalse(trimmed.matches(".*\\bclass\\b.*"),
-                        "the classpath loader must not be in the weblog loader set: " + trimmed);
+        for (Path path : VELOCITY_PROPERTIES) {
+            String props = read(path);
+            for (String line : props.split("\n")) {
+                String trimmed = line.trim();
+                if (trimmed.startsWith("resource.loaders")) {
+                    assertFalse(trimmed.matches(".*\\bclass\\b.*"),
+                            path + ": the classpath loader must not be in the weblog "
+                                    + "loader set: " + trimmed);
+                }
             }
+            assertFalse(props.contains("ClasspathResourceLoader"),
+                    path + ": the classpath loader must not be configured for "
+                            + "weblog rendering");
         }
-        assertFalse(props.contains("ClasspathResourceLoader"),
-                "the classpath loader must not be configured for weblog rendering");
     }
 
     /** The include handler must actually be registered, under Velocity 2's key. */
     @Test
     public void includeHandlerIsRegistered() throws Exception {
-        String props = velocityProperties();
-        assertTrue(props.contains(
-                        "event_handler.include.class=org.apache.roller.weblogger.ui."
-                                + "rendering.velocity.ThemeIncludeEventHandler"),
-                "the include event handler must be registered under Velocity 2's "
-                        + "event_handler.include.class key");
+        for (Path path : VELOCITY_PROPERTIES) {
+            assertTrue(read(path).contains(
+                            "event_handler.include.class=org.apache.roller.weblogger.ui."
+                                    + "rendering.velocity.ThemeIncludeEventHandler"),
+                    path + ": the include event handler must be registered under "
+                            + "Velocity 2's event_handler.include.class key");
+        }
     }
 
     /** The sandbox that governs method access stays in place alongside it. */
     @Test
     public void secureUberspectorIsRetained() throws Exception {
-        assertTrue(velocityProperties().contains("SecureUberspector"),
-                "the introspection sandbox must be retained");
+        for (Path path : VELOCITY_PROPERTIES) {
+            assertTrue(read(path).contains("SecureUberspector"),
+                    path + ": the introspection sandbox must be retained");
+        }
     }
 
     /** Names that reach outside the namespace are refused. */
