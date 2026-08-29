@@ -31,10 +31,15 @@
 
             <div id="tabContent">
                 <div id="directory">
-                #if($model.getRequestParameter("weblog"))
-                    #set($handle = $model.getRequestParameter("weblog"))
-                    <a href="?letter=$utils.left($handle,1)">Back to blog directory</a>
-                    #set($profileWeblog = $site.getWeblog($handle))
+                ## Render the profile only for a weblog that exists, and build
+                ## the back-link from the resolved weblog's own handle.
+                #set($profileWeblog = false)
+                #set($requestedHandle = $model.getRequestParameter("weblog"))
+                #if($requestedHandle)
+                    #set($profileWeblog = $site.getWeblog($requestedHandle))
+                #end
+                #if($profileWeblog)
+                    <a href="?letter=$utils.escapeHTML($utils.left($profileWeblog.handle,1))">Back to blog directory</a>
                     #includeTemplate($model.weblog "_blogprofile")
                 #else                 
                    #set($pageLength = $maxResults)

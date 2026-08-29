@@ -1,8 +1,14 @@
-#if($model.getRequestParameter("letter"))
-        #set($chosenLetter = $model.getRequestParameter("letter"))
-    #end
+#set($weblogLetterMap = $site.getWeblogHandleLetterMap())
 
-    #set($weblogLetterMap = $site.getWeblogHandleLetterMap())
+    ## Accept only a known A-Z key; otherwise render the full listing, exactly
+    ## as a missing parameter does.
+    #set($requestedLetter = $model.getRequestParameter("letter"))
+    #if($requestedLetter && $requestedLetter.length() == 1)
+        #set($candidateLetter = $requestedLetter.toUpperCase())
+        #if($weblogLetterMap.containsKey($candidateLetter))
+            #set($chosenLetter = $candidateLetter)
+        #end
+    #end
     <div class="letterMap">
     <p>
     #set($firstLetterDone = 0)
@@ -22,7 +28,7 @@
     </div>
 
     #if($chosenLetter)
-       <h2 class="pageTitle">Weblogs starting with $chosenLetter</h2>
+       <h2 class="pageTitle">Weblogs starting with $utils.escapeHTML($chosenLetter)</h2>
     #else
        <h2 class="pageTitle">All weblogs</h2>
     #end
