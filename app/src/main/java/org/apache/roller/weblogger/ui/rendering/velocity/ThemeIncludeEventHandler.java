@@ -36,8 +36,15 @@ import org.apache.velocity.context.Context;
  * <p>Legitimate includes name a resource within the current theme, or a stored
  * template resolved by id through the weblog's own template collection. Neither
  * needs to leave the namespace, so a name that is absolute, walks upward, or
- * carries a scheme is refused. Returning null tells Velocity not to resolve the
- * resource at all.
+ * carries a scheme is refused.
+ *
+ * <p>Names are also held to the shapes a template can actually take: a stored
+ * template id, which carries no extension, or a Velocity template file. A name
+ * that asks for some other kind of file is not a template reference at all, and
+ * refusing it keeps the directives pointed at templates no matter what a loader
+ * further down happens to be able to resolve.
+ *
+ * <p>Returning null tells Velocity not to resolve the resource at all.
  */
 public class ThemeIncludeEventHandler implements IncludeEventHandler {
 
@@ -53,7 +60,7 @@ public class ThemeIncludeEventHandler implements IncludeEventHandler {
 
         String path = includeResourcePath.trim();
 
-        if (isOutsideNamespace(path)) {
+        if (isOutsideNamespace(path) || isNotATemplateName(path)) {
             // Logged rather than raised: a template that asks for something it
             // may not have renders without that fragment, which is how Velocity
             // already treats a resource it cannot find.
@@ -63,6 +70,30 @@ public class ThemeIncludeEventHandler implements IncludeEventHandler {
         }
 
         return path;
+    }
+
+    /**
+     * Stored templates are resolved by id and carry no extension; theme
+     * resources are Velocity templates. A name bearing any other extension is
+     * asking for something that is not a template.
+     *
+     * @return true when the name is not one of those two shapes
+     */
+    private boolean isNotATemplateName(String path) {
+        // Stored template ids arrive as <template>|<deviceType>; the device
+        // type is a rendition selector, not part of the resource name.
+        String name = path;
+        int bar = name.indexOf('|');
+        if (bar > -1) {
+            name = name.substring(0, bar);
+        }
+
+        int dot = name.lastIndexOf('.');
+        if (dot == -1) {
+            // No extension: a stored template id.
+            return false;
+        }
+        return !name.regionMatches(true, dot, ".vm", 0, 3) || dot != name.length() - 3;
     }
 
     /**

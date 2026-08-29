@@ -118,6 +118,13 @@ public class ThemeIncludeConfinementTest {
                 "\\WEB-INF\\classes\\roller-custom.properties",
                 "",
                 "   ",
+                // Not template names: a plain name needs no traversal to reach
+                // whatever a loader can resolve, so shape is checked too.
+                "roller-custom.properties",
+                "web.xml",
+                "org/apache/roller/weblogger/config/roller.properties",
+                "weblog.vm.bak",
+                "notes.txt",
         };
         for (String name : refused) {
             assertNull(handler.includeEvent(new VelocityContext(), name, "weblog.vm", "include"),
@@ -152,42 +159,46 @@ public class ThemeIncludeConfinementTest {
      *
      * <p>Velocity's ClasspathResourceLoader resolves a plain resource name
      * against the classpath, with no traversal involved, so a loader set that
-     * includes it makes any packaged file resolvable by name. This renders the
-     * same template with that loader and without it, which anchors the
-     * assertion to a demonstrated difference rather than to an include that
-     * might not have resolved under either configuration.
+     * includes it makes any packaged file resolvable by name. The first case
+     * reproduces that resolution, which is what gives the other two something
+     * to be measured against: each of the two changes is then shown to stop it
+     * on its own, so neither is carrying the other.
      */
     @Test
-    public void classpathResourcesAreUnreachableOnceTheLoaderIsRemoved() throws Exception {
+    public void aPlainNameDoesNotReachAPackagedFile() throws Exception {
         Path dir = Files.createTempDirectory("roller-include-confinement");
         Files.write(dir.resolve("include-by-name.vm"),
                 "BEFORE[#include(\"roller-custom.properties\")]AFTER"
                         .getBytes(StandardCharsets.UTF_8));
 
-        String withClasspath = render(dir, true);
-        assertTrue(withClasspath.contains("database.jdbc"),
+        String reference = render(dir, true, false);
+        assertTrue(reference.contains("database.jdbc"),
                 "control failed: the classpath loader did not resolve the resource, so "
-                        + "this test cannot show that the loader set matters:\n" + withClasspath);
+                        + "neither assertion below can show anything:\n" + reference);
 
-        String withoutClasspath = render(dir, false);
-        assertFalse(withoutClasspath.contains("database.jdbc"),
-                "a weblog template resolved a classpath resource:\n" + withoutClasspath);
+        assertFalse(render(dir, false, false).contains("database.jdbc"),
+                "the shipped loader set still resolved a classpath resource");
+
+        assertFalse(render(dir, true, true).contains("database.jdbc"),
+                "the include handler still admitted a name that is not a template");
     }
 
     /**
-     * Renders include-by-name.vm with and without the classpath in the loader set,
-     * mirroring the shipped configuration in each case.
+     * Renders include-by-name.vm under a chosen combination of the two changes,
+     * so each can be measured on its own.
      */
-    private String render(Path dir, boolean includeClasspathLoader) {
+    private String render(Path dir, boolean classpathLoader, boolean includeHandler) {
         Properties props = new Properties();
-        props.setProperty("resource.loaders", includeClasspathLoader ? "file, class" : "file");
+        props.setProperty("resource.loaders", classpathLoader ? "file, class" : "file");
         props.setProperty("resource.loader.file.class",
                 "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
         props.setProperty("resource.loader.file.path", dir.toString());
         props.setProperty("resource.loader.class.class",
                 "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-        props.setProperty("event_handler.include.class",
-                ThemeIncludeEventHandler.class.getName());
+        if (includeHandler) {
+            props.setProperty("event_handler.include.class",
+                    ThemeIncludeEventHandler.class.getName());
+        }
         VelocityEngine engine = new VelocityEngine();
         engine.init(props);
 
@@ -196,7 +207,7 @@ public class ThemeIncludeConfinementTest {
             engine.mergeTemplate("include-by-name.vm", "UTF-8", new VelocityContext(), out);
         } catch (Exception ex) {
             // Velocity raises when nothing can resolve the name, which is the
-            // outcome we want in the without-classpath case.
+            // outcome the assertions below are looking for.
             return "unresolved: " + ex.getClass().getSimpleName();
         }
         return out.toString();
