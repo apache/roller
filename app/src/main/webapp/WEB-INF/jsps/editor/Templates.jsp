@@ -73,8 +73,9 @@
                                 <s:param name="weblog" value="actionWeblog.handle"/>
                                 <s:param name="removeId" value="#p.id"/>
                             </s:url>
-                            <a href="#" onclick=
-                                    "confirmTemplateDelete('<s:property value="#p.id"/>', '<s:property value="#p.name"/>' )">
+                            <a href="#" class="template-delete-link"
+                               data-template-id="<s:property value="#p.id"/>"
+                               data-template-name="<s:property value="#p.name"/>">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </a>
 
@@ -107,4 +108,12 @@
             document.getElementById("templates").submit();
         }
     }
+
+    // Author-supplied values travel in data attributes and are read back as
+    // text rather than being interpolated into inline handlers.
+    $(document).on('click', '.template-delete-link', function (event) {
+        event.preventDefault();
+        confirmTemplateDelete($(this).attr('data-template-id'),
+                $(this).attr('data-template-name'));
+    });
 </script>

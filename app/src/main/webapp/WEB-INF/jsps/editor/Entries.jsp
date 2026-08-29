@@ -140,8 +140,9 @@
     <td>
         <s:set var="postId" value="#post.id" />
         <s:set var="postTitle" value="#post.title" />
-        <a href="#"
-            onclick="showDeleteModal('<s:property value="postId" />', '<s:property value="postTitle"/>' )">
+        <a href="#" class="entry-delete-link"
+            data-post-id="<s:property value="postId" />"
+            data-post-title="<s:property value="postTitle"/>">
             <span class="glyphicon glyphicon-trash"
                   data-toggle="tooltip" data-placement="top" title="<s:text name='generic.delete'/>">
             </span>
@@ -238,9 +239,16 @@
 
 <script>
     function showDeleteModal( postId, postTitle ) {
-        $('#postIdLabel').html(postId);
-        $('#postTitleLabel').html(postTitle);
+        $('#postIdLabel').text(postId);
+        $('#postTitleLabel').text(postTitle);
         $('#removeId').val(postId);
         $('#delete-entry-modal').modal({show: true});
     }
+
+    // Author-supplied values travel in data attributes and are read back as
+    // text rather than being interpolated into inline handlers.
+    $(document).on('click', '.entry-delete-link', function (event) {
+        event.preventDefault();
+        showDeleteModal($(this).attr('data-post-id'), $(this).attr('data-post-title'));
+    });
 </script>

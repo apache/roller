@@ -169,9 +169,9 @@
                             <li class="align-images"
                                 onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
 
-                                <div class="mediaObject" onclick="onClickEdit(
-                                        '<s:property value="#mediaFile.id"/>',
-                                        '<s:property value="#mediaFile.name"/>' )">
+                                <div class="mediaObject mediafile-edit-target"
+                                     data-mediafile-id="<s:property value="#mediaFile.id"/>"
+                                     data-mediafile-name="<s:property value="#mediaFile.name"/>">
 
                                     <s:if test="#mediaFile.imageFile">
                                         <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
@@ -179,7 +179,7 @@
                                              height='<s:property value="#mediaFile.thumbnailHeight" />'
                                              title='<s:property value="#mediaFile.name" />'
                                              alt='<s:property value="#mediaFile.name" />'
-                                            <%-- onclick="onClickEdit('<s:property value="#mediaFile.id"/>')" --%> />
+                                            />
                                     </s:if>
 
                                     <s:else>
@@ -187,7 +187,7 @@
                                         <img border="0" src='<s:property value="%{mediaFileURL}" />'
                                              style="padding:40px 50px;"
                                              alt='<s:property value="#mediaFile.name"/>'
-                                            <%-- onclick="onClickEdit('<s:property value="#mediaFile.id"/>')" --%> />
+                                            />
                                     </s:else>
 
                                 </div>
@@ -223,9 +223,9 @@
                             <li class="align-images"
                                 onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
 
-                                <div class="mediaObject" onclick="onClickEdit(
-                                        '<s:property value="#mediaFile.id"/>',
-                                        '<s:property value="#mediaFile.name"/>' )">
+                                <div class="mediaObject mediafile-edit-target"
+                                     data-mediafile-id="<s:property value="#mediaFile.id"/>"
+                                     data-mediafile-name="<s:property value="#mediaFile.name"/>">
 
                                     <s:if test="#mediaFile.imageFile">
                                         <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
@@ -348,10 +348,17 @@
         <s:url var="mediaFileEditURL" action="mediaFileEdit">
         <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
-        $('#edit-subtitle').html(mediaFileName);
+        $('#edit-subtitle').text(mediaFileName);
         $('#mediaFileEditor').attr('src', '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
         $('#mediafile_edit_lightbox').modal({show: true});
     }
+
+    // Author-supplied values travel in data attributes and are read back as
+    // text rather than being interpolated into inline handlers.
+    $(document).on('click', '.mediafile-edit-target', function () {
+        onClickEdit($(this).attr('data-mediafile-id'),
+                $(this).attr('data-mediafile-name'));
+    });
 
     function onEditSuccess() {
         onEditCancelled();
