@@ -160,6 +160,20 @@ public class XMLRPCWeblogPermissionTest {
                 owner.getUserName(), PASSWORD);
         assertEquals(2, ownerBlogs.size());
 
+        Weblog managedOtherWeblog = WebloggerFactory.getWeblogger()
+                .getWeblogManager().getWeblog(otherWeblog.getId());
+        managedOtherWeblog.setEnableBloggerApi(false);
+        WebloggerFactory.getWeblogger().getWeblogManager()
+                .saveWeblog(managedOtherWeblog);
+        TestUtils.endSession(true);
+
+        @SuppressWarnings("unchecked")
+        Vector<Object> enabledOwnerBlogs = (Vector<Object>) blogger.getUsersBlogs(
+                "", owner.getUserName(), PASSWORD);
+        assertEquals(1, enabledOwnerBlogs.size());
+        assertEquals(weblog.getHandle(), postField(enabledOwnerBlogs.get(0),
+                "blogid"));
+
         @SuppressWarnings("unchecked")
         Vector<Object> outsiderBlogs = (Vector<Object>) blogger.getUsersBlogs("",
                 outsider.getUserName(), PASSWORD);
@@ -175,6 +189,19 @@ public class XMLRPCWeblogPermissionTest {
         TestUtils.endSession(true);
         assertThrows(XmlRpcException.class, () -> blogger.getUserInfo("",
                 outsider.getUserName(), PASSWORD));
+    }
+
+    @Test
+    public void testGlobalXmlRpcSettingIsRequired() throws Exception {
+        PropertiesManager propertiesManager = WebloggerFactory.getWeblogger()
+                .getPropertiesManager();
+        RuntimeConfigProperty xmlRpcProperty = propertiesManager
+                .getProperty("webservices.enableXmlRpc");
+        xmlRpcProperty.setValue("false");
+        propertiesManager.saveProperty(xmlRpcProperty);
+
+        assertThrows(XmlRpcException.class, () -> blogger.getUserInfo("",
+                owner.getUserName(), PASSWORD));
     }
 
     @Test
@@ -197,8 +224,14 @@ public class XMLRPCWeblogPermissionTest {
                 authorName, PASSWORD, "unapproved", "main"));
 
         // Supplying another weblog's template ID must not escape the requested weblog.
-        assertThrows(XmlRpcException.class, () -> blogger.getTemplate("", handle,
-                ownerName, PASSWORD, otherTemplate.getId()));
+        XmlRpcException foreignTemplate = assertThrows(XmlRpcException.class,
+                () -> blogger.getTemplate("", handle, ownerName, PASSWORD,
+                        otherTemplate.getId()));
+        XmlRpcException missingTemplate = assertThrows(XmlRpcException.class,
+                () -> blogger.getTemplate("", handle, ownerName, PASSWORD,
+                        "missing-template"));
+        assertEquals(missingTemplate.code, foreignTemplate.code);
+        assertEquals(missingTemplate.getMessage(), foreignTemplate.getMessage());
 
         assertNotNull(metaWeblog.getCategories(handle, limitedName, PASSWORD));
         assertThrows(XmlRpcException.class, () -> metaWeblog.getCategories(handle,
@@ -314,6 +347,17 @@ public class XMLRPCWeblogPermissionTest {
 
         managedWeblog = WebloggerFactory.getWeblogger().getWeblogManager()
                 .getWeblog(weblog.getId());
+        managedWeblog.setVisible(true);
+        managedWeblog.setActive(false);
+        WebloggerFactory.getWeblogger().getWeblogManager()
+                .saveWeblog(managedWeblog);
+        TestUtils.endSession(true);
+
+        assertThrows(XmlRpcException.class, () -> metaWeblog.getCategories(
+                weblog.getHandle(), owner.getUserName(), PASSWORD));
+
+        managedWeblog = WebloggerFactory.getWeblogger().getWeblogManager()
+                .getWeblog(weblog.getId());
         managedWeblog.setEnableBloggerApi(true);
         managedWeblog.setVisible(false);
         WebloggerFactory.getWeblogger().getWeblogManager()
@@ -387,5 +431,10 @@ public class XMLRPCWeblogPermissionTest {
     @SuppressWarnings("unchecked")
     private String postId(Object post) {
         return ((Hashtable<String, Object>) post).get("postid").toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    private String postField(Object post, String field) {
+        return ((Hashtable<String, String>) post).get(field);
     }
 }
