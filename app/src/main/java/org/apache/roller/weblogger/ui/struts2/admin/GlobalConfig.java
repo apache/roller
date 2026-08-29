@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.FrontpageSettings;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -207,6 +208,22 @@ public class GlobalConfig extends UIAction implements HttpParametersAware, Servl
                     String propDesc = bundle.getString(propertyDef.getKey());
                     addError("ConfigForm.invalidFloatProperty",
                         Arrays.asList(propDesc, propName));
+                }
+
+            } else if ( FrontpageSettings.HANDLE_PROPERTY.equals(propertyDef.getName())
+                    && incomingProp != null ) {
+                // Declared as a plain string, but it names a weblog, so it
+                // is resolved through the same service as the setup path. The
+                // stored value is always a weblog that exists and is enabled.
+                try {
+                    if (FrontpageSettings.resolveWeblog(incomingProp) == null) {
+                        addError("frontpageConfig.invalidWeblog");
+                    } else {
+                        updProp.setValue( incomingProp.trim() );
+                    }
+                } catch (WebloggerException ex) {
+                    log.error("Error resolving frontpage weblog", ex);
+                    addError("frontpageConfig.values.error");
                 }
 
             } else if ( incomingProp != null ){

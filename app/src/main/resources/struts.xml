@@ -112,7 +112,14 @@
                 class="org.apache.roller.weblogger.ui.struts2.core.Setup">
             <result name="success" type="tiles">.Setup</result>
             <result name="home" type="redirectAction">home</result>
-            <allowed-methods>activate,execute,save</allowed-methods>
+            <allowed-methods>execute</allowed-methods>
+        </action>
+
+        <action name="frontpageSetup"
+                class="org.apache.roller.weblogger.ui.struts2.core.FrontpageSetup">
+            <result name="input" type="tiles">.Setup</result>
+            <result name="home" type="redirectAction">home</result>
+            <allowed-methods>save</allowed-methods>
         </action>
                         
         <action name="login"

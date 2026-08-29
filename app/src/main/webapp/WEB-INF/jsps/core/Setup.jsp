@@ -57,7 +57,7 @@
     <div class="panel-heading">
         <h3 class="panel-title">
             <s:text name="index.createWeblog"/>
-            <s:if test="blogCount > 0"> -
+            <s:if test="blogCount > 0 && !bootstrap"> -
                 <s:text name="index.createWeblogDone">
                     <s:param value="blogCount"/>
                 </s:text>
@@ -93,7 +93,8 @@
 
         <s:if test="blogCount > 0">
 
-            <s:form action="setup!save" theme="bootstrap" cssClass="form-horizontal">
+            <s:form action="frontpageSetup!save" method="post"
+                    theme="bootstrap" cssClass="form-horizontal">
                 <s:hidden name="salt"/>
 
                 <s:select list="weblogs"
