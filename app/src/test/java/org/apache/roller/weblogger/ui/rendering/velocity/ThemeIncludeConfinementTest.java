@@ -108,21 +108,21 @@ public class ThemeIncludeConfinementTest {
     public void namesThatLeaveTheNamespaceAreRefused() {
         ThemeIncludeEventHandler handler = new ThemeIncludeEventHandler();
         String[] refused = {
-                "/WEB-INF/classes/roller-custom.properties",
-                "../roller-custom.properties",
-                "../../WEB-INF/classes/roller-custom.properties",
-                "themes/../../roller-custom.properties",
+                "/WEB-INF/classes/secret.properties",
+                "../secret.properties",
+                "../../WEB-INF/classes/secret.properties",
+                "themes/../../secret.properties",
                 "..",
                 "file:/etc/passwd",
                 "http://example.test/evil.vm",
-                "\\WEB-INF\\classes\\roller-custom.properties",
+                "\\WEB-INF\\classes\\secret.properties",
                 "",
                 "   ",
                 // Not template names: a plain name needs no traversal to reach
                 // whatever a loader can resolve, so shape is checked too.
-                "roller-custom.properties",
+                "secret.properties",
                 "web.xml",
-                "org/apache/roller/weblogger/config/roller.properties",
+                "some/config.properties",
                 "weblog.vm.bak",
                 "notes.txt",
         };
@@ -168,18 +168,18 @@ public class ThemeIncludeConfinementTest {
     public void aPlainNameDoesNotReachAPackagedFile() throws Exception {
         Path dir = Files.createTempDirectory("roller-include-confinement");
         Files.write(dir.resolve("include-by-name.vm"),
-                "BEFORE[#include(\"roller-custom.properties\")]AFTER"
+                "BEFORE[#include(\"confinement-probe.properties\")]AFTER"
                         .getBytes(StandardCharsets.UTF_8));
 
         String reference = render(dir, true, false);
-        assertTrue(reference.contains("database.jdbc"),
-                "control failed: the classpath loader did not resolve the resource, so "
+        assertTrue(reference.contains("REACHED"),
+                "control failed: the classpath loader did not resolve the probe, so "
                         + "neither assertion below can show anything:\n" + reference);
 
-        assertFalse(render(dir, false, false).contains("database.jdbc"),
+        assertFalse(render(dir, false, false).contains("REACHED"),
                 "the shipped loader set still resolved a classpath resource");
 
-        assertFalse(render(dir, true, true).contains("database.jdbc"),
+        assertFalse(render(dir, true, true).contains("REACHED"),
                 "the include handler still admitted a name that is not a template");
     }
 
