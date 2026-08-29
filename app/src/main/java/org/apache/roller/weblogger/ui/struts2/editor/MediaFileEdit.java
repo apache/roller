@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
@@ -124,7 +125,10 @@ public class MediaFileEdit extends MediaFileBase {
 
                 if (uploadedFile != null) {
                     mediaFile.setLength(this.uploadedFile.length());
-                    mediaFile.setContentType(this.uploadedFileContentType);
+                    // Replacing the body re-decides the type, on the same
+                    // terms as the original upload.
+                    mediaFile.setContentType(MediaTypePolicy.storedTypeFor(
+                            mediaFile.getName(), this.uploadedFileContentType));
                     manager.updateMediaFile(getActionWeblog(), mediaFile,
                             new FileInputStream(this.uploadedFile));
                 } else {

@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -125,7 +126,9 @@ public class ResourceServlet extends HttpServlet {
         }
 
         // if not from theme then see if resource is in weblog's upload dir
+        boolean fromUploadedMedia = false;
         if (resourceStream == null) {
+            fromUploadedMedia = true;
             try {
                 MediaFileManager mmgr = WebloggerFactory.getWeblogger()
                         .getMediaFileManager();
@@ -159,8 +162,19 @@ public class ResourceServlet extends HttpServlet {
         }
 
         // set the content type based on whatever is in our web.xml mime defs
-        response.setContentType(this.context.getMimeType(resourceRequest
-                .getResourcePath()));
+        String resourceType = this.context.getMimeType(
+                resourceRequest.getResourcePath());
+        if (fromUploadedMedia) {
+            // Uploaded through the media library, so it is governed by the
+            // same policy as any other media response.
+            MediaTypePolicy.applyResponseHeaders(response, resourceType,
+                    resourceRequest.getResourcePath());
+        } else {
+            // A theme resource: authored as part of the theme and served as
+            // the type the theme intends, but never re-typed by the browser.
+            response.setHeader("X-Content-Type-Options", "nosniff");
+            response.setContentType(resourceType);
+        }
 
         try {
             // ok, lets serve up the file

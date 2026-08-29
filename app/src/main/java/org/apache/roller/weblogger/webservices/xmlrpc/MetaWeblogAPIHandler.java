@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -381,7 +382,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             mf.setDirectory(root);
             mf.setWeblog(website);
             mf.setName(name);
-            mf.setContentType(type);
+            mf.setContentType(MediaTypePolicy.storedTypeFor(name, type));
             mf.setInputStream(new ByteArrayInputStream(bits));
             mf.setLength(bits.length);
             String fileLink = mf.getPermalink();

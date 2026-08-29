@@ -47,6 +47,7 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
@@ -136,7 +137,8 @@ public class MediaCollection {
                     mf.setWeblog(website);
                     mf.setName(fileName);
                     mf.setOriginalPath(justPath);
-                    mf.setContentType(contentType);
+                    mf.setContentType(
+                            MediaTypePolicy.storedTypeFor(fileName, contentType));
                     mf.setInputStream(fis);
                     mf.setLength(tempFile.length());
 
@@ -394,7 +396,8 @@ public class MediaCollection {
                     
                     // Attempt to load file, to ensure it exists
                     MediaFile mf = fmgr.getMediaFileByPath(website, path);
-                    mf.setContentType(contentType);
+                    mf.setContentType(
+                            MediaTypePolicy.storedTypeFor(mf.getName(), contentType));
                     mf.setInputStream(fis);
                     mf.setLength(tempFile.length());
 
