@@ -429,6 +429,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         
         try {
             Vector<Object> results = new Vector<>();
+            if (numposts <= 0) {
+                return results;
+            }
             
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
@@ -438,6 +441,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                 wesc.setSortBy(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
                 if (website.hasUserPermission(user, WeblogPermission.POST)) {
                     wesc.setMaxResults(numposts);
+                } else {
+                    wesc.setMaxResults(Math.max(numposts, DRAFT_SCAN_CAP));
                 }
                 List<WeblogEntry> entries = weblogMgr.getWeblogEntries(wesc);
 

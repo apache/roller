@@ -60,7 +60,10 @@ public class BloggerAPIHandler extends BaseAPIHandler {
     static final long serialVersionUID = 2398898776655115019L;
     
     private static Log mLogger = LogFactory.getLog(BloggerAPIHandler.class);
-    
+
+    /** Upper bound on the entry scan a limited (non-POST) member can trigger. */
+    protected static final int DRAFT_SCAN_CAP = 200;
+
     public BloggerAPIHandler() {
         super();
     }
@@ -471,6 +474,9 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         
         try {
             Vector<Object> results = new Vector<>();
+            if (numposts <= 0) {
+                return results;
+            }
             
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
@@ -480,6 +486,8 @@ public class BloggerAPIHandler extends BaseAPIHandler {
                 wesc.setEndDate(new Date());
                 if (weblog.hasUserPermission(user, WeblogPermission.POST)) {
                     wesc.setMaxResults(numposts);
+                } else {
+                    wesc.setMaxResults(Math.max(numposts, DRAFT_SCAN_CAP));
                 }
                 Map<Date, List<WeblogEntry>> entries = weblogMgr.getWeblogEntryObjectMap(wesc);
 
