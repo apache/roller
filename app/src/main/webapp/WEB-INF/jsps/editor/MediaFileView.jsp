@@ -19,7 +19,7 @@
 
 <s:form id="createPostForm" action='entryAddWithMediaFile'>
     <s:hidden name="salt"/>
-    <input type="hidden" name="weblog" value='<s:property value="actionWeblog.handle" />'/>
+    <input type="hidden" name="weblog" value="<s:property value='actionWeblog.handle' />"/>
     <input type="hidden" name="selectedImage" id="selectedImage"/>
     <input type="hidden" name="type" id="type"/>
 </s:form>
@@ -174,19 +174,19 @@
                                      data-mediafile-name="<s:property value="#mediaFile.name"/>">
 
                                     <s:if test="#mediaFile.imageFile">
-                                        <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
-                                             width='<s:property value="#mediaFile.thumbnailWidth" />'
-                                             height='<s:property value="#mediaFile.thumbnailHeight" />'
-                                             title='<s:property value="#mediaFile.name" />'
-                                             alt='<s:property value="#mediaFile.name" />'
+                                        <img border="0" src="<s:property value='%{#mediaFile.thumbnailURL}' />"
+                                             width="<s:property value='#mediaFile.thumbnailWidth' />"
+                                             height="<s:property value='#mediaFile.thumbnailHeight' />"
+                                             title="<s:property value='#mediaFile.name' />"
+                                             alt="<s:property value='#mediaFile.name' />"
                                             />
                                     </s:if>
 
                                     <s:else>
                                         <s:url var="mediaFileURL" value="/images/page.png"/>
-                                        <img border="0" src='<s:property value="%{mediaFileURL}" />'
+                                        <img border="0" src="<s:property value='%{mediaFileURL}' />"
                                              style="padding:40px 50px;"
-                                             alt='<s:property value="#mediaFile.name"/>'
+                                             alt="<s:property value='#mediaFile.name'/>"
                                             />
                                     </s:else>
 
@@ -228,17 +228,17 @@
                                      data-mediafile-name="<s:property value="#mediaFile.name"/>">
 
                                     <s:if test="#mediaFile.imageFile">
-                                        <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
-                                             width='<s:property value="#mediaFile.thumbnailWidth"/>'
-                                             height='<s:property value="#mediaFile.thumbnailHeight"/>'
-                                             title='<s:property value="#mediaFile.name" />'
-                                             alt='<s:property value="#mediaFile.name"/>'/>
+                                        <img border="0" src="<s:property value='%{#mediaFile.thumbnailURL}' />"
+                                             width="<s:property value='#mediaFile.thumbnailWidth'/>"
+                                             height="<s:property value='#mediaFile.thumbnailHeight'/>"
+                                             title="<s:property value='#mediaFile.name' />"
+                                             alt="<s:property value='#mediaFile.name'/>"/>
                                     </s:if>
 
                                     <s:else>
                                         <s:url var="mediaFileURL" value="/images/page.png"/>
-                                        <img border="0" src='<s:property value="%{mediaFileURL}" />'
-                                             style="padding:40px 50px;" alt='<s:property value="#mediaFile.name"/>'/>
+                                        <img border="0" src="<s:property value='%{mediaFileURL}' />"
+                                             style="padding:40px 50px;" alt="<s:property value='#mediaFile.name'/>"/>
                                     </s:else>
 
                                 </div>
@@ -353,8 +353,7 @@
         $('#mediafile_edit_lightbox').modal({show: true});
     }
 
-    // Author-supplied values travel in data attributes and are read back as
-    // text rather than being interpolated into inline handlers.
+    // Values come from data-* attributes and are bound via delegated listeners.
     $(document).on('click', '.mediafile-edit-target', function () {
         onClickEdit($(this).attr('data-mediafile-id'),
                 $(this).attr('data-mediafile-name'));

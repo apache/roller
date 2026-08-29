@@ -41,14 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * Structural audit of the authoring UI templates.
  *
  * <p>Values that originate from weblog content are rendered by the editor JSPs.
- * Struts <code>&lt;s:property&gt;</code> HTML-escapes its output but does not
- * escape the apostrophe, so such a value placed inside a single-quoted
- * JavaScript string literal terminates the literal. Likewise, a value handed to
- * jQuery <code>.html()</code> is parsed as markup even when it reached the page
- * safely.
- *
- * <p>This test enforces the two structural rules that keep those values inert:
- * they travel in double-quoted <code>data-*</code> attributes rather than inline
+ * This test enforces the two structural rules that keep those values inert: they
+ * travel in double-quoted <code>data-*</code> attributes rather than inline
  * handler literals, and they are written to the DOM through a text API. It is a
  * source audit rather than a behavioural test because the guarantee is a
  * property of the whole page family, not of any one code path.

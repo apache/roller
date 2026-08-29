@@ -78,10 +78,10 @@
                                      data-mediafile-is-image="<s:property value="#mediaFile.isImageFile()"/>">
 
                                     <s:if test="#mediaFile.imageFile">
-                                        <img border="0" src='<s:property value="%{mediaFileThumbnailURL}" />'
-                                             width='<s:property value="#mediaFile.thumbnailWidth"/>'
-                                             height='<s:property value="#mediaFile.thumbnailHeight"/>'
-                                             alt='<s:property value="#mediaFile.name" />'/>
+                                        <img border="0" src="<s:property value='%{mediaFileThumbnailURL}' />"
+                                             width="<s:property value='#mediaFile.thumbnailWidth'/>"
+                                             height="<s:property value='#mediaFile.thumbnailHeight'/>"
+                                             alt="<s:property value='#mediaFile.name' />"/>
                                     </s:if>
 
                                     <s:else>
@@ -118,8 +118,7 @@
         window.parent.onSelectMediaFile(name, url, isImage);
     }
 
-    // Author-supplied values travel in data attributes and are read back as
-    // text rather than being interpolated into inline handlers.
+    // Values come from data-* attributes and are bound via delegated listeners.
     $(document).on('click', '.mediafile-select-target', function () {
         onSelectMediaFile($(this).attr('data-mediafile-name'),
                 $(this).attr('data-mediafile-url'),

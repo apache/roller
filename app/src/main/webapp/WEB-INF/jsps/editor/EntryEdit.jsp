@@ -443,8 +443,7 @@
         $('#delete-entry-modal').modal({show: true});
     }
 
-    // Author-supplied values travel in data attributes and are read back as
-    // text rather than being interpolated into inline handlers.
+    // Values come from data-* attributes and are bound via delegated listeners.
     $(document).on('click', '.entry-delete-button', function (event) {
         event.preventDefault();
         showDeleteModal($(this).attr('data-post-id'), $(this).attr('data-post-title'));

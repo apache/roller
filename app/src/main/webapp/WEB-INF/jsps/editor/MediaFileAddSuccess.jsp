@@ -201,8 +201,7 @@
         return false;
     }
 
-    // Author-supplied values travel in data attributes and are read back as
-    // text rather than being interpolated into inline handlers.
+    // Values come from data-* attributes and are bound via delegated listeners.
     $(document).on('change', '.enclosure-choice', function () {
         setEnclosure($(this).attr('data-enclosure-url'));
     });

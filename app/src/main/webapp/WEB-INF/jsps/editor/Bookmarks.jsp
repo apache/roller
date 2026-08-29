@@ -706,8 +706,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     }
 
 
-    // Author-supplied values travel in data attributes and are read back as
-    // text rather than being interpolated into inline handlers.
+    // Values come from data-* attributes and are bound via delegated listeners.
     $(document).on('click', '.bookmark-edit-link', function (event) {
         event.preventDefault();
         editBookmark($(this).attr('data-bookmark-id'),
