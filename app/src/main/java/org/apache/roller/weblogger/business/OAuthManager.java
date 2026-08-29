@@ -88,10 +88,39 @@ public interface OAuthManager {
             throws IOException, OAuthProblemException;
 
     /**
-     * Set the access token 
+     * Set the access token
+     *
+     * @deprecated Records approval against the consumer key alone, without
+     *             naming the request token being approved and without
+     *             requiring that it is still pending. Use
+     *             {@link #authorizeRequestToken(String, String, String)},
+     *             which does both in one statement. No longer called from
+     *             Roller; retained for callers outside the project.
      */
+    @Deprecated
     void markAsAuthorized(OAuthAccessor accessor, String userId)
-            throws OAuthException;    
+            throws OAuthException;
+
+    /**
+     * Record a user's approval of one pending request token.
+     *
+     * <p>The whole transition happens in a single conditional statement: the
+     * record is claimed only if it still matches the consumer key and the
+     * exact request token, has not been authorized already, and has not yet
+     * been exchanged for an access token. That makes approval one-shot without
+     * a read-then-write window in which the same token could be approved
+     * twice.
+     *
+     * @param consumerKey  key of the consumer the token was issued to
+     * @param requestToken the pending request token being approved
+     * @param userName     the approving user
+     * @return true if this call performed the approval; false if the record
+     *         did not match, was already authorized, or was already exchanged.
+     *         Callers should not distinguish these cases to the client.
+     * @throws OAuthException on persistence failure
+     */
+    boolean authorizeRequestToken(String consumerKey, String requestToken, String userName)
+            throws OAuthException;
 
     /**
      * Generate a fresh request token and secret for a consumer.
