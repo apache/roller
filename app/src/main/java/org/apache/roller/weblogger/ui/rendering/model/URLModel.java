@@ -184,11 +184,6 @@ public class URLModel implements Model {
     }
     
     
-    public String trackback(String anchor) {
-        return urlStrategy.getWeblogEntryURL(weblog, locale, anchor, true);
-    }
-
-    
     public String date(String dateString) {
         return urlStrategy.getWeblogCollectionURL(weblog, locale, null, dateString, null, -1, true);
     }

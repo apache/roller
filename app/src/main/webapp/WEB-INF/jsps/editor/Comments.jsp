@@ -273,12 +273,12 @@
                                             </s:else>
                                         </div>
 
-                                        <s:if test="#comment.url != null && !#comment.url.equals('')">
+                                        <s:if test="#comment.safeUrl != null">
                                             <div class="details">
                                                 <s:text name="commentManagement.commentByURL"/>&nbsp;:&nbsp;
-                                                <a href='<s:property value="#comment.url" />'>
+                                                <a href='<s:property value="#comment.safeUrl" />'>
                                                     <str:truncateNicely upper="60" appendToEnd="..."><s:property
-                                                            value="#comment.url"/></str:truncateNicely></a>
+                                                            value="#comment.safeUrl"/></str:truncateNicely></a>
                                             </div>
                                         </s:if>
 

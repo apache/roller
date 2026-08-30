@@ -93,7 +93,7 @@ public final class WeblogEntryCommentWrapper {
      * Value is always html escaped.
      */
     public String getUrl() {
-        return StringEscapeUtils.escapeHtml4(this.pojo.getUrl());
+        return StringEscapeUtils.escapeHtml4(this.pojo.getSafeUrl());
     }
     
     
@@ -147,7 +147,7 @@ public final class WeblogEntryCommentWrapper {
     
     
     /**
-     * Get the http referrer of the comment poster, used for trackbacks.
+     * Get the HTTP referrer of the comment poster.
      *
      * Value is always html escaped.
      */
