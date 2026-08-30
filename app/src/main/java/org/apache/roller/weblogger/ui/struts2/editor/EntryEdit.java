@@ -48,15 +48,13 @@ import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.WeblogEntryEditor;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.roller.weblogger.util.EnclosureMetadata;
 import org.apache.roller.weblogger.util.MailUtil;
-import org.apache.roller.weblogger.util.MediacastException;
-import org.apache.roller.weblogger.util.MediacastResource;
-import org.apache.roller.weblogger.util.MediacastUtil;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.Trackback;
 import org.apache.roller.weblogger.util.TrackbackNotAllowedException;
+import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -192,6 +190,19 @@ public final class EntryEdit extends UIAction {
      */
     private String save() {
         if (!hasActionErrors()) {
+            EnclosureMetadata enclosure = null;
+            if (!StringUtils.isEmpty(getBean().getEnclosureURL())) {
+                try {
+                    enclosure = EnclosureMetadata.of(
+                            getBean().getEnclosureURL(),
+                            getBean().getEnclosureType(),
+                            getBean().getEnclosureLength());
+                } catch (IllegalArgumentException e) {
+                    addError("weblogEdit.enclosureMetadataInvalid");
+                    return INPUT;
+                }
+            }
+
             try {
                 WeblogEntryManager weblogEntryManager = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
@@ -223,24 +234,13 @@ public final class EntryEdit extends UIAction {
                     weblogEntry.setPinnedToMain(getBean().getPinnedToMain());
                 }
 
-                if (!StringUtils.isEmpty(getBean().getEnclosureURL())) {
-                    try {
-                        // Fetch MediaCast resource
-                        log.debug("Checking MediaCast attributes");
-                        MediacastResource mediacast = MediacastUtil
-                                .lookupResource(getBean().getEnclosureURL());
-
-                        // set mediacast attributes
-                        weblogEntry.putEntryAttribute("att_mediacast_url",
-                                mediacast.getUrl());
-                        weblogEntry.putEntryAttribute("att_mediacast_type",
-                                mediacast.getContentType());
-                        weblogEntry.putEntryAttribute("att_mediacast_length", ""
-                                + mediacast.getLength());
-
-                    } catch (MediacastException ex) {
-                        addMessage(getText(ex.getErrorKey()));
-                    }
+                if (enclosure != null) {
+                    weblogEntry.putEntryAttribute("att_mediacast_url",
+                            enclosure.getUrl());
+                    weblogEntry.putEntryAttribute("att_mediacast_type",
+                            enclosure.getContentType());
+                    weblogEntry.putEntryAttribute("att_mediacast_length",
+                            enclosure.getLength());
                 } else if ("entryEdit".equals(actionName)) {
                     try {
                         // if MediaCast string is empty, clean out MediaCast

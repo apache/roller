@@ -25,6 +25,8 @@
     <s:hidden name="salt"/>
     <s:hidden name="weblog"/>
     <s:hidden name="bean.enclosureURL" id="enclosureURL"/>
+    <s:hidden name="bean.enclosureType" id="enclosureType"/>
+    <s:hidden name="bean.enclosureLength" id="enclosureLength"/>
 
     <s:if test="newImages.size() > 0">
         <h4><s:text name="mediaFileSuccess.selectImagesTitle"/></h4>
@@ -96,7 +98,9 @@
 
                         <div class="col-md-1">
                             <input type="radio" name="enclosure"
-                                   onchange="setEnclosure('<s:property value="%{#newFile.permalink}"/>')"/>
+                                   onchange="setEnclosure('<s:property value="%{#newFile.permalink}"/>',
+                                           '<s:property value="%{#newFile.contentType}"/>',
+                                           '<s:property value="%{#newFile.length}"/>')"/>
                         </div>
 
                         <div class="col-md-11">
@@ -132,7 +136,7 @@
                 <div class="row">
 
                     <div class="col-md-1">
-                        <input type="radio" name="enclosure" onchange="setEnclosure('')" />
+                        <input type="radio" name="enclosure" onchange="setEnclosure('', '', '')" />
                     </div>
 
                     <div class="col-md-10">
@@ -201,8 +205,10 @@
         return false;
     }
 
-    function setEnclosure(url) {
+    function setEnclosure(url, type, length) {
         $("#enclosureURL").get(0).value = url;
+        $("#enclosureType").get(0).value = type;
+        $("#enclosureLength").get(0).value = length;
         if (isImageChecked()) {
             $("#submit").attr("disabled", false);
             return;

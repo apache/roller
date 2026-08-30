@@ -238,15 +238,10 @@
 
                     <s:textfield label="%{getText('weblogEdit.enclosureURL')}" name="bean.enclosureURL"
                                  maxlength="255" tooltip="%{getText('weblogEdit.enclosureURL.tooltip')}"/>
-
-                    <s:if test="actionName == 'entryEdit'">
-                        <s:if test="!bean.enclosureURL.isEmpty()">
-                            <s:text name="weblogEdit.enclosureType"/>:
-                            <s:property value='entry.findEntryAttribute("att_mediacast_type")'/>
-                            <s:text name="weblogEdit.enclosureLength"/>:
-                            <s:property value='entry.findEntryAttribute("att_mediacast_length")'/>
-                        </s:if>
-                    </s:if>
+                    <s:textfield label="%{getText('weblogEdit.enclosureType')}" name="bean.enclosureType"
+                                 maxlength="255" tooltip="%{getText('weblogEdit.enclosureType.tooltip')}"/>
+                    <s:textfield label="%{getText('weblogEdit.enclosureLength')}" name="bean.enclosureLength"
+                                 maxlength="20" tooltip="%{getText('weblogEdit.enclosureLength.tooltip')}"/>
 
                 </div>
 
