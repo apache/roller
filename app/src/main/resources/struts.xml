@@ -340,12 +340,14 @@
 	    <action name="mediaFileImageDim"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageDim">
             <result name="success" type="tiles">.MediaFileImageDimension</result>
+            <result name="error" type="chain">mediaFileView</result>
             <allowed-methods>execute</allowed-methods>
         </action>
 
         <action name="entryAddWithMediaFile"
                 class="org.apache.roller.weblogger.ui.struts2.editor.EntryAddWithMediaFile">
             <result name="success" type="chain">entryAdd</result>
+            <result name="error" type="chain">mediaFileView</result>
             <allowed-methods>execute</allowed-methods>
         </action>
 

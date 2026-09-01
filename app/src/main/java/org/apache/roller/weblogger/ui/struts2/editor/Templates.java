@@ -210,7 +210,7 @@ public class Templates extends UIAction {
 
         WeblogTemplate template = null;
         try {
-            template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(getRemoveId());
+            template = WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(getActionWeblog(), getRemoveId());
         } catch (WebloggerException e) {
             addError("Error deleting template - check Roller logs");
         }
