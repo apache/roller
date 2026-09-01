@@ -46,6 +46,11 @@
     </filter>
 
     <filter>
+        <filter-name>XmlRpcEnabledFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.XmlRpcEnabledFilter</filter-class>
+    </filter>
+
+    <filter>
         <filter-name>RequestMappingFilter</filter-name>
         <filter-class>org.apache.roller.weblogger.ui.rendering.filters.RequestMappingFilter</filter-class>
     </filter>
@@ -154,6 +159,14 @@
 	</filter-mapping>
 
     <!-- Request mapping, this is what allows the urls to work -->
+    <filter-mapping>
+        <filter-name>XmlRpcEnabledFilter</filter-name>
+        <url-pattern>/roller-services/xmlrpc</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>RequestMappingFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -296,9 +309,11 @@
         <init-param>
             <description>
                 Sets whether the servlet supports vendor extensions for XML-RPC.
+                Roller uses only the standard XML-RPC value types; the library's
+                vendor extension types are unused and are switched off.
             </description>
             <param-name>enabledForExtensions</param-name>
-            <param-value>true</param-value>
+            <param-value>false</param-value>
         </init-param>
     </servlet>
 
