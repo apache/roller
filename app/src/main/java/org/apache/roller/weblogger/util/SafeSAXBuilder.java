@@ -19,14 +19,9 @@
 package org.apache.roller.weblogger.util;
 
 import javax.xml.XMLConstants;
-import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
-import org.jdom2.input.sax.XMLReaderJDOMFactory;
-import org.xml.sax.XMLReader;
+import org.jdom2.input.sax.XMLReaders;
 
 /**
  * A {@link SAXBuilder} that treats a document strictly as data.
@@ -53,17 +48,13 @@ public class SafeSAXBuilder extends SAXBuilder {
     /** Xerces feature names, honoured by the JDK's own parser. */
     private static final String DISALLOW_DOCTYPE =
             "http://apache.org/xml/features/disallow-doctype-decl";
-    private static final String EXTERNAL_GENERAL_ENTITIES =
-            "http://xml.org/sax/features/external-general-entities";
     private static final String EXTERNAL_PARAMETER_ENTITIES =
             "http://xml.org/sax/features/external-parameter-entities";
     private static final String LOAD_EXTERNAL_DTD =
             "http://apache.org/xml/features/nonvalidating/load-external-dtd";
 
-    private static final Log LOG = LogFactory.getLog(SafeSAXBuilder.class);
-
     public SafeSAXBuilder() {
-        super(new HardenedReaders());
+        super(XMLReaders.NONVALIDATING);
 
         // Secure processing is set explicitly rather than relied on. It is on
         // by default in current JDKs, but that default limits resource
@@ -75,53 +66,12 @@ public class SafeSAXBuilder extends SAXBuilder {
         // stand behind.
         setFeature(DISALLOW_DOCTYPE, true);
 
-        setFeature(EXTERNAL_GENERAL_ENTITIES, false);
         setFeature(EXTERNAL_PARAMETER_ENTITIES, false);
         setFeature(LOAD_EXTERNAL_DTD, false);
 
+        // JDOM maps this setting to the external-general-entities parser
+        // feature, so it supplies that part of the policy without duplicate
+        // configuration.
         setExpandEntities(false);
-    }
-
-    /**
-     * Supplies the reader, so that the two access properties can be applied
-     * where a parser that does not recognise them can be tolerated.
-     *
-     * <p>They are JAXP properties rather than SAX ones, and Roller ships its
-     * own Xerces, which rejects them outright at the SAX layer. Setting them
-     * through the builder would therefore fail every parse. They are still
-     * worth setting where they are understood, because they deny the protocols
-     * outright, so they are applied here and a rejection is logged and passed
-     * over — the features above are what carry the guarantee.
-     */
-    private static final class HardenedReaders implements XMLReaderJDOMFactory {
-
-        @Override
-        public XMLReader createXMLReader() throws JDOMException {
-            try {
-                SAXParserFactory factory = SAXParserFactory.newInstance();
-                factory.setNamespaceAware(true);
-                factory.setValidating(false);
-                XMLReader reader = factory.newSAXParser().getXMLReader();
-                denyProtocol(reader, XMLConstants.ACCESS_EXTERNAL_DTD);
-                denyProtocol(reader, XMLConstants.ACCESS_EXTERNAL_SCHEMA);
-                return reader;
-            } catch (Exception ex) {
-                throw new JDOMException("Unable to create an XML reader", ex);
-            }
-        }
-
-        private void denyProtocol(XMLReader reader, String property) {
-            try {
-                reader.setProperty(property, "");
-            } catch (Exception unsupported) {
-                LOG.debug("XML reader does not recognise " + property
-                        + "; the parser features are what constrain resolution", unsupported);
-            }
-        }
-
-        @Override
-        public boolean isValidating() {
-            return false;
-        }
     }
 }

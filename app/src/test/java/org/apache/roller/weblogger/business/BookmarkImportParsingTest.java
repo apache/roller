@@ -17,9 +17,8 @@
  */
 package org.apache.roller.weblogger.business;
 
-import java.io.File;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +27,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
+import org.jdom2.input.JDOMParseException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,26 +80,38 @@ public class BookmarkImportParsingTest {
         return folder.retrieveBookmarks();
     }
 
-    private void tryImport(String opml) {
+    private void assertDoctypeRejected(String opml) throws Exception {
+        Exception failure = null;
         try {
             bookmarkManager().importBookmarks(
                     TestUtils.getManagedWebsite(testWeblog), folderName, opml);
-            TestUtils.endSession(true);
         } catch (Exception expected) {
-            // A refusal to parse is one acceptable outcome; the assertions in
-            // each test say what must be true either way.
-            log.debug("import raised: " + expected);
+            failure = expected;
+        } finally {
+            TestUtils.endSession(true);
         }
+        assertTrue(failure instanceof org.apache.roller.weblogger.WebloggerException,
+                "DOCTYPE input must produce a WebloggerException: " + failure);
+        assertTrue(failure.getMessage().contains("document type declarations"),
+                "the import error should explain the rejected input: " + failure.getMessage());
+        assertTrue(failure.getCause() instanceof JDOMParseException,
+                "the parse cause should be retained: " + failure.getCause());
     }
 
     /** Ordinary OPML, with no declarations in it, must still import. */
     @Test
     public void ordinaryOpmlStillImports() throws Exception {
-        byte[] opml = Files.readAllBytes(
-                new File("src/test/resources/bookmarks.opml").toPath());
-        bookmarkManager().importBookmarks(TestUtils.getManagedWebsite(testWeblog),
-                folderName, new String(opml, StandardCharsets.UTF_8));
-        TestUtils.endSession(true);
+        String opml;
+        try (InputStream in = getClass().getResourceAsStream("/bookmarks.opml")) {
+            assertTrue(in != null, "the ordinary OPML fixture must be on the classpath");
+            opml = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        }
+        try {
+            bookmarkManager().importBookmarks(TestUtils.getManagedWebsite(testWeblog),
+                    folderName, opml);
+        } finally {
+            TestUtils.endSession(true);
+        }
 
         assertFalse(importedBookmarks().isEmpty(),
                 "ordinary OPML no longer imports any bookmarks");
@@ -114,7 +126,7 @@ public class BookmarkImportParsingTest {
                 + "<outline text=\"harmless\" type=\"link\" url=\"http://example.test/\"/>"
                 + "</body></opml>";
 
-        tryImport(opml);
+        assertDoctypeRejected(opml);
 
         assertTrue(importedBookmarks().isEmpty(),
                 "a document carrying a DOCTYPE was still imported");
