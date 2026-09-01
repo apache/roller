@@ -162,6 +162,9 @@
     <filter-mapping>
         <filter-name>XmlRpcEnabledFilter</filter-name>
         <url-pattern>/roller-services/xmlrpc</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
 
     <filter-mapping>

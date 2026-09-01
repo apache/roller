@@ -18,24 +18,40 @@
 package org.apache.roller.weblogger.webservices.xmlrpc;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlrpc.parser.XmlRpcRequestParser;
 import org.apache.xmlrpc.common.XmlRpcHttpRequestConfigImpl;
 import org.apache.xmlrpc.common.TypeFactoryImpl;
 import org.apache.xmlrpc.common.XmlRpcController;
 import org.apache.xmlrpc.server.XmlRpcServer;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.ui.core.filters.XmlRpcEnabledFilter;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mockStatic;
 
 /**
  * Covers how the XML-RPC endpoint treats vendor extension types.
@@ -46,8 +62,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class XmlRpcExtensionTypeTest {
 
-    private static final Path WEB_XML =
-            Paths.get("src", "main", "webapp", "WEB-INF", "web.xml");
+    private static final Path WEB_XML = Paths.get(
+            System.getProperty("project.basedir", System.getProperty("user.dir")),
+            "src", "main", "webapp", "WEB-INF", "web.xml");
 
     private String parseRequest(String xml, boolean extensionsEnabled) throws Exception {
         XmlRpcServer server = new XmlRpcServer();
@@ -56,7 +73,10 @@ public class XmlRpcExtensionTypeTest {
 
         XmlRpcRequestParser parser = new XmlRpcRequestParser(
                 config, new TypeFactoryImpl((XmlRpcController) server));
-        XMLReader reader = XMLReaderFactory.createXMLReader();
+        javax.xml.parsers.SAXParserFactory saxFactory =
+                javax.xml.parsers.SAXParserFactory.newInstance();
+        saxFactory.setNamespaceAware(true);
+        XMLReader reader = saxFactory.newSAXParser().getXMLReader();
         reader.setContentHandler(parser);
         reader.parse(new InputSource(
                 new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))));
@@ -69,28 +89,62 @@ public class XmlRpcExtensionTypeTest {
                     + "<params><param><value><string>hello</string></value></param></params>"
                     + "</methodCall>";
 
+    private static final String EXTENSION_REQUEST =
+            "<?xml version=\"1.0\"?><methodCall>"
+                    + "<methodName>blogger.getUsersBlogs</methodName><params><param><value>"
+                    + "<ex:nil xmlns:ex=\"http://ws.apache.org/xmlrpc/namespaces/extensions\"/>"
+                    + "</value></param></params></methodCall>";
+
+    private Document webXml() throws Exception {
+        try (java.io.InputStream in = Files.newInputStream(WEB_XML)) {
+            assertNotNull(in, "web.xml must be available in the Maven build directory");
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            return factory.newDocumentBuilder().parse(in);
+        }
+    }
+
     /** The shipped configuration must not enable the extension types. */
     @Test
     public void shippedConfigurationDisablesExtensionTypes() throws Exception {
-        String webXml = new String(Files.readAllBytes(WEB_XML), StandardCharsets.UTF_8);
-        int idx = webXml.indexOf("enabledForExtensions");
-        assertTrue(idx > 0, "enabledForExtensions param not found in web.xml");
-        String tail = webXml.substring(idx, Math.min(idx + 300, webXml.length()));
-        assertTrue(tail.contains("<param-value>false</param-value>"),
-                "the XML-RPC servlet must not enable vendor extension types:\n" + tail);
+        Document document = webXml();
+        NodeList params = document.getElementsByTagNameNS("*", "init-param");
+        boolean found = false;
+        for (int i = 0; i < params.getLength(); i++) {
+            Element param = (Element) params.item(i);
+            NodeList names = param.getElementsByTagNameNS("*", "param-name");
+            if (names.getLength() > 0 && "enabledForExtensions".equals(names.item(0).getTextContent().trim())) {
+                found = true;
+                NodeList values = param.getElementsByTagNameNS("*", "param-value");
+                assertEquals("false", values.item(0).getTextContent().trim());
+            }
+        }
+        assertTrue(found, "enabledForExtensions init-param not found in web.xml");
     }
 
     /** The endpoint is closed by a filter while the service is switched off. */
     @Test
     public void endpointIsGatedWhileTheServiceIsDisabled() throws Exception {
-        String webXml = new String(Files.readAllBytes(WEB_XML), StandardCharsets.UTF_8);
-        assertTrue(webXml.contains("XmlRpcEnabledFilter"),
-                "a filter must gate the XML-RPC endpoint");
-        int mapping = webXml.indexOf("<filter-name>XmlRpcEnabledFilter</filter-name>",
-                webXml.indexOf("<filter-mapping>"));
-        assertTrue(mapping > 0, "the gating filter must be mapped");
-        assertTrue(webXml.indexOf("/roller-services/xmlrpc", mapping) > 0,
-                "the gating filter must be mapped to the XML-RPC endpoint");
+        Document document = webXml();
+        NodeList mappings = document.getElementsByTagNameNS("*", "filter-mapping");
+        boolean found = false;
+        for (int i = 0; i < mappings.getLength(); i++) {
+            Element mapping = (Element) mappings.item(i);
+            if ("XmlRpcEnabledFilter".equals(mapping.getElementsByTagNameNS("*", "filter-name")
+                    .item(0).getTextContent().trim())) {
+                found = true;
+                assertEquals("/roller-services/xmlrpc",
+                        mapping.getElementsByTagNameNS("*", "url-pattern").item(0)
+                                .getTextContent().trim());
+                java.util.Set<String> dispatchers = new java.util.HashSet<>();
+                NodeList nodes = mapping.getElementsByTagNameNS("*", "dispatcher");
+                for (int j = 0; j < nodes.getLength(); j++) {
+                    dispatchers.add(nodes.item(j).getTextContent().trim());
+                }
+                assertEquals(java.util.Set.of("REQUEST", "FORWARD", "INCLUDE"), dispatchers);
+            }
+        }
+        assertTrue(found, "the XML-RPC filter mapping was not found");
     }
 
     /** Ordinary XML-RPC calls must still parse with extensions disabled. */
@@ -99,5 +153,28 @@ public class XmlRpcExtensionTypeTest {
         String methodName = parseRequest(ORDINARY_REQUEST, false);
         assertNotNull(methodName, "an ordinary XML-RPC call must still parse");
         assertEquals("blogger.getUsersBlogs", methodName);
+    }
+
+    /** Vendor extension values must be rejected by the shipped parser policy. */
+    @Test
+    public void extensionValuesAreRejectedWhenDisabled() {
+        assertThrows(Exception.class, () -> parseRequest(EXTENSION_REQUEST, false));
+    }
+
+    /** Disabled requests receive a non-HTML response and never reach the chain. */
+    @Test
+    public void disabledFilterReturnsPlainResponse() throws Exception {
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+        when(response.getWriter()).thenReturn(new java.io.PrintWriter(new StringWriter()));
+        try (MockedStatic<WebloggerRuntimeConfig> config = mockStatic(WebloggerRuntimeConfig.class)) {
+            config.when(() -> WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc"))
+                    .thenReturn(false);
+            new XmlRpcEnabledFilter().doFilter(mock(ServletRequest.class), response, chain);
+        }
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        verify(response).setContentType("text/plain;charset=UTF-8");
+        verify(response).getWriter();
+        verifyNoInteractions(chain);
     }
 }
