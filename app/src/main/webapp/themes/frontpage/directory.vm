@@ -35,11 +35,16 @@
                 ## the back-link from the resolved weblog's own handle.
                 #set($profileWeblog = false)
                 #set($requestedHandle = $model.getRequestParameter("weblog"))
-                #if($requestedHandle)
+                #if($requestedHandle && $requestedHandle.matches("[A-Za-z0-9_]+"))
                     #set($profileWeblog = $site.getWeblog($requestedHandle))
                 #end
                 #if($profileWeblog)
-                    <a href="?letter=$utils.escapeHTML($utils.left($profileWeblog.handle,1))">Back to blog directory</a>
+                    #set($resolvedFirst = $utils.left($profileWeblog.handle,1))
+                    #if($resolvedFirst.matches("[A-Za-z]"))
+                        <a href="?letter=$utils.toUpperCase($resolvedFirst)">Back to blog directory</a>
+                    #else
+                        <a href="?">Back to blog directory</a>
+                    #end
                     #includeTemplate($model.weblog "_blogprofile")
                 #else                 
                    #set($pageLength = $maxResults)

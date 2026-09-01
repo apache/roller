@@ -3,8 +3,8 @@
     ## Accept only a known A-Z key; otherwise render the full listing, exactly
     ## as a missing parameter does.
     #set($requestedLetter = $model.getRequestParameter("letter"))
-    #if($requestedLetter && $requestedLetter.length() == 1)
-        #set($candidateLetter = $requestedLetter.toUpperCase())
+    #if($requestedLetter)
+        #set($candidateLetter = $utils.toUpperCase($requestedLetter))
         #if($weblogLetterMap.containsKey($candidateLetter))
             #set($chosenLetter = $candidateLetter)
         #end

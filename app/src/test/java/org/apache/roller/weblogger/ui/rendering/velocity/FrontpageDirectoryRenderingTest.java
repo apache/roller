@@ -18,9 +18,6 @@
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,6 +28,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -67,9 +65,15 @@ public class FrontpageDirectoryRenderingTest {
     /** Minimal stand-ins for the model objects the template reads. */
     public static class StubModel {
         private final String letter;
-        StubModel(String letter) { this.letter = letter; }
+        private final String weblog;
+        StubModel(String letter) { this(letter, null); }
+        StubModel(String letter, String weblog) {
+            this.letter = letter;
+            this.weblog = weblog;
+        }
         public String getRequestParameter(String name) {
-            return "letter".equals(name) ? letter : null;
+            if ("letter".equals(name)) { return letter; }
+            return "weblog".equals(name) ? weblog : null;
         }
     }
 
@@ -92,28 +96,34 @@ public class FrontpageDirectoryRenderingTest {
         public StubPager getWeblogsByLetterPager(String letter, int offset, int length) {
             return new StubPager();
         }
+        public StubWeblog getWeblog(String handle) {
+            if ("alice".equals(handle) || "2blog".equals(handle)) {
+                return new StubWeblog(handle);
+            }
+            return null;
+        }
+        public List<Object> getNewWeblogs(int since, int maxResults) {
+            return new ArrayList<>();
+        }
     }
 
-    public static class StubUtils {
-        public String escapeHTML(String str) {
-            return str == null ? null : str.replace("&", "&amp;").replace("<", "&lt;")
-                    .replace(">", "&gt;").replace("\"", "&quot;");
-        }
-        public String left(String str, int len) {
-            if (str == null) { return null; }
-            return str.length() <= len ? str : str.substring(0, len);
-        }
+    public static class StubWeblog {
+        private final String handle;
+        StubWeblog(String handle) { this.handle = handle; }
+        public String getHandle() { return handle; }
     }
 
     public static class StubUrl {
         public String getAbsoluteSite() { return "http://example.test"; }
+        public String getHome() { return "/"; }
+        public String page(String name) { return "/page/" + name; }
     }
 
     private String render(String letterParam) throws Exception {
         VelocityContext ctx = new VelocityContext();
         ctx.put("model", new StubModel(letterParam));
         ctx.put("site", new StubSite());
-        ctx.put("utils", new StubUtils());
+        ctx.put("utils", new UtilitiesModel());
         ctx.put("url", new StubUrl());
         ctx.put("pageLength", 30);
         StringWriter out = new StringWriter();
@@ -175,23 +185,37 @@ public class FrontpageDirectoryRenderingTest {
         }
     }
 
-    /**
-     * The sibling directory template resolves a weblog handle from the query
-     * string. It cannot be rendered standalone here because it pulls in other
-     * templates through #includeTemplate, so this is a structural check: the
-     * link must be built from the resolved weblog rather than the raw
-     * parameter, and escaped at output.
-     */
+    private String renderDirectory(String weblogParam) throws Exception {
+        VelocityContext ctx = new VelocityContext();
+        ctx.put("model", new StubModel(null, weblogParam));
+        ctx.put("site", new StubSite());
+        ctx.put("utils", new UtilitiesModel());
+        ctx.put("url", new StubUrl());
+        ctx.put("config", new Object() {
+            public String getSiteName() { return "Example"; }
+            public String getSiteDescription() { return "Description"; }
+        });
+        StringWriter out = new StringWriter();
+        String source = "#macro(includeTemplate $weblog $template)#end\n"
+                + "#parse('directory.vm')";
+        engine.evaluate(ctx, out, "directory-test", source);
+        return out.toString();
+    }
+
     @Test
     public void directoryTemplateValidatesTheWeblogParameter() throws Exception {
-        String vm = new String(Files.readAllBytes(Paths.get(THEME_DIR, "directory.vm")),
-                StandardCharsets.UTF_8);
-        assertFalse(vm.contains("$utils.left($handle,1)"),
-                "the back-link must not be built from the raw weblog parameter:\n" + vm);
-        assertTrue(vm.contains("$site.getWeblog($requestedHandle)"),
-                "the requested handle must be resolved before use:\n" + vm);
-        assertTrue(vm.contains("$utils.escapeHTML($utils.left($profileWeblog.handle,1))"),
-                "the back-link must escape the resolved handle:\n" + vm);
+        String unknown = renderDirectory("<script>alert(1)</script>");
+        assertFalse(unknown.contains("Back to blog directory"),
+                "invalid handles must not reach the weblog lookup or profile link");
+
+        String alpha = renderDirectory("alice");
+        assertTrue(alpha.contains("href=\"?letter=A\""),
+                "alphabetic resolved handles must link to their normalized directory group:\n"
+                        + alpha);
+
+        String numeric = renderDirectory("2blog");
+        assertTrue(numeric.contains("href=\"?\""),
+                "numeric resolved handles must omit the letter filter:\n" + numeric);
     }
 
     /**
