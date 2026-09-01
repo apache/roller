@@ -122,10 +122,14 @@ public class WeblogStatsTest  {
     @Test
     public void testGetWeblogLetterMap() throws Exception {        
         WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        Map<String, Long> map = mgr.getWeblogHandleLetterMap();    
-        assertNotNull(map.get("A"));
-        assertNotNull(map.get("B"));
-        assertNotNull(map.get("C"));
+        Map<String, Long> map = mgr.getWeblogHandleLetterMap();
+        // The frontpage blog directory validates its letter parameter against
+        // these keys, so the contract is the exact A-Z set rather than a
+        // sample: a missing key would silently reject a legitimate letter.
+        assertEquals(26, map.size(), "expected the complete A-Z key set");
+        for (char c = 'A'; c <= 'Z'; c++) {
+            assertNotNull(map.get(String.valueOf(c)), "missing key " + c);
+        }
     }
 
     @AfterEach
