@@ -72,16 +72,16 @@
                             <li class="align-images"
                                 onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
 
-                                <div class="mediaObject"
-                                     onclick="onSelectMediaFile('<s:property value="#mediaFile.name"/>',
-                                             '<s:property value="%{mediaFileURL}"/>',
-                                             '<s:property value="#mediaFile.isImageFile()"/>')">
+                                <div class="mediaObject mediafile-select-target"
+                                     data-mediafile-name="<s:property value="#mediaFile.name"/>"
+                                     data-mediafile-url="<s:property value="%{mediaFileURL}"/>"
+                                     data-mediafile-is-image="<s:property value="#mediaFile.isImageFile()"/>">
 
                                     <s:if test="#mediaFile.imageFile">
-                                        <img border="0" src='<s:property value="%{mediaFileThumbnailURL}" />'
-                                             width='<s:property value="#mediaFile.thumbnailWidth"/>'
-                                             height='<s:property value="#mediaFile.thumbnailHeight"/>'
-                                             alt='<s:property value="#mediaFile.name" />'/>
+                                        <img border="0" src="<s:property value='%{mediaFileThumbnailURL}' />"
+                                             width="<s:property value='#mediaFile.thumbnailWidth'/>"
+                                             height="<s:property value='#mediaFile.thumbnailHeight'/>"
+                                             alt="<s:property value='#mediaFile.name' />"/>
                                     </s:if>
 
                                     <s:else>
@@ -117,6 +117,13 @@
     function onSelectMediaFile(name, url, isImage) {
         window.parent.onSelectMediaFile(name, url, isImage);
     }
+
+    // Values come from data-* attributes and are bound via delegated listeners.
+    $(document).on('click', '.mediafile-select-target', function () {
+        onSelectMediaFile($(this).attr('data-mediafile-name'),
+                $(this).attr('data-mediafile-url'),
+                $(this).attr('data-mediafile-is-image'));
+    });
 
     function highlight(el, flag) {
         if (flag) {

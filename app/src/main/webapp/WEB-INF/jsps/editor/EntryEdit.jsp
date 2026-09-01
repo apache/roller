@@ -291,9 +291,10 @@
 
         <%-- delete --%>
         <span style="float:right">
-            <input class="btn btn-danger" type="button"
+            <input class="btn btn-danger entry-delete-button" type="button"
                    value="<s:text name='weblogEdit.deleteEntry'/>"
-                   onclick="showDeleteModal('<s:property value="entry.id" />', '<s:property value="entry.title"/>' )">
+                   data-post-id="<s:property value="entry.id" />"
+                   data-post-title="<s:property value="entry.title"/>">
         </span>
     </s:if>
 
@@ -436,10 +437,16 @@
     });
 
     function showDeleteModal(postId, postTitle) {
-        $('#postIdLabel').html(postId);
-        $('#postTitleLabel').html(postTitle);
+        $('#postIdLabel').text(postId);
+        $('#postTitleLabel').text(postTitle);
         $('#removeId').val(postId);
         $('#delete-entry-modal').modal({show: true});
     }
+
+    // Values come from data-* attributes and are bound via delegated listeners.
+    $(document).on('click', '.entry-delete-button', function (event) {
+        event.preventDefault();
+        showDeleteModal($(this).attr('data-post-id'), $(this).attr('data-post-title'));
+    });
 
 </script>

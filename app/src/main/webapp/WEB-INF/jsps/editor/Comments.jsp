@@ -276,7 +276,7 @@
                                         <s:if test="#comment.url != null && !#comment.url.equals('')">
                                             <div class="details">
                                                 <s:text name="commentManagement.commentByURL"/>&nbsp;:&nbsp;
-                                                <a href='<s:property value="#comment.url" />'>
+                                                <a href="<s:property value="#comment.url" />">
                                                     <str:truncateNicely upper="60" appendToEnd="..."><s:property
                                                             value="#comment.url"/></str:truncateNicely></a>
                                             </div>
