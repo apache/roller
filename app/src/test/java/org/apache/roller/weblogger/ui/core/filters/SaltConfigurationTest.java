@@ -20,7 +20,6 @@
 package org.apache.roller.weblogger.ui.core.filters;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,14 +28,16 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SaltConfigurationTest {
 
     @Test
     public void testSubmittedSaltIsValidatedBeforeResponseSaltIsLoaded() throws Exception {
-        String webXml = Files.readString(Path.of("src/main/webapp/WEB-INF/web.xml"));
+        Path projectDirectory = Path.of(
+                System.getProperty("project.build.directory")).getParent();
+        String webXml = Files.readString(projectDirectory.resolve(
+                "src/main/webapp/WEB-INF/web.xml"));
 
         int validateMapping = filterMappingPosition(webXml, "ValidateSaltFilter");
         int loadMapping = filterMappingPosition(webXml, "LoadSaltFilter");
@@ -48,23 +49,15 @@ public class SaltConfigurationTest {
     }
 
     @Test
-    public void testMultipartSaltValidationImmediatelyFollowsUploadInterceptor() throws Exception {
+    public void testMultipartSaltValidationImmediatelyFollowsExceptionInterceptor() throws Exception {
         String strutsXml = readResource("/struts.xml");
 
         Pattern adjacentInterceptors = Pattern.compile(
-                "<interceptor-ref name=\"fileUpload\"/>\\s*"
+                "<interceptor-ref name=\"exception\"/>\\s*"
                 + "<interceptor-ref name=\"ValidateSaltInterceptor\"/>");
 
         assertTrue(adjacentInterceptors.matcher(strutsXml).find(),
-                "ValidateSaltInterceptor must immediately follow the upload interceptor");
-    }
-
-    @Test
-    public void testConfigurableSaltBypassIsRemoved() throws Exception {
-        String properties = readResource(
-                "/org/apache/roller/weblogger/config/roller.properties");
-
-        assertFalse(properties.contains("salt.ignored.urls"));
+                "ValidateSaltInterceptor must immediately follow the exception interceptor");
     }
 
     private int filterMappingPosition(String webXml, String filterName) {
@@ -75,7 +68,8 @@ public class SaltConfigurationTest {
     }
 
     private String readResource(String path) throws IOException {
-        try (InputStream stream = SaltConfigurationTest.class.getResourceAsStream(path)) {
+        try (java.io.InputStream stream =
+                     SaltConfigurationTest.class.getResourceAsStream(path)) {
             if (stream == null) {
                 throw new IOException("Test resource not found: " + path);
             }

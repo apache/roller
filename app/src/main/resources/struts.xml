@@ -47,6 +47,7 @@
                  default stack -->
             <interceptor-stack name="rollerStack">
                 <interceptor-ref name="exception"/>
+                <interceptor-ref name="ValidateSaltInterceptor"/>
                 <!-- <interceptor-ref name="alias"/> -->
                 <interceptor-ref name="servletConfig"/>
                 <!-- <interceptor-ref name="prepare"/> -->
@@ -57,7 +58,6 @@
                 <!-- <interceptor-ref name="scopedModelDriven"/> -->
                 <!-- <interceptor-ref name="modelDriven"/> -->
                 <interceptor-ref name="fileUpload"/>
-                <interceptor-ref name="ValidateSaltInterceptor"/>
                 <interceptor-ref name="checkbox"/>
                 <interceptor-ref name="multiselect"/>
                 <interceptor-ref name="staticParams"/>

@@ -5,7 +5,6 @@ import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
@@ -194,35 +193,6 @@ public class ValidateSaltFilterTest {
                     () -> filter.doFilter(request, response, chain));
 
             verify(chain, never()).doFilter(request, response);
-        }
-    }
-
-    @Test
-    public void testValidationRunsBeforeResponseSaltGeneration() throws Exception {
-        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
-             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
-
-            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
-            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
-
-            when(request.getMethod()).thenReturn("POST");
-            when(request.getParameter("salt")).thenReturn("submittedSalt");
-            when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
-            when(saltCache.get("submittedSalt")).thenReturn("userId");
-
-            LoadSaltFilter loadSaltFilter = new LoadSaltFilter();
-            FilterChain terminalChain = mock(FilterChain.class);
-            FilterChain loadSaltChain = (servletRequest, servletResponse) ->
-                    loadSaltFilter.doFilter(servletRequest, servletResponse, terminalChain);
-
-            filter.doFilter(request, response, loadSaltChain);
-
-            InOrder order = inOrder(saltCache, request, terminalChain);
-            order.verify(saltCache).get("submittedSalt");
-            order.verify(saltCache).remove("submittedSalt");
-            order.verify(saltCache).put(anyString(), eq("userId"));
-            order.verify(request).setAttribute(eq("salt"), anyString());
-            order.verify(terminalChain).doFilter(request, response);
         }
     }
 

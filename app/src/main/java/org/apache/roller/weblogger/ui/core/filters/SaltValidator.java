@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.ui.core.filters;
 import java.util.Locale;
 import java.util.Objects;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.roller.weblogger.ui.core.RollerSession;
@@ -33,6 +34,9 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 public final class SaltValidator {
 
     private static final String MULTIPART_FORM_DATA = "multipart/form-data";
+
+    public static final String VALIDATED_REQUEST_ATTRIBUTE =
+            SaltValidator.class.getName() + ".validated";
 
     private SaltValidator() {
     }
@@ -64,6 +68,19 @@ public final class SaltValidator {
             saltCache.remove(salt);
         }
         return true;
+    }
+
+    /**
+     * Validates and consumes the submitted salt or rejects the request.
+     *
+     * @param request current request
+     * @throws ServletException when the submitted salt is missing or invalid
+     */
+    public static void requireSubmittedSalt(HttpServletRequest request)
+            throws ServletException {
+        if (!consumeSubmittedSalt(request)) {
+            throw new ServletException("Security Violation");
+        }
     }
 
     /**

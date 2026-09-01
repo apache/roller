@@ -24,8 +24,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.filters.SaltValidator;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 import org.apache.struts2.StrutsStatics;
+import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -51,6 +53,9 @@ public class ValidateSaltInterceptorTest {
 
     @Mock
     private HttpServletRequest request;
+
+    @Mock
+    private MultiPartRequestWrapper multipartRequest;
 
     @Mock
     private RollerSession rollerSession;
@@ -82,8 +87,49 @@ public class ValidateSaltInterceptorTest {
             assertEquals("success", interceptor.intercept(invocation));
 
             verify(saltCache).remove("validSalt");
+            verify(request).setAttribute(
+                    SaltValidator.VALIDATED_REQUEST_ATTRIBUTE, Boolean.TRUE);
             verify(invocation).invoke();
         }
+    }
+
+    @Test
+    public void testChainedMultipartRequestIsValidatedOnlyOnce() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
+             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+
+            configureMultipartPost("/roller-ui/bookmarksImport!save.rol");
+            when(request.getParameter("salt")).thenReturn("validSalt");
+            when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
+            when(saltCache.get("validSalt")).thenReturn("userId");
+            when(request.getAttribute(SaltValidator.VALIDATED_REQUEST_ATTRIBUTE))
+                    .thenReturn(null, Boolean.TRUE);
+            when(invocation.invoke()).thenReturn("success");
+
+            assertEquals("success", interceptor.intercept(invocation));
+            assertEquals("success", interceptor.intercept(invocation));
+
+            verify(saltCache).get("validSalt");
+            verify(saltCache).remove("validSalt");
+            verify(invocation, times(2)).invoke();
+        }
+    }
+
+    @Test
+    public void testMultipartParsingErrorsReachUploadHandling() throws Exception {
+        when(context.get(StrutsStatics.HTTP_REQUEST)).thenReturn(multipartRequest);
+        when(multipartRequest.getMethod()).thenReturn("POST");
+        when(multipartRequest.getContentType()).thenReturn(
+                "multipart/form-data; boundary=abc123");
+        when(multipartRequest.hasErrors()).thenReturn(true);
+        when(invocation.invoke()).thenReturn("input");
+
+        assertEquals("input", interceptor.intercept(invocation));
+
+        verify(multipartRequest, never()).getParameter("salt");
+        verify(invocation).invoke();
     }
 
     @Test

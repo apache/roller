@@ -45,18 +45,20 @@ public class ValidateSaltFilter implements Filter {
 
         if ("POST".equalsIgnoreCase(httpReq.getMethod())) {
             if (SaltValidator.isMultipartFormPost(httpReq) && isStrutsAction(httpReq)) {
-                // Struts makes multipart parameters available after its upload
-                // interceptor; ValidateSaltInterceptor handles these requests.
+                // Struts wraps multipart requests before its interceptor stack;
+                // ValidateSaltInterceptor handles these requests.
                 chain.doFilter(request, response);
                 return;
             }
 
-            if (!SaltValidator.consumeSubmittedSalt(httpReq)) {
+            try {
+                SaltValidator.requireSubmittedSalt(httpReq);
+            } catch (ServletException e) {
                 if (log.isDebugEnabled()) {
                     log.debug("Valid salt value not found on POST to URL : "
                             + httpReq.getServletPath());
                 }
-                throw new ServletException("Security Violation");
+                throw e;
             }
         }
 

@@ -26,13 +26,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.ui.core.filters.SaltValidator;
 import org.apache.struts2.StrutsStatics;
+import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 
 /**
- * Validates salts after Struts has parsed a multipart form request.
+ * Validates salts after Struts has wrapped a multipart form request.
  */
 public class ValidateSaltInterceptor extends AbstractInterceptor implements StrutsStatics {
 
@@ -45,12 +46,24 @@ public class ValidateSaltInterceptor extends AbstractInterceptor implements Stru
         HttpServletRequest request = (HttpServletRequest) context.get(HTTP_REQUEST);
 
         if (SaltValidator.isMultipartFormPost(request)
-                && !SaltValidator.consumeSubmittedSalt(request)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Valid salt value not found on multipart POST to URL : "
-                        + request.getServletPath());
+                && !Boolean.TRUE.equals(request.getAttribute(
+                        SaltValidator.VALIDATED_REQUEST_ATTRIBUTE))) {
+            if (request instanceof MultiPartRequestWrapper
+                    && ((MultiPartRequestWrapper) request).hasErrors()) {
+                return invocation.invoke();
             }
-            throw new ServletException("Security Violation");
+
+            try {
+                SaltValidator.requireSubmittedSalt(request);
+            } catch (ServletException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Valid salt value not found on multipart POST to URL : "
+                            + request.getServletPath());
+                }
+                throw e;
+            }
+            request.setAttribute(
+                    SaltValidator.VALIDATED_REQUEST_ATTRIBUTE, Boolean.TRUE);
         }
 
         return invocation.invoke();
