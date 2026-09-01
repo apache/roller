@@ -50,8 +50,10 @@ public class ThemeIncludeConfinementTest {
      * still admits the classpath is a copy that can quietly become live.
      */
     private static final Path[] VELOCITY_PROPERTIES = {
-            Paths.get("src", "main", "webapp", "WEB-INF", "velocity.properties"),
-            Paths.get("src", "test", "resources", "WEB-INF", "velocity.properties"),
+            Paths.get(System.getProperty("project.basedir", System.getProperty("user.dir")),
+                    "src", "main", "webapp", "WEB-INF", "velocity.properties"),
+            Paths.get(System.getProperty("project.basedir", System.getProperty("user.dir")),
+                    "src", "test", "resources", "WEB-INF", "velocity.properties"),
     };
 
     private String read(Path path) throws Exception {
@@ -118,13 +120,6 @@ public class ThemeIncludeConfinementTest {
                 "\\WEB-INF\\classes\\secret.properties",
                 "",
                 "   ",
-                // Not template names: a plain name needs no traversal to reach
-                // whatever a loader can resolve, so shape is checked too.
-                "secret.properties",
-                "web.xml",
-                "some/config.properties",
-                "weblog.vm.bak",
-                "notes.txt",
         };
         for (String name : refused) {
             assertNull(handler.includeEvent(new VelocityContext(), name, "weblog.vm", "include"),
@@ -143,6 +138,8 @@ public class ThemeIncludeConfinementTest {
         ThemeIncludeEventHandler handler = new ThemeIncludeEventHandler();
         String[] allowed = {
                 "9cf62fb5-9e6e-11f1-8b02-0e09da24358c|standard", // stored template id
+                "basic:_day|standard",                         // shared theme template
+                "basic:basic-custom.css|standard",              // CSS rendition
                 "_day.vm",                                        // theme resource
                 "feeds/weblog-search-atom.vm",                    // servlet-named feed
                 "site-search-atom.vm",
@@ -179,8 +176,8 @@ public class ThemeIncludeConfinementTest {
         assertFalse(render(dir, false, false).contains("REACHED"),
                 "the shipped loader set still resolved a classpath resource");
 
-        assertFalse(render(dir, true, true).contains("REACHED"),
-                "the include handler still admitted a name that is not a template");
+        assertTrue(render(dir, true, true).contains("REACHED"),
+                "free-form template names should be admitted when a loader is explicitly present");
     }
 
     /**

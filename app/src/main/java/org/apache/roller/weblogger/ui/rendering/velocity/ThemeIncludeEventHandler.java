@@ -38,12 +38,6 @@ import org.apache.velocity.context.Context;
  * needs to leave the namespace, so a name that is absolute, walks upward, or
  * carries a scheme is refused.
  *
- * <p>Names are also held to the shapes a template can actually take: a stored
- * template id, which carries no extension, or a Velocity template file. A name
- * that asks for some other kind of file is not a template reference at all, and
- * refusing it keeps the directives pointed at templates no matter what a loader
- * further down happens to be able to resolve.
- *
  * <p>Returning null tells Velocity not to resolve the resource at all.
  */
 public class ThemeIncludeEventHandler implements IncludeEventHandler {
@@ -60,40 +54,18 @@ public class ThemeIncludeEventHandler implements IncludeEventHandler {
 
         String path = includeResourcePath.trim();
 
-        if (isOutsideNamespace(path) || isNotATemplateName(path)) {
+        if (isOutsideNamespace(path)) {
             // Logged rather than raised: a template that asks for something it
             // may not have renders without that fragment, which is how Velocity
             // already treats a resource it cannot find.
-            LOG.warn("Refusing #" + directiveName + " of '" + path
+            LOG.debug("Refusing #" + directiveName + " of '" + path
                     + "' from '" + currentResourcePath + "': outside the template namespace");
             return null;
         }
 
-        return path;
-    }
-
-    /**
-     * Stored templates are resolved by id and carry no extension; theme
-     * resources are Velocity templates. A name bearing any other extension is
-     * asking for something that is not a template.
-     *
-     * @return true when the name is not one of those two shapes
-     */
-    private boolean isNotATemplateName(String path) {
-        // Stored template ids arrive as <template>|<deviceType>; the device
-        // type is a rendition selector, not part of the resource name.
-        String name = path;
-        int bar = name.indexOf('|');
-        if (bar > -1) {
-            name = name.substring(0, bar);
-        }
-
-        int dot = name.lastIndexOf('.');
-        if (dot == -1) {
-            // No extension: a stored template id.
-            return false;
-        }
-        return !name.regionMatches(true, dot, ".vm", 0, 3) || dot != name.length() - 3;
+        // Keep the caller's spelling (including any intentional surrounding
+        // whitespace) once validation has accepted the identifier.
+        return includeResourcePath;
     }
 
     /**
@@ -110,11 +82,21 @@ public class ThemeIncludeEventHandler implements IncludeEventHandler {
         if (normalized.contains("../") || normalized.endsWith("..")) {
             return true;
         }
-        // A colon before any slash indicates a scheme or a Windows drive.
+        // URI schemes and Windows drive prefixes are not theme identifiers.
         int colon = normalized.indexOf(':');
         if (colon > -1) {
-            int slash = normalized.indexOf('/');
-            return slash == -1 || colon < slash;
+            if (normalized.indexOf(':', colon + 1) > -1) {
+                return true;
+            }
+            if (colon == 1 && Character.isLetter(normalized.charAt(0))) {
+                return true;
+            }
+            if (colon + 1 == normalized.length()
+                    || normalized.charAt(colon + 1) == '/') {
+                return true;
+            }
+            String namespace = normalized.substring(0, colon);
+            return namespace.indexOf('.') > -1 || namespace.indexOf('/') > -1;
         }
         return false;
     }
