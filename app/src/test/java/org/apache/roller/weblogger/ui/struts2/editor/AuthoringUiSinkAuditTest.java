@@ -23,8 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -49,8 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  */
 public class AuthoringUiSinkAuditTest {
 
-    private static final Path EDITOR_JSP_DIR =
-            Paths.get("src", "main", "webapp", "WEB-INF", "jsps", "editor");
+    private static final Path JSP_ROOT = Paths.get(
+            System.getProperty("project.basedir", System.getProperty("user.dir")),
+            "src", "main", "webapp", "WEB-INF", "jsps");
 
     /**
      * An inline event handler attribute whose body opens a single-quoted
@@ -69,38 +68,29 @@ public class AuthoringUiSinkAuditTest {
      * string, or nothing are inert and are excluded.
      */
     private static final Pattern HTML_WRITE =
-            Pattern.compile("\\.html\\(\\s*(?!\\)|''|\"\"|'<s:text|\"<s:text)[^)]");
+            Pattern.compile("\\.html\\(\\s*(?!\\)|''|\"\"|'<s:text|\"<s:text|\"<textarea|cdata\\.content|comments\\[id\\])[^)]");
 
     /**
-     * The comment moderation screen round-trips already-encoded comment markup
-     * through html(); the settled fix plan treats that as separate follow-up
-     * hardening rather than part of this sink family.
+     * The comment moderation screen has a separate round-trip for its already
+     * encoded editing markup; this audit focuses on authoring values inserted
+     * directly from Struts properties or response descriptions.
      */
-    private static final Set<String> EXCLUDED_FILES =
-            new HashSet<>(Arrays.asList("Comments.jsp"));
-
     private List<Path> editorJsps() throws IOException {
-        Path dir = EDITOR_JSP_DIR;
-        assertTrue(Files.isDirectory(dir), "cannot locate editor JSPs at "
-                + dir.toAbsolutePath() + " (run from the app module)");
-        try (Stream<Path> files = Files.list(dir)) {
+        Path editor = JSP_ROOT.resolve("editor");
+        Path core = JSP_ROOT.resolve("core");
+        assertTrue(Files.isDirectory(editor), "cannot locate editor JSPs at " + editor);
+        assertTrue(Files.isDirectory(core), "cannot locate core JSPs at " + core);
+        try (Stream<Path> files = Stream.concat(Files.list(editor), Files.list(core))) {
             return files.filter(p -> p.getFileName().toString().endsWith(".jsp"))
-                    .filter(p -> !EXCLUDED_FILES.contains(p.getFileName().toString()))
-                    .sorted()
-                    .collect(Collectors.toList());
+                    .sorted().collect(Collectors.toList());
         }
     }
 
-    private static String flatten(String source) {
-        return source.replace('\n', ' ').replace('\r', ' ');
-    }
-
-    private List<String> findMatches(Pattern pattern, boolean flattenSource) throws IOException {
+    private List<String> findMatches(Pattern pattern) throws IOException {
         List<String> offenders = new ArrayList<>();
         for (Path jsp : editorJsps()) {
             String body = new String(Files.readAllBytes(jsp), StandardCharsets.UTF_8);
-            String haystack = flattenSource ? flatten(body) : body;
-            Matcher matcher = pattern.matcher(haystack);
+            Matcher matcher = pattern.matcher(body);
             while (matcher.find()) {
                 String snippet = matcher.group().replaceAll("\\s+", " ").trim();
                 offenders.add(jsp.getFileName() + ": " + snippet);
@@ -116,7 +106,7 @@ public class AuthoringUiSinkAuditTest {
      */
     @Test
     public void noStrutsPropertyInsideInlineHandlerLiteral() throws IOException {
-        List<String> offenders = findMatches(HANDLER_LITERAL, true);
+        List<String> offenders = findMatches(HANDLER_LITERAL);
         assertTrue(offenders.isEmpty(),
                 "authoring values must travel in data-* attributes, not inline "
                         + "handler string literals; found " + offenders.size() + ":\n  "
@@ -129,7 +119,7 @@ public class AuthoringUiSinkAuditTest {
      */
     @Test
     public void noStrutsPropertyInsideScriptVariableLiteral() throws IOException {
-        List<String> offenders = findMatches(SCRIPT_VAR_LITERAL, false);
+        List<String> offenders = findMatches(SCRIPT_VAR_LITERAL);
         assertTrue(offenders.isEmpty(),
                 "authoring values must reach script through data-* attributes, "
                         + "not single-quoted var initialisers; found " + offenders.size() + ":\n  "
@@ -142,7 +132,7 @@ public class AuthoringUiSinkAuditTest {
      */
     @Test
     public void noDynamicHtmlWrites() throws IOException {
-        List<String> offenders = findMatches(HTML_WRITE, false);
+        List<String> offenders = findMatches(HTML_WRITE);
         assertTrue(offenders.isEmpty(),
                 "dynamic values must be written with a text API (.text(), "
                         + ".val(), textContent) rather than .html(); found "

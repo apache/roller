@@ -291,10 +291,10 @@
         $('#category-name').text(name);
         if ( inUse ) {
             $('#category-in-use').css('display','block');
-            $('#category-emtpy').css('display', 'none');
+            $('#category-empty').css('display', 'none');
         } else {
             $('#category-in-use').css('display', 'none');
-            $('#category-emtpy').css('display', 'block');
+            $('#category-empty').css('display', 'block');
         }
         populateCategorySelect(id);
         $('#delete-category-modal').modal({show: true});
@@ -304,7 +304,7 @@
         // Category names are author-supplied. They are rendered into data
         // attributes below and read back as text here, so no name is ever
         // parsed as JavaScript.
-        const allCategories = $('#category-option-data .category-option').map(function () {
+        const allCategories = $('.category-delete-link').map(function () {
             return {
                 id: $(this).attr('data-category-id'),
                 name: $(this).attr('data-category-name')
@@ -337,13 +337,3 @@
     });
 
 </script>
-
-<%-- Source data for the "move entries to" select, carried as escaped
-     attributes rather than generated JavaScript literals. --%>
-<div id="category-option-data" style="display:none">
-    <s:iterator value="allCategories" var="category">
-        <span class="category-option"
-              data-category-id="<s:property value="#category.id"/>"
-              data-category-name="<s:property value="#category.name"/>"></span>
-    </s:iterator>
-</div>

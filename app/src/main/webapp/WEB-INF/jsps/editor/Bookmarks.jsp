@@ -131,7 +131,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
                     <td>
                         <s:if test="#bookmark.url != null">
-                            <a href='<s:property value="#bookmark.url" />' target='_blank'>
+                            <a href="<s:property value="#bookmark.url" />" target="_blank">
                                 <str:truncateNicely lower="70" upper="90">
                                     <s:property value="#bookmark.url"/>
                                 </str:truncateNicely>
@@ -338,7 +338,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     function confirmDeleteFolder() {
         $('#boomarks_delete_folder_folderId').val($('#bookmarks_folderId:first').val());
-        $('#deleteBlogrollName').text('<s:property value="%{folder.name}"/>');
+        $('#deleteBlogrollName').text($('#deleteBlogrollName').data('folder-name'));
         $('#delete-blogroll-modal').modal({show: true});
     }
 
@@ -565,7 +565,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
                 <div class="modal-body">
                     <s:text name="blogrollDeleteOK.areYouSure" />
-                    <span id="deleteBlogrollName"></span>?
+                    <span id="deleteBlogrollName"
+                          data-folder-name="<s:property value="%{folder.name}"/>"></span>?
                 </div>
 
                 <div class="modal-footer">
