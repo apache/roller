@@ -113,6 +113,10 @@ public class CategoryRemove extends UIAction {
 
                 if (getTargetCategoryId() != null) {
                     WeblogCategory target = wmgr.getWeblogCategory(getActionWeblog(), getTargetCategoryId());
+                    if (target == null) {
+                        addError("categoryForm.notFound");
+                        return execute();
+                    }
                     wmgr.moveWeblogCategoryContents(getCategory(), target);
                     WebloggerFactory.getWeblogger().flush();
                 }

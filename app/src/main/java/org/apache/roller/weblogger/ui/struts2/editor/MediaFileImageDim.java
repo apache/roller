@@ -51,6 +51,10 @@ public class MediaFileImageDim extends MediaFileBase {
         try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
             MediaFile mediaFile = mgr.getMediaFile(getActionWeblog(), getMediaFileId());
+            if (mediaFile == null) {
+                addError("MediaFile.error.view");
+                return ERROR;
+            }
             bean.copyFrom(mediaFile);
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directory", ex);

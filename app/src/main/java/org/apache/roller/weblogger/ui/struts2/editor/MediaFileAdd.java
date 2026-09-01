@@ -95,6 +95,10 @@ public class MediaFileAdd extends MediaFileBase {
                 }
                 setDirectory(root);
             }
+            if (getDirectory() == null) {
+                addError("mediaFile.directory.notFound");
+                return;
+            }
             directoryName = getDirectory().getName();
             bean.setDirectoryId(getDirectory().getId());
 

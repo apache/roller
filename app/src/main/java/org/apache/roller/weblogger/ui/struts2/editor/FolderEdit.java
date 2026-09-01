@@ -93,6 +93,10 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
     @Override
     public String execute() {
         if (!isAdd()) {
+            if (folder == null) {
+                addError("folderForm.notFound");
+                return ERROR;
+            }
             // load bean with database values during initial load
             getBean().copyFrom(folder);
         }
@@ -103,6 +107,10 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
      * Save updated folder data.
      */
     public String save() {
+        if (!isAdd() && folder == null) {
+            addError("folderForm.notFound");
+            return ERROR;
+        }
         myValidate();
         
         if(!hasActionErrors()) {
@@ -144,6 +152,10 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
     }
 
     public void myValidate() {
+        if (folder == null) {
+            addError("folderForm.notFound");
+            return;
+        }
         // make sure new name is not a duplicate of an existing folder
         if ( isAdd() || !getBean().getName().equals(folder.getName()) ) {
             if (folder.getWeblog().hasBookmarkFolder(getBean().getName())) {

@@ -228,9 +228,22 @@ public class Bookmarks extends UIAction {
             WeblogBookmarkFolder newFolder = bmgr.getFolderById(getActionWeblog(), getTargetFolderId());
             String bookmarks[] = getSelectedBookmarks();
 
+            if (newFolder == null) {
+                addError("bookmarksForm.error.move");
+                return execute();
+            }
+
             if (null != bookmarks && bookmarks.length > 0) {
-                for (int j = 0; j < bookmarks.length; j++) {
-                    WeblogBookmark bd = bmgr.getBookmark(getActionWeblog(), bookmarks[j]);
+                List<WeblogBookmark> bookmarksToMove = new ArrayList<>();
+                for (String bookmarkId : bookmarks) {
+                    WeblogBookmark bd = bmgr.getBookmark(getActionWeblog(), bookmarkId);
+                    if (bd == null) {
+                        addError("bookmarksForm.error.move");
+                        return execute();
+                    }
+                    bookmarksToMove.add(bd);
+                }
+                for (WeblogBookmark bd : bookmarksToMove) {
                     newFolder.addBookmark(bd);
                     bd.setFolder(newFolder);
                     bmgr.saveBookmark(bd);

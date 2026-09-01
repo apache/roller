@@ -18,6 +18,11 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import com.opensymphony.xwork2.DefaultTextProvider;
+import com.opensymphony.xwork2.TextProvider;
+import com.opensymphony.xwork2.TextProviderFactory;
+import com.opensymphony.xwork2.inject.Container;
+import com.opensymphony.xwork2.inject.Scope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
@@ -29,13 +34,20 @@ import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Verifies that authoring actions resolve the resource named by a request
@@ -132,12 +144,26 @@ public class AuthoringActionScopingTest {
         TestUtils.endSession(true);
 
         EntryEdit action = new EntryEdit();
+        prepareText(action);
         action.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
         action.getBean().setId(foreign.getId());
         action.myPrepare();
 
         assertNull(action.getEntry(),
                 "editor must not load an entry owned by another weblog");
+    }
+
+    @Test
+    public void testEntryEditReportsMissingEntry() throws Exception {
+        EntryEdit action = new EntryEdit();
+        prepareText(action);
+        action.setActionName("entryEdit");
+        action.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
+        action.getBean().setId("missing-entry");
+        action.myPrepare();
+
+        assertEquals(EntryEdit.ERROR, action.execute());
+        assertTrue(action.hasActionErrors());
     }
 
     // -------------------------------------------------- category removal
@@ -175,6 +201,55 @@ public class AuthoringActionScopingTest {
         assertEquals(own.getId(), action.getCategory().getId());
     }
 
+    @Test
+    public void testCategoryEditReportsMissingCategory() throws Exception {
+        CategoryEdit action = new CategoryEdit();
+        prepareText(action);
+        action.setActionName("categoryEdit");
+        action.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
+        action.getBean().setId("missing-category");
+        action.myPrepare();
+
+        assertEquals(CategoryEdit.ERROR, action.execute());
+        assertTrue(action.hasActionErrors());
+    }
+
+    @Test
+    public void testCategoryRemoveRejectsMissingTarget() throws Exception {
+        WeblogCategory own = TestUtils.setupWeblogCategory(
+                TestUtils.getManagedWebsite(weblogOne), "actScopeRemoveCat");
+        TestUtils.endSession(true);
+
+        CategoryRemove action = new CategoryRemove();
+        prepareText(action);
+        action.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
+        action.setRemoveId(own.getId());
+        action.setTargetCategoryId("missing-target-category");
+        action.myPrepare();
+
+        assertEquals(CategoryRemove.INPUT, action.remove());
+        assertTrue(action.hasActionErrors());
+        assertNotNull(WebloggerFactory.getWeblogger().getWeblogEntryManager()
+                .getWeblogCategory(TestUtils.getManagedWebsite(weblogOne), own.getId()));
+    }
+
+    @Test
+    public void testWeblogConfigPreservesCategoryWhenSelectionIsMissing()
+            throws Exception {
+        Weblog managed = TestUtils.getManagedWebsite(weblogOne);
+        String originalCategoryId = managed.getBloggerCategory().getId();
+        WeblogConfig action = new WeblogConfig();
+        prepareText(action);
+        action.setActionWeblog(managed);
+        action.getBean().copyFrom(managed);
+        action.getBean().setBloggerCategoryId("missing-blogger-category");
+
+        assertEquals(WeblogConfig.INPUT, action.save());
+        assertTrue(action.hasActionErrors());
+        assertEquals(originalCategoryId,
+                managed.getBloggerCategory().getId());
+    }
+
     // -------------------------------------------------- bookmark editing
 
     @Test
@@ -200,4 +275,177 @@ public class AuthoringActionScopingTest {
         assertNull(action.getBookmark(),
                 "editor must not load a bookmark owned by another weblog");
     }
+
+    @Test
+    public void testBookmarkAndFolderEditorsReportMissingResources() throws Exception {
+        BookmarkEdit bookmark = new BookmarkEdit();
+        prepareText(bookmark);
+        bookmark.setActionName("bookmarkEdit");
+        bookmark.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
+        bookmark.getBean().setId("missing-bookmark");
+        bookmark.myPrepare();
+
+        assertEquals(BookmarkEdit.ERROR, bookmark.execute());
+        assertTrue(bookmark.hasActionErrors());
+
+        FolderEdit folder = new FolderEdit();
+        prepareText(folder);
+        folder.setActionName("folderEdit");
+        folder.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
+        folder.getBean().setId("missing-folder");
+        folder.myPrepare();
+
+        assertEquals(FolderEdit.ERROR, folder.execute());
+        assertTrue(folder.hasActionErrors());
+    }
+
+    @Test
+    public void testBookmarkMoveRejectsMissingTarget() throws Exception {
+        Bookmarks action = new Bookmarks();
+        prepareText(action);
+        action.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
+        action.setTargetFolderId("missing-target-folder");
+        action.setSelectedBookmarks(new String[0]);
+
+        assertEquals(Bookmarks.LIST, action.move());
+        assertTrue(action.hasActionErrors());
+    }
+
+    @Test
+    public void testMissingCommentFilterReturnsNoComments() throws Exception {
+        Comments action = new Comments();
+        prepareText(action);
+        action.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
+        action.getBean().setEntryId("missing-comment-entry");
+
+        assertEquals(Comments.LIST, action.execute());
+        assertTrue(action.hasActionErrors());
+        assertTrue(action.getPager().getItems().isEmpty());
+    }
+
+    @Test
+    public void testMediaActionsReportMissingResources() throws Exception {
+        MediaFileImageDim dimensions = new MediaFileImageDim();
+        prepareText(dimensions);
+        dimensions.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
+        dimensions.setMediaFileId("missing-media-file");
+
+        assertEquals(MediaFileImageDim.ERROR, dimensions.execute());
+        assertTrue(dimensions.hasActionErrors());
+
+        EntryAddWithMediaFile entry = new EntryAddWithMediaFile();
+        prepareText(entry);
+        entry.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
+        entry.setSelectedImages(new String[] {"missing-media-file"});
+
+        assertEquals(EntryAddWithMediaFile.ERROR, entry.execute());
+        assertTrue(entry.hasActionErrors());
+
+        TestMediaFileAction media = new TestMediaFileAction();
+        prepareText(media);
+        media.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
+        media.setMediaFileId("missing-media-file");
+        media.deleteMissing();
+        assertTrue(media.hasActionErrors());
+    }
+
+    @Test
+    public void testMediaMoveRejectsMissingDirectory() throws Exception {
+        TestMediaFileAction media = new TestMediaFileAction();
+        prepareText(media);
+        media.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
+        media.setSelectedMediaFiles(new String[] {"missing-media-file"});
+        media.setSelectedDirectory("missing-media-directory");
+
+        media.moveMissing();
+
+        assertTrue(media.hasActionErrors());
+    }
+
+    private static class TestMediaFileAction extends MediaFileBase {
+        private static final long serialVersionUID = 1L;
+
+        void deleteMissing() {
+            doDeleteMediaFile();
+        }
+
+        void moveMissing() {
+            doMoveSelected();
+        }
+    }
+
+    private static void prepareText(UIAction action) {
+        action.setContainer(TEST_CONTAINER);
+    }
+
+    private static final TextProvider TEST_TEXT_PROVIDER = new DefaultTextProvider() {
+        @Override
+        public String getText(String key) {
+            return key;
+        }
+
+        @Override
+        public String getText(String key, List<?> args) {
+            return key;
+        }
+
+        @Override
+        public String getText(String key, String defaultValue, String value) {
+            return key;
+        }
+    };
+
+    private static final TextProviderFactory TEST_TEXT_PROVIDER_FACTORY =
+            new TextProviderFactory() {
+                @Override
+                @SuppressWarnings("rawtypes")
+                public TextProvider createInstance(Class type) {
+                    return TEST_TEXT_PROVIDER;
+                }
+
+                @Override
+                public TextProvider createInstance(ResourceBundle bundle) {
+                    return TEST_TEXT_PROVIDER;
+                }
+            };
+
+    private static final Container TEST_CONTAINER = new Container() {
+        @Override
+        public void inject(Object object) {
+        }
+
+        @Override
+        public <T> T inject(Class<T> implementation) {
+            return null;
+        }
+
+        @Override
+        public <T> T getInstance(Class<T> type, String name) {
+            return getInstance(type);
+        }
+
+        @Override
+        public <T> T getInstance(Class<T> type) {
+            if (type == TextProviderFactory.class) {
+                return type.cast(TEST_TEXT_PROVIDER_FACTORY);
+            }
+            if (type == String.class) {
+                return type.cast("false");
+            }
+            return null;
+        }
+
+        @Override
+        public Set<String> getInstanceNames(Class<?> type) {
+            return Collections.emptySet();
+        }
+
+        @Override
+        public void setScopeStrategy(Scope.Strategy strategy) {
+        }
+
+        @Override
+        public void removeScopeStrategy() {
+        }
+    };
 }

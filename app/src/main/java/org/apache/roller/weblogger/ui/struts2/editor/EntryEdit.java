@@ -122,6 +122,9 @@ public final class EntryEdit extends UIAction {
     @Override
     public String execute() {
         if (getActionName().equals("entryEdit")) {
+            if (!requireEntry()) {
+                return ERROR;
+            }
             // load bean with pojo data
             getBean().copyFrom(getEntry(), getLocale());
         } else {
@@ -146,6 +149,9 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String saveDraft() {
+        if (!requireEntry()) {
+            return INPUT;
+        }
         getBean().setStatus(PubStatus.DRAFT.name());
         if (entry.isPublished()) {
             // entry reverted from published to non-viewable draft
@@ -161,6 +167,9 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String publish() {
+        if (!requireEntry()) {
+            return INPUT;
+        }
         if (getActionWeblog().hasUserPermission(
                 getAuthenticatedUser(), WeblogPermission.POST)) {
             Timestamp pubTime = getBean().getPubTime(getLocale(),
@@ -191,6 +200,9 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     private String save() {
+        if (!requireEntry()) {
+            return INPUT;
+        }
         if (!hasActionErrors()) {
             try {
                 WeblogEntryManager weblogEntryManager = WebloggerFactory.getWeblogger()
@@ -327,8 +339,19 @@ public final class EntryEdit extends UIAction {
         this.entry = entry;
     }
 
+    private boolean requireEntry() {
+        if (entry == null) {
+            addError("weblogEntry.notFound");
+            return false;
+        }
+        return true;
+    }
+
     @SkipValidation
     public String firstSave() {
+        if (!requireEntry()) {
+            return ERROR;
+        }
         addStatusMessage(getEntry().getStatus());
         return execute();
     }
