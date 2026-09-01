@@ -24,12 +24,16 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Instant;
 import java.util.Base64;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.apache.roller.weblogger.ui.core.RollerContext;
 
 class RollerAtomHandlerTest {
 
@@ -58,6 +62,7 @@ class RollerAtomHandlerTest {
         User user = new User();
         user.setUserName(USER_NAME);
         user.setPassword(PASSWORD);
+        user.setEnabled(true);
 
         when(weblogger.getUserManager()).thenReturn(userManager);
         when(weblogger.getUrlStrategy()).thenReturn(urlStrategy);
@@ -85,6 +90,43 @@ class RollerAtomHandlerTest {
             factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
             config.when(() -> WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))
                     .thenReturn("wsse");
+
+            RollerAtomHandler handler = new RollerAtomHandler(request, response);
+
+            assertNull(handler.getAuthenticatedUsername());
+            verify(request, never()).getHeader("Authorization");
+        }
+    }
+
+    @Test
+    void basicAuthenticationAcceptsNormalizedMethodAndUsesResolvedUser() {
+        String credentials = Base64.getEncoder().encodeToString(
+                (USER_NAME + ":" + PASSWORD).getBytes(StandardCharsets.UTF_8));
+        when(request.getHeader("Authorization")).thenReturn("Basic " + credentials);
+        PasswordEncoder encoder = mock(PasswordEncoder.class);
+        when(encoder.matches(PASSWORD, PASSWORD)).thenReturn(true);
+
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class);
+             MockedStatic<WebloggerRuntimeConfig> config = mockStatic(WebloggerRuntimeConfig.class);
+             MockedStatic<RollerContext> context = mockStatic(RollerContext.class)) {
+            factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
+            config.when(() -> WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))
+                    .thenReturn("  BaSiC  ");
+            context.when(RollerContext::getPasswordEncoder).thenReturn(encoder);
+
+            RollerAtomHandler handler = new RollerAtomHandler(request, response);
+
+            assertNotNull(handler.getAuthenticatedUsername());
+        }
+    }
+
+    @Test
+    void nullAuthenticationMethodIsRejected() {
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class);
+             MockedStatic<WebloggerRuntimeConfig> config = mockStatic(WebloggerRuntimeConfig.class)) {
+            factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
+            config.when(() -> WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))
+                    .thenReturn(null);
 
             RollerAtomHandler handler = new RollerAtomHandler(request, response);
 

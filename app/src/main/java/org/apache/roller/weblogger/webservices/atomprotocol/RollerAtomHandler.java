@@ -19,6 +19,7 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 import com.rometools.propono.atom.common.Categories;
 import com.rometools.propono.atom.server.AtomRequest;
 import java.util.StringTokenizer;
+import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
@@ -116,14 +117,18 @@ public class RollerAtomHandler implements AtomHandler {
         roller = WebloggerFactory.getWeblogger();
 
         String userName;
-        String authenticationMethod =
-                WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth");
+        String authenticationMethod = WebloggerRuntimeConfig
+                .getProperty("webservices.atomPubAuth");
+        if (authenticationMethod != null) {
+            authenticationMethod = authenticationMethod.trim().toLowerCase(Locale.ROOT);
+        }
         if ("oauth".equals(authenticationMethod)) {
             userName = authenticationOAUTH(request, response);
         } else if ("basic".equals(authenticationMethod)) {
             userName = authenticateBASIC(request);
         } else {
-            log.warn("Unsupported AtomPub authentication method; authentication denied");
+            log.warn("Unsupported AtomPub authentication method '" + authenticationMethod
+                    + "'; expected 'basic' or 'oauth'. Authentication denied.");
             userName = null;
         }
 
@@ -429,7 +434,8 @@ public class RollerAtomHandler implements AtomHandler {
                             User inUser = roller.getUserManager().getUserByUserName(userID);
                             if (inUser.getEnabled()) {
                                 String password = userPass.substring(p+1);
-                                valid = RollerContext.getPasswordEncoder().matches(password, user.getPassword());
+                                valid = RollerContext.getPasswordEncoder()
+                                        .matches(password, inUser.getPassword());
                             }
                         }
                     }
