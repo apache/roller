@@ -108,7 +108,8 @@ public class JPAOAuthManagerTest  {
 
         assertFalse(omgr.authorizeRequestToken(consumerKey, "another-token", "alice"));
         assertTrue(omgr.authorizeRequestToken(consumerKey, requestToken, "alice"));
-        assertFalse(omgr.authorizeRequestToken(consumerKey, requestToken, "alice"));
+        assertTrue(omgr.authorizeRequestToken(consumerKey, requestToken, "alice"));
+        assertFalse(omgr.authorizeRequestToken(consumerKey, requestToken, "bob"));
         TestUtils.endSession(true);
 
         OAuthAccessor authorized = omgr.getAccessorByToken(requestToken);

@@ -153,16 +153,6 @@
 		<url-pattern>/roller-ui/*</url-pattern>
 	</filter-mapping>
 
-	<!-- The OAuth consent form is served by a forward into /roller-ui/, so it
-	     already receives a token from LoadSaltFilter above, but it posts back
-	     outside /roller-ui/. Validate that one exact URL; the request-token and
-	     access-token endpoints are consumer-to-server calls carrying an OAuth
-	     signature and must not be included. -->
-	<filter-mapping>
-		<filter-name>ValidateSaltFilter</filter-name>
-		<url-pattern>/roller-services/oauth/authorize</url-pattern>
-	</filter-mapping>
-
     <!-- Request mapping, this is what allows the urls to work -->
     <filter-mapping>
         <filter-name>RequestMappingFilter</filter-name>

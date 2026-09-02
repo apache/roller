@@ -28,18 +28,22 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.web.savedrequest.SimpleSavedRequest;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -71,6 +75,9 @@ public class AuthorizationServletTest {
     private RequestDispatcher dispatcher;
 
     @Mock
+    private HttpSession httpSession;
+
+    @Mock
     private RollerSession rollerSession;
 
     @Mock
@@ -85,7 +92,8 @@ public class AuthorizationServletTest {
     @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
-        servlet = new AuthorizationServlet();
+        servlet = spy(new AuthorizationServlet());
+        doReturn(true).when(servlet).hasValidSalt(request);
 
         // A site-wide consumer: no "userId" property bound to the key. This is
         // the configuration in which the servlet has no consumer-side identity
@@ -99,6 +107,8 @@ public class AuthorizationServletTest {
         when(request.getRequestURL())
                 .thenReturn(new StringBuffer("https://example.com/roller-services/oauth/authorize"));
         when(request.getLocalName()).thenReturn("example.com");
+        when(request.getContextPath()).thenReturn("");
+        when(request.getSession(true)).thenReturn(httpSession);
         when(request.getRequestDispatcher(anyString())).thenReturn(dispatcher);
         responseBody = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(responseBody));
@@ -112,17 +122,6 @@ public class AuthorizationServletTest {
         u.setUserName(userName);
         u.setEnabled(Boolean.TRUE);
         return u;
-    }
-
-    /**
-     * Assert that no approval was recorded for {@code userName}, through either
-     * of the manager's authorizing entry points. Checking both matters: a test
-     * that named only one of them would pass whenever the servlet happened to
-     * use the other.
-     */
-    private void verifyNothingAuthorizedFor(String userName) throws Exception {
-        verify(oauthManager, never()).markAsAuthorized(any(), eq(userName));
-        verify(oauthManager, never()).authorizeRequestToken(anyString(), anyString(), eq(userName));
     }
 
     /**
@@ -150,7 +149,9 @@ public class AuthorizationServletTest {
 
             servlet.doPost(request, response);
 
-            verifyNothingAuthorizedFor("admin");
+            verify(response).setStatus(HttpServletResponse.SC_FORBIDDEN);
+            assertEquals("oauth_problem=permission_denied\n", responseBody.toString());
+            verifyNothingAuthorized();
         }
     }
 
@@ -170,7 +171,9 @@ public class AuthorizationServletTest {
 
             servlet.doPost(request, response);
 
-            verifyNothingAuthorizedFor("admin");
+            verify(response).setStatus(HttpServletResponse.SC_FORBIDDEN);
+            assertEquals("oauth_problem=permission_denied\n", responseBody.toString());
+            verifyNothingAuthorized();
         }
     }
 
@@ -192,6 +195,7 @@ public class AuthorizationServletTest {
             servlet.doPost(request, response);
 
             verifyNothingAuthorized();
+            verifyLoginResumeWasSaved();
         }
     }
 
@@ -321,5 +325,76 @@ public class AuthorizationServletTest {
             assertEquals("oauth_problem=permission_denied\n", responseBody.toString());
             verifyNothingAuthorized();
         }
+    }
+
+    @Test
+    public void missingAccessorOnGetIsRefusedGenerically() throws Exception {
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class)) {
+            factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
+            when(oauthManager.getAccessor(any())).thenReturn(null);
+
+            servlet.doGet(request, response);
+
+            verify(response).setStatus(HttpServletResponse.SC_FORBIDDEN);
+            assertEquals("oauth_problem=permission_denied\n", responseBody.toString());
+        }
+    }
+
+    @Test
+    public void expiredTokenOnGetIsRefusedGenerically() throws Exception {
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class)) {
+            factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
+            when(oauthManager.getAccessor(any()))
+                    .thenThrow(new OAuthProblemException("token_expired"));
+
+            servlet.doGet(request, response);
+
+            verify(response).setStatus(HttpServletResponse.SC_FORBIDDEN);
+            assertEquals("oauth_problem=permission_denied\n", responseBody.toString());
+        }
+    }
+
+    @Test
+    public void pendingGetWithoutSessionRedirectsToLoginAndCanResume() throws Exception {
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class);
+             MockedStatic<RollerSession> session = mockStatic(RollerSession.class)) {
+            factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
+            session.when(() -> RollerSession.getRollerSession(request))
+                    .thenReturn(rollerSession);
+            when(rollerSession.getAuthenticatedUser()).thenReturn(null);
+
+            servlet.doGet(request, response);
+
+            verifyNothingAuthorized();
+            verifyLoginResumeWasSaved();
+        }
+    }
+
+    @Test
+    public void invalidSaltRendersConsentAgainWithoutAuthorizing() throws Exception {
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class);
+             MockedStatic<RollerSession> session = mockStatic(RollerSession.class)) {
+            factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
+            session.when(() -> RollerSession.getRollerSession(request))
+                    .thenReturn(rollerSession);
+            when(rollerSession.getAuthenticatedUser()).thenReturn(user("alice"));
+            doReturn(false).when(servlet).hasValidSalt(request);
+
+            servlet.doPost(request, response);
+
+            verify(dispatcher).forward(request, response);
+            verifyNothingAuthorized();
+        }
+    }
+
+    private void verifyLoginResumeWasSaved() throws Exception {
+        ArgumentCaptor<Object> saved = ArgumentCaptor.forClass(Object.class);
+        verify(httpSession).setAttribute(
+                eq("SPRING_SECURITY_SAVED_REQUEST"), saved.capture());
+        assertTrue(saved.getValue() instanceof SimpleSavedRequest);
+        SimpleSavedRequest request = (SimpleSavedRequest) saved.getValue();
+        assertEquals("GET", request.getMethod());
+        assertTrue(request.getRedirectUrl().contains("oauth_token=" + REQUEST_TOKEN));
+        verify(response).sendRedirect("/roller-ui/login.rol");
     }
 }

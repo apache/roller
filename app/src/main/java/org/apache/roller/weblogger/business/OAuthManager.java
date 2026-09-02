@@ -106,17 +106,18 @@ public interface OAuthManager {
      *
      * <p>The whole transition happens in a single conditional statement: the
      * record is claimed only if it still matches the consumer key and the
-     * exact request token, has not been authorized already, and has not yet
-     * been exchanged for an access token. That makes approval one-shot without
-     * a read-then-write window in which the same token could be approved
-     * twice.
+     * exact request token and has not yet been exchanged for an access token.
+     * A pending token already approved by the same user is accepted as an
+     * idempotent retry; a different user cannot claim it. The transition stays
+     * in one statement, without a read-then-write window.
      *
      * @param consumerKey  key of the consumer the token was issued to
      * @param requestToken the pending request token being approved
      * @param userName     the approving user
-     * @return true if this call performed the approval; false if the record
-     *         did not match, was already authorized, or was already exchanged.
-     *         Callers should not distinguish these cases to the client.
+     * @return true if this call performed the approval or confirmed the same
+     *         user's prior approval; false if the record did not match, belongs
+     *         to another user, or was already exchanged. Callers should not
+     *         distinguish these cases to the client.
      * @throws OAuthException on persistence failure
      */
     boolean authorizeRequestToken(String consumerKey, String requestToken, String userName)

@@ -36,6 +36,8 @@ import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.filters.SaltValidator;
+import org.springframework.security.web.savedrequest.SimpleSavedRequest;
 
 /**
  * Authorization request handler.
@@ -63,13 +65,30 @@ public class AuthorizationServlet extends HttpServlet {
             OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
             OAuthAccessor accessor = omgr.getAccessor(requestMessage);
            
+            if (accessor == null || accessor.consumer == null
+                    || accessor.requestToken == null) {
+                denyPermission(response);
+                return;
+            }
+
             if (Boolean.TRUE.equals(accessor.getProperty("authorized"))) {
                 // already authorized send the user back
                 returnToConsumer(request, response, accessor);
             } else {
+                User user = getAuthenticatedUser(request);
+                if (user == null) {
+                    sendToLogin(request, response, accessor);
+                    return;
+                }
+                if (!Boolean.TRUE.equals(user.getEnabled())) {
+                    denyPermission(response);
+                    return;
+                }
                 sendToAuthorizePage(request, response, accessor);
             }
-        
+
+        } catch (OAuthProblemException e) {
+            denyPermission(response);
         } catch (Exception e){
             handleException(e, request, response, true);
         }
@@ -94,7 +113,7 @@ public class AuthorizationServlet extends HttpServlet {
             // approve on behalf of, so send the caller through the login flow.
             User user = getAuthenticatedUser(request);
             if (user == null) {
-                sendToAuthorizePage(request, response, accessor);
+                sendToLogin(request, response, accessor);
                 return;
             }
             if (!Boolean.TRUE.equals(user.getEnabled())) {
@@ -120,6 +139,13 @@ public class AuthorizationServlet extends HttpServlet {
             }
             if (submittedUserId != null && !submittedUserId.equals(userId)) {
                 denyPermission(response);
+                return;
+            }
+
+            // A stale or already-used consent form is safe to show again. The
+            // forward passes through LoadSaltFilter and receives a fresh salt.
+            if (!hasValidSalt(request)) {
+                sendToAuthorizePage(request, response, accessor);
                 return;
             }
 
@@ -152,6 +178,26 @@ public class AuthorizationServlet extends HttpServlet {
     private User getAuthenticatedUser(HttpServletRequest request) {
         RollerSession rollerSession = RollerSession.getRollerSession(request);
         return rollerSession == null ? null : rollerSession.getAuthenticatedUser();
+    }
+
+    boolean hasValidSalt(HttpServletRequest request) {
+        return SaltValidator.consumeSubmittedSalt(request);
+    }
+
+    private void sendToLogin(HttpServletRequest request,
+            HttpServletResponse response, OAuthAccessor accessor) throws IOException {
+        String resume = OAuth.addParameters(request.getRequestURL().toString(),
+                "oauth_token", accessor.requestToken);
+        String callback = request.getParameter("oauth_callback");
+        if (callback != null) {
+            resume = OAuth.addParameters(resume, "oauth_callback", callback);
+        }
+
+        SimpleSavedRequest savedRequest = new SimpleSavedRequest(resume);
+        savedRequest.setMethod("GET");
+        request.getSession(true).setAttribute(
+                "SPRING_SECURITY_SAVED_REQUEST", savedRequest);
+        response.sendRedirect(request.getContextPath() + "/roller-ui/login.rol");
     }
 
     /**
