@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
 import org.apache.roller.weblogger.util.MediaTypePolicy;
@@ -177,8 +178,16 @@ public class MediaFileAdd extends MediaFileBase {
                         // The type the browser put on the part describes what
                         // the sender meant to send. It is taken as a hint and
                         // the stored type is worked out from the file name.
+                        String declaredType = MediaTypePolicy.normalizeType(
+                                this.uploadedFilesContentType[i]);
+                        if (!WebloggerFactory.getWeblogger().getFileContentManager().canSave(
+                                getActionWeblog(), fileName, declaredType,
+                                this.uploadedFiles[i].length(), errors)) {
+                            continue;
+                        }
                         mediaFile.setContentType(MediaTypePolicy.storedTypeFor(
-                                mediaFile.getName(), this.uploadedFilesContentType[i]));
+                                mediaFile.getName(), declaredType,
+                                RollerContext.getServletContext()::getMimeType));
 
                         manager.createMediaFile(getActionWeblog(), mediaFile, errors);
                         WebloggerFactory.getWeblogger().flush();

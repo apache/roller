@@ -44,6 +44,7 @@ import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.UUID;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,6 +60,7 @@ import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 
@@ -70,6 +72,7 @@ import org.apache.roller.weblogger.util.Utilities;
 public class MediaCollection {
     private Weblogger      roller;
     private User           user;
+    private HttpServletResponse response;
     private static final int MAX_ENTRIES = 20;
     private final String   atomURL;    
     
@@ -78,8 +81,13 @@ public class MediaCollection {
     
     
     public MediaCollection(User user, String atomURL) {
+        this(user, atomURL, null);
+    }
+
+    public MediaCollection(User user, String atomURL, HttpServletResponse response) {
         this.user = user;
         this.atomURL = atomURL;
+        this.response = response;
         this.roller = WebloggerFactory.getWeblogger();
     }  
     
@@ -137,12 +145,18 @@ public class MediaCollection {
                     mf.setWeblog(website);
                     mf.setName(fileName);
                     mf.setOriginalPath(justPath);
-                    mf.setContentType(
-                            MediaTypePolicy.storedTypeFor(fileName, contentType));
                     mf.setInputStream(fis);
                     mf.setLength(tempFile.length());
 
                     RollerMessages errors = new RollerMessages();
+                    String declaredType = MediaTypePolicy.normalizeType(contentType);
+                    if (!roller.getFileContentManager().canSave(website, fileName,
+                            declaredType, tempFile.length(), errors)) {
+                        throw new AtomException(errors.toString());
+                    }
+                    mf.setContentType(MediaTypePolicy.storedTypeFor(fileName,
+                            declaredType,
+                            RollerContext.getServletContext()::getMimeType));
                     fileMgr.createMediaFile(website, mf, errors);
                     if (errors.getErrorCount() > 0) {
                         throw new AtomException(errors.toString());
@@ -222,11 +236,7 @@ public class MediaCollection {
                     // Parse pathinfo to determine file path
                     String filePath = filePathFromPathInfo(pathInfo);
                     MediaFile mf = fmgr.getMediaFileByOriginalPath(website, filePath);
-                    return new AtomMediaResource(
-                            mf.getName(),
-                            mf.getLength(),
-                            new Date(mf.getLastModified()),
-                            mf.getInputStream());
+                    return createMediaResource(mf, response);
                 } catch (Exception e) {
                     throw new AtomException(
                         "Unexpected error during file upload", e);
@@ -396,8 +406,16 @@ public class MediaCollection {
                     
                     // Attempt to load file, to ensure it exists
                     MediaFile mf = fmgr.getMediaFileByPath(website, path);
-                    mf.setContentType(
-                            MediaTypePolicy.storedTypeFor(mf.getName(), contentType));
+                    String replacementName = pathInfo[pathInfo.length - 1];
+                    String declaredType = MediaTypePolicy.normalizeType(contentType);
+                    RollerMessages errors = new RollerMessages();
+                    if (!roller.getFileContentManager().canSave(website,
+                            replacementName, declaredType, tempFile.length(), errors)) {
+                        throw new FileIOException(errors.toString());
+                    }
+                    mf.setContentType(MediaTypePolicy.storedTypeFor(
+                            replacementName, declaredType,
+                            RollerContext.getServletContext()::getMimeType));
                     mf.setInputStream(fis);
                     mf.setLength(tempFile.length());
 
@@ -481,6 +499,21 @@ public class MediaCollection {
             path = "";
         }
         return path;
+    }
+
+    static AtomMediaResource createMediaResource(MediaFile mediaFile,
+            HttpServletResponse response) throws IOException {
+        AtomMediaResource resource = new AtomMediaResource(
+                mediaFile.getName(), mediaFile.getLength(),
+                new Date(mediaFile.getLastModified()), mediaFile.getInputStream());
+        resource.setContentType(mediaFile.getContentType());
+        if (response != null) {
+            MediaTypePolicy.applyResponseHeaders(response,
+                    mediaFile.getContentType(), mediaFile.getName());
+            resource.setContentType(
+                    MediaTypePolicy.responseTypeFor(mediaFile.getContentType()));
+        }
+        return resource;
     }
     
     private Entry createAtomResourceEntry(Weblog website, MediaFile file) {

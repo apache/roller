@@ -44,6 +44,7 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.xmlrpc.XmlRpcException;
@@ -382,12 +383,18 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             mf.setDirectory(root);
             mf.setWeblog(website);
             mf.setName(name);
-            mf.setContentType(MediaTypePolicy.storedTypeFor(name, type));
             mf.setInputStream(new ByteArrayInputStream(bits));
             mf.setLength(bits.length);
             String fileLink = mf.getPermalink();
             
             RollerMessages errors = new RollerMessages();
+            String declaredType = MediaTypePolicy.normalizeType(type);
+            if (!roller.getFileContentManager().canSave(website, name,
+                    declaredType, bits.length, errors)) {
+                throw new Exception(errors.toString());
+            }
+            mf.setContentType(MediaTypePolicy.storedTypeFor(name, declaredType,
+                    RollerContext.getServletContext()::getMimeType));
             fmgr.createMediaFile(website, mf, errors);
             
             if (errors.getErrorCount() > 0) {

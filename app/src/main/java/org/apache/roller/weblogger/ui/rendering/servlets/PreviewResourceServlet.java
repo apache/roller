@@ -163,8 +163,8 @@ public class PreviewResourceServlet extends HttpServlet {
         }
 
         // set the content type based on whatever is in our web.xml mime defs
-        String resourceType = this.context.getMimeType(
-                resourceRequest.getResourcePath());
+        String resourceType = MediaTypePolicy.typeFromName(
+                resourceRequest.getResourcePath(), this.context::getMimeType);
         if (fromUploadedMedia) {
             // Uploaded through the media library, so it is governed by the
             // same policy as any other media response.

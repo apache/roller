@@ -52,10 +52,11 @@ public final class MediaTypePolicy {
      */
     private static final Set<String> INLINE_TYPES = Collections.unmodifiableSet(
             new HashSet<>(Arrays.asList(
-                    "image/jpeg", "image/pjpeg", "image/png", "image/gif",
+                    "image/jpeg", "image/jpg", "image/pjpeg", "image/png",
+                    "image/x-png", "image/apng", "image/avif", "image/gif",
                     "image/bmp", "image/x-ms-bmp", "image/webp", "image/tiff",
                     "image/x-icon", "image/vnd.microsoft.icon",
-                    "application/pdf")));
+                    "application/pdf", "text/plain")));
 
     /** Families served inline whatever the subtype. */
     private static final String[] INLINE_PREFIXES = {"audio/", "video/"};
@@ -80,13 +81,14 @@ public final class MediaTypePolicy {
      *         conclusive, otherwise the declared type if it is not one a
      *         browser would act on, otherwise the generic binary type
      */
-    public static String storedTypeFor(String fileName, String declaredType) {
-        String derived = normalize(deriveFromName(fileName));
+    public static String storedTypeFor(String fileName, String declaredType,
+            MimeTypeResolver resolver) {
+        String derived = typeFromName(fileName, resolver);
         if (isConclusive(derived)) {
             return derived;
         }
 
-        String declared = normalize(declaredType);
+        String declared = normalizeType(declaredType);
         if (isConclusive(declared) && !isActive(declared)) {
             return declared;
         }
@@ -94,9 +96,14 @@ public final class MediaTypePolicy {
         return DEFAULT_TYPE;
     }
 
+    /** Resolves a file name through the servlet container's MIME mappings. */
+    public static String typeFromName(String fileName, MimeTypeResolver resolver) {
+        return normalizeType(deriveFromName(fileName, resolver));
+    }
+
     /** @return true when browsers render this type without executing it */
     public static boolean isInlineSafe(String contentType) {
-        String type = normalize(contentType);
+        String type = normalizeType(contentType);
         if (type == null) {
             return false;
         }
@@ -113,7 +120,7 @@ public final class MediaTypePolicy {
 
     /** @return true when a browser may execute this type, or script inside it */
     public static boolean isActive(String contentType) {
-        String type = normalize(contentType);
+        String type = normalizeType(contentType);
         if (type == null) {
             return false;
         }
@@ -128,10 +135,7 @@ public final class MediaTypePolicy {
                                             String contentType, String fileName) {
         response.setHeader("X-Content-Type-Options", "nosniff");
 
-        String type = normalize(contentType);
-        if (type == null) {
-            type = DEFAULT_TYPE;
-        }
+        String type = responseTypeFor(contentType);
 
         if (isInlineSafe(type)) {
             response.setContentType(type);
@@ -144,19 +148,26 @@ public final class MediaTypePolicy {
                 "attachment; filename=\"" + headerSafe(fileName) + "\"");
     }
 
-    private static String deriveFromName(String fileName) {
-        if (fileName == null || fileName.trim().isEmpty()) {
+    /** @return the response type after applying the inline policy. */
+    public static String responseTypeFor(String contentType) {
+        String type = normalizeType(contentType);
+        return type != null && isInlineSafe(type) ? type : DEFAULT_TYPE;
+    }
+
+    private static String deriveFromName(String fileName, MimeTypeResolver resolver) {
+        if (fileName == null || fileName.trim().isEmpty() || resolver == null) {
             return null;
         }
-        try {
-            return Utilities.getContentTypeFromFileName(fileName);
-        } catch (Exception undetermined) {
-            return null;
+        String name = fileName.trim();
+        int dot = name.lastIndexOf('.');
+        if (dot > -1) {
+            name = name.substring(0, dot) + name.substring(dot).toLowerCase(Locale.ENGLISH);
         }
+        return resolver.resolve(name);
     }
 
     /** @return the bare type in lower case, without parameters such as charset */
-    private static String normalize(String contentType) {
+    public static String normalizeType(String contentType) {
         if (contentType == null) {
             return null;
         }
@@ -170,6 +181,12 @@ public final class MediaTypePolicy {
 
     private static boolean isConclusive(String type) {
         return type != null && !DEFAULT_TYPE.equals(type);
+    }
+
+    /** Resolves a name with the MIME mappings supplied by the active servlet container. */
+    @FunctionalInterface
+    public interface MimeTypeResolver {
+        String resolve(String fileName);
     }
 
     /**

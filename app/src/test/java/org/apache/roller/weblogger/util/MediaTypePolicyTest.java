@@ -53,12 +53,15 @@ public class MediaTypePolicyTest {
     @Test
     public void theFileNameDecidesTheStoredType() {
         assertEquals("image/jpeg",
-                MediaTypePolicy.storedTypeFor("holiday.jpg", "text/html"),
+                MediaTypePolicy.storedTypeFor("holiday.jpg", "text/html",
+                        MediaTypePolicyTest::mimeTypeFor),
                 "a declared type overrode the file name");
         assertEquals("image/png",
-                MediaTypePolicy.storedTypeFor("diagram.png", "image/svg+xml"));
+                MediaTypePolicy.storedTypeFor("diagram.png", "image/svg+xml",
+                        MediaTypePolicyTest::mimeTypeFor));
         assertEquals("image/gif",
-                MediaTypePolicy.storedTypeFor("loop.GIF", "application/xhtml+xml"),
+                MediaTypePolicy.storedTypeFor("loop.GIF", "application/xhtml+xml",
+                        MediaTypePolicyTest::mimeTypeFor),
                 "the extension must be matched regardless of case");
     }
 
@@ -70,7 +73,8 @@ public class MediaTypePolicyTest {
                 "image/svg+xml", "application/xml", "text/javascript",
                 "application/javascript", "text/xsl", "something/custom+xml"}) {
             assertEquals(MediaTypePolicy.DEFAULT_TYPE,
-                    MediaTypePolicy.storedTypeFor("payload.unknownext", active),
+                    MediaTypePolicy.storedTypeFor("payload.unknownext", active,
+                            MediaTypePolicyTest::mimeTypeFor),
                     "adopted an executable declared type: " + active);
         }
     }
@@ -79,11 +83,14 @@ public class MediaTypePolicyTest {
     @Test
     public void aHarmlessDeclarationIsUsedWhenTheNameIsOpaque() {
         assertEquals("application/zip",
-                MediaTypePolicy.storedTypeFor("bundle.unknownext", "application/zip"));
+                MediaTypePolicy.storedTypeFor("bundle.unknownext", "application/zip",
+                        MediaTypePolicyTest::mimeTypeFor));
         assertEquals(MediaTypePolicy.DEFAULT_TYPE,
-                MediaTypePolicy.storedTypeFor("bundle.unknownext", null));
+                MediaTypePolicy.storedTypeFor("bundle.unknownext", null,
+                        MediaTypePolicyTest::mimeTypeFor));
         assertEquals(MediaTypePolicy.DEFAULT_TYPE,
-                MediaTypePolicy.storedTypeFor(null, null));
+                MediaTypePolicy.storedTypeFor(null, null,
+                        MediaTypePolicyTest::mimeTypeFor));
     }
 
     // ----------------------------------------------------------------- //
@@ -93,8 +100,9 @@ public class MediaTypePolicyTest {
     @Test
     public void passiveFormatsRenderInline() {
         for (String inline : new String[]{
-                "image/jpeg", "image/png", "image/gif", "image/webp",
-                "application/pdf", "audio/mpeg", "video/mp4",
+                "image/jpeg", "image/jpg", "image/png", "image/x-png",
+                "image/apng", "image/avif", "image/gif", "image/webp",
+                "application/pdf", "text/plain", "audio/mpeg", "video/mp4",
                 "image/png; charset=binary"}) {
             assertTrue(MediaTypePolicy.isInlineSafe(inline),
                     "expected to render inline: " + inline);
@@ -105,7 +113,7 @@ public class MediaTypePolicyTest {
     public void formatsThatCanCarryScriptDoNot() {
         for (String blocked : new String[]{
                 "image/svg+xml", "text/html", "application/xhtml+xml",
-                "text/xml", "application/javascript", "text/plain",
+                "text/xml", "application/javascript",
                 "application/zip", null, ""}) {
             assertFalse(MediaTypePolicy.isInlineSafe(blocked),
                     "expected not to render inline: " + blocked);
@@ -150,6 +158,35 @@ public class MediaTypePolicyTest {
                 "evil\r\nSet-Cookie: a=b\".html");
         verify(response).setHeader("Content-Disposition",
                 "attachment; filename=\"evilSet-Cookie: a=b.html\"");
+    }
+
+    @Test
+    public void servletMappingsAreUsedCaseInsensitively() {
+        assertEquals("application/pdf", MediaTypePolicy.typeFromName(
+                "report.PDF", MediaTypePolicyTest::mimeTypeFor));
+        assertEquals("video/mp4", MediaTypePolicy.typeFromName(
+                "clip.MP4", MediaTypePolicyTest::mimeTypeFor));
+        assertEquals(null, MediaTypePolicy.typeFromName(
+                "payload.unmapped", MediaTypePolicyTest::mimeTypeFor));
+    }
+
+    @Test
+    public void unknownAndActiveTypesUseTheDownloadType() {
+        assertEquals(MediaTypePolicy.DEFAULT_TYPE,
+                MediaTypePolicy.responseTypeFor(null));
+        assertEquals(MediaTypePolicy.DEFAULT_TYPE,
+                MediaTypePolicy.responseTypeFor("image/svg+xml"));
+        assertEquals("text/plain",
+                MediaTypePolicy.responseTypeFor("text/plain; charset=utf-8"));
+    }
+
+    private static String mimeTypeFor(String fileName) {
+        if (fileName.endsWith(".jpg")) return "image/jpeg";
+        if (fileName.endsWith(".png")) return "image/png";
+        if (fileName.endsWith(".gif")) return "image/gif";
+        if (fileName.endsWith(".pdf")) return "application/pdf";
+        if (fileName.endsWith(".mp4")) return "video/mp4";
+        return null;
     }
 
     // ----------------------------------------------------------------- //
@@ -218,8 +255,23 @@ public class MediaTypePolicyTest {
             String src = source(caller[0]);
             assertTrue(src.contains("MediaTypePolicy.storedTypeFor"),
                     caller[0] + " must derive the stored type through the policy");
+            assertTrue(src.contains("getFileContentManager().canSave"),
+                    caller[0] + " must validate the declared type before deriving it");
             assertFalse(src.contains("setContentType(" + caller[1] + ")"),
                     caller[0] + " still stores the client's declared type directly");
         }
+    }
+
+    @Test
+    public void replacementRoutesUseTheReplacementName() throws Exception {
+        String editor = source("org/apache/roller/weblogger/ui/struts2/editor/"
+                + "MediaFileEdit.java");
+        assertTrue(editor.contains("storedTypeFor(\n                            this.uploadedFileName"));
+
+        String atom = source("org/apache/roller/weblogger/webservices/atomprotocol/"
+                + "MediaCollection.java");
+        assertTrue(atom.contains("storedTypeFor(\n                            replacementName"));
+        assertTrue(atom.contains("createMediaResource(mf, response)"),
+                "Atom media reads must apply the response policy");
     }
 }
