@@ -17,6 +17,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -54,7 +55,7 @@ class EntryTrackbackRemovalTest {
                     NodeList allowedMethods = action.getElementsByTagName("allowed-methods");
                     assertEquals(1, allowedMethods.getLength());
                     String methods = allowedMethods.item(0).getTextContent();
-                    assertFalse(Set.of(methods.trim().split("\\s*,\\s*")).contains("trackback"));
+                    assertFalse(List.of(methods.trim().split("\\s*,\\s*")).contains("trackback"));
                     actionsChecked++;
                 }
             }
