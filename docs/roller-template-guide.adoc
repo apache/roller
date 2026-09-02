@@ -843,9 +843,6 @@ Every possible type of Roller URL is supported:
 |String
 |Absolute URL of a resource within a Roller theme.
 
-|$url.trackback(String anchor)
-|String
-|Trackback URL for entry specified by anchor.
 |===
 
 === $utils
@@ -1853,21 +1850,6 @@ has been configured. See the Roller User’s Guide - Weblog Settings and
 Roller Administration sections for information on where to configure the
 tracking codes within Roller. This tag is normally placed within the
 HTML header section.
-
-Generated HTML and CSS classes used
-
-No style-able markup is produced.
-
-`#showTrackbackAutodiscovery($entry)`
-
-Arguments:
-
-*$entry:* WeblogEntry object
-
-Synopsis:
-
-Show trackback autodiscovery code for a specified weblog entry, suitable
-for use within a day template.
 
 Generated HTML and CSS classes used
 

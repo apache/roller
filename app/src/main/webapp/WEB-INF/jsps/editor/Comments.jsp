@@ -273,14 +273,22 @@
                                             </s:else>
                                         </div>
 
-                                        <s:if test="#comment.url != null && !#comment.url.equals('')">
+                                        <s:set var="safeCommentUrl" value="#comment.safeUrl"/>
+                                        <s:if test="#safeCommentUrl != null">
                                             <div class="details">
                                                 <s:text name="commentManagement.commentByURL"/>&nbsp;:&nbsp;
-                                                <a href='<s:property value="#comment.url" />'>
+                                                <a href='<s:property value="#safeCommentUrl" escapeHtml="true" />'>
                                                     <str:truncateNicely upper="60" appendToEnd="..."><s:property
-                                                            value="#comment.url"/></str:truncateNicely></a>
+                                                            value="#safeCommentUrl" escapeHtml="true"/></str:truncateNicely></a>
                                             </div>
                                         </s:if>
+                                        <s:elseif test="#comment.url != null && #comment.url.trim().length() > 0">
+                                            <div class="details">
+                                                <s:text name="commentManagement.commentByURL"/>&nbsp;:&nbsp;
+                                                <str:truncateNicely upper="60" appendToEnd="..."><s:property
+                                                        value="#comment.url" escapeHtml="true"/></str:truncateNicely>
+                                            </div>
+                                        </s:elseif>
 
                                         <div class="details">
                                             <s:text name="commentManagement.postTime"/>&nbsp;:&nbsp;

@@ -1,9 +1,10 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
- * under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * contributor license agreements. See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -11,65 +12,29 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.  For additional information regarding
- * copyright in this work, please see the NOTICE file in the top level
- * directory of this distribution.
+ * limitations under the License.
  */
-
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ResourceBundle;
-
 import org.apache.roller.util.RollerConstants;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.util.LinkbackExtractor;
 import org.apache.roller.weblogger.util.RollerMessages;
 
 /**
- * Validates comment if comment's URL links back to the comment's entry,
- * intended for use with trackbacks only.
+ * No-op retained temporarily for installations that still name this plugin.
+ *
+ * @deprecated The associated protocol endpoint is no longer available.
  */
+@Deprecated(since = "6.1.6", forRemoval = true)
 public class TrackbackLinkbackCommentValidator implements CommentValidator {
-    
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
-    
+
     @Override
     public String getName() {
-        return bundle.getString("comment.validator.trackbackLinkbackName");
+        return "Compatibility comment validator";
     }
-    
+
     @Override
     public int validate(WeblogEntryComment comment, RollerMessages messages) {
-        
-        // linkback validation can be toggled at runtime, so check if it's enabled
-        // if it's disabled then just return a score of 100
-        if(!WebloggerRuntimeConfig.getBooleanProperty("site.trackbackVerification.enabled")) {
-            return RollerConstants.PERCENT_100;
-        }
-        
-        int ret = 0;
-        LinkbackExtractor linkback = null;
-        try {
-            linkback = new LinkbackExtractor(
-                    comment.getUrl(),
-                    WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogEntryURL(
-                    comment.getWeblogEntry().getWebsite(),
-                    null,
-                    comment.getWeblogEntry().getAnchor(),
-                    true));
-        } catch (MalformedURLException ignored1) {
-        } catch (IOException ignored2) {}
-        
-        if (linkback != null && linkback.getExcerpt() != null) {
-            ret = RollerConstants.PERCENT_100;
-        } else {
-            messages.addError("comment.validator.trackbackLinkbackMessage");
-        }
-        return ret;
+        return RollerConstants.PERCENT_100;
     }
-    
 }
