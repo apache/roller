@@ -19,10 +19,11 @@
 package org.apache.roller.weblogger.webservices.xmlrpc;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -61,7 +62,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
     
     private static Log mLogger = LogFactory.getLog(BloggerAPIHandler.class);
 
-    /** Upper bound on the entry scan a limited (non-POST) member can trigger. */
+    /** Upper bound for a positive recent-post request. */
     protected static final int DRAFT_SCAN_CAP = 200;
 
     public BloggerAPIHandler() {
@@ -91,7 +92,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         Weblogger roller = WebloggerFactory.getWeblogger();
         WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
         User user = validateUser(userid, password);
-        WeblogEntry entry = getEntryForWrite(postid, user, null);
+        WeblogEntry entry = getEntryForWrite(postid, user);
 
         // Return false if entry is not available to this user.
         if (entry == null) {
@@ -474,41 +475,22 @@ public class BloggerAPIHandler extends BaseAPIHandler {
         
         try {
             Vector<Object> results = new Vector<>();
-            if (numposts <= 0) {
-                return results;
-            }
-            
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             if (weblog != null) {
-                WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-                wesc.setWeblog(weblog);
-                wesc.setEndDate(new Date());
-                if (weblog.hasUserPermission(user, WeblogPermission.POST)) {
-                    wesc.setMaxResults(numposts);
-                } else {
-                    wesc.setMaxResults(Math.max(numposts, DRAFT_SCAN_CAP));
-                }
-                Map<Date, List<WeblogEntry>> entries = weblogMgr.getWeblogEntryObjectMap(wesc);
-
-                outer:
-                for (List<WeblogEntry> weList : entries.values()) {
-                    for (WeblogEntry entry : weList) {
-                        if (!entry.hasWritePermissions(user)) {
-                            continue;
-                        }
-                        Hashtable<String, Object> result = new Hashtable<>();
-                        if (entry.getPubTime() != null) {
-                            result.put("dateCreated", entry.getPubTime());
-                        }
-                        result.put("userid", userid);
-                        result.put("postid", entry.getId());
-                        result.put("content", entry.getText());
-                        results.add(result);
-                        if (results.size() >= numposts) {
-                            break outer;
-                        }
+                List<WeblogEntry> entries = getRecentEntries(weblog, user,
+                        numposts, WeblogEntrySearchCriteria.SortBy.PUBLICATION_TIME,
+                        new Date());
+                for (WeblogEntry entry : entries) {
+                    if (!entry.hasWritePermissions(user)) {
+                        continue;
                     }
+                    Hashtable<String, Object> result = new Hashtable<>();
+                    if (entry.getPubTime() != null) {
+                        result.put("dateCreated", entry.getPubTime());
+                    }
+                    result.put("userid", userid);
+                    result.put("postid", entry.getId());
+                    result.put("content", entry.getText());
+                    results.add(result);
                 }
             }
             return results;
@@ -517,6 +499,52 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             mLogger.error(msg,e);
             throw new XmlRpcException(UNKNOWN_EXCEPTION, msg);
         }
+    }
+
+    protected List<WeblogEntry> getRecentEntries(Weblog weblog, User user,
+            int requestedLimit, WeblogEntrySearchCriteria.SortBy sortBy,
+            Date endDate) throws Exception {
+        int effectiveLimit = requestedLimit <= 0 ? -1
+                : Math.min(requestedLimit, DRAFT_SCAN_CAP);
+        WeblogEntryManager entryManager = WebloggerFactory.getWeblogger()
+                .getWeblogEntryManager();
+
+        if (weblog.hasUserPermission(user, WeblogPermission.POST)) {
+            return entryManager.getWeblogEntries(recentCriteria(weblog, null,
+                    sortBy, endDate, effectiveLimit));
+        }
+
+        List<WeblogEntry> entries = new ArrayList<>();
+        entries.addAll(entryManager.getWeblogEntries(recentCriteria(weblog,
+                PubStatus.DRAFT, sortBy, endDate, effectiveLimit)));
+        entries.addAll(entryManager.getWeblogEntries(recentCriteria(weblog,
+                PubStatus.PENDING, sortBy, endDate, effectiveLimit)));
+
+        Comparator<Timestamp> newestFirst =
+                Comparator.nullsLast(Comparator.reverseOrder());
+        if (sortBy == WeblogEntrySearchCriteria.SortBy.UPDATE_TIME) {
+            entries.sort(Comparator.comparing(
+                    WeblogEntry::getUpdateTime, newestFirst));
+        } else {
+            entries.sort(Comparator.comparing(
+                    WeblogEntry::getPubTime, newestFirst));
+        }
+        if (effectiveLimit > 0 && entries.size() > effectiveLimit) {
+            return new ArrayList<>(entries.subList(0, effectiveLimit));
+        }
+        return entries;
+    }
+
+    private WeblogEntrySearchCriteria recentCriteria(Weblog weblog,
+            PubStatus status, WeblogEntrySearchCriteria.SortBy sortBy,
+            Date endDate, int maxResults) {
+        WeblogEntrySearchCriteria criteria = new WeblogEntrySearchCriteria();
+        criteria.setWeblog(weblog);
+        criteria.setStatus(status);
+        criteria.setSortBy(sortBy);
+        criteria.setEndDate(endDate);
+        criteria.setMaxResults(maxResults);
+        return criteria;
     }
     
 }

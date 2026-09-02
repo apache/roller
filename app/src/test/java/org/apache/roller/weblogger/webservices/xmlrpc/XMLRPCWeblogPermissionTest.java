@@ -17,6 +17,7 @@
 package org.apache.roller.weblogger.webservices.xmlrpc;
 
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import java.util.Vector;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -38,6 +40,7 @@ import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
@@ -76,6 +79,7 @@ public class XMLRPCWeblogPermissionTest {
     private WeblogTemplate otherTemplate;
     private WeblogEntry draftEntry;
     private WeblogEntry secondDraftEntry;
+    private WeblogEntry pendingEntry;
     private WeblogEntry publishedEntry;
     private WeblogEntry deleteEntry;
     private String oldXmlRpcValue;
@@ -119,6 +123,9 @@ public class XMLRPCWeblogPermissionTest {
                 weblog, owner);
         secondDraftEntry = TestUtils.setupWeblogEntry("xmlrpc-second-draft",
                 weblog.getWeblogCategories().iterator().next(), PubStatus.DRAFT,
+                weblog, owner);
+        pendingEntry = TestUtils.setupWeblogEntry("xmlrpc-pending",
+                weblog.getWeblogCategories().iterator().next(), PubStatus.PENDING,
                 weblog, owner);
         publishedEntry = TestUtils.setupWeblogEntry("xmlrpc-published",
                 weblog.getWeblogCategories().iterator().next(), PubStatus.PUBLISHED,
@@ -270,9 +277,11 @@ public class XMLRPCWeblogPermissionTest {
 
         assertTrue(blogger.editPost("", draftEntry.getId(), limitedName,
                 PASSWORD, "limited draft edit", false));
-        assertThrows(XmlRpcException.class, () -> blogger.editPost("",
+        XmlRpcException bloggerPublishDenied = assertThrows(XmlRpcException.class,
+                () -> blogger.editPost("",
                 secondDraftEntry.getId(), limitedName, PASSWORD,
                 "limited publish", true));
+        assertTrue(bloggerPublishDenied.code != BaseAPIHandler.INVALID_POSTID);
         assertTrue(blogger.editPost("", secondDraftEntry.getId(), authorName,
                 PASSWORD, "author publish", true));
         assertThrows(XmlRpcException.class, () -> blogger.editPost("",
@@ -286,9 +295,11 @@ public class XMLRPCWeblogPermissionTest {
 
         assertTrue(metaWeblog.editPost(draftEntry.getId(), limitedName, PASSWORD,
                 postStruct("limited meta edit"), false));
-        assertThrows(XmlRpcException.class, () -> metaWeblog.editPost(
+        XmlRpcException metaPublishDenied = assertThrows(XmlRpcException.class,
+                () -> metaWeblog.editPost(
                 draftEntry.getId(), limitedName, PASSWORD,
                 postStruct("limited meta publish"), true));
+        assertTrue(metaPublishDenied.code != BaseAPIHandler.INVALID_POSTID);
 
         assertFalse(blogger.deletePost("", publishedEntry.getId(), outsiderName,
                 PASSWORD, false));
@@ -314,18 +325,54 @@ public class XMLRPCWeblogPermissionTest {
         Vector<Object> bloggerLimited = (Vector<Object>) blogger.getRecentPosts(
                 "", handle, limitedName, PASSWORD, 50);
         assertContainsPost(bloggerLimited, draftEntry.getId());
+        assertContainsPost(bloggerLimited, pendingEntry.getId());
         assertDoesNotContainPost(bloggerLimited, publishedEntry.getId());
 
         @SuppressWarnings("unchecked")
         Vector<Object> metaLimited = (Vector<Object>) metaWeblog.getRecentPosts(
                 handle, limitedName, PASSWORD, 50);
         assertContainsPost(metaLimited, draftEntry.getId());
+        assertContainsPost(metaLimited, pendingEntry.getId());
         assertDoesNotContainPost(metaLimited, publishedEntry.getId());
 
         @SuppressWarnings("unchecked")
         Vector<Object> metaAuthor = (Vector<Object>) metaWeblog.getRecentPosts(
                 handle, authorName, PASSWORD, 50);
         assertContainsPost(metaAuthor, publishedEntry.getId());
+
+        addNewerPublishedEntries(205);
+
+        @SuppressWarnings("unchecked")
+        Vector<Object> bloggerAfterPublished =
+                (Vector<Object>) blogger.getRecentPosts(
+                        "", handle, limitedName, PASSWORD, 50);
+        assertContainsPost(bloggerAfterPublished, draftEntry.getId());
+
+        @SuppressWarnings("unchecked")
+        Vector<Object> metaAfterPublished =
+                (Vector<Object>) metaWeblog.getRecentPosts(
+                        handle, limitedName, PASSWORD, 50);
+        assertContainsPost(metaAfterPublished, draftEntry.getId());
+
+        @SuppressWarnings("unchecked")
+        Vector<Object> bloggerBounded = (Vector<Object>) blogger.getRecentPosts(
+                "", handle, authorName, PASSWORD, 1000000);
+        assertEquals(BloggerAPIHandler.DRAFT_SCAN_CAP, bloggerBounded.size());
+
+        @SuppressWarnings("unchecked")
+        Vector<Object> metaBounded = (Vector<Object>) metaWeblog.getRecentPosts(
+                handle, authorName, PASSWORD, 1000000);
+        assertEquals(BloggerAPIHandler.DRAFT_SCAN_CAP, metaBounded.size());
+
+        @SuppressWarnings("unchecked")
+        Vector<Object> bloggerLegacy = (Vector<Object>) blogger.getRecentPosts(
+                "", handle, limitedName, PASSWORD, 0);
+        assertContainsPost(bloggerLegacy, draftEntry.getId());
+
+        @SuppressWarnings("unchecked")
+        Vector<Object> metaLegacy = (Vector<Object>) metaWeblog.getRecentPosts(
+                handle, limitedName, PASSWORD, -1);
+        assertContainsPost(metaLegacy, draftEntry.getId());
 
         assertThrows(XmlRpcException.class, () -> blogger.getRecentPosts("",
                 handle, outsider.getUserName(), PASSWORD, 50));
@@ -347,13 +394,14 @@ public class XMLRPCWeblogPermissionTest {
 
         managedWeblog = WebloggerFactory.getWeblogger().getWeblogManager()
                 .getWeblog(weblog.getId());
+        managedWeblog.setEnableBloggerApi(true);
         managedWeblog.setVisible(true);
         managedWeblog.setActive(false);
         WebloggerFactory.getWeblogger().getWeblogManager()
                 .saveWeblog(managedWeblog);
         TestUtils.endSession(true);
 
-        assertThrows(XmlRpcException.class, () -> metaWeblog.getCategories(
+        assertNotNull(metaWeblog.getCategories(
                 weblog.getHandle(), owner.getUserName(), PASSWORD));
 
         managedWeblog = WebloggerFactory.getWeblogger().getWeblogManager()
@@ -371,6 +419,39 @@ public class XMLRPCWeblogPermissionTest {
     private void enableXmlRpc(Weblog target) throws Exception {
         target.setEnableBloggerApi(true);
         WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(target);
+    }
+
+    private void addNewerPublishedEntries(int count) throws Exception {
+        Weblogger roller = WebloggerFactory.getWeblogger();
+        WeblogEntryManager entryManager = roller.getWeblogEntryManager();
+        Weblog managedWeblog = roller.getWeblogManager().getWeblog(weblog.getId());
+        User managedOwner = roller.getUserManager()
+                .getUserByUserName(owner.getUserName());
+        WeblogCategory category = managedWeblog.getWeblogCategories()
+                .iterator().next();
+
+        WeblogEntry managedDraft = entryManager.getWeblogEntry(draftEntry.getId());
+        Timestamp oldTime = new Timestamp(946684800000L);
+        managedDraft.setPubTime(oldTime);
+        managedDraft.setUpdateTime(oldTime);
+        entryManager.saveWeblogEntry(managedDraft);
+
+        long now = System.currentTimeMillis();
+        for (int i = 0; i < count; i++) {
+            WeblogEntry entry = new WeblogEntry();
+            entry.setTitle("newer published " + i);
+            entry.setText("newer published entry");
+            entry.setAnchor("xmlrpc-newer-published-" + i);
+            entry.setPubTime(new Timestamp(now - count + i));
+            entry.setUpdateTime(new Timestamp(now - count + i));
+            entry.setStatus(PubStatus.PUBLISHED);
+            entry.setWebsite(managedWeblog);
+            entry.setCreatorUserName(managedOwner.getUserName());
+            entry.setCategory(category);
+            entryManager.saveWeblogEntry(entry);
+        }
+        roller.flush();
+        TestUtils.endSession(true);
     }
 
     @SuppressWarnings("deprecation")

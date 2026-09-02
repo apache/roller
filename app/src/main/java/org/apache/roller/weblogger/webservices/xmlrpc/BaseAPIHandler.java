@@ -119,18 +119,23 @@ public class BaseAPIHandler implements Serializable {
      */
     protected Weblog validateWeblog(String blogid, User user,
             String requiredAction) throws Exception {
-        WeblogManager weblogMgr = WebloggerFactory.getWeblogger().getWeblogManager();
-        Weblog website = weblogMgr.getWeblogByHandle(blogid);
+        try {
+            WeblogManager weblogMgr = WebloggerFactory.getWeblogger()
+                    .getWeblogManager();
+            Weblog website = weblogMgr.getWeblogByHandle(blogid);
 
-        // Use one response for missing, unavailable, and inaccessible weblogs.
-        if (!isWeblogAvailable(website)
-                || !website.hasUserPermission(user, requiredAction)) {
+            // Use one response for missing, unavailable, and inaccessible weblogs.
+            if (!isWeblogAvailable(website)
+                    || !website.hasUserPermission(user, requiredAction)) {
+                throw new XmlRpcNotAuthorizedException(WEBLOG_DISABLED_MSG);
+            }
+            return website;
+        } catch (XmlRpcNotAuthorizedException e) {
+            throw e;
+        } catch (Exception e) {
+            mLogger.error("ERROR internal error validating weblog", e);
             throw new XmlRpcNotAuthorizedException(WEBLOG_DISABLED_MSG);
         }
-        if (!Boolean.TRUE.equals(website.getEnableBloggerApi())) {
-            throw new XmlRpcNotAuthorizedException(BLOGGERAPI_DISABLED_MSG);
-        }
-        return website;
     }
     
     //------------------------------------------------------------------------
@@ -177,9 +182,23 @@ public class BaseAPIHandler implements Serializable {
      */
     protected WeblogEntry validateEntry(String postid, User user,
             String additionalAction) throws Exception {
-        WeblogEntry entry = getEntryForWrite(postid, user, additionalAction);
+        WeblogEntry entry = getEntryForWrite(postid, user);
         if (entry == null) {
             throw new XmlRpcException(INVALID_POSTID, INVALID_POSTID_MSG);
+        }
+        if (additionalAction != null) {
+            try {
+                if (!entry.getWebsite().hasUserPermission(user, additionalAction)) {
+                    throw new XmlRpcNotAuthorizedException(
+                            AUTHORIZATION_EXCEPTION_MSG);
+                }
+            } catch (XmlRpcNotAuthorizedException e) {
+                throw e;
+            } catch (Exception e) {
+                mLogger.error("ERROR internal error validating entry action", e);
+                throw new XmlRpcNotAuthorizedException(
+                        AUTHORIZATION_EXCEPTION_MSG);
+            }
         }
         return entry;
     }
@@ -188,29 +207,31 @@ public class BaseAPIHandler implements Serializable {
      * Nullable form used by Blogger.deletePost(), whose public contract
      * returns false when the entry is unavailable.
      */
-    protected WeblogEntry getEntryForWrite(String postid, User user,
-            String additionalAction) throws Exception {
-        WeblogEntryManager entryMgr = WebloggerFactory.getWeblogger()
-                .getWeblogEntryManager();
-        WeblogEntry entry = entryMgr.getWeblogEntry(postid);
-        if (entry == null || !isWeblogAvailable(entry.getWebsite())
-                || !Boolean.TRUE.equals(entry.getWebsite().getEnableBloggerApi())
-                || !entry.getWebsite().hasUserPermission(
-                        user, WeblogPermission.EDIT_DRAFT)
-                || !entry.hasWritePermissions(user)) {
-            return null;
+    protected WeblogEntry getEntryForWrite(String postid, User user)
+            throws Exception {
+        try {
+            WeblogEntryManager entryMgr = WebloggerFactory.getWeblogger()
+                    .getWeblogEntryManager();
+            WeblogEntry entry = entryMgr.getWeblogEntry(postid);
+            if (entry == null || !isWeblogAvailable(entry.getWebsite())
+                    || !entry.getWebsite().hasUserPermission(
+                            user, WeblogPermission.EDIT_DRAFT)
+                    || !entry.hasWritePermissions(user)) {
+                return null;
+            }
+            return entry;
+        } catch (Exception e) {
+            mLogger.error("ERROR internal error validating weblog entry", e);
+            throw new XmlRpcNotAuthorizedException(AUTHORIZATION_EXCEPTION_MSG);
         }
-        if (additionalAction != null
-                && !entry.getWebsite().hasUserPermission(user, additionalAction)) {
-            return null;
-        }
-        return entry;
     }
 
     private boolean isWeblogAvailable(Weblog website) {
-        return website != null
-                && Boolean.TRUE.equals(website.getVisible())
-                && Boolean.TRUE.equals(website.getActive());
+        if (website == null) {
+            return false;
+        }
+        return Boolean.TRUE.equals(website.getVisible())
+                && Boolean.TRUE.equals(website.getEnableBloggerApi());
     }
     
     //------------------------------------------------------------------------

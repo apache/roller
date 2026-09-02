@@ -429,31 +429,16 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         
         try {
             Vector<Object> results = new Vector<>();
-            if (numposts <= 0) {
-                return results;
-            }
-            
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             if (website != null) {
-                WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-                wesc.setWeblog(website);
-                wesc.setSortBy(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
-                if (website.hasUserPermission(user, WeblogPermission.POST)) {
-                    wesc.setMaxResults(numposts);
-                } else {
-                    wesc.setMaxResults(Math.max(numposts, DRAFT_SCAN_CAP));
-                }
-                List<WeblogEntry> entries = weblogMgr.getWeblogEntries(wesc);
+                List<WeblogEntry> entries = getRecentEntries(website, user,
+                        numposts, WeblogEntrySearchCriteria.SortBy.UPDATE_TIME,
+                        null);
 
                 for (WeblogEntry entry : entries) {
                     if (!entry.hasWritePermissions(user)) {
                         continue;
                     }
                     results.addElement(createPostStruct(entry, userid));
-                    if (results.size() >= numposts) {
-                        break;
-                    }
                 }
             }
             return results;
