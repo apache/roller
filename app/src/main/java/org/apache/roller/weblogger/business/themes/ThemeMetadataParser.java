@@ -25,7 +25,7 @@ import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
+import org.apache.roller.weblogger.util.SafeSAXBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +52,7 @@ public class ThemeMetadataParser {
         
         ThemeMetadata theme = new ThemeMetadata();
         
-        SAXBuilder builder = new SAXBuilder();
+        SafeSAXBuilder builder = new SafeSAXBuilder();
         Document doc = builder.build(instream);
         
         // start at root and get theme id, name, description and author
