@@ -21,9 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
-import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache;
-import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
 
 /**
  * Reads and writes the site frontpage weblog settings.
@@ -31,8 +28,7 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
  * <p>Two screens change these values: the one-time setup screen used to choose
  * a frontpage while the site is being installed, and the global configuration
  * screen used afterwards. Both go through here so that the handle is resolved
- * and validated the same way, both properties move together, and the rendered
- * page and feed caches are invalidated consistently.
+ * and validated the same way and both properties move together.
  */
 public final class FrontpageSettings {
 
@@ -50,7 +46,7 @@ public final class FrontpageSettings {
      *         to a disabled weblog
      */
     public static Weblog resolveWeblog(String handle) throws WebloggerException {
-        if (StringUtils.isBlank(handle)) {
+        if (StringUtils.isBlank(handle) || !isValidHandle(handle.trim())) {
             return null;
         }
         return WebloggerFactory.getWeblogger().getWeblogManager()
@@ -69,7 +65,7 @@ public final class FrontpageSettings {
 
     /** @return true when a frontpage weblog has already been chosen. */
     public static boolean isConfigured() throws WebloggerException {
-        return getConfiguredHandle() != null;
+        return resolveWeblog(getConfiguredHandle()) != null;
     }
 
     /**
@@ -85,7 +81,7 @@ public final class FrontpageSettings {
      * @throws InvalidFrontpageWeblogException when the handle does not name an
      *         existing, enabled weblog
      */
-    public static void apply(String handle, Boolean aggregated)
+    public static boolean applyInitial(String handle, Boolean aggregated)
             throws WebloggerException {
 
         Weblog weblog = resolveWeblog(handle);
@@ -96,8 +92,11 @@ public final class FrontpageSettings {
         PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
 
         RuntimeConfigProperty handleProp = mgr.getProperty(HANDLE_PROPERTY);
-        handleProp.setValue(weblog.getHandle());
-        mgr.saveProperty(handleProp);
+        String currentValue = handleProp == null ? null : handleProp.getValue();
+        if (resolveWeblog(currentValue) != null
+                || !mgr.compareAndSetProperty(HANDLE_PROPERTY, currentValue, weblog.getHandle())) {
+            return false;
+        }
 
         RuntimeConfigProperty aggregatedProp = mgr.getProperty(AGGREGATED_PROPERTY);
         aggregatedProp.setValue(Boolean.toString(Boolean.TRUE.equals(aggregated)));
@@ -105,22 +104,16 @@ public final class FrontpageSettings {
 
         WebloggerFactory.getWeblogger().flush();
 
-        invalidateRenderedContent();
+        return true;
     }
 
-    /**
-     * Drops the locally cached rendering of the front page.
-     *
-     * <p>The properties themselves are read through the properties manager on
-     * each request, but rendered pages and feeds are cached separately and would
-     * otherwise keep serving the previous weblog. Roller has no cross-node
-     * invalidation transport, so peers pick the change up when their own cache
-     * entries expire.
-     */
-    private static void invalidateRenderedContent() {
-        SiteWideCache.getInstance().clear();
-        WeblogPageCache.getInstance().clear();
-        WeblogFeedCache.getInstance().clear();
+    private static boolean isValidHandle(String handle) {
+        for (int i = 0; i < handle.length(); i++) {
+            if (!Character.isLetterOrDigit(handle.charAt(i)) && handle.charAt(i) != '_') {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Raised when a submitted frontpage handle cannot be used. */

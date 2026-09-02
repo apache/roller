@@ -53,6 +53,7 @@
 
 <%-- STEP 2: Create a weblog if you don't already have one --%>
 
+<s:if test="!bootstrap">
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">
@@ -91,7 +92,7 @@
 
         <p><s:text name="index.setFrontpageHelp"/></p>
 
-        <s:if test="blogCount > 0">
+        <s:if test="blogCount > 0 && userIsAdmin && !frontpageConfigured">
 
             <s:form action="frontpageSetup!save" method="post"
                     theme="bootstrap" cssClass="form-horizontal">
@@ -112,6 +113,9 @@
             </s:form>
 
         </s:if>
+        <s:elseif test="blogCount > 0 && !userIsAdmin && !frontpageConfigured">
+            <p><s:text name="index.setFrontpageAdminRequired"/></p>
+        </s:elseif>
     </div>
 </div>
-
+</s:if>

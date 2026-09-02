@@ -33,9 +33,9 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
  * Page used to display Roller install instructions.
  *
  * <p>This page is reachable without a login because a brand new site has no
- * users yet. While the site is empty it shows bootstrap guidance; once users
- * exist it requires a global administrator, and once a frontpage weblog has
- * been chosen it redirects home.
+ * users yet. While the site is empty it shows bootstrap guidance. Once users
+ * exist it remains useful to everyone, but only a global administrator sees
+ * the frontpage chooser.
  *
  * <p>Choosing the initial frontpage weblog is {@link FrontpageSetup}, a
  * separate global-administrator action; later changes go through the global
@@ -54,6 +54,9 @@ public class Setup extends UIAction {
     // true while the site has no users and only bootstrap guidance is shown
     private boolean bootstrap = false;
 
+    // true when a valid frontpage weblog has already been selected
+    private boolean frontpageConfigured = false;
+
     public Setup() {
         this.pageTitle = "index.heading";
     }
@@ -71,6 +74,22 @@ public class Setup extends UIAction {
     @Override
     public String execute() {
 
+        loadSetupModel();
+
+        if (isBootstrap()) {
+            return SUCCESS;
+        }
+
+        if (isFrontpageConfigured()) {
+            return "home";
+        }
+
+        return SUCCESS;
+    }
+
+    /** Loads the model used by both the public page and failed save results. */
+    protected void loadSetupModel() {
+
         try {
             setUserCount(WebloggerFactory.getWeblogger().getUserManager().getUserCount());
             setBlogCount(WebloggerFactory.getWeblogger().getWeblogManager().getWeblogCount());
@@ -84,32 +103,24 @@ public class Setup extends UIAction {
         // thing that can usefully be done.
         if (getUserCount() == 0) {
             setBootstrap(true);
-            return SUCCESS;
-        }
-
-        // Beyond that point this is a site configuration screen.
-        if (!isUserIsAdmin()) {
-            return DENIED;
+            return;
         }
 
         try {
-            if (FrontpageSettings.isConfigured()) {
-                // Already chosen; later changes belong in global configuration.
-                return "home";
-            }
+            setFrontpageConfigured(FrontpageSettings.isConfigured());
         } catch (WebloggerException ex) {
             LOG.error("Error reading frontpage configuration", ex);
         }
 
-        try {
-            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            setWeblogs(mgr.getWeblogs(true, null, null, null, 0, -1));
-        } catch (WebloggerException ex) {
-            LOG.error("Error getting weblogs", ex);
-            addError("frontpageConfig.weblogs.error");
+        if (isUserIsAdmin() && !isFrontpageConfigured()) {
+            try {
+                WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                setWeblogs(mgr.getWeblogs(true, null, null, null, 0, -1));
+            } catch (WebloggerException ex) {
+                LOG.error("Error getting weblogs", ex);
+                addError("frontpageConfig.weblogs.error");
+            }
         }
-
-        return SUCCESS;
     }
 
 
@@ -136,6 +147,14 @@ public class Setup extends UIAction {
 
     public void setBootstrap(boolean bootstrap) {
         this.bootstrap = bootstrap;
+    }
+
+    public boolean isFrontpageConfigured() {
+        return frontpageConfigured;
+    }
+
+    public void setFrontpageConfigured(boolean frontpageConfigured) {
+        this.frontpageConfigured = frontpageConfigured;
     }
 
     public Collection<Weblog> getWeblogs() {

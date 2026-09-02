@@ -28,7 +28,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FrontpageSettings;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
-import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
+import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache;
+import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -43,7 +45,7 @@ import org.apache.struts2.ServletActionContext;
  * set, later changes go through the global configuration screen, which is
  * already administrator-only.
  */
-public class FrontpageSetup extends UIAction {
+public class FrontpageSetup extends Setup {
 
     private static final Log LOG = LogFactory.getLog(FrontpageSetup.class);
 
@@ -60,6 +62,11 @@ public class FrontpageSetup extends UIAction {
     }
 
     @Override
+    public boolean isUserRequired() {
+        return true;
+    }
+
+    @Override
     public List<String> requiredGlobalPermissionActions() {
         return Collections.singletonList(GlobalPermission.ADMIN);
     }
@@ -72,36 +79,45 @@ public class FrontpageSetup extends UIAction {
      */
     public String save() {
 
-        HttpServletRequest req = ServletActionContext.getRequest();
-        if (!"POST".equalsIgnoreCase(req.getMethod())) {
+        if (!isPostRequest()) {
             return DENIED;
         }
 
         try {
-            // Re-read immediately before writing so that a second submission
-            // arriving alongside the first cannot replace the winner. This
-            // narrows the window rather than closing it outright; the two
-            // submissions would have to interleave within this method, and the
-            // losing caller is told the choice is already made.
-            if (FrontpageSettings.isConfigured()) {
+            if (!FrontpageSettings.applyInitial(frontpageBlog, aggregated)) {
                 addError("frontpageConfig.alreadyConfigured");
-                return "home";
+                loadSetupModel();
+                setFrontpageConfigured(true);
+                return INPUT;
             }
 
-            FrontpageSettings.apply(frontpageBlog, aggregated);
+            invalidateRenderedContent();
             addMessage("frontpageConfig.values.saved");
 
         } catch (FrontpageSettings.InvalidFrontpageWeblogException ex) {
             addError("frontpageConfig.invalidWeblog");
+            loadSetupModel();
             return INPUT;
 
         } catch (WebloggerException ex) {
             LOG.error("ERROR saving frontpage configuration", ex);
             addError("frontpageConfig.values.error");
+            loadSetupModel();
             return INPUT;
         }
 
         return "home";
+    }
+
+    protected boolean isPostRequest() {
+        HttpServletRequest req = ServletActionContext.getRequest();
+        return req != null && "POST".equalsIgnoreCase(req.getMethod());
+    }
+
+    private void invalidateRenderedContent() {
+        SiteWideCache.getInstance().clear();
+        WeblogPageCache.getInstance().clear();
+        WeblogFeedCache.getInstance().clear();
     }
 
     public String getFrontpageBlog() {
