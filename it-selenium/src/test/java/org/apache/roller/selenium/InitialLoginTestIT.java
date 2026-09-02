@@ -86,7 +86,7 @@ public class InitialLoginTestIT {
         driver.get(baseUrl);
         sp = new SetupPage(driver);
         driver.navigate().refresh();
-        BlogHomePage bhp = sp.chooseFrontPageBlog();
+        BlogHomePage bhp = sp.chooseFrontPageBlog("bobsblog");
 
         // create and read first blog entry
         String blogEntryTitle = "My First Blog Entry";
