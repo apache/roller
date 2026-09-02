@@ -90,4 +90,35 @@ public class JPAOAuthManagerTest  {
         TestUtils.endSession(true);
         assertNull(omgr.getConsumerByKey(consumerKey));
     }
+
+    @Test
+    public void testAuthorizeRequestTokenTransition() throws Exception {
+        JPAOAuthManagerImpl omgr = (JPAOAuthManagerImpl)
+            WebloggerFactory.getWeblogger().getOAuthManager();
+
+        String consumerKey = "authorization-consumer";
+        String requestToken = "pending-request-token";
+        OAuthConsumer consumer = omgr.addConsumer("authorization-owner", consumerKey);
+
+        OAuthAccessor accessor = new OAuthAccessor(consumer);
+        accessor.requestToken = requestToken;
+        accessor.tokenSecret = "pending-token-secret";
+        omgr.addAccessor(accessor);
+        TestUtils.endSession(true);
+
+        assertFalse(omgr.authorizeRequestToken(consumerKey, "another-token", "alice"));
+        assertTrue(omgr.authorizeRequestToken(consumerKey, requestToken, "alice"));
+        assertTrue(omgr.authorizeRequestToken(consumerKey, requestToken, "alice"));
+        assertFalse(omgr.authorizeRequestToken(consumerKey, requestToken, "bob"));
+        TestUtils.endSession(true);
+
+        OAuthAccessor authorized = omgr.getAccessorByToken(requestToken);
+        assertNotNull(authorized);
+        assertEquals("alice", authorized.getProperty("userId"));
+        assertEquals(Boolean.TRUE, authorized.getProperty("authorized"));
+
+        omgr.removeAccessor(authorized);
+        omgr.removeConsumer(consumer);
+        TestUtils.endSession(true);
+    }
 }

@@ -30,7 +30,7 @@
 </p>
 
 <form name="authZForm" action="authorize" method="POST">
-    <input type="hidden" name="userId" value="<s:property value="userName" />" size="20" /><br>
+    <s:hidden name="salt"/>
     <input type="hidden" name="oauth_token" value='<s:property value="token" />' />
     <input type="hidden" name="oauth_callback" value='<s:property value="callback" />' />
     <input type="submit" name="Authorize" value="Authorize"/>
