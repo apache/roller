@@ -94,8 +94,10 @@ public class BookmarkImportParsingTest {
                 "DOCTYPE input must produce a WebloggerException: " + failure);
         assertTrue(failure.getMessage().contains("document type declarations"),
                 "the import error should explain the rejected input: " + failure.getMessage());
-        assertTrue(failure.getCause() instanceof JDOMParseException,
-                "the parse cause should be retained: " + failure.getCause());
+        Throwable rootCause = ((org.apache.roller.weblogger.WebloggerException) failure)
+                .getRootCause();
+        assertTrue(rootCause instanceof JDOMParseException,
+                "the parse cause should be retained: " + rootCause);
     }
 
     /** Ordinary OPML, with no declarations in it, must still import. */
