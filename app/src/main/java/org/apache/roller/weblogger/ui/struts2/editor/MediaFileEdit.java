@@ -23,12 +23,15 @@ import java.io.FileInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -124,7 +127,19 @@ public class MediaFileEdit extends MediaFileBase {
 
                 if (uploadedFile != null) {
                     mediaFile.setLength(this.uploadedFile.length());
-                    mediaFile.setContentType(this.uploadedFileContentType);
+                    String declaredType = MediaTypePolicy.normalizeType(
+                            this.uploadedFileContentType);
+                    RollerMessages errors = new RollerMessages();
+                    if (!WebloggerFactory.getWeblogger().getFileContentManager().canSave(
+                            getActionWeblog(), this.uploadedFileName, declaredType,
+                            this.uploadedFile.length(), errors)) {
+                        throw new FileIOException(errors.toString());
+                    }
+                    // Replacing the body re-decides the type, on the same
+                    // terms as the original upload.
+                    mediaFile.setContentType(MediaTypePolicy.storedTypeFor(
+                            this.uploadedFileName, declaredType,
+                            RollerContext.getServletContext()::getMimeType));
                     manager.updateMediaFile(getActionWeblog(), mediaFile,
                             new FileInputStream(this.uploadedFile));
                 } else {
