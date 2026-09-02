@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -49,6 +48,7 @@ import org.apache.roller.weblogger.ui.rendering.plugins.comments.CommentValidati
 import org.apache.roller.weblogger.ui.rendering.plugins.comments.DefaultCommentAuthenticator;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogCommentRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogEntryCommentForm;
+import org.apache.roller.weblogger.util.CommentAuthorUrl;
 import org.apache.roller.weblogger.util.GenericThrottle;
 import org.apache.roller.weblogger.util.IPBanList;
 import org.apache.roller.weblogger.util.MailUtil;
@@ -231,21 +231,10 @@ public class CommentServlet extends HttpServlet {
         comment.setName(commentRequest.getName());
         comment.setEmail(commentRequest.getEmail());
         
-        // Validate url
-        if (StringUtils.isNotEmpty(commentRequest.getUrl())) {
-            String theUrl = commentRequest.getUrl().trim().toLowerCase();
-            StringBuilder url = new StringBuilder();
-            if (theUrl.startsWith("http://")) {
-                url.append(theUrl);
-            } else if (theUrl.startsWith("https://")) {
-                url.append(theUrl);
-            } else {
-                url.append("http://").append(theUrl);
-            }
-            comment.setUrl(url.toString());
-        } else {
-            comment.setUrl("");
-        }
+        String submittedCommentUrl = StringUtils.trimToEmpty(commentRequest.getUrl());
+        String normalizedCommentUrl = CommentAuthorUrl.normalizeInput(submittedCommentUrl);
+        comment.setUrl(normalizedCommentUrl != null
+                ? normalizedCommentUrl : submittedCommentUrl);
         
         comment.setContent(commentRequest.getContent());
         comment.setNotify(commentRequest.isNotify());
@@ -288,9 +277,8 @@ public class CommentServlet extends HttpServlet {
             log.debug("Email Adddress is invalid : "
                     + commentRequest.getEmail());
             // if there is an URL it must be valid
-        } else if (StringUtils.isNotEmpty(comment.getUrl())
-                && !new UrlValidator(new String[] { "http", "https" })
-                        .isValid(comment.getUrl())) {
+        } else if (StringUtils.isNotEmpty(submittedCommentUrl)
+                && normalizedCommentUrl == null) {
                 error = messageUtils.getString("error.commentPostFailedURL");
                 log.debug("URL is invalid : " + comment.getUrl());
             // if this is a real comment post then authenticate request

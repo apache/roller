@@ -20,27 +20,27 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.ui.rendering.model.ConfigModel;
 import org.apache.roller.weblogger.ui.rendering.model.URLModel;
+import org.apache.roller.weblogger.ui.rendering.plugins.comments.TrackbackLinkbackCommentValidator;
 import org.apache.roller.weblogger.util.BannedwordslistChecker;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IncomingTrackbackRemovalTest {
 
     @Test
-    void incomingTrackbackClassesAndHelpersAreRemoved() {
+    void incomingTrackbackEndpointsAndSettingsAreRemoved() {
         assertThrows(ClassNotFoundException.class, () -> Class.forName(
                 "org.apache.roller.weblogger.ui.rendering.servlets.TrackbackServlet"));
         assertThrows(ClassNotFoundException.class, () -> Class.forName(
                 "org.apache.roller.weblogger.ui.rendering.util.WeblogTrackbackRequest"));
-        assertThrows(ClassNotFoundException.class, () -> Class.forName(
-                "org.apache.roller.weblogger.ui.rendering.plugins.comments.TrackbackLinkbackCommentValidator"));
-        assertThrows(NoSuchMethodException.class,
-                () -> URLModel.class.getMethod("trackback", String.class));
         assertThrows(NoSuchMethodException.class,
                 () -> ConfigModel.class.getMethod("getTrackbacksEnabled"));
         assertThrows(NoSuchMethodException.class,
@@ -50,17 +50,45 @@ class IncomingTrackbackRemovalTest {
     }
 
     @Test
+    @SuppressWarnings("removal")
+    void legacyExtensionPointsRemainHarmlessForOneRelease() throws Exception {
+        assertEquals("", new URLModel().trackback("entry"));
+        assertEquals(RollerConstants.PERCENT_100,
+                new TrackbackLinkbackCommentValidator().validate(null, null));
+        assertFileContains(
+                "src/main/webapp/WEB-INF/velocity/weblog.vm",
+                "#macro(showTrackbackAutodiscovery $entry)\n#end");
+    }
+
+    @Test
     void deploymentAndRuntimeConfigurationDoNotExposeTrackbacks() throws Exception {
         assertFileDoesNotContain("src/main/webapp/WEB-INF/web.xml", "trackback");
         assertResourceDoesNotContain(
                 "org/apache/roller/weblogger/config/runtimeConfigDefs.xml", "trackback");
-        assertFileDoesNotContain(
-                "src/main/webapp/WEB-INF/velocity/weblog.vm", "trackback");
+        assertFileDoesNotContain("../docs/roller-user-guide.adoc", "trackback");
+        assertFileDoesNotContain("../docs/roller-template-guide.adoc", "trackback");
     }
 
     private void assertFileDoesNotContain(String path, String value) throws Exception {
-        String content = Files.readString(Path.of(path), StandardCharsets.UTF_8);
+        String content = Files.readString(resolveAppPath(path), StandardCharsets.UTF_8);
         assertFalse(content.toLowerCase().contains(value), path);
+    }
+
+    private void assertFileContains(String path, String value) throws Exception {
+        String content = Files.readString(resolveAppPath(path), StandardCharsets.UTF_8);
+        assertTrue(content.contains(value), path);
+    }
+
+    private Path resolveAppPath(String path) throws Exception {
+        Path current = Path.of(getClass().getProtectionDomain()
+                .getCodeSource().getLocation().toURI()).toAbsolutePath();
+        while (current != null) {
+            if (Files.isDirectory(current.resolve("src/main"))) {
+                return current.resolve(path).normalize();
+            }
+            current = current.getParent();
+        }
+        throw new IllegalStateException("Unable to locate the app module");
     }
 
     private void assertResourceDoesNotContain(String path, String value) throws Exception {

@@ -114,6 +114,13 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
 
 
 #**
+Deprecated no-op retained temporarily for custom template compatibility.
+*#
+#macro(showTrackbackAutodiscovery $entry)
+#end
+
+
+#**
 Adds a meta description tag, suitable for use in HTML header sections.  This tag is frequently used by
 search engines to provide a short description for links returned.  The description value will set to the
 weblog's tagline if on a multiple blog entry page or the weblog entry search description if on a single
@@ -1014,6 +1021,5 @@ Include Javascript code needed for expanding folder macros (undocumented).
 
 </script>
 #end
-
 
 

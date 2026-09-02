@@ -16,15 +16,15 @@
  */
 package org.apache.roller.weblogger.util;
 
-import org.apache.commons.validator.routines.UrlValidator;
+import java.net.IDN;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Locale;
 
 /**
  * Normalizes comment author URLs before they are rendered as links.
  */
 public final class CommentAuthorUrl {
-
-    private static final UrlValidator VALIDATOR =
-            new UrlValidator(new String[] {"http", "https"});
 
     private CommentAuthorUrl() {
     }
@@ -34,6 +34,80 @@ public final class CommentAuthorUrl {
             return null;
         }
         String normalized = value.trim();
-        return VALIDATOR.isValid(normalized) ? normalized : null;
+        try {
+            URI uri = new URI(normalized);
+            String scheme = uri.getScheme();
+            if (scheme == null
+                    || !(scheme.equalsIgnoreCase("http") || scheme.equalsIgnoreCase("https"))
+                    || uri.isOpaque()
+                    || !hasValidAuthority(uri)) {
+                return null;
+            }
+            return normalized;
+        } catch (IllegalArgumentException | URISyntaxException ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * Normalizes user-entered URLs, retaining the long-standing behavior of
+     * supplying an HTTP scheme when one was omitted.
+     */
+    public static String normalizeInput(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String normalized = value.trim();
+        String lowerCase = normalized.toLowerCase(Locale.ROOT);
+        if (!lowerCase.startsWith("http://") && !lowerCase.startsWith("https://")) {
+            normalized = "http://" + normalized;
+        }
+        return normalize(normalized);
+    }
+
+    private static boolean hasValidAuthority(URI uri) {
+        String authority = uri.getRawAuthority();
+        if (authority == null || authority.isBlank() || uri.getRawUserInfo() != null) {
+            return false;
+        }
+
+        if (authority.startsWith("[")) {
+            int closingBracket = authority.indexOf(']');
+            if (closingBracket < 2 || uri.getHost() == null) {
+                return false;
+            }
+            return hasValidPort(authority.substring(closingBracket + 1));
+        }
+
+        String host = authority;
+        int colon = authority.lastIndexOf(':');
+        if (colon >= 0) {
+            if (authority.indexOf(':') != colon
+                    || !hasValidPort(authority.substring(colon))) {
+                return false;
+            }
+            host = authority.substring(0, colon);
+        }
+
+        try {
+            return !IDN.toASCII(host).isBlank();
+        } catch (IllegalArgumentException ignored) {
+            return false;
+        }
+    }
+
+    private static boolean hasValidPort(String suffix) {
+        if (suffix.isEmpty()) {
+            return true;
+        }
+        if (suffix.charAt(0) != ':' || suffix.length() == 1) {
+            return false;
+        }
+        try {
+            int port = Integer.parseInt(suffix.substring(1));
+            return port >= 0 && port <= 65535;
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
     }
 }

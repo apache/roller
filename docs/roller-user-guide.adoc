@@ -54,8 +54,6 @@ comments are allowed.
 * *Comment*. A comment posted by a visitor to a weblog and regarding one
 specific weblog post. A comment has an email address, a publication
 timestamp and some content.
-* *Trackback*. A comment posted by a remote weblog regarding one
-specific weblog post. Trackbacks are stored as comments by Roller.
 * *Templates*. Each Roller weblog is defined by a set of HTML and CSS
 templates that provide the layout and styles for the weblog. Normally
 templates are authored using Velocity template language, but other
@@ -611,13 +609,10 @@ URL is _http://jroller.com/fredsblog_), then your parameters would be:
 * *BlogID*: fredsblog
 * *URL*: http://jroller.com/roller-services/xmlrpc
 
-== Working with comments and trackbacks
+== Working with comments
 
-Roller supports weblog comments and _trackbacks_, which provide a way
-for other bloggers to add comments to your blog remotely. By default
-comments and trackbacks are enabled, but you can turn them off on your
-weblog’s Weblog Settings page of your weblog. Note that turning off
-comments will disable both comments and trackbacks.
+Roller supports weblog comments, which are enabled by default. You can
+turn them off on your weblog’s Weblog Settings page.
 
 === Comment notification via email
 
@@ -705,21 +700,20 @@ available in the context of a weblog.
 
 === *Preventing weblog spam*
 
-There are two forms of comment spam that can affect your weblog:
+Comment spam can affect your weblog:
 
 ** _Comment spam_: spam that arrives via the comment form on your
 weblog. Sometimes spam comments are added by a human and sometimes by a
 computer program known as a _spambot._
-** _Trackback spam_: spam that arrives via trackbacks sent by a spambot.
 
-Fortunately, there are counter-measures for each type of spam. Here are
+Fortunately, there are counter-measures. Here are
 Roller’s built in spam prevention measures:
 
 * _Pluggable comment authentication_. By default, Roller asks each
 commenter a simple math question to ensure that they are a person and
 not a spam robot. Your site administrator can turn this off or replace
 it with another form of authentication.
-* _Pluggable comment validation_. Roller includes five comment
+* _Pluggable comment validation_. Roller includes four comment
 validators below. Your site administrator can adjust the settings for
 these validators and can enable/disable them as needed by overriding
 Roller’s configuration properties (see the Installation Guide for more
@@ -730,8 +724,6 @@ as spam (default: on)
 characters as spam (default: on)
 ** Bannedwordslist validator marks comments containing any of your site’s
 designated bad words as spam (default: on)
-** Trackback verification validator will check incoming trackbacks to
-ensure that they link to you.
 ** Akismet validator allows you to use the Akismet.com spam prevention
 service.
 * _Comment throttling_. If your site is being abused by a spam robot
@@ -747,11 +739,11 @@ comments on your weblog. None of the measures are 100% effective. If you
 are really concerned about displaying offensive content on your weblog
 even for a short time, then enable comment moderation on your weblog.
 
-Roller uses a _bannedwordslist_, a lists of words which are used to check
-incoming comments, trackbacks and requestors for spam URLs. If the name,
-URL or content of a comment or trackback includes one of the bannedwordslist
-words or matches one of the expressions then that comment or trackback
-is marked as spam and is not displayed on your weblog, unless you use
+Roller uses a _bannedwordslist_, a list of words used to check incoming
+comments and requestors for spam URLs. If the name, URL or content of a
+comment includes one of the bannedwordslist words or matches one of the
+expressions, then that comment is marked as spam and is not displayed on your
+weblog, unless you use
 the comment management page to unmark it.
 
 Actually, there are three levels of bannedwordslist:
@@ -764,8 +756,8 @@ edited by a global administrator via the Server Admin page.
 ** Level 3 bannedwordslist: Weblog specific bannedwordslist, which you control in
 the Weblog Settings page of your weblog.
 
-Incoming comments and trackbacks are checked against all three levels of
-bannedwordslist. Incoming web page requests, however, are only checked against
+Incoming comments are checked against all three levels of bannedwordslist.
+Incoming web page requests, however, are only checked against
 the levels 2 and 3 bannedwordslist and will receive a 403 (forbidden) message
 if found.
 
@@ -936,7 +928,7 @@ enabled by default on a new weblog entry.
 image::user-guide-spam.png[]
 
 * **Ignore incoming URLs that contain any of these words - **you can use
-this to filter out what commentors, trackbacks, and referrers (web page
+this to filter out what commenters and referrers (web page
 requestors) are accepted. See Section
 [link:#5.5.Preventing%20weblog%20spam%20%7Coutline[5.5]]for more
 information on spam prevention.
@@ -1254,8 +1246,6 @@ users.
 
 * *Allow weblog comments*: By un-setting this you can turn off weblog
 comments on all weblogs in the system.
-* *Allow trackbacks*: By un-setting this you can turn off incoming
-trackbacks on all weblogs in the system.
 * *Autoformat comments*: If this is on, Roller will auto-format comments
 by adding in line-breaks where appropriate.
 * *Escape comment HTML*: By setting this, you can disallow HTML in
@@ -1265,11 +1255,6 @@ some forms of cross-site scripting.
 notification of new comments. This won’t work unless you configured
 Roller properly for sending email as described in the Roller
 installation guide.
-* *Enable verification of trackback links*: Trackback verification
-checks each incoming trackback to verify that the site sending the
-trackback actually links to the specific weblog entry that is the target
-of the trackback.
-
 image::user-guide-28-feed.png[]
 
 * *Default number of entries*: default number of entries to appear in

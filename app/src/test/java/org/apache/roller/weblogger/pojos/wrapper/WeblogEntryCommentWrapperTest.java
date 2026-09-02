@@ -17,6 +17,7 @@
 package org.apache.roller.weblogger.pojos.wrapper;
 
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
+import org.apache.roller.weblogger.util.CommentAuthorUrl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,21 +37,36 @@ class WeblogEntryCommentWrapperTest {
     }
 
     @Test
+    void acceptsLocalAndInternationalizedAuthorUrls() {
+        assertEquals("http://localhost:8080/profile",
+                CommentAuthorUrl.normalize("http://localhost:8080/profile"));
+        assertEquals("https://intranet/profile",
+                CommentAuthorUrl.normalize("https://intranet/profile"));
+        assertEquals("http://my_host.example.com/profile",
+                CommentAuthorUrl.normalize("http://my_host.example.com/profile"));
+        assertEquals("https://例え.テスト/profile",
+                CommentAuthorUrl.normalize("https://例え.テスト/profile"));
+        assertEquals("http://Example.org/CaseSensitive",
+                CommentAuthorUrl.normalizeInput("Example.org/CaseSensitive"));
+    }
+
+    @Test
     void omitsUnsupportedOrMalformedAuthorUrls() {
         WeblogEntryComment comment = new WeblogEntryComment();
-        WeblogEntryCommentWrapper wrapper = WeblogEntryCommentWrapper.wrap(comment, null);
-
         comment.setUrl("javascript:alert(1)");
-        assertNull(wrapper.getUrl());
+        assertEquals("", WeblogEntryCommentWrapper.wrap(comment, null).getUrl());
         assertNull(comment.getSafeUrl());
 
         comment.setUrl("//example.org/profile");
-        assertNull(wrapper.getUrl());
+        assertEquals("", WeblogEntryCommentWrapper.wrap(comment, null).getUrl());
 
         comment.setUrl("not a url");
-        assertNull(wrapper.getUrl());
+        assertEquals("", WeblogEntryCommentWrapper.wrap(comment, null).getUrl());
 
         comment.setUrl("  ");
-        assertNull(wrapper.getUrl());
+        assertEquals("", WeblogEntryCommentWrapper.wrap(comment, null).getUrl());
+
+        assertNull(CommentAuthorUrl.normalize("https://user@example.org/profile"));
+        assertNull(CommentAuthorUrl.normalize("https://example.org:99999/profile"));
     }
 }
