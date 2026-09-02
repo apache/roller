@@ -68,6 +68,8 @@ public class EntryBean {
     private boolean rightToLeft = false;
     private boolean pinnedToMain = false;
     private String enclosureURL = null;
+    private String enclosureType = null;
+    private String enclosureLength = null;
     private String searchDescription = null;
     private int commentCount = 0;
     
@@ -226,6 +228,22 @@ public class EntryBean {
     
     public void setEnclosureURL(String enclosureUrl) {
         this.enclosureURL = enclosureUrl;
+    }
+
+    public String getEnclosureType() {
+        return enclosureType;
+    }
+
+    public void setEnclosureType(String enclosureType) {
+        this.enclosureType = enclosureType;
+    }
+
+    public String getEnclosureLength() {
+        return enclosureLength;
+    }
+
+    public void setEnclosureLength(String enclosureLength) {
+        this.enclosureLength = enclosureLength;
     }
     
     public String getSearchDescription() {
@@ -390,6 +408,10 @@ public class EntryBean {
             for (WeblogEntryAttribute attr : attrs) {
                 if ("att_mediacast_url".equals(attr.getName())) {
                     setEnclosureURL(attr.getValue());
+                } else if ("att_mediacast_type".equals(attr.getName())) {
+                    setEnclosureType(attr.getValue());
+                } else if ("att_mediacast_length".equals(attr.getName())) {
+                    setEnclosureLength(attr.getValue());
                 }
             }
         }
