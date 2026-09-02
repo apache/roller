@@ -16,16 +16,16 @@
  */
 package org.apache.roller.weblogger.util;
 
+import java.net.IDN;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Locale;
 import java.util.regex.Pattern;
-import org.apache.commons.validator.routines.UrlValidator;
 
 /**
  * Validated metadata for an RSS or Atom enclosure.
  */
 public final class EnclosureMetadata {
-
-    private static final UrlValidator URL_VALIDATOR = new UrlValidator(
-            new String[] {"http", "https"}, UrlValidator.ALLOW_LOCAL_URLS);
 
     private static final Pattern MEDIA_TYPE = Pattern.compile(
             "[!#$%&'*+.^_`|~0-9A-Za-z-]+/[!#$%&'*+.^_`|~0-9A-Za-z-]+");
@@ -42,24 +42,28 @@ public final class EnclosureMetadata {
 
     public static EnclosureMetadata of(String url, String contentType, String length) {
         String normalizedUrl = normalize(url);
-        String normalizedType = normalize(contentType);
+        String normalizedType = normalizeContentType(contentType);
         String normalizedLength = normalize(length);
 
-        if (!URL_VALIDATOR.isValid(normalizedUrl)) {
-            throw new IllegalArgumentException("Enclosure URL must be an absolute HTTP or HTTPS URL");
+        if (!isHttpUri(normalizedUrl)) {
+            throw new ValidationException(Field.URL,
+                    "Enclosure URL must be an absolute HTTP or HTTPS URL");
         }
         if (!MEDIA_TYPE.matcher(normalizedType).matches()) {
-            throw new IllegalArgumentException("Enclosure type must be a valid media type");
+            throw new ValidationException(Field.TYPE,
+                    "Enclosure type must be a valid media type");
         }
 
         final long byteLength;
         try {
             byteLength = Long.parseLong(normalizedLength);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Enclosure length must be a non-negative integer", e);
+            throw new ValidationException(Field.LENGTH,
+                    "Enclosure length must be a non-negative integer", e);
         }
         if (byteLength < 0) {
-            throw new IllegalArgumentException("Enclosure length must be a non-negative integer");
+            throw new ValidationException(Field.LENGTH,
+                    "Enclosure length must be a non-negative integer");
         }
 
         return new EnclosureMetadata(
@@ -68,6 +72,72 @@ public final class EnclosureMetadata {
 
     private static String normalize(String value) {
         return value == null ? "" : value.trim();
+    }
+
+    private static String normalizeContentType(String value) {
+        String type = normalize(value);
+        int parameter = type.indexOf(';');
+        if (parameter >= 0) {
+            type = type.substring(0, parameter).trim();
+        }
+        return type.toLowerCase(Locale.ENGLISH);
+    }
+
+    private static boolean isHttpUri(String value) {
+        try {
+            URI uri = new URI(value);
+            String scheme = uri.getScheme();
+            if (!("http".equalsIgnoreCase(scheme)
+                    || "https".equalsIgnoreCase(scheme))) {
+                return false;
+            }
+            if (uri.getRawAuthority() == null || uri.getRawAuthority().isEmpty()) {
+                return false;
+            }
+            if (uri.getHost() != null && !uri.getHost().isEmpty()) {
+                return uri.getPort() <= 65535;
+            }
+
+            // URI.getHost() is null for a Unicode authority. Validate its host
+            // locally after converting it to ASCII; this performs no DNS or I/O.
+            String authority = uri.getRawAuthority();
+            int userInfo = authority.lastIndexOf('@');
+            String hostAndPort = userInfo >= 0
+                    ? authority.substring(userInfo + 1) : authority;
+            int colon = hostAndPort.lastIndexOf(':');
+            String host = colon >= 0 ? hostAndPort.substring(0, colon) : hostAndPort;
+            if (colon >= 0) {
+                int port = Integer.parseInt(hostAndPort.substring(colon + 1));
+                if (port > 65535) {
+                    return false;
+                }
+            }
+            return !IDN.toASCII(host).isEmpty();
+        } catch (IllegalArgumentException | URISyntaxException invalid) {
+            return false;
+        }
+    }
+
+    public enum Field {
+        URL, TYPE, LENGTH
+    }
+
+    public static final class ValidationException extends IllegalArgumentException {
+        private final Field field;
+
+        private ValidationException(Field field, String message) {
+            super(message);
+            this.field = field;
+        }
+
+        private ValidationException(Field field, String message, Throwable cause) {
+            super(message, cause);
+            this.field = field;
+        }
+
+        public Field getField() {
+            return field;
+        }
     }
 
     public String getUrl() {

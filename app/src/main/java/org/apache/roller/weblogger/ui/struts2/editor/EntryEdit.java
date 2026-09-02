@@ -188,19 +188,11 @@ public final class EntryEdit extends UIAction {
      *
      * @return String The result of the action.
      */
-    private String save() {
+    String save() {
         if (!hasActionErrors()) {
-            EnclosureMetadata enclosure = null;
-            if (!StringUtils.isEmpty(getBean().getEnclosureURL())) {
-                try {
-                    enclosure = EnclosureMetadata.of(
-                            getBean().getEnclosureURL(),
-                            getBean().getEnclosureType(),
-                            getBean().getEnclosureLength());
-                } catch (IllegalArgumentException e) {
-                    addError("weblogEdit.enclosureMetadataInvalid");
-                    return INPUT;
-                }
+            EnclosureMetadata enclosure = validateEnclosure();
+            if (hasActionErrors()) {
+                return failedSave();
             }
 
             try {
@@ -304,8 +296,56 @@ public final class EntryEdit extends UIAction {
                 addError("generic.error.check.logs");
             }
         }
+        return failedSave();
+    }
+
+    EnclosureMetadata validateEnclosure() {
+        if (StringUtils.isEmpty(getBean().getEnclosureURL())) {
+            return null;
+        }
+        try {
+            return EnclosureMetadata.of(
+                    getBean().getEnclosureURL(),
+                    getBean().getEnclosureType(),
+                    getBean().getEnclosureLength());
+        } catch (EnclosureMetadata.ValidationException invalid) {
+            if (submittedEnclosureMatchesStored()) {
+                getBean().setEnclosureURL(null);
+                getBean().setEnclosureType(null);
+                getBean().setEnclosureLength(null);
+                addMessage("weblogEdit.enclosureMetadataRemoved");
+            } else {
+                switch (invalid.getField()) {
+                    case URL:
+                        addError("weblogEdit.enclosureURLInvalid");
+                        break;
+                    case TYPE:
+                        addError("weblogEdit.enclosureTypeInvalid");
+                        break;
+                    case LENGTH:
+                        addError("weblogEdit.enclosureLengthInvalid");
+                        break;
+                    default:
+                        throw invalid;
+                }
+            }
+            return null;
+        }
+    }
+
+    private boolean submittedEnclosureMatchesStored() {
+        return "entryEdit".equals(actionName) && getEntry() != null
+                && StringUtils.equals(getBean().getEnclosureURL(),
+                        getEntry().findEntryAttribute("att_mediacast_url"))
+                && StringUtils.equals(getBean().getEnclosureType(),
+                        getEntry().findEntryAttribute("att_mediacast_type"))
+                && StringUtils.equals(getBean().getEnclosureLength(),
+                        getEntry().findEntryAttribute("att_mediacast_length"));
+    }
+
+    private String failedSave() {
         if ("entryAdd".equals(actionName)) {
-            // if here on entryAdd, nothing saved, so reset status to null (unsaved)
+            // If here on entryAdd, nothing saved, so reset status to null (unsaved).
             getBean().setStatus(null);
         }
         return INPUT;

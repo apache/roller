@@ -16,10 +16,16 @@
  */
 package org.apache.roller.weblogger.util;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EnclosureMetadataTest {
 
@@ -45,14 +51,85 @@ class EnclosureMetadataTest {
     }
 
     @Test
+    void acceptsLocalAndInternationalizedAuthoritiesWithoutNetworkAccess() {
+        assertEquals("http://roller.internal/audio.ogg",
+                EnclosureMetadata.of("http://roller.internal/audio.ogg",
+                        "audio/ogg", "12").getUrl());
+        assertEquals("https://例え.テスト/audio.ogg",
+                EnclosureMetadata.of("https://例え.テスト/audio.ogg",
+                        "audio/ogg", "12").getUrl());
+    }
+
+    @Test
+    void stripsLegacyParametersAndNormalizesTheMediaType() {
+        EnclosureMetadata metadata = EnclosureMetadata.of(
+                "https://media.example.org/show.mp3",
+                " Audio/MPEG; charset=utf-8 ", "12");
+
+        assertEquals("audio/mpeg", metadata.getContentType());
+    }
+
+    @Test
+    void acceptsAllMediaTypeTokenCharacters() {
+        assertEquals("audio/x!#$%&'*+-.^_`|~",
+                EnclosureMetadata.of("https://example.org/audio",
+                        "audio/x!#$%&'*+-.^_`|~", "12").getContentType());
+    }
+
+    @Test
     void rejectsUnsupportedOrIncompleteMetadata() {
-        assertThrows(IllegalArgumentException.class,
-                () -> EnclosureMetadata.of("file:///tmp/audio.ogg", "audio/ogg", "12"));
-        assertThrows(IllegalArgumentException.class,
-                () -> EnclosureMetadata.of("https://example.org/audio", "not-a-type", "12"));
-        assertThrows(IllegalArgumentException.class,
-                () -> EnclosureMetadata.of("https://example.org/audio", "audio/ogg", "-1"));
-        assertThrows(IllegalArgumentException.class,
-                () -> EnclosureMetadata.of("https://example.org/audio", "audio/ogg", "unknown"));
+        assertField(EnclosureMetadata.Field.URL,
+                "file:///tmp/audio.ogg", "audio/ogg", "12");
+        assertField(EnclosureMetadata.Field.TYPE,
+                "https://example.org/audio", "not-a-type", "12");
+        assertField(EnclosureMetadata.Field.LENGTH,
+                "https://example.org/audio", "audio/ogg", "-1");
+        assertField(EnclosureMetadata.Field.LENGTH,
+                "https://example.org/audio", "audio/ogg", "unknown");
+    }
+
+    @Test
+    void templatesEscapeFeedAttributesAndAvoidInlineHandlers() throws Exception {
+        String feeds = source("src/main/webapp/WEB-INF/velocity/feeds.vm");
+        assertEquals(2, count(feeds, "type=\"$utils.escapeXML($mc_type)\""));
+        assertFalse(feeds.contains("type=\"$mc_type\""));
+
+        String upload = source(
+                "src/main/webapp/WEB-INF/jsps/editor/MediaFileAddSuccess.jsp");
+        assertTrue(upload.contains("data-enclosure-url="));
+        assertTrue(upload.contains("data-enclosure-type="));
+        assertTrue(upload.contains("selected.attr(\"data-enclosure-type\")"));
+        assertFalse(upload.contains("onchange=\"setEnclosure("));
+
+        String policy = source(
+                "src/main/java/org/apache/roller/weblogger/util/EnclosureMetadata.java");
+        assertFalse(policy.contains("openConnection"));
+        assertFalse(policy.contains("UrlValidator"));
+    }
+
+    private void assertField(EnclosureMetadata.Field field,
+            String url, String type, String length) {
+        EnclosureMetadata.ValidationException exception = assertThrows(
+                EnclosureMetadata.ValidationException.class,
+                () -> EnclosureMetadata.of(url, type, length));
+        assertEquals(field, exception.getField());
+    }
+
+    private int count(String value, String needle) {
+        int count = 0;
+        int offset = 0;
+        while ((offset = value.indexOf(needle, offset)) >= 0) {
+            count++;
+            offset += needle.length();
+        }
+        return count;
+    }
+
+    private String source(String relativePath) throws Exception {
+        Path path = Path.of(relativePath);
+        if (!Files.exists(path)) {
+            path = Path.of("app").resolve(relativePath);
+        }
+        return Files.readString(path, StandardCharsets.UTF_8);
     }
 }

@@ -98,9 +98,9 @@
 
                         <div class="col-md-1">
                             <input type="radio" name="enclosure"
-                                   onchange="setEnclosure('<s:property value="%{#newFile.permalink}"/>',
-                                           '<s:property value="%{#newFile.contentType}"/>',
-                                           '<s:property value="%{#newFile.length}"/>')"/>
+                                   data-enclosure-url="<s:property value="%{#newFile.permalink}"/>"
+                                   data-enclosure-type="<s:property value="%{#newFile.contentType}"/>"
+                                   data-enclosure-length="<s:property value="%{#newFile.length}"/>"/>
                         </div>
 
                         <div class="col-md-11">
@@ -136,7 +136,9 @@
                 <div class="row">
 
                     <div class="col-md-1">
-                        <input type="radio" name="enclosure" onchange="setEnclosure('', '', '')" />
+                        <input type="radio" name="enclosure"
+                               data-enclosure-url="" data-enclosure-type=""
+                               data-enclosure-length="" />
                     </div>
 
                     <div class="col-md-10">
@@ -192,6 +194,14 @@
                 return;
             }
             submitButton.attr("disabled", !isImageChecked());
+        });
+
+        $("input[name='enclosure']").change(function () {
+            var selected = $(this);
+            setEnclosure(
+                selected.attr("data-enclosure-url") || "",
+                selected.attr("data-enclosure-type") || "",
+                selected.attr("data-enclosure-length") || "");
         });
     });
 
