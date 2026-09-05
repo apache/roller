@@ -35,6 +35,7 @@ import org.apache.xmlrpc.util.SAXParsers;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -368,6 +369,7 @@ public abstract class WebloggerImpl implements Weblogger {
         try {
             spf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (ParserConfigurationException | SAXNotRecognizedException | SAXNotSupportedException e) {
             String message = "Unable to turn off External DTD support in SAXParser. XML-RLC is vulnerable";
             if ( log.isDebugEnabled() ) {
