@@ -19,6 +19,7 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 import com.rometools.propono.atom.common.Categories;
 import com.rometools.propono.atom.server.AtomRequest;
 import java.util.StringTokenizer;
+import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
@@ -29,7 +30,6 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
-import org.apache.roller.weblogger.util.WSSEUtilities;
 import com.rometools.propono.atom.common.AtomService;
 import com.rometools.propono.atom.server.AtomException;
 import com.rometools.propono.atom.server.AtomHandler;
@@ -37,7 +37,6 @@ import com.rometools.propono.atom.server.AtomMediaResource;
 import com.rometools.propono.atom.server.AtomNotFoundException;
 import com.rometools.rome.feed.atom.Entry;
 import com.rometools.rome.feed.atom.Feed;
-import java.nio.charset.StandardCharsets;
 import javax.servlet.http.HttpServletResponse;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthMessage;
@@ -118,15 +117,19 @@ public class RollerAtomHandler implements AtomHandler {
         roller = WebloggerFactory.getWeblogger();
 
         String userName;
-        if ("oauth".equals(WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))) {
+        String authenticationMethod = WebloggerRuntimeConfig
+                .getProperty("webservices.atomPubAuth");
+        if (authenticationMethod != null) {
+            authenticationMethod = authenticationMethod.trim().toLowerCase(Locale.ROOT);
+        }
+        if ("oauth".equals(authenticationMethod)) {
             userName = authenticationOAUTH(request, response);
-
-        } else if ("wsse".equals(WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))) {
-            userName = authenticateWSSE(request);
-
-        } else {
-            // default to basic
+        } else if ("basic".equals(authenticationMethod)) {
             userName = authenticateBASIC(request);
+        } else {
+            log.warn("Unsupported AtomPub authentication method '" + authenticationMethod
+                    + "'; expected 'basic' or 'oauth'. Authentication denied.");
+            userName = null;
         }
 
         if (userName != null) {
@@ -411,53 +414,6 @@ public class RollerAtomHandler implements AtomHandler {
     //-------------------------------------------------------------- authentication
 
     /**
-     * Perform WSSE authentication based on information in request.
-     * Will not work if Weblogger password encryption is turned on.
-     */
-    protected String authenticateWSSE(HttpServletRequest request) {
-        String wsseHeader = request.getHeader("X-WSSE");
-        String ret = null;
-        if (wsseHeader == null) {
-            return ret;
-        }
-        String userName = null;
-        String created = null;
-        String nonce = null;
-        String passwordDigest = null;
-        String[] tokens = wsseHeader.split(",");
-        for (int i = 0; i < tokens.length; i++) {
-            int index = tokens[i].indexOf('=');
-            if (index != -1) {
-                String key = tokens[i].substring(0, index).trim();
-                String value = tokens[i].substring(index + 1).trim();
-                value = value.replace("\"", "");
-                if (key.startsWith("UsernameToken")) {
-                    userName = value;
-                } else if (key.equalsIgnoreCase("nonce")) {
-                    nonce = value;
-                } else if (key.equalsIgnoreCase("passworddigest")) {
-                    passwordDigest = value;
-                } else if (key.equalsIgnoreCase("created")) {
-                    created = value;
-                }
-            }
-        }
-        String digest = null;
-        try {
-            User inUser = roller.getUserManager().getUserByUserName(userName);
-            digest = WSSEUtilities.generateDigest(WSSEUtilities.base64Decode(nonce),
-                    created.getBytes(StandardCharsets.UTF_8),
-                    inUser.getPassword().getBytes(StandardCharsets.UTF_8));
-            if (digest.equals(passwordDigest)) {
-                ret = userName;
-            }
-        } catch (Exception e) {
-            log.error("During wsseAuthenticataion: " + e.getMessage(), e);
-        }
-        return ret;
-    }
-
-    /**
      * BASIC authentication.
      */
     public String authenticateBASIC(HttpServletRequest request) {
@@ -478,7 +434,8 @@ public class RollerAtomHandler implements AtomHandler {
                             User inUser = roller.getUserManager().getUserByUserName(userID);
                             if (inUser.getEnabled()) {
                                 String password = userPass.substring(p+1);
-                                valid = RollerContext.getPasswordEncoder().matches(password, user.getPassword());
+                                valid = RollerContext.getPasswordEncoder()
+                                        .matches(password, inUser.getPassword());
                             }
                         }
                     }
