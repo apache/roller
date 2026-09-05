@@ -434,9 +434,9 @@
             dataType: "text",
             processData: "false",
             contentType: "text/plain",
-            success: function (rdata) {
-                if (status != "success") {
-                    var cdata = eval("(" + rdata + ")");
+            success: function (rdata, status) {
+                var cdata = updateCommentSalt(rdata);
+                if (status === "success" && cdata && cdata.content !== undefined) {
                     $("#editlink-" + id).show();
                     $("#savelink-" + id).hide();
                     $("#cancellink-" + id).hide();
@@ -444,8 +444,24 @@
                 } else {
                     alert('<s:text name="commentManagement.saveError" />');
                 }
+            },
+            error: function (xhr) {
+                updateCommentSalt(xhr.responseText);
+                alert('<s:text name="commentManagement.saveError" />');
             }
         });
+    }
+
+    function updateCommentSalt(rdata) {
+        try {
+            var cdata = JSON.parse(rdata);
+            if (cdata.salt) {
+                $("#comments_salt").val(cdata.salt);
+            }
+            return cdata;
+        } catch (error) {
+            return null;
+        }
     }
 
     function editCommentCancel(id) {

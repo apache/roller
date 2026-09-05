@@ -785,31 +785,6 @@ _javax.util.regex.Pattern_ for a guide to regular expressions). Don’t
 try to use a regular expression unless you really know what you’re
 doing.
 
-=== Sending trackbacks
-
-If you are writing about something you read on another weblog, you want
-to let the author and readers of that weblog know that you are doing so,
-and that other weblog is trackback enabled, then you should send that
-weblog a trackback ping. Here’s a story that illustrates how trackback
-works:
-
-* You read an interesting blog entry on Otto’s blog. You notice that
-Otto’s blog entry has a trackback URL, so instead of leaving a comment
-on Otto’s blog you decide to comment by writing a blog entry in your own
-blog. You copy that trackback URL (using ALT-C, or right-click-copy, or
-whatever) cause you’ll need it later.
-
-* You go to your blog and write a new blog entry in response to Otto’s
-entry. Click the Post to Weblog button to publish your new entry. After
-you publish, scroll down on the New Entry page until you see the
-following text field and button:
-* Enter the trackback URL from Otto’s blog entry into the text field and
-click the Send Trackback button. Roller will respond by printing the
-response received from Otto’s blog server. If the trackback was
-successful, you should see something like this:
-* You should now see your trackback listed among the comments on Otto’s
-blog entry.
-
 == Choosing your weblog theme
 
 A weblog theme is a set of templates, style-sheets and image that
