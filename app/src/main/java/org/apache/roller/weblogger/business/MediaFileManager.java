@@ -77,6 +77,15 @@ public interface MediaFileManager {
     MediaFile getMediaFile(String id) throws WebloggerException;
 
     /**
+     * Get media file metadata by file id, restricted to the given weblog.
+     *
+     * @return the media file, or null if no media file with that id belongs to
+     *         the given weblog. A media file that exists but belongs to another
+     *         weblog is reported the same way as one that does not exist.
+     */
+    MediaFile getMediaFile(Weblog weblog, String id) throws WebloggerException;
+
+    /**
      * Get media file metadata optionally including the actual content
      */
     MediaFile getMediaFile(String id, boolean includeContent)
@@ -116,6 +125,16 @@ public interface MediaFileManager {
      * Get media file directory by id
      */
     MediaFileDirectory getMediaFileDirectory(String id)
+            throws WebloggerException;
+
+    /**
+     * Get media file directory by id, restricted to the given weblog.
+     *
+     * @return the directory, or null if no directory with that id belongs to
+     *         the given weblog. A directory that exists but belongs to another
+     *         weblog is reported the same way as one that does not exist.
+     */
+    MediaFileDirectory getMediaFileDirectory(Weblog weblog, String id)
             throws WebloggerException;
 
     /**

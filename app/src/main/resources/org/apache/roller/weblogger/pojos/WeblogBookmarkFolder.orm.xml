@@ -12,6 +12,9 @@
         <named-query name="WeblogBookmarkFolder.getByWebsite&amp;Name">
             <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.weblog = ?1 AND f.name = ?2</query>
         </named-query>
+        <named-query name="WeblogBookmarkFolder.getByWebsite&amp;Id">
+            <query>SELECT f FROM WeblogBookmarkFolder f WHERE f.weblog = ?1 AND f.id = ?2</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>

@@ -97,7 +97,7 @@
                     <div class="row">
 
                         <div class="col-md-1">
-                            <input type="radio" name="enclosure"
+                            <input type="radio" name="enclosure" class="enclosure-choice"
                                    data-enclosure-url="<s:property value="%{#newFile.permalink}"/>"
                                    data-enclosure-type="<s:property value="%{#newFile.contentType}"/>"
                                    data-enclosure-length="<s:property value="%{#newFile.length}"/>"/>
@@ -195,14 +195,6 @@
             }
             submitButton.attr("disabled", !isImageChecked());
         });
-
-        $("input[name='enclosure']").change(function () {
-            var selected = $(this);
-            setEnclosure(
-                selected.attr("data-enclosure-url") || "",
-                selected.attr("data-enclosure-type") || "",
-                selected.attr("data-enclosure-length") || "");
-        });
     });
 
     function isImageChecked() {
@@ -214,6 +206,14 @@
         }
         return false;
     }
+
+    // Values come from data-* attributes and are bound via delegated listeners.
+    $(document).on('change', '.enclosure-choice', function () {
+        var selected = $(this);
+        setEnclosure(selected.attr("data-enclosure-url") || "",
+                     selected.attr("data-enclosure-type") || "",
+                     selected.attr("data-enclosure-length") || "");
+    });
 
     function setEnclosure(url, type, length) {
         $("#enclosureURL").get(0).value = url;

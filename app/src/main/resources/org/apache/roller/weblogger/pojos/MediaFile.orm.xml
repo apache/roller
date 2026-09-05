@@ -9,6 +9,9 @@
         <named-query name="MediaFile.getByWeblogAndOrigpath">
             <query>SELECT f FROM MediaFile f WHERE f.weblog = ?1 AND f.originalPath = ?2</query>
         </named-query>
+        <named-query name="MediaFile.getByWeblogAndId">
+            <query>SELECT f FROM MediaFile f WHERE f.weblog = ?1 AND f.id = ?2</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>

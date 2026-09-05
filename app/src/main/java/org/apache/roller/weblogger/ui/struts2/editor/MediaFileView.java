@@ -199,7 +199,7 @@ public class MediaFileView extends MediaFileBase {
         try {
             MediaFileDirectory directory;
             if (StringUtils.isNotEmpty(this.directoryId)) {
-                directory = manager.getMediaFileDirectory(this.directoryId);
+                directory = manager.getMediaFileDirectory(getActionWeblog(), this.directoryId);
 
             } else if (StringUtils.isNotEmpty(this.directoryName)) {
                 directory = manager.getMediaFileDirectoryByName(
@@ -254,7 +254,7 @@ public class MediaFileView extends MediaFileBase {
                     .getMediaFileManager();
             if (!StringUtils.isEmpty(viewDirectoryId)) {
                 setDirectoryId(viewDirectoryId);
-                setCurrentDirectory(manager.getMediaFileDirectory(viewDirectoryId));
+                setCurrentDirectory(manager.getMediaFileDirectory(getActionWeblog(), viewDirectoryId));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up directory", ex);
@@ -326,7 +326,7 @@ public class MediaFileView extends MediaFileBase {
                 log.debug("Deleting media file folder - " + directoryId + " ("
                         + directoryName + ")");
                 MediaFileDirectory mediaFileDir = manager
-                        .getMediaFileDirectory(directoryId);
+                        .getMediaFileDirectory(getActionWeblog(), directoryId);
                 manager.removeMediaFileDirectory(mediaFileDir);
                 refreshAllDirectories();
                 WebloggerFactory.getWeblogger().getWeblogManager()

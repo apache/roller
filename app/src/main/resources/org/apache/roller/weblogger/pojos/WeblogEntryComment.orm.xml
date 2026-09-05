@@ -11,6 +11,9 @@
             <!-- DISTINCT is not required for this query as comments would never be duplicated in retrieved result-->
             <query>SELECT COUNT(c) FROM WeblogEntryComment c where c.status = ?1</query>
         </named-query>
+        <named-query name="WeblogEntryComment.getByWebsite&amp;Id">
+            <query>SELECT c FROM WeblogEntryComment c WHERE c.weblogEntry.website = ?1 AND c.id = ?2</query>
+        </named-query>
         <named-query name="WeblogEntryComment.getCountDistinctByWebsite&amp;Status">
             <!-- DISTINCT is not required for this query as comments would never be duplicated in retrieved result-->
             <query>SELECT COUNT(c) FROM WeblogEntryComment c WHERE c.weblogEntry.website = ?1 AND c.status = ?2</query>

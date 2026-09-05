@@ -53,11 +53,12 @@
 
 <%-- STEP 2: Create a weblog if you don't already have one --%>
 
+<s:if test="!bootstrap">
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">
             <s:text name="index.createWeblog"/>
-            <s:if test="blogCount > 0"> -
+            <s:if test="blogCount > 0 && !bootstrap"> -
                 <s:text name="index.createWeblogDone">
                     <s:param value="blogCount"/>
                 </s:text>
@@ -91,9 +92,10 @@
 
         <p><s:text name="index.setFrontpageHelp"/></p>
 
-        <s:if test="blogCount > 0">
+        <s:if test="blogCount > 0 && userIsAdmin && !frontpageConfigured">
 
-            <s:form action="setup!save" theme="bootstrap" cssClass="form-horizontal">
+            <s:form action="frontpageSetup!save" method="post"
+                    theme="bootstrap" cssClass="form-horizontal">
                 <s:hidden name="salt"/>
 
                 <s:select list="weblogs"
@@ -111,6 +113,9 @@
             </s:form>
 
         </s:if>
+        <s:elseif test="blogCount > 0 && !userIsAdmin && !frontpageConfigured">
+            <p><s:text name="index.setFrontpageAdminRequired"/></p>
+        </s:elseif>
     </div>
 </div>
-
+</s:if>

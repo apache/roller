@@ -59,6 +59,9 @@ class EntryEditEnclosureTest {
     void failedNewEntryValidationRestoresTheUnsavedStatus() {
         EntryEdit action = action();
         action.setActionName("entryAdd");
+        // myPrepare() creates this for a new entry; the test drives save()
+        // directly, so stand it up the same way.
+        action.setEntry(new WeblogEntry());
         action.getBean().setStatus(WeblogEntry.PubStatus.PUBLISHED.name());
         setEnclosure(action.getBean(), "file:///tmp/audio", "audio/ogg", "12");
 
