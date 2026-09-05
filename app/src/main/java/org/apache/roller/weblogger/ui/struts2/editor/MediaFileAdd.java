@@ -33,8 +33,10 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
+import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -173,23 +175,19 @@ public class MediaFileAdd extends MediaFileBase {
                         mediaFile.setLength(this.uploadedFiles[i].length());
                         mediaFile.setInputStream(new FileInputStream(
                                 this.uploadedFiles[i]));
-                        mediaFile
-                                .setContentType(this.uploadedFilesContentType[i]);
-
-                        // in some cases Struts2 is not able to guess the content
-                        // type correctly and assigns the default, which is
-                        // octet-stream. So in cases where we see octet-stream
-                        // we double check and see if we can guess the content
-                        // type via the Java MIME type facilities.
-                        mediaFile.setContentType(this.uploadedFilesContentType[i]);
-                        if (mediaFile.getContentType() == null
-                                || mediaFile.getContentType().endsWith("/octet-stream")) {
-
-                            String ctype = Utilities.getContentTypeFromFileName(mediaFile.getName());
-                            if (null != ctype) {
-                                mediaFile.setContentType(ctype);
-                            }
+                        // The type the browser put on the part describes what
+                        // the sender meant to send. It is taken as a hint and
+                        // the stored type is worked out from the file name.
+                        String declaredType = MediaTypePolicy.normalizeType(
+                                this.uploadedFilesContentType[i]);
+                        if (!WebloggerFactory.getWeblogger().getFileContentManager().canSave(
+                                getActionWeblog(), fileName, declaredType,
+                                this.uploadedFiles[i].length(), errors)) {
+                            continue;
                         }
+                        mediaFile.setContentType(MediaTypePolicy.storedTypeFor(
+                                mediaFile.getName(), declaredType,
+                                RollerContext.getServletContext()::getMimeType));
 
                         manager.createMediaFile(getActionWeblog(), mediaFile, errors);
                         WebloggerFactory.getWeblogger().flush();

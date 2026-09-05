@@ -95,6 +95,7 @@ public class RollerAtomHandler implements AtomHandler {
     protected User user = null;
     protected int maxEntries = 20;
     protected String atomURL = null;
+    private final HttpServletResponse response;
 
     protected static final boolean THROTTLE;
 
@@ -114,6 +115,7 @@ public class RollerAtomHandler implements AtomHandler {
      * then user's name, otherwise it will return null.
      */
     public RollerAtomHandler(HttpServletRequest request, HttpServletResponse response) {
+        this.response = response;
         roller = WebloggerFactory.getWeblogger();
 
         String userName;
@@ -256,7 +258,7 @@ public class RollerAtomHandler implements AtomHandler {
      */
     @Override
     public AtomMediaResource getMediaResource(AtomRequest areq) throws AtomException {
-        MediaCollection mcol = new MediaCollection(user, atomURL);
+        MediaCollection mcol = new MediaCollection(user, atomURL, response);
         return mcol.getMediaResource(areq);
     }
 
