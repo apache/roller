@@ -13,6 +13,9 @@
         <named-query name="WeblogCategory.getByWeblog&amp;Name">
             <query>SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 AND w.name = ?2</query>
         </named-query>
+        <named-query name="WeblogCategory.getByWeblog&amp;Id">
+            <query>SELECT w FROM WeblogCategory w WHERE w.weblog = ?1 AND w.id = ?2</query>
+        </named-query>
         <named-query name="WeblogCategory.removeByWeblog">
             <query>DELETE FROM WeblogCategory w WHERE w.weblog = ?1</query>
         </named-query>
