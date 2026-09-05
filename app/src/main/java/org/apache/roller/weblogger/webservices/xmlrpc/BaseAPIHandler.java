@@ -147,6 +147,12 @@ public class BaseAPIHandler implements Serializable {
      */
     protected User validateUser(String username, String password)
             throws Exception {
+        // Nothing below matters when the endpoint is switched off, so answer
+        // before looking anything up or checking a password.
+        if (!WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc")) {
+            throw new XmlRpcNotAuthorizedException(BLOGGERAPI_DISABLED_MSG);
+        }
+
         User user = null;
         boolean authenticated = false;
         try {
@@ -164,12 +170,11 @@ public class BaseAPIHandler implements Serializable {
             throw new XmlRpcNotAuthorizedException(AUTHORIZATION_EXCEPTION_MSG);
         }
 
+        // The account check stays behind the password check on purpose: a
+        // caller who has not proven the password should not be able to tell a
+        // disabled account from a wrong one.
         if (!Boolean.TRUE.equals(user.getEnabled())) {
             throw new XmlRpcNotAuthorizedException(USER_DISABLED_MSG);
-        }
-
-        if (!WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc")) {
-            throw new XmlRpcNotAuthorizedException(BLOGGERAPI_DISABLED_MSG);
         }
 
         return user;
