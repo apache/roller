@@ -95,8 +95,8 @@
                     <div class="row">
 
                         <div class="col-md-1">
-                            <input type="radio" name="enclosure"
-                                   onchange="setEnclosure('<s:property value="%{#newFile.permalink}"/>')"/>
+                            <input type="radio" name="enclosure" class="enclosure-choice"
+                                   data-enclosure-url="<s:property value="%{#newFile.permalink}"/>"/>
                         </div>
 
                         <div class="col-md-11">
@@ -200,6 +200,11 @@
         }
         return false;
     }
+
+    // Values come from data-* attributes and are bound via delegated listeners.
+    $(document).on('change', '.enclosure-choice', function () {
+        setEnclosure($(this).attr('data-enclosure-url'));
+    });
 
     function setEnclosure(url) {
         $("#enclosureURL").get(0).value = url;
