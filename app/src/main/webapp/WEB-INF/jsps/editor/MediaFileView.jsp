@@ -19,7 +19,7 @@
 
 <s:form id="createPostForm" action='entryAddWithMediaFile'>
     <s:hidden name="salt"/>
-    <input type="hidden" name="weblog" value='<s:property value="actionWeblog.handle" />'/>
+    <input type="hidden" name="weblog" value="<s:property value='actionWeblog.handle' />"/>
     <input type="hidden" name="selectedImage" id="selectedImage"/>
     <input type="hidden" name="type" id="type"/>
 </s:form>
@@ -169,25 +169,25 @@
                             <li class="align-images"
                                 onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
 
-                                <div class="mediaObject" onclick="onClickEdit(
-                                        '<s:property value="#mediaFile.id"/>',
-                                        '<s:property value="#mediaFile.name"/>' )">
+                                <div class="mediaObject mediafile-edit-target"
+                                     data-mediafile-id="<s:property value="#mediaFile.id"/>"
+                                     data-mediafile-name="<s:property value="#mediaFile.name"/>">
 
                                     <s:if test="#mediaFile.imageFile">
-                                        <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
-                                             width='<s:property value="#mediaFile.thumbnailWidth" />'
-                                             height='<s:property value="#mediaFile.thumbnailHeight" />'
-                                             title='<s:property value="#mediaFile.name" />'
-                                             alt='<s:property value="#mediaFile.name" />'
-                                            <%-- onclick="onClickEdit('<s:property value="#mediaFile.id"/>')" --%> />
+                                        <img border="0" src="<s:property value='%{#mediaFile.thumbnailURL}' />"
+                                             width="<s:property value='#mediaFile.thumbnailWidth' />"
+                                             height="<s:property value='#mediaFile.thumbnailHeight' />"
+                                             title="<s:property value='#mediaFile.name' />"
+                                             alt="<s:property value='#mediaFile.name' />"
+                                            />
                                     </s:if>
 
                                     <s:else>
                                         <s:url var="mediaFileURL" value="/images/page.png"/>
-                                        <img border="0" src='<s:property value="%{mediaFileURL}" />'
+                                        <img border="0" src="<s:property value='%{mediaFileURL}' />"
                                              style="padding:40px 50px;"
-                                             alt='<s:property value="#mediaFile.name"/>'
-                                            <%-- onclick="onClickEdit('<s:property value="#mediaFile.id"/>')" --%> />
+                                             alt="<s:property value='#mediaFile.name'/>"
+                                            />
                                     </s:else>
 
                                 </div>
@@ -223,22 +223,22 @@
                             <li class="align-images"
                                 onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
 
-                                <div class="mediaObject" onclick="onClickEdit(
-                                        '<s:property value="#mediaFile.id"/>',
-                                        '<s:property value="#mediaFile.name"/>' )">
+                                <div class="mediaObject mediafile-edit-target"
+                                     data-mediafile-id="<s:property value="#mediaFile.id"/>"
+                                     data-mediafile-name="<s:property value="#mediaFile.name"/>">
 
                                     <s:if test="#mediaFile.imageFile">
-                                        <img border="0" src='<s:property value="%{#mediaFile.thumbnailURL}" />'
-                                             width='<s:property value="#mediaFile.thumbnailWidth"/>'
-                                             height='<s:property value="#mediaFile.thumbnailHeight"/>'
-                                             title='<s:property value="#mediaFile.name" />'
-                                             alt='<s:property value="#mediaFile.name"/>'/>
+                                        <img border="0" src="<s:property value='%{#mediaFile.thumbnailURL}' />"
+                                             width="<s:property value='#mediaFile.thumbnailWidth'/>"
+                                             height="<s:property value='#mediaFile.thumbnailHeight'/>"
+                                             title="<s:property value='#mediaFile.name' />"
+                                             alt="<s:property value='#mediaFile.name'/>"/>
                                     </s:if>
 
                                     <s:else>
                                         <s:url var="mediaFileURL" value="/images/page.png"/>
-                                        <img border="0" src='<s:property value="%{mediaFileURL}" />'
-                                             style="padding:40px 50px;" alt='<s:property value="#mediaFile.name"/>'/>
+                                        <img border="0" src="<s:property value='%{mediaFileURL}' />"
+                                             style="padding:40px 50px;" alt="<s:property value='#mediaFile.name'/>"/>
                                     </s:else>
 
                                 </div>
@@ -348,10 +348,16 @@
         <s:url var="mediaFileEditURL" action="mediaFileEdit">
         <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
-        $('#edit-subtitle').html(mediaFileName);
+        $('#edit-subtitle').text(mediaFileName);
         $('#mediaFileEditor').attr('src', '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
         $('#mediafile_edit_lightbox').modal({show: true});
     }
+
+    // Values come from data-* attributes and are bound via delegated listeners.
+    $(document).on('click', '.mediafile-edit-target', function () {
+        onClickEdit($(this).attr('data-mediafile-id'),
+                $(this).attr('data-mediafile-name'));
+    });
 
     function onEditSuccess() {
         onEditCancelled();

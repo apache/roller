@@ -115,7 +115,7 @@
     function previewImage(themeId) {
         $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themedata",
             data: {theme:themeId}, success: function(data) {
-                $('#themedescription').html(data.description);
+                $('#themedescription').text(data.description);
                 $('#themeThumbnail').attr('src','<s:property value="siteURL" />' + data.previewPath);
             }
         });

@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -201,6 +202,14 @@ public class UtilitiesModel implements Model {
     
     public String left(String str, int length) {
         return StringUtils.left(str, length);
+    }
+
+    /**
+     * Upper-case a value using a locale-independent mapping for templates
+     * that validate protocol or identifier keys.
+     */
+    public String toUpperCase(String str) {
+        return str == null ? null : str.toUpperCase(Locale.ROOT);
     }
     
     public String escapeHTML(String str) {
