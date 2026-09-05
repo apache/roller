@@ -37,6 +37,8 @@
                          class="org.apache.roller.weblogger.ui.struts2.util.UISecurityInterceptor" />
             <interceptor name="UIActionPrepareInterceptor" 
                          class="org.apache.roller.weblogger.ui.struts2.util.UIActionPrepareInterceptor" />
+            <interceptor name="ValidateSaltInterceptor"
+                         class="org.apache.roller.weblogger.ui.struts2.util.ValidateSaltInterceptor" />
                          
             <!-- Define a custom interceptor stack for Roller so that we can 
                  add in our own custom interceptors.  We basically copy the 
@@ -45,6 +47,7 @@
                  default stack -->
             <interceptor-stack name="rollerStack">
                 <interceptor-ref name="exception"/>
+                <interceptor-ref name="ValidateSaltInterceptor"/>
                 <!-- <interceptor-ref name="alias"/> -->
                 <interceptor-ref name="servletConfig"/>
                 <!-- <interceptor-ref name="prepare"/> -->
@@ -112,7 +115,14 @@
                 class="org.apache.roller.weblogger.ui.struts2.core.Setup">
             <result name="success" type="tiles">.Setup</result>
             <result name="home" type="redirectAction">home</result>
-            <allowed-methods>activate,execute,save</allowed-methods>
+            <allowed-methods>execute</allowed-methods>
+        </action>
+
+        <action name="frontpageSetup"
+                class="org.apache.roller.weblogger.ui.struts2.core.FrontpageSetup">
+            <result name="input" type="tiles">.Setup</result>
+            <result name="home" type="redirectAction">home</result>
+            <allowed-methods>save</allowed-methods>
         </action>
                         
         <action name="login"
@@ -340,12 +350,14 @@
 	    <action name="mediaFileImageDim"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileImageDim">
             <result name="success" type="tiles">.MediaFileImageDimension</result>
+            <result name="error" type="chain">mediaFileView</result>
             <allowed-methods>execute</allowed-methods>
         </action>
 
         <action name="entryAddWithMediaFile"
                 class="org.apache.roller.weblogger.ui.struts2.editor.EntryAddWithMediaFile">
             <result name="success" type="chain">entryAdd</result>
+            <result name="error" type="chain">mediaFileView</result>
             <allowed-methods>execute</allowed-methods>
         </action>
 
@@ -359,7 +371,7 @@
                 <param name="weblog">${weblog}</param>
                 <param name="bean.id">${bean.id}</param>
             </result>
-            <allowed-methods>execute,firstSave,publish,saveDraft,trackback</allowed-methods>
+            <allowed-methods>execute,firstSave,publish,saveDraft</allowed-methods>
         </action>
 
         <action name="entryEdit"
@@ -371,7 +383,7 @@
                 <param name="actionName">menu</param>
                 <param name="namespace">/roller-ui</param>
             </result>
-            <allowed-methods>execute,firstSave,publish,saveDraft,trackback</allowed-methods>
+            <allowed-methods>execute,firstSave,publish,saveDraft</allowed-methods>
         </action>
         
         <action name="entryRemove"

@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -116,7 +117,8 @@ public class MediaResourceServlet extends HttpServlet {
 
         // set the content type based on whatever is in our web.xml mime defs
         if (resourceRequest.isThumbnail()) {
-            response.setContentType("image/png");
+            MediaTypePolicy.applyResponseHeaders(response, "image/png",
+                    mediaFile.getName());
             try {
                 resourceStream = mediaFile.getThumbnailInputStream();
             } catch (Exception e) {
@@ -131,7 +133,8 @@ public class MediaResourceServlet extends HttpServlet {
         }
 
         if (resourceStream == null) {
-            response.setContentType(mediaFile.getContentType());
+            MediaTypePolicy.applyResponseHeaders(response,
+                    mediaFile.getContentType(), mediaFile.getName());
             resourceStream = mediaFile.getInputStream();
         }
 

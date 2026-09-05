@@ -22,6 +22,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import org.apache.roller.weblogger.pojos.MediaFile;
@@ -159,12 +160,57 @@ public class WeblogCustomTheme extends WeblogTheme {
         try {
             MediaFileManager mmgr =
                 WebloggerFactory.getWeblogger().getMediaFileManager();
-            MediaFile mf = mmgr.getMediaFileByOriginalPath(
-                this.weblog, path);
+            MediaFile mediaFile = mmgr.getMediaFileByOriginalPath(this.weblog, path);
+            if (mediaFile != null) {
+                resource = new MediaFileThemeResource(mediaFile);
+            }
         } catch (WebloggerException ex) {
             // ignored, resource considered not found
         }
         return resource;
+    }
+
+    private static final class MediaFileThemeResource implements ThemeResource {
+        private final MediaFile mediaFile;
+
+        private MediaFileThemeResource(MediaFile mediaFile) {
+            this.mediaFile = mediaFile;
+        }
+
+        @Override
+        public String getName() {
+            return mediaFile.getName();
+        }
+
+        @Override
+        public String getPath() {
+            return mediaFile.getOriginalPath();
+        }
+
+        @Override
+        public long getLastModified() {
+            return mediaFile.getLastModified();
+        }
+
+        @Override
+        public long getLength() {
+            return mediaFile.getLength();
+        }
+
+        @Override
+        public InputStream getInputStream() {
+            return mediaFile.getInputStream();
+        }
+
+        @Override
+        public boolean isDirectory() {
+            return false;
+        }
+
+        @Override
+        public int compareTo(ThemeResource other) {
+            return getPath().compareTo(other.getPath());
+        }
     }
     
 }

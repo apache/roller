@@ -19,7 +19,9 @@ package org.apache.roller.selenium.core;
 
 import org.apache.roller.selenium.AbstractRollerPage;
 import org.apache.roller.selenium.view.BlogHomePage;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.Select;
 
 /**
  * represents core/Setup.jsp
@@ -40,9 +42,12 @@ public class SetupPage extends AbstractRollerPage {
         return new RegisterPage(driver);
     }
 
-    public BlogHomePage chooseFrontPageBlog() {
-        verifyPageTitle("setup_0", "Front Page: Welcome to Roller!");
-        clickById("setup_0");
+    public BlogHomePage chooseFrontPageBlog(String handle) {
+        verifyPageTitle("Front Page: Welcome to Roller!");
+        Select chooser = new Select(driver.findElement(By.name("frontpageBlog")));
+        chooser.selectByValue(handle);
+        driver.findElement(By.cssSelector(
+                "form[action*='frontpageSetup'] input[type='submit']")).click();
         return new BlogHomePage(driver);
     }
 }

@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.FrontpageSettings;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -37,6 +38,9 @@ import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
+import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache;
+import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.dispatcher.HttpParameters;
@@ -156,6 +160,9 @@ public class GlobalConfig extends UIAction implements HttpParametersAware, Servl
             return ERROR;
         }
 
+        String oldFrontpageHandle = propertyValue(FrontpageSettings.HANDLE_PROPERTY);
+        String oldFrontpageAggregated = propertyValue(FrontpageSettings.AGGREGATED_PROPERTY);
+
         // only set values for properties that are already defined
         RuntimeConfigProperty updProp;
         String incomingProp;
@@ -209,6 +216,23 @@ public class GlobalConfig extends UIAction implements HttpParametersAware, Servl
                         Arrays.asList(propDesc, propName));
                 }
 
+            } else if ( FrontpageSettings.HANDLE_PROPERTY.equals(propertyDef.getName())
+                    && incomingProp != null ) {
+                // Declared as a plain string, but it names a weblog, so it
+                // is resolved through the same service as the setup path. The
+                // stored value is always a weblog that exists and is enabled.
+                try {
+                    Weblog weblog = FrontpageSettings.resolveWeblog(incomingProp);
+                    if (weblog == null) {
+                        addError("frontpageConfig.invalidWeblog");
+                    } else {
+                        updProp.setValue(weblog.getHandle());
+                    }
+                } catch (WebloggerException ex) {
+                    log.error("Error resolving frontpage weblog", ex);
+                    addError("frontpageConfig.values.error");
+                }
+
             } else if ( incomingProp != null ){
                 updProp.setValue( incomingProp.trim() );
                 log.debug("Set something " + propName + " = " + incomingProp);
@@ -240,6 +264,12 @@ public class GlobalConfig extends UIAction implements HttpParametersAware, Servl
             mgr.saveProperties(getProperties());
             WebloggerFactory.getWeblogger().flush();
 
+            if (!Objects.equals(oldFrontpageHandle, propertyValue(FrontpageSettings.HANDLE_PROPERTY))
+                    || !Objects.equals(oldFrontpageAggregated,
+                            propertyValue(FrontpageSettings.AGGREGATED_PROPERTY))) {
+                invalidateRenderedContent();
+            }
+
             // notify user of our success
             addMessage("generic.changes.saved");
 
@@ -249,6 +279,17 @@ public class GlobalConfig extends UIAction implements HttpParametersAware, Servl
         }
 
         return SUCCESS;
+    }
+
+    private String propertyValue(String name) {
+        RuntimeConfigProperty property = getProperties().get(name);
+        return property == null ? null : property.getValue();
+    }
+
+    private void invalidateRenderedContent() {
+        SiteWideCache.getInstance().clear();
+        WeblogPageCache.getInstance().clear();
+        WeblogFeedCache.getInstance().clear();
     }
 
 

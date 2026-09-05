@@ -98,7 +98,8 @@ public class CommentDataServlet extends HttpServlet {
             WeblogEntryManager wmgr = roller.getWeblogEntryManager();
             WeblogEntryComment c = wmgr.getComment(request.getParameter("id"));
             if (c == null) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                writeSaveResponse(request, response,
+                        HttpServletResponse.SC_NOT_FOUND, null, null);
             } else {
                 // need post permission to edit comments
                 RollerSession rses = RollerSession.getRollerSession(request);
@@ -114,17 +115,11 @@ public class CommentDataServlet extends HttpServlet {
                     c = wmgr.getComment(request.getParameter("id"));
                     content = Utilities.escapeHTML(c.getContent());
                     content = WordUtils.wrap(content, 72);
-                    content = StringEscapeUtils.escapeEcmaScript(content);
-                    String json = "{ id: \"" + c.getId() + "\"," + "content: \"" + content + "\" }";
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    response.setContentType("text/html; charset=utf-8");
-                    response.getWriter().print(json);
-                    response.flushBuffer();
-                    response.getWriter().flush();
-                    response.getWriter().close();
-                    response.setStatus(HttpServletResponse.SC_OK);
+                    writeSaveResponse(request, response,
+                            HttpServletResponse.SC_OK, c.getId(), content);
                 } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    writeSaveResponse(request, response,
+                            HttpServletResponse.SC_FORBIDDEN, null, null);
                 }
             }
 
@@ -139,5 +134,33 @@ public class CommentDataServlet extends HttpServlet {
             throws ServletException, IOException {
         // not all browsers support PUT
         doPut(request, response);
+    }
+
+    private void writeSaveResponse(HttpServletRequest request,
+            HttpServletResponse response, int status, String id, String content)
+            throws IOException {
+        String salt = request.getAttribute("salt") != null
+                ? request.getAttribute("salt").toString() : "";
+        StringBuilder json = new StringBuilder("{");
+        if (id != null) {
+            json.append("\"id\":\"")
+                    .append(StringEscapeUtils.escapeJson(id))
+                    .append("\",");
+        }
+        if (content != null) {
+            json.append("\"content\":\"")
+                    .append(StringEscapeUtils.escapeJson(content))
+                    .append("\",");
+        }
+        json.append("\"salt\":\"")
+                .append(StringEscapeUtils.escapeJson(salt))
+                .append("\"}");
+
+        response.setStatus(status);
+        response.setContentType("application/json; charset=utf-8");
+        response.getWriter().print(json.toString());
+        response.flushBuffer();
+        response.getWriter().flush();
+        response.getWriter().close();
     }
 }

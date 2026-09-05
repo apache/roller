@@ -77,6 +77,9 @@ public class Comments extends UIAction {
     // entry associated with comments or null if none
     private WeblogEntry queryEntry = null;
 
+    // distinguishes an unresolved submitted id from an intentionally empty filter
+    private boolean queryEntryMissing = false;
+
     // indicates number of comments that would be deleted by bulk removal
     // a non-zero value here indicates bulk removal is a valid option
     private int bulkDeleteCount = 0;
@@ -100,9 +103,10 @@ public class Comments extends UIAction {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
                     .getWeblogEntryManager();
 
-            // lookup weblog entry if necessary
-            if (!StringUtils.isEmpty(getBean().getEntryId())) {
-                setQueryEntry(wmgr.getWeblogEntry(getBean().getEntryId()));
+            if (!resolveQueryEntry(wmgr)) {
+                setPager(new CommentsPager(buildBaseUrl(), getBean().getPage(),
+                        comments, false));
+                return;
             }
 
             CommentSearchCriteria csc = getCommentSearchCriteria();
@@ -182,6 +186,10 @@ public class Comments extends UIAction {
         // load bean data using comments list
         getBean().loadCheckboxes(getPager().getItems());
 
+        if (queryEntryMissing) {
+            return LIST;
+        }
+
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
@@ -221,6 +229,10 @@ public class Comments extends UIAction {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
+            if (!resolveQueryEntry(wmgr)) {
+                return execute();
+            }
+
             // if search is enabled, we will need to re-index all entries with
             // comments that have been deleted, so build a list of those entries
             Set<WeblogEntry> reindexEntries = new HashSet<>();
@@ -234,7 +246,7 @@ public class Comments extends UIAction {
                 }
             }
 
-            int deleted = wmgr.removeMatchingComments(getActionWeblog(), null,
+            int deleted = wmgr.removeMatchingComments(getActionWeblog(), getQueryEntry(),
                     getBean().getSearchString(), getBean().getStartDate(),
                     getBean().getEndDate(), getBean().getStatus());
 
@@ -262,6 +274,28 @@ public class Comments extends UIAction {
         return LIST;
     }
 
+    private boolean resolveQueryEntry(WeblogEntryManager wmgr)
+            throws WebloggerException {
+        if (StringUtils.isEmpty(getBean().getEntryId())) {
+            queryEntryMissing = false;
+            setQueryEntry(null);
+            return true;
+        }
+        if (queryEntryMissing) {
+            return false;
+        }
+        if (getQueryEntry() == null) {
+            setQueryEntry(wmgr.getWeblogEntry(
+                    getActionWeblog(), getBean().getEntryId()));
+        }
+        if (getQueryEntry() == null) {
+            queryEntryMissing = true;
+            addError("weblogEntry.notFound");
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Update a list of comments.
      */
@@ -284,11 +318,11 @@ public class Comments extends UIAction {
 
                 WeblogEntryComment deleteComment = null;
                 for (String deleteId : deletes) {
-                    deleteComment = wmgr.getComment(deleteId);
+                    deleteComment = wmgr.getComment(getActionWeblog(), deleteId);
 
-                    // make sure comment is tied to action weblog
-                    if (getActionWeblog().equals(
-                            deleteComment.getWeblogEntry().getWebsite())) {
+                    // scoped lookup yields null for ids that do not belong to
+                    // the action weblog, and for ids that do not exist at all
+                    if (deleteComment != null) {
                         flushList.add(deleteComment);
                         reindexList.add(deleteComment.getWeblogEntry());
                         wmgr.removeComment(deleteComment);
@@ -315,11 +349,11 @@ public class Comments extends UIAction {
                     continue;
                 }
 
-                WeblogEntryComment comment = wmgr.getComment(ids[i]);
+                WeblogEntryComment comment = wmgr.getComment(getActionWeblog(), ids[i]);
 
-                // make sure comment is tied to action weblog
-                if (getActionWeblog().equals(
-                        comment.getWeblogEntry().getWebsite())) {
+                // scoped lookup yields null for ids that do not belong to the
+                // action weblog, and for ids that do not exist at all
+                if (comment != null) {
                     // comment approvals and mark/unmark spam
                     if (approvedIds.contains(ids[i])) {
                         // if a comment was previously PENDING then this is

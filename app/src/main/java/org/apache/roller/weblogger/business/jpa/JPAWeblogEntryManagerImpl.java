@@ -762,7 +762,82 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public WeblogEntry getWeblogEntry(String id) throws WebloggerException {
         return (WeblogEntry)strategy.load(WeblogEntry.class, id);
     }
-    
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public WeblogEntry getWeblogEntry(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        if (id == null) {
+            return null;
+        }
+
+        TypedQuery<WeblogEntry> q = strategy.getNamedQuery(
+                "WeblogEntry.getByWebsite&Id", WeblogEntry.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public WeblogCategory getWeblogCategory(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        if (id == null) {
+            return null;
+        }
+
+        TypedQuery<WeblogCategory> q = strategy.getNamedQuery(
+                "WeblogCategory.getByWeblog&Id", WeblogCategory.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public WeblogEntryComment getComment(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        if (id == null) {
+            return null;
+        }
+
+        TypedQuery<WeblogEntryComment> q = strategy.getNamedQuery(
+                "WeblogEntryComment.getByWebsite&Id", WeblogEntryComment.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
     /**
      * @inheritDoc
      */

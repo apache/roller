@@ -28,11 +28,16 @@ import javax.servlet.http.HttpServletResponse;
 import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthMessage;
+import net.oauth.OAuthProblemException;
 import net.oauth.server.OAuthServlet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.filters.SaltValidator;
+import org.springframework.security.web.savedrequest.SimpleSavedRequest;
 
 /**
  * Authorization request handler.
@@ -42,7 +47,14 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
  */
 public class AuthorizationServlet extends HttpServlet {
     protected static final Log log = LogFactory.getFactory().getInstance(AuthorizationServlet.class);
-    
+
+    /**
+     * One response for every refusal, so the endpoint reveals nothing about
+     * tokens the caller does not hold.
+     */
+    private static final String PERMISSION_DENIED = "permission_denied";
+
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -53,13 +65,30 @@ public class AuthorizationServlet extends HttpServlet {
             OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
             OAuthAccessor accessor = omgr.getAccessor(requestMessage);
            
+            if (accessor == null || accessor.consumer == null
+                    || accessor.requestToken == null) {
+                denyPermission(response);
+                return;
+            }
+
             if (Boolean.TRUE.equals(accessor.getProperty("authorized"))) {
                 // already authorized send the user back
                 returnToConsumer(request, response, accessor);
             } else {
+                User user = getAuthenticatedUser(request);
+                if (user == null) {
+                    sendToLogin(request, response, accessor);
+                    return;
+                }
+                if (!Boolean.TRUE.equals(user.getEnabled())) {
+                    denyPermission(response);
+                    return;
+                }
                 sendToAuthorizePage(request, response, accessor);
             }
-        
+
+        } catch (OAuthProblemException e) {
+            denyPermission(response);
         } catch (Exception e){
             handleException(e, request, response, true);
         }
@@ -71,40 +100,120 @@ public class AuthorizationServlet extends HttpServlet {
         
         try{
             OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
-            
+
             OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
             OAuthAccessor accessor = omgr.getAccessor(requestMessage);
-
-            String userId = request.getParameter("userId");
-            if (userId == null) {
-                userId = request.getParameter("xoauth_requestor_id");
+            if (accessor == null || accessor.consumer == null || accessor.requestToken == null) {
+                denyPermission(response);
+                return;
             }
-            
-            if (userId == null) {
-                // no user associted with the key, must be site-wide key,
-                // so get user to login and do the authorization process
+
+            // The approving identity comes from the browser session, consistent
+            // with the rest of the UI. Without a session there is nobody to
+            // approve on behalf of, so send the caller through the login flow.
+            User user = getAuthenticatedUser(request);
+            if (user == null) {
+                sendToLogin(request, response, accessor);
+                return;
+            }
+            if (!Boolean.TRUE.equals(user.getEnabled())) {
+                denyPermission(response);
+                return;
+            }
+            String userId = user.getUserName();
+
+            // A consumer key bound to one user may only be approved by that
+            // user. A site-wide key has no bound user and is approved as
+            // whoever is logged in.
+            String consumerUserId = (String)accessor.consumer.getProperty("userId");
+            if (consumerUserId != null && !consumerUserId.equals(userId)) {
+                denyPermission(response);
+                return;
+            }
+
+            // Older clients still post the identity; accept it only when it
+            // agrees with the session.
+            String submittedUserId = request.getParameter("userId");
+            if (submittedUserId == null) {
+                submittedUserId = request.getParameter("xoauth_requestor_id");
+            }
+            if (submittedUserId != null && !submittedUserId.equals(userId)) {
+                denyPermission(response);
+                return;
+            }
+
+            // A stale or already-used consent form is safe to show again. The
+            // forward passes through LoadSaltFilter and receives a fresh salt.
+            if (!hasValidSalt(request)) {
                 sendToAuthorizePage(request, response, accessor);
-            
-            } else {
-
-                // if consumer key is for specific user, check username match
-                String consumerUserId = (String)accessor.consumer.getProperty("userId");
-                if (consumerUserId != null && !userId.equals(consumerUserId)) {
-                    throw new ServletException("ERROR: invalid or unspecified userId");
-                }
-
-                // set userId in accessor and mark it as authorized
-                omgr.markAsAuthorized(accessor, userId);
-                WebloggerFactory.getWeblogger().flush();
+                return;
             }
-            
+
+            // Claim the pending request token in one conditional statement, so
+            // approval is one-shot. A token that is missing, belongs to another
+            // consumer, or has already been approved or exchanged all produce
+            // the same answer here and the same response below.
+            if (!omgr.authorizeRequestToken(
+                    accessor.consumer.consumerKey, accessor.requestToken, userId)) {
+                denyPermission(response);
+                return;
+            }
+            WebloggerFactory.getWeblogger().flush();
+
+            accessor.setProperty("userId", userId);
+            accessor.setProperty("authorized", Boolean.TRUE);
+
             returnToConsumer(request, response, accessor);
-            
+
+        } catch (OAuthProblemException e) {
+            denyPermission(response);
         } catch (Exception e){
             handleException(e, request, response, true);
         }
     }
-    
+
+    /**
+     * The Roller user behind this request's session, or null if there is none.
+     */
+    private User getAuthenticatedUser(HttpServletRequest request) {
+        RollerSession rollerSession = RollerSession.getRollerSession(request);
+        return rollerSession == null ? null : rollerSession.getAuthenticatedUser();
+    }
+
+    boolean hasValidSalt(HttpServletRequest request) {
+        return SaltValidator.consumeSubmittedSalt(request);
+    }
+
+    private void sendToLogin(HttpServletRequest request,
+            HttpServletResponse response, OAuthAccessor accessor) throws IOException {
+        String resume = OAuth.addParameters(request.getRequestURL().toString(),
+                "oauth_token", accessor.requestToken);
+        String callback = request.getParameter("oauth_callback");
+        if (callback != null) {
+            resume = OAuth.addParameters(resume, "oauth_callback", callback);
+        }
+
+        SimpleSavedRequest savedRequest = new SimpleSavedRequest(resume);
+        savedRequest.setMethod("GET");
+        request.getSession(true).setAttribute(
+                "SPRING_SECURITY_SAVED_REQUEST", savedRequest);
+        response.sendRedirect(request.getContextPath() + "/roller-ui/login.rol");
+    }
+
+    /**
+     * Refuse the approval, in the OAuth problem-reporting form and with the
+     * same body for every reason. Written directly rather than thrown so the
+     * response does not vary with how the library happens to render a given
+     * exception.
+     */
+    private void denyPermission(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setContentType("text/plain");
+        try (PrintWriter out = response.getWriter()) {
+            out.println("oauth_problem=" + PERMISSION_DENIED);
+        }
+    }
+
     private void sendToAuthorizePage(HttpServletRequest request, 
             HttpServletResponse response, OAuthAccessor accessor)
     throws IOException, ServletException{
