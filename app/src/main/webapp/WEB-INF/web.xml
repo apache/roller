@@ -95,12 +95,11 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
-    <!-- Ip Banning is mapped for comment and trackbacks only.
+    <!-- Ip Banning is mapped for comments only.
     Note: this filter does nothing if an ip ban list is not configured. -->
     <filter-mapping>
         <filter-name>IPBanFilter</filter-name>
         <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
-        <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     
@@ -226,12 +225,6 @@
     <servlet>
         <servlet-name>CommentServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.CommentServlet</servlet-class>
-        <load-on-startup>7</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>TrackbackServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.TrackbackServlet</servlet-class>
         <load-on-startup>7</load-on-startup>
     </servlet>
 
@@ -366,11 +359,6 @@
     <servlet-mapping>
         <servlet-name>CommentServlet</servlet-name>
         <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>TrackbackServlet</servlet-name>
-        <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

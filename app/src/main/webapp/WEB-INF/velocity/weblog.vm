@@ -22,7 +22,6 @@ These are the documented macros in order defined in this file:
 
     #includeTemplate($weblog $pageName)
     #showAutodiscoveryLinks($weblog)
-    #showTrackbackAutodiscovery($entry)
     #showMetaDescription()
     #showAnalyticsTrackingCode($weblog)
 
@@ -115,28 +114,11 @@ Show RSS, Atom and RSD auto-discovery links as HTML link elements.
 
 
 #**
- * Display a trackback auto-discovery RDF comment for a WeblogEntry, but only
- * if trackbacks are enabled and comments are allowed for the entry.
- **#
-#macro( showTrackbackAutodiscovery $entry )
-#if($config.trackbacksEnabled && $model.weblog.allowComments && $entry.commentsStillAllowed)
-<!--
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/"
-         xmlns:dc="http://purl.org/dc/elements/1.1/">
-<rdf:Description
-    rdf:about="$url.entry($entry.anchor)"
-    trackback:ping="$url.trackback($entry.anchor)"
-    dc:title="$entry.title"
-    dc:identifier="$url.entry($entry.anchor)"
-    dc:subject="$entry.category.name"
-    dc:description="$entry.title"
-    dc:creator="$entry.creator.userName"
-    dc:date="$entry.pubTime" />
-</rdf:RDF>
--->
+Deprecated no-op retained temporarily for custom template compatibility.
+*#
+#macro(showTrackbackAutodiscovery $entry)
 #end
-#end
+
 
 #**
 Adds a meta description tag, suitable for use in HTML header sections.  This tag is frequently used by
@@ -1039,7 +1021,5 @@ Include Javascript code needed for expanding folder macros (undocumented).
 
 </script>
 #end
-
-
 
 

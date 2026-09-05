@@ -27,7 +27,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 /**
- * Checks comment, trackbacks and referrers for spam.
+ * Checks comments and referrers for spam.
  * @author Lance Lavandowska
  * @author Dave Johnson
  */
@@ -49,17 +49,6 @@ public final class BannedwordslistChecker {
         return false;
     }
     
-    /** 
-     * Test trackback comment, applying all bannedwordslists, if configured
-     * @return True if comment matches bannedwordslist term
-     */
-    public static boolean checkTrackback(WeblogEntryComment comment) {
-        if (WebloggerConfig.getBooleanProperty("site.bannedwordslist.enable.trackbacks")) {
-            return testComment(comment);
-        }
-        return false;
-    }
-
     /** 
      * Test referrer URL, applying bannedwordslist and website bannedwordslist only if configured
      * @return True if comment matches bannedwordslist term
@@ -101,4 +90,3 @@ public final class BannedwordslistChecker {
         return ret;
     }        
 }
-
