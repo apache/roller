@@ -25,6 +25,8 @@
     <s:hidden name="salt"/>
     <s:hidden name="weblog"/>
     <s:hidden name="bean.enclosureURL" id="enclosureURL"/>
+    <s:hidden name="bean.enclosureType" id="enclosureType"/>
+    <s:hidden name="bean.enclosureLength" id="enclosureLength"/>
 
     <s:if test="newImages.size() > 0">
         <h4><s:text name="mediaFileSuccess.selectImagesTitle"/></h4>
@@ -96,7 +98,9 @@
 
                         <div class="col-md-1">
                             <input type="radio" name="enclosure" class="enclosure-choice"
-                                   data-enclosure-url="<s:property value="%{#newFile.permalink}"/>"/>
+                                   data-enclosure-url="<s:property value="%{#newFile.permalink}"/>"
+                                   data-enclosure-type="<s:property value="%{#newFile.contentType}"/>"
+                                   data-enclosure-length="<s:property value="%{#newFile.length}"/>"/>
                         </div>
 
                         <div class="col-md-11">
@@ -132,7 +136,9 @@
                 <div class="row">
 
                     <div class="col-md-1">
-                        <input type="radio" name="enclosure" onchange="setEnclosure('')" />
+                        <input type="radio" name="enclosure"
+                               data-enclosure-url="" data-enclosure-type=""
+                               data-enclosure-length="" />
                     </div>
 
                     <div class="col-md-10">
@@ -203,11 +209,16 @@
 
     // Values come from data-* attributes and are bound via delegated listeners.
     $(document).on('change', '.enclosure-choice', function () {
-        setEnclosure($(this).attr('data-enclosure-url'));
+        var selected = $(this);
+        setEnclosure(selected.attr("data-enclosure-url") || "",
+                     selected.attr("data-enclosure-type") || "",
+                     selected.attr("data-enclosure-length") || "");
     });
 
-    function setEnclosure(url) {
+    function setEnclosure(url, type, length) {
         $("#enclosureURL").get(0).value = url;
+        $("#enclosureType").get(0).value = type;
+        $("#enclosureLength").get(0).value = length;
         if (isImageChecked()) {
             $("#submit").attr("disabled", false);
             return;
