@@ -25,6 +25,7 @@ import java.util.Objects;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
 
@@ -53,12 +54,13 @@ public final class SaltValidator {
             return true;
         }
 
-        String userId = rollerSession.getAuthenticatedUser() != null
-                ? rollerSession.getAuthenticatedUser().getId() : "";
         String salt = request.getParameter("salt");
         if (salt == null) {
             return false;
         }
+
+        User authenticatedUser = rollerSession.getAuthenticatedUser();
+        String userId = authenticatedUser != null ? authenticatedUser.getId() : "";
 
         SaltCache saltCache = SaltCache.getInstance();
         synchronized (saltCache) {
