@@ -32,8 +32,10 @@
 			<includes>
 				<include>app/**</include>
 				<include>assembly-release/**</include>
+				<include>db-utils/**</include>
 				<include>docs/**</include>
 				<include>it-selenium/**</include>
+				<include>CHANGES.md</include>
 				<include>LICENSE.txt</include>
 				<include>NOTICE.txt</include>
 				<include>pom.xml</include>
