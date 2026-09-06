@@ -32,14 +32,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '11', '17', '21', '23' ]
+        java: [ '11', '17', '21', '25' ]
 
     steps:
       - name: Set up JDK ${{ matrix.java }} 
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
-          java-version: ${{ matrix.java }} 
+          java-version: ${{ matrix.java }}
           distribution: 'zulu'
+          # remove after build warning count is reduced
+          problem-matcher: false
 
       - name: Setup Xvfb
         run: |
@@ -47,7 +49,7 @@ jobs:
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
       - name: Checkout Project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
           submodules: false
@@ -66,6 +68,8 @@ jobs:
         if: always()
         with:
           paths: "app/target/surefire-reports/TEST-*.xml"
+          show: all
+          folded: true
 
       - name: Publish IT Report
         uses: test-summary/action@v2
@@ -76,7 +80,7 @@ jobs:
       # only on integration and only once in this matrix
       - name: Upload Dev Build on Integration
         if: ${{ (matrix.java == '11') && (github.event_name == 'push') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dev-build
           path: ./app/target/roller.war

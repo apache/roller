@@ -18,7 +18,8 @@
 package org.apache.roller.selenium;
 
 import java.awt.GraphicsEnvironment;
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import org.apache.roller.selenium.core.CreateWeblogPage;
 import org.apache.roller.selenium.core.LoginPage;
 import org.apache.roller.selenium.core.MainMenuPage;
@@ -48,7 +49,7 @@ public class InitialLoginTestIT {
     private WebDriver driver;
     private String baseUrl;
     private boolean acceptNextAlert = true;
-    private StringBuffer verificationErrors = new StringBuffer();
+    private final StringBuffer verificationErrors = new StringBuffer();
 
     @Before
     public void setUp() throws Exception {
@@ -62,9 +63,9 @@ public class InitialLoginTestIT {
         options.setProfile(profile);
         
         driver = new FirefoxDriver(options);
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS)
-                                  .pageLoadTimeout(5, TimeUnit.SECONDS)
-                                  .setScriptTimeout(5, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(Duration.of(5, ChronoUnit.SECONDS))
+                                  .pageLoadTimeout(Duration.of(5, ChronoUnit.SECONDS))
+                                  .scriptTimeout(Duration.of(5, ChronoUnit.SECONDS));
         baseUrl = "http://localhost:8080/roller/";
     }
 
@@ -109,6 +110,7 @@ public class InitialLoginTestIT {
         if (!"".equals(verificationErrorString)) {
             fail(verificationErrorString);
         }
+        driver.quit();
     }
 
     private boolean isElementPresent(By by) {
