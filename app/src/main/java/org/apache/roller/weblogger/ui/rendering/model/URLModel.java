@@ -137,6 +137,16 @@ public class URLModel implements Model {
     public String getCommentAuthenticator() {
         return getSite()+"/CommentAuthenticatorServlet?weblog="+weblog.getHandle();
     }
+
+    /**
+     * Retained temporarily so older custom templates continue to render.
+     *
+     * @deprecated This endpoint is no longer available.
+     */
+    @Deprecated(since = "6.1.6", forRemoval = true)
+    public String trackback(String anchor) {
+        return "";
+    }
     
     
     public String themeResource(String theme, String filePath) {
@@ -183,11 +193,6 @@ public class URLModel implements Model {
         return urlStrategy.getWeblogCommentsURL(weblog, locale, anchor, true);
     }
     
-    
-    public String trackback(String anchor) {
-        return urlStrategy.getWeblogEntryURL(weblog, locale, anchor, true);
-    }
-
     
     public String date(String dateString) {
         return urlStrategy.getWeblogCollectionURL(weblog, locale, null, dateString, null, -1, true);
