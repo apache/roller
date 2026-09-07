@@ -853,7 +853,8 @@ public class DatabaseInstaller {
     }
 
 
-    private int parseVersionString(String vstring) {
+    // package-private so tests can parse versions exactly as the installer does
+    static int parseVersionString(String vstring) {
         int myversion = 0;
 
         // NOTE: this assumes a maximum of 3 digits for the version number
