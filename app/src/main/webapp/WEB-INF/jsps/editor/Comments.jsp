@@ -112,13 +112,13 @@
                 <ul class="pager">
                     <s:if test="pager.prevLink != null">
                         <li class="previous">
-                            <a href='<s:property value="pager.prevLink" />'>
+                            <a href="<s:property value="pager.prevLink" />">
                                 <span aria-hidden="true">&larr;</span>Newer</a>
                         </li>
                     </s:if>
                     <s:if test="pager.nextLink != null">
                         <li class="next">
-                            <a href='<s:property value="pager.nextLink"/>'>Older
+                            <a href="<s:property value="pager.nextLink"/>">Older
                                 <span aria-hidden="true">&rarr;</span></a>
                         </li>
                     </s:if>
@@ -246,7 +246,7 @@
 
                                         <div class="details">
                                             <s:text name="commentManagement.entryTitled"/>&nbsp;:&nbsp;
-                                            <a href='<s:property value="#comment.weblogEntry.permalink" />'>
+                                            <a href="<s:property value="#comment.weblogEntry.permalink" />">
                                                 <s:property value="#comment.weblogEntry.title"/></a>
                                         </div>
 
@@ -277,7 +277,7 @@
                                         <s:if test="#safeCommentUrl != null">
                                             <div class="details">
                                                 <s:text name="commentManagement.commentByURL"/>&nbsp;:&nbsp;
-                                                <a href='<s:property value="#safeCommentUrl" escapeHtml="true" />'>
+                                                <a href="<s:property value="#safeCommentUrl" escapeHtml="true" />">
                                                     <str:truncateNicely upper="60" appendToEnd="..."><s:property
                                                             value="#safeCommentUrl" escapeHtml="true"/></str:truncateNicely></a>
                                             </div>
@@ -356,13 +356,13 @@
             <ul class="pager">
                 <s:if test="pager.prevLink != null">
                     <li class="previous">
-                        <a href='<s:property value="pager.prevLink" />'>
+                        <a href="<s:property value="pager.prevLink" />">
                             <span aria-hidden="true">&larr;</span>Newer</a>
                     </li>
                 </s:if>
                 <s:if test="pager.nextLink != null">
                     <li class="next">
-                        <a href='<s:property value="pager.nextLink"/>'>Older
+                        <a href="<s:property value="pager.nextLink"/>">Older
                             <span aria-hidden="true">&rarr;</span></a>
                     </li>
                 </s:if>

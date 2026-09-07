@@ -139,6 +139,18 @@ public class AuthoringUiSinkAuditTest {
                         + offenders.size() + ":\n  " + String.join("\n  ", offenders));
     }
 
+    /** Comment author URL markup convention, consistent with the authoring templates. */
+    @Test
+    public void commentAuthorUrlUsesDoubleQuotedHref() throws IOException {
+        Path comments = JSP_ROOT.resolve("editor/Comments.jsp");
+        String body = new String(Files.readAllBytes(comments), StandardCharsets.UTF_8)
+                .replaceAll("\\s+", " ");
+        String expected = "<a href=\"<s:property value=\"#safeCommentUrl\" "
+                + "escapeHtml=\"true\" />\">";
+        assertTrue(body.contains(expected),
+                "Comments.jsp must use the standard comment author URL link markup");
+    }
+
     /**
      * Guards the audit itself: if the JSP directory moved or the patterns stopped
      * matching anything at all, the three tests above would pass vacuously.
