@@ -412,7 +412,7 @@ public final class EntryEdit extends UIAction {
                 .getUrlStrategy()
                 .getPreviewURLStrategy(null)
                 .getWeblogEntryURL(getActionWeblog(), null,
-                        getEntry().getAnchor(), true);
+                        getEntry().getAnchor(), false);
     }
 
     /**

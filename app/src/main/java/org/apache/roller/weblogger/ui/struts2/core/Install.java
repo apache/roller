@@ -55,6 +55,15 @@ public class Install extends UIAction {
 
 
     @Override
+    public void setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
+    }
+
+    public String getRootCauseExceptionName() {
+        return rootCauseException == null ? "" : rootCauseException.getClass().getName();
+    }
+
+    @Override
     public boolean isUserRequired() {
         return false;
     }

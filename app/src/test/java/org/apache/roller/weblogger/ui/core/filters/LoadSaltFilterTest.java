@@ -74,6 +74,41 @@ public class LoadSaltFilterTest {
         }
     }
 
+    @Test
+    void firstFormHasAUsableSalt() throws Exception {
+        javax.servlet.http.HttpSession session = mock(javax.servlet.http.HttpSession.class);
+        java.util.Map<String, Object> attributes = new java.util.HashMap<>();
+        java.util.Map<String, Object> sessionAttributes = new java.util.HashMap<>();
+        when(request.getSession(true)).thenAnswer(invocation -> {
+            when(request.getSession(false)).thenReturn(session);
+            return session;
+        });
+        when(session.getAttribute(anyString())).thenAnswer(i -> sessionAttributes.get(i.getArgument(0)));
+        doAnswer(i -> { sessionAttributes.put(i.getArgument(0), i.getArgument(1)); return null; })
+                .when(session).setAttribute(anyString(), any());
+        doAnswer(i -> { attributes.put(i.getArgument(0), i.getArgument(1)); return null; })
+                .when(request).setAttribute(anyString(), any());
+        java.util.Map<String, String> salts = new java.util.HashMap<>();
+        try (MockedStatic<SaltCache> cache = mockStatic(SaltCache.class)) {
+            cache.when(SaltCache::getInstance).thenReturn(saltCache);
+            doAnswer(i -> { salts.put(i.getArgument(0), i.getArgument(1)); return null; })
+                    .when(saltCache).put(anyString(), anyString());
+            when(saltCache.get(anyString())).thenAnswer(i -> salts.get(i.getArgument(0)));
+            doAnswer(i -> { salts.remove(i.getArgument(0)); return null; })
+                    .when(saltCache).remove(anyString());
+            filter.doFilter(request, response, chain);
+            String salt = (String) attributes.get("salt");
+            org.junit.jupiter.api.Assertions.assertNotNull(salt);
+            when(request.getParameter("salt")).thenReturn(null);
+            org.junit.jupiter.api.Assertions.assertFalse(SaltValidator.consumeSubmittedSalt(request));
+            when(request.getParameter("salt")).thenReturn("unknown");
+            org.junit.jupiter.api.Assertions.assertFalse(SaltValidator.consumeSubmittedSalt(request));
+            when(request.getParameter("salt")).thenReturn(salt);
+            org.junit.jupiter.api.Assertions.assertTrue(SaltValidator.consumeSubmittedSalt(request));
+            org.junit.jupiter.api.Assertions.assertFalse(SaltValidator.consumeSubmittedSalt(request));
+        }
+    }
+
     private static class TestUser extends User {
         private final String id;
 

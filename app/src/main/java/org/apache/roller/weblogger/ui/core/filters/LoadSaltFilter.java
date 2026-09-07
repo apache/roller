@@ -37,6 +37,7 @@ public class LoadSaltFilter implements Filter {
         throws IOException, ServletException {
 
         HttpServletRequest httpReq = (HttpServletRequest) request;
+        httpReq.getSession(true);
         RollerSession rollerSession = RollerSession.getRollerSession(httpReq);
         if (rollerSession != null) {
             String userId = rollerSession.getAuthenticatedUser() != null ? rollerSession.getAuthenticatedUser().getId() : "";

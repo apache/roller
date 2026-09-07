@@ -226,6 +226,8 @@ public class DatabaseInstaller {
 
             log.info("Database is old, beginning upgrade to version "+myVersion);
 
+            boolean schemaChangesRequired = dbversion < 610;
+
             // iterate through each upgrade as needed
             // to add to the upgrade sequence simply add a new "if" statement
             // for whatever version needed and then define a new method upgradeXXX()
@@ -254,6 +256,10 @@ public class DatabaseInstaller {
             // make sure the database version is the exact version
             // we are upgrading too.
             updateDatabaseVersion(con, myVersion);
+            if (!schemaChangesRequired) {
+                successMessage("No table changes were required.");
+            }
+            successMessage("Database version updated to " + myVersion + ".");
 
         } catch (SQLException e) {
             throw new StartupException("ERROR obtaining connection");
