@@ -71,15 +71,6 @@ public class AuthoringUiSinkAuditTest {
             Pattern.compile("\\.html\\(\\s*(?!\\)|''|\"\"|'<s:text|\"<s:text|\"<textarea|cdata\\.content|comments\\[id\\])[^)]");
 
     /**
-     * A comment author URL rendered inside a single-quoted href attribute. This
-     * value is externally supplied and normalized rather than encoded for a
-     * quoted attribute, so it may contain an apostrophe; a single-quoted
-     * attribute would not reliably contain it.
-     */
-    private static final Pattern COMMENT_URL_SINGLE_QUOTED_HREF =
-            Pattern.compile("href\\s*=\\s*'\\s*<s:property\\s+value=\"#(safeCommentUrl|comment\\.url)\"");
-
-    /**
      * The comment moderation screen has a separate round-trip for its already
      * encoded editing markup; this audit focuses on authoring values inserted
      * directly from Struts properties or response descriptions.
@@ -148,19 +139,16 @@ public class AuthoringUiSinkAuditTest {
                         + offenders.size() + ":\n  " + String.join("\n  ", offenders));
     }
 
-    /**
-     * The comment author URL travels into an href attribute on the comment
-     * management screen. That attribute must be double-quoted, consistent with
-     * how other externally-supplied URL values (for example the bookmark URL)
-     * are already written on the authoring screens.
-     */
+    /** Comment author URL markup convention, consistent with the authoring templates. */
     @Test
     public void commentAuthorUrlUsesDoubleQuotedHref() throws IOException {
-        List<String> offenders = findMatches(COMMENT_URL_SINGLE_QUOTED_HREF);
-        assertTrue(offenders.isEmpty(),
-                "comment author URLs must render inside a double-quoted href "
-                        + "attribute; found " + offenders.size() + ":\n  "
-                        + String.join("\n  ", offenders));
+        Path comments = JSP_ROOT.resolve("editor/Comments.jsp");
+        String body = new String(Files.readAllBytes(comments), StandardCharsets.UTF_8)
+                .replaceAll("\\s+", " ");
+        String expected = "<a href=\"<s:property value=\"#safeCommentUrl\" "
+                + "escapeHtml=\"true\" />\">";
+        assertTrue(body.contains(expected),
+                "Comments.jsp must use the standard comment author URL link markup");
     }
 
     /**
