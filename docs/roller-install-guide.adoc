@@ -259,6 +259,19 @@ be packaged as ojdbc14.jar, even if operating on Oracle 9 server.
 * See the server specific sections to information on where to place the
 JDBC driver jars.
 
+=== H2 database considerations
+
+H2 is not one of Roller's officially supported databases (PostgreSQL, MySQL and
+Derby are), but Roller can run against it as a generic JDBC database. If you use
+H2 2.5.250 or later, be aware that H2 now treats VALUE as a reserved word.
+Several Roller tables, such as ROLLER_PROPERTIES, have a column named VALUE, so
+Roller will fail to read them on newer H2. To work around this, append
+;NON_KEYWORDS=VALUE to your H2 JDBC connection URL, for example:
+
+----
+jdbc:h2:file:/path/to/rollerdb;NON_KEYWORDS=VALUE
+----
+
 == Deploy Roller to Tomcat
 
 Deploying Roller to the Tomcat servlet container involves creating a
