@@ -226,37 +226,46 @@ public class DatabaseInstaller {
 
             log.info("Database is old, beginning upgrade to version "+myVersion);
 
-            boolean schemaChangesRequired = dbversion < 610;
+            // track whether any upgrade step actually ran, so the
+            // "no table changes" message stays correct without a
+            // hardcoded version constant
+            boolean schemaUpgraded = false;
 
             // iterate through each upgrade as needed
             // to add to the upgrade sequence simply add a new "if" statement
-            // for whatever version needed and then define a new method upgradeXXX()
+            // for whatever version needed, define a new method upgradeXXX(),
+            // and set schemaUpgraded = true
 
             if(dbversion < 400) {
                 upgradeTo400(con, runScripts);
                 dbversion = 400;
+                schemaUpgraded = true;
             }
             if(dbversion < 500) {
                 upgradeTo500(con, runScripts);
                 dbversion = 500;
+                schemaUpgraded = true;
             }
             if(dbversion < 510) {
                 upgradeTo510(con, runScripts);
                 dbversion = 510;
+                schemaUpgraded = true;
             }
             if(dbversion < 520) {
                 upgradeTo520(con, runScripts);
                 dbversion = 520;
+                schemaUpgraded = true;
             }
             if(dbversion < 610) {
                 upgradeTo610(con, runScripts);
                 dbversion = 610;
+                schemaUpgraded = true;
             }
 
             // make sure the database version is the exact version
             // we are upgrading too.
             updateDatabaseVersion(con, myVersion);
-            if (!schemaChangesRequired) {
+            if (!schemaUpgraded) {
                 successMessage("No table changes were required.");
             }
             successMessage("Database version updated to " + myVersion + ".");
