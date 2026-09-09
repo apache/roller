@@ -7,8 +7,11 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 
 <script src="<s:url value='/webjars/jquery/3.7.1/jquery.min.js' />"></script>
 
-<script src="<s:url value='/webjars/jquery-ui/1.14.2+1/jquery-ui.min.js' />"></script>
-<link href="<s:url value='/webjars/jquery-ui/1.14.2+1/jquery-ui.css' />" rel="stylesheet" />
+<%-- jquery-ui webjar is 1.14.2+1 in pom.xml, but its resources are served
+     under the plus-free path: the +N is a webjar build suffix, not part of
+     the URL. Keeping the +1 here 404s and breaks the date picker/autocomplete. --%>
+<script src="<s:url value='/webjars/jquery-ui/1.14.2/jquery-ui.min.js' />"></script>
+<link href="<s:url value='/webjars/jquery-ui/1.14.2/jquery-ui.css' />" rel="stylesheet" />
 
 <script src="<s:url value='/webjars/jquery-validation/1.21.0/jquery.validate.min.js' />"></script>
 
