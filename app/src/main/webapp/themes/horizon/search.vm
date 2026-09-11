@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>Search — $model.weblog.name</title>
+  </head>
+  <body>
+    #includeTemplate($model.weblog "standard_header")
+    <main id="content" class="article-shell">
+      <header class="page-heading">
+        <p class="eyebrow">Search</p>
+        <h1>Results for “$model.term”</h1>
+        <p>$model.hits matches</p>
+      </header>
+      <form class="search-panel" method="get" action="$url.search">
+        <label for="result-search">Search this weblog</label>
+        <div>
+          <input id="result-search" name="q" type="search" value="$model.term" />
+          <button type="submit">Search</button>
+        </div>
+      </form>
+      #if($model.hits>0)#set($pager=$model.getWeblogEntriesPager())#showWeblogEntriesPager($pager)
+      <nav class="pager">#showNextPrevEntriesControl($pager)</nav>
+      #else
+      <p class="empty-state">No entries matched. Try a broader phrase.</p>
+      #end
+    </main>
+    #includeTemplate($model.weblog "standard_footer")
+  </body>
+</html>

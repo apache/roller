@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. -->
+<weblogtheme>
+  <id>horizon</id><name>Horizon</name>
+  <description>A warm, typography-first editorial theme for stories, travel, and technical writing.</description>
+  <author>Apache Roller</author>
+  <preview-image path="preview.svg" />
+  <stylesheet><name>custom.css</name><description>Horizon custom styles</description><link>custom.css</link><contentType>text/css</contentType><rendition><contentsFile>custom.css</contentsFile><templateLanguage>velocity</templateLanguage></rendition></stylesheet>
+  <template action="weblog"><name>Weblog</name><description>Main weblog</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>weblog.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
+  <template action="permalink"><name>Entry</name><description>Single entry</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>entry.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
+  <template action="search"><name>Search</name><description>Search results</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>search.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
+  <template action="tagsIndex"><name>TagsIndex</name><description>Tagged entries</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>tags.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
+  <template action="custom"><name>_day</name><description>Entry list</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>day.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
+  <template action="custom"><name>Archives</name><description>Archive browser</description><link>archives</link><navbar>true</navbar><hidden>false</hidden><contentType>text/html</contentType><rendition><contentsFile>archives.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
+  <template action="custom"><name>standard_head</name><description>HTML head</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>head.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
+  <template action="custom"><name>standard_header</name><description>Site header</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>header.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
+  <template action="custom"><name>standard_footer</name><description>Site footer</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>footer.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
+  <template action="custom"><name>sidebar</name><description>About and topic panel</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>sidebar.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
+  <resource path="theme.css" /><resource path="preview.svg" />
+</weblogtheme>

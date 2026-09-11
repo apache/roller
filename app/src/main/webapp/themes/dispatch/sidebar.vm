@@ -1,0 +1,20 @@
+<aside class="index-panel">
+  <div class="panel-label">INDEX / TOPICS</div>
+  #set($mytags=$model.weblog.getPopularTags(-1,24))
+  <ol>
+    #foreach($tag in $mytags)
+    <li>
+      <a href="$url.tag($tag.name)">
+        <span>$tag.name</span>
+        <small>$tag.count</small>
+      </a>
+    </li>
+    #end
+  </ol>
+  <div class="panel-about">
+    <div class="panel-label">ABOUT</div>
+    #if($model.weblog.about)$model.weblog.about#else
+    <p>Software, open source, and life outside the terminal.</p>
+    #end
+  </div>
+</aside>
