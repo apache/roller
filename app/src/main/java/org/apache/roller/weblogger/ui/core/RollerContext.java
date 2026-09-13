@@ -45,6 +45,7 @@ import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
+import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
@@ -157,6 +158,10 @@ public class RollerContext extends ContextLoaderListener
             return;
         }
 
+        if (!WebloggerStartup.isPrepared()) {
+            BootstrapSecurity.start();
+        }
+
         final boolean ittest = "ittest".equals(WebloggerConfig.getProperty("installation.type"));
 
         // if preparation failed or is incomplete then we are done,
@@ -186,6 +191,21 @@ public class RollerContext extends ContextLoaderListener
                 // trigger initialization process
                 weblogger = WebloggerFactory.getWeblogger();
                 weblogger.initialize();
+                try {
+                    org.apache.roller.weblogger.pojos.RuntimeConfigProperty marker =
+                            weblogger.getPropertiesManager().getProperty(BootstrapSecurity.COMPLETION_PROPERTY);
+                    if (marker != null && "true".equalsIgnoreCase(marker.getValue())) {
+                        BootstrapSecurity.complete();
+                    } else if (weblogger.getUserManager().getUserCount() > 0) {
+                        weblogger.getPropertiesManager().saveProperty(new org.apache.roller.weblogger.pojos.RuntimeConfigProperty(BootstrapSecurity.COMPLETION_PROPERTY, "true"));
+                        weblogger.flush();
+                        BootstrapSecurity.complete();
+                    } else {
+                        BootstrapSecurity.start();
+                    }
+                } catch (WebloggerException ignored) {
+                    BootstrapSecurity.start();
+                }
 
             } catch (BootstrapException ex) {
                 log.fatal("Roller Weblogger bootstrap failed", ex);

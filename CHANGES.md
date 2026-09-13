@@ -2,6 +2,8 @@
 
 ## 6.1.6
 
+Initial installation now requires a one-time, cryptographically secure setup token printed to the server log; bootstrap access closes after the first administrator is created.
+
 A maintenance release. Users of 6.1.5 and earlier are encouraged to upgrade.
 
 ### Behaviour changes worth reading before upgrading
