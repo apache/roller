@@ -18,8 +18,10 @@
 package org.apache.roller.selenium;
 
 import java.awt.GraphicsEnvironment;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import org.apache.roller.selenium.core.BootstrapTokenPage;
 import org.apache.roller.selenium.core.CreateWeblogPage;
 import org.apache.roller.selenium.core.LoginPage;
 import org.apache.roller.selenium.core.MainMenuPage;
@@ -66,14 +68,15 @@ public class InitialLoginTestIT {
         driver.manage().timeouts().implicitlyWait(Duration.of(5, ChronoUnit.SECONDS))
                                   .pageLoadTimeout(Duration.of(5, ChronoUnit.SECONDS))
                                   .scriptTimeout(Duration.of(5, ChronoUnit.SECONDS));
-        baseUrl = "http://localhost:8080/roller/";
+        baseUrl = System.getProperty("roller.test.baseUrl", "http://localhost:8080/roller/");
     }
 
     @Test
     public void testInitialLogin() throws Exception {
         // create new user and first blog
         driver.get(baseUrl);
-        SetupPage sp = new SetupPage(driver);
+        SetupPage sp = new BootstrapTokenPage(driver).unlock(Paths.get(
+                System.getProperty("roller.test.logFile", "logs/roller.log")));
         RegisterPage rp = sp.createNewUser();
         WelcomePage wp = rp.submitUserRegistration("bsmith", "Bob Smith", "bsmith@email.com", "roller123");
         
