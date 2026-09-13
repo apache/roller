@@ -128,13 +128,13 @@ table.mm_table_actions td {
 }
 
 td.pendingentry, tr.pendingentry {
-    background: #ffcccc;
+    background: #ffcccc !important;
 }
 td.draftentry, tr.draftentry {
-    background: #ffffcc;
+    background: #ffffcc !important;
 }
 td.scheduledentry, tr.scheduledentry {
-    background: #EEEEE0;
+    background: #EEEEE0 !important;
 }
 
 .entryEditSidebarLink > a {
