@@ -12,9 +12,14 @@ public class BootstrapSecurityFilter implements Filter {
         HttpServletRequest r = (HttpServletRequest) req;
         HttpServletResponse p = (HttpServletResponse) res;
         String uri = r.getRequestURI();
-        boolean installer = uri != null && (uri.contains("/roller-ui/install/") || uri.endsWith("/roller-ui/register.rol") || uri.endsWith("/roller-ui/register!save.rol") || uri.endsWith("/roller-ui/setup.rol"));
+        boolean tokenPage = uri != null && (uri.endsWith("/bootstrap-token.rol")
+                || uri.endsWith("/bootstrap-token!redeem.rol"));
+        boolean installer = uri != null && (tokenPage || uri.contains("/roller-ui/install/")
+                || uri.endsWith("/roller-ui/register.rol")
+                || uri.endsWith("/roller-ui/register!save.rol")
+                || uri.endsWith("/roller-ui/setup.rol"));
         if (installer && !BootstrapSecurity.isCompleted()) {
-            if (uri.endsWith("/bootstrap-token.rol")) { chain.doFilter(req, res); return; }
+            if (tokenPage) { chain.doFilter(req, res); return; }
             if (!BootstrapSecurity.isValid(r)) { p.sendRedirect(r.getContextPath() + "/roller-ui/bootstrap-token.rol"); return; }
         }
         chain.doFilter(req, res);

@@ -78,6 +78,7 @@ public class BootstrapFilter implements Filter {
                 || uri.endsWith("create.rol") 
                 || uri.endsWith("upgrade.rol") 
                 || uri.endsWith("bootstrap-token.rol")
+                || uri.endsWith("bootstrap-token!redeem.rol")
                 || uri.endsWith(".js") 
                 || uri.endsWith(".css")));
     }
