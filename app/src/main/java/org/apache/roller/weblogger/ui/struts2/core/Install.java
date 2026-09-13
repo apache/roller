@@ -78,8 +78,6 @@ public class Install extends UIAction {
 
     @Override
     public String execute() {
-        if (!BootstrapSecurity.isValid(ServletActionContext.getRequest())) return BOOTSTRAP;
-
         if (WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
         }
