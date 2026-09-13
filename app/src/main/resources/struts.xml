@@ -138,6 +138,13 @@
             <result name="success" type="tiles">.Welcome</result>
             <allowed-methods>activate,execute,save</allowed-methods>
         </action>
+
+        <action name="bootstrap-token"
+                class="org.apache.roller.weblogger.ui.struts2.core.BootstrapToken">
+            <result name="input" type="tiles">.BootstrapToken</result>
+            <result name="success" type="redirectAction">install</result>
+            <allowed-methods>execute,redeem</allowed-methods>
+        </action>
         
         <action name="profile"
                 class="org.apache.roller.weblogger.ui.struts2.core.Profile">

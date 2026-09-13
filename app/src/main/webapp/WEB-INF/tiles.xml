@@ -142,6 +142,9 @@
     <definition name=".Setup" extends=".tiles-simplepage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/Setup.jsp" />
     </definition>
+    <definition name=".BootstrapToken" extends=".tiles-simplepage">
+        <put-attribute name="content" value="/WEB-INF/jsps/core/BootstrapToken.jsp" />
+    </definition>
     
     <definition name=".CreateDatabase" extends=".tiles-installpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/core/CreateDatabase.jsp" />
