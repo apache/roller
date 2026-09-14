@@ -253,7 +253,7 @@ body {
     margin:5px;
     list-style-type:none;
     width:140px;
-    height:160px;
+    max-height:200px;
     border: 1px solid #ccc;
     text-align: center;
 }
