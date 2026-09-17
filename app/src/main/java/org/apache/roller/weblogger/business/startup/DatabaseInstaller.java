@@ -816,9 +816,19 @@ public class DatabaseInstaller {
 
     /**
      * Return true if named table exists in database.
+     *
+     * The lookup is scoped to the catalog the connection is actually pointed
+     * at. A null catalog means "every catalog on the server" to some drivers —
+     * MySQL Connector/J 8 among them, which changed the default of
+     * nullCatalogMeansCurrent from true to false — and an unscoped lookup then
+     * finds Roller tables belonging to a different database on the same
+     * server. An empty schema would be mistaken for an installed one, and
+     * Roller would skip table creation and fail later looking for tables that
+     * were never created. Drivers that do not use catalogs return null here,
+     * which is the same query as before.
      */
     private boolean tableExists(Connection con, String tableName) throws SQLException {
-        ResultSet rs = con.getMetaData().getTables(null, null, "%", null);
+        ResultSet rs = con.getMetaData().getTables(con.getCatalog(), null, "%", null);
         while (rs.next()) {
             if (tableName.equalsIgnoreCase(rs.getString("TABLE_NAME").toLowerCase())) {
                 return true;

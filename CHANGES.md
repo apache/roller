@@ -51,6 +51,12 @@ Two more changes are visible in normal use:
   attributes.
 - Bookmark and configuration parsing share a single JDOM builder that treats a
   document strictly as data.
+- Table detection during installation is scoped to the database the connection
+  points at. Installing into an empty schema on a server that also hosts
+  another Roller database previously found that database's tables, skipped
+  table creation, and then failed at startup looking for tables it had never
+  created. MySQL installations are the ones affected, because Connector/J 8
+  changed `nullCatalogMeansCurrent` to default to false.
 
 ### Build and packaging
 
