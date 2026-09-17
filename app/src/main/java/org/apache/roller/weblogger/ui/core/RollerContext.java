@@ -191,19 +191,7 @@ public class RollerContext extends ContextLoaderListener
                 // trigger initialization process
                 weblogger = WebloggerFactory.getWeblogger();
                 weblogger.initialize();
-                try {
-                    org.apache.roller.weblogger.pojos.RuntimeConfigProperty marker =
-                            weblogger.getPropertiesManager().getProperty(BootstrapSecurity.COMPLETION_PROPERTY);
-                    if (marker != null && "true".equalsIgnoreCase(marker.getValue())) {
-                        BootstrapSecurity.complete();
-                    } else if (weblogger.getUserManager().getUserCount() > 0) {
-                        weblogger.getPropertiesManager().saveProperty(new org.apache.roller.weblogger.pojos.RuntimeConfigProperty(BootstrapSecurity.COMPLETION_PROPERTY, "true"));
-                        weblogger.flush();
-                        BootstrapSecurity.complete();
-                    } else {
-                        BootstrapSecurity.start();
-                    }
-                } catch (WebloggerException ignored) {
+                if (!BootstrapSecurity.completeIfInstalled(weblogger)) {
                     BootstrapSecurity.start();
                 }
 

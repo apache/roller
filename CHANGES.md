@@ -2,7 +2,7 @@
 
 ## 6.1.6
 
-Initial installation now requires a one-time, cryptographically secure setup token printed to the server log; bootstrap access closes after the first administrator is created.
+Initial installation now requires a one-time, cryptographically secure setup token printed to the server log. Bootstrap access closes as soon as setup finishes — when the first administrator is created on a new site, or when the database upgrade completes on an existing one.
 
 A maintenance release. Users of 6.1.5 and earlier are encouraged to upgrade.
 

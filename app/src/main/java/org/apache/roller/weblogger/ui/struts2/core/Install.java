@@ -172,6 +172,12 @@ public class Install extends UIAction {
             // trigger initialization process
             WebloggerFactory.getWeblogger().initialize();
 
+            // On the upgrade path setup is finished here: the site already has
+            // users, so no first-administrator registration will come along to
+            // close the bootstrap gate. Close it now rather than leaving the
+            // installer reachable until the next restart.
+            BootstrapSecurity.completeIfInstalled(WebloggerFactory.getWeblogger());
+
             // also need to do planet if it's configured
             if (WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
 

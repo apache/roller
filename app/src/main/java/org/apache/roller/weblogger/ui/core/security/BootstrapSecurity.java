@@ -26,6 +26,10 @@ import java.util.Base64;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
 /** Process-scoped gate for the unauthenticated installation flow. */
 public final class BootstrapSecurity {
@@ -67,6 +71,44 @@ public final class BootstrapSecurity {
     public static void complete() {
         completed = true;
         digest = null;
+    }
+
+    /**
+     * Close the gate if this database is already installed, recording the
+     * completion marker when it is missing. A database that already has users
+     * has no first administrator left to register, so setup is finished and
+     * nothing further should be allowed through the bootstrap flow.
+     *
+     * <p>Callers reach this from two directions: at startup, and at the end of
+     * the installer's own bootstrap action. The latter matters for the upgrade
+     * path, where there is no first-user registration to close the gate.
+     *
+     * @return true if bootstrap access is now closed, false if the first
+     *         administrator has yet to be created or the marker could not be
+     *         written.
+     */
+    public static boolean completeIfInstalled(Weblogger weblogger) {
+        if (completed) {
+            return true;
+        }
+        try {
+            PropertiesManager properties = weblogger.getPropertiesManager();
+            RuntimeConfigProperty marker = properties.getProperty(COMPLETION_PROPERTY);
+            if (marker == null || !"true".equalsIgnoreCase(marker.getValue())) {
+                if (weblogger.getUserManager().getUserCount() < 1) {
+                    // Brand new install; Register closes the gate when the
+                    // first administrator is committed.
+                    return false;
+                }
+                properties.saveProperty(new RuntimeConfigProperty(COMPLETION_PROPERTY, "true"));
+                weblogger.flush();
+            }
+            complete();
+            return true;
+        } catch (WebloggerException ex) {
+            LOG.warn("Could not record bootstrap completion; it will be recorded at the next restart", ex);
+            return false;
+        }
     }
 
     public static void beginInitialAdmin() {
