@@ -48,6 +48,9 @@ public class DatabaseInstaller {
     // the name of the property which holds the dbversion value
     private static final String DBVERSION_PROP = "roller.database.version";
 
+    // Update this when adding a database or data migration step below.
+    private static final int LATEST_DATABASE_UPGRADE_VERSION = 610;
+
 
     public DatabaseInstaller(DatabaseProvider dbProvider, DatabaseScriptProvider scriptProvider) {
         db = dbProvider;
@@ -123,9 +126,12 @@ public class DatabaseInstaller {
             }
 
             return false;
-        } else {
-            return databaseVersion < desiredVersion;
         }
+
+        // A product release does not always change the database. Do not send
+        // administrators through the upgrade UI for a version-only change.
+        int requiredDatabaseVersion = Math.min(desiredVersion, LATEST_DATABASE_UPGRADE_VERSION);
+        return databaseVersion < requiredDatabaseVersion;
     }
 
 

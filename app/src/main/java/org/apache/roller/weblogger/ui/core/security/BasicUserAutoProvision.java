@@ -45,6 +45,7 @@ public class BasicUserAutoProvision implements AutoProvision {
 	 */
     @Override
 	public boolean execute(HttpServletRequest request) {
+		if (!BootstrapSecurity.isCompleted()) return false;
 		User ud = CustomUserRegistry.getUserDetailsFromAuthentication(request);
 
 		if (hasNecessaryFields(ud)) {

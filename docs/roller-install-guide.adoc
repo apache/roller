@@ -791,6 +791,12 @@ error type which the automated installation process is coded to ignore.
 
 == Upgrading Roller
 
+=== Initial setup security token
+
+For a new installation Roller generates a cryptographically random, one-time setup token during startup and prints it to the Roller server log. Open `/roller-ui/bootstrap-token.rol` over HTTPS (or a secured local tunnel) and enter the token before opening the installer or registering the first administrator. The token is accepted only in the POST body, expires after 60 minutes, and is consumed on successful entry. Restart Roller to obtain a new token if it expires or the browser session is lost. The token is never included in a URL or Roller page.
+
+The token authorizes the installer and first-user flow for the current browser session only. Run database creation or upgrade on one setup node at a time. After the first administrator is committed, bootstrap access is permanently disabled, including after deleting or disabling that account. Existing installations with users continue to use their normal login and registration settings.
+
 This section describes how to upgrade an existing Roller installation to
 the latest release of Roller by shutting down, backing up and then
 following the installation instructions with a couple of key exceptions.

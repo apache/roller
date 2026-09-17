@@ -32,7 +32,7 @@
     <artifactId>roller-selenium-tests</artifactId>
     <packaging>war</packaging>
 
-    <!-- Process to run Selenium tests (actually no tests right now, just a skeleton)
+    <!-- Process to run Selenium tests
          1. Tests presently require Firefox browser, Chrome on the to-do list.
 
          2. Run mvn clean install from the roller trunk or app folder, that will install Roller in your
@@ -41,7 +41,12 @@
          3. Navigate to this directory and run mvn integration-test or clean install.  Test results will
             be in target/failsafe-reports.
 
-         4. Feel free to add more Selenium tests!
+         4. InitialLoginTestIT reads the generated setup token from logs/roller.log
+            and submits it through the initial setup form. If using a custom logging
+            configuration, pass -Droller.test.logFile=/absolute/path/to/roller.log.
+            Start with a fresh test database; the setup token is single-use.
+            To use another HTTP port, pass both -Djetty.http.port=18080 and
+            -Droller.test.baseUrl=http://localhost:18080/roller/.
     -->
     <dependencies>
 

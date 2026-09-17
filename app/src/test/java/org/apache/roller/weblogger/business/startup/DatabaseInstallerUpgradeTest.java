@@ -14,6 +14,41 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DatabaseInstallerUpgradeTest {
+
+    @Test
+    void patchReleaseWithoutDatabaseChangesDoesNotRequireUpgrade() throws Exception {
+        DatabaseProvider db = mock(DatabaseProvider.class);
+        Connection con = mock(Connection.class);
+        Statement query = mock(Statement.class);
+        ResultSet rows = mock(ResultSet.class);
+        when(db.getConnection()).thenReturn(con);
+        when(con.createStatement()).thenReturn(query);
+        when(query.executeQuery(anyString())).thenReturn(rows);
+        when(rows.next()).thenReturn(true);
+        when(rows.getString(1)).thenReturn("615");
+
+        DatabaseInstaller installer = new DatabaseInstaller(db, mock(DatabaseScriptProvider.class));
+
+        assertFalse(installer.isUpgradeRequired());
+    }
+
+    @Test
+    void pendingDatabaseMigrationRequiresUpgrade() throws Exception {
+        DatabaseProvider db = mock(DatabaseProvider.class);
+        Connection con = mock(Connection.class);
+        Statement query = mock(Statement.class);
+        ResultSet rows = mock(ResultSet.class);
+        when(db.getConnection()).thenReturn(con);
+        when(con.createStatement()).thenReturn(query);
+        when(query.executeQuery(anyString())).thenReturn(rows);
+        when(rows.next()).thenReturn(true);
+        when(rows.getString(1)).thenReturn("520");
+
+        DatabaseInstaller installer = new DatabaseInstaller(db, mock(DatabaseScriptProvider.class));
+
+        assertTrue(installer.isUpgradeRequired());
+    }
+
     @Test
     void versionOnlyUpgradeReportsCompletion() throws Exception {
         DatabaseProvider db = mock(DatabaseProvider.class);
