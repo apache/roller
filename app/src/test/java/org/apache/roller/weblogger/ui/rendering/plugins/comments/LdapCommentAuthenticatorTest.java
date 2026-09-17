@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -36,31 +37,37 @@ class LdapCommentAuthenticatorTest {
         HttpSession session = mock(HttpSession.class);
         when(request.getSession(true)).thenReturn(session);
         String html = render(request);
-        assertFields(html, "", "");
+        assertFields(html, "");
         verify(session).setAttribute("ldapUser", "");
         verify(session).setAttribute("ldapPass", "");
     }
 
     @Test
     void rendersMissingValuesAsEmpty() {
-        assertFields(renderReturningVisit(null, null), "", "");
+        assertFields(renderReturningVisit(null, null), "");
     }
 
     @Test
     void preservesOrdinaryFormValues() {
-        assertFields(renderReturningVisit("reader", "sample-pass"), "reader", "sample-pass");
+        assertFields(renderReturningVisit("reader", "sample-pass"), "reader");
+    }
+
+    @Test
+    void omitsSubmittedPasswordFromMarkup() {
+        String html = renderReturningVisit("reader", "sample-pass");
+        assertFalse(html.contains("sample-pass"), () -> "password written into markup: " + html);
     }
 
     @Test
     void formatsPunctuationInFormValues() {
         String value = "A&B \"quoted\" <label> 'name'";
         String formatted = "A&amp;B &quot;quoted&quot; &lt;label&gt; 'name'";
-        assertFields(renderReturningVisit(value, value), formatted, formatted);
+        assertFields(renderReturningVisit(value, value), formatted);
     }
 
     @Test
     void preservesLiteralEntityText() {
-        assertFields(renderReturningVisit("&quot;", "&#34;"), "&amp;quot;", "&amp;#34;");
+        assertFields(renderReturningVisit("&quot;", "&#34;"), "&amp;quot;");
     }
 
     private String renderReturningVisit(String user, String password) {
@@ -80,8 +87,10 @@ class LdapCommentAuthenticatorTest {
         }
     }
 
-    private void assertFields(String html, String user, String password) {
-        assertTrue(html.contains("<input name=\"ldapUser\" value=\"" + user + "\">"));
-        assertTrue(html.contains("<input type=\"password\" name=\"ldapPass\" value=\"" + password + "\">"));
+    private void assertFields(String html, String user) {
+        String userField = "<input name=\"ldapUser\" value=\"" + user + "\">";
+        assertTrue(html.contains(userField), () -> "expected " + userField + " in " + html);
+        String passwordField = "<input type=\"password\" name=\"ldapPass\">";
+        assertTrue(html.contains(passwordField), () -> "expected " + passwordField + " in " + html);
     }
 }
