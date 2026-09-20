@@ -1,0 +1,12 @@
+<a class="skip-link" href="#content">Skip to content</a>
+<header class="masthead">
+  <a class="wordmark" href="$url.home">
+    $model.weblog.name
+    <span class="cursor">_</span>
+  </a>
+  <nav aria-label="Primary">#showPageMenu($model.weblog)</nav>
+  <form method="get" action="$url.search" role="search">
+    <label for="dispatch-search">Search</label>
+    <input id="dispatch-search" name="q" type="search" placeholder="⌘ /" />
+  </form>
+</header>

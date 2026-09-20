@@ -48,6 +48,7 @@ public class CreateWeblog extends UIAction {
     
     private static final Log log = LogFactory.getLog(CreateWeblog.class);
     private static final String DISABLED_RETURN_CODE = "disabled";
+    private static final String DEFAULT_THEME = "basic";
 
     private CreateWeblogBean bean = new CreateWeblogBean();
     
@@ -97,6 +98,7 @@ public class CreateWeblog extends UIAction {
         getBean().setLocale(user.getLocale());
         getBean().setTimeZone(user.getTimeZone());
         getBean().setEmailAddress(user.getEmailAddress());
+        getBean().setTheme(DEFAULT_THEME);
         
         return INPUT;
     }
