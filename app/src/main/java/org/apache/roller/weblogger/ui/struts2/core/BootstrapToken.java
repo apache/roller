@@ -19,21 +19,18 @@
 
 package org.apache.roller.weblogger.ui.struts2.core;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.struts2.action.ServletRequestAware;
 import org.apache.struts2.action.ServletResponseAware;
 
-public class BootstrapToken extends UIAction implements ServletRequestAware, ServletResponseAware {
+public class BootstrapToken extends UIAction implements ServletResponseAware {
 
     private static final Log LOG = LogFactory.getLog(BootstrapToken.class);
 
-    private HttpServletRequest request;
     private HttpServletResponse response;
     private String token;
 
@@ -45,17 +42,17 @@ public class BootstrapToken extends UIAction implements ServletRequestAware, Ser
         setResponseHeaders();
         LOG.info("Roller is waiting for an administrator to submit the one-time setup token; "
                 + "database setup will not continue until the token is accepted. Setup page: "
-                + request.getRequestURL());
+                + getServletRequest().getRequestURL());
         return INPUT;
     }
 
     public String redeem() {
         setResponseHeaders();
-        if (!"POST".equalsIgnoreCase(request.getMethod())) {
+        if (!"POST".equalsIgnoreCase(getServletRequest().getMethod())) {
             addActionError(getText("installer.bootstrap.postRequired"));
             return INPUT;
         }
-        if (BootstrapSecurity.redeem(request, token == null ? null : token.trim())) {
+        if (BootstrapSecurity.redeem(getServletRequest(), token == null ? null : token.trim())) {
             LOG.info("One-time setup token accepted; continuing database setup.");
             return SUCCESS;
         }
@@ -70,10 +67,6 @@ public class BootstrapToken extends UIAction implements ServletRequestAware, Ser
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public void withServletRequest(HttpServletRequest request) {
-        this.request = request;
     }
 
     public void withServletResponse(HttpServletResponse response) {
