@@ -27,6 +27,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -90,6 +94,53 @@ public class PropertiesTest  {
         assertNotNull(props);
         assertEquals("foofoo", props.get("site.name").getValue());
         assertEquals("blahblah", props.get("site.description").getValue());
+    }
+
+    @Test
+    public void compareAndSetAllowsOnlyOneConcurrentWinner() throws Exception {
+        PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
+        RuntimeConfigProperty prop = mgr.getProperty("site.frontpage.weblog.handle");
+        String original = prop.getValue();
+        prop.setValue("");
+        mgr.saveProperty(prop);
+        TestUtils.endSession(true);
+
+        CountDownLatch ready = new CountDownLatch(2);
+        CountDownLatch start = new CountDownLatch(1);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            Future<Boolean> first = executor.submit(() -> compareAndSetAfterSignal(
+                    "site.frontpage.weblog.handle", "first", ready, start));
+            Future<Boolean> second = executor.submit(() -> compareAndSetAfterSignal(
+                    "site.frontpage.weblog.handle", "second", ready, start));
+            ready.await();
+            start.countDown();
+
+            assertNotEquals(first.get(), second.get(), "exactly one update must win");
+
+            RuntimeConfigProperty saved = WebloggerFactory.getWeblogger()
+                    .getPropertiesManager().getProperty("site.frontpage.weblog.handle");
+            assertTrue("first".equals(saved.getValue()) || "second".equals(saved.getValue()));
+            saved.setValue(original);
+            WebloggerFactory.getWeblogger().getPropertiesManager().saveProperty(saved);
+            TestUtils.endSession(true);
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    private boolean compareAndSetAfterSignal(String name, String value,
+            CountDownLatch ready, CountDownLatch start) throws Exception {
+        ready.countDown();
+        start.await();
+        try {
+            boolean updated = WebloggerFactory.getWeblogger().getPropertiesManager()
+                    .compareAndSetProperty(name, "", value);
+            WebloggerFactory.getWeblogger().flush();
+            return updated;
+        } finally {
+            WebloggerFactory.getWeblogger().release();
+        }
     }
     
 }

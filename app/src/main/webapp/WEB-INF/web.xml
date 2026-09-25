@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-         version="6.0">
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_1.xsd"
+         version="6.1">
 
     <display-name>Roller Weblogger</display-name>
 
@@ -43,6 +43,15 @@
     <filter>
         <filter-name>BootstrapFilter</filter-name>
         <filter-class>org.apache.roller.weblogger.ui.core.filters.BootstrapFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>BootstrapSecurityFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.BootstrapSecurityFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>XmlRpcEnabledFilter</filter-name>
+        <filter-class>org.apache.roller.weblogger.ui.core.filters.XmlRpcEnabledFilter</filter-class>
     </filter>
 
     <filter>
@@ -95,12 +104,11 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
-    <!-- Ip Banning is mapped for comment and trackbacks only.
+    <!-- Ip Banning is mapped for comments only.
     Note: this filter does nothing if an ip ban list is not configured. -->
     <filter-mapping>
         <filter-name>IPBanFilter</filter-name>
         <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
-        <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     
@@ -125,6 +133,15 @@
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>BootstrapSecurityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+        <dispatcher>ASYNC</dispatcher>
+    </filter-mapping>
 
     <!-- Map everything to the PersistenceSessionFilter.
     NOTE: Any filters preceding this one MUST NOT use persistence sessions.-->
@@ -142,18 +159,26 @@
     </filter-mapping>
 
 	<filter-mapping>
+		<filter-name>ValidateSaltFilter</filter-name>
+		<url-pattern>/roller-ui/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
 		<filter-name>LoadSaltFilter</filter-name>
 		<url-pattern>/roller-ui/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
-	<filter-mapping>
-		<filter-name>ValidateSaltFilter</filter-name>
-		<url-pattern>/roller-ui/*</url-pattern>
-	</filter-mapping>
-
     <!-- Request mapping, this is what allows the urls to work -->
+    <filter-mapping>
+        <filter-name>XmlRpcEnabledFilter</filter-name>
+        <url-pattern>/roller-services/xmlrpc</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+
     <filter-mapping>
         <filter-name>RequestMappingFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -230,12 +255,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>TrackbackServlet</servlet-name>
-        <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.TrackbackServlet</servlet-class>
-        <load-on-startup>7</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>RSDServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.ui.rendering.servlets.RSDServlet</servlet-class>
         <load-on-startup>7</load-on-startup>
@@ -296,9 +315,11 @@
         <init-param>
             <description>
                 Sets whether the servlet supports vendor extensions for XML-RPC.
+                Roller uses only the standard XML-RPC value types; the library's
+                vendor extension types are unused and are switched off.
             </description>
             <param-name>enabledForExtensions</param-name>
-            <param-value>true</param-value>
+            <param-value>false</param-value>
         </init-param>
     </servlet>
 
@@ -326,11 +347,6 @@
     <servlet-mapping>
         <servlet-name>CommentServlet</servlet-name>
         <url-pattern>/roller-ui/rendering/comment/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>TrackbackServlet</servlet-name>
-        <url-pattern>/roller-ui/rendering/trackback/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

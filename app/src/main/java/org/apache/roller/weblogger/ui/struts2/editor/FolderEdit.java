@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.apache.struts2.ActionContext;
+import org.apache.struts2.action.ServletResponseAware;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -38,7 +38,9 @@ import jakarta.servlet.http.HttpServletResponse;
  * Edit a new or existing folder.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class FolderEdit extends UIAction {
+public class FolderEdit extends UIAction implements ServletResponseAware {
+
+    private HttpServletResponse servletResponse = null;
 
     private static final Log log = LogFactory.getLog(FolderEdit.class);
 
@@ -72,15 +74,16 @@ public class FolderEdit extends UIAction {
             // retrieve existing folder data from DB
             try {
                 BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-                folder = bmgr.getFolder(getBean().getId());
+                folder = bmgr.getFolderById(getActionWeblog(), getBean().getId());
             } catch (WebloggerException ex) {
                 log.error("Error looking up folder", ex);
             }
         }
     }
 
-    private HttpServletResponse getServletResponse() {
-        return ActionContext.getContext().getServletResponse();
+    @Override
+    public void withServletResponse(HttpServletResponse response) {
+        this.servletResponse = response;
     }
 
     /**
@@ -90,6 +93,10 @@ public class FolderEdit extends UIAction {
     @Override
     public String execute() {
         if (!isAdd()) {
+            if (folder == null) {
+                addError("folderForm.notFound");
+                return ERROR;
+            }
             // load bean with database values during initial load
             getBean().copyFrom(folder);
         }
@@ -100,6 +107,10 @@ public class FolderEdit extends UIAction {
      * Save updated folder data.
      */
     public String save() {
+        if (!isAdd() && folder == null) {
+            addError("folderForm.notFound");
+            return ERROR;
+        }
         myValidate();
         
         if(!hasActionErrors()) {
@@ -127,7 +138,7 @@ public class FolderEdit extends UIAction {
                 // HTTP response splitting defense
                 String sanetizedFolderID = folderId.replace("\n", "").replace("\r", "");
 
-                getServletResponse().addHeader("folderId", sanetizedFolderID);
+                servletResponse.addHeader("folderId", sanetizedFolderID);
 
                 return SUCCESS;
 
@@ -141,6 +152,10 @@ public class FolderEdit extends UIAction {
     }
 
     public void myValidate() {
+        if (folder == null) {
+            addError("folderForm.notFound");
+            return;
+        }
         // make sure new name is not a duplicate of an existing folder
         if ( isAdd() || !getBean().getName().equals(folder.getName()) ) {
             if (folder.getWeblog().hasBookmarkFolder(getBean().getName())) {

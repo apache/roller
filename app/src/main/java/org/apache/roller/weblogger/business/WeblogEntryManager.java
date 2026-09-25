@@ -53,9 +53,18 @@ public interface WeblogEntryManager {
      * Get weblog entry by id.
      */
     WeblogEntry getWeblogEntry(String id) throws WebloggerException;
-    
-    /** 
-     * Get weblog entry by anchor. 
+
+    /**
+     * Get weblog entry by id, restricted to the given weblog.
+     *
+     * @return the entry, or null if no entry with that id belongs to the given
+     *         weblog. An entry that exists but belongs to another weblog is
+     *         reported the same way as one that does not exist.
+     */
+    WeblogEntry getWeblogEntry(Weblog weblog, String id) throws WebloggerException;
+
+    /**
+     * Get weblog entry by anchor.
      */
     WeblogEntry getWeblogEntryByAnchor(Weblog website, String anchor)
             throws WebloggerException;
@@ -154,8 +163,17 @@ public interface WeblogEntryManager {
      * Get category by id.
      */
     WeblogCategory getWeblogCategory(String id) throws WebloggerException;
-    
-    
+
+    /**
+     * Get category by id, restricted to the given weblog.
+     *
+     * @return the category, or null if no category with that id belongs to the
+     *         given weblog. A category that exists but belongs to another
+     *         weblog is reported the same way as one that does not exist.
+     */
+    WeblogCategory getWeblogCategory(Weblog weblog, String id) throws WebloggerException;
+
+
     /**
      * Recategorize all entries with one category to another.
      */
@@ -190,7 +208,18 @@ public interface WeblogEntryManager {
      * Get comment by id.
      */
     WeblogEntryComment getComment(String id) throws WebloggerException;
-       
+
+    /**
+     * Get comment by id, restricted to the given weblog.
+     *
+     * @return the comment, or null if no comment with that id belongs to an
+     *         entry of the given weblog. A comment that exists but belongs to
+     *         another weblog is reported the same way as one that does not
+     *         exist.
+     */
+    WeblogEntryComment getComment(Weblog weblog, String id) throws WebloggerException;
+
+
     /**
      * Generic comments query method.
      * @param csc CommentSearchCriteria object with fields indicating search criteria

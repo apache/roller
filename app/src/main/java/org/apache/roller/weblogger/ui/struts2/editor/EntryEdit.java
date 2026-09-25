@@ -20,10 +20,8 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -48,15 +46,9 @@ import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.WeblogEntryEditor;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.roller.weblogger.util.EnclosureMetadata;
 import org.apache.roller.weblogger.util.MailUtil;
-import org.apache.roller.weblogger.util.MediacastException;
-import org.apache.roller.weblogger.util.MediacastResource;
-import org.apache.roller.weblogger.util.MediacastUtil;
-import org.apache.roller.weblogger.util.RollerMessages;
-import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
-import org.apache.roller.weblogger.util.Trackback;
-import org.apache.roller.weblogger.util.TrackbackNotAllowedException;
+import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -73,9 +65,6 @@ public final class EntryEdit extends UIAction {
 
     // the entry we are adding or editing
     private WeblogEntry entry = null;
-
-    // url to send trackback to
-    private String trackbackUrl = null;
 
     public EntryEdit() {
         this.desiredMenu = "editor";
@@ -104,7 +93,7 @@ public final class EntryEdit extends UIAction {
                 // retrieve from DB WeblogEntry based on ID
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
-                setEntry(wmgr.getWeblogEntry(getBean().getId()));
+                setEntry(wmgr.getWeblogEntry(getActionWeblog(), getBean().getId()));
             } catch (WebloggerException ex) {
                 log.error(
                         "Error looking up entry by id - " + getBean().getId(),
@@ -122,6 +111,9 @@ public final class EntryEdit extends UIAction {
     @Override
     public String execute() {
         if (getActionName().equals("entryEdit")) {
+            if (!requireEntry()) {
+                return ERROR;
+            }
             // load bean with pojo data
             getBean().copyFrom(getEntry(), getLocale());
         } else {
@@ -146,6 +138,9 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String saveDraft() {
+        if (!requireEntry()) {
+            return INPUT;
+        }
         getBean().setStatus(PubStatus.DRAFT.name());
         if (entry.isPublished()) {
             // entry reverted from published to non-viewable draft
@@ -161,6 +156,9 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String publish() {
+        if (!requireEntry()) {
+            return INPUT;
+        }
         if (getActionWeblog().hasUserPermission(
                 getAuthenticatedUser(), WeblogPermission.POST)) {
             Timestamp pubTime = getBean().getPubTime(getLocale(),
@@ -190,8 +188,18 @@ public final class EntryEdit extends UIAction {
      *
      * @return String The result of the action.
      */
-    private String save() {
+    // Package-private rather than private so EntryEditEnclosureTest can drive
+    // it directly.
+    String save() {
+        if (!requireEntry()) {
+            return INPUT;
+        }
         if (!hasActionErrors()) {
+            EnclosureMetadata enclosure = validateEnclosure();
+            if (hasActionErrors()) {
+                return failedSave();
+            }
+
             try {
                 WeblogEntryManager weblogEntryManager = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
@@ -223,24 +231,13 @@ public final class EntryEdit extends UIAction {
                     weblogEntry.setPinnedToMain(getBean().getPinnedToMain());
                 }
 
-                if (!StringUtils.isEmpty(getBean().getEnclosureURL())) {
-                    try {
-                        // Fetch MediaCast resource
-                        log.debug("Checking MediaCast attributes");
-                        MediacastResource mediacast = MediacastUtil
-                                .lookupResource(getBean().getEnclosureURL());
-
-                        // set mediacast attributes
-                        weblogEntry.putEntryAttribute("att_mediacast_url",
-                                mediacast.getUrl());
-                        weblogEntry.putEntryAttribute("att_mediacast_type",
-                                mediacast.getContentType());
-                        weblogEntry.putEntryAttribute("att_mediacast_length", ""
-                                + mediacast.getLength());
-
-                    } catch (MediacastException ex) {
-                        addMessage(getText(ex.getErrorKey()));
-                    }
+                if (enclosure != null) {
+                    weblogEntry.putEntryAttribute("att_mediacast_url",
+                            enclosure.getUrl());
+                    weblogEntry.putEntryAttribute("att_mediacast_type",
+                            enclosure.getContentType());
+                    weblogEntry.putEntryAttribute("att_mediacast_length",
+                            enclosure.getLength());
                 } else if ("entryEdit".equals(actionName)) {
                     try {
                         // if MediaCast string is empty, clean out MediaCast
@@ -304,8 +301,56 @@ public final class EntryEdit extends UIAction {
                 addError("generic.error.check.logs");
             }
         }
+        return failedSave();
+    }
+
+    EnclosureMetadata validateEnclosure() {
+        if (StringUtils.isEmpty(getBean().getEnclosureURL())) {
+            return null;
+        }
+        try {
+            return EnclosureMetadata.of(
+                    getBean().getEnclosureURL(),
+                    getBean().getEnclosureType(),
+                    getBean().getEnclosureLength());
+        } catch (EnclosureMetadata.ValidationException invalid) {
+            if (submittedEnclosureMatchesStored()) {
+                getBean().setEnclosureURL(null);
+                getBean().setEnclosureType(null);
+                getBean().setEnclosureLength(null);
+                addMessage("weblogEdit.enclosureMetadataRemoved");
+            } else {
+                switch (invalid.getField()) {
+                    case URL:
+                        addError("weblogEdit.enclosureURLInvalid");
+                        break;
+                    case TYPE:
+                        addError("weblogEdit.enclosureTypeInvalid");
+                        break;
+                    case LENGTH:
+                        addError("weblogEdit.enclosureLengthInvalid");
+                        break;
+                    default:
+                        throw invalid;
+                }
+            }
+            return null;
+        }
+    }
+
+    private boolean submittedEnclosureMatchesStored() {
+        return "entryEdit".equals(actionName) && getEntry() != null
+                && StringUtils.equals(getBean().getEnclosureURL(),
+                        getEntry().findEntryAttribute("att_mediacast_url"))
+                && StringUtils.equals(getBean().getEnclosureType(),
+                        getEntry().findEntryAttribute("att_mediacast_type"))
+                && StringUtils.equals(getBean().getEnclosureLength(),
+                        getEntry().findEntryAttribute("att_mediacast_length"));
+    }
+
+    private String failedSave() {
         if ("entryAdd".equals(actionName)) {
-            // if here on entryAdd, nothing saved, so reset status to null (unsaved)
+            // If here on entryAdd, nothing saved, so reset status to null (unsaved).
             getBean().setStatus(null);
         }
         return INPUT;
@@ -327,8 +372,19 @@ public final class EntryEdit extends UIAction {
         this.entry = entry;
     }
 
+    private boolean requireEntry() {
+        if (entry == null) {
+            addError("weblogEntry.notFound");
+            return false;
+        }
+        return true;
+    }
+
     @SkipValidation
     public String firstSave() {
+        if (!requireEntry()) {
+            return ERROR;
+        }
         addStatusMessage(getEntry().getStatus());
         return execute();
     }
@@ -356,71 +412,7 @@ public final class EntryEdit extends UIAction {
                 .getUrlStrategy()
                 .getPreviewURLStrategy(null)
                 .getWeblogEntryURL(getActionWeblog(), null,
-                        getEntry().getAnchor(), true);
-    }
-
-    public String getTrackbackUrl() {
-        return trackbackUrl;
-    }
-
-    public void setTrackbackUrl(String trackbackUrl) {
-        this.trackbackUrl = trackbackUrl;
-    }
-
-    /**
-     * Send trackback to a specific url.
-     */
-    @SkipValidation
-    public String trackback() {
-
-        // make sure we have an entry to edit and it belongs to the action
-        // weblog
-        if (getEntry() == null) {
-            return ERROR;
-        } else if (!getEntry().getWebsite().equals(getActionWeblog())) {
-            return DENIED;
-        }
-
-        if (!StringUtils.isEmpty(getTrackbackUrl())) {
-            RollerMessages results = null;
-            try {
-                Trackback trackback = new Trackback(getEntry(),
-                        getTrackbackUrl());
-                results = trackback.send();
-            } catch (TrackbackNotAllowedException ex) {
-                addError("error.trackbackNotAllowed");
-            } catch (Exception e) {
-                log.error("Error sending trackback", e);
-                // TODO: error handling
-                addError("error.general", e.getMessage());
-            }
-
-            if (results != null) {
-                for (Iterator<RollerMessage> mit = results.getMessages(); mit.hasNext();) {
-                    RollerMessage msg = mit.next();
-                    if (msg.getArgs() == null) {
-                        addMessage(msg.getKey());
-                    } else {
-                        addMessage(msg.getKey(), Arrays.asList(msg.getArgs()));
-                    }
-                }
-
-                for (Iterator<RollerMessage> eit = results.getErrors(); eit.hasNext();) {
-                    RollerMessage err = eit.next();
-                    if (err.getArgs() == null) {
-                        addError(err.getKey());
-                    } else {
-                        addError(err.getKey(), Arrays.asList(err.getArgs()));
-                    }
-                }
-            }
-
-            // reset trackback url
-            setTrackbackUrl(null);
-
-        }
-
-        return INPUT;
+                        getEntry().getAnchor(), false);
     }
 
     /**

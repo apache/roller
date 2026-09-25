@@ -28,6 +28,7 @@ docker/postgresql-data
 docker/roller-data
 assembly-release/release.sh
 it-selenium/overlays/
+docker/postgresql-16-data
 
 # Playwright MCP session output
 .playwright-mcp/

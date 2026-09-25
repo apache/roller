@@ -120,13 +120,13 @@ table.mm_table_actions td {
 }
 
 td.pendingentry, tr.pendingentry {
-    background: #ffcccc;
+    background: #ffcccc !important;
 }
 td.draftentry, tr.draftentry {
-    background: #ffffcc;
+    background: #ffffcc !important;
 }
 td.scheduledentry, tr.scheduledentry {
-    background: #EEEEE0;
+    background: #EEEEE0 !important;
 }
 
 .entryEditSidebarLink > a {
@@ -252,7 +252,7 @@ body {
     margin:5px;
     list-style-type:none;
     width:140px;
-    height:160px;
+    max-height:200px;
     border: 1px solid #ccc;
     text-align: center;
 }
@@ -271,7 +271,7 @@ body {
 
 .mediaObject {
     width:120px;
-    height:120px;
+    max-height:120px;
     margin-top: 10px;
     margin-left: 10px;
 }

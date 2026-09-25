@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
-import org.apache.struts2.ActionContext;
+import org.apache.struts2.action.ServletRequestAware;
 import org.apache.struts2.ActionSupport;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.text.StringEscapeUtils;
@@ -52,7 +52,7 @@ import java.util.stream.IntStream;
  * getText(key) on the param passed into setError() and setSuccess().
  */
 public abstract class UIAction extends ActionSupport
-        implements UIActionPreparable, UISecurityEnforced {
+        implements UIActionPreparable, UISecurityEnforced, ServletRequestAware {
     
     // a result that sends the user to an access denied warning
     public static final String DENIED = "access-denied";
@@ -82,18 +82,26 @@ public abstract class UIAction extends ActionSupport
     protected String pageTitle = null;
 
     protected String salt = null;
+
+    private HttpServletRequest servletRequest = null;
     
     @Override
     public void myPrepare() {
         // no-op
     }
 
+	@Override
+	public void withServletRequest(HttpServletRequest request) {
+		this.servletRequest = request;
+	}
+
+	protected HttpServletRequest getServletRequest() {
+		return servletRequest;
+	}
+
 	public String getSalt() {
-		if (salt == null) {
-			HttpServletRequest request = ActionContext.getContext().getServletRequest();
-			if (request != null) {
-				salt = (String) request.getAttribute("salt");
-			}
+		if (salt == null && servletRequest != null) {
+			salt = (String) servletRequest.getAttribute("salt");
 		}
 		return salt;
 	}

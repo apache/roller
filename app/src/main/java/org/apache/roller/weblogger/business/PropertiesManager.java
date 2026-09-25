@@ -52,6 +52,15 @@ public interface PropertiesManager {
      * Save a list of properties
      */
     void saveProperties(Map<String, RuntimeConfigProperty> properties) throws WebloggerException;
+
+
+    /**
+     * Replace a property's value only when it still has the expected value.
+     *
+     * @return true when the property was updated, otherwise false
+     */
+    boolean compareAndSetProperty(String name, String expectedValue, String newValue)
+            throws WebloggerException;
     
     
     /**

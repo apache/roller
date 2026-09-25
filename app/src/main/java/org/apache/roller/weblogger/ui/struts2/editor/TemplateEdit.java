@@ -58,7 +58,8 @@ public class TemplateEdit extends UIAction {
     @Override
     public void myPrepare() {
         try {
-            setTemplate(WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(getBean().getId()));
+            setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
+                    .getTemplate(getActionWeblog(), getBean().getId()));
         } catch (WebloggerException ex) {
             log.error("Error looking up template - " + getBean().getId(), ex);
         }
