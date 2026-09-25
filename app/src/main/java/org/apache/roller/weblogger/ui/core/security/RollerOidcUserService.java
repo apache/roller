@@ -32,6 +32,7 @@ import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -197,6 +198,12 @@ public class RollerOidcUserService implements OAuth2UserService<OidcUserRequest,
         boolean bootstrapAdmin = umgr.getUserCount() == 0
                 && WebloggerConfig.getBooleanProperty("users.firstUserAdmin");
 
+        // Until initial setup completes, BootstrapSecurityFilter only lets the
+        // session that redeemed the one-time setup token start an OIDC sign-in,
+        // so this account belongs to the operator: like a form registration it
+        // keeps the first-user admin grant and completes setup.
+        boolean initialSetup = !BootstrapSecurity.isCompleted();
+
         // grants the "editor" role, and "admin" if this is the first user
         umgr.addUser(user);
 
@@ -208,18 +215,24 @@ public class RollerOidcUserService implements OAuth2UserService<OidcUserRequest,
         if (claimRoles.contains("admin")) {
             umgr.grantRole("admin", user);
             WebloggerFactory.getWeblogger().flush();
-        } else if (bootstrapAdmin
+        } else if (bootstrapAdmin && !initialSetup
                 && !WebloggerConfig.getBooleanProperty("users.oidc.firstUserAdmin")) {
-            // users.firstUserAdmin makes the first account an administrator,
-            // which for auto-provisioned identities would mean whichever
-            // provider user reaches a fresh install first. That grant needs an
-            // explicit opt-in for OIDC.
+            // After setup, an install with no users left would otherwise hand
+            // the admin role to whichever provider user signs in first. That
+            // grant needs an explicit opt-in for OIDC.
             umgr.revokeRole("admin", user);
             WebloggerFactory.getWeblogger().flush();
             log.warn("First user '" + username + "' was auto-provisioned from OIDC and did NOT "
                     + "receive the admin role. To bootstrap an administrator, assert an 'admin' "
                     + "role claim at the provider, set users.oidc.firstUserAdmin=true, or create "
                     + "the account before enabling OIDC.");
+        }
+        if (initialSetup) {
+            WebloggerFactory.getWeblogger().getPropertiesManager().saveProperty(
+                    new RuntimeConfigProperty(BootstrapSecurity.COMPLETION_PROPERTY, "true"));
+            WebloggerFactory.getWeblogger().flush();
+            BootstrapSecurity.complete();
+            log.info("Initial setup completed by the OIDC sign-in of '" + username + "'");
         }
         log.info("Auto-provisioned OIDC user '" + username + "' from claims (roles: "
                 + claimRoles + ", subject: " + oidcSubject + ")");
