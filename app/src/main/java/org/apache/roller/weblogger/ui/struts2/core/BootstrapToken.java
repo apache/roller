@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.action.ServletResponseAware;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 public class BootstrapToken extends UIAction implements ServletResponseAware {
 
@@ -65,6 +66,7 @@ public class BootstrapToken extends UIAction implements ServletResponseAware {
         response.setHeader("Referrer-Policy", "no-referrer");
     }
 
+    @StrutsParameter
     public void setToken(String token) {
         this.token = token;
     }

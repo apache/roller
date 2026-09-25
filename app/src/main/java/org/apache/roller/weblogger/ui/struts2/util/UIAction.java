@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.util;
 
 import org.apache.struts2.action.ServletRequestAware;
 import org.apache.struts2.ActionSupport;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.business.UserManager;
@@ -111,6 +112,7 @@ public abstract class UIAction extends ActionSupport
      * See also https://issues.apache.org/jira/browse/ROL-2068
      * @param salt previous salt
      */
+    @StrutsParameter
     public void setSalt(String salt) {
         // no-op
     }
@@ -305,6 +307,7 @@ public abstract class UIAction extends ActionSupport
         return weblog;
     }
 
+    @StrutsParameter
     public void setWeblog(String weblog) {
         this.weblog = weblog;
     }

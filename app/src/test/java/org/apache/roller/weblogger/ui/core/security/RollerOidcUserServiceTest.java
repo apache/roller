@@ -17,6 +17,7 @@
  */
 package org.apache.roller.weblogger.ui.core.security;
 
+import java.lang.reflect.Field;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -31,6 +33,7 @@ import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -66,9 +69,22 @@ class RollerOidcUserServiceTest {
     private RollerOidcUserService service;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
         service = new RollerOidcUserService();
+        // most cases run on an install whose initial setup is done
+        setSetupCompleted(true);
+    }
+
+    @AfterEach
+    void resetSetupGate() throws Exception {
+        setSetupCompleted(false);
+    }
+
+    private static void setSetupCompleted(boolean completed) throws Exception {
+        Field field = BootstrapSecurity.class.getDeclaredField("completed");
+        field.setAccessible(true);
+        field.set(null, completed);
     }
 
     @Test
@@ -413,10 +429,38 @@ class RollerOidcUserServiceTest {
     }
 
     /**
-     * users.firstUserAdmin makes the first account an administrator, which for
-     * an auto-provisioned identity would be whichever provider user reaches a
-     * fresh install first. The grant must be revoked unless explicitly enabled
-     * for OIDC or asserted by an admin role claim.
+     * During initial setup only the session holding the one-time setup token
+     * can reach OIDC sign-in, so the first account is the operator's: it keeps
+     * the users.firstUserAdmin grant and completes setup, as a form
+     * registration does.
+     */
+    @Test
+    void firstUserDuringInitialSetupKeepsAdminAndCompletesSetup() throws Exception {
+        setSetupCompleted(false);
+        PropertiesManager properties = mock(PropertiesManager.class);
+        when(roller.getPropertiesManager()).thenReturn(properties);
+        try (MockedStatic<WebloggerFactory> factory = bootstrappedRoller();
+             MockedStatic<WebloggerConfig> config = oidcBootstrapPolicy(false)) {
+            when(userManager.getUserByOpenIdUrl(SUBJECT)).thenReturn(null);
+            when(userManager.getUserCount()).thenReturn(0L);
+            when(userManager.getRoles(any(User.class))).thenReturn(List.of("editor", "admin"));
+
+            service.resolveUser(oidcUser(Map.of(
+                    "preferred_username", "operator",
+                    "email", "operator@example.com")));
+
+            verify(userManager, never()).revokeRole(anyString(), any(User.class));
+            verify(properties).saveProperty(argThat(p ->
+                    BootstrapSecurity.COMPLETION_PROPERTY.equals(p.getName()) && "true".equals(p.getValue())));
+            assertTrue(BootstrapSecurity.isCompleted());
+        }
+    }
+
+    /**
+     * Once setup is done, an install with no users left would hand
+     * users.firstUserAdmin to whichever provider user signs in first. The
+     * grant must be revoked unless explicitly enabled for OIDC or asserted by
+     * an admin role claim.
      */
     @Test
     void firstProvisionedUserLosesBootstrapAdminByDefault() throws Exception {
