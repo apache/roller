@@ -9,35 +9,14 @@
   #showAnalyticsTrackingCode($model.weblog)
 
   <link rel="stylesheet" href="$model.weblog.stylesheet">
-  <link rel="stylesheet" href="$url.absoluteSite/roller-ui/styles/jquery.mobile-theme/default.min.css" />
-  <link rel="stylesheet" href="$url.absoluteSite/roller-ui/styles/jquery.mobile-theme/jquery.mobile.icons.min.css" />
-  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
-
-  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 
   <script>
-
-    $(document).bind("mobileinit", function(){
-      $.mobile.ajaxEnabled = false;
-    });
-
-  </script>
-
-  <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
-
-  <script>
-    $(document).bind("pageinit", function(){
-      $('#btnStandard').on('click', function() {
-        setCookie("roller_user_request_type","standard",30);
-        $("#btnStandard").attr('href', '?deviceType=standard').click();
+    // remember the choice, then let the link's deviceType parameter switch views
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("btnStandard").addEventListener("click", function () {
+        document.cookie = "roller_user_request_type=standard; max-age=" + 30 * 24 * 60 * 60 + "; path=/";
       });
     });
-    function setCookie(c_name, value, exdays) {
-      var exdate = new Date();
-      exdate.setDate(exdate.getDate() + exdays);
-      var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString() + "; path=/");
-      document.cookie = c_name + "=" + c_value;
-    }
   </script>
 </head>
 <!-- weblog-mobile -->
@@ -47,7 +26,7 @@
     <div data-role="header" data-theme="a">
       <h1>$model.weblog.name</h1>
       <a href="$url.absoluteSite" data-icon="home" data-theme="a">Home</a>
-      <a href="#" id="btnStandard" data-role="button">View Standard</a>
+      <a href="?deviceType=standard" id="btnStandard" data-role="button">View Standard</a>
     </div>
 
     <div role="main" class="ui-content">
