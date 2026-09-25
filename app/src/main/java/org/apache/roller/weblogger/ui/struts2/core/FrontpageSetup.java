@@ -31,7 +31,6 @@ import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
 import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache;
 import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
-import org.apache.struts2.ServletActionContext;
 
 /**
  * Chooses the site frontpage weblog for the first time.
@@ -110,7 +109,7 @@ public class FrontpageSetup extends Setup {
     }
 
     protected boolean isPostRequest() {
-        HttpServletRequest req = ServletActionContext.getRequest();
+        HttpServletRequest req = getServletRequest();
         return req != null && "POST".equalsIgnoreCase(req.getMethod());
     }
 

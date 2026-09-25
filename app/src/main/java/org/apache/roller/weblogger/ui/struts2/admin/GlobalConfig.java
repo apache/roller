@@ -41,7 +41,7 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache;
 import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.struts2.ActionContext;
+import org.apache.struts2.action.ParametersAware;
 import org.apache.struts2.dispatcher.HttpParameters;
 import org.apache.struts2.dispatcher.Parameter;
 
@@ -50,12 +50,17 @@ import org.apache.struts2.dispatcher.Parameter;
  * Action which handles editing of global configuration.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class GlobalConfig extends UIAction {
+public class GlobalConfig extends UIAction implements ParametersAware {
 
     private static final Log log = LogFactory.getLog(GlobalConfig.class);
 
     // the request parameters
     private HttpParameters params = HttpParameters.create().build();
+
+    @Override
+    public void withParameters(HttpParameters parameters) {
+        this.params = parameters;
+    }
 
     // map of config properties
     private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
@@ -102,9 +107,6 @@ public class GlobalConfig extends UIAction {
      */
     @Override
     public void myPrepare() {
-        // initialize request parameters from ActionContext
-        this.params = ActionContext.getContext().getParameters();
-
         if (log.isDebugEnabled()) {
             log.debug("Parameter map:");
             for (Map.Entry<String, Parameter> entry : params.entrySet()) {
@@ -163,7 +165,7 @@ public class GlobalConfig extends UIAction {
      * Save global properties.
      */
     public String save() {
-        httpMethod = ActionContext.getContext().getServletRequest().getMethod();
+        httpMethod = getServletRequest().getMethod();
         if (!"POST".equals(httpMethod)) {
             return ERROR;
         }

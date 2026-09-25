@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.apache.struts2.ActionContext;
+import org.apache.struts2.action.ServletResponseAware;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -38,7 +38,9 @@ import jakarta.servlet.http.HttpServletResponse;
  * Edit a new or existing folder.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class FolderEdit extends UIAction {
+public class FolderEdit extends UIAction implements ServletResponseAware {
+
+    private HttpServletResponse servletResponse = null;
 
     private static final Log log = LogFactory.getLog(FolderEdit.class);
 
@@ -79,8 +81,9 @@ public class FolderEdit extends UIAction {
         }
     }
 
-    private HttpServletResponse getServletResponse() {
-        return ActionContext.getContext().getServletResponse();
+    @Override
+    public void withServletResponse(HttpServletResponse response) {
+        this.servletResponse = response;
     }
 
     /**
@@ -135,7 +138,7 @@ public class FolderEdit extends UIAction {
                 // HTTP response splitting defense
                 String sanetizedFolderID = folderId.replace("\n", "").replace("\r", "");
 
-                getServletResponse().addHeader("folderId", sanetizedFolderID);
+                servletResponse.addHeader("folderId", sanetizedFolderID);
 
                 return SUCCESS;
 

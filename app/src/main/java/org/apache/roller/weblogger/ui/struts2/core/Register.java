@@ -39,7 +39,6 @@ import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
-import org.apache.struts2.ActionContext;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -60,7 +59,6 @@ public class Register extends UIAction {
     public static final String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
 
     // this is a no-no, we should not need this
-    private HttpServletRequest servletRequest = null;
 
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
@@ -448,13 +446,6 @@ public class Register extends UIAction {
         }
 	}
     
-    
-    public HttpServletRequest getServletRequest() {
-        if (servletRequest == null) {
-            servletRequest = ActionContext.getContext().getServletRequest();
-        }
-        return servletRequest;
-    }
     
     public ProfileBean getBean() {
         return bean;
