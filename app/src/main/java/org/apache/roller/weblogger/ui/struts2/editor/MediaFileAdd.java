@@ -40,6 +40,7 @@ import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.action.UploadedFilesAware;
 import org.apache.struts2.dispatcher.multipart.UploadedFile;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -251,6 +252,7 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
         }
     }
     
+    @StrutsParameter(depth = 1)
     public MediaFileBean getBean() {
         return bean;
     }
@@ -308,6 +310,7 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
      * @param directoryName
      *            the directoryName to set
      */
+    @StrutsParameter
     public void setDirectoryName(String directoryName) {
         this.directoryName = directoryName;
     }

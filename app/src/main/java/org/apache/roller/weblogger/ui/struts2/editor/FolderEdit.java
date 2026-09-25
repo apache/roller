@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.apache.struts2.action.ServletResponseAware;
 
@@ -169,6 +170,7 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
         return actionName.equals("folderAdd");
     }
 
+    @StrutsParameter(depth = 1)
     public FolderBean getBean() {
         return bean;
     }

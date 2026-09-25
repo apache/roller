@@ -41,6 +41,7 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 
 /**
@@ -337,6 +338,7 @@ public class GlobalCommentManagement extends UIAction {
         return opts;
     }
 
+    @StrutsParameter(depth = 1)
     public GlobalCommentManagementBean getBean() {
         return bean;
     }

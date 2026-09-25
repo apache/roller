@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.dispatcher.multipart.UploadedFile;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import java.util.List;
@@ -177,6 +178,7 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
         return INPUT;
     }
 
+    @StrutsParameter(depth = 1)
     public MediaFileBean getBean() {
         return bean;
     }
