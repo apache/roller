@@ -51,7 +51,8 @@ limitations under the License.
     <modules>
         <module>app</module>
         <module>db-utils</module>
-        <!-- <module>it-selenium</module> -->
+        <!-- it-playwright holds the browser tests; it is not a reactor module
+             because it needs a running Roller and a browser. See its README. -->
     </modules>
 
     <build>
