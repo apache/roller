@@ -86,3 +86,31 @@ Use the portal-generated advisory and review its fields before sending:
 
 Do not include private correspondence, internal record links, or reproduction
 steps by default. Coordinate recipients and timing with the ASF process.
+
+## Disclosure notice to reporter
+
+Subject: Apache Roller [version]: advisories published for your reports
+
+Apache Roller [version] was released on [date], and the advisories for the
+reports you sent us are now public:
+
+[CVE identifier]: [public title]
+  [public advisory link]
+
+[For duplicates: Your reports that duplicated earlier findings are credited on
+these advisories as well: ...]
+
+You are credited as "[approved wording]". Thank you for reporting these issues
+and for keeping them confidential while we prepared the fix.
+
+[Name, on behalf of the Apache Roller project]
+
+## Sending
+
+- Send ASF list mail from your `@apache.org` address. announce@apache.org rejects
+  other senders, while the other recipients still receive the message, so a failed
+  send is easy to miss.
+- Drafts created through mail APIs or automation can store links rewritten as
+  redirects. Check the raw message source before sending, or compose in the mail
+  client itself.
+- After sending, confirm the message in the list archive.
