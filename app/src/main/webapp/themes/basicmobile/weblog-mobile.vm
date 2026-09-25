@@ -8,7 +8,7 @@
   #showMetaDescription()
   #showAnalyticsTrackingCode($model.weblog)
 
-  <link rel="stylesheet" href="$model.weblog.stylesheet">
+  <link rel="stylesheet" href="$model.weblog.stylesheet?deviceType=mobile">
 
   <script>
     // remember the choice, then let the link's deviceType parameter switch views

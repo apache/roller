@@ -212,7 +212,9 @@ function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
-$(document).ready(function () {
+// weblog pages include this script with their comment form, and most themes
+// do not load jQuery, so validation only runs where jQuery Validation is loaded
+window.jQuery && jQuery.validator && jQuery(function () {
     jQuery("form.validate-form").validate();
     // Added method to check valid email address and add a custom error message
     jQuery.validator.addMethod(
