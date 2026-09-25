@@ -17,7 +17,10 @@ public class BootstrapSecurityFilter implements Filter {
         boolean installer = uri != null && (tokenPage || uri.contains("/roller-ui/install/")
                 || uri.endsWith("/roller-ui/register.rol")
                 || uri.endsWith("/roller-ui/register!save.rol")
-                || uri.endsWith("/roller-ui/setup.rol"));
+                || uri.endsWith("/roller-ui/setup.rol")
+                // OIDC sign-in can provision the first account
+                || uri.contains("/oauth2/authorization/")
+                || uri.contains("/login/oauth2/code/"));
         if (installer && !BootstrapSecurity.isCompleted()) {
             if (tokenPage) { chain.doFilter(req, res); return; }
             if (!BootstrapSecurity.isValid(r)) { p.sendRedirect(r.getContextPath() + "/roller-ui/bootstrap-token.rol"); return; }

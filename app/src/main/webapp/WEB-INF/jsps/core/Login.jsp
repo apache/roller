@@ -33,36 +33,33 @@
     }
 %>
 
-    <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
-
-
-        <form method="post" id="loginOpenIDForm" class="form-horizontal"
-              action="/roller/roller_j_openid_security_check" onsubmit="saveOpenidIdentifier(this)">
-
+    <s:if test="authMethod == 'OIDC' || authMethod == 'DB_OIDC'">
+        <s:if test="oidcProviders.size() > 0">
             <div class="form-group">
-                <legend><s:text name="loginPage.openIdPrompt"/></legend>
+                <legend><s:text name="loginPage.oidcPrompt"/></legend>
             </div>
 
             <div class="form-group">
-                <label for="openid_identifier"><s:text name="loginPage.openID"/></label>
-                <input class="form-control" type="text" name="openid_identifier" id="openid_identifier"/>
+                <s:iterator value="oidcProviders" var="provider">
+                    <a href="${pageContext.request.contextPath}/oauth2/authorization/<s:property value="#provider.id"/>"
+                       class="btn btn-default" style="margin-bottom: 5px;">
+                        <s:text name="loginPage.signInWith">
+                            <s:param><s:property value="#provider.name"/></s:param>
+                        </s:text>
+                    </a>
+                </s:iterator>
             </div>
-
-            <button type="submit" name="submit" id="submit" class="btn btn-primary"
-                value="<s:text name='loginPage.loginOpenID'/>"></button>
-
-        </form>
-
+        </s:if>
     </s:if>
 
-    <s:if test="authMethod != 'OPENID'">
+    <s:if test="authMethod != 'OIDC'">
 
         <form method="post" id="loginForm" class="form-horizontal"
               action="<c:url value="<%= securityCheckUrl %>"/>" onsubmit="saveUsername(this)">
 
             <div class="form-group">
-                <s:if test="authMethod == 'DB_OPENID'">
-                    <legend><s:text name="loginPage.openIdHybridPrompt"/></legend>
+                <s:if test="authMethod == 'DB_OIDC'">
+                    <legend><s:text name="loginPage.dbOidcPrompt"/></legend>
                 </s:if>
 
                 <s:else>
@@ -102,44 +99,14 @@
     </s:if>
 
 <script>
-    <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
-    function focusToOpenidForm() {
-        return (document.getElementById && document.getElementById("j_username") === null) ||
-                getCookie("favorite_authentication_method") !== "username";
-    }
-
-    if (document.getElementById) {
-        if (document.getElementById && getCookie("openid_identifier") !== null) {
-            document.getElementById("openid_identifier").value = getCookie("openid_identifier");
-        }
-        if (focusToOpenidForm()) {
-            document.getElementById("openid_identifier").focus();
-        }
-    }
-
-    function saveOpenidIdentifier(theForm) {
-        var expires = new Date();
-        expires.setTime(expires.getTime() + 24 * 30 * 60 * 60 * 1000); // sets it for approx 30 days.
-        setCookie("openid_identifier", theForm.openid_identifier.value, expires);
-        setCookie("favorite_authentication_method", "openid");
-    }
-    </s:if>
-
-    <s:if test="authMethod != 'OPENID'">
-    function focusToUsernamePasswordForm() {
-        return (document.getElementById && document.getElementById("openid_identifier") === null) ||
-                getCookie("favorite_authentication_method") === "username";
-    }
-
+    <s:if test="authMethod != 'OIDC'">
     if (document.getElementById) {
         if (getCookie("username") != null) {
             if (document.getElementById) {
                 document.getElementById("j_username").value = getCookie("username");
-                if (focusToUsernamePasswordForm()) {
-                    document.getElementById("j_password").focus();
-                }
+                document.getElementById("j_password").focus();
             }
-        } else if (focusToUsernamePasswordForm()) {
+        } else {
             document.getElementById("j_username").focus();
         }
     }
@@ -148,7 +115,6 @@
         var expires = new Date();
         expires.setTime(expires.getTime() + 24 * 30 * 60 * 60 * 1000); // sets it for approx 30 days.
         setCookie("username", theForm.j_username.value, expires);
-        setCookie("favorite_authentication_method", "username");
     }
     </s:if>
 </script>

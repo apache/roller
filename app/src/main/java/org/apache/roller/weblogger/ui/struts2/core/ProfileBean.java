@@ -113,7 +113,22 @@ public class ProfileBean {
     public void setOpenIdUrl(String openIdUrl) {
         this.openIdUrl = openIdUrl;
     }
-    
+
+    /** The issuer half of the {@code issuer#subject} federated identity. */
+    public String getOidcIssuer() {
+        return openIdUrl == null ? null : openIdUrl.split("#", 2)[0];
+    }
+
+    /** The subject half of the {@code issuer#subject} federated identity. */
+    public String getOidcSubject() {
+        if (openIdUrl == null) {
+            return null;
+        }
+        String[] parts = openIdUrl.split("#", 2);
+        return parts.length > 1 ? parts[1] : null;
+    }
+
+
     public String getPasswordText() {
         return passwordText;
     }

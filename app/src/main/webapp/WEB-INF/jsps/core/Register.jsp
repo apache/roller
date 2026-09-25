@@ -69,19 +69,7 @@
 
         <h2><s:text name="userRegister.heading.authentication" /></h2>
 
-        <s:if test="authMethod == 'ROLLERDB'">
-            <p><s:text name="userRegister.tip.openid.disabled" /></p>
-        </s:if>
-
-        <s:if test="authMethod == 'DB_OPENID'">
-            <p><s:text name="userRegister.tip.openid.hybrid" /></p>
-        </s:if>
-
-        <s:if test="authMethod == 'OPENID'">
-            <p><s:text name="userRegister.tip.openid.only" /></p>
-        </s:if>
-
-        <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OPENID'">
+        <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OIDC'">
 
             <s:password label="%{getText('userSettings.password')}"
                          tooltip="%{getText('userRegister.tip.password')}"
@@ -99,14 +87,6 @@
             <s:hidden name="bean.passwordText" />
             <s:hidden name="bean.passwordConfirm" />
         </s:else>
-
-        <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
-
-            <s:textfield label="%{getText('userSettings.openIdUrl')}"
-                         tooltip="%{getText('userRegister.tip.openIdUrl')}"
-                         onkeyup="onChange()"
-                         name="bean.openIdUrl" size="40" maxlength="255" />
-        </s:if>
 
     </s:if>
 
@@ -156,22 +136,17 @@
             userName = document.register['bean.userName'].value;
         }
 
-        if (authMethod === "ROLLERDB" || authMethod === "DB_OPENID") {
+        if (authMethod === "ROLLERDB" || authMethod === "DB_OIDC") {
             passwordText    = document.register['bean.passwordText'].value;
             passwordConfirm = document.register['bean.passwordConfirm'].value;
-        }
-        if (authMethod === "OPENID" || authMethod === "DB_OPENID") {
-            openIdUrl = document.register['bean.openIdUrl'].value;
         }
 
         if (authMethod === "LDAP") {
             if (emailAddress) disabled = false;
-        } else if (authMethod === "ROLLERDB") {
+        } else if (authMethod === "ROLLERDB" || authMethod === "DB_OIDC") {
             if (emailAddress && userName && passwordText && passwordConfirm) disabled = false;
-        } else if (authMethod === "OPENID") {
-            if (emailAddress && openIdUrl) disabled = false;
-        } else if (authMethod === "DB_OPENID") {
-            if (emailAddress && ((passwordText && passwordConfirm) || (openIdUrl)) ) disabled = false;
+        } else if (authMethod === "OIDC") {
+            if (emailAddress && userName) disabled = false;
         }
 
         if (authMethod !== 'LDAP') {
