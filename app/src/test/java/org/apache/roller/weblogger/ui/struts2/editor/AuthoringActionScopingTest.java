@@ -447,5 +447,9 @@ public class AuthoringActionScopingTest {
         @Override
         public void removeScopeStrategy() {
         }
+
+        @Override
+        public void destroy() {
+        }
     };
 }
