@@ -6,7 +6,7 @@
   <title>Search Results for '$model.term' : $model.weblog.name</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="$model.weblog.stylesheet">
+  <link rel="stylesheet" href="$model.weblog.stylesheet?deviceType=mobile">
 
 </head>
 <!-- searchresults-mobile -->
