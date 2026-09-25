@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 
 /**
@@ -133,6 +134,7 @@ public class MainMenu extends UIAction {
         return inviteId;
     }
 
+    @StrutsParameter
     public void setInviteId(String inviteId) {
         this.inviteId = inviteId;
     }

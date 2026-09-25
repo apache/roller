@@ -44,6 +44,7 @@ import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.action.ParametersAware;
 import org.apache.struts2.dispatcher.HttpParameters;
 import org.apache.struts2.dispatcher.Parameter;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 
 /**
@@ -340,6 +341,7 @@ public class GlobalConfig extends UIAction implements ParametersAware {
         return commentPlugins.clone();
     }
 
+    @StrutsParameter
     public void setCommentPlugins(String[] commentPlugins) {
         this.commentPlugins = commentPlugins.clone();
     }

@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 
 /**
@@ -167,6 +168,7 @@ public class MembersInvite extends UIAction {
         return userName;
     }
 
+    @StrutsParameter
     public void setUserName(String userId) {
         this.userName = userId;
     }
@@ -175,6 +177,7 @@ public class MembersInvite extends UIAction {
         return permissionString;
     }
 
+    @StrutsParameter
     public void setPermissionString(String permission) {
         this.permissionString = permission;
     }

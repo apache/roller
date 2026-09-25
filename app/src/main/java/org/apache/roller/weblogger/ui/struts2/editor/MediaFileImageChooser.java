@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryC
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -151,6 +152,7 @@ public class MediaFileImageChooser extends MediaFileBase {
      * @param directoryId
      *            the directoryId to set
      */
+    @StrutsParameter
     public void setDirectoryId(String directoryId) {
         this.directoryId = directoryId;
     }
@@ -166,6 +168,7 @@ public class MediaFileImageChooser extends MediaFileBase {
      * @param directoryName
      *            the directoryName to set
      */
+    @StrutsParameter
     public void setDirectoryName(String directoryName) {
         this.directoryName = directoryName;
     }

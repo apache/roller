@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.core.security.RollerClientRegistrationRepository;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 
 /**
@@ -105,6 +106,7 @@ public class Login extends UIAction {
         return error;
     }
 
+    @StrutsParameter
     public void setError(String error) {
         this.error = error;
     }

@@ -24,6 +24,7 @@ import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -116,6 +117,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
         return SUCCESS;
     }
 
+    @StrutsParameter(depth = 1)
     public EntryBean getBean() {
         return bean;
     }
@@ -134,6 +136,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
     /**
      * @param selectedImages the selectedImages to set
      */
+    @StrutsParameter
     public void setSelectedImages(String[] selectedImages) {
         this.selectedImages = selectedImages;
     }
@@ -150,6 +153,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
      * @param weblog the weblog to set
      */
     @Override
+    @StrutsParameter
     public void setWeblog(String weblog) {
         this.weblog = weblog;
     }
@@ -164,6 +168,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
     /**
      * @param selectedImage the selectedImage to set
      */
+    @StrutsParameter
     public void setSelectedImage(String selectedImage) {
         this.selectedImage = selectedImage;
     }

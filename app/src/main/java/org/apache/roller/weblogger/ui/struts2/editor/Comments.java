@@ -48,6 +48,7 @@ import org.apache.roller.weblogger.util.I18nMessages;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 /**
  * Action for managing weblog comments.
@@ -454,6 +455,7 @@ public class Comments extends UIAction {
         return opts;
     }
 
+    @StrutsParameter(depth = 1)
     public CommentsBean getBean() {
         return bean;
     }
