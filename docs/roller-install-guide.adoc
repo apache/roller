@@ -259,6 +259,19 @@ be packaged as ojdbc14.jar, even if operating on Oracle 9 server.
 * See the server specific sections to information on where to place the
 JDBC driver jars.
 
+=== H2 database considerations
+
+H2 is not one of Roller's officially supported databases (PostgreSQL, MySQL and
+Derby are), but Roller can run against it as a generic JDBC database. If you use
+H2 2.5.250 or later, be aware that H2 now treats VALUE as a reserved word.
+Several Roller tables, such as ROLLER_PROPERTIES, have a column named VALUE, so
+Roller will fail to read them on newer H2. To work around this, append
+;NON_KEYWORDS=VALUE to your H2 JDBC connection URL, for example:
+
+----
+jdbc:h2:file:/path/to/rollerdb;NON_KEYWORDS=VALUE
+----
+
 == Deploy Roller to Tomcat
 
 Deploying Roller to the Tomcat servlet container involves creating a
@@ -479,7 +492,7 @@ password in 'mail/Session' Resource.
 ----
 
 The Java mail properties listed above are defined here:
-https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html.
+https://eclipse-ee4j.github.io/mail/docs/api/com/sun/mail/smtp/package-summary.html.
 Note the email account defined above will appear in the "From:" line
 of notification email messages sent to blog owners (and, if they select
 "Notify me of further comments", blog commenters) so take care not to
@@ -523,9 +536,12 @@ subsystem will be able to find and use them. Download them from your
 database vendor/provider and place them in Tomcat’s _lib_ directory.
 * **Java Mail and Activation. **Tomcat does not include the Java Mail
 and Activation jars. Even if you do not plan to use email features, you
-must download those jars and place them in Tomcat’s classpath. Download
-them from Oracle (https://java.net/projects/javamail/pages/Home) and
-place them in Tomcat’s _lib_ directory.
+must download those jars and place them in Tomcat’s classpath because
+Roller uses the JavaMail API for email address validation in its core
+code. Download them from Maven Central and place them in Tomcat’s _lib_
+directory:
+** https://repo1.maven.org/maven2/com/sun/mail/jakarta.mail/1.6.7/jakarta.mail-1.6.7.jar[jakarta.mail-1.6.7.jar]
+** https://repo1.maven.org/maven2/com/sun/activation/jakarta.activation/1.2.2/jakarta.activation-1.2.2.jar[jakarta.activation-1.2.2.jar]
 
 === Tomcat: Set URI Encoding
 
@@ -774,6 +790,21 @@ such as foreign keys or indexes that don’t already exist, a specific
 error type which the automated installation process is coded to ignore.
 
 == Upgrading Roller
+
+=== Initial setup security token
+
+Whenever Roller starts and finds setup work to do, it generates a cryptographically random, one-time setup token and prints it to the Roller server log. This applies to two cases:
+
+* a **new installation**, where the database tables have yet to be created; and
+* an **upgrade of an existing site** whose database schema needs to be migrated — for example from Roller 5.2.x or 6.0.x.
+
+Upgrades that require no schema change issue no token and show no installer. Upgrading from any Roller 6.1.x release to another, including to 6.1.6, is such a case: the site starts up normally with no operator interaction.
+
+When a token is issued, open `/roller-ui/bootstrap-token.rol` over HTTPS (or a secured local tunnel) and enter the token before opening the installer or registering the first administrator. The token is accepted only in the POST body, expires after 60 minutes, and is consumed on successful entry. Restart Roller to obtain a new token if it expires or the browser session is lost. The token is never included in a URL or Roller page.
+
+NOTE: Because the token is written only to the server log, make sure you can read the Roller log — `roller.log`, or the container's console output — before you begin an upgrade that needs one. Plan for this in deployments where logs are shipped elsewhere or the console is not readily accessible.
+
+The token authorizes the installer and first-user flow for the current browser session only. Run database creation or upgrade on one setup node at a time. Bootstrap access closes permanently as soon as setup finishes: on a new installation when the first administrator is committed, including after deleting or disabling that account; on an existing site when the database upgrade completes. Existing installations with users continue to use their normal login and registration settings.
 
 This section describes how to upgrade an existing Roller installation to
 the latest release of Roller by shutting down, backing up and then

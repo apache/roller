@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
@@ -30,6 +31,8 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.struts2.action.UploadedFilesAware;
+import org.apache.roller.weblogger.ui.core.RollerContext;
+import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.dispatcher.multipart.UploadedFile;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -66,7 +69,7 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
         try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
-                setDirectory(mgr.getMediaFileDirectory(bean.getDirectoryId()));
+                setDirectory(mgr.getMediaFileDirectory(getActionWeblog(), bean.getDirectoryId()));
             }
         } catch (WebloggerException ex) {
             log.error("Error looking up media file directory", ex);
@@ -99,7 +102,7 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
     public String execute() {
         MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
         try {
-            MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
+            MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), getMediaFileId());
             this.bean.copyFrom(mediaFile);
 
         } catch (FileIOException ex) {
@@ -123,13 +126,25 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
         if (!hasActionErrors()) {
             MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
             try {
-                MediaFile mediaFile = manager.getMediaFile(getMediaFileId());
+                MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), getMediaFileId());
                 bean.copyTo(mediaFile);
 
                 if (uploadedFile != null
                         && uploadedFile.getContent() instanceof File uploadFile) {
                     mediaFile.setLength(uploadFile.length());
-                    mediaFile.setContentType(uploadedFile.getContentType());
+                    String declaredType = MediaTypePolicy.normalizeType(
+                            uploadedFile.getContentType());
+                    RollerMessages errors = new RollerMessages();
+                    if (!WebloggerFactory.getWeblogger().getFileContentManager().canSave(
+                            getActionWeblog(), uploadedFile.getOriginalName(), declaredType,
+                            uploadFile.length(), errors)) {
+                        throw new FileIOException(errors.toString());
+                    }
+                    // Replacing the body re-decides the type, on the same
+                    // terms as the original upload.
+                    mediaFile.setContentType(MediaTypePolicy.storedTypeFor(
+                            uploadedFile.getOriginalName(), declaredType,
+                            RollerContext.getServletContext()::getMimeType));
                     manager.updateMediaFile(getActionWeblog(), mediaFile,
                             new FileInputStream(uploadFile));
                 } else {

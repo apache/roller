@@ -40,7 +40,6 @@ import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.struts2.ActionContext;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 
 
@@ -244,7 +243,7 @@ public class GlobalCommentManagement extends UIAction {
      * Update a list of comments.
      */
     public String update() {
-        httpMethod = ActionContext.getContext().getServletRequest().getMethod();
+        httpMethod = getServletRequest().getMethod();
         if (!"POST".equals(httpMethod)) {
             return ERROR;
         }

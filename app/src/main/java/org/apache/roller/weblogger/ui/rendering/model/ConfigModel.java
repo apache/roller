@@ -101,11 +101,6 @@ public class ConfigModel implements Model {
         return getBooleanProperty("users.comments.emailnotify");
     }
     
-    public boolean getTrackbacksEnabled() {
-        return getBooleanProperty("users.trackbacks.enabled");
-    }
-    
-    
     /** Get Roller version string */
     public String getRollerVersion() {
         return WebloggerFactory.getWeblogger().getVersion();
@@ -146,4 +141,3 @@ public class ConfigModel implements Model {
     }
     
 }
-

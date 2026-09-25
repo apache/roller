@@ -255,7 +255,7 @@
         $.ajax({
             url: "<s:url value='themedata'/>",
             data: {theme: themeId}, success: function (data) {
-                $('#themeDescription').html(data.description);
+                $('#themeDescription').text(data.description);
                 thumbnail = $('#themeThumbnail');
                 thumbnail.attr('src', '<s:property value="siteURL" />' + data.previewPath);
             }

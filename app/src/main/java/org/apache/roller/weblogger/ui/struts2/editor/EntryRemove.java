@@ -59,7 +59,7 @@ public class EntryRemove extends UIAction {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
-                setRemoveEntry(wmgr.getWeblogEntry(getRemoveId()));
+                setRemoveEntry(wmgr.getWeblogEntry(getActionWeblog(), getRemoveId()));
             } catch (WebloggerException ex) {
                 log.error("Error looking up entry by id - " + getRemoveId(), ex);
             }

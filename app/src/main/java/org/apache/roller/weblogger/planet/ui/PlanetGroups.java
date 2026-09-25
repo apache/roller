@@ -21,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.struts2.ActionContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ public class PlanetGroups extends PlanetUIAction {
 
     @Override
     public void myPrepare() {
-        HttpServletRequest request = ActionContext.getContext().getServletRequest();
+        HttpServletRequest request = getServletRequest();
         group = PlanetGroupSubs.getGroupFromRequest(request, getPlanet());
     }
 

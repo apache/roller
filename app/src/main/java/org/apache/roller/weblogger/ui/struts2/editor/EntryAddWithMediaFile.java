@@ -71,7 +71,11 @@ public class EntryAddWithMediaFile extends MediaFileBase {
 
             if (selectedImages != null) {
                 for (String image : selectedImages) {
-                    MediaFile mediaFile = manager.getMediaFile(image);
+                    MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), image);
+                    if (mediaFile == null) {
+                        addError("MediaFile.error.view");
+                        return ERROR;
+                    }
                     String link;
 
                     if (mediaFile.isImageFile()) {
@@ -106,6 +110,8 @@ public class EntryAddWithMediaFile extends MediaFileBase {
 
         } catch (Exception e) {
             log.error("Error while constructing media file link for new entry", e);
+            addError("MediaFile.error.view");
+            return ERROR;
         }
         return SUCCESS;
     }
