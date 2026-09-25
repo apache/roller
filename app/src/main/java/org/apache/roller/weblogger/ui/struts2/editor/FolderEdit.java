@@ -72,7 +72,7 @@ public class FolderEdit extends UIAction {
             // retrieve existing folder data from DB
             try {
                 BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-                folder = bmgr.getFolder(getBean().getId());
+                folder = bmgr.getFolderById(getActionWeblog(), getBean().getId());
             } catch (WebloggerException ex) {
                 log.error("Error looking up folder", ex);
             }
@@ -90,6 +90,10 @@ public class FolderEdit extends UIAction {
     @Override
     public String execute() {
         if (!isAdd()) {
+            if (folder == null) {
+                addError("folderForm.notFound");
+                return ERROR;
+            }
             // load bean with database values during initial load
             getBean().copyFrom(folder);
         }
@@ -100,6 +104,10 @@ public class FolderEdit extends UIAction {
      * Save updated folder data.
      */
     public String save() {
+        if (!isAdd() && folder == null) {
+            addError("folderForm.notFound");
+            return ERROR;
+        }
         myValidate();
         
         if(!hasActionErrors()) {
@@ -141,6 +149,10 @@ public class FolderEdit extends UIAction {
     }
 
     public void myValidate() {
+        if (folder == null) {
+            addError("folderForm.notFound");
+            return;
+        }
         // make sure new name is not a duplicate of an existing folder
         if ( isAdd() || !getBean().getName().equals(folder.getName()) ) {
             if (folder.getWeblog().hasBookmarkFolder(getBean().getName())) {

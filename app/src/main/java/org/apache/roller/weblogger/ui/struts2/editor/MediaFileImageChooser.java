@@ -83,7 +83,7 @@ public class MediaFileImageChooser extends MediaFileBase {
 
             MediaFileDirectory directory;
             if (this.directoryId != null) {
-                directory = manager.getMediaFileDirectory(this.directoryId);
+                directory = manager.getMediaFileDirectory(getActionWeblog(), this.directoryId);
             } else if (this.directoryName != null) {
                 directory = manager.getMediaFileDirectoryByName(getActionWeblog(), this.directoryName);
                 this.directoryId = directory.getId();

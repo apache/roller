@@ -55,11 +55,11 @@
                         <s:set var="categoryName"  value="#category.name" />
                         <s:set var="categoryDesc"  value="#category.description" />
                         <s:set var="categoryImage" value="#category.image" />
-                        <a href="#" onclick="showCategoryEditModal(
-                                '<s:property value="categoryId" />',
-                                '<s:property value="categoryName"/>',
-                                '<s:property value="categoryDesc"/>',
-                                '<s:property value="categoryImage"/>' )">
+                        <a href="#" class="category-edit-link"
+                           data-category-id="<s:property value="categoryId" />"
+                           data-category-name="<s:property value="categoryName"/>"
+                           data-category-desc="<s:property value="categoryDesc"/>"
+                           data-category-image="<s:property value="categoryImage"/>">
                             <span class="glyphicon glyphicon-edit"></span>
                         </a>
 
@@ -71,10 +71,10 @@
                             <s:set var="categoryId"    value="#category.id" />
                             <s:set var="categoryName"  value="#category.name" />
                             <s:set var="categoryInUse" value="#category.inUse.toString()" />
-                            <a href="#" onclick="showCategoryDeleteModal(
-                                    '<s:property value="categoryId" />',
-                                    '<s:property value="categoryName" />',
-                                    <s:property value="categoryInUse"/> )" >
+                            <a href="#" class="category-delete-link"
+                               data-category-id="<s:property value="categoryId" />"
+                               data-category-name="<s:property value="categoryName" />"
+                               data-category-in-use="<s:property value="categoryInUse"/>">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </a>
 
@@ -288,27 +288,28 @@
     function showCategoryDeleteModal( id, name, inUse ) {
         $('#categoryRemove_removeId').val(id);
         $('#categoryEdit_bean_name').val(name);
-        $('#category-name').html(name);
+        $('#category-name').text(name);
         if ( inUse ) {
             $('#category-in-use').css('display','block');
-            $('#category-emtpy').css('display', 'none');
+            $('#category-empty').css('display', 'none');
         } else {
             $('#category-in-use').css('display', 'none');
-            $('#category-emtpy').css('display', 'block');
+            $('#category-empty').css('display', 'block');
         }
         populateCategorySelect(id);
         $('#delete-category-modal').modal({show: true});
     }
 
     function populateCategorySelect(removeId) {
-        const allCategories = [];
-
-        <s:iterator value="allCategories" var="category">
-        allCategories.push({
-            id: '<s:property value="#category.id"/>',
-            name: '<s:property value="#category.name"/>'
-        });
-        </s:iterator>
+        // Category names are author-supplied. They are rendered into data
+        // attributes below and read back as text here, so no name is ever
+        // parsed as JavaScript.
+        const allCategories = $('.category-delete-link').map(function () {
+            return {
+                id: $(this).attr('data-category-id'),
+                name: $(this).attr('data-category-name')
+            };
+        }).get();
 
         const select = $('#categoryRemove_targetCategoryId');
         select.empty();
@@ -318,5 +319,21 @@
             }
         });
     }
+
+    // Values come from data-* attributes and are bound via delegated listeners.
+    $(document).on('click', '.category-edit-link', function (event) {
+        event.preventDefault();
+        showCategoryEditModal($(this).attr('data-category-id'),
+                $(this).attr('data-category-name'),
+                $(this).attr('data-category-desc'),
+                $(this).attr('data-category-image'));
+    });
+
+    $(document).on('click', '.category-delete-link', function (event) {
+        event.preventDefault();
+        showCategoryDeleteModal($(this).attr('data-category-id'),
+                $(this).attr('data-category-name'),
+                $(this).attr('data-category-in-use') === 'true');
+    });
 
 </script>

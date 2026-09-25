@@ -32,6 +32,8 @@ import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.springframework.beans.FatalBeanException;
+import org.apache.struts2.ServletActionContext;
+import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 
 
 /**
@@ -55,6 +57,15 @@ public class Install extends UIAction {
 
 
     @Override
+    public void setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
+    }
+
+    public String getRootCauseExceptionName() {
+        return rootCauseException == null ? "" : rootCauseException.getClass().getName();
+    }
+
+    @Override
     public boolean isUserRequired() {
         return false;
     }
@@ -67,7 +78,6 @@ public class Install extends UIAction {
 
     @Override
     public String execute() {
-
         if (WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
         }
@@ -105,6 +115,7 @@ public class Install extends UIAction {
 
 
     public String create() {
+        if (!BootstrapSecurity.isValid(ServletActionContext.getRequest())) return BOOTSTRAP;
 
         if (WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
@@ -125,6 +136,7 @@ public class Install extends UIAction {
 
 
     public String upgrade() {
+        if (!BootstrapSecurity.isValid(ServletActionContext.getRequest())) return BOOTSTRAP;
 
         if (WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
@@ -145,6 +157,7 @@ public class Install extends UIAction {
 
 
     public String bootstrap() {
+        if (!BootstrapSecurity.isValid(ServletActionContext.getRequest())) return BOOTSTRAP;
         log.info("ENTERING");
 
         if (WebloggerFactory.isBootstrapped()) {
@@ -158,6 +171,12 @@ public class Install extends UIAction {
 
             // trigger initialization process
             WebloggerFactory.getWeblogger().initialize();
+
+            // On the upgrade path setup is finished here: the site already has
+            // users, so no first-administrator registration will come along to
+            // close the bootstrap gate. Close it now rather than leaving the
+            // installer reachable until the next restart.
+            BootstrapSecurity.completeIfInstalled(WebloggerFactory.getWeblogger());
 
             // also need to do planet if it's configured
             if (WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {

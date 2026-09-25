@@ -21,6 +21,9 @@ package org.apache.roller.weblogger.business.jpa;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import jakarta.persistence.LockModeType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -143,6 +146,19 @@ public class JPAPropertiesManagerImpl implements PropertiesManager {
         for (Object prop : properties.values()) {
             this.strategy.store(prop);
         }
+    }
+
+
+    @Override
+    public boolean compareAndSetProperty(String name, String expectedValue, String newValue)
+            throws WebloggerException {
+        RuntimeConfigProperty property = strategy.getEntityManager(true).find(
+                RuntimeConfigProperty.class, name, LockModeType.PESSIMISTIC_WRITE);
+        if (property == null || !Objects.equals(expectedValue, property.getValue())) {
+            return false;
+        }
+        property.setValue(newValue);
+        return true;
     }
     
 

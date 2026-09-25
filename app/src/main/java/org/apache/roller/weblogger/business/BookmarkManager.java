@@ -63,8 +63,21 @@ public interface BookmarkManager {
      * @throws WebloggerException If there is a problem.
      */
     WeblogBookmarkFolder getFolder(String id) throws WebloggerException;
-    
-    
+
+    /**
+     * Get a folder by id, restricted to the given weblog.
+     *
+     * <p>Named differently from {@link #getFolder(Weblog, String)}, which
+     * looks a folder up by name, because the two would otherwise have the
+     * same erasure.
+     *
+     * @return the folder, or null if no folder with that id belongs to the
+     *         given weblog. A folder that exists but belongs to another weblog
+     *         is reported the same way as one that does not exist.
+     */
+    WeblogBookmarkFolder getFolderById(Weblog weblog, String id) throws WebloggerException;
+
+
     /** 
      * Get all folders for a weblog.
      *
@@ -123,8 +136,18 @@ public interface BookmarkManager {
      * @throws WebloggerException If there is a problem.
      */
     WeblogBookmark getBookmark(String id) throws WebloggerException;
-    
-    
+
+    /**
+     * Get a bookmark by id, restricted to the given weblog.
+     *
+     * @return the bookmark, or null if no bookmark with that id belongs to a
+     *         folder of the given weblog. A bookmark that exists but belongs
+     *         to another weblog is reported the same way as one that does not
+     *         exist.
+     */
+    WeblogBookmark getBookmark(Weblog weblog, String id) throws WebloggerException;
+
+
     /** 
      * Lookup all Bookmarks in a folder, optionally search recursively.
      *
