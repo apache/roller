@@ -22,7 +22,7 @@
 </p>
 
 <s:form id="entry" action="mediaFileEdit!save" method="POST" enctype="multipart/form-data"
-        theme="bootstrap" class="form-horizontal">
+        theme="bootstrap">
 
     <s:hidden name="salt"/>
     <s:hidden name="weblog"/>
@@ -30,8 +30,8 @@
     <s:hidden name="bean.permalink"/>
 
     <s:if test="bean.isImage">
-        <div class="form-group">
-            <label class="control-label col-sm-3">Thumbnail</label>
+        <div class="row mb-3">
+            <label class="col-form-label col-sm-3">Thumbnail</label>
             <div class="controls col-sm-9">
                 <a href='<s:property value="bean.permalink" />' target="_blank">
                     <img alt="thumbnail" src='<s:property value="bean.thumbnailURL" />'
@@ -47,8 +47,8 @@
     <s:textfield name="bean.name" size="35" maxlength="100" tabindex="1"
                  label="%{getText('generic.name')}"/>
 
-    <div class="form-group">
-        <label class="control-label col-sm-3"><s:text name="mediaFileEdit.fileInfo"/></label>
+    <div class="row mb-3">
+        <label class="col-form-label col-sm-3"><s:text name="mediaFileEdit.fileInfo"/></label>
 
         <div class="controls col-sm-9">
 
@@ -67,8 +67,8 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="control-label col-sm-3">URL</label>
+    <div class="row mb-3">
+        <label class="col-form-label col-sm-3">URL</label>
 
         <div class="controls col-sm-9">
 
@@ -109,7 +109,7 @@
 
     <input type="submit" tabindex="7" class="btn btn-success"
            value="<s:text name="generic.save" />" name="submit"/>
-    <input type="button" tabindex="8" class="btn"
+    <input type="button" tabindex="8" class="btn btn-outline-secondary"
            value="<s:text name="generic.cancel" />" onClick="window.parent.onEditCancelled();"/>
 
 </s:form>

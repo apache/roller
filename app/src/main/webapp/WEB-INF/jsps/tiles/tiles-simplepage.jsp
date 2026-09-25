@@ -41,8 +41,8 @@
 
             <h1 class="roller-page-title"><s:property value="pageTitle"/></h1>
             <p><tiles:insertAttribute name="messages"/>
-            <div class="panel">
-                <div class="panel-body">
+            <div class="card">
+                <div class="card-body">
                     <tiles:insertAttribute name="content"/>
                 </div>
             </div>

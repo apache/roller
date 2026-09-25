@@ -25,7 +25,7 @@
                 <h3><s:text name="mediaFileSidebar.actions"/></h3>
 
                 <div style="clear:right">
-                    <span class="glyphicon glyphicon-picture"></span>
+                    <span class="bi bi-image"></span>
                     <s:url var="mediaFileAddURL" action="mediaFileAdd">
                         <s:param name="weblog" value="%{actionWeblog.handle}"/>
                         <s:param name="directoryName" value="%{directoryName}"/>
@@ -41,7 +41,7 @@
 
                     <div style="clear:right; margin-top: 1em">
 
-                        <span class="glyphicon glyphicon-folder-open"></span>
+                        <span class="bi bi-folder2-open"></span>
                         <s:text name="mediaFileView.addDirectory"/> <br />
 
                         <label for="newDirectoryName">
@@ -83,11 +83,11 @@
                     <s:textfield id="beanTags" name="bean.tags" size="20" maxlength="50"
                                  label="%{getText('mediaFileView.tags')}"/>
 
-                    <s:submit id="searchButton" cssClass="btn btn-primary"
+                    <s:submit id="searchButton" theme="simple" cssClass="btn btn-primary"
                               value="%{getText('mediaFileView.search')}" cssStyle="margin:5px 0;"/>
 
                     <s:if test="pager">
-                        <input id="resetButton" style="margin:5px 0;" type="button" class="btn"
+                        <input id="resetButton" style="margin:5px 0;" type="button" class="btn btn-outline-secondary"
                                name="reset" value='<s:text name="mediaFileView.reset" />'/>
                     </s:if>
 

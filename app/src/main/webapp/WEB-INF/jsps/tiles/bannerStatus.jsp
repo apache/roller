@@ -17,22 +17,18 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<nav class="navbar navbar-default navbar-static-top navbar-inverse">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <div id="navbar" class="navbar-collapse collapse">
+        <a class="navbar-brand" href="#"><s:property value="%{getProp('site.name')}" /></a>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse"
+                data-bs-target="#navbar" aria-expanded="false" aria-controls="navbar"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" 
-                        data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#"><s:property value="%{getProp('site.name')}" /></a>
-            </div>
-            
-            <ul class="nav navbar-nav">
+        <div id="navbar" class="collapse navbar-collapse">
+
+            <ul class="navbar-nav">
 
                 <s:if test="actionWeblog != null">
                     
@@ -40,15 +36,15 @@
                     <s:if test="#tabMenu != null">
 
                         <s:iterator var="tab" value="#tabMenu.tabs">
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                   aria-haspopup="true" aria-expanded="false">
-                                    <s:text name="%{#tab.key}"/> <span class="caret"></span>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button"
+                                   aria-expanded="false">
+                                    <s:text name="%{#tab.key}"/>
                                 </a>
                                 <ul class="dropdown-menu">
                                     <s:iterator var="tabItem" value="#tab.items" status="stat">
                                         <li>
-                                            <a href="<s:url action="%{#tabItem.action}">
+                                            <a class="dropdown-item" href="<s:url action="%{#tabItem.action}">
                                                 <s:param name="weblog" value="actionWeblog.handle"/></s:url>">
                                                 <s:text name="%{#tabItem.key}"/>
                                             </a>
@@ -68,15 +64,15 @@
                     <s:if test="#tabMenu != null">
 
                         <s:iterator var="tab" value="#tabMenu.tabs">
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                                   aria-haspopup="true" aria-expanded="false">
-                                    <s:text name="%{#tab.key}"/> <span class="caret"></span>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button"
+                                   aria-expanded="false">
+                                    <s:text name="%{#tab.key}"/>
                                 </a>
                                 <ul class="dropdown-menu">
                                     <s:iterator var="tabItem" value="#tab.items" status="stat">
                                         <li>
-                                            <a href="<s:url action='%{#tabItem.action}' />">
+                                            <a class="dropdown-item" href="<s:url action='%{#tabItem.action}' />">
                                                 <s:text name="%{#tabItem.key}"/>
                                             </a>
                                         </li>
@@ -91,30 +87,30 @@
 
             </ul>
             
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="navbar-nav ms-auto">
                 
-                <li><a href="<s:url value='/'/>"><s:property value="getProp('site.shortName')"/></a></li>
+                <li class="nav-item"><a class="nav-link" href="<s:url value='/'/>"><s:property value="getProp('site.shortName')"/></a></li>
 
-                <li>
-                    <a href="<s:url action='menu' namespace='/roller-ui' />">
+                <li class="nav-item">
+                    <a class="nav-link" href="<s:url action='menu' namespace='/roller-ui' />">
                         <s:text name="mainPage.mainMenu" /></a>
                 </li>
 
                 <s:if test="authenticatedUser != null">
-                    <li>
-                        <a href="<s:url action='logout' namespace='/roller-ui' />">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<s:url action='logout' namespace='/roller-ui' />">
                             <s:text name="navigationBar.logout"/></a>
                     </li>
                 </s:if>
                 <s:else>
-                    <li>
-                        <a href="<s:url action='login-redirect' namespace='/roller-ui' />">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<s:url action='login-redirect' namespace='/roller-ui' />">
                             <s:text name="navigationBar.login"/></a>
                     </li>
 
                     <s:if test="getBooleanProp('users.registration.enabled') && getProp('authentication.method') != 'ldap'">
-                        <li>
-                            <a href="<s:url action='register' namespace='/roller-ui' />">
+                        <li class="nav-item">
+                            <a class="nav-link" href="<s:url action='register' namespace='/roller-ui' />">
                                 <s:text name="navigationBar.register"/></a>
                         </li>
                     </s:if>

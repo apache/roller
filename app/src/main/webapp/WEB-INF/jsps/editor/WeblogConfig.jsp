@@ -142,7 +142,7 @@
     </s:if>
 
     <div class="control" style="margin-bottom:5em">
-        <s:submit cssClass="btn btn-success" value="%{getText('websiteSettings.button.update')}"/>
+        <s:submit theme="simple" cssClass="btn btn-success" value="%{getText('websiteSettings.button.update')}"/>
     </div>
 
 </s:form>
@@ -157,6 +157,6 @@
     <div class="alert alert-danger" role="alert">
         <s:text name="websiteSettings.removeWebsiteWarning"/>
     </div>
-    <s:submit cssClass="btn btn-danger" value="%{getText('websiteSettings.button.remove')}"/>
+    <s:submit theme="simple" cssClass="btn btn-danger" value="%{getText('websiteSettings.button.remove')}"/>
 
 </s:form>

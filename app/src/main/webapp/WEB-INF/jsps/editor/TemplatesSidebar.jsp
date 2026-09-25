@@ -20,7 +20,7 @@
 <h3><s:text name="pagesForm.addNewPage"/></h3>
 <hr size="1" noshade="noshade"/>
 
-<s:form action="templates!add" theme="bootstrap" cssClass="form-horizontal" id="templateAdd">
+<s:form action="templates!add" theme="bootstrap" id="templateAdd" cssClass="form-horizontal">
     <s:hidden name="salt"/>
     <s:hidden name="weblog"/>
 
@@ -32,7 +32,7 @@
         <s:select name="newTmplAction" list="availableActions"/>
     </s:if>
 
-    <s:submit class="btn" value="%{getText('pagesForm.add')}"/>
+    <s:submit theme="simple" cssClass="btn btn-outline-secondary" value="%{getText('pagesForm.add')}"/>
 
 </s:form>
 

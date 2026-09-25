@@ -55,7 +55,7 @@
 
     <s:form action="install!create">
 		<s:hidden name="salt" />
-        <s:submit value="%{getText('installer.yesCreateTables')}" cssClass="btn btn-default" />
+        <s:submit theme="simple" value="%{getText('installer.yesCreateTables')}" cssClass="btn btn-outline-secondary" />
     </s:form>
     
 </s:else>

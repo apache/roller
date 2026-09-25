@@ -36,8 +36,8 @@
 
     <div class="row">
         <div class="col-md-12 roller-column-left">
-            <div class="panel panel-default">
-                <div class="panel-body">
+            <div class="card">
+                <div class="card-body">
                     <tiles:insertAttribute name="messages"/>
                     <h2 class="roller-page-title"><s:property value="pageTitle"/></h2>
                     <tiles:insertAttribute name="content"/>

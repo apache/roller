@@ -24,7 +24,7 @@
     <%-- Add Blogroll --%>
 
     <a href="#" onclick="newBlogroll()">
-        <span class="glyphicon glyphicon-plus"></span>
+        <span class="bi bi-plus-lg"></span>
         <s:text name="bookmarksForm.addFolder"/>
     </a>
 </p>
@@ -35,7 +35,7 @@
         <s:param name="weblog" value="%{actionWeblog.handle}"/>
     </s:url>
     <s:a href="%{importBookmarks}">
-        <span class="glyphicon glyphicon-plus"></span>
+        <span class="bi bi-plus-lg"></span>
         <s:text name="bookmarksForm.importBookmarks"/>
     </s:a>
 </p>

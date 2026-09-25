@@ -30,14 +30,14 @@
 
                 <%-- Edit profile --%>
 
-                <h4><span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                <h4><span class="bi bi-person" aria-hidden="true"></span>
                 <a href="<s:url action="profile"/>"><s:text name="yourWebsites.editProfile" /></a></h4>
                 <p><s:text name="yourWebsites.editProfile.desc" /></p>
 
                 <%-- Create weblog --%>
                 
                 <s:if test="getBooleanProp('site.allowUserWeblogCreation') && (getBooleanProp('groupblogging.enabled') || (existingPermissions.isEmpty && pendingPermissions.isEmpty))">
-                    <h4><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    <h4><span class="bi bi-plus-lg" aria-hidden="true"></span>
                     <a href="<s:url action="createWeblog" />"><s:text name="yourWebsites.createWeblog" /></a></h4>
                     <p><s:text name="yourWebsites.createWeblog.desc" /></p>
                 </s:if>
@@ -46,7 +46,7 @@
 
                     <%-- Roller settings --%>
 
-                    <h4><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+                    <h4><span class="bi bi-wrench" aria-hidden="true"></span>
                     <a href="<s:url action="globalConfig" namespace="/roller-ui/admin" />"><s:text name="yourWebsites.globalAdmin" /></a></h4>          
                     <p><s:text name="yourWebsites.globalAdmin.desc" /></p>
 

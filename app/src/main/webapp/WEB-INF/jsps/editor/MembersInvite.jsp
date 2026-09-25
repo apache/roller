@@ -51,9 +51,10 @@
        <s:text name="inviteMember.limited" />
     </div>
 
-    <br />
-    <s:submit id="inviteButton" value="%{getText('inviteMember.button.save')}"  cssClass="btn btn-default"/>
-    <s:submit value="%{getText('generic.cancel')}" action="invite!cancel" cssClass="btn"/>
+    <div class="mb-3">
+        <s:submit theme="simple" id="inviteButton" value="%{getText('inviteMember.button.save')}" cssClass="btn btn-primary"/>
+        <s:submit theme="simple" value="%{getText('generic.cancel')}" action="invite!cancel" cssClass="btn btn-outline-secondary"/>
+    </div>
 
 </s:form>
 

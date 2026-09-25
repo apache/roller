@@ -212,7 +212,9 @@ function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
-$(document).ready(function () {
+// weblog pages include this script with their comment form, and most themes
+// do not load jQuery, so validation only runs where jQuery Validation is loaded
+window.jQuery && jQuery.validator && jQuery(function () {
     jQuery("form.validate-form").validate();
     // Added method to check valid email address and add a custom error message
     jQuery.validator.addMethod(
@@ -232,5 +234,16 @@ $(document).ready(function () {
         maxlength: 255,
         email: true,
         regex: /^\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i
+    });
+});
+
+// Bootstrap 5 tooltips are opt-in; field hints come from the form theme.
+// Titles may contain markup, hence html: true.
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof bootstrap === 'undefined' || !bootstrap.Tooltip) {
+        return;
+    }
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+        new bootstrap.Tooltip(el, {html: true, placement: 'right'});
     });
 });
