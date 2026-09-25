@@ -29,7 +29,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.struts2.ActionContext;
+import org.apache.struts2.action.ParametersAware;
 import org.apache.struts2.dispatcher.HttpParameters;
 
 
@@ -40,12 +40,17 @@ import org.apache.struts2.dispatcher.HttpParameters;
  * website.permissions collection when a permission is deleted.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class Members extends UIAction {
+public class Members extends UIAction implements ParametersAware {
     
     private static final Log log = LogFactory.getLog(Members.class);
     
     // raw parameters from request
     private HttpParameters parameters = HttpParameters.create().build();
+
+    @Override
+    public void withParameters(HttpParameters parameters) {
+        this.parameters = parameters;
+    }
     
     
     public Members() {
@@ -58,7 +63,6 @@ public class Members extends UIAction {
 
     @Override
     public void myPrepare() {
-        this.parameters = ActionContext.getContext().getParameters();
     }
 
     @Override

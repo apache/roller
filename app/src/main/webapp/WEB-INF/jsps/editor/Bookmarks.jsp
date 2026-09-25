@@ -131,7 +131,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
                     <td>
                         <s:if test="#bookmark.url != null">
-                            <a href='<s:property value="#bookmark.url" />' target='_blank'>
+                            <a href="<s:property value="#bookmark.url" />" target="_blank">
                                 <str:truncateNicely lower="70" upper="90">
                                     <s:property value="#bookmark.url"/>
                                 </str:truncateNicely>
@@ -143,13 +143,13 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
                     <td align="center">
 
-                        <a href="#" onclick="editBookmark(
-                                '<s:property value="#bookmark.id"/>',
-                                '<s:property value="#bookmark.name"/>',
-                                '<s:property value="#bookmark.url"/>',
-                                '<s:property value="#bookmark.feedUrl"/>',
-                                '<s:property value="#bookmark.description"/>',
-                                '<s:property value="#bookmark.image"/>' )">
+                        <a href="#" class="bookmark-edit-link"
+                           data-bookmark-id="<s:property value="#bookmark.id"/>"
+                           data-bookmark-name="<s:property value="#bookmark.name"/>"
+                           data-bookmark-url="<s:property value="#bookmark.url"/>"
+                           data-bookmark-feed-url="<s:property value="#bookmark.feedUrl"/>"
+                           data-bookmark-description="<s:property value="#bookmark.description"/>"
+                           data-bookmark-image="<s:property value="#bookmark.image"/>">
                             <span class="glyphicon glyphicon-edit"></span>
                         </a>
 
@@ -338,7 +338,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     function confirmDeleteFolder() {
         $('#boomarks_delete_folder_folderId').val($('#bookmarks_folderId:first').val());
-        $('#deleteBlogrollName').html('<s:property value="%{folder.name}"/>');
+        $('#deleteBlogrollName').text($('#deleteBlogrollName').data('folder-name'));
         $('#delete-blogroll-modal').modal({show: true});
     }
 
@@ -565,7 +565,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
                 <div class="modal-body">
                     <s:text name="blogrollDeleteOK.areYouSure" />
-                    <span id="deleteBlogrollName"></span>?
+                    <span id="deleteBlogrollName"
+                          data-folder-name="<s:property value="%{folder.name}"/>"></span>?
                 </div>
 
                 <div class="modal-footer">
@@ -700,11 +701,22 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         $('#bookmarkEdit_bean_image:first').val('');
         $('#bookmarkEdit_bean_feedUrl:first').val('');
 
-        $('#subtitle_folder_name:first').html(originalName);
+        $('#subtitle_folder_name:first').text(originalName);
 
         $('#addedit-bookmark-modal').modal({show: true});
     }
 
+
+    // Values come from data-* attributes and are bound via delegated listeners.
+    $(document).on('click', '.bookmark-edit-link', function (event) {
+        event.preventDefault();
+        editBookmark($(this).attr('data-bookmark-id'),
+                $(this).attr('data-bookmark-name'),
+                $(this).attr('data-bookmark-url'),
+                $(this).attr('data-bookmark-feed-url'),
+                $(this).attr('data-bookmark-description'),
+                $(this).attr('data-bookmark-image'));
+    });
 
     function editBookmark(id, name, url, feedUrl, description, image) {
 
@@ -725,7 +737,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         $('#bookmarkEdit_bean_description:first').val(description);
         $('#bookmarkEdit_bean_image:first').val(image);
 
-        $('#subtitle_folder_name:first').html(originalName);
+        $('#subtitle_folder_name:first').text(originalName);
 
         $('#addedit-bookmark-modal').modal({show: true});
     }
@@ -770,7 +782,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
             elem.removeClass("alert-info");
             elem.removeClass("alert-danger");
             elem.addClass("alert-success");
-            elem.html(message);
+            elem.text(message);
 
         } else {
             saveBookmarkButton.attr("disabled", true);
@@ -789,7 +801,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
             elem.removeClass("alert-info");
             elem.removeClass("alert-success");
             elem.addClass("alert-danger");
-            elem.html(message);
+            elem.text(message);
         }
     }
 

@@ -30,7 +30,7 @@ import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
-import org.apache.struts2.ActionContext;
+import org.apache.struts2.action.ParametersAware;
 import org.apache.struts2.dispatcher.HttpParameters;
 import org.apache.struts2.dispatcher.Parameter;
 
@@ -45,12 +45,17 @@ import java.util.Map;
  * Handles editing of planet global runtime properties.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class PlanetConfig extends PlanetUIAction {
+public class PlanetConfig extends PlanetUIAction implements ParametersAware {
     
     private static final Log log = LogFactory.getLog(PlanetConfig.class);
     
     // original request parameters
     private HttpParameters parameters = HttpParameters.create().build();
+
+    @Override
+    public void withParameters(HttpParameters parameters) {
+        this.parameters = parameters;
+    }
     
     // runtime properties data
     private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
@@ -80,9 +85,6 @@ public class PlanetConfig extends PlanetUIAction {
     
     @Override
     public void myPrepare() {
-        // initialize request parameters from ActionContext
-        this.parameters = ActionContext.getContext().getParameters();
-
         try {
             // just grab our properties map
             PropertiesManager pMgr = WebloggerFactory.getWeblogger().getPropertiesManager();

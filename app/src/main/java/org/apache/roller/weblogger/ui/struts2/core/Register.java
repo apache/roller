@@ -33,11 +33,12 @@ import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
+import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
-import org.apache.struts2.ActionContext;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -58,7 +59,6 @@ public class Register extends UIAction {
     public static final String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
 
     // this is a no-no, we should not need this
-    private HttpServletRequest servletRequest = null;
 
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
@@ -170,6 +170,14 @@ public class Register extends UIAction {
     
     
     public String save() {
+        if (!BootstrapSecurity.isCompleted() && !BootstrapSecurity.isValid(getServletRequest())) {
+            return DISABLED_RETURN_CODE;
+        }
+        if (!BootstrapSecurity.isCompleted()
+                && !WebloggerConfig.getBooleanProperty("users.firstUserAdmin")) {
+            addError("Initial administrator creation is disabled by users.firstUserAdmin");
+            return DISABLED_RETURN_CODE;
+        }
         
         // if registration is disabled, then don't allow registration
         try {
@@ -187,6 +195,7 @@ public class Register extends UIAction {
         
         if (!hasActionErrors()) {
             try {
+                if (!BootstrapSecurity.isCompleted()) BootstrapSecurity.beginInitialAdmin();
 
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
 
@@ -228,8 +237,11 @@ public class Register extends UIAction {
 
                 // save new user
                 mgr.addUser(ud);
+                WebloggerFactory.getWeblogger().getPropertiesManager().saveProperty(
+                        new RuntimeConfigProperty(BootstrapSecurity.COMPLETION_PROPERTY, "true"));
 
                 WebloggerFactory.getWeblogger().flush();
+                if (!BootstrapSecurity.isCompleted()) BootstrapSecurity.complete();
 
                 // now send activation email if necessary
                 sendActivationMailIfNeeded(ud, activationEnabled);
@@ -248,6 +260,8 @@ public class Register extends UIAction {
             } catch (WebloggerException ex) {
                 log.error("Error adding new user", ex);
                 addError("generic.error.check.logs");
+            } finally {
+                BootstrapSecurity.endInitialAdmin();
             }
         }
         
@@ -433,13 +447,6 @@ public class Register extends UIAction {
         }
 	}
     
-    
-    public HttpServletRequest getServletRequest() {
-        if (servletRequest == null) {
-            servletRequest = ActionContext.getContext().getServletRequest();
-        }
-        return servletRequest;
-    }
     
     public ProfileBean getBean() {
         return bean;

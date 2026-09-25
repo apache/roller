@@ -9,6 +9,9 @@
         <named-query name="BookmarkData.getByFolder">
             <query>SELECT b FROM WeblogBookmark b WHERE b.folder = ?1 order by b.priority</query>
         </named-query>
+        <named-query name="WeblogBookmark.getByWebsite&amp;Id">
+            <query>SELECT b FROM WeblogBookmark b WHERE b.folder.weblog = ?1 AND b.id = ?2</query>
+        </named-query>
         <attributes>
             <id name="id">
                 <column name="id"/>

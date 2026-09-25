@@ -17,6 +17,7 @@
  */
 package org.apache.roller.weblogger.ui.struts2.ajax;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
@@ -80,17 +81,21 @@ public class ThemeDataServlet extends HttpServlet {
         }
         for (Iterator<SharedTheme> it = themes.iterator(); it.hasNext();) {
             SharedTheme theme = it.next();
+            // Theme metadata comes from theme.xml, which an operator can edit
+            // or install; escape it so a quote or newline cannot break out of
+            // the string and produce malformed JSON.
             pw.print("    { \"id\" : \"");
-            pw.print(theme.getId());
+            pw.print(StringEscapeUtils.escapeJson(theme.getId()));
             pw.print("\", ");
             pw.print("\"name\" : \"");
-            pw.print(theme.getName());
+            pw.print(StringEscapeUtils.escapeJson(theme.getName()));
             pw.print("\", ");
             pw.print("\"description\" : \"");
-            pw.print(theme.getDescription());
+            pw.print(StringEscapeUtils.escapeJson(theme.getDescription()));
             pw.print("\", ");
             pw.print("\"previewPath\" : \"");
-            pw.print("/themes" + "/" + theme.getId() + "/" + theme.getPreviewImage().getPath());
+            pw.print(StringEscapeUtils.escapeJson(
+                    "/themes" + "/" + theme.getId() + "/" + theme.getPreviewImage().getPath()));
             pw.print("\" }");
             if (it.hasNext()) {
                 pw.println(", ");

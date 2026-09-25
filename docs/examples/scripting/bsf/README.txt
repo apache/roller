@@ -4,7 +4,8 @@ Some experiments with using BSF to enable scripting in Roller templates.
 
 To use it in Roller:
 
-1) Put roller-scripting.jar and bsf.jar in WEB-INF/lib
+1) Put roller-scripting.jar and bsf.jar in WEB-INF/lib. bsf.jar is not
+   distributed with Roller; download Apache BSF and use the jar from it.
 
 2) Add the jars necessary JavaScript, Groovy or JRuby to WEB-INF/lib
 

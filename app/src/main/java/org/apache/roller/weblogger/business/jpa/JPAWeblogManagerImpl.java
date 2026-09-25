@@ -514,8 +514,31 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (id != null && id.endsWith(".vm")) {
             return null;
         }
-        
+
         return (WeblogTemplate)this.strategy.load(WeblogTemplate.class,id);
+    }
+
+    @Override
+    public WeblogTemplate getTemplate(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        // Don't hit database for templates stored on disk
+        if (id == null || id.endsWith(".vm")) {
+            return null;
+        }
+
+        TypedQuery<WeblogTemplate> query = strategy.getNamedQuery("WeblogTemplate.getByWeblog&Id",
+                WeblogTemplate.class);
+        query.setParameter(1, weblog);
+        query.setParameter(2, id);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
     
     /**

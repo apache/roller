@@ -65,7 +65,7 @@ public class BookmarkEdit extends UIAction {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
             try {
                 if (!StringUtils.isEmpty(getFolderId())) {
-                    bookmark.setFolder(bmgr.getFolder(getFolderId()));
+                    bookmark.setFolder(bmgr.getFolderById(getActionWeblog(), getFolderId()));
                 }
             } catch (WebloggerException ex) {
                 addError("generic.error.check.logs");
@@ -75,7 +75,7 @@ public class BookmarkEdit extends UIAction {
             // existing bookmark, retrieve its info from DB
             try {
                 BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-                bookmark = bmgr.getBookmark(getBean().getId());
+                bookmark = bmgr.getBookmark(getActionWeblog(), getBean().getId());
             } catch (WebloggerException ex) {
                 addError("generic.error.check.logs");
                 log.error("Error looking up bookmark" + getBean().getId(), ex);
@@ -88,6 +88,10 @@ public class BookmarkEdit extends UIAction {
     @Override
     public String execute() {
         if (!isAdd()) {
+            if (bookmark == null) {
+                addError("bookmarkForm.notFound");
+                return ERROR;
+            }
             // load bean with database values during initial load
             getBean().copyFrom(getBookmark());
         }
@@ -96,6 +100,10 @@ public class BookmarkEdit extends UIAction {
 
     
     public String save() {
+        if (bookmark == null || bookmark.getFolder() == null) {
+            addError("bookmarkForm.notFound");
+            return ERROR;
+        }
         myValidate();
 
         if (!hasActionErrors()) {
@@ -118,6 +126,10 @@ public class BookmarkEdit extends UIAction {
     }
 
     public void myValidate() {
+        if (bookmark == null || bookmark.getFolder() == null) {
+            addError("bookmarkForm.notFound");
+            return;
+        }
         // if name new or changed, check new name doesn't already exist
         if ((isAdd() || !getBean().getName().equals(bookmark.getName()))
              && bookmark.getFolder().hasBookmarkOfName(getBean().getName())) {

@@ -151,7 +151,7 @@
    </display-group>
    
    
-   <!-- Comment & Trackback Settings Group -->
+   <!-- Comment Settings Group -->
    <display-group name="commentSettings" key="configForm.commentSettings" >
    
       <property-def  name="users.comments.enabled"  key="configForm.enableComments">
@@ -161,14 +161,6 @@
       <property-def  name="comments.ignoreSpam.enabled"  key="configForm.ignoreSpamComments">
          <type>boolean</type>
          <default-value>false</default-value>
-      </property-def>
-      <property-def  name="users.trackbacks.enabled"  key="configForm.enableTrackbacks">
-         <type>boolean</type>
-         <default-value>true</default-value>
-      </property-def>
-      <property-def  name="trackbacks.ignoreSpam.enabled"  key="configForm.ignoreSpamTrackbacks">
-         <type>boolean</type>
-         <default-value>true</default-value>
       </property-def>
       <property-def  name="users.comments.htmlenabled"  key="configForm.commentHtmlAllowed">
          <type>boolean</type>
@@ -187,11 +179,6 @@
          <type>boolean</type>
          <default-value>false</default-value>
       </property-def>
-      <property-def name="site.trackbackVerification.enabled" key="configForm.enableTrackbackValidation">
-         <type>boolean</type>
-         <default-value>false</default-value>
-      </property-def>
-
    </display-group >
    
    <!-- File Upload Settings Group -->
