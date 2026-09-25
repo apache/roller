@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import java.util.Date;
@@ -184,6 +185,7 @@ public class TemplateEdit extends UIAction {
     }
 
 
+    @StrutsParameter(depth = 1)
     public TemplateEditBean getBean() {
         return bean;
     }

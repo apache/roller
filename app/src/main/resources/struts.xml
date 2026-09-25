@@ -31,12 +31,6 @@
          to /static, which Roller does not map. -->
     <constant name="struts.ui.staticContentPath" value="/struts"/>
 
-    <!-- Struts 7 only binds request parameters to properties annotated with
-         @StrutsParameter. Roller's actions predate that annotation, so without
-         this no form in the application can submit data. Annotating the action
-         beans would be the stricter alternative. -->
-    <constant name="struts.parameters.requireAnnotations" value="false"/>
-
     <!-- Weblogger default package -->
     <package name="weblogger" namespace="/roller-ui" extends="struts-default">
 

@@ -40,6 +40,7 @@ import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -448,6 +449,7 @@ public class Register extends UIAction {
 	}
     
     
+    @StrutsParameter(depth = 1)
     public ProfileBean getBean() {
         return bean;
     }
@@ -468,6 +470,7 @@ public class Register extends UIAction {
         return activationCode;
     }
 
+    @StrutsParameter
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
     }

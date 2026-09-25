@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
 import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache;
 import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 /**
  * Chooses the site frontpage weblog for the first time.
@@ -123,6 +124,7 @@ public class FrontpageSetup extends Setup {
         return frontpageBlog;
     }
 
+    @StrutsParameter
     public void setFrontpageBlog(String frontpageBlog) {
         this.frontpageBlog = frontpageBlog;
     }
@@ -131,6 +133,7 @@ public class FrontpageSetup extends Setup {
         return aggregated;
     }
 
+    @StrutsParameter
     public void setAggregated(Boolean aggregated) {
         this.aggregated = aggregated;
     }

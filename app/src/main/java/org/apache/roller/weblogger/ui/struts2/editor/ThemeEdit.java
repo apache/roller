@@ -38,6 +38,7 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 /**
  * Action for controlling theme selection.
@@ -252,6 +253,7 @@ public class ThemeEdit extends UIAction {
         return themeType;
     }
 
+    @StrutsParameter
     public void setThemeType(String themeType) {
         this.themeType = themeType;
     }
@@ -268,6 +270,7 @@ public class ThemeEdit extends UIAction {
         return importTheme;
     }
 
+    @StrutsParameter
     public void setImportTheme(boolean importTheme) {
         this.importTheme = importTheme;
     }
@@ -276,6 +279,7 @@ public class ThemeEdit extends UIAction {
         return selectedThemeId;
     }
 
+    @StrutsParameter
     public void setSelectedThemeId(String importThemeId) {
         this.selectedThemeId = importThemeId;
     }

@@ -112,6 +112,18 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     
+    <!-- ahead of Spring Security, which consumes the OIDC sign-in endpoints
+         this gate covers before later filters would see them -->
+    <filter-mapping>
+        <filter-name>BootstrapSecurityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+        <dispatcher>ASYNC</dispatcher>
+    </filter-mapping>
+
     <!-- keep right above spring firewall filter, see source for details -->
     <filter-mapping>
         <filter-name>SpringFirewallExceptionFilter</filter-name>
@@ -132,15 +144,6 @@
         <filter-name>BootstrapFilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>BootstrapSecurityFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-        <dispatcher>ERROR</dispatcher>
-        <dispatcher>ASYNC</dispatcher>
     </filter-mapping>
 
     <!-- Map everything to the PersistenceSessionFilter.
