@@ -39,7 +39,5 @@ delete from userrole WHERE username like 'junit_%';
 delete from roller_permission WHERE username like 'junit_%';
 delete from roller_user WHERE username like 'junit_%';
 delete from roller_userattribute WHERE username like 'junit_%';
-delete from roller_oauthconsumer WHERE username like 'junit_%';
-delete from roller_oauthaccessor WHERE username like 'junit_%';
 delete from roller_tasklock WHERE name = 'TestTask';
 

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "https://jetty.org/configure_10_0.dtd">
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  The ASF licenses this file to You
@@ -16,17 +17,16 @@
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
 -->
-<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_3.dtd">
-
 <!-- Dummy values used only when testing with Jetty via mvn jetty:run -->
 
 <Configure id="Server" class="org.eclipse.jetty.server.Server">
 
+    <!-- Scoped to the Server so the webapp's web.xml resource-refs resolve -->
     <New id="ds" class="org.eclipse.jetty.plus.jndi.Resource">
-        <Arg> <Ref id="wac_ds"/> </Arg>
+        <Arg><Ref refid="Server"/></Arg>
         <Arg>jdbc/rollerdb</Arg>
         <Arg>
-            <New class="org.apache.commons.dbcp.BasicDataSource">
+            <New class="org.apache.commons.dbcp2.BasicDataSource">
                 <Set name="driverClassName">org.apache.derby.jdbc.ClientDriver</Set>
                 <Set name="url">jdbc:derby://localhost:4224/memory:rollerdb;create=true</Set>
                 <Set name="username">app</Set>
@@ -36,17 +36,17 @@
     </New>
 
     <New id="mail" class="org.eclipse.jetty.plus.jndi.Resource">
-        <Arg> <Ref id="wac_mail"/> </Arg>
+        <Arg><Ref refid="Server"/></Arg>
         <Arg>mail/Session</Arg>
         <Arg>
-            <New class="org.eclipse.jetty.jndi.factories.MailSessionReference">
-                <Set name="properties">
+            <!-- Jetty 12 dropped MailSessionReference, so bind a Session directly -->
+            <Call class="jakarta.mail.Session" name="getInstance">
+                <Arg>
                     <New class="java.util.Properties">
                         <Put name="mail.smtp.host">mail</Put>
-                        <Put name="mail.debug">true</Put>
                     </New>
-                </Set>
-            </New>
+                </Arg>
+            </Call>
         </Arg>
     </New>
 

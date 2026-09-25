@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 /**
  * Add or modify a common ping target.
@@ -140,6 +141,7 @@ public class PingTargetEdit extends UIAction {
         return actionName.equals("commonPingTargetAdd");
     }
 
+    @StrutsParameter(depth = 1)
     public PingTargetBean getBean() {
         return bean;
     }

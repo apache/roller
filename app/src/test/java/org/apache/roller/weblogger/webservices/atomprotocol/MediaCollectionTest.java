@@ -8,7 +8,7 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.io.ByteArrayInputStream;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.rometools.propono.atom.server.AtomMediaResource;
 import org.apache.roller.weblogger.pojos.MediaFile;

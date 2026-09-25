@@ -9,9 +9,9 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import static org.mockito.Mockito.*;
 
@@ -76,7 +76,7 @@ public class LoadSaltFilterTest {
 
     @Test
     void firstFormHasAUsableSalt() throws Exception {
-        javax.servlet.http.HttpSession session = mock(javax.servlet.http.HttpSession.class);
+        jakarta.servlet.http.HttpSession session = mock(jakarta.servlet.http.HttpSession.class);
         java.util.Map<String, Object> attributes = new java.util.HashMap<>();
         java.util.Map<String, Object> sessionAttributes = new java.util.HashMap<>();
         when(request.getSession(true)).thenAnswer(invocation -> {

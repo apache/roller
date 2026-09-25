@@ -19,8 +19,6 @@
 package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.*;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,22 +41,27 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache;
 import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
+import org.apache.struts2.action.ParametersAware;
 import org.apache.struts2.dispatcher.HttpParameters;
 import org.apache.struts2.dispatcher.Parameter;
-import org.apache.struts2.interceptor.HttpParametersAware;
-import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 
 /**
  * Action which handles editing of global configuration.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class GlobalConfig extends UIAction implements HttpParametersAware, ServletRequestAware {
+public class GlobalConfig extends UIAction implements ParametersAware {
 
     private static final Log log = LogFactory.getLog(GlobalConfig.class);
 
     // the request parameters
     private HttpParameters params = HttpParameters.create().build();
+
+    @Override
+    public void withParameters(HttpParameters parameters) {
+        this.params = parameters;
+    }
 
     // map of config properties
     private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
@@ -105,6 +108,13 @@ public class GlobalConfig extends UIAction implements HttpParametersAware, Servl
      */
     @Override
     public void myPrepare() {
+        if (log.isDebugEnabled()) {
+            log.debug("Parameter map:");
+            for (Map.Entry<String, Parameter> entry : params.entrySet()) {
+                log.debug(entry.getKey() + " = " + Utilities.stringArrayToString(entry.getValue().getMultipleValues(), ","));
+            }
+        }
+
         try {
             // just grab our properties map and make it available to the action
             PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
@@ -156,6 +166,7 @@ public class GlobalConfig extends UIAction implements HttpParametersAware, Servl
      * Save global properties.
      */
     public String save() {
+        httpMethod = getServletRequest().getMethod();
         if (!"POST".equals(httpMethod)) {
             return ERROR;
         }
@@ -293,19 +304,6 @@ public class GlobalConfig extends UIAction implements HttpParametersAware, Servl
     }
 
 
-    @Override
-    public void setParameters(HttpParameters parameters) {
-        this.params = parameters;
-
-        if (log.isDebugEnabled()) {
-            log.debug("Parameter map:");
-
-            for (Map.Entry<String, Parameter> entry : parameters.entrySet()) {
-                log.debug(entry.getKey() + " = " + Utilities.stringArrayToString(entry.getValue().getMultipleValues(), ","));
-            }
-        }
-    }
-
     // convenience method for getting a single parameter as a String
     private String getParameter(String key) {
         return this.params.get(key).getValue();
@@ -343,13 +341,9 @@ public class GlobalConfig extends UIAction implements HttpParametersAware, Servl
         return commentPlugins.clone();
     }
 
+    @StrutsParameter
     public void setCommentPlugins(String[] commentPlugins) {
         this.commentPlugins = commentPlugins.clone();
-    }
-
-    @Override
-    public void setServletRequest(HttpServletRequest req) {
-        httpMethod = req.getMethod();
     }
 
     public Collection<Weblog> getWeblogs() {

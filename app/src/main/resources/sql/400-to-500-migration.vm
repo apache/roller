@@ -78,29 +78,6 @@ create index ua_attrname_idx  on roller_userattribute( attrname$!db.INDEXSIZE );
 create index ua_attrvalue_idx on roller_userattribute( attrvalue$!db.INDEXSIZE );
 
 
--- OAUTH SUPPORT
-
--- each record is an OAuth consumer key and secret, can be tied to just one user
-create table roller_oauthconsumer (
-    consumerkey    varchar(48) not null primary key,
-    consumersecret varchar(48) not null,
-    username       varchar(48)
-);
-create index oc_username_idx  on roller_oauthconsumer( username$!db.INDEXSIZE );
-
--- each record is an OAuth accessor, always tied to just one user
-create table roller_oauthaccessor (
-    consumerkey  varchar(48) not null primary key,
-    requesttoken varchar(48),
-    accesstoken  varchar(48),
-    tokensecret  varchar(48),
-    created      $db.TIMESTAMP_SQL_TYPE not null,
-    updated      $db.TIMESTAMP_SQL_TYPE not null,
-    username     varchar(48),
-    authorized   $db.BOOLEAN_SQL_TYPE_FALSE
-);
-
-
 -- MEDIA BLOGGING
 
 create table roller_mediafile (

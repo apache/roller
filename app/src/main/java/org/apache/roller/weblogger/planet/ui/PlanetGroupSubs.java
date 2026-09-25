@@ -28,9 +28,10 @@ import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
-import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.Preparable;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 
@@ -38,12 +39,15 @@ import java.util.*;
  * Manage planet group subscriptions, default group is "all".
  */
 // TODO: make this work @AllowedMethods({"execute","saveSubscription","saveGroup","deleteSubscription"})
-public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAware {
+public class PlanetGroupSubs extends PlanetUIAction implements Preparable {
 
     private static final Log log = LogFactory.getLog(PlanetGroupSubs.class);
 
     // the planet group we are working in
-    private PlanetGroup group = null;
+    private PlanetGroup planetGroup = null;
+
+    // form data for the group
+    private PlanetGroupBean group = new PlanetGroupBean();
 
     // the subscription to deal with
     private String subUrl = null;
@@ -67,13 +71,21 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
     }
 
 
+    /**
+     * Loads the group being edited. This runs before the params interceptor so
+     * that submitted values are bound onto the form bean rather than being
+     * overwritten by it.
+     */
     @Override
-    public void setServletRequest(HttpServletRequest request) {
-        if (request.getParameter("createNew") != null) {
-            group = new PlanetGroup();
-        } else {
-            group = getGroupFromRequest(request, getPlanet());
+    public void prepare() {
+        HttpServletRequest request = getServletRequest();
+        if (request.getParameter("createNew") == null) {
+            planetGroup = getGroupFromRequest(request, getPlanet());
         }
+        if (planetGroup == null) {
+            planetGroup = new PlanetGroup();
+        }
+        group.copyFrom(planetGroup);
     }
 
 
@@ -121,20 +133,22 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
             try {
                 PlanetManager planetManager = WebloggerFactory.getWeblogger().getPlanetManager();
 
-                PlanetGroup existingGroup = planetManager.getGroup(getPlanet(), getGroup().getHandle());
+                getGroup().copyTo(planetGroup);
+                PlanetGroup existingGroup = planetManager.getGroup(getPlanet(), planetGroup.getHandle());
 
                 if (existingGroup == null) {
-                    log.debug("Adding New Group: " + getGroup().getHandle());
-                    planetManager.saveNewPlanetGroup(getPlanet(), getGroup());
+                    log.debug("Adding New Group: " + planetGroup.getHandle());
+                    planetManager.saveNewPlanetGroup(getPlanet(), planetGroup);
 
                 } else {
                     log.debug("Updating Existing Group: " + existingGroup.getHandle());
-                    existingGroup.setTitle( getGroup().getTitle() );
-                    existingGroup.setHandle( getGroup().getHandle() );
+                    existingGroup.setTitle( planetGroup.getTitle() );
+                    existingGroup.setHandle( planetGroup.getHandle() );
                     planetManager.saveGroup(existingGroup);
                 }
 
                 WebloggerFactory.getWeblogger().flush();
+                getGroup().copyFrom(planetGroup);
                 addMessage("planetGroups.success.saved");
 
             } catch (Exception ex) {
@@ -196,9 +210,9 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
                 }
 
                 // add the sub to the group
-                group.getSubscriptions().add(sub);
-                sub.getGroups().add(group);
-                pmgr.saveGroup(group);
+                planetGroup.getSubscriptions().add(sub);
+                sub.getGroups().add(planetGroup);
+                pmgr.saveGroup(planetGroup);
                 WebloggerFactory.getWeblogger().flush();
 
                 // clear field after success
@@ -232,11 +246,11 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
                 Subscription sub = pmgr.getSubscription(getSubUrl());
 
                 // remove sub from group
-                getGroup().getSubscriptions().remove(sub);
-                pmgr.saveGroup(getGroup());
+                planetGroup.getSubscriptions().remove(sub);
+                pmgr.saveGroup(planetGroup);
 
                 // remove group from sub
-                sub.getGroups().remove(getGroup());
+                sub.getGroups().remove(planetGroup);
                 pmgr.saveSubscription(sub);
 
                 WebloggerFactory.getWeblogger().flush();
@@ -272,10 +286,10 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
         if (pageTitle == null) {
             if (getCreateNew()) {
                 pageTitle = getText("planetGroupSubs.custom.title.new");
-            } else if (getGroup().getHandle().equals("all")) {
+            } else if (planetGroup.getHandle().equals("all")) {
                 pageTitle = getText("planetGroupSubs.default.title");
             } else {
-                pageTitle = getText("planetGroupSubs.custom.title", new String[]{getGroup().getHandle()});
+                pageTitle = getText("planetGroupSubs.custom.title", new String[]{planetGroup.getHandle()});
             }
         }
         return pageTitle;
@@ -285,8 +299,8 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
     public List<Subscription> getSubscriptions() {
 
         List<Subscription> subs = Collections.emptyList();
-        if (getGroup() != null) {
-            Set<Subscription> subsSet = getGroup().getSubscriptions();
+        if (planetGroup != null) {
+            Set<Subscription> subsSet = planetGroup.getSubscriptions();
 
             // iterate over list and build display list
             subs = new ArrayList<>();
@@ -301,18 +315,16 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
         return subs;
     }
 
-    public PlanetGroup getGroup() {
+    @StrutsParameter(depth = 1)
+    public PlanetGroupBean getGroup() {
         return group;
-    }
-
-    public void setGroup(PlanetGroup group) {
-        this.group = group;
     }
 
     public String getSubUrl() {
         return subUrl;
     }
 
+    @StrutsParameter
     public void setSubUrl(String subUrl) {
         this.subUrl = subUrl;
     }
@@ -322,7 +334,7 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
             PlanetManager pmgr = WebloggerFactory.getWeblogger().getPlanetManager();
             PlanetGroup existingGroup = null;
             try {
-                existingGroup = pmgr.getGroupById(group.getId());
+                existingGroup = pmgr.getGroupById(planetGroup.getId());
             } catch (RollerException e) {
                 log.error("Error getting group by ID", e);
             }
@@ -336,7 +348,7 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
     }
 
     public String getGroupHandle() {
-        return group.getHandle();
+        return planetGroup.getHandle();
     }
 
 }

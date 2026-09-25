@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.core;
 
 import java.util.TimeZone;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +40,7 @@ import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.struts2.convention.annotation.AllowedMethods;
-import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -53,14 +53,13 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * @see org.apache.roller.weblogger.ui.struts2.core.Login
  */
 // TODO: make this work @AllowedMethods({"execute","save","activate"})
-public class Register extends UIAction implements ServletRequestAware {
+public class Register extends UIAction {
     
     private static Log log = LogFactory.getLog(Register.class);
     private static final String DISABLED_RETURN_CODE = "disabled";
     public static final String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
 
     // this is a no-no, we should not need this
-    private HttpServletRequest servletRequest = null;
 
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
@@ -449,15 +448,7 @@ public class Register extends UIAction implements ServletRequestAware {
 	}
     
     
-    public HttpServletRequest getServletRequest() {
-        return servletRequest;
-    }
-
-    @Override
-    public void setServletRequest(HttpServletRequest servletRequest) {
-        this.servletRequest = servletRequest;
-    }
-    
+    @StrutsParameter(depth = 1)
     public ProfileBean getBean() {
         return bean;
     }
@@ -478,6 +469,7 @@ public class Register extends UIAction implements ServletRequestAware {
         return activationCode;
     }
 
+    @StrutsParameter
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
     }

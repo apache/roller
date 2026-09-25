@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
@@ -31,31 +32,27 @@ import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.action.UploadedFilesAware;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.dispatcher.multipart.UploadedFile;
 
 
 /**
  * Import opml file into bookmarks folder.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public final class BookmarksImport extends UIAction {
-    
+public final class BookmarksImport extends UIAction implements UploadedFilesAware {
+
     private static Log log = LogFactory.getLog(BookmarksImport.class);
-    
+
     // only write files out that are below this threshold
     private static final long WRITE_THRESHOLD_IN_MB = 4;
     private static final long WRITE_THRESHOLD = WRITE_THRESHOLD_IN_MB * 1024000;
 
-    // uploaded opml file
-    private File opmlFile = null;
-    
-    // content type of uploaded file
-    private String opmlFileContentType = null;
-    
-    // file name of uploaded file
-    private String opmlFileFileName = null;
-    
-    
+    // uploaded opml file, injected by the actionFileUpload interceptor
+    private UploadedFile opmlFile = null;
+
+
     public BookmarksImport() {
         this.actionName = "bookmarksImport";
         this.desiredMenu = "editor";
@@ -70,20 +67,25 @@ public final class BookmarksImport extends UIAction {
         return INPUT;
     }
 
+    @Override
+    public void withUploadedFiles(List<UploadedFile> uploadedFiles) {
+        this.opmlFile = uploadedFiles.isEmpty() ? null : uploadedFiles.get(0);
+    }
+
     /**
      * Save imported bookmarks.
      */
     public String save() {
-        
+
         BookmarkManager bm = WebloggerFactory.getWeblogger().getBookmarkManager();
-        
+
         InputStream stream = null;
-        if(getOpmlFile() != null && getOpmlFile().exists()) {
+        if (opmlFile != null && opmlFile.getContent() instanceof File file && file.exists()) {
             try {
                 //only write files out that are less than 4MB
-                if (getOpmlFile().length() < WRITE_THRESHOLD) {
+                if (file.length() < WRITE_THRESHOLD) {
 
-                    stream = new FileInputStream(getOpmlFile());
+                    stream = new FileInputStream(file);
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
                     byte[] buffer = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
@@ -109,14 +111,14 @@ public final class BookmarksImport extends UIAction {
                     addMessage("bookmarksImport.imported", folderName);
 
                     // destroy the temporary file created
-                    getOpmlFile().delete();
+                    opmlFile.delete();
 
                     return SUCCESS;
 
                 } else {
                     String data = "The file is greater than " + WRITE_THRESHOLD_IN_MB
                             +" MB, and has not been written to stream."
-                            +" File Size: " + getOpmlFile().length() + " bytes. "
+                            +" File Size: " + file.length() + " bytes. "
                             +" This is a limitation of this particular "
                             +" web application";
                     addError("bookmarksImport.error", data);
@@ -136,30 +138,5 @@ public final class BookmarksImport extends UIAction {
         }
         return INPUT;
     }
-    
-    
-    public File getOpmlFile() {
-        return opmlFile;
-    }
-    
-    public void setOpmlFile(File opmlFile) {
-        this.opmlFile = opmlFile;
-    }
-    
-    public String getOpmlFileContentType() {
-        return opmlFileContentType;
-    }
-    
-    public void setOpmlFileContentType(String opmlFileContentType) {
-        this.opmlFileContentType = opmlFileContentType;
-    }
-    
-    public String getOpmlFileFileName() {
-        return opmlFileFileName;
-    }
-    
-    public void setOpmlFileFileName(String opmlFileFileName) {
-        this.opmlFileFileName = opmlFileFileName;
-    }
-    
+
 }

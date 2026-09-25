@@ -17,7 +17,7 @@
  */
 package org.apache.roller.weblogger.ui.core.security;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

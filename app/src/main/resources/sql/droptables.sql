@@ -38,10 +38,6 @@ drop table roller_mediafiletag;
 drop table roller_mediafile;
 drop table roller_mediafiledir;
 
--- oauth tables
-drop table roller_oauthconsumer;
-drop table roller_oauthaccessor;
-
 -- core services tables
 drop table roller_hitcounts;
 drop table roller_comment;

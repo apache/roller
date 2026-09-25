@@ -22,7 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.Test;
 
@@ -242,14 +242,14 @@ public class MediaTypePolicyTest {
     public void everyUploadPathGoesThroughThePolicy() throws Exception {
         String[][] callers = {
                 {"org/apache/roller/weblogger/ui/struts2/editor/MediaFileAdd.java",
-                        "this.uploadedFilesContentType[i]"},
+                        "upload.getContentType()"},
                 {"org/apache/roller/weblogger/webservices/atomprotocol/"
                         + "MediaCollection.java", "setContentType(contentType)"},
                 {"org/apache/roller/weblogger/webservices/xmlrpc/"
                         + "MetaWeblogAPIHandler.java", "setContentType(type)"},
                 // Replacing an existing file's body is an upload too.
                 {"org/apache/roller/weblogger/ui/struts2/editor/MediaFileEdit.java",
-                        "this.uploadedFileContentType"},
+                        "uploadedFile.getContentType()"},
         };
         for (String[] caller : callers) {
             String src = source(caller[0]);
@@ -266,7 +266,7 @@ public class MediaTypePolicyTest {
     public void replacementRoutesUseTheReplacementName() throws Exception {
         String editor = source("org/apache/roller/weblogger/ui/struts2/editor/"
                 + "MediaFileEdit.java");
-        assertTrue(editor.contains("storedTypeFor(\n                            this.uploadedFileName"));
+        assertTrue(editor.contains("storedTypeFor(\n                            uploadedFile.getOriginalName()"));
 
         String atom = source("org/apache/roller/weblogger/webservices/atomprotocol/"
                 + "MediaCollection.java");

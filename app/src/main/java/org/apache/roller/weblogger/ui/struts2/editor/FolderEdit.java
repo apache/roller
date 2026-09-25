@@ -27,11 +27,12 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
-import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.apache.struts2.action.ServletResponseAware;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 /**
@@ -39,6 +40,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
 public class FolderEdit extends UIAction implements ServletResponseAware {
+
+    private HttpServletResponse servletResponse = null;
 
     private static final Log log = LogFactory.getLog(FolderEdit.class);
 
@@ -50,8 +53,6 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
 
     // the folder we are adding or editing
     private WeblogBookmarkFolder folder = null;
-
-    private HttpServletResponse httpServletResponse;
 
 
     public FolderEdit() {
@@ -82,8 +83,8 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
     }
 
     @Override
-    public void setServletResponse(HttpServletResponse httpServletResponse) {
-        this.httpServletResponse = httpServletResponse;
+    public void withServletResponse(HttpServletResponse response) {
+        this.servletResponse = response;
     }
 
     /**
@@ -138,7 +139,7 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
                 // HTTP response splitting defense
                 String sanetizedFolderID = folderId.replace("\n", "").replace("\r", "");
 
-                httpServletResponse.addHeader("folderId", sanetizedFolderID);
+                servletResponse.addHeader("folderId", sanetizedFolderID);
 
                 return SUCCESS;
 
@@ -169,6 +170,7 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
         return actionName.equals("folderAdd");
     }
 
+    @StrutsParameter(depth = 1)
     public FolderBean getBean() {
         return bean;
     }

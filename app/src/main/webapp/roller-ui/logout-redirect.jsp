@@ -17,7 +17,7 @@
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <%@ page import="org.apache.roller.weblogger.ui.core.RollerSession" %>
-<%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="jakarta.servlet.http.Cookie" %>
 <%@ page import="org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices" %>
 
 <%

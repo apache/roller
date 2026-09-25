@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import java.util.List;
@@ -199,6 +200,7 @@ public class CreateWeblog extends UIAction {
         return themeMgr.getEnabledThemesList();
     }
 
+    @StrutsParameter(depth = 1)
     public CreateWeblogBean getBean() {
         return bean;
     }
