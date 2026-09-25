@@ -21,8 +21,8 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 
 <script src="<s:url value='/webjars/clipboard.js/2.0.11/clipboard.min.js' />"></script>
 
-<script src="<s:url value='/webjars/summernote/0.9.1/dist/summernote.min.js' />"></script>
-<link href="<s:url value='/webjars/summernote/0.9.1/dist/summernote.css' />" rel="stylesheet" />
+<script src="<s:url value='/webjars/summernote/0.9.1/dist/summernote-bs5.min.js' />"></script>
+<link href="<s:url value='/webjars/summernote/0.9.1/dist/summernote-bs5.min.css' />" rel="stylesheet" />
 
 <link rel="stylesheet" media="all" href='<s:url value="/roller-ui/styles/roller.css"/>' />
 
