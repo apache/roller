@@ -114,6 +114,14 @@ abstract class BaseIT {
                 p.locator("a[href*='install!bootstrap']").click();
                 p.waitForLoadState();
             }
+
+            // with no form login there is no one to register, so the operator
+            // completes setup by signing in as the provider's administrator
+            p.navigate(LOGIN_PAGE);
+            if (p.locator(FORM_LOGIN_USERNAME).count() == 0 && p.locator(PROVIDER_BUTTON).count() > 0) {
+                signInWithProvider(p, OIDC_ADMIN, OIDC_ADMIN);
+                p.waitForURL(baseUrl + "roller-ui/menu.rol");
+            }
             setupSession = setup.storageState();
         } finally {
             setup.close();
@@ -197,6 +205,26 @@ abstract class BaseIT {
 
     private static Path tracesDir() {
         return Paths.get(System.getProperty("playwright.tracesDir", "target/playwright-traces"));
+    }
+
+    protected static final String LOGIN_PAGE = "roller-ui/login.rol";
+    protected static final String FORM_LOGIN_USERNAME = "input[name='j_username']";
+
+    // the compose stack's Keycloak realm seeds this administrator (password = username)
+    protected static final String OIDC_ADMIN = "admin";
+    protected static final String PROVIDER_BUTTON = "a[href*='/oauth2/authorization/']";
+    private static final Pattern PROVIDER_USERNAME_LABEL = Pattern.compile("username", Pattern.CASE_INSENSITIVE);
+    private static final String PROVIDER_PASSWORD = "input[type='password']";
+    private static final String PROVIDER_SUBMIT = "input[type='submit'], button[type='submit']";
+
+    /** Clicks through Roller's provider button and the provider's own login form. */
+    protected static void signInWithProvider(Page p, String username, String password) {
+        p.navigate(LOGIN_PAGE);
+        p.locator(PROVIDER_BUTTON).first().click();
+
+        p.getByLabel(PROVIDER_USERNAME_LABEL).first().fill(username);
+        p.locator(PROVIDER_PASSWORD).first().fill(password);
+        p.locator(PROVIDER_SUBMIT).first().click();
     }
 
     /** Whether this suite registers the first user, which needs the setup session. */

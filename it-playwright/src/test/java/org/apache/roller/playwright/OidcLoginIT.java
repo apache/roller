@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 @DisplayName("OIDC login")
 class OidcLoginIT extends BaseIT {
 
-    private static final String ADMIN_USER = "admin";
+    private static final String ADMIN_USER = OIDC_ADMIN;
     private static final String REGULAR_USER = "user";
     private static final String BLOG_HANDLE = "oidcblog";
     private static final String BLOG_NAME = "OIDC Blog";
@@ -47,7 +47,6 @@ class OidcLoginIT extends BaseIT {
     private static final String ENTRY_TEXT = "This entry was published by an OIDC-authenticated user.";
 
     // pages
-    private static final String LOGIN_PAGE = "roller-ui/login.rol";
     private static final String MENU_PAGE = "roller-ui/menu.rol";
     private static final String ADMIN_PAGE = "roller-ui/admin/globalConfig.rol";
     private static final String CREATE_WEBLOG_PAGE = "roller-ui/createWeblog.rol";
@@ -58,15 +57,7 @@ class OidcLoginIT extends BaseIT {
     private static final String WEBLOG_EMAIL = "#createWeblog_bean_emailAddress";
     private static final String WEBLOG_SUBMIT = "#createWeblog_0";
 
-    // Roller's login page
-    private static final String PROVIDER_BUTTON = "a[href*='/oauth2/authorization/']";
     private static final String SERVER_ADMIN_LINK = "Server administration";
-
-    // the provider's own login form
-    private static final Pattern PROVIDER_USERNAME_LABEL =
-            Pattern.compile("username", Pattern.CASE_INSENSITIVE);
-    private static final String PROVIDER_PASSWORD = "input[type='password']";
-    private static final String PROVIDER_SUBMIT = "input[type='submit'], button[type='submit']";
 
     @BeforeEach
     void requireOidcProvider() {
@@ -135,14 +126,8 @@ class OidcLoginIT extends BaseIT {
         assertEntryOnBlog(BLOG_HANDLE, ENTRY_TITLE, ENTRY_TEXT);
     }
 
-    /** Clicks through Roller's provider button and the provider's own login form. */
     private void signIn(String username, String password) {
-        goTo(LOGIN_PAGE);
-        providerButton().first().click();
-
-        page.getByLabel(PROVIDER_USERNAME_LABEL).first().fill(username);
-        page.locator(PROVIDER_PASSWORD).first().fill(password);
-        page.locator(PROVIDER_SUBMIT).first().click();
+        signInWithProvider(page, username, password);
     }
 
     private Locator providerButton() {
