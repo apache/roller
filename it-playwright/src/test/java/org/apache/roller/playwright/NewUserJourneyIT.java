@@ -101,6 +101,11 @@ class NewUserJourneyIT extends BaseIT {
     private static final String OPML_FILE_INPUT = "input[name='opmlFile']";
     private static final String OPML_IMPORT_SUBMIT = "input.btn-primary[type='submit']";
 
+    @Override
+    protected boolean usesSetupSession() {
+        return true;
+    }
+
     @Test
     @DisplayName("registers an account, creates a weblog, publishes an entry, uploads a media file, and imports bookmarks")
     void firstUserCanRegisterAndPublish() {

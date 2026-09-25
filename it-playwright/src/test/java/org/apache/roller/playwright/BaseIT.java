@@ -17,8 +17,12 @@
  */
 package org.apache.roller.playwright;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
@@ -52,6 +56,18 @@ abstract class BaseIT {
     private static Playwright playwright;
     private static Browser browser;
 
+    // the box Roller logs at startup until an operator completes initial setup
+    private static final Pattern SETUP_TOKEN = Pattern.compile(
+            "Enter this one-time setup token[^\\r\\n]*\\R\\| ([A-Za-z0-9_-]{43}) +\\|");
+
+    /**
+     * Cookies of the session that redeemed the one-time setup token, or null
+     * when the instance had already been set up. Only that session may
+     * register the first user.
+     */
+    protected static String setupSession;
+    private static boolean setupChecked;
+
     protected BrowserContext context;
     protected Page page;
 
@@ -65,6 +81,73 @@ abstract class BaseIT {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
                 .setHeadless(!Boolean.getBoolean("playwright.headed")));
+        completeInitialSetup();
+    }
+
+    /**
+     * Unlocks a fresh install the way an operator does: reads the one-time
+     * setup token from the server log, redeems it, and creates the database
+     * tables if the instance has none yet. Runs once per test run.
+     */
+    private static void completeInitialSetup() {
+        if (setupChecked) {
+            return;
+        }
+        setupChecked = true;
+
+        BrowserContext setup = browser.newContext(new Browser.NewContextOptions().setBaseURL(baseUrl));
+        try {
+            Page p = setup.newPage();
+            p.navigate("roller-ui/bootstrap-token.rol");
+            if (p.locator("#setup-token").count() == 0) {
+                return;
+            }
+            p.locator("#setup-token").fill(readSetupToken());
+            p.locator("#setup-token-submit").click();
+            p.waitForLoadState();
+
+            // a database Roller has not installed yet: create the tables, then
+            // follow the installer's link to start the application
+            var createTables = p.locator("form[action*='install!create'] input[type='submit']");
+            if (createTables.count() > 0) {
+                createTables.click();
+                p.locator("a[href*='install!bootstrap']").click();
+                p.waitForLoadState();
+            }
+            setupSession = setup.storageState();
+        } finally {
+            setup.close();
+        }
+    }
+
+    /**
+     * The newest setup token in the server log ({@code -Droller.test.logFile}).
+     * Logging is asynchronous, so the startup message may take a moment to land.
+     */
+    private static String readSetupToken() {
+        Path log = Paths.get(System.getProperty("roller.test.logFile", "../logs/roller.log"));
+        for (int attempt = 0; attempt < 20; attempt++) {
+            try {
+                if (Files.exists(log)) {
+                    Matcher matcher = SETUP_TOKEN.matcher(Files.readString(log));
+                    String token = null;
+                    while (matcher.find()) {
+                        token = matcher.group(1);
+                    }
+                    if (token != null) {
+                        return token;
+                    }
+                }
+                Thread.sleep(500);
+            } catch (IOException ex) {
+                throw new IllegalStateException("Cannot read Roller's server log: " + log, ex);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        throw new IllegalStateException("No initial setup token found in " + log.toAbsolutePath()
+                + "; point -Droller.test.logFile at the running instance's roller.log");
     }
 
     @AfterAll
@@ -81,7 +164,8 @@ abstract class BaseIT {
     void openContext() {
         context = browser.newContext(new Browser.NewContextOptions()
                 .setBaseURL(baseUrl)
-                .setViewportSize(1280, 1024));
+                .setViewportSize(1280, 1024)
+                .setStorageState(usesSetupSession() ? setupSession : null));
         context.tracing().start(new Tracing.StartOptions()
                 .setScreenshots(true)
                 .setSnapshots(true));
@@ -113,6 +197,11 @@ abstract class BaseIT {
 
     private static Path tracesDir() {
         return Paths.get(System.getProperty("playwright.tracesDir", "target/playwright-traces"));
+    }
+
+    /** Whether this suite registers the first user, which needs the setup session. */
+    protected boolean usesSetupSession() {
+        return false;
     }
 
     /** Navigates to a path relative to Roller's base URL. */

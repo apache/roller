@@ -50,6 +50,7 @@ Then, from this directory:
     mvn verify
 
 Every `jetty:run` start gives a fresh database, which is what the new-user journey needs.
+A fresh install waits for the one-time setup token Roller writes to `logs/roller.log`; the tests read it from there, redeem it, and register the first user in the same browser session.
 Run it again without restarting and the journey reports itself skipped rather than failing, because the first user now exists.
 
 ## Running against Docker Compose (OIDC auth)
@@ -63,9 +64,12 @@ Then, from the project root:
 
     docker compose up -d
 
-and from this directory:
+and from this directory, after copying out the log that holds the setup token:
 
-    mvn verify -Droller.baseUrl=http://localhost:8080/
+    docker compose cp apache-roller:/usr/local/tomcat/logs/roller.log ../roller.log
+    mvn verify -Droller.baseUrl=http://localhost:8080/ -Droller.test.logFile=../roller.log
+
+On a fresh database the tests also create Roller's tables through the installer.
 
 Keycloak is seeded with an administrator (`admin`/`admin`) and a regular user (`user`/`user`).
 To offer form login next to the provider buttons, start the stack with `AUTHENTICATION_METHOD=db-oidc docker compose up -d` instead; on a fresh database the new-user journey then runs against it too.
@@ -74,6 +78,7 @@ To offer form login next to the provider buttons, start the stack with `AUTHENTI
 
     mvn verify -Dplaywright.headed=true      watch the browser
     mvn verify -Droller.baseUrl=<url>        point at any Roller instance
+    mvn verify -Droller.test.logFile=<path>  the instance's roller.log, for its setup token
     mvn verify -Dit.test=NewUserJourneyIT    run a single test class
 
 Playwright downloads the browser it needs on first run.

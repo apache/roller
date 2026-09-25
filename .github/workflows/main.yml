@@ -124,6 +124,7 @@ jobs:
           path: |
             it-playwright/target/playwright-traces
             jetty.log
+            logs/roller.log
           if-no-files-found: ignore
 
   # Browser tests against the Docker Compose stack (Tomcat + PostgreSQL +
@@ -166,13 +167,12 @@ jobs:
         env:
           AUTHENTICATION_METHOD: ${{ matrix.auth }}
 
-      # a fresh database lands on Roller's auto-installer, which waits for a
-      # click; drive it so the login page is reachable
-      - name: Wait for Roller and install its database
+      # a fresh install waits for the one-time setup token it logs at startup;
+      # the tests redeem it and create the database tables in the browser
+      - name: Wait for Roller and copy out its log
         run: |
           timeout 300 bash -c 'until curl -sf http://localhost:8080/ > /dev/null; do sleep 5; done'
-          curl -sf -X POST http://localhost:8080/roller-ui/install/install!create.rol > /dev/null
-          curl -sf -X POST http://localhost:8080/roller-ui/install/install!bootstrap.rol > /dev/null
+          docker compose cp apache-roller:/usr/local/tomcat/logs/roller.log roller.log
 
       - name: Install Playwright browser
         working-directory: it-playwright
@@ -180,7 +180,7 @@ jobs:
 
       - name: Run UI tests
         working-directory: it-playwright
-        run: mvn -ntp verify -Droller.baseUrl=http://localhost:8080/ -Droller.expectedAuth=${{ matrix.auth }}
+        run: mvn -ntp verify -Droller.baseUrl=http://localhost:8080/ -Droller.expectedAuth=${{ matrix.auth }} -Droller.test.logFile=${{ github.workspace }}/roller.log
 
       - name: Publish UI Test Report
         uses: test-summary/action@v2

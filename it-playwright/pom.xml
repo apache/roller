@@ -23,7 +23,7 @@
 
     <groupId>org.apache.roller</groupId>
     <artifactId>roller-playwright-tests</artifactId>
-    <version>6.1.5</version>
+    <version>6.1.6</version>
     <packaging>jar</packaging>
     <name>Roller Playwright tests</name>
 
@@ -50,13 +50,16 @@
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <playwright.version>1.62.0</playwright.version>
-        <junit.jupiter.version>5.11.4</junit.jupiter.version>
+        <playwright.version>1.63.0</playwright.version>
+        <junit.jupiter.version>6.1.3</junit.jupiter.version>
         <!-- default matches "mvn jetty:run" -->
         <roller.baseUrl>http://localhost:8080/roller/</roller.baseUrl>
         <playwright.headed>false</playwright.headed>
         <!-- empty means: adapt to whatever the instance offers -->
         <roller.expectedAuth></roller.expectedAuth>
+        <!-- where the instance logs its one-time setup token; the default is
+             where "mvn jetty:run" from the project root writes it -->
+        <roller.test.logFile>${project.basedir}/../logs/roller.log</roller.test.logFile>
     </properties>
 
     <dependencies>
@@ -82,11 +85,11 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.4</version>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.5.2</version>
+                <version>3.6.0</version>
                 <configuration>
                     <!-- LoginPageIT and NewUserJourneyIT must run before
                          OidcLoginIT: signing in through the provider creates
@@ -95,6 +98,7 @@
                     <systemPropertyVariables>
                         <roller.baseUrl>${roller.baseUrl}</roller.baseUrl>
                         <roller.expectedAuth>${roller.expectedAuth}</roller.expectedAuth>
+                        <roller.test.logFile>${roller.test.logFile}</roller.test.logFile>
                         <playwright.headed>${playwright.headed}</playwright.headed>
                         <playwright.tracesDir>${project.build.directory}/playwright-traces</playwright.tracesDir>
                     </systemPropertyVariables>
