@@ -86,3 +86,27 @@ jobs:
           path: ./app/target/roller.war
           retention-days: 90
           if-no-files-found: error
+
+  # Apache RAT is not bound to the build because it slows it down, so CI runs
+  # it on its own
+  license-headers:
+    name: License headers
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v6
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Checkout Project
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          submodules: false
+          show-progress: false
+
+      - name: Check license headers with Apache RAT
+        run: mvn -V -ntp apache-rat:check
