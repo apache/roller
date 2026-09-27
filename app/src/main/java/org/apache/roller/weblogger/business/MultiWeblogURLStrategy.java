@@ -455,21 +455,5 @@ public class MultiWeblogURLStrategy extends AbstractURLStrategy {
         return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/opensearch/" + weblogHandle;
     }
 
-    @Override
-    public String getOAuthRequestTokenURL() {
-        return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/oauth/requestToken";
-    }
 
-    @Override
-    public String getOAuthAuthorizationURL() {
-        return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/oauth/authorize";
-    }
-
-    @Override
-    public String getOAuthAccessTokenURL() {
-        return WebloggerRuntimeConfig.getAbsoluteContextURL() + "/roller-services/oauth/accessToken";
-    }
-    
 }
-
-

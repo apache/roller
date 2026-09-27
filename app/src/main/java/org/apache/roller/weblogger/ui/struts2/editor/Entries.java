@@ -37,6 +37,7 @@ import org.apache.roller.weblogger.ui.struts2.pagers.EntriesPager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 
 /**
@@ -207,6 +208,7 @@ public class Entries extends UIAction {
     }
     
     
+    @StrutsParameter(depth = 1)
     public EntriesBean getBean() {
         return bean;
     }

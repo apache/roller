@@ -19,8 +19,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,9 +28,9 @@ import org.apache.roller.weblogger.ui.core.filters.SaltValidator;
 import org.apache.struts2.StrutsStatics;
 import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.interceptor.AbstractInterceptor;
 
 /**
  * Validates salts after Struts has wrapped a multipart form request.

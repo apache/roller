@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
+<persistence version="3.2"
+    xmlns="https://jakarta.ee/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd">
   <persistence-unit name="RollerPU" transaction-type="RESOURCE_LOCAL">
     <!-- DB configuration done in roller-custom.properties (see Install guide)
          Avoiding DB configuration here to allow the same persistence.xml to be used between
@@ -27,9 +30,7 @@
     <mapping-file>org/apache/roller/weblogger/pojos/ObjectPermission.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/WeblogPermission.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/Weblog.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/OAuthConsumerRecord.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/OAuthAccessorRecord.orm.xml</mapping-file>
-    <mapping-file>org/apache/roller/weblogger/pojos/MediaFile.orm.xml</mapping-file>
+<mapping-file>org/apache/roller/weblogger/pojos/MediaFile.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/MediaFileTag.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/MediaFileDirectory.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/weblogger/pojos/AutoPing.orm.xml</mapping-file>

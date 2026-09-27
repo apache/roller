@@ -50,6 +50,7 @@ import org.apache.roller.weblogger.util.EnclosureMetadata;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -356,6 +357,7 @@ public final class EntryEdit extends UIAction {
         return INPUT;
     }
 
+    @StrutsParameter(depth = 1)
     public EntryBean getBean() {
         return bean;
     }

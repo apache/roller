@@ -31,10 +31,10 @@
         <div style="padding: 15px 25px 25px 25px">
             <h2 class="error"><fmt:message key="errorPage.title" /></h2>
             
-            <c:set var="status_code" value="${requestScope['javax.servlet.error.status_code']}" />
-            <c:set var="message"     value="${requestScope['javax.servlet.error.message']}" />
-            <c:set var="type"        value="${requestScope['javax.servlet.error.type']}" />
-            <c:set var="exception"   value="${requestScope['javax.servlet.error.exception']}" />
+            <c:set var="status_code" value="${requestScope['jakarta.servlet.error.status_code']}" />
+            <c:set var="message"     value="${requestScope['jakarta.servlet.error.message']}" />
+            <c:set var="type"        value="${requestScope['jakarta.servlet.error.type']}" />
+            <c:set var="exception"   value="${requestScope['jakarta.servlet.error.exception']}" />
             
             <table width="80%" border="1px" style="border-collapse: collapse;">
                 <tr>

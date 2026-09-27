@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 /**

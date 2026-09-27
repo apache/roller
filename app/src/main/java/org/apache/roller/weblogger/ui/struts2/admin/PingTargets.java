@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 /**
  * Admin action for managing global ping targets.
@@ -203,6 +204,7 @@ public class PingTargets extends UIAction {
         return pingTargetId;
     }
 
+    @StrutsParameter
     public void setPingTargetId(String pingTargetId) {
         this.pingTargetId = pingTargetId;
     }

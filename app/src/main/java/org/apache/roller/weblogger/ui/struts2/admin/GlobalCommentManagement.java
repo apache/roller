@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,14 +41,14 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.convention.annotation.AllowedMethods;
-import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 
 /**
  * Action for managing global set of comments.
  */
 // TODO: make this work @AllowedMethods({"query","delete","update"})
-public class GlobalCommentManagement extends UIAction implements ServletRequestAware {
+public class GlobalCommentManagement extends UIAction {
     
     private static Log log = LogFactory.getLog(GlobalCommentManagement.class);
     
@@ -245,6 +244,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
      * Update a list of comments.
      */
     public String update() {
+        httpMethod = getServletRequest().getMethod();
         if (!"POST".equals(httpMethod)) {
             return ERROR;
         }
@@ -338,6 +338,7 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
         return opts;
     }
 
+    @StrutsParameter(depth = 1)
     public GlobalCommentManagementBean getBean() {
         return bean;
     }
@@ -378,9 +379,4 @@ public class GlobalCommentManagement extends UIAction implements ServletRequestA
         this.pager = pager;
     }
 
-    @Override
-    public void setServletRequest(HttpServletRequest req) {
-        httpMethod = req.getMethod();
-    }
-    
 }

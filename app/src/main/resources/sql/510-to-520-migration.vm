@@ -39,8 +39,6 @@
 #expandTimestampNotNull('roller_comment' 'posttime')
 #expandTimestampNotNull('roller_mediafile' 'date_uploaded')
 #expandTimestamp('roller_mediafile' 'last_updated')
-#expandTimestampNotNull('roller_oauthaccessor' 'created')
-#expandTimestampNotNull('roller_oauthaccessor' 'updated')
 #expandTimestampNotNull('roller_permission' 'datecreated')
 #expandTimestamp('roller_tasklock' 'timeacquired')
 #expandTimestamp('roller_tasklock' 'lastrun')

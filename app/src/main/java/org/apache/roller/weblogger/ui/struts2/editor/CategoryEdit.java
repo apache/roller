@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -164,6 +165,7 @@ public class CategoryEdit extends UIAction {
         }
     }
 
+    @StrutsParameter(depth = 1)
     public CategoryBean getBean() {
         return bean;
     }

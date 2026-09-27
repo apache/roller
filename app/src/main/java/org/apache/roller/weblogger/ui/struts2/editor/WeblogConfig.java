@@ -40,6 +40,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.Bannedwordslist;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -213,6 +214,7 @@ public class WeblogConfig extends UIAction {
     }
     
     
+    @StrutsParameter(depth = 1)
     public WeblogConfigBean getBean() {
         return bean;
     }

@@ -28,14 +28,17 @@
     <http pattern="/scripts/**" security="none"/>
     <http pattern="/styles/**" security="none"/>
 
-    <http auto-config="false" access-decision-manager-ref="accessDecisionManager" use-expressions="false">
-        <intercept-url pattern="/roller-ui/login-redirect**" access="admin,editor"/>
-        <intercept-url pattern="/roller-ui/profile**" access="admin,editor"/>
-        <intercept-url pattern="/roller-ui/createWeblog**" access="admin,editor"/>
-        <intercept-url pattern="/roller-ui/menu**" access="admin,editor"/>
-        <intercept-url pattern="/roller-ui/authoring/**" access="admin,editor"/>
-        <intercept-url pattern="/roller-ui/admin/**" access="admin"/>
-        <intercept-url pattern="/rewrite-status*" access="admin"/>
+    <http auto-config="false" use-expressions="true">
+        <intercept-url pattern="/roller-ui/login-redirect**" access="hasAnyAuthority('admin','editor')"/>
+        <intercept-url pattern="/roller-ui/profile**" access="hasAnyAuthority('admin','editor')"/>
+        <intercept-url pattern="/roller-ui/createWeblog**" access="hasAnyAuthority('admin','editor')"/>
+        <intercept-url pattern="/roller-ui/menu**" access="hasAnyAuthority('admin','editor')"/>
+        <intercept-url pattern="/roller-ui/authoring/**" access="hasAnyAuthority('admin','editor')"/>
+        <intercept-url pattern="/roller-ui/admin/**" access="hasAuthority('admin')"/>
+        <intercept-url pattern="/rewrite-status*" access="hasAuthority('admin')"/>
+        <!-- Spring Security 7's authorization manager denies requests that match
+             no rule, where the old FilterSecurityInterceptor allowed them -->
+        <intercept-url pattern="/**" access="permitAll"/>
 
         <form-login login-page="/roller-ui/login.rol"
                     username-parameter="j_username" 
@@ -46,8 +49,6 @@
         <remember-me services-ref="rollerRememberMeServices"
                      key="715F2448-3176-11DD-ABC6-9CD955D89593"/>
 
-        <custom-filter ref="openidAuthenticationProcessingFilter" position="OPENID_FILTER"/>
-        
         <!-- roller already uses its own salt based CSRF protection-->
         <csrf disabled="true"/>
         
@@ -57,25 +58,15 @@
         </headers>
     </http>
 
-    <beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-        <beans:constructor-arg ref="roleVoter"/>
-        <beans:property name="allowIfAllAbstainDecisions" value="false"/>
-    </beans:bean>
-
-    <beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter">
-        <beans:property name="rolePrefix" value=""/>
-    </beans:bean>
-
     <!-- Read users from Roller API -->
     <authentication-manager alias='rollerAuthenticationManager'>
         <authentication-provider ref="rememberMeAuthenticationProvider"/>
 
-        <!-- Uncomment one of the three below, based on whether database, LDAP, or
-             OpenID authentication is desired. -->
+        <!-- Uncomment one of the two below, based on whether database or LDAP
+             authentication is desired. -->
         <authentication-provider user-service-ref="rollerUserService"/>
         <!--
         <authentication-provider ref="ldapAuthProvider" />
-        <authentication-provider ref="openIDAuthProvider"/>
         -->
     </authentication-manager>
 
@@ -89,18 +80,6 @@
 
     <beans:bean id="rememberMeAuthenticationProvider"
                 class="org.apache.roller.weblogger.ui.core.security.RollerRememberMeAuthenticationProvider">
-    </beans:bean>
-
-    <beans:bean id = "openIDAuthProvider" class="org.springframework.security.openid.OpenIDAuthenticationProvider">
-        <beans:property name="userDetailsService" ref="rollerUserService"/>
-    </beans:bean>
-
-    <beans:bean id="openidAuthenticationProcessingFilter"
-                class="org.apache.roller.weblogger.ui.core.filters.CustomOpenIDAuthenticationProcessingFilter">
-        <beans:property name="filterProcessesUrl" value="/roller_j_openid_security_check"/>
-        <beans:property name="authenticationManager" ref="rollerAuthenticationManager"/>
-        <beans:property name="authenticationSuccessHandler" ref="myAuthenticationSuccessHandler"/>
-        <beans:property name="authenticationFailureHandler" ref="myAuthenticationFailureHandler"/>
     </beans:bean>
 
     <beans:bean id="myAuthenticationSuccessHandler"
