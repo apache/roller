@@ -33,6 +33,15 @@ and KEYS from the official distribution site rather than an arbitrary mirror.
 Verify versioned archive links and all verification sidecars after propagation.
 A redirect response alone is not evidence that its destination archive exists.
 
+Fetch and rebase onto the remote publishing branch before pushing, and regenerate
+`content/` afterwards; do not overwrite other people's site changes. Preview by
+serving `content/` as the web root, since the templates use absolute paths. Check
+the rendered HTML as well as the source: Markdown features such as tables may not
+be enabled, and inline HTML is the safer choice.
+
+A project security page must not list or hint at undisclosed CVEs. Link CVE records
+only once they are published.
+
 Publish the website only when the approved release artifacts are available.
 Verify the live page and links before announcement, then prune superseded
 releases within the agreed scope. Keep release-specific website defects in the
