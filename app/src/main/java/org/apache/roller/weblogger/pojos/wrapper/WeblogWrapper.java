@@ -337,9 +337,14 @@ public final class WeblogWrapper {
      * this is a special method to access the original pojo
      * we don't really want to do this, but it's necessary
      * because some parts of the rendering process still need the
-     * original pojo object
+     * original pojo object.
+     *
+     * Not public on purpose: templates render under an introspection
+     * sandbox that reaches public methods only, so the wrapped object
+     * itself must stay out of the template-visible surface. Java code
+     * that needs it goes through {@link Wrappers#unwrap(WeblogWrapper)}.
      */
-    public Weblog getPojo() {
+    Weblog getPojo() {
         return this.pojo;
     }
 }
