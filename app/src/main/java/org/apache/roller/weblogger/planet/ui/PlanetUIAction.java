@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 
 
@@ -37,6 +38,14 @@ public abstract class PlanetUIAction extends UIAction {
     private Planet planet = null;
     
     
+    /**
+     * Planet actions are only available while the Planet aggregator is enabled.
+     */
+    @Override
+    public boolean isFeatureEnabled() {
+        return WebloggerConfig.getBooleanProperty("planet.aggregator.enabled");
+    }
+
     public Planet getPlanet() {
         if(planet == null) {
             try {
