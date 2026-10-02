@@ -46,6 +46,7 @@ limitations under the License.
         <commons-codec.version>1.22.1</commons-codec.version>
         <commons-text.version>1.15.0</commons-text.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
+        <commons-secure-xml.version>1.0.0</commons-secure-xml.version>
         <eclipse-link.version>4.0.9</eclipse-link.version>
         <guice.version>7.0.0</guice.version>
         <log4j2.version>2.26.1</log4j2.version>
@@ -373,6 +374,12 @@ limitations under the License.
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-secure-xml</artifactId>
+            <version>${commons-secure-xml.version}</version>
         </dependency>
 
         <dependency>
