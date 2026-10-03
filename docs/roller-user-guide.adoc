@@ -404,12 +404,15 @@ image::user-guide-11-blogroll.png[]
 
 When you paste or drag a local PNG, JPEG or GIF image into the rich text
 editor, Roller stores it as a media file when uploads are available to you.
-If uploads are unavailable, Roller keeps the image in the entry. Inline images
-are limited to 60,000 UTF-8 bytes per content or summary field, including
-the surrounding text. If an older entry contains embedded images, saving it
-again applies the same rule. An administrator can set
+If uploads are unavailable, Roller keeps the image in the entry. By default,
+a content or summary field with inline images is limited to 60,000 UTF-8
+bytes, including the surrounding text. If an older entry contains embedded
+images, saving it again applies the same rule. An administrator can set
 `weblog.inlineImages.preferInline=true` in `roller-custom.properties` to
-prefer inline images even when uploads are available. Custom themes with a
+prefer inline images even when uploads are available, and can change the
+limit with `weblog.inlineImages.maxFieldBytes`. On MySQL, alter the
+`weblogentry.text` and `weblogentry.summary` columns to `MEDIUMTEXT` before
+raising the limit, because a `TEXT` column holds only 65,535 bytes. Custom themes with a
 Content Security Policy must allow `data:` in `img-src` to show inline images.
 
 If you’d like to upload images or other files for use in your weblog, go

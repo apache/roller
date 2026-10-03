@@ -411,7 +411,7 @@ public final class EntryEdit extends UIAction {
 
     private boolean inlineFieldFits(String html, List<InlineImageData.Source> sources) {
         if (!sources.isEmpty() && html.getBytes(StandardCharsets.UTF_8).length
-                > InlineImageData.MAX_FIELD_BYTES) {
+                > InlineImageData.maxFieldBytes()) {
             addError("weblogEdit.inlineImageTooLarge");
             return false;
         }

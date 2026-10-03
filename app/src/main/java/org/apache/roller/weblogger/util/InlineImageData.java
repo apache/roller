@@ -23,11 +23,19 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
+
 /** Image data URLs accepted in entry content and their locations in HTML. */
 public final class InlineImageData {
 
+    private static final Log log = LogFactory.getLog(InlineImageData.class);
+
+    static final String MAX_FIELD_BYTES_PROPERTY = "weblog.inlineImages.maxFieldBytes";
+
     // MySQL's TEXT column holds 65,535 bytes. Leave room for the rest of an entry.
-    public static final int MAX_FIELD_BYTES = 60000;
+    static final int DEFAULT_MAX_FIELD_BYTES = 60000;
 
     private static final Pattern IMAGE_TAG = Pattern.compile("(?is)<img\\b[^>]*>");
     private static final Pattern SOURCE_ATTRIBUTE = Pattern.compile(
@@ -36,6 +44,25 @@ public final class InlineImageData {
             "(?i)^data:image/(png|jpeg|gif);base64,([a-z0-9+/]+={0,2})$");
 
     private InlineImageData() {
+    }
+
+    /** Largest inline content or summary field, in UTF-8 bytes. */
+    public static int maxFieldBytes() {
+        String value = WebloggerConfig.getProperty(MAX_FIELD_BYTES_PROPERTY);
+        if (value == null || value.trim().isEmpty()) {
+            return DEFAULT_MAX_FIELD_BYTES;
+        }
+        try {
+            int max = Integer.parseInt(value.trim());
+            if (max > 0) {
+                return max;
+            }
+        } catch (NumberFormatException invalid) {
+            // fall through to the default
+        }
+        log.warn("Ignoring invalid " + MAX_FIELD_BYTES_PROPERTY + " value '" + value
+                + "'; using " + DEFAULT_MAX_FIELD_BYTES);
+        return DEFAULT_MAX_FIELD_BYTES;
     }
 
     public static List<Source> findSources(String html) {
@@ -82,7 +109,7 @@ public final class InlineImageData {
     }
 
     private static Image parse(String value, boolean inline) {
-        if (value == null || (inline && value.length() > MAX_FIELD_BYTES)) {
+        if (value == null || (inline && value.length() > maxFieldBytes())) {
             return null;
         }
         Matcher match = DATA_URL.matcher(value);
