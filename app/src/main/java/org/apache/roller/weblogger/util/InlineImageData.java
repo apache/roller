@@ -37,9 +37,7 @@ public final class InlineImageData {
     // MySQL's TEXT column holds 65,535 bytes. Leave room for the rest of an entry.
     static final int DEFAULT_MAX_FIELD_BYTES = 60000;
 
-    private static final Pattern IMAGE_TAG = Pattern.compile("(?is)<img\\b[^>]*>");
-    private static final Pattern SOURCE_ATTRIBUTE = Pattern.compile(
-            "(?is)(?<![\\w:-])src\\s*=\\s*(?:\"([^\"]*)\"|'([^']*)'|([^\\s>]+))");
+    private static final Pattern IMAGE_TAG = Pattern.compile("(?is)<img\\b[^<>]*>");
     private static final Pattern DATA_URL = Pattern.compile(
             "(?i)^data:image/(png|jpeg|gif);base64,([a-z0-9+/]+={0,2})$");
 
@@ -72,18 +70,75 @@ public final class InlineImageData {
         }
         Matcher image = IMAGE_TAG.matcher(html);
         while (image.find()) {
-            Matcher source = SOURCE_ATTRIBUTE.matcher(image.group());
-            if (!source.find()) {
-                continue;
-            }
-            int group = source.start(1) >= 0 ? 1 : source.start(2) >= 0 ? 2 : 3;
-            String value = source.group(group);
-            if (value.trim().toLowerCase(Locale.ROOT).startsWith("data:")) {
-                sources.add(new Source(image.start() + source.start(),
-                        image.start() + source.end(), value));
+            Source source = findSource(image.group(), image.start());
+            if (source != null
+                    && source.value.trim().toLowerCase(Locale.ROOT).startsWith("data:")) {
+                sources.add(source);
             }
         }
         return sources;
+    }
+
+    /**
+     * Returns the first src attribute of an img tag. Attributes are read in
+     * order, so text inside another attribute's quoted value is never taken
+     * for a src attribute.
+     */
+    private static Source findSource(String tag, int offset) {
+        int length = tag.length();
+        int i = "<img".length();
+        while (i < length) {
+            char c = tag.charAt(i);
+            if (Character.isWhitespace(c) || c == '/' || c == '=') {
+                i++;
+                continue;
+            }
+            if (c == '>') {
+                return null;
+            }
+            int nameStart = i;
+            while (i < length && !isNameEnd(tag.charAt(i))) {
+                i++;
+            }
+            String name = tag.substring(nameStart, i);
+            int afterName = i;
+            while (i < length && Character.isWhitespace(tag.charAt(i))) {
+                i++;
+            }
+            if (i >= length || tag.charAt(i) != '=') {
+                i = afterName;
+                continue;
+            }
+            i++;
+            while (i < length && Character.isWhitespace(tag.charAt(i))) {
+                i++;
+            }
+            String value;
+            if (i < length && (tag.charAt(i) == '"' || tag.charAt(i) == '\'')) {
+                char quote = tag.charAt(i);
+                int close = tag.indexOf(quote, i + 1);
+                if (close < 0) {
+                    return null;
+                }
+                value = tag.substring(i + 1, close);
+                i = close + 1;
+            } else {
+                int valueStart = i;
+                while (i < length && !Character.isWhitespace(tag.charAt(i))
+                        && tag.charAt(i) != '>') {
+                    i++;
+                }
+                value = tag.substring(valueStart, i);
+            }
+            if ("src".equalsIgnoreCase(name)) {
+                return new Source(offset + nameStart, offset + i, value);
+            }
+        }
+        return null;
+    }
+
+    private static boolean isNameEnd(char c) {
+        return Character.isWhitespace(c) || c == '=' || c == '>' || c == '/';
     }
 
     /** Returns null for unsupported, malformed, or oversized image data. */

@@ -219,62 +219,8 @@ public final class EntryEdit extends UIAction {
             List<MediaFile> createdImages = new ArrayList<>();
             boolean entrySaved = false;
             try {
-                Map<String, InlineImageData.Image> images = new HashMap<>();
-                List<InlineImageData.Source> textImages = InlineImageData.findSources(submittedText);
-                List<InlineImageData.Source> summaryImages = InlineImageData.findSources(submittedSummary);
-                boolean keepInline = WebloggerConfig.getBooleanProperty(
-                        "weblog.inlineImages.preferInline")
-                        || !WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")
-                        || !getActionWeblog().hasUserPermission(
-                                getAuthenticatedUser(), WeblogPermission.POST);
-                long maxUploadBytes = 0;
-                if (!keepInline && (!textImages.isEmpty() || !summaryImages.isEmpty())) {
-                    maxUploadBytes = (long) (RollerConstants.ONE_MB_IN_BYTES
-                            * new BigDecimal(WebloggerRuntimeConfig.getProperty(
-                                    "uploads.file.maxsize")).doubleValue());
-                }
-                if (!validateInlineImages(textImages, images, keepInline, maxUploadBytes)
-                        || !validateInlineImages(summaryImages, images, keepInline,
-                                maxUploadBytes)) {
+                if (!prepareInlineImages(createdImages)) {
                     return failedSave();
-                }
-                if (!images.isEmpty()) {
-                    if (keepInline) {
-                        String inlineText = normalizeInlineSources(submittedText,
-                                textImages);
-                        String inlineSummary = normalizeInlineSources(submittedSummary,
-                                summaryImages);
-                        if (!inlineFieldFits(inlineText, textImages)
-                                || !inlineFieldFits(inlineSummary, summaryImages)) {
-                            return failedSave();
-                        }
-                        getBean().setText(inlineText);
-                        getBean().setSummary(inlineSummary);
-                    } else {
-                        MediaFileManager mediaManager = WebloggerFactory.getWeblogger()
-                                .getMediaFileManager();
-                        MediaFileDirectory directory = mediaManager
-                                .getDefaultMediaFileDirectory(getActionWeblog());
-                        if (directory == null) {
-                            directory = mediaManager.createDefaultMediaFileDirectory(
-                                    getActionWeblog());
-                        }
-                        Map<String, String> mediaUrls = new HashMap<>();
-                        getBean().setText(replaceInlineImages(submittedText,
-                                textImages, images, mediaUrls, directory,
-                                mediaManager, createdImages));
-                        if (!hasActionErrors()) {
-                            getBean().setSummary(replaceInlineImages(submittedSummary,
-                                    summaryImages, images, mediaUrls, directory,
-                                    mediaManager, createdImages));
-                        }
-                        if (hasActionErrors()) {
-                            getBean().setText(submittedText);
-                            getBean().setSummary(submittedSummary);
-                            removeCreatedImages(mediaManager, createdImages);
-                            return failedSave();
-                        }
-                    }
                 }
 
                 WeblogEntryManager weblogEntryManager = WebloggerFactory.getWeblogger()
@@ -385,6 +331,77 @@ public final class EntryEdit extends UIAction {
             }
         }
         return failedSave();
+    }
+
+    /**
+     * Uploads data images in the submitted text and summary as media files, or
+     * keeps them inline when uploads are unavailable. Adds an action error and
+     * returns false if the entry cannot be saved. Media files it creates are
+     * added to createdImages so a later failure can remove them.
+     */
+    // Package-private so EntryEditInlineImagesTest can drive it directly.
+    boolean prepareInlineImages(List<MediaFile> createdImages)
+            throws WebloggerException {
+        String submittedText = getBean().getText();
+        String submittedSummary = getBean().getSummary();
+        Map<String, InlineImageData.Image> images = new HashMap<>();
+        List<InlineImageData.Source> textImages = InlineImageData.findSources(submittedText);
+        List<InlineImageData.Source> summaryImages = InlineImageData.findSources(submittedSummary);
+        boolean keepInline = WebloggerConfig.getBooleanProperty(
+                "weblog.inlineImages.preferInline")
+                || !WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")
+                || !getActionWeblog().hasUserPermission(
+                        getAuthenticatedUser(), WeblogPermission.POST);
+        long maxUploadBytes = 0;
+        if (!keepInline && (!textImages.isEmpty() || !summaryImages.isEmpty())) {
+            maxUploadBytes = (long) (RollerConstants.ONE_MB_IN_BYTES
+                    * new BigDecimal(WebloggerRuntimeConfig.getProperty(
+                            "uploads.file.maxsize")).doubleValue());
+        }
+        if (!validateInlineImages(textImages, images, keepInline, maxUploadBytes)
+                || !validateInlineImages(summaryImages, images, keepInline,
+                        maxUploadBytes)) {
+            return false;
+        }
+        if (!images.isEmpty()) {
+            if (keepInline) {
+                String inlineText = normalizeInlineSources(submittedText,
+                        textImages);
+                String inlineSummary = normalizeInlineSources(submittedSummary,
+                        summaryImages);
+                if (!inlineFieldFits(inlineText, textImages)
+                        || !inlineFieldFits(inlineSummary, summaryImages)) {
+                    return false;
+                }
+                getBean().setText(inlineText);
+                getBean().setSummary(inlineSummary);
+            } else {
+                MediaFileManager mediaManager = WebloggerFactory.getWeblogger()
+                        .getMediaFileManager();
+                MediaFileDirectory directory = mediaManager
+                        .getDefaultMediaFileDirectory(getActionWeblog());
+                if (directory == null) {
+                    directory = mediaManager.createDefaultMediaFileDirectory(
+                            getActionWeblog());
+                }
+                Map<String, String> mediaUrls = new HashMap<>();
+                getBean().setText(replaceInlineImages(submittedText,
+                        textImages, images, mediaUrls, directory,
+                        mediaManager, createdImages));
+                if (!hasActionErrors()) {
+                    getBean().setSummary(replaceInlineImages(submittedSummary,
+                            summaryImages, images, mediaUrls, directory,
+                            mediaManager, createdImages));
+                }
+                if (hasActionErrors()) {
+                    getBean().setText(submittedText);
+                    getBean().setSummary(submittedSummary);
+                    removeCreatedImages(mediaManager, createdImages);
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private boolean validateInlineImages(List<InlineImageData.Source> sources,
