@@ -1,0 +1,23 @@
+<aside class="sidebar">
+  <section>
+    <h2>About</h2>
+    #if($model.weblog.about)
+    <div class="about">$model.weblog.about</div>
+    #else
+    <p>A personal weblog about technology, family, and adventure.</p>
+    #end
+  </section>
+  <section>
+    <h2>Explore</h2>
+    #set($mytags=$model.weblog.getPopularTags(-1,18))
+    <div class="tag-cloud">
+      #foreach($tag in $mytags)
+      <a href="$url.tag($tag.name)" title="$tag.count entries">$tag.name</a>
+      #end
+    </div>
+  </section>
+  <a class="subscribe" href="$url.feed.entries.atom">
+    Follow via Atom
+    <span aria-hidden="true">→</span>
+  </a>
+</aside>
