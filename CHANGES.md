@@ -1,5 +1,21 @@
 # Apache Roller — Changes
 
+## 6.1.7
+
+### Improvements
+
+- **Pasted entry images are kept when you publish**
+  ([ROL-2184](https://issues.apache.org/jira/browse/ROL-2184)). PNG, JPEG and
+  GIF images pasted or dragged into the rich text editor are saved as media
+  files when the author can upload. Otherwise they are kept inline.
+  - `weblog.inlineImages.preferInline=true` keeps images inline even when
+    uploads are available.
+  - `weblog.inlineImages.maxFieldBytes` (default 60000) limits a content or
+    summary field that has inline images. On MySQL, change the entry columns to
+    `MEDIUMTEXT` before you raise it.
+  - Bundled themes allow `data:` images. Custom themes with their own Content
+    Security Policy need `data:` in `img-src`.
+
 ## 6.1.6
 
 Initial installation now requires a one-time, cryptographically secure setup token printed to the server log. Bootstrap access closes as soon as setup finishes — when the first administrator is created on a new site, or when the database upgrade completes on an existing one.
