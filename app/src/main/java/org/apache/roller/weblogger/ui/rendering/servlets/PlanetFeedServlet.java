@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.config.PlanetRuntimeConfig;
@@ -78,6 +79,11 @@ public class PlanetFeedServlet extends HttpServlet {
             throws ServletException, IOException {
 
         log.debug("Entering");
+
+        if (!WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
         PlanetManager planet = WebloggerFactory.getWeblogger()
                 .getPlanetManager();

@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.planet.ui;
 
+import org.apache.roller.weblogger.ui.struts2.util.RequiresPost;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.RollerException;
@@ -107,6 +108,7 @@ public class PlanetConfig extends PlanetUIAction implements HttpParametersAware 
     }
     
     
+    @RequiresPost
     public String save() {
         
         try {
