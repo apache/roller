@@ -95,7 +95,11 @@ public class RollerAtomServlet extends AtomServlet {
         }
         try {
             // Propono reads the entry as UTF-8 text, so check the same text.
-            new SafeSAXBuilder().build(new InputStreamReader(
+            SafeSAXBuilder saxBuilder = new SafeSAXBuilder();
+            saxBuilder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            saxBuilder.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            saxBuilder.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            saxBuilder.build(new InputStreamReader(
                     new ByteArrayInputStream(body), StandardCharsets.UTF_8));
         } catch (JDOMException e) {
             LOG.debug("Rejecting Atom entry that could not be parsed", e);
