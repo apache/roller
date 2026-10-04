@@ -1,5 +1,17 @@
 # Apache Roller — Changes
 
+## 6.1.7
+
+### Behaviour changes worth reading before upgrading
+
+- **Planet is off by default.** `planet.aggregator.enabled` now defaults to
+  `false`. While it is off, the Planet admin pages, `/planetrss` and the
+  Planet background tasks (`RefreshRollerPlanetTask`, `SyncWebsitesTask`) do
+  nothing. A site that uses Planet must set `planet.aggregator.enabled=true`
+  in `roller-custom.properties` before upgrading.
+- **Planet admin changes require POST.** Saving or deleting Planet groups and
+  subscriptions is refused unless the request is a POST from the admin form.
+
 ## 6.1.6
 
 Initial installation now requires a one-time, cryptographically secure setup token printed to the server log. Bootstrap access closes as soon as setup finishes — when the first administrator is created on a new site, or when the database upgrade completes on an existing one.

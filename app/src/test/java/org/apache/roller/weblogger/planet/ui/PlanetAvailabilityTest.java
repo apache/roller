@@ -28,6 +28,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import com.opensymphony.xwork2.ActionInvocation;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.planet.tasks.RefreshRollerPlanetTask;
+import org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask;
 import org.apache.roller.weblogger.ui.rendering.servlets.PlanetFeedServlet;
 import org.apache.roller.weblogger.ui.struts2.util.RequiresPost;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -133,6 +135,19 @@ class PlanetAvailabilityTest {
             new PlanetFeedServlet().doGet(request, response);
 
             verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
+            factory.verifyNoInteractions();
+        }
+    }
+
+    @Test
+    void planetTasksDoNothingWhileOff() {
+        try (MockedStatic<WebloggerConfig> config = mockStatic(WebloggerConfig.class);
+             MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class)) {
+            config.when(() -> WebloggerConfig.getBooleanProperty(ENABLED)).thenReturn(false);
+
+            new RefreshRollerPlanetTask().runTask();
+            new SyncWebsitesTask().runTask();
+
             factory.verifyNoInteractions();
         }
     }

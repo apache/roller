@@ -60,11 +60,25 @@ public class RequiresPostInterceptor extends AbstractInterceptor {
         if (methodName == null) {
             methodName = "execute";
         }
-        try {
-            Method method = invocation.getAction().getClass().getMethod(methodName);
-            return method.isAnnotationPresent(RequiresPost.class);
-        } catch (NoSuchMethodException e) {
-            return false;
+        return isMarked(invocation.getAction().getClass(), methodName);
+    }
+
+    /**
+     * True when the method, or any superclass method it overrides, is marked.
+     * Method annotations are not inherited, so an override that does not
+     * repeat the annotation must not drop the check.
+     */
+    static boolean isMarked(Class<?> type, String methodName) {
+        for (Class<?> c = type; c != null; c = c.getSuperclass()) {
+            try {
+                Method method = c.getMethod(methodName);
+                if (method.isAnnotationPresent(RequiresPost.class)) {
+                    return true;
+                }
+            } catch (NoSuchMethodException e) {
+                return false;
+            }
         }
+        return false;
     }
 }

@@ -49,6 +49,14 @@ class RequiresPostInterceptorTest {
         }
     }
 
+    /** Overrides the marked method without repeating the annotation. */
+    public static class OverridingAction extends SampleAction {
+        @Override
+        public String save() {
+            return "saved again";
+        }
+    }
+
     private final RequiresPostInterceptor interceptor = new RequiresPostInterceptor();
 
     @Test
@@ -84,6 +92,22 @@ class RequiresPostInterceptorTest {
     }
 
     @Test
+    void overrideOfMarkedMethodStillRefusesGet() throws Exception {
+        ActionInvocation invocation = invocation("save", "GET", new OverridingAction());
+
+        assertEquals(UIAction.DENIED, interceptor.intercept(invocation));
+        verify(invocation, never()).invoke();
+    }
+
+    @Test
+    void overrideOfMarkedMethodAcceptsPost() throws Exception {
+        ActionInvocation invocation = invocation("save", "POST", new OverridingAction());
+
+        assertEquals("next", interceptor.intercept(invocation));
+        verify(invocation).invoke();
+    }
+
+    @Test
     void markedMethodRefusedWhenRequestIsMissing() throws Exception {
         ActionInvocation invocation = invocation("save", null);
 
@@ -92,6 +116,11 @@ class RequiresPostInterceptorTest {
     }
 
     private static ActionInvocation invocation(String methodName, String httpMethod) throws Exception {
+        return invocation(methodName, httpMethod, new SampleAction());
+    }
+
+    private static ActionInvocation invocation(String methodName, String httpMethod,
+                                               Object action) throws Exception {
         Map<String, Object> contextMap = new HashMap<>();
         if (httpMethod != null) {
             HttpServletRequest request = mock(HttpServletRequest.class);
@@ -104,7 +133,7 @@ class RequiresPostInterceptorTest {
 
         ActionInvocation invocation = mock(ActionInvocation.class);
         when(invocation.getProxy()).thenReturn(proxy);
-        when(invocation.getAction()).thenReturn(new SampleAction());
+        when(invocation.getAction()).thenReturn(action);
         when(invocation.getInvocationContext()).thenReturn(new ActionContext(contextMap));
         when(invocation.invoke()).thenReturn("next");
         return invocation;
