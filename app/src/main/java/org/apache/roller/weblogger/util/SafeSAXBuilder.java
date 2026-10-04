@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.util;
 import javax.xml.XMLConstants;
 
 import org.jdom2.input.SAXBuilder;
-import org.jdom2.input.sax.XMLReaders;
 
 /**
  * A {@link SAXBuilder} that treats a document strictly as data.
@@ -38,10 +37,12 @@ import org.jdom2.input.sax.XMLReaders;
  * anything. Roller's own descriptors carry no document type declaration, so the
  * strict setting costs them nothing.
  *
- * <p>The settings overlap deliberately. Refusing the declaration outright is
- * what does the work; the remaining ones close the same door at the layers
- * beneath, so a parser configured elsewhere, or a JAXP implementation with
- * different defaults, does not quietly reopen it.
+ * <p>The underlying reader comes from {@link SecureXmlParsers}, which takes its
+ * parser from Apache Commons Secure XML and also refuses document type
+ * declarations. The settings below overlap with that deliberately. Refusing the
+ * declaration outright is what does the work; the remaining ones close the same
+ * door at the layers beneath, so a parser configured elsewhere, or a JAXP
+ * implementation with different defaults, does not quietly reopen it.
  */
 public class SafeSAXBuilder extends SAXBuilder {
 
@@ -54,7 +55,7 @@ public class SafeSAXBuilder extends SAXBuilder {
             "http://apache.org/xml/features/nonvalidating/load-external-dtd";
 
     public SafeSAXBuilder() {
-        super(XMLReaders.NONVALIDATING);
+        super(SecureXmlParsers.JDOM_READERS);
 
         // Secure processing is set explicitly rather than relied on. It is on
         // by default in current JDKs, but that default limits resource
