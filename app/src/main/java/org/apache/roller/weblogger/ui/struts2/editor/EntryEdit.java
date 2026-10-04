@@ -322,6 +322,10 @@ public final class EntryEdit extends UIAction {
             } catch (Exception e) {
                 log.error("Error saving new entry", e);
                 if (!entrySaved) {
+                    // The entry may already hold the failed edit, and the
+                    // cleanup below commits its own transaction. Roll the
+                    // failed edit back first so that commit cannot save it.
+                    WebloggerFactory.getWeblogger().release();
                     getBean().setText(submittedText);
                     getBean().setSummary(submittedSummary);
                     removeCreatedImages(WebloggerFactory.getWeblogger()
@@ -482,12 +486,15 @@ public final class EntryEdit extends UIAction {
                 media.setLength(image.getBytes().length);
                 media.setContentType(image.getContentType());
                 media.setInputStream(new ByteArrayInputStream(image.getBytes()));
+                // Track the upload before creating it: createMediaFile commits
+                // the record before it writes the file, so a failed write can
+                // still leave a record to remove.
+                createdImages.add(media);
                 mediaManager.createMediaFile(getActionWeblog(), media, errors);
                 if (errors.getErrorCount() > 0) {
                     addMediaErrors(errors);
                     return html;
                 }
-                createdImages.add(media);
                 url = media.getPermalink();
                 mediaUrls.put(source.getValue(), url);
             }
@@ -512,7 +519,13 @@ public final class EntryEdit extends UIAction {
             List<MediaFile> createdImages) {
         for (MediaFile image : createdImages) {
             try {
-                mediaManager.removeMediaFile(getActionWeblog(), image);
+                // Look the upload up again: the save may have rolled back and
+                // released the session, and an attempted upload may never
+                // have been stored.
+                MediaFile stored = mediaManager.getMediaFile(image.getId());
+                if (stored != null) {
+                    mediaManager.removeMediaFile(stored.getWeblog(), stored);
+                }
             } catch (WebloggerException cleanupError) {
                 log.warn("Could not remove an image from a failed entry save", cleanupError);
             }

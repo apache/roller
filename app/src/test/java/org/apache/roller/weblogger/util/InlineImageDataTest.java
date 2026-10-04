@@ -110,12 +110,35 @@ class InlineImageDataTest {
     }
 
     @Test
+    void findsSourcesInTagsWithAngleBracketsInQuotedValues() {
+        String before = "<img alt=\"a > b\" src=\"" + PNG + "\">";
+        List<InlineImageData.Source> sources = InlineImageData.findSources(before);
+        assertEquals(1, sources.size());
+        assertEquals(PNG, sources.get(0).getValue());
+        assertEquals("src=\"" + PNG + "\"",
+                before.substring(sources.get(0).getStart(), sources.get(0).getEnd()));
+
+        String after = "<p>x</p><img src=\"" + PNG + "\" alt=\"a < b\"><img src='" + PNG + "'>";
+        sources = InlineImageData.findSources(after);
+        assertEquals(2, sources.size());
+        assertEquals(PNG, sources.get(0).getValue());
+        assertEquals(PNG, sources.get(1).getValue());
+    }
+
+    @Test
+    void ignoresElementsThatOnlyStartWithImg() {
+        assertTrue(InlineImageData.findSources("<imgx src=\"" + PNG + "\">").isEmpty());
+    }
+
+    @Test
     void findingSourcesStaysLinearOnAdversarialInput() {
         String unclosedTags = "<img ".repeat(200_000);
         String unclosedQuotes = "<img" + " a=\"".repeat(200_000) + ">";
+        String bracketsInQuotes = "<img alt=\"" + "<img >".repeat(200_000) + "\">";
         assertTimeoutPreemptively(Duration.ofSeconds(2), () -> {
             assertTrue(InlineImageData.findSources(unclosedTags).isEmpty());
             assertTrue(InlineImageData.findSources(unclosedQuotes).isEmpty());
+            assertTrue(InlineImageData.findSources(bracketsInQuotes).isEmpty());
         });
     }
 

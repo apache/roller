@@ -18,28 +18,38 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.UserManager;
+import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -48,6 +58,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
@@ -65,6 +77,9 @@ class EntryEditInlineImagesTest {
     private MockedStatic<WebloggerRuntimeConfig> runtimeConfig;
     private MockedStatic<WebloggerFactory> factory;
     private MediaFileManager mediaManager;
+    private Weblogger weblogger;
+    /** Media records the mocked manager has stored, by id. */
+    private final Map<String, MediaFile> stored = new HashMap<>();
     private FileContentManager contentManager;
     private Weblog weblog;
     private EntryEdit action;
@@ -83,7 +98,7 @@ class EntryEditInlineImagesTest {
         mediaManager = mock(MediaFileManager.class);
         contentManager = mock(FileContentManager.class);
         URLStrategy urls = mock(URLStrategy.class);
-        Weblogger weblogger = mock(Weblogger.class);
+        weblogger = mock(Weblogger.class);
         when(weblogger.getMediaFileManager()).thenReturn(mediaManager);
         when(weblogger.getFileContentManager()).thenReturn(contentManager);
         when(weblogger.getUrlStrategy()).thenReturn(urls);
@@ -94,6 +109,13 @@ class EntryEditInlineImagesTest {
                 .thenReturn(new MediaFileDirectory());
         when(contentManager.canSave(any(), anyString(), anyString(), anyLong(), any()))
                 .thenReturn(true);
+        doAnswer(call -> {
+            MediaFile media = call.getArgument(1);
+            stored.put(media.getId(), media);
+            return null;
+        }).when(mediaManager).createMediaFile(any(), any(), any());
+        when(mediaManager.getMediaFile(anyString()))
+                .thenAnswer(call -> stored.get(call.<String>getArgument(0)));
 
         weblog = mock(Weblog.class);
         when(weblog.hasUserPermission(any(), eq(WeblogPermission.POST))).thenReturn(true);
@@ -211,5 +233,69 @@ class EntryEditInlineImagesTest {
         assertEquals(summary, action.getBean().getSummary());
         assertEquals(1, created.size());
         verify(mediaManager).removeMediaFile(weblog, created.get(0));
+    }
+
+    @Test
+    void uploadWhoseFileWriteFailsIsStillRemoved() throws Exception {
+        // createMediaFile commits the record, then fails writing the file
+        doAnswer(call -> {
+            MediaFile media = call.getArgument(1);
+            stored.put(media.getId(), media);
+            throw new WebloggerException("file write failed");
+        }).when(mediaManager).createMediaFile(any(), any(), any());
+        action.setEntry(new WeblogEntry());
+        action.getBean().setText("<img src=\"" + PNG + "\">");
+
+        assertEquals(EntryEdit.INPUT, action.save());
+
+        assertEquals(1, stored.size());
+        MediaFile attempted = stored.values().iterator().next();
+        verify(mediaManager).removeMediaFile(weblog, attempted);
+        assertEquals("<img src=\"" + PNG + "\">", action.getBean().getText());
+    }
+
+    @Test
+    void attemptedUploadThatWasNeverStoredIsSkipped() throws Exception {
+        doAnswer(call -> {
+            throw new WebloggerException("refused before storing");
+        }).when(mediaManager).createMediaFile(any(), any(), any());
+        action.setEntry(new WeblogEntry());
+        action.getBean().setText("<img src=\"" + PNG + "\">");
+
+        assertEquals(EntryEdit.INPUT, action.save());
+
+        verify(mediaManager, never()).removeMediaFile(any(), any());
+    }
+
+    @Test
+    void failedEditIsRolledBackBeforeUploadsAreRemoved() throws Exception {
+        WeblogEntryManager entryManager = mock(WeblogEntryManager.class);
+        when(weblogger.getWeblogEntryManager()).thenReturn(entryManager);
+        when(weblogger.getIndexManager()).thenReturn(mock(IndexManager.class));
+        when(weblogger.getUserManager()).thenReturn(mock(UserManager.class));
+        // the category was deleted after the edit form was loaded
+        when(entryManager.getWeblogCategory("gone")).thenReturn(null);
+        doReturn(Locale.US).when(action).getLocale();
+        WeblogEntry entry = new WeblogEntry();
+        entry.setTitle("stored title");
+        action.setEntry(entry);
+        action.getBean().setTitle("edited title");
+        action.getBean().setStatus(WeblogEntry.PubStatus.DRAFT.name());
+        action.getBean().setCategoryId("gone");
+        action.getBean().setText("<img src=\"" + PNG + "\">");
+
+        assertEquals(EntryEdit.INPUT, action.save());
+
+        // the edit reached the entry before failing...
+        assertEquals("edited title", entry.getTitle());
+        MediaFile upload = stored.values().iterator().next();
+        // ...so it is rolled back before the cleanup commits, and the
+        // entry is never saved
+        InOrder order = inOrder(weblogger, mediaManager);
+        order.verify(weblogger).release();
+        order.verify(mediaManager).removeMediaFile(weblog, upload);
+        order.verify(weblogger).flush();
+        verify(weblogger, times(1)).flush();
+        verify(entryManager, never()).saveWeblogEntry(any());
     }
 }

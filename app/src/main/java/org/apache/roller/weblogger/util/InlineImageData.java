@@ -37,7 +37,6 @@ public final class InlineImageData {
     // MySQL's TEXT column holds 65,535 bytes. Leave room for the rest of an entry.
     static final int DEFAULT_MAX_FIELD_BYTES = 60000;
 
-    private static final Pattern IMAGE_TAG = Pattern.compile("(?is)<img\\b[^<>]*>");
     private static final Pattern DATA_URL = Pattern.compile(
             "(?i)^data:image/(png|jpeg|gif);base64,([a-z0-9+/]+={0,2})$");
 
@@ -68,70 +67,98 @@ public final class InlineImageData {
         if (html == null) {
             return sources;
         }
-        Matcher image = IMAGE_TAG.matcher(html);
-        while (image.find()) {
-            Source source = findSource(image.group(), image.start());
-            if (source != null
-                    && source.value.trim().toLowerCase(Locale.ROOT).startsWith("data:")) {
-                sources.add(source);
+        int i = 0;
+        while ((i = indexOfImageTag(html, i)) >= 0) {
+            int[] tag = scanImageTag(html, i);
+            if (tag == null) {
+                // The tag never closes, so nothing after it is markup.
+                break;
             }
+            if (tag[1] >= 0) {
+                Source source = new Source(tag[1], tag[2], html.substring(tag[3], tag[4]));
+                if (source.value.trim().toLowerCase(Locale.ROOT).startsWith("data:")) {
+                    sources.add(source);
+                }
+            }
+            i = tag[0];
         }
         return sources;
     }
 
+    /** Index of the next "<img" that starts an img tag, or -1. */
+    private static int indexOfImageTag(String html, int from) {
+        int length = html.length();
+        for (int i = from; i + 4 <= length; i++) {
+            if (html.charAt(i) == '<' && html.regionMatches(true, i + 1, "img", 0, 3)
+                    && (i + 4 == length || isNameEnd(html.charAt(i + 4)))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     /**
-     * Returns the first src attribute of an img tag. Attributes are read in
-     * order, so text inside another attribute's quoted value is never taken
-     * for a src attribute.
+     * Reads the attributes of the img tag at start, in order, so that quoted
+     * values may contain any character, including angle brackets, and text
+     * inside another attribute's value is never taken for a src attribute.
+     * Returns null if the tag does not close. Otherwise returns {tag end,
+     * src start, src end, value start, value end} for the first src
+     * attribute, with -1 in the src fields when there is none.
      */
-    private static Source findSource(String tag, int offset) {
-        int length = tag.length();
-        int i = "<img".length();
+    private static int[] scanImageTag(String html, int start) {
+        int length = html.length();
+        int[] result = {-1, -1, -1, -1, -1};
+        int i = start + "<img".length();
         while (i < length) {
-            char c = tag.charAt(i);
+            char c = html.charAt(i);
+            if (c == '>') {
+                result[0] = i + 1;
+                return result;
+            }
             if (Character.isWhitespace(c) || c == '/' || c == '=') {
                 i++;
                 continue;
             }
-            if (c == '>') {
-                return null;
-            }
             int nameStart = i;
-            while (i < length && !isNameEnd(tag.charAt(i))) {
+            while (i < length && !isNameEnd(html.charAt(i))) {
                 i++;
             }
-            String name = tag.substring(nameStart, i);
+            boolean isSrc = "src".equalsIgnoreCase(html.substring(nameStart, i));
             int afterName = i;
-            while (i < length && Character.isWhitespace(tag.charAt(i))) {
+            while (i < length && Character.isWhitespace(html.charAt(i))) {
                 i++;
             }
-            if (i >= length || tag.charAt(i) != '=') {
+            if (i >= length || html.charAt(i) != '=') {
                 i = afterName;
                 continue;
             }
             i++;
-            while (i < length && Character.isWhitespace(tag.charAt(i))) {
+            while (i < length && Character.isWhitespace(html.charAt(i))) {
                 i++;
             }
-            String value;
-            if (i < length && (tag.charAt(i) == '"' || tag.charAt(i) == '\'')) {
-                char quote = tag.charAt(i);
-                int close = tag.indexOf(quote, i + 1);
+            int valueStart;
+            int valueEnd;
+            if (i < length && (html.charAt(i) == '"' || html.charAt(i) == '\'')) {
+                int close = html.indexOf(html.charAt(i), i + 1);
                 if (close < 0) {
                     return null;
                 }
-                value = tag.substring(i + 1, close);
+                valueStart = i + 1;
+                valueEnd = close;
                 i = close + 1;
             } else {
-                int valueStart = i;
-                while (i < length && !Character.isWhitespace(tag.charAt(i))
-                        && tag.charAt(i) != '>') {
+                valueStart = i;
+                while (i < length && !Character.isWhitespace(html.charAt(i))
+                        && html.charAt(i) != '>') {
                     i++;
                 }
-                value = tag.substring(valueStart, i);
+                valueEnd = i;
             }
-            if ("src".equalsIgnoreCase(name)) {
-                return new Source(offset + nameStart, offset + i, value);
+            if (isSrc && result[1] < 0) {
+                result[1] = nameStart;
+                result[2] = i;
+                result[3] = valueStart;
+                result[4] = valueEnd;
             }
         }
         return null;
