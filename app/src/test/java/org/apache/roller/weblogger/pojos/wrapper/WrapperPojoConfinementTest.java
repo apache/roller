@@ -20,7 +20,11 @@
  */
 package org.apache.roller.weblogger.pojos.wrapper;
 
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Properties;
@@ -34,6 +38,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -56,12 +61,32 @@ public class WrapperPojoConfinementTest {
 
     private static VelocityEngine engine;
 
+    /** The configuration the weblog renderer loads. */
+    private static final Path VELOCITY_CONFIG =
+            Paths.get("src", "main", "webapp", "WEB-INF", "velocity.properties");
+
     @BeforeAll
-    public static void setUpEngine() {
-        // the same introspection sandbox the weblog renderer configures
+    public static void setUpEngine() throws Exception {
+        // Load the shipped renderer configuration, so the introspection
+        // settings under test are the real ones. Only the settings that need
+        // a running webapp (resource loaders, macro libraries, the include
+        // handler and the logger) are dropped.
+        Properties shipped = new Properties();
+        try (InputStream in = Files.newInputStream(VELOCITY_CONFIG)) {
+            shipped.load(in);
+        }
+        assertNotNull(shipped.getProperty("introspector.uberspect.class"),
+                VELOCITY_CONFIG + " no longer sets an uberspector");
+
         Properties props = new Properties();
-        props.setProperty("introspector.uberspect.class",
-                "org.apache.velocity.util.introspection.SecureUberspector");
+        for (String key : shipped.stringPropertyNames()) {
+            if (!key.startsWith("resource.loader")
+                    && !key.startsWith("velocimacro.")
+                    && !key.startsWith("event_handler.")
+                    && !key.startsWith("runtime.log.logsystem")) {
+                props.setProperty(key, shipped.getProperty(key));
+            }
+        }
         engine = new VelocityEngine();
         engine.init(props);
     }
