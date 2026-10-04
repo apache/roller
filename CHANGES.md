@@ -26,6 +26,12 @@
   and on the blogroll dialogs even a duplicate name, closed the dialog as if the
   save had worked, or ended on an error page.
 
+- **AtomPub media collections work.** Listing a media collection by the URL in
+  the service document (`/resources/default`) failed with a server error. So
+  did uploading media with no `Slug` header and no title, uploading to
+  `/resources` itself, or uploading with a very short `Slug`. Unknown media
+  directories now answer 404.
+
 ## 6.1.6
 
 Initial installation now requires a one-time, cryptographically secure setup token printed to the server log. Bootstrap access closes as soon as setup finishes — when the first administrator is created on a new site, or when the database upgrade completes on an existing one.
