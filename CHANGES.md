@@ -19,6 +19,10 @@
   each save.
 - **"Switch to blogroll" lets you pick a blogroll.** The page no longer reloads
   as soon as you open the list.
+- **Renaming a blogroll no longer reports a system error.** The rename was
+  saved, but the page showed "System error - check logs".
+- **A blogroll name that is already in use is reported** in the dialog, instead
+  of the page failing with an error.
 
 ## 6.1.6
 
