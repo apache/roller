@@ -8,6 +8,11 @@
   setting is off, every AtomPub URL answers 404, not only the service document.
 - **AtomPub entry bodies are limited to 10 MB.** A larger entry is refused with
   413. Media uploads are not affected.
+- **XML parsing uses Apache Commons Secure XML.** Roller now bundles
+  `commons-secure-xml` 1.0.0 and builds all of its XML parsers through it.
+- **Startup fails if the XML-RPC parser cannot be configured.** Roller used to
+  log an error and continue. It now stops at startup, so check the log if a
+  custom XML parser is on the classpath.
 
 ## 6.1.6
 
