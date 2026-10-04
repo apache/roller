@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
+import com.rometools.propono.atom.server.AtomHandler;
 import com.rometools.propono.atom.server.AtomServlet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,6 +57,13 @@ public class RollerAtomServlet extends AtomServlet {
 
     private static final String ATOM_CONTENT_TYPE = "application/atom+xml";
 
+    /**
+     * Request attribute that carries the handler authenticated by this servlet
+     * to {@link RollerAtomHandlerFactory}, so Propono does not authenticate the
+     * request a second time.
+     */
+    static final String HANDLER_ATTRIBUTE = RollerAtomServlet.class.getName() + ".handler";
+
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
@@ -70,6 +78,15 @@ public class RollerAtomServlet extends AtomServlet {
             forward(req, res);
             return;
         }
+
+        // Authenticate before reading the body, as Propono does.
+        AtomHandler handler = createHandler(req, res);
+        if (handler.getAuthenticatedUsername() == null) {
+            res.setHeader("WWW-Authenticate", "BASIC realm=\"AtomPub\"");
+            res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+        req.setAttribute(HANDLER_ATTRIBUTE, handler);
 
         byte[] body = readBody(req.getInputStream());
         if (body == null) {
@@ -86,6 +103,11 @@ public class RollerAtomServlet extends AtomServlet {
             return;
         }
         forward(new BufferedBodyRequest(req, body), res);
+    }
+
+    /** Creates the handler that authenticates the request. */
+    protected AtomHandler createHandler(HttpServletRequest req, HttpServletResponse res) {
+        return new RollerAtomHandler(req, res);
     }
 
     /** Hands the request to the Propono servlet. */

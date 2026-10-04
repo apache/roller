@@ -29,6 +29,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.rometools.propono.atom.server.AtomHandler;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -175,6 +176,42 @@ class RollerAtomServletTest {
     }
 
     @Test
+    void unauthenticatedEntryPostIsRefusedWithoutReadingTheBody() throws Exception {
+        servlet.userName = null;
+        HttpServletRequest request = request("POST", "/blog/entries", "application/atom+xml", ENTRY);
+
+        servlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        verify(request, never()).getInputStream();
+        assertNull(servlet.forwarded);
+    }
+
+    @Test
+    void unauthenticatedEntryUpdateIsRefusedWithoutReadingTheBody() throws Exception {
+        servlet.userName = null;
+        HttpServletRequest request = request("PUT", "/blog/entry/abc", "application/atom+xml", ENTRY);
+
+        servlet.service(request, response);
+
+        verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        verify(request, never()).getInputStream();
+        assertNull(servlet.forwarded);
+    }
+
+    @Test
+    void authenticatedHandlerIsReusedByTheFactory() throws Exception {
+        HttpServletRequest request = request("POST", "/blog/entries", "application/atom+xml", ENTRY);
+
+        servlet.service(request, response);
+
+        verify(request).setAttribute(RollerAtomServlet.HANDLER_ATTRIBUTE, servlet.handler);
+        when(request.getAttribute(RollerAtomServlet.HANDLER_ATTRIBUTE)).thenReturn(servlet.handler);
+        assertSame(servlet.handler, new RollerAtomHandlerFactory().newAtomHandler(request, response));
+        verify(request).removeAttribute(RollerAtomServlet.HANDLER_ATTRIBUTE);
+    }
+
+    @Test
     void entryPathsMatchTheHandler() {
         assertTrue(RollerAtomHandler.isEntryPath("/blog/entry/abc"));
         assertTrue(RollerAtomHandler.isEntryPath("/blog/resource/photo.png.media-link"));
@@ -228,6 +265,15 @@ class RollerAtomServletTest {
         private static final long serialVersionUID = 1L;
         HttpServletRequest forwarded;
         byte[] forwardedBody;
+        String userName = "alice";
+        AtomHandler handler;
+
+        @Override
+        protected AtomHandler createHandler(HttpServletRequest req, HttpServletResponse res) {
+            handler = mock(AtomHandler.class);
+            when(handler.getAuthenticatedUsername()).thenReturn(userName);
+            return handler;
+        }
 
         @Override
         protected void forward(HttpServletRequest req, HttpServletResponse res) throws IOException {

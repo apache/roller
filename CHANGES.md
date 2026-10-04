@@ -1,5 +1,14 @@
 # Apache Roller — Changes
 
+## 6.1.7
+
+### Behaviour changes worth reading before upgrading
+
+- **AtomPub honours `webservices.enableAtomPub` on every request.** While the
+  setting is off, every AtomPub URL answers 404, not only the service document.
+- **AtomPub entry bodies are limited to 10 MB.** A larger entry is refused with
+  413. Media uploads are not affected.
+
 ## 6.1.6
 
 Initial installation now requires a one-time, cryptographically secure setup token printed to the server log. Bootstrap access closes as soon as setup finishes — when the first administrator is created on a new site, or when the database upgrade completes on an existing one.

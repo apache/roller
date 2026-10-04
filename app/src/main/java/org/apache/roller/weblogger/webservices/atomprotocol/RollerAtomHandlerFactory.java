@@ -30,12 +30,18 @@ import javax.servlet.http.HttpServletResponse;
 public class RollerAtomHandlerFactory extends AtomHandlerFactory {
     
     /**
-     * Create new AtomHandler.
+     * Return the handler that {@link RollerAtomServlet} already authenticated
+     * for this request, or create a new AtomHandler.
      */
     @Override
     public AtomHandler newAtomHandler(
             HttpServletRequest req, HttpServletResponse res) {
+        Object handler = req.getAttribute(RollerAtomServlet.HANDLER_ATTRIBUTE);
+        if (handler instanceof AtomHandler) {
+            req.removeAttribute(RollerAtomServlet.HANDLER_ATTRIBUTE);
+            return (AtomHandler) handler;
+        }
         return new RollerAtomHandler(req, res);
-    }    
+    }
 }
       
