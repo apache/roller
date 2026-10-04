@@ -21,8 +21,10 @@
   as soon as you open the list.
 - **Renaming a blogroll no longer reports a system error.** The rename was
   saved, but the page showed "System error - check logs".
-- **A blogroll name that is already in use is reported** in the dialog, instead
-  of the page failing with an error.
+- **The blogroll, bookmark, category and ping target dialogs show why a save
+  was refused.** Before, only a duplicate name was reported. Any other error,
+  and on the blogroll dialogs even a duplicate name, closed the dialog as if the
+  save had worked, or ended on an error page.
 
 ## 6.1.6
 

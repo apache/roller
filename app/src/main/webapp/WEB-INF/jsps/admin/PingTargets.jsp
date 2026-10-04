@@ -279,12 +279,10 @@
 
             refreshSalt(data);
 
-            // kludge: scrape response status from HTML returned by Struts
-            var alertEnd = data.indexOf("ALERT_END");
-            var notUnique = data.indexOf("<s:text name='pingTarget.nameNotUnique' />");
-            if (notUnique > 0 && notUnique < alertEnd) {
+            var errors = actionErrors(data);
+            if (errors.length > 0) {
                 feedbackAreaEdit.css("color", "red");
-                feedbackAreaEdit.html('<s:text name="pingTarget.nameNotUnique" />');
+                feedbackAreaEdit.text(errors.join(" "));
 
             } else {
                 feedbackAreaEdit.css("color", "green");

@@ -821,12 +821,10 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
             refreshSalt(data);
 
-            // kludge: scrape response status from HTML returned by Struts
-            var alertEnd = data.indexOf("ALERT_END");
-            var notUnique = data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />');
-            if (notUnique > 0 && notUnique < alertEnd) {
+            var errors = actionErrors(data);
+            if (errors.length > 0) {
                 feedbackAreaEdit.css("color", "red");
-                feedbackAreaEdit.html('<s:text name="bookmarkForm.error.duplicateName" />');
+                feedbackAreaEdit.text(errors.join(" "));
 
             } else {
                 feedbackAreaEdit.css("color", "green");
