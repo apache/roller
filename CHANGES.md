@@ -36,6 +36,9 @@
   their defaults.
 - **An image pasted into the rich text editor appears once.** Pasting an image
   copied from a web page inserted it twice.
+- **Decimal settings can be saved on the configuration page.** The maximum
+  upload file and directory sizes accepted only whole numbers in the browser,
+  although they are measured in megabytes with decimals (default `2.00`).
 
 ## 6.1.6
 
