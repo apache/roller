@@ -415,6 +415,14 @@ limit with `weblog.inlineImages.maxFieldBytes`. On MySQL, alter the
 raising the limit, because a `TEXT` column holds only 65,535 bytes. Custom themes with a
 Content Security Policy must allow `data:` in `img-src` to show inline images.
 
+A pasted image is sent with the entry form as base64 text, about 4/3 of the
+image's size. Servlet containers limit the size of a form POST; Tomcat's
+`maxPostSize` defaults to 2 MB, so a pasted image larger than about 1.5 MB is
+refused with a "form is too large" message even when it is within the upload
+limit. To accept larger pasted images, set `maxPostSize` on the Tomcat
+`Connector` to at least 4/3 of `uploads.file.maxsize`, plus room for the
+entry text.
+
 If you’d like to upload images or other files for use in your weblog, go
 to your weblog’s *Create & Edit -> Media Files* page. From there you can
 upload files, browse and search files. You can also manage your files,

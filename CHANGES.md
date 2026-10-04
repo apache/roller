@@ -15,6 +15,9 @@
     `MEDIUMTEXT` before you raise it.
   - Bundled themes allow `data:` images. Custom themes with their own Content
     Security Policy need `data:` in `img-src`.
+  - Pasted images travel in the form POST as base64. Tomcat's `maxPostSize`
+    defaults to 2 MB, so larger pastes are refused with a "form is too large"
+    message; raise `maxPostSize` to accept them.
 
 ## 6.1.6
 

@@ -487,6 +487,11 @@
     </error-page>
 
     <error-page>
+        <error-code>413</error-code>
+        <location>/roller-ui/errors/error.jsp</location>
+    </error-page>
+
+    <error-page>
         <error-code>403</error-code>
         <location>/roller-ui/errors/403.jsp</location>
     </error-page>
