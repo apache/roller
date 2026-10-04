@@ -54,7 +54,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 <s:text name="bookmarksForm.blogrollName"/>
             </label>
             <div class="col-sm-9 controls">
-                <div class="form-control"><s:text name="%{folder.name}"/></div>
+                <div class="form-control"><s:property value="folder.name"/></div>
             </div>
         </div>
 
@@ -72,22 +72,22 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 <s:text name="bookmarksForm.blogrollName"/>
             </label>
             <div class="col-sm-9 controls">
-                <input style="width:55%; float:left" type="text" name="folder.name"
-                       value="<s:text name='%{folder.name}'/>" id="bookmarks_folder_name" class="form-control"
-                       onchange="nameChanged()"
-                       onkeyup="nameChanged()"/>
-                <button type="button" id="rename_button"
-                        class="btn btn-success" style="float:left; margin-left:1em;"
-                        onclick="renameFolder(); return false;"
-                        onsubmit="return false;">
-                    <s:text name="generic.rename"/>
-                </button>
-                <button type="button" id="rename_cancel"
-                        class="btn btn-default" style="float:left; margin-left:1em;"
-                        onclick="cancelRenameFolder(); return false;"
-                        onsubmit="return false;">
-                    <s:text name="generic.cancel"/>
-                </button>
+                <div style="display:flex; gap:1em;">
+                    <input type="text" name="folder.name" style="flex:1;"
+                           value="<s:property value='folder.name'/>" id="bookmarks_folder_name" class="form-control"
+                           onchange="nameChanged()"
+                           onkeyup="nameChanged()"/>
+                    <button type="button" id="rename_button" class="btn btn-success"
+                            onclick="renameFolder(); return false;"
+                            onsubmit="return false;">
+                        <s:text name="generic.rename"/>
+                    </button>
+                    <button type="button" id="rename_cancel" class="btn btn-default"
+                            onclick="cancelRenameFolder(); return false;"
+                            onsubmit="return false;">
+                        <s:text name="generic.cancel"/>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -95,8 +95,15 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     <%-- allow user to select the bookmark folder to view --%>
 
-    <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name" emptyOption="true"
-              label="%{getText('bookmarksForm.switchTo')}" onchange="viewChanged()"/>
+    <div class="form-group ">
+        <label class="col-sm-3 control-label" for="bookmarks_viewFolderId">
+            <s:text name="bookmarksForm.switchTo"/>
+        </label>
+        <div class="col-sm-9 controls">
+            <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name" emptyOption="true"
+                      theme="simple" cssClass="form-control" onchange="viewChanged()"/>
+        </div>
+    </div>
 
     <table class="rollertable table table-striped">
 
