@@ -1,5 +1,15 @@
 # Apache Roller — Changes
 
+## 6.1.7
+
+### Behaviour changes worth reading before upgrading
+
+- **XML parsing uses Apache Commons Secure XML.** Roller now bundles
+  `commons-secure-xml` 1.0.0 and builds all of its XML parsers through it.
+- **Startup fails if the XML-RPC parser cannot be configured.** Roller used to
+  log an error and continue. It now stops at startup, so check the log if a
+  custom XML parser is on the classpath.
+
 ## 6.1.6
 
 Initial installation now requires a one-time, cryptographically secure setup token printed to the server log. Bootstrap access closes as soon as setup finishes — when the first administrator is created on a new site, or when the database upgrade completes on an existing one.
