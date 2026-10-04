@@ -16,7 +16,6 @@
 
 package org.apache.roller.weblogger.planet.ui;
 
-import org.apache.roller.weblogger.ui.struts2.util.RequiresPost;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -114,8 +113,10 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
     /**
      * Save group.
      */
-    @RequiresPost
     public String saveGroup() {
+        if (!isPostRequest()) {
+            return DENIED;
+        }
 
         validateGroup();
 
@@ -172,8 +173,10 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
     /**
      * Save subscription, add to current group
      */
-    @RequiresPost
     public String saveSubscription() {
+        if (!isPostRequest()) {
+            return DENIED;
+        }
 
         valudateNewSub();
 
@@ -225,8 +228,10 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
     /**
      * Delete subscription, reset form
      */
-    @RequiresPost
     public String deleteSubscription() {
+        if (!isPostRequest()) {
+            return DENIED;
+        }
 
         if (getSubUrl() != null) {
             try {

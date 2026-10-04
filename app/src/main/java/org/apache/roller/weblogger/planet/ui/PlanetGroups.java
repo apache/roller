@@ -16,7 +16,6 @@
 
 package org.apache.roller.weblogger.planet.ui;
 
-import org.apache.roller.weblogger.ui.struts2.util.RequiresPost;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
@@ -67,8 +66,10 @@ public class PlanetGroups extends PlanetUIAction  implements ServletRequestAware
     /**
      * Delete group
      */
-    @RequiresPost
     public String delete() {
+        if (!isPostRequest()) {
+            return DENIED;
+        }
 
         if (getGroup() != null) {
             try {

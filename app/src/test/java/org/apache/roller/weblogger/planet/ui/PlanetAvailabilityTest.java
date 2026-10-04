@@ -20,25 +20,24 @@
 package org.apache.roller.weblogger.planet.ui;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.planet.tasks.RefreshRollerPlanetTask;
 import org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask;
 import org.apache.roller.weblogger.ui.rendering.servlets.PlanetFeedServlet;
-import org.apache.roller.weblogger.ui.struts2.util.RequiresPost;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.ui.struts2.util.UISecurityInterceptor;
+import org.apache.struts2.StrutsStatics;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -91,37 +90,40 @@ class PlanetAvailabilityTest {
     }
 
     @Test
-    void planetChangesRequirePost() throws Exception {
-        assertTrue(PlanetConfig.class.getMethod("save").isAnnotationPresent(RequiresPost.class));
-        assertTrue(PlanetGroupSubs.class.getMethod("saveGroup").isAnnotationPresent(RequiresPost.class));
-        assertTrue(PlanetGroupSubs.class.getMethod("saveSubscription").isAnnotationPresent(RequiresPost.class));
-        assertTrue(PlanetGroupSubs.class.getMethod("deleteSubscription").isAnnotationPresent(RequiresPost.class));
-        assertTrue(PlanetGroups.class.getMethod("delete").isAnnotationPresent(RequiresPost.class));
+    void planetChangesAreRefusedUnlessPosted() {
+        HttpServletRequest get = mock(HttpServletRequest.class);
+        when(get.getMethod()).thenReturn("GET");
+        Map<String, Object> context = new HashMap<>();
+        context.put(StrutsStatics.HTTP_REQUEST, get);
+        ActionContext.setContext(new ActionContext(context));
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class)) {
+            assertEquals(UIAction.DENIED, new PlanetConfig().save());
+            assertEquals(UIAction.DENIED, new PlanetGroups().delete());
+            assertEquals(UIAction.DENIED, new PlanetGroupSubs().saveGroup());
+            assertEquals(UIAction.DENIED, new PlanetGroupSubs().saveSubscription());
+            assertEquals(UIAction.DENIED, new PlanetGroupSubs().deleteSubscription());
+            factory.verifyNoInteractions();
+        } finally {
+            ActionContext.setContext(null);
+        }
     }
 
     @Test
-    void rollerStackIncludesThePostCheck() throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-        Document doc;
-        try (InputStream in = getClass().getResourceAsStream("/struts.xml")) {
-            doc = factory.newDocumentBuilder().parse(in);
+    void onlyAPostCountsAsAPostRequest() {
+        PlanetUIAction action = new PlanetGroups();
+        try {
+            ActionContext.setContext(new ActionContext(new HashMap<>()));
+            assertFalse(action.isPostRequest());
+
+            HttpServletRequest post = mock(HttpServletRequest.class);
+            when(post.getMethod()).thenReturn("post");
+            Map<String, Object> context = new HashMap<>();
+            context.put(StrutsStatics.HTTP_REQUEST, post);
+            ActionContext.setContext(new ActionContext(context));
+            assertTrue(action.isPostRequest());
+        } finally {
+            ActionContext.setContext(null);
         }
-        NodeList stacks = doc.getElementsByTagName("interceptor-stack");
-        boolean found = false;
-        for (int i = 0; i < stacks.getLength(); i++) {
-            Element stack = (Element) stacks.item(i);
-            if (!"rollerStack".equals(stack.getAttribute("name"))) {
-                continue;
-            }
-            NodeList refs = stack.getElementsByTagName("interceptor-ref");
-            for (int j = 0; j < refs.getLength(); j++) {
-                if ("RequiresPostInterceptor".equals(((Element) refs.item(j)).getAttribute("name"))) {
-                    found = true;
-                }
-            }
-        }
-        assertTrue(found);
     }
 
     @Test

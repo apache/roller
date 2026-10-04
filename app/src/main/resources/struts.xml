@@ -39,8 +39,6 @@
                          class="org.apache.roller.weblogger.ui.struts2.util.UIActionPrepareInterceptor" />
             <interceptor name="ValidateSaltInterceptor"
                          class="org.apache.roller.weblogger.ui.struts2.util.ValidateSaltInterceptor" />
-            <interceptor name="RequiresPostInterceptor"
-                         class="org.apache.roller.weblogger.ui.struts2.util.RequiresPostInterceptor" />
                          
             <!-- Define a custom interceptor stack for Roller so that we can 
                  add in our own custom interceptors.  We basically copy the 
@@ -50,7 +48,6 @@
             <interceptor-stack name="rollerStack">
                 <interceptor-ref name="exception"/>
                 <interceptor-ref name="ValidateSaltInterceptor"/>
-                <interceptor-ref name="RequiresPostInterceptor"/>
                 <!-- <interceptor-ref name="alias"/> -->
                 <interceptor-ref name="servletConfig"/>
                 <!-- <interceptor-ref name="prepare"/> -->
