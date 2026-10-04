@@ -25,9 +25,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.runtime.ConfigDef;
+import org.apache.roller.weblogger.config.runtime.PropertyDef;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefsParser;
 import org.apache.roller.weblogger.planet.ui.PlanetConfig;
+import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 
 
 /**
@@ -45,8 +48,10 @@ public class PlanetRuntimeConfig {
 
 
     /**
-     * Retrieve a single property from the PropertiesManager ... returns null
-     * if there is an error
+     * Retrieve a single property from the PropertiesManager. A property that
+     * has not been saved yet, as on a new site before Planet Config is saved,
+     * returns its default from the Planet config definitions. Returns null if
+     * there is an error.
      **/
     public static String getProperty(String name) {
 
@@ -54,7 +59,8 @@ public class PlanetRuntimeConfig {
 
         try {
             PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-            value = pmgr.getProperty(name).getValue();
+            RuntimeConfigProperty prop = pmgr.getProperty(name);
+            value = (prop != null) ? prop.getValue() : getDefaultValue(name);
         } catch(Exception e) {
             log.warn("Trouble accessing property: "+name, e);
         }
@@ -62,6 +68,21 @@ public class PlanetRuntimeConfig {
         log.debug("fetched property ["+name+"="+value+"]");
 
         return value;
+    }
+
+
+    /** The default value of a Planet property, or null if it has no definition. */
+    static String getDefaultValue(String name) {
+        RuntimeConfigDefs defs = getRuntimeConfigDefs();
+        if (defs != null) {
+            for (ConfigDef configDef : defs.getConfigDefs()) {
+                PropertyDef def = configDef.getPropertyDef(name);
+                if (def != null) {
+                    return def.getDefaultValue();
+                }
+            }
+        }
+        return null;
     }
 
 

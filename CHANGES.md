@@ -25,12 +25,15 @@
   was refused.** Before, only a duplicate name was reported. Any other error,
   and on the blogroll dialogs even a duplicate name, closed the dialog as if the
   save had worked, or ended on an error page.
-
 - **AtomPub media collections work.** Listing a media collection by the URL in
   the service document (`/resources/default`) failed with a server error. So
   did uploading media with no `Slug` header and no title, uploading to
   `/resources` itself, or uploading with a very short `Slug`. Unknown media
   directories now answer 404.
+- **The Planet feed has a title before Planet Config is first saved.** On a new
+  site, `/planetrss` printed `$utils.escapeXML($siteName)` as its title and
+  description, and logged a warning for each. Unsaved Planet settings now use
+  their defaults.
 
 ## 6.1.6
 
