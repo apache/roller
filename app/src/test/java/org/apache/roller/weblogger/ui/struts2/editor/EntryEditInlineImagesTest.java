@@ -188,6 +188,23 @@ class EntryEditInlineImagesTest {
     }
 
     @Test
+    void reportsAnInlineImageOverTheLimitAsTooLarge() throws Exception {
+        config.when(() -> WebloggerConfig.getBooleanProperty("weblog.inlineImages.preferInline"))
+                .thenReturn(true);
+        config.when(() -> WebloggerConfig.getProperty("weblog.inlineImages.maxFieldBytes"))
+                .thenReturn("100");
+        String text = "<img src=\"" + PNG + "\">";
+        action.getBean().setText(text);
+
+        assertFalse(action.prepareInlineImages(created));
+
+        assertTrue(action.getActionErrors().contains("weblogEdit.inlineImageTooLarge"),
+                action.getActionErrors().toString());
+        assertFalse(action.getActionErrors().contains("weblogEdit.inlineImageInvalid"));
+        assertEquals(text, action.getBean().getText());
+    }
+
+    @Test
     void refusesInvalidImageData() throws Exception {
         String text = "<img src=\"data:image/svg+xml;base64,"
                 + Base64.getEncoder().encodeToString("<svg/>".getBytes()) + "\">";

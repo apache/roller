@@ -417,6 +417,12 @@ public final class EntryEdit extends UIAction {
                 addError("weblogEdit.inlineImageUploadTooLarge");
                 return false;
             }
+            // parse() also refuses an inline image over the field limit; report
+            // that as too large, not as an invalid image
+            if (keepInline && source.getValue().length() > InlineImageData.maxFieldBytes()) {
+                addError("weblogEdit.inlineImageTooLarge");
+                return false;
+            }
             InlineImageData.Image image = keepInline
                     ? InlineImageData.parse(source.getValue())
                     : InlineImageData.parseForUpload(source.getValue(),
