@@ -10,6 +10,16 @@
   log an error and continue. It now stops at startup, so check the log if a
   custom XML parser is on the classpath.
 
+### Bug fixes
+
+- **Blogroll, category and ping target dialogs work again after a save.**
+  Adding or renaming a blogroll, saving a bookmark, or saving a ping target
+  then refreshing the page failed with an error page. So did retrying after a
+  "name already in use" message. The page now picks up a new form token after
+  each save.
+- **"Switch to blogroll" lets you pick a blogroll.** The page no longer reloads
+  as soon as you open the list.
+
 ## 6.1.6
 
 Initial installation now requires a one-time, cryptographically secure setup token printed to the server log. Bootstrap access closes as soon as setup finishes — when the first administrator is created on a new site, or when the database upgrade completes on an existing one.

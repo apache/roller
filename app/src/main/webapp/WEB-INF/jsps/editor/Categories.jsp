@@ -205,6 +205,8 @@
 
         }).done(function (data) {
 
+            refreshSalt(data);
+
             // kludge: scrape response status from HTML returned by Struts
             var alertEnd = data.indexOf("ALERT_END");
             var notUnique = data.indexOf('<s:text name="categoryForm.error.duplicateName" />');

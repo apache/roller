@@ -96,7 +96,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     <%-- allow user to select the bookmark folder to view --%>
 
     <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name" emptyOption="true"
-              label="%{getText('bookmarksForm.switchTo')}" onchange="viewChanged()" onmouseup="viewChanged()"/>
+              label="%{getText('bookmarksForm.switchTo')}" onchange="viewChanged()"/>
 
     <table class="rollertable table table-striped">
 
@@ -307,6 +307,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         }).done(function (data, status, response) {
 
+            refreshSalt(data);
+
             // kludge: scrape response status from HTML returned by Struts
             var alertEnd = data.indexOf("ALERT_END");
             var notUnique = data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />');
@@ -471,6 +473,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
             context: document.body
 
         }).done(function (data, status, response) {
+
+            refreshSalt(data);
 
             // kludge: scrape response status from HTML returned by Struts
             var alertEnd = data.indexOf("ALERT_END");
@@ -818,6 +822,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
             context: document.body
 
         }).done(function (data) {
+
+            refreshSalt(data);
 
             // kludge: scrape response status from HTML returned by Struts
             var alertEnd = data.indexOf("ALERT_END");
