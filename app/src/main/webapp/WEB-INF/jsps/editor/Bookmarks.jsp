@@ -309,18 +309,16 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
             refreshSalt(data);
 
-            // kludge: scrape response status from HTML returned by Struts
-            var alertEnd = data.indexOf("ALERT_END");
-            var notUnique = data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />');
-            if (notUnique > 0 && notUnique < alertEnd) {
-                alert('<s:text name="bookmarkForm.error.duplicateName" />');
+            var errors = actionErrors(data);
+            if (errors.length > 0) {
+                alert(errors.join("\n"));
 
             } else {
                 originalName = newName;
                 nameChanged();
             }
 
-        }).error(function (data) {
+        }).fail(function (data) {
             alert('<s:text name="generic.error.check.logs" />');
         });
     }
@@ -476,12 +474,10 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
             refreshSalt(data);
 
-            // kludge: scrape response status from HTML returned by Struts
-            var alertEnd = data.indexOf("ALERT_END");
-            var notUnique = data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />');
-            if (notUnique > 0 && notUnique < alertEnd) {
+            var errors = actionErrors(data);
+            if (errors.length > 0) {
                 feedbackAreaBlogrollEdit.css("color", "red");
-                feedbackAreaBlogrollEdit.html('<s:text name="bookmarkForm.error.duplicateName" />');
+                feedbackAreaBlogrollEdit.text(errors.join(" "));
 
             } else {
                 feedbackAreaBlogrollEdit.css("color", "green");
@@ -498,7 +494,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 bookmarksForm.submit();
             }
 
-        }).error(function (data) {
+        }).fail(function (data) {
             feedbackAreaBlogrollEdit.html('<s:text name="generic.error.check.logs" />');
             feedbackAreaBlogrollEdit.css("color", "red");
         });
@@ -844,7 +840,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 viewChanged();
             }
 
-        }).error(function (data) {
+        }).fail(function (data) {
             feedbackAreaEdit.html('<s:text name="generic.error.check.logs" />');
             feedbackAreaEdit.css("color", "red");
         });

@@ -224,7 +224,7 @@
                 location.reload(true);
             }
 
-        }).error(function (data) {
+        }).fail(function (data) {
             feedbackAreaEdit.html('<s:text name="generic.error.check.logs" />');
             feedbackAreaEdit.css("color", "red");
         });

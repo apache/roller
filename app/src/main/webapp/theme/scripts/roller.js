@@ -220,12 +220,22 @@ function validateEmail(email) {
  */
 function refreshSalt(html) {
     var issued = new DOMParser().parseFromString(html, "text/html")
-        .querySelector("input[name='salt']");
-    if (issued && issued.value) {
+        .querySelector("meta[name='roller-salt']");
+    var salt = issued ? issued.getAttribute("content") : "";
+    if (salt) {
         document.querySelectorAll("input[name='salt']").forEach(function (field) {
-            field.value = issued.value;
+            field.value = salt;
         });
     }
+}
+
+/* Returns the action error messages in a page returned to an AJAX post. */
+function actionErrors(html) {
+    var errors = new DOMParser().parseFromString(html, "text/html")
+        .querySelectorAll("#errors li");
+    return Array.prototype.map.call(errors, function (error) {
+        return error.textContent.trim();
+    });
 }
 $(document).ready(function () {
     jQuery("form.validate-form").validate();
