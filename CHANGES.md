@@ -9,6 +9,11 @@
   templates. A custom theme that uses them will print the reference text
   as-is, without an error. Use the wrapper's own properties instead, for
   example `$weblog.handle` or `$entry.title`.
+- **XML parsing uses Apache Commons Secure XML.** Roller now bundles
+  `commons-secure-xml` 1.0.0 and builds all of its XML parsers through it.
+- **Startup fails if the XML-RPC parser cannot be configured.** Roller used to
+  log an error and continue. It now stops at startup, so check the log if a
+  custom XML parser is on the classpath.
 
 ## 6.1.6
 
