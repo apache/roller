@@ -34,6 +34,8 @@
   site, `/planetrss` printed `$utils.escapeXML($siteName)` as its title and
   description, and logged a warning for each. Unsaved Planet settings now use
   their defaults.
+- **An image pasted into the rich text editor appears once.** Pasting an image
+  copied from a web page inserted it twice.
 
 ## 6.1.6
 
