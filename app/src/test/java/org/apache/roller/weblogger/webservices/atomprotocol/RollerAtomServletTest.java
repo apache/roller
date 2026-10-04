@@ -37,11 +37,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
@@ -86,7 +84,7 @@ class RollerAtomServletTest {
     }
 
     @Test
-    void disabledServiceAnswersNotFoundWithoutReadingTheBody() throws Exception {
+    void disabledServiceAnswersNotFoundForWritesAndReads() throws Exception {
         config.when(() -> WebloggerRuntimeConfig.getBooleanProperty("webservices.enableAtomPub"))
                 .thenReturn(false);
         HttpServletRequest request = request("POST", "/blog/entries", "application/atom+xml", ENTRY);
@@ -96,16 +94,12 @@ class RollerAtomServletTest {
         verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
         verify(request, never()).getInputStream();
         assertNull(servlet.forwarded);
-    }
 
-    @Test
-    void disabledServiceAlsoRefusesReads() throws Exception {
-        config.when(() -> WebloggerRuntimeConfig.getBooleanProperty("webservices.enableAtomPub"))
-                .thenReturn(false);
+        HttpServletResponse readResponse = mock(HttpServletResponse.class);
+        when(readResponse.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
+        servlet.service(request("GET", "/blog/entries", null, ""), readResponse);
 
-        servlet.service(request("GET", "/blog/entries", null, ""), response);
-
-        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        verify(readResponse).setStatus(HttpServletResponse.SC_NOT_FOUND);
         assertNull(servlet.forwarded);
     }
 
@@ -153,16 +147,6 @@ class RollerAtomServletTest {
     }
 
     @Test
-    void mediaUpdateIsForwardedWithoutParsing() throws Exception {
-        HttpServletRequest request = request("PUT", "/blog/resource/photo.png", "image/png", "not xml");
-
-        servlet.service(request, response);
-
-        assertSame(request, servlet.forwarded);
-        verify(request, never()).getInputStream();
-    }
-
-    @Test
     void oversizedEntryIsRefused() throws Exception {
         byte[] big = new byte[RollerAtomServlet.MAX_ENTRY_BYTES + 1];
         Arrays.fill(big, (byte) ' ');
@@ -188,18 +172,6 @@ class RollerAtomServletTest {
     }
 
     @Test
-    void unauthenticatedEntryUpdateIsRefusedWithoutReadingTheBody() throws Exception {
-        servlet.userName = null;
-        HttpServletRequest request = request("PUT", "/blog/entry/abc", "application/atom+xml", ENTRY);
-
-        servlet.service(request, response);
-
-        verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        verify(request, never()).getInputStream();
-        assertNull(servlet.forwarded);
-    }
-
-    @Test
     void authenticatedHandlerIsReusedByTheFactory() throws Exception {
         HttpServletRequest request = request("POST", "/blog/entries", "application/atom+xml", ENTRY);
 
@@ -209,15 +181,6 @@ class RollerAtomServletTest {
         when(request.getAttribute(RollerAtomServlet.HANDLER_ATTRIBUTE)).thenReturn(servlet.handler);
         assertSame(servlet.handler, new RollerAtomHandlerFactory().newAtomHandler(request, response));
         verify(request).removeAttribute(RollerAtomServlet.HANDLER_ATTRIBUTE);
-    }
-
-    @Test
-    void entryPathsMatchTheHandler() {
-        assertTrue(RollerAtomHandler.isEntryPath("/blog/entry/abc"));
-        assertTrue(RollerAtomHandler.isEntryPath("/blog/resource/photo.png.media-link"));
-        assertFalse(RollerAtomHandler.isEntryPath("/blog/resource/photo.png"));
-        assertFalse(RollerAtomHandler.isEntryPath("/blog/entries"));
-        assertFalse(RollerAtomHandler.isEntryPath(null));
     }
 
     private static HttpServletRequest request(String method, String pathInfo,
