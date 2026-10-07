@@ -18,8 +18,14 @@
   - Pasted images travel in the form POST as base64. Tomcat's `maxPostSize`
     defaults to 2 MB, so larger pastes are refused with a "form is too large"
     message; raise `maxPostSize` to accept them.
+    
 ### Behaviour changes worth reading before upgrading
 
+- **Templates can no longer reach the objects behind the template wrappers.**
+  `$weblog.pojo`, `$entry.pojo` and `getPojo()` no longer resolve in weblog
+  templates. A custom theme that uses them will print the reference text
+  as-is, without an error. Use the wrapper's own properties instead, for
+  example `$weblog.handle` or `$entry.title`.
 - **Planet is off by default.** `planet.aggregator.enabled` now defaults to
   `false`. While it is off, the Planet admin pages, `/planetrss` and the
   Planet background tasks (`RefreshRollerPlanetTask`, `SyncWebsitesTask`) do
