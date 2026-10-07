@@ -33,6 +33,36 @@
   log an error and continue. It now stops at startup, so check the log if a
   custom XML parser is on the classpath.
 
+### Bug fixes
+
+- **Blogroll, category and ping target dialogs work again after a save.**
+  Adding or renaming a blogroll, saving a bookmark, or saving a ping target
+  then refreshing the page failed with an error page. So did retrying after a
+  "name already in use" message. The page now picks up a new form token after
+  each save.
+- **"Switch to blogroll" lets you pick a blogroll.** The page no longer reloads
+  as soon as you open the list.
+- **Renaming a blogroll no longer reports a system error.** The rename was
+  saved, but the page showed "System error - check logs".
+- **The blogroll, bookmark, category and ping target dialogs show why a save
+  was refused.** Before, only a duplicate name was reported. Any other error,
+  and on the blogroll dialogs even a duplicate name, closed the dialog as if the
+  save had worked, or ended on an error page.
+- **AtomPub media collections work.** Listing a media collection by the URL in
+  the service document (`/resources/default`) failed with a server error. So
+  did uploading media with no `Slug` header and no title, uploading to
+  `/resources` itself, or uploading with a very short `Slug`. Unknown media
+  directories now answer 404.
+- **The Planet feed has a title before Planet Config is first saved.** On a new
+  site, `/planetrss` printed `$utils.escapeXML($siteName)` as its title and
+  description, and logged a warning for each. Unsaved Planet settings now use
+  their defaults.
+- **An image pasted into the rich text editor appears once.** Pasting an image
+  copied from a web page inserted it twice.
+- **Decimal settings can be saved on the configuration page.** The maximum
+  upload file and directory sizes accepted only whole numbers in the browser,
+  although they are measured in megabytes with decimals (default `2.00`).
+
 ## 6.1.6
 
 Initial installation now requires a one-time, cryptographically secure setup token printed to the server log. Bootstrap access closes as soon as setup finishes — when the first administrator is created on a new site, or when the database upgrade completes on an existing one.

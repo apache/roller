@@ -154,10 +154,10 @@ public class PlanetFeedServlet extends HttpServlet {
             model.put("lastModified", lastModified);
 
             model.put("siteName",
-                    PlanetRuntimeConfig.getProperty("planet.site.name"));
+                    StringUtils.defaultString(PlanetRuntimeConfig.getProperty("planet.site.name")));
 
             model.put("siteDescription",
-                    PlanetRuntimeConfig.getProperty("planet.site.description"));
+                    StringUtils.defaultString(PlanetRuntimeConfig.getProperty("planet.site.description")));
 
 
             if (StringUtils.isNotEmpty(WebloggerRuntimeConfig
