@@ -20,11 +20,10 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -37,8 +36,12 @@ import com.rometools.propono.atom.server.AtomServlet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.util.SafeSAXBuilder;
-import org.jdom2.JDOMException;
+import org.apache.roller.weblogger.util.SecureXmlParsers;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Roller's AtomPub endpoint. It answers only while
@@ -52,8 +55,10 @@ public class RollerAtomServlet extends AtomServlet {
 
     private static final Log LOG = LogFactory.getLog(RollerAtomServlet.class);
 
-    /** Largest Atom entry body accepted, in bytes. Media uploads are not affected. */
-    static final int MAX_ENTRY_BYTES = 10 * 1024 * 1024;
+    /** Default maximum Atom entry body size, in bytes. Media uploads are not affected. */
+    static final int DEFAULT_MAX_ENTRY_BYTES = 1024 * 1024;
+
+    static final String MAX_ENTRY_SIZE_PROPERTY = "webservices.atomPubMaxEntrySize";
 
     private static final String ATOM_CONTENT_TYPE = "application/atom+xml";
 
@@ -88,20 +93,32 @@ public class RollerAtomServlet extends AtomServlet {
         }
         req.setAttribute(HANDLER_ATTRIBUTE, handler);
 
-        byte[] body = readBody(req.getInputStream());
-        if (body == null) {
+        int maxEntryBytes = maxEntryBytes();
+        // Read one byte past the limit, so an oversized body can be detected.
+        byte[] body = req.getInputStream().readNBytes(maxEntryBytes + 1);
+        if (body.length > maxEntryBytes) {
             sendText(res, HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, "Entry is too large");
             return;
         }
+        DefaultHandler contentHandler = new DefaultHandler() {
+            @Override
+            public void error(SAXParseException e) throws SAXException {
+                throw e;
+            }
+        };
+        XMLReader reader;
+        try {
+            reader = SecureXmlParsers.newSAXParserFactory().newSAXParser().getXMLReader();
+        } catch (ParserConfigurationException | SAXException e) {
+            throw new ServletException("Could not create an Atom entry parser", e);
+        }
+        reader.setContentHandler(contentHandler);
+        reader.setErrorHandler(contentHandler);
         try {
             // Propono reads the entry as UTF-8 text, so check the same text.
-            SafeSAXBuilder saxBuilder = new SafeSAXBuilder();
-            saxBuilder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            saxBuilder.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            saxBuilder.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            saxBuilder.build(new InputStreamReader(
-                    new ByteArrayInputStream(body), StandardCharsets.UTF_8));
-        } catch (JDOMException e) {
+            reader.parse(new InputSource(new InputStreamReader(
+                    new ByteArrayInputStream(body), StandardCharsets.UTF_8)));
+        } catch (SAXException e) {
             LOG.debug("Rejecting Atom entry that could not be parsed", e);
             sendText(res, HttpServletResponse.SC_BAD_REQUEST, "Invalid Atom entry");
             return;
@@ -136,20 +153,21 @@ public class RollerAtomServlet extends AtomServlet {
         return false;
     }
 
-    /** Reads the whole body, or returns null when it exceeds the limit. */
-    private static byte[] readBody(InputStream in) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] buffer = new byte[8192];
-        int total = 0;
-        int read;
-        while ((read = in.read(buffer)) != -1) {
-            total += read;
-            if (total > MAX_ENTRY_BYTES) {
-                return null;
+    /** Uses the default when an older installation has no setting or its value is invalid. */
+    private static int maxEntryBytes() {
+        String value = WebloggerRuntimeConfig.getProperty(MAX_ENTRY_SIZE_PROPERTY);
+        if (value != null) {
+            try {
+                int limit = Integer.parseInt(value.trim());
+                if (limit > 0 && limit < Integer.MAX_VALUE) {
+                    return limit;
+                }
+            } catch (NumberFormatException e) {
+                // Fall back to the default below.
             }
-            out.write(buffer, 0, read);
+            LOG.warn("Invalid " + MAX_ENTRY_SIZE_PROPERTY + "; using the default entry limit");
         }
-        return out.toByteArray();
+        return DEFAULT_MAX_ENTRY_BYTES;
     }
 
     private static void sendText(HttpServletResponse res, int status, String message)

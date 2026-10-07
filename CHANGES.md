@@ -23,8 +23,10 @@
 
 - **AtomPub honours `webservices.enableAtomPub` on every request.** While the
   setting is off, every AtomPub URL answers 404, not only the service document.
-- **AtomPub entry bodies are limited to 10 MB.** A larger entry is refused with
-  413. Media uploads are not affected.
+- **AtomPub entry bodies default to a 1 MiB limit.** A larger entry is refused
+  with 413. Set `webservices.atomPubMaxEntrySize` in Server Settings to change
+  the limit in bytes (default 1048576). Media uploads use the existing file
+  upload limits.
 - **Planet is off by default.** `planet.aggregator.enabled` now defaults to
   `false`. While it is off, the Planet admin pages, `/planetrss` and the
   Planet background tasks (`RefreshRollerPlanetTask`, `SyncWebsitesTask`) do

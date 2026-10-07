@@ -195,7 +195,12 @@ public class GlobalConfig extends UIAction implements HttpParametersAware, Servl
             } else if ( incomingProp != null && propertyDef.getType().equals("integer") ) {
 
                 try {
-                    Integer.parseInt(incomingProp);
+                    int value = Integer.parseInt(incomingProp);
+                    if ("webservices.atomPubMaxEntrySize".equals(propName)
+                            && (value <= 0 || value == Integer.MAX_VALUE)) {
+                        addError("ConfigForm.invalidAtomPubMaxEntrySize");
+                        continue;
+                    }
                     updProp.setValue(incomingProp);
                     log.debug("Set integer " + propName + " = " + incomingProp);
                 } catch ( NumberFormatException nfe ) {

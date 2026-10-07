@@ -24,23 +24,30 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.servlet.ReadListener;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.rometools.propono.atom.server.AtomHandler;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.util.SecureXmlParsers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -137,8 +144,15 @@ class RollerAtomServletTest {
     }
 
     @Test
-    void mediaUploadIsForwardedWithoutParsing() throws Exception {
-        HttpServletRequest request = request("POST", "/blog/resources", "image/png", "not xml");
+    void mediaUploadsBypassTheEntryLimit() throws Exception {
+        mediaUploadIsForwardedWithoutApplyingTheEntryLimit("POST", "/blog/resources");
+        mediaUploadIsForwardedWithoutApplyingTheEntryLimit("PUT", "/blog/resources/image.png");
+    }
+
+    private void mediaUploadIsForwardedWithoutApplyingTheEntryLimit(String method, String path) throws Exception {
+        config.when(() -> WebloggerRuntimeConfig.getProperty(RollerAtomServlet.MAX_ENTRY_SIZE_PROPERTY))
+                .thenReturn("1");
+        HttpServletRequest request = request(method, path, "image/png", "not xml");
 
         servlet.service(request, response);
 
@@ -148,8 +162,73 @@ class RollerAtomServletTest {
 
     @Test
     void oversizedEntryIsRefused() throws Exception {
-        byte[] big = new byte[RollerAtomServlet.MAX_ENTRY_BYTES + 1];
+        byte[] big = new byte[RollerAtomServlet.DEFAULT_MAX_ENTRY_BYTES + 100];
         Arrays.fill(big, (byte) ' ');
+        HttpServletRequest request = request("POST", "/blog/entries", "application/atom+xml", "");
+        ServletInputStream input = stream(big);
+        when(request.getInputStream()).thenReturn(input);
+
+        servlet.service(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
+        assertNull(servlet.forwarded);
+        assertEquals(99, input.available(), "Read only one byte past the entry limit");
+    }
+
+    @Test
+    void entryExactlyAtTheDefaultLimitIsAccepted() throws Exception {
+        String body = ENTRY + " ".repeat(
+                RollerAtomServlet.DEFAULT_MAX_ENTRY_BYTES - ENTRY.getBytes(StandardCharsets.UTF_8).length);
+
+        servlet.service(request("POST", "/blog/entries", "application/atom+xml", body), response);
+
+        assertNotNull(servlet.forwarded);
+        assertArrayEquals(body.getBytes(StandardCharsets.UTF_8), servlet.forwardedBody);
+    }
+
+    @Test
+    void configuredLimitAppliesToEntryPostsAndUpdates() throws Exception {
+        configuredLimitCountsUtf8BytesAndChangesOnTheNextRequest("POST", "/blog/entries");
+        servlet.forwarded = null;
+        clearInvocations(response);
+        configuredLimitCountsUtf8BytesAndChangesOnTheNextRequest("PUT", "/blog/entry/abc");
+    }
+
+    private void configuredLimitCountsUtf8BytesAndChangesOnTheNextRequest(String method, String path) throws Exception {
+        String body = ENTRY.replace("Hello", "Hello 世界");
+        int size = body.getBytes(StandardCharsets.UTF_8).length;
+        config.when(() -> WebloggerRuntimeConfig.getProperty(RollerAtomServlet.MAX_ENTRY_SIZE_PROPERTY))
+                .thenReturn(Integer.toString(size - 1), Integer.toString(size));
+
+        servlet.service(request(method, path, "application/atom+xml", body), response);
+
+        verify(response).setStatus(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
+        assertNull(servlet.forwarded);
+
+        servlet.service(request(method, path, "application/atom+xml", body), response);
+
+        assertNotNull(servlet.forwarded);
+        assertArrayEquals(body.getBytes(StandardCharsets.UTF_8), servlet.forwardedBody);
+    }
+
+    @Test
+    void missingOrInvalidLimitsUseTheDefault() throws Exception {
+        for (String value : new String[] {null, "", "0", "-1", "2147483647", "2147483648", "not a number"}) {
+            clearInvocations(response);
+            missingOrInvalidLimitUsesTheDefault(value);
+        }
+    }
+
+    private void missingOrInvalidLimitUsesTheDefault(String value) throws Exception {
+        config.when(() -> WebloggerRuntimeConfig.getProperty(RollerAtomServlet.MAX_ENTRY_SIZE_PROPERTY))
+                .thenReturn(value);
+        String body = ENTRY + " ".repeat(
+                RollerAtomServlet.DEFAULT_MAX_ENTRY_BYTES - ENTRY.getBytes(StandardCharsets.UTF_8).length);
+        servlet.service(request("POST", "/blog/entries", "application/atom+xml", body), response);
+        assertNotNull(servlet.forwarded);
+        assertEquals(RollerAtomServlet.DEFAULT_MAX_ENTRY_BYTES, servlet.forwardedBody.length);
+        servlet.forwarded = null;
+        byte[] big = new byte[RollerAtomServlet.DEFAULT_MAX_ENTRY_BYTES + 1];
         HttpServletRequest request = request("POST", "/blog/entries", "application/atom+xml", "");
         when(request.getInputStream()).thenReturn(stream(big));
 
@@ -160,9 +239,55 @@ class RollerAtomServletTest {
     }
 
     @Test
-    void unauthenticatedEntryPostIsRefusedWithoutReadingTheBody() throws Exception {
+    void configuredLimitCanBeRaisedAboveTheDefault() throws Exception {
+        String body = ENTRY + " ".repeat(RollerAtomServlet.DEFAULT_MAX_ENTRY_BYTES);
+        config.when(() -> WebloggerRuntimeConfig.getProperty(RollerAtomServlet.MAX_ENTRY_SIZE_PROPERTY))
+                .thenReturn(Integer.toString(body.getBytes(StandardCharsets.UTF_8).length));
+
+        servlet.service(request("POST", "/blog/entries", "application/atom+xml", body), response);
+
+        assertNotNull(servlet.forwarded);
+    }
+
+    @Test
+    void malformedEntryPostsAndUpdatesAreRefused() throws Exception {
+        malformedEntryIsRefused("POST", "/blog/entries");
+        clearInvocations(response);
+        malformedEntryIsRefused("PUT", "/blog/entry/abc");
+    }
+
+    private void malformedEntryIsRefused(String method, String path) throws Exception {
+        servlet.service(request(method, path, "application/atom+xml", "<entry><title></entry>"), response);
+
+        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        assertNull(servlet.forwarded);
+    }
+
+    @Test
+    void parserSetupFailureIsAServerError() throws Exception {
+        try (MockedStatic<SecureXmlParsers> parsers = mockStatic(SecureXmlParsers.class)) {
+            SAXParserFactory factory = mock(SAXParserFactory.class);
+            parsers.when(SecureXmlParsers::newSAXParserFactory).thenReturn(factory);
+            when(factory.newSAXParser()).thenThrow(new ParserConfigurationException("Cannot create parser"));
+
+            assertThrows(ServletException.class, () -> servlet.service(
+                    request("POST", "/blog/entries", "application/atom+xml", ENTRY), response));
+
+            verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            assertNull(servlet.forwarded);
+        }
+    }
+
+    @Test
+    void unauthenticatedEntryPostsAndUpdatesDoNotReadTheBody() throws Exception {
+        unauthenticatedEntryIsRefusedWithoutReadingTheBody("POST", "/blog/entries");
+        clearInvocations(response);
+        unauthenticatedEntryIsRefusedWithoutReadingTheBody("PUT", "/blog/entry/abc");
+    }
+
+    private void unauthenticatedEntryIsRefusedWithoutReadingTheBody(String method, String path) throws Exception {
         servlet.userName = null;
-        HttpServletRequest request = request("POST", "/blog/entries", "application/atom+xml", ENTRY);
+        HttpServletRequest request = request(method, path, "application/atom+xml", ENTRY);
 
         servlet.service(request, response);
 
@@ -204,6 +329,11 @@ class RollerAtomServletTest {
             @Override
             public int read(byte[] b, int off, int len) {
                 return in.read(b, off, len);
+            }
+
+            @Override
+            public int available() {
+                return in.available();
             }
 
             @Override
