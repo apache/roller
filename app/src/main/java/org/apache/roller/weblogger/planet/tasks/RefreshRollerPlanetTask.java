@@ -131,6 +131,10 @@ public class RefreshRollerPlanetTask extends RollerTaskWithLeasing {
 
     @Override
     public void runTask() {
+        if (!WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+            log.debug("Planet is disabled; not running " + getName());
+            return;
+        }
         try {
             log.info("Refreshing Planet subscriptions");
 
