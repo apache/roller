@@ -88,6 +88,40 @@ public class ValidateSaltFilterTest {
     }
 
     @Test
+    public void testPostTooLargeForTheContainerGetsA413() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getServletPath()).thenReturn("/roller-ui/authoring/entryAdd.rol");
+            when(request.getLocale()).thenReturn(java.util.Locale.ENGLISH);
+            // Tomcat dropped the parameters, so the salt is missing
+            when(request.getParameter("salt")).thenReturn(null);
+            when(request.getAttribute(ValidateSaltFilter.PARSE_FAILED_REASON)).thenReturn("POST_TOO_LARGE");
+
+            filter.doFilter(request, response, chain);
+
+            verify(response).sendError(eq(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE),
+                    argThat(message -> message.contains("too large")));
+            verify(chain, never()).doFilter(request, response);
+        }
+    }
+
+    @Test
+    public void testOtherParseFailuresStillFailTheSaltCheck() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getParameter("salt")).thenReturn(null);
+            when(request.getAttribute(ValidateSaltFilter.PARSE_FAILED_REASON)).thenReturn("CLIENT_DISCONNECT");
+
+            assertThrows(ServletException.class, () -> filter.doFilter(request, response, chain));
+            verify(response, never()).sendError(anyInt(), anyString());
+        }
+    }
+
+    @Test
     public void testDoFilterWithPostMethodAndMismatchedUserId() throws Exception {
         try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
              MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {

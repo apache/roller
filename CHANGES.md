@@ -2,6 +2,22 @@
 
 ## 6.1.7
 
+### Improvements
+
+- **Pasted entry images are kept when you publish**
+  ([ROL-2184](https://issues.apache.org/jira/browse/ROL-2184)). PNG, JPEG and
+  GIF images pasted or dragged into the rich text editor are saved as media
+  files when the author can upload. Otherwise they are kept inline.
+  - `weblog.inlineImages.preferInline=true` keeps images inline even when
+    uploads are available.
+  - `weblog.inlineImages.maxFieldBytes` (default 60000) limits a content or
+    summary field that has inline images. On MySQL, change the entry columns to
+    `MEDIUMTEXT` before you raise it.
+  - Bundled themes allow `data:` images. Custom themes with their own Content
+    Security Policy need `data:` in `img-src`.
+  - Pasted images travel in the form POST as base64. Tomcat's `maxPostSize`
+    defaults to 2 MB, so larger pastes are refused with a "form is too large"
+    message; raise `maxPostSize` to accept them.
 ### Behaviour changes worth reading before upgrading
 
 - **Planet is off by default.** `planet.aggregator.enabled` now defaults to
