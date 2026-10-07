@@ -4,6 +4,13 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Planet is off by default.** `planet.aggregator.enabled` now defaults to
+  `false`. While it is off, the Planet admin pages, `/planetrss` and the
+  Planet background tasks (`RefreshRollerPlanetTask`, `SyncWebsitesTask`) do
+  nothing. A site that uses Planet must set `planet.aggregator.enabled=true`
+  in `roller-custom.properties` before upgrading.
+- **Planet admin changes require POST.** Saving or deleting Planet groups and
+  subscriptions is refused unless the request is a POST from the admin form.
 - **XML parsing uses Apache Commons Secure XML.** Roller now bundles
   `commons-secure-xml` 1.0.0 and builds all of its XML parsers through it.
 - **Startup fails if the XML-RPC parser cannot be configured.** Roller used to

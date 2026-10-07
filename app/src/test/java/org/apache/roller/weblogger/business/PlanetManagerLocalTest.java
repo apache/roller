@@ -23,6 +23,7 @@ import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.planet.pojos.Subscription;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.planet.tasks.RefreshRollerPlanetTask;
 import org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask;
 import org.apache.roller.weblogger.pojos.User;
@@ -32,6 +33,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -40,6 +42,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mockStatic;
 
 
 /**
@@ -138,7 +142,11 @@ public class PlanetManagerLocalTest  {
 
     @Test
     public void testRefreshEntries() {
-        try {      
+        // Planet is off by default, and its tasks do nothing while it is off.
+        try (MockedStatic<WebloggerConfig> config =
+                     mockStatic(WebloggerConfig.class, CALLS_REAL_METHODS)) {
+            config.when(() -> WebloggerConfig.getBooleanProperty("planet.aggregator.enabled"))
+                    .thenReturn(true);
             PlanetManager planet = WebloggerFactory.getWeblogger().getPlanetManager();
             
             // run sync task to fill aggregator with websites created by super

@@ -114,6 +114,9 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
      * Save group.
      */
     public String saveGroup() {
+        if (!isPostRequest()) {
+            return DENIED;
+        }
 
         validateGroup();
 
@@ -171,6 +174,9 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
      * Save subscription, add to current group
      */
     public String saveSubscription() {
+        if (!isPostRequest()) {
+            return DENIED;
+        }
 
         valudateNewSub();
 
@@ -223,6 +229,9 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
      * Delete subscription, reset form
      */
     public String deleteSubscription() {
+        if (!isPostRequest()) {
+            return DENIED;
+        }
 
         if (getSubUrl() != null) {
             try {
