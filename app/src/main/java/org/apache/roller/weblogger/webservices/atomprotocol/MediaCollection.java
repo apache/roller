@@ -115,10 +115,14 @@ public class MediaCollection {
             }
             if (pathInfo.length > 1) {
                 // Save to temp file
-                String fileName = createFileName(website, 
-                    (slug != null) ? slug : Utilities.replaceNonAlphanumeric(title,' '), contentType);
+                String baseName = slug;
+                if (baseName == null && title != null) {
+                    baseName = Utilities.replaceNonAlphanumeric(title, ' ');
+                }
+                // createFileName() uses the date when there is no name
+                String fileName = createFileName(website, baseName, contentType);
                 try {
-                    tempFile = File.createTempFile(fileName, "tmp");
+                    tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
                     FileOutputStream fos = new FileOutputStream(tempFile);
                     Utilities.copyInputToOutput(is, fos);
                     fos.close();
@@ -131,8 +135,12 @@ public class MediaCollection {
                         justPath = path.substring(lastSlash);
                     }
 
-                    MediaFileDirectory mdir =
-                        fileMgr.getMediaFileDirectoryByName(website, justPath);
+                    MediaFileDirectory mdir = justPath.isEmpty()
+                        ? fileMgr.getDefaultMediaFileDirectory(website)
+                        : fileMgr.getMediaFileDirectoryByName(website, justPath);
+                    if (mdir == null) {
+                        throw new AtomNotFoundException("Cannot find media directory: " + justPath);
+                    }
 
                     if (mdir.hasMediaFile(fileName)) {
                         throw new AtomException("Duplicate file name");
@@ -265,9 +273,6 @@ public class MediaCollection {
                 } catch (Exception ingored) {}
             }
             String path = filePathFromPathInfo(pathInfo);
-            if (!path.isEmpty()) {
-                path = path + File.separator;
-            }
             
             String handle = pathInfo[0];
             String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
@@ -298,6 +303,9 @@ public class MediaCollection {
             } else {
                 log.debug("Fetching root resource collection from weblog " + handle);
                 dir = fmgr.getDefaultMediaFileDirectory(website);
+            }
+            if (dir == null) {
+                throw new AtomNotFoundException("Cannot find media directory: " + path);
             }
             Set<MediaFile> files = dir.getMediaFiles();
 

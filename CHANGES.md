@@ -2,6 +2,23 @@
 
 ## 6.1.7
 
+### Improvements
+
+- **Pasted entry images are kept when you publish**
+  ([ROL-2184](https://issues.apache.org/jira/browse/ROL-2184)). PNG, JPEG and
+  GIF images pasted or dragged into the rich text editor are saved as media
+  files when the author can upload. Otherwise they are kept inline.
+  - `weblog.inlineImages.preferInline=true` keeps images inline even when
+    uploads are available.
+  - `weblog.inlineImages.maxFieldBytes` (default 60000) limits a content or
+    summary field that has inline images. On MySQL, change the entry columns to
+    `MEDIUMTEXT` before you raise it.
+  - Bundled themes allow `data:` images. Custom themes with their own Content
+    Security Policy need `data:` in `img-src`.
+  - Pasted images travel in the form POST as base64. Tomcat's `maxPostSize`
+    defaults to 2 MB, so larger pastes are refused with a "form is too large"
+    message; raise `maxPostSize` to accept them.
+    
 ### Behaviour changes worth reading before upgrading
 
 - **Templates can no longer reach the objects behind the template wrappers.**
@@ -9,11 +26,48 @@
   templates. A custom theme that uses them will print the reference text
   as-is, without an error. Use the wrapper's own properties instead, for
   example `$weblog.handle` or `$entry.title`.
+- **Planet is off by default.** `planet.aggregator.enabled` now defaults to
+  `false`. While it is off, the Planet admin pages, `/planetrss` and the
+  Planet background tasks (`RefreshRollerPlanetTask`, `SyncWebsitesTask`) do
+  nothing. A site that uses Planet must set `planet.aggregator.enabled=true`
+  in `roller-custom.properties` before upgrading.
+- **Planet admin changes require POST.** Saving or deleting Planet groups and
+  subscriptions is refused unless the request is a POST from the admin form.
 - **XML parsing uses Apache Commons Secure XML.** Roller now bundles
   `commons-secure-xml` 1.0.0 and builds all of its XML parsers through it.
 - **Startup fails if the XML-RPC parser cannot be configured.** Roller used to
   log an error and continue. It now stops at startup, so check the log if a
   custom XML parser is on the classpath.
+
+### Bug fixes
+
+- **Blogroll, category and ping target dialogs work again after a save.**
+  Adding or renaming a blogroll, saving a bookmark, or saving a ping target
+  then refreshing the page failed with an error page. So did retrying after a
+  "name already in use" message. The page now picks up a new form token after
+  each save.
+- **"Switch to blogroll" lets you pick a blogroll.** The page no longer reloads
+  as soon as you open the list.
+- **Renaming a blogroll no longer reports a system error.** The rename was
+  saved, but the page showed "System error - check logs".
+- **The blogroll, bookmark, category and ping target dialogs show why a save
+  was refused.** Before, only a duplicate name was reported. Any other error,
+  and on the blogroll dialogs even a duplicate name, closed the dialog as if the
+  save had worked, or ended on an error page.
+- **AtomPub media collections work.** Listing a media collection by the URL in
+  the service document (`/resources/default`) failed with a server error. So
+  did uploading media with no `Slug` header and no title, uploading to
+  `/resources` itself, or uploading with a very short `Slug`. Unknown media
+  directories now answer 404.
+- **The Planet feed has a title before Planet Config is first saved.** On a new
+  site, `/planetrss` printed `$utils.escapeXML($siteName)` as its title and
+  description, and logged a warning for each. Unsaved Planet settings now use
+  their defaults.
+- **An image pasted into the rich text editor appears once.** Pasting an image
+  copied from a web page inserted it twice.
+- **Decimal settings can be saved on the configuration page.** The maximum
+  upload file and directory sizes accepted only whole numbers in the browser,
+  although they are measured in megabytes with decimals (default `2.00`).
 
 ## 6.1.6
 
