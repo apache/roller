@@ -109,6 +109,16 @@ public class RollerAtomServlet extends AtomServlet {
         XMLReader reader;
         try {
             reader = SecureXmlParsers.newSAXParserFactory().newSAXParser().getXMLReader();
+            // Hardening: DOCTYPE declarations should be rejected,
+            // regardless whether the secure reader already does it.
+            DefaultHandler2 doctypeRefuser = new DefaultHandler2() {
+                @Override
+                public void startDTD(String name, String publicId, String systemId)
+                        throws SAXException {
+                    throw new SAXException("DOCTYPE is not allowed in an Atom entry");
+                }
+            };
+            parser.setProperty("http://xml.org/sax/properties/lexical-handler", doctypeRefuser);
         } catch (ParserConfigurationException | SAXException e) {
             throw new ServletException("Could not create an Atom entry parser", e);
         }
