@@ -41,6 +41,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -118,7 +119,7 @@ public class RollerAtomServlet extends AtomServlet {
                     throw new SAXException("DOCTYPE is not allowed in an Atom entry");
                 }
             };
-            parser.setProperty("http://xml.org/sax/properties/lexical-handler", doctypeRefuser);
+            reader.setProperty("http://xml.org/sax/properties/lexical-handler", doctypeRefuser);
         } catch (ParserConfigurationException | SAXException e) {
             throw new ServletException("Could not create an Atom entry parser", e);
         }
