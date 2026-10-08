@@ -50,6 +50,8 @@
 				<exclude>**/.classpath</exclude>
 				<exclude>**/.project</exclude>
 				<exclude>**/*.log</exclude>
+				<exclude>app/logs/**</exclude>
+				<exclude>it-selenium/logs/**</exclude>
 				<exclude>**/*.iml</exclude>
 			</excludes>
 		</fileSet>
