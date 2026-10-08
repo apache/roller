@@ -46,6 +46,7 @@ import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.Wrappers;
 import org.apache.roller.weblogger.ui.rendering.pagers.CommentsPager;
 import org.apache.roller.weblogger.ui.rendering.pagers.Pager;
 import org.apache.roller.weblogger.ui.rendering.pagers.UsersPager;
@@ -189,7 +190,7 @@ public class SiteModel implements Model {
        
         return new WeblogEntriesListPager(
             urlStrategy,
-            pagerUrl, queryWeblog.getPojo(), user, cat,
+            pagerUrl, Wrappers.unwrap(queryWeblog), user, cat,
             tags,
             weblogRequest.getLocale(),
             sinceDays,
