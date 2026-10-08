@@ -54,14 +54,18 @@ public final class BootstrapSecurity {
         String token = Base64.getUrlEncoder().withoutPadding().encodeToString(raw);
         digest = sha256(token);
         expires = System.currentTimeMillis() + LIFETIME_MS;
-        LOG.warn(box(
+        String message = box(
                 "ROLLER INITIAL SETUP REQUIRED",
                 "",
                 "Open Roller in a web browser.",
                 "You will be redirected to the secure initial-setup page.",
                 "",
                 "Enter this one-time setup token (expires in 60 minutes):",
-                token));
+                token);
+        LOG.warn(message);
+        // Also print to the console, which operators watch at first start
+        // even when Roller's own log goes to a file.
+        System.out.println(message);
     }
 
     public static boolean isCompleted() {

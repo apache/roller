@@ -22,6 +22,9 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<%-- salt issued with this response, read by refreshSalt() after an AJAX post --%>
+<meta name="roller-salt" content="<s:property value="salt"/>" />
+
 <script src="<s:url value='/webjars/jquery/3.7.1/jquery.min.js' />"></script>
 
 <%-- jquery-ui webjar is 1.14.2+1 in pom.xml, but its resources are served

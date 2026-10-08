@@ -18,12 +18,18 @@
 package org.apache.roller.weblogger.util;
 
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.jdom2.Document;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -52,5 +58,24 @@ public class SafeSAXBuilderTest {
         assertThrows(Exception.class,
                 () -> new SafeSAXBuilder().build(new StringReader(withInternalSubset)),
                 "a document type declaration was accepted");
+    }
+
+    /** A declared external entity is refused, and its file is never read into the document. */
+    @Test
+    public void externalEntitiesAreNotRead(@TempDir Path dir) throws Exception {
+        Path marker = dir.resolve("marker.txt");
+        Files.write(marker, "MARKER-CONTENT".getBytes(StandardCharsets.UTF_8));
+        String withEntity = "<?xml version=\"1.0\"?>"
+                + "<!DOCTYPE opml [<!ENTITY m SYSTEM \"" + marker.toUri() + "\">]>"
+                + "<opml version=\"1.1\"><body><outline text=\"&m;\"/></body></opml>";
+        Exception e = assertThrows(Exception.class,
+                () -> new SafeSAXBuilder().build(new StringReader(withEntity)));
+        assertFalse(String.valueOf(e.getMessage()).contains("MARKER-CONTENT"));
+    }
+
+    /** Readers come from the shared parser configuration. */
+    @Test
+    public void readersComeFromTheSharedConfiguration() {
+        assertSame(SecureXmlParsers.JDOM_READERS, new SafeSAXBuilder().getXMLReaderFactory());
     }
 }
