@@ -1288,6 +1288,15 @@ when they load the feed in their browsers.
 
 image::user-guide-29-fileupload.png[]
 
+* *Maximum AtomPub entry size (bytes)*: Maximum size of the XML body of one
+AtomPub entry, set under Web Services Settings. The default is 1048576 bytes
+(1 MiB). The `webservices.atomPubMaxEntrySize` setting takes effect on the next
+request without a restart and must be between 1 and 2147483646 bytes. An entry
+over the limit returns HTTP 413. A missing or invalid setting uses the default.
+This limit does not apply to AtomPub media uploads, which use the file upload
+settings below. Raising it does not increase the capacity of the database's
+entry content columns.
+
 * *Enable File Uploads*: Are users allowed to upload files?
 * *Allowed Extensions*: Comma-separated list of file extensions that
 users are allowed to upload.

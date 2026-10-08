@@ -327,7 +327,18 @@ public class RollerAtomHandler implements AtomHandler {
      */
     @Override
     public boolean isEntryURI(AtomRequest areq) {
-        String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
+        return isEntryPath(areq.getPathInfo());
+    }
+
+    /**
+     * True if the path info names an entry. Shared with RollerAtomServlet so
+     * both agree on which requests carry an entry body.
+     */
+    static boolean isEntryPath(String path) {
+        String[] pathInfo = StringUtils.split(path, "/");
+        if (pathInfo == null) {
+            return false;
+        }
         if (pathInfo.length > 2 && pathInfo[1].equals("entry")) {
             return true;
         }

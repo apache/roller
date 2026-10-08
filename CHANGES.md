@@ -21,6 +21,12 @@
     
 ### Behaviour changes worth reading before upgrading
 
+- **AtomPub honours `webservices.enableAtomPub` on every request.** While the
+  setting is off, every AtomPub URL answers 404, not only the service document.
+- **AtomPub entry bodies default to a 1 MiB limit.** A larger entry is refused
+  with 413. Set `webservices.atomPubMaxEntrySize` in Server Settings to change
+  the limit in bytes (default 1048576). Media uploads use the existing file
+  upload limits.
 - **Templates can no longer reach the objects behind the template wrappers.**
   `$weblog.pojo`, `$entry.pojo` and `getPojo()` no longer resolve in weblog
   templates. A custom theme that uses them will print the reference text
@@ -63,15 +69,15 @@
   site, `/planetrss` printed `$utils.escapeXML($siteName)` as its title and
   description, and logged a warning for each. Unsaved Planet settings now use
   their defaults.
-- **An image pasted into the rich text editor appears once.** Pasting an image
-  copied from a web page inserted it twice.
 - **Decimal settings can be saved on the configuration page.** The maximum
   upload file and directory sizes accepted only whole numbers in the browser,
   although they are measured in megabytes with decimals (default `2.00`).
 
 ## 6.1.6
 
-Initial installation now requires a one-time, cryptographically secure setup token printed to the server log. Bootstrap access closes as soon as setup finishes — when the first administrator is created on a new site, or when the database upgrade completes on an existing one.
+Initial installation now requires a one-time, cryptographically secure setup token printed to the server log. 
+Bootstrap access closes as soon as setup finishes — when the first administrator is created on a new site, 
+or when the database upgrade completes on an existing one.
 
 A maintenance release. Users of 6.1.5 and earlier are encouraged to upgrade.
 
