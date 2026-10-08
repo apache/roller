@@ -18,6 +18,10 @@
   - Pasted images travel in the form POST as base64. Tomcat's `maxPostSize`
     defaults to 2 MB, so larger pastes are refused with a "form is too large"
     message; raise `maxPostSize` to accept them.
+
+- **The one-time setup token is also printed to the console.** It still goes
+  to Roller's log, and now also appears on standard output (for example
+  `catalina.out`), so it is easy to find at first start.
     
 ### Behaviour changes worth reading before upgrading
 
