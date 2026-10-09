@@ -36,6 +36,9 @@
   templates. A custom theme that uses them will print the reference text
   as-is, without an error. Use the wrapper's own properties instead, for
   example `$weblog.handle` or `$entry.title`.
+- **Tag names can no longer contain `"`, `&`, `'`, `<`, `>` or `` ` ``.**
+  These characters are removed when a tag is saved, and from existing tag
+  names when they are shown.
 - **Planet is off by default.** `planet.aggregator.enabled` now defaults to
   `false`. While it is off, the Planet admin pages, `/planetrss` and the
   Planet background tasks (`RefreshRollerPlanetTask`, `SyncWebsitesTask`) do

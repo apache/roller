@@ -187,7 +187,9 @@ public final class WeblogEntryWrapper {
     
     
     public String getTagsAsString() {
-        return this.pojo.getTagsAsString();
+        return getTags().stream()
+                .map(WeblogEntryTagWrapper::getName)
+                .collect(Collectors.joining(" "));
     }
     
     
