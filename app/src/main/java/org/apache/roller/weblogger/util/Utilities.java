@@ -900,8 +900,13 @@ public class Utilities {
     }
 
     /**
-     * @param tag
-     * @return
+     * Removes characters that are not allowed in a tag name: whitespace,
+     * control characters, comma, and the HTML-significant characters
+     * <code>" &amp; ' &lt; &gt; `</code>. Templates can then print tag names
+     * as they are.
+     *
+     * @param tag the tag name
+     * @return the tag name without invalid characters
      */
     public static String stripInvalidTagCharacters(String tag) {
         if (tag == null) {
@@ -913,12 +918,17 @@ public class Utilities {
         for (int i = 0; i < charArray.length; i++) {
             char c = charArray[i];
 
-            // fast-path exclusions quotes and commas are obvious
-            // 34 = double-quote, 44 = comma
             switch (c) {
-            case 34:
-            case 44:
+            case '"':
+            case '&':
+            case '\'':
+            case ',':
+            case '<':
+            case '>':
+            case '`':
                 continue;
+            default:
+                break;
             }
 
             if ((33 <= c && c <= 126) || Character.isUnicodeIdentifierPart(c)

@@ -36,10 +36,9 @@
   templates. A custom theme that uses them will print the reference text
   as-is, without an error. Use the wrapper's own properties instead, for
   example `$weblog.handle` or `$entry.title`.
-- **AtomPub tags are normalized like editor tags.** Each character in a tag
-  that is not a letter or digit becomes a space, so an AtomPub client that
-  sends `foo-bar` gets two tags, `foo` and `bar`, as it would in the editor.
-  Bundled themes and the `#showEntryTags` macro also HTML-escape tag names.
+- **Tag names can no longer contain `"`, `&`, `'`, `<`, `>` or `` ` ``.**
+  These characters are removed when a tag is saved, and from existing tag
+  names when they are shown.
 - **Planet is off by default.** `planet.aggregator.enabled` now defaults to
   `false`. While it is off, the Planet admin pages, `/planetrss` and the
   Planet background tasks (`RefreshRollerPlanetTask`, `SyncWebsitesTask`) do

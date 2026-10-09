@@ -44,7 +44,7 @@
         <p class="entryInfo" style="clear: right">
             Tags:
             #foreach($tag in $entry.tags)
-                <a class="tagLink" href="$url.tag($tag.name)">$utils.escapeHTML($tag.name)</a>
+                <a class="tagLink" href="$url.tag($tag.name)">$tag.name</a>
             #end
         </p>
         #end

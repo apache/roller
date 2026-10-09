@@ -1002,7 +1002,7 @@ Include Javascript code needed for expanding folder macros (undocumented).
 
   #set ( $tags = $entry.tags )
   #foreach($tag in $tags)
-	    <a href="$url.tag($tag.name)" rel="tag">$utils.escapeHTML($tag.name)</a>
+	    <a href="$url.tag($tag.name)" rel="tag">$tag.name</a>
   #end
 
 #end

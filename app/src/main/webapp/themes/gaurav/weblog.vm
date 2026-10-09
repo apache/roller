@@ -74,7 +74,7 @@
 							   the most recent posts with the tag.</p>
                            <div id="tagcloud">
                            #foreach ($tag in $mytags)
-                              <a class="tag s${tag.intensity}" href="$url.tag($tag.name)" title="$tag.count">$utils.escapeHTML($tag.name)</a>
+                              <a class="tag s${tag.intensity}" href="$url.tag($tag.name)" title="$tag.count">$tag.name</a>
                            #end
                            </div>
 				</div>
