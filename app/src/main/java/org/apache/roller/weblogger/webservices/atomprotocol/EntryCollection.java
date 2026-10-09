@@ -447,17 +447,23 @@ public class EntryCollection {
         
         // Now process incoming categories that are tags:
         // Atom categories with no scheme are considered tags.
-        String tags = "";
+        rollerEntry.setTagsAsString(tagsFromCategories(categories));
+    }
+
+    /**
+     * Joins the terms of Atom categories with no scheme into a tag string,
+     * normalized the same way as tags entered in the weblog editor.
+     */
+    static String tagsFromCategories(List<Category> categories) {
         StringBuilder buff = new StringBuilder();
-        if (categories != null && !categories.isEmpty()) {
+        if (categories != null) {
             for (Category cat : categories) {
-                if (cat.getScheme() == null) {
+                if (cat.getScheme() == null && cat.getTerm() != null) {
                     buff.append(" ").append(cat.getTerm());
-                }                
+                }
             }
-            tags = buff.toString();
         }
-        rollerEntry.setTagsAsString(tags);        
+        return Utilities.replaceNonAlphanumeric(buff.toString(), ' ');
     }
 
     private void reindexEntry(WeblogEntry entry) throws WebloggerException {
