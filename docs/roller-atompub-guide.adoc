@@ -234,7 +234,9 @@ Slug: sunset
 ----
 
 * Without `Slug`, Roller names the file from the weblog handle and the date.
-The file name extension comes from the media type.
+The file name extension comes from the media type, without parameters or a
+`+xml`/`+json` suffix (`image/svg+xml` gives `.svg`, `image/jpeg` gives
+`.jpg`). A `Slug` that already ends in a matching extension keeps it.
 * The media type must be one the site allows; the service document lists them
 in each media collection's `app:accept`. Roller stores the type it derives
 from the file name and contents, not only the one the client sends.

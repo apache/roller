@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
@@ -140,7 +142,6 @@ public class MediaCollection {
                     mf.setDirectory(mdir);
                     mf.setWeblog(website);
                     mf.setName(fileName);
-                    mf.setOriginalPath(justPath);
                     mf.setInputStream(fis);
                     mf.setLength(tempFile.length());
 
@@ -234,10 +235,12 @@ public class MediaCollection {
                 try {
                     // Parse pathinfo to determine file path
                     String filePath = filePathFromPathInfo(pathInfo);
-                    MediaFile mf = fmgr.getMediaFileByOriginalPath(website, filePath);
+                    // The edit-media URI names the file by directory and name
+                    MediaFile mf = fmgr.getMediaFileByPath(website, filePath);
                     if (mf == null) {
                         throw new AtomNotFoundException("Cannot find media file: " + filePath);
                     }
+                    mf.setContent(roller.getFileContentManager().getFileContent(website, mf.getId()));
                     return createMediaResource(mf, response);
                 } catch (AtomException ae) {
                     throw ae;
@@ -281,8 +284,7 @@ public class MediaCollection {
             }
 
             AtomFeed feed = new AtomFeed();
-            feed.setId(atomURL
-                +"/"+website.getHandle() + "/resources/" + path + start);
+            feed.setId(collectionURI(website, path, start));
             feed.setTitle(website.getName());
 
             List<AtomLink> links = new ArrayList<>();
@@ -344,8 +346,7 @@ public class MediaCollection {
                 if (start + count < files.size()) {
                     // add next link
                     int nextOffset = start + max;
-                    String url = atomURL
-                        +"/"+ website.getHandle() + "/resources/" + path + nextOffset;
+                    String url = collectionURI(website, path, nextOffset);
                     AtomLink nextLink = new AtomLink();
                     nextLink.setRel("next");
                     nextLink.setHref(url);
@@ -354,8 +355,7 @@ public class MediaCollection {
                 if (start > 0) {
                     // add previous link
                     int prevOffset = start > max ? start - max : 0;
-                    String url = atomURL
-                        +"/"+website.getHandle() + "/resources/" + path + prevOffset;
+                    String url = collectionURI(website, path, prevOffset);
                     AtomLink prevLink = new AtomLink();
                     prevLink.setRel("previous");
                     prevLink.setHref(url);
@@ -610,14 +610,7 @@ public class MediaCollection {
             throw new IllegalArgumentException("contentType cannot be null");
         }
 
-        String fileName;
-
-        // Determine the extension based on the contentType. This is a hack.
-        // The info we need to map from contentType to file extension is in
-        // JRE/lib/content-type.properties, but Java Activation doesn't provide
-        // a way to do a reverse mapping or to get at the data.
-        String[] typeTokens = contentType.split("/");
-        String ext = typeTokens[1];
+        String ext = fileExtension(contentType);
 
         if (title != null && !title.isBlank()) {
             // We've got a title, so use it to build file name
@@ -630,19 +623,100 @@ public class MediaCollection {
                 tmp = (tmp == null) ? s : tmp + "_" + s;
                 count++;
             }
-            if (!tmp.endsWith("." + ext)) {
-                fileName = tmp + "." + ext;
-            } else {
-                fileName = tmp;
-            }
-        } else {
-            // No title or text, so instead we'll use the item's date
-            // in YYYYMMDD format to form the file name
-            SimpleDateFormat sdf = new SimpleDateFormat();
-            sdf.applyPattern("yyyyMMddHHSS");
-            fileName = weblog.getHandle()+"-"+sdf.format(new Date())+"."+ext;
+            return withExtension(tmp, ext);
         }
 
-        return fileName;
+        // No title or text, so instead we'll use the item's date
+        // in YYYYMMDD format to form the file name
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern("yyyyMMddHHSS");
+        return weblog.getHandle() + "-" + sdf.format(new Date()) + "." + ext;
+    }
+
+    /**
+     * The URI of one page of a media collection: /{handle}/resources/{offset}
+     * for the default directory, /{handle}/resources/{dir}/{offset} for a
+     * named one. getCollection() reads the last segment as the offset.
+     */
+    private String collectionURI(Weblog website, String path, int offset) {
+        StringBuilder uri = new StringBuilder(atomURL).append('/')
+                .append(website.getHandle()).append("/resources/");
+        if (StringUtils.isNotEmpty(path)) {
+            uri.append(path).append('/');
+        }
+        return uri.append(offset).toString();
+    }
+
+    /** Usual file extensions for types whose subtype is not the extension. */
+    private static final Map<String, String> EXTENSIONS = Map.ofEntries(
+            Map.entry("image/jpeg", "jpg"),
+            Map.entry("image/pjpeg", "jpg"),
+            Map.entry("image/svg+xml", "svg"),
+            Map.entry("application/ld+json", "jsonld"),
+            Map.entry("image/x-icon", "ico"),
+            Map.entry("image/vnd.microsoft.icon", "ico"),
+            Map.entry("image/tiff", "tif"),
+            Map.entry("text/plain", "txt"),
+            Map.entry("text/markdown", "md"),
+            Map.entry("text/javascript", "js"),
+            Map.entry("application/javascript", "js"),
+            Map.entry("audio/mpeg", "mp3"),
+            Map.entry("audio/mp4", "m4a"),
+            Map.entry("video/quicktime", "mov"),
+            Map.entry("application/msword", "doc"),
+            Map.entry("application/vnd.ms-powerpoint", "ppt"),
+            Map.entry("application/vnd.ms-excel", "xls"),
+            Map.entry("application/x-shockwave-flash", "swf"),
+            Map.entry("application/octet-stream", "bin"));
+
+    /** Other extensions that name the same type as the usual one. */
+    private static final Map<String, Set<String>> ALIASES = Map.of(
+            "jpg", Set.of("jpeg", "jpe"),
+            "tif", Set.of("tiff"),
+            "html", Set.of("htm"),
+            "txt", Set.of("text"),
+            "mpeg", Set.of("mpg"));
+
+    /**
+     * The file extension for a media type: parameters such as charset and a
+     * structured-syntax suffix such as {@code +xml} are dropped, and common
+     * types map to their usual extension ({@code image/svg+xml} gives
+     * {@code svg}, {@code image/jpeg} gives {@code jpg}).
+     */
+    static String fileExtension(String contentType) {
+        String type = MediaTypePolicy.normalizeType(contentType);
+        if (type == null) {
+            return "bin";
+        }
+        String known = EXTENSIONS.get(type);
+        if (known != null) {
+            return known;
+        }
+        int slash = type.indexOf('/');
+        String subtype = slash > -1 ? type.substring(slash + 1) : type;
+        int plus = subtype.indexOf('+');
+        if (plus > -1) {
+            subtype = subtype.substring(0, plus);
+        }
+        if (subtype.startsWith("x-")) {
+            subtype = subtype.substring(2);
+        }
+        String ext = subtype.replaceAll("[^a-z0-9]", "");
+        return ext.isEmpty() ? "bin" : ext;
+    }
+
+    /**
+     * Adds the extension to a base name, unless the name already ends with
+     * it or with another extension for the same type.
+     */
+    static String withExtension(String baseName, String ext) {
+        int dot = baseName.lastIndexOf('.');
+        if (dot > -1) {
+            String own = baseName.substring(dot + 1).toLowerCase(Locale.ROOT);
+            if (own.equals(ext) || ALIASES.getOrDefault(ext, Set.of()).contains(own)) {
+                return baseName;
+            }
+        }
+        return baseName + "." + ext;
     }
 }
