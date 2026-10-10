@@ -187,6 +187,24 @@ public class RollerAtomProtocolTest {
     }
 
     @Test
+    public void testTagsUseTheSharedTagCharacterRules() throws Exception {
+        AtomEntry in = sampleEntry("Tagged", "<p>x</p>", false);
+        AtomCategory tag = new AtomCategory();
+        tag.setTerm("rock&roll\"live\"");
+        in.getCategories().add(tag);
+        EntryCollection ecol = new EntryCollection(managedUser(), ATOM_URL);
+        AtomEntry created = ecol.postEntry(
+                request("/" + HANDLE + "/entries", "application/atom+xml", null, null), in);
+        String entryId = entryIdFromEditLink(created);
+        TestUtils.endSession(true);
+
+        WeblogEntry persisted = WebloggerFactory.getWeblogger().getWeblogEntryManager()
+                .getWeblogEntry(entryId);
+        assertTrue(persisted.getTags().stream().anyMatch(t -> "rockrolllive".equals(t.getName())),
+                () -> persisted.getTags().toString());
+    }
+
+    @Test
     public void testServiceDocument() throws Exception {
         AtomServiceDoc service = new RollerAtomService(managedUser(), ATOM_URL).getServiceDoc();
 

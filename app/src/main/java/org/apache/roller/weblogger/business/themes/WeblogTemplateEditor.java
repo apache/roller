@@ -153,6 +153,12 @@ public class WeblogTemplateEditor {
     public List<TemplateRuleException.Violation> validateUpdate(Weblog weblog,
             WeblogTemplate template, String newName, String newLink) throws WebloggerException {
         List<TemplateRuleException.Violation> violations = new ArrayList<>();
+        if (newName != null && newName.length() > RollerConstants.TEXTWIDTH_255) {
+            violations.add(invalid("Template.error.nameSize"));
+        }
+        if (newLink != null && newLink.length() > RollerConstants.TEXTWIDTH_255) {
+            violations.add(invalid("Template.error.linkSize"));
+        }
         WeblogManager mgr = roller.getWeblogManager();
         if (newName != null && !newName.equals(template.getName())
                 && mgr.getTemplateByName(weblog, newName) != null) {

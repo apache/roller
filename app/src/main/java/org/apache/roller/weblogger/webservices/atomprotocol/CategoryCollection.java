@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -32,12 +33,14 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.util.CommentAuthorUrl;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
 /**
  * The categories of a weblog as an AtomPub collection, for users who may
  * post to the weblog. Each category is an entry: atom:title is the name,
- * atom:summary the description, roller:image the image URL; roller:position
+ * atom:summary the description, roller:image the image URL (http or https,
+ * as in the category editor); roller:position
  * and roller:inUse are read-only.
  *
  * <p>A category that entries still use is removed only when the request
@@ -189,12 +192,27 @@ public class CategoryCollection {
         return entry;
     }
 
-    private static void copyProperties(AtomEntry entry, WeblogCategory category) {
+    /** Copies the description and image, with the category editor's rules. */
+    private static void copyProperties(AtomEntry entry, WeblogCategory category)
+            throws AtomException {
         if (entry.getSummary() != null) {
-            category.setDescription(entry.getSummary().getValue());
+            String description = entry.getSummary().getValue();
+            checkLength(description, "Category description");
+            category.setDescription(description);
         }
         if (entry.getExtensions().containsKey("image")) {
-            category.setImage(StringUtils.trimToNull(entry.getExtension("image")));
+            String image = StringUtils.trimToNull(entry.getExtension("image"));
+            if (image != null && CommentAuthorUrl.normalize(image) == null) {
+                throw CollectionSupport.badRequest("roller:image must be an http or https URL");
+            }
+            checkLength(image, "roller:image");
+            category.setImage(image);
+        }
+    }
+
+    private static void checkLength(String value, String what) throws AtomException {
+        if (value != null && value.length() > RollerConstants.TEXTWIDTH_255) {
+            throw CollectionSupport.badRequest(what + " cannot be more than 255 characters");
         }
     }
 
@@ -204,6 +222,7 @@ public class CategoryCollection {
         if (trimmed == null || !trimmed.equals(StringEscapeUtils.escapeHtml4(trimmed))) {
             throw CollectionSupport.badRequest("Invalid category name");
         }
+        checkLength(trimmed, "Category name");
         return trimmed;
     }
 
