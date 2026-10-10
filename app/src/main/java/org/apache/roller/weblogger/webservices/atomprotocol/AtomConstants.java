@@ -32,7 +32,7 @@ public final class AtomConstants {
     public static final String APP_NS = "http://www.w3.org/2007/app";
 
     /** Media type for an Atom entry. */
-    public static final String ENTRY_MEDIA_TYPE = "application/atom+xml;type=entry";
+    public static final String ENTRY_MEDIA_TYPE = "application/atom+xml;type=entry;charset=utf-8";
 
     /** Media type for an Atom feed/collection. */
     public static final String FEED_MEDIA_TYPE = "application/atom+xml;type=feed;charset=utf-8";

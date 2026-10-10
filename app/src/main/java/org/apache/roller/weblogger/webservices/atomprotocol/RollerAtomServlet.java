@@ -84,12 +84,18 @@ public class RollerAtomServlet extends HttpServlet {
             return;
         }
 
-        byte[] body = null;
+        if ("POST".equals(method) && request.getContentType() == null) {
+            sendText(response, HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
+                    "No content-type specified in request");
+            return;
+        }
+
+        AtomRequest areq;
         AtomEntry entry = null;
         if (carriesEntry(request)) {
             int maxEntryBytes = maxEntryBytes();
             // Read one byte past the limit, so an oversized body can be detected.
-            body = request.getInputStream().readNBytes(maxEntryBytes + 1);
+            byte[] body = request.getInputStream().readNBytes(maxEntryBytes + 1);
             if (body.length > maxEntryBytes) {
                 sendText(response, HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
                         "Entry is too large");
@@ -102,10 +108,12 @@ public class RollerAtomServlet extends HttpServlet {
                 sendText(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid Atom entry");
                 return;
             }
-        } else if ("POST".equals(method) || "PUT".equals(method)) {
-            body = readBody(request);
+            areq = new AtomRequest(request, body);
+        } else {
+            // Media bodies are streamed to a temporary file by MediaCollection,
+            // where the upload size and quota are checked.
+            areq = AtomRequest.streaming(request);
         }
-        AtomRequest areq = new AtomRequest(request, body);
 
         try {
             switch (method) {
@@ -268,12 +276,6 @@ public class RollerAtomServlet extends HttpServlet {
             new AtomWriter().writeEntry(out, entry);
         } catch (IOException ioe) {
             throw new AtomException("Error writing created entry", ioe);
-        }
-    }
-
-    private byte[] readBody(HttpServletRequest request) throws IOException {
-        try (InputStream in = request.getInputStream()) {
-            return in.readAllBytes();
         }
     }
 }

@@ -18,15 +18,17 @@
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * Lightweight wrapper around an {@link HttpServletRequest} for AtomPub handlers.
- * The dispatcher servlet reads any request body once into a byte array and
- * passes it here so handlers can read it (and so {@code getPathInfo()} never
- * returns null for the service-document URI).
+ * The dispatcher servlet reads an Atom entry body once into a byte array and
+ * passes it here so handlers can read it. Media bodies are not buffered: they
+ * are streamed from the request (see {@link #streaming(HttpServletRequest)}).
+ * {@code getPathInfo()} never returns null for the service-document URI.
  */
 public class AtomRequest {
 
@@ -34,10 +36,21 @@ public class AtomRequest {
 
     private final HttpServletRequest request;
     private final byte[] body;
+    private final boolean streaming;
 
     public AtomRequest(HttpServletRequest request, byte[] body) {
+        this(request, (body != null) ? body : EMPTY, false);
+    }
+
+    private AtomRequest(HttpServletRequest request, byte[] body, boolean streaming) {
         this.request = request;
-        this.body = (body != null) ? body : EMPTY;
+        this.body = body;
+        this.streaming = streaming;
+    }
+
+    /** A request whose body is read directly from the servlet request, once. */
+    public static AtomRequest streaming(HttpServletRequest request) {
+        return new AtomRequest(request, null, true);
     }
 
     /** Path info relative to the AtomPub servlet, never null ("" for the service doc). */
@@ -54,9 +67,12 @@ public class AtomRequest {
         return request.getContentType();
     }
 
-    /** A fresh stream over the buffered request body. */
-    public InputStream getInputStream() {
-        return new ByteArrayInputStream(body);
+    /**
+     * A fresh stream over the buffered request body, or the servlet request's
+     * stream for a streaming request.
+     */
+    public InputStream getInputStream() throws IOException {
+        return streaming ? request.getInputStream() : new ByteArrayInputStream(body);
     }
 
     public HttpServletRequest getRequest() {

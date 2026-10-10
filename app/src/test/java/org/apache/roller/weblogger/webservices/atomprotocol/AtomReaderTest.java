@@ -149,4 +149,33 @@ public class AtomReaderTest {
         AtomException ex = assertThrows(AtomException.class, () -> parse("<entry><title></entry>"));
         assertEquals(HttpServletResponse.SC_BAD_REQUEST, ex.getStatus());
     }
+
+    @Test
+    public void testSourceMetadataIsIgnored() throws Exception {
+        String xml =
+            "<entry xmlns='http://www.w3.org/2005/Atom'>"
+            + "<source><title>Other Blog</title><updated>2020-01-01T00:00:00Z</updated></source>"
+            + "<title>Mine</title>"
+            + "</entry>";
+        AtomEntry entry = parse(xml);
+        assertEquals("Mine", entry.getTitle());
+        assertNull(entry.getUpdated());
+    }
+
+    @Test
+    public void testXhtmlContentAndTitle() throws Exception {
+        String xml =
+            "<entry xmlns='http://www.w3.org/2005/Atom'>"
+            + "<title type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>A <em>title</em></div></title>"
+            + "<content type='xhtml'>"
+            + "  <xhtml:div xmlns:xhtml='http://www.w3.org/1999/xhtml'>"
+            + "<xhtml:p class='x'>One &amp; two<xhtml:br/>three</xhtml:p>"
+            + "</xhtml:div>"
+            + "</content>"
+            + "</entry>";
+        AtomEntry entry = parse(xml);
+        assertEquals("A <em>title</em>", entry.getTitle());
+        assertEquals("xhtml", entry.getContent().getType());
+        assertEquals("<p class=\"x\">One &amp; two<br/>three</p>", entry.getContent().getValue());
+    }
 }

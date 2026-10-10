@@ -47,6 +47,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -144,10 +145,24 @@ class RollerAtomServletTest {
     private void mediaUploadBypassesTheEntryLimit(String method, String path) throws Exception {
         config.when(() -> WebloggerRuntimeConfig.getProperty(RollerAtomServlet.MAX_ENTRY_SIZE_PROPERTY))
                 .thenReturn("1");
+        HttpServletRequest request = request(method, path, "image/png", "not xml");
 
-        servlet.service(request(method, path, "image/png", "not xml"), response);
+        servlet.service(request, response);
 
         assertArrayEquals("not xml".getBytes(StandardCharsets.UTF_8), servlet.body);
+        // The servlet does not buffer media; the handler reads the request stream
+        verify(request, times(1)).getInputStream();
+    }
+
+    @Test
+    void postWithoutContentTypeIsUnsupportedMediaType() throws Exception {
+        HttpServletRequest request = request("POST", "/blog/resources", null, "data");
+
+        servlet.service(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+        verify(request, never()).getInputStream();
+        assertNull(servlet.body);
     }
 
     @Test

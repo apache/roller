@@ -51,33 +51,12 @@ public class AtomWriter {
     }
 
     public void writeEntry(OutputStream out, AtomEntry entry) throws AtomException {
-        try {
-            XMLStreamWriter w = factory.createXMLStreamWriter(out, "UTF-8");
-            w.writeStartDocument("UTF-8", "1.0");
-            w.setDefaultNamespace(ATOM_NS);
-            w.setPrefix("app", APP_NS);
-            w.writeStartElement(ATOM_NS, "entry");
-            w.writeDefaultNamespace(ATOM_NS);
-            w.writeNamespace("app", APP_NS);
-            writeEntryBody(w, entry);
-            w.writeEndElement();
-            w.writeEndDocument();
-            w.flush();
-            w.close();
-        } catch (XMLStreamException ex) {
-            throw new AtomException("Error serializing Atom entry", ex);
-        }
+        writeDocument(out, ATOM_NS, "entry", "app", APP_NS, "Error serializing Atom entry",
+                w -> writeEntryBody(w, entry));
     }
 
     public void writeFeed(OutputStream out, AtomFeed feed) throws AtomException {
-        try {
-            XMLStreamWriter w = factory.createXMLStreamWriter(out, "UTF-8");
-            w.writeStartDocument("UTF-8", "1.0");
-            w.setDefaultNamespace(ATOM_NS);
-            w.setPrefix("app", APP_NS);
-            w.writeStartElement(ATOM_NS, "feed");
-            w.writeDefaultNamespace(ATOM_NS);
-            w.writeNamespace("app", APP_NS);
+        writeDocument(out, ATOM_NS, "feed", "app", APP_NS, "Error serializing Atom feed", w -> {
             writeAtomText(w, "id", feed.getId());
             writeAtomText(w, "title", feed.getTitle());
             writeAtomText(w, "updated", formatDate(feed.getUpdated()));
@@ -89,60 +68,85 @@ public class AtomWriter {
                 writeEntryBody(w, entry);
                 w.writeEndElement();
             }
-            w.writeEndElement();
-            w.writeEndDocument();
-            w.flush();
-            w.close();
-        } catch (XMLStreamException ex) {
-            throw new AtomException("Error serializing Atom feed", ex);
-        }
+        });
     }
 
     public void writeServiceDoc(OutputStream out, AtomServiceDoc service) throws AtomException {
-        try {
-            XMLStreamWriter w = factory.createXMLStreamWriter(out, "UTF-8");
-            w.writeStartDocument("UTF-8", "1.0");
-            w.setDefaultNamespace(APP_NS);
-            w.setPrefix("atom", ATOM_NS);
-            w.writeStartElement(APP_NS, "service");
-            w.writeDefaultNamespace(APP_NS);
-            w.writeNamespace("atom", ATOM_NS);
+        writeDocument(out, APP_NS, "service", "atom", ATOM_NS, "Error serializing service document", w -> {
             for (AtomWorkspace workspace : service.getWorkspaces()) {
                 w.writeStartElement(APP_NS, "workspace");
                 writeAtomText(w, "title", workspace.getTitle());
                 for (AtomCollection collection : workspace.getCollections()) {
-                    w.writeStartElement(APP_NS, "collection");
-                    if (collection.getHref() != null) {
-                        w.writeAttribute("href", collection.getHref());
-                    }
-                    writeAtomText(w, "title", collection.getTitle());
-                    for (String accept : collection.getAccepts()) {
-                        w.writeStartElement(APP_NS, "accept");
-                        w.writeCharacters(accept);
-                        w.writeEndElement();
-                    }
-                    for (AtomCategories cats : collection.getCategories()) {
-                        w.writeStartElement(APP_NS, "categories");
-                        w.writeAttribute("fixed", cats.isFixed() ? "yes" : "no");
-                        if (cats.getScheme() != null) {
-                            w.writeAttribute("scheme", cats.getScheme());
-                        }
-                        for (AtomCategory cat : cats.getCategories()) {
-                            writeCategory(w, cat);
-                        }
-                        w.writeEndElement();
-                    }
-                    w.writeEndElement();
+                    writeCollection(w, collection);
                 }
                 w.writeEndElement();
             }
+        });
+    }
+
+    /** Writes the body of a document element. */
+    @FunctionalInterface
+    private interface ElementBody {
+        void write(XMLStreamWriter w) throws XMLStreamException;
+    }
+
+    /**
+     * Writes a UTF-8 document whose root element is in the default namespace
+     * {@code rootNs}, with {@code otherNs} bound to {@code prefix}.
+     */
+    private void writeDocument(OutputStream out, String rootNs, String root,
+            String prefix, String otherNs, String errorMessage, ElementBody body)
+            throws AtomException {
+        XMLStreamWriter w = null;
+        try {
+            w = factory.createXMLStreamWriter(out, "UTF-8");
+            w.writeStartDocument("UTF-8", "1.0");
+            w.setDefaultNamespace(rootNs);
+            w.setPrefix(prefix, otherNs);
+            w.writeStartElement(rootNs, root);
+            w.writeDefaultNamespace(rootNs);
+            w.writeNamespace(prefix, otherNs);
+            body.write(w);
             w.writeEndElement();
             w.writeEndDocument();
             w.flush();
-            w.close();
         } catch (XMLStreamException ex) {
-            throw new AtomException("Error serializing service document", ex);
+            throw new AtomException(errorMessage, ex);
+        } finally {
+            if (w != null) {
+                try {
+                    w.close();
+                } catch (XMLStreamException ignored) {
+                    // nothing useful to do on close failure
+                }
+            }
         }
+    }
+
+    private void writeCollection(XMLStreamWriter w, AtomCollection collection)
+            throws XMLStreamException {
+        w.writeStartElement(APP_NS, "collection");
+        if (collection.getHref() != null) {
+            w.writeAttribute("href", collection.getHref());
+        }
+        writeAtomText(w, "title", collection.getTitle());
+        for (String accept : collection.getAccepts()) {
+            w.writeStartElement(APP_NS, "accept");
+            w.writeCharacters(accept);
+            w.writeEndElement();
+        }
+        for (AtomCategories cats : collection.getCategories()) {
+            w.writeStartElement(APP_NS, "categories");
+            w.writeAttribute("fixed", cats.isFixed() ? "yes" : "no");
+            if (cats.getScheme() != null) {
+                w.writeAttribute("scheme", cats.getScheme());
+            }
+            for (AtomCategory cat : cats.getCategories()) {
+                writeCategory(w, cat);
+            }
+            w.writeEndElement();
+        }
+        w.writeEndElement();
     }
 
     private void writeEntryBody(XMLStreamWriter w, AtomEntry entry) throws XMLStreamException {
@@ -168,16 +172,17 @@ public class AtomWriter {
         for (AtomLink link : entry.getLinks()) {
             writeLink(w, link);
         }
-        // APP control extension (RFC 5023)
-        w.writeStartElement(APP_NS, "control");
-        w.writeStartElement(APP_NS, "draft");
-        w.writeCharacters(entry.isDraft() ? "yes" : "no");
-        w.writeEndElement();
+        // APP extensions (RFC 5023): app:edited is a child of atom:entry
+        // (section 10.2); app:draft goes inside app:control (section 13.1)
         if (entry.getEdited() != null) {
             w.writeStartElement(APP_NS, "edited");
             w.writeCharacters(formatDate(entry.getEdited()));
             w.writeEndElement();
         }
+        w.writeStartElement(APP_NS, "control");
+        w.writeStartElement(APP_NS, "draft");
+        w.writeCharacters(entry.isDraft() ? "yes" : "no");
+        w.writeEndElement();
         w.writeEndElement();
     }
 

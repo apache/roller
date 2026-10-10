@@ -25,6 +25,7 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -137,6 +138,35 @@ class MediaCollectionPathTest {
         verify(content).canSave(eq(weblog), name.capture(), eq("image/png"), anyLong(), any());
         assertTrue(name.getValue().matches("blog-\\d+\\.png"), name.getValue());
         verify(files, never()).createMediaFile(any(), any(), any());
+    }
+
+    @Test
+    void deleteThroughTheEditUriRemovesTheMediaFile() throws Exception {
+        MediaFile file = mock(MediaFile.class);
+        when(files.getMediaFileByPath(weblog, "default/a.png")).thenReturn(file);
+
+        collection.deleteEntry(request("/blog/resource/default/a.png.media-link"));
+
+        verify(files).removeMediaFile(weblog, file);
+    }
+
+    @Test
+    void deleteOfAnUnknownFileIsNotFound() throws Exception {
+        assertThrows(AtomNotFoundException.class,
+                () -> collection.deleteEntry(request("/blog/resource/default/missing.png.media-link")));
+        verify(files, never()).removeMediaFile(any(), any());
+    }
+
+    @Test
+    void getOfAnUnknownMediaResourceIsNotFound() {
+        assertThrows(AtomNotFoundException.class,
+                () -> collection.getMediaResource(request("/blog/resource/default/missing.png")));
+    }
+
+    @Test
+    void putOfAnUnknownMediaResourceIsNotFound() {
+        assertThrows(AtomNotFoundException.class,
+                () -> collection.putMedia(request("/blog/resource/default/missing.png")));
     }
 
     private void refuseUploads() throws Exception {

@@ -126,6 +126,8 @@ public class AtomWriterTest {
         // draft "no" plus app:edited present
         assertEquals("no", text(doc, APP_NS, "draft"));
         assertEquals(AtomWriter.formatDate(UPDATED), text(doc, APP_NS, "edited"));
+        // RFC 5023 10.2: app:edited is a direct child of atom:entry
+        assertEquals(doc.getDocumentElement(), element(doc, APP_NS, "edited").getParentNode());
     }
 
     @Test

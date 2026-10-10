@@ -229,7 +229,12 @@ public class MediaCollection {
                     // Parse pathinfo to determine file path
                     String filePath = filePathFromPathInfo(pathInfo);
                     MediaFile mf = fmgr.getMediaFileByOriginalPath(website, filePath);
+                    if (mf == null) {
+                        throw new AtomNotFoundException("Cannot find media file: " + filePath);
+                    }
                     return createMediaResource(mf, response);
+                } catch (AtomException ae) {
+                    throw ae;
                 } catch (Exception e) {
                     throw new AtomException(
                         "Unexpected error during file upload", e);
@@ -373,8 +378,6 @@ public class MediaCollection {
        String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
        String contentType = areq.getContentType();
        try {
-            InputStream is = areq.getInputStream();
-
             // authenticated client posted a weblog entry
             File tempFile = null;
             String handle = pathInfo[0];
@@ -387,18 +390,22 @@ public class MediaCollection {
             if (pathInfo.length > 1) {
                 // Save to temp file
                 try {
-                    tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
-                    FileOutputStream fos = new FileOutputStream(tempFile);
-                    Utilities.copyInputToOutput(is, fos);
-                    fos.close();
-
-                    FileInputStream fis = new FileInputStream(tempFile);
-
                     // Parse pathinfo to determine file path
                     String path = filePathFromPathInfo(pathInfo);
 
                     // Attempt to load file, to ensure it exists
                     MediaFile mf = fmgr.getMediaFileByPath(website, path);
+                    if (mf == null) {
+                        throw new AtomNotFoundException("Cannot find media file: " + path);
+                    }
+
+                    tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
+                    try (InputStream is = areq.getInputStream();
+                            FileOutputStream fos = new FileOutputStream(tempFile)) {
+                        Utilities.copyInputToOutput(is, fos);
+                    }
+
+                    FileInputStream fis = new FileInputStream(tempFile);
                     String replacementName = pathInfo[pathInfo.length - 1];
                     String declaredType = MediaTypePolicy.normalizeType(contentType);
                     RollerMessages errors = new RollerMessages();
@@ -421,6 +428,8 @@ public class MediaCollection {
                     log.debug("Exiting");
                     return;
 
+                } catch (AtomException ae) {
+                    throw ae;
                 } catch (FileIOException fie) {
                     throw new AtomException(
                         "File upload disabled, over-quota or other error", fie);
@@ -451,14 +460,20 @@ public class MediaCollection {
             }
             if (RollerAtomHandler.canEdit(user, website) && pathInfo.length > 1) {
                 try {
+                    // The edit URI ends in .media-link; the edit-media URI does not
                     String path = filePathFromPathInfo(pathInfo);
-                    String fileName = path.substring(0, path.length() - ".media-link".length());
+                    String fileName = StringUtils.removeEnd(path, ".media-link");
                     MediaFileManager fmgr = roller.getMediaFileManager();
-                    MediaFile mf = fmgr.getMediaFileByPath(website, path);
+                    MediaFile mf = fmgr.getMediaFileByPath(website, fileName);
+                    if (mf == null) {
+                        throw new AtomNotFoundException("Cannot find media file: " + fileName);
+                    }
                     fmgr.removeMediaFile(website, mf);
                     log.debug("Deleted media entry: " + fileName);
                     return;
 
+                } catch (AtomException ae) {
+                    throw ae;
                 } catch (Exception e) {
                     String msg = "ERROR deleting media entry";
                     log.error(msg, e);

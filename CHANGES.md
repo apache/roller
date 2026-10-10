@@ -1,5 +1,15 @@
 # Apache Roller — Changes
 
+## 7.0.0 (in development)
+
+### Behaviour changes worth reading before upgrading
+
+- **AtomPub no longer uses ROME Propono.** Roller now has its own AtomPub
+  server. The `propono.properties` file and the `RollerAtomHandlerFactory`
+  extension point are removed, so a deployment that configured its own
+  `AtomHandlerFactory` (for example, for custom authentication) no longer has
+  that handler. AtomPub clients see no change.
+
 ## 6.1.7
 
 ### Improvements
