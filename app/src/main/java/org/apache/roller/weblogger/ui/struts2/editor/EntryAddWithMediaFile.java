@@ -71,19 +71,23 @@ public class EntryAddWithMediaFile extends MediaFileBase {
 
             if (selectedImages != null) {
                 for (String image : selectedImages) {
-                    MediaFile mediaFile = manager.getMediaFile(image);
+                    MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), image);
+                    if (mediaFile == null) {
+                        addError("MediaFile.error.view");
+                        return ERROR;
+                    }
                     String link;
 
                     if (mediaFile.isImageFile()) {
                         link = "<p>" + mediaFile.getName() + "</p>";
-                        link += "<a href='<url>'><img src='<urlt>' alt='<name>' width='<width>' height='<height>'></img></a>";
+                        link += "<a href=\"<url>\"><img src=\"<urlt>\" alt=\"<name>\" width=\"<width>\" height=\"<height>\"></img></a>";
                         link = link.replace("<url>", mediaFile.getPermalink())
                                    .replace("<urlt>", mediaFile.getThumbnailURL())
                                    .replace("<name>", mediaFile.getName())
                                    .replace("<width>", ""+mediaFile.getThumbnailWidth())
                                    .replace("<height>", ""+mediaFile.getThumbnailHeight());
                     } else {
-                        link = "<a href='<url>'><name></a> (<size> bytes, <type>)";
+                        link = "<a href=\"<url>\"><name></a> (<size> bytes, <type>)";
                         link = link.replace("<url>", mediaFile.getPermalink())
                                    .replace("<name>", mediaFile.getName())
                                    .replace("<size>",""+mediaFile.getLength())
@@ -97,7 +101,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
                 sb.append("<p>")
                   .append(getText("mediaFileEdit.includesEnclosure"))
                   .append("<br />")
-                  .append("<a href='" + bean.getEnclosureURL() + "'>")
+                  .append("<a href=\"" + bean.getEnclosureURL() + "\">")
                   .append(bean.getEnclosureURL())
                   .append("</a></p>");
             }
@@ -106,6 +110,8 @@ public class EntryAddWithMediaFile extends MediaFileBase {
 
         } catch (Exception e) {
             log.error("Error while constructing media file link for new entry", e);
+            addError("MediaFile.error.view");
+            return ERROR;
         }
         return SUCCESS;
     }

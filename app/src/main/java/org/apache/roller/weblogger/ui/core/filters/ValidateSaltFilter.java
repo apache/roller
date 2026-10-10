@@ -19,9 +19,6 @@
 package org.apache.roller.weblogger.ui.core.filters;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -30,13 +27,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
-import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.util.I18nMessages;
 
 /**
  * Filter checks all POST request for presence of valid salt value and rejects those without
@@ -44,40 +39,46 @@ import org.apache.roller.weblogger.ui.core.RollerSession;
  */
 public class ValidateSaltFilter implements Filter {
     private static final Log log = LogFactory.getLog(ValidateSaltFilter.class);
-    private Set<String> ignored = Collections.emptySet();
+
+    /**
+     * Request attribute Tomcat sets when it does not parse the parameters of a
+     * request; its value names the reason.
+     */
+    static final String PARSE_FAILED_REASON = "org.apache.catalina.parameter_parse_failed_reason";
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpReq = (HttpServletRequest) request;
 
-        String requestURL = httpReq.getRequestURL().toString();
-        String queryString = httpReq.getQueryString();
-        if (queryString != null) {
-            requestURL += "?" + queryString;
-        }
+        if ("POST".equalsIgnoreCase(httpReq.getMethod())) {
+            if (SaltValidator.isMultipartFormPost(httpReq) && isStrutsAction(httpReq)) {
+                // Struts wraps multipart requests before its interceptor stack;
+                // ValidateSaltInterceptor handles these requests.
+                chain.doFilter(request, response);
+                return;
+            }
 
-        if ("POST".equals(httpReq.getMethod()) && !isIgnoredURL(requestURL)) {
-            RollerSession rollerSession = RollerSession.getRollerSession(httpReq);
-            if (rollerSession != null) {
-                String userId = rollerSession.getAuthenticatedUser() != null ? rollerSession.getAuthenticatedUser().getId() : "";
-
-                Object saltObject = httpReq.getAttribute("salt"); // multi-form post case
-                String salt = saltObject != null ? saltObject.toString() : null;
-                salt = salt != null ? salt : httpReq.getParameter("salt");
-                SaltCache saltCache = SaltCache.getInstance();
-                if (salt == null || !Objects.equals(saltCache.get(salt), userId)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Valid salt value not found on POST to URL : " + httpReq.getServletPath());
-                    }
-                    throw new ServletException("Security Violation");
+            try {
+                SaltValidator.requireSubmittedSalt(httpReq);
+            } catch (ServletException e) {
+                if (isPostTooLarge(httpReq)) {
+                    // The container dropped the form, salt included, because it
+                    // is over its maximum POST size. Pasted images make this
+                    // likely, so say why instead of reporting a security error.
+                    log.warn("Refused a POST to " + httpReq.getServletPath()
+                            + " that is larger than the server's maximum POST size");
+                    ((HttpServletResponse) response).sendError(
+                            HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
+                            I18nMessages.getMessages(httpReq.getLocale())
+                                    .getString("error.postTooLarge"));
+                    return;
                 }
-
-                // Remove salt from cache after successful validation
-                saltCache.remove(salt);
                 if (log.isDebugEnabled()) {
-                    log.debug("Salt used and invalidated: " + salt);
+                    log.debug("Valid salt value not found on POST to URL : "
+                            + httpReq.getServletPath());
                 }
+                throw e;
             }
         }
 
@@ -86,20 +87,19 @@ public class ValidateSaltFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        String urls = WebloggerConfig.getProperty("salt.ignored.urls");
-        ignored = Set.of(StringUtils.stripAll(StringUtils.split(urls, ",")));
     }
 
     @Override
     public void destroy() {
     }
 
-    /**
-     * Checks if this is an ignored url defined in the salt.ignored.urls property
-     * @param theUrl the url
-     * @return true, if is ignored resource
-     */
-    private boolean isIgnoredURL(String theUrl) {
-        return ignored.contains(theUrl);
+    static boolean isPostTooLarge(HttpServletRequest request) {
+        Object reason = request.getAttribute(PARSE_FAILED_REASON);
+        return reason != null && "POST_TOO_LARGE".equals(reason.toString());
+    }
+
+    private boolean isStrutsAction(HttpServletRequest request) {
+        String servletPath = request.getServletPath();
+        return servletPath != null && servletPath.endsWith(".rol");
     }
 }

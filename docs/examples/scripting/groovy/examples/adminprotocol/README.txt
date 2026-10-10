@@ -8,7 +8,9 @@ Roller Admin Protocol (RAP).
 
 1) Have Groovy 1.0 installed on your system
 
-2) Put the RAP SDK, JDOM and Commons Codec jars in your classpath. For example:
+2) Put the RAP SDK, JDOM and Commons Codec jars in your classpath. These are
+   not distributed with Roller; download them and place them in ./lib, or point
+   the classpath at wherever you keep them. For example:
 
   $ export CLASSPATH=./lib/jdom.jar:./lib/roller-rap-sdk.jar:./lib/commons-codec-1.3.jar
 

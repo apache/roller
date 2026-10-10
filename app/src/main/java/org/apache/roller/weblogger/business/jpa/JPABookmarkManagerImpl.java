@@ -34,7 +34,8 @@ import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.jdom2.Document;
 import org.jdom2.Element;
-import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.JDOMParseException;
+import org.apache.roller.weblogger.util.SafeSAXBuilder;
 
 /*
  * JPABookmarkManagerImpl.java
@@ -86,6 +87,50 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     @Override
     public WeblogBookmark getBookmark(String id) throws WebloggerException {
         return (WeblogBookmark) strategy.load(WeblogBookmark.class, id);
+    }
+
+    @Override
+    public WeblogBookmark getBookmark(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        if (id == null) {
+            return null;
+        }
+
+        TypedQuery<WeblogBookmark> q = strategy.getNamedQuery(
+                "WeblogBookmark.getByWebsite&Id", WeblogBookmark.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public WeblogBookmarkFolder getFolderById(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        if (id == null) {
+            return null;
+        }
+
+        TypedQuery<WeblogBookmarkFolder> q = strategy.getNamedQuery(
+                "WeblogBookmarkFolder.getByWebsite&Id", WeblogBookmarkFolder.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
@@ -142,7 +187,7 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
 
         try {
             // Build JDOC document OPML string
-            SAXBuilder builder = new SAXBuilder();
+            SafeSAXBuilder builder = new SafeSAXBuilder();
             StringReader reader = new StringReader( opml );
             Document doc = builder.build( reader );
 
@@ -157,6 +202,10 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
             for (Element elem : body.getChildren()) {
                 importOpmlElement(elem, newFolder );
             }
+        } catch (JDOMParseException ex) {
+            throw new WebloggerException(
+                    "Unable to import bookmarks: XML document type declarations are not supported",
+                    ex);
         } catch (Exception ex) {
             throw new WebloggerException(ex);
         }

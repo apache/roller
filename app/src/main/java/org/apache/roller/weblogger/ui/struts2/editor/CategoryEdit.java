@@ -74,7 +74,7 @@ public class CategoryEdit extends UIAction {
         } else {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                category = wmgr.getWeblogCategory(getBean().getId());
+                category = wmgr.getWeblogCategory(getActionWeblog(), getBean().getId());
             } catch (WebloggerException ex) {
                 log.error("Error looking up category", ex);
             }
@@ -89,6 +89,10 @@ public class CategoryEdit extends UIAction {
     @Override
     public String execute() {
         if (!isAdd()) {
+            if (category == null) {
+                addError("categoryForm.notFound");
+                return ERROR;
+            }
             // make sure bean is properly loaded from pojo data
             getBean().copyFrom(category);
         }
@@ -103,6 +107,10 @@ public class CategoryEdit extends UIAction {
      * Save new category.
      */
     public String save() {
+        if (!isAdd() && category == null) {
+            addError("categoryForm.notFound");
+            return ERROR;
+        }
         myValidate();
         
         if(!hasActionErrors()) {
@@ -138,6 +146,10 @@ public class CategoryEdit extends UIAction {
     }
 
     public void myValidate() {
+        if (!isAdd() && category == null) {
+            addError("categoryForm.notFound");
+            return;
+        }
         if (bean.getName() == null || !bean.getName().equals(StringEscapeUtils.escapeHtml4(bean.getName()))) {
             addError("categoryForm.error.invalidName");
         } else if ( isAdd() ) {

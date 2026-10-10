@@ -18,14 +18,18 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.io.ByteArrayInputStream;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -33,12 +37,17 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.plugins.entry.WeblogEntryPlugin;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
+import org.apache.roller.weblogger.pojos.MediaFile;
+import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
@@ -48,15 +57,12 @@ import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.core.plugins.UIPluginManager;
 import org.apache.roller.weblogger.ui.core.plugins.WeblogEntryEditor;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.roller.weblogger.util.EnclosureMetadata;
+import org.apache.roller.weblogger.util.InlineImageData;
 import org.apache.roller.weblogger.util.MailUtil;
-import org.apache.roller.weblogger.util.MediacastException;
-import org.apache.roller.weblogger.util.MediacastResource;
-import org.apache.roller.weblogger.util.MediacastUtil;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.RollerMessages.RollerMessage;
-import org.apache.roller.weblogger.util.Trackback;
-import org.apache.roller.weblogger.util.TrackbackNotAllowedException;
+import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -73,9 +79,6 @@ public final class EntryEdit extends UIAction {
 
     // the entry we are adding or editing
     private WeblogEntry entry = null;
-
-    // url to send trackback to
-    private String trackbackUrl = null;
 
     public EntryEdit() {
         this.desiredMenu = "editor";
@@ -104,7 +107,7 @@ public final class EntryEdit extends UIAction {
                 // retrieve from DB WeblogEntry based on ID
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
-                setEntry(wmgr.getWeblogEntry(getBean().getId()));
+                setEntry(wmgr.getWeblogEntry(getActionWeblog(), getBean().getId()));
             } catch (WebloggerException ex) {
                 log.error(
                         "Error looking up entry by id - " + getBean().getId(),
@@ -122,6 +125,9 @@ public final class EntryEdit extends UIAction {
     @Override
     public String execute() {
         if (getActionName().equals("entryEdit")) {
+            if (!requireEntry()) {
+                return ERROR;
+            }
             // load bean with pojo data
             getBean().copyFrom(getEntry(), getLocale());
         } else {
@@ -146,6 +152,9 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String saveDraft() {
+        if (!requireEntry()) {
+            return INPUT;
+        }
         getBean().setStatus(PubStatus.DRAFT.name());
         if (entry.isPublished()) {
             // entry reverted from published to non-viewable draft
@@ -161,6 +170,9 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String publish() {
+        if (!requireEntry()) {
+            return INPUT;
+        }
         if (getActionWeblog().hasUserPermission(
                 getAuthenticatedUser(), WeblogPermission.POST)) {
             Timestamp pubTime = getBean().getPubTime(getLocale(),
@@ -190,9 +202,27 @@ public final class EntryEdit extends UIAction {
      *
      * @return String The result of the action.
      */
-    private String save() {
+    // Package-private rather than private so EntryEditEnclosureTest can drive
+    // it directly.
+    String save() {
+        if (!requireEntry()) {
+            return INPUT;
+        }
         if (!hasActionErrors()) {
+            EnclosureMetadata enclosure = validateEnclosure();
+            if (hasActionErrors()) {
+                return failedSave();
+            }
+
+            String submittedText = getBean().getText();
+            String submittedSummary = getBean().getSummary();
+            List<MediaFile> createdImages = new ArrayList<>();
+            boolean entrySaved = false;
             try {
+                if (!prepareInlineImages(createdImages)) {
+                    return failedSave();
+                }
+
                 WeblogEntryManager weblogEntryManager = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
 
@@ -223,24 +253,13 @@ public final class EntryEdit extends UIAction {
                     weblogEntry.setPinnedToMain(getBean().getPinnedToMain());
                 }
 
-                if (!StringUtils.isEmpty(getBean().getEnclosureURL())) {
-                    try {
-                        // Fetch MediaCast resource
-                        log.debug("Checking MediaCast attributes");
-                        MediacastResource mediacast = MediacastUtil
-                                .lookupResource(getBean().getEnclosureURL());
-
-                        // set mediacast attributes
-                        weblogEntry.putEntryAttribute("att_mediacast_url",
-                                mediacast.getUrl());
-                        weblogEntry.putEntryAttribute("att_mediacast_type",
-                                mediacast.getContentType());
-                        weblogEntry.putEntryAttribute("att_mediacast_length", ""
-                                + mediacast.getLength());
-
-                    } catch (MediacastException ex) {
-                        addMessage(getText(ex.getErrorKey()));
-                    }
+                if (enclosure != null) {
+                    weblogEntry.putEntryAttribute("att_mediacast_url",
+                            enclosure.getUrl());
+                    weblogEntry.putEntryAttribute("att_mediacast_type",
+                            enclosure.getContentType());
+                    weblogEntry.putEntryAttribute("att_mediacast_length",
+                            enclosure.getLength());
                 } else if ("entryEdit".equals(actionName)) {
                     try {
                         // if MediaCast string is empty, clean out MediaCast
@@ -267,6 +286,7 @@ public final class EntryEdit extends UIAction {
                 log.debug("Saving entry");
                 weblogEntryManager.saveWeblogEntry(weblogEntry);
                 WebloggerFactory.getWeblogger().flush();
+                entrySaved = true;
 
                 // notify search of the new entry
                 if (weblogEntry.isPublished()) {
@@ -301,11 +321,278 @@ public final class EntryEdit extends UIAction {
 
             } catch (Exception e) {
                 log.error("Error saving new entry", e);
+                if (!entrySaved) {
+                    // The entry may already hold the failed edit, and the
+                    // cleanup below commits its own transaction. Roll the
+                    // failed edit back first so that commit cannot save it.
+                    WebloggerFactory.getWeblogger().release();
+                    getBean().setText(submittedText);
+                    getBean().setSummary(submittedSummary);
+                    removeCreatedImages(WebloggerFactory.getWeblogger()
+                            .getMediaFileManager(), createdImages);
+                }
                 addError("generic.error.check.logs");
             }
         }
+        return failedSave();
+    }
+
+    /**
+     * Uploads data images in the submitted text and summary as media files, or
+     * keeps them inline when uploads are unavailable. Adds an action error and
+     * returns false if the entry cannot be saved. Media files it creates are
+     * added to createdImages so a later failure can remove them.
+     */
+    // Package-private so EntryEditInlineImagesTest can drive it directly.
+    boolean prepareInlineImages(List<MediaFile> createdImages)
+            throws WebloggerException {
+        String submittedText = getBean().getText();
+        String submittedSummary = getBean().getSummary();
+        Map<String, InlineImageData.Image> images = new HashMap<>();
+        List<InlineImageData.Source> textImages = InlineImageData.findSources(submittedText);
+        List<InlineImageData.Source> summaryImages = InlineImageData.findSources(submittedSummary);
+        boolean keepInline = WebloggerConfig.getBooleanProperty(
+                "weblog.inlineImages.preferInline")
+                || !WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")
+                || !getActionWeblog().hasUserPermission(
+                        getAuthenticatedUser(), WeblogPermission.POST);
+        long maxUploadBytes = 0;
+        if (!keepInline && (!textImages.isEmpty() || !summaryImages.isEmpty())) {
+            maxUploadBytes = (long) (RollerConstants.ONE_MB_IN_BYTES
+                    * new BigDecimal(WebloggerRuntimeConfig.getProperty(
+                            "uploads.file.maxsize")).doubleValue());
+        }
+        if (!validateInlineImages(textImages, images, keepInline, maxUploadBytes)
+                || !validateInlineImages(summaryImages, images, keepInline,
+                        maxUploadBytes)) {
+            return false;
+        }
+        if (!images.isEmpty()) {
+            if (keepInline) {
+                String inlineText = normalizeInlineSources(submittedText,
+                        textImages);
+                String inlineSummary = normalizeInlineSources(submittedSummary,
+                        summaryImages);
+                if (!inlineFieldFits(inlineText, textImages)
+                        || !inlineFieldFits(inlineSummary, summaryImages)) {
+                    return false;
+                }
+                getBean().setText(inlineText);
+                getBean().setSummary(inlineSummary);
+            } else {
+                MediaFileManager mediaManager = WebloggerFactory.getWeblogger()
+                        .getMediaFileManager();
+                MediaFileDirectory directory = mediaManager
+                        .getDefaultMediaFileDirectory(getActionWeblog());
+                if (directory == null) {
+                    directory = mediaManager.createDefaultMediaFileDirectory(
+                            getActionWeblog());
+                }
+                Map<String, String> mediaUrls = new HashMap<>();
+                getBean().setText(replaceInlineImages(submittedText,
+                        textImages, images, mediaUrls, directory,
+                        mediaManager, createdImages));
+                if (!hasActionErrors()) {
+                    getBean().setSummary(replaceInlineImages(submittedSummary,
+                            summaryImages, images, mediaUrls, directory,
+                            mediaManager, createdImages));
+                }
+                if (hasActionErrors()) {
+                    getBean().setText(submittedText);
+                    getBean().setSummary(submittedSummary);
+                    removeCreatedImages(mediaManager, createdImages);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean validateInlineImages(List<InlineImageData.Source> sources,
+            Map<String, InlineImageData.Image> images, boolean keepInline,
+            long maxUploadBytes) {
+        for (InlineImageData.Source source : sources) {
+            if (!keepInline && InlineImageData.exceedsUploadLimit(
+                    source.getValue(), maxUploadBytes)) {
+                addError("weblogEdit.inlineImageUploadTooLarge");
+                return false;
+            }
+            // parse() also refuses an inline image over the field limit; report
+            // that as too large, not as an invalid image
+            if (keepInline && source.getValue().length() > InlineImageData.maxFieldBytes()) {
+                addError("weblogEdit.inlineImageTooLarge");
+                return false;
+            }
+            InlineImageData.Image image = keepInline
+                    ? InlineImageData.parse(source.getValue())
+                    : InlineImageData.parseForUpload(source.getValue(),
+                            maxUploadBytes);
+            if (image == null) {
+                addError("weblogEdit.inlineImageInvalid");
+                return false;
+            }
+            images.put(source.getValue(), image);
+        }
+        return true;
+    }
+
+    private boolean inlineFieldFits(String html, List<InlineImageData.Source> sources) {
+        if (!sources.isEmpty() && html.getBytes(StandardCharsets.UTF_8).length
+                > InlineImageData.maxFieldBytes()) {
+            addError("weblogEdit.inlineImageTooLarge");
+            return false;
+        }
+        return true;
+    }
+
+    private String normalizeInlineSources(String html,
+            List<InlineImageData.Source> sources) {
+        if (html == null || sources.isEmpty()) {
+            return html;
+        }
+        StringBuilder result = new StringBuilder(html.length());
+        int cursor = 0;
+        for (InlineImageData.Source source : sources) {
+            result.append(html, cursor, source.getStart());
+            result.append("src=\"").append(source.getValue()).append('"');
+            cursor = source.getEnd();
+        }
+        result.append(html, cursor, html.length());
+        return result.toString();
+    }
+
+    private String replaceInlineImages(String html,
+            List<InlineImageData.Source> sources,
+            Map<String, InlineImageData.Image> images,
+            Map<String, String> mediaUrls, MediaFileDirectory directory,
+            MediaFileManager mediaManager, List<MediaFile> createdImages)
+            throws WebloggerException {
+        if (html == null || sources.isEmpty()) {
+            return html;
+        }
+        StringBuilder result = new StringBuilder(html.length());
+        int cursor = 0;
+        for (InlineImageData.Source source : sources) {
+            String url = mediaUrls.get(source.getValue());
+            if (url == null) {
+                InlineImageData.Image image = images.get(source.getValue());
+                String name = "entry-image-" + UUID.randomUUID() + "."
+                        + image.getExtension();
+                RollerMessages errors = new RollerMessages();
+                if (!WebloggerFactory.getWeblogger().getFileContentManager()
+                        .canSave(getActionWeblog(), name, image.getContentType(),
+                                image.getBytes().length, errors)) {
+                    addMediaErrors(errors);
+                    return html;
+                }
+                MediaFile media = new MediaFile();
+                media.setName(name);
+                media.setWeblog(getActionWeblog());
+                media.setDirectory(directory);
+                media.setLength(image.getBytes().length);
+                media.setContentType(image.getContentType());
+                media.setInputStream(new ByteArrayInputStream(image.getBytes()));
+                // Track the upload before creating it: createMediaFile commits
+                // the record before it writes the file, so a failed write can
+                // still leave a record to remove.
+                createdImages.add(media);
+                mediaManager.createMediaFile(getActionWeblog(), media, errors);
+                if (errors.getErrorCount() > 0) {
+                    addMediaErrors(errors);
+                    return html;
+                }
+                url = media.getPermalink();
+                mediaUrls.put(source.getValue(), url);
+            }
+            result.append(html, cursor, source.getStart());
+            result.append("src=\"").append(url).append('"');
+            cursor = source.getEnd();
+        }
+        result.append(html, cursor, html.length());
+        return result.toString();
+    }
+
+    private void addMediaErrors(RollerMessages errors) {
+        for (Iterator<RollerMessage> it = errors.getErrors(); it.hasNext();) {
+            RollerMessage message = it.next();
+            String[] args = message.getArgs();
+            addError(message.getKey(), args == null
+                    ? Collections.emptyList() : java.util.Arrays.asList(args));
+        }
+    }
+
+    private void removeCreatedImages(MediaFileManager mediaManager,
+            List<MediaFile> createdImages) {
+        for (MediaFile image : createdImages) {
+            try {
+                // Look the upload up again: the save may have rolled back and
+                // released the session, and an attempted upload may never
+                // have been stored.
+                MediaFile stored = mediaManager.getMediaFile(image.getId());
+                if (stored != null) {
+                    mediaManager.removeMediaFile(stored.getWeblog(), stored);
+                }
+            } catch (WebloggerException cleanupError) {
+                log.warn("Could not remove an image from a failed entry save", cleanupError);
+            }
+        }
+        if (!createdImages.isEmpty()) {
+            try {
+                WebloggerFactory.getWeblogger().flush();
+            } catch (WebloggerException cleanupError) {
+                log.warn("Could not flush image cleanup after a failed entry save",
+                        cleanupError);
+            }
+        }
+    }
+
+    EnclosureMetadata validateEnclosure() {
+        if (StringUtils.isEmpty(getBean().getEnclosureURL())) {
+            return null;
+        }
+        try {
+            return EnclosureMetadata.of(
+                    getBean().getEnclosureURL(),
+                    getBean().getEnclosureType(),
+                    getBean().getEnclosureLength());
+        } catch (EnclosureMetadata.ValidationException invalid) {
+            if (submittedEnclosureMatchesStored()) {
+                getBean().setEnclosureURL(null);
+                getBean().setEnclosureType(null);
+                getBean().setEnclosureLength(null);
+                addMessage("weblogEdit.enclosureMetadataRemoved");
+            } else {
+                switch (invalid.getField()) {
+                    case URL:
+                        addError("weblogEdit.enclosureURLInvalid");
+                        break;
+                    case TYPE:
+                        addError("weblogEdit.enclosureTypeInvalid");
+                        break;
+                    case LENGTH:
+                        addError("weblogEdit.enclosureLengthInvalid");
+                        break;
+                    default:
+                        throw invalid;
+                }
+            }
+            return null;
+        }
+    }
+
+    private boolean submittedEnclosureMatchesStored() {
+        return "entryEdit".equals(actionName) && getEntry() != null
+                && StringUtils.equals(getBean().getEnclosureURL(),
+                        getEntry().findEntryAttribute("att_mediacast_url"))
+                && StringUtils.equals(getBean().getEnclosureType(),
+                        getEntry().findEntryAttribute("att_mediacast_type"))
+                && StringUtils.equals(getBean().getEnclosureLength(),
+                        getEntry().findEntryAttribute("att_mediacast_length"));
+    }
+
+    private String failedSave() {
         if ("entryAdd".equals(actionName)) {
-            // if here on entryAdd, nothing saved, so reset status to null (unsaved)
+            // If here on entryAdd, nothing saved, so reset status to null (unsaved).
             getBean().setStatus(null);
         }
         return INPUT;
@@ -327,8 +614,19 @@ public final class EntryEdit extends UIAction {
         this.entry = entry;
     }
 
+    private boolean requireEntry() {
+        if (entry == null) {
+            addError("weblogEntry.notFound");
+            return false;
+        }
+        return true;
+    }
+
     @SkipValidation
     public String firstSave() {
+        if (!requireEntry()) {
+            return ERROR;
+        }
         addStatusMessage(getEntry().getStatus());
         return execute();
     }
@@ -356,71 +654,7 @@ public final class EntryEdit extends UIAction {
                 .getUrlStrategy()
                 .getPreviewURLStrategy(null)
                 .getWeblogEntryURL(getActionWeblog(), null,
-                        getEntry().getAnchor(), true);
-    }
-
-    public String getTrackbackUrl() {
-        return trackbackUrl;
-    }
-
-    public void setTrackbackUrl(String trackbackUrl) {
-        this.trackbackUrl = trackbackUrl;
-    }
-
-    /**
-     * Send trackback to a specific url.
-     */
-    @SkipValidation
-    public String trackback() {
-
-        // make sure we have an entry to edit and it belongs to the action
-        // weblog
-        if (getEntry() == null) {
-            return ERROR;
-        } else if (!getEntry().getWebsite().equals(getActionWeblog())) {
-            return DENIED;
-        }
-
-        if (!StringUtils.isEmpty(getTrackbackUrl())) {
-            RollerMessages results = null;
-            try {
-                Trackback trackback = new Trackback(getEntry(),
-                        getTrackbackUrl());
-                results = trackback.send();
-            } catch (TrackbackNotAllowedException ex) {
-                addError("error.trackbackNotAllowed");
-            } catch (Exception e) {
-                log.error("Error sending trackback", e);
-                // TODO: error handling
-                addError("error.general", e.getMessage());
-            }
-
-            if (results != null) {
-                for (Iterator<RollerMessage> mit = results.getMessages(); mit.hasNext();) {
-                    RollerMessage msg = mit.next();
-                    if (msg.getArgs() == null) {
-                        addMessage(msg.getKey());
-                    } else {
-                        addMessage(msg.getKey(), Arrays.asList(msg.getArgs()));
-                    }
-                }
-
-                for (Iterator<RollerMessage> eit = results.getErrors(); eit.hasNext();) {
-                    RollerMessage err = eit.next();
-                    if (err.getArgs() == null) {
-                        addError(err.getKey());
-                    } else {
-                        addError(err.getKey(), Arrays.asList(err.getArgs()));
-                    }
-                }
-            }
-
-            // reset trackback url
-            setTrackbackUrl(null);
-
-        }
-
-        return INPUT;
+                        getEntry().getAnchor(), false);
     }
 
     /**

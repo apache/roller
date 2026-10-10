@@ -32,7 +32,7 @@
 
 <p>
     <s:text name="installer.aboutTheException" />
-    [<s:property value="getRootCauseException().getClass().getName()" />]
+    [<s:property value="rootCauseExceptionName" />]
 </p>
 
 <p><s:text name="installer.heresTheStackTrace" /></p>

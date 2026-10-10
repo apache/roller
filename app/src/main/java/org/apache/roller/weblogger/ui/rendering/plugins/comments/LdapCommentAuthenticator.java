@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.I18nMessages;
 import org.springframework.util.StringUtils;
@@ -62,7 +63,6 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
     @Override
 	public String getHtml(HttpServletRequest request) {
 		String ldapUser = "";
-		String ldapPass  = "";
 		HttpSession session = request.getSession(true);
 		if (session.getAttribute("ldapUser") == null) {
 			session.setAttribute("ldapUser", "");
@@ -70,9 +70,7 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 		} else {
 			// preserve user data
 			String ldapUserTemp = request.getParameter("ldapUser");
-			String ldapPassTemp = request.getParameter("ldapPass");
 			ldapUser = ldapUserTemp != null ? ldapUserTemp : "";
-			ldapPass = ldapPassTemp != null ? ldapPassTemp : "";
 		}
 
 		Locale locale = CommentAuthenticatorUtils.getLocale(request);
@@ -84,14 +82,13 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 		sb.append("</p>");
 		sb.append("<p>");
 		sb.append("<input name=\"ldapUser\" value=\"");
-		sb.append(ldapUser + "\">");
+		sb.append(StringEscapeUtils.escapeHtml4(ldapUser)).append("\">");
 		sb.append("</p>");
 		sb.append("<p>");
 		sb.append(messages.getString("comments.ldapAuthenticatorPassword"));
 		sb.append("</p>");
 		sb.append("<p>");
-		sb.append("<input type=\"password\" name=\"ldapPass\" value=\"");
-		sb.append(ldapPass + "\">");
+		sb.append("<input type=\"password\" name=\"ldapPass\">");
 		sb.append("</p>");
 
 		return sb.toString();

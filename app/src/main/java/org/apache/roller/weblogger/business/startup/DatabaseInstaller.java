@@ -48,6 +48,9 @@ public class DatabaseInstaller {
     // the name of the property which holds the dbversion value
     private static final String DBVERSION_PROP = "roller.database.version";
 
+    // Update this when adding a database or data migration step below.
+    private static final int LATEST_DATABASE_UPGRADE_VERSION = 610;
+
 
     public DatabaseInstaller(DatabaseProvider dbProvider, DatabaseScriptProvider scriptProvider) {
         db = dbProvider;
@@ -123,9 +126,12 @@ public class DatabaseInstaller {
             }
 
             return false;
-        } else {
-            return databaseVersion < desiredVersion;
         }
+
+        // A product release does not always change the database. Do not send
+        // administrators through the upgrade UI for a version-only change.
+        int requiredDatabaseVersion = Math.min(desiredVersion, LATEST_DATABASE_UPGRADE_VERSION);
+        return databaseVersion < requiredDatabaseVersion;
     }
 
 
@@ -226,34 +232,49 @@ public class DatabaseInstaller {
 
             log.info("Database is old, beginning upgrade to version "+myVersion);
 
+            // track whether any upgrade step actually ran, so the
+            // "no table changes" message stays correct without a
+            // hardcoded version constant
+            boolean schemaUpgraded = false;
+
             // iterate through each upgrade as needed
             // to add to the upgrade sequence simply add a new "if" statement
-            // for whatever version needed and then define a new method upgradeXXX()
+            // for whatever version needed, define a new method upgradeXXX(),
+            // and set schemaUpgraded = true
 
             if(dbversion < 400) {
                 upgradeTo400(con, runScripts);
                 dbversion = 400;
+                schemaUpgraded = true;
             }
             if(dbversion < 500) {
                 upgradeTo500(con, runScripts);
                 dbversion = 500;
+                schemaUpgraded = true;
             }
             if(dbversion < 510) {
                 upgradeTo510(con, runScripts);
                 dbversion = 510;
+                schemaUpgraded = true;
             }
             if(dbversion < 520) {
                 upgradeTo520(con, runScripts);
                 dbversion = 520;
+                schemaUpgraded = true;
             }
             if(dbversion < 610) {
                 upgradeTo610(con, runScripts);
                 dbversion = 610;
+                schemaUpgraded = true;
             }
 
             // make sure the database version is the exact version
             // we are upgrading too.
             updateDatabaseVersion(con, myVersion);
+            if (!schemaUpgraded) {
+                successMessage("No table changes were required.");
+            }
+            successMessage("Database version updated to " + myVersion + ".");
 
         } catch (SQLException e) {
             throw new StartupException("ERROR obtaining connection");
@@ -795,9 +816,19 @@ public class DatabaseInstaller {
 
     /**
      * Return true if named table exists in database.
+     *
+     * The lookup is scoped to the catalog the connection is actually pointed
+     * at. A null catalog means "every catalog on the server" to some drivers —
+     * MySQL Connector/J 8 among them, which changed the default of
+     * nullCatalogMeansCurrent from true to false — and an unscoped lookup then
+     * finds Roller tables belonging to a different database on the same
+     * server. An empty schema would be mistaken for an installed one, and
+     * Roller would skip table creation and fail later looking for tables that
+     * were never created. Drivers that do not use catalogs return null here,
+     * which is the same query as before.
      */
     private boolean tableExists(Connection con, String tableName) throws SQLException {
-        ResultSet rs = con.getMetaData().getTables(null, null, "%", null);
+        ResultSet rs = con.getMetaData().getTables(con.getCatalog(), null, "%", null);
         while (rs.next()) {
             if (tableName.equalsIgnoreCase(rs.getString("TABLE_NAME").toLowerCase())) {
                 return true;
@@ -847,7 +878,8 @@ public class DatabaseInstaller {
     }
 
 
-    private int parseVersionString(String vstring) {
+    // package-private so tests can parse versions exactly as the installer does
+    static int parseVersionString(String vstring) {
         int myversion = 0;
 
         // NOTE: this assumes a maximum of 3 digits for the version number

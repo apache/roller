@@ -29,6 +29,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.junit.jupiter.api.Test;
 
 /**
@@ -132,5 +134,19 @@ public class AtomReaderTest {
             + "<!DOCTYPE entry [ <!ENTITY xxe SYSTEM 'file:///etc/passwd'> ]>"
             + "<entry xmlns='http://www.w3.org/2005/Atom'><title>&xxe;</title></entry>";
         assertThrows(AtomException.class, () -> parse(xml));
+    }
+
+    @Test
+    public void testDoctypeIsRefusedAsBadRequest() {
+        String xml = "<?xml version='1.0'?><!DOCTYPE entry>"
+            + "<entry xmlns='http://www.w3.org/2005/Atom'><title>t</title></entry>";
+        AtomException ex = assertThrows(AtomException.class, () -> parse(xml));
+        assertEquals(HttpServletResponse.SC_BAD_REQUEST, ex.getStatus());
+    }
+
+    @Test
+    public void testMalformedEntryIsBadRequest() {
+        AtomException ex = assertThrows(AtomException.class, () -> parse("<entry><title></entry>"));
+        assertEquals(HttpServletResponse.SC_BAD_REQUEST, ex.getStatus());
     }
 }

@@ -25,6 +25,8 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -34,8 +36,9 @@ import javax.xml.stream.XMLStreamReader;
  * Parses an incoming AtomPub request body (an atom:entry) into the wire model
  * using the JDK StAX API. Replaces ROME's Atom parser.
  *
- * <p>DTD processing and external entities are disabled to protect against XXE
- * attacks.
+ * <p>DTD processing and external entities are disabled, and an entry that
+ * declares a DOCTYPE is refused, to protect against XXE attacks. Parse errors
+ * are reported as HTTP 400.
  */
 public class AtomReader {
 
@@ -73,7 +76,12 @@ public class AtomReader {
             r = factory.createXMLStreamReader(in, "UTF-8");
             AtomEntry entry = new AtomEntry();
             while (r.hasNext()) {
-                if (r.next() != XMLStreamConstants.START_ELEMENT) {
+                int event = r.next();
+                if (event == XMLStreamConstants.DTD) {
+                    throw new AtomException("DOCTYPE is not allowed in an Atom entry",
+                            HttpServletResponse.SC_BAD_REQUEST, null);
+                }
+                if (event != XMLStreamConstants.START_ELEMENT) {
                     continue;
                 }
                 String ns = r.getNamespaceURI();
@@ -113,7 +121,8 @@ public class AtomReader {
             }
             return entry;
         } catch (XMLStreamException ex) {
-            throw new AtomException("Error parsing Atom entry", ex);
+            throw new AtomException("Error parsing Atom entry",
+                    HttpServletResponse.SC_BAD_REQUEST, ex);
         } finally {
             if (r != null) {
                 try {

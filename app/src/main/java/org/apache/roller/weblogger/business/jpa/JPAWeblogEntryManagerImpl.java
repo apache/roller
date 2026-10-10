@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
@@ -762,7 +763,82 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public WeblogEntry getWeblogEntry(String id) throws WebloggerException {
         return (WeblogEntry)strategy.load(WeblogEntry.class, id);
     }
-    
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public WeblogEntry getWeblogEntry(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        if (id == null) {
+            return null;
+        }
+
+        TypedQuery<WeblogEntry> q = strategy.getNamedQuery(
+                "WeblogEntry.getByWebsite&Id", WeblogEntry.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public WeblogCategory getWeblogCategory(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        if (id == null) {
+            return null;
+        }
+
+        TypedQuery<WeblogCategory> q = strategy.getNamedQuery(
+                "WeblogCategory.getByWeblog&Id", WeblogCategory.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public WeblogEntryComment getComment(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        if (id == null) {
+            return null;
+        }
+
+        TypedQuery<WeblogEntryComment> q = strategy.getNamedQuery(
+                "WeblogEntryComment.getByWebsite&Id", WeblogEntryComment.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
     /**
      * @inheritDoc
      */
@@ -971,7 +1047,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             for (Object obj : queryResults) {
                 Object[] row = (Object[]) obj;
                 TagStat t = new TagStat();
-                t.setName((String) row[0]);
+                // filter names stored before the current tag character rules
+                t.setName(Utilities.stripInvalidTagCharacters((String) row[0]));
                 t.setCount(((Number) row[1]).intValue());
 
                 min = Math.min(min, t.getCount());
@@ -1041,7 +1118,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             for (Object obj : queryResults) {
                 Object[] row = (Object[]) obj;
                 TagStat ce = new TagStat();
-                ce.setName((String) row[0]);
+                // filter names stored before the current tag character rules
+                ce.setName(Utilities.stripInvalidTagCharacters((String) row[0]));
                 // The JPA query retrieves SUM(w.total) always as long
                 ce.setCount(((Long) row[1]).intValue());
                 results.add(ce);

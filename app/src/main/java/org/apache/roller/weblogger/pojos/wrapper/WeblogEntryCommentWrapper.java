@@ -38,12 +38,17 @@ public final class WeblogEntryCommentWrapper {
     
     // url strategy to use for any url building
     private final URLStrategy urlStrategy;
+
+    private final String safeUrl;
     
     
     // this is private so that we can force the use of the .wrap(pojo) method
     private WeblogEntryCommentWrapper(WeblogEntryComment toWrap, URLStrategy strat) {
         this.pojo = toWrap;
         this.urlStrategy = strat;
+        String normalizedUrl = toWrap.getSafeUrl();
+        this.safeUrl = normalizedUrl == null
+                ? "" : StringEscapeUtils.escapeHtml4(normalizedUrl);
     }
     
     
@@ -93,7 +98,7 @@ public final class WeblogEntryCommentWrapper {
      * Value is always html escaped.
      */
     public String getUrl() {
-        return StringEscapeUtils.escapeHtml4(this.pojo.getUrl());
+        return safeUrl;
     }
     
     
@@ -147,7 +152,7 @@ public final class WeblogEntryCommentWrapper {
     
     
     /**
-     * Get the http referrer of the comment poster, used for trackbacks.
+     * Get the HTTP referrer of the comment poster.
      *
      * Value is always html escaped.
      */

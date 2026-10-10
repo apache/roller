@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -43,6 +44,8 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.xmlrpc.XmlRpcException;
@@ -82,7 +85,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     BlogId: " + blogid);
         mLogger.debug("     UserId: " + userid);
         
-        Weblog website = validate(blogid, userid,password);
+        Weblog website = validate(blogid, userid, password,
+                WeblogPermission.EDIT_DRAFT);
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             Hashtable<String, Object> result = new Hashtable<>();
@@ -129,9 +133,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         
         Weblogger roller = WebloggerFactory.getWeblogger();
         WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
-        WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
-        
-        validate(entry.getWebsite().getHandle(), userid,password);
+        User user = validateUser(userid, password);
+        WeblogEntry entry = validateEntry(postid, user,
+                publish ? WeblogPermission.POST : null);
         
         Hashtable<String, ?> postcontent = struct;
         String description = (String)postcontent.get("description");
@@ -227,7 +231,9 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("    Publish: " + publish);
         
-        Weblog website = validate(blogid, userid, password);
+        User user = validateUser(userid, password);
+        Weblog website = validateWeblog(blogid, user,
+                publish ? WeblogPermission.POST : WeblogPermission.EDIT_DRAFT);
         
         Hashtable<String, ?> postcontent = struct;
         String description = (String)postcontent.get("description");
@@ -252,7 +258,6 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
-            User user = roller.getUserManager().getUserByUserName(userid);
             Timestamp current = new Timestamp(System.currentTimeMillis());
             
             WeblogEntry entry = new WeblogEntry();
@@ -330,14 +335,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     PostId: " + postid);
         mLogger.debug("     UserId: " + userid);
         
-        Weblogger roller = WebloggerFactory.getWeblogger();
-        WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
-        WeblogEntry entry = weblogMgr.getWeblogEntry(postid);
-        
-        if (entry == null) {
-            throw new XmlRpcException(INVALID_POSTID, INVALID_POSTID_MSG);
-        }
-        validate(entry.getWebsite().getHandle(), userid, password);
+        User user = validateUser(userid, password);
+        WeblogEntry entry = validateEntry(postid, user, null);
         
         try {
             return createPostStruct(entry, userid);
@@ -362,7 +361,8 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("   Password: *********");
         
-        Weblog website = validate(blogid, userid, password);
+        Weblog website = validate(blogid, userid, password,
+                WeblogPermission.POST);
         try {
             String name = (String) struct.get("name");
             name = name.replace("/","_");
@@ -381,12 +381,18 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             mf.setDirectory(root);
             mf.setWeblog(website);
             mf.setName(name);
-            mf.setContentType(type);
             mf.setInputStream(new ByteArrayInputStream(bits));
             mf.setLength(bits.length);
             String fileLink = mf.getPermalink();
             
             RollerMessages errors = new RollerMessages();
+            String declaredType = MediaTypePolicy.normalizeType(type);
+            if (!roller.getFileContentManager().canSave(website, name,
+                    declaredType, bits.length, errors)) {
+                throw new Exception(errors.toString());
+            }
+            mf.setContentType(MediaTypePolicy.storedTypeFor(name, declaredType,
+                    RollerContext.getServletContext()::getMimeType));
             fmgr.createMediaFile(website, mf, errors);
             
             if (errors.getErrorCount() > 0) {
@@ -425,21 +431,21 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         mLogger.debug("     UserId: " + userid);
         mLogger.debug("     Number: " + numposts);
         
-        Weblog website = validate(blogid, userid,password);
+        User user = validateUser(userid, password);
+        Weblog website = validateWeblog(blogid, user,
+                WeblogPermission.EDIT_DRAFT);
         
         try {
             Vector<Object> results = new Vector<>();
-            
-            Weblogger roller = WebloggerFactory.getWeblogger();
-            WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
             if (website != null) {
-                WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
-                wesc.setWeblog(website);
-                wesc.setSortBy(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME);
-                wesc.setMaxResults(numposts);
-                List<WeblogEntry> entries = weblogMgr.getWeblogEntries(wesc);
+                List<WeblogEntry> entries = getRecentEntries(website, user,
+                        numposts, WeblogEntrySearchCriteria.SortBy.UPDATE_TIME,
+                        null);
 
                 for (WeblogEntry entry : entries) {
+                    if (!entry.hasWritePermissions(user)) {
+                        continue;
+                    }
                     results.addElement(createPostStruct(entry, userid));
                 }
             }

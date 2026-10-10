@@ -177,11 +177,19 @@
 </s:form>
 
 
+<div id="template-edit-data" style="display:none"
+     data-weblog-url="<s:property value="actionWeblog.absoluteURL" />"
+     data-original-link="<s:property value="bean.link" />"
+     data-template-type="<s:property value="bean.type" />"></div>
+
 <script type="text/javascript">
 
-    var weblogURL = '<s:property value="actionWeblog.absoluteURL" />';
-    var originalLink = '<s:property value="bean.link" />';
-    var type = '<s:property value="bean.type" />';
+    // Read from escaped data attributes rather than generated string
+    // literals; the template link is author-supplied.
+    var templateData = $('#template-edit-data');
+    var weblogURL = templateData.attr('data-weblog-url');
+    var originalLink = templateData.attr('data-original-link');
+    var type = templateData.attr('data-template-type');
 
     $(document).ready(function () {
 
@@ -199,7 +207,7 @@
         if (link !== "") {
             $("#no_link").hide();
             $("#good_link").show();
-            $("#linkPreview").html(link);
+            $("#linkPreview").text(link);
         } else {
             $("#good_link").hide();
             $("#no_link").show();

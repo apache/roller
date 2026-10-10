@@ -18,6 +18,7 @@
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.util.StringTokenizer;
+import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.oauth.OAuthAccessor;
@@ -88,6 +89,7 @@ public class RollerAtomHandler {
     protected User user = null;
     protected int maxEntries = 20;
     protected String atomURL = null;
+    private final HttpServletResponse response;
 
     protected static final boolean THROTTLE;
 
@@ -107,14 +109,23 @@ public class RollerAtomHandler {
      * then user's name, otherwise it will return null.
      */
     public RollerAtomHandler(HttpServletRequest request, HttpServletResponse response) {
+        this.response = response;
         roller = WebloggerFactory.getWeblogger();
 
         String userName;
-        if ("oauth".equals(WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth"))) {
+        String authenticationMethod = WebloggerRuntimeConfig
+                .getProperty("webservices.atomPubAuth");
+        if (authenticationMethod != null) {
+            authenticationMethod = authenticationMethod.trim().toLowerCase(Locale.ROOT);
+        }
+        if ("oauth".equals(authenticationMethod)) {
             userName = authenticationOAUTH(request, response);
-        } else {
-            // default to basic
+        } else if ("basic".equals(authenticationMethod)) {
             userName = authenticateBASIC(request);
+        } else {
+            log.warn("Unsupported AtomPub authentication method '" + authenticationMethod
+                    + "'; expected 'basic' or 'oauth'. Authentication denied.");
+            userName = null;
         }
 
         if (userName != null) {
@@ -225,7 +236,7 @@ public class RollerAtomHandler {
      * Expects pathInfo of form /blog-name/resource/path/name
      */
     public AtomMediaResource getMediaResource(AtomRequest areq) throws AtomException {
-        MediaCollection mcol = new MediaCollection(user, atomURL);
+        MediaCollection mcol = new MediaCollection(user, atomURL, response);
         return mcol.getMediaResource(areq);
     }
 
@@ -289,7 +300,18 @@ public class RollerAtomHandler {
      * True if URL is a entry URI.
      */
     public boolean isEntryURI(AtomRequest areq) {
-        String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
+        return isEntryPath(areq.getPathInfo());
+    }
+
+    /**
+     * True if the path info names an entry. Shared with RollerAtomServlet so
+     * both agree on which requests carry an entry body.
+     */
+    static boolean isEntryPath(String path) {
+        String[] pathInfo = StringUtils.split(path, "/");
+        if (pathInfo == null) {
+            return false;
+        }
         if (pathInfo.length > 2 && pathInfo[1].equals("entry")) {
             return true;
         }

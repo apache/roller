@@ -22,12 +22,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.roller.weblogger.TestUtils;
@@ -44,7 +48,9 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 /**
  * Integration tests that exercise the AtomPub server handlers against a real
@@ -221,9 +227,17 @@ public class RollerAtomProtocolTest {
         mediaIn.setContent(content);
         mediaIn.setTitle("snapshot");
 
-        AtomEntry created = mcol.postMedia(
-                request("/" + HANDLE + "/resources/atomuploads", "image/png", "snapshot", bytes),
-                mediaIn);
+        // MediaCollection derives the stored type through the servlet context
+        ServletContext servletContext = mock(ServletContext.class);
+        when(servletContext.getMimeType(anyString())).thenReturn("image/png");
+        AtomEntry created;
+        try (MockedStatic<RollerContext> rollerContext =
+                mockStatic(RollerContext.class, CALLS_REAL_METHODS)) {
+            rollerContext.when(RollerContext::getServletContext).thenReturn(servletContext);
+            created = mcol.postMedia(
+                    request("/" + HANDLE + "/resources/atomuploads", "image/png", "snapshot", bytes),
+                    mediaIn);
+        }
 
         assertNotNull(created.getLinkHref("edit"));
         assertNotNull(created.getLinkHref("edit-media"));

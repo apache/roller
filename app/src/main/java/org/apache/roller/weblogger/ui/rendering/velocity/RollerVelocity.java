@@ -61,10 +61,8 @@ public class RollerVelocity {
             // Development theme reloading
             Boolean themeReload = WebloggerConfig.getBooleanProperty("themes.reload.mode");
             
-            // Override for theme reloading
+            // Override webapp and macro settings for theme reloading
             if (themeReload) {
-                velocityProps.setProperty("resource.loader.class.cache", "false");
-                velocityProps.setProperty("resource.loader.class.modification_check_interval", "2");
                 velocityProps.setProperty("resource.loader.webapp.cache", "false");
                 velocityProps.setProperty("resource.loader.webapp.modification_check_interval", "2");
                 velocityProps.setProperty("velocimacro.library.autoreload", "true");

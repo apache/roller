@@ -23,6 +23,7 @@ import java.sql.Timestamp;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.roller.util.UUIDGenerator;
+import org.apache.roller.weblogger.util.CommentAuthorUrl;
 
 
 /**
@@ -129,6 +130,13 @@ public class WeblogEntryComment implements Serializable {
      */
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    /**
+     * URL of the comment writer when it can be safely rendered as a link.
+     */
+    public String getSafeUrl() {
+        return CommentAuthorUrl.normalize(this.url);
     }
     
     
