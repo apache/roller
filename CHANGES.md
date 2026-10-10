@@ -13,6 +13,10 @@
     categories inline, as before, and also references that document.
   - Comment moderation: list, change status, delete.
 
+- **New AtomPub Guide** (`docs/roller-atompub-guide.adoc`). It documents
+  every AtomPub URI, permission, element and status code, with examples
+  that the test suite checks against the code.
+
 ### Behaviour changes worth reading before upgrading
 
 - **AtomPub no longer uses ROME Propono.** Roller now has its own AtomPub
