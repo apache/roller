@@ -22,7 +22,6 @@ import java.io.ByteArrayInputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.rometools.propono.atom.server.AtomMediaResource;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.junit.jupiter.api.Test;

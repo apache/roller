@@ -18,20 +18,14 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collections;
-import java.util.List;
 
-import com.rometools.propono.atom.server.AtomException;
-import com.rometools.propono.atom.server.AtomNotFoundException;
-import com.rometools.propono.atom.server.AtomRequest;
-import com.rometools.rome.feed.atom.Content;
-import com.rometools.rome.feed.atom.Entry;
-import com.rometools.rome.feed.atom.Feed;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -104,7 +98,7 @@ class MediaCollectionPathTest {
 
     @Test
     void namedCollectionIsLookedUpByItsName() throws Exception {
-        Feed feed = collection.getCollection(request("/blog/resources/default"));
+        AtomFeed feed = collection.getCollection(request("/blog/resources/default"));
 
         assertTrue(feed.getEntries().isEmpty());
         verify(files).getMediaFileDirectoryByName(weblog, "default");
@@ -146,6 +140,50 @@ class MediaCollectionPathTest {
         verify(files, never()).createMediaFile(any(), any(), any());
     }
 
+    @Test
+    void deleteThroughTheEditUriRemovesTheMediaFile() throws Exception {
+        MediaFile file = mock(MediaFile.class);
+        when(files.getMediaFileByPath(weblog, "default/a.png")).thenReturn(file);
+
+        collection.deleteEntry(request("/blog/resource/default/a.png.media-link"));
+
+        verify(files).removeMediaFile(weblog, file);
+    }
+
+    @Test
+    void deleteOfAnUnknownFileIsNotFound() throws Exception {
+        assertThrows(AtomNotFoundException.class,
+                () -> collection.deleteEntry(request("/blog/resource/default/missing.png.media-link")));
+        verify(files, never()).removeMediaFile(any(), any());
+    }
+
+    @Test
+    void mediaLinkEntryOfAnUnknownWeblogIsNotFound() {
+        assertThrows(AtomNotFoundException.class,
+                () -> collection.getEntry(request("/nosuchblog/resource/default/a.png.media-link")));
+    }
+
+    @Test
+    void mediaLinkEntryNeedsPermissionOnTheWeblog() throws Exception {
+        when(weblog.hasUserPermission(any(), eq(WeblogPermission.POST))).thenReturn(false);
+
+        assertThrows(AtomNotAuthorizedException.class,
+                () -> collection.getEntry(request("/blog/resource/default/a.png.media-link")));
+        verify(files, never()).getMediaFileByPath(any(), anyString());
+    }
+
+    @Test
+    void getOfAnUnknownMediaResourceIsNotFound() {
+        assertThrows(AtomNotFoundException.class,
+                () -> collection.getMediaResource(request("/blog/resource/default/missing.png")));
+    }
+
+    @Test
+    void putOfAnUnknownMediaResourceIsNotFound() {
+        assertThrows(AtomNotFoundException.class,
+                () -> collection.putMedia(request("/blog/resource/default/missing.png")));
+    }
+
     private void refuseUploads() throws Exception {
         when(content.canSave(any(), anyString(), anyString(), anyLong(), any()))
                 .thenAnswer(call -> {
@@ -161,12 +199,12 @@ class MediaCollectionPathTest {
         return request;
     }
 
-    private static Entry mediaEntry(String title) {
-        Content body = new Content();
+    private static AtomEntry mediaEntry(String title) {
+        AtomContent body = new AtomContent();
         body.setType("image/png");
-        Entry entry = new Entry();
+        AtomEntry entry = new AtomEntry();
         entry.setTitle(title);
-        entry.setContents(List.of(body));
+        entry.setContent(body);
         return entry;
     }
 }

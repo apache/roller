@@ -16,42 +16,36 @@
 * directory of this distribution.
 */
 package org.apache.roller.weblogger.webservices.atomprotocol;
-import com.rometools.propono.atom.common.Categories;
-import com.rometools.propono.atom.server.AtomRequest;
+
 import java.util.StringTokenizer;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.roller.util.RollerConstants;
-import org.apache.roller.weblogger.business.Weblogger;
-import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.Weblog;
-import com.rometools.propono.atom.common.AtomService;
-import com.rometools.propono.atom.server.AtomException;
-import com.rometools.propono.atom.server.AtomHandler;
-import com.rometools.propono.atom.server.AtomMediaResource;
-import com.rometools.propono.atom.server.AtomNotFoundException;
-import com.rometools.rome.feed.atom.Entry;
-import com.rometools.rome.feed.atom.Feed;
 import javax.servlet.http.HttpServletResponse;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthMessage;
 import net.oauth.server.OAuthServlet;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.OAuthManager;
+import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 
 
 /**
- * Weblogger's ROME Propono-based Atom Protocol implementation.
+ * Weblogger's Atom Publishing Protocol implementation. This implementation uses
+ * only the JDK XML (StAX) APIs for serialization and parsing &mdash; it does not
+ * depend on ROME or Propono.
  *
  * Each Weblogger workspace has two collections, one that accepts entries and
  * that accepts everything. The entries collection represents the weblog
@@ -90,7 +84,7 @@ import org.apache.roller.weblogger.ui.core.RollerContext;
  *
  * @author David M Johnson
  */
-public class RollerAtomHandler implements AtomHandler {
+public class RollerAtomHandler {
     protected Weblogger roller = null;
     protected User user = null;
     protected int maxEntries = 20;
@@ -145,10 +139,14 @@ public class RollerAtomHandler implements AtomHandler {
         atomURL = WebloggerFactory.getWeblogger().getUrlStrategy().getAtomProtocolURL(true);
     }
 
+    /** The absolute AtomPub URL that this server's links start with. */
+    String getAtomURL() {
+        return atomURL;
+    }
+
     /**
      * Return weblogHandle of authenticated user or null if there is none.
      */
-    @Override
     public String getAuthenticatedUsername() {
         String ret = null;
         if (this.user != null) {
@@ -163,10 +161,9 @@ public class RollerAtomHandler implements AtomHandler {
      * Return Atom service document for site, getting blog-name from pathInfo.
      * The workspace will contain collections for entries, categories and resources.
      */
-    @Override
-    public AtomService getAtomService(AtomRequest areq) throws AtomException {
+    public AtomServiceDoc getAtomService(AtomRequest areq) throws AtomException {
         try {
-            return new RollerAtomService(user, atomURL);
+            return new RollerAtomService(user, atomURL).getServiceDoc();
         } catch (WebloggerException ex) {
             log.error("Unable to create Service Document", ex);
             throw new AtomException("ERROR creating Service Document", ex);
@@ -178,8 +175,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Create entry in the entry collection (a Weblogger blog has only one).
      */
-    @Override
-    public Entry postEntry(AtomRequest areq, Entry entry) throws AtomException {
+    public AtomEntry postEntry(AtomRequest areq, AtomEntry entry) throws AtomException {
         EntryCollection ecol = new EntryCollection(user, atomURL);
         return ecol.postEntry(areq, entry);
     }
@@ -187,12 +183,8 @@ public class RollerAtomHandler implements AtomHandler {
 
     /**
      * Create new resource in generic collection (a Weblogger blog has only one).
-     * TODO: can we avoid saving temporary file?
-     * TODO: do we need to handle mutli-part MIME uploads?
-     * TODO: use Jakarta Commons File-upload?
      */
-    @Override
-    public Entry postMedia(AtomRequest areq, Entry entry)
+    public AtomEntry postMedia(AtomRequest areq, AtomEntry entry)
             throws AtomException {
         MediaCollection mcol = new MediaCollection(user, atomURL);
         return mcol.postMedia(areq, entry);
@@ -211,8 +203,7 @@ public class RollerAtomHandler implements AtomHandler {
      *    /<blog-name>/resources/offset
      * </pre>
      */
-    @Override
-    public Feed getCollection(AtomRequest areq) throws AtomException {
+    public AtomFeed getCollection(AtomRequest areq) throws AtomException {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
 
         if (pathInfo.length > 0 && pathInfo[1].equals("entries")) {
@@ -227,17 +218,10 @@ public class RollerAtomHandler implements AtomHandler {
     }
 
 
-    @Override
-    public Categories getCategories(AtomRequest arg0) throws AtomException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-
     /**
      * Retrieve entry, URI like this /blog-name/entry/id
      */
-    @Override
-    public Entry getEntry(AtomRequest areq) throws AtomException {
+    public AtomEntry getEntry(AtomRequest areq) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         // URI is /blogname/entries/entryid
@@ -256,7 +240,6 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Expects pathInfo of form /blog-name/resource/path/name
      */
-    @Override
     public AtomMediaResource getMediaResource(AtomRequest areq) throws AtomException {
         MediaCollection mcol = new MediaCollection(user, atomURL, response);
         return mcol.getMediaResource(areq);
@@ -268,8 +251,7 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Update entry, URI like this /blog-name/entry/id
      */
-    @Override
-    public void putEntry(AtomRequest areq, Entry entry) throws AtomException {
+    public void putEntry(AtomRequest areq, AtomEntry entry) throws AtomException {
         EntryCollection ecol = new EntryCollection(user, atomURL);
         ecol.putEntry(areq, entry);
     }
@@ -279,7 +261,6 @@ public class RollerAtomHandler implements AtomHandler {
      * Update resource specified by pathInfo using data from input stream.
      * Expects pathInfo of form /blog-name/resource/path/name
      */
-    @Override
     public void putMedia(AtomRequest areq) throws AtomException {
         MediaCollection mcol = new MediaCollection(user, atomURL);
         mcol.putMedia(areq);
@@ -291,7 +272,6 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Delete entry, URI like this /blog-name/entry/id
      */
-    @Override
     public void deleteEntry(AtomRequest areq) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
@@ -316,7 +296,6 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * True if URL is the introspection URI.
      */
-    @Override
     public boolean isAtomServiceURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         return pathInfo.length == 0;
@@ -325,7 +304,6 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * True if URL is a entry URI.
      */
-    @Override
     public boolean isEntryURI(AtomRequest areq) {
         return isEntryPath(areq.getPathInfo());
     }
@@ -351,7 +329,6 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * True if URL is media edit URI. Media can be updated, but not metadata.
      */
-    @Override
     public boolean isMediaEditURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         if (pathInfo.length > 1 && pathInfo[1].equals("resource")) {
@@ -363,7 +340,6 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * True if URL is a collection URI of any sort.
      */
-    @Override
     public boolean isCollectionURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         if (pathInfo.length > 1 && pathInfo[1].equals("entries")) {
@@ -375,11 +351,6 @@ public class RollerAtomHandler implements AtomHandler {
         if (pathInfo.length > 1 && pathInfo[1].equals("categories")) {
             return true;
         }
-        return false;
-    }
-
-    @Override
-    public boolean isCategoriesURI(AtomRequest arg0) {
         return false;
     }
 
@@ -447,8 +418,7 @@ public class RollerAtomHandler implements AtomHandler {
                             User inUser = roller.getUserManager().getUserByUserName(userID);
                             if (inUser.getEnabled()) {
                                 String password = userPass.substring(p+1);
-                                valid = RollerContext.getPasswordEncoder()
-                                        .matches(password, inUser.getPassword());
+                                valid = RollerContext.getPasswordEncoder().matches(password, inUser.getPassword());
                             }
                         }
                     }

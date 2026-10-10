@@ -19,22 +19,20 @@
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 import javax.servlet.ReadListener;
-import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.rometools.propono.atom.server.AtomHandler;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.util.SecureXmlParsers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,14 +40,17 @@ import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -72,7 +73,6 @@ class RollerAtomServletTest {
     private MockedStatic<WebloggerRuntimeConfig> config;
     private RecordingServlet servlet;
     private HttpServletResponse response;
-    private StringWriter responseBody;
 
     @BeforeEach
     void setUp() throws IOException {
@@ -80,9 +80,7 @@ class RollerAtomServletTest {
         config.when(() -> WebloggerRuntimeConfig.getBooleanProperty("webservices.enableAtomPub"))
                 .thenReturn(true);
         servlet = new RecordingServlet();
-        response = mock(HttpServletResponse.class);
-        responseBody = new StringWriter();
-        when(response.getWriter()).thenReturn(new PrintWriter(responseBody));
+        response = response();
     }
 
     @AfterEach
@@ -100,31 +98,28 @@ class RollerAtomServletTest {
 
         verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
         verify(request, never()).getInputStream();
-        assertNull(servlet.forwarded);
+        assertNull(servlet.handler);
 
-        HttpServletResponse readResponse = mock(HttpServletResponse.class);
-        when(readResponse.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
+        HttpServletResponse readResponse = response();
         servlet.service(request("GET", "/blog/entries", null, ""), readResponse);
 
         verify(readResponse).setStatus(HttpServletResponse.SC_NOT_FOUND);
-        assertNull(servlet.forwarded);
+        assertNull(servlet.handler);
     }
 
     @Test
-    void readsPassThroughUnchanged() throws Exception {
-        HttpServletRequest request = request("GET", "/blog/entries", null, "");
+    void readsAreDispatchedToTheHandler() throws Exception {
+        servlet.service(request("GET", "/blog/entries", null, ""), response);
 
-        servlet.service(request, response);
-
-        assertSame(request, servlet.forwarded);
+        verify(servlet.handler).getCollection(any());
     }
 
     @Test
-    void wellFormedEntryIsForwardedWithTheSameBody() throws Exception {
+    void wellFormedEntryIsPostedWithTheSameBody() throws Exception {
         servlet.service(request("POST", "/blog/entries", "application/atom+xml;type=entry", ENTRY), response);
 
-        assertNotNull(servlet.forwarded);
-        assertArrayEquals(ENTRY.getBytes(StandardCharsets.UTF_8), servlet.forwardedBody);
+        assertEquals("Hello", servlet.postedEntry.getTitle());
+        assertArrayEquals(ENTRY.getBytes(StandardCharsets.UTF_8), servlet.body);
     }
 
     @Test
@@ -132,7 +127,7 @@ class RollerAtomServletTest {
         servlet.service(request("POST", "/blog/entries", "application/atom+xml", ENTRY_WITH_DOCTYPE), response);
 
         verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        assertNull(servlet.forwarded);
+        assertNull(servlet.body);
     }
 
     @Test
@@ -140,24 +135,37 @@ class RollerAtomServletTest {
         servlet.service(request("PUT", "/blog/entry/abc", "text/plain", ENTRY_WITH_DOCTYPE), response);
 
         verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        assertNull(servlet.forwarded);
+        assertNull(servlet.body);
     }
 
     @Test
     void mediaUploadsBypassTheEntryLimit() throws Exception {
-        mediaUploadIsForwardedWithoutApplyingTheEntryLimit("POST", "/blog/resources");
-        mediaUploadIsForwardedWithoutApplyingTheEntryLimit("PUT", "/blog/resources/image.png");
+        mediaUploadBypassesTheEntryLimit("POST", "/blog/resources");
+        servlet.body = null;
+        mediaUploadBypassesTheEntryLimit("PUT", "/blog/resource/image.png");
     }
 
-    private void mediaUploadIsForwardedWithoutApplyingTheEntryLimit(String method, String path) throws Exception {
+    private void mediaUploadBypassesTheEntryLimit(String method, String path) throws Exception {
         config.when(() -> WebloggerRuntimeConfig.getProperty(RollerAtomServlet.MAX_ENTRY_SIZE_PROPERTY))
                 .thenReturn("1");
         HttpServletRequest request = request(method, path, "image/png", "not xml");
 
         servlet.service(request, response);
 
-        assertSame(request, servlet.forwarded);
+        assertArrayEquals("not xml".getBytes(StandardCharsets.UTF_8), servlet.body);
+        // The servlet does not buffer media; the handler reads the request stream
+        verify(request, times(1)).getInputStream();
+    }
+
+    @Test
+    void postWithoutContentTypeIsUnsupportedMediaType() throws Exception {
+        HttpServletRequest request = request("POST", "/blog/resources", null, "data");
+
+        servlet.service(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
         verify(request, never()).getInputStream();
+        assertNull(servlet.body);
     }
 
     @Test
@@ -171,7 +179,7 @@ class RollerAtomServletTest {
         servlet.service(request, response);
 
         verify(response).setStatus(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
-        assertNull(servlet.forwarded);
+        assertNull(servlet.body);
         assertEquals(99, input.available(), "Read only one byte past the entry limit");
     }
 
@@ -182,14 +190,13 @@ class RollerAtomServletTest {
 
         servlet.service(request("POST", "/blog/entries", "application/atom+xml", body), response);
 
-        assertNotNull(servlet.forwarded);
-        assertArrayEquals(body.getBytes(StandardCharsets.UTF_8), servlet.forwardedBody);
+        assertArrayEquals(body.getBytes(StandardCharsets.UTF_8), servlet.body);
     }
 
     @Test
     void configuredLimitAppliesToEntryPostsAndUpdates() throws Exception {
         configuredLimitCountsUtf8BytesAndChangesOnTheNextRequest("POST", "/blog/entries");
-        servlet.forwarded = null;
+        servlet.body = null;
         clearInvocations(response);
         configuredLimitCountsUtf8BytesAndChangesOnTheNextRequest("PUT", "/blog/entry/abc");
     }
@@ -203,12 +210,11 @@ class RollerAtomServletTest {
         servlet.service(request(method, path, "application/atom+xml", body), response);
 
         verify(response).setStatus(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
-        assertNull(servlet.forwarded);
+        assertNull(servlet.body);
 
         servlet.service(request(method, path, "application/atom+xml", body), response);
 
-        assertNotNull(servlet.forwarded);
-        assertArrayEquals(body.getBytes(StandardCharsets.UTF_8), servlet.forwardedBody);
+        assertArrayEquals(body.getBytes(StandardCharsets.UTF_8), servlet.body);
     }
 
     @Test
@@ -225,9 +231,8 @@ class RollerAtomServletTest {
         String body = ENTRY + " ".repeat(
                 RollerAtomServlet.DEFAULT_MAX_ENTRY_BYTES - ENTRY.getBytes(StandardCharsets.UTF_8).length);
         servlet.service(request("POST", "/blog/entries", "application/atom+xml", body), response);
-        assertNotNull(servlet.forwarded);
-        assertEquals(RollerAtomServlet.DEFAULT_MAX_ENTRY_BYTES, servlet.forwardedBody.length);
-        servlet.forwarded = null;
+        assertEquals(RollerAtomServlet.DEFAULT_MAX_ENTRY_BYTES, servlet.body.length);
+        servlet.body = null;
         byte[] big = new byte[RollerAtomServlet.DEFAULT_MAX_ENTRY_BYTES + 1];
         HttpServletRequest request = request("POST", "/blog/entries", "application/atom+xml", "");
         when(request.getInputStream()).thenReturn(stream(big));
@@ -235,7 +240,7 @@ class RollerAtomServletTest {
         servlet.service(request, response);
 
         verify(response).setStatus(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
-        assertNull(servlet.forwarded);
+        assertNull(servlet.body);
     }
 
     @Test
@@ -246,7 +251,7 @@ class RollerAtomServletTest {
 
         servlet.service(request("POST", "/blog/entries", "application/atom+xml", body), response);
 
-        assertNotNull(servlet.forwarded);
+        assertArrayEquals(body.getBytes(StandardCharsets.UTF_8), servlet.body);
     }
 
     @Test
@@ -260,22 +265,7 @@ class RollerAtomServletTest {
         servlet.service(request(method, path, "application/atom+xml", "<entry><title></entry>"), response);
 
         verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        assertNull(servlet.forwarded);
-    }
-
-    @Test
-    void parserSetupFailureIsAServerError() throws Exception {
-        try (MockedStatic<SecureXmlParsers> parsers = mockStatic(SecureXmlParsers.class)) {
-            SAXParserFactory factory = mock(SAXParserFactory.class);
-            parsers.when(SecureXmlParsers::newSAXParserFactory).thenReturn(factory);
-            when(factory.newSAXParser()).thenThrow(new ParserConfigurationException("Cannot create parser"));
-
-            assertThrows(ServletException.class, () -> servlet.service(
-                    request("POST", "/blog/entries", "application/atom+xml", ENTRY), response));
-
-            verify(response, never()).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            assertNull(servlet.forwarded);
-        }
+        assertNull(servlet.body);
     }
 
     @Test
@@ -293,19 +283,78 @@ class RollerAtomServletTest {
 
         verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
         verify(request, never()).getInputStream();
-        assertNull(servlet.forwarded);
+        assertNull(servlet.body);
     }
 
     @Test
-    void authenticatedHandlerIsReusedByTheFactory() throws Exception {
-        HttpServletRequest request = request("POST", "/blog/entries", "application/atom+xml", ENTRY);
+    void serverErrorsDoNotExposeTheExceptionMessage() throws Exception {
+        servlet.failure = new IllegalStateException("secret internal detail");
 
-        servlet.service(request, response);
+        servlet.service(request("GET", "/blog/entries", null, ""), response);
 
-        verify(request).setAttribute(RollerAtomServlet.HANDLER_ATTRIBUTE, servlet.handler);
-        when(request.getAttribute(RollerAtomServlet.HANDLER_ATTRIBUTE)).thenReturn(servlet.handler);
-        assertSame(servlet.handler, new RollerAtomHandlerFactory().newAtomHandler(request, response));
-        verify(request).removeAttribute(RollerAtomServlet.HANDLER_ATTRIBUTE);
+        verify(response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        verify(response, never()).sendError(anyInt(), anyString());
+    }
+
+    @Test
+    void clientErrorsKeepTheirMessage() throws Exception {
+        servlet.service(request("GET", "/blog/nowhere", null, ""), response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND, "Cannot find specified resource");
+    }
+
+    @Test
+    void locationMustBeAValidUriUnderTheAtomUrl() {
+        String atom = "https://blog.example/roller-services/app";
+        assertEquals(atom + "/blog/entry/1", RollerAtomServlet.safeLocation(atom + "/blog/entry/1", atom));
+        assertEquals(atom + "/blog/resource/caf%C3%A9.png.media-link",
+                RollerAtomServlet.safeLocation(atom + "/blog/resource/café.png.media-link", atom));
+        assertNull(RollerAtomServlet.safeLocation("https://evil.example/x", atom));
+        assertNull(RollerAtomServlet.safeLocation(atom + ".evil.example/x", atom));
+        assertNull(RollerAtomServlet.safeLocation(atom + "/blog/a\r\nSet-Cookie: x=y", atom));
+        assertNull(RollerAtomServlet.safeLocation(atom + "/blog/entry/1", null));
+        assertNull(RollerAtomServlet.safeLocation(null, atom));
+    }
+
+    @Test
+    void createdEntryLocationIsSetOnlyWhenSafe() throws Exception {
+        servlet.atomURL = "https://blog.example/roller-services/app";
+        servlet.editHref = servlet.atomURL + "/blog/entry/1";
+
+        servlet.service(request("POST", "/blog/entries", "application/atom+xml", ENTRY), response);
+
+        verify(response).setStatus(HttpServletResponse.SC_CREATED);
+        verify(response).setHeader("Location", servlet.editHref);
+
+        HttpServletResponse unsafe = response();
+        servlet.editHref = "https://evil.example/x";
+        servlet.service(request("POST", "/blog/entries", "application/atom+xml", ENTRY), unsafe);
+
+        verify(unsafe).setStatus(HttpServletResponse.SC_CREATED);
+        verify(unsafe, never()).setHeader(eq("Location"), anyString());
+    }
+
+    private static HttpServletResponse response() throws IOException {
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        when(response.getOutputStream()).thenReturn(new ServletOutputStream() {
+            @Override
+            public void write(int b) {
+                out.write(b);
+            }
+
+            @Override
+            public boolean isReady() {
+                return true;
+            }
+
+            @Override
+            public void setWriteListener(WriteListener listener) {
+                throw new UnsupportedOperationException();
+            }
+        });
+        return response;
     }
 
     private static HttpServletRequest request(String method, String pathInfo,
@@ -353,27 +402,66 @@ class RollerAtomServletTest {
         };
     }
 
-    /** Records what would have been handed to the Propono servlet. */
+    /** Records the request body and entry that reach the handler. */
     private static final class RecordingServlet extends RollerAtomServlet {
         private static final long serialVersionUID = 1L;
-        HttpServletRequest forwarded;
-        byte[] forwardedBody;
         String userName = "alice";
-        AtomHandler handler;
+        String atomURL;
+        String editHref;
+        RuntimeException failure;
+        RollerAtomHandler handler;
+        AtomEntry postedEntry;
+        byte[] body;
 
         @Override
-        protected AtomHandler createHandler(HttpServletRequest req, HttpServletResponse res) {
-            handler = mock(AtomHandler.class);
-            when(handler.getAuthenticatedUsername()).thenReturn(userName);
+        protected RollerAtomHandler createHandler(HttpServletRequest req, HttpServletResponse res) {
+            handler = mock(RollerAtomHandler.class);
+            try {
+                when(handler.getAuthenticatedUsername()).thenReturn(userName);
+                when(handler.getAtomURL()).thenReturn(atomURL);
+                when(handler.isCollectionURI(any())).thenAnswer(call ->
+                        call.<AtomRequest>getArgument(0).getPathInfo().matches("/[^/]+/(entries|resources).*"));
+                when(handler.isEntryURI(any())).thenAnswer(call ->
+                        RollerAtomHandler.isEntryPath(call.<AtomRequest>getArgument(0).getPathInfo()));
+                when(handler.isMediaEditURI(any())).thenAnswer(call ->
+                        call.<AtomRequest>getArgument(0).getPathInfo().matches("/[^/]+/resource/.*"));
+                if (failure != null) {
+                    when(handler.getCollection(any())).thenThrow(failure);
+                } else {
+                    when(handler.getCollection(any())).thenReturn(new AtomFeed());
+                }
+                when(handler.postEntry(any(), any())).thenAnswer(call -> {
+                    record(call.getArgument(0));
+                    postedEntry = call.getArgument(1);
+                    AtomEntry created = new AtomEntry();
+                    if (editHref != null) {
+                        AtomLink edit = new AtomLink();
+                        edit.setRel("edit");
+                        edit.setHref(editHref);
+                        created.getLinks().add(edit);
+                    }
+                    return created;
+                });
+                when(handler.postMedia(any(), any())).thenAnswer(call -> {
+                    record(call.getArgument(0));
+                    return new AtomEntry();
+                });
+                doAnswer(call -> {
+                    record(call.getArgument(0));
+                    return null;
+                }).when(handler).putEntry(any(), any());
+                doAnswer(call -> {
+                    record(call.getArgument(0));
+                    return null;
+                }).when(handler).putMedia(any());
+            } catch (AtomException e) {
+                throw new IllegalStateException(e);
+            }
             return handler;
         }
 
-        @Override
-        protected void forward(HttpServletRequest req, HttpServletResponse res) throws IOException {
-            forwarded = req;
-            if (req instanceof BufferedBodyRequest) {
-                forwardedBody = req.getInputStream().readAllBytes();
-            }
+        private void record(AtomRequest areq) throws IOException {
+            body = areq.getInputStream().readAllBytes();
         }
     }
 }
