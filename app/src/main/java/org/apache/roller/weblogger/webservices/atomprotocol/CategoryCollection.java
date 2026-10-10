@@ -42,7 +42,9 @@ import org.apache.roller.weblogger.util.cache.CacheManager;
  *
  * <p>A category that entries still use is removed only when the request
  * names another category of the same weblog in the {@code moveTo} parameter;
- * the entries move there first. Otherwise DELETE answers 409.
+ * the entries move there first, and the target becomes the default (Blogger
+ * API) category if the removed one was. Otherwise DELETE answers 409, as it
+ * does for the weblog's last category.
  */
 public class CategoryCollection {
 
@@ -144,6 +146,10 @@ public class CategoryCollection {
         try {
             WeblogEntryManager mgr = manager();
             WeblogCategory category = requireCategory(weblog, pathInfo);
+            if (mgr.getWeblogCategories(weblog).size() < 2) {
+                // New entries need a category, as on the Categories page
+                throw CollectionSupport.conflict("A weblog must keep at least one category");
+            }
             String moveTo = areq.getParameter("moveTo");
             if (StringUtils.isNotEmpty(moveTo)) {
                 WeblogCategory target = mgr.getWeblogCategory(weblog, moveTo);

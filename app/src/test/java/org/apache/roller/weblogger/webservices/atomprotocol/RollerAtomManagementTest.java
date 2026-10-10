@@ -292,6 +292,45 @@ public class RollerAtomManagementTest {
     }
 
     @Test
+    public void defaultCategoryRemovedWithMoveToHandsOverTheDefault() throws Exception {
+        WeblogCategory target = TestUtils.setupWeblogCategory(managedWeblog(), "Target");
+        TestUtils.endSession(true);
+        String defaultId = managedWeblog().getBloggerCategory().getId();
+
+        // the default category counts as in use
+        AtomException refused = assertThrows(AtomException.class, () -> categories(author)
+                .deleteEntry(request("/" + HANDLE + "/category/" + defaultId)));
+        assertEquals(HttpServletResponse.SC_CONFLICT, refused.getStatus());
+        TestUtils.endSession(false);
+
+        categories(author).deleteEntry(request("/" + HANDLE + "/category/" + defaultId,
+                "moveTo", target.getId()));
+        TestUtils.endSession(true);
+
+        assertEquals(target.getId(), managedWeblog().getBloggerCategory().getId());
+        // the collection still lists cleanly
+        AtomFeed feed = categories(author).getCollection(request("/" + HANDLE + "/categories"));
+        assertTrue(feed.getEntries().stream().anyMatch(e -> "Target".equals(e.getTitle())));
+    }
+
+    @Test
+    public void lastCategoryCannotBeRemoved() throws Exception {
+        WeblogEntryManager wem = entryManager();
+        List<WeblogCategory> cats = wem.getWeblogCategories(managedWeblog());
+        WeblogCategory keep = cats.get(0);
+        for (WeblogCategory cat : cats.subList(1, cats.size())) {
+            categories(author).deleteEntry(request("/" + HANDLE + "/category/" + cat.getId(),
+                    "moveTo", keep.getId()));
+            TestUtils.endSession(true);
+        }
+        assertEquals(1, entryManager().getWeblogCategories(managedWeblog()).size());
+
+        AtomException refused = assertThrows(AtomException.class, () -> categories(author)
+                .deleteEntry(request("/" + HANDLE + "/category/" + keep.getId())));
+        assertEquals(HttpServletResponse.SC_CONFLICT, refused.getStatus());
+    }
+
+    @Test
     public void categoriesNeedPermissionOnTheWeblog() throws Exception {
         assertThrows(AtomNotAuthorizedException.class, () -> categories(author)
                 .getCollection(request("/" + OTHER_HANDLE + "/categories")));
