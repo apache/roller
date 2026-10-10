@@ -1,3 +1,13 @@
+# Copied from RFC 4287, "The Atom Syndication Format", Appendix B
+# (https://www.rfc-editor.org/rfc/rfc4287#appendix-B). Used only by tests;
+# not included in the Roller web application.
+#
+# Copyright (C) The Internet Society (2005).
+#
+# This document is subject to the rights, licenses and restrictions contained
+# in BCP 78, and except as set forth therein, the authors retain all their
+# rights.
+#
 # RELAX NG Compact Syntax Grammar for the Atom Format Specification (RFC 4287,
 # Appendix B). Used by AtomSchemaValidationTest to verify that the entries and
 # feeds produced by AtomWriter conform to the Atom Syndication Format. The

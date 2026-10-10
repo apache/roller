@@ -592,6 +592,19 @@ limitations under the License.
             <artifactId>jing</artifactId>
             <version>20091111</version>
             <scope>test</scope>
+            <!-- Jing declares these with runtime scope, which would replace
+                 the newer versions that reach the WAR through nekohtml.
+                 Jing uses the JDK's XML parser instead. -->
+            <exclusions>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
