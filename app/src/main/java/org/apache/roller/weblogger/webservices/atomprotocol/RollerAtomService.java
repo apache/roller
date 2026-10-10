@@ -82,20 +82,12 @@ public class RollerAtomService {
                     entryCol.setHref(atomURL + "/" + weblog.getHandle() + "/entries");
                     entryCol.getAccepts().add("application/atom+xml;type=entry");
 
-                    // Add fixed categories using scheme that points to
-                    // weblog because categories are weblog specific
-                    weblog = perm.getWeblog();
-                    AtomCategories cats = new AtomCategories();
-                    cats.setFixed(true);
-                    cats.setScheme(getWeblogCategoryScheme(weblog));
-                    List<WeblogCategory> rollerCats = roller.getWeblogEntryManager().getWeblogCategories(weblog);
-                    for (WeblogCategory rollerCat : rollerCats) {
-                        AtomCategory cat = new AtomCategory();
-                        cat.setTerm(rollerCat.getName());
-                        cat.setLabel(rollerCat.getName());
-                        cats.getCategories().add(cat);
-                    }
-                    entryCol.getCategories().add(cats);
+                    // The weblog's fixed categories, both inline (for older
+                    // clients) and as an out-of-line category document
+                    entryCol.getCategories().add(weblogCategories(weblog));
+                    AtomCategories catsDoc = new AtomCategories();
+                    catsDoc.setHref(atomURL + "/" + weblog.getHandle() + "/categories.atomcat");
+                    entryCol.getCategories().add(catsDoc);
 
                     // Indicte that free form categories are allowed
                     AtomCategories tags = new AtomCategories();
@@ -123,8 +115,57 @@ public class RollerAtomService {
                 } catch (Exception e) {
                     throw new AtomException("Creating weblog entry collection for service doc", e);
                 }
+
+                addManagementCollections(workspace, user, weblog, atomURL);
             }
         }
+    }
+
+    /**
+     * Adds the template, category and comment collections that the user may
+     * use. Templates need weblog ADMIN permission and a custom theme; the
+     * others need POST permission.
+     */
+    private static void addManagementCollections(AtomWorkspace workspace, User user,
+            Weblog weblog, String atomURL) {
+        String base = atomURL + "/" + weblog.getHandle();
+        if (TemplateCollection.isAvailable(user, weblog)) {
+            workspace.getCollections().add(collection("Templates", base + "/templates",
+                    "application/atom+xml;type=entry"));
+        }
+        if (CollectionSupport.hasPermission(user, weblog, WeblogPermission.POST)) {
+            workspace.getCollections().add(collection("Categories", base + "/categories",
+                    "application/atom+xml;type=entry"));
+            // An empty accept list means the collection does not accept POST
+            workspace.getCollections().add(collection("Comments", base + "/comments", ""));
+        }
+    }
+
+    private static AtomCollection collection(String title, String href, String accept) {
+        AtomCollection collection = new AtomCollection();
+        collection.setTitle(title);
+        collection.setHref(href);
+        collection.getAccepts().add(accept);
+        return collection;
+    }
+
+    /**
+     * The weblog's categories as a fixed category set. The scheme points to
+     * the weblog because categories are weblog specific.
+     */
+    static AtomCategories weblogCategories(Weblog weblog) throws WebloggerException {
+        AtomCategories cats = new AtomCategories();
+        cats.setFixed(true);
+        cats.setScheme(getWeblogCategoryScheme(weblog));
+        List<WeblogCategory> rollerCats = WebloggerFactory.getWeblogger()
+                .getWeblogEntryManager().getWeblogCategories(weblog);
+        for (WeblogCategory rollerCat : rollerCats) {
+            AtomCategory cat = new AtomCategory();
+            cat.setTerm(rollerCat.getName());
+            cat.setLabel(rollerCat.getName());
+            cats.getCategories().add(cat);
+        }
+        return cats;
     }
 
     /**

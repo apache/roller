@@ -630,6 +630,48 @@ URL is _http://jroller.com/fredsblog_), then your parameters would be:
 * *BlogID*: fredsblog
 * *URL*: http://jroller.com/roller-services/xmlrpc
 
+==== Managing templates, categories and comments with AtomPub
+
+Roller's AtomPub service (`/roller-services/app`) also lets a client manage
+a weblog's templates, categories and comments. The service document lists
+these collections in each weblog's workspace when you may use them. Roller's
+own elements use the namespace `http://roller.apache.org/ns/atompub/1.0`
+(prefix `roller` below).
+
+[cols="2,3,4",options="header"]
+|===
+|URI (under `/roller-services/app`) |Who may use it |Methods
+|`/{handle}/templates`, `/{handle}/template/{id}`
+|Weblog administrators, when the weblog uses a custom theme and the site
+allows custom themes
+|GET, POST, PUT, DELETE
+|`/{handle}/categories`, `/{handle}/category/{id}`
+|Users who may post to the weblog
+|GET, POST, PUT, DELETE (`?moveTo={id}` for a category in use)
+|`/{handle}/categories.atomcat`
+|Users who may post to the weblog
+|GET (an RFC 5023 category document)
+|`/{handle}/comments`, `/{handle}/comment/{id}`
+|Users who may post to the weblog
+|GET (`?status=`, `?entry=`), PUT (status only), DELETE
+|===
+
+* *Templates*: `atom:title` is the name, `atom:summary` the description and
+`atom:content type="text"` the standard template. `roller:rendition
+type="mobile"` holds the mobile template. `roller:action`, `roller:link`,
+`roller:navbar`, `roller:hidden` and `roller:contentType` hold the other
+settings; only custom templates can change their name, link and flags. A
+PUT without a mobile rendition leaves the mobile template as it is; an
+empty one removes it, so mobile visitors see the standard template.
+Escape template markup as text.
+* *Categories*: `atom:title` is the name, `atom:summary` the description and
+`roller:image` the image URL. Deleting a category that entries use answers
+409 unless `moveTo` names the category to move them to.
+* *Comments*: `roller:status` is `approved`, `disapproved`, `spam` or
+`pending`; a PUT changes only the status. `thr:in-reply-to` (RFC 4685)
+points to the weblog entry. Approving a pending comment sends the same
+notification as the Comments page.
+
 == Working with comments
 
 Roller supports weblog comments, which are enabled by default. You can

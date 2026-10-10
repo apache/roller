@@ -199,9 +199,11 @@ public class RollerAtomProtocolTest {
                 .findFirst().orElse(null);
         assertNotNull(entries, "service doc should expose an entries collection");
         assertTrue(entries.getAccepts().contains("application/atom+xml;type=entry"));
-        // a fixed categories block (weblog categories) plus a free-form one
-        assertEquals(2, entries.getCategories().size());
+        // the weblog's categories inline and by reference, plus a free-form block
+        assertEquals(3, entries.getCategories().size());
         assertTrue(entries.getCategories().stream().anyMatch(AtomCategories::isFixed));
+        assertTrue(entries.getCategories().stream().anyMatch(c ->
+                (ATOM_URL + "/" + HANDLE + "/categories.atomcat").equals(c.getHref())));
 
         // the document serializes to well-formed XML
         java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();

@@ -38,7 +38,11 @@ import java.time.Instant;
 import java.util.Base64;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -145,5 +149,49 @@ class RollerAtomHandlerTest {
             assertNull(handler.getAuthenticatedUsername());
             verify(request, never()).getHeader("Authorization");
         }
+    }
+
+    @Test
+    void managementUrisAreClassified() {
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class);
+             MockedStatic<WebloggerRuntimeConfig> config = mockStatic(WebloggerRuntimeConfig.class)) {
+            factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
+            RollerAtomHandler handler = new RollerAtomHandler(request, response);
+
+            for (String collection : new String[] {"templates", "categories", "comments"}) {
+                assertTrue(handler.isCollectionURI(atomRequest("/blog/" + collection)), collection);
+            }
+            for (String member : new String[] {"template", "category", "comment"}) {
+                assertTrue(RollerAtomHandler.isEntryPath("/blog/" + member + "/abc"), member);
+                assertFalse(RollerAtomHandler.isEntryPath("/blog/" + member), member);
+            }
+            assertTrue(handler.isCategoriesDocURI(atomRequest("/blog/categories.atomcat")));
+            assertFalse(handler.isCategoriesDocURI(atomRequest("/blog/categories")));
+            assertFalse(handler.isCollectionURI(atomRequest("/blog/categories.atomcat")));
+        }
+    }
+
+    @Test
+    void entryOnlyCollectionsRefuseMediaAndCommentsRefusePost() {
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class);
+             MockedStatic<WebloggerRuntimeConfig> config = mockStatic(WebloggerRuntimeConfig.class)) {
+            factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
+            RollerAtomHandler handler = new RollerAtomHandler(request, response);
+
+            for (String collection : new String[] {"templates", "categories", "comments"}) {
+                AtomException refused = assertThrows(AtomException.class, () ->
+                        handler.postMedia(atomRequest("/blog/" + collection), new AtomEntry()));
+                assertEquals(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, refused.getStatus());
+            }
+            AtomException post = assertThrows(AtomException.class, () ->
+                    handler.postEntry(atomRequest("/blog/comments"), new AtomEntry()));
+            assertEquals(HttpServletResponse.SC_METHOD_NOT_ALLOWED, post.getStatus());
+        }
+    }
+
+    private static AtomRequest atomRequest(String pathInfo) {
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        when(req.getPathInfo()).thenReturn(pathInfo);
+        return new AtomRequest(req, null);
     }
 }
