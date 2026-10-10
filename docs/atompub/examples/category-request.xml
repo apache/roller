@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:roller="http://roller.apache.org/ns/atompub/1.0">
+  <id>urn:uuid:5b1f7a1e-0b6a-4c0e-9a37-3f1d2c4e8b11</id>
+  <title>Travel</title>
+  <updated>2026-10-10T12:00:00Z</updated>
+  <author>
+    <name>dave</name>
+  </author>
+  <summary type="text">Trips and places</summary>
+  <roller:image>https://example.com/images/travel.png</roller:image>
+</entry>

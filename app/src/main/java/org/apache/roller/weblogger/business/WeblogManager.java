@@ -201,6 +201,13 @@ public interface WeblogManager {
     void saveTemplateRendition(CustomTemplateRendition templateCode) throws WebloggerException;
 
     /**
+     * Remove a template's mobile rendition. The template then renders its
+     * standard rendition for mobile visitors too. The standard rendition
+     * cannot be removed.
+     */
+    void removeTemplateRendition(CustomTemplateRendition rendition) throws WebloggerException;
+
+    /**
      * Get all custom templates for a weblog
      */
     List<WeblogTemplate> getTemplates(Weblog w) throws WebloggerException;

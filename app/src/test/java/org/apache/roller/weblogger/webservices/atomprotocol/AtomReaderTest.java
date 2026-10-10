@@ -178,4 +178,42 @@ public class AtomReaderTest {
         assertEquals("xhtml", entry.getContent().getType());
         assertEquals("<p class=\"x\">One &amp; two<br/>three</p>", entry.getContent().getValue());
     }
+
+    @Test
+    public void testRollerExtensionsAndInReplyTo() throws Exception {
+        String xml =
+            "<entry xmlns='http://www.w3.org/2005/Atom'"
+            + "       xmlns:roller='http://roller.apache.org/ns/atompub/1.0'"
+            + "       xmlns:thr='http://purl.org/syndication/thread/1.0'>"
+            + "<title>sidebar</title>"
+            + "<content type='text'>&lt;div&gt;standard&lt;/div&gt;</content>"
+            + "<roller:rendition type='mobile'>&lt;div&gt;mobile&lt;/div&gt;</roller:rendition>"
+            + "<roller:action>custom</roller:action>"
+            + "<roller:navbar>true</roller:navbar>"
+            + "<thr:in-reply-to ref='urn:parent' href='http://example.com/app/blog/entry/1'/>"
+            + "</entry>";
+        AtomEntry entry = parse(xml);
+        assertEquals("<div>standard</div>", entry.getContent().getValue());
+        assertEquals("<div>mobile</div>", entry.getMobileRendition());
+        assertEquals("custom", entry.getExtension("action"));
+        assertEquals("true", entry.getExtension("navbar"));
+        assertEquals("urn:parent", entry.getInReplyToRef());
+        assertEquals("http://example.com/app/blog/entry/1", entry.getInReplyToHref());
+    }
+
+    @Test
+    public void testExtensionRoundTrip() throws Exception {
+        AtomEntry out = new AtomEntry();
+        out.setTitle("t");
+        out.setMobileRendition("<p>m &amp; n</p>");
+        out.setExtension("status", "spam");
+        out.setInReplyToRef("urn:x");
+        java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+        new AtomWriter().writeEntry(bytes, out);
+
+        AtomEntry in = new AtomReader().parseEntry(new ByteArrayInputStream(bytes.toByteArray()));
+        assertEquals("<p>m &amp; n</p>", in.getMobileRendition());
+        assertEquals("spam", in.getExtension("status"));
+        assertEquals("urn:x", in.getInReplyToRef());
+    }
 }

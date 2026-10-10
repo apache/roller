@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns:roller="http://roller.apache.org/ns/atompub/1.0" xmlns:thr="http://purl.org/syndication/thread/1.0">
+  <id>https://example.com/roller/roller-services/app/myblog/entries/0</id>
+  <title>My Weblog</title>
+  <updated>2026-10-10T12:30:00Z</updated>
+  <link rel="alternate" href="https://example.com/roller/myblog"/>
+  <link rel="next" href="https://example.com/roller/roller-services/app/myblog/entries/20"/>
+  <entry>
+    <id>https://example.com/roller/myblog/entry/hello_atompub</id>
+    <title>Hello AtomPub</title>
+    <published>2026-10-10T12:00:00Z</published>
+    <updated>2026-10-10T12:30:00Z</updated>
+    <author>
+      <name>dave</name>
+      <email>dave@example.com</email>
+    </author>
+    <category term="Java" scheme="https://example.com/roller/myblog/"/>
+    <category term="atompub"/>
+    <content type="html">&lt;p&gt;Posted with &lt;b&gt;AtomPub&lt;/b&gt;.&lt;/p&gt;</content>
+    <link rel="alternate" href="https://example.com/roller/myblog/entry/hello_atompub"/>
+    <link rel="edit" href="https://example.com/roller/roller-services/app/myblog/entry/4a7d1ed4"/>
+    <app:edited>2026-10-10T12:30:00Z</app:edited>
+    <app:control>
+      <app:draft>no</app:draft>
+    </app:control>
+  </entry>
+</feed>

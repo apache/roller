@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app">
+  <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+  <title>Hello AtomPub</title>
+  <updated>2026-10-10T12:00:00Z</updated>
+  <author>
+    <name>dave</name>
+  </author>
+  <category term="Java" scheme="https://example.com/roller/myblog/"/>
+  <category term="atompub"/>
+  <content type="html">&lt;p&gt;Posted with &lt;b&gt;AtomPub&lt;/b&gt;.&lt;/p&gt;</content>
+  <app:control>
+    <app:draft>no</app:draft>
+  </app:control>
+</entry>

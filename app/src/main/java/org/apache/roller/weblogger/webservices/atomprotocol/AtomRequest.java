@@ -63,6 +63,11 @@ public class AtomRequest {
         return request.getHeader(name);
     }
 
+    /** A query string parameter, or null. */
+    public String getParameter(String name) {
+        return request.getParameter(name);
+    }
+
     public String getContentType() {
         return request.getContentType();
     }

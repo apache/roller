@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<categories xmlns="http://www.w3.org/2007/app" xmlns:atom="http://www.w3.org/2005/Atom" fixed="yes" scheme="https://example.com/roller/myblog/">
+  <atom:category term="General" label="General"/>
+  <atom:category term="Java" label="Java"/>
+  <atom:category term="Travel" label="Travel"/>
+</categories>
