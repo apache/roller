@@ -461,6 +461,9 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         } else {
             mdir = getDefaultMediaFileDirectory(weblog);
         }
+        if (mdir == null) {
+            return null;
+        }
         if (slash != -1) {
             fileName = fileName.substring(slash + 1);
         }

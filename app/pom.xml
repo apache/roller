@@ -277,10 +277,12 @@ limitations under the License.
             <version>1.14.2+1</version>
         </dependency>
 
+        <!-- 0.9 renders its menu check icons as <i></i>; 0.8.12 wrote <i/>,
+             which jQuery 3.5+ no longer expands, hiding the menu labels -->
         <dependency>
-            <groupId>org.webjars.bower</groupId>
+            <groupId>org.webjars.npm</groupId>
             <artifactId>summernote</artifactId>
-            <version>0.8.12</version>
+            <version>0.9.1</version>
         </dependency>
 
         <dependency>
