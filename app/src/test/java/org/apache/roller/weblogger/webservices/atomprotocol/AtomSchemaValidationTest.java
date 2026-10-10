@@ -19,24 +19,14 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXParseException;
 
-import com.thaiopensource.util.PropertyMapBuilder;
-import com.thaiopensource.validate.ValidateProperty;
-import com.thaiopensource.validate.ValidationDriver;
-import com.thaiopensource.validate.rng.CompactSchemaReader;
 
 /**
  * Validates the XML produced by {@link AtomWriter} against the official RELAX NG
@@ -49,25 +39,8 @@ public class AtomSchemaValidationTest {
     private static final Date PUBLISHED = Date.from(Instant.parse("2026-06-03T12:34:56Z"));
     private static final Date UPDATED = Date.from(Instant.parse("2026-06-04T01:02:03Z"));
 
-    /** Validate xml against a classpath RELAX NG Compact schema; return errors (empty == valid). */
     private List<String> validate(String schemaResource, byte[] xml) throws Exception {
-        List<String> errors = new ArrayList<>();
-        ErrorHandler handler = new ErrorHandler() {
-            @Override public void warning(SAXParseException e) { /* ignore warnings */ }
-            @Override public void error(SAXParseException e) { errors.add(e.getMessage()); }
-            @Override public void fatalError(SAXParseException e) { errors.add(e.getMessage()); }
-        };
-        PropertyMapBuilder props = new PropertyMapBuilder();
-        props.put(ValidateProperty.ERROR_HANDLER, handler);
-        ValidationDriver driver =
-                new ValidationDriver(props.toPropertyMap(), CompactSchemaReader.getInstance());
-
-        try (InputStream schema = getClass().getResourceAsStream(schemaResource)) {
-            assertTrue(driver.loadSchema(new InputSource(schema)),
-                    "schema " + schemaResource + " failed to compile: " + errors);
-        }
-        driver.validate(new InputSource(new ByteArrayInputStream(xml)));
-        return errors;
+        return RelaxNgValidator.validateResource(schemaResource, xml);
     }
 
     private byte[] writeEntry(AtomEntry entry) throws Exception {
