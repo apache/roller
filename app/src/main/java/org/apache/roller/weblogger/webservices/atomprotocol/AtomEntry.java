@@ -19,11 +19,16 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An atom:entry. The {@code draft} and {@code edited} fields carry the APP
- * control extension (app:control/app:draft and app:edited).
+ * control extension (app:control/app:draft and app:edited). Roller's own
+ * extension elements ({@link AtomConstants#ROLLER_NS}) are kept by local name
+ * in {@link #getExtensions()}; the mobile template rendition and the
+ * thr:in-reply-to link (RFC 4685) have their own fields.
  */
 public class AtomEntry {
 
@@ -38,6 +43,10 @@ public class AtomEntry {
     private List<AtomPerson> authors = new ArrayList<>();
     private List<AtomCategory> categories = new ArrayList<>();
     private List<AtomLink> links = new ArrayList<>();
+    private Map<String, String> extensions = new LinkedHashMap<>();
+    private String mobileRendition;
+    private String inReplyToRef;
+    private String inReplyToHref;
 
     public String getId() {
         return id;
@@ -125,6 +134,50 @@ public class AtomEntry {
 
     public void setLinks(List<AtomLink> links) {
         this.links = links;
+    }
+
+    /** Simple roller:* extension values, by local name, in document order. */
+    public Map<String, String> getExtensions() {
+        return extensions;
+    }
+
+    public String getExtension(String name) {
+        return extensions.get(name);
+    }
+
+    public void setExtension(String name, String value) {
+        if (value == null) {
+            extensions.remove(name);
+        } else {
+            extensions.put(name, value);
+        }
+    }
+
+    /** Source of the mobile template rendition, or null when there is none. */
+    public String getMobileRendition() {
+        return mobileRendition;
+    }
+
+    public void setMobileRendition(String mobileRendition) {
+        this.mobileRendition = mobileRendition;
+    }
+
+    /** The thr:in-reply-to ref (the parent's atom:id), or null. */
+    public String getInReplyToRef() {
+        return inReplyToRef;
+    }
+
+    public void setInReplyToRef(String inReplyToRef) {
+        this.inReplyToRef = inReplyToRef;
+    }
+
+    /** The thr:in-reply-to href, or null. */
+    public String getInReplyToHref() {
+        return inReplyToHref;
+    }
+
+    public void setInReplyToHref(String inReplyToHref) {
+        this.inReplyToHref = inReplyToHref;
     }
 
     /** Return the href of the first link with the given rel, or null. */

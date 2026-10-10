@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns:roller="http://roller.apache.org/ns/atompub/1.0" xmlns:thr="http://purl.org/syndication/thread/1.0">
+  <id>https://example.com/roller/roller-services/app/myblog/comments/0</id>
+  <title>My Weblog comments</title>
+  <updated>2026-10-10T12:30:00Z</updated>
+  <link rel="next" href="https://example.com/roller/roller-services/app/myblog/comments/20?status=pending"/>
+  <entry>
+    <id>https://example.com/roller/roller-services/app/myblog/comment/8f0e2a6c</id>
+    <title>Comment on Hello AtomPub</title>
+    <published>2026-10-10T12:00:00Z</published>
+    <updated>2026-10-10T12:00:00Z</updated>
+    <author>
+      <name>Pat Reader</name>
+      <uri>https://pat.example.org/</uri>
+      <email>pat@example.org</email>
+    </author>
+    <content type="text">Nice post!</content>
+    <link rel="edit" href="https://example.com/roller/roller-services/app/myblog/comment/8f0e2a6c"/>
+    <link rel="related" href="https://example.com/roller/myblog/entry/hello_atompub"/>
+    <thr:in-reply-to ref="https://example.com/roller/myblog/entry/hello_atompub" href="https://example.com/roller/roller-services/app/myblog/entry/4a7d1ed4"/>
+    <roller:status>pending</roller:status>
+    <roller:remoteHost>192.0.2.10</roller:remoteHost>
+    <app:control>
+      <app:draft>no</app:draft>
+    </app:control>
+  </entry>
+</feed>

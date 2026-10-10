@@ -254,4 +254,23 @@ public class AtomWriterTest {
         assertEquals("http://example.com/cats", parsed.getCategories().get(0).getScheme());
         assertNull(parsed.getCategories().get(1).getScheme());
     }
+
+    @Test
+    public void testWriteCategoriesDocument() throws Exception {
+        AtomCategories cats = new AtomCategories();
+        cats.setFixed(true);
+        cats.setScheme("http://example.com/blog/");
+        AtomCategory cat = new AtomCategory();
+        cat.setTerm("Travel");
+        cat.setLabel("Travel");
+        cats.getCategories().add(cat);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        new AtomWriter().writeCategoriesDoc(out, cats);
+
+        Document doc = parse(out.toByteArray());
+        assertEquals("categories", doc.getDocumentElement().getLocalName());
+        assertEquals(APP_NS, doc.getDocumentElement().getNamespaceURI());
+        assertEquals("yes", doc.getDocumentElement().getAttribute("fixed"));
+        assertEquals("Travel", element(doc, ATOM_NS, "category").getAttribute("term"));
+    }
 }

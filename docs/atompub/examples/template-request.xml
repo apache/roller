@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:roller="http://roller.apache.org/ns/atompub/1.0">
+  <id>urn:uuid:9e0c4f8a-6d3b-4a51-b2f7-0c8e1d5a7f20</id>
+  <title>sidebar</title>
+  <updated>2026-10-10T12:00:00Z</updated>
+  <author>
+    <name>dave</name>
+  </author>
+  <summary type="text">The sidebar</summary>
+  <content type="text">&lt;div class="sidebar"&gt;$model.weblog.name&lt;/div&gt;</content>
+  <roller:rendition type="mobile">&lt;div class="sidebar-mobile"&gt;$model.weblog.name&lt;/div&gt;</roller:rendition>
+  <roller:action>custom</roller:action>
+  <roller:navbar>true</roller:navbar>
+</entry>

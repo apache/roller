@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.CommentAuthorUrl;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -161,6 +162,10 @@ public class CategoryEdit extends UIAction {
             if ( wc != null && !wc.getId().equals( bean.getId() )) {
                 addError("categoryForm.error.duplicateName", bean.getName());
             }
+        }
+        if (StringUtils.isNotBlank(bean.getImage())
+                && CommentAuthorUrl.normalize(bean.getImage()) == null) {
+            addError("Category.error.imageBad");
         }
     }
 

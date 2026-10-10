@@ -29,6 +29,7 @@ public class AtomCategories {
 
     private boolean fixed;
     private String scheme;
+    private String href;
     private final List<AtomCategory> categories = new ArrayList<>();
 
     public boolean isFixed() {
@@ -45,6 +46,18 @@ public class AtomCategories {
 
     public void setScheme(String scheme) {
         this.scheme = scheme;
+    }
+
+    /**
+     * The URI of an out-of-line category document. When set, the service
+     * document writes {@code <app:categories href="..."/>} instead of the list.
+     */
+    public String getHref() {
+        return href;
+    }
+
+    public void setHref(String href) {
+        this.href = href;
     }
 
     public List<AtomCategory> getCategories() {

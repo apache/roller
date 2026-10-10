@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns:roller="http://roller.apache.org/ns/atompub/1.0" xmlns:thr="http://purl.org/syndication/thread/1.0">
+  <id>https://example.com/roller/roller-services/app/myblog/template/0e5d8b62</id>
+  <title>sidebar</title>
+  <updated>2026-10-10T12:30:00Z</updated>
+  <summary type="text">The sidebar</summary>
+  <content type="text">&lt;div class="sidebar"&gt;$model.weblog.name&lt;/div&gt;</content>
+  <link rel="edit" href="https://example.com/roller/roller-services/app/myblog/template/0e5d8b62"/>
+  <roller:rendition type="mobile">&lt;div class="sidebar-mobile"&gt;$model.weblog.name&lt;/div&gt;</roller:rendition>
+  <roller:action>custom</roller:action>
+  <roller:link>sidebar</roller:link>
+  <roller:navbar>true</roller:navbar>
+  <roller:hidden>false</roller:hidden>
+  <roller:required>false</roller:required>
+  <app:edited>2026-10-10T12:30:00Z</app:edited>
+  <app:control>
+    <app:draft>no</app:draft>
+  </app:control>
+</entry>

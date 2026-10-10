@@ -19,11 +19,14 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.APP_NS;
 import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.ATOM_NS;
+import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.ROLLER_NS;
+import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.THREAD_NS;
 
 import java.io.OutputStream;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Map;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -53,6 +56,20 @@ public class AtomWriter {
     public void writeEntry(OutputStream out, AtomEntry entry) throws AtomException {
         writeDocument(out, ATOM_NS, "entry", "app", APP_NS, "Error serializing Atom entry",
                 w -> writeEntryBody(w, entry));
+    }
+
+    /** Writes an APP category document (RFC 5023 section 7). */
+    public void writeCategoriesDoc(OutputStream out, AtomCategories cats) throws AtomException {
+        writeDocument(out, APP_NS, "categories", "atom", ATOM_NS,
+                "Error serializing category document", w -> {
+            w.writeAttribute("fixed", cats.isFixed() ? "yes" : "no");
+            if (cats.getScheme() != null) {
+                w.writeAttribute("scheme", cats.getScheme());
+            }
+            for (AtomCategory cat : cats.getCategories()) {
+                writeCategory(w, cat);
+            }
+        });
     }
 
     public void writeFeed(OutputStream out, AtomFeed feed) throws AtomException {
@@ -106,6 +123,13 @@ public class AtomWriter {
             w.writeStartElement(rootNs, root);
             w.writeDefaultNamespace(rootNs);
             w.writeNamespace(prefix, otherNs);
+            if (ATOM_NS.equals(rootNs)) {
+                // Extension namespaces used by entries (see writeEntryBody)
+                w.setPrefix("roller", ROLLER_NS);
+                w.setPrefix("thr", THREAD_NS);
+                w.writeNamespace("roller", ROLLER_NS);
+                w.writeNamespace("thr", THREAD_NS);
+            }
             body.write(w);
             w.writeEndElement();
             w.writeEndDocument();
@@ -136,6 +160,11 @@ public class AtomWriter {
             w.writeEndElement();
         }
         for (AtomCategories cats : collection.getCategories()) {
+            if (cats.getHref() != null) {
+                w.writeEmptyElement(APP_NS, "categories");
+                w.writeAttribute("href", cats.getHref());
+                continue;
+            }
             w.writeStartElement(APP_NS, "categories");
             w.writeAttribute("fixed", cats.isFixed() ? "yes" : "no");
             if (cats.getScheme() != null) {
@@ -157,6 +186,7 @@ public class AtomWriter {
         for (AtomPerson author : entry.getAuthors()) {
             w.writeStartElement(ATOM_NS, "author");
             writeAtomText(w, "name", author.getName());
+            writeAtomText(w, "uri", author.getUri());
             writeAtomText(w, "email", author.getEmail());
             w.writeEndElement();
         }
@@ -171,6 +201,24 @@ public class AtomWriter {
         }
         for (AtomLink link : entry.getLinks()) {
             writeLink(w, link);
+        }
+        if (entry.getInReplyToRef() != null) {
+            w.writeEmptyElement(THREAD_NS, "in-reply-to");
+            w.writeAttribute("ref", entry.getInReplyToRef());
+            if (entry.getInReplyToHref() != null) {
+                w.writeAttribute("href", entry.getInReplyToHref());
+            }
+        }
+        if (entry.getMobileRendition() != null) {
+            w.writeStartElement(ROLLER_NS, "rendition");
+            w.writeAttribute("type", "mobile");
+            w.writeCharacters(entry.getMobileRendition());
+            w.writeEndElement();
+        }
+        for (Map.Entry<String, String> ext : entry.getExtensions().entrySet()) {
+            w.writeStartElement(ROLLER_NS, ext.getKey());
+            w.writeCharacters(ext.getValue());
+            w.writeEndElement();
         }
         // APP extensions (RFC 5023): app:edited is a child of atom:entry
         // (section 10.2); app:draft goes inside app:control (section 13.1)
