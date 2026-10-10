@@ -139,6 +139,11 @@ public class RollerAtomHandler {
         atomURL = WebloggerFactory.getWeblogger().getUrlStrategy().getAtomProtocolURL(true);
     }
 
+    /** The absolute AtomPub URL that this server's links start with. */
+    String getAtomURL() {
+        return atomURL;
+    }
+
     /**
      * Return weblogHandle of authenticated user or null if there is none.
      */

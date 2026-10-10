@@ -42,6 +42,9 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -283,6 +286,54 @@ class RollerAtomServletTest {
         assertNull(servlet.body);
     }
 
+    @Test
+    void serverErrorsDoNotExposeTheExceptionMessage() throws Exception {
+        servlet.failure = new IllegalStateException("secret internal detail");
+
+        servlet.service(request("GET", "/blog/entries", null, ""), response);
+
+        verify(response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        verify(response, never()).sendError(anyInt(), anyString());
+    }
+
+    @Test
+    void clientErrorsKeepTheirMessage() throws Exception {
+        servlet.service(request("GET", "/blog/nowhere", null, ""), response);
+
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND, "Cannot find specified resource");
+    }
+
+    @Test
+    void locationMustBeAValidUriUnderTheAtomUrl() {
+        String atom = "https://blog.example/roller-services/app";
+        assertEquals(atom + "/blog/entry/1", RollerAtomServlet.safeLocation(atom + "/blog/entry/1", atom));
+        assertEquals(atom + "/blog/resource/caf%C3%A9.png.media-link",
+                RollerAtomServlet.safeLocation(atom + "/blog/resource/café.png.media-link", atom));
+        assertNull(RollerAtomServlet.safeLocation("https://evil.example/x", atom));
+        assertNull(RollerAtomServlet.safeLocation(atom + ".evil.example/x", atom));
+        assertNull(RollerAtomServlet.safeLocation(atom + "/blog/a\r\nSet-Cookie: x=y", atom));
+        assertNull(RollerAtomServlet.safeLocation(atom + "/blog/entry/1", null));
+        assertNull(RollerAtomServlet.safeLocation(null, atom));
+    }
+
+    @Test
+    void createdEntryLocationIsSetOnlyWhenSafe() throws Exception {
+        servlet.atomURL = "https://blog.example/roller-services/app";
+        servlet.editHref = servlet.atomURL + "/blog/entry/1";
+
+        servlet.service(request("POST", "/blog/entries", "application/atom+xml", ENTRY), response);
+
+        verify(response).setStatus(HttpServletResponse.SC_CREATED);
+        verify(response).setHeader("Location", servlet.editHref);
+
+        HttpServletResponse unsafe = response();
+        servlet.editHref = "https://evil.example/x";
+        servlet.service(request("POST", "/blog/entries", "application/atom+xml", ENTRY), unsafe);
+
+        verify(unsafe).setStatus(HttpServletResponse.SC_CREATED);
+        verify(unsafe, never()).setHeader(eq("Location"), anyString());
+    }
+
     private static HttpServletResponse response() throws IOException {
         HttpServletResponse response = mock(HttpServletResponse.class);
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
@@ -355,6 +406,9 @@ class RollerAtomServletTest {
     private static final class RecordingServlet extends RollerAtomServlet {
         private static final long serialVersionUID = 1L;
         String userName = "alice";
+        String atomURL;
+        String editHref;
+        RuntimeException failure;
         RollerAtomHandler handler;
         AtomEntry postedEntry;
         byte[] body;
@@ -364,17 +418,29 @@ class RollerAtomServletTest {
             handler = mock(RollerAtomHandler.class);
             try {
                 when(handler.getAuthenticatedUsername()).thenReturn(userName);
+                when(handler.getAtomURL()).thenReturn(atomURL);
                 when(handler.isCollectionURI(any())).thenAnswer(call ->
                         call.<AtomRequest>getArgument(0).getPathInfo().matches("/[^/]+/(entries|resources).*"));
                 when(handler.isEntryURI(any())).thenAnswer(call ->
                         RollerAtomHandler.isEntryPath(call.<AtomRequest>getArgument(0).getPathInfo()));
                 when(handler.isMediaEditURI(any())).thenAnswer(call ->
                         call.<AtomRequest>getArgument(0).getPathInfo().matches("/[^/]+/resource/.*"));
-                when(handler.getCollection(any())).thenReturn(new AtomFeed());
+                if (failure != null) {
+                    when(handler.getCollection(any())).thenThrow(failure);
+                } else {
+                    when(handler.getCollection(any())).thenReturn(new AtomFeed());
+                }
                 when(handler.postEntry(any(), any())).thenAnswer(call -> {
                     record(call.getArgument(0));
                     postedEntry = call.getArgument(1);
-                    return new AtomEntry();
+                    AtomEntry created = new AtomEntry();
+                    if (editHref != null) {
+                        AtomLink edit = new AtomLink();
+                        edit.setRel("edit");
+                        edit.setHref(editHref);
+                        created.getLinks().add(edit);
+                    }
+                    return created;
                 });
                 when(handler.postMedia(any(), any())).thenAnswer(call -> {
                     record(call.getArgument(0));

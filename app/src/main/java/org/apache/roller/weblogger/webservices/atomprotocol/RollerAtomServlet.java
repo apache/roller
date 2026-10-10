@@ -21,6 +21,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -131,15 +133,39 @@ public class RollerAtomServlet extends HttpServlet {
                     response.setStatus(HttpServletResponse.SC_OK);
             }
         } catch (AtomException ae) {
-            log.debug("Returning error to client: " + ae.getMessage(), ae);
             if (!response.isCommitted()) {
-                response.sendError(ae.getStatus(), ae.getMessage());
+                if (ae.getStatus() >= HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+                    // Server errors can carry internal details; keep them in the log
+                    log.error("Error handling AtomPub request", ae);
+                    response.sendError(ae.getStatus());
+                } else {
+                    // Client errors carry a message written by Roller for the client
+                    log.debug("Returning error to client: " + ae.getMessage(), ae);
+                    response.sendError(ae.getStatus(), ae.getMessage());
+                }
             }
         } catch (Exception e) {
             log.error("Unexpected error handling AtomPub request", e);
             if (!response.isCommitted()) {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
+        }
+    }
+
+    /**
+     * Returns the edit URI as a header value, or null when it is not a valid
+     * URI under this server's AtomPub URL. The URI is built in part from
+     * client input (the Slug header and the request path), so this keeps the
+     * Location header from pointing elsewhere or carrying CR/LF.
+     */
+    static String safeLocation(String href, String atomURL) {
+        if (href == null || atomURL == null || !href.startsWith(atomURL + "/")) {
+            return null;
+        }
+        try {
+            return new URI(href).toASCIIString();
+        } catch (URISyntaxException e) {
+            return null;
         }
     }
 
@@ -245,7 +271,7 @@ public class RollerAtomServlet extends HttpServlet {
             mediaEntry.setTitle(areq.getHeader("Slug"));
             created = handler.postMedia(areq, mediaEntry);
         }
-        writeCreated(response, created);
+        writeCreated(handler, response, created);
     }
 
     private void doPut(RollerAtomHandler handler, AtomRequest areq, AtomEntry entry,
@@ -262,12 +288,12 @@ public class RollerAtomServlet extends HttpServlet {
         }
     }
 
-    private void writeCreated(HttpServletResponse response, AtomEntry entry)
-            throws AtomException {
-        String editHref = entry.getLinkHref("edit");
-        if (editHref != null) {
-            response.setHeader("Location", editHref);
-            response.setHeader("Content-Location", editHref);
+    private void writeCreated(RollerAtomHandler handler, HttpServletResponse response,
+            AtomEntry entry) throws AtomException {
+        String location = safeLocation(entry.getLinkHref("edit"), handler.getAtomURL());
+        if (location != null) {
+            response.setHeader("Location", location);
+            response.setHeader("Content-Location", location);
         }
         response.setStatus(HttpServletResponse.SC_CREATED);
         response.setContentType(AtomConstants.ENTRY_MEDIA_TYPE);

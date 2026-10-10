@@ -158,6 +158,21 @@ class MediaCollectionPathTest {
     }
 
     @Test
+    void mediaLinkEntryOfAnUnknownWeblogIsNotFound() {
+        assertThrows(AtomNotFoundException.class,
+                () -> collection.getEntry(request("/nosuchblog/resource/default/a.png.media-link")));
+    }
+
+    @Test
+    void mediaLinkEntryNeedsPermissionOnTheWeblog() throws Exception {
+        when(weblog.hasUserPermission(any(), eq(WeblogPermission.POST))).thenReturn(false);
+
+        assertThrows(AtomNotAuthorizedException.class,
+                () -> collection.getEntry(request("/blog/resource/default/a.png.media-link")));
+        verify(files, never()).getMediaFileByPath(any(), anyString());
+    }
+
+    @Test
     void getOfAnUnknownMediaResourceIsNotFound() {
         assertThrows(AtomNotFoundException.class,
                 () -> collection.getMediaResource(request("/blog/resource/default/missing.png")));

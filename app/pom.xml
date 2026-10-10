@@ -529,21 +529,6 @@ limitations under the License.
             </exclusions>
         </dependency>
 
-        <!-- Used by Trackback; previously reached the classpath transitively
-             via rome-propono, now declared explicitly since propono was removed. -->
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <dependency>
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth-provider</artifactId>

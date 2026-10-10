@@ -197,6 +197,12 @@ public class MediaCollection {
             filePath = filePath.substring(0, filePath.length() - ".media-link".length());
             String handle = pathInfo[0];
             Weblog website = roller.getWeblogManager().getWeblogByHandle(handle);
+            if (website == null) {
+                throw new AtomNotFoundException("Cannot find weblog: " + handle);
+            }
+            if (!RollerAtomHandler.canView(user, website)) {
+                throw new AtomNotAuthorizedException("Not authorized to access website");
+            }
 
             MediaFileManager fileMgr = roller.getMediaFileManager();
             MediaFile mf = fileMgr.getMediaFileByPath(website, filePath);
