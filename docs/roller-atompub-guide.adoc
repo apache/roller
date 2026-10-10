@@ -284,10 +284,10 @@ include::atompub/examples/categories.xml[]
 |===
 |Element |Access |Meaning
 |`atom:title` |read/write
-|Name; required on `POST`. It must be unique in the weblog and may not contain
-`<`, `>`, `&` or `"`.
-|`atom:summary` |read/write |Description
-|`roller:image` |read/write |Image URL; empty removes it
+|Name; required on `POST`; at most 255 characters. It must be unique in the
+weblog and may not contain `<`, `>`, `&` or `"`.
+|`atom:summary` |read/write |Description, at most 255 characters
+|`roller:image` |read/write |Image URL (`http` or `https`); empty removes it
 |`roller:position` |read |Order in the weblog's category list
 |`roller:inUse` |read |`true` when entries use the category, or it is the
 weblog's default category
@@ -335,8 +335,9 @@ its URIs answer `404 Not Found`, even for administrators.
 [cols="2,1,4",options="header"]
 |===
 |Element |Access |Meaning
-|`atom:title` |read/write |Name; required on `POST`; unique in the weblog
-|`atom:summary` |read/write |Description
+|`atom:title` |read/write |Name; required on `POST`; unique in the weblog; at
+most 255 characters
+|`atom:summary` |read/write |Description, at most 255 characters
 |`atom:content type="text"` |read/write |The standard template (Velocity)
 |`roller:rendition type="mobile"` |read/write
 |The mobile template. Missing on `PUT`: unchanged. Empty: removed, so mobile
@@ -344,7 +345,8 @@ visitors see the standard template.
 |`roller:action` |read/write
 |`weblog`, `permalink`, `search`, `tagsindex`, `stylesheet` or `custom`.
 Set on `POST` only; `custom` when missing.
-|`roller:link` |read/write |The template's URL path; unique in the weblog
+|`roller:link` |read/write |The template's URL path; unique in the weblog; at
+most 255 characters
 |`roller:navbar` |read/write |`true` to list the template in the navigation bar
 |`roller:hidden` |read/write |`true` to hide the template from visitors
 |`roller:contentType` |read/write |Output media type; empty for automatic
@@ -432,7 +434,8 @@ is in Roller's log.
 |===
 |Status |Meaning
 |`400 Bad Request` |The entry is not well-formed, has a `DOCTYPE`, or has an
-invalid value (unknown action or status, invalid category name, bad `moveTo`)
+invalid value (unknown action or status, invalid category name or image URL,
+a value longer than 255 characters, bad `moveTo`)
 |`401 Unauthorized` |Authentication failed, or the user lacks the permission the
 resource needs
 |`404 Not Found` |AtomPub is off, the resource does not exist or belongs to
