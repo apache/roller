@@ -331,6 +331,47 @@ public class RollerAtomManagementTest {
     }
 
     @Test
+    public void categoryImageMustBeAnHttpUrl() throws Exception {
+        for (String image : new String[] {"javascript:alert(1)", "https://example.com/a\" b",
+                "ftp://example.com/a.png", "/images/a.png"}) {
+            AtomEntry in = new AtomEntry();
+            in.setTitle("Pictures");
+            in.setExtension("image", image);
+            AtomException refused = assertThrows(AtomException.class, () -> categories(author)
+                    .postEntry(request("/" + HANDLE + "/categories"), in), image);
+            assertEquals(HttpServletResponse.SC_BAD_REQUEST, refused.getStatus(), image);
+            TestUtils.endSession(false);
+        }
+
+        AtomEntry ok = new AtomEntry();
+        ok.setTitle("Pictures");
+        ok.setExtension("image", "https://example.com/images/a.png");
+        AtomEntry created = categories(author).postEntry(request("/" + HANDLE + "/categories"), ok);
+        assertEquals("https://example.com/images/a.png", created.getExtension("image"));
+    }
+
+    @Test
+    public void overlongCategoryAndTemplateValuesAreRefused() throws Exception {
+        String tooLong = "x".repeat(256);
+
+        AtomEntry category = new AtomEntry();
+        category.setTitle("Long");
+        category.setSummary(CollectionSupport.text("text", tooLong));
+        AtomException refused = assertThrows(AtomException.class, () -> categories(author)
+                .postEntry(request("/" + HANDLE + "/categories"), category));
+        assertEquals(HttpServletResponse.SC_BAD_REQUEST, refused.getStatus());
+        TestUtils.endSession(false);
+
+        useCustomTheme();
+        AtomEntry template = new AtomEntry();
+        template.setTitle("sidebar");
+        template.setExtension("link", tooLong);
+        AtomException refusedTemplate = assertThrows(AtomException.class, () -> templates(owner)
+                .postEntry(request("/" + HANDLE + "/templates"), template));
+        assertEquals(HttpServletResponse.SC_BAD_REQUEST, refusedTemplate.getStatus());
+    }
+
+    @Test
     public void categoriesNeedPermissionOnTheWeblog() throws Exception {
         assertThrows(AtomNotAuthorizedException.class, () -> categories(author)
                 .getCollection(request("/" + OTHER_HANDLE + "/categories")));

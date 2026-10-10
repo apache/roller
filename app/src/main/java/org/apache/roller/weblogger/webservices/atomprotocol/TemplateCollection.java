@@ -19,11 +19,13 @@
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -184,7 +186,13 @@ public class TemplateCollection {
                 template.setName(name);
             }
             if (entry.getSummary() != null) {
-                template.setDescription(entry.getSummary().getValue());
+                String description = entry.getSummary().getValue();
+                if (description != null && description.length() > RollerConstants.TEXTWIDTH_255) {
+                    throw new TemplateRuleException(Collections.singletonList(
+                            new TemplateRuleException.Violation(
+                                    "Template.error.descriptionSize", List.of(), false)));
+                }
+                template.setDescription(description);
             }
             if (link != null) {
                 template.setLink(link);
