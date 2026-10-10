@@ -630,6 +630,12 @@ URL is _http://jroller.com/fredsblog_), then your parameters would be:
 * *BlogID*: fredsblog
 * *URL*: http://jroller.com/roller-services/xmlrpc
 
+==== Managing templates, categories and comments with AtomPub
+
+Roller's AtomPub service can also manage a weblog's templates, categories and
+comments. The AtomPub Guide (`roller-atompub-guide`) documents every URI,
+permission and XML element, with examples.
+
 == Working with comments
 
 Roller supports weblog comments, which are enabled by default. You can

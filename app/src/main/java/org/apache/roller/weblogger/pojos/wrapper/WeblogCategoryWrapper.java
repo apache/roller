@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
+import org.apache.roller.weblogger.util.CommentAuthorUrl;
 
 
 /**
@@ -69,8 +70,12 @@ public final class WeblogCategoryWrapper {
     }
     
     
+    /**
+     * The image URL when it is an http or https URL, otherwise null. Checked
+     * again here in case it was stored before the current rules.
+     */
     public String getImage() {
-        return this.pojo.getImage();
+        return CommentAuthorUrl.normalize(this.pojo.getImage());
     }
 
     public WeblogWrapper getWebsite() {

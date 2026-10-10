@@ -41,6 +41,7 @@ import org.mockito.MockedStatic;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -334,6 +335,36 @@ class RollerAtomServletTest {
         verify(unsafe, never()).setHeader(eq("Location"), anyString());
     }
 
+    @Test
+    void categoryDocumentIsServedAsAtomcat() throws Exception {
+        HttpServletResponse catsResponse = mock(HttpServletResponse.class);
+        ByteArrayOutputStream body = new ByteArrayOutputStream();
+        when(catsResponse.getOutputStream()).thenReturn(new ServletOutputStream() {
+            @Override
+            public void write(int b) {
+                body.write(b);
+            }
+
+            @Override
+            public boolean isReady() {
+                return true;
+            }
+
+            @Override
+            public void setWriteListener(WriteListener listener) {
+                throw new UnsupportedOperationException();
+            }
+        });
+
+        servlet.service(request("GET", "/blog/categories.atomcat", null, ""), catsResponse);
+
+        verify(catsResponse).setContentType(AtomConstants.CATEGORIES_MEDIA_TYPE);
+        verify(servlet.handler, never()).getCollection(any());
+        String xml = body.toString(StandardCharsets.UTF_8);
+        assertTrue(xml.contains("<categories"), xml);
+        assertTrue(xml.contains("term=\"Travel\""), xml);
+    }
+
     private static HttpServletResponse response() throws IOException {
         HttpServletResponse response = mock(HttpServletResponse.class);
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
@@ -419,6 +450,14 @@ class RollerAtomServletTest {
             try {
                 when(handler.getAuthenticatedUsername()).thenReturn(userName);
                 when(handler.getAtomURL()).thenReturn(atomURL);
+                when(handler.isCategoriesDocURI(any())).thenAnswer(call ->
+                        call.<AtomRequest>getArgument(0).getPathInfo().endsWith("/categories.atomcat"));
+                AtomCategories cats = new AtomCategories();
+                cats.setFixed(true);
+                AtomCategory travel = new AtomCategory();
+                travel.setTerm("Travel");
+                cats.getCategories().add(travel);
+                when(handler.getCategoriesDocument(any())).thenReturn(cats);
                 when(handler.isCollectionURI(any())).thenAnswer(call ->
                         call.<AtomRequest>getArgument(0).getPathInfo().matches("/[^/]+/(entries|resources).*"));
                 when(handler.isEntryURI(any())).thenAnswer(call ->

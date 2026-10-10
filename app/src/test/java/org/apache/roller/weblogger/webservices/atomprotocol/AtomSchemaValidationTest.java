@@ -19,24 +19,14 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXParseException;
 
-import com.thaiopensource.util.PropertyMapBuilder;
-import com.thaiopensource.validate.ValidateProperty;
-import com.thaiopensource.validate.ValidationDriver;
-import com.thaiopensource.validate.rng.CompactSchemaReader;
 
 /**
  * Validates the XML produced by {@link AtomWriter} against the official RELAX NG
@@ -49,25 +39,8 @@ public class AtomSchemaValidationTest {
     private static final Date PUBLISHED = Date.from(Instant.parse("2026-06-03T12:34:56Z"));
     private static final Date UPDATED = Date.from(Instant.parse("2026-06-04T01:02:03Z"));
 
-    /** Validate xml against a classpath RELAX NG Compact schema; return errors (empty == valid). */
     private List<String> validate(String schemaResource, byte[] xml) throws Exception {
-        List<String> errors = new ArrayList<>();
-        ErrorHandler handler = new ErrorHandler() {
-            @Override public void warning(SAXParseException e) { /* ignore warnings */ }
-            @Override public void error(SAXParseException e) { errors.add(e.getMessage()); }
-            @Override public void fatalError(SAXParseException e) { errors.add(e.getMessage()); }
-        };
-        PropertyMapBuilder props = new PropertyMapBuilder();
-        props.put(ValidateProperty.ERROR_HANDLER, handler);
-        ValidationDriver driver =
-                new ValidationDriver(props.toPropertyMap(), CompactSchemaReader.getInstance());
-
-        try (InputStream schema = getClass().getResourceAsStream(schemaResource)) {
-            assertTrue(driver.loadSchema(new InputSource(schema)),
-                    "schema " + schemaResource + " failed to compile: " + errors);
-        }
-        driver.validate(new InputSource(new ByteArrayInputStream(xml)));
-        return errors;
+        return RelaxNgValidator.validateResource(schemaResource, xml);
     }
 
     private byte[] writeEntry(AtomEntry entry) throws Exception {
@@ -188,6 +161,86 @@ public class AtomSchemaValidationTest {
         media.setHref("http://example.com/app/blog/resources/default");
         media.setAccepts(Arrays.asList("image/png", "image/jpeg"));
         workspace.getCollections().add(media);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        new AtomWriter().writeServiceDoc(out, service);
+
+        List<String> errors = validate("/atompub/app-service.rnc", out.toByteArray());
+        assertTrue(errors.isEmpty(), "service document should be schema-valid but: " + errors);
+    }
+
+    @Test
+    public void testTemplateEntryWithExtensionsConformsToAtomSchema() throws Exception {
+        AtomEntry entry = new AtomEntry();
+        entry.setId("http://example.com/app/blog/template/1");
+        entry.setTitle("sidebar");
+        entry.setUpdated(UPDATED);
+        entry.setEdited(UPDATED);
+        AtomContent content = new AtomContent();
+        content.setType("text");
+        content.setValue("<div>$model.weblog.name</div>");
+        entry.setContent(content);
+        entry.setMobileRendition("<div>mobile</div>");
+        entry.setExtension("action", "custom");
+        entry.setExtension("navbar", "false");
+        entry.getLinks().add(new AtomLink("edit", "http://example.com/app/blog/template/1"));
+
+        List<String> errors = validate("/atompub/atom.rnc", writeEntry(entry));
+        assertTrue(errors.isEmpty(), "template entry should be schema-valid but: " + errors);
+    }
+
+    @Test
+    public void testCommentEntryConformsToAtomSchema() throws Exception {
+        AtomEntry entry = new AtomEntry();
+        entry.setId("http://example.com/app/blog/comment/1");
+        entry.setTitle("Comment on Hello");
+        entry.setPublished(PUBLISHED);
+        entry.setUpdated(PUBLISHED);
+        AtomPerson author = new AtomPerson();
+        author.setName("bob");
+        author.setUri("http://bob.example.com/");
+        author.setEmail("bob@example.com");
+        entry.getAuthors().add(author);
+        AtomContent content = new AtomContent();
+        content.setType("text");
+        content.setValue("Nice post");
+        entry.setContent(content);
+        entry.setInReplyToRef("http://example.com/blog/entry/hello");
+        entry.setInReplyToHref("http://example.com/app/blog/entry/42");
+        entry.setExtension("status", "pending");
+        entry.getLinks().add(new AtomLink("edit", "http://example.com/app/blog/comment/1"));
+
+        List<String> errors = validate("/atompub/atom.rnc", writeEntry(entry));
+        assertTrue(errors.isEmpty(), "comment entry should be schema-valid but: " + errors);
+    }
+
+    @Test
+    public void testOutOfLineCategoriesAndReadOnlyCollectionConformToAppSchema() throws Exception {
+        AtomServiceDoc service = new AtomServiceDoc();
+        AtomWorkspace workspace = new AtomWorkspace();
+        workspace.setTitle("My Weblog");
+        service.getWorkspaces().add(workspace);
+
+        AtomCollection entries = new AtomCollection();
+        entries.setTitle("Weblog Entries");
+        entries.setHref("http://example.com/app/blog/entries");
+        entries.setAccepts(Arrays.asList("application/atom+xml;type=entry"));
+        AtomCategories inline = new AtomCategories();
+        inline.setFixed(true);
+        AtomCategory cat = new AtomCategory();
+        cat.setTerm("tech");
+        inline.getCategories().add(cat);
+        entries.getCategories().add(inline);
+        AtomCategories byReference = new AtomCategories();
+        byReference.setHref("http://example.com/app/blog/categories.atomcat");
+        entries.getCategories().add(byReference);
+        workspace.getCollections().add(entries);
+
+        AtomCollection comments = new AtomCollection();
+        comments.setTitle("Comments");
+        comments.setHref("http://example.com/app/blog/comments");
+        comments.setAccepts(Arrays.asList(""));
+        workspace.getCollections().add(comments);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         new AtomWriter().writeServiceDoc(out, service);

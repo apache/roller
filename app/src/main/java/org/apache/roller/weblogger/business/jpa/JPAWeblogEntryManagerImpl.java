@@ -615,7 +615,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     @Override
     public boolean isWeblogCategoryInUse(WeblogCategory cat)
     throws WebloggerException {
-        if (cat.getWeblog().getBloggerCategory().equals(cat)) {
+        if (cat.equals(cat.getWeblog().getBloggerCategory())) {
             return true;
         }
         TypedQuery<WeblogEntry> q = strategy.getNamedQuery("WeblogEntry.getByCategory", WeblogEntry.class);

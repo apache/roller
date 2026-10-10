@@ -222,6 +222,11 @@ public class RollerAtomServlet extends HttpServlet {
             response.setContentType(AtomConstants.SERVICE_MEDIA_TYPE);
             new AtomWriter().writeServiceDoc(response.getOutputStream(), service);
 
+        } else if (handler.isCategoriesDocURI(areq)) {
+            AtomCategories cats = handler.getCategoriesDocument(areq);
+            response.setContentType(AtomConstants.CATEGORIES_MEDIA_TYPE);
+            new AtomWriter().writeCategoriesDoc(response.getOutputStream(), cats);
+
         } else if (handler.isCollectionURI(areq)) {
             AtomFeed feed = handler.getCollection(areq);
             response.setContentType(AtomConstants.FEED_MEDIA_TYPE);
