@@ -59,6 +59,28 @@ class MediaCollectionTest {
         verify(response).setContentType("text/plain");
     }
 
+    @Test
+    void fileExtensionComesFromTheMediaType() {
+        assertEquals("svg", MediaCollection.fileExtension("image/svg+xml"));
+        assertEquals("txt", MediaCollection.fileExtension("text/plain; charset=UTF-8"));
+        assertEquals("jpg", MediaCollection.fileExtension("IMAGE/JPEG"));
+        assertEquals("png", MediaCollection.fileExtension("image/png"));
+        assertEquals("jsonld", MediaCollection.fileExtension("application/ld+json"));
+        assertEquals("atom", MediaCollection.fileExtension("application/atom+xml"));
+        assertEquals("pdf", MediaCollection.fileExtension("application/pdf"));
+        assertEquals("bin", MediaCollection.fileExtension("application/octet-stream"));
+    }
+
+    @Test
+    void aNameKeepsAnExtensionThatMatchesTheType() {
+        assertEquals("diagram.svg", MediaCollection.withExtension("diagram.svg", "svg"));
+        assertEquals("photo.jpeg", MediaCollection.withExtension("photo.jpeg", "jpg"));
+        assertEquals("photo.JPG", MediaCollection.withExtension("photo.JPG", "jpg"));
+        assertEquals("roller-atompub-model.svg",
+                MediaCollection.withExtension("roller-atompub-model", "svg"));
+        assertEquals("notes.md.txt", MediaCollection.withExtension("notes.md", "txt"));
+    }
+
     private MediaFile mediaFile(String name, String type) {
         MediaFile mediaFile = mock(MediaFile.class);
         when(mediaFile.getName()).thenReturn(name);

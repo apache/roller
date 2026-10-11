@@ -17,6 +17,23 @@
   every AtomPub URI, permission, element and status code, with examples
   that the test suite checks against the code.
 
+### Bug fixes
+
+- **AtomPub fixes found while running a 7.0.0 snapshot.**
+  - Uploaded media files get the usual extension for their type:
+    `image/svg+xml` gives `.svg`, parameters such as `charset` are ignored,
+    and a `Slug` that already has a matching extension keeps it.
+  - The `next` and `previous` links of a named media directory include the
+    slash before the offset, so paging through it works.
+  - Characters that XML 1.0 does not allow are left out of AtomPub
+    responses, so one stored control character no longer makes a whole page
+    unreadable.
+  - A file uploaded over AtomPub can be read back through its `edit-media`
+    URI; it answered 404.
+- **The rich text editor's menus show their labels again.** Summernote is
+  upgraded to 0.9.1, and the panel chevron no longer appears on the
+  editor's menu items.
+
 ### Behaviour changes worth reading before upgrading
 
 - **AtomPub no longer uses ROME Propono.** Roller now has its own AtomPub
