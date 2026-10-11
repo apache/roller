@@ -183,8 +183,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                   cssClass="btn btn-warning" cssStyle="float:left; margin-right: 0.5em"
                   action="bookmarks!move" onclick="onMoveToFolder();return false;"/>
         <%-- Move-to combo-box --%>
-        <s:select name="targetFolderId" theme="bootstrap"
-                  cssClass="form-control" cssStyle="float:left; width:30%; margin-right: 2em"
+        <s:select name="targetFolderId" theme="simple"
+                  cssClass="form-select" cssStyle="float:left; width:auto; margin-right: 2em"
                   list="allFolders" listKey="id" listValue="name"/>
     </s:if>
 

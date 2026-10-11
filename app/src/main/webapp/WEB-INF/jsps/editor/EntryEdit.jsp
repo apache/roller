@@ -201,16 +201,18 @@
 
                         <div class="controls col-md-9">
 
-                            <s:select theme="bootstrap" name="bean.hours" list="hoursList"/> :
-                            <s:select theme="bootstrap" name="bean.minutes" list="minutesList"/> :
-                            <s:select theme="bootstrap" name="bean.seconds" list="secondsList"/> <br/>
+                            <div class="d-flex gap-2 align-items-center mb-2">
+                                <s:select theme="simple" name="bean.hours" list="hoursList"
+                                          cssClass="form-select" cssStyle="width:5em"/> :
+                                <s:select theme="simple" name="bean.minutes" list="minutesList"
+                                          cssClass="form-select" cssStyle="width:5em"/> :
+                                <s:select theme="simple" name="bean.seconds" list="secondsList"
+                                          cssClass="form-select" cssStyle="width:5em"/>
+                            </div>
 
-                            <img src="<s:url value='/roller-ui/images/spacer.png' />"
-                                 alt="spacer" style="min-height: 0.3em"/>
-
-                            <div class="input-group">
+                            <div class="input-group w-auto d-inline-flex">
                                 <s:textfield name="bean.dateString" readonly="true" cssStyle="width:15em"
-                                             theme="bootstrap" cssClass="date-picker form-control"/>
+                                             theme="simple" cssClass="date-picker form-control"/>
                                 <label for="bean.dateString" class="input-group-text btn" style="width:3em">
                                     <span class="bi bi-calendar"></span>
                                 </label>
