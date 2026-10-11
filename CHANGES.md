@@ -19,6 +19,17 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Roller now runs on Jakarta EE**
+  ([ROL-2183](https://issues.apache.org/jira/browse/ROL-2183)). It needs Java 17
+  or later and a Servlet 6.1 container such as Tomcat 11. Tomcat 9 and other
+  `javax.servlet` containers can no longer run Roller.
+- **OAuth 1.0a is removed** ([ROL-2183](https://issues.apache.org/jira/browse/ROL-2183)).
+  AtomPub accepts only BASIC authentication, and the OAuth credentials page and
+  consumer keys are gone. If `webservices.atomPubAuth` is still set to `oauth`,
+  AtomPub refuses every request until you set it to `basic`.
+- **OpenID 2.0 login is removed** ([ROL-2183](https://issues.apache.org/jira/browse/ROL-2183)).
+  Sites with `authentication.method` set to `openid` or `db-openid` must switch
+  to another method before upgrading.
 - **AtomPub no longer uses ROME Propono.** Roller now has its own AtomPub
   server. The `propono.properties` file and the `RollerAtomHandlerFactory`
   extension point are removed, so a deployment that configured its own
