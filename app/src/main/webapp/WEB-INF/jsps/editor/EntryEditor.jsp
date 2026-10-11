@@ -23,7 +23,7 @@
 
 <%-- content --%>
 <s:textarea id="edit_content" name="bean.text"
-            tabindex="5" rows="18" cssClass="col-sm-12" theme="bootstrap"/>
+            tabindex="5" rows="18" cssClass="col-sm-12" theme="simple"/>
 
 <a href="#" onClick="onClickMediaFileInsert();"><s:text name="weblogEdit.insertMediaFile"/></a><br/>
 <img src="<s:url value='/roller-ui/images/spacer.png' />" alt="spacer" style="min-height: 2em"/>
@@ -45,7 +45,7 @@
         <div class="card-body">
 
             <s:textarea id="edit_summary" name="bean.summary"
-                        tabindex="6" rows="10" cssClass="col-sm-12" theme="bootstrap"/>
+                        tabindex="6" rows="10" cssClass="col-sm-12" theme="simple"/>
 
         </div>
     </div>
@@ -191,7 +191,7 @@
         <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
         $("#mediaFileEditor").attr('src', '<s:property value="%{mediaFileImageChooser}" />');
-        $('#mediafile_edit_lightbox').modal({show: true});
+        $('#mediafile_edit_lightbox').modal('show');
     }
 
     function onClose() {

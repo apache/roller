@@ -48,7 +48,7 @@
 
         validateCategory();
 
-        $('#category-edit-modal').modal({show: true});
+        $('#category-edit-modal').modal('show');
     }
 
 </script>

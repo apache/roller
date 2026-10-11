@@ -183,8 +183,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                   cssClass="btn btn-warning" cssStyle="float:left; margin-right: 0.5em"
                   action="bookmarks!move" onclick="onMoveToFolder();return false;"/>
         <%-- Move-to combo-box --%>
-        <s:select name="targetFolderId" theme="bootstrap"
-                  cssClass="form-control" cssStyle="float:left; width:30%; margin-right: 2em"
+        <s:select name="targetFolderId" theme="simple"
+                  cssClass="form-select" cssStyle="float:left; width:auto; margin-right: 2em"
                   list="allFolders" listKey="id" listValue="name"/>
     </s:if>
 
@@ -318,7 +318,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 nameChanged();
             }
 
-        }).error(function (data) {
+        }).fail(function (data) {
             alert('<s:text name="generic.error.check.logs" />');
         });
     }
@@ -329,7 +329,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     }
 
     function confirmDeleteSelected() {
-        $('#delete-links-modal').modal({show: true});
+        $('#delete-links-modal').modal('show');
     }
 
     function deleteSelected() {
@@ -339,7 +339,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     function confirmDeleteFolder() {
         $('#boomarks_delete_folder_folderId').val($('#bookmarks_folderId:first').val());
         $('#deleteBlogrollName').text($('#deleteBlogrollName').data('folder-name'));
-        $('#delete-blogroll-modal').modal({show: true});
+        $('#delete-blogroll-modal').modal('show');
     }
 
     function onMoveToFolder() {
@@ -373,7 +373,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         // disable save button until valid name is entered
 
-        $('#addedit-bookmarkfolder-modal').modal({show: true});
+        $('#addedit-bookmarkfolder-modal').modal('show');
 
         onBlogrollFormChanged();
     }
@@ -494,7 +494,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 bookmarksForm.submit();
             }
 
-        }).error(function (data) {
+        }).fail(function (data) {
             feedbackAreaBlogrollEdit.html('<s:text name="generic.error.check.logs" />');
             feedbackAreaBlogrollEdit.css("color", "red");
         });
@@ -703,7 +703,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         $('#subtitle_folder_name:first').text(originalName);
 
-        $('#addedit-bookmark-modal').modal({show: true});
+        $('#addedit-bookmark-modal').modal('show');
     }
 
 
@@ -739,7 +739,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         $('#subtitle_folder_name:first').text(originalName);
 
-        $('#addedit-bookmark-modal').modal({show: true});
+        $('#addedit-bookmark-modal').modal('show');
     }
 
 
@@ -838,7 +838,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 viewChanged();
             }
 
-        }).error(function (data) {
+        }).fail(function (data) {
             feedbackAreaEdit.html('<s:text name="generic.error.check.logs" />');
             feedbackAreaEdit.css("color", "red");
         });

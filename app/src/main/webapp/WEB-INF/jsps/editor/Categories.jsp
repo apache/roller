@@ -156,7 +156,7 @@
         $('#categoryEditForm_bean_description').val(desc);
         $('#categoryEditForm_bean_image').val(image);
 
-        $('#category-edit-modal').modal({show: true});
+        $('#category-edit-modal').modal('show');
 
     }
 
@@ -222,7 +222,7 @@
                 location.reload(true);
             }
 
-        }).error(function (data) {
+        }).fail(function (data) {
             feedbackAreaEdit.html('<s:text name="generic.error.check.logs" />');
             feedbackAreaEdit.css("color", "red");
         });
@@ -297,7 +297,7 @@
             $('#category-empty').css('display', 'block');
         }
         populateCategorySelect(id);
-        $('#delete-category-modal').modal({show: true});
+        $('#delete-category-modal').modal('show');
     }
 
     function populateCategorySelect(removeId) {
