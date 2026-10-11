@@ -216,7 +216,7 @@
 
     function showDeleteModal( removeId ) {
         $('#removeId').val(removeId);
-        $('#delete-ping-target-modal').modal({show: true});
+        $('#delete-ping-target-modal').modal('show');
     }
 
     function showAddEditModal(pingTargetId, name, url) {
@@ -230,7 +230,7 @@
             $('#pingTargetEditForm_bean_name:first').val("");
             $('#pingTargetEditForm_bean_pingUrl:first').val("");
         }
-        $('#addedit-pingtarget-modal').modal({show: true});
+        $('#addedit-pingtarget-modal').modal('show');
     }
 
     function validate() {
@@ -293,7 +293,7 @@
                 viewChanged();
             }
 
-        }).error(function (data) {
+        }).fail(function (data) {
             feedbackAreaEdit.html('<s:text name="generic.error.check.logs" />');
             feedbackAreaEdit.css("color", "red");
         });

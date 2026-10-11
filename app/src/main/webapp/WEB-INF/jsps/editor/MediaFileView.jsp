@@ -350,7 +350,7 @@
         </s:url>
         $('#edit-subtitle').text(mediaFileName);
         $('#mediaFileEditor').attr('src', '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
-        $('#mediafile_edit_lightbox').modal({show: true});
+        $('#mediafile_edit_lightbox').modal('show');
     }
 
     // Values come from data-* attributes and are bound via delegated listeners.

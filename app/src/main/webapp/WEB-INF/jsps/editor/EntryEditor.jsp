@@ -191,7 +191,7 @@
         <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
         $("#mediaFileEditor").attr('src', '<s:property value="%{mediaFileImageChooser}" />');
-        $('#mediafile_edit_lightbox').modal({show: true});
+        $('#mediafile_edit_lightbox').modal('show');
     }
 
     function onClose() {

@@ -422,7 +422,7 @@
         $('#postIdLabel').text(postId);
         $('#postTitleLabel').text(postTitle);
         $('#removeId').val(postId);
-        $('#delete-entry-modal').modal({show: true});
+        $('#delete-entry-modal').modal('show');
     }
 
     // Values come from data-* attributes and are bound via delegated listeners.
