@@ -32,14 +32,14 @@
         <ul id="template-code-tabs" class="nav nav-tabs" role="tablist" style="margin-bottom: 1em">
 
             <li role="presentation" class="active">
-                <a href="#tabStandard" aria-controls="home" role="tab" data-toggle="tab">
+                <a href="#tabStandard" aria-controls="home" role="tab" data-bs-toggle="tab">
                     <em><s:text name="stylesheetEdit.standard"/></em>
                 </a>
             </li>
 
             <s:if test="contentsMobile != null">
                 <li role="presentation">
-                    <a href="#tabMobile" aria-controls="home" role="tab" data-toggle="tab">
+                    <a href="#tabMobile" aria-controls="home" role="tab" data-bs-toggle="tab">
                         <em><s:text name="stylesheetEdit.mobile"/></em>
                     </a>
                 </li>
@@ -63,19 +63,19 @@
         </div>
 
         <%-- Save, Close and Resize text area buttons--%>
-        <s:submit value="%{getText('generic.save')}" cssClass="btn btn-success" />
+        <s:submit theme="simple" value="%{getText('generic.save')}" cssClass="btn btn-success" />
 
         <s:if test="!customTheme">
-            <s:submit value="%{getText('stylesheetEdit.revert')}" cssClass="btn"
+            <s:submit theme="simple" value="%{getText('stylesheetEdit.revert')}" cssClass="btn btn-outline-secondary"
                 onclick="revertStylesheet();return false;"
-                      tooltip="%{getText('stylesheetEdit.revertTip')}" />
+                title="%{getText('stylesheetEdit.revertTip')}" />
         </s:if>
 
         <%-- Only delete if we have no custom templates ie website.customStylesheetPath=null --%>
         <s:if test="sharedThemeStylesheet">
-            <s:submit value="%{getText('stylesheetEdit.delete')}"  cssClass="btn btn-danger"
+            <s:submit theme="simple" value="%{getText('stylesheetEdit.delete')}" cssClass="btn btn-danger"
                 onclick="deleteStylesheet();return false;"
-                      tooltip="%{getText('stylesheetEdit.deleteTip')}" />
+                title="%{getText('stylesheetEdit.deleteTip')}" />
         </s:if>
 
     </s:form>
@@ -90,8 +90,8 @@
         <s:form action="stylesheetEdit!copyStylesheet" theme="bootstrap" cssClass="form-vertical">
             <s:hidden name="salt" />
             <s:hidden name="weblog" />
-            <s:submit value="%{getText('stylesheetEdit.copyStylesheet')}" cssClass="btn btn-success"
-                tooltip="%{getText('stylesheetEdit.createStylesheetTip')}" />
+            <s:submit theme="simple" value="%{getText('stylesheetEdit.copyStylesheet')}" cssClass="btn btn-success"
+                title="%{getText('stylesheetEdit.createStylesheetTip')}" />
         </s:form>
 
     </s:if>

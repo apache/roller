@@ -34,7 +34,7 @@
                  name="bean.handle" size="30" maxlength="30"
                  onkeyup="handlePreview(this)" data-msg-required="%{getText('CreateWeblog.error.handleNull')}" required="required"/>
 
-    <div class="form-group">
+    <div class="row mb-3">
         <label class="col-sm-3"></label>
         <div class="col-sm-9 controls">
             <s:text name="createWebsite.weblogUrl" />:&nbsp;
@@ -59,24 +59,28 @@
               tooltip="%{getText('createWebsite.tip.timezone')}"
               name="bean.timeZone" size="1" list="timeZonesList"/>
 
-    <div class="form-group" ng-app="themeSelectModule" ng-controller="themeController">
-        <label class="col-sm-3 control-label" for="createWeblog_bean_timeZone">
+    <div class="row mb-3" ng-app="themeSelectModule" ng-controller="themeController">
+        <label class="col-sm-3 col-form-label" for="createWeblog_bean_timeZone">
             <s:text name="createWebsite.theme" />
         </label>
         <div class="col-sm-9 controls">
-            <s:select name="bean.theme" size="1" list="themes" listKey="id" listValue="name"
+            <s:select theme="simple" cssClass="form-select" name="bean.theme" size="1"
+                      list="themes" listKey="id" listValue="name"
                       onchange="previewImage(this[selectedIndex].value)"/>
             <p id="themedescription"></p>
-            <p><img id="themeThumbnail" src="" class="img-responsive img-thumbnail" style="max-width: 30em" /></p>
+            <p><img id="themeThumbnail" src="" class="img-fluid img-thumbnail" style="max-width: 30em" /></p>
 
         </div>
     </div>
 
-    <s:submit cssClass="btn btn-default"
-              value="%{getText('createWebsite.button.save')}"/>
-
-    <input class="btn" type="button" value="<s:text name="generic.cancel"/>"
-           onclick="window.location='<s:url action="menu"/>'"/>
+    <div class="row mb-3">
+        <div class="col-sm-9 offset-sm-3">
+            <s:submit cssClass="btn btn-primary"
+              value="%{getText('createWebsite.button.save')}" theme="simple"/>
+            <input class="btn btn-outline-secondary" type="button" value="<s:text name="generic.cancel"/>"
+                   onclick="window.location='<s:url action="menu"/>'"/>
+        </div>
+    </div>
 
 </s:form>
 
@@ -92,12 +96,7 @@
 
         saveButton = $("#createWeblog_0");
 
-        <s:if test="bean.theme == null">
-        previewImage('<s:property value="themes[0].id"/>');
-        </s:if>
-        <s:else>
-        previewImage('<s:property value="bean.theme"/>');
-        </s:else>
+        previewImage($('select[name="bean.theme"]').val());
 
     });
 

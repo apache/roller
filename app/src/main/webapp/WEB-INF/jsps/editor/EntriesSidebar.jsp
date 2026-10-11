@@ -49,7 +49,7 @@
     <%-- filter by date --%>
 
     <div class="control-group">
-        <label for="bean.startDateString" class="control-label">
+        <label for="bean.startDateString" class="col-form-label">
             <s:text name="weblogEntryQuery.label.startDate"/>
         </label>
         <div class="controls">
@@ -57,8 +57,8 @@
 
                 <s:textfield name="bean.startDateString" readonly="true"
                              theme="simple" cssClass="date-picker form-control"/>
-                <label for="bean.startDateString" class="input-group-addon btn">
-                    <span class="glyphicon glyphicon-calendar"></span>
+                <label for="bean.startDateString" class="input-group-text btn">
+                    <span class="bi bi-calendar"></span>
                 </label>
 
             </div>
@@ -66,7 +66,7 @@
     </div>
 
     <div class="control-group">
-        <label for="bean.endDateString" class="control-label">
+        <label for="bean.endDateString" class="col-form-label">
             <s:text name="weblogEntryQuery.label.endDate"/>
         </label>
         <div class="controls">
@@ -74,8 +74,8 @@
 
                 <s:textfield name="bean.endDateString" readonly="true"
                              theme="simple" cssClass="date-picker form-control"/>
-                <label for="bean.endDateString" class="input-group-addon btn">
-                    <span class="glyphicon glyphicon-calendar"></span>
+                <label for="bean.endDateString" class="input-group-text btn">
+                    <span class="bi bi-calendar"></span>
                 </label>
 
             </div>
@@ -102,7 +102,7 @@
     <%-- ========================================================= --%>
     <%-- filter button --%>
 
-    <s:submit cssClass="btn" value="%{getText('weblogEntryQuery.button.query')}"/>
+    <s:submit theme="simple" cssClass="btn btn-outline-secondary" value="%{getText('weblogEntryQuery.button.query')}"/>
 
 </s:form>
 

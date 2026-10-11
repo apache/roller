@@ -38,7 +38,7 @@
         <s:form action="weblogRemove!remove" theme="bootstrap" cssClass="form-horizontal">
             <s:hidden name="salt" />
             <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-            <s:submit cssClass="btn btn-danger" value="%{getText('generic.yesRemove')}" />
+            <s:submit theme="simple" cssClass="btn btn-danger" value="%{getText('generic.yesRemove')}" />
         </s:form>
 
     </div>
@@ -47,7 +47,7 @@
         <s:form action="weblogConfig" method="post" theme="bootstrap" cssClass="form-horizontal">
             <s:hidden name="salt" />
             <s:hidden name="weblog" value="%{actionWeblog.handle}" />
-            <s:submit cssClass="btn btn-success" value="%{getText('generic.cancel')}" />
+            <s:submit theme="simple" cssClass="btn btn-success" value="%{getText('generic.cancel')}" />
         </s:form>
 
     </div>

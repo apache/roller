@@ -26,6 +26,6 @@
 <s:form action="memberResign!resign"  cssClass="form-horizontal">
     <s:hidden name="salt"/>
     <s:hidden name="weblog"/>
-    <s:submit value="%{getText('generic.yes')}" cssClass="form-horizontal"/>&nbsp;
-    <s:submit value="%{getText('generic.no')}" action="menu" cssClass="form-horizontal"/>
+    <s:submit theme="simple" cssClass="btn btn-danger" value="%{getText('generic.yes')}"/>&nbsp;
+    <s:submit theme="simple" cssClass="btn btn-outline-secondary" value="%{getText('generic.no')}" action="menu"/>
 </s:form>

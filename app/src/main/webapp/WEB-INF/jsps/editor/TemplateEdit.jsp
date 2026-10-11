@@ -92,14 +92,14 @@
     <ul id="template-code-tabs" class="nav nav-tabs" role="tablist" style="margin-bottom: 1em">
 
         <li role="presentation" class="active">
-            <a href="#tabStandard" aria-controls="home" role="tab" data-toggle="tab">
+            <a href="#tabStandard" aria-controls="home" role="tab" data-bs-toggle="tab">
                 <em><s:text name="stylesheetEdit.standard"/></em>
             </a>
         </li>
 
         <s:if test="bean.contentsMobile != null">
             <li role="presentation">
-                <a href="#tabMobile" aria-controls="home" role="tab" data-toggle="tab">
+                <a href="#tabMobile" aria-controls="home" role="tab" data-bs-toggle="tab">
                     <em><s:text name="stylesheetEdit.mobile"/></em>
                 </a>
             </li>
@@ -125,31 +125,35 @@
     <%-- ================================================================== --%>
     <%-- Save, Close and Resize text area buttons--%>
 
-    <s:submit value="%{getText('generic.save')}" cssClass="btn btn-default"/>
-    <input type="button" value='<s:text name="generic.done"/>' class="button btn"
-           onclick="window.location='<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>'"/>
+    <div class="row mb-3">
+        <div class="col-sm-9 offset-sm-3">
+            <s:submit value="%{getText('generic.save')}" cssClass="btn btn-primary" theme="simple"/>
+            <input type="button" value='<s:text name="generic.done"/>' class="btn btn-outline-secondary"
+                   onclick="window.location='<s:url action="templates"><s:param name="weblog" value="%{weblog}"/></s:url>'"/>
+        </div>
+    </div>
 
     <%-- ================================================================== --%>
     <%-- Advanced settings inside a control toggle --%>
 
     <s:if test="template.custom">
 
-        <div class="panel-group" id="accordion" style="margin-top:2em">
+        <div class="accordion" id="accordion" style="margin-top:2em">
 
-        <div class="panel panel-default" id="panel-plugins">
+        <div class="card" id="panel-plugins">
 
-            <div class="panel-heading">
+            <div class="card-header">
 
-                <h4 class="panel-title">
-                    <a class="collapsed" data-toggle="collapse" data-target="#collapseAdvanced" href="#">
+                <h4 class="card-title">
+                    <a class="collapsed text-body text-decoration-none" data-bs-toggle="collapse" data-bs-target="#collapseAdvanced" href="#">
                         <s:text name="pageForm.advancedSettings"/>
                     </a>
                 </h4>
 
             </div>
 
-            <div id="collapseAdvanced" class="panel-collapse collapse">
-                <div class="panel-body">
+            <div id="collapseAdvanced" class="collapse">
+                <div class="card-body">
 
                     <s:select name="bean.templateLanguage" list="templateLanguages" size="1"
                               label="%{getText('pageForm.templateLanguage')}"/>

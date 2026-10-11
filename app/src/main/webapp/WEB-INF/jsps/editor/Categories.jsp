@@ -60,7 +60,7 @@
                            data-category-name="<s:property value="categoryName"/>"
                            data-category-desc="<s:property value="categoryDesc"/>"
                            data-category-image="<s:property value="categoryImage"/>">
-                            <span class="glyphicon glyphicon-edit"></span>
+                            <span class="bi bi-pencil-square"></span>
                         </a>
 
                     </td>
@@ -75,7 +75,7 @@
                                data-category-id="<s:property value="categoryId" />"
                                data-category-name="<s:property value="categoryName" />"
                                data-category-in-use="<s:property value="categoryInUse"/>">
-                                <span class="glyphicon glyphicon-trash"></span>
+                                <span class="bi bi-trash"></span>
                             </a>
 
                         </s:if>
@@ -134,7 +134,7 @@
                 <button onclick="submitEditedCategory()" class="btn btn-primary">
                     <s:text name="generic.save"/>
                 </button>
-                <button type="button" class="btn" data-dismiss="modal">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                     <s:text name="generic.cancel"/>
                 </button>
             </div>
@@ -156,7 +156,7 @@
         $('#categoryEditForm_bean_description').val(desc);
         $('#categoryEditForm_bean_image').val(image);
 
-        $('#category-edit-modal').modal({show: true});
+        $('#category-edit-modal').modal('show');
 
     }
 
@@ -267,8 +267,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <s:submit cssClass="btn btn-danger" value="%{getText('generic.yes')}"/>&nbsp;
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <s:submit theme="simple" cssClass="btn btn-danger" value="%{getText('generic.yes')}"/>&nbsp;
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <s:text name="generic.no" />
                     </button>
                 </div>
@@ -293,7 +293,7 @@
             $('#category-empty').css('display', 'block');
         }
         populateCategorySelect(id);
-        $('#delete-category-modal').modal({show: true});
+        $('#delete-category-modal').modal('show');
     }
 
     function populateCategorySelect(removeId) {

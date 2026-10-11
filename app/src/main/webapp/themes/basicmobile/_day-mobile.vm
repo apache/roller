@@ -22,10 +22,10 @@
         <a href="$entry.permalink" data-transition="slide">
       #end
         <h3>
-          #if($utils.isEmpty($entry.text))
-            $entry.transformedText
+          #if($utils.isEmpty($entry.summary))
+            $!entry.transformedText
           #else
-            $entry.transformedSummary
+            $!entry.transformedSummary
           #end
         </h3>
         #if($model.permalink)

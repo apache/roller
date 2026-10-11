@@ -49,14 +49,6 @@ p {
     margin: 10px;
 }
 
-.fade {
-    opacity: 0;
-    -webkit-transition: opacity 1.25s linear;
-    -moz-transition: opacity 1.25s linear;
-    -ms-transition: opacity 1.25s linear;
-    -o-transition: opacity 1.25s linear;
-    transition: opacity 1.25s linear;
-}
 
 /* bootstrap tweaks */
 
@@ -347,3 +339,38 @@ tr.rollertable_pending {
 
 
 
+
+/* Bootstrap 3 rendered all labels bold; Bootstrap 5 does not. Keep the
+   original emphasis on form field labels. */
+.form-label,
+.col-form-label {
+    font-weight: 700;
+}
+
+/* Bootstrap 5 leaves readonly inputs looking editable; shade them like
+   disabled ones so fields the user cannot change read as such. */
+.form-control[readonly],
+.form-select[disabled] {
+    background-color: var(--bs-secondary-bg);
+    opacity: 1;
+}
+
+/* Field hint icons sit next to the label rather than in the text flow. */
+.s2b_tooltip {
+    margin-left: .35rem;
+    color: var(--bs-secondary-color);
+    cursor: help;
+}
+
+/* Give the form panels a little breathing room inside the surrounding card. */
+form fieldset {
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+/* Bootstrap 3's navbar carried a bottom margin that Bootstrap 5 dropped,
+   which left page titles butted up against the nav bar. */
+nav.navbar {
+    margin-bottom: 20px;
+}

@@ -24,14 +24,14 @@
     <s:hidden name="weblog" value="%{actionWeblog.handle}" />
 
     <p><s:text name="maintenance.prompt.flush" /></p>
-    <s:submit value="%{getText('maintenance.button.flush')}" action="maintenance!flushCache" cssClass="btn" />
+    <s:submit theme="simple" value="%{getText('maintenance.button.flush')}" action="maintenance!flushCache" cssClass="btn btn-outline-secondary" />
 
     <s:if test="getBooleanProp('search.enabled')">
         <p><s:text name="maintenance.prompt.index" /></p>
-        <s:submit value="%{getText('maintenance.button.index')}" action="maintenance!index" cssClass="btn" />
+        <s:submit theme="simple" value="%{getText('maintenance.button.index')}" action="maintenance!index" cssClass="btn btn-outline-secondary" />
     </s:if>
 
     <p><s:text name="maintenance.prompt.reset" /></p>
-    <s:submit value="%{getText('maintenance.button.reset')}" action="maintenance!reset" cssClass="btn" />
+    <s:submit theme="simple" value="%{getText('maintenance.button.reset')}" action="maintenance!reset" cssClass="btn btn-outline-secondary" />
 
 </s:form>
