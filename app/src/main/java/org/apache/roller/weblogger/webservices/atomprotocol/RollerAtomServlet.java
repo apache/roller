@@ -1,368 +1,312 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  The ASF licenses this file to You
- * under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.  For additional information regarding
- * copyright in this work, please see the NOTICE file in the top level
- * directory of this distribution.
- */
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements.  The ASF licenses this file to You
+* under the Apache License, Version 2.0 (the "License"); you may not
+* use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.  For additional information regarding
+* copyright in this work, please see the NOTICE file in the top level
+* directory of this distribution.
+*/
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Writer;
-import java.util.Collections;
-import java.util.Locale;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.jdom2.Document;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.rometools.propono.atom.common.AtomService;
-import com.rometools.propono.atom.common.Categories;
-import com.rometools.propono.atom.server.AtomException;
-import com.rometools.propono.atom.server.AtomHandler;
-import com.rometools.propono.atom.server.AtomMediaResource;
-import com.rometools.propono.atom.server.AtomRequest;
-import com.rometools.rome.feed.atom.Content;
-import com.rometools.rome.feed.atom.Entry;
-import com.rometools.rome.feed.atom.Feed;
-import com.rometools.rome.feed.atom.Link;
-import com.rometools.rome.io.WireFeedOutput;
-import com.rometools.rome.io.impl.Atom10Generator;
-import com.rometools.rome.io.impl.Atom10Parser;
-import org.apache.roller.weblogger.util.Utilities;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 /**
- * Forked from rome-propono's AtomServlet to remove the dependency on propono's
- * servlet class, which has no Jakarta-compatible release. This servlet directly
- * creates a {@link RollerAtomHandler} instead of going through propono's
- * AtomHandlerFactory/FactoryFinder lookup.
+ * Dispatcher servlet for Roller's Atom Publishing Protocol (RFC 5023)
+ * implementation. Replaces the ROME Propono {@code AtomServlet}: it
+ * authenticates the request, routes by HTTP method and URI shape to
+ * {@link RollerAtomHandler}, and serializes/parses Atom XML via {@link AtomWriter}
+ * and {@link AtomReader}. No ROME or Propono types are involved.
  *
- * <p>Handles Atom Publishing Protocol requests by parsing incoming XML into
- * ROME Atom {@link Entry} objects, passing those to the handler, and
- * serializing entries and feeds returned by the handler to the response.</p>
+ * <p>It answers only while <code>webservices.enableAtomPub</code> is on. Atom
+ * entry bodies are capped at <code>webservices.atomPubMaxEntrySize</code> bytes
+ * and are read only after the request is authenticated.
  */
 public class RollerAtomServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    /** Feed type supported by this servlet */
-    public static final String FEED_TYPE = "atom_1.0";
+    private static final Log log =
+            LogFactory.getFactory().getInstance(RollerAtomServlet.class);
 
-    private static String contextDirPath = null;
+    /** Default maximum Atom entry body size, in bytes. Media uploads are not affected. */
+    static final int DEFAULT_MAX_ENTRY_BYTES = 1024 * 1024;
 
-    private static final Logger LOG = LoggerFactory.getLogger(RollerAtomServlet.class);
+    static final String MAX_ENTRY_SIZE_PROPERTY = "webservices.atomPubMaxEntrySize";
 
-    static {
-        Atom10Parser.setResolveURIs(true);
-    }
+    private static final String ATOM_CONTENT_TYPE = "application/atom+xml";
 
-    /**
-     * Create an Atom request handler directly, bypassing propono's factory lookup.
-     */
-    private AtomHandler createAtomRequestHandler(final HttpServletRequest request, final HttpServletResponse response) {
-        return new RollerAtomHandler(request, response);
-    }
-
-    /**
-     * Handles an Atom GET by calling handler and writing results to response.
-     */
     @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
-        LOG.debug("Entering");
-        final AtomHandler handler = createAtomRequestHandler(req, res);
-        final String userName = handler.getAuthenticatedUsername();
-        if (userName != null) {
-            final AtomRequest areq = new RollerAtomRequestImpl(req);
-            try {
-                if (handler.isAtomServiceURI(areq)) {
-                    // return an Atom Service document
-                    final AtomService service = handler.getAtomService(areq);
-                    final Document doc = service.serviceToDocument();
-                    res.setContentType("application/atomsvc+xml; charset=utf-8");
-                    final Writer writer = res.getWriter();
-                    final XMLOutputter outputter = new XMLOutputter();
-                    outputter.setFormat(Format.getPrettyFormat());
-                    outputter.output(doc, writer);
-                    writer.close();
-                    res.setStatus(HttpServletResponse.SC_OK);
-                } else if (handler.isCategoriesURI(areq)) {
-                    final Categories cats = handler.getCategories(areq);
-                    res.setContentType("application/xml");
-                    final Writer writer = res.getWriter();
-                    final Document catsDoc = new Document();
-                    catsDoc.setRootElement(cats.categoriesToElement());
-                    final XMLOutputter outputter = new XMLOutputter();
-                    outputter.output(catsDoc, writer);
-                    writer.close();
-                    res.setStatus(HttpServletResponse.SC_OK);
-                } else if (handler.isCollectionURI(areq)) {
-                    // return a collection
-                    final Feed col = handler.getCollection(areq);
-                    col.setFeedType(FEED_TYPE);
-                    final WireFeedOutput wireFeedOutput = new WireFeedOutput();
-                    final Document feedDoc = wireFeedOutput.outputJDom(col);
-                    res.setContentType("application/atom+xml; charset=utf-8");
-                    final Writer writer = res.getWriter();
-                    final XMLOutputter outputter = new XMLOutputter();
-                    outputter.setFormat(Format.getPrettyFormat());
-                    outputter.output(feedDoc, writer);
-                    writer.close();
-                    res.setStatus(HttpServletResponse.SC_OK);
-                } else if (handler.isEntryURI(areq)) {
-                    // return an entry
-                    final Entry entry = handler.getEntry(areq);
-                    if (entry != null) {
-                        res.setContentType("application/atom+xml; type=entry; charset=utf-8");
-                        final Writer writer = res.getWriter();
-                        Atom10Generator.serializeEntry(entry, writer);
-                        writer.close();
-                    } else {
-                        res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                    }
-                } else if (handler.isMediaEditURI(areq)) {
-                    final AtomMediaResource entry = handler.getMediaResource(areq);
-                    res.setContentType(entry.getContentType());
-                    res.setContentLength((int) entry.getContentLength());
-                    Utilities.copyInputToOutput(entry.getInputStream(), res.getOutputStream());
-                    res.getOutputStream().flush();
-                    res.getOutputStream().close();
-                } else {
-                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                }
-            } catch (final AtomException ae) {
-                res.sendError(ae.getStatus(), ae.getMessage());
-                LOG.debug("An error occurred while processing GET", ae);
-            } catch (final Exception e) {
-                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-                LOG.debug("An error occurred while processing GET", e);
-            }
-        } else {
-            res.setHeader("WWW-Authenticate", "BASIC realm=\"AtomPub\"");
-            res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+    protected void service(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        if (!WebloggerRuntimeConfig.getBooleanProperty("webservices.enableAtomPub")) {
+            log.debug("AtomPub service is disabled; rejecting request");
+            sendText(response, HttpServletResponse.SC_NOT_FOUND, "AtomPub service is disabled");
+            return;
         }
-        LOG.debug("Exiting");
-    }
 
-    /**
-     * Handles an Atom POST by calling handler to identify URI, reading/parsing
-     * data, calling handler and writing results to response.
-     */
-    @Override
-    protected void doPost(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
-        LOG.debug("Entering");
-        final AtomHandler handler = createAtomRequestHandler(req, res);
-        final String userName = handler.getAuthenticatedUsername();
-        if (userName != null) {
-            final AtomRequest areq = new RollerAtomRequestImpl(req);
-            try {
-                if (handler.isCollectionURI(areq)) {
-
-                    final String contentType = req.getContentType();
-                    if (contentType != null && contentType.startsWith("application/atom+xml")) {
-
-                        // parse incoming entry
-                        final Entry entry = Atom10Parser.parseEntry(
-                                new BufferedReader(new InputStreamReader(req.getInputStream(), "UTF-8")),
-                                null, Locale.US);
-
-                        // call handler to post it
-                        final Entry newEntry = handler.postEntry(areq, entry);
-
-                        // set Location and Content-Location headers
-                        for (final Object element : newEntry.getOtherLinks()) {
-                            final Link link = (Link) element;
-                            if ("edit".equals(link.getRel())) {
-                                res.addHeader("Location", link.getHrefResolved());
-                                break;
-                            }
-                        }
-                        for (final Object element : newEntry.getAlternateLinks()) {
-                            final Link link = (Link) element;
-                            if ("alternate".equals(link.getRel())) {
-                                res.addHeader("Content-Location", link.getHrefResolved());
-                                break;
-                            }
-                        }
-
-                        // write entry back out to response
-                        res.setStatus(HttpServletResponse.SC_CREATED);
-                        res.setContentType("application/atom+xml; type=entry; charset=utf-8");
-
-                        final Writer writer = res.getWriter();
-                        Atom10Generator.serializeEntry(newEntry, writer);
-                        writer.close();
-
-                    } else if (contentType != null) {
-
-                        // get incoming title and slug from HTTP header
-                        final String title = areq.getHeader("Title");
-
-                        // create new entry for resource, set title and type
-                        final Entry resource = new Entry();
-                        resource.setTitle(title);
-                        final Content content = new Content();
-                        content.setType(areq.getContentType());
-                        resource.setContents(Collections.singletonList(content));
-
-                        // hand input stream off to handler to post file
-                        final Entry newEntry = handler.postMedia(areq, resource);
-
-                        // set Location and Content-Location headers
-                        for (final Object element : newEntry.getOtherLinks()) {
-                            final Link link = (Link) element;
-                            if ("edit".equals(link.getRel())) {
-                                res.addHeader("Location", link.getHrefResolved());
-                                break;
-                            }
-                        }
-                        for (final Object element : newEntry.getAlternateLinks()) {
-                            final Link link = (Link) element;
-                            if ("alternate".equals(link.getRel())) {
-                                res.addHeader("Content-Location", link.getHrefResolved());
-                                break;
-                            }
-                        }
-
-                        res.setStatus(HttpServletResponse.SC_CREATED);
-                        res.setContentType("application/atom+xml; type=entry; charset=utf-8");
-
-                        final Writer writer = res.getWriter();
-                        Atom10Generator.serializeEntry(newEntry, writer);
-                        writer.close();
-
-                    } else {
-                        res.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "No content-type specified in request");
-                    }
-
-                } else {
-                    res.sendError(HttpServletResponse.SC_NOT_FOUND, "Invalid collection specified in request");
-                }
-            } catch (final AtomException ae) {
-                res.sendError(ae.getStatus(), ae.getMessage());
-                LOG.debug("An error occurred while processing POST", ae);
-            } catch (final Exception e) {
-                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-                LOG.debug("An error occurred while processing POST", e);
-            }
-        } else {
-            res.setHeader("WWW-Authenticate", "BASIC realm=\"AtomPub\"");
-            res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        String method = request.getMethod();
+        if (!"GET".equals(method) && !"POST".equals(method)
+                && !"PUT".equals(method) && !"DELETE".equals(method)) {
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            return;
         }
-        LOG.debug("Exiting");
-    }
 
-    /**
-     * Handles an Atom PUT by calling handler to identify URI, reading/parsing
-     * data, calling handler and writing results to response.
-     */
-    @Override
-    protected void doPut(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
-        LOG.debug("Entering");
-        final AtomHandler handler = createAtomRequestHandler(req, res);
-        final String userName = handler.getAuthenticatedUsername();
-        if (userName != null) {
-            final AtomRequest areq = new RollerAtomRequestImpl(req);
-            try {
-                if (handler.isEntryURI(areq)) {
-
-                    // parse incoming entry
-                    final Entry unsavedEntry = Atom10Parser.parseEntry(
-                            new BufferedReader(new InputStreamReader(req.getInputStream(), "UTF-8")),
-                            null, Locale.US);
-
-                    // call handler to put entry
-                    handler.putEntry(areq, unsavedEntry);
-
-                    res.setStatus(HttpServletResponse.SC_OK);
-
-                } else if (handler.isMediaEditURI(areq)) {
-
-                    // hand input stream to handler
-                    handler.putMedia(areq);
-
-                    res.setStatus(HttpServletResponse.SC_OK);
-
-                } else {
-                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                }
-            } catch (final AtomException ae) {
-                res.sendError(ae.getStatus(), ae.getMessage());
-                LOG.debug("An error occurred while processing PUT", ae);
-            } catch (final Exception e) {
-                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-                LOG.debug("An error occurred while processing PUT", e);
+        // Authenticate before reading the body.
+        RollerAtomHandler handler = createHandler(request, response);
+        String userName = handler.getAuthenticatedUsername();
+        if (userName == null) {
+            // The OAuth path may have already written a challenge/error response.
+            if (!response.isCommitted()) {
+                response.setHeader("WWW-Authenticate", "Basic realm=\"Roller\"");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             }
-        } else {
-            res.setHeader("WWW-Authenticate", "BASIC realm=\"AtomPub\"");
-            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
-        LOG.debug("Exiting");
-    }
 
-    /**
-     * Handle Atom DELETE by calling appropriate handler.
-     */
-    @Override
-    protected void doDelete(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
-        LOG.debug("Entering");
-        final AtomHandler handler = createAtomRequestHandler(req, res);
-        final String userName = handler.getAuthenticatedUsername();
-        if (userName != null) {
-            final AtomRequest areq = new RollerAtomRequestImpl(req);
+        if ("POST".equals(method) && request.getContentType() == null) {
+            sendText(response, HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
+                    "No content-type specified in request");
+            return;
+        }
+
+        AtomRequest areq;
+        AtomEntry entry = null;
+        if (carriesEntry(request)) {
+            int maxEntryBytes = maxEntryBytes();
+            // Read one byte past the limit, so an oversized body can be detected.
+            byte[] body = request.getInputStream().readNBytes(maxEntryBytes + 1);
+            if (body.length > maxEntryBytes) {
+                sendText(response, HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
+                        "Entry is too large");
+                return;
+            }
             try {
-                if (handler.isEntryURI(areq)) {
+                entry = new AtomReader().parseEntry(new ByteArrayInputStream(body));
+            } catch (AtomException e) {
+                log.debug("Rejecting Atom entry that could not be parsed", e);
+                sendText(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid Atom entry");
+                return;
+            }
+            areq = new AtomRequest(request, body);
+        } else {
+            // Media bodies are streamed to a temporary file by MediaCollection,
+            // where the upload size and quota are checked.
+            areq = AtomRequest.streaming(request);
+        }
+
+        try {
+            switch (method) {
+                case "GET":
+                    doGet(handler, areq, response);
+                    break;
+                case "POST":
+                    doPost(handler, areq, entry, response);
+                    break;
+                case "PUT":
+                    doPut(handler, areq, entry, response);
+                    break;
+                default:
                     handler.deleteEntry(areq);
-                    res.setStatus(HttpServletResponse.SC_OK);
-                } else {
-                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                }
-            } catch (final AtomException ae) {
-                res.sendError(ae.getStatus(), ae.getMessage());
-                LOG.debug("An error occurred while processing DELETE", ae);
-            } catch (final Exception e) {
-                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-                LOG.debug("An error occurred while processing DELETE", e);
+                    response.setStatus(HttpServletResponse.SC_OK);
             }
-        } else {
-            res.setHeader("WWW-Authenticate", "BASIC realm=\"AtomPub\"");
-            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        } catch (AtomException ae) {
+            if (!response.isCommitted()) {
+                if (ae.getStatus() >= HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+                    // Server errors can carry internal details; keep them in the log
+                    log.error("Error handling AtomPub request", ae);
+                    response.sendError(ae.getStatus());
+                } else {
+                    // Client errors carry a message written by Roller for the client
+                    log.debug("Returning error to client: " + ae.getMessage(), ae);
+                    response.sendError(ae.getStatus(), ae.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            log.error("Unexpected error handling AtomPub request", e);
+            if (!response.isCommitted()) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
         }
-        LOG.debug("Exiting");
     }
 
     /**
-     * Initialize servlet.
+     * Returns the edit URI as a header value, or null when it is not a valid
+     * URI under this server's AtomPub URL. The URI is built in part from
+     * client input (the Slug header and the request path), so this keeps the
+     * Location header from pointing elsewhere or carrying CR/LF.
      */
-    @Override
-    public void init(final ServletConfig config) throws ServletException {
-        super.init(config);
-        contextDirPath = getServletContext().getRealPath("/");
+    static String safeLocation(String href, String atomURL) {
+        if (href == null || atomURL == null || !href.startsWith(atomURL + "/")) {
+            return null;
+        }
+        try {
+            return new URI(href).toASCIIString();
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    /** Creates the handler that authenticates the request. */
+    protected RollerAtomHandler createHandler(HttpServletRequest req, HttpServletResponse res) {
+        return new RollerAtomHandler(req, res);
     }
 
     /**
-     * Get absolute path to Servlet context directory.
+     * True when the request body is an Atom entry: a POST of Atom content, or
+     * a PUT to an entry URI.
      */
-    public static String getContextDirPath() {
-        return contextDirPath;
+    static boolean carriesEntry(HttpServletRequest req) {
+        String method = req.getMethod();
+        if ("POST".equals(method)) {
+            String contentType = req.getContentType();
+            return contentType != null && contentType.startsWith(ATOM_CONTENT_TYPE);
+        }
+        if ("PUT".equals(method)) {
+            return RollerAtomHandler.isEntryPath(req.getPathInfo());
+        }
+        return false;
+    }
+
+    /** Uses the default when an older installation has no setting or its value is invalid. */
+    private static int maxEntryBytes() {
+        String value = WebloggerRuntimeConfig.getProperty(MAX_ENTRY_SIZE_PROPERTY);
+        if (value != null) {
+            try {
+                int limit = Integer.parseInt(value.trim());
+                if (limit > 0 && limit < Integer.MAX_VALUE) {
+                    return limit;
+                }
+            } catch (NumberFormatException e) {
+                // Fall back to the default below.
+            }
+            log.warn("Invalid " + MAX_ENTRY_SIZE_PROPERTY + "; using the default entry limit");
+        }
+        return DEFAULT_MAX_ENTRY_BYTES;
+    }
+
+    private static void sendText(HttpServletResponse res, int status, String message)
+            throws IOException {
+        res.setStatus(status);
+        res.setContentType("text/plain;charset=UTF-8");
+        res.getWriter().write(message);
+    }
+
+    private void doGet(RollerAtomHandler handler, AtomRequest areq, HttpServletResponse response)
+            throws AtomException, IOException {
+
+        if (handler.isAtomServiceURI(areq)) {
+            AtomServiceDoc service = handler.getAtomService(areq);
+            response.setContentType(AtomConstants.SERVICE_MEDIA_TYPE);
+            new AtomWriter().writeServiceDoc(response.getOutputStream(), service);
+
+        } else if (handler.isCategoriesDocURI(areq)) {
+            AtomCategories cats = handler.getCategoriesDocument(areq);
+            response.setContentType(AtomConstants.CATEGORIES_MEDIA_TYPE);
+            new AtomWriter().writeCategoriesDoc(response.getOutputStream(), cats);
+
+        } else if (handler.isCollectionURI(areq)) {
+            AtomFeed feed = handler.getCollection(areq);
+            response.setContentType(AtomConstants.FEED_MEDIA_TYPE);
+            new AtomWriter().writeFeed(response.getOutputStream(), feed);
+
+        } else if (handler.isEntryURI(areq)) {
+            AtomEntry entry = handler.getEntry(areq);
+            response.setContentType(AtomConstants.ENTRY_MEDIA_TYPE);
+            new AtomWriter().writeEntry(response.getOutputStream(), entry);
+
+        } else if (handler.isMediaEditURI(areq)) {
+            AtomMediaResource resource = handler.getMediaResource(areq);
+            if (resource.getContentType() != null) {
+                response.setContentType(resource.getContentType());
+            }
+            response.setContentLengthLong(resource.getContentLength());
+            if (resource.getLastModified() != null) {
+                response.setDateHeader("Last-Modified", resource.getLastModified().getTime());
+            }
+            try (InputStream in = resource.getInputStream()) {
+                in.transferTo(response.getOutputStream());
+            }
+
+        } else {
+            throw new AtomNotFoundException("Cannot find specified resource");
+        }
+    }
+
+    private void doPost(RollerAtomHandler handler, AtomRequest areq, AtomEntry entry,
+            HttpServletResponse response) throws AtomException {
+
+        if (!handler.isCollectionURI(areq)) {
+            throw new AtomNotFoundException("Cannot POST to specified URI");
+        }
+
+        String contentType = areq.getContentType();
+        AtomEntry created;
+        if (entry != null) {
+            created = handler.postEntry(areq, entry);
+        } else {
+            // Media POST: synthesize an entry carrying the request content type
+            // and Slug; the binary data is read from the request body.
+            AtomEntry mediaEntry = new AtomEntry();
+            AtomContent content = new AtomContent();
+            content.setType(contentType);
+            mediaEntry.setContent(content);
+            mediaEntry.setTitle(areq.getHeader("Slug"));
+            created = handler.postMedia(areq, mediaEntry);
+        }
+        writeCreated(handler, response, created);
+    }
+
+    private void doPut(RollerAtomHandler handler, AtomRequest areq, AtomEntry entry,
+            HttpServletResponse response) throws AtomException {
+
+        if (entry != null) {
+            handler.putEntry(areq, entry);
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else if (handler.isMediaEditURI(areq)) {
+            handler.putMedia(areq);
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            throw new AtomNotFoundException("Cannot PUT to specified URI");
+        }
+    }
+
+    private void writeCreated(RollerAtomHandler handler, HttpServletResponse response,
+            AtomEntry entry) throws AtomException {
+        String location = safeLocation(entry.getLinkHref("edit"), handler.getAtomURL());
+        if (location != null) {
+            response.setHeader("Location", location);
+            response.setHeader("Content-Location", location);
+        }
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        response.setContentType(AtomConstants.ENTRY_MEDIA_TYPE);
+        try {
+            OutputStream out = response.getOutputStream();
+            new AtomWriter().writeEntry(out, entry);
+        } catch (IOException ioe) {
+            throw new AtomException("Error writing created entry", ioe);
+        }
     }
 }

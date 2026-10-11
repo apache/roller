@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.Wrappers;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
@@ -82,7 +83,7 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthorizedToAuthor(WeblogWrapper weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return weblog.getPojo().hasUserPermission(
+                return Wrappers.unwrap(weblog).hasUserPermission(
                         parsedRequest.getUser(), WeblogPermission.POST);
             }
         } catch (Exception e) {
@@ -94,7 +95,7 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthorizedToAdmin(WeblogWrapper weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return weblog.getPojo().hasUserPermission(
+                return Wrappers.unwrap(weblog).hasUserPermission(
                         parsedRequest.getUser(), WeblogPermission.ADMIN);
             }
         } catch (Exception e) {

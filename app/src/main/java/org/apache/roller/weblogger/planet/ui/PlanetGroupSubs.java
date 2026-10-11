@@ -126,6 +126,9 @@ public class PlanetGroupSubs extends PlanetUIAction implements Preparable {
      * Save group.
      */
     public String saveGroup() {
+        if (!isPostRequest()) {
+            return DENIED;
+        }
 
         validateGroup();
 
@@ -185,6 +188,9 @@ public class PlanetGroupSubs extends PlanetUIAction implements Preparable {
      * Save subscription, add to current group
      */
     public String saveSubscription() {
+        if (!isPostRequest()) {
+            return DENIED;
+        }
 
         valudateNewSub();
 
@@ -237,6 +243,9 @@ public class PlanetGroupSubs extends PlanetUIAction implements Preparable {
      * Delete subscription, reset form
      */
     public String deleteSubscription() {
+        if (!isPostRequest()) {
+            return DENIED;
+        }
 
         if (getSubUrl() != null) {
             try {

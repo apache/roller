@@ -29,7 +29,7 @@ cvss_score:
 # External identifiers and implementation artifacts
 cve:                         # CVE-YYYY-NNNNN
 branch:                      # name the change, never the flaw
-fix_commit:
+fix_commit:                  # merge/squash commit on the release branch, not PR head
 tests: []
 target_release:
 credit: >-

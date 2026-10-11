@@ -137,7 +137,7 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
                 }
 
                 // HTTP response splitting defense
-                String sanetizedFolderID = folderId.replace("\n", "").replace("\r", "");
+                String sanetizedFolderID = folder.getId().replace("\n", "").replace("\r", "");
 
                 servletResponse.addHeader("folderId", sanetizedFolderID);
 

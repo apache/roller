@@ -62,4 +62,13 @@ public interface UISecurityEnforced {
      * List of weblog permissions required to access action if applicable.
      */
     List<String> requiredGlobalPermissionActions();
+
+    /**
+     * Whether the feature this action belongs to is turned on. Actions for
+     * optional features override this; while it returns false the action is
+     * refused.
+     */
+    default boolean isFeatureEnabled() {
+        return true;
+    }
 }
