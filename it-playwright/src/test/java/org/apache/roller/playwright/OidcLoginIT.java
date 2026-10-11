@@ -105,7 +105,7 @@ class OidcLoginIT extends BaseIT {
      * failed with a Velocity error.
      */
     @Test
-    @DisplayName("an OIDC user can create a weblog, publish an entry and read it while signed in")
+    @DisplayName("an OIDC user can create a weblog, publish an entry, read it while signed in, and use the authoring dialogs")
     void oidcUserCanPublish() {
         signIn(ADMIN_USER, ADMIN_USER);
 
@@ -124,6 +124,11 @@ class OidcLoginIT extends BaseIT {
         Assertions.assertEquals(200, response.status());
         assertThat(page.locator("body")).not().containsText("Velocity template error");
         assertEntryOnBlog(BLOG_HANDLE, ENTRY_TITLE, ENTRY_TEXT);
+
+        // the authoring dialogs open for OIDC users too; the category name is
+        // unique per run because this weblog survives between runs
+        addCategoryThroughDialog(BLOG_HANDLE, "OIDC " + System.currentTimeMillis());
+        cancelEntryDeleteDialog(BLOG_HANDLE, ENTRY_TITLE);
     }
 
     private void signIn(String username, String password) {

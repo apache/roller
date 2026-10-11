@@ -277,6 +277,88 @@ abstract class BaseIT {
         assertThat(page).hasTitle(java.util.regex.Pattern.compile("Edit Entry"));
     }
 
+    // authoring dialogs (Bootstrap modals)
+    private static final String CATEGORY_ADD_LINK = "a[onclick*='showCategoryAddModal']";
+    private static final String CATEGORY_DIALOG = "#category-edit-modal";
+    private static final String CATEGORY_NAME_FIELD = "#categoryEditForm_bean_name";
+    private static final String CATEGORY_SAVE_BUTTON = CATEGORY_DIALOG + " .modal-footer .btn-primary";
+    private static final String CATEGORY_TABLE = "table.rollertable";
+    private static final String ENTRY_DELETE_LINK = ".entry-delete-link";
+    private static final String ENTRY_DELETE_DIALOG = "#delete-entry-modal";
+    private static final String ENTRY_DELETE_NO = ENTRY_DELETE_DIALOG + " .modal-footer button[data-bs-dismiss='modal']";
+    private static final String MEDIA_INSERT_LINK = "a[onclick*='onClickMediaFileInsert']";
+    private static final String MEDIA_INSERT_DIALOG = "#mediafile_edit_lightbox";
+    private static final String MEDIA_CHOOSER_FRAME = "#mediaFileEditor";
+    private static final String MEDIA_CHOOSER_FILE = ".mediafile-select-target";
+
+    /** Adds a category through the Add Category dialog on the categories page. */
+    protected void addCategoryThroughDialog(String weblogHandle, String name) {
+        goTo("roller-ui/authoring/categories.rol?weblog=" + weblogHandle);
+        page.locator(CATEGORY_ADD_LINK).first().click();
+        assertThat(page.locator(CATEGORY_DIALOG)).isVisible();
+
+        page.locator(CATEGORY_NAME_FIELD).fill(name);
+        // the dialog validates on keyup, which fill() does not fire
+        page.locator(CATEGORY_NAME_FIELD).press("End");
+        page.locator(CATEGORY_SAVE_BUTTON).click();
+
+        // a successful save closes the dialog and reloads the list
+        assertThat(page.locator(CATEGORY_DIALOG)).isHidden();
+        assertThat(page.locator(CATEGORY_TABLE)).containsText(name);
+    }
+
+    /** Opens the delete dialog for an entry on the entries page and cancels it. */
+    protected void cancelEntryDeleteDialog(String weblogHandle, String title) {
+        goTo("roller-ui/authoring/entries.rol?weblog=" + weblogHandle);
+        page.locator(ENTRY_DELETE_LINK).first().click();
+        assertThat(page.locator(ENTRY_DELETE_DIALOG)).isVisible();
+
+        page.locator(ENTRY_DELETE_NO).click();
+        assertThat(page.locator(ENTRY_DELETE_DIALOG)).isHidden();
+        assertThat(page.getByText(title).first()).isVisible();
+    }
+
+    /**
+     * Inserts the weblog's first media file into a new entry through the
+     * Insert Media File dialog, and checks that the editor received it.
+     */
+    protected void insertMediaFileThroughDialog(String weblogHandle) {
+        goTo("roller-ui/authoring/entryAdd.rol?weblog=" + weblogHandle);
+        // Bootstrap ignores hide() while a modal is still fading in, and the
+        // chooser can load faster than that, so wait for the shown event
+        page.evaluate("sel => document.querySelector(sel).addEventListener('shown.bs.modal',"
+                + " () => window.rollerDialogShown = true, {once: true})", MEDIA_INSERT_DIALOG);
+        page.locator(MEDIA_INSERT_LINK).click();
+        page.waitForFunction("() => window.rollerDialogShown === true");
+        assertThat(page.locator(MEDIA_INSERT_DIALOG)).isVisible();
+
+        page.frameLocator(MEDIA_CHOOSER_FRAME).locator(MEDIA_CHOOSER_FILE).first().click();
+        assertThat(page.locator(MEDIA_INSERT_DIALOG)).isHidden();
+
+        var richText = page.locator(ENTRY_RICH_TEXT);
+        if (richText.count() > 0) {
+            assertThat(richText.first().locator("img")).hasCount(1);
+        } else {
+            assertThat(page.locator(ENTRY_TEXTAREA)).hasValue(Pattern.compile("<img src=\"[^\"]+\""));
+        }
+    }
+
+    /**
+     * Expands the entry editor's advanced settings and checks the publishing
+     * time's hour, minute and second selects sit on one line rather than as
+     * stacked form rows.
+     */
+    protected void assertPublishingTimeOnOneLine() {
+        page.locator("a[href='#collapseAdvanced']").click();
+        assertThat(page.locator("#collapseAdvanced")).isVisible();
+        double hours = page.locator("select[name='bean.hours']").boundingBox().y;
+        double minutes = page.locator("select[name='bean.minutes']").boundingBox().y;
+        double seconds = page.locator("select[name='bean.seconds']").boundingBox().y;
+        org.junit.jupiter.api.Assertions.assertTrue(
+                Math.abs(hours - minutes) < 2 && Math.abs(minutes - seconds) < 2,
+                "publishing time selects should share a line, but sit at y=" + hours + ", " + minutes + ", " + seconds);
+    }
+
     /** Asserts the entry is the latest one rendered on the weblog itself. */
     protected void assertEntryOnBlog(String weblogHandle, String title, String text) {
         goTo(weblogHandle + "/");

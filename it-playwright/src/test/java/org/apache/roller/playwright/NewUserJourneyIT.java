@@ -39,8 +39,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 /**
  * The path a brand new Roller install puts its first visitor through: register
  * an account, sign in, create a weblog, then publish and read back an entry,
- * and finally upload a media file (the first user is the admin, so the journey
- * also turns file uploads on, which Roller ships disabled).
+ * upload a media file (the first user is the admin, so the journey also turns
+ * file uploads on, which Roller ships disabled), and finally use the authoring
+ * dialogs: add a category, cancel an entry delete, and insert the media file
+ * into a new entry.
  *
  * <p>This is the journey the old Selenium suite covered. Roller only accepts
  * registrations on an install with no users yet, so the test skips when the
@@ -58,6 +60,7 @@ class NewUserJourneyIT extends BaseIT {
     private static final String BLOG_NAME = "Bob's Blog";
     private static final String ENTRY_TITLE = "My First Blog Entry";
     private static final String ENTRY_TEXT = "Welcome to my blog!";
+    private static final String CATEGORY_NAME = "Travel";
 
     // pages
     private static final String LOGIN_PAGE = "roller-ui/login.rol";
@@ -107,7 +110,7 @@ class NewUserJourneyIT extends BaseIT {
     }
 
     @Test
-    @DisplayName("registers an account, creates a weblog, publishes an entry, uploads a media file, and imports bookmarks")
+    @DisplayName("registers an account, creates a weblog, publishes an entry, uploads a media file, imports bookmarks, and uses the authoring dialogs")
     void firstUserCanRegisterAndPublish() {
         goTo(LOGIN_PAGE);
         assumeTrue(page.locator(LOGIN_USERNAME).count() > 0,
@@ -121,6 +124,10 @@ class NewUserJourneyIT extends BaseIT {
         enableUploads();
         uploadMediaFile();
         importBookmarks();
+        addCategoryThroughDialog(BLOG_HANDLE, CATEGORY_NAME);
+        cancelEntryDeleteDialog(BLOG_HANDLE, ENTRY_TITLE);
+        insertMediaFileThroughDialog(BLOG_HANDLE);
+        assertPublishingTimeOnOneLine();
     }
 
     private void register() {
