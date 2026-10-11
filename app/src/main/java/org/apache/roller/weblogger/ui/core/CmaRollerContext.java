@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.ui.core;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 
 /**

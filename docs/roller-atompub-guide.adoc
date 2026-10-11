@@ -65,8 +65,9 @@ A Roller administrator controls AtomPub in *Server Administration > Configuratio
 |`webservices.enableAtomPub` |`false`
 |Turns AtomPub on. While it is off, every AtomPub URL answers `404 Not Found`.
 |`webservices.atomPubAuth` |`basic`
-|Authentication method: `basic` or `oauth`. Any other value refuses all
-requests (see <<Authentication>>).
+|Authentication method. Only `basic` is supported; any other value, including
+`oauth` or `wsse` left over from an older release, refuses all requests (see
+<<Authentication>>).
 |`webservices.atomPubMaxEntrySize` |`1048576`
 |Largest Atom entry body accepted, in bytes. A larger entry gets
 `413 Request Entity Too Large`. Media uploads are not affected; they use the
@@ -88,7 +89,8 @@ Always use HTTPS: BASIC authentication sends the password with every request.
 
 === BASIC
 
-With `webservices.atomPubAuth` set to `basic`, send the Roller user name and
+Roller supports only BASIC authentication for AtomPub. OAuth 1.0a was
+removed in Roller 7. With `webservices.atomPubAuth` set to `basic`, send the Roller user name and
 password in an HTTP `Authorization` header:
 
 ----
@@ -97,23 +99,6 @@ Authorization: Basic ZGF2ZTpzZWNyZXQ=
 
 The user must be enabled. Without valid credentials Roller answers `401` with
 `WWW-Authenticate: Basic realm="Roller"`.
-
-=== OAuth
-
-With `webservices.atomPubAuth` set to `oauth`, clients use OAuth 1.0a. Each
-user finds their consumer key and secret, and the OAuth URLs, through the
-*OAuth Credentials* link on the *Your Weblogs* page (shown while OAuth is on).
-Administrators also see site-wide keys.
-
-[cols="2,3",options="header"]
-|===
-|Step |URL
-|Get a request token |`/<context>/roller-services/oauth/requestToken`
-|User authorizes the token |`/<context>/roller-services/oauth/authorize`
-|Exchange for an access token |`/<context>/roller-services/oauth/accessToken`
-|===
-
-Sign each AtomPub request with the access token, as OAuth 1.0a describes.
 
 == Discovery: the service document
 

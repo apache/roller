@@ -31,8 +31,8 @@ import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.MediaFileManager;

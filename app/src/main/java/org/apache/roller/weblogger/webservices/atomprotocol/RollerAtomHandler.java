@@ -19,18 +19,14 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.util.StringTokenizer;
 import java.util.Locale;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import net.oauth.OAuthAccessor;
-import net.oauth.OAuthMessage;
-import net.oauth.server.OAuthServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -113,18 +109,19 @@ public class RollerAtomHandler {
         roller = WebloggerFactory.getWeblogger();
 
         String userName;
-        String authenticationMethod = WebloggerRuntimeConfig
-                .getProperty("webservices.atomPubAuth");
-        if (authenticationMethod != null) {
-            authenticationMethod = authenticationMethod.trim().toLowerCase(Locale.ROOT);
+        String authScheme = WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth");
+        if (authScheme != null) {
+            authScheme = authScheme.trim().toLowerCase(Locale.ROOT);
         }
-        if ("oauth".equals(authenticationMethod)) {
-            userName = authenticationOAUTH(request, response);
-        } else if ("basic".equals(authenticationMethod)) {
+        if ("basic".equals(authScheme)) {
             userName = authenticateBASIC(request);
         } else {
-            log.warn("Unsupported AtomPub authentication method '" + authenticationMethod
-                    + "'; expected 'basic' or 'oauth'. Authentication denied.");
+            // an upgraded site may still have "oauth" or "wsse" stored in the
+            // runtime config; refuse authentication instead of silently
+            // accepting a scheme the administrator did not choose
+            log.error("Unsupported webservices.atomPubAuth value '" + authScheme
+                    + "' (OAuth 1.0a and WSSE support were removed); set it to 'basic'."
+                    + " Refusing AtomPub authentication until it is corrected.");
             userName = null;
         }
 
@@ -511,27 +508,6 @@ public class RollerAtomHandler {
     }
 
 
-    private String authenticationOAUTH(
-            HttpServletRequest request, HttpServletResponse response) {
-        try {
-            OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
-            OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
-            OAuthAccessor accessor = omgr.getAccessor(requestMessage);
-            omgr.getValidator().validateMessage(requestMessage, accessor);
-            return (String)accessor.consumer.getProperty("userId");
-
-        } catch (Exception ex) {
-            log.debug("ERROR authenticating user", ex);
-            String realm = (request.isSecure())?"https://":"http://";
-            realm += request.getLocalName();
-            try {
-                OAuthServlet.handleException(response, ex, realm, true);
-            } catch (Exception ioe) {
-                log.debug("ERROR writing error response", ioe);
-            }
-        }
-        return null;
-    }
 
 
     public static void oneSecondThrottle() {

@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -269,6 +270,7 @@ public class Bookmarks extends UIAction {
         return folderId;
     }
 
+    @StrutsParameter
     public void setFolderId(String folderId) {
         this.folderId = folderId;
     }
@@ -277,6 +279,7 @@ public class Bookmarks extends UIAction {
         return selectedBookmarks;
     }
 
+    @StrutsParameter
     public void setSelectedBookmarks(String[] bookmarks) {
         this.selectedBookmarks = bookmarks;
     }
@@ -285,6 +288,7 @@ public class Bookmarks extends UIAction {
         return targetFolderId;
     }
 
+    @StrutsParameter
     public void setTargetFolderId(String targetFolderId) {
         this.targetFolderId = targetFolderId;
     }
@@ -312,6 +316,7 @@ public class Bookmarks extends UIAction {
         return viewFolderId;
     }
 
+    @StrutsParameter
     public void setViewFolderId(String viewFolderId) {
         this.viewFolderId = viewFolderId;
     }

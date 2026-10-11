@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator;
 import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryComparatorType;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 /**
  * Base class for all actions related to media files.
@@ -214,6 +215,7 @@ public class MediaFileBase extends UIAction {
         return selectedMediaFiles;
     }
 
+    @StrutsParameter
     public void setSelectedMediaFiles(String[] selectedMediaFiles) {
         this.selectedMediaFiles = selectedMediaFiles;
     }
@@ -222,6 +224,7 @@ public class MediaFileBase extends UIAction {
         return selectedDirectory;
     }
 
+    @StrutsParameter
     public void setSelectedDirectory(String selectedDirectory) {
         this.selectedDirectory = selectedDirectory;
     }
@@ -238,6 +241,7 @@ public class MediaFileBase extends UIAction {
         return mediaFileId;
     }
 
+    @StrutsParameter
     public void setMediaFileId(String mediaFileId) {
         this.mediaFileId = mediaFileId;
     }

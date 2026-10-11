@@ -37,6 +37,7 @@ import org.apache.roller.weblogger.ui.struts2.pagers.MediaFilePager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
@@ -376,6 +377,7 @@ public class MediaFileView extends MediaFileBase {
         return directoryId;
     }
 
+    @StrutsParameter
     public void setDirectoryId(String id) {
         this.directoryId = id;
     }
@@ -392,6 +394,7 @@ public class MediaFileView extends MediaFileBase {
         return newDirectoryName;
     }
 
+    @StrutsParameter
     public void setNewDirectoryName(String newDirectoryName) {
         this.newDirectoryName = newDirectoryName;
     }
@@ -408,6 +411,7 @@ public class MediaFileView extends MediaFileBase {
         return directoryName;
     }
 
+    @StrutsParameter
     public void setDirectoryName(String path) {
         this.directoryName = path;
     }
@@ -416,6 +420,7 @@ public class MediaFileView extends MediaFileBase {
         return sortBy;
     }
 
+    @StrutsParameter
     public void setSortBy(String sortBy) {
         this.sortBy = sortBy;
     }
@@ -433,6 +438,7 @@ public class MediaFileView extends MediaFileBase {
         return true;
     }
 
+    @StrutsParameter(depth = 1)
     public MediaFileSearchBean getBean() {
         return bean;
     }
@@ -477,6 +483,7 @@ public class MediaFileView extends MediaFileBase {
         return viewDirectoryId;
     }
 
+    @StrutsParameter
     public void setViewDirectoryId(String viewDirectoryId) {
         this.viewDirectoryId = viewDirectoryId;
     }

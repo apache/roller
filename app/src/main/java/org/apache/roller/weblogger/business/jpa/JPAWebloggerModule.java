@@ -20,8 +20,6 @@ package org.apache.roller.weblogger.business.jpa;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import net.oauth.OAuthValidator;
-import net.oauth.SimpleOAuthValidator;
 import org.apache.roller.planet.business.MultiPlanetURLStrategy;
 import org.apache.roller.planet.business.Planet;
 import org.apache.roller.planet.business.PlanetManager;
@@ -34,7 +32,6 @@ import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.FileContentManagerImpl;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.MultiWeblogURLStrategy;
-import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -75,10 +72,6 @@ public class JPAWebloggerModule implements Module {
         binder.bind(UserManager.class).to(         JPAUserManagerImpl.class);   
         binder.bind(WeblogManager.class).to(       JPAWeblogManagerImpl.class);   
         binder.bind(WeblogEntryManager.class).to(  JPAWeblogEntryManagerImpl.class);   
-        binder.bind(OAuthManager.class).to(        JPAOAuthManagerImpl.class);
-
-        binder.bind(OAuthValidator.class).to(      SimpleOAuthValidator.class);
-                
         binder.bind(MediaFileManager.class).to(    JPAMediaFileManagerImpl.class);
         binder.bind(FileContentManager.class).to(  FileContentManagerImpl.class);
         binder.bind(IndexManager.class).to(        LuceneIndexManager.class);

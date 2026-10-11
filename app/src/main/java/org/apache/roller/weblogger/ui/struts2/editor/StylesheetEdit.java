@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 
 import java.util.Date;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 /**
  * Action which handles editing for a weblog stylesheet override template.
@@ -382,6 +383,7 @@ public class StylesheetEdit extends UIAction {
      * Sets the contents standard.
      * @param contents the new contents standard
      */
+    @StrutsParameter
     public void setContentsStandard(String contents) {
         this.contentsStandard = contents;
     }
@@ -398,6 +400,7 @@ public class StylesheetEdit extends UIAction {
      * Sets the contents mobile.
      * @param contents the new contents mobile
      */
+    @StrutsParameter
     public void setContentsMobile(String contents) {
         this.contentsMobile = contents;
     }

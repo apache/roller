@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;

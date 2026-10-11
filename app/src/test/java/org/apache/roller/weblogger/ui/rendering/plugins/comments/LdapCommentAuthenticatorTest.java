@@ -17,8 +17,8 @@
 package org.apache.roller.weblogger.ui.rendering.plugins.comments;
 
 import java.util.Locale;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 

@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.ui.rendering.util;
 
 import java.util.Locale;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

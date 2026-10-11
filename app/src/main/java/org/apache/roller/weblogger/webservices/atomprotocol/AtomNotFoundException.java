@@ -17,7 +17,7 @@
 */
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Thrown when a requested resource cannot be found (HTTP 404).

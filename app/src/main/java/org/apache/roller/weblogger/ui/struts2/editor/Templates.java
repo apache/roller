@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.pojos.*;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -205,6 +206,7 @@ public class Templates extends UIAction {
         return newTmplName;
     }
 
+    @StrutsParameter
     public void setNewTmplName(String newTmplName) {
         this.newTmplName = newTmplName;
     }
@@ -213,6 +215,7 @@ public class Templates extends UIAction {
         return newTmplAction;
     }
 
+    @StrutsParameter
     public void setNewTmplAction(ComponentType newTmplAction) {
         this.newTmplAction = newTmplAction;
     }
@@ -221,6 +224,7 @@ public class Templates extends UIAction {
         return removeId;
     }
 
+    @StrutsParameter
     public void setRemoveId(String removeId) {
         this.removeId = removeId;
     }
