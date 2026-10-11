@@ -27,9 +27,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.util.I18nMessages;
 
 /**
  * Filter checks all POST request for presence of valid salt value and rejects those without
@@ -37,6 +39,12 @@ import org.apache.commons.logging.LogFactory;
  */
 public class ValidateSaltFilter implements Filter {
     private static final Log log = LogFactory.getLog(ValidateSaltFilter.class);
+
+    /**
+     * Request attribute Tomcat sets when it does not parse the parameters of a
+     * request; its value names the reason.
+     */
+    static final String PARSE_FAILED_REASON = "org.apache.catalina.parameter_parse_failed_reason";
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
@@ -54,6 +62,18 @@ public class ValidateSaltFilter implements Filter {
             try {
                 SaltValidator.requireSubmittedSalt(httpReq);
             } catch (ServletException e) {
+                if (isPostTooLarge(httpReq)) {
+                    // The container dropped the form, salt included, because it
+                    // is over its maximum POST size. Pasted images make this
+                    // likely, so say why instead of reporting a security error.
+                    log.warn("Refused a POST to " + httpReq.getServletPath()
+                            + " that is larger than the server's maximum POST size");
+                    ((HttpServletResponse) response).sendError(
+                            HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
+                            I18nMessages.getMessages(httpReq.getLocale())
+                                    .getString("error.postTooLarge"));
+                    return;
+                }
                 if (log.isDebugEnabled()) {
                     log.debug("Valid salt value not found on POST to URL : "
                             + httpReq.getServletPath());
@@ -71,6 +91,11 @@ public class ValidateSaltFilter implements Filter {
 
     @Override
     public void destroy() {
+    }
+
+    static boolean isPostTooLarge(HttpServletRequest request) {
+        Object reason = request.getAttribute(PARSE_FAILED_REASON);
+        return reason != null && "POST_TOO_LARGE".equals(reason.toString());
     }
 
     private boolean isStrutsAction(HttpServletRequest request) {

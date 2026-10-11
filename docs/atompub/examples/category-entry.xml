@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns:roller="http://roller.apache.org/ns/atompub/1.0" xmlns:thr="http://purl.org/syndication/thread/1.0">
+  <id>https://example.com/roller/roller-services/app/myblog/category/7c3e9a10</id>
+  <title>Travel</title>
+  <updated>2026-10-10T12:30:00Z</updated>
+  <summary type="text">Trips and places</summary>
+  <link rel="edit" href="https://example.com/roller/roller-services/app/myblog/category/7c3e9a10"/>
+  <roller:image>https://example.com/images/travel.png</roller:image>
+  <roller:position>2</roller:position>
+  <roller:inUse>true</roller:inUse>
+  <app:control>
+    <app:draft>no</app:draft>
+  </app:control>
+</entry>

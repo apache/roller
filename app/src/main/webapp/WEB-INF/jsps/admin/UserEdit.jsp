@@ -154,15 +154,15 @@
 
     <div class="control">
         <s:if test="actionName == 'createUser'">
-            <s:submit cssClass="btn btn-default" id="save_button"
+            <s:submit cssClass="btn btn-primary" id="save_button"
                       value="%{getText('generic.save')}" action="createUser!save"/>
-            <s:submit cssClass="btn"
+            <s:submit cssClass="btn btn-outline-secondary"
                       value="%{getText('generic.cancel')}" action="createUser!cancel" />
         </s:if>
         <s:else>
-            <s:submit cssClass="btn btn-default" id="save_button"
+            <s:submit cssClass="btn btn-primary" id="save_button"
                       value="%{getText('generic.save')}" action="modifyUser!save"/>
-            <s:submit cssClass="btn"
+            <s:submit cssClass="btn btn-outline-secondary"
                       value="%{getText('generic.cancel')}" action="modifyUser!cancel" />
         </s:else>
     </div>

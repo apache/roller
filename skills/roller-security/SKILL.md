@@ -43,6 +43,12 @@ is safe: review what the entire change reveals, including related cases. Resolve
 uncertainty with the PMC and ASF Security. Do not assume that derivability from
 public source makes an unannounced finding appropriate for publication.
 
+When public text such as a release announcement, blog post or website page is
+prepared before disclosure, by a person or another agent, give the author the
+permitted facts and the constraints on scope and tone. Do not tell them what is
+being withheld or why: the instruction itself must be safe to leak. Keep such text
+neutral until the advisories are out.
+
 Keep only generic procedures and synthetic templates in this skill. Do not add
 live portal screenshots, case-derived examples, or release execution notes.
 
@@ -51,7 +57,9 @@ live portal screenshots, case-derived examples, or release execution notes.
 1. Locate the private workspace and read its summary and the item's `TRACKING.md`.
 2. Read the original report, reproduction evidence and `IMPLEMENTATION.md`.
 3. Check the implementation branch, review state and release target against the
-   actual repository. Do not infer that a message was sent from a draft file.
+   actual repository. Do not infer that a message was sent from a draft file, or
+   that none was received because the record lacks one; search the correspondence
+   before stating what a reporter said or did not say.
 4. Reconcile `CVE_FORM.md` before using the portal or drafting an advisory.
 
 For new cases, copy `assets/item-template/` into a private item directory.
@@ -89,6 +97,9 @@ project-specific decisions. Verify current policy when performing the workflow.
    that regression tests detect the reported behavior and pass with the fix;
    keep sensitive reproduction evidence private. Use the target branch's
    supported JDK and documented test commands, not a machine-specific SDK path.
+   Record as `fix_commit` the commit that landed on the release branch (the merge
+   or squash commit), not the pull request's branch head, and confirm it is an
+   ancestor of the release tag before citing it in a CVE record.
 7. Give the reporter the fix and draft advisory for comment with a reasonable
    deadline. Coordinate merge timing with the PMC; the ASF default places
    reporter review before commit. Record any agreed project variation.
@@ -96,6 +107,10 @@ project-specific decisions. Verify current policy when performing the workflow.
    mechanics when available; otherwise use the project's release documentation.
 9. Coordinate disclosure with release availability, verify announcement recipients,
    update public security information, and add announcement references to the CVE.
+   Confirm each advisory in every list archive rather than assuming delivery,
+   and notify reporters separately with their advisory links, since the list
+   emails do not reach them. Log each reporter reply in the case record when it
+   arrives.
    Do not rewrite pushed Git commits to add CVE IDs.
 
 ## Multiple reports

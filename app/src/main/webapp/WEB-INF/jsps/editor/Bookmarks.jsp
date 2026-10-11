@@ -54,7 +54,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 <s:text name="bookmarksForm.blogrollName"/>
             </label>
             <div class="col-sm-9 controls">
-                <div class="form-control"><s:text name="%{folder.name}"/></div>
+                <div class="form-control"><s:property value="folder.name"/></div>
             </div>
         </div>
 
@@ -72,22 +72,22 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 <s:text name="bookmarksForm.blogrollName"/>
             </label>
             <div class="col-sm-9 controls">
-                <input style="width:55%; float:left" type="text" name="folder.name"
-                       value="<s:text name='%{folder.name}'/>" id="bookmarks_folder_name" class="form-control"
-                       onchange="nameChanged()"
-                       onkeyup="nameChanged()"/>
-                <button type="button" id="rename_button"
-                        class="btn btn-success" style="float:left; margin-left:1em;"
-                        onclick="renameFolder(); return false;"
-                        onsubmit="return false;">
-                    <s:text name="generic.rename"/>
-                </button>
-                <button type="button" id="rename_cancel"
-                        class="btn btn-outline-secondary" style="float:left; margin-left:1em;"
-                        onclick="cancelRenameFolder(); return false;"
-                        onsubmit="return false;">
-                    <s:text name="generic.cancel"/>
-                </button>
+                <div style="display:flex; gap:1em;">
+                    <input type="text" name="folder.name" style="flex:1;"
+                           value="<s:property value='folder.name'/>" id="bookmarks_folder_name" class="form-control"
+                           onchange="nameChanged()"
+                           onkeyup="nameChanged()"/>
+                    <button type="button" id="rename_button" class="btn btn-success"
+                            onclick="renameFolder(); return false;"
+                            onsubmit="return false;">
+                        <s:text name="generic.rename"/>
+                    </button>
+                    <button type="button" id="rename_cancel" class="btn btn-outline-secondary"
+                            onclick="cancelRenameFolder(); return false;"
+                            onsubmit="return false;">
+                        <s:text name="generic.cancel"/>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -95,8 +95,15 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     <%-- allow user to select the bookmark folder to view --%>
 
-    <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name" emptyOption="true"
-              label="%{getText('bookmarksForm.switchTo')}" onchange="viewChanged()" onmouseup="viewChanged()"/>
+    <div class="form-group ">
+        <label class="col-sm-3 control-label" for="bookmarks_viewFolderId">
+            <s:text name="bookmarksForm.switchTo"/>
+        </label>
+        <div class="col-sm-9 controls">
+            <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name" emptyOption="true"
+                      theme="simple" cssClass="form-control" onchange="viewChanged()"/>
+        </div>
+    </div>
 
     <table class="rollertable table table-striped">
 
@@ -307,11 +314,11 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         }).done(function (data, status, response) {
 
-            // kludge: scrape response status from HTML returned by Struts
-            var alertEnd = data.indexOf("ALERT_END");
-            var notUnique = data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />');
-            if (notUnique > 0 && notUnique < alertEnd) {
-                alert('<s:text name="bookmarkForm.error.duplicateName" />');
+            refreshSalt(data);
+
+            var errors = actionErrors(data);
+            if (errors.length > 0) {
+                alert(errors.join("\n"));
 
             } else {
                 originalName = newName;
@@ -472,12 +479,12 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         }).done(function (data, status, response) {
 
-            // kludge: scrape response status from HTML returned by Struts
-            var alertEnd = data.indexOf("ALERT_END");
-            var notUnique = data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />');
-            if (notUnique > 0 && notUnique < alertEnd) {
+            refreshSalt(data);
+
+            var errors = actionErrors(data);
+            if (errors.length > 0) {
                 feedbackAreaBlogrollEdit.css("color", "red");
-                feedbackAreaBlogrollEdit.html('<s:text name="bookmarkForm.error.duplicateName" />');
+                feedbackAreaBlogrollEdit.text(errors.join(" "));
 
             } else {
                 feedbackAreaBlogrollEdit.css("color", "green");
@@ -819,12 +826,12 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         }).done(function (data) {
 
-            // kludge: scrape response status from HTML returned by Struts
-            var alertEnd = data.indexOf("ALERT_END");
-            var notUnique = data.indexOf('<s:text name="bookmarkForm.error.duplicateName" />');
-            if (notUnique > 0 && notUnique < alertEnd) {
+            refreshSalt(data);
+
+            var errors = actionErrors(data);
+            if (errors.length > 0) {
                 feedbackAreaEdit.css("color", "red");
-                feedbackAreaEdit.html('<s:text name="bookmarkForm.error.duplicateName" />');
+                feedbackAreaEdit.text(errors.join(" "));
 
             } else {
                 feedbackAreaEdit.css("color", "green");

@@ -157,7 +157,24 @@
                     ['misc', ['codeview']],
                     ['insert', ['link']]
                 ],
-                height: 400
+                height: 400,
+                callbacks: {
+                    onPaste: function (e) {
+                        // Summernote inserts a pasted image file itself, but it
+                        // does not stop the browser from also pasting the image's
+                        // HTML, so an image copied from a web page appeared twice.
+                        // Use the same clipboard item Summernote picks.
+                        var clipboard = (e.originalEvent || e).clipboardData;
+                        if (!clipboard || !clipboard.items || !clipboard.items.length) {
+                            return;
+                        }
+                        var items = clipboard.items;
+                        var item = items.length > 1 ? items[1] : items[0];
+                        if (item.kind === 'file' && item.type.indexOf('image/') !== -1) {
+                            e.preventDefault();
+                        }
+                    }
+                }
             }
         );
         // Added event listener to confirm once the editor content is changed

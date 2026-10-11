@@ -38,16 +38,21 @@ accessible even though it is not an official release; do not upload private note
 
 Record the passed vote, source SVN revision, candidate filenames and destination.
 Use an SVN working copy or a single reviewed repository transaction to promote
-only that candidate. Preserve archive bytes and detached signatures. If removing
-an RC suffix from filenames, update the filename references in checksum sidecars
-and verify each digest against the unchanged archive.
+only that candidate. A sparse working copy of the repository root lets one commit
+`svn mv` each file from dev to release, renaming it as it goes. Preserve archive
+bytes and detached signatures. If removing an RC suffix from filenames, update
+the filename references in checksum sidecars and verify each digest against the
+unchanged archive.
 
 Do not blindly promote everything in a version directory: it may contain cancelled
 candidates or unrelated files. Verify the final inventory, signature fingerprints
 and checksum checks after promotion. Never rebuild to remove an RC suffix.
 
 Wait for distribution propagation and check the public download URLs, not merely
-SVN success. Follow the current
+SVN success. downloads.apache.org redirects missing files to the archive, so a
+request that does not follow redirects can report success for a file that is not
+there; check the directory listing or follow redirects to the final response.
+Follow the current
 [release publishing guidance](https://infra.apache.org/release-publishing.html)
 for timing. Update the website and verify its links before announcing.
 

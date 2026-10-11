@@ -113,6 +113,9 @@ public class PlanetConfig extends PlanetUIAction implements ParametersAware {
     
     
     public String save() {
+        if (!isPostRequest()) {
+            return DENIED;
+        }
         
         try {
             String incomingProp = null;

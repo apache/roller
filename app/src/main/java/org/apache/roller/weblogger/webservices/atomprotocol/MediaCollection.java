@@ -1,13 +1,13 @@
 /*
  *  Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
  *  Use is subject to license terms.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you
  *  may not use this file except in compliance with the License. You may
  *  obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,17 +17,6 @@
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import com.rometools.propono.atom.common.rome.AppModule;
-import com.rometools.propono.atom.common.rome.AppModuleImpl;
-import com.rometools.propono.atom.server.AtomException;
-import com.rometools.propono.atom.server.AtomMediaResource;
-import com.rometools.propono.atom.server.AtomNotAuthorizedException;
-import com.rometools.propono.atom.server.AtomNotFoundException;
-import com.rometools.propono.atom.server.AtomRequest;
-import com.rometools.rome.feed.atom.Content;
-import com.rometools.rome.feed.atom.Entry;
-import com.rometools.rome.feed.atom.Feed;
-import com.rometools.rome.feed.atom.Link;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -74,12 +62,12 @@ public class MediaCollection {
     private User           user;
     private HttpServletResponse response;
     private static final int MAX_ENTRIES = 20;
-    private final String   atomURL;    
-    
+    private final String   atomURL;
+
     private static Log log =
             LogFactory.getFactory().getInstance(EntryCollection.class);
-    
-    
+
+
     public MediaCollection(User user, String atomURL) {
         this(user, atomURL, null);
     }
@@ -89,10 +77,10 @@ public class MediaCollection {
         this.atomURL = atomURL;
         this.response = response;
         this.roller = WebloggerFactory.getWeblogger();
-    }  
-    
-    
-    public Entry postMedia(AtomRequest areq, Entry entry) throws AtomException {
+    }
+
+
+    public AtomEntry postMedia(AtomRequest areq, AtomEntry entry) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
 
@@ -100,11 +88,11 @@ public class MediaCollection {
             // get incoming slug from HTTP header
             String slug = areq.getHeader("Slug");
 
-            Content content = entry.getContents().get(0); 
+            AtomContent content = entry.getContent();
             String contentType = content.getType();
             InputStream is = areq.getInputStream();
             String title = entry.getTitle() != null ? entry.getTitle() : slug;
-            
+
             // authenticated client posted a weblog entry
             File tempFile = null;
             String handle = pathInfo[0];
@@ -115,14 +103,18 @@ public class MediaCollection {
             }
             if (pathInfo.length > 1) {
                 // Save to temp file
-                String fileName = createFileName(website, 
-                    (slug != null) ? slug : Utilities.replaceNonAlphanumeric(title,' '), contentType);
+                String baseName = slug;
+                if (baseName == null && title != null) {
+                    baseName = Utilities.replaceNonAlphanumeric(title, ' ');
+                }
+                // createFileName() uses the date when there is no name
+                String fileName = createFileName(website, baseName, contentType);
                 try {
-                    tempFile = File.createTempFile(fileName, "tmp");
+                    tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
                     FileOutputStream fos = new FileOutputStream(tempFile);
                     Utilities.copyInputToOutput(is, fos);
                     fos.close();
-                                        
+
                     // Parse pathinfo to determine file path
                     String path = filePathFromPathInfo(pathInfo);
                     String justPath = path;
@@ -131,8 +123,12 @@ public class MediaCollection {
                         justPath = path.substring(lastSlash);
                     }
 
-                    MediaFileDirectory mdir =
-                        fileMgr.getMediaFileDirectoryByName(website, justPath);
+                    MediaFileDirectory mdir = justPath.isEmpty()
+                        ? fileMgr.getDefaultMediaFileDirectory(website)
+                        : fileMgr.getMediaFileDirectoryByName(website, justPath);
+                    if (mdir == null) {
+                        throw new AtomNotFoundException("Cannot find media directory: " + justPath);
+                    }
 
                     if (mdir.hasMediaFile(fileName)) {
                         throw new AtomException("Duplicate file name");
@@ -163,20 +159,17 @@ public class MediaCollection {
                     }
 
                     roller.flush();
-                    
+
                     fis.close();
-                                      
+
                     MediaFile stored = fileMgr.getMediaFile(mf.getId());
-                    Entry mediaEntry = createAtomResourceEntry(website, stored);
-                    for (Object objLink : mediaEntry.getOtherLinks()) {
-                        Link link = (Link) objLink;
-                        if ("edit".equals(link.getRel())) {
-                            log.debug("Exiting");
-                            return mediaEntry;
-                        }
+                    AtomEntry mediaEntry = createAtomResourceEntry(website, stored);
+                    if (mediaEntry.getLinkHref("edit") != null) {
+                        log.debug("Exiting");
+                        return mediaEntry;
                     }
                     log.error("ERROR: no edit link found in saved media entry");
-                    
+
                 } catch (FileIOException fie) {
                     throw new AtomException(
                         "File upload disabled, over-quota or other error", fie);
@@ -187,16 +180,16 @@ public class MediaCollection {
                 }
             }
             throw new AtomException("Error saving media entry");
-        
+
         } catch (WebloggerException re) {
             throw new AtomException("Posting media", re);
         } catch (IOException ioe) {
             throw new AtomException("Posting media", ioe);
         }
     }
-    
-    
-    public Entry getEntry(AtomRequest areq) throws AtomException {
+
+
+    public AtomEntry getEntry(AtomRequest areq) throws AtomException {
         try {
             String[] pathInfo = Utilities.stringToStringArray(areq.getPathInfo(), "/");
 
@@ -204,6 +197,12 @@ public class MediaCollection {
             filePath = filePath.substring(0, filePath.length() - ".media-link".length());
             String handle = pathInfo[0];
             Weblog website = roller.getWeblogManager().getWeblogByHandle(handle);
+            if (website == null) {
+                throw new AtomNotFoundException("Cannot find weblog: " + handle);
+            }
+            if (!RollerAtomHandler.canView(user, website)) {
+                throw new AtomNotAuthorizedException("Not authorized to access website");
+            }
 
             MediaFileManager fileMgr = roller.getMediaFileManager();
             MediaFile mf = fileMgr.getMediaFileByPath(website, filePath);
@@ -212,14 +211,14 @@ public class MediaCollection {
             if (mf != null) {
                 return createAtomResourceEntry(website, mf);
             }
-            
+
         } catch (WebloggerException ex) {
             throw new AtomException("ERROR fetching entry",ex);
         }
         throw new AtomNotFoundException("ERROR resource not found");
     }
-    
-    
+
+
     public AtomMediaResource getMediaResource(AtomRequest areq) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
@@ -232,25 +231,30 @@ public class MediaCollection {
                 throw new AtomNotAuthorizedException("Not authorized to edit weblog: " + handle);
             }
             if (pathInfo.length > 1) {
-                try {                                        
+                try {
                     // Parse pathinfo to determine file path
                     String filePath = filePathFromPathInfo(pathInfo);
                     MediaFile mf = fmgr.getMediaFileByOriginalPath(website, filePath);
+                    if (mf == null) {
+                        throw new AtomNotFoundException("Cannot find media file: " + filePath);
+                    }
                     return createMediaResource(mf, response);
+                } catch (AtomException ae) {
+                    throw ae;
                 } catch (Exception e) {
                     throw new AtomException(
                         "Unexpected error during file upload", e);
                 }
             }
             throw new AtomException("Incorrect path information");
-        
+
         } catch (WebloggerException re) {
             throw new AtomException("Posting media");
         }
     }
-    
-    
-    public Feed getCollection(AtomRequest areq) throws AtomException {
+
+
+    public AtomFeed getCollection(AtomRequest areq) throws AtomException {
         log.debug("Entering");
         String[] rawPathInfo = StringUtils.split(areq.getPathInfo(),"/");
         try {
@@ -265,9 +269,6 @@ public class MediaCollection {
                 } catch (Exception ingored) {}
             }
             String path = filePathFromPathInfo(pathInfo);
-            if (!path.isEmpty()) {
-                path = path + File.separator;
-            }
             
             String handle = pathInfo[0];
             String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
@@ -279,16 +280,17 @@ public class MediaCollection {
                 throw new AtomNotAuthorizedException("Not authorized to access website");
             }
 
-            Feed feed = new Feed();
+            AtomFeed feed = new AtomFeed();
             feed.setId(atomURL
-                +"/"+website.getHandle() + "/resources/" + path + start);                
+                +"/"+website.getHandle() + "/resources/" + path + start);
             feed.setTitle(website.getName());
 
-            Link link = new Link();
+            List<AtomLink> links = new ArrayList<>();
+            AtomLink link = new AtomLink();
             link.setHref(absUrl + "/" + website.getHandle());
             link.setRel("alternate");
             link.setType("text/html");
-            feed.setAlternateLinks(Collections.singletonList(link));
+            links.add(link);
 
             MediaFileManager fmgr = roller.getMediaFileManager();
             MediaFileDirectory dir;
@@ -298,6 +300,9 @@ public class MediaCollection {
             } else {
                 log.debug("Fetching root resource collection from weblog " + handle);
                 dir = fmgr.getDefaultMediaFileDirectory(website);
+            }
+            if (dir == null) {
+                throw new AtomNotFoundException("Cannot find media directory: " + path);
             }
             Set<MediaFile> files = dir.getMediaFiles();
 
@@ -317,7 +322,7 @@ public class MediaCollection {
                     }
                 }
             });
-                                    
+
             if (files != null && start < files.size()) {
                 for (MediaFile mf : files) {
                     sortedSet.add(mf);
@@ -325,9 +330,9 @@ public class MediaCollection {
                 int count = 0;
                 MediaFile[] sortedResources =
                         sortedSet.toArray(MediaFile[]::new);
-                List<Entry> atomEntries = new ArrayList<>();
+                List<AtomEntry> atomEntries = new ArrayList<>();
                 for (int i=start; i<(start + max) && i<(sortedResources.length); i++) {
-                    Entry entry = createAtomResourceEntry(website, sortedResources[i]);
+                    AtomEntry entry = createAtomResourceEntry(website, sortedResources[i]);
                     atomEntries.add(entry);
                     if (count == 0) {
                         // first entry is most recent
@@ -336,28 +341,26 @@ public class MediaCollection {
                     count++;
                 }
 
-                List<Link> otherLinks = new ArrayList<>();
                 if (start + count < files.size()) {
                     // add next link
                     int nextOffset = start + max;
                     String url = atomURL
                         +"/"+ website.getHandle() + "/resources/" + path + nextOffset;
-                    Link nextLink = new Link();
+                    AtomLink nextLink = new AtomLink();
                     nextLink.setRel("next");
                     nextLink.setHref(url);
-                    otherLinks.add(nextLink);
+                    links.add(nextLink);
                 }
                 if (start > 0) {
                     // add previous link
                     int prevOffset = start > max ? start - max : 0;
                     String url = atomURL
                         +"/"+website.getHandle() + "/resources/" + path + prevOffset;
-                    Link prevLink = new Link();
+                    AtomLink prevLink = new AtomLink();
                     prevLink.setRel("previous");
                     prevLink.setHref(url);
-                    otherLinks.add(prevLink);
+                    links.add(prevLink);
                 }
-                feed.setOtherLinks(otherLinks);
                 feed.setEntries(atomEntries);
 
                 log.debug("Collection contains: " + count);
@@ -365,23 +368,22 @@ public class MediaCollection {
             } else {
                 log.debug("Returning empty collection");
             }
-            
+
+            feed.setLinks(links);
 
             log.debug("Exiting");
             return feed;
-       
+
         } catch (WebloggerException re) {
             throw new AtomException("Getting resource collection", re);
         }
     }
-    
-    
+
+
     public void putMedia(AtomRequest areq) throws AtomException {
        String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
        String contentType = areq.getContentType();
        try {
-            InputStream is = areq.getInputStream();
-     
             // authenticated client posted a weblog entry
             File tempFile = null;
             String handle = pathInfo[0];
@@ -394,18 +396,22 @@ public class MediaCollection {
             if (pathInfo.length > 1) {
                 // Save to temp file
                 try {
-                    tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
-                    FileOutputStream fos = new FileOutputStream(tempFile);
-                    Utilities.copyInputToOutput(is, fos);
-                    fos.close();
-                                        
-                    FileInputStream fis = new FileInputStream(tempFile);
-
                     // Parse pathinfo to determine file path
                     String path = filePathFromPathInfo(pathInfo);
-                    
+
                     // Attempt to load file, to ensure it exists
                     MediaFile mf = fmgr.getMediaFileByPath(website, path);
+                    if (mf == null) {
+                        throw new AtomNotFoundException("Cannot find media file: " + path);
+                    }
+
+                    tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
+                    try (InputStream is = areq.getInputStream();
+                            FileOutputStream fos = new FileOutputStream(tempFile)) {
+                        Utilities.copyInputToOutput(is, fos);
+                    }
+
+                    FileInputStream fis = new FileInputStream(tempFile);
                     String replacementName = pathInfo[pathInfo.length - 1];
                     String declaredType = MediaTypePolicy.normalizeType(contentType);
                     RollerMessages errors = new RollerMessages();
@@ -424,10 +430,12 @@ public class MediaCollection {
                     roller.flush();
 
                     fis.close();
-                    
+
                     log.debug("Exiting");
                     return;
 
+                } catch (AtomException ae) {
+                    throw ae;
                 } catch (FileIOException fie) {
                     throw new AtomException(
                         "File upload disabled, over-quota or other error", fie);
@@ -441,15 +449,13 @@ public class MediaCollection {
                 }
             }
             throw new AtomException("Incorrect path information");
-        
+
         } catch (WebloggerException re) {
             throw new AtomException("Posting media");
-        } catch (IOException ioe) {
-            throw new AtomException("Posting media", ioe);
         }
     }
-    
-    
+
+
     public void deleteEntry(AtomRequest areq) throws AtomException {
         try {
             String[] pathInfo = StringUtils.split(areq.getPathInfo(), "/");
@@ -460,30 +466,36 @@ public class MediaCollection {
             }
             if (RollerAtomHandler.canEdit(user, website) && pathInfo.length > 1) {
                 try {
+                    // The edit URI ends in .media-link; the edit-media URI does not
                     String path = filePathFromPathInfo(pathInfo);
-                    String fileName = path.substring(0, path.length() - ".media-link".length());
+                    String fileName = StringUtils.removeEnd(path, ".media-link");
                     MediaFileManager fmgr = roller.getMediaFileManager();
-                    MediaFile mf = fmgr.getMediaFileByPath(website, path);
+                    MediaFile mf = fmgr.getMediaFileByPath(website, fileName);
+                    if (mf == null) {
+                        throw new AtomNotFoundException("Cannot find media file: " + fileName);
+                    }
                     fmgr.removeMediaFile(website, mf);
                     log.debug("Deleted media entry: " + fileName);
                     return;
-                    
+
+                } catch (AtomException ae) {
+                    throw ae;
                 } catch (Exception e) {
                     String msg = "ERROR deleting media entry";
                     log.error(msg, e);
                     throw new AtomException(msg);
                 }
             }
-            log.debug("Not authorized to delete media entry"); 
-            log.debug("Exiting via exception"); 
+            log.debug("Not authorized to delete media entry");
+            log.debug("Exiting via exception");
 
         } catch (WebloggerException ex) {
             throw new AtomException("ERROR deleting media entry",ex);
         }
         throw new AtomNotAuthorizedException("Not authorized to delete entry");
     }
-    
-    
+
+
     private String filePathFromPathInfo(String[] pathInfo) {
         String path = null;
         if (pathInfo.length > 2) {
@@ -503,88 +515,79 @@ public class MediaCollection {
 
     static AtomMediaResource createMediaResource(MediaFile mediaFile,
             HttpServletResponse response) throws IOException {
-        AtomMediaResource resource = new AtomMediaResource(
-                mediaFile.getName(), mediaFile.getLength(),
-                new Date(mediaFile.getLastModified()), mediaFile.getInputStream());
-        resource.setContentType(mediaFile.getContentType());
+        String contentType = mediaFile.getContentType();
         if (response != null) {
             MediaTypePolicy.applyResponseHeaders(response,
                     mediaFile.getContentType(), mediaFile.getName());
-            resource.setContentType(
-                    MediaTypePolicy.responseTypeFor(mediaFile.getContentType()));
+            contentType = MediaTypePolicy.responseTypeFor(mediaFile.getContentType());
         }
-        return resource;
+        return new AtomMediaResource(mediaFile.getName(), mediaFile.getLength(),
+                contentType, new Date(mediaFile.getLastModified()),
+                mediaFile.getInputStream());
     }
-    
-    private Entry createAtomResourceEntry(Weblog website, MediaFile file) {
+
+    private AtomEntry createAtomResourceEntry(Weblog website, MediaFile file) {
         String filePath = file.getPath().endsWith("/")
                 ? file.getPath() + file.getName()
                 : file.getPath() + "/" + file.getName();
-        String editURI = 
+        String editURI =
                 atomURL+"/"+website.getHandle()
                 + "/resource/" + filePath + ".media-link";
-        String editMediaURI = 
+        String editMediaURI =
                 atomURL+"/"+ website.getHandle()
                 + "/resource/" + filePath;
         String contentType = Utilities.getContentTypeFromFileName(file.getName());
-        
-        Entry entry = new Entry();
+
+        AtomEntry entry = new AtomEntry();
         entry.setId(editMediaURI);
         entry.setTitle(file.getName());
         entry.setUpdated(new Date(file.getLastModified()));
-        
-        Link altlink = new Link();
+
+        List<AtomLink> links = new ArrayList<>();
+        AtomLink altlink = new AtomLink();
         altlink.setRel("alternate");
         altlink.setHref(file.getPermalink());
-        List<Link> altlinks = new ArrayList<>();
-        altlinks.add(altlink);
-        entry.setAlternateLinks(altlinks);
+        links.add(altlink);
 
-        List<Link> otherlinks = new ArrayList<>();
-        entry.setOtherLinks(otherlinks);
-        Link editlink = new Link();
-            editlink.setRel("edit");
-            editlink.setHref(editURI);        
-            otherlinks.add(editlink);            
-        Link editMedialink = new Link();
-            editMedialink.setRel("edit-media");
-            editMedialink.setHref(editMediaURI);        
-            otherlinks.add(editMedialink);
-        
-        Content content = new Content();
+        AtomLink editlink = new AtomLink();
+        editlink.setRel("edit");
+        editlink.setHref(editURI);
+        links.add(editlink);
+
+        AtomLink editMedialink = new AtomLink();
+        editMedialink.setRel("edit-media");
+        editMedialink.setHref(editMediaURI);
+        links.add(editMedialink);
+        entry.setLinks(links);
+
+        AtomContent content = new AtomContent();
         content.setSrc(file.getPermalink());
         content.setType(contentType);
-        List<Content> contents = new ArrayList<>();
-        contents.add(content);
-        entry.setContents(contents);
-        
-        List<com.rometools.rome.feed.module.Module> modules = new ArrayList<>();
-        AppModule app = new AppModuleImpl();
-        app.setDraft(false);
-        app.setEdited(entry.getUpdated());
-        modules.add(app);
-        entry.setModules(modules);
-        
+        entry.setContent(content);
+
+        entry.setDraft(false);
+        entry.setEdited(entry.getUpdated());
+
         return entry;
     }
- 
-    
+
+
     /**
-     * Creates a file name for a file based on a weblog, title string and a 
-     * content-type. 
-     * 
+     * Creates a file name for a file based on a weblog, title string and a
+     * content-type.
+     *
      * @param weblog      Weblog for which file name is being created
      * @param title       Title to be used as basis for file name (or null)
      * @param contentType Content type of file (must not be null)
-     * 
-     * If a title is specified, the method will apply the same create-anchor 
+     *
+     * If a title is specified, the method will apply the same create-anchor
      * logic we use for weblog entries to create a file name based on the title.
      *
-     * If title is null, the base file name will be the weblog handle plus a 
-     * YYYYMMDDHHSS timestamp. 
+     * If title is null, the base file name will be the weblog handle plus a
+     * YYYYMMDDHHSS timestamp.
      *
      * The extension will be formed by using the part of content type that
-     * comes after he slash. 
+     * comes after he slash.
      *
      * For example:
      *    weblog.handle = "daveblog"
@@ -599,23 +602,23 @@ public class MediaCollection {
      * Might result in daveblog-200608201034.jpg
      */
     private String createFileName(Weblog weblog, String title, String contentType) {
-        
+
         if (weblog == null) {
             throw new IllegalArgumentException("weblog cannot be null");
         }
         if (contentType == null) {
             throw new IllegalArgumentException("contentType cannot be null");
         }
-        
+
         String fileName;
-        
+
         // Determine the extension based on the contentType. This is a hack.
-        // The info we need to map from contentType to file extension is in 
-        // JRE/lib/content-type.properties, but Java Activation doesn't provide 
+        // The info we need to map from contentType to file extension is in
+        // JRE/lib/content-type.properties, but Java Activation doesn't provide
         // a way to do a reverse mapping or to get at the data.
         String[] typeTokens = contentType.split("/");
         String ext = typeTokens[1];
-        
+
         if (title != null && !title.isBlank()) {
             // We've got a title, so use it to build file name
             StringTokenizer toker = new StringTokenizer(title);
@@ -631,15 +634,15 @@ public class MediaCollection {
                 fileName = tmp + "." + ext;
             } else {
                 fileName = tmp;
-            }            
-        } else {            
+            }
+        } else {
             // No title or text, so instead we'll use the item's date
             // in YYYYMMDD format to form the file name
             SimpleDateFormat sdf = new SimpleDateFormat();
             sdf.applyPattern("yyyyMMddHHSS");
             fileName = weblog.getHandle()+"-"+sdf.format(new Date())+"."+ext;
         }
-        
+
         return fileName;
     }
 }
