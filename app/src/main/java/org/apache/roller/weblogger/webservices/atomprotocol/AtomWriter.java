@@ -62,9 +62,9 @@ public class AtomWriter {
     public void writeCategoriesDoc(OutputStream out, AtomCategories cats) throws AtomException {
         writeDocument(out, APP_NS, "categories", "atom", ATOM_NS,
                 "Error serializing category document", w -> {
-            w.writeAttribute("fixed", cats.isFixed() ? "yes" : "no");
+            w.writeAttribute("fixed", xml(cats.isFixed() ? "yes" : "no"));
             if (cats.getScheme() != null) {
-                w.writeAttribute("scheme", cats.getScheme());
+                w.writeAttribute("scheme", xml(cats.getScheme()));
             }
             for (AtomCategory cat : cats.getCategories()) {
                 writeCategory(w, cat);
@@ -151,24 +151,24 @@ public class AtomWriter {
             throws XMLStreamException {
         w.writeStartElement(APP_NS, "collection");
         if (collection.getHref() != null) {
-            w.writeAttribute("href", collection.getHref());
+            w.writeAttribute("href", xml(collection.getHref()));
         }
         writeAtomText(w, "title", collection.getTitle());
         for (String accept : collection.getAccepts()) {
             w.writeStartElement(APP_NS, "accept");
-            w.writeCharacters(accept);
+            w.writeCharacters(xml(accept));
             w.writeEndElement();
         }
         for (AtomCategories cats : collection.getCategories()) {
             if (cats.getHref() != null) {
                 w.writeEmptyElement(APP_NS, "categories");
-                w.writeAttribute("href", cats.getHref());
+                w.writeAttribute("href", xml(cats.getHref()));
                 continue;
             }
             w.writeStartElement(APP_NS, "categories");
-            w.writeAttribute("fixed", cats.isFixed() ? "yes" : "no");
+            w.writeAttribute("fixed", xml(cats.isFixed() ? "yes" : "no"));
             if (cats.getScheme() != null) {
-                w.writeAttribute("scheme", cats.getScheme());
+                w.writeAttribute("scheme", xml(cats.getScheme()));
             }
             for (AtomCategory cat : cats.getCategories()) {
                 writeCategory(w, cat);
@@ -204,32 +204,32 @@ public class AtomWriter {
         }
         if (entry.getInReplyToRef() != null) {
             w.writeEmptyElement(THREAD_NS, "in-reply-to");
-            w.writeAttribute("ref", entry.getInReplyToRef());
+            w.writeAttribute("ref", xml(entry.getInReplyToRef()));
             if (entry.getInReplyToHref() != null) {
-                w.writeAttribute("href", entry.getInReplyToHref());
+                w.writeAttribute("href", xml(entry.getInReplyToHref()));
             }
         }
         if (entry.getMobileRendition() != null) {
             w.writeStartElement(ROLLER_NS, "rendition");
-            w.writeAttribute("type", "mobile");
-            w.writeCharacters(entry.getMobileRendition());
+            w.writeAttribute("type", xml("mobile"));
+            w.writeCharacters(xml(entry.getMobileRendition()));
             w.writeEndElement();
         }
         for (Map.Entry<String, String> ext : entry.getExtensions().entrySet()) {
             w.writeStartElement(ROLLER_NS, ext.getKey());
-            w.writeCharacters(ext.getValue());
+            w.writeCharacters(xml(ext.getValue()));
             w.writeEndElement();
         }
         // APP extensions (RFC 5023): app:edited is a child of atom:entry
         // (section 10.2); app:draft goes inside app:control (section 13.1)
         if (entry.getEdited() != null) {
             w.writeStartElement(APP_NS, "edited");
-            w.writeCharacters(formatDate(entry.getEdited()));
+            w.writeCharacters(xml(formatDate(entry.getEdited())));
             w.writeEndElement();
         }
         w.writeStartElement(APP_NS, "control");
         w.writeStartElement(APP_NS, "draft");
-        w.writeCharacters(entry.isDraft() ? "yes" : "no");
+        w.writeCharacters(xml(entry.isDraft() ? "yes" : "no"));
         w.writeEndElement();
         w.writeEndElement();
     }
@@ -238,12 +238,12 @@ public class AtomWriter {
             throws XMLStreamException {
         w.writeStartElement(ATOM_NS, name);
         if (content.getType() != null) {
-            w.writeAttribute("type", content.getType());
+            w.writeAttribute("type", xml(content.getType()));
         }
         if (content.getSrc() != null) {
-            w.writeAttribute("src", content.getSrc());
+            w.writeAttribute("src", xml(content.getSrc()));
         } else if (content.getValue() != null) {
-            w.writeCharacters(content.getValue());
+            w.writeCharacters(xml(content.getValue()));
         }
         w.writeEndElement();
     }
@@ -251,13 +251,13 @@ public class AtomWriter {
     private void writeLink(XMLStreamWriter w, AtomLink link) throws XMLStreamException {
         w.writeStartElement(ATOM_NS, "link");
         if (link.getRel() != null) {
-            w.writeAttribute("rel", link.getRel());
+            w.writeAttribute("rel", xml(link.getRel()));
         }
         if (link.getHref() != null) {
-            w.writeAttribute("href", link.getHref());
+            w.writeAttribute("href", xml(link.getHref()));
         }
         if (link.getType() != null) {
-            w.writeAttribute("type", link.getType());
+            w.writeAttribute("type", xml(link.getType()));
         }
         w.writeEndElement();
     }
@@ -265,13 +265,13 @@ public class AtomWriter {
     private void writeCategory(XMLStreamWriter w, AtomCategory cat) throws XMLStreamException {
         w.writeStartElement(ATOM_NS, "category");
         if (cat.getTerm() != null) {
-            w.writeAttribute("term", cat.getTerm());
+            w.writeAttribute("term", xml(cat.getTerm()));
         }
         if (cat.getScheme() != null) {
-            w.writeAttribute("scheme", cat.getScheme());
+            w.writeAttribute("scheme", xml(cat.getScheme()));
         }
         if (cat.getLabel() != null) {
-            w.writeAttribute("label", cat.getLabel());
+            w.writeAttribute("label", xml(cat.getLabel()));
         }
         w.writeEndElement();
     }
@@ -282,7 +282,36 @@ public class AtomWriter {
             return;
         }
         w.writeStartElement(ATOM_NS, name);
-        w.writeCharacters(text);
+        w.writeCharacters(xml(text));
         w.writeEndElement();
+    }
+
+    /**
+     * Drops the characters that XML 1.0 does not allow in a document (most
+     * control characters, U+FFFE, U+FFFF and unpaired surrogates). Stored
+     * text can contain them, and a single one makes the whole response
+     * unreadable for a client.
+     */
+    static String xml(String text) {
+        if (text == null) {
+            return null;
+        }
+        StringBuilder out = null;
+        int i = 0;
+        while (i < text.length()) {
+            int cp = text.codePointAt(i);
+            int len = Character.charCount(cp);
+            boolean legal = cp == 0x9 || cp == 0xA || cp == 0xD
+                    || (cp >= 0x20 && cp <= 0xD7FF)
+                    || (cp >= 0xE000 && cp <= 0xFFFD)
+                    || (cp >= 0x10000 && cp <= 0x10FFFF);
+            if (!legal && out == null) {
+                out = new StringBuilder(text.length()).append(text, 0, i);
+            } else if (legal && out != null) {
+                out.appendCodePoint(cp);
+            }
+            i += len;
+        }
+        return out == null ? text : out.toString();
     }
 }
