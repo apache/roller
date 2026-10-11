@@ -78,7 +78,7 @@ public class RollerAtomServlet extends HttpServlet {
         RollerAtomHandler handler = createHandler(request, response);
         String userName = handler.getAuthenticatedUsername();
         if (userName == null) {
-            // The OAuth path may have already written a challenge/error response.
+            // Ask the client for BASIC credentials.
             if (!response.isCommitted()) {
                 response.setHeader("WWW-Authenticate", "Basic realm=\"Roller\"");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
