@@ -1,0 +1,11 @@
+<footer class="site-footer">
+  <div>
+    <strong>$model.weblog.name</strong>
+    #if($model.weblog.tagline)<p>$model.weblog.tagline</p>#end
+  </div>
+  <div class="footer-links">
+    <a href="$url.feed.entries.atom">Atom feed</a>
+    <a href="$url.home">Home</a>
+  </div>
+  <small>&copy; $utils.formatDate($utils.now, "yyyy") $model.weblog.creator.fullName</small>
+</footer>
