@@ -119,6 +119,7 @@ iframe {
   letter-spacing: -0.075em;
   text-transform: uppercase;
   margin: 0.25em 0 0;
+  overflow-wrap: anywhere;
 }
 .issue-header h1 span {
   color: var(--orange);

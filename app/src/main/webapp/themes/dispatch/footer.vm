@@ -1,7 +1,7 @@
 <footer class="site-footer">
   <span class="status">
     <i></i>
-    Publishing since the early web
+    Publishing since $utils.formatDate($model.weblog.dateCreated, "yyyy")
   </span>
   <strong>$model.weblog.name</strong>
   <span><a href="$url.feed.entries.atom">ATOM.XML</a></span>

@@ -1,12 +1,10 @@
 <aside class="sidebar">
+  #if($model.weblog.about)
   <section>
     <h2>About</h2>
-    #if($model.weblog.about)
     <div class="about">$model.weblog.about</div>
-    #else
-    <p>A personal weblog about technology, family, and adventure.</p>
-    #end
   </section>
+  #end
   <section>
     <h2>Explore</h2>
     #set($mytags=$model.weblog.getPopularTags(-1,18))

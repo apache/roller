@@ -9,14 +9,7 @@
     <main id="content">
       <section class="hero">
         <div class="hero-copy">
-          <p class="kicker">From Colorado to everywhere</p>
-          <h1>
-            Life is better
-            <br />
-            with a little
-            <br />
-            <em>altitude.</em>
-          </h1>
+          <h1>$model.weblog.name</h1>
           #if($model.weblog.tagline)
           <p>$model.weblog.tagline</p>
           #end

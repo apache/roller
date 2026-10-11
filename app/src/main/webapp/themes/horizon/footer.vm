@@ -1,7 +1,7 @@
 <footer class="site-footer">
   <div>
     <strong>$model.weblog.name</strong>
-    <p>#if($model.weblog.tagline)$model.weblog.tagline#else Stories worth keeping.#end</p>
+    #if($model.weblog.tagline)<p>$model.weblog.tagline</p>#end
   </div>
   <div class="footer-links">
     <a href="$url.feed.entries.atom">Atom feed</a>

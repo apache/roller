@@ -9,20 +9,14 @@
     <main id="content">
       <header class="issue-header">
         <div>
-          <p class="label">INDEPENDENT WEBLOG / EST. 2002</p>
-          <h1>
-            Ideas,
-            <br />
-            adventures,
-            <br />
-            <span>&amp; source code.</span>
-          </h1>
+          <p class="label">INDEPENDENT WEBLOG / EST. $utils.formatDate($model.weblog.dateCreated, "yyyy")</p>
+          <h1>$model.weblog.name</h1>
         </div>
         <div class="issue-note">
           #if($model.weblog.tagline)
           <p>$model.weblog.tagline</p>
           #end
-          <a href="$url.feed.entries.atom">SUBSCRIBE TO THE SIGNAL →</a>
+          <a href="$url.feed.entries.atom">SUBSCRIBE VIA ATOM →</a>
         </div>
       </header>
       <div class="publication-grid">

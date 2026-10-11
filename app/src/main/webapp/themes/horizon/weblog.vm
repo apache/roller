@@ -8,7 +8,6 @@
     #includeTemplate($model.weblog "standard_header")
     <main id="content" class="page-shell">
       <section class="intro">
-        <p class="eyebrow">Notes from the journey</p>
         <h1>$model.weblog.name</h1>
         #if($model.weblog.tagline)
         <p class="lede">$model.weblog.tagline</p>

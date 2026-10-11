@@ -11,10 +11,10 @@
     </li>
     #end
   </ol>
+  #if($model.weblog.about)
   <div class="panel-about">
     <div class="panel-label">ABOUT</div>
-    #if($model.weblog.about)$model.weblog.about#else
-    <p>Software, open source, and life outside the terminal.</p>
-    #end
+    $model.weblog.about
   </div>
+  #end
 </aside>

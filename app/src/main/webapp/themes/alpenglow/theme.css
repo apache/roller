@@ -108,6 +108,7 @@ video {
   font: 900 clamp(3.6rem, 8vw, 7.5rem)/0.82 var(--display);
   letter-spacing: -0.07em;
   margin: 0.3em 0;
+  overflow-wrap: anywhere;
 }
 .hero h1 em {
   font-family: var(--serif);

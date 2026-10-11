@@ -1,16 +1,14 @@
 <aside class="explore">
+  #if($model.weblog.about)
   <div>
     <p class="kicker">The journal</p>
-    #if($model.weblog.about)
     <div>$model.weblog.about</div>
-    #else
-    <p>Technology, family, powder days, open roads, and everywhere they lead.</p>
-    #end
   </div>
+  #end
   <form method="get" action="$url.search" role="search">
     <label for="alpine-search">Find a story</label>
     <div>
-      <input id="alpine-search" name="q" type="search" placeholder="Java, skiing, travel…" />
+      <input id="alpine-search" name="q" type="search" placeholder="Search…" />
       <button>Go</button>
     </div>
   </form>
