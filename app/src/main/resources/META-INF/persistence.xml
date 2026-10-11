@@ -56,5 +56,13 @@
     <mapping-file>org/apache/roller/planet/pojos/PlanetGroup.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/planet/pojos/Subscription.orm.xml</mapping-file>
     <mapping-file>org/apache/roller/planet/pojos/SubscriptionEntry.orm.xml</mapping-file>
+    <properties>
+      <!-- Background search index operations read comments on their own threads.
+           If one reads a comment just before another thread deletes it, the
+           shared cache can hold the deleted comment after the delete commits,
+           so lookups by id return it (ROL-2185). Comments are always read
+           fresh from the database instead. -->
+      <property name="eclipselink.cache.shared.WeblogEntryComment" value="false"/>
+    </properties>
   </persistence-unit>
 </persistence>
