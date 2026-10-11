@@ -74,3 +74,14 @@ Release notes: [public URL]
 
 Check the current ASF and project announcement guidance for recipients and
 formatting. Tally binding votes by PMC membership; do not count every +1 as binding.
+Check membership against the ASF roster (for example the public LDAP projects data),
+not the project website's committer list, which can lag.
+
+Send the announcement from your `@apache.org` address; announce@apache.org rejects
+other senders without warning. Confirm it in the announce@ archive.
+
+When a release carries undisclosed security fixes, keep the announcement, release
+notes, blog posts and website neutral until the advisories are sent: describe
+behaviour changes and upgrade guidance without characterizing the fixes.
+Instructions given to anyone writing that text must not reveal what is being
+withheld.

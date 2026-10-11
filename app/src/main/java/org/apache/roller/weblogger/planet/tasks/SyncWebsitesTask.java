@@ -141,6 +141,10 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
      */
     @Override
     public void runTask() {
+        if (!WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
+            log.debug("Planet is disabled; not running " + getName());
+            return;
+        }
 
         log.info("Syncing local weblogs with planet subscriptions list");
 

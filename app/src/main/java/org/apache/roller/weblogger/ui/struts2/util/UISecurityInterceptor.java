@@ -56,6 +56,14 @@ public class UISecurityInterceptor extends MethodFilterInterceptor {
 
             final UISecurityEnforced theAction = (UISecurityEnforced) action;
 
+            // is the feature this action belongs to turned on?
+            if (!theAction.isFeatureEnabled()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("DENIED: feature is disabled");
+                }
+                return UIAction.DENIED;
+            }
+
             // are we requiring an authenticated user?
             if (theAction.isUserRequired()) {
 

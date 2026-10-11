@@ -211,7 +211,8 @@ public class HTMLSanitizer {
                         } else if (tag.matches("img|embed") && "src".equals(attr)) {
                             // <img src="......">
                             String[] customSchemes = {"http", "https"};
-                            if (new UrlValidator(customSchemes).isValid(val)) {
+                            if (new UrlValidator(customSchemes).isValid(val)
+                                    || ("img".equals(tag) && InlineImageData.parse(val) != null)) {
                                 foundURL = true;
                             } else {
                                 ret.invalidTags.add(attr + " " + val);
@@ -374,7 +375,7 @@ public class HTMLSanitizer {
     private static List<String> tokenize(String html) {
         List<String> tokens = new ArrayList<>();
         int pos = 0;
-        String token = "";
+        StringBuilder token = new StringBuilder();
         int len = html.length();
         while (pos < len) {
             char c = html.charAt(pos);
@@ -385,11 +386,11 @@ public class HTMLSanitizer {
             if ("<!--".equals(ahead)) {
                 //store the current token
                 if (token.length() > 0) {
-                    tokens.add(token);
+                    tokens.add(token.toString());
                 }
 
                 //clear the token
-                token = "";
+                token.setLength(0);
 
                 // search the end of <......>
                 int end = moveToMarkerEnd(pos, "-->", html);
@@ -402,11 +403,11 @@ public class HTMLSanitizer {
 
                 //store the current token
                 if (token.length() > 0) {
-                    tokens.add(token);
+                    tokens.add(token.toString());
                 }
 
                 //clear the token
-                token = "";
+                token.setLength(0);
 
                 // serch the end of <......>
                 int end = moveToMarkerEnd(pos, ">", html);
@@ -414,7 +415,7 @@ public class HTMLSanitizer {
                 pos = end;
 
             } else {
-                token = token + c;
+                token.append(c);
                 pos++;
             }
 
@@ -422,7 +423,7 @@ public class HTMLSanitizer {
 
         //store the last token
         if (token.length() > 0) {
-            tokens.add(token);
+            tokens.add(token.toString());
         }
 
         return tokens;

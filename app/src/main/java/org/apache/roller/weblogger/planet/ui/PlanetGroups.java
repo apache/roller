@@ -67,6 +67,9 @@ public class PlanetGroups extends PlanetUIAction {
      * Delete group
      */
     public String delete() {
+        if (!isPostRequest()) {
+            return DENIED;
+        }
 
         if (getGroup() != null) {
             try {

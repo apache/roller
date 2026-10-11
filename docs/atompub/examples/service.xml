@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service xmlns="http://www.w3.org/2007/app" xmlns:atom="http://www.w3.org/2005/Atom">
+  <workspace>
+    <atom:title>My Weblog</atom:title>
+    <collection href="https://example.com/roller/roller-services/app/myblog/entries">
+      <atom:title>Weblog Entries</atom:title>
+      <accept>application/atom+xml;type=entry</accept>
+      <categories fixed="yes" scheme="https://example.com/roller/myblog/">
+        <atom:category term="General" label="General"/>
+        <atom:category term="Java" label="Java"/>
+        <atom:category term="Travel" label="Travel"/>
+      </categories>
+      <categories href="https://example.com/roller/roller-services/app/myblog/categories.atomcat"/>
+      <categories fixed="no"/>
+    </collection>
+    <collection href="https://example.com/roller/roller-services/app/myblog/resources/default">
+      <atom:title>Media Files: default</atom:title>
+      <accept>image/*</accept>
+      <accept>application/pdf</accept>
+    </collection>
+    <collection href="https://example.com/roller/roller-services/app/myblog/templates">
+      <atom:title>Templates</atom:title>
+      <accept>application/atom+xml;type=entry</accept>
+    </collection>
+    <collection href="https://example.com/roller/roller-services/app/myblog/categories">
+      <atom:title>Categories</atom:title>
+      <accept>application/atom+xml;type=entry</accept>
+    </collection>
+    <collection href="https://example.com/roller/roller-services/app/myblog/comments">
+      <atom:title>Comments</atom:title>
+      <accept/>
+    </collection>
+  </workspace>
+</service>
