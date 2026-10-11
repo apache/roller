@@ -2,14 +2,14 @@
 <html lang="en">
   <head>
     #includeTemplate($model.weblog "standard_head")
-    <title>$model.tags — $model.weblog.name</title>
+    <title>#foreach($tagName in $model.tags)$tagName#if($foreach.hasNext), #end#end — $model.weblog.name</title>
   </head>
   <body>
     #includeTemplate($model.weblog "standard_header")
     <main id="content" class="article-shell">
       <header class="page-heading">
         <p class="eyebrow">Topic</p>
-        <h1>$model.tags</h1>
+        <h1>#foreach($tagName in $model.tags)$tagName#if($foreach.hasNext), #end#end</h1>
       </header>
       #set($pager=$model.getWeblogEntriesPager())#showWeblogEntriesPager($pager)
       <nav class="pager">#showNextPrevEntriesControl($pager)</nav>

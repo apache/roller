@@ -1,6 +1,6 @@
 #foreach($entry in $entries)
 <article class="story">
-  <div class="story-index" aria-hidden="true">$velocityCount</div>
+  <div class="story-index" aria-hidden="true">$foreach.count</div>
   <div class="story-body">
     <div class="meta">
       <a href="$url.category($entry.category.name)">$entry.category.name</a>

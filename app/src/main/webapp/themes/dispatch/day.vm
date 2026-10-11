@@ -1,6 +1,6 @@
 #foreach($entry in $entries)
 <article class="dispatch">
-  <div class="dispatch-number">#if($velocityCount<10)0#end$velocityCount</div>
+  <div class="dispatch-number">#if($foreach.count < 10)0#end$foreach.count</div>
   <div class="dispatch-copy">
     <div class="meta">
       <time datetime="$utils.formatDate($entry.pubTime,'yyyy-MM-dd')">
