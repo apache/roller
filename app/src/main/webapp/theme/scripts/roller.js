@@ -212,6 +212,32 @@ function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
+
+/*
+ * A salt can be used only once. After a form is posted with AJAX, copy the
+ * salt issued with the response into the forms on this page, so the next post
+ * from this page is accepted.
+ */
+function refreshSalt(html) {
+    var issued = new DOMParser().parseFromString(html, "text/html")
+        .querySelector("meta[name='roller-salt']");
+    var salt = issued ? issued.getAttribute("content") : "";
+    if (salt) {
+        document.querySelectorAll("input[name='salt']").forEach(function (field) {
+            field.value = salt;
+        });
+    }
+}
+
+/* Returns the action error messages in a page returned to an AJAX post. */
+function actionErrors(html) {
+    var errors = new DOMParser().parseFromString(html, "text/html")
+        .querySelectorAll("#errors li");
+    return Array.prototype.map.call(errors, function (error) {
+        return error.textContent.trim();
+    });
+}
+
 // weblog pages include this script with their comment form, and most themes
 // do not load jQuery, so validation only runs where jQuery Validation is loaded
 window.jQuery && jQuery.validator && jQuery(function () {

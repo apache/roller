@@ -78,8 +78,9 @@ the website points to the new release and archive availability is confirmed.
 Keep historical signing keys available for verification of old releases.
 
 For security releases, coordinate advisory timing with the PMC and ASF Security;
-use the companion `roller-security` skill when available. Public vote material
-must not expose undisclosed case details. The operator upgrade must be available
+use the companion `roller-security` skill when available. Public vote material,
+announcements and release notes must not expose undisclosed case details; keep
+them neutral until the advisories are out. The operator upgrade must be available
 when the advisory is published.
 
 ## References and helpers

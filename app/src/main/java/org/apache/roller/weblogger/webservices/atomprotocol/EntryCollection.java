@@ -1,13 +1,13 @@
 /*
  *  Copyright 2007 Sun Microsystems, Inc.  All rights reserved.
  *  Use is subject to license terms.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you
  *  may not use this file except in compliance with the License. You may
  *  obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,21 +17,6 @@
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-
-import com.rometools.propono.atom.common.rome.AppModule;
-import com.rometools.propono.atom.common.rome.AppModuleImpl;
-import com.rometools.propono.atom.server.AtomException;
-import com.rometools.propono.atom.server.AtomNotAuthorizedException;
-import com.rometools.propono.atom.server.AtomNotFoundException;
-import com.rometools.propono.atom.server.AtomRequest;
-import com.rometools.rome.feed.atom.Category;
-import com.rometools.rome.feed.atom.Content;
-import com.rometools.rome.feed.atom.Entry;
-import com.rometools.rome.feed.atom.Feed;
-import com.rometools.rome.feed.atom.Link;
-import com.rometools.rome.feed.atom.Person;
-import com.rometools.rome.feed.module.Module;
-import com.rometools.rome.feed.synd.SyndPerson;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -70,26 +55,26 @@ public class EntryCollection {
     private Weblogger      roller;
     private User           user;
     private static final int MAX_ENTRIES = 20;
-    private final String   atomURL;    
-    
+    private final String   atomURL;
+
     private static Log log =
             LogFactory.getFactory().getInstance(EntryCollection.class);
-    
-    
+
+
     public EntryCollection(User user, String atomURL) {
         this.user = user;
         this.atomURL = atomURL;
         this.roller = WebloggerFactory.getWeblogger();
     }
-    
-    
-    public Entry postEntry(AtomRequest areq, Entry entry) throws AtomException {
+
+
+    public AtomEntry postEntry(AtomRequest areq, AtomEntry entry) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         try {
             // authenticated client posted a weblog entry
             String handle = pathInfo[0];
-            Weblog website = 
+            Weblog website =
                 roller.getWeblogManager().getWeblogByHandle(handle);
             if (website == null) {
                 throw new AtomNotFoundException("Cannot find weblog: " + handle);
@@ -97,9 +82,9 @@ public class EntryCollection {
             if (!RollerAtomHandler.canEdit(user, website)) {
                 throw new AtomNotAuthorizedException("Not authorized to access website: " + handle);
             }
-            
+
             RollerAtomHandler.oneSecondThrottle();
-            
+
             // Save it and commit it
             WeblogEntryManager mgr = roller.getWeblogEntryManager();
             WeblogEntry rollerEntry = new WeblogEntry();
@@ -116,13 +101,10 @@ public class EntryCollection {
             }
 
             rollerEntry = mgr.getWeblogEntry(rollerEntry.getId());
-            Entry newEntry = createAtomEntry(rollerEntry);
-            for (Object objLink : newEntry.getOtherLinks()) {
-                Link link = (Link) objLink;
-                if ("edit".equals(link.getRel())) {
-                    log.debug("Exiting");
-                    return createAtomEntry(rollerEntry);
-                }
+            AtomEntry newEntry = createAtomEntry(rollerEntry);
+            if (newEntry.getLinkHref("edit") != null) {
+                log.debug("Exiting");
+                return newEntry;
             }
             log.error("ERROR: no edit link found in saved media entry");
             log.debug("Exiting via exception");
@@ -132,9 +114,9 @@ public class EntryCollection {
         }
         throw new AtomException("Posting entry");
     }
-    
-    
-    public Entry getEntry(AtomRequest areq) throws AtomException {
+
+
+    public AtomEntry getEntry(AtomRequest areq) throws AtomException {
         try {
             String entryid = Utilities.stringToStringArray(areq.getPathInfo(),"/")[2];
             WeblogEntry entry = roller.getWeblogEntryManager().getWeblogEntry(entryid);
@@ -150,9 +132,9 @@ public class EntryCollection {
             throw new AtomException("ERROR fetching entry", ex);
         }
     }
-    
-    
-    public Feed getCollection(AtomRequest areq) throws AtomException {
+
+
+    public AtomFeed getCollection(AtomRequest areq) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         try {
@@ -165,7 +147,7 @@ public class EntryCollection {
                 } catch (Exception e) {
                     log.warn("Unparsable range: " + pathInfo[2]);
                 }
-            }        
+            }
             String handle = pathInfo[0];
             String absUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
             Weblog website = roller.getWeblogManager().getWeblogByHandle(handle);
@@ -181,37 +163,37 @@ public class EntryCollection {
             wesc.setOffset(start);
             wesc.setMaxResults(max + 1);
             List<WeblogEntry> entries = roller.getWeblogEntryManager().getWeblogEntries(wesc);
-            Feed feed = new Feed();
+            AtomFeed feed = new AtomFeed();
             feed.setId(atomURL
                 +"/"+website.getHandle() + "/entries/" + start);
             feed.setTitle(website.getName());
 
-            Link link = new Link();
+            List<AtomLink> links = new ArrayList<>();
+            AtomLink link = new AtomLink();
             link.setHref(absUrl + "/" + website.getHandle());
             link.setRel("alternate");
             link.setType("text/html");
-            feed.setAlternateLinks(Collections.singletonList(link));
+            links.add(link);
 
-            List<Entry> atomEntries = new ArrayList<>();
+            List<AtomEntry> atomEntries = new ArrayList<>();
             int count = 0;
             for (WeblogEntry rollerEntry : entries) {
                 if (count++ >= MAX_ENTRIES) {
                     break;
                 }
-                Entry entry = createAtomEntry(rollerEntry);
+                AtomEntry entry = createAtomEntry(rollerEntry);
                 atomEntries.add(entry);
                 if (count == 1) {
                     // first entry is most recent
                     feed.setUpdated(entry.getUpdated());
                 }
             }
-            List<Link> links = new ArrayList<>();
             if (entries.size() > max) {
                 // add next link
                 int nextOffset = start + max;
                 String url = atomURL+"/"
                         + website.getHandle() + "/entries/" + nextOffset;
-                Link nextLink = new Link();
+                AtomLink nextLink = new AtomLink();
                 nextLink.setRel("next");
                 nextLink.setHref(url);
                 links.add(nextLink);
@@ -221,27 +203,25 @@ public class EntryCollection {
                 int prevOffset = start > max ? start - max : 0;
                 String url = atomURL+"/"
                         +website.getHandle() + "/entries/" + prevOffset;
-                Link prevLink = new Link();
+                AtomLink prevLink = new AtomLink();
                 prevLink.setRel("previous");
                 prevLink.setHref(url);
                 links.add(prevLink);
             }
-            if (!links.isEmpty()) {
-                feed.setOtherLinks(links);
-            }
+            feed.setLinks(links);
             // Use collection URI as id
             feed.setEntries(atomEntries);
-            
+
             log.debug("Exiting");
             return feed;
-        
+
         } catch (WebloggerException re) {
             throw new AtomException("Getting entry collection");
         }
     }
-    
-    
-    public void putEntry(AtomRequest areq, Entry entry) throws AtomException {
+
+
+    public void putEntry(AtomRequest areq, AtomEntry entry) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         try {
@@ -252,18 +232,18 @@ public class EntryCollection {
                     roller.getWeblogEntryManager().getWeblogEntry(pathInfo[2]);
                 if (rollerEntry == null) {
                     throw new AtomNotFoundException(
-                        "Cannot find specified entry/resource");  
+                        "Cannot find specified entry/resource");
                 }
                 if (RollerAtomHandler.canEdit(user, rollerEntry)) {
-            
+
                     RollerAtomHandler.oneSecondThrottle();
-                    
+
                     WeblogEntryManager mgr = roller.getWeblogEntryManager();
                     copyToRollerEntry(entry, rollerEntry);
                     rollerEntry.setUpdateTime(new Timestamp(new Date().getTime()));
                     mgr.saveWeblogEntry(rollerEntry);
                     roller.flush();
-                    
+
                     CacheManager.invalidate(rollerEntry.getWebsite());
                     if (rollerEntry.isPublished()) {
                         roller.getIndexManager().addEntryReIndexOperation(rollerEntry);
@@ -274,13 +254,13 @@ public class EntryCollection {
                 throw new AtomNotAuthorizedException("ERROR not authorized to update entry");
             }
             throw new AtomNotFoundException("Cannot find specified entry/resource");
-            
+
         } catch (WebloggerException re) {
             throw new AtomException("Updating entry");
         }
     }
-    
-    
+
+
     public void deleteEntry(AtomRequest areq) throws AtomException {
         try {
             String[] pathInfo = StringUtils.split(areq.getPathInfo(), "/");
@@ -297,98 +277,89 @@ public class EntryCollection {
                 roller.flush();
                 return;
             }
-            log.debug("Not authorized to delete entry"); 
-            log.debug("Exiting via exception"); 
-            
+            log.debug("Not authorized to delete entry");
+            log.debug("Exiting via exception");
+
         } catch (WebloggerException ex) {
             throw new AtomException("ERROR deleting entry",ex);
         }
         throw new AtomNotAuthorizedException("Not authorized to delete entry");
     }
 
-    
+
         /**
-     * Create a Rome Atom entry based on a Weblogger entry.
+     * Create an Atom entry based on a Weblogger entry.
      * Content is escaped.
      * Link is stored as rel=alternate link.
      */
-    private Entry createAtomEntry(WeblogEntry entry) {
-        Entry atomEntry = new Entry();
-        
+    private AtomEntry createAtomEntry(WeblogEntry entry) {
+        AtomEntry atomEntry = new AtomEntry();
+
         atomEntry.setId(        entry.getPermalink());
         atomEntry.setTitle(     entry.getTitle());
         atomEntry.setPublished( entry.getPubTime());
         atomEntry.setUpdated(   entry.getUpdateTime());
-        
-        Content content = new Content();
-        content.setType(Content.HTML);
+
+        AtomContent content = new AtomContent();
+        content.setType("html");
         content.setValue(entry.getText());
-        List<Content> contents = new ArrayList<>();
-        contents.add(content);
-        
-        atomEntry.setContents(contents);
-        
+        atomEntry.setContent(content);
+
         if (StringUtils.isNotEmpty(entry.getSummary())) {
-            Content summary = new Content();
-            summary.setType(Content.HTML);
+            AtomContent summary = new AtomContent();
+            summary.setType("html");
             summary.setValue(entry.getSummary());
             atomEntry.setSummary(summary);
         }
-        
+
         User creator = entry.getCreator();
-        SyndPerson author = new Person();
+        AtomPerson author = new AtomPerson();
         author.setName(         creator.getUserName());
         author.setEmail(        creator.getEmailAddress());
-        atomEntry.setAuthors(Collections.singletonList(author));
-        
+        atomEntry.setAuthors(new ArrayList<>(Collections.singletonList(author)));
+
         // Add Atom category for Weblogger category, using category scheme
-        List<Category> categories = new ArrayList<>();
-        Category atomCat = new Category();
+        List<AtomCategory> categories = new ArrayList<>();
+        AtomCategory atomCat = new AtomCategory();
         atomCat.setScheme(RollerAtomService.getWeblogCategoryScheme(entry.getWebsite()));
         atomCat.setTerm(entry.getCategory().getName());
         categories.add(atomCat);
-        
+
         // Add Atom categories for each Weblogger tag with null scheme
         Set<WeblogEntryTag> tmp = new TreeSet<>(new WeblogEntryTagComparator());
         tmp.addAll(entry.getTags());
         for (WeblogEntryTag tag : tmp) {
-            Category newcat = new Category();
+            AtomCategory newcat = new AtomCategory();
             newcat.setTerm(tag.getName());
             categories.add(newcat);
-        }        
+        }
         atomEntry.setCategories(categories);
-        
-        Link altlink = new Link();
+
+        List<AtomLink> links = new ArrayList<>();
+        AtomLink altlink = new AtomLink();
         altlink.setRel("alternate");
         altlink.setHref(entry.getPermalink());
-        List<Link> altlinks = new ArrayList<>();
-        altlinks.add(altlink);
-        atomEntry.setAlternateLinks(altlinks);
-        
-        Link editlink = new Link();
+        links.add(altlink);
+
+        AtomLink editlink = new AtomLink();
         editlink.setRel("edit");
         editlink.setHref(
                 atomURL
                 +"/"+entry.getWebsite().getHandle() + "/entry/" + entry.getId());
-        List<Link> otherlinks = new ArrayList<>();
-        otherlinks.add(editlink);
-        atomEntry.setOtherLinks(otherlinks);
-        
-        List<Module> modules = new ArrayList<>();
-        AppModule app = new AppModuleImpl();
-        app.setDraft(!WeblogEntry.PubStatus.PUBLISHED.equals(entry.getStatus()));
-        app.setEdited(entry.getUpdateTime());
-        modules.add(app);
-        atomEntry.setModules(modules);
-        
+        links.add(editlink);
+        atomEntry.setLinks(links);
+
+        atomEntry.setDraft(!WeblogEntry.PubStatus.PUBLISHED.equals(entry.getStatus()));
+        atomEntry.setEdited(entry.getUpdateTime());
+
         return atomEntry;
     }
-    
+
     /**
-     * Copy fields from ROME entry to Weblogger entry.
+     * Copy fields from Atom entry to Weblogger entry.
      */
-    private void copyToRollerEntry(Entry entry, WeblogEntry rollerEntry) throws WebloggerException {
-        
+    private void copyToRollerEntry(AtomEntry entry, WeblogEntry rollerEntry) throws WebloggerException {
+
         Timestamp current = new Timestamp(System.currentTimeMillis());
         Timestamp pubTime = current;
         Timestamp updateTime = current;
@@ -399,31 +370,28 @@ public class EntryCollection {
             updateTime = new Timestamp( entry.getUpdated().getTime() );
         }
         rollerEntry.setTitle(entry.getTitle());
-        if (entry.getContents() != null && !entry.getContents().isEmpty()) {
-            Content content = entry.getContents().get(0);
-            rollerEntry.setText(content.getValue());
+        if (entry.getContent() != null) {
+            rollerEntry.setText(entry.getContent().getValue());
         }
         if (entry.getSummary() != null) {
             rollerEntry.setSummary(entry.getSummary().getValue());
         }
         rollerEntry.setPubTime(pubTime);
         rollerEntry.setUpdateTime(updateTime);
-        
-        AppModule control =
-                (AppModule)entry.getModule(AppModule.URI);
-        if (control!=null && control.getDraft()) {
+
+        if (entry.isDraft()) {
             rollerEntry.setStatus(PubStatus.DRAFT);
         } else {
             rollerEntry.setStatus(PubStatus.PUBLISHED);
         }
-                
+
         // Process incoming categories:
         // Atom categories with weblog-level scheme are Weblogger categories.
         // Atom supports multiple cats, but Weblogger supports one/entry
         // so here we take accept the first category that exists.
-        List<Category> categories = entry.getCategories();
+        List<AtomCategory> categories = entry.getCategories();
         if (categories != null && !categories.isEmpty()) {
-            for (Category cat : categories) {
+            for (AtomCategory cat : categories) {
                 if (cat.getScheme() != null && cat.getScheme().equals(
                         RollerAtomService.getWeblogCategoryScheme(rollerEntry.getWebsite()))) {
                     String catString = cat.getTerm();
@@ -444,28 +412,28 @@ public class EntryCollection {
             // Didn't find a category? Fall back to the default Blogger API category.
             rollerEntry.setCategory(rollerEntry.getWebsite().getBloggerCategory());
         }
-        
+
         // Now process incoming categories that are tags:
         // Atom categories with no scheme are considered tags.
         String tags = "";
         StringBuilder buff = new StringBuilder();
         if (categories != null && !categories.isEmpty()) {
-            for (Category cat : categories) {
+            for (AtomCategory cat : categories) {
                 if (cat.getScheme() == null) {
                     buff.append(" ").append(cat.getTerm());
-                }                
+                }
             }
             tags = buff.toString();
         }
-        rollerEntry.setTagsAsString(tags);        
+        rollerEntry.setTagsAsString(tags);
     }
 
     private void reindexEntry(WeblogEntry entry) throws WebloggerException {
         IndexManager manager = roller.getIndexManager();
-        
+
         // TODO: figure out what's up here and at WeblogEntryFormAction line 696
         //manager.removeEntryIndexOperation(entry);
-        
+
         // if published, index the entry
         if (entry.isPublished()) {
             manager.addEntryReIndexOperation(entry);

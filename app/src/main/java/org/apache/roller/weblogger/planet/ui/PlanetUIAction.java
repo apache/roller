@@ -20,8 +20,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.Planet;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.ServletActionContext;
 
 
 /**
@@ -37,6 +40,23 @@ public abstract class PlanetUIAction extends UIAction {
     private Planet planet = null;
     
     
+    /**
+     * Planet actions are only available while the Planet aggregator is enabled.
+     */
+    @Override
+    public boolean isFeatureEnabled() {
+        return WebloggerConfig.getBooleanProperty("planet.aggregator.enabled");
+    }
+
+    /**
+     * Planet changes are made only by POST, which the CSRF salt filter
+     * checks. Methods that change Planet state return DENIED otherwise.
+     */
+    protected boolean isPostRequest() {
+        HttpServletRequest req = ServletActionContext.getRequest();
+        return req != null && "POST".equalsIgnoreCase(req.getMethod());
+    }
+
     public Planet getPlanet() {
         if(planet == null) {
             try {

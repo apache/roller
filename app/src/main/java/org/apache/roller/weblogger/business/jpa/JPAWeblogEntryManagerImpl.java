@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.pojos.CommentSearchCriteria;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
@@ -614,7 +615,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     @Override
     public boolean isWeblogCategoryInUse(WeblogCategory cat)
     throws WebloggerException {
-        if (cat.getWeblog().getBloggerCategory().equals(cat)) {
+        if (cat.equals(cat.getWeblog().getBloggerCategory())) {
             return true;
         }
         TypedQuery<WeblogEntry> q = strategy.getNamedQuery("WeblogEntry.getByCategory", WeblogEntry.class);
@@ -1046,7 +1047,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             for (Object obj : queryResults) {
                 Object[] row = (Object[]) obj;
                 TagStat t = new TagStat();
-                t.setName((String) row[0]);
+                // filter names stored before the current tag character rules
+                t.setName(Utilities.stripInvalidTagCharacters((String) row[0]));
                 t.setCount(((Number) row[1]).intValue());
 
                 min = Math.min(min, t.getCount());
@@ -1116,7 +1118,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             for (Object obj : queryResults) {
                 Object[] row = (Object[]) obj;
                 TagStat ce = new TagStat();
-                ce.setName((String) row[0]);
+                // filter names stored before the current tag character rules
+                ce.setName(Utilities.stripInvalidTagCharacters((String) row[0]));
                 // The JPA query retrieves SUM(w.total) always as long
                 ce.setCount(((Long) row[1]).intValue());
                 results.add(ce);

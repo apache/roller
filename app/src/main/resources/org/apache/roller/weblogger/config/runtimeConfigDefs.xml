@@ -130,6 +130,11 @@
          <default-value>basic</default-value>
       </property-def>
 
+      <property-def name="webservices.atomPubMaxEntrySize" key="configForm.atomPubMaxEntrySize">
+         <type>integer</type>
+         <default-value>1048576</default-value>
+      </property-def>
+
    </display-group>
 
    <!-- Weblog Rendering Settings Group -->

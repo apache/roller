@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:roller="http://roller.apache.org/ns/atompub/1.0">
+  <id>https://example.com/roller/roller-services/app/myblog/comment/8f0e2a6c</id>
+  <title>Comment on Hello AtomPub</title>
+  <updated>2026-10-10T12:00:00Z</updated>
+  <author>
+    <name>dave</name>
+  </author>
+  <roller:status>approved</roller:status>
+</entry>

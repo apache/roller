@@ -1,0 +1,58 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  The ASF licenses this file to You
+# under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.  For additional information regarding
+# copyright in this work, please see the NOTICE file in the top level
+# directory of this distribution.
+
+# RELAX NG Compact grammar for the extension elements that Roller's AtomPub
+# service adds to atom:entry: Roller's own elements and the thr:in-reply-to
+# element of the Atom Threading Extensions (RFC 4685). Atom allows these as
+# foreign elements, so an entry that uses them is still valid against the
+# RFC 4287 grammar. This grammar checks the elements themselves; its start
+# pattern matches one extension element.
+
+namespace roller = "http://roller.apache.org/ns/atompub/1.0"
+namespace thr = "http://purl.org/syndication/thread/1.0"
+
+start = rollerElement | thrInReplyTo
+
+boolean = "true" | "false"
+
+rollerElement =
+    # Templates
+    element roller:rendition { attribute type { "mobile" }, text }
+  | element roller:action {
+        "weblog" | "permalink" | "search" | "tagsindex" | "stylesheet" | "custom"
+    }
+  | element roller:link { text }
+  | element roller:navbar { boolean }
+  | element roller:hidden { boolean }
+  | element roller:required { boolean }
+  | element roller:contentType { text }
+    # Categories
+  | element roller:image { text }
+  | element roller:position { xsd:nonNegativeInteger }
+  | element roller:inUse { boolean }
+    # Comments
+  | element roller:status { "approved" | "disapproved" | "spam" | "pending" }
+  | element roller:remoteHost { text }
+  | element roller:referrer { text }
+
+thrInReplyTo =
+    element thr:in-reply-to {
+        attribute ref { text },
+        attribute href { text }?,
+        attribute type { text }?,
+        attribute source { text }?,
+        empty
+    }

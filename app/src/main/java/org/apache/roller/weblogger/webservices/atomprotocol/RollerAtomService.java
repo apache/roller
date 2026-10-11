@@ -36,30 +36,24 @@ import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.util.Utilities;
 
-import com.rometools.propono.atom.common.AtomService;
-import com.rometools.propono.atom.common.Categories;
-import com.rometools.propono.atom.common.Collection;
-import com.rometools.propono.atom.common.Workspace;
-import com.rometools.propono.atom.server.AtomException;
-import com.rometools.rome.feed.atom.Category;
-
 
 /**
- * Roller's Atom service.
+ * Builds Roller's APP service document. The document is assembled into an
+ * {@link AtomServiceDoc} wire-model object during construction and is available
+ * via {@link #getServiceDoc()}.
  */
-public class RollerAtomService extends AtomService {
+public class RollerAtomService {
 
-    /**
-     * Creates a new instance of FileBasedAtomService.
-     */
+    private final AtomServiceDoc serviceDoc = new AtomServiceDoc();
+
     public RollerAtomService(User user, String atomURL) throws WebloggerException, AtomException {
         Weblogger roller = WebloggerFactory.getWeblogger();
         List<WeblogPermission> perms;
-        
+
         if (!WebloggerRuntimeConfig.getBooleanProperty("webservices.enableAtomPub")) {
         	throw new AtomException("AtomPub not enabled for this Roller installation");
         }
-        
+
         try {
             perms = roller.getUserManager().getWeblogPermissions(user);
         } catch (WebloggerException re) {
@@ -74,38 +68,33 @@ public class RollerAtomService extends AtomService {
         if (perms != null) {
             for (WeblogPermission perm : perms) {
                 Weblog weblog = perm.getWeblog();
-                Workspace workspace;
+                AtomWorkspace workspace;
                 try {
 
                     // Create workspace to represent weblog
-                    workspace = new Workspace(Utilities.removeHTML(perm.getWeblog().getName()), "text");
-                    addWorkspace(workspace);
+                    workspace = new AtomWorkspace();
+                    workspace.setTitle(Utilities.removeHTML(perm.getWeblog().getName()));
+                    serviceDoc.getWorkspaces().add(workspace);
 
                     // Create collection for entries within that workspace
-                    Collection entryCol = new Collection("Weblog Entries", "text", atomURL + "/" + weblog.getHandle() + "/entries");
-                    entryCol.addAccept("application/atom+xml;type=entry");
+                    AtomCollection entryCol = new AtomCollection();
+                    entryCol.setTitle("Weblog Entries");
+                    entryCol.setHref(atomURL + "/" + weblog.getHandle() + "/entries");
+                    entryCol.getAccepts().add("application/atom+xml;type=entry");
 
-                    // Add fixed categories using scheme that points to
-                    // weblog because categories are weblog specific
-                    weblog = perm.getWeblog();
-                    Categories cats = new Categories();
-                    cats.setFixed(true);
-                    cats.setScheme(getWeblogCategoryScheme(weblog));
-                    List<WeblogCategory> rollerCats = roller.getWeblogEntryManager().getWeblogCategories(weblog);
-                    for (WeblogCategory rollerCat : rollerCats) {
-                        Category cat = new Category();
-                        cat.setTerm(rollerCat.getName());
-                        cat.setLabel(rollerCat.getName());
-                        cats.addCategory(cat);
-                    }
-                    entryCol.addCategories(cats);
+                    // The weblog's fixed categories, both inline (for older
+                    // clients) and as an out-of-line category document
+                    entryCol.getCategories().add(weblogCategories(weblog));
+                    AtomCategories catsDoc = new AtomCategories();
+                    catsDoc.setHref(atomURL + "/" + weblog.getHandle() + "/categories.atomcat");
+                    entryCol.getCategories().add(catsDoc);
 
                     // Indicte that free form categories are allowed
-                    Categories tags = new Categories();
+                    AtomCategories tags = new AtomCategories();
                     tags.setFixed(false);
-                    entryCol.addCategories(tags);
+                    entryCol.getCategories().add(tags);
 
-                    workspace.addCollection(entryCol);
+                    workspace.getCollections().add(entryCol);
                 } catch (Exception e) {
                     throw new AtomException("Creating weblog entry collection for service doc", e);
                 }
@@ -115,28 +104,85 @@ public class RollerAtomService extends AtomService {
                     MediaFileManager mgr = roller.getMediaFileManager();
                     List<MediaFileDirectory> dirs = mgr.getMediaFileDirectories(weblog);
                     for (MediaFileDirectory dir : dirs) {
-                        Collection uploadSubCol = new Collection(
-                            "Media Files: " + dir.getName(), "text",
+                        AtomCollection uploadSubCol = new AtomCollection();
+                        uploadSubCol.setTitle("Media Files: " + dir.getName());
+                        uploadSubCol.setHref(
                             atomURL + "/" + weblog.getHandle() + "/resources/" + dir.getName());
                         uploadSubCol.setAccepts(uploadAccepts);
-                        workspace.addCollection(uploadSubCol);
+                        workspace.getCollections().add(uploadSubCol);
                     }
 
                 } catch (Exception e) {
                     throw new AtomException("Creating weblog entry collection for service doc", e);
                 }
+
+                addManagementCollections(workspace, user, weblog, atomURL);
             }
         }
     }
-    
+
     /**
-     * Build accept range by taking things that appear to be content-type rules 
+     * Adds the template, category and comment collections that the user may
+     * use. Templates need weblog ADMIN permission and a custom theme; the
+     * others need POST permission.
+     */
+    private static void addManagementCollections(AtomWorkspace workspace, User user,
+            Weblog weblog, String atomURL) {
+        String base = atomURL + "/" + weblog.getHandle();
+        if (TemplateCollection.isAvailable(user, weblog)) {
+            workspace.getCollections().add(collection("Templates", base + "/templates",
+                    "application/atom+xml;type=entry"));
+        }
+        if (CollectionSupport.hasPermission(user, weblog, WeblogPermission.POST)) {
+            workspace.getCollections().add(collection("Categories", base + "/categories",
+                    "application/atom+xml;type=entry"));
+            // An empty accept list means the collection does not accept POST
+            workspace.getCollections().add(collection("Comments", base + "/comments", ""));
+        }
+    }
+
+    private static AtomCollection collection(String title, String href, String accept) {
+        AtomCollection collection = new AtomCollection();
+        collection.setTitle(title);
+        collection.setHref(href);
+        collection.getAccepts().add(accept);
+        return collection;
+    }
+
+    /**
+     * The weblog's categories as a fixed category set. The scheme points to
+     * the weblog because categories are weblog specific.
+     */
+    static AtomCategories weblogCategories(Weblog weblog) throws WebloggerException {
+        AtomCategories cats = new AtomCategories();
+        cats.setFixed(true);
+        cats.setScheme(getWeblogCategoryScheme(weblog));
+        List<WeblogCategory> rollerCats = WebloggerFactory.getWeblogger()
+                .getWeblogEntryManager().getWeblogCategories(weblog);
+        for (WeblogCategory rollerCat : rollerCats) {
+            AtomCategory cat = new AtomCategory();
+            cat.setTerm(rollerCat.getName());
+            cat.setLabel(rollerCat.getName());
+            cats.getCategories().add(cat);
+        }
+        return cats;
+    }
+
+    /**
+     * The assembled service document.
+     */
+    public AtomServiceDoc getServiceDoc() {
+        return serviceDoc;
+    }
+
+    /**
+     * Build accept range by taking things that appear to be content-type rules
      * from site's file-upload allowed extensions.
      */
     private List<String> getAcceptedContentTypeRange() throws WebloggerException {
         List<String> accepts = new ArrayList<>();
         Weblogger roller = WebloggerFactory.getWeblogger();
-        Map<String, RuntimeConfigProperty> config = roller.getPropertiesManager().getProperties();        
+        Map<String, RuntimeConfigProperty> config = roller.getPropertiesManager().getProperties();
         String allows = config.get("uploads.types.allowed").getValue();
         String[] rules = StringUtils.split(StringUtils.deleteWhitespace(allows), ",");
         if (rules != null) {
@@ -147,11 +193,10 @@ public class RollerAtomService extends AtomService {
                 accepts.add(rule);
             }
         }
-        return accepts;             
-    }      
-            
+        return accepts;
+    }
+
     public static String getWeblogCategoryScheme(Weblog website) {
         return WebloggerFactory.getWeblogger().getUrlStrategy().getWeblogURL(website, null, true);
     }
 }
-

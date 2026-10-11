@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.pojos.wrapper;
 
 import java.sql.Timestamp;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
+import org.apache.roller.weblogger.util.Utilities;
 
 
 /**
@@ -51,8 +52,13 @@ public final class WeblogEntryTagWrapper {
     }
     
     
+    /**
+     * The tag name, filtered again in case it was stored before the current
+     * tag character rules.
+     */
     public String getName() {
-        return this.pojo.getName();
+        String name = this.pojo.getName();
+        return name == null ? null : Utilities.stripInvalidTagCharacters(name);
     }
     
     

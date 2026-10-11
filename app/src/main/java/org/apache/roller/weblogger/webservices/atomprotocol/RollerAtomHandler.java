@@ -16,39 +16,32 @@
 * directory of this distribution.
 */
 package org.apache.roller.weblogger.webservices.atomprotocol;
-import com.rometools.propono.atom.common.Categories;
-import com.rometools.propono.atom.server.AtomRequest;
+
 import java.util.StringTokenizer;
 import java.util.Locale;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.Weblog;
-import com.rometools.propono.atom.common.AtomService;
-import com.rometools.propono.atom.server.AtomException;
-import com.rometools.propono.atom.server.AtomHandler;
-import com.rometools.propono.atom.server.AtomMediaResource;
-import com.rometools.propono.atom.server.AtomNotFoundException;
-import com.rometools.rome.feed.atom.Entry;
-import com.rometools.rome.feed.atom.Feed;
-import java.nio.charset.StandardCharsets;
-import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 
 
 /**
- * Weblogger's ROME Propono-based Atom Protocol implementation.
+ * Weblogger's Atom Publishing Protocol implementation. This implementation uses
+ * only the JDK XML (StAX) APIs for serialization and parsing &mdash; it does not
+ * depend on ROME or Propono.
  *
  * Each Weblogger workspace has two collections, one that accepts entries and
  * that accepts everything. The entries collection represents the weblog
@@ -87,7 +80,7 @@ import org.apache.roller.weblogger.ui.core.RollerContext;
  *
  * @author David M Johnson
  */
-public class RollerAtomHandler implements AtomHandler {
+public class RollerAtomHandler {
     protected Weblogger roller = null;
     protected User user = null;
     protected int maxEntries = 20;
@@ -122,7 +115,6 @@ public class RollerAtomHandler implements AtomHandler {
         }
         if ("basic".equals(authScheme)) {
             userName = authenticateBASIC(request);
-
         } else {
             // an upgraded site may still have "oauth" or "wsse" stored in the
             // runtime config; refuse authentication instead of silently
@@ -144,10 +136,14 @@ public class RollerAtomHandler implements AtomHandler {
         atomURL = WebloggerFactory.getWeblogger().getUrlStrategy().getAtomProtocolURL(true);
     }
 
+    /** The absolute AtomPub URL that this server's links start with. */
+    String getAtomURL() {
+        return atomURL;
+    }
+
     /**
      * Return weblogHandle of authenticated user or null if there is none.
      */
-    @Override
     public String getAuthenticatedUsername() {
         String ret = null;
         if (this.user != null) {
@@ -162,10 +158,9 @@ public class RollerAtomHandler implements AtomHandler {
      * Return Atom service document for site, getting blog-name from pathInfo.
      * The workspace will contain collections for entries, categories and resources.
      */
-    @Override
-    public AtomService getAtomService(AtomRequest areq) throws AtomException {
+    public AtomServiceDoc getAtomService(AtomRequest areq) throws AtomException {
         try {
-            return new RollerAtomService(user, atomURL);
+            return new RollerAtomService(user, atomURL).getServiceDoc();
         } catch (WebloggerException ex) {
             log.error("Unable to create Service Document", ex);
             throw new AtomException("ERROR creating Service Document", ex);
@@ -177,22 +172,42 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Create entry in the entry collection (a Weblogger blog has only one).
      */
-    @Override
-    public Entry postEntry(AtomRequest areq, Entry entry) throws AtomException {
-        EntryCollection ecol = new EntryCollection(user, atomURL);
-        return ecol.postEntry(areq, entry);
+    public AtomEntry postEntry(AtomRequest areq, AtomEntry entry) throws AtomException {
+        switch (collectionName(areq)) {
+            case "templates":
+                return new TemplateCollection(user, atomURL).postEntry(areq, entry);
+            case "categories":
+                return new CategoryCollection(user, atomURL).postEntry(areq, entry);
+            case "comments":
+                throw new AtomException("The comments collection does not accept POST",
+                        HttpServletResponse.SC_METHOD_NOT_ALLOWED, null);
+            default:
+                EntryCollection ecol = new EntryCollection(user, atomURL);
+                return ecol.postEntry(areq, entry);
+        }
+    }
+
+    /** The second path element (the collection or member type), or "". */
+    private static String collectionName(AtomRequest areq) {
+        String[] pathInfo = StringUtils.split(areq.getPathInfo(), "/");
+        return pathInfo != null && pathInfo.length > 1 ? pathInfo[1] : "";
+    }
+
+    /** True for the collections that hold only Atom entries, never media. */
+    private static boolean isEntryOnlyCollection(String name) {
+        return "templates".equals(name) || "categories".equals(name) || "comments".equals(name);
     }
 
 
     /**
      * Create new resource in generic collection (a Weblogger blog has only one).
-     * TODO: can we avoid saving temporary file?
-     * TODO: do we need to handle mutli-part MIME uploads?
-     * TODO: use Jakarta Commons File-upload?
      */
-    @Override
-    public Entry postMedia(AtomRequest areq, Entry entry)
+    public AtomEntry postMedia(AtomRequest areq, AtomEntry entry)
             throws AtomException {
+        if (isEntryOnlyCollection(collectionName(areq))) {
+            throw new AtomException("This collection accepts only Atom entries",
+                    HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, null);
+        }
         MediaCollection mcol = new MediaCollection(user, atomURL);
         return mcol.postMedia(areq, entry);
     }
@@ -210,8 +225,7 @@ public class RollerAtomHandler implements AtomHandler {
      *    /<blog-name>/resources/offset
      * </pre>
      */
-    @Override
-    public Feed getCollection(AtomRequest areq) throws AtomException {
+    public AtomFeed getCollection(AtomRequest areq) throws AtomException {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
 
         if (pathInfo.length > 0 && pathInfo[1].equals("entries")) {
@@ -221,22 +235,24 @@ public class RollerAtomHandler implements AtomHandler {
         } else if (pathInfo.length > 0 && pathInfo[1].equals("resources")) {
             MediaCollection mcol = new MediaCollection(user, atomURL);
             return mcol.getCollection(areq);
+
+        } else if (pathInfo.length > 1 && pathInfo[1].equals("templates")) {
+            return new TemplateCollection(user, atomURL).getCollection(areq);
+
+        } else if (pathInfo.length > 1 && pathInfo[1].equals("categories")) {
+            return new CategoryCollection(user, atomURL).getCollection(areq);
+
+        } else if (pathInfo.length > 1 && pathInfo[1].equals("comments")) {
+            return new CommentCollection(user, atomURL).getCollection(areq);
         }
         throw new AtomNotFoundException("Cannot find collection specified");
-    }
-
-
-    @Override
-    public Categories getCategories(AtomRequest arg0) throws AtomException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 
     /**
      * Retrieve entry, URI like this /blog-name/entry/id
      */
-    @Override
-    public Entry getEntry(AtomRequest areq) throws AtomException {
+    public AtomEntry getEntry(AtomRequest areq) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         // URI is /blogname/entries/entryid
@@ -247,6 +263,12 @@ public class RollerAtomHandler implements AtomHandler {
             } else if (pathInfo[1].equals("resource") && pathInfo[pathInfo.length - 1].endsWith(".media-link")) {
                 MediaCollection mcol = new MediaCollection(user, atomURL);
                 return mcol.getEntry(areq);
+            } else if (pathInfo[1].equals("template")) {
+                return new TemplateCollection(user, atomURL).getEntry(areq);
+            } else if (pathInfo[1].equals("category")) {
+                return new CategoryCollection(user, atomURL).getEntry(areq);
+            } else if (pathInfo[1].equals("comment")) {
+                return new CommentCollection(user, atomURL).getEntry(areq);
             }
         }
         throw new AtomNotFoundException("Cannot find specified entry/resource");
@@ -255,7 +277,6 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Expects pathInfo of form /blog-name/resource/path/name
      */
-    @Override
     public AtomMediaResource getMediaResource(AtomRequest areq) throws AtomException {
         MediaCollection mcol = new MediaCollection(user, atomURL, response);
         return mcol.getMediaResource(areq);
@@ -267,10 +288,26 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Update entry, URI like this /blog-name/entry/id
      */
-    @Override
-    public void putEntry(AtomRequest areq, Entry entry) throws AtomException {
-        EntryCollection ecol = new EntryCollection(user, atomURL);
-        ecol.putEntry(areq, entry);
+    public void putEntry(AtomRequest areq, AtomEntry entry) throws AtomException {
+        switch (collectionName(areq)) {
+            case "template":
+                new TemplateCollection(user, atomURL).putEntry(areq, entry);
+                return;
+            case "category":
+                new CategoryCollection(user, atomURL).putEntry(areq, entry);
+                return;
+            case "comment":
+                new CommentCollection(user, atomURL).putEntry(areq, entry);
+                return;
+            default:
+                EntryCollection ecol = new EntryCollection(user, atomURL);
+                ecol.putEntry(areq, entry);
+        }
+    }
+
+    /** The out-of-line category document of a weblog's entries collection. */
+    public AtomCategories getCategoriesDocument(AtomRequest areq) throws AtomException {
+        return new CategoryCollection(user, atomURL).getCategoriesDocument(areq);
     }
 
 
@@ -278,7 +315,6 @@ public class RollerAtomHandler implements AtomHandler {
      * Update resource specified by pathInfo using data from input stream.
      * Expects pathInfo of form /blog-name/resource/path/name
      */
-    @Override
     public void putMedia(AtomRequest areq) throws AtomException {
         MediaCollection mcol = new MediaCollection(user, atomURL);
         mcol.putMedia(areq);
@@ -290,7 +326,6 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * Delete entry, URI like this /blog-name/entry/id
      */
-    @Override
     public void deleteEntry(AtomRequest areq) throws AtomException {
         log.debug("Entering");
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
@@ -304,6 +339,15 @@ public class RollerAtomHandler implements AtomHandler {
                 MediaCollection mcol = new MediaCollection(user, atomURL);
                 mcol.deleteEntry(areq);
                 return;
+            } else if (pathInfo[1].equals("template")) {
+                new TemplateCollection(user, atomURL).deleteEntry(areq);
+                return;
+            } else if (pathInfo[1].equals("category")) {
+                new CategoryCollection(user, atomURL).deleteEntry(areq);
+                return;
+            } else if (pathInfo[1].equals("comment")) {
+                new CommentCollection(user, atomURL).deleteEntry(areq);
+                return;
             }
         }
         throw new AtomNotFoundException("cannot find specified entry/resource");
@@ -315,7 +359,6 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * True if URL is the introspection URI.
      */
-    @Override
     public boolean isAtomServiceURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         return pathInfo.length == 0;
@@ -324,10 +367,21 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * True if URL is a entry URI.
      */
-    @Override
     public boolean isEntryURI(AtomRequest areq) {
-        String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
-        if (pathInfo.length > 2 && pathInfo[1].equals("entry")) {
+        return isEntryPath(areq.getPathInfo());
+    }
+
+    /**
+     * True if the path info names an entry. Shared with RollerAtomServlet so
+     * both agree on which requests carry an entry body.
+     */
+    static boolean isEntryPath(String path) {
+        String[] pathInfo = StringUtils.split(path, "/");
+        if (pathInfo == null) {
+            return false;
+        }
+        if (pathInfo.length > 2 && (pathInfo[1].equals("entry") || pathInfo[1].equals("template")
+                || pathInfo[1].equals("category") || pathInfo[1].equals("comment"))) {
             return true;
         }
         if (pathInfo.length > 2 && pathInfo[1].equals("resource") && pathInfo[pathInfo.length-1].endsWith(".media-link")) {
@@ -339,7 +393,6 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * True if URL is media edit URI. Media can be updated, but not metadata.
      */
-    @Override
     public boolean isMediaEditURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         if (pathInfo.length > 1 && pathInfo[1].equals("resource")) {
@@ -351,7 +404,6 @@ public class RollerAtomHandler implements AtomHandler {
     /**
      * True if URL is a collection URI of any sort.
      */
-    @Override
     public boolean isCollectionURI(AtomRequest areq) {
         String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
         if (pathInfo.length > 1 && pathInfo[1].equals("entries")) {
@@ -363,12 +415,17 @@ public class RollerAtomHandler implements AtomHandler {
         if (pathInfo.length > 1 && pathInfo[1].equals("categories")) {
             return true;
         }
+        if (pathInfo.length > 1 && (pathInfo[1].equals("templates")
+                || pathInfo[1].equals("comments"))) {
+            return true;
+        }
         return false;
     }
 
-    @Override
-    public boolean isCategoriesURI(AtomRequest arg0) {
-        return false;
+    /** True if URL is a weblog's category document, /blog-name/categories.atomcat. */
+    public boolean isCategoriesDocURI(AtomRequest areq) {
+        String[] pathInfo = StringUtils.split(areq.getPathInfo(), "/");
+        return pathInfo.length == 2 && pathInfo[1].equals("categories.atomcat");
     }
 
 
@@ -435,8 +492,7 @@ public class RollerAtomHandler implements AtomHandler {
                             User inUser = roller.getUserManager().getUserByUserName(userID);
                             if (inUser.getEnabled()) {
                                 String password = userPass.substring(p+1);
-                                valid = RollerContext.getPasswordEncoder()
-                                        .matches(password, inUser.getPassword());
+                                valid = RollerContext.getPasswordEncoder().matches(password, inUser.getPassword());
                             }
                         }
                     }
@@ -450,6 +506,8 @@ public class RollerAtomHandler implements AtomHandler {
         }
         return null;
     }
+
+
 
 
     public static void oneSecondThrottle() {
