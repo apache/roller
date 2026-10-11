@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthConsumer;
@@ -136,6 +137,25 @@ public class JPAOAuthManagerImpl implements OAuthManager {
             
         } catch (WebloggerException ex) {
             throw new OAuthException("ERROR: setting authorization flag", ex);
+        }
+    }
+
+    @Override
+    public boolean authorizeRequestToken(String consumerKey, String requestToken, String userName)
+            throws OAuthException {
+        if (consumerKey == null || requestToken == null || userName == null) {
+            return false;
+        }
+        try {
+            Query q = strategy.getNamedUpdate("OAuthAccessorRecord.authorizeRequestToken");
+            q.setParameter(1, userName);
+            q.setParameter(2, new Timestamp(new Date().getTime()));
+            q.setParameter(3, consumerKey);
+            q.setParameter(4, requestToken);
+            return q.executeUpdate() == 1;
+
+        } catch (WebloggerException ex) {
+            throw new OAuthException("ERROR: authorizing request token", ex);
         }
     }
 

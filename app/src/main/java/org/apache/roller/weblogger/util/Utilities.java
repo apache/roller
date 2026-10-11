@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.weblogger.util;
 
 import java.io.BufferedInputStream;
@@ -80,7 +98,12 @@ public class Utilities {
     private static final Pattern CLOSING_A_TAG_PATTERN = Pattern.compile(
             "&lt;/a&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern OPENING_A_TAG_PATTERN = Pattern.compile(
-            "&lt;a href=.*?&gt;", Pattern.CASE_INSENSITIVE);
+            "&lt;a\\s+href\\s*=.*?&gt;", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+    private static final Pattern A_HREF_PATTERN = Pattern.compile(
+            "&lt;a\\s+href\\s*=\\s*(?:\"([^\"]*)\"|'([^']*)'|([^\\s\"'=<>`]+))\\s*&gt;",
+            Pattern.CASE_INSENSITIVE);
+    private static final Pattern SUBSET_LINK_PATTERN = Pattern.compile(
+            "(?:https?://|mailto:)[^\\x00-\\x20\\x7f]+", Pattern.CASE_INSENSITIVE);
     private static final Pattern QUOTE_PATTERN = Pattern.compile("&quot;",
             Pattern.CASE_INSENSITIVE);
 
@@ -895,8 +918,13 @@ public class Utilities {
     }
 
     /**
-     * @param tag
-     * @return
+     * Removes characters that are not allowed in a tag name: whitespace,
+     * control characters, comma, and the HTML-significant characters
+     * <code>" &amp; ' &lt; &gt; `</code>. Templates can then print tag names
+     * as they are.
+     *
+     * @param tag the tag name
+     * @return the tag name without invalid characters
      */
     public static String stripInvalidTagCharacters(String tag) {
         if (tag == null) {
@@ -908,12 +936,17 @@ public class Utilities {
         for (int i = 0; i < charArray.length; i++) {
             char c = charArray[i];
 
-            // fast-path exclusions quotes and commas are obvious
-            // 34 = double-quote, 44 = comma
             switch (c) {
-            case 34:
-            case 44:
+            case '"':
+            case '&':
+            case '\'':
+            case ',':
+            case '<':
+            case '>':
+            case '`':
                 continue;
+            default:
+                break;
             }
 
             if ((33 <= c && c <= 126) || Character.isUnicodeIdentifierPart(c)
@@ -975,23 +1008,39 @@ public class Utilities {
         s = replace(s, CLOSING_LI_TAG_PATTERN, "</li>");
         s = replace(s, QUOTE_PATTERN, "\"");
 
-        // HTTP links
+        // Normalize supported links while retaining the surrounding text.
         s = replace(s, CLOSING_A_TAG_PATTERN, "</a>");
         Matcher m = OPENING_A_TAG_PATTERN.matcher(s);
+        StringBuilder result = new StringBuilder(s.length());
+        int end = 0;
         while (m.find()) {
-            int start = m.start();
-            int end = m.end();
-            String link = s.substring(start, end);
-            link = "<" + link.substring(4, link.length() - 4) + ">";
-            s = s.substring(0, start) + link + s.substring(end, s.length());
-            m = OPENING_A_TAG_PATTERN.matcher(s);
+            result.append(restoreSubsetEntities(s.substring(end, m.start())));
+            Matcher hrefMatcher = A_HREF_PATTERN.matcher(m.group());
+            String link = "<a>";
+            if (hrefMatcher.matches()) {
+                String href = hrefMatcher.group(1);
+                if (href == null) {
+                    href = hrefMatcher.group(2);
+                }
+                if (href == null) {
+                    href = hrefMatcher.group(3);
+                }
+                href = StringEscapeUtils.unescapeHtml4(restoreSubsetEntities(href));
+                if (SUBSET_LINK_PATTERN.matcher(href).matches()) {
+                    link = "<a href=\"" + StringEscapeUtils.escapeHtml4(href) + "\">";
+                }
+            }
+            result.append(link);
+            end = m.end();
         }
+        result.append(restoreSubsetEntities(s.substring(end)));
+        return result.toString();
+    }
 
-        // escaped angle brackets
+    private static String restoreSubsetEntities(String s) {
         s = s.replace("&amp;lt;", "&lt;");
         s = s.replace("&amp;gt;", "&gt;");
         s = s.replace("&amp;#", "&#");
-
         return s;
     }
 

@@ -62,7 +62,11 @@ public class MediaFileBase extends UIAction {
             log.debug("Processing delete of file id - " + this.mediaFileId);
             MediaFileManager manager = WebloggerFactory.getWeblogger()
                     .getMediaFileManager();
-            MediaFile mediaFile = manager.getMediaFile(this.mediaFileId);
+            MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), this.mediaFileId);
+            if (mediaFile == null) {
+                addError("mediaFile.delete.error", this.mediaFileId);
+                return;
+            }
             manager.removeMediaFile(getActionWeblog(), mediaFile);
             // flush changes
             WebloggerFactory.getWeblogger().flush();
@@ -84,7 +88,11 @@ public class MediaFileBase extends UIAction {
                     + this.mediaFileId);
             MediaFileManager manager = WebloggerFactory.getWeblogger()
                     .getMediaFileManager();
-            MediaFile mediaFile = manager.getMediaFile(this.mediaFileId);
+            MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), this.mediaFileId);
+            if (mediaFile == null) {
+                addError("mediaFile.includeInGallery.error", this.mediaFileId);
+                return;
+            }
             mediaFile.setSharedForGallery(true);
             manager.updateMediaFile(getActionWeblog(), mediaFile);
             // flush changes
@@ -111,7 +119,7 @@ public class MediaFileBase extends UIAction {
                         + " media files.");
                 for (String fileId : fileIds) {
                     log.debug("Deleting media file - " + fileId);
-                    MediaFile mediaFile = manager.getMediaFile(fileId);
+                    MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), fileId);
                     if (mediaFile != null) {
                         manager.removeMediaFile(getActionWeblog(), mediaFile);
                     }
@@ -147,12 +155,24 @@ public class MediaFileBase extends UIAction {
                 log.debug("Processing move of " + fileIds.length
                         + " media files.");
                 MediaFileDirectory targetDirectory = manager
-                        .getMediaFileDirectory(this.selectedDirectory);
+                        .getMediaFileDirectory(getActionWeblog(), this.selectedDirectory);
+                if (targetDirectory == null) {
+                    addError("mediaFile.move.errors");
+                    return;
+                }
+                List<MediaFile> filesToMove = new ArrayList<>();
                 for (String fileId : fileIds) {
                     log.debug("Moving media file - " + fileId
                             + " to directory - " + this.selectedDirectory);
-                    MediaFile mediaFile = manager.getMediaFile(fileId);
-                    if (mediaFile != null && !mediaFile.getDirectory().getId().equals(targetDirectory.getId())) {
+                    MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), fileId);
+                    if (mediaFile == null) {
+                        addError("mediaFile.move.errors");
+                        return;
+                    }
+                    filesToMove.add(mediaFile);
+                }
+                for (MediaFile mediaFile : filesToMove) {
+                    if (!mediaFile.getDirectory().getId().equals(targetDirectory.getId())) {
                         manager.moveMediaFile(mediaFile, targetDirectory);
                         movedFiles++;
                     }

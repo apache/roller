@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.CommentAuthorUrl;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -74,7 +75,7 @@ public class CategoryEdit extends UIAction {
         } else {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-                category = wmgr.getWeblogCategory(getBean().getId());
+                category = wmgr.getWeblogCategory(getActionWeblog(), getBean().getId());
             } catch (WebloggerException ex) {
                 log.error("Error looking up category", ex);
             }
@@ -89,6 +90,10 @@ public class CategoryEdit extends UIAction {
     @Override
     public String execute() {
         if (!isAdd()) {
+            if (category == null) {
+                addError("categoryForm.notFound");
+                return ERROR;
+            }
             // make sure bean is properly loaded from pojo data
             getBean().copyFrom(category);
         }
@@ -103,6 +108,10 @@ public class CategoryEdit extends UIAction {
      * Save new category.
      */
     public String save() {
+        if (!isAdd() && category == null) {
+            addError("categoryForm.notFound");
+            return ERROR;
+        }
         myValidate();
         
         if(!hasActionErrors()) {
@@ -138,6 +147,10 @@ public class CategoryEdit extends UIAction {
     }
 
     public void myValidate() {
+        if (!isAdd() && category == null) {
+            addError("categoryForm.notFound");
+            return;
+        }
         if (bean.getName() == null || !bean.getName().equals(StringEscapeUtils.escapeHtml4(bean.getName()))) {
             addError("categoryForm.error.invalidName");
         } else if ( isAdd() ) {
@@ -149,6 +162,10 @@ public class CategoryEdit extends UIAction {
             if ( wc != null && !wc.getId().equals( bean.getId() )) {
                 addError("categoryForm.error.duplicateName", bean.getName());
             }
+        }
+        if (StringUtils.isNotBlank(bean.getImage())
+                && CommentAuthorUrl.normalize(bean.getImage()) == null) {
+            addError("Category.error.imageBad");
         }
     }
 

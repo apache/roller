@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -30,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.Wrappers;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
@@ -81,7 +83,7 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthorizedToAuthor(WeblogWrapper weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return weblog.getPojo().hasUserPermission(
+                return Wrappers.unwrap(weblog).hasUserPermission(
                         parsedRequest.getUser(), WeblogPermission.POST);
             }
         } catch (Exception e) {
@@ -93,7 +95,7 @@ public class UtilitiesModel implements Model {
     public boolean isUserAuthorizedToAdmin(WeblogWrapper weblog) {
         try {
             if (parsedRequest.getAuthenticUser() != null) {
-                return weblog.getPojo().hasUserPermission(
+                return Wrappers.unwrap(weblog).hasUserPermission(
                         parsedRequest.getUser(), WeblogPermission.ADMIN);
             }
         } catch (Exception e) {
@@ -201,6 +203,14 @@ public class UtilitiesModel implements Model {
     
     public String left(String str, int length) {
         return StringUtils.left(str, length);
+    }
+
+    /**
+     * Upper-case a value using a locale-independent mapping for templates
+     * that validate protocol or identifier keys.
+     */
+    public String toUpperCase(String str) {
+        return str == null ? null : str.toUpperCase(Locale.ROOT);
     }
     
     public String escapeHTML(String str) {

@@ -17,7 +17,8 @@
  */
 
 /**
- <p>Atom Publising Protocol (AtomPub) implementation using ROME Propono.</p>
+ <p>Atom Publishing Protocol (AtomPub) implementation built on the JDK StAX XML
+ APIs. It does not depend on ROME or Propono.</p>
  <p>End-point is at [context]/roller-services/app</p>
  */
 package org.apache.roller.weblogger.webservices.atomprotocol;

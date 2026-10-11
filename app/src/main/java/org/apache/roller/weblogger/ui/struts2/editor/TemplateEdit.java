@@ -23,6 +23,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.themes.TemplateRuleException;
+import org.apache.roller.weblogger.business.themes.WeblogTemplateEditor;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -58,7 +60,8 @@ public class TemplateEdit extends UIAction {
     @Override
     public void myPrepare() {
         try {
-            setTemplate(WebloggerFactory.getWeblogger().getWeblogManager().getTemplate(getBean().getId()));
+            setTemplate(WebloggerFactory.getWeblogger().getWeblogManager()
+                    .getTemplate(getActionWeblog(), getBean().getId()));
         } catch (WebloggerException ex) {
             log.error("Error looking up template - " + getBean().getId(), ex);
         }
@@ -147,30 +150,14 @@ public class TemplateEdit extends UIAction {
     }
 
     private void myValidate() {
-
-        // if name changed make sure there isn't a conflict
-        if (!getTemplate().getName().equals(getBean().getName())) {
-            try {
-                if (WebloggerFactory.getWeblogger().getWeblogManager()
-                        .getTemplateByName(getActionWeblog(), getBean().getName()) != null) {
-                    addError("pagesForm.error.alreadyExists", getBean().getName());
-                }
-            } catch (WebloggerException ex) {
-                log.error("Error checking page name uniqueness", ex);
+        try {
+            for (TemplateRuleException.Violation violation : new WeblogTemplateEditor(
+                    WebloggerFactory.getWeblogger()).validateUpdate(getActionWeblog(),
+                    getTemplate(), getBean().getName(), getBean().getLink())) {
+                addError(violation.getMessageKey(), violation.getArgs());
             }
-        }
-
-        // if link changed make sure there isn't a conflict
-        if (!StringUtils.isEmpty(getBean().getLink()) &&
-                !getBean().getLink().equals(getTemplate().getLink())) {
-            try {
-                if (WebloggerFactory.getWeblogger().getWeblogManager()
-                        .getTemplateByLink(getActionWeblog(), getBean().getLink()) != null) {
-                    addError("pagesForm.error.alreadyExists", getBean().getLink());
-                }
-            } catch (WebloggerException ex) {
-                log.error("Error checking page link uniqueness", ex);
-            }
+        } catch (WebloggerException ex) {
+            log.error("Error checking template name and link uniqueness", ex);
         }
     }
 

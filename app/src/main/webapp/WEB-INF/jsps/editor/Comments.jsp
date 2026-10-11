@@ -112,13 +112,13 @@
                 <ul class="pager">
                     <s:if test="pager.prevLink != null">
                         <li class="previous">
-                            <a href='<s:property value="pager.prevLink" />'>
+                            <a href="<s:property value="pager.prevLink" />">
                                 <span aria-hidden="true">&larr;</span>Newer</a>
                         </li>
                     </s:if>
                     <s:if test="pager.nextLink != null">
                         <li class="next">
-                            <a href='<s:property value="pager.nextLink"/>'>Older
+                            <a href="<s:property value="pager.nextLink"/>">Older
                                 <span aria-hidden="true">&rarr;</span></a>
                         </li>
                     </s:if>
@@ -246,7 +246,7 @@
 
                                         <div class="details">
                                             <s:text name="commentManagement.entryTitled"/>&nbsp;:&nbsp;
-                                            <a href='<s:property value="#comment.weblogEntry.permalink" />'>
+                                            <a href="<s:property value="#comment.weblogEntry.permalink" />">
                                                 <s:property value="#comment.weblogEntry.title"/></a>
                                         </div>
 
@@ -273,14 +273,22 @@
                                             </s:else>
                                         </div>
 
-                                        <s:if test="#comment.url != null && !#comment.url.equals('')">
+                                        <s:set var="safeCommentUrl" value="#comment.safeUrl"/>
+                                        <s:if test="#safeCommentUrl != null">
                                             <div class="details">
                                                 <s:text name="commentManagement.commentByURL"/>&nbsp;:&nbsp;
-                                                <a href='<s:property value="#comment.url" />'>
+                                                <a href="<s:property value="#safeCommentUrl" escapeHtml="true" />">
                                                     <str:truncateNicely upper="60" appendToEnd="..."><s:property
-                                                            value="#comment.url"/></str:truncateNicely></a>
+                                                            value="#safeCommentUrl" escapeHtml="true"/></str:truncateNicely></a>
                                             </div>
                                         </s:if>
+                                        <s:elseif test="#comment.url != null && #comment.url.trim().length() > 0">
+                                            <div class="details">
+                                                <s:text name="commentManagement.commentByURL"/>&nbsp;:&nbsp;
+                                                <str:truncateNicely upper="60" appendToEnd="..."><s:property
+                                                        value="#comment.url" escapeHtml="true"/></str:truncateNicely>
+                                            </div>
+                                        </s:elseif>
 
                                         <div class="details">
                                             <s:text name="commentManagement.postTime"/>&nbsp;:&nbsp;
@@ -348,13 +356,13 @@
             <ul class="pager">
                 <s:if test="pager.prevLink != null">
                     <li class="previous">
-                        <a href='<s:property value="pager.prevLink" />'>
+                        <a href="<s:property value="pager.prevLink" />">
                             <span aria-hidden="true">&larr;</span>Newer</a>
                     </li>
                 </s:if>
                 <s:if test="pager.nextLink != null">
                     <li class="next">
-                        <a href='<s:property value="pager.nextLink"/>'>Older
+                        <a href="<s:property value="pager.nextLink"/>">Older
                             <span aria-hidden="true">&rarr;</span></a>
                     </li>
                 </s:if>
@@ -434,9 +442,9 @@
             dataType: "text",
             processData: "false",
             contentType: "text/plain",
-            success: function (rdata) {
-                if (status != "success") {
-                    var cdata = eval("(" + rdata + ")");
+            success: function (rdata, status) {
+                var cdata = updateCommentSalt(rdata);
+                if (status === "success" && cdata && cdata.content !== undefined) {
                     $("#editlink-" + id).show();
                     $("#savelink-" + id).hide();
                     $("#cancellink-" + id).hide();
@@ -444,8 +452,24 @@
                 } else {
                     alert('<s:text name="commentManagement.saveError" />');
                 }
+            },
+            error: function (xhr) {
+                updateCommentSalt(xhr.responseText);
+                alert('<s:text name="commentManagement.saveError" />');
             }
         });
+    }
+
+    function updateCommentSalt(rdata) {
+        try {
+            var cdata = JSON.parse(rdata);
+            if (cdata.salt) {
+                $("#comments_salt").val(cdata.salt);
+            }
+            return cdata;
+        } catch (error) {
+            return null;
+        }
     }
 
     function editCommentCancel(id) {

@@ -155,11 +155,28 @@ public interface WeblogManager {
     
     
     /**
-     * Get a custom template by its id.
+     * Get a custom template by its id, without restricting the result to any
+     * weblog.
+     *
+     * <p>Callers that act on behalf of a single weblog must use
+     * {@link #getTemplate(Weblog, String)} instead, so that a template id
+     * belonging to another weblog cannot resolve. This unscoped form is for
+     * callers that legitimately have no weblog in context, such as the
+     * Velocity resource loader.
      */
     WeblogTemplate getTemplate(String id) throws WebloggerException;
-    
-    
+
+
+    /**
+     * Get a custom template by its id, restricted to the given weblog.
+     *
+     * @return the template, or null if no template with that id belongs to
+     *         the given weblog. A template that exists but belongs to another
+     *         weblog is reported the same way as one that does not exist.
+     */
+    WeblogTemplate getTemplate(Weblog weblog, String id) throws WebloggerException;
+
+
     /**
      * Get a custom template by the action it supports.
      */
@@ -182,6 +199,13 @@ public interface WeblogManager {
      * Save a custom template rendition
      */
     void saveTemplateRendition(CustomTemplateRendition templateCode) throws WebloggerException;
+
+    /**
+     * Remove a template's mobile rendition. The template then renders its
+     * standard rendition for mobile visitors too. The standard rendition
+     * cannot be removed.
+     */
+    void removeTemplateRendition(CustomTemplateRendition rendition) throws WebloggerException;
 
     /**
      * Get all custom templates for a weblog

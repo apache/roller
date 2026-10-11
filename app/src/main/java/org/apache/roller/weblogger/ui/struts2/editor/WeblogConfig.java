@@ -127,6 +127,20 @@ public class WeblogConfig extends UIAction {
 
                 Weblog weblog = getActionWeblog();
 
+                WeblogCategory bloggerCategory = weblog.getBloggerCategory();
+                String bloggerCategoryId = getBean().getBloggerCategoryId();
+                boolean bloggerCategoryChanged = bloggerCategoryId != null
+                        && (bloggerCategory == null
+                        || !bloggerCategory.getId().equals(bloggerCategoryId));
+                if (bloggerCategoryChanged) {
+                    bloggerCategory = wmgr.getWeblogCategory(
+                            getActionWeblog(), bloggerCategoryId);
+                    if (bloggerCategory == null) {
+                        addError("websiteSettings.error.invalidBloggerCategory");
+                        return INPUT;
+                    }
+                }
+
                 if (getBean().getAnalyticsCode() != null) {
                     getBean().setAnalyticsCode(getBean().getAnalyticsCode().trim());
                 }
@@ -134,9 +148,8 @@ public class WeblogConfig extends UIAction {
                 getBean().copyTo(weblog);
 
                 // if blogger category changed then lookup new cat and set it
-                if(getBean().getBloggerCategoryId() != null &&
-                        !weblog.getBloggerCategory().getId().equals(getBean().getBloggerCategoryId())) {
-                    weblog.setBloggerCategory(wmgr.getWeblogCategory(getBean().getBloggerCategoryId()));
+                if (bloggerCategoryChanged) {
+                    weblog.setBloggerCategory(bloggerCategory);
                 }
 
                 // ROL-485: comments not allowed on inactive weblogs

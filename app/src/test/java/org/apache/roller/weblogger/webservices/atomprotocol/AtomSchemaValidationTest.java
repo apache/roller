@@ -1,0 +1,251 @@
+/*
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements.  The ASF licenses this file to You
+* under the Apache License, Version 2.0 (the "License"); you may not
+* use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.  For additional information regarding
+* copyright in this work, please see the NOTICE file in the top level
+* directory of this distribution.
+*/
+package org.apache.roller.weblogger.webservices.atomprotocol;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+
+/**
+ * Validates the XML produced by {@link AtomWriter} against the official RELAX NG
+ * schemas from RFC 4287 (Atom) and RFC 5023 (AtomPub), using Jing. This checks
+ * that Roller's AtomPub wire format actually conforms to the specifications,
+ * not just that it is well-formed.
+ */
+public class AtomSchemaValidationTest {
+
+    private static final Date PUBLISHED = Date.from(Instant.parse("2026-06-03T12:34:56Z"));
+    private static final Date UPDATED = Date.from(Instant.parse("2026-06-04T01:02:03Z"));
+
+    private List<String> validate(String schemaResource, byte[] xml) throws Exception {
+        return RelaxNgValidator.validateResource(schemaResource, xml);
+    }
+
+    private byte[] writeEntry(AtomEntry entry) throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        new AtomWriter().writeEntry(out, entry);
+        return out.toByteArray();
+    }
+
+    private AtomEntry textEntry() {
+        AtomEntry entry = new AtomEntry();
+        entry.setId("urn:entry:1");
+        entry.setTitle("Hello World");
+        entry.setPublished(PUBLISHED);
+        entry.setUpdated(UPDATED);
+        entry.setEdited(UPDATED);
+        entry.setDraft(false);
+
+        AtomContent content = new AtomContent();
+        content.setType("html");
+        content.setValue("<b>Body</b> & more");
+        entry.setContent(content);
+
+        AtomContent summary = new AtomContent();
+        summary.setType("html");
+        summary.setValue("A summary");
+        entry.setSummary(summary);
+
+        AtomPerson author = new AtomPerson();
+        author.setName("alice");
+        author.setEmail("alice@example.com");
+        entry.getAuthors().add(author);
+
+        AtomCategory cat = new AtomCategory();
+        cat.setTerm("tech");
+        cat.setScheme("http://example.com/cats");
+        entry.getCategories().add(cat);
+        AtomCategory tag = new AtomCategory();
+        tag.setTerm("java");
+        entry.getCategories().add(tag);
+
+        entry.getLinks().add(new AtomLink("alternate", "http://example.com/blog/1"));
+        entry.getLinks().add(new AtomLink("edit", "http://example.com/app/blog/entry/1"));
+        return entry;
+    }
+
+    private AtomEntry mediaEntry() {
+        AtomEntry entry = new AtomEntry();
+        entry.setId("http://example.com/app/blog/resource/snapshot.png");
+        entry.setTitle("snapshot.png");
+        entry.setUpdated(UPDATED);
+        entry.setEdited(UPDATED);
+        entry.setDraft(false);
+
+        AtomContent content = new AtomContent();
+        content.setType("image/png");
+        content.setSrc("http://example.com/blog/mediaresource/snapshot.png");
+        entry.setContent(content);
+
+        entry.getLinks().add(new AtomLink("alternate", "http://example.com/blog/snapshot.png"));
+        entry.getLinks().add(new AtomLink("edit", "http://example.com/app/blog/resource/snapshot.png.media-link"));
+        entry.getLinks().add(new AtomLink("edit-media", "http://example.com/app/blog/resource/snapshot.png"));
+        return entry;
+    }
+
+    @Test
+    public void testTextEntryConformsToAtomSchema() throws Exception {
+        List<String> errors = validate("/atompub/atom.rnc", writeEntry(textEntry()));
+        assertTrue(errors.isEmpty(), "Atom entry should be schema-valid but: " + errors);
+    }
+
+    @Test
+    public void testMediaEntryConformsToAtomSchema() throws Exception {
+        List<String> errors = validate("/atompub/atom.rnc", writeEntry(mediaEntry()));
+        assertTrue(errors.isEmpty(), "media link entry should be schema-valid but: " + errors);
+    }
+
+    @Test
+    public void testFeedConformsToAtomSchema() throws Exception {
+        AtomFeed feed = new AtomFeed();
+        feed.setId("urn:feed:1");
+        feed.setTitle("My Blog");
+        feed.setUpdated(UPDATED);
+        feed.getLinks().add(new AtomLink("alternate", "http://example.com/blog"));
+        feed.getEntries().add(textEntry());
+        feed.getEntries().add(textEntry());
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        new AtomWriter().writeFeed(out, feed);
+
+        List<String> errors = validate("/atompub/atom.rnc", out.toByteArray());
+        assertTrue(errors.isEmpty(), "Atom feed should be schema-valid but: " + errors);
+    }
+
+    @Test
+    public void testServiceDocConformsToAppSchema() throws Exception {
+        AtomServiceDoc service = new AtomServiceDoc();
+        AtomWorkspace workspace = new AtomWorkspace();
+        workspace.setTitle("My Weblog");
+        service.getWorkspaces().add(workspace);
+
+        AtomCollection entries = new AtomCollection();
+        entries.setTitle("Weblog Entries");
+        entries.setHref("http://example.com/app/blog/entries");
+        entries.setAccepts(Arrays.asList("application/atom+xml;type=entry"));
+        AtomCategories fixed = new AtomCategories();
+        fixed.setFixed(true);
+        fixed.setScheme("http://example.com/cats");
+        AtomCategory cat = new AtomCategory();
+        cat.setTerm("tech");
+        cat.setLabel("tech");
+        fixed.getCategories().add(cat);
+        entries.getCategories().add(fixed);
+        entries.getCategories().add(new AtomCategories()); // free-form
+        workspace.getCollections().add(entries);
+
+        AtomCollection media = new AtomCollection();
+        media.setTitle("Media Files: default");
+        media.setHref("http://example.com/app/blog/resources/default");
+        media.setAccepts(Arrays.asList("image/png", "image/jpeg"));
+        workspace.getCollections().add(media);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        new AtomWriter().writeServiceDoc(out, service);
+
+        List<String> errors = validate("/atompub/app-service.rnc", out.toByteArray());
+        assertTrue(errors.isEmpty(), "service document should be schema-valid but: " + errors);
+    }
+
+    @Test
+    public void testTemplateEntryWithExtensionsConformsToAtomSchema() throws Exception {
+        AtomEntry entry = new AtomEntry();
+        entry.setId("http://example.com/app/blog/template/1");
+        entry.setTitle("sidebar");
+        entry.setUpdated(UPDATED);
+        entry.setEdited(UPDATED);
+        AtomContent content = new AtomContent();
+        content.setType("text");
+        content.setValue("<div>$model.weblog.name</div>");
+        entry.setContent(content);
+        entry.setMobileRendition("<div>mobile</div>");
+        entry.setExtension("action", "custom");
+        entry.setExtension("navbar", "false");
+        entry.getLinks().add(new AtomLink("edit", "http://example.com/app/blog/template/1"));
+
+        List<String> errors = validate("/atompub/atom.rnc", writeEntry(entry));
+        assertTrue(errors.isEmpty(), "template entry should be schema-valid but: " + errors);
+    }
+
+    @Test
+    public void testCommentEntryConformsToAtomSchema() throws Exception {
+        AtomEntry entry = new AtomEntry();
+        entry.setId("http://example.com/app/blog/comment/1");
+        entry.setTitle("Comment on Hello");
+        entry.setPublished(PUBLISHED);
+        entry.setUpdated(PUBLISHED);
+        AtomPerson author = new AtomPerson();
+        author.setName("bob");
+        author.setUri("http://bob.example.com/");
+        author.setEmail("bob@example.com");
+        entry.getAuthors().add(author);
+        AtomContent content = new AtomContent();
+        content.setType("text");
+        content.setValue("Nice post");
+        entry.setContent(content);
+        entry.setInReplyToRef("http://example.com/blog/entry/hello");
+        entry.setInReplyToHref("http://example.com/app/blog/entry/42");
+        entry.setExtension("status", "pending");
+        entry.getLinks().add(new AtomLink("edit", "http://example.com/app/blog/comment/1"));
+
+        List<String> errors = validate("/atompub/atom.rnc", writeEntry(entry));
+        assertTrue(errors.isEmpty(), "comment entry should be schema-valid but: " + errors);
+    }
+
+    @Test
+    public void testOutOfLineCategoriesAndReadOnlyCollectionConformToAppSchema() throws Exception {
+        AtomServiceDoc service = new AtomServiceDoc();
+        AtomWorkspace workspace = new AtomWorkspace();
+        workspace.setTitle("My Weblog");
+        service.getWorkspaces().add(workspace);
+
+        AtomCollection entries = new AtomCollection();
+        entries.setTitle("Weblog Entries");
+        entries.setHref("http://example.com/app/blog/entries");
+        entries.setAccepts(Arrays.asList("application/atom+xml;type=entry"));
+        AtomCategories inline = new AtomCategories();
+        inline.setFixed(true);
+        AtomCategory cat = new AtomCategory();
+        cat.setTerm("tech");
+        inline.getCategories().add(cat);
+        entries.getCategories().add(inline);
+        AtomCategories byReference = new AtomCategories();
+        byReference.setHref("http://example.com/app/blog/categories.atomcat");
+        entries.getCategories().add(byReference);
+        workspace.getCollections().add(entries);
+
+        AtomCollection comments = new AtomCollection();
+        comments.setTitle("Comments");
+        comments.setHref("http://example.com/app/blog/comments");
+        comments.setAccepts(Arrays.asList(""));
+        workspace.getCollections().add(comments);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        new AtomWriter().writeServiceDoc(out, service);
+
+        List<String> errors = validate("/atompub/app-service.rnc", out.toByteArray());
+        assertTrue(errors.isEmpty(), "service document should be schema-valid but: " + errors);
+    }
+}

@@ -1,6 +1,23 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  The ASF licenses this file to You
+ * under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.  For additional information regarding
+ * copyright in this work, please see the NOTICE file in the top level
+ * directory of this distribution.
+ */
+
 package org.apache.roller.weblogger.ui.core.filters;
 
-import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
@@ -11,7 +28,6 @@ import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,8 +63,6 @@ public class ValidateSaltFilterTest {
     @Test
     public void testDoFilterWithGetMethod() throws Exception {
         when(request.getMethod()).thenReturn("GET");
-        StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");
-        when(request.getRequestURL()).thenReturn(requestURL);
 
         filter.doFilter(request, response, chain);
 
@@ -67,9 +81,6 @@ public class ValidateSaltFilterTest {
             when(request.getParameter("salt")).thenReturn("validSalt");
             when(saltCache.get("validSalt")).thenReturn("userId");
             when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
-            StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");
-            when(request.getRequestURL()).thenReturn(requestURL);
-
             filter.doFilter(request, response, chain);
 
             verify(chain).doFilter(request, response);
@@ -88,12 +99,43 @@ public class ValidateSaltFilterTest {
             when(request.getMethod()).thenReturn("POST");
             when(request.getParameter("salt")).thenReturn("invalidSalt");
             when(saltCache.get("invalidSalt")).thenReturn(null);
-            StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");
-            when(request.getRequestURL()).thenReturn(requestURL);
-
             assertThrows(ServletException.class, () -> {
                 filter.doFilter(request, response, chain);
             });
+        }
+    }
+
+    @Test
+    public void testPostTooLargeForTheContainerGetsA413() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getServletPath()).thenReturn("/roller-ui/authoring/entryAdd.rol");
+            when(request.getLocale()).thenReturn(java.util.Locale.ENGLISH);
+            // Tomcat dropped the parameters, so the salt is missing
+            when(request.getParameter("salt")).thenReturn(null);
+            when(request.getAttribute(ValidateSaltFilter.PARSE_FAILED_REASON)).thenReturn("POST_TOO_LARGE");
+
+            filter.doFilter(request, response, chain);
+
+            verify(response).sendError(eq(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE),
+                    argThat(message -> message.contains("too large")));
+            verify(chain, never()).doFilter(request, response);
+        }
+    }
+
+    @Test
+    public void testOtherParseFailuresStillFailTheSaltCheck() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getParameter("salt")).thenReturn(null);
+            when(request.getAttribute(ValidateSaltFilter.PARSE_FAILED_REASON)).thenReturn("CLIENT_DISCONNECT");
+
+            assertThrows(ServletException.class, () -> filter.doFilter(request, response, chain));
+            verify(response, never()).sendError(anyInt(), anyString());
         }
     }
 
@@ -109,9 +151,6 @@ public class ValidateSaltFilterTest {
             when(request.getParameter("salt")).thenReturn("validSalt");
             when(saltCache.get("validSalt")).thenReturn("differentUserId");
             when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
-            StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");
-            when(request.getRequestURL()).thenReturn(requestURL);
-
             assertThrows(ServletException.class, () -> {
                 filter.doFilter(request, response, chain);
             });
@@ -129,9 +168,6 @@ public class ValidateSaltFilterTest {
             when(request.getMethod()).thenReturn("POST");
             when(request.getParameter("salt")).thenReturn("validSalt");
             when(saltCache.get("validSalt")).thenReturn("");
-            StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");
-            when(request.getRequestURL()).thenReturn(requestURL);
-
             filter.doFilter(request, response, chain);
 
             verify(saltCache, never()).remove("validSalt");
@@ -139,32 +175,81 @@ public class ValidateSaltFilterTest {
     }
 
     @Test
-    public void testDoFilterWithIgnoredURL() throws Exception {
+    public void testPostWithoutParameterRejectsRequestAttributeSalt() throws Exception {
         try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
-             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class);
-             MockedStatic<WebloggerConfig> mockedWebloggerConfig = mockStatic(WebloggerConfig.class)) {
+             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
 
             mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
-            mockedWebloggerConfig.when(() -> WebloggerConfig.getProperty("salt.ignored.urls"))
-                    .thenReturn("https://example.com/app/ignoredurl?param1=value1&m2=value2");
 
             when(request.getMethod()).thenReturn("POST");
-            StringBuffer requestURL = new StringBuffer("https://example.com/app/ignoredurl");
-            when(request.getRequestURL()).thenReturn(requestURL);
-            when(request.getQueryString()).thenReturn("param1=value1&m2=value2");
-            when(request.getParameter("salt")).thenReturn(null);  // No salt provided
+            when(request.getAttribute("salt")).thenReturn("responseSalt");
+            when(request.getParameter("salt")).thenReturn(null);
+            when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
+            when(saltCache.get("responseSalt")).thenReturn("userId");
 
-            filter.init(mock(FilterConfig.class));
-            filter.doFilter(request, response, chain);
+            assertThrows(ServletException.class,
+                    () -> filter.doFilter(request, response, chain));
 
-            verify(chain).doFilter(request, response);
+            verify(chain, never()).doFilter(request, response);
             verify(saltCache, never()).get(anyString());
             verify(saltCache, never()).remove(anyString());
         }
     }
 
+    @Test
+    public void testSubmittedSaltCanOnlyBeUsedOnce() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
+             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getParameter("salt")).thenReturn("validSalt");
+            when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
+            when(saltCache.get("validSalt")).thenReturn("userId", (String) null);
+
+            filter.doFilter(request, response, chain);
+            assertThrows(ServletException.class,
+                    () -> filter.doFilter(request, response, chain));
+
+            verify(chain, times(1)).doFilter(request, response);
+            verify(saltCache, times(1)).remove("validSalt");
+        }
+    }
+
+    @Test
+    public void testMultipartStrutsPostIsDeferred() throws Exception {
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getContentType()).thenReturn("multipart/form-data; boundary=abc123");
+        when(request.getServletPath()).thenReturn("/roller-ui/mediaFileAdd!save.rol");
+
+        filter.doFilter(request, response, chain);
+
+        verify(chain).doFilter(request, response);
+        verify(request, never()).getParameter("salt");
+    }
+
+    @Test
+    public void testMultipartNonStrutsPostIsNotDeferred() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getContentType()).thenReturn("multipart/form-data; boundary=abc123");
+            when(request.getServletPath()).thenReturn("/roller-ui/upload");
+            when(request.getParameter("salt")).thenReturn(null);
+
+            assertThrows(ServletException.class,
+                    () -> filter.doFilter(request, response, chain));
+
+            verify(chain, never()).doFilter(request, response);
+        }
+    }
+
     private static class TestUser extends User {
+        private static final long serialVersionUID = 1L;
         private final String id;
 
         TestUser(String id) {

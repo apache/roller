@@ -62,6 +62,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.WeblogEntryTag;
 import org.apache.roller.weblogger.pojos.WeblogEntryTagAggregate;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 
 
@@ -244,6 +245,19 @@ public class JPAWeblogManagerImpl implements WeblogManager {
     public void saveTemplate(WeblogTemplate template) throws WebloggerException {
         this.strategy.store(template);
         
+        // update weblog last modified date.  date updated by saveWeblog()
+        roller.getWeblogManager().saveWeblog(template.getWeblog());
+    }
+
+    @Override
+    public void removeTemplateRendition(CustomTemplateRendition rendition) throws WebloggerException {
+        if (RenditionType.STANDARD.equals(rendition.getType())) {
+            throw new WebloggerException("The standard rendition of a template cannot be removed");
+        }
+        WeblogTemplate template = rendition.getWeblogTemplate();
+        template.getTemplateRenditions().remove(rendition);
+        this.strategy.remove(rendition);
+
         // update weblog last modified date.  date updated by saveWeblog()
         roller.getWeblogManager().saveWeblog(template.getWeblog());
     }
@@ -514,8 +528,31 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         if (id != null && id.endsWith(".vm")) {
             return null;
         }
-        
+
         return (WeblogTemplate)this.strategy.load(WeblogTemplate.class,id);
+    }
+
+    @Override
+    public WeblogTemplate getTemplate(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        // Don't hit database for templates stored on disk
+        if (id == null || id.endsWith(".vm")) {
+            return null;
+        }
+
+        TypedQuery<WeblogTemplate> query = strategy.getNamedQuery("WeblogTemplate.getByWeblog&Id",
+                WeblogTemplate.class);
+        query.setParameter(1, weblog);
+        query.setParameter(2, id);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
     
     /**

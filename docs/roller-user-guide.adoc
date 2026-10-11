@@ -54,8 +54,6 @@ comments are allowed.
 * *Comment*. A comment posted by a visitor to a weblog and regarding one
 specific weblog post. A comment has an email address, a publication
 timestamp and some content.
-* *Trackback*. A comment posted by a remote weblog regarding one
-specific weblog post. Trackbacks are stored as comments by Roller.
 * *Templates*. Each Roller weblog is defined by a set of HTML and CSS
 templates that provide the layout and styles for the weblog. Normally
 templates are authored using Velocity template language, but other
@@ -404,6 +402,27 @@ image::user-guide-11-blogroll.png[]
 
 === Uploading images and other files to your weblog
 
+When you paste or drag a local PNG, JPEG or GIF image into the rich text
+editor, Roller stores it as a media file when uploads are available to you.
+If uploads are unavailable, Roller keeps the image in the entry. By default,
+a content or summary field with inline images is limited to 60,000 UTF-8
+bytes, including the surrounding text. If an older entry contains embedded
+images, saving it again applies the same rule. An administrator can set
+`weblog.inlineImages.preferInline=true` in `roller-custom.properties` to
+prefer inline images even when uploads are available, and can change the
+limit with `weblog.inlineImages.maxFieldBytes`. On MySQL, alter the
+`weblogentry.text` and `weblogentry.summary` columns to `MEDIUMTEXT` before
+raising the limit, because a `TEXT` column holds only 65,535 bytes. Custom themes with a
+Content Security Policy must allow `data:` in `img-src` to show inline images.
+
+A pasted image is sent with the entry form as base64 text, about 4/3 of the
+image's size. Servlet containers limit the size of a form POST; Tomcat's
+`maxPostSize` defaults to 2 MB, so a pasted image larger than about 1.5 MB is
+refused with a "form is too large" message even when it is within the upload
+limit. To accept larger pasted images, set `maxPostSize` on the Tomcat
+`Connector` to at least 4/3 of `uploads.file.maxsize`, plus room for the
+entry text.
+
 If you’d like to upload images or other files for use in your weblog, go
 to your weblog’s *Create & Edit -> Media Files* page. From there you can
 upload files, browse and search files. You can also manage your files,
@@ -611,13 +630,16 @@ URL is _http://jroller.com/fredsblog_), then your parameters would be:
 * *BlogID*: fredsblog
 * *URL*: http://jroller.com/roller-services/xmlrpc
 
-== Working with comments and trackbacks
+==== Managing templates, categories and comments with AtomPub
 
-Roller supports weblog comments and _trackbacks_, which provide a way
-for other bloggers to add comments to your blog remotely. By default
-comments and trackbacks are enabled, but you can turn them off on your
-weblog’s Weblog Settings page of your weblog. Note that turning off
-comments will disable both comments and trackbacks.
+Roller's AtomPub service can also manage a weblog's templates, categories and
+comments. The AtomPub Guide (`roller-atompub-guide`) documents every URI,
+permission and XML element, with examples.
+
+== Working with comments
+
+Roller supports weblog comments, which are enabled by default. You can
+turn them off on your weblog’s Weblog Settings page.
 
 === Comment notification via email
 
@@ -705,21 +727,20 @@ available in the context of a weblog.
 
 === *Preventing weblog spam*
 
-There are two forms of comment spam that can affect your weblog:
+Comment spam can affect your weblog:
 
 ** _Comment spam_: spam that arrives via the comment form on your
 weblog. Sometimes spam comments are added by a human and sometimes by a
 computer program known as a _spambot._
-** _Trackback spam_: spam that arrives via trackbacks sent by a spambot.
 
-Fortunately, there are counter-measures for each type of spam. Here are
+Fortunately, there are counter-measures. Here are
 Roller’s built in spam prevention measures:
 
 * _Pluggable comment authentication_. By default, Roller asks each
 commenter a simple math question to ensure that they are a person and
 not a spam robot. Your site administrator can turn this off or replace
 it with another form of authentication.
-* _Pluggable comment validation_. Roller includes five comment
+* _Pluggable comment validation_. Roller includes four comment
 validators below. Your site administrator can adjust the settings for
 these validators and can enable/disable them as needed by overriding
 Roller’s configuration properties (see the Installation Guide for more
@@ -730,8 +751,6 @@ as spam (default: on)
 characters as spam (default: on)
 ** Bannedwordslist validator marks comments containing any of your site’s
 designated bad words as spam (default: on)
-** Trackback verification validator will check incoming trackbacks to
-ensure that they link to you.
 ** Akismet validator allows you to use the Akismet.com spam prevention
 service.
 * _Comment throttling_. If your site is being abused by a spam robot
@@ -747,11 +766,11 @@ comments on your weblog. None of the measures are 100% effective. If you
 are really concerned about displaying offensive content on your weblog
 even for a short time, then enable comment moderation on your weblog.
 
-Roller uses a _bannedwordslist_, a lists of words which are used to check
-incoming comments, trackbacks and requestors for spam URLs. If the name,
-URL or content of a comment or trackback includes one of the bannedwordslist
-words or matches one of the expressions then that comment or trackback
-is marked as spam and is not displayed on your weblog, unless you use
+Roller uses a _bannedwordslist_, a list of words used to check incoming
+comments and requestors for spam URLs. If the name, URL or content of a
+comment includes one of the bannedwordslist words or matches one of the
+expressions, then that comment is marked as spam and is not displayed on your
+weblog, unless you use
 the comment management page to unmark it.
 
 Actually, there are three levels of bannedwordslist:
@@ -764,8 +783,8 @@ edited by a global administrator via the Server Admin page.
 ** Level 3 bannedwordslist: Weblog specific bannedwordslist, which you control in
 the Weblog Settings page of your weblog.
 
-Incoming comments and trackbacks are checked against all three levels of
-bannedwordslist. Incoming web page requests, however, are only checked against
+Incoming comments are checked against all three levels of bannedwordslist.
+Incoming web page requests, however, are only checked against
 the levels 2 and 3 bannedwordslist and will receive a 403 (forbidden) message
 if found.
 
@@ -784,31 +803,6 @@ expressions (see the Java API documentation for
 _javax.util.regex.Pattern_ for a guide to regular expressions). Don’t
 try to use a regular expression unless you really know what you’re
 doing.
-
-=== Sending trackbacks
-
-If you are writing about something you read on another weblog, you want
-to let the author and readers of that weblog know that you are doing so,
-and that other weblog is trackback enabled, then you should send that
-weblog a trackback ping. Here’s a story that illustrates how trackback
-works:
-
-* You read an interesting blog entry on Otto’s blog. You notice that
-Otto’s blog entry has a trackback URL, so instead of leaving a comment
-on Otto’s blog you decide to comment by writing a blog entry in your own
-blog. You copy that trackback URL (using ALT-C, or right-click-copy, or
-whatever) cause you’ll need it later.
-
-* You go to your blog and write a new blog entry in response to Otto’s
-entry. Click the Post to Weblog button to publish your new entry. After
-you publish, scroll down on the New Entry page until you see the
-following text field and button:
-* Enter the trackback URL from Otto’s blog entry into the text field and
-click the Send Trackback button. Roller will respond by printing the
-response received from Otto’s blog server. If the trackback was
-successful, you should see something like this:
-* You should now see your trackback listed among the comments on Otto’s
-blog entry.
 
 == Choosing your weblog theme
 
@@ -961,7 +955,7 @@ enabled by default on a new weblog entry.
 image::user-guide-spam.png[]
 
 * **Ignore incoming URLs that contain any of these words - **you can use
-this to filter out what commentors, trackbacks, and referrers (web page
+this to filter out what commenters and referrers (web page
 requestors) are accepted. See Section
 [link:#5.5.Preventing%20weblog%20spam%20%7Coutline[5.5]]for more
 information on spam prevention.
@@ -1279,8 +1273,6 @@ users.
 
 * *Allow weblog comments*: By un-setting this you can turn off weblog
 comments on all weblogs in the system.
-* *Allow trackbacks*: By un-setting this you can turn off incoming
-trackbacks on all weblogs in the system.
 * *Autoformat comments*: If this is on, Roller will auto-format comments
 by adding in line-breaks where appropriate.
 * *Escape comment HTML*: By setting this, you can disallow HTML in
@@ -1290,11 +1282,6 @@ some forms of cross-site scripting.
 notification of new comments. This won’t work unless you configured
 Roller properly for sending email as described in the Roller
 installation guide.
-* *Enable verification of trackback links*: Trackback verification
-checks each incoming trackback to verify that the site sending the
-trackback actually links to the specific weblog entry that is the target
-of the trackback.
-
 image::user-guide-28-feed.png[]
 
 * *Default number of entries*: default number of entries to appear in
@@ -1306,6 +1293,15 @@ user-friendly RSS and Atom feed display, so that users don’t see raw XML
 when they load the feed in their browsers.
 
 image::user-guide-29-fileupload.png[]
+
+* *Maximum AtomPub entry size (bytes)*: Maximum size of the XML body of one
+AtomPub entry, set under Web Services Settings. The default is 1048576 bytes
+(1 MiB). The `webservices.atomPubMaxEntrySize` setting takes effect on the next
+request without a restart and must be between 1 and 2147483646 bytes. An entry
+over the limit returns HTTP 413. A missing or invalid setting uses the default.
+This limit does not apply to AtomPub media uploads, which use the file upload
+settings below. Raising it does not increase the capacity of the database's
+entry content columns.
 
 * *Enable File Uploads*: Are users allowed to upload files?
 * *Allowed Extensions*: Comma-separated list of file extensions that

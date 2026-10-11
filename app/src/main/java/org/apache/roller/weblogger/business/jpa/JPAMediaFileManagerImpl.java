@@ -346,6 +346,51 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         return getMediaFile(id, false);
     }
 
+    @Override
+    public MediaFile getMediaFile(Weblog weblog, String id) throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        if (id == null) {
+            return null;
+        }
+
+        TypedQuery<MediaFile> q = strategy.getNamedQuery(
+                "MediaFile.getByWeblogAndId", MediaFile.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public MediaFileDirectory getMediaFileDirectory(Weblog weblog, String id)
+            throws WebloggerException {
+
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+
+        if (id == null) {
+            return null;
+        }
+
+        TypedQuery<MediaFileDirectory> q = strategy.getNamedQuery(
+                "MediaFileDirectory.getByWeblogAndId", MediaFileDirectory.class);
+        q.setParameter(1, weblog);
+        q.setParameter(2, id);
+        try {
+            return q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
     /**
      * {@inheritDoc}
      */

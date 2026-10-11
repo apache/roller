@@ -22,19 +22,25 @@ import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.business.FrontpageSettings;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.struts2.convention.annotation.AllowedMethods;
 
 
 /**
  * Page used to display Roller install instructions.
+ *
+ * <p>This page is reachable without a login because a brand new site has no
+ * users yet. While the site is empty it shows bootstrap guidance. Once users
+ * exist it remains useful to everyone, but only a global administrator sees
+ * the frontpage chooser.
+ *
+ * <p>Choosing the initial frontpage weblog is {@link FrontpageSetup}, a
+ * separate global-administrator action; later changes go through the global
+ * configuration screen.
  */
-// TODO: make this work @AllowedMethods({"execute","save"})
 public class Setup extends UIAction {
     
     private static final Log LOG = LogFactory.getLog(Setup.class);
@@ -42,11 +48,14 @@ public class Setup extends UIAction {
     private long userCount = 0;
     private long blogCount = 0;
 
-    private String frontpageBlog;
-    private Boolean aggregated;
-
     // weblogs for frontpage blog chooser
     private Collection<Weblog> weblogs;
+
+    // true while the site has no users and only bootstrap guidance is shown
+    private boolean bootstrap = false;
+
+    // true when a valid frontpage weblog has already been selected
+    private boolean frontpageConfigured = false;
 
     public Setup() {
         this.pageTitle = "index.heading";
@@ -64,14 +73,22 @@ public class Setup extends UIAction {
 
     @Override
     public String execute() {
-        
-        try {
-            WeblogManager mgr =  WebloggerFactory.getWeblogger().getWeblogManager();
-            setWeblogs(mgr.getWeblogs(true, null, null, null, 0, -1));
-        } catch (WebloggerException ex) {
-            LOG.error("Error getting weblogs", ex);
-            addError("frontpageConfig.weblogs.error");
+
+        loadSetupModel();
+
+        if (isBootstrap()) {
+            return SUCCESS;
         }
+
+        if (isFrontpageConfigured()) {
+            return "home";
+        }
+
+        return SUCCESS;
+    }
+
+    /** Loads the model used by both the public page and failed save results. */
+    protected void loadSetupModel() {
 
         try {
             setUserCount(WebloggerFactory.getWeblogger().getUserManager().getUserCount());
@@ -79,31 +96,34 @@ public class Setup extends UIAction {
         } catch (WebloggerException ex) {
             LOG.error("Error getting user/weblog counts", ex);
         }
-        
-        return SUCCESS;
-    }
 
-    public String save() {
-        PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-        try {
-            RuntimeConfigProperty frontpageBlogProp = mgr.getProperty("site.frontpage.weblog.handle");
-            frontpageBlogProp.setValue(frontpageBlog);
-            mgr.saveProperty(frontpageBlogProp);
-
-            RuntimeConfigProperty aggregatedProp = mgr.getProperty("site.frontpage.weblog.aggregated");
-            aggregatedProp.setValue(aggregated.toString());
-            mgr.saveProperty(aggregatedProp);
-
-            WebloggerFactory.getWeblogger().flush();
-
-            addMessage("frontpageConfig.values.saved");
-
-        } catch (WebloggerException ex) {
-            LOG.error("ERROR saving frontpage configuration", ex);
-            addError("frontpageConfig.values.error");
+        // A site with no users cannot have an administrator yet, so the
+        // bootstrap instructions are shown to anyone. Nothing about the site's
+        // contents is exposed here: registering the first user is the only
+        // thing that can usefully be done.
+        if (getUserCount() == 0) {
+            setBootstrap(true);
+            return;
         }
-        return "home";
+
+        try {
+            setFrontpageConfigured(FrontpageSettings.isConfigured());
+        } catch (WebloggerException ex) {
+            LOG.error("Error reading frontpage configuration", ex);
+        }
+
+        if (isUserIsAdmin() && !isFrontpageConfigured()) {
+            try {
+                WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+                setWeblogs(mgr.getWeblogs(true, null, null, null, 0, -1));
+            } catch (WebloggerException ex) {
+                LOG.error("Error getting weblogs", ex);
+                addError("frontpageConfig.weblogs.error");
+            }
+        }
     }
+
+
     
     public long getUserCount() {
         return userCount;
@@ -121,6 +141,22 @@ public class Setup extends UIAction {
         this.blogCount = blogCount;
     }
 
+    public boolean isBootstrap() {
+        return bootstrap;
+    }
+
+    public void setBootstrap(boolean bootstrap) {
+        this.bootstrap = bootstrap;
+    }
+
+    public boolean isFrontpageConfigured() {
+        return frontpageConfigured;
+    }
+
+    public void setFrontpageConfigured(boolean frontpageConfigured) {
+        this.frontpageConfigured = frontpageConfigured;
+    }
+
     public Collection<Weblog> getWeblogs() {
         return weblogs;
     }
@@ -129,19 +165,4 @@ public class Setup extends UIAction {
         this.weblogs = weblogs;
     }
     
-    public String getFrontpageBlog() {
-        return frontpageBlog;
-    }
-
-    public void setFrontpageBlog(String frontpageBlog) {
-        this.frontpageBlog = frontpageBlog;
-    }
-
-    public Boolean getAggregated() {
-        return aggregated;
-    }
-
-    public void setAggregated(Boolean aggregated) {
-        this.aggregated = aggregated;
-    }
 }

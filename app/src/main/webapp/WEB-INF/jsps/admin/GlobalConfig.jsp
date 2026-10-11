@@ -92,7 +92,7 @@
                         <s:text name="%{#pd.key}"/>
                     </label>
                     <div class="col-sm-9 controls">
-                        <input type="number" name='<s:property value="#pd.name" />' size="5"
+                        <input type="number" step="any" name='<s:property value="#pd.name" />' size="5"
                                value='<s:property value="properties[#pd.name].value"/>'
                                id='globalConfig_<s:property value="#pd.nameWithUnderbars" />'
                                class="form-control float" onkeyup="formChanged()"/>

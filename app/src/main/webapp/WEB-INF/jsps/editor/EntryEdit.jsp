@@ -238,15 +238,10 @@
 
                     <s:textfield label="%{getText('weblogEdit.enclosureURL')}" name="bean.enclosureURL"
                                  maxlength="255" tooltip="%{getText('weblogEdit.enclosureURL.tooltip')}"/>
-
-                    <s:if test="actionName == 'entryEdit'">
-                        <s:if test="!bean.enclosureURL.isEmpty()">
-                            <s:text name="weblogEdit.enclosureType"/>:
-                            <s:property value='entry.findEntryAttribute("att_mediacast_type")'/>
-                            <s:text name="weblogEdit.enclosureLength"/>:
-                            <s:property value='entry.findEntryAttribute("att_mediacast_length")'/>
-                        </s:if>
-                    </s:if>
+                    <s:textfield label="%{getText('weblogEdit.enclosureType')}" name="bean.enclosureType"
+                                 maxlength="255" tooltip="%{getText('weblogEdit.enclosureType.tooltip')}"/>
+                    <s:textfield label="%{getText('weblogEdit.enclosureLength')}" name="bean.enclosureLength"
+                                 maxlength="20" tooltip="%{getText('weblogEdit.enclosureLength.tooltip')}"/>
 
                 </div>
 
@@ -291,24 +286,12 @@
 
         <%-- delete --%>
         <span style="float:right">
-            <input class="btn btn-danger" type="button"
+            <input class="btn btn-danger entry-delete-button" type="button"
                    value="<s:text name='weblogEdit.deleteEntry'/>"
-                   onclick="showDeleteModal('<s:property value="entry.id" />', '<s:property value="entry.title"/>' )">
+                   data-post-id="<s:property value="entry.id" />"
+                   data-post-title="<s:property value="entry.title"/>">
         </span>
     </s:if>
-
-
-    <%-- Trackback control
-    <s:if test="actionName == 'entryEdit' && userAnAuthor">
-        <br/>
-        <h2><s:text name="weblogEdit.trackback"/></h2>
-        <s:text name="weblogEdit.trackbackUrl"/>
-        <br/>
-        <s:textfield name="trackbackUrl" size="80" maxlength="255" style="width:35%"/>
-
-        <s:submit value="%{getText('weblogEdit.sendTrackback')}" action="entryEdit!trackback"/>
-    </s:if>
-    --%>
 
 </s:form>
 
@@ -436,10 +419,16 @@
     });
 
     function showDeleteModal(postId, postTitle) {
-        $('#postIdLabel').html(postId);
-        $('#postTitleLabel').html(postTitle);
+        $('#postIdLabel').text(postId);
+        $('#postTitleLabel').text(postTitle);
         $('#removeId').val(postId);
         $('#delete-entry-modal').modal({show: true});
     }
+
+    // Values come from data-* attributes and are bound via delegated listeners.
+    $(document).on('click', '.entry-delete-button', function (event) {
+        event.preventDefault();
+        showDeleteModal($(this).attr('data-post-id'), $(this).attr('data-post-title'));
+    });
 
 </script>
