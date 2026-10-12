@@ -19,9 +19,9 @@
 
 <p class="subtitle"><s:text name="userAdmin.title.editUser"/></p>
 
-<s:if test="authMethod == 'DB_OPENID'">
+<s:if test="authMethod == 'DB_OIDC'">
     <p class="pagetip">
-        <s:text name="userAdmin.noPasswordForOpenID"/>
+        <s:text name="userAdmin.noPasswordForOidc"/>
     </p>
 </s:if>
 
@@ -49,7 +49,7 @@
                  onchange="formChanged()" onkeyup="formChanged()"
                  name="bean.emailAddress" size="40" maxlength="40"/>
 
-    <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OPENID'">
+    <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OIDC'">
         <s:password label="%{getText('userSettings.password')}"
                     tooltip="%{getText('userSettings.tip.password')}"
                     onchange="formChanged()" onkeyup="formChanged()"
@@ -64,10 +64,11 @@
         <s:hidden name="bean.password"/>
     </s:else>
 
-    <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
+    <s:if test="authMethod == 'OIDC' || authMethod == 'DB_OIDC'">
+        <%-- assigned by the identity provider at login, so shown read-only --%>
         <s:textfield label="%{getText('userSettings.openIdUrl')}"
-                     tooltip="%{getText('userRegister.tip.openIdUrl')}"
                      name="bean.openIdUrl" size="40" maxlength="255"
+                     readonly="true"
                      style="width:75%" id="f_openid_identifier"/>
     </s:if>
 
