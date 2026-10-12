@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.APP_NS;
 import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.ATOM_NS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
@@ -272,5 +274,54 @@ public class AtomWriterTest {
         assertEquals(APP_NS, doc.getDocumentElement().getNamespaceURI());
         assertEquals("yes", doc.getDocumentElement().getAttribute("fixed"));
         assertEquals("Travel", element(doc, ATOM_NS, "category").getAttribute("term"));
+    }
+
+    @Test
+    public void testCharactersIllegalInXmlAreDropped() throws Exception {
+        AtomEntry comment = new AtomEntry();
+        comment.setId("urn:comment:1");
+        comment.setTitle("Comment");
+        comment.setUpdated(UPDATED);
+        comment.setContent(text("text", "before\u0014after"));
+        AtomPerson author = new AtomPerson();
+        author.setName("Pat\u0001");
+        comment.getAuthors().add(author);
+        comment.setExtension("referrer", "https://example.com/?q=\uFFFE");
+        AtomEntry entry = new AtomEntry();
+        entry.setId("urn:entry:1");
+        entry.setTitle("Title\u0000 with \uD800lone surrogate \uD83D\uDE00");
+        entry.setUpdated(UPDATED);
+        entry.getLinks().add(new AtomLink("alternate", "https://example.com/a\u001Fb"));
+        AtomFeed feed = new AtomFeed();
+        feed.setId("urn:feed");
+        feed.setTitle("Comments");
+        feed.setUpdated(UPDATED);
+        feed.getEntries().add(comment);
+        feed.getEntries().add(entry);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        new AtomWriter().writeFeed(out, feed);
+
+        Document doc = parse(out.toByteArray());
+        String xml = out.toString(StandardCharsets.UTF_8);
+        assertTrue(xml.contains("beforeafter"), xml);
+        assertTrue(xml.contains("Title with lone surrogate \uD83D\uDE00"), xml);
+        assertTrue(xml.contains("https://example.com/ab"), xml);
+        assertEquals("feed", doc.getDocumentElement().getLocalName());
+    }
+
+    @Test
+    public void testXmlFilterKeepsLegalText() {
+        String legal = "tab\tnl\ncr\r \u00e9 \uE000 \uFFFD \uD83D\uDE00";
+        assertSame(legal, AtomWriter.xml(legal));
+        assertNull(AtomWriter.xml(null));
+        assertEquals("", AtomWriter.xml("\u0000\u0008\u000B\u000C\uFFFF\uDC00"));
+    }
+
+    private static AtomContent text(String type, String value) {
+        AtomContent content = new AtomContent();
+        content.setType(type);
+        content.setValue(value);
+        return content;
     }
 }
