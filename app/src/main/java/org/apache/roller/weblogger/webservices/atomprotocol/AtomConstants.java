@@ -31,11 +31,8 @@ public final class AtomConstants {
     /** Atom Publishing Protocol namespace (RFC 5023). */
     public static final String APP_NS = "http://www.w3.org/2007/app";
 
-    /** Roller's AtomPub extension namespace (templates, categories, comments). */
+    /** Roller's AtomPub extension namespace (templates and categories). */
     public static final String ROLLER_NS = "http://roller.apache.org/ns/atompub/1.0";
-
-    /** Atom Threading Extensions namespace (RFC 4685). */
-    public static final String THREAD_NS = "http://purl.org/syndication/thread/1.0";
 
     /** Media type for an APP category document. */
     public static final String CATEGORIES_MEDIA_TYPE = "application/atomcat+xml;charset=utf-8";

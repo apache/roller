@@ -190,32 +190,7 @@ public class AtomSchemaValidationTest {
     }
 
     @Test
-    public void testCommentEntryConformsToAtomSchema() throws Exception {
-        AtomEntry entry = new AtomEntry();
-        entry.setId("http://example.com/app/blog/comment/1");
-        entry.setTitle("Comment on Hello");
-        entry.setPublished(PUBLISHED);
-        entry.setUpdated(PUBLISHED);
-        AtomPerson author = new AtomPerson();
-        author.setName("bob");
-        author.setUri("http://bob.example.com/");
-        author.setEmail("bob@example.com");
-        entry.getAuthors().add(author);
-        AtomContent content = new AtomContent();
-        content.setType("text");
-        content.setValue("Nice post");
-        entry.setContent(content);
-        entry.setInReplyToRef("http://example.com/blog/entry/hello");
-        entry.setInReplyToHref("http://example.com/app/blog/entry/42");
-        entry.setExtension("status", "pending");
-        entry.getLinks().add(new AtomLink("edit", "http://example.com/app/blog/comment/1"));
-
-        List<String> errors = validate("/atompub/atom.rnc", writeEntry(entry));
-        assertTrue(errors.isEmpty(), "comment entry should be schema-valid but: " + errors);
-    }
-
-    @Test
-    public void testOutOfLineCategoriesAndReadOnlyCollectionConformToAppSchema() throws Exception {
+    public void testOutOfLineCategoriesConformToAppSchema() throws Exception {
         AtomServiceDoc service = new AtomServiceDoc();
         AtomWorkspace workspace = new AtomWorkspace();
         workspace.setTitle("My Weblog");
@@ -235,12 +210,6 @@ public class AtomSchemaValidationTest {
         byReference.setHref("http://example.com/app/blog/categories.atomcat");
         entries.getCategories().add(byReference);
         workspace.getCollections().add(entries);
-
-        AtomCollection comments = new AtomCollection();
-        comments.setTitle("Comments");
-        comments.setHref("http://example.com/app/blog/comments");
-        comments.setAccepts(Arrays.asList(""));
-        workspace.getCollections().add(comments);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         new AtomWriter().writeServiceDoc(out, service);

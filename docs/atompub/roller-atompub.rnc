@@ -15,16 +15,14 @@
 # directory of this distribution.
 
 # RELAX NG Compact grammar for the extension elements that Roller's AtomPub
-# service adds to atom:entry: Roller's own elements and the thr:in-reply-to
-# element of the Atom Threading Extensions (RFC 4685). Atom allows these as
+# service adds to atom:entry. Atom allows these as
 # foreign elements, so an entry that uses them is still valid against the
 # RFC 4287 grammar. This grammar checks the elements themselves; its start
 # pattern matches one extension element.
 
 namespace roller = "http://roller.apache.org/ns/atompub/1.0"
-namespace thr = "http://purl.org/syndication/thread/1.0"
 
-start = rollerElement | thrInReplyTo
+start = rollerElement
 
 boolean = "true" | "false"
 
@@ -43,16 +41,3 @@ rollerElement =
   | element roller:image { text }
   | element roller:position { xsd:nonNegativeInteger }
   | element roller:inUse { boolean }
-    # Comments
-  | element roller:status { "approved" | "disapproved" | "spam" | "pending" }
-  | element roller:remoteHost { text }
-  | element roller:referrer { text }
-
-thrInReplyTo =
-    element thr:in-reply-to {
-        attribute ref { text },
-        attribute href { text }?,
-        attribute type { text }?,
-        attribute source { text }?,
-        empty
-    }

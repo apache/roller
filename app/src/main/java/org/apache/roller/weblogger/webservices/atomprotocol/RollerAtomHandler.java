@@ -178,9 +178,6 @@ public class RollerAtomHandler {
                 return new TemplateCollection(user, atomURL).postEntry(areq, entry);
             case "categories":
                 return new CategoryCollection(user, atomURL).postEntry(areq, entry);
-            case "comments":
-                throw new AtomException("The comments collection does not accept POST",
-                        HttpServletResponse.SC_METHOD_NOT_ALLOWED, null);
             default:
                 EntryCollection ecol = new EntryCollection(user, atomURL);
                 return ecol.postEntry(areq, entry);
@@ -195,7 +192,7 @@ public class RollerAtomHandler {
 
     /** True for the collections that hold only Atom entries, never media. */
     private static boolean isEntryOnlyCollection(String name) {
-        return "templates".equals(name) || "categories".equals(name) || "comments".equals(name);
+        return "templates".equals(name) || "categories".equals(name);
     }
 
 
@@ -242,8 +239,6 @@ public class RollerAtomHandler {
         } else if (pathInfo.length > 1 && pathInfo[1].equals("categories")) {
             return new CategoryCollection(user, atomURL).getCollection(areq);
 
-        } else if (pathInfo.length > 1 && pathInfo[1].equals("comments")) {
-            return new CommentCollection(user, atomURL).getCollection(areq);
         }
         throw new AtomNotFoundException("Cannot find collection specified");
     }
@@ -267,8 +262,6 @@ public class RollerAtomHandler {
                 return new TemplateCollection(user, atomURL).getEntry(areq);
             } else if (pathInfo[1].equals("category")) {
                 return new CategoryCollection(user, atomURL).getEntry(areq);
-            } else if (pathInfo[1].equals("comment")) {
-                return new CommentCollection(user, atomURL).getEntry(areq);
             }
         }
         throw new AtomNotFoundException("Cannot find specified entry/resource");
@@ -295,9 +288,6 @@ public class RollerAtomHandler {
                 return;
             case "category":
                 new CategoryCollection(user, atomURL).putEntry(areq, entry);
-                return;
-            case "comment":
-                new CommentCollection(user, atomURL).putEntry(areq, entry);
                 return;
             default:
                 EntryCollection ecol = new EntryCollection(user, atomURL);
@@ -345,9 +335,6 @@ public class RollerAtomHandler {
             } else if (pathInfo[1].equals("category")) {
                 new CategoryCollection(user, atomURL).deleteEntry(areq);
                 return;
-            } else if (pathInfo[1].equals("comment")) {
-                new CommentCollection(user, atomURL).deleteEntry(areq);
-                return;
             }
         }
         throw new AtomNotFoundException("cannot find specified entry/resource");
@@ -381,7 +368,7 @@ public class RollerAtomHandler {
             return false;
         }
         if (pathInfo.length > 2 && (pathInfo[1].equals("entry") || pathInfo[1].equals("template")
-                || pathInfo[1].equals("category") || pathInfo[1].equals("comment"))) {
+                || pathInfo[1].equals("category"))) {
             return true;
         }
         if (pathInfo.length > 2 && pathInfo[1].equals("resource") && pathInfo[pathInfo.length-1].endsWith(".media-link")) {
@@ -415,8 +402,7 @@ public class RollerAtomHandler {
         if (pathInfo.length > 1 && pathInfo[1].equals("categories")) {
             return true;
         }
-        if (pathInfo.length > 1 && (pathInfo[1].equals("templates")
-                || pathInfo[1].equals("comments"))) {
+        if (pathInfo.length > 1 && pathInfo[1].equals("templates")) {
             return true;
         }
         return false;

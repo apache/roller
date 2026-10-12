@@ -26,9 +26,5 @@
       <atom:title>Categories</atom:title>
       <accept>application/atom+xml;type=entry</accept>
     </collection>
-    <collection href="https://example.com/roller/roller-services/app/myblog/comments">
-      <atom:title>Comments</atom:title>
-      <accept/>
-    </collection>
   </workspace>
 </service>

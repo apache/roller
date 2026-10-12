@@ -278,15 +278,15 @@ public class AtomWriterTest {
 
     @Test
     public void testCharactersIllegalInXmlAreDropped() throws Exception {
-        AtomEntry comment = new AtomEntry();
-        comment.setId("urn:comment:1");
-        comment.setTitle("Comment");
-        comment.setUpdated(UPDATED);
-        comment.setContent(text("text", "before\u0014after"));
+        AtomEntry first = new AtomEntry();
+        first.setId("urn:first:1");
+        first.setTitle("First");
+        first.setUpdated(UPDATED);
+        first.setContent(text("text", "before\u0014after"));
         AtomPerson author = new AtomPerson();
         author.setName("Pat\u0001");
-        comment.getAuthors().add(author);
-        comment.setExtension("referrer", "https://example.com/?q=\uFFFE");
+        first.getAuthors().add(author);
+        first.setExtension("referrer", "https://example.com/?q=\uFFFE");
         AtomEntry entry = new AtomEntry();
         entry.setId("urn:entry:1");
         entry.setTitle("Title\u0000 with \uD800lone surrogate \uD83D\uDE00");
@@ -294,9 +294,9 @@ public class AtomWriterTest {
         entry.getLinks().add(new AtomLink("alternate", "https://example.com/a\u001Fb"));
         AtomFeed feed = new AtomFeed();
         feed.setId("urn:feed");
-        feed.setTitle("Comments");
+        feed.setTitle("Feed");
         feed.setUpdated(UPDATED);
-        feed.getEntries().add(comment);
+        feed.getEntries().add(first);
         feed.getEntries().add(entry);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
