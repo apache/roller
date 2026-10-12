@@ -27,8 +27,8 @@ import java.util.Map;
  * An atom:entry. The {@code draft} and {@code edited} fields carry the APP
  * control extension (app:control/app:draft and app:edited). Roller's own
  * extension elements ({@link AtomConstants#ROLLER_NS}) are kept by local name
- * in {@link #getExtensions()}; the mobile template rendition and the
- * thr:in-reply-to link (RFC 4685) have their own fields.
+ * in {@link #getExtensions()}; the mobile template rendition has its own
+ * field.
  */
 public class AtomEntry {
 
@@ -45,8 +45,6 @@ public class AtomEntry {
     private List<AtomLink> links = new ArrayList<>();
     private Map<String, String> extensions = new LinkedHashMap<>();
     private String mobileRendition;
-    private String inReplyToRef;
-    private String inReplyToHref;
 
     public String getId() {
         return id;
@@ -160,24 +158,6 @@ public class AtomEntry {
 
     public void setMobileRendition(String mobileRendition) {
         this.mobileRendition = mobileRendition;
-    }
-
-    /** The thr:in-reply-to ref (the parent's atom:id), or null. */
-    public String getInReplyToRef() {
-        return inReplyToRef;
-    }
-
-    public void setInReplyToRef(String inReplyToRef) {
-        this.inReplyToRef = inReplyToRef;
-    }
-
-    /** The thr:in-reply-to href, or null. */
-    public String getInReplyToHref() {
-        return inReplyToHref;
-    }
-
-    public void setInReplyToHref(String inReplyToHref) {
-        this.inReplyToHref = inReplyToHref;
     }
 
     /** Return the href of the first link with the given rel, or null. */

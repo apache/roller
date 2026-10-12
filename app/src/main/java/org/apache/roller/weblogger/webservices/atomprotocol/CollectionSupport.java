@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 /**
- * Helpers shared by the template, category and comment collections.
+ * Helpers shared by the template and category collections.
  */
 final class CollectionSupport {
 

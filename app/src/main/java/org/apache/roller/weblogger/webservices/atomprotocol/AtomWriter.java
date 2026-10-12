@@ -20,7 +20,6 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.APP_NS;
 import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.ATOM_NS;
 import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.ROLLER_NS;
-import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.THREAD_NS;
 
 import java.io.OutputStream;
 import java.time.ZoneOffset;
@@ -124,11 +123,9 @@ public class AtomWriter {
             w.writeDefaultNamespace(rootNs);
             w.writeNamespace(prefix, otherNs);
             if (ATOM_NS.equals(rootNs)) {
-                // Extension namespaces used by entries (see writeEntryBody)
+                // Extension namespace used by entries (see writeEntryBody)
                 w.setPrefix("roller", ROLLER_NS);
-                w.setPrefix("thr", THREAD_NS);
                 w.writeNamespace("roller", ROLLER_NS);
-                w.writeNamespace("thr", THREAD_NS);
             }
             body.write(w);
             w.writeEndElement();
@@ -201,13 +198,6 @@ public class AtomWriter {
         }
         for (AtomLink link : entry.getLinks()) {
             writeLink(w, link);
-        }
-        if (entry.getInReplyToRef() != null) {
-            w.writeEmptyElement(THREAD_NS, "in-reply-to");
-            w.writeAttribute("ref", xml(entry.getInReplyToRef()));
-            if (entry.getInReplyToHref() != null) {
-                w.writeAttribute("href", xml(entry.getInReplyToHref()));
-            }
         }
         if (entry.getMobileRendition() != null) {
             w.writeStartElement(ROLLER_NS, "rendition");
