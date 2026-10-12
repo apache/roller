@@ -38,9 +38,9 @@
     </p>
     <p><s:text name="installer.upgradeTables"/></p>
 
-    <s:form action="install!upgrade" class="form-horizontal">
+    <s:form action="install!upgrade">
         <s:hidden name="salt"/>
-        <s:submit value="%{getText('installer.yesUpgradeTables')}" cssClass="btn btn-primary" />
+        <s:submit theme="simple" value="%{getText('installer.yesUpgradeTables')}" cssClass="btn btn-primary" />
     </s:form>
 
 </s:elseif>
@@ -59,9 +59,9 @@
         <s:iterator value="messages"><s:property/><br/></s:iterator>
     </pre>
 
-    <s:form action="install!bootstrap" class="form-horizontal">
+    <s:form action="install!bootstrap">
         <s:hidden name="salt"/>
-        <s:submit value="%{getText('installer.finishUpgrade')}" cssClass="btn btn-primary" />
+        <s:submit theme="simple" value="%{getText('installer.finishUpgrade')}" cssClass="btn btn-primary" />
     </s:form>
 
 </s:else>
