@@ -16,11 +16,18 @@
   directory of this distribution.
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page import="org.apache.roller.weblogger.config.WebloggerRuntimeConfig" %>
 <%@ page import="org.apache.roller.weblogger.ui.core.RollerSession" %>
+<%@ page import="org.apache.roller.weblogger.ui.core.security.LogoutRedirect" %>
+<%@ page import="org.springframework.security.core.Authentication" %>
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
 <%@ page import="jakarta.servlet.http.Cookie" %>
 <%@ page import="org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices" %>
 
 <%
+// capture how the user signed in before the session goes away
+Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
 request.getSession().removeAttribute(RollerSession.ROLLER_SESSION);
 request.getSession().invalidate(); 
 
@@ -31,5 +38,8 @@ terminate.setPath(contextPath != null && contextPath.length() > 0 ? contextPath 
 terminate.setMaxAge(0);
 response.addCookie(terminate);
 
-response.sendRedirect(request.getContextPath()+"/"); 
+// OIDC users also end their provider session; everyone else lands on the front page
+String absoluteUrl = WebloggerRuntimeConfig.getAbsoluteContextURL();
+LogoutRedirect.forServletContext(application).sendRedirect(request, response, authentication,
+        absoluteUrl != null && !absoluteUrl.isBlank() ? absoluteUrl + "/" : null);
 %>

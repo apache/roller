@@ -36,8 +36,8 @@
     <s:if test="actionName == 'createUser'">
         <s:text name="userAdmin.addInstructions"/>
     </s:if>
-    <s:if test="authMethod == 'DB_OPENID'">
-         <s:text name="userAdmin.noPasswordForOpenID"/>
+    <s:if test="authMethod == 'DB_OIDC'">
+         <s:text name="userAdmin.noPasswordForOidc"/>
     </s:if>
 </p>
 
@@ -68,14 +68,16 @@
                  label="%{getText('userSettings.fullname')}"
                  tooltip="%{getText('userAdmin.tip.fullName')}" />
 
-    <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OPENID'">
+    <s:if test="authMethod == 'ROLLERDB' || authMethod == 'DB_OIDC'">
         <s:password name="bean.password" size="30" maxlength="30" onkeyup="formChanged()"
                      label="%{getText('userSettings.password')}"
                      tooltip="%{getText('userAdmin.tip.password')}" />
     </s:if>
 
-    <s:if test="authMethod == 'OPENID' || authMethod == 'DB_OPENID'">
-        <s:textfield name="bean.openIdUrl" size="30" maxlength="255" id="f_openid_identifier"
+    <s:if test="authMethod == 'OIDC' || authMethod == 'DB_OIDC'">
+        <%-- editable so an administrator can link an account to its provider
+             identity (issuer#subject), the fix account_link_required asks for --%>
+        <s:textfield name="bean.openIdUrl" size="30" maxlength="255" onkeyup="formChanged()"
                      label="%{getText('userSettings.openIdUrl')}"
                      tooltip="%{getText('userAdmin.tip.openIdUrl')}" />
     </s:if>
