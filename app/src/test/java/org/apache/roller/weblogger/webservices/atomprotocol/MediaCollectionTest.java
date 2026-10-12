@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.io.ByteArrayInputStream;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.util.MediaTypePolicy;

@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.business.pings.WeblogUpdatePinger;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.xmlrpc.XmlRpcException;
 import java.io.IOException;
 import java.net.SocketException;
@@ -242,6 +243,7 @@ public class Pings extends UIAction {
         return pingTargetId;
     }
 
+    @StrutsParameter
     public void setPingTargetId(String pingTargetId) {
         this.pingTargetId = pingTargetId;
     }

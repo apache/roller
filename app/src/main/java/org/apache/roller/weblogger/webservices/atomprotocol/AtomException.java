@@ -17,7 +17,7 @@
 */
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Base exception for the AtomPub implementation. Carries the HTTP status code

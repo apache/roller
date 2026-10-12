@@ -16,7 +16,7 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -108,7 +108,7 @@ class FolderEditSaveTest {
         doAnswer(call -> call.getArgument(0)).when(action).getText(anyString(), anyList());
         action.setActionName(actionName);
         action.setActionWeblog(weblog);
-        action.setServletResponse(response);
+        action.withServletResponse(response);
         return action;
     }
 }

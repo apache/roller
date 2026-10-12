@@ -19,7 +19,7 @@
 package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.util.Map;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;

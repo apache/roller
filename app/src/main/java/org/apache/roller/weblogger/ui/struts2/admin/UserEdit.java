@@ -40,6 +40,7 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerLoginSessionManager;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -272,6 +273,7 @@ public class UserEdit extends UIAction {
         }
     }
 
+    @StrutsParameter(depth = 1)
     public CreateUserBean getBean() {
         return bean;
     }

@@ -21,9 +21,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.business.PlanetManager;
 import org.apache.roller.planet.pojos.PlanetGroup;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.struts2.interceptor.ServletRequestAware;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +31,7 @@ import java.util.List;
  * Manage planet groups.
  */
 // TODO: make this work @AllowedMethods({"execute","save","delete"})
-public class PlanetGroups extends PlanetUIAction  implements ServletRequestAware {
+public class PlanetGroups extends PlanetUIAction {
 
     private static Log log = LogFactory.getLog(PlanetGroups.class);
 
@@ -51,7 +50,8 @@ public class PlanetGroups extends PlanetUIAction  implements ServletRequestAware
     }
 
     @Override
-    public void setServletRequest(HttpServletRequest request) {
+    public void myPrepare() {
+        HttpServletRequest request = getServletRequest();
         group = PlanetGroupSubs.getGroupFromRequest(request, getPlanet());
     }
 

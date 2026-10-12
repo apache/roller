@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -28,9 +28,9 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.struts2.StrutsStatics;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.interceptor.MethodFilterInterceptor;
 
 /**
  * A struts2 interceptor for configuring specifics of the weblogger ui.

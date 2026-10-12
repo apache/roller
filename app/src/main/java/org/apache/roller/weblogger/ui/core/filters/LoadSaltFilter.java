@@ -20,8 +20,8 @@ package org.apache.roller.weblogger.ui.core.filters;
  
 import java.io.IOException;
 import java.security.SecureRandom;
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
