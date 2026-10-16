@@ -98,8 +98,9 @@ public class MediaFileBean {
     }
 
     /**
-     * Copies the contents of this bean to a media file object
-     * 
+     * Copies the contents of this bean to a media file object. The original
+     * path is not copied: it decides which resource URL serves the file, so
+     * only actions that are allowed to set it do so.
      */
     public void copyTo(MediaFile dataHolder) throws WebloggerException {
 
@@ -108,7 +109,6 @@ public class MediaFileBean {
         dataHolder.setCopyrightText(this.copyrightText);
         dataHolder.setTagsAsString(this.tagsAsString);
         dataHolder.setSharedForGallery(this.isSharedForGallery);
-        dataHolder.setOriginalPath(this.originalPath);
     }
 
     /**

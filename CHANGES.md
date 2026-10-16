@@ -39,6 +39,12 @@
 - **Tag names can no longer contain `"`, `&`, `'`, `<`, `>` or `` ` ``.**
   These characters are removed when a tag is saved, and from existing tag
   names when they are shown.
+- **Custom-theme files in the media library follow the media rules.** A weblog
+  with a custom theme still serves its stylesheets and scripts from the media
+  library as before. Other files there, such as HTML or SVG, are served like
+  any other media file: as a download unless they are an image, audio, video,
+  PDF or plain text. The media file editor sets a file's original path only
+  when `mediafile.originalPathEdit.enabled=true`, as its form already shows.
 - **Planet is off by default.** `planet.aggregator.enabled` now defaults to
   `false`. While it is off, the Planet admin pages, `/planetrss` and the
   Planet background tasks (`RefreshRollerPlanetTask`, `SyncWebsitesTask`) do
