@@ -124,6 +124,9 @@ public class MediaFileEdit extends MediaFileBase {
             try {
                 MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), getMediaFileId());
                 bean.copyTo(mediaFile);
+                if (getBooleanProp("mediafile.originalPathEdit.enabled")) {
+                    mediaFile.setOriginalPath(bean.getOriginalPath());
+                }
 
                 if (uploadedFile != null) {
                     mediaFile.setLength(this.uploadedFile.length());

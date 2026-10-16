@@ -150,6 +150,44 @@ public class MediaTypePolicyTest {
                 "attachment; filename=\"page.html\"");
     }
 
+    /**
+     * A custom theme keeps its stylesheets and scripts in the media library,
+     * and its pages load them by type, so those two keep their type.
+     */
+    @Test
+    public void themeMediaStylesheetsAndScriptsKeepTheirType() {
+        for (String type : new String[]{"text/css", "text/javascript",
+                "application/javascript"}) {
+            HttpServletResponse response = mock(HttpServletResponse.class);
+            MediaTypePolicy.applyThemeMediaHeaders(response, type, "/theme/file");
+            verify(response).setContentType(type);
+            verify(response).setHeader("X-Content-Type-Options", "nosniff");
+            verify(response, never()).setHeader(eq("Content-Disposition"), anyString());
+        }
+    }
+
+    /**
+     * Anything else a custom theme finds in the media library is an upload
+     * like any other, and a document type must not render on Roller's origin.
+     */
+    @Test
+    public void themeMediaDocumentsAreServedAsDownloads() {
+        for (String type : new String[]{"text/html", "image/svg+xml",
+                "application/xhtml+xml", "text/xml"}) {
+            HttpServletResponse response = mock(HttpServletResponse.class);
+            MediaTypePolicy.applyThemeMediaHeaders(response, type, "/page.html");
+            verify(response).setContentType(MediaTypePolicy.DEFAULT_TYPE);
+            verify(response).setHeader("Content-Disposition",
+                    "attachment; filename=\"/page.html\"");
+            verify(response).setHeader("X-Content-Type-Options", "nosniff");
+        }
+
+        HttpServletResponse image = mock(HttpServletResponse.class);
+        MediaTypePolicy.applyThemeMediaHeaders(image, "image/png", "/logo.png");
+        verify(image).setContentType("image/png");
+        verify(image, never()).setHeader(eq("Content-Disposition"), anyString());
+    }
+
     /** The name is placed inside a header, so it cannot be allowed to leave it. */
     @Test
     public void theAttachmentNameCannotBreakOutOfTheHeader() {
@@ -219,9 +257,9 @@ public class MediaTypePolicyTest {
 
     /**
      * Uploaded media is also reachable through the two resource servlets, which
-     * serve theme resources from the same method. Only the uploaded-media
-     * branch takes the media policy — applying it to theme resources would send
-     * every stylesheet as a download — but both branches must refuse sniffing.
+     * serve theme resources from the same method. Uploaded media takes the
+     * media policy whether the fallback or a custom theme found it; a resource
+     * that ships with a theme keeps its type. Every branch refuses sniffing.
      */
     @Test
     public void theResourceServletsCoverTheirUploadedMediaBranch() throws Exception {
@@ -232,6 +270,10 @@ public class MediaTypePolicyTest {
                     name + " must apply the media policy to uploaded media");
             assertTrue(servlet.contains("fromUploadedMedia"),
                     name + " must distinguish uploaded media from theme resources");
+            assertTrue(servlet.contains("MediaTypePolicy.applyThemeMediaHeaders"),
+                    name + " must apply the media policy to media a custom theme finds");
+            assertTrue(servlet.contains("WeblogCustomTheme.isMediaFile(resource)"),
+                    name + " must check every theme lookup for media files");
             assertTrue(servlet.contains("X-Content-Type-Options"),
                     name + " must refuse sniffing on the theme branch too");
         }
