@@ -73,8 +73,8 @@ class ResourceServletTest {
         when(weblog.getTheme()).thenReturn(new WeblogCustomTheme(weblog));
 
         ServletContext context = mock(ServletContext.class);
-        when(context.getMimeType("evil.html")).thenReturn("text/html");
-        when(context.getMimeType("/evil.html")).thenReturn("text/html");
+        when(context.getMimeType("page.html")).thenReturn("text/html");
+        when(context.getMimeType("/page.html")).thenReturn("text/html");
         when(context.getMimeType("/css/site.css")).thenReturn("text/css");
         ServletConfig config = mock(ServletConfig.class);
         when(config.getServletContext()).thenReturn(context);
@@ -90,12 +90,12 @@ class ResourceServletTest {
 
     @Test
     void uploadedDocumentFoundByCustomThemeIsADownload() throws Exception {
-        HttpServletResponse response = serve("/evil.html",
-                "<script>document.title='x'</script>");
+        HttpServletResponse response = serve("/page.html",
+                "<p>page</p>");
 
         verify(response).setContentType("application/octet-stream");
         verify(response).setHeader("Content-Disposition",
-                "attachment; filename=\"/evil.html\"");
+                "attachment; filename=\"/page.html\"");
         verify(response).setHeader("X-Content-Type-Options", "nosniff");
         verify(response, never()).setContentType("text/html");
     }

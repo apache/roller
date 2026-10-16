@@ -31,12 +31,12 @@ class MediaFileBeanTest {
     @Test
     void copyToLeavesTheOriginalPathAlone() throws Exception {
         MediaFileBean bean = new MediaFileBean();
-        bean.setName("evil.html");
-        bean.setOriginalPath("/evil.html");
+        bean.setName("page.html");
+        bean.setOriginalPath("/page.html");
 
         MediaFile added = new MediaFile();
         bean.copyTo(added);
-        assertEquals("evil.html", added.getName());
+        assertEquals("page.html", added.getName());
         assertNull(added.getOriginalPath());
 
         MediaFile imported = new MediaFile();
