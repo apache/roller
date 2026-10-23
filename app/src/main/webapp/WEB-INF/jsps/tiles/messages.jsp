@@ -38,20 +38,16 @@
 
 <%-- Success Messages --%>
 <s:if test="!actionMessages.isEmpty">
-    <div id="messages" class="alert alert-success">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+    <div id="messages" class="alert alert-success alert-dismissible fade show">
         <s:actionmessage />
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 </s:if>
 
 <%-- Error Messages --%>
 <s:if test="!actionErrors.isEmpty || !fieldErrors.isEmpty">
-    <div id="errors" class="alert alert-danger">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+    <div id="errors" class="alert alert-danger alert-dismissible fade show">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         <ul>
 
             <s:iterator var="actionError" value="actionErrors">

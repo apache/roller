@@ -7,22 +7,15 @@
     <title>$model.weblog.name</title>
     #showAutodiscoveryLinks($model.weblog)
     #showAnalyticsTrackingCode($model.weblog)
-    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
     <link rel="stylesheet" media="all" href="$model.weblog.stylesheet">
     #showMetaDescription()
     <script>
-      $(document).ready(function () {
-        $('#btnMobile').on('click', function() {
-           setCookie("roller_user_request_type","mobile",30);
-           $("#btnMobile").attr('href', '?deviceType=mobile').click();
+      // remember the choice, then let the link's deviceType parameter switch views
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("btnMobile").addEventListener("click", function () {
+          document.cookie = "roller_user_request_type=mobile; max-age=" + 30 * 24 * 60 * 60 + "; path=/";
         });
       });
-      function setCookie(c_name, value, exdays) {
-        var exdate = new Date();
-        exdate.setDate(exdate.getDate() + exdays);
-        var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString() + "; path=/");
-        document.cookie = c_name + "=" + c_value;
-      }
     </script>
 </head>
 <!-- weblog -->
@@ -51,7 +44,7 @@
 <div class="rightbar_wrapper">
   <div class="rightbar">
     <div class="mobile">
-        <a id="btnMobile" href="#" alt="View Mobile Weblog">View Mobile Weblog</a>
+        <a id="btnMobile" href="?deviceType=mobile">View Mobile Weblog</a>
     </div>
     #includeTemplate($model.weblog "sidebar")
   </div>

@@ -21,21 +21,21 @@
 <s:if test="#tabMenu != null">
 
     <%--
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-light">
         <div class="container-fluid">
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="navbar-nav">
 
                     <s:iterator id="tab" value="#tabMenu.tabs">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" 
-                                aria-haspopup="true" aria-expanded="false">
-                                <s:text name="%{#tab.key}"/> <span class="caret"></span>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button"
+                                aria-expanded="false">
+                                <s:text name="%{#tab.key}"/>
                             </a>
                             <ul class="dropdown-menu">
                                 <s:iterator id="tabItem" value="#tab.items" status="stat">
                                     <li>
-                                        <a href="<s:url action="%{#tabItem.action}"><s:param name="weblog" value="actionWeblog.handle"/></s:url>">
+                                        <a class="dropdown-item" href="<s:url action="%{#tabItem.action}"><s:param name="weblog" value="actionWeblog.handle"/></s:url>">
                                             <s:text name="%{#tabItem.key}"/>
                                         </a>
                                     </li>
@@ -43,7 +43,7 @@
                             </ul>
                         </li>
                     </s:iterator>
-                    
+
                 </ul>
             </div> <!--/.nav-collapse -->
         </div> <!--/.container-fluid -->

@@ -76,12 +76,12 @@
                             <a href="#" class="template-delete-link"
                                data-template-id="<s:property value="#p.id"/>"
                                data-template-name="<s:property value="#p.name"/>">
-                                <span class="glyphicon glyphicon-trash"></span>
+                                <span class="bi bi-trash"></span>
                             </a>
 
                         </s:if>
                         <s:else>
-                            <span class="glyphicon glyphicon-lock"></span>
+                            <span class="bi bi-lock"></span>
                         </s:else>
                     </td>
 

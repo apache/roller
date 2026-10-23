@@ -28,14 +28,14 @@
 
     <s:if test="authMethod == 'LDAP'">
 
-        <div class="form-group">
+        <div class="row mb-3">
 
-            <label class="col-sm-3 control-label">
+            <label class="col-sm-3 col-form-label">
                 <s:text name="userSettings.username" />
             </label>
 
             <div class="col-sm-9 controls">
-                <p class="form-control-static">
+                <p class="form-control-plaintext">
                     <s:property value="bean.userName"/>
                 </p>
             </div>
@@ -109,9 +109,13 @@
 
     <p id="readytip"><s:text name="userRegister.tip.ready" /></p>
 
-    <s:submit id="submit" key="userRegister.button.save" cssClass="btn btn-default" />
-    <input type="button" class="btn btn-cancel"
-           value="<s:text name="generic.cancel"/>" onclick="window.location='<s:url value="/"/>'" />
+    <div class="row mb-3">
+        <div class="col-sm-9 offset-sm-3">
+            <s:submit id="submit" key="userRegister.button.save" cssClass="btn btn-primary" theme="simple"/>
+            <input type="button" class="btn btn-outline-secondary btn-cancel" value="<s:text name="generic.cancel"/>"
+                   onclick="window.location='<s:url value="/"/>'"/>
+        </div>
+    </div>
 
 </s:form>
 
@@ -123,7 +127,7 @@
         var disabled = true;
         var authMethod    = "<s:property value='authMethod' />";
         var emailAddress    = document.register['bean.emailAddress'].value;
-        var userName = passwordText = passwordConfirm = openIdUrl = "";
+        var userName = passwordText = passwordConfirm = "";
 
         if (!validateEmail(emailAddress)) {
             document.getElementById('submit').disabled = true;
