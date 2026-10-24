@@ -69,8 +69,8 @@
 
             <%-- "integer" use input type number --%>
             <s:elseif test="#pd.type == 'integer'">
-                <div class="form-group ">
-                    <label class="col-sm-3 control-label"
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label"
                            for='globalConfig_<s:property value="#pd.nameWithUnderbars" />'>
                         <s:text name="%{#pd.key}"/>
                     </label>
@@ -86,8 +86,8 @@
 
             <%-- "float" use input type number --%>
             <s:elseif test="#pd.type == 'float'">
-                <div class="form-group ">
-                    <label class="col-sm-3 control-label"
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label"
                            for='globalConfig_<s:property value="#pd.nameWithUnderbars" />'>
                         <s:text name="%{#pd.key}"/>
                     </label>
@@ -112,7 +112,7 @@
 
     </s:iterator>
 
-    <input id="saveButton" class="btn btn-default" type="submit" value="<s:text name="generic.save"/>"/>
+    <input id="saveButton" class="btn btn-outline-secondary" type="submit" value="<s:text name="generic.save"/>"/>
 
 </s:form>
 

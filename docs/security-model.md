@@ -66,7 +66,7 @@ flowchart TB
   end
   subgraph Members["Logged-in users"]
     AU["Authoring UI<br/>(/roller-ui/authoring)"]
-    API["Remote publishing APIs<br/>XML-RPC, AtomPub, OAuth"]
+    API["Remote publishing APIs<br/>XML-RPC, AtomPub"]
   end
   subgraph Admins["Global admins"]
     AD["Admin UI<br/>(/roller-ui/admin)"]
@@ -162,7 +162,7 @@ attack by an anonymous visitor, not by that user.
 | Templates and stylesheets | Weblog Admins, when custom themes are on |
 | Uploaded files: content, name, declared type | Weblog members, when uploads are on |
 | OPML bookmark import | Weblog Admins |
-| Remote API requests (XML-RPC, AtomPub, OAuth) | Anyone, before authentication |
+| Remote API requests (XML-RPC, AtomPub) | Anyone, before authentication |
 | Feeds fetched by Planet | Whoever runs the feed's host |
 | Responses from ping targets | Whoever runs the ping target |
 | Installer forms | Anyone, until setup is complete |
@@ -232,8 +232,8 @@ flowchart TD
   G4 -- yes --> OK["Action runs"]
 ```
 
-The remote APIs (XML-RPC, AtomPub) authenticate with a username and password,
-or OAuth, instead of a session and salt. They apply the same role and object
+The remote APIs (XML-RPC, AtomPub) authenticate with a username and password
+instead of a session and salt. They apply the same role and object
 checks.
 
 ## How content is kept safe

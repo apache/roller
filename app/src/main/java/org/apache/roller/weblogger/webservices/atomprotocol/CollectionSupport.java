@@ -18,7 +18,7 @@
 
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.WebloggerException;
@@ -28,7 +28,7 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 
 /**
- * Helpers shared by the template, category and comment collections.
+ * Helpers shared by the template and category collections.
  */
 final class CollectionSupport {
 

@@ -18,8 +18,8 @@
 package org.apache.roller.weblogger.ui.rendering.mobile;
 
 import java.util.regex.Pattern;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType.*;
 

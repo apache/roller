@@ -40,6 +40,7 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerLoginSessionManager;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -143,7 +144,7 @@ public class UserEdit extends UIAction {
         if (!hasActionErrors()) {
             getBean().copyTo(user);
 
-            if (authMethod == AuthMethod.DB_OPENID) {
+            if (authMethod == AuthMethod.DB_OIDC) {
                 if (StringUtils.isEmpty(user.getPassword())
                         && StringUtils.isEmpty(bean.getPassword())
                         && StringUtils.isEmpty(bean.getOpenIdUrl())) {
@@ -157,8 +158,8 @@ public class UserEdit extends UIAction {
             }
 
             // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OPENID) ||
-                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+            if (authMethod.equals(AuthMethod.OIDC) ||
+                    (authMethod.equals(AuthMethod.DB_OIDC) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
                 String randomString = RandomStringUtils.randomAlphanumeric(255);
                 user.resetPassword(randomString);
             }
@@ -243,7 +244,7 @@ public class UserEdit extends UIAction {
                 addError("error.add.user.badUserName");
             }
             if ((authMethod == AuthMethod.ROLLERDB ||
-                    (authMethod == AuthMethod.DB_OPENID && StringUtils.isEmpty(getBean().getOpenIdUrl())))
+                    (authMethod == AuthMethod.DB_OIDC && StringUtils.isEmpty(getBean().getOpenIdUrl())))
                     && StringUtils.isEmpty(getBean().getPassword())) {
                 addError("error.add.user.missingPassword");
             }
@@ -253,7 +254,7 @@ public class UserEdit extends UIAction {
                 addError("userAdmin.error.userNotFound");
             }
         }
-        if ((authMethod == AuthMethod.OPENID) && StringUtils.isEmpty(getBean().getOpenIdUrl())) {
+        if ((authMethod == AuthMethod.OIDC) && StringUtils.isEmpty(getBean().getOpenIdUrl())) {
             addError("userRegister.error.missingOpenID");
         }
 
@@ -272,6 +273,7 @@ public class UserEdit extends UIAction {
         }
     }
 
+    @StrutsParameter(depth = 1)
     public CreateUserBean getBean() {
         return bean;
     }

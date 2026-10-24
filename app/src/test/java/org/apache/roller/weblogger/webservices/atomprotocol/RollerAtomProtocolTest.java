@@ -31,8 +31,8 @@ import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.MediaFileManager;
@@ -227,6 +227,83 @@ public class RollerAtomProtocolTest {
         java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
         new AtomWriter().writeServiceDoc(out, service);
         assertTrue(out.size() > 0);
+    }
+
+    @Test
+    public void testMediaCollectionNextLinksLeadToTheNextPage() throws Exception {
+        MediaFileManager mfm = WebloggerFactory.getWeblogger().getMediaFileManager();
+        mfm.createMediaFileDirectory(
+                WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(HANDLE),
+                "diagrams");
+        TestUtils.endSession(true);
+
+        for (String dir : new String[] {"/resources/diagrams", "/resources"}) {
+            uploadImages(dir, 21);
+
+            AtomFeed first = new MediaCollection(managedUser(), ATOM_URL)
+                    .getCollection(request("/" + HANDLE + dir, null, null, null));
+            assertEquals(20, first.getEntries().size(), dir);
+            assertEquals(ATOM_URL + "/" + HANDLE + dir + "/0", first.getId(), dir);
+            String next = linkHref(first, "next");
+            assertEquals(ATOM_URL + "/" + HANDLE + dir + "/20", next, dir);
+
+            // follow the next link, as a client would
+            AtomFeed second = new MediaCollection(managedUser(), ATOM_URL)
+                    .getCollection(request(next.substring(ATOM_URL.length()), null, null, null));
+            assertEquals(1, second.getEntries().size(), dir);
+            assertEquals(ATOM_URL + "/" + HANDLE + dir + "/0", linkHref(second, "previous"), dir);
+            assertNull(linkHref(second, "next"), dir);
+            TestUtils.endSession(true);
+        }
+    }
+
+    @Test
+    public void testUploadedMediaCanBeReadThroughItsEditMediaUri() throws Exception {
+        MediaFileManager mfm = WebloggerFactory.getWeblogger().getMediaFileManager();
+        mfm.createMediaFileDirectory(
+                WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(HANDLE),
+                "diagrams");
+        TestUtils.endSession(true);
+
+        for (String dir : new String[] {"/resources/diagrams", "/resources"}) {
+            AtomEntry created = uploadImages(dir, 1).get(0);
+            String editMedia = created.getLinkHref("edit-media");
+            assertNotNull(editMedia, dir);
+
+            AtomMediaResource resource = new MediaCollection(managedUser(), ATOM_URL)
+                    .getMediaResource(request(editMedia.substring(ATOM_URL.length()), null, null, null));
+            try (java.io.InputStream in = resource.getInputStream()) {
+                assertEquals("png-0", new String(in.readAllBytes(), StandardCharsets.UTF_8), dir);
+            }
+            TestUtils.endSession(true);
+        }
+    }
+
+    private java.util.List<AtomEntry> uploadImages(String dir, int count) throws Exception {
+        java.util.List<AtomEntry> created = new java.util.ArrayList<>();
+        ServletContext servletContext = mock(ServletContext.class);
+        when(servletContext.getMimeType(anyString())).thenReturn("image/png");
+        try (MockedStatic<RollerContext> rollerContext =
+                mockStatic(RollerContext.class, CALLS_REAL_METHODS)) {
+            rollerContext.when(RollerContext::getServletContext).thenReturn(servletContext);
+            for (int i = 0; i < count; i++) {
+                AtomEntry mediaIn = new AtomEntry();
+                AtomContent content = new AtomContent();
+                content.setType("image/png");
+                mediaIn.setContent(content);
+                String slug = "image" + i;
+                created.add(new MediaCollection(managedUser(), ATOM_URL).postMedia(
+                        request("/" + HANDLE + dir, "image/png", slug,
+                                ("png-" + i).getBytes(StandardCharsets.UTF_8)), mediaIn));
+                TestUtils.endSession(true);
+            }
+        }
+        return created;
+    }
+
+    private static String linkHref(AtomFeed feed, String rel) {
+        return feed.getLinks().stream().filter(l -> rel.equals(l.getRel()))
+                .map(AtomLink::getHref).findFirst().orElse(null);
     }
 
     @Test

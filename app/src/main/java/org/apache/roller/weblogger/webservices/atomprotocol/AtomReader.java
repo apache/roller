@@ -20,14 +20,13 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.APP_NS;
 import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.ATOM_NS;
 import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.ROLLER_NS;
-import static org.apache.roller.weblogger.webservices.atomprotocol.AtomConstants.THREAD_NS;
 
 import java.io.InputStream;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -173,11 +172,6 @@ public class AtomReader {
                 // Roller extension values are text; markup must be escaped
                 entry.setExtension(name, r.getElementText());
             }
-            return;
-        } else if (THREAD_NS.equals(ns) && "in-reply-to".equals(name)) {
-            entry.setInReplyToRef(r.getAttributeValue(null, "ref"));
-            entry.setInReplyToHref(r.getAttributeValue(null, "href"));
-            skipElement(r);
             return;
         }
         skipElement(r);

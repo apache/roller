@@ -4,21 +4,48 @@
 
 ### Improvements
 
-- **AtomPub can manage templates, categories and comments.** New collections
+- **AtomPub can manage templates and categories.** New collections
   in each weblog's workspace, documented in the user guide:
   - Templates (standard and mobile versions) for weblog administrators,
     when the weblog uses a custom theme.
   - Categories, including an RFC 5023 category document at
     `/{handle}/categories.atomcat`. The entries collection lists its
     categories inline, as before, and also references that document.
-  - Comment moderation: list, change status, delete.
 
 - **New AtomPub Guide** (`docs/roller-atompub-guide.adoc`). It documents
   every AtomPub URI, permission, element and status code, with examples
   that the test suite checks against the code.
 
+### Bug fixes
+
+- **AtomPub fixes found while running a 7.0.0 snapshot.**
+  - Uploaded media files get the usual extension for their type:
+    `image/svg+xml` gives `.svg`, parameters such as `charset` are ignored,
+    and a `Slug` that already has a matching extension keeps it.
+  - The `next` and `previous` links of a named media directory include the
+    slash before the offset, so paging through it works.
+  - Characters that XML 1.0 does not allow are left out of AtomPub
+    responses, so one stored control character no longer makes a whole page
+    unreadable.
+  - A file uploaded over AtomPub can be read back through its `edit-media`
+    URI; it answered 404.
+- **The rich text editor's menus show their labels again.** Summernote is
+  upgraded to 0.9.1, and the panel chevron no longer appears on the
+  editor's menu items.
+
 ### Behaviour changes worth reading before upgrading
 
+- **Roller now runs on Jakarta EE**
+  ([ROL-2183](https://issues.apache.org/jira/browse/ROL-2183)). It needs Java 17
+  or later and a Servlet 6.1 container such as Tomcat 11. Tomcat 9 and other
+  `javax.servlet` containers can no longer run Roller.
+- **OAuth 1.0a is removed** ([ROL-2183](https://issues.apache.org/jira/browse/ROL-2183)).
+  AtomPub accepts only BASIC authentication, and the OAuth credentials page and
+  consumer keys are gone. If `webservices.atomPubAuth` is still set to `oauth`,
+  AtomPub refuses every request until you set it to `basic`.
+- **OpenID 2.0 login is removed** ([ROL-2183](https://issues.apache.org/jira/browse/ROL-2183)).
+  Sites with `authentication.method` set to `openid` or `db-openid` must switch
+  to another method before upgrading.
 - **AtomPub no longer uses ROME Propono.** Roller now has its own AtomPub
   server. The `propono.properties` file and the `RollerAtomHandlerFactory`
   extension point are removed, so a deployment that configured its own

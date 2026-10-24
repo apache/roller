@@ -49,11 +49,11 @@
 <%-- only show edit form for custom group --%>
 <s:if test="groupHandle != 'all'">
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
+    <div class="card">
+        <div class="card-header">
             <p><s:text name="planetGroupSubs.properties"/></p>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
             <s:if test="createNew">
                 <s:text name="planetGroupSubs.creatingNewGroup" />
             </s:if>
@@ -61,7 +61,7 @@
                 <s:text name="planetGroupSubs.editingExistingGroup" />
             </s:else>
 
-            <s:form action="planetGroupSubs!saveGroup" theme="bootstrap" cssClass="form-horizontal" style="margin-top:1em">
+            <s:form action="planetGroupSubs!saveGroup" theme="bootstrap" style="margin-top:1em" cssClass="form-horizontal">
                 <s:hidden name="salt"/>
                 <s:hidden name="group.id"/>
 
@@ -76,12 +76,12 @@
                              tooltip="%{getText('planetGroups.tip.handle')}"/>
 
 
-                <div class="form-group ">
-                    <label class="col-sm-3 control-label"></label>
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label"></label>
                     <div class="col-sm-9 controls">
-                        <s:submit value="%{getText('generic.save')}" cssClass="btn btn-default"/>
+                        <s:submit theme="simple" value="%{getText('generic.save')}" cssClass="btn btn-outline-secondary"/>
                         <s:if test="createNew">
-                            <input type="button" class="btn"
+                            <input type="button" class="btn btn-outline-secondary"
                                    value='<s:text name="generic.cancel" />'
                                    onclick="window.location='<s:url action="planetGroups"/>'"/>
                         </s:if>
@@ -127,7 +127,7 @@
                     <td><s:set var="feedURL" value="#sub.feedURL"/> ${fn:substring(feedURL, 0, 100)} </td>
                     <td>
                         <a href="javascript: void(0);" onclick="confirmDelete('<s:property value="feedURL"/>')">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"> </span>
+                            <span class="bi bi-x-lg" aria-hidden="true"> </span>
                             <s:text name="generic.delete"/>
                         </a>
                     </td>

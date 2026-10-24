@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.io.ByteArrayInputStream;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.util.MediaTypePolicy;
@@ -57,6 +57,28 @@ class MediaCollectionTest {
         assertEquals("text/plain", resource.getContentType());
         verify(response).setHeader("X-Content-Type-Options", "nosniff");
         verify(response).setContentType("text/plain");
+    }
+
+    @Test
+    void fileExtensionComesFromTheMediaType() {
+        assertEquals("svg", MediaCollection.fileExtension("image/svg+xml"));
+        assertEquals("txt", MediaCollection.fileExtension("text/plain; charset=UTF-8"));
+        assertEquals("jpg", MediaCollection.fileExtension("IMAGE/JPEG"));
+        assertEquals("png", MediaCollection.fileExtension("image/png"));
+        assertEquals("jsonld", MediaCollection.fileExtension("application/ld+json"));
+        assertEquals("atom", MediaCollection.fileExtension("application/atom+xml"));
+        assertEquals("pdf", MediaCollection.fileExtension("application/pdf"));
+        assertEquals("bin", MediaCollection.fileExtension("application/octet-stream"));
+    }
+
+    @Test
+    void aNameKeepsAnExtensionThatMatchesTheType() {
+        assertEquals("diagram.svg", MediaCollection.withExtension("diagram.svg", "svg"));
+        assertEquals("photo.jpeg", MediaCollection.withExtension("photo.jpeg", "jpg"));
+        assertEquals("photo.JPG", MediaCollection.withExtension("photo.JPG", "jpg"));
+        assertEquals("roller-atompub-model.svg",
+                MediaCollection.withExtension("roller-atompub-model", "svg"));
+        assertEquals("notes.md.txt", MediaCollection.withExtension("notes.md", "txt"));
     }
 
     private MediaFile mediaFile(String name, String type) {

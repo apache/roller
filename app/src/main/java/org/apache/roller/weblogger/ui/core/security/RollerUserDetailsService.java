@@ -27,6 +27,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.config.AuthMethod;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
@@ -45,6 +47,13 @@ public class RollerUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String userName) {
+        // hiding the login form is not an authentication control: refuse
+        // password lookups server side when only OIDC login is configured
+        if (WebloggerConfig.getAuthMethod() == AuthMethod.OIDC) {
+            throw new UsernameNotFoundException(
+                    "form login is disabled: authentication.method is oidc");
+        }
+
         Weblogger roller;
         try {
             roller = WebloggerFactory.getWeblogger();
@@ -57,54 +66,17 @@ public class RollerUserDetailsService implements UserDetailsService {
         try {
             UserManager umgr = roller.getUserManager();
             User userData;
-            // OpenID user?
-            if (userName.startsWith("http://") || userName.startsWith("https://")) {
-                if (userName.endsWith("/")) {
-                    userName = userName.substring(0, userName.length() -1 );
-                }
-                try {
-                    userData = umgr.getUserByOpenIdUrl(userName);
-                    if (userData == null) {
-                        log.warn("No user found with OpenID URL: " + userName +
-                                " (OpenID aliased by auth provider?) Confirm URL exists in roller_user table");
-                    }
-                } catch (WebloggerException ex) {
-                    throw new DataRetrievalFailureException("ERROR in user lookup", ex);
-                }
-                String name;
-                String password;
-                List<SimpleGrantedAuthority> authorities;
-                
-                // We are not throwing UsernameNotFound exception in case of 
-                // openid authentication in order to receive OpenID Simple Registration (SREG)
-                // attributes from the authentication filter and save them
-                if (userData == null) {
-                     authorities = new ArrayList<>(1);
-                     SimpleGrantedAuthority g = new SimpleGrantedAuthority("rollerOpenidLogin");
-                     authorities.add(g);
-                     name = "openid";
-                     password = "openid";
-                } else {
-                     authorities = getAuthorities(userData, umgr);
-                     name = userData.getUserName();
-                     password = userData.getPassword();
-                }
-                return new org.springframework.security.core.userdetails.User(name, password,
-                        true, true, true, true, authorities);
-            } else {
-                // standard username/password auth
-                try {
-                    userData = umgr.getUserByUserName(userName);
-                } catch (WebloggerException ex) {
-                    throw new DataRetrievalFailureException("ERROR in user lookup", ex);
-                }
-                if (userData == null) {
-                    throw new UsernameNotFoundException("ERROR no user: " + userName);
-                }
-                List<SimpleGrantedAuthority> authorities =  getAuthorities(userData, umgr);
-                return new org.springframework.security.core.userdetails.User(userData.getUserName(), userData.getPassword(),
-                        true, true, true, true, authorities);
-            }            
+            try {
+                userData = umgr.getUserByUserName(userName);
+            } catch (WebloggerException ex) {
+                throw new DataRetrievalFailureException("ERROR in user lookup", ex);
+            }
+            if (userData == null) {
+                throw new UsernameNotFoundException("ERROR no user: " + userName);
+            }
+            List<SimpleGrantedAuthority> authorities = getAuthorities(userData, umgr);
+            return new org.springframework.security.core.userdetails.User(userData.getUserName(), userData.getPassword(),
+                    true, true, true, true, authorities);
         } catch (WebloggerException ex) {
             throw new DataAccessResourceFailureException("ERROR: fetching roles", ex);
         }

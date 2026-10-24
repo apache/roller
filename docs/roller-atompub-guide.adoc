@@ -8,13 +8,13 @@ Apache Roller Weblogger
 
 This is the reference for the Atom Publishing Protocol (AtomPub) interface of
 the Apache Roller Weblogger. With it, a program can create and edit weblog
-entries, upload media files, and manage a weblog's categories, templates and
-comments over HTTP.
+entries, upload media files, and manage a weblog's categories and templates
+over HTTP. Comments are moderated in Roller's web interface, not over AtomPub.
 
 Roller implements AtomPub as defined in
 https://www.rfc-editor.org/rfc/rfc5023[RFC 5023], using the Atom format of
-https://www.rfc-editor.org/rfc/rfc4287[RFC 4287]. Categories, templates and
-comments are Roller extensions; they use ordinary Atom entries plus a few
+https://www.rfc-editor.org/rfc/rfc4287[RFC 4287]. Categories and templates
+are Roller extensions; they use ordinary Atom entries plus a few
 extension elements, so any AtomPub client library can read and write them.
 
 === Copyright and trademark information
@@ -38,7 +38,6 @@ All trademarks within this document belong to legitimate owners.
 |(default) |`http://www.w3.org/2005/Atom` (Atom, RFC 4287)
 |`app` |`http://www.w3.org/2007/app` (AtomPub, RFC 5023)
 |`roller` |`http://roller.apache.org/ns/atompub/1.0` (Roller extensions)
-|`thr` |`http://purl.org/syndication/thread/1.0` (Atom Threading, RFC 4685)
 |===
 * Media types:
 +
@@ -65,8 +64,9 @@ A Roller administrator controls AtomPub in *Server Administration > Configuratio
 |`webservices.enableAtomPub` |`false`
 |Turns AtomPub on. While it is off, every AtomPub URL answers `404 Not Found`.
 |`webservices.atomPubAuth` |`basic`
-|Authentication method: `basic` or `oauth`. Any other value refuses all
-requests (see <<Authentication>>).
+|Authentication method. Only `basic` is supported; any other value, including
+`oauth` or `wsse` left over from an older release, refuses all requests (see
+<<Authentication>>).
 |`webservices.atomPubMaxEntrySize` |`1048576`
 |Largest Atom entry body accepted, in bytes. A larger entry gets
 `413 Request Entity Too Large`. Media uploads are not affected; they use the
@@ -88,7 +88,8 @@ Always use HTTPS: BASIC authentication sends the password with every request.
 
 === BASIC
 
-With `webservices.atomPubAuth` set to `basic`, send the Roller user name and
+Roller supports only BASIC authentication for AtomPub. OAuth 1.0a was
+removed in Roller 7. With `webservices.atomPubAuth` set to `basic`, send the Roller user name and
 password in an HTTP `Authorization` header:
 
 ----
@@ -97,23 +98,6 @@ Authorization: Basic ZGF2ZTpzZWNyZXQ=
 
 The user must be enabled. Without valid credentials Roller answers `401` with
 `WWW-Authenticate: Basic realm="Roller"`.
-
-=== OAuth
-
-With `webservices.atomPubAuth` set to `oauth`, clients use OAuth 1.0a. Each
-user finds their consumer key and secret, and the OAuth URLs, through the
-*OAuth Credentials* link on the *Your Weblogs* page (shown while OAuth is on).
-Administrators also see site-wide keys.
-
-[cols="2,3",options="header"]
-|===
-|Step |URL
-|Get a request token |`/<context>/roller-services/oauth/requestToken`
-|User authorizes the token |`/<context>/roller-services/oauth/authorize`
-|Exchange for an access token |`/<context>/roller-services/oauth/accessToken`
-|===
-
-Sign each AtomPub request with the access token, as OAuth 1.0a describes.
 
 == Discovery: the service document
 
@@ -125,7 +109,7 @@ user is a member of, and lists only the collections the user may use:
 |Collection |Listed when
 |Weblog Entries, Media Files (one per media directory)
 |The user is a member of the weblog
-|Categories, Comments
+|Categories
 |The user may post to the weblog (permission `POST` or higher)
 |Templates
 |The user is an administrator of the weblog (`ADMIN`), the weblog uses a custom
@@ -135,7 +119,6 @@ theme, and the site allows custom themes
 The entries collection describes the weblog's categories twice: inline, for
 older clients, and as a link to the weblog's category document. A third,
 empty `app:categories` element says that any other term is accepted as a tag.
-The comments collection has an empty `app:accept`: it does not accept `POST`.
 
 .Service document
 [source,xml]
@@ -151,7 +134,7 @@ include::atompub/examples/service.xml[]
 * A successful `POST` answers `201 Created` with the new member as the body and
 its edit URI in the `Location` and `Content-Location` headers.
 * A successful `PUT` or `DELETE` answers `200 OK` without a body.
-* The entries, media and comments collections return at most 20 members. When
+* The entries and media collections return at most 20 members. When
 there are more, the feed has `next` and `previous` links; follow them to page
 through. The categories and templates collections return all members.
 
@@ -234,7 +217,9 @@ Slug: sunset
 ----
 
 * Without `Slug`, Roller names the file from the weblog handle and the date.
-The file name extension comes from the media type.
+The file name extension comes from the media type, without parameters or a
+`+xml`/`+json` suffix (`image/svg+xml` gives `.svg`, `image/jpeg` gives
+`.jpg`). A `Slug` that already ends in a matching extension keeps it.
 * The media type must be one the site allows; the service document lists them
 in each media collection's `app:accept`. Roller stores the type it derives
 from the file name and contents, not only the one the client sends.
@@ -378,53 +363,6 @@ include::atompub/examples/template-request.xml[]
 include::atompub/examples/template-entry.xml[]
 ----
 
-== Comments
-
-The comments collection is for comment moderation. It does not accept new
-comments.
-
-[cols="2,1,4",options="header"]
-|===
-|URI |Method |Action
-|`/{h}/comments`, `/{h}/comments/{offset}` |GET
-|List comments, newest first. Filter with `?status=` (`approved`,
-`disapproved`, `spam`, `pending`) and `?entry={entryId}`.
-|`/{h}/comments` |POST |Not allowed (`405 Method Not Allowed`)
-|`/{h}/comment/{id}` |GET |Read a comment
-|`/{h}/comment/{id}` |PUT |Change the comment's status
-|`/{h}/comment/{id}` |DELETE |Delete a comment
-|===
-
-*Permission:* `POST` on the weblog.
-
-[cols="2,1,4",options="header"]
-|===
-|Element |Access |Meaning
-|`roller:status` |read/write
-|`approved`, `disapproved`, `spam` or `pending`. The only element a `PUT` uses.
-|`atom:author` |read |The commenter's name, email address and web site
-|`atom:content` |read |The comment text
-|`atom:published` |read |When the comment was posted
-|`thr:in-reply-to` |read |The weblog entry: its id (`ref`) and edit URI
-(`href`)
-|`roller:remoteHost`, `roller:referrer` |read |Where the comment came from
-|===
-
-When a `pending` comment is approved, Roller sends the same notification email
-as the *Comments* page, if mail is configured.
-
-.Changing a comment's status (request)
-[source,xml]
-----
-include::atompub/examples/comment-status-request.xml[]
-----
-
-.Comments collection
-[source,xml]
-----
-include::atompub/examples/comments-feed.xml[]
-----
-
 == Errors
 
 Errors carry a short message. Server errors (`5xx`) carry no detail; the cause
@@ -434,15 +372,14 @@ is in Roller's log.
 |===
 |Status |Meaning
 |`400 Bad Request` |The entry is not well-formed, has a `DOCTYPE`, or has an
-invalid value (unknown action or status, invalid category name or image URL,
+invalid value (unknown action, invalid category name or image URL,
 a value longer than 255 characters, bad `moveTo`)
 |`401 Unauthorized` |Authentication failed, or the user lacks the permission the
 resource needs
 |`404 Not Found` |AtomPub is off, the resource does not exist or belongs to
 another weblog, or the collection is not available (for example templates of a
 shared theme)
-|`405 Method Not Allowed` |The method is not supported, for example `POST` to
-the comments collection
+|`405 Method Not Allowed` |The method is not supported
 |`409 Conflict` |The change conflicts with the weblog: duplicate name or link,
 a template action that is taken, a required template, a category in use or the
 last category
@@ -485,12 +422,6 @@ curl -u "$AUTH" -X POST "$APP/myblog/categories" \
 curl -u "$AUTH" -X PUT "$APP/myblog/template/0e5d8b62" \
      -H "Content-Type: application/atom+xml;type=entry" \
      --data-binary @template-request.xml
-
-# 6. List pending comments, then approve one
-curl -u "$AUTH" "$APP/myblog/comments?status=pending"
-curl -u "$AUTH" -X PUT "$APP/myblog/comment/8f0e2a6c" \
-     -H "Content-Type: application/atom+xml;type=entry" \
-     --data-binary @comment-status-request.xml
 ----
 
 == Schemas
@@ -499,7 +430,7 @@ curl -u "$AUTH" -X PUT "$APP/myblog/comment/8f0e2a6c" \
 https://www.rfc-editor.org/rfc/rfc4287#appendix-B[RFC 4287, Appendix B].
 * Service and category documents: the grammar in
 https://www.rfc-editor.org/rfc/rfc5023#appendix-B[RFC 5023, Appendix B].
-* Roller's extension elements and `thr:in-reply-to`: `atompub/roller-atompub.rnc`
+* Roller's extension elements: `atompub/roller-atompub.rnc`
 in Roller's `docs` directory:
 +
 [source]

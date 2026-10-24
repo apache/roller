@@ -18,7 +18,7 @@ package org.apache.roller.weblogger.ui.struts2.admin;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -101,13 +101,13 @@ class GlobalConfigAtomPubLimitTest {
         action.setProperties(values);
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getMethod()).thenReturn("POST");
-        action.setServletRequest(request);
+        action.withServletRequest(request);
         Parameter incomingLimit = mock(Parameter.class);
         when(incomingLimit.getValue()).thenReturn(value);
         HttpParameters parameters = mock(HttpParameters.class);
         when(parameters.get(LIMIT_PROPERTY)).thenReturn(incomingLimit);
         when(parameters.get("users.comments.plugins")).thenReturn(mock(Parameter.class));
-        action.setParameters(parameters);
+        action.withParameters(parameters);
         return action;
     }
 }

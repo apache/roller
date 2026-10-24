@@ -24,9 +24,9 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -78,7 +78,7 @@ public class RollerAtomServlet extends HttpServlet {
         RollerAtomHandler handler = createHandler(request, response);
         String userName = handler.getAuthenticatedUsername();
         if (userName == null) {
-            // The OAuth path may have already written a challenge/error response.
+            // Ask the client for BASIC credentials.
             if (!response.isCommitted()) {
                 response.setHeader("WWW-Authenticate", "Basic realm=\"Roller\"");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);

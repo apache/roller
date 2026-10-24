@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -145,10 +146,12 @@ public class BookmarkEdit extends UIAction {
         return folderId;
     }
 
+    @StrutsParameter
     public void setFolderId(String folderId) {
         this.folderId = folderId;
     }
     
+    @StrutsParameter(depth = 1)
     public BookmarkBean getBean() {
         return bean;
     }

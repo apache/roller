@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.rendering.util;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;

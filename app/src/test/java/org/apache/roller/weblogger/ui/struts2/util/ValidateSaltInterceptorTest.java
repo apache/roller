@@ -19,8 +19,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.RollerSession;
@@ -34,8 +34,8 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -29,7 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.Test;
 
@@ -180,7 +180,7 @@ public class AtomReaderTest {
     }
 
     @Test
-    public void testRollerExtensionsAndInReplyTo() throws Exception {
+    public void testRollerExtensionsAndUnknownMarkup() throws Exception {
         String xml =
             "<entry xmlns='http://www.w3.org/2005/Atom'"
             + "       xmlns:roller='http://roller.apache.org/ns/atompub/1.0'"
@@ -197,8 +197,8 @@ public class AtomReaderTest {
         assertEquals("<div>mobile</div>", entry.getMobileRendition());
         assertEquals("custom", entry.getExtension("action"));
         assertEquals("true", entry.getExtension("navbar"));
-        assertEquals("urn:parent", entry.getInReplyToRef());
-        assertEquals("http://example.com/app/blog/entry/1", entry.getInReplyToHref());
+        // foreign markup that Roller does not use is skipped
+        assertEquals(2, entry.getExtensions().size());
     }
 
     @Test
@@ -206,14 +206,12 @@ public class AtomReaderTest {
         AtomEntry out = new AtomEntry();
         out.setTitle("t");
         out.setMobileRendition("<p>m &amp; n</p>");
-        out.setExtension("status", "spam");
-        out.setInReplyToRef("urn:x");
+        out.setExtension("action", "custom");
         java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
         new AtomWriter().writeEntry(bytes, out);
 
         AtomEntry in = new AtomReader().parseEntry(new ByteArrayInputStream(bytes.toByteArray()));
         assertEquals("<p>m &amp; n</p>", in.getMobileRendition());
-        assertEquals("spam", in.getExtension("status"));
-        assertEquals("urn:x", in.getInReplyToRef());
+        assertEquals("custom", in.getExtension("action"));
     }
 }

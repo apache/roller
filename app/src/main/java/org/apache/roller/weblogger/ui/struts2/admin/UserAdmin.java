@@ -27,6 +27,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 
 /**
@@ -70,6 +71,7 @@ public class UserAdmin extends UIAction {
         return authMethod.name();
     }
 
+    @StrutsParameter(depth = 1)
     public CreateUserBean getBean() {
         return bean;
     }
