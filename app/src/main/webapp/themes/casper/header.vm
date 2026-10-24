@@ -1,0 +1,28 @@
+<header id="gh-head" class="gh-head outer">
+  <div class="gh-head-inner inner">
+    <div class="gh-head-brand">
+      <a class="gh-head-logo no-image" href="$url.home">$model.weblog.name</a>
+      <a class="gh-search gh-icon-btn" href="$url.search" aria-label="Search this site">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+      </a>
+      <button class="gh-burger" aria-label="Main Menu"></button>
+    </div>
+
+    <nav class="gh-head-menu" aria-label="Primary navigation">
+      <ul class="nav">
+        <li class="nav-home"><a href="$url.home">Home</a></li>
+        #foreach($navPage in $model.weblog.templates)
+        #if($navPage.navbar && !$navPage.hidden && $navPage.link)
+        <li><a href="$url.page($navPage.link)">$navPage.name</a></li>
+        #end
+        #end
+      </ul>
+    </nav>
+
+    <div class="gh-head-actions">
+      <a class="gh-search gh-icon-btn" href="$url.search" aria-label="Search this site">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+      </a>
+    </div>
+  </div>
+</header>

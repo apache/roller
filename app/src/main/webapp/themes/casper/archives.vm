@@ -1,0 +1,40 @@
+## Every post as a Casper card feed, under a tag.hbs-style header card.
+#set($archiveEntries = $model.weblog.getRecentWeblogEntries("nil", 100))
+#set($headerTitle = "Archives")
+#set($headerCount = $model.weblog.entryCount)
+#set($headerDescription = "")
+<!DOCTYPE html>
+<html lang="en" class="auto-color">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>Archives — $model.weblog.name</title>
+  </head>
+  <body class="tag-template is-head-left-logo">
+    <div class="viewport">
+      #includeTemplate($model.weblog "standard_header")
+
+      <div class="site-content">
+        <main id="site-main" class="site-main outer">
+          <div class="inner posts">
+            <div class="post-feed">
+              #includeTemplate($model.weblog "_tag_header")
+              #set($cardClass = "")
+              #foreach($entry in $archiveEntries)
+              #includeTemplate($model.weblog "_card")
+              #end
+            </div>
+
+            #if($utils.isNotEmpty($model.weblog.about))
+            <section class="archive-about gh-content">
+              <h2 id="about">About $model.weblog.name</h2>
+              <p>$model.weblog.about</p>
+            </section>
+            #end
+          </div>
+        </main>
+      </div>
+
+      #includeTemplate($model.weblog "standard_footer")
+    </div>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+#set($entry = $model.weblogEntry)
+<!DOCTYPE html>
+<html lang="en" class="auto-color">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>$entry.title — $model.weblog.name</title>
+  </head>
+  <body class="post-template is-head-left-logo">
+    <div class="viewport">
+      #includeTemplate($model.weblog "standard_header")
+
+      <div class="site-content">
+        #includeTemplate($model.weblog "_article")
+      </div>
+
+      #includeTemplate($model.weblog "standard_footer")
+    </div>
+  </body>
+</html>

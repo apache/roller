@@ -1,0 +1,18 @@
+<footer class="site-footer outer">
+  <div class="inner">
+    <section class="copyright"><a href="$url.home">$model.weblog.name</a> &copy; $utils.formatDate($utils.now, "yyyy")</section>
+    <div class="site-footer-center">
+      <nav class="site-footer-nav" aria-label="Secondary navigation">
+        <ul>
+          #foreach($footerCategory in $model.weblog.weblogCategories)
+          #if($footerCategory.inUse)
+          <li><a href="$url.category($footerCategory.name)">$footerCategory.name</a></li>
+          #end
+          #end
+          <li><a href="$url.feed.entries.atom">Atom feed</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="gh-powered-by"><a href="https://roller.apache.org/" target="_blank" rel="noopener">Powered by Apache Roller</a></div>
+  </div>
+</footer>

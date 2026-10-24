@@ -1,0 +1,38 @@
+## Casper's post feed. Expects $pager, $classicHome (first card large, next two wide) and $feedHeader.
+<main id="site-main" class="site-main outer">
+  <div class="inner posts">
+    <div class="post-feed">
+      #if($feedHeader)
+      #includeTemplate($model.weblog "_tag_header")
+      #end
+      #set($cardIndex = 0)
+      #foreach($day in $pager.entries.keySet())
+      #foreach($entry in $pager.entries.get($day))
+      #set($cardClass = "")
+      #if($classicHome && $cardIndex == 0)
+        #set($cardClass = " post-card-large")
+      #elseif($classicHome && $cardIndex < 3)
+        #set($cardClass = " dynamic")
+      #end
+      #includeTemplate($model.weblog "_card")
+      #set($cardIndex = $cardIndex + 1)
+      #end
+      #end
+    </div>
+
+    #if($pager.prevLink || $pager.nextLink || $pager.prevCollectionLink || $pager.nextCollectionLink)
+    <nav class="pagination" aria-label="Pagination">
+      #if($pager.prevLink)
+      <a class="newer-posts" href="$pager.prevLink"><span aria-hidden="true">&larr;</span> Newer Posts</a>
+      #elseif($pager.prevCollectionLink)
+      <a class="newer-posts" href="$pager.prevCollectionLink"><span aria-hidden="true">&larr;</span> $pager.prevCollectionName</a>
+      #end
+      #if($pager.nextLink)
+      <a class="older-posts" href="$pager.nextLink">Older Posts <span aria-hidden="true">&rarr;</span></a>
+      #elseif($pager.nextCollectionLink)
+      <a class="older-posts" href="$pager.nextCollectionLink">$pager.nextCollectionName <span aria-hidden="true">&rarr;</span></a>
+      #end
+    </nav>
+    #end
+  </div>
+</main>

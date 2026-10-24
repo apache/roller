@@ -1,0 +1,2545 @@
+/*
+Casper for Apache Roller
+
+Ported from Casper, the default theme for Ghost
+(https://github.com/TryGhost/Casper, commit cbdb5c6).
+
+Copyright (c) 2013-2026 Ghost Foundation
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+/* Table of Contents
+/* ------------------------------------------------------------
+
+1.  Global Styles
+2.  Layout
+3.  Site Header
+4.  Site Navigation
+5.  Post Feed
+6.  Single Post
+  6.1. Post Byline
+  6.3. Read More
+  6.4. Comments
+8.  Tag Template
+10. Site Footer
+11. Dark Mode
+12. Roller Additions
+
+Section numbers follow upstream screen.css. Ghost-only sections
+(Subscribe, Author and Error templates, Lightbox) are not ported,
+and postcss color-mod() calls are replaced with the values from
+upstream's built stylesheet.
+
+*/
+
+/* 1. Global - Set up the things
+/* ---------------------------------------------------------- */
+
+/* Reset
+/* ---------------------------------------------------------- */
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    font-size: 100%;
+    vertical-align: baseline;
+}
+body {
+    line-height: 1;
+}
+blockquote,
+q {
+    quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: "";
+    content: none;
+}
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+html {
+    box-sizing: border-box;
+    font-family: sans-serif;
+
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+a {
+    background-color: transparent;
+}
+a:active,
+a:hover {
+    outline: 0;
+}
+b,
+strong {
+    font-weight: bold;
+}
+i,
+em,
+dfn {
+    font-style: italic;
+}
+h1 {
+    margin: 0.67em 0;
+    font-size: 2em;
+}
+small {
+    font-size: 80%;
+}
+sub,
+sup {
+    position: relative;
+    font-size: 75%;
+    line-height: 0;
+    vertical-align: baseline;
+}
+sup {
+    top: -0.5em;
+}
+sub {
+    bottom: -0.25em;
+}
+img {
+    border: 0;
+}
+svg:not(:root) {
+    overflow: hidden;
+}
+mark {
+    background-color: #fdffb6;
+}
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, monospace;
+    font-size: 1em;
+}
+kbd {
+    padding: 3px 5px;
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    background: #f6f8fa;
+    border: 1px solid rgba(124, 139, 154, 0.25);
+    border-radius: 6px;
+    box-shadow: inset 0 -1px 0 rgba(124, 139, 154, 0.25);
+}
+@media (max-width: 600px) {
+    kbd {
+        font-size: 1.3rem;
+    }
+}
+button,
+input,
+optgroup,
+select,
+textarea {
+    margin: 0; /* 3 */
+    color: inherit; /* 1 */
+    font: inherit; /* 2 */
+}
+button {
+    overflow: visible;
+    border: none;
+}
+button,
+select {
+    text-transform: none;
+}
+button,
+html input[type="button"],
+/* 1 */
+input[type="reset"],
+input[type="submit"] {
+    cursor: pointer; /* 3 */
+
+    -webkit-appearance: button; /* 2 */
+}
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+}
+input {
+    line-height: normal;
+}
+input:focus {
+    outline: none;
+}
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    height: auto;
+}
+input[type="search"] {
+    box-sizing: content-box; /* 2 */
+
+    -webkit-appearance: textfield; /* 1 */
+}
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+legend {
+    padding: 0; /* 2 */
+    border: 0; /* 1 */
+}
+textarea {
+    overflow: auto;
+}
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+td,
+th {
+    padding: 0;
+}
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+
+html {
+    font-size: 62.5%;
+
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+body {
+    color: var(--color-darkgrey);
+    font-family: var(--gh-font-body, var(--font-sans));
+    font-size: 1.6rem;
+    line-height: 1.6em;
+    font-weight: 400;
+    font-style: normal;
+    letter-spacing: 0;
+    text-rendering: optimizeLegibility;
+    background: #fff;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -moz-font-feature-settings: "liga" on;
+}
+
+::selection {
+    text-shadow: none;
+    background: #daf2fd;
+}
+
+hr {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin: 2.5em 0 3.5em;
+    padding: 0;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #f0f0f0;
+}
+
+audio,
+canvas,
+iframe,
+img,
+svg,
+video {
+    vertical-align: middle;
+}
+
+fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+textarea {
+    resize: vertical;
+}
+
+::not(.gh-content) p,
+::not(.gh-content) ul,
+::not(.gh-content) ol,
+::not(.gh-content) dl,
+::not(.gh-content) blockquote {
+    margin: 0 0 1.5em 0;
+}
+
+ol,
+ul {
+    padding-left: 1.3em;
+    padding-right: 1.5em;
+}
+
+ol ol,
+ul ul,
+ul ol,
+ol ul {
+    margin: 0.5em 0;
+}
+
+ul,
+ol {
+    max-width: 100%;
+}
+
+li {
+    padding-left: 0.3em;
+    line-height: 1.6em;
+}
+
+li + li {
+    margin-top: 0.5em;
+}
+
+dt {
+    float: left;
+    margin: 0 20px 0 0;
+    width: 120px;
+    color: #daf2fd;
+    font-weight: 500;
+    text-align: right;
+}
+
+dd {
+    margin: 0 0 5px 0;
+    text-align: left;
+}
+
+sub, sup {
+    line-height: 1;
+}
+
+blockquote {
+    margin: 1.5em 0;
+    padding: 0 1.6em 0 1.6em;
+    border-left: #daf2fd;
+}
+
+blockquote small {
+    display: inline-block;
+    margin: 0.8em 0 0.8em 1.5em;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+/* Quotation marks */
+blockquote small:before {
+    content: "\2014 \00A0";
+}
+
+blockquote cite {
+    font-weight: bold;
+}
+blockquote cite a {
+    font-weight: normal;
+}
+
+a {
+    color: #15171A;
+    text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 0;
+    line-height: 1.15;
+    font-family: var(--gh-font-heading, var(--font-sans));
+    font-weight: 600;
+    text-rendering: optimizeLegibility;
+    letter-spacing: -0.01em;
+}
+
+h1 {
+    margin: 0 0 0.5em 0;
+    font-size: 4.8rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+}
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2.8rem;
+    }
+}
+
+h2 {
+    margin: 1.5em 0 0.5em 0;
+    font-size: 2.8rem;
+    font-weight: 700;
+}
+@media (max-width: 600px) {
+    h2 {
+        font-size: 2.3rem;
+    }
+}
+
+h3 {
+    margin: 1.5em 0 0.5em 0;
+    font-size: 2.4rem;
+    font-weight: 600;
+}
+@media (max-width: 600px) {
+    h3 {
+        font-size: 1.7rem;
+    }
+}
+
+h4 {
+    margin: 1.5em 0 0.5em 0;
+    font-size: 2rem;
+}
+@media (max-width: 600px) {
+    h4 {
+        font-size: 1.7rem;
+    }
+}
+
+h5 {
+    margin: 1.5em 0 0.5em 0;
+    font-size: 2rem;
+}
+
+h6 {
+    margin: 1.5em 0 0.5em 0;
+    font-size: 1.8rem;
+}
+
+:root {
+    /* Ghost sets this from Settings > Brand; this is Ghost's default accent color */
+    --ghost-accent-color: #ff1a75;
+
+    /* Colours */
+    --color-green: #a4d037;
+    --color-yellow: #fecd35;
+    --color-red: #f05230;
+    --color-darkgrey: #15171A;
+    --color-midgrey: #738a94;
+    --color-lightgrey: #f1f1f1;
+    --color-secondary-text: #979797;
+    --color-border: #e1e1e1;
+    --color-wash: #e5eff5;
+    --color-darkmode: #151719;
+
+    /*
+    An accent color is also set by Ghost itself in
+    Ghost Admin > Settings > Brand
+
+    --ghost-accent-color: {value};
+
+    You can use this variable throughout your styles
+     */
+
+    /* Fonts */
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    --font-serif: Georgia, Times, serif;
+    --font-mono: Menlo, Courier, monospace;
+
+}
+
+
+/* 2. Layout - Page building blocks
+/* ---------------------------------------------------------- */
+
+.viewport {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.site-content {
+    flex-grow: 1;
+}
+
+/* Full width page blocks */
+.outer {
+    position: relative;
+    padding: 0 max(4vmin, 20px);
+}
+
+/* Centered content container blocks */
+.inner {
+    margin: 0 auto;
+    max-width: 1200px;
+    width: 100%;
+}
+
+
+/* 3. Site Header
+/* ---------------------------------------------------------- */
+
+.site-header {
+    position: relative;
+    color: #fff;
+    background: var(--ghost-accent-color);
+}
+
+.site-header-content {
+    position: relative;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    padding-top: calc(19vmin + 44px);
+    padding-bottom: 19vmin;
+    text-align: center;
+    color: var(--color-darkgrey);
+}
+
+.site-header-inner {
+    position: relative;
+}
+
+.site-title {
+    z-index: 10;
+    margin: 0;
+    padding: 0;
+    font-size: 5rem;
+    font-weight: 800;
+}
+
+.site-description {
+    display: inline-block;
+    z-index: 10;
+    max-width: 960px;
+    font-size: 6rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.site-description:first-child {
+    font-family: var(--gh-font-heading, var(--font-sans));
+}
+
+.site-title + .site-description {
+    max-width: 640px;
+    margin-top: 16px;
+    font-size: 2.4rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.site-title + .site-description {
+    color: var(--color-secondary-text);
+}
+
+@media (max-width: 991px) {
+    .site-header-content {
+        padding-top: calc(19vmin + 32px);
+    }
+}
+
+@media (max-width: 767px) {
+    .site-header-inner {
+        gap: 16px;
+    }
+
+    .site-title {
+        font-size: 3.4rem !important;
+    }
+    .site-description {
+        font-size: 2.2rem !important;
+    }
+
+    .site-title + .site-description {
+        margin-top: 12px !important;
+    }
+}
+
+
+/* 4. Site Navigation
+/* ---------------------------------------------------------- */
+
+.gh-head {
+    height: 88px;
+    font-size: 1.6rem;
+    line-height: 1.3em;
+    background-color: #fff;
+    z-index: 150;
+}
+
+.gh-head a {
+    text-decoration: none;
+}
+
+.gh-head-inner {
+    display: grid;
+    column-gap: 40px;
+    grid-template-columns: auto 1fr auto;
+    grid-auto-flow: row dense;
+    align-items: center;
+    height: 100%;
+}
+
+/* Header styles
+/* ---------------------------------------------------------- */
+
+.is-head-left-logo .gh-head-inner {
+    grid-template-columns: auto 1fr auto;
+}
+
+.is-head-left-logo.home-template .gh-head:not(.is-header-hidden) .gh-head-logo {
+    display: none;
+}
+
+.is-head-left-logo.home-template .gh-head:not(.is-header-hidden) .gh-head-menu {
+    margin-left: -40px;
+}
+
+@media (min-width: 992px) {
+    .is-head-left-logo .gh-head-menu {
+        margin-right: 64px;
+        margin-left: 16px;
+    }
+}
+
+/* Brand
+/* ---------------------------------------------------------- */
+
+.gh-head-brand {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    word-break: break-all;
+}
+
+.gh-head-logo {
+    display: block;
+    font-family: var(--gh-font-heading, var(--font-sans));
+    font-weight: 800;
+    font-size: 2.6rem;
+    letter-spacing: -0.02em;
+    color: inherit;
+    white-space: nowrap;
+}
+
+.gh-head-logo.no-image {
+    margin-top: -5px;
+}
+
+.gh-head-logo img {
+    max-height: 40px;
+}
+
+
+/* Primary Navigation
+/* ---------------------------------------------------------- */
+
+.gh-head-menu {
+    display: flex;
+    align-items: center;
+    margin-top: 1px;
+    font-weight: 500;
+}
+
+.gh-head-menu .nav {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 32px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    vertical-align: middle;
+}
+
+.gh-head-menu .nav li {
+    margin: 0;
+    padding: 0;
+}
+
+.gh-head-menu .nav a {
+    line-height: 1.7;
+    color: inherit;
+}
+
+.gh-head-menu .nav a:hover {
+    opacity: 0.9;
+}
+
+
+/* Secondary Navigation
+/* ---------------------------------------------------------- */
+
+.gh-head-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 24px;
+    list-style: none;
+    text-align: right;
+}
+
+
+/* Search
+/* ---------------------------------------------------------- */
+
+.gh-search {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    cursor: pointer;
+    background-color: transparent;
+    border: 0;
+    outline: none;
+}
+
+.gh-search:hover {
+    opacity: 0.9;
+}
+
+.gh-head-brand .gh-search {
+    margin-right: 8px;
+}
+
+.gh-head-actions .gh-search {
+    margin-right: -4px;
+}
+
+@media (max-width: 767px) {
+    .gh-head-actions .gh-search {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .gh-head-brand .gh-search {
+        display: none;
+    }
+}
+
+
+/* Mobile Menu Trigger
+/* ---------------------------------------------------------- */
+
+html.gh-navigation-open {
+    overflow: hidden;
+}
+
+.gh-navigation-open body {
+    position: fixed;
+    top: var(--gh-navigation-scroll-top);
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
+.gh-burger {
+    position: relative;
+    display: none;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    margin-right: -3px;
+    cursor: pointer;
+    background-color: transparent;
+    border: 0;
+    appearance: none;
+}
+
+.gh-burger::before,
+.gh-burger::after {
+    position: absolute;
+    left: 3px;
+    width: 24px;
+    height: 1px;
+    content: "";
+    background-color: var(--color-darkgrey);
+    transition: all 0.2s cubic-bezier(0.04, 0.04, 0.12, 0.96) 0.1008s;
+}
+
+.gh-burger::before {
+    top: 11px;
+}
+
+.gh-burger::after {
+    bottom: 11px;
+}
+
+.gh-head-open .gh-burger::before {
+    top: 15px;
+    transform: rotate(45deg);
+}
+
+.gh-head-open .gh-burger::after {
+    bottom: 14px;
+    transform: rotate(-45deg);
+}
+
+
+/* Mobile Menu
+/* ---------------------------------------------------------- */
+/* IDs needed to ensure sufficient specificity */
+
+@media (max-width: 767px) {
+    #gh-head {
+        height: 64px;
+    }
+
+    #gh-head .gh-head-inner {
+        grid-template-rows: auto 1fr auto;
+        grid-template-columns: 1fr;
+        gap: 48px;
+    }
+
+    #gh-head .gh-head-brand {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        grid-column-start: 1;
+        align-items: center;
+        height: 64px;
+    }
+
+    #gh-head .gh-head-logo {
+        font-size: 2.2rem;
+    }
+
+    #gh-head .gh-head-brand .gh-search {
+        margin-left: -6px;
+    }
+
+    #gh-head .gh-burger {
+        display: block;
+    }
+
+    #gh-head .gh-head-menu,
+    #gh-head .gh-head-actions {
+        position: fixed;
+        justify-content: center;
+        visibility: hidden;
+        opacity: 0;
+    }
+
+    #gh-head .gh-head-menu {
+        margin: 0;
+        transition: none;
+        transform: translateY(0);
+    }
+
+    #gh-head .nav {
+        gap: 16px;
+        align-items: center;
+        line-height: 1.4;
+    }
+
+    #gh-head .nav a {
+        font-size: 2.6rem;
+        font-weight: 600;
+        text-transform: none;
+    }
+
+    #gh-head .nav li {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    .gh-head-open #gh-head {
+        position: fixed;
+        inset: 0;
+        z-index: 3999999;
+        height: 100%;
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .gh-head-open #gh-head .gh-head-menu,
+    .gh-head-open #gh-head .gh-head-actions {
+        position: static;
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .gh-head-open #gh-head .nav {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .gh-head-open #gh-head .nav li {
+        opacity: 1;
+        transition: transform 0.2s, opacity 0.2s;
+        transform: translateY(0);
+    }
+
+    .gh-head-open #gh-head .gh-head-actions {
+        position: sticky;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: inline-flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        padding: max(4vmin, 20px) 0 max(4vmin, 28px);
+        background-color: #fff;
+    }
+}
+
+
+/* 5. Post Feed
+/* ---------------------------------------------------------- */
+
+.post-feed {
+    position: relative;
+    display: grid;
+    gap: 4.8vmin 4vmin;
+    grid-template-columns: repeat(6, 1fr);
+    padding: max(4.8vmin, 36px) 0 0;
+}
+
+.tag-template .post-feed {
+    margin-top: 4vmin;
+}
+
+@media (max-width: 991px) {
+    .post-feed {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 767px) {
+    .post-feed {
+        grid-template-columns: 1fr;
+        grid-gap: 40px;
+    }
+}
+
+.post-card {
+    position: relative;
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    background-size: cover;
+    word-break: break-word;
+}
+
+.post-card-image-link {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    margin-bottom: 32px;
+}
+
+.post-card-image-link::after {
+    content: "";
+    display: block;
+    padding-bottom: 55%;
+}
+
+.post-card-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--color-lightgrey) no-repeat center center;
+    object-fit: cover;
+}
+
+.post-card-content-link {
+    position: relative;
+    display: block;
+    color: var(--color-darkgrey);
+}
+
+.post-card-content-link:hover {
+    text-decoration: none;
+}
+
+.post-feed .no-image .post-card-content-link {
+    padding: 0;
+}
+
+.no-image .post-card-header {
+    margin-top: 0;
+}
+
+.post-card-tags {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 10px;
+    color: var(--color-secondary-text);
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    line-height: 1;
+}
+
+.post-card-featured {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding-left: 18px;
+    color: var(--ghost-accent-color);
+}
+
+.post-card-featured svg {
+    position: absolute;
+    left: 0;
+}
+
+.post-card-title {
+    margin: 0;
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+}
+
+.post-card-content-link:hover .post-card-title {
+    opacity: 0.9;
+}
+
+.no-image .post-card-title {
+    margin-top: 0;
+}
+
+.post-card-title svg {
+    margin-top: -3px;
+    margin-left: -1px;
+}
+
+.post-card-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.post-card-excerpt {
+    display: -webkit-box;
+    overflow-y: hidden;
+    margin-top: 12px;
+    max-width: 720px;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+}
+
+.tag-template .post-card-excerpt {
+    margin-top: 6px;
+}
+
+.tag-template .post-card-large .post-card-excerpt {
+    display: block;
+    overflow-y: auto;
+}
+
+.post-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 0;
+    font-size: 1.3rem;
+    color: var(--color-secondary-text);
+}
+
+.post-card-meta > * {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.post-card-meta > * + *:not(script)::before {
+    width: 2px;
+    height: 2px;
+    content: "";
+    background-color: var(--color-secondary-text);
+    border-radius: 50%;
+}
+
+.post-card-meta .sep {
+    margin: 0 4px;
+}
+
+.author-profile-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #1a1a1a;
+    border-radius: 100%;
+
+    object-fit: cover;
+}
+
+.author-list {
+    display: flex;
+    margin: 0 0 0 4px;
+    padding: 0;
+    list-style: none;
+}
+
+.author-list-item {
+    position: relative;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* Special Styling for home page grid (below):
+
+The first post in the list is styled to be bigger than the others and take over
+the full width of the grid to give it more emphasis. Wrapped in a media query to
+make sure this only happens on large viewports / desktop-ish devices.
+
+*/
+
+@media (min-width: 1001px) {
+    .post-card-large {
+        grid-column: span 6;
+        display: grid;
+        grid-gap: 4vmin;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 0;
+    }
+
+    .post-card-large:not(.no-image) .post-card-header {
+        margin-top: 0;
+    }
+
+    .post-card-large .post-card-image-link {
+        position: relative;
+        grid-column: span 2;
+        margin-bottom: 0;
+    }
+
+    .post-card-large .post-card-content {
+        grid-column: span 1;
+    }
+
+    .post-card-large.no-image .post-card-content {
+        grid-column: span 2;
+    }
+
+    .post-card-large .post-card-image {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .post-card-large .post-card-tags {
+        margin-bottom: 12px;
+    }
+
+    .post-card-large .post-card-title {
+        margin-top: 0;
+        font-size: 4.4rem;
+        line-height: 1.05;
+    }
+
+    .post-card-large .post-card-excerpt {
+        margin-top: 16px;
+    }
+
+    .post-card-large + .post-card-large:nth-child(even) {
+        margin: 32px 0;
+    }
+
+    .post-card-large + .post-card-large:nth-child(even) .post-card-content {
+        order: -1;
+    }
+
+    .post-card.dynamic {
+        grid-column: span 3;
+    }
+
+    .post-card.dynamic .post-card-title {
+        font-size: 3rem;
+    }
+}
+
+/* Pagination
+/* ---------------------------------------------------------- */
+
+.pagination {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin-top: 8vmin;
+}
+
+.pagination a {
+    font-size: 1.7rem;
+    font-weight: 600;
+}
+
+.pagination .page-number {
+    grid-column-start: 2;
+    color: var(--color-secondary-text);
+}
+
+.pagination .older-posts {
+    grid-column-start: 3;
+    text-align: right;
+}
+
+@media (max-width: 767px) {
+    .pagination .page-number {
+        display: none;
+    }
+}
+
+
+/* 6. Single Post
+/* ---------------------------------------------------------- */
+
+.article {
+    word-break: break-word;
+}
+
+.post-template .article {
+    padding: max(8vmin, 40px) 0 max(8vmin, 64px);
+}
+
+.post-template .article-header {
+    padding: 0 0 max(6.4vmin, 40px);
+}
+
+.article-tag {
+    margin-bottom: 16px;
+    font-size: 1.6rem;
+}
+
+.article-tag a {
+    color: var(--color-secondary-text);
+}
+
+.article-title {
+    margin-bottom: 0;
+    font-size: clamp(3.2rem, 5vw, 5.2rem);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--color-darkgrey);
+}
+
+.article-excerpt {
+    margin-top: 20px;
+    max-width: 720px;
+    font-size: 2rem;
+    line-height: 1.45;
+    color: var(--color-darkgrey);
+}
+
+@media (max-width: 767px) {
+    .article-excerpt {
+        margin-top: 14px;
+        font-size: 1.7rem;
+    }
+}
+
+/* -------- */
+
+/* Content grid
+/* ---------------------------------------------------------- */
+
+/* Canvas creates a multi-column, centered grid which the post
+is laid out on top of. Canvas just defines the grid, we don't
+use it for applying any other styles. */
+
+.gh-canvas {
+    --gap: max(4vmin, 20px);
+    --main: min(var(--content-width, 720px), 100% - var(--gap) * 2);
+    --wide: minmax(0, calc((var(--container-width, 1200px) - var(--content-width, 720px)) / 2));
+    --full: minmax(var(--gap), 1fr);
+
+    display: grid;
+    grid-template-columns:
+        [full-start] var(--full)
+        [wide-start] var(--wide)
+        [main-start] var(--main) [main-end]
+        var(--wide) [wide-end]
+        var(--full) [full-end];
+}
+
+.gh-canvas > * {
+    grid-column: main-start / main-end;
+}
+
+
+/* Content
+/* ---------------------------------------------------------- */
+
+/* Content refers to styling all page and post content that is
+created within the Ghost editor. The main content handles
+headings, text, images and lists. We deal with cards lower down. */
+
+/* Default vertical spacing */
+.gh-content > * + * {
+    margin-top: max(3.2vmin, 24px);
+    margin-bottom: 0;
+}
+
+/* Remove space between full-width cards */
+
+
+/* [id] represents all headings h1-h6, reset all margins */
+.gh-content > [id] {
+    margin: 0;
+    color: var(--color-darkgrey);
+}
+
+
+/* Add back a top margin to all headings, unless a heading
+is the very first element in the post content */
+.gh-content > [id]:not(:first-child) {
+    margin: 2em 0 0;
+}
+
+/* Add a small margin between a heading and anything after it */
+.gh-content > [id] + * {
+    margin-top: 1.5rem !important;
+}
+
+/* A larger margin before/after HRs and blockquotes */
+.gh-content > hr,
+.gh-content > blockquote {
+    position: relative;
+    margin-top: max(4.8vmin, 32px);
+}
+.gh-content > hr + *,
+.gh-content > blockquote + * {
+    margin-top: max(4.8vmin, 32px) !important;
+}
+
+/* Now the content typography styles */
+.gh-content a {
+    color: var(--ghost-accent-color);
+    text-decoration: underline;
+    word-break: break-word;
+}
+
+.gh-content > blockquote:not([class]),
+.gh-content > ol,
+.gh-content > ul,
+.gh-content > dl,
+.gh-content > p {
+    font-family: var(--gh-font-body, var(--font-serif));
+    font-weight: 400;
+    font-size: 2rem;
+    line-height: 1.6em;
+}
+
+.gh-content > p img {
+  margin: 0 auto;
+}
+
+.gh-content > ul,
+.gh-content > ol,
+.gh-content > dl {
+    padding-left: 1.9em;
+}
+
+.gh-content > blockquote:not([class]) {
+    position: relative;
+    font-style: italic;
+    padding: 0;
+}
+
+.gh-content > blockquote:not([class])::before {
+    content: "";
+    position: absolute;
+    left: -1.5em;
+    top: 0;
+    bottom: 0;
+    width: 0.3rem;
+    background: var(--ghost-accent-color);
+}
+
+.gh-content :not(pre) > code {
+    vertical-align: middle;
+    padding: 0.15em 0.4em 0.15em;
+    border: #e1eaef 1px solid;
+    font-weight: 400 !important;
+    font-size: 0.9em;
+    line-height: 1em;
+    color: #15171A;
+    background: #f0f6f9;
+    border-radius: 0.25em;
+}
+
+.gh-content pre {
+    overflow: auto;
+    padding: 16px 20px;
+    color: var(--color-wash);
+    font-size: 1.4rem;
+    line-height: 1.5em;
+    background: var(--color-darkgrey);
+    border-radius: 5px;
+    box-shadow: 0 2px 6px -2px rgba(0,0,0,.1), 0 0 1px rgba(0,0,0,.4);
+}
+
+.gh-content ol ol li {
+    list-style-type: lower-alpha;
+}
+
+.gh-content ol ol ol li {
+    list-style-type: lower-roman;
+}
+
+@media (max-width: 650px) {
+    .gh-content > blockquote:not([class]),
+.gh-content > ol,
+.gh-content > ul,
+.gh-content > dl,
+.gh-content > p {
+        font-size: 1.8rem;
+    }
+
+    .gh-content blockquote:not([class])::before {
+        left: min(-4vmin, -20px);
+    }
+}
+
+
+/* Cards
+/* ---------------------------------------------------------- */
+
+/* Cards are dynamic blocks of content which appear within Ghost
+posts, for example: embedded videos, tweets, galleries, or
+specially styled bookmark links. We add extra styling here to
+make sure they look good, and are given a bit of extra spacing. */
+
+/* Add extra margin before/after any cards,
+except for when immediately preceeded by a heading */
+
+
+/* This keeps small embeds centered */
+
+
+/* Responsive video embeds - no JavaScript needed */
+
+.gh-content iframe[src*="youtube.com"],
+.gh-content iframe[src*="youtube-nocookie.com"],
+.gh-content iframe[src*="player.vimeo.com"],
+.gh-content iframe[src*="kickstarter.com"] {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    height: auto;
+}
+
+/* This keeps small iamges centered */
+
+
+/* Captions */
+figcaption {
+    padding: 1.5rem 1.5rem 0;
+    text-align: center;
+    color: rgba(0,0,0,0.5);
+    font-size: 1.3rem;
+    line-height: 1.4em;
+}
+figcaption strong {
+    color: rgba(0,0,0,0.8);
+}
+figcaption a {
+    text-decoration: underline;
+}
+
+
+/* Highly specific styles for traditional Instagram embeds */
+
+
+/* Card captions
+/* ---------------------------------------------------------- */
+
+.article-comments {
+    margin: 6vmin 0 0 0;
+}
+
+/* -----old------ */
+
+.footnotes-sep {
+    margin-bottom: 30px;
+}
+
+.footnotes {
+    font-size: 1.5rem;
+}
+
+.footnotes p {
+    margin: 0;
+}
+
+.footnote-backref {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+/* Tables */
+.gh-content table:not(.gist table) {
+    display: inline-block;
+    overflow-x: auto;
+    max-width: 100%;
+    width: auto;
+    border-spacing: 0;
+    border-collapse: collapse;
+    font-family: var(--font-sans);
+    font-size: 1.6rem;
+    white-space: nowrap;
+    vertical-align: top;
+    -webkit-overflow-scrolling: touch;
+    background: radial-gradient(ellipse at left, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 75%) 0 center, radial-gradient(ellipse at right, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 75%) 100% center;
+    background-attachment: scroll, scroll;
+    background-size: 10px 100%, 10px 100%;
+    background-repeat: no-repeat;
+}
+
+.gh-content table:not(.gist table) td:first-child {
+    background-image: linear-gradient(to right, rgba(255,255,255, 1) 50%, rgba(255,255,255, 0) 100%);
+    background-size: 20px 100%;
+    background-repeat: no-repeat;
+}
+
+.gh-content table:not(.gist table) td:last-child {
+    background-image: linear-gradient(to left, rgba(255,255,255, 1) 50%, rgba(255,255,255, 0) 100%);
+    background-position: 100% 0;
+    background-size: 20px 100%;
+    background-repeat: no-repeat;
+}
+
+.gh-content table:not(.gist table) th {
+    color: var(--color-darkgrey);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    text-align: left;
+    text-transform: uppercase;
+    background-color: #f4f8fb;
+}
+
+.gh-content table:not(.gist table) th,
+.gh-content table:not(.gist table) td {
+    padding: 6px 12px;
+    border: #e3edf3 1px solid;
+}
+
+
+/* 6.1. Post Byline
+/* ---------------------------------------------------------- */
+
+.article-byline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: min(24px, 5.6vmin) 0 0;
+}
+
+.gh-button-share {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0.5em 1.2em;
+    font-size: 1.4rem;
+    font-weight: 600;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 999px;
+    color: rgba(0, 0, 0, 0.85);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.gh-button-share:hover {
+    border-color: rgba(0, 0, 0, 0.5);
+}
+
+html.dark-mode .gh-button-share {
+    color: rgba(255, 255, 255, 0.85);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+html.dark-mode .gh-button-share:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.article-byline-content {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.article-byline-content .author-list {
+    justify-content: flex-start;
+    padding: 0 14px 0 0;
+}
+
+.article-byline-meta {
+    color: var(--color-secondary-text);
+    font-size: 1.4rem;
+    line-height: 1.2em;
+}
+
+.article-byline-meta .author-name {
+    margin: 0 0 6px;
+    font-size: 1.7rem;
+    font-weight: 700;
+    letter-spacing: 0;
+}
+
+.article-byline-meta .bull {
+    display: inline-block;
+    margin: 0 2px;
+}
+
+.author-avatar {
+    display: block;
+    overflow: hidden;
+    margin: 0 -4px;
+    width: min(56px, 13.6vmin);
+    height: min(56px, 13.6vmin);
+    border: #fff 2px solid;
+    border-radius: 50%;
+    background-color: var(--color-border);
+}
+
+@media (max-width: 767px) {
+    .article-byline-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .article-byline-content .author-list {
+        padding-right: 12px;
+    }
+    .article-byline-meta .author-name {
+        margin-bottom: 4px;
+    }
+}
+
+
+/* 6.3. Read more
+/* ---------------------------------------------------------- */
+
+.read-more-wrap {
+    margin-top: 2.4vmin;
+}
+
+.read-more {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 4vmin;
+}
+
+.read-more .post-card-tags {
+    display: none;
+}
+
+@media (max-width: 1000px) {
+    .read-more {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .read-more .post-card:nth-child(3) {
+        display: none;
+    }
+}
+
+@media (max-width: 700px) {
+    .read-more {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .read-more .post-card:nth-child(2) {
+        display: none;
+    }
+}
+
+/* 6.4. Comments
+/* ---------------------------------------------------------- */
+.comments {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 60px 0 44px;
+}
+
+
+/* 8. Tag Template
+/* ---------------------------------------------------------- */
+
+.tag-template .post-card-large .post-card-image-link {
+    grid-column: 2 / span 2;
+    order: 2;
+}
+
+.tag-template .post-card-large .post-card-content {
+    order: 1;
+}
+
+@media (min-width: 1001px) {
+    .tag-template .post-card-large .post-card-content:only-child {
+        grid-column: span 2;
+        max-width: 640px;
+    }
+}
+
+/* 10. Site Footer
+/* ---------------------------------------------------------- */
+
+.site-footer {
+    position: relative;
+    margin: max(12vmin, 64px) 0 0 0;
+    padding-top: 48px;
+    padding-bottom: 140px;
+    color: #fff;
+    background: #000;
+}
+
+.site-footer .inner {
+    display: grid;
+    grid-gap: 40px;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    color: rgba(255,255,255,0.7);
+    font-size: 1.3rem;
+}
+
+.site-footer-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.site-footer-social-links {
+    display: flex;
+    gap: 20px;
+}
+
+.site-footer-social-links a {
+    display: inline-flex;
+}
+
+.site-footer-social-links svg {
+    width: 16px;
+    height: 16px;
+}
+
+.site-footer .copyright a {
+    color: #fff;
+    letter-spacing: -0.015em;
+    font-weight: 500;
+}
+
+.site-footer a {
+    color: rgba(255,255,255,0.7);
+}
+
+.site-footer a:hover {
+    color: rgba(255,255,255,1);
+    text-decoration: none;
+}
+
+.site-footer-nav ul {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-footer-nav li {
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    line-height: 2em;
+}
+
+.site-footer-nav a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.site-footer-nav li:not(:first-child) a:before {
+    content: "";
+    display: block;
+    width: 2px;
+    height: 2px;
+    margin: 0 10px 0 0;
+    background: #fff;
+    border-radius: 100%;
+}
+
+@media (max-width: 767px) {
+    .site-footer .inner {
+        max-width: 500px;
+        grid-template-columns: 1fr;
+        grid-gap: 0;
+        text-align: center;
+    }
+    .site-footer .copyright,
+    .site-footer .copyright a {
+        color: #fff;
+        font-size: 1.5rem;
+    }
+    .site-footer .copyright {
+        margin-bottom: 16px;
+    }
+    .site-footer-center {
+        margin-bottom: 16px;
+    }
+}
+
+
+/* 11. Dark Mode
+/* ---------------------------------------------------------- */
+
+html.dark-mode body {
+    color: rgba(255, 255, 255, 0.75);
+    background: var(--color-darkmode);
+}
+
+html.dark-mode img {
+    opacity: 0.9;
+}
+
+html.dark-mode kbd {
+    background: #0c0d0e;
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.15);
+}
+
+html.dark-mode mark {
+    background-color: rgba(253, 255, 182, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+html.dark-mode figcaption a {
+    color: #fff;
+}
+
+html.dark-mode .gh-head {
+    background: var(--color-darkmode);
+    color: #fff;
+}
+
+html.dark-mode .gh-burger::before,
+html.dark-mode .gh-burger::after {
+    background-color: #fff;
+}
+
+html.dark-mode .site-header-content {
+    color: #fff;
+}
+
+html.dark-mode .post-card-image {
+    background: var(--color-darkmode);
+}
+
+html.dark-mode :is(.post-card-tags, .post-card-meta, .article-tag a, .byline-meta-content, .pagination .page-number) {
+    color: var(--color-secondary-text);
+}
+
+html.dark-mode .post-card-featured {
+    color: #fff;
+}
+
+html.dark-mode .post-card-title {
+    color: #fff;
+}
+
+html.dark-mode .post-card-excerpt {
+    color: var(--color-secondary-text);
+}
+
+html.dark-mode .pagination a {
+    color: #fff;
+}
+
+html.dark-mode .article-title {
+    color: #fff;
+}
+
+html.dark-mode .article-excerpt {
+    color: var(--color-secondary-text);
+}
+
+html.dark-mode .author-avatar {
+    border-color: var(--color-darkmode);
+    background-color: #131416;
+}
+
+html.dark-mode .author-profile-image {
+    opacity: 1;
+}
+
+html.dark-mode .author-profile-image path {
+    fill: var(--color-darkmode);
+}
+
+html.dark-mode .article-byline-meta .author-name a {
+    color: #fff;
+}
+
+html.dark-mode .gh-content > [id] {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+html.dark-mode .gh-content pre {
+    background: #000;
+}
+
+html.dark-mode .gh-content :not(pre) > code {
+    background: #0e0f11;
+    border-color: #131416;
+    color: var(--color-wash);
+}
+
+:where(html.dark-mode) .gh-content a {
+    color: #fff;
+}
+
+html.dark-mode .gh-content code {
+    color: #fff;
+    background: #000;
+}
+
+html.dark-mode hr {
+    border-top-color: #424242;
+}
+
+html.dark-mode .gh-content hr:after {
+    background: #131416;
+    box-shadow: var(--color-darkmode) 0 0 0 5px;
+}
+
+html.dark-mode figcaption {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+html.dark-mode figcaption strong {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+html.dark-mode .gh-content table:not(.gist table) td:first-child {
+    background-image: linear-gradient(to right, var(--color-darkmode) 50%, rgba(21, 23, 25, 0) 100%);
+}
+
+html.dark-mode .gh-content table:not(.gist table) td:last-child {
+    background-image: linear-gradient(to left, var(--color-darkmode) 50%, rgba(21, 23, 25, 0) 100%);
+}
+
+html.dark-mode .gh-content table:not(.gist table) th {
+    color: rgba(255, 255, 255, 0.85);
+    background-color: #282b2f;
+}
+
+html.dark-mode .gh-content table:not(.gist table) th,
+html.dark-mode .gh-content table:not(.gist table) td {
+    border: #282b2f 1px solid;
+}
+
+html.dark-mode .gh-content :is(input, textarea) {
+    color: #000;
+}
+
+@media (max-width: 767px) {
+    html.dark-mode .gh-head-open #gh-head,
+    html.dark-mode .gh-head-open #gh-head .gh-head-actions {
+        background: var(--color-darkmode);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    html.auto-color body {
+        color: rgba(255, 255, 255, 0.75);
+        background: var(--color-darkmode);
+    }
+
+    html.auto-color img {
+        opacity: 0.9;
+    }
+
+    html.auto-color kbd {
+        background: #0c0d0e;
+        border-color: rgba(255, 255, 255, 0.15);
+        box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    html.auto-color mark {
+        background-color: rgba(253, 255, 182, 0.2);
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    html.auto-color figcaption a {
+        color: #fff;
+    }
+
+    html.auto-color .gh-head {
+        background: var(--color-darkmode);
+        color: #fff;
+    }
+
+    html.auto-color .gh-burger::before,
+    html.auto-color .gh-burger::after {
+        background-color: #fff;
+    }
+
+    html.auto-color .site-header-content {
+        color: #fff;
+    }
+
+    html.auto-color .post-card-image {
+        background: var(--color-darkmode);
+    }
+
+    html.auto-color :is(.post-card-tags, .post-card-meta, .article-tag a, .byline-meta-content, .pagination .page-number) {
+        color: var(--color-secondary-text);
+    }
+
+    html.auto-color .post-card-featured {
+        color: #fff;
+    }
+
+    html.auto-color .post-card-title {
+        color: #fff;
+    }
+
+    html.auto-color .post-card-excerpt {
+        color: var(--color-secondary-text);
+    }
+
+    html.auto-color .pagination a {
+        color: #fff;
+    }
+
+    html.auto-color .article-title {
+        color: #fff;
+    }
+
+    html.auto-color .article-excerpt {
+        color: var(--color-secondary-text);
+    }
+
+    html.auto-color .author-avatar {
+        border-color: var(--color-darkmode);
+        background-color: #131416;
+    }
+
+    html.auto-color .author-profile-image {
+        opacity: 1;
+    }
+
+    html.auto-color .author-profile-image path {
+        fill: var(--color-darkmode);
+    }
+
+    html.auto-color .article-byline-meta .author-name a {
+        color: #fff;
+    }
+
+    html.auto-color .gh-button-share {
+        color: rgba(255, 255, 255, 0.85);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    html.auto-color .gh-button-share:hover {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    html.auto-color .gh-content > [id] {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    html.auto-color .gh-content pre {
+        background: #000;
+    }
+
+    html.auto-color .gh-content :not(pre) > code {
+        background: #0e0f11;
+        border-color: #131416;
+        color: var(--color-wash);
+    }
+
+    :where(html.auto-color) .gh-content a {
+        color: #fff;
+    }
+
+    html.auto-color .gh-content code {
+        color: #fff;
+        background: #000;
+    }
+
+    html.auto-color hr {
+        border-top-color: #424242;
+    }
+
+    html.auto-color .gh-content hr:after {
+        background: #131416;
+        box-shadow: var(--color-darkmode) 0 0 0 5px;
+    }
+
+    html.auto-color figcaption {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    html.auto-color figcaption strong {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    html.auto-color .gh-content table:not(.gist table) td:first-child {
+        background-image: linear-gradient(to right, var(--color-darkmode) 50%, rgba(21, 23, 25, 0) 100%);
+    }
+
+    html.auto-color .gh-content table:not(.gist table) td:last-child {
+        background-image: linear-gradient(to left, var(--color-darkmode) 50%, rgba(21, 23, 25, 0) 100%);
+    }
+
+    html.auto-color .gh-content table:not(.gist table) th {
+        color: rgba(255, 255, 255, 0.85);
+        background-color: #282b2f;
+    }
+
+    html.auto-color .gh-content table:not(.gist table) th,
+    html.auto-color .gh-content table:not(.gist table) td {
+        border: #282b2f 1px solid;
+    }
+
+    html.auto-color .gh-content :is(input, textarea) {
+        color: #000;
+    }
+
+    @media (max-width: 767px) {
+        html.auto-color .gh-head-open #gh-head,
+        html.auto-color .gh-head-open #gh-head .gh-head-actions {
+            background: var(--color-darkmode);
+        }
+}
+}
+
+
+/* 12. Roller Additions
+/* ---------------------------------------------------------- */
+
+/* Markup that only exists in Roller: entry tags, the comment
+macros (#showWeblogEntryComments, #showWeblogEntryCommentForm)
+and the search form. Styled to sit in Casper's article column. */
+
+/* The search icon is a link to the search page rather than
+upstream's <button>, so it needs to inherit the header color */
+.gh-search {
+    color: inherit;
+}
+
+.article-tags {
+    margin-top: max(4.8vmin, 32px);
+}
+
+.article-tags ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.article-tags li {
+    margin: 0;
+    padding: 0;
+}
+
+.article-tags a {
+    color: var(--color-secondary-text);
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.article-tags a:hover {
+    color: var(--color-darkgrey);
+}
+
+.article-byline-meta .author-name {
+    color: var(--color-darkgrey);
+}
+
+.article-comments > :first-child {
+    padding-top: max(4.8vmin, 32px);
+    border-top: 1px solid var(--color-lightgrey);
+}
+
+.article-comments .comments {
+    align-items: stretch;
+    margin: 0 0 44px;
+}
+
+.article-comments .comments-head {
+    margin: 0 0 24px;
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+
+.article-comments .comments > br {
+    display: none;
+}
+
+.article-comments .comment {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--color-lightgrey);
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    line-height: 1.6em;
+}
+
+.article-comments .comment p {
+    margin: 0 0 0.8em;
+}
+
+.article-comments .comment-details {
+    margin: 12px 0 0 !important;
+    font-family: var(--font-sans);
+    font-size: 1.3rem;
+    color: var(--color-secondary-text);
+}
+
+.article-comments .comment-details b {
+    font-weight: 700;
+    color: var(--color-darkgrey);
+}
+
+.article-comments .comment-details a {
+    color: inherit;
+}
+
+.article-comments .comments-form ul {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.article-comments .comments-form li {
+    margin: 0;
+    padding: 0;
+}
+
+.article-comments label.desc {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.article-comments label.choice {
+    margin-left: 6px;
+    font-size: 1.4rem;
+}
+
+.article-comments input.text,
+.article-comments textarea,
+.article-comments #commentAuthenticator input,
+.gh-search-input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    color: var(--color-darkgrey);
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: border-color 0.2s;
+}
+
+.article-comments #commentAuthenticator input {
+    width: 6em;
+    margin-left: 6px;
+    padding: 4px 8px;
+}
+
+.article-comments input.text:focus,
+.article-comments textarea:focus,
+.gh-search-input:focus {
+    outline: none;
+    border-color: #c2c2c2;
+}
+
+.article-comments .info {
+    font-size: 1.3rem;
+    color: var(--color-secondary-text);
+}
+
+.article-comments input.button,
+.gh-search-submit {
+    display: inline-block;
+    margin-right: 8px;
+    padding: 9px 18px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: #fff;
+    background: var(--ghost-accent-color);
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.article-comments input.button:first-child {
+    color: var(--color-darkgrey);
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.article-comments .status,
+.article-comments .error {
+    display: block;
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+    color: var(--color-secondary-text);
+}
+
+.article-comments .error {
+    color: var(--color-red);
+}
+
+.gh-search-form {
+    display: flex;
+    gap: 8px;
+    max-width: 500px;
+    margin-top: 24px;
+}
+
+.gh-search-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.gh-search-input {
+    box-sizing: border-box;
+    flex: 1;
+}
+
+.gh-search-submit {
+    margin: 0;
+}
+
+.archive-about {
+    max-width: 720px;
+    margin: max(8vmin, 48px) auto 0;
+}
+
+.archive-about > p {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    line-height: 1.6em;
+}
+
+html.dark-mode .article-byline-meta .author-name,
+html.dark-mode .article-comments .comments-head,
+html.dark-mode .article-tags a:hover,
+html.dark-mode .article-comments .comment-details b {
+    color: #fff;
+}
+
+html.dark-mode .article-comments > :first-child,
+html.dark-mode .article-comments .comment {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+html.dark-mode .article-comments input.text,
+html.dark-mode .article-comments textarea,
+html.dark-mode .article-comments #commentAuthenticator input,
+html.dark-mode .gh-search-input {
+    color: #fff;
+    background: #0c0d0e;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+html.dark-mode .article-comments input.button:first-child {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+    html.auto-color .article-byline-meta .author-name,
+    html.auto-color .article-comments .comments-head,
+    html.auto-color .article-tags a:hover,
+    html.auto-color .article-comments .comment-details b {
+        color: #fff;
+    }
+
+    html.auto-color .article-comments > :first-child,
+    html.auto-color .article-comments .comment {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    html.auto-color .article-comments input.text,
+    html.auto-color .article-comments textarea,
+    html.auto-color .article-comments #commentAuthenticator input,
+    html.auto-color .gh-search-input {
+        color: #fff;
+        background: #0c0d0e;
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    html.auto-color .article-comments input.button:first-child {
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+}
+
+
+/*
+
+Hey! You reached the end.
+
+Hope you enjoyed this CSS file, if you have any suggestions
+for improvements that might be useful for everyone who uses
+this theme, you can find the open source repository for it
+here: https://github.com/tryghost/casper
+
+Or, if you've just scrolled all the way to the bottom of the
+file to add some of your own styles. Well, you've come to
+the right place. Onward!
+
+ */
