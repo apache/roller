@@ -102,9 +102,6 @@ public class AtomPubDocExamplesTest {
         AtomEntry template = read("template-request.xml");
         assertEquals("custom", template.getExtension("action"));
         assertTrue(template.getMobileRendition().contains("sidebar-mobile"));
-
-        AtomEntry status = read("comment-status-request.xml");
-        assertEquals("approved", status.getExtension("status"));
     }
 
     @Test
@@ -142,8 +139,6 @@ public class AtomPubDocExamplesTest {
         examples.put("categories.xml", write(w -> w.writeCategoriesDoc(w.out, categories())));
         examples.put("category-entry.xml", write(w -> w.writeEntry(w.out, categoryEntry())));
         examples.put("template-entry.xml", write(w -> w.writeEntry(w.out, templateEntry())));
-        examples.put("comment-entry.xml", write(w -> w.writeEntry(w.out, commentEntry())));
-        examples.put("comments-feed.xml", write(w -> w.writeFeed(w.out, commentsFeed())));
         return examples;
     }
 
@@ -171,7 +166,6 @@ public class AtomPubDocExamplesTest {
                 "application/atom+xml;type=entry"));
         workspace.getCollections().add(collection("Categories", BLOG + "/categories",
                 "application/atom+xml;type=entry"));
-        workspace.getCollections().add(collection("Comments", BLOG + "/comments", ""));
         return service;
     }
 
@@ -269,37 +263,6 @@ public class AtomPubDocExamplesTest {
         entry.setExtension("required", "false");
         entry.getLinks().add(link("edit", BLOG + "/template/0e5d8b62"));
         return entry;
-    }
-
-    private static AtomEntry commentEntry() {
-        AtomEntry entry = new AtomEntry();
-        entry.setId(BLOG + "/comment/8f0e2a6c");
-        entry.setTitle("Comment on Hello AtomPub");
-        entry.setPublished(PUBLISHED);
-        entry.setUpdated(PUBLISHED);
-        AtomPerson author = new AtomPerson();
-        author.setName("Pat Reader");
-        author.setEmail("pat@example.org");
-        author.setUri("https://pat.example.org/");
-        entry.getAuthors().add(author);
-        entry.setContent(CollectionSupport.text("text", "Nice post!"));
-        entry.setInReplyToRef(ROLLER + "/myblog/entry/hello_atompub");
-        entry.setInReplyToHref(BLOG + "/entry/4a7d1ed4");
-        entry.setExtension("status", "pending");
-        entry.setExtension("remoteHost", "192.0.2.10");
-        entry.getLinks().add(link("edit", BLOG + "/comment/8f0e2a6c"));
-        entry.getLinks().add(link("related", ROLLER + "/myblog/entry/hello_atompub"));
-        return entry;
-    }
-
-    private static AtomFeed commentsFeed() {
-        AtomFeed feed = new AtomFeed();
-        feed.setId(BLOG + "/comments/0");
-        feed.setTitle("My Weblog comments");
-        feed.setUpdated(UPDATED);
-        feed.getLinks().add(link("next", BLOG + "/comments/20?status=pending"));
-        feed.getEntries().add(commentEntry());
-        return feed;
     }
 
     private static AtomCollection collection(String title, String href, String accept) {
@@ -448,7 +411,7 @@ public class AtomPubDocExamplesTest {
         return attribute ? escaped.replace("\"", "&quot;") : escaped;
     }
 
-    /** Each roller:* or thr:* element, serialized alone with its namespace declared. */
+    /** Each roller:* element, serialized alone with its namespace declared. */
     private static List<byte[]> extensionElements(Node node) {
         List<byte[]> found = new ArrayList<>();
         collectExtensions(node, found);
@@ -461,8 +424,7 @@ public class AtomPubDocExamplesTest {
                 continue;
             }
             Node element = (Node) child;
-            if (AtomConstants.ROLLER_NS.equals(element.namespace)
-                    || AtomConstants.THREAD_NS.equals(element.namespace)) {
+            if (AtomConstants.ROLLER_NS.equals(element.namespace)) {
                 StringBuilder xml = new StringBuilder();
                 String prefix = element.name.substring(0, element.name.indexOf(':'));
                 xml.append('<').append(element.name).append(" xmlns:").append(prefix)

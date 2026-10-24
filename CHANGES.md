@@ -4,14 +4,13 @@
 
 ### Improvements
 
-- **AtomPub can manage templates, categories and comments.** New collections
+- **AtomPub can manage templates and categories.** New collections
   in each weblog's workspace, documented in the user guide:
   - Templates (standard and mobile versions) for weblog administrators,
     when the weblog uses a custom theme.
   - Categories, including an RFC 5023 category document at
     `/{handle}/categories.atomcat`. The entries collection lists its
     categories inline, as before, and also references that document.
-  - Comment moderation: list, change status, delete.
 
 - **New AtomPub Guide** (`docs/roller-atompub-guide.adoc`). It documents
   every AtomPub URI, permission, element and status code, with examples

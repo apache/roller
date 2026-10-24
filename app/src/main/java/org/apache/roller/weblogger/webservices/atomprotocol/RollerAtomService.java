@@ -122,9 +122,9 @@ public class RollerAtomService {
     }
 
     /**
-     * Adds the template, category and comment collections that the user may
-     * use. Templates need weblog ADMIN permission and a custom theme; the
-     * others need POST permission.
+     * Adds the template and category collections that the user may use.
+     * Templates need weblog ADMIN permission and a custom theme; categories
+     * need POST permission.
      */
     private static void addManagementCollections(AtomWorkspace workspace, User user,
             Weblog weblog, String atomURL) {
@@ -136,8 +136,6 @@ public class RollerAtomService {
         if (CollectionSupport.hasPermission(user, weblog, WeblogPermission.POST)) {
             workspace.getCollections().add(collection("Categories", base + "/categories",
                     "application/atom+xml;type=entry"));
-            // An empty accept list means the collection does not accept POST
-            workspace.getCollections().add(collection("Comments", base + "/comments", ""));
         }
     }
 

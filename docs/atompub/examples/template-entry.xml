@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entry xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns:roller="http://roller.apache.org/ns/atompub/1.0" xmlns:thr="http://purl.org/syndication/thread/1.0">
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns:roller="http://roller.apache.org/ns/atompub/1.0">
   <id>https://example.com/roller/roller-services/app/myblog/template/0e5d8b62</id>
   <title>sidebar</title>
   <updated>2026-10-10T12:30:00Z</updated>
