@@ -20,8 +20,8 @@ package org.apache.roller.weblogger.ui.struts2.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;
+import org.apache.struts2.ActionInvocation;
+import org.apache.struts2.interceptor.MethodFilterInterceptor;
 
 /**
  * A struts2 interceptor for doing custom prepare logic.

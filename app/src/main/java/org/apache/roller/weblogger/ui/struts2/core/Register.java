@@ -20,7 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.core;
 
 import java.util.TimeZone;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +40,7 @@ import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
 import org.apache.struts2.convention.annotation.AllowedMethods;
-import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -53,14 +53,13 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * @see org.apache.roller.weblogger.ui.struts2.core.Login
  */
 // TODO: make this work @AllowedMethods({"execute","save","activate"})
-public class Register extends UIAction implements ServletRequestAware {
+public class Register extends UIAction {
     
     private static Log log = LogFactory.getLog(Register.class);
     private static final String DISABLED_RETURN_CODE = "disabled";
     public static final String DEFAULT_ALLOWED_CHARS = "A-Za-z0-9";
 
     // this is a no-no, we should not need this
-    private HttpServletRequest servletRequest = null;
 
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
@@ -161,7 +160,7 @@ public class Register extends UIAction implements ServletRequestAware {
                     getBean().setScreenName(getServletRequest().getUserPrincipal().getName());
                 }
             }
-            
+
         } catch (Exception ex) {
             log.error("Error reading SSO user data", ex);
             addError("error.editing.user", ex.toString());
@@ -352,7 +351,8 @@ public class Register extends UIAction implements ServletRequestAware {
     public void myValidate() {
         
         // if using external auth, we don't want to error on empty password/username from HTML form.
-        boolean usingSSO = authMethod == AuthMethod.LDAP || authMethod == AuthMethod.CMA;
+        boolean usingSSO = authMethod == AuthMethod.LDAP || authMethod == AuthMethod.CMA
+                || authMethod == AuthMethod.OIDC;
         if (usingSSO) {
             // store an unused marker in the Roller DB for the passphrase in
             // the LDAP or CMA cases, as actual passwords are stored externally
@@ -380,9 +380,9 @@ public class Register extends UIAction implements ServletRequestAware {
                 return;
         }
         
-        // User.password does not allow null, so generate one
-        if (getAuthMethod().equals(AuthMethod.OPENID.name()) ||
-                (getAuthMethod().equals(AuthMethod.DB_OPENID.name()) && !StringUtils.isEmpty(getBean().getOpenIdUrl()))) {
+        // User.password does not allow null, so generate one for OIDC users
+        if (getAuthMethod().equals(AuthMethod.OIDC.name()) ||
+                (getAuthMethod().equals(AuthMethod.DB_OIDC.name()) && !StringUtils.isEmpty(getBean().getOpenIdUrl()))) {
             String randomString = RandomStringUtils.randomAlphanumeric(255);
             getBean().setPasswordText(randomString);
             getBean().setPasswordConfirm(randomString);
@@ -449,15 +449,7 @@ public class Register extends UIAction implements ServletRequestAware {
 	}
     
     
-    public HttpServletRequest getServletRequest() {
-        return servletRequest;
-    }
-
-    @Override
-    public void setServletRequest(HttpServletRequest servletRequest) {
-        this.servletRequest = servletRequest;
-    }
-    
+    @StrutsParameter(depth = 1)
     public ProfileBean getBean() {
         return bean;
     }
@@ -478,6 +470,7 @@ public class Register extends UIAction implements ServletRequestAware {
         return activationCode;
     }
 
+    @StrutsParameter
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
     }

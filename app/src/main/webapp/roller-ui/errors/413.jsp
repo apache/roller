@@ -29,7 +29,7 @@
 
         <h2 class="error"><fmt:message key="error.title.413" /></h2>
 
-        <p><c:out value="${requestScope['javax.servlet.error.message']}" /></p>
+        <p><c:out value="${requestScope['jakarta.servlet.error.message']}" /></p>
 
     </body>
 </html>

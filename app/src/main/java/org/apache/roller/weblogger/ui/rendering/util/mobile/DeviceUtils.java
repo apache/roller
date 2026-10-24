@@ -20,7 +20,7 @@
  */
 package org.apache.roller.weblogger.ui.rendering.util.mobile;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.web.context.request.RequestAttributes;
 

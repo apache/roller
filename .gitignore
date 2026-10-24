@@ -28,4 +28,5 @@ docker/postgresql-data
 docker/roller-data
 assembly-release/release.sh
 it-selenium/overlays/
-it-selenium/logs/
+docker/postgresql-16-data
+logs/

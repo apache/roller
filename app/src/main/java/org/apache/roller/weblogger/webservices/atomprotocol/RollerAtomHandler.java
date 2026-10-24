@@ -19,18 +19,14 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.util.StringTokenizer;
 import java.util.Locale;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import net.oauth.OAuthAccessor;
-import net.oauth.OAuthMessage;
-import net.oauth.server.OAuthServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.OAuthManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -113,18 +109,19 @@ public class RollerAtomHandler {
         roller = WebloggerFactory.getWeblogger();
 
         String userName;
-        String authenticationMethod = WebloggerRuntimeConfig
-                .getProperty("webservices.atomPubAuth");
-        if (authenticationMethod != null) {
-            authenticationMethod = authenticationMethod.trim().toLowerCase(Locale.ROOT);
+        String authScheme = WebloggerRuntimeConfig.getProperty("webservices.atomPubAuth");
+        if (authScheme != null) {
+            authScheme = authScheme.trim().toLowerCase(Locale.ROOT);
         }
-        if ("oauth".equals(authenticationMethod)) {
-            userName = authenticationOAUTH(request, response);
-        } else if ("basic".equals(authenticationMethod)) {
+        if ("basic".equals(authScheme)) {
             userName = authenticateBASIC(request);
         } else {
-            log.warn("Unsupported AtomPub authentication method '" + authenticationMethod
-                    + "'; expected 'basic' or 'oauth'. Authentication denied.");
+            // an upgraded site may still have "oauth" or "wsse" stored in the
+            // runtime config; refuse authentication instead of silently
+            // accepting a scheme the administrator did not choose
+            log.error("Unsupported webservices.atomPubAuth value '" + authScheme
+                    + "' (OAuth 1.0a and WSSE support were removed); set it to 'basic'."
+                    + " Refusing AtomPub authentication until it is corrected.");
             userName = null;
         }
 
@@ -181,9 +178,6 @@ public class RollerAtomHandler {
                 return new TemplateCollection(user, atomURL).postEntry(areq, entry);
             case "categories":
                 return new CategoryCollection(user, atomURL).postEntry(areq, entry);
-            case "comments":
-                throw new AtomException("The comments collection does not accept POST",
-                        HttpServletResponse.SC_METHOD_NOT_ALLOWED, null);
             default:
                 EntryCollection ecol = new EntryCollection(user, atomURL);
                 return ecol.postEntry(areq, entry);
@@ -198,7 +192,7 @@ public class RollerAtomHandler {
 
     /** True for the collections that hold only Atom entries, never media. */
     private static boolean isEntryOnlyCollection(String name) {
-        return "templates".equals(name) || "categories".equals(name) || "comments".equals(name);
+        return "templates".equals(name) || "categories".equals(name);
     }
 
 
@@ -245,8 +239,6 @@ public class RollerAtomHandler {
         } else if (pathInfo.length > 1 && pathInfo[1].equals("categories")) {
             return new CategoryCollection(user, atomURL).getCollection(areq);
 
-        } else if (pathInfo.length > 1 && pathInfo[1].equals("comments")) {
-            return new CommentCollection(user, atomURL).getCollection(areq);
         }
         throw new AtomNotFoundException("Cannot find collection specified");
     }
@@ -270,8 +262,6 @@ public class RollerAtomHandler {
                 return new TemplateCollection(user, atomURL).getEntry(areq);
             } else if (pathInfo[1].equals("category")) {
                 return new CategoryCollection(user, atomURL).getEntry(areq);
-            } else if (pathInfo[1].equals("comment")) {
-                return new CommentCollection(user, atomURL).getEntry(areq);
             }
         }
         throw new AtomNotFoundException("Cannot find specified entry/resource");
@@ -298,9 +288,6 @@ public class RollerAtomHandler {
                 return;
             case "category":
                 new CategoryCollection(user, atomURL).putEntry(areq, entry);
-                return;
-            case "comment":
-                new CommentCollection(user, atomURL).putEntry(areq, entry);
                 return;
             default:
                 EntryCollection ecol = new EntryCollection(user, atomURL);
@@ -348,9 +335,6 @@ public class RollerAtomHandler {
             } else if (pathInfo[1].equals("category")) {
                 new CategoryCollection(user, atomURL).deleteEntry(areq);
                 return;
-            } else if (pathInfo[1].equals("comment")) {
-                new CommentCollection(user, atomURL).deleteEntry(areq);
-                return;
             }
         }
         throw new AtomNotFoundException("cannot find specified entry/resource");
@@ -384,7 +368,7 @@ public class RollerAtomHandler {
             return false;
         }
         if (pathInfo.length > 2 && (pathInfo[1].equals("entry") || pathInfo[1].equals("template")
-                || pathInfo[1].equals("category") || pathInfo[1].equals("comment"))) {
+                || pathInfo[1].equals("category"))) {
             return true;
         }
         if (pathInfo.length > 2 && pathInfo[1].equals("resource") && pathInfo[pathInfo.length-1].endsWith(".media-link")) {
@@ -418,8 +402,7 @@ public class RollerAtomHandler {
         if (pathInfo.length > 1 && pathInfo[1].equals("categories")) {
             return true;
         }
-        if (pathInfo.length > 1 && (pathInfo[1].equals("templates")
-                || pathInfo[1].equals("comments"))) {
+        if (pathInfo.length > 1 && pathInfo[1].equals("templates")) {
             return true;
         }
         return false;
@@ -511,27 +494,6 @@ public class RollerAtomHandler {
     }
 
 
-    private String authenticationOAUTH(
-            HttpServletRequest request, HttpServletResponse response) {
-        try {
-            OAuthManager omgr = WebloggerFactory.getWeblogger().getOAuthManager();
-            OAuthMessage requestMessage = OAuthServlet.getMessage(request, null);
-            OAuthAccessor accessor = omgr.getAccessor(requestMessage);
-            omgr.getValidator().validateMessage(requestMessage, accessor);
-            return (String)accessor.consumer.getProperty("userId");
-
-        } catch (Exception ex) {
-            log.debug("ERROR authenticating user", ex);
-            String realm = (request.isSecure())?"https://":"http://";
-            realm += request.getLocalName();
-            try {
-                OAuthServlet.handleException(response, ex, realm, true);
-            } catch (Exception ioe) {
-                log.debug("ERROR writing error response", ioe);
-            }
-        }
-        return null;
-    }
 
 
     public static void oneSecondThrottle() {

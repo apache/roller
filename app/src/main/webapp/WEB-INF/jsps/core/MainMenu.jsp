@@ -61,10 +61,10 @@
     
     <s:iterator var="perms" value="existingPermissions">
 
-        <div class="well yourWeblogBox">
+        <div class="card card-body yourWeblogBox">
 
             <h3 class="mm_weblog_name">
-                <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+                <span class="bi bi-folder2-open" aria-hidden="true"></span>
                 &nbsp;<s:property value="#perms.weblog.name" />
             </h3>
 
@@ -85,8 +85,8 @@
                 <s:url action="entryAdd" namespace="/roller-ui/authoring" var="newEntry">
                     <s:param name="weblog" value="#perms.weblog.handle"/>
                 </s:url>
-                <s:a href="%{newEntry}" cssClass="btn btn-default">
-                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                <s:a href="%{newEntry}" cssClass="btn btn-outline-secondary">
+                    <span class="bi bi-pencil" aria-hidden="true"></span>
                     <s:text name="yourWebsites.newEntry"/>
                 </s:a>
 
@@ -96,10 +96,10 @@
                     <s:url action="entries" namespace="/roller-ui/authoring" var="editEntries">
                         <s:param name="weblog" value="#perms.weblog.handle"/>
                     </s:url>
-                    <s:a href="%{editEntries}" cssClass="btn btn-default">
-                        <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+                    <s:a href="%{editEntries}" cssClass="btn btn-outline-secondary">
+                        <span class="bi bi-list-ul" aria-hidden="true"></span>
                         <s:text name="yourWebsites.editEntries"/>
-                        <span class="badge"><s:property value="#perms.weblog.entryCount"/></span>
+                        <span class="badge text-bg-secondary ms-1"><s:property value="#perms.weblog.entryCount"/></span>
                     </s:a>
 
                 </s:if>
@@ -110,10 +110,10 @@
                     <s:url action="comments" namespace="/roller-ui/authoring" var="manageComments">
                         <s:param name="weblog" value="#perms.weblog.handle"/>
                     </s:url>
-                    <s:a href="%{manageComments}" cssClass="btn btn-default">
-                        <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                    <s:a href="%{manageComments}" cssClass="btn btn-outline-secondary">
+                        <span class="bi bi-chat" aria-hidden="true"></span>
                         <s:text name="yourWebsites.manageComments"/>
-                        <span class="badge"><s:property value="#perms.weblog.commentCount"/></span>
+                        <span class="badge text-bg-secondary ms-1"><s:property value="#perms.weblog.commentCount"/></span>
                     </s:a>
 
                 </s:if>
@@ -134,8 +134,8 @@
                                 <s:param name="weblog" value="#perms.weblog.handle" />
                             </s:url>
                         </s:else>
-                        <a href='<s:property value="weblogTheme" />' class="btn btn-default">
-                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                        <a href='<s:property value="weblogTheme" />' class="btn btn-outline-secondary">
+                            <span class="bi bi-eye" aria-hidden="true"></span>
                             <s:text name="yourWebsites.theme" />
                         </a>
                     </s:if>
@@ -144,8 +144,8 @@
                     <s:url action="weblogConfig" namespace="/roller-ui/authoring" var="manageWeblog">
                         <s:param name="weblog" value="#perms.weblog.handle"/>
                     </s:url>
-                    <a href='<s:property value="manageWeblog" />' class="btn btn-default">
-                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                    <a href='<s:property value="manageWeblog" />' class="btn btn-outline-secondary">
+                        <span class="bi bi-gear" aria-hidden="true"></span>
                         <s:text name="yourWebsites.manage"/>
                     </a>
 
@@ -154,8 +154,8 @@
                 <%-- don't allow last admin to resign from blog --%>
                 <s:if test='!(#perms.hasAction("admin") && #perms.weblog.adminUserCount == 1)'>
 
-                    <button type="button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    <button type="button" class="btn btn-outline-secondary">
+                        <span class="bi bi-trash" aria-hidden="true"></span>
                         <s:url action="memberResign" namespace="/roller-ui/authoring" var="resignWeblog">
                             <s:param name="weblog" value="#perms.weblog.handle"/>
                         </s:url>

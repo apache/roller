@@ -49,8 +49,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
     <s:if test="folder.name == 'default'">
 
-        <div class="form-group ">
-            <label class="col-sm-3 control-label" for="bookmarks_folder_name">
+        <div class="row mb-3">
+            <label class="col-sm-3 col-form-label" for="bookmarks_folder_name">
                 <s:text name="bookmarksForm.blogrollName"/>
             </label>
             <div class="col-sm-9 controls">
@@ -67,8 +67,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
         <%-- for other blogrolls, show textarea so user can rename it --%>
         <%-- don't use Struts tags here so button can be on same line as text input --%>
 
-        <div class="form-group ">
-            <label class="col-sm-3 control-label" for="bookmarks_folder_name">
+        <div class="row mb-3">
+            <label class="col-sm-3 col-form-label" for="bookmarks_folder_name">
                 <s:text name="bookmarksForm.blogrollName"/>
             </label>
             <div class="col-sm-9 controls">
@@ -82,7 +82,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                             onsubmit="return false;">
                         <s:text name="generic.rename"/>
                     </button>
-                    <button type="button" id="rename_cancel" class="btn btn-default"
+                    <button type="button" id="rename_cancel" class="btn btn-outline-secondary"
                             onclick="cancelRenameFolder(); return false;"
                             onsubmit="return false;">
                         <s:text name="generic.cancel"/>
@@ -142,7 +142,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                                 <str:truncateNicely lower="70" upper="90">
                                     <s:property value="#bookmark.url"/>
                                 </str:truncateNicely>
-                                <span class="glyphicon glyphicon-play-circle"></span>
+                                <span class="bi bi-play-circle"></span>
                             </a>
                         </s:if>
 
@@ -157,7 +157,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                            data-bookmark-feed-url="<s:property value="#bookmark.feedUrl"/>"
                            data-bookmark-description="<s:property value="#bookmark.description"/>"
                            data-bookmark-image="<s:property value="#bookmark.image"/>">
-                            <span class="glyphicon glyphicon-edit"></span>
+                            <span class="bi bi-pencil-square"></span>
                         </a>
 
                     </td>
@@ -191,7 +191,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                   action="bookmarks!move" onclick="onMoveToFolder();return false;"/>
         <%-- Move-to combo-box --%>
         <s:select name="targetFolderId" theme="simple"
-                  cssClass="form-control" cssStyle="float:left; width:30%; margin-right: 2em"
+                  cssClass="form-select" cssStyle="float:left; width:auto; margin-right: 2em"
                   list="allFolders" listKey="id" listValue="name"/>
     </s:if>
 
@@ -336,7 +336,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     }
 
     function confirmDeleteSelected() {
-        $('#delete-links-modal').modal({show: true});
+        $('#delete-links-modal').modal('show');
     }
 
     function deleteSelected() {
@@ -346,7 +346,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
     function confirmDeleteFolder() {
         $('#boomarks_delete_folder_folderId').val($('#bookmarks_folderId:first').val());
         $('#deleteBlogrollName').text($('#deleteBlogrollName').data('folder-name'));
-        $('#delete-blogroll-modal').modal({show: true});
+        $('#delete-blogroll-modal').modal('show');
     }
 
     function onMoveToFolder() {
@@ -380,7 +380,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         // disable save button until valid name is entered
 
-        $('#addedit-bookmarkfolder-modal').modal({show: true});
+        $('#addedit-bookmarkfolder-modal').modal('show');
 
         onBlogrollFormChanged();
     }
@@ -424,7 +424,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 <button id="save_blogroll" onclick="submitEditedBlogroll()" class="btn btn-primary">
                     <s:text name="generic.save"/>
                 </button>
-                <button type="button" class="btn" data-dismiss="modal">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                     <s:text name="generic.cancel"/>
                 </button>
             </div>
@@ -532,11 +532,11 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn" value="%{getText('generic.yes')}" onclick="deleteSelected()">
+                    <button type="button" class="btn btn-outline-secondary" value="%{getText('generic.yes')}" onclick="deleteSelected()">
                         <s:text name="generic.yes"/>
                     </button>
                     &nbsp;
-                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">
+                    <button type="button" class="btn btn-outline-secondary btn-primary" data-bs-dismiss="modal">
                         <s:text name="generic.no"/>
                     </button>
                 </div>
@@ -577,8 +577,8 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                 </div>
 
                 <div class="modal-footer">
-                    <s:submit cssClass="btn" value="%{getText('generic.yes')}"/>&nbsp;
-                    <button type="button" class="btn btn-default btn-primary" data-dismiss="modal">
+                    <s:submit theme="simple" cssClass="btn btn-outline-secondary" value="%{getText('generic.yes')}"/>&nbsp;
+                    <button type="button" class="btn btn-outline-secondary btn-primary" data-bs-dismiss="modal">
                         <s:text name="generic.no"/>
                     </button>
                 </div>
@@ -670,7 +670,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
                     <button type="button" id="save_bookmark" onclick="saveBookmark()" class="btn btn-primary">
                         <s:text name="generic.save"/>
                     </button>
-                    <button type="button" class="btn" data-dismiss="modal">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <s:text name="generic.cancel"/>
                     </button>
                 </div>
@@ -710,7 +710,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         $('#subtitle_folder_name:first').text(originalName);
 
-        $('#addedit-bookmark-modal').modal({show: true});
+        $('#addedit-bookmark-modal').modal('show');
     }
 
 
@@ -746,7 +746,7 @@ We used to call them Bookmarks and Folders, now we call them Blogroll links and 
 
         $('#subtitle_folder_name:first').text(originalName);
 
-        $('#addedit-bookmark-modal').modal({show: true});
+        $('#addedit-bookmark-modal').modal('show');
     }
 
 

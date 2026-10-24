@@ -18,11 +18,11 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
-import com.opensymphony.xwork2.DefaultTextProvider;
-import com.opensymphony.xwork2.TextProvider;
-import com.opensymphony.xwork2.TextProviderFactory;
-import com.opensymphony.xwork2.inject.Container;
-import com.opensymphony.xwork2.inject.Scope;
+import org.apache.struts2.text.DefaultTextProvider;
+import org.apache.struts2.text.TextProvider;
+import org.apache.struts2.text.TextProviderFactory;
+import org.apache.struts2.inject.Container;
+import org.apache.struts2.inject.Scope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
@@ -446,6 +446,10 @@ public class AuthoringActionScopingTest {
 
         @Override
         public void removeScopeStrategy() {
+        }
+
+        @Override
+        public void destroy() {
         }
     };
 }

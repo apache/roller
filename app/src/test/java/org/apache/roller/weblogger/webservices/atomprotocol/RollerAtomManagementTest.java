@@ -20,8 +20,8 @@ package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.PropertiesManager;
@@ -35,8 +35,6 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment;
-import org.apache.roller.weblogger.pojos.WeblogEntryComment.ApprovalStatus;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
@@ -54,8 +52,7 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
 /**
- * Integration tests for the AtomPub template, category and comment
- * collections against the in-memory test database.
+ * Integration tests for the AtomPub template and category collections against the in-memory test database.
  */
 public class RollerAtomManagementTest {
 
@@ -377,66 +374,13 @@ public class RollerAtomManagementTest {
                 .getCollection(request("/" + OTHER_HANDLE + "/categories")));
     }
 
-    // ------------------------------------------------------------- comments
-
-    @Test
-    public void commentModeration() throws Exception {
-        WeblogEntry entry = TestUtils.setupWeblogEntry("commented", managedWeblog(),
-                TestUtils.getManagedUser(owner));
-        WeblogEntryComment pending = TestUtils.setupComment("pending one", entry);
-        pending.setStatus(ApprovalStatus.PENDING);
-        entryManager().saveComment(pending);
-        WeblogEntryComment approved = TestUtils.setupComment("approved one", entry);
-        TestUtils.endSession(true);
-
-        // list only pending comments
-        AtomFeed feed = comments(author).getCollection(
-                request("/" + HANDLE + "/comments", "status", "pending"));
-        List<String> statuses = feed.getEntries().stream()
-                .map(e -> e.getExtension("status")).collect(Collectors.toList());
-        assertEquals(List.of("pending"), statuses);
-        AtomEntry listed = feed.getEntries().get(0);
-        assertEquals(entry.getPermalink(), listed.getInReplyToRef());
-        assertEquals("test", listed.getAuthors().get(0).getName());
-
-        // approve it
-        AtomEntry change = new AtomEntry();
-        change.setExtension("status", "approved");
-        comments(author).putEntry(request("/" + HANDLE + "/comment/" + pending.getId()), change);
-        TestUtils.endSession(true);
-        assertEquals(ApprovalStatus.APPROVED, entryManager().getComment(pending.getId()).getStatus());
-
-        // an unknown status is refused
-        AtomEntry bad = new AtomEntry();
-        bad.setExtension("status", "maybe");
-        AtomException invalid = assertThrows(AtomException.class, () -> comments(author)
-                .putEntry(request("/" + HANDLE + "/comment/" + pending.getId()), bad));
-        assertEquals(HttpServletResponse.SC_BAD_REQUEST, invalid.getStatus());
-
-        // delete the other one
-        comments(author).deleteEntry(request("/" + HANDLE + "/comment/" + approved.getId()));
-        TestUtils.endSession(true);
-        assertNull(entryManager().getComment(approved.getId()));
-    }
-
-    @Test
-    public void commentsOfAnotherWeblogAreNotFound() throws Exception {
-        WeblogEntry entry = TestUtils.setupWeblogEntry("elsewhere", managedOther(),
-                TestUtils.getManagedUser(owner));
-        WeblogEntryComment comment = TestUtils.setupComment("other", entry);
-        TestUtils.endSession(true);
-
-        assertThrows(AtomNotFoundException.class, () -> comments(author)
-                .getEntry(request("/" + HANDLE + "/comment/" + comment.getId())));
-    }
-
     // ------------------------------------------------------ service document
 
     @Test
     public void serviceDocumentListsTheCollectionsTheUserMayUse() throws Exception {
         List<String> authorHrefs = hrefs(author);
         assertTrue(authorHrefs.contains(ATOM_URL + "/" + HANDLE + "/categories"));
-        assertTrue(authorHrefs.contains(ATOM_URL + "/" + HANDLE + "/comments"));
+        assertFalse(authorHrefs.contains(ATOM_URL + "/" + HANDLE + "/comments"));
         assertFalse(authorHrefs.contains(ATOM_URL + "/" + HANDLE + "/templates"));
 
         // the owner sees templates only once the weblog uses a custom theme
@@ -477,10 +421,6 @@ public class RollerAtomManagementTest {
 
     private CategoryCollection categories(User user) throws Exception {
         return new CategoryCollection(TestUtils.getManagedUser(user), ATOM_URL);
-    }
-
-    private CommentCollection comments(User user) throws Exception {
-        return new CommentCollection(TestUtils.getManagedUser(user), ATOM_URL);
     }
 
     private Weblog managedWeblog() throws Exception {

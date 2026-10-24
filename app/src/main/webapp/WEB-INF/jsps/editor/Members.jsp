@@ -80,7 +80,7 @@ function save() {
             </s:else>
             
                 <td class="rollertable">
-                    <span class="glyphicon glyphicon-user"></span>
+                    <span class="bi bi-person"></span>
 	                <s:property value="#perm.user.userName" />
                 </td>               
                 <td class="rollertable">
@@ -108,7 +108,7 @@ function save() {
     <br />
      
     <div class="control">
-       <s:submit value="%{getText('generic.save')}" cssClass="btn" />
+       <s:submit theme="simple" value="%{getText('generic.save')}" cssClass="btn btn-outline-secondary" />
     </div>
     
 </s:form>

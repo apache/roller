@@ -20,7 +20,7 @@
 <h3><s:text name="mainPage.actions" /></h3>
 <hr size="1" noshade="noshade" />
 
-<span class="glyphicon glyphicon-plus"></span>
+<span class="bi bi-plus-lg"></span>
 <s:url action="invite" var="inviteUrl">
    <s:param name="weblog" value="%{actionWeblog.handle}" />
 </s:url>

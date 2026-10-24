@@ -23,11 +23,11 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.ActionInvocation;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.planet.tasks.RefreshRollerPlanetTask;
@@ -95,7 +95,7 @@ class PlanetAvailabilityTest {
         when(get.getMethod()).thenReturn("GET");
         Map<String, Object> context = new HashMap<>();
         context.put(StrutsStatics.HTTP_REQUEST, get);
-        ActionContext.setContext(new ActionContext(context));
+        ActionContext.of(context).bind();
         try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class)) {
             assertEquals(UIAction.DENIED, new PlanetConfig().save());
             assertEquals(UIAction.DENIED, new PlanetGroups().delete());
@@ -104,7 +104,7 @@ class PlanetAvailabilityTest {
             assertEquals(UIAction.DENIED, new PlanetGroupSubs().deleteSubscription());
             factory.verifyNoInteractions();
         } finally {
-            ActionContext.setContext(null);
+            ActionContext.clear();
         }
     }
 
@@ -112,17 +112,17 @@ class PlanetAvailabilityTest {
     void onlyAPostCountsAsAPostRequest() {
         PlanetUIAction action = new PlanetGroups();
         try {
-            ActionContext.setContext(new ActionContext(new HashMap<>()));
+            ActionContext.of(new HashMap<>()).bind();
             assertFalse(action.isPostRequest());
 
             HttpServletRequest post = mock(HttpServletRequest.class);
             when(post.getMethod()).thenReturn("post");
             Map<String, Object> context = new HashMap<>();
             context.put(StrutsStatics.HTTP_REQUEST, post);
-            ActionContext.setContext(new ActionContext(context));
+            ActionContext.of(context).bind();
             assertTrue(action.isPostRequest());
         } finally {
-            ActionContext.setContext(null);
+            ActionContext.clear();
         }
     }
 

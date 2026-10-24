@@ -30,8 +30,8 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Instant;
@@ -158,13 +158,16 @@ class RollerAtomHandlerTest {
             factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
             RollerAtomHandler handler = new RollerAtomHandler(request, response);
 
-            for (String collection : new String[] {"templates", "categories", "comments"}) {
+            for (String collection : new String[] {"templates", "categories"}) {
                 assertTrue(handler.isCollectionURI(atomRequest("/blog/" + collection)), collection);
             }
-            for (String member : new String[] {"template", "category", "comment"}) {
+            for (String member : new String[] {"template", "category"}) {
                 assertTrue(RollerAtomHandler.isEntryPath("/blog/" + member + "/abc"), member);
                 assertFalse(RollerAtomHandler.isEntryPath("/blog/" + member), member);
             }
+            // comments are not managed over AtomPub
+            assertFalse(handler.isCollectionURI(atomRequest("/blog/comments")));
+            assertFalse(RollerAtomHandler.isEntryPath("/blog/comment/abc"));
             assertTrue(handler.isCategoriesDocURI(atomRequest("/blog/categories.atomcat")));
             assertFalse(handler.isCategoriesDocURI(atomRequest("/blog/categories")));
             assertFalse(handler.isCollectionURI(atomRequest("/blog/categories.atomcat")));
@@ -172,20 +175,17 @@ class RollerAtomHandlerTest {
     }
 
     @Test
-    void entryOnlyCollectionsRefuseMediaAndCommentsRefusePost() {
+    void entryOnlyCollectionsRefuseMedia() {
         try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class);
              MockedStatic<WebloggerRuntimeConfig> config = mockStatic(WebloggerRuntimeConfig.class)) {
             factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
             RollerAtomHandler handler = new RollerAtomHandler(request, response);
 
-            for (String collection : new String[] {"templates", "categories", "comments"}) {
+            for (String collection : new String[] {"templates", "categories"}) {
                 AtomException refused = assertThrows(AtomException.class, () ->
                         handler.postMedia(atomRequest("/blog/" + collection), new AtomEntry()));
                 assertEquals(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, refused.getStatus());
             }
-            AtomException post = assertThrows(AtomException.class, () ->
-                    handler.postEntry(atomRequest("/blog/comments"), new AtomEntry()));
-            assertEquals(HttpServletResponse.SC_METHOD_NOT_ALLOWED, post.getStatus());
         }
     }
 

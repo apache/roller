@@ -42,24 +42,29 @@
                 label="%{getText('mediaFileAdd.includeGallery')}"
                 tooltip="%{getText('mediaFileEdit.includeGalleryHelp')}"/>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4 class="panel-title">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">
                 <s:text name="mediaFileAdd.fileLocation"/>
             </h4>
         </div>
-        <div class="panel-body">
-            <s:file id="fileControl0" name="uploadedFiles" size="30" />
-            <s:file id="fileControl1" name="uploadedFiles" size="30" />
-            <s:file id="fileControl2" name="uploadedFiles" size="30" />
-            <s:file id="fileControl3" name="uploadedFiles" size="30" />
-            <s:file id="fileControl4" name="uploadedFiles" size="30" />
+        <div class="card-body">
+            <s:file id="fileControl0" name="uploadedFiles" size="30" cssClass="form-control mb-2" />
+            <s:file id="fileControl1" name="uploadedFiles" size="30" cssClass="form-control mb-2" />
+            <s:file id="fileControl2" name="uploadedFiles" size="30" cssClass="form-control mb-2" />
+            <s:file id="fileControl3" name="uploadedFiles" size="30" cssClass="form-control mb-2" />
+            <s:file id="fileControl4" name="uploadedFiles" size="30" cssClass="form-control mb-2" />
         </div>
     </div>
 
-    <s:submit id="uploadButton" cssClass="btn btn-default"
-              value="%{getText('mediaFileAdd.upload')}" action="mediaFileAdd!save"/>
-    <s:submit cssClass="btn" value="%{getText('generic.cancel')}" action="mediaFileAdd!cancel"/>
+    <div class="row mb-3">
+        <div class="col-sm-9 offset-sm-3">
+            <s:submit id="uploadButton" cssClass="btn btn-primary" theme="simple"
+                      value="%{getText('mediaFileAdd.upload')}" action="mediaFileAdd!save"/>
+            <s:submit cssClass="btn btn-outline-secondary" theme="simple"
+                      value="%{getText('generic.cancel')}" action="mediaFileAdd!cancel"/>
+        </div>
+    </div>
 
 </s:form>
 

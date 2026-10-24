@@ -6,22 +6,9 @@
   <title>$model.weblogEntry.title : $model.weblog.name</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="$model.weblog.stylesheet">
-  <link rel="stylesheet" href="$url.absoluteSite/roller-ui/styles/jquery.mobile-theme/default.min.css" />
-  <link rel="stylesheet" href="$url.absoluteSite/roller-ui/styles/jquery.mobile-theme/jquery.mobile.icons.min.css" />
-  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
+  <link rel="stylesheet" href="$model.weblog.stylesheet?deviceType=mobile">
   #showMetaDescription()
   #showAnalyticsTrackingCode($model.weblog)
-
-  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
-
-  <script>
-    $(document).bind("mobileinit", function(){
-      $.mobile.ajaxEnabled = false;
-    });
-  </script>
-
-  <script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
 </head>
 <!-- permalink-mobile -->
 <body>
@@ -60,7 +47,7 @@
         <li data-theme="a">
           #showWeblogEntryCommentForm($model.weblogEntry)
         </li>
-      <ul>
+      </ul>
     
     </div>
 

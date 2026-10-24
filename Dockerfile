@@ -21,24 +21,16 @@
 
 # STAGE 1 - BUILD ------------------------------------------------
 
-FROM maven:3-openjdk-17-slim as builder
+FROM maven:3-eclipse-temurin-17 AS builder
 
-COPY ./docker /project/docker
-
-# Build Apache Roller
-
-WORKDIR /tmp
-RUN apt-get update && apt-get install -y git
-RUN git clone https://github.com/apache/roller.git
-WORKDIR /tmp/roller
-# change to branch/tag you prefer
-RUN git checkout tags/roller-6.1.0; \
-mvn -Duser.home=/builder/home -DskipTests=true -B clean install
+COPY . /project
+WORKDIR /project
+RUN mvn -Duser.home=/builder/home -DskipTests=true -B clean install
 
 
 # STAGE 2 - PACKAGE ------------------------------------------------
 
-FROM tomcat:9-jdk17-openjdk-slim
+FROM tomcat:11.0-jdk17-temurin
 
 # Remove existing Tomcat webapps
 
@@ -63,21 +55,23 @@ ENV DATABASE_HOST ${DATABASE_HOST}
 # install Roller WAR as ROOT.war, create data dirs
 
 WORKDIR /usr/local/roller
-COPY --from=builder /tmp/roller/app/target/roller.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=builder /project/app/target/roller.war /usr/local/tomcat/webapps/ROOT.war
 RUN mkdir -p data/mediafiles data/searchindex
 
 # download PostgreSQL and MySQL drivers plus Mail and Activation JARs
 
 WORKDIR /usr/local/tomcat/lib
 RUN apt-get update && apt-get install -y wget
-RUN wget -O postgresql.jar https://jdbc.postgresql.org/download/postgresql-42.3.1.jar
-RUN wget https://repo1.maven.org/maven2/javax/mail/mail/1.4.7/mail-1.4.7.jar
-#RUN wget https://repo1.maven.org/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar
+RUN wget -O postgresql.jar https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.13/postgresql-42.7.13.jar
+RUN wget https://repo1.maven.org/maven2/org/eclipse/angus/angus-mail/2.0.5/angus-mail-2.0.5.jar
+RUN wget https://repo1.maven.org/maven2/jakarta/mail/jakarta.mail-api/2.1.5/jakarta.mail-api-2.1.5.jar
+RUN wget https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api/2.1.4/jakarta.activation-api-2.1.4.jar
+RUN wget https://repo1.maven.org/maven2/org/eclipse/angus/angus-activation/2.0.3/angus-activation-2.0.3.jar
 
 # Add Roller entry-point and go!
 
-COPY --from=builder /project/docker/entry-point.sh /usr/local/tomcat/bin
-COPY --from=builder /project/docker/wait-for-it.sh /usr/local/tomcat/bin
+COPY docker/entry-point.sh /usr/local/tomcat/bin
+COPY docker/wait-for-it.sh /usr/local/tomcat/bin
 RUN chgrp -R 0 /usr/local/tomcat
 RUN chmod -R g+rw /usr/local/tomcat
 
