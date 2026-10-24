@@ -150,7 +150,7 @@
     </div>
 
 
-    <div class="accordion" id="accordion">
+    <div class="accordion my-4" id="accordion">
 
             <%-- Weblog editor --%>
 
@@ -160,17 +160,16 @@
 
         <s:if test="!entryPlugins.isEmpty">
 
-            <div class="card" id="panel-plugins">
-                <div class="card-header">
-
-                    <h4 class="card-title">
-                        <a class="collapsed text-body text-decoration-none" data-bs-toggle="collapse" data-bs-target="#collapsePlugins" href="#">
-                            <s:text name="weblogEdit.pluginsToApply"/> </a>
-                    </h4>
-
-                </div>
-                <div id="collapsePlugins" class="collapse">
-                    <div class="card-body">
+            <div class="accordion-item" id="panel-plugins">
+                <h2 class="accordion-header">
+                    <button type="button" class="accordion-button collapsed"
+                            data-bs-toggle="collapse" data-bs-target="#collapsePlugins"
+                            aria-expanded="false" aria-controls="collapsePlugins">
+                        <s:text name="weblogEdit.pluginsToApply"/>
+                    </button>
+                </h2>
+                <div id="collapsePlugins" class="accordion-collapse collapse">
+                    <div class="accordion-body">
 
                         <s:checkboxlist name="bean.plugins" list="entryPlugins" listKey="name" listValue="name"/>
 
@@ -182,18 +181,16 @@
 
             <%-- Advanced settings --%>
 
-        <div class="card" id="panel-settings">
-            <div class="card-header">
-
-                <h4 class="card-title">
-                    <a class="collapsed text-body text-decoration-none" data-bs-toggle="collapse" data-bs-parent="#collapseAdvanced"
-                       href="#collapseAdvanced">
-                        <s:text name="weblogEdit.miscSettings"/> </a>
-                </h4>
-
-            </div>
-            <div id="collapseAdvanced" class="collapse">
-                <div class="card-body">
+        <div class="accordion-item" id="panel-settings">
+            <h2 class="accordion-header">
+                <button type="button" class="accordion-button collapsed"
+                        data-bs-toggle="collapse" data-bs-target="#collapseAdvanced"
+                        aria-expanded="false" aria-controls="collapseAdvanced">
+                    <s:text name="weblogEdit.miscSettings"/>
+                </button>
+            </h2>
+            <div id="collapseAdvanced" class="accordion-collapse collapse">
+                <div class="accordion-body">
 
                     <div class="row mb-3">
 
@@ -213,9 +210,10 @@
                             <div class="input-group w-auto d-inline-flex">
                                 <s:textfield name="bean.dateString" readonly="true" cssStyle="width:15em"
                                              theme="simple" cssClass="date-picker form-control"/>
-                                <label for="bean.dateString" class="input-group-text btn" style="width:3em">
-                                    <span class="bi bi-calendar"></span>
-                                </label>
+                                <button type="button" class="btn btn-outline-secondary date-picker-show"
+                                        title="<s:text name='generic.chooseDate'/>" aria-label="<s:text name='generic.chooseDate'/>">
+                                    <span class="bi bi-calendar" aria-hidden="true"></span>
+                                </button>
                             </div>
 
                             <s:property value="actionWeblog.timeZone"/>
@@ -257,43 +255,45 @@
     <%-- ================================================================== --%>
     <%-- The button box --%>
 
-    <%-- save draft --%>
-    <s:submit theme="simple" cssClass="btn btn-warning"
-              value="%{getText('weblogEdit.save')}"
-              action="%{#mainAction}!saveDraft"/>
+    <div class="d-flex flex-wrap gap-2 mt-4">
 
-    <s:if test="actionName == 'entryEdit'">
+        <%-- save draft --%>
+        <s:submit theme="simple" cssClass="btn btn-warning"
+                  value="%{getText('weblogEdit.save')}"
+                  action="%{#mainAction}!saveDraft"/>
 
-        <%-- preview mode --%>
-        <input class="btn btn-outline-secondary" type="button" name="fullPreview"
-               value="<s:text name='weblogEdit.fullPreviewMode' />"
-               onclick="fullPreviewMode()"/>
-    </s:if>
-    <s:if test="userAnAuthor">
+        <s:if test="actionName == 'entryEdit'">
 
-        <%-- publish --%>
-        <s:submit theme="simple" cssClass="btn btn-success"
-                  value="%{getText('weblogEdit.post')}"
-                  action="%{#mainAction}!publish"/>
-    </s:if>
-    <s:else>
+            <%-- preview mode --%>
+            <input class="btn btn-outline-secondary" type="button" name="fullPreview"
+                   value="<s:text name='weblogEdit.fullPreviewMode' />"
+                   onclick="fullPreviewMode()"/>
+        </s:if>
+        <s:if test="userAnAuthor">
 
-        <%-- submit for review --%>
-        <s:submit theme="simple" cssClass="btn btn-info"
-                  value="%{getText('weblogEdit.submitForReview')}"
-                  action="%{#mainAction}!publish"/>
-    </s:else>
+            <%-- publish --%>
+            <s:submit theme="simple" cssClass="btn btn-success"
+                      value="%{getText('weblogEdit.post')}"
+                      action="%{#mainAction}!publish"/>
+        </s:if>
+        <s:else>
 
-    <s:if test="actionName == 'entryEdit'">
+            <%-- submit for review --%>
+            <s:submit theme="simple" cssClass="btn btn-info"
+                      value="%{getText('weblogEdit.submitForReview')}"
+                      action="%{#mainAction}!publish"/>
+        </s:else>
 
-        <%-- delete --%>
-        <span style="float:right">
-            <input class="btn btn-danger entry-delete-button" type="button"
+        <s:if test="actionName == 'entryEdit'">
+
+            <%-- delete --%>
+            <input class="btn btn-danger entry-delete-button ms-auto" type="button"
                    value="<s:text name='weblogEdit.deleteEntry'/>"
                    data-post-id="<s:property value="entry.id" />"
                    data-post-title="<s:property value="entry.title"/>">
-        </span>
-    </s:if>
+        </s:if>
+
+    </div>
 
 </s:form>
 
@@ -362,10 +362,6 @@
 <%-- ========================================================================================== --%>
 
 <script>
-
-    $(document).ready(function () {
-        $("#entry_bean_dateString").datepicker();
-    });
 
     function fullPreviewMode() {
         window.open('<s:property value="previewURL" />', 'roller-preview');

@@ -505,6 +505,7 @@ public class MediaFileTest  {
             filter1.setName("mytest.jpg");
             searchResults = mfMgr.searchMediaFiles(testWeblog, filter1);
             assertTrue(searchResults.isEmpty());
+            assertEquals(0, mfMgr.getMediaFileCount(testWeblog, filter1));
 
             MediaFileFilter filter2 = new MediaFileFilter();
             filter2.setName("test_home.jpg");
@@ -542,6 +543,7 @@ public class MediaFileTest  {
             searchResults = mfMgr.searchMediaFiles(testWeblog, filter4);
             assertFalse(searchResults.isEmpty());
             assertEquals(1, searchResults.size());
+            assertEquals(1, mfMgr.getMediaFileCount(testWeblog, filter4));
             assertEquals("test_work.jpg", searchResults.get(0).getName());
 
             // search by size
@@ -576,6 +578,7 @@ public class MediaFileTest  {
             searchResults = mfMgr.searchMediaFiles(testWeblog, filter9);
             assertFalse(searchResults.isEmpty());
             assertEquals(2, searchResults.size());
+            assertEquals(2, mfMgr.getMediaFileCount(testWeblog, filter9));
 
             MediaFileFilter filter10 = new MediaFileFilter();
             filter10.setSize(3000);
@@ -598,6 +601,7 @@ public class MediaFileTest  {
             searchResults = mfMgr.searchMediaFiles(testWeblog, filter12);
             assertFalse(searchResults.isEmpty());
             assertEquals(2, searchResults.size());
+            assertEquals(2, mfMgr.getMediaFileCount(testWeblog, filter12));
 
         } finally {
             TestUtils.endSession(true);
@@ -668,6 +672,8 @@ public class MediaFileTest  {
             assertFalse(searchResults2.isEmpty());
             assertEquals(3, searchResults2.size());
             assertEquals("test_file13.jpg", searchResults2.get(0).getName());
+            // the count ignores start index and length: it sizes the pager across all pages
+            assertEquals(15, mfMgr.getMediaFileCount(testWeblog, filter2));
 
             MediaFileFilter filter3 = new MediaFileFilter();
             filter3.setSize(1000);

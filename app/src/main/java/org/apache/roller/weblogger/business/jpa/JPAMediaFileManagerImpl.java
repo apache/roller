@@ -583,10 +583,64 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             MediaFileFilter filter) throws WebloggerException {
 
         List<Object> params = new ArrayList<>();
-        int size = 0;
-        String queryString = "SELECT m FROM MediaFile m WHERE ";
-        StringBuilder whereClause = new StringBuilder();
+        String queryString = "SELECT m " + mediaFilesFromWhere(weblog, filter, params);
         StringBuilder orderBy = new StringBuilder();
+
+        if (filter.getOrder() != null) {
+            switch (filter.getOrder()) {
+            case NAME:
+                orderBy.append(" order by m.name");
+                break;
+            case DATE_UPLOADED:
+                orderBy.append(" order by m.dateUploaded");
+                break;
+            case TYPE:
+                orderBy.append(" order by m.contentType");
+                break;
+            default:
+            }
+        } else {
+            orderBy.append(" order by m.name");
+        }
+
+        TypedQuery<MediaFile> query = strategy.getDynamicQuery(queryString
+                + orderBy.toString(), MediaFile.class);
+        for (int i = 0; i < params.size(); i++) {
+            query.setParameter(i + 1, params.get(i));
+        }
+
+        if (filter.getStartIndex() >= 0) {
+            query.setFirstResult(filter.getStartIndex());
+            query.setMaxResults(filter.getLength());
+        }
+        return query.getResultList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getMediaFileCount(Weblog weblog,
+            MediaFileFilter filter) throws WebloggerException {
+
+        List<Object> params = new ArrayList<>();
+        TypedQuery<Long> query = strategy.getDynamicQuery(
+                "SELECT COUNT(m) " + mediaFilesFromWhere(weblog, filter, params), Long.class);
+        for (int i = 0; i < params.size(); i++) {
+            query.setParameter(i + 1, params.get(i));
+        }
+        return query.getSingleResult();
+    }
+
+    /**
+     * Build the FROM and WHERE clauses shared by searchMediaFiles() and
+     * getMediaFileCount(), adding positional parameters to params.
+     */
+    private String mediaFilesFromWhere(Weblog weblog, MediaFileFilter filter,
+            List<Object> params) {
+
+        int size = params.size();
+        StringBuilder whereClause = new StringBuilder();
 
         params.add(size++, weblog);
         whereClause.append("m.directory.weblog = ?").append(size);
@@ -659,34 +713,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             }
         }
 
-        if (filter.getOrder() != null) {
-            switch (filter.getOrder()) {
-            case NAME:
-                orderBy.append(" order by m.name");
-                break;
-            case DATE_UPLOADED:
-                orderBy.append(" order by m.dateUploaded");
-                break;
-            case TYPE:
-                orderBy.append(" order by m.contentType");
-                break;
-            default:
-            }
-        } else {
-            orderBy.append(" order by m.name");
-        }
-
-        TypedQuery<MediaFile> query = strategy.getDynamicQuery(queryString
-                + whereClause.toString() + orderBy.toString(), MediaFile.class);
-        for (int i = 0; i < params.size(); i++) {
-            query.setParameter(i + 1, params.get(i));
-        }
-
-        if (filter.getStartIndex() >= 0) {
-            query.setFirstResult(filter.getStartIndex());
-            query.setMaxResults(filter.getLength());
-        }
-        return query.getResultList();
+        return "FROM MediaFile m WHERE " + whereClause;
     }
 
     /**

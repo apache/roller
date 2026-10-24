@@ -64,6 +64,8 @@
                     <s:hidden name="salt"/>
                     <s:hidden name="weblog"/>
                     <input type="hidden" name="mediaFileId" value=""/>
+                    <%-- set by the result pager buttons; a new search starts at page 0 --%>
+                    <input type="hidden" id="beanPageNum" name="bean.pageNum" value="0"/>
 
                     <s:textfield id="beanName" name="bean.name" size="20" maxlength="255"
                                  label="%{getText('generic.name')}"/>
@@ -119,6 +121,12 @@
             $("#newDirectoryButton").attr("disabled", false);
         }
     }
+
+    // result pager buttons (MediaFilePager.jsp) resubmit this search for their page
+    $(document).on("click", ".media-search-page", function () {
+        $("#beanPageNum").val($(this).data("page"));
+        $("#mediaFileSearchForm").submit();
+    });
 
     $("#searchButton").ready(function () {
 
