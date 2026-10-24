@@ -42,9 +42,9 @@ Here are some recommendations to keep your Roller installation secure:
 interfere or access the Roller database or files. To prevent this, install Roller
 on a secure network or when the server is not in use by others.
 
-* *Disable new user registrations*. By default, Roller allows self-registration,
-which means anyone can create an account. To prevent this, disable the
-*Allow New Users* option on the Server Administration page.
+* *Keep new user registrations disabled unless needed*. Self-registration is off
+by default. Enabling *Allow New Users* on the Server Administration page lets
+visitors create accounts; review <<optional-features>> before enabling it.
 
 * *Use SSL for Roller*. Running Roller over HTTP can expose your password
 to snooping, especially on open WIFI networks. To configure SSL (https:// URLs),
@@ -73,8 +73,9 @@ This can be enabled via the Server Admin page if you trust your users, as custom
 * *File uploads disabled*: By default, file uploads are not allowed.
 If you trust your users, you can enable this feature via the Server Admin page.
 
-NOTE: If you are a solo blogger, you can safely enable un-sanitized HTML,
-file uploads, and custom themes by adjusting the above settings.
+See <<optional-features>> for the benefits, risks and steps for enabling these
+and other optional features. A solo blog still needs upload limits and care
+when publishing HTML or editing templates.
 
 == Ready to roll?
 
@@ -283,6 +284,7 @@ attempt to install Roller, and be aware of how to deploy a WAR archive
 on Tomcat. Refer to the Tomcat documentation linked from this page for
 more information: http://tomcat.apache.org/[_http://tomcat.apache.org_]
 
+[[tomcat-create-roller-configuration-file]]
 === Tomcat: Create Roller Configuration File
 
 There are a variety of ways to configure Roller and Tomcat and here
@@ -401,10 +403,13 @@ database.jdbc.password=tiger
 The above instructions rely on Roller’s default user authentication
 mechanism, i.e., using a Roller-provided database table (roller_user) to
 store usernames and encrypted passwords. Roller provides other
-authentication options defined under the "authentication.method"
-setting in the roller.properties file: OpenID, OpenID/DB combination,
-and LDAP
+authentication options defined by the `authentication.method`
+setting in _roller-custom.properties_: OpenID Connect (`oidc`), a combination
+of database passwords and OpenID Connect (`db-oidc`), and LDAP (`ldap`)
 (https://cwiki.apache.org/confluence/display/ROLLER/Roller+5.1+with+LDAP).
+See <<oidc-login>> for OpenID Connect configuration. Roller 7 replaces the older
+OpenID 2.0 integration with OpenID Connect; an old OpenID configuration needs
+an OIDC provider registration.
 These authentication methods are used less frequently so should be
 tested more thoroughly with your particular setup if you wish to use
 them. Check the roller.properties file included in your WAR for
@@ -656,6 +661,7 @@ that it accepts the new setting.
 
 *What’s next?*
 
+Review <<optional-features>> to decide which additional features your site needs.
 Once you’ve gotten Roller up and running refer to the Roller User Guide
 for more information on running your Roller system and your weblog. For
 information on customizing your weblog, refer to the Roller Template
@@ -664,12 +670,236 @@ subscribe to the Roller user mailing list and ask your questions there:
 
 https://cwiki.apache.org/confluence/display/ROLLER/Roller+Mailing+Lists
 
+[[optional-features]]
+== Review optional features
+
+Roller leaves several features off until an administrator chooses to enable
+them. Some expose additional publishing or account-management interfaces;
+others need a mail server, an identity provider or background tasks. Review
+the benefits and risks below after completing installation.
+
+These are the defaults for a new Roller 7 installation. Upgraded sites retain
+their saved runtime settings, and local configuration can override startup
+defaults. Summernote is included below because authors may need to select it,
+although the plugin is available by default.
+
+There are two places to change settings:
+
+* *Server Administration > Configuration*: a global administrator changes these
+settings in the web interface and clicks *Save*. They are stored in the database
+and do not require a restart. Do not put these runtime settings in
+_roller-custom.properties_. Property names below help identify the settings.
+* *_roller-custom.properties_*: the server operator changes these startup
+properties in the configuration file described earlier in this guide, then
+restarts Roller. Keep passwords and secret keys in a file readable only by the
+operator and the account running Roller. Do not edit the bundled
+_roller.properties_ or _runtimeConfigDefs.xml_ files.
+
+=== Atom Publishing Protocol (AtomPub)
+
+*Default:* off (`webservices.enableAtomPub=false`).
+
+* *Benefit:* desktop clients and scripts can publish entries, upload media and
+manage categories and templates without using the browser editor.
+* *Risk:* clients hold credentials and can change or delete content with the
+user's weblog permissions. BASIC authentication sends credentials with each
+request, so the endpoint must use HTTPS.
+* *Enable:* in *Web Services Settings*, select *Enable Atom Publishing Protocol*
+and leave *AtomPub authentication* set to `basic`, the supported method in
+Roller 7. Keep the *Maximum AtomPub entry size (bytes)* limit appropriate for
+your entries; the default is 1048576 (1 MiB). Media uploads also need file
+uploads enabled. Template access also needs custom themes enabled and a custom
+theme selected for that weblog.
+
+After saving, use a client to discover
+`https://<host>/<context>/roller-services/app/` with a Roller username and
+password. OIDC browser sign-in does not supply an AtomPub password. See the
+Roller AtomPub Guide for discovery, permissions and request examples.
+
+=== Blogger and MetaWeblog APIs (XML-RPC)
+
+*Default:* off (`webservices.enableXmlRpc=false`).
+
+* *Benefit:* supports older weblog clients that use the Blogger or MetaWeblog
+publishing APIs.
+* *Risk:* exposes another interface for changing content. Clients send the
+username and password in requests; use HTTPS and protect stored credentials.
+* *Enable:* in *Web Services Settings*, select *Enable Blogger / MetaWeblog API*.
+For each weblog, also select *Enable weblog client support?* in its settings.
+Configure the client to use `https://<host>/<context>/roller-services/xmlrpc`.
+Enable file uploads separately if the client will upload media.
+
+[[oidc-login]]
+=== OpenID Connect (OIDC) sign-in
+
+*Default:* off; `authentication.method=db` uses Roller database passwords.
+Automatic OIDC account creation is also off.
+
+* *Benefit:* users sign in through an identity provider, which can centrally
+manage accounts and authentication policies.
+* *Risk:* sign-in depends on the provider's availability and account policies.
+The provider controls identity claims; when automatic account creation is on,
+it can also supply roles for new users, including `admin`. Restrict who can
+use the Roller client and who can assign those roles.
+* *Enable:* register Roller as an OIDC client at your provider. For a deployment
+at `https://example.com/roller` and registration ID `company`, register
+`https://example.com/roller/login/oauth2/code/company` as the redirect URI.
+Add the following startup properties, replacing the example values:
+
+[source,properties]
+----
+authentication.method=db-oidc
+oidc.company.client-id=roller
+oidc.company.client-secret=replace-with-your-client-secret
+oidc.company.issuer-uri=https://identity.example.com/realms/company
+oidc.company.client-name=Company sign-in
+----
+
+Restart Roller and test provider sign-in while retaining a working database
+administrator login. Use `authentication.method=oidc` if users should sign in
+only through the provider. Use HTTPS for Roller and the provider, and make sure
+the redirect URI matches Roller's externally visible URL.
+
+With `users.oidc.autoProvision.enabled=false`, users need an existing Roller
+account linked to their provider identity. Roller can link an account when the
+provider username matches and the provider asserts a verified email address
+matching that account. To create accounts on first provider sign-in instead,
+set `users.oidc.autoProvision.enabled=true` and restart. This is independent of
+*Allow New Users*, which controls the registration form. Keep
+`users.oidc.firstUserAdmin=false` for normal operation.
+
+=== Summernote rich text editor
+
+*Default:* the Summernote plugin is available; new weblogs initially select
+the plain text editor.
+
+* *Benefit:* authors can format entries, insert links and work with images
+without writing HTML by hand.
+* *Risk:* pasted content can include unwanted markup and large images.
+The editor does not replace server-side HTML sanitization.
+* *Enable:* in the weblog's settings, select *Rich Text Editor (Summernote)* as
+the editor and save. If an operator removed Summernote from
+`plugins.weblogEntryEditors`, restore
+`org.apache.roller.weblogger.ui.core.plugins.Summernote` in that comma-separated
+startup property, preserving the other editor classes, then restart Roller.
+
+Keep `weblogAdminsUntrusted=true`. Pasted PNG, JPEG and GIF images use media
+storage when uploads are available; otherwise Roller keeps validated images
+inline within the configured entry size limit. See the Roller User Guide for
+inline image limits and database requirements.
+
+=== Custom themes and templates
+
+*Default:* off (`themes.customtheme.allowed=false`). Shared themes remain
+available.
+
+* *Benefit:* weblog administrators can customize templates, layouts and styles
+for their own weblogs.
+* *Risk:* template mistakes can break pages. Custom HTML, scripts and external
+resources can affect visitors' privacy and browser behavior. The template
+sandbox remains in effect when custom themes are enabled.
+* *Enable:* in *Theme Settings*, select *Allow Custom Themes?*. A weblog
+administrator can then use *Design > Theme* to select a custom theme and edit
+its templates. Back up custom templates before changing them and review any
+third-party theme before using it.
+
+=== File uploads and media storage
+
+*Default:* off (`uploads.enabled=false`).
+
+* *Benefit:* authors can store images and downloadable files in Roller and
+insert them in entries. Remote publishing clients can upload media too.
+* *Risk:* uploaded content consumes disk space and may contain malicious or
+unwanted files. A filename extension alone does not establish that a file is
+safe to download.
+* *Enable:* ensure `mediafiles.storage.dir` points to a writable directory
+outside the deployed web application. In *File Upload Settings*, select
+*Enable File Uploads?*, set an explicit *Allowed Extensions* list for the types
+you need, and review *Forbidden Extensions*, *Max File Size (MB)* and
+*Max Directory Size (MB)*. The default limits are 2 MB per file and 20 MB per
+weblog. Check available disk space and include media storage in backups.
+
+=== Self-registration and email activation
+
+*Default:* off (`users.registration.enabled=false`); requiring email
+activation is also off (`user.account.email.activation=false`).
+
+* *Benefit:* visitors can create their own accounts without an administrator
+creating each one. Email activation checks access to the supplied mailbox.
+* *Risk:* open registration can attract spam accounts and resource abuse.
+Email activation needs working outbound mail and does not establish that a
+person is trustworthy.
+* *Enable:* in *User Settings*, select *Allow New Users?*. Configure and test
+mail before selecting *Require new users to activate accounts via email*.
+Review *Allow users to create new weblogs?*, which is on by default, before
+opening registration. Test registration and activation with a non-admin
+account. For a private site, leave registration off and create accounts in
+the user administration pages.
+
+=== HTML comments and comment email notifications
+
+*Default:* comments are allowed, but HTML in comments and email notifications
+are off (`users.comments.htmlenabled=false`, `users.comments.emailnotify=false`).
+
+* *Benefit:* HTML comments allow limited formatting and links. Notifications
+help authors notice new comments and moderation requests.
+* *Risk:* formatting and links can carry spam. Notifications can generate
+unwanted mail and require a working mail server.
+* *Enable:* in *Comment Settings*, select *Allow html in comments?* and/or
+*Allow email notification of comments?*. Retain the `HTMLSubset` comment
+formatting plugin when allowing HTML; this permits a limited subset of tags.
+For notifications, configure outbound mail and enable comment notification
+in the weblog's settings too. Review comment moderation and spam controls
+before accepting public comments.
+
+=== Remember-me login
+
+*Default:* off (`rememberme.enabled=false`).
+
+* *Benefit:* users can remain signed in across browser sessions.
+* *Risk:* someone who obtains the persistent login cookie may gain access
+to the account. Avoid this option on shared computers and use HTTPS.
+* *Enable:* set `rememberme.enabled=true` and set `rememberme.key` to a long,
+random secret unique to your installation in _roller-custom.properties_, then
+restart. Do not use the shipped placeholder key `springRocks`; Roller refuses
+to enable remember-me with that key.
+
+=== Planet feed aggregator
+
+*Default:* off (`planet.aggregator.enabled=false`); its background tasks are
+not in the default `tasks.enabled` list.
+
+* *Benefit:* combines entries from local weblogs and external RSS/Atom feeds
+into an aggregated site and feeds.
+* *Risk:* Roller fetches remote URLs and stores feed content in its cache.
+Only global administrators should choose subscriptions; review destinations,
+disk usage and refresh frequency.
+* *Enable:* follow <<planet-setup>> to create the cache directory, enable
+Planet and its tasks, and add the rendering model. Preserve existing tasks
+when updating `tasks.enabled`; setting only `planet.aggregator.enabled=true`
+does not start feed fetching.
+
+=== Publishing HTML without sanitization
+
+*Default:* off; `weblogAdminsUntrusted=true` sanitizes HTML from weblog members.
+
+* *Benefit:* trusted authors can publish HTML that the sanitizer would remove,
+such as embedded scripts or widgets.
+* *Risk:* disabling sanitization allows authors' HTML to run scripts in
+visitors' browsers. This startup setting applies site-wide, including to
+other weblogs. A solo author can also paste unsafe third-party content.
+* *Enable:* only if every weblog author and administrator is trusted, set
+`weblogAdminsUntrusted=false` in _roller-custom.properties_ and restart.
+Keep the default on sites with untrusted users. Summernote, file uploads and
+custom themes do not require disabling HTML sanitization.
+
 == Configuration tips and tricks
 
 This section covers some tips and tricks that can help you get the most
 out of Roller. It covers Roller’s Planet feed aggregator and how to
 setup Roller to use server-provided resources.
 
+[[planet-setup]]
 === Setting up Roller’s Planet feed aggregator
 
 Roller includes a RSS/Atom feed aggregator that makes it possible to run
@@ -765,6 +995,7 @@ http://localhost:8080/roller/planetrss
 http://localhost:8080/roller/planetrss?group=<group-name>[]
 
 
+[[manual-table-creation-and-upgrade]]
 === Manual table creation and upgrade
 
 If you would rather create your database tables yourself instead of
@@ -870,7 +1101,7 @@ Roller, but…
 
 * When creating your _roller-custom.properties_, copy of your old one.
 Carefully review each property and compare it to the property settings
-in the Roller property file described in Section link:#tomcat-create-roller-configuration-file[6.1].
+in the Roller property file described in <<tomcat-create-roller-configuration-file>>.
 * Don’t create a new database for Roller. Instead point Roller to your
 existing Roller database. *This is completely safe because you created a
 backup of your database, right?*
@@ -880,8 +1111,8 @@ to be upgraded and it will offer to run each of the migrations scripts
 necessary to upgrade you from your old version to the new version of
 Roller.
 
-*NOTE*: You can run the database scripts manually too, see Section
-link:#manual-table-creation-and-upgrade[8.2].
+*NOTE*: You can run the database scripts manually too, see
+<<manual-table-creation-and-upgrade>>.
 
 *NOTE*: On Tomcat, before startup you should delete the contents of the
 Tomcat work directory (located under the webapps folder.)
