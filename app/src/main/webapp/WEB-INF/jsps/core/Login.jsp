@@ -35,29 +35,29 @@
 
     <s:if test="authMethod == 'OIDC' || authMethod == 'DB_OIDC'">
         <s:if test="oidcProviders.size() > 0">
-            <div class="form-group">
-                <legend><s:text name="loginPage.oidcPrompt"/></legend>
-            </div>
+            <div class="text-center mb-4">
+                <h2 class="h5 mb-3"><s:text name="loginPage.oidcPrompt"/></h2>
 
-            <div class="form-group">
-                <s:iterator value="oidcProviders" var="provider">
-                    <a href="${pageContext.request.contextPath}/oauth2/authorization/<s:property value="#provider.id"/>"
-                       class="btn btn-default" style="margin-bottom: 5px;">
-                        <s:text name="loginPage.signInWith">
-                            <s:param><s:property value="#provider.name"/></s:param>
-                        </s:text>
-                    </a>
-                </s:iterator>
+                <div class="d-grid gap-2 col-10 mx-auto">
+                    <s:iterator value="oidcProviders" var="provider">
+                        <a href="${pageContext.request.contextPath}/oauth2/authorization/<s:property value="#provider.id"/>"
+                           class="btn btn-primary">
+                            <s:text name="loginPage.signInWith">
+                                <s:param><s:property value="#provider.name"/></s:param>
+                            </s:text>
+                        </a>
+                    </s:iterator>
+                </div>
             </div>
         </s:if>
     </s:if>
 
     <s:if test="authMethod != 'OIDC'">
 
-        <form method="post" id="loginForm" class="form-horizontal"
+        <form method="post" id="loginForm"
               action="<c:url value="<%= securityCheckUrl %>"/>" onsubmit="saveUsername(this)">
 
-            <div class="form-group">
+            <div class="mb-3">
                 <s:if test="authMethod == 'DB_OIDC'">
                     <legend><s:text name="loginPage.dbOidcPrompt"/></legend>
                 </s:if>
@@ -67,29 +67,29 @@
                 </s:else>
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="j_username" > <s:text name="loginPage.userName"/> </label>
                 <input type="text" class="form-control" name="j_username" id="j_username" placeholder="Username"/>
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="j_password" > <s:text name="loginPage.password"/> </label>
                 <input type="password" class="form-control" name="j_password" id="j_password" placeholder="Password"/>
             </div>
 
             <c:if test="${rememberMeEnabled}">
-                <div class="form-group">
+                <div class="mb-3">
                     <input type="checkbox" name="_spring_security_remember_me" id="_spring_security_remember_me"/>
                     <label for="_spring_security_remember_me" > <s:text name="loginPage.rememberMe"/> </label>
                 </div>
             </c:if>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <button class="btn btn-primary" type="submit" name="login" id="login">
                     <s:text name='loginPage.login'/>
                 </button>
 
-                <button class="btn" type="reset" name="reset" id="reset"
+                <button class="btn btn-outline-secondary" type="reset" name="reset" id="reset"
                         onclick="document.getElementById('j_username').focus()">
                     <s:text name='loginPage.reset'/>
                 </button>

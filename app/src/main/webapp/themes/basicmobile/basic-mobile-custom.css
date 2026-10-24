@@ -98,3 +98,136 @@ Basic theme styles
 .content-textbox p {
     margin: 0 0 8px;
 }
+
+/* mobile page layout ----------------------------------------------
+   The mobile templates keep their data-role markup; these rules style it
+   without a JavaScript framework. */
+
+body {
+    margin: 0;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+[data-role="header"], [data-role="footer"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: .5em;
+    padding: .5em 1em;
+    background: #333;
+    color: #fff;
+}
+
+[data-role="header"] h1, [data-role="footer"] h4 {
+    flex: 1 1 100%;
+    margin: .25em 0;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+[data-role="header"] a {
+    color: #fff;
+}
+
+.ui-content {
+    padding: 1em;
+}
+
+[data-role="button"], input[type="submit"] {
+    display: inline-block;
+    padding: .5em 1em;
+    border: 1px solid #ccc;
+    border-radius: .4em;
+    background: #f6f6f6;
+    color: #333;
+    font: inherit;
+    cursor: pointer;
+}
+
+[data-role="header"] [data-role="button"] {
+    border-color: #666;
+    background: #555;
+    color: #fff;
+}
+
+[data-mini="true"] {
+    padding: .2em .6em;
+    font-size: .85em;
+}
+
+[data-role="listview"] {
+    margin: 1em 0;
+    padding: 0;
+    list-style: none;
+}
+
+[data-role="listview"][data-inset="true"] {
+    overflow: hidden;
+    border: 1px solid #ddd;
+    border-radius: .5em;
+}
+
+[data-role="listview"] > li {
+    padding: .75em 1em;
+    border-top: 1px solid #ddd;
+}
+
+[data-role="listview"] > li:first-child {
+    border-top: 0;
+}
+
+[data-role="listview"] > li[data-role="list-divider"] {
+    background: #e9e9e9;
+    font-size: .9em;
+    font-weight: bold;
+}
+
+[data-role="listview"] > li > a {
+    display: block;
+    color: inherit;
+}
+
+.ui-btn-active > a {
+    font-weight: bold;
+}
+
+[data-role="navbar"] ul {
+    display: flex;
+    gap: .5em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+[data-role="navbar"] li {
+    flex: 1;
+}
+
+[data-role="navbar"] a {
+    display: block;
+    padding: .5em;
+    border: 1px solid #ccc;
+    border-radius: .4em;
+    background: #f6f6f6;
+    text-align: center;
+}
+
+/* popups open when their id is the URL fragment, e.g. the category chooser */
+[data-role="popup"] {
+    display: none;
+}
+
+[data-role="popup"]:target {
+    display: block;
+    margin: .5em 0;
+}
+
+[data-role="collapsible"] h2 {
+    margin: 0 0 .5em;
+    font-size: 1em;
+}

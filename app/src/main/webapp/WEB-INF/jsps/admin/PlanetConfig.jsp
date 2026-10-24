@@ -68,6 +68,6 @@
 
     </s:iterator>
 
-     <input class="btn btn-default" type="submit" value="<s:text name="generic.save"/>"/>
+     <input class="btn btn-outline-secondary" type="submit" value="<s:text name="generic.save"/>"/>
 
 </s:form>

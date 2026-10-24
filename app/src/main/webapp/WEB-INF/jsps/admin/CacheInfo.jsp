@@ -40,7 +40,7 @@
                     <s:form action="cacheInfo!clear">
 						<s:hidden name="salt" />
                         <s:hidden name="cache" value="%{#cache.key}" />
-                        <s:submit value="%{getText('cacheInfo.clear')}" cssClass="btn btn-default" />
+                        <s:submit theme="simple" value="%{getText('cacheInfo.clear')}" cssClass="btn btn-outline-secondary" />
                     </s:form>
                 </td>
             </tr>

@@ -39,8 +39,8 @@
 
         <div class="col-md-3 roller-column-left">
 
-            <div class="panel panel-default">
-                <div class="panel-body" style="text-align: center">
+            <div class="card">
+                <div class="card-body" style="text-align: center">
 
                     <img src='<s:url value="/roller-ui/images/feather.svg" />'
                          alt="ASF feat" height="100" align="center"/>
@@ -49,8 +49,8 @@
                 </div>
             </div>
 
-            <div class="panel panel-default">
-                <div class="panel-body">
+            <div class="card">
+                <div class="card-body">
 
                     <tiles:insertAttribute name="sidebar"/>
 
@@ -61,8 +61,8 @@
 
         <div class="col-md-9 roller-column-right">
 
-            <div class="panel panel-default">
-                <div class="panel-body">
+            <div class="card">
+                <div class="card-body">
 
                     <h2 class="roller-page-title"><s:property value="pageTitle"/></h2>
                     <tiles:insertAttribute name="messages"/>

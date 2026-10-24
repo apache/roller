@@ -45,7 +45,7 @@ public class EntryEditorAssetsTest {
     @Test
     public void summernoteClosesItsIconElements() throws IOException {
         String head = read(WEBAPP.resolve("WEB-INF/jsps/tiles/head.jsp"));
-        Matcher script = Pattern.compile("/webjars/(summernote/[^/]+/dist/summernote\\.min\\.js)")
+        Matcher script = Pattern.compile("/webjars/(summernote/[^/]+/dist/summernote(?:-bs5)?\\.min\\.js)")
                 .matcher(head);
         assertTrue(script.find(), "head.jsp loads Summernote");
 

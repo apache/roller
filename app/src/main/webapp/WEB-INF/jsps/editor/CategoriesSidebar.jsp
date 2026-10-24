@@ -27,7 +27,7 @@
     <s:set var="categoryImage" value="#post.image"/>
 
     <a href="#" onclick="showCategoryAddModal()">
-        <span class="glyphicon glyphicon-plus"></span>
+        <span class="bi bi-plus-lg"></span>
         <s:text name="categoriesForm.addCategory"/>
     </a>
 </p>
@@ -48,7 +48,7 @@
 
         validateCategory();
 
-        $('#category-edit-modal').modal({show: true});
+        $('#category-edit-modal').modal('show');
     }
 
 </script>
