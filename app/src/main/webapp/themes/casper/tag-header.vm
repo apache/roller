@@ -1,0 +1,19 @@
+## Casper's tag.hbs header card. Expects $headerTitle, $headerDescription (may be empty) and $headerCount.
+<section class="post-card post-card-large">
+  <div class="post-card-content">
+    <div class="post-card-content-link">
+      <header class="post-card-header">
+        <h1 class="post-card-title">$headerTitle</h1>
+      </header>
+      <div class="post-card-excerpt">
+        #if($utils.isNotEmpty($headerDescription))
+        $headerDescription
+        #elseif($headerCount == 1)
+        A collection of 1 post
+        #else
+        A collection of $headerCount posts
+        #end
+      </div>
+    </div>
+  </div>
+</section>

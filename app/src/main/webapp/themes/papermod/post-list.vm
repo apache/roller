@@ -1,0 +1,45 @@
+## Entry cards for $pager, like PaperMod's list.html.
+## Set $firstEntry = true before including to give the first card the larger
+## "first-entry" treatment used on page 1 of the home page.
+#foreach($day in $pager.entries.keySet())
+#foreach($entry in $pager.entries.get($day))
+#if($firstEntry)
+#set($entryClass = "first-entry")
+#set($firstEntry = false)
+#elseif($model.tags)
+#set($entryClass = "post-entry tag-entry")
+#else
+#set($entryClass = "post-entry")
+#end
+#if($utils.isNotEmpty($entry.summary))
+#set($entrySummary = $utils.removeHTML($entry.summary))
+#else
+#set($entrySummary = $utils.removeHTML("$!entry.text"))
+#end
+#set($entrySummary = $utils.truncateNicely($entrySummary.trim(), 240, 300, "..."))
+<article class="$entryClass">
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">$entry.title</h2>
+  </header>
+  #if($utils.isNotEmpty($entrySummary))
+  <div class="entry-content">
+    <p>$entrySummary</p>
+  </div>
+  #end
+  <footer class="entry-footer">#includeTemplate($model.weblog "_post_meta")</footer>
+  <a class="entry-link" aria-label="post link to $utils.escapeHTML($utils.removeHTML($entry.title))" href="$url.entry($entry.anchor)"></a>
+</article>
+#end
+#end
+#if($pager.prevLink || $pager.nextLink)
+<footer class="page-footer">
+  <nav class="pagination">
+    #if($pager.prevLink)
+    <a class="prev" href="$pager.prevLink">«&nbsp;Prev&nbsp;</a>
+    #end
+    #if($pager.nextLink)
+    <a class="next" href="$pager.nextLink">Next&nbsp;&nbsp;»</a>
+    #end
+  </nav>
+</footer>
+#end

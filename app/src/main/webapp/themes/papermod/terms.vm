@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>Tags | $model.weblog.name</title>
+  </head>
+  <body class="list" id="top">
+    #includeTemplate($model.weblog "standard_header")
+    <main class="main">
+      <header class="page-header">
+        <h1>Tags</h1>
+      </header>
+      <ul class="terms-tags">
+        #foreach($tag in $model.weblog.getPopularTags(-1, 1000))
+        <li>
+          <a href="$url.tag($tag.name)">$tag.name <sup><strong><sup>$tag.count</sup></strong></sup> </a>
+        </li>
+        #end
+      </ul>
+    </main>
+    #includeTemplate($model.weblog "standard_footer")
+  </body>
+</html>
