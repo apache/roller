@@ -1,0 +1,10 @@
+## Sets $readingTime for $entry: words / 275 per minute, like Ghost's reading_time helper.
+#set($readingWords = 0)
+#set($readingText = $utils.removeHTML($entry.text))
+#if($readingText && $readingText.trim().length() > 0)
+  #set($readingWords = $readingText.trim().split("\s+").size())
+#end
+#set($readingTime = ($readingWords + 137) / 275)
+#if($readingTime < 1)
+  #set($readingTime = 1)
+#end

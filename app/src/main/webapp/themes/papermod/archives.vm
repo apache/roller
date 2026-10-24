@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>Archives | $model.weblog.name</title>
+  </head>
+  <body class="list" id="top">
+    #includeTemplate($model.weblog "standard_header")
+    <main class="main">
+      <header class="page-header">
+        <h1>Archives</h1>
+      </header>
+      ## Roller caps recent entries at 100; count per year and month first so
+      ## the headers can show totals, then render in publication order.
+      #set($archiveEntries = $model.weblog.getRecentWeblogEntries("nil", 100))
+      #set($yearCounts = {})
+      #set($monthCounts = {})
+      #foreach($entry in $archiveEntries)
+      #set($y = $utils.formatDate($entry.pubTime, "yyyy"))
+      #set($m = $utils.formatDate($entry.pubTime, "yyyy-MM"))
+      #if($yearCounts.containsKey($y))
+      #set($ignore = $yearCounts.put($y, $yearCounts.get($y) + 1))
+      #else
+      #set($ignore = $yearCounts.put($y, 1))
+      #end
+      #if($monthCounts.containsKey($m))
+      #set($ignore = $monthCounts.put($m, $monthCounts.get($m) + 1))
+      #else
+      #set($ignore = $monthCounts.put($m, 1))
+      #end
+      #end
+      #set($currentYear = "")
+      #set($currentMonth = "")
+      #foreach($entry in $archiveEntries)
+      #set($y = $utils.formatDate($entry.pubTime, "yyyy"))
+      #set($m = $utils.formatDate($entry.pubTime, "yyyy-MM"))
+      #if($m != $currentMonth && $currentMonth != "")
+          </div>
+        </div>
+      #end
+      #if($y != $currentYear)
+      #if($currentYear != "")
+      </div>
+      #end
+      <div class="archive-year">
+        <h2 class="archive-year-header" id="$y">
+          <a class="archive-header-link" href="#$y">$y</a>
+          <sup class="archive-count">&nbsp;$yearCounts.get($y)</sup>
+        </h2>
+      #set($currentYear = $y)
+      #end
+      #if($m != $currentMonth)
+      #set($monthName = $utils.formatDate($entry.pubTime, "MMMM"))
+        <div class="archive-month">
+          <h3 class="archive-month-header" id="$y-$monthName">
+            <a class="archive-header-link" href="#$y-$monthName">$monthName</a>
+            <sup class="archive-count">&nbsp;$monthCounts.get($m)</sup>
+          </h3>
+          <div class="archive-posts">
+      #set($currentMonth = $m)
+      #end
+            <div class="archive-entry">
+              <h3 class="archive-entry-title entry-hint-parent">$entry.title</h3>
+              <div class="archive-meta">#includeTemplate($model.weblog "_post_meta")</div>
+              <a class="entry-link" aria-label="post link to $utils.escapeHTML($utils.removeHTML($entry.title))" href="$url.entry($entry.anchor)"></a>
+            </div>
+      #end
+      #if($currentMonth != "")
+          </div>
+        </div>
+      </div>
+      #end
+    </main>
+    #includeTemplate($model.weblog "standard_footer")
+  </body>
+</html>

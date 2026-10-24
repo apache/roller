@@ -1,0 +1,17 @@
+## Date, reading time, and author for $entry, like PaperMod's post_meta.html.
+## Set $metaShowCategory = true to append the category link.
+## Reading time follows Hugo: words / 213, rounded up.
+#if($utils.isNotEmpty($entry.text))
+#set($metaText = $utils.removeHTML($entry.text))
+#else
+#set($metaText = $utils.removeHTML("$!entry.summary"))
+#end
+#set($metaWords = $metaText.trim().split('\s+').size())
+#set($metaMinutes = ($metaWords + 212) / 213)
+#if($metaMinutes < 1)#set($metaMinutes = 1)#end
+#if($utils.isNotEmpty($entry.creator.fullName))
+#set($metaAuthor = $entry.creator.fullName)
+#else
+#set($metaAuthor = $entry.creator.screenName)
+#end
+<span title="$utils.formatIso8601Date($entry.pubTime)">$utils.formatDate($entry.pubTime, "MMMM d, yyyy")</span>&nbsp;·&nbsp;<span>$metaMinutes min</span>&nbsp;·&nbsp;<span>$metaAuthor</span>#if($metaShowCategory)&nbsp;·&nbsp;<span><a href="$url.category($entry.category.name)">$entry.category.name</a></span>#end

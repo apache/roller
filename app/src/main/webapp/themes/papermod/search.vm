@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>Search | $model.weblog.name</title>
+  </head>
+  <body class="list" id="top">
+    #includeTemplate($model.weblog "standard_header")
+    <main class="main">
+      <header class="page-header">
+        <h1>Search&nbsp;<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </h1>
+      </header>
+      <form id="searchbox" class="searchbox" method="get" action="$url.search" role="search">
+        <input id="searchInput" name="q" placeholder="Search ↵" aria-label="search" type="search"
+          autocomplete="off" maxlength="64" value="$!model.term" />
+      </form>
+      #if($utils.isNotEmpty($model.term))
+      #if($model.hits > 0)
+      #set($min = $model.offset + 1)
+      #set($max = $model.offset + $model.limit)
+      #if($max > $model.hits)#set($max = $model.hits)#end
+      <p class="post-meta search-summary">#if($model.hits == 1)1 result#{else}$min–$max of $model.hits results#end for “$model.term”</p>
+      #set($pager = $model.getWeblogEntriesPager())
+      <ul id="searchResults" class="searchResults" aria-label="search results">
+        #foreach($day in $pager.entries.keySet())
+        #foreach($entry in $pager.entries.get($day))
+        <li>$entry.title<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="13 17 18 12 13 7"></polyline>
+            <polyline points="6 17 11 12 6 7"></polyline>
+          </svg><a class="entry-link" href="$url.entry($entry.anchor)" aria-label="$utils.escapeHTML($utils.removeHTML($entry.title))"></a></li>
+        #end
+        #end
+      </ul>
+      #if($pager.prevLink || $pager.nextLink)
+      <footer class="page-footer">
+        <nav class="pagination">
+          #if($pager.prevLink)
+          <a class="prev" href="$pager.prevLink">«&nbsp;Prev&nbsp;</a>
+          #end
+          #if($pager.nextLink)
+          <a class="next" href="$pager.nextLink">Next&nbsp;&nbsp;»</a>
+          #end
+        </nav>
+      </footer>
+      #end
+      #else
+      <p class="empty-state">No entries matched “$model.term”.</p>
+      #end
+      #end
+    </main>
+    #includeTemplate($model.weblog "standard_footer")
+  </body>
+</html>
