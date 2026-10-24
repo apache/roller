@@ -680,8 +680,8 @@ the benefits and risks below after completing installation.
 
 These are the defaults for a new Roller 7 installation. Upgraded sites retain
 their saved runtime settings, and local configuration can override startup
-defaults. Summernote is included below because authors may need to select it,
-although the plugin is available by default.
+defaults. The features most sites want come first; the later ones serve
+specialized needs.
 
 There are two places to change settings:
 
@@ -694,79 +694,6 @@ properties in the configuration file described earlier in this guide, then
 restarts Roller. Keep passwords and secret keys in a file readable only by the
 operator and the account running Roller. Do not edit the bundled
 _roller.properties_ or _runtimeConfigDefs.xml_ files.
-
-=== Atom Publishing Protocol (AtomPub)
-
-*Default:* off (`webservices.enableAtomPub=false`).
-
-* *Benefit:* desktop clients and scripts can publish entries, upload media and
-manage categories and templates without using the browser editor.
-* *Risk:* clients hold credentials and can change or delete content with the
-user's weblog permissions. BASIC authentication sends credentials with each
-request, so the endpoint must use HTTPS.
-* *Enable:* in *Web Services Settings*, select *Enable Atom Publishing Protocol*
-and leave *AtomPub authentication* set to `basic`, the supported method in
-Roller 7. Keep the *Maximum AtomPub entry size (bytes)* limit appropriate for
-your entries; the default is 1048576 (1 MiB). Media uploads also need file
-uploads enabled. Template access also needs custom themes enabled and a custom
-theme selected for that weblog.
-
-After saving, use a client to discover
-`https://<host>/<context>/roller-services/app/` with a Roller username and
-password. OIDC browser sign-in does not supply an AtomPub password. See the
-Roller AtomPub Guide for discovery, permissions and request examples.
-
-=== Blogger and MetaWeblog APIs (XML-RPC)
-
-*Default:* off (`webservices.enableXmlRpc=false`).
-
-* *Benefit:* supports older weblog clients that use the Blogger or MetaWeblog
-publishing APIs.
-* *Risk:* exposes another interface for changing content. Clients send the
-username and password in requests; use HTTPS and protect stored credentials.
-* *Enable:* in *Web Services Settings*, select *Enable Blogger / MetaWeblog API*.
-For each weblog, also select *Enable weblog client support?* in its settings.
-Configure the client to use `https://<host>/<context>/roller-services/xmlrpc`.
-Enable file uploads separately if the client will upload media.
-
-[[oidc-login]]
-=== OpenID Connect (OIDC) sign-in
-
-*Default:* off; `authentication.method=db` uses Roller database passwords.
-Automatic OIDC account creation is also off.
-
-* *Benefit:* users sign in through an identity provider, which can centrally
-manage accounts and authentication policies.
-* *Risk:* sign-in depends on the provider's availability and account policies.
-The provider controls identity claims; when automatic account creation is on,
-it can also supply roles for new users, including `admin`. Restrict who can
-use the Roller client and who can assign those roles.
-* *Enable:* register Roller as an OIDC client at your provider. For a deployment
-at `https://example.com/roller` and registration ID `company`, register
-`https://example.com/roller/login/oauth2/code/company` as the redirect URI.
-Add the following startup properties, replacing the example values:
-
-[source,properties]
-----
-authentication.method=db-oidc
-oidc.company.client-id=roller
-oidc.company.client-secret=replace-with-your-client-secret
-oidc.company.issuer-uri=https://identity.example.com/realms/company
-oidc.company.client-name=Company sign-in
-----
-
-Restart Roller and test provider sign-in while retaining a working database
-administrator login. Use `authentication.method=oidc` if users should sign in
-only through the provider. Use HTTPS for Roller and the provider, and make sure
-the redirect URI matches Roller's externally visible URL.
-
-With `users.oidc.autoProvision.enabled=false`, users need an existing Roller
-account linked to their provider identity. Roller can link an account when the
-provider username matches and the provider asserts a verified email address
-matching that account. To create accounts on first provider sign-in instead,
-set `users.oidc.autoProvision.enabled=true` and restart. This is independent of
-*Allow New Users*, which controls the registration form. Keep
-`users.oidc.firstUserAdmin=false` for normal operation.
 
 === Summernote rich text editor
 
@@ -819,23 +746,6 @@ you need, and review *Forbidden Extensions*, *Max File Size (MB)* and
 *Max Directory Size (MB)*. The default limits are 2 MB per file and 20 MB per
 weblog. Check available disk space and include media storage in backups.
 
-=== Self-registration and email activation
-
-*Default:* off (`users.registration.enabled=false`); requiring email
-activation is also off (`user.account.email.activation=false`).
-
-* *Benefit:* visitors can create their own accounts without an administrator
-creating each one. Email activation checks access to the supplied mailbox.
-* *Risk:* open registration can attract spam accounts and resource abuse.
-Email activation needs working outbound mail and does not establish that a
-person is trustworthy.
-* *Enable:* in *User Settings*, select *Allow New Users?*. Configure and test
-mail before selecting *Require new users to activate accounts via email*.
-Review *Allow users to create new weblogs?*, which is on by default, before
-opening registration. Test registration and activation with a non-admin
-account. For a private site, leave registration off and create accounts in
-the user administration pages.
-
 === HTML comments and comment email notifications
 
 *Default:* comments are allowed, but HTML in comments and email notifications
@@ -864,6 +774,62 @@ random secret unique to your installation in _roller-custom.properties_, then
 restart. Do not use the shipped placeholder key `springRocks`; Roller refuses
 to enable remember-me with that key.
 
+=== Self-registration and email activation
+
+*Default:* off (`users.registration.enabled=false`); requiring email
+activation is also off (`user.account.email.activation=false`).
+
+* *Benefit:* visitors can create their own accounts without an administrator
+creating each one. Email activation checks access to the supplied mailbox.
+* *Risk:* open registration can attract spam accounts and resource abuse.
+Email activation needs working outbound mail and does not establish that a
+person is trustworthy.
+* *Enable:* in *User Settings*, select *Allow New Users?*. Configure and test
+mail before selecting *Require new users to activate accounts via email*.
+Review *Allow users to create new weblogs?*, which is on by default, before
+opening registration. Test registration and activation with a non-admin
+account. For a private site, leave registration off and create accounts in
+the user administration pages.
+
+[[oidc-login]]
+=== OpenID Connect (OIDC) sign-in
+
+*Default:* off; `authentication.method=db` uses Roller database passwords.
+Automatic OIDC account creation is also off.
+
+* *Benefit:* users sign in through an identity provider, which can centrally
+manage accounts and authentication policies.
+* *Risk:* sign-in depends on the provider's availability and account policies.
+The provider controls identity claims; when automatic account creation is on,
+it can also supply roles for new users, including `admin`. Restrict who can
+use the Roller client and who can assign those roles.
+* *Enable:* register Roller as an OIDC client at your provider. For a deployment
+at `https://example.com/roller` and registration ID `company`, register
+`https://example.com/roller/login/oauth2/code/company` as the redirect URI.
+Add the following startup properties, replacing the example values:
+
+[source,properties]
+----
+authentication.method=db-oidc
+oidc.company.client-id=roller
+oidc.company.client-secret=replace-with-your-client-secret
+oidc.company.issuer-uri=https://identity.example.com/realms/company
+oidc.company.client-name=Company sign-in
+----
+
+Restart Roller and test provider sign-in while retaining a working database
+administrator login. Use `authentication.method=oidc` if users should sign in
+only through the provider. Use HTTPS for Roller and the provider, and make sure
+the redirect URI matches Roller's externally visible URL.
+
+With `users.oidc.autoProvision.enabled=false`, users need an existing Roller
+account linked to their provider identity. Roller can link an account when the
+provider username matches and the provider asserts a verified email address
+matching that account. To create accounts on first provider sign-in instead,
+set `users.oidc.autoProvision.enabled=true` and restart. This is independent of
+*Allow New Users*, which controls the registration form. Keep
+`users.oidc.firstUserAdmin=false` for normal operation.
+
 === Planet feed aggregator
 
 *Default:* off (`planet.aggregator.enabled=false`); its background tasks are
@@ -878,6 +844,40 @@ disk usage and refresh frequency.
 Planet and its tasks, and add the rendering model. Preserve existing tasks
 when updating `tasks.enabled`; setting only `planet.aggregator.enabled=true`
 does not start feed fetching.
+
+=== Atom Publishing Protocol (AtomPub)
+
+*Default:* off (`webservices.enableAtomPub=false`).
+
+* *Benefit:* desktop clients and scripts can publish entries, upload media and
+manage categories and templates without using the browser editor.
+* *Risk:* clients hold credentials and can change or delete content with the
+user's weblog permissions. BASIC authentication sends credentials with each
+request, so the endpoint must use HTTPS.
+* *Enable:* in *Web Services Settings*, select *Enable Atom Publishing Protocol*
+and leave *AtomPub authentication* set to `basic`, the supported method in
+Roller 7. Keep the *Maximum AtomPub entry size (bytes)* limit appropriate for
+your entries; the default is 1048576 (1 MiB). Media uploads also need file
+uploads enabled. Template access also needs custom themes enabled and a custom
+theme selected for that weblog.
+
+After saving, use a client to discover
+`https://<host>/<context>/roller-services/app/` with a Roller username and
+password. OIDC browser sign-in does not supply an AtomPub password. See the
+Roller AtomPub Guide for discovery, permissions and request examples.
+
+=== Blogger and MetaWeblog APIs (XML-RPC)
+
+*Default:* off (`webservices.enableXmlRpc=false`).
+
+* *Benefit:* supports older weblog clients that use the Blogger or MetaWeblog
+publishing APIs.
+* *Risk:* exposes another interface for changing content. Clients send the
+username and password in requests; use HTTPS and protect stored credentials.
+* *Enable:* in *Web Services Settings*, select *Enable Blogger / MetaWeblog API*.
+For each weblog, also select *Enable weblog client support?* in its settings.
+Configure the client to use `https://<host>/<context>/roller-services/xmlrpc`.
+Enable file uploads separately if the client will upload media.
 
 === Publishing HTML without sanitization
 
