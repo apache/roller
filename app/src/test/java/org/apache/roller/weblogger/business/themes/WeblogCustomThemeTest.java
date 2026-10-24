@@ -18,8 +18,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
@@ -55,6 +57,13 @@ class WeblogCustomThemeTest {
             assertEquals(3L, resource.getLength());
             assertEquals(7L, resource.getLastModified());
             assertSame(content, resource.getInputStream());
+            assertTrue(WeblogCustomTheme.isMediaFile(resource));
         }
+    }
+
+    @Test
+    void resourcesFromOtherSourcesAreNotMediaFiles() {
+        assertFalse(WeblogCustomTheme.isMediaFile(mock(ThemeResource.class)));
+        assertFalse(WeblogCustomTheme.isMediaFile(null));
     }
 }

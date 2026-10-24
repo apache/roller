@@ -62,6 +62,16 @@ public final class MediaTypePolicy {
     private static final String[] INLINE_PREFIXES = {"audio/", "video/"};
 
     /**
+     * Stylesheets and scripts. A custom theme keeps its copies of these in the
+     * media library, and its pages load them by type. A browser does not render
+     * either as a document.
+     */
+    private static final Set<String> THEME_ASSET_TYPES = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(
+                    "text/css", "text/javascript", "application/javascript",
+                    "application/x-javascript")));
+
+    /**
      * Types a browser may execute, or that can carry something it will. These
      * are never adopted from a client's declaration.
      */
@@ -146,6 +156,22 @@ public final class MediaTypePolicy {
         response.setContentType(DEFAULT_TYPE);
         response.setHeader("Content-Disposition",
                 "attachment; filename=\"" + headerSafe(fileName) + "\"");
+    }
+
+    /**
+     * Sets the headers for a custom-theme resource held in the media library.
+     * Stylesheets and scripts keep their type so that the theme's pages can
+     * load them; anything else is governed like any other media response.
+     */
+    public static void applyThemeMediaHeaders(HttpServletResponse response,
+                                              String contentType, String fileName) {
+        String type = normalizeType(contentType);
+        if (type != null && THEME_ASSET_TYPES.contains(type)) {
+            response.setHeader("X-Content-Type-Options", "nosniff");
+            response.setContentType(type);
+            return;
+        }
+        applyResponseHeaders(response, contentType, fileName);
     }
 
     /** @return the response type after applying the inline policy. */

@@ -152,7 +152,6 @@ public class MediaCollection {
                     mf.setDirectory(mdir);
                     mf.setWeblog(website);
                     mf.setName(fileName);
-                    mf.setOriginalPath(justPath);
                     mf.setInputStream(fis);
                     mf.setLength(tempFile.length());
 
