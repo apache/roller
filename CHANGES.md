@@ -45,6 +45,7 @@
   any other media file: as a download unless they are an image, audio, video,
   PDF or plain text. The media file editor sets a file's original path only
   when `mediafile.originalPathEdit.enabled=true`, as its form already shows.
+  AtomPub media uploads no longer set one.
 - **Planet is off by default.** `planet.aggregator.enabled` now defaults to
   `false`. While it is off, the Planet admin pages, `/planetrss` and the
   Planet background tasks (`RefreshRollerPlanetTask`, `SyncWebsitesTask`) do
