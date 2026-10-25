@@ -46,10 +46,8 @@
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
     </definition>
 
-    <!-- media pages: the sidebar holds folders, so a one-line user/weblog context
-         replaces the "Powered by" card -->
+    <!-- media pages -->
     <definition name=".tiles-mediapage" extends=".tiles-tabbedpage">
-        <put-attribute name="branding"     value="/WEB-INF/jsps/tiles/contextLine.jsp" />
         <!-- media pages are laid out for narrow screens; other tabbed pages are not yet -->
         <put-attribute name="viewport"     value="/WEB-INF/jsps/tiles/viewport.jsp" />
     </definition>

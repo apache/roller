@@ -19,7 +19,7 @@
 
 <%-- The "Powered by" card at the top of the tabbed page sidebar --%>
 
-<div class="card">
+<div class="card roller-branding-card">
     <div class="card-body" style="text-align: center">
 
         <img src='<s:url value="/roller-ui/images/feather.svg" />'
