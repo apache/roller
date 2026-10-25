@@ -9,7 +9,7 @@ Roller is made up of the following Maven projects:
 * _app_:                    Roller Weblogger webapp, JSP pages, Velocity templates
 * _assembly-release_:       Used to create official distributions of Roller
 * _docs_:                   Roller documentation in ASCII Doc format
-* _it-selenium_:            Integrated browser tests for Roller using Selenium
+* _it-playwright_:          Browser tests for Roller using Playwright (run separately, see below)
 
 ## Documentation
 
@@ -46,7 +46,7 @@ Compile and build Roller:
     $ cd roller
     $ mvn -DskipTests=true install
 
-Run Roller in Jetty with an embedded Derby database (for testing only):
+Run Roller in Jetty with an in-memory Derby database (for testing only):
 
     $ mvn jetty:run
 
@@ -63,10 +63,26 @@ Get the code:
 
     $ git clone https://github.com/apache/roller.git
 
-Run Docker Compose to build and launch Roller along with a PostgreSQL database:
+The compose stack runs Roller against a PostgreSQL database with Keycloak as an OpenID Connect identity provider.
+Roller and your browser must both reach Keycloak at the same hostname, so add this line to `/etc/hosts` once:
+
+    127.0.0.1 keycloak
+
+Run Docker Compose to build and launch everything:
 
     $ cd roller
-    $ docker-compose up
-    
-It will take a while to build and start the Docker image. 
-Once it's done browse to <http://localhost:8080/roller> to try Roller.
+    $ docker compose up
+
+It will take a while to build and start the Docker image.
+Once it's done browse to <http://localhost:8080/> and log in as `admin`/`admin` (administrator) or `user`/`user` (regular user).
+
+
+## Running the tests
+
+Unit tests run as part of the normal build:
+
+    $ mvn install
+
+Browser-based UI tests live in `it-playwright` and run against a started Roller, whichever way you started it.
+See [it-playwright/README.md](it-playwright/README.md) for instructions.
+CI runs both on every push and pull request.
