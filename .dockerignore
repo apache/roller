@@ -18,4 +18,4 @@
 docker/postgresql-data
 docker/postgresql-16-data
 docker/roller-data
-it-selenium
+it-playwright
