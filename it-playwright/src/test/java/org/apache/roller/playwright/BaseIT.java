@@ -349,7 +349,7 @@ abstract class BaseIT {
      * stacked form rows.
      */
     protected void assertPublishingTimeOnOneLine() {
-        page.locator("a[href='#collapseAdvanced']").click();
+        page.locator("[data-bs-target='#collapseAdvanced']").click();
         assertThat(page.locator("#collapseAdvanced")).isVisible();
         double hours = page.locator("select[name='bean.hours']").boundingBox().y;
         double minutes = page.locator("select[name='bean.minutes']").boundingBox().y;
