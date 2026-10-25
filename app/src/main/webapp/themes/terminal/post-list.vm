@@ -1,0 +1,60 @@
+## Terminal's list.html and pagination.html, shared by the weblog, tag, and
+## search templates. Expects $pager to be set by the including template.
+#set($listEntries = [])
+#foreach($day in $pager.entries.keySet())
+  #foreach($entry in $pager.entries.get($day))
+    #set($added = $listEntries.add($entry))
+  #end
+#end
+<div class="posts">
+  #foreach($entry in $listEntries)
+  <article class="post on-list">
+    <h2 class="post-title">
+      <a href="$url.entry($entry.anchor)">$entry.title</a>
+    </h2>
+    <div class="post-meta">
+      <time class="post-date" datetime="$utils.formatIso8601Date($entry.pubTime)">$utils.formatDate($entry.pubTime, "yyyy-MM-dd")</time>
+      #set($authorName = $entry.creator.fullName)
+      #if($utils.isEmpty($authorName))#set($authorName = $entry.creator.screenName)#end
+      #if($utils.isNotEmpty($authorName))
+      <span class="post-author">$authorName</span>
+      #end
+    </div>
+    #if($entry.tags && $entry.tags.size() > 0)
+    <span class="post-tags">
+      #foreach($tag in $entry.tags)
+      &#35;<a href="$url.tag($tag.name)" rel="tag">$tag.name</a>&nbsp;
+      #end
+    </span>
+    #end
+    <div class="post-content">
+      #if($utils.isNotEmpty($entry.summary))
+      $entry.transformedSummary
+      #else
+      <p>$utils.truncateNicely($utils.removeHTML($entry.transformedText), 240, 300, "&hellip;")</p>
+      #end
+    </div>
+    <div>
+      <a class="read-more button inline" href="$url.entry($entry.anchor)">[Read more &rarr;]</a>
+    </div>
+  </article>
+  #end
+  #if($listEntries.size() == 0)
+  <p class="post-list-empty">No posts here yet.</p>
+  #end
+  #if($pager.prevLink || $pager.nextLink)
+  <div class="pagination">
+    <div class="pagination__buttons">
+      #if($pager.prevLink)
+      <a href="$pager.prevLink" class="button inline prev">&lt; [<span class="button__text">Newer posts</span>]</a>
+      #end
+      #if($pager.prevLink && $pager.nextLink)
+      ::
+      #end
+      #if($pager.nextLink)
+      <a href="$pager.nextLink" class="button inline next">[<span class="button__text">Older posts</span>] &gt;</a>
+      #end
+    </div>
+  </div>
+  #end
+</div>

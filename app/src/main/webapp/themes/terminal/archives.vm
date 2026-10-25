@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="$model.weblog.localeInstance.toLanguageTag()">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>Archives :: $model.weblog.name</title>
+  </head>
+  <body>
+    <div class="container">
+      #includeTemplate($model.weblog "standard_header")
+      <main class="content">
+        <div class="terms archives">
+          <h1>Archives</h1>
+          <p class="post-meta">$model.weblog.entryCount #if($model.weblog.entryCount == 1)post#{else}posts#end</p>
+
+          #set($archiveEntries = $model.weblog.getRecentWeblogEntries("nil", 100))
+          #set($currentYear = "")
+          #foreach($archiveEntry in $archiveEntries)
+            #set($entryYear = $utils.formatDate($archiveEntry.pubTime, "yyyy"))
+            #if($entryYear != $currentYear)
+              #if($currentYear != "")
+          </ul>
+              #end
+              #set($currentYear = $entryYear)
+          <h2>$entryYear</h2>
+          <ul class="archive-list">
+            #end
+            <li>
+              <time class="post-meta" datetime="$utils.formatIso8601Date($archiveEntry.pubTime)">$utils.formatDate($archiveEntry.pubTime, "MM-dd")</time>
+              <a href="$url.entry($archiveEntry.anchor)">$archiveEntry.title</a>
+            </li>
+          #end
+          #if($currentYear != "")
+          </ul>
+          #end
+
+          #set($archiveCategories = $model.weblog.weblogCategories)
+          #if($archiveCategories.size() > 0)
+          <h2>Categories</h2>
+          <ul>
+            #foreach($archiveCategory in $archiveCategories)
+            <li><a class="terms-title" href="$url.category($archiveCategory.name)">$archiveCategory.name</a></li>
+            #end
+          </ul>
+          #end
+
+          #set($archiveTags = $model.weblog.getPopularTags(-1, 50))
+          #if($archiveTags.size() > 0)
+          <h2>Tags</h2>
+          <ul>
+            #foreach($archiveTag in $archiveTags)
+            <li><a class="terms-title" href="$url.tag($archiveTag.name)">$archiveTag.name [$archiveTag.count]</a></li>
+            #end
+          </ul>
+          #end
+        </div>
+      </main>
+      #includeTemplate($model.weblog "standard_footer")
+    </div>
+  </body>
+</html>

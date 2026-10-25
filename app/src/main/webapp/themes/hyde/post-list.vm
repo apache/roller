@@ -1,0 +1,45 @@
+## Hyde's index.html post list and pagination, shared by the weblog, tag, and
+## search templates. Expects $pager to be set by the including template.
+## Like Hyde, each post is shown in full; entries with a summary show the
+## summary and Roller's "Read More" link instead.
+#set($listEntries = [])
+#foreach($day in $pager.entries.keySet())
+  #foreach($entry in $pager.entries.get($day))
+    #set($added = $listEntries.add($entry))
+  #end
+#end
+<div class="posts">
+  #foreach($entry in $listEntries)
+  <div class="post">
+    <h1 class="post-title">
+      <a href="$url.entry($entry.anchor)">$entry.title</a>
+    </h1>
+
+    <span class="post-date"><time datetime="$utils.formatIso8601Date($entry.pubTime)">$utils.formatDate($entry.pubTime, "dd MMM yyyy")</time></span>
+
+    #if($model.searchResults)
+    <p>$utils.truncateNicely($utils.removeHTML($entry.transformedText), 240, 300, "&hellip;")</p>
+    #else
+    $entry.displayContent($url.entry($entry.anchor))
+    #end
+  </div>
+  #end
+  #if($listEntries.size() == 0)
+  <p class="message">No posts here yet.</p>
+  #end
+</div>
+
+#if($pager.prevLink || $pager.nextLink)
+<div class="pagination">
+  #if($pager.nextLink)
+  <a class="pagination-item older" href="$pager.nextLink">Older</a>
+  #else
+  <span class="pagination-item older">Older</span>
+  #end
+  #if($pager.prevLink)
+  <a class="pagination-item newer" href="$pager.prevLink">Newer</a>
+  #else
+  <span class="pagination-item newer">Newer</span>
+  #end
+</div>
+#end

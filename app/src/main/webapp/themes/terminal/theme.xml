@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. -->
-<!-- Minima is MIT licensed, Copyright (c) 2016-present Parker Moore and the minima contributors; see theme.css. -->
+<!-- Terminal is MIT licensed, Copyright (c) 2024 panr; see theme.css. -->
 <weblogtheme>
-  <id>minima</id><name>Minima</name>
-  <description>A port of Minima, Jekyll's default theme: a clean, single-column blog with system fonts and automatic light and dark modes.</description>
-  <author>Parker Moore and the Minima contributors (ported for Apache Roller)</author>
+  <id>terminal</id><name>Terminal</name>
+  <description>A port of Terminal, the retro console theme for Hugo: monospace type, a dark background with amber accents, and a light variant for readers who prefer one.</description>
+  <author>panr (ported for Apache Roller)</author>
   <preview-image path="preview.png" />
-  <stylesheet><name>custom.css</name><description>Minima custom styles</description><link>custom.css</link><contentType>text/css</contentType><rendition><contentsFile>custom.css</contentsFile><templateLanguage>velocity</templateLanguage></rendition></stylesheet>
+  <stylesheet><name>custom.css</name><description>Terminal custom styles</description><link>custom.css</link><contentType>text/css</contentType><rendition><contentsFile>custom.css</contentsFile><templateLanguage>velocity</templateLanguage></rendition></stylesheet>
   <template action="weblog"><name>Weblog</name><description>Home, category, and date archive lists</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>weblog.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
   <template action="permalink"><name>Entry</name><description>Single entry</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>entry.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
   <template action="search"><name>Search</name><description>Search results</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>search.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
@@ -14,7 +14,7 @@
   <template action="custom"><name>Archives</name><description>All posts by year, categories, and tags</description><link>archives</link><navbar>true</navbar><hidden>false</hidden><contentType>text/html</contentType><rendition><contentsFile>archives.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
   <template action="custom"><name>_post_list</name><description>Post list and pagination</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>post-list.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
   <template action="custom"><name>standard_head</name><description>HTML head</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>head.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
-  <template action="custom"><name>standard_header</name><description>Site header and navigation</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>header.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
+  <template action="custom"><name>standard_header</name><description>Logo and navigation menu</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>header.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
   <template action="custom"><name>standard_footer</name><description>Site footer</description><navbar>false</navbar><hidden>true</hidden><contentType>text/html</contentType><rendition><contentsFile>footer.vm</contentsFile><templateLanguage>velocity</templateLanguage></rendition></template>
-  <resource path="theme.css" />
+  <resource path="theme.css" /><resource path="preview.png" />
 </weblogtheme>

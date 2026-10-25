@@ -51,12 +51,12 @@ public class ThemeManagerTest  {
         assertNotNull( themeManager.getTheme("basic") );
         assertNotNull( themeManager.getTheme("basic").getStylesheet() );
         assertNull( themeManager.getTheme("frontpage").getStylesheet() );
-        assertNotNull( themeManager.getTheme("casper") );
-        assertNotNull( themeManager.getTheme("casper").getStylesheet() );
-        assertNotNull( themeManager.getTheme("minima") );
-        assertNotNull( themeManager.getTheme("minima").getStylesheet() );
+        assertNotNull( themeManager.getTheme("hyde") );
+        assertNotNull( themeManager.getTheme("hyde").getStylesheet() );
         assertNotNull( themeManager.getTheme("papermod") );
         assertNotNull( themeManager.getTheme("papermod").getStylesheet() );
+        assertNotNull( themeManager.getTheme("terminal") );
+        assertNotNull( themeManager.getTheme("terminal").getStylesheet() );
     }
         
 }

@@ -1,0 +1,13 @@
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="copyright">
+      <span>&copy; $utils.formatDate($utils.now, "yyyy") <a href="$url.home">$model.weblog.name</a></span>
+      <span>:: <a href="$url.feed.entries.atom">Atom feed</a></span>
+      #if($utils.isUserAuthorizedToAuthor($model.weblog))
+      <span>:: <a href="$url.createEntry">New entry</a></span>
+      #end
+      <span>:: Powered by <a href="https://roller.apache.org/" rel="noopener">Apache Roller</a></span>
+      <span>:: <a href="https://github.com/panr/hugo-theme-terminal" rel="noopener">Theme</a> made by <a href="https://github.com/panr" rel="noopener">panr</a></span>
+    </div>
+  </div>
+</footer>
