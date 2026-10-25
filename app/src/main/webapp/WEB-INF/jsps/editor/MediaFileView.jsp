@@ -24,426 +24,232 @@
     <input type="hidden" name="type" id="type"/>
 </s:form>
 
+<s:url var="mediaFileAddURL" action="mediaFileAdd">
+    <s:param name="weblog" value="%{actionWeblog.handle}"/>
+    <s:param name="directoryName" value="%{directoryName}"/>
+</s:url>
 
-<%-- ********************************************************************* --%>
+<div id="mediaLibrary" class="media-library"
+     data-confirm-delete="<s:text name='mediaFileView.confirmDelete'/>"
+     data-confirm-move="<s:text name='mediaFile.move.confirm'/>"
+     data-confirm-delete-folder="<s:text name='mediaFile.deleteFolder.confirm'/>"
+     data-selected-count="<s:text name='mediaFileView.selectedCount'/>">
 
-<%-- Subtitle and folder path --%>
+<%-- Heading: where we are, and the main action --%>
 
-<s:if test='currentDirectory.name.equals("default")'>
+<div class="media-header">
+    <div>
+        <s:if test="pager">
+            <h3 class="media-heading"><s:text name="mediaFileView.searchTitle"/></h3>
+        </s:if>
+        <s:else>
+            <h3 class="media-heading">
+                <span class="bi bi-folder2" aria-hidden="true"></span>
+                <s:property value="currentDirectory.name"/>
+            </h3>
+        </s:else>
+    </div>
+    <div class="media-folder-picker">
+        <label class="form-label" for="folderPicker"><s:text name="mediaFileView.viewFolder"/></label>
+        <select id="folderPicker" class="form-select">
+            <s:iterator var="folder" value="allDirectories">
+                <s:url var="folderURL" action="mediaFileView">
+                    <s:param name="weblog" value="%{actionWeblog.handle}"/>
+                    <s:param name="directoryId" value="%{#folder.id}"/>
+                </s:url>
+                <option value="<s:property value='%{folderURL}'/>"
+                        <s:if test="#folder.id == currentDirectory.id">selected</s:if>><s:property value="#folder.name"/></option>
+            </s:iterator>
+        </select>
+    </div>
+    <a class="btn btn-primary" href="<s:property value='%{mediaFileAddURL}'/>">
+        <span class="bi bi-upload" aria-hidden="true"></span>
+        <s:text name="mediaFileView.upload"/>
+    </a>
+</div>
 
-    <p class="subtitle">
-        <s:text name="mediaFileView.subtitle">
-            <s:param value="weblog"/>
-        </s:text>
-    </p>
-    <p class="pagetip">
-        <s:text name="mediaFileView.rootPageTip"/>
-    </p>
+<%-- Search: name and type first; size and tags behind Filters --%>
 
-</s:if>
+<s:form id="mediaFileSearchForm" name="mediaFileSearchForm" action="mediaFileView!search"
+        theme="simple" cssClass="media-search" role="search">
+    <s:hidden name="salt"/>
+    <s:hidden name="weblog"/>
+    <%-- set by the result pager buttons; a new search starts at page 0 --%>
+    <input type="hidden" id="beanPageNum" name="bean.pageNum" value="0"/>
 
-<s:elseif test='pager'>
+    <div class="media-search-row">
+        <div class="media-search-name">
+            <label class="form-label" for="beanName"><s:text name="mediaFileView.nameStartsWith"/></label>
+            <s:textfield id="beanName" name="bean.name" maxlength="255" cssClass="form-control"/>
+        </div>
+        <div class="media-search-type">
+            <label class="form-label" for="beanType"><s:text name="mediaFileView.type"/></label>
+            <s:select id="beanType" name="bean.type" list="fileTypes" listKey="key" listValue="value"
+                      cssClass="form-select"/>
+        </div>
+        <div class="media-search-buttons">
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="collapse"
+                    data-bs-target="#mediaFilters" aria-expanded="false" aria-controls="mediaFilters">
+                <span class="bi bi-sliders" aria-hidden="true"></span>
+                <s:text name="mediaFileView.filters"/>
+            </button>
+            <s:submit id="searchButton" cssClass="btn btn-primary" value="%{getText('generic.search')}"/>
+            <s:if test="pager">
+                <s:url var="mediaFileViewURL" action="mediaFileView">
+                    <s:param name="weblog" value="%{actionWeblog.handle}"/>
+                </s:url>
+                <a class="btn btn-outline-secondary" href="<s:property value='%{mediaFileViewURL}'/>">
+                    <s:text name="mediaFileView.clearSearch"/></a>
+            </s:if>
+        </div>
+    </div>
 
-    <p class="subtitle">
-        <s:text name="mediaFileView.searchTitle"/>
-    </p>
-    <p class="pagetip">
+    <div id="mediaFilters" class="collapse media-filters">
+        <fieldset class="media-filter-size">
+            <legend class="form-label"><s:text name="mediaFileView.size"/></legend>
+            <s:select id="sizeFilterTypeCombo" name="bean.sizeFilterType" list="sizeFilterTypes"
+                      listKey="key" listValue="value" cssClass="form-select"
+                      aria-label="%{getText('mediaFileView.sizeComparison')}"/>
+            <s:textfield id="beanSize" name="bean.size" maxlength="10" cssClass="form-control"
+                         aria-label="%{getText('mediaFileView.size')}"/>
+            <s:select id="beanSizeUnit" name="bean.sizeUnit" list="sizeUnits" listKey="key" listValue="value"
+                      cssClass="form-select" aria-label="%{getText('mediaFileView.sizeUnit')}"/>
+        </fieldset>
+        <div class="media-filter-tags">
+            <label class="form-label" for="beanTags"><s:text name="mediaFileView.tags"/></label>
+            <s:textfield id="beanTags" name="bean.tags" maxlength="50" cssClass="form-control"/>
+        </div>
+    </div>
+</s:form>
 
-            <%-- display summary of the search results and terms --%>
-
+<s:if test="pager">
+    <p class="media-result-summary" role="status">
         <s:if test="pager.items.size() > 0">
-        <s:text name="mediaFileView.matchingResults">
-            <s:param value="pager.totalCount"/>
-        </s:text>
+            <s:text name="mediaFileView.matchingResults">
+                <s:param value="pager.totalCount"/>
+            </s:text>
         </s:if>
         <s:else>
             <s:text name="mediaFileView.noResults"/>
         </s:else>
-            <s:text name="mediaFileView.searchInfo"/>
-
-    <ul>
-        <s:if test="!bean.name.isEmpty()">
-            <li>
-                <s:text name="mediaFileView.filesNamed">
-                    <s:param value="bean.name"/>
-                </s:text>
-            </li>
-        </s:if>
-        <s:if test="bean.size > 0">
-            <li>
-                <s:text name="mediaFileView.filesOfSize">
-                    <s:param value='bean.sizeFilterTypeLabel'/>
-                    <s:param value='bean.size'/>
-                    <s:param value='bean.sizeUnitLabel'/>
-                </s:text>
-            </li>
-        </s:if>
-        <s:if test="!bean.type.isEmpty()">
-            <li>
-                <s:text name="mediaFileView.filesOfType">
-                    <s:param value='bean.typeLabel'/>
-                </s:text>
-            </li>
-        </s:if>
-        <s:if test="!bean.tags.isEmpty()">
-            <li>
-                <s:text name="mediaFileView.filesTagged">
-                    <s:param value="bean.tags"/>
-                </s:text>
-            </li>
-        </s:if>
-    </ul>
-
-    <s:include value="/WEB-INF/jsps/editor/MediaFilePager.jsp"/>
-
-</s:elseif>
-
-<s:else>
-
-    <p class="subtitle">
-        <s:text name="mediaFileView.folderName"/>: <s:property value="%{currentDirectory.name}"/>
     </p>
-    <p class="pagetip">
-        <s:text name="mediaFileView.dirPageTip"/>
-    </p>
+</s:if>
 
-</s:else>
+<%-- Files, with the selection toolbar above them --%>
 
+<s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView" theme="simple">
+    <s:hidden name="salt"/>
+    <s:hidden name="weblog"/>
+    <s:hidden name="directoryId"/>
+    <s:hidden name="newDirectoryName"/>
+    <input type="hidden" name="mediaFileId" value=""/>
 
-<s:if test="childFiles || (pager && pager.items.size() > 0)">
+    <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
 
-    <s:form id="mediaFileViewForm" name="mediaFileViewForm" action="mediaFileView" theme="bootstrap">
-        <s:hidden name="salt"/>
-        <s:hidden name="weblog"/>
-        <s:hidden name="directoryId"/>
-        <s:hidden name="newDirectoryName"/>
-        <input type="hidden" name="mediaFileId" value=""/>
-
-        <div class="image-controls">
-
-            <s:if test="!allDirectories.isEmpty">
-                <%-- Folder to View combo-box --%>
-                <span><s:text name="mediaFileView.viewFolder"/>:</span>
-                <s:select id="viewDirectoryMenu" name="viewDirectoryId"
-                          list="allDirectories" listKey="id" listValue="name" onchange="onView()"/>
-            </s:if>
-
-            <span><s:text name="mediaFileView.sortBy"/>:</span>
-            <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="key" listValue="value"
-                      onchange="document.mediaFileViewForm.submit();"/>
-
-        </div>
-
-
-        <%-- ***************************************************************** --%>
-
-        <%-- Media file folder contents --%>
-
-        <script>
-            function highlight(el, flag) {
-                if (flag) {
-                    $(el).addClass("highlight");
-                } else {
-                    $(el).removeClass("highlight");
-                }
-            }
-        </script>
-
-        <div id="imageGrid" class="card">
-            <div class="card-body">
-
-                <ul>
-
-                    <s:if test="!pager">
-
-                        <%-- ----------------------------------------------------- --%>
-
-                        <%-- NOT SEARCH RESULTS --%>
-
-                        <s:if test="childFiles.size() ==0">
-                            <s:text name="mediaFileView.noFiles"/>
-                        </s:if>
-
-                        <%-- List media files --%>
-
-                        <s:iterator var="mediaFile" value="childFiles">
-
-                            <li class="align-images"
-                                onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
-
-                                <div class="mediaObject mediafile-edit-target"
-                                     data-mediafile-id="<s:property value="#mediaFile.id"/>"
-                                     data-mediafile-name="<s:property value="#mediaFile.name"/>">
-
-                                    <s:if test="#mediaFile.imageFile">
-                                        <img border="0" src="<s:property value='%{#mediaFile.thumbnailURL}' />"
-                                             width="<s:property value='#mediaFile.thumbnailWidth' />"
-                                             height="<s:property value='#mediaFile.thumbnailHeight' />"
-                                             title="<s:property value='#mediaFile.name' />"
-                                             alt="<s:property value='#mediaFile.name' />"
-                                            />
-                                    </s:if>
-
-                                    <s:else>
-                                        <s:url var="mediaFileURL" value="/images/page.png"/>
-                                        <img border="0" src="<s:property value='%{mediaFileURL}' />"
-                                             style="padding:40px 50px;"
-                                             alt="<s:property value='#mediaFile.name'/>"
-                                            />
-                                    </s:else>
-
-                                </div>
-
-                                <div class="mediaObjectInfo">
-
-                                    <input type="checkbox"
-                                           name="selectedMediaFiles"
-                                           value="<s:property value="#mediaFile.id"/>"/>
-                                    <input type="hidden" id="mediafileidentity"
-                                           value="<s:property value='#mediaFile.id'/>"/>
-
-                                    <str:truncateNicely lower="47" upper="47">
-                                        <s:property value="#mediaFile.name"/>
-                                    </str:truncateNicely>
-
-                                </div>
-
-                            </li>
-
-                        </s:iterator>
-
-                    </s:if>
-
-                    <s:else>
-
-                        <%-- ----------------------------------------------------- --%>
-
-                        <%-- SEARCH RESULTS --%>
-
-                        <s:iterator var="mediaFile" value="pager.items">
-
-                            <li class="align-images"
-                                onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
-
-                                <div class="mediaObject mediafile-edit-target"
-                                     data-mediafile-id="<s:property value="#mediaFile.id"/>"
-                                     data-mediafile-name="<s:property value="#mediaFile.name"/>">
-
-                                    <s:if test="#mediaFile.imageFile">
-                                        <img border="0" src="<s:property value='%{#mediaFile.thumbnailURL}' />"
-                                             width="<s:property value='#mediaFile.thumbnailWidth'/>"
-                                             height="<s:property value='#mediaFile.thumbnailHeight'/>"
-                                             title="<s:property value='#mediaFile.name' />"
-                                             alt="<s:property value='#mediaFile.name'/>"/>
-                                    </s:if>
-
-                                    <s:else>
-                                        <s:url var="mediaFileURL" value="/images/page.png"/>
-                                        <img border="0" src="<s:property value='%{mediaFileURL}' />"
-                                             style="padding:40px 50px;" alt="<s:property value='#mediaFile.name'/>"/>
-                                    </s:else>
-
-                                </div>
-
-                                <div class="mediaObjectInfo">
-
-                                    <input type="checkbox"
-                                           name="selectedMediaFiles"
-                                           value="<s:property value="#mediaFile.id"/>"/>
-                                    <input type="hidden" id="mediafileidentity"
-                                           value="<s:property value='#mediaFile.id'/>">
-
-                                    <str:truncateNicely lower="40" upper="50">
-                                        <s:property value="#mediaFile.name"/>
-                                    </str:truncateNicely>
-
-                                    <span class="button" id="addbutton-<s:property value='#mediaFile.id' />">
-                                    <img id="addbutton-img<s:property value='#mediaFile.id' />"
-                                         src="<s:url value="/images/add.png"/>"/>
-                                </span>
-
-                                </div>
-
-                            </li>
-
-                        </s:iterator>
-
-                    </s:else>
-
-                </ul>
-
+        <div class="media-toolbar">
+            <div class="media-toolbar-group">
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="selectPageButton">
+                    <s:text name="mediaFileView.selectPage"/></button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="clearSelectionButton" disabled>
+                    <s:text name="mediaFileView.clearSelection"/></button>
+                <span class="media-selected-count" id="selectedCount" aria-live="polite"></span>
             </div>
+            <div class="media-toolbar-group">
+                <label class="visually-hidden" for="moveTargetMenu"><s:text name="mediaFileView.moveTo"/></label>
+                <s:select id="moveTargetMenu" name="selectedDirectory" list="allDirectories" listKey="id"
+                          listValue="name" cssClass="form-select form-select-sm" disabled="true"/>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="moveButton" disabled>
+                    <span class="bi bi-folder-symlink" aria-hidden="true"></span>
+                    <s:text name="mediaFileView.move"/></button>
+                <button type="button" class="btn btn-outline-danger btn-sm" id="deleteButton" disabled>
+                    <span class="bi bi-trash" aria-hidden="true"></span>
+                    <s:text name="generic.delete"/></button>
+            </div>
+            <s:if test="!pager">
+                <div class="media-toolbar-group ms-auto">
+                    <label for="sortByMenu"><s:text name="mediaFileView.sortBy"/></label>
+                    <s:select id="sortByMenu" name="sortBy" list="sortOptions" listKey="key" listValue="value"
+                              cssClass="form-select form-select-sm"/>
+                </div>
+            </s:if>
         </div>
-
-        <div style="clear:left;"></div>
 
         <s:if test="pager">
             <s:include value="/WEB-INF/jsps/editor/MediaFilePager.jsp"/>
         </s:if>
 
-        <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0) || (currentDirectory.name != 'default' && !pager)">
+        <ul class="media-grid" id="mediaGrid">
+            <s:if test="pager">
+                <s:iterator var="mediaFile" value="pager.items">
+                    <s:include value="/WEB-INF/jsps/editor/MediaFileCard.jsp"/>
+                </s:iterator>
+            </s:if>
+            <s:else>
+                <s:iterator var="mediaFile" value="childFiles">
+                    <s:include value="/WEB-INF/jsps/editor/MediaFileCard.jsp"/>
+                </s:iterator>
+            </s:else>
+        </ul>
 
-            <div class="image-controls">
-
-                <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0)">
-                    <input id="toggleButton" type="button" class="btn btn-outline-secondary" style="display: inline"
-                           value='<s:text name="generic.toggle" />' onclick="onToggle()"/>
-
-                    <input id="deleteButton" type="button" class="btn btn-danger" style="display: inline"
-                           value='<s:text name="mediaFileView.deleteSelected" />' onclick="onDeleteSelected()"/>
-
-                    <input id="moveButton" type="button" class="btn btn-primary" style="display: inline"
-                           value='<s:text name="mediaFileView.moveSelected" />' onclick="onMoveSelected()"/>
-                </s:if>
-
-                <s:select id="moveTargetMenu" name="selectedDirectory" cssStyle="display: inline; width: 15em"
-                          list="allDirectories" listKey="id" listValue="name"/>
-
-                <s:if test="currentDirectory.name != 'default' && !pager">
-                    <input id="deleteFolderButton" type="button" class="btn btn-outline-secondary" style="display: inline"
-                           value='<s:text name="mediaFileView.deleteFolder" />' onclick="onDeleteFolder()"/>
-                </s:if>
-
-            </div>
-
+        <s:if test="pager">
+            <s:include value="/WEB-INF/jsps/editor/MediaFilePager.jsp"/>
         </s:if>
 
-    </s:form>
+    </s:if>
+    <s:elseif test="!pager">
+        <div class="media-empty">
+            <span class="bi bi-images" aria-hidden="true"></span>
+            <p><s:text name="mediaFileView.noFiles"/></p>
+            <a class="btn btn-primary" href="<s:property value='%{mediaFileAddURL}'/>">
+                <s:text name="mediaFileView.upload"/></a>
+        </div>
+    </s:elseif>
 
-</s:if>
+    <s:if test="currentDirectory.name != 'default' && !pager">
+        <div class="media-folder-actions">
+            <button type="button" class="btn btn-link text-danger" id="deleteFolderButton">
+                <s:text name="mediaFileView.deleteFolder"/></button>
+        </div>
+    </s:if>
 
+</s:form>
+
+</div>
 
 <%-- ================================================================================================ --%>
 
 <%-- view image modal --%>
 
-<div id="mediafile_edit_lightbox" class="modal fade" tabindex="-1" role="dialog">
+<div id="mediafile_edit_lightbox" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="edit-subtitle">
 
     <div class="modal-dialog modal-lg">
 
         <div class="modal-content">
 
             <div class="modal-header">
-                <h3 class="subtitle">
-                    <s:text name="mediaFileEdit.subtitle"/><b><span id="edit-subtitle"></span></b>
-                </h3>
+                <h3 class="modal-title fs-5" id="edit-subtitle"></h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="<s:text name='generic.close'/>"></button>
             </div>
 
             <div class="modal-body">
-                <iframe id="mediaFileEditor"
-                        style="visibility:inherit"
-                        height="700" <%-- pixels, sigh, this is suboptimal--%>
-                        width="100%"
-                        frameborder="no"
-                        scrolling="auto">
-                </iframe>
+                <iframe id="mediaFileEditor" title="<s:text name='mediaFileEdit.subtitle'/>"
+                        style="visibility:inherit; width:100%; height:70vh; border:0"></iframe>
             </div>
-
-            <div class="modal-footer"></div>
 
         </div>
     </div>
 
 </div>
 
+<s:url var="mediaFileEditURL" action="mediaFileEdit">
+    <s:param name="weblog" value="%{actionWeblog.handle}" />
+</s:url>
+<span id="mediaFileUrls" hidden
+      data-edit-url="<s:property value='%{mediaFileEditURL}'/>"
+      data-delete-selected-url="<s:url action='mediaFileView!deleteSelected'/>"
+      data-move-selected-url="<s:url action='mediaFileView!moveSelected'/>"
+      data-delete-folder-url="<s:url action='mediaFileView!deleteFolder'/>"
+      data-create-folder-url="<s:url action='mediaFileView!createNewDirectory'/>"></span>
 
-<script>
-    toggleState = 'Off';
-
-    function onClickEdit(mediaFileId, mediaFileName) {
-        <s:url var="mediaFileEditURL" action="mediaFileEdit">
-        <s:param name="weblog" value="%{actionWeblog.handle}" />
-        </s:url>
-        $('#edit-subtitle').text(mediaFileName);
-        $('#mediaFileEditor').attr('src', '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
-        $('#mediafile_edit_lightbox').modal('show');
-    }
-
-    // Values come from data-* attributes and are bound via delegated listeners.
-    $(document).on('click', '.mediafile-edit-target', function () {
-        onClickEdit($(this).attr('data-mediafile-id'),
-                $(this).attr('data-mediafile-name'));
-    });
-
-    function onEditSuccess() {
-        onEditCancelled();
-        document.mediaFileViewForm.submit();
-    }
-
-    function onEditCancelled() {
-        $('#mediafile_edit_lightbox').modal('hide');
-        $("#mediaFileEditor").attr('src', 'about:blank');
-    }
-
-    function onSelectDirectory(id) {
-        window.location = "<s:url action="mediaFileView" />?directoryId="
-            + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
-    }
-
-    function onToggle() {
-        if (toggleState === 'Off') {
-            toggleState = 'On';
-            toggleFunction(true, 'selectedMediaFiles');
-            $("#deleteButton").attr('disabled', false);
-            $("#moveButton").attr('disabled', false);
-            $("#moveTargetMenu").attr('disabled', false);
-        } else {
-            toggleState = 'Off';
-            toggleFunction(false, 'selectedMediaFiles');
-            $("#deleteButton").attr('disabled', true);
-            $("#moveButton").attr('disabled', true);
-            $("#moveTargetMenu").attr('disabled', true);
-        }
-    }
-
-    function onDeleteSelected() {
-        if (confirm("<s:text name='mediaFile.delete.confirm' />")) {
-            document.mediaFileViewForm.action = '<s:url action="mediaFileView!deleteSelected" />';
-            document.mediaFileViewForm.submit();
-        }
-    }
-
-    function onDeleteFolder() {
-        if (confirm("<s:text name='mediaFile.deleteFolder.confirm' />")) {
-            document.mediaFileViewForm.action = '<s:url action="mediaFileView!deleteFolder" />';
-            document.mediaFileViewForm.submit();
-        }
-    }
-
-    function onMoveSelected() {
-        if (confirm("<s:text name='mediaFile.move.confirm' />")) {
-            document.mediaFileViewForm.action = '<s:url action="mediaFileView!moveSelected" />';
-            document.mediaFileViewForm.submit();
-        }
-    }
-
-    function onView() {
-        document.mediaFileViewForm.action = "<s:url action='mediaFileView!view' />";
-        document.mediaFileViewForm.submit();
-    }
-
-    <%-- code to toggle buttons on/off as media file/directory selections change --%>
-
-    $(document).ready(function () {
-        $("#deleteButton").attr('disabled', true);
-        $("#moveButton").attr('disabled', true);
-        $("#moveTargetMenu").attr('disabled', true);
-
-        $("input[type=checkbox]").change(function () {
-            var count = 0;
-            $("input[type=checkbox]").each(function (index, element) {
-                if (element.checked) count++;
-            });
-            if (count === 0) {
-                $("#deleteButton").attr('disabled', true);
-                $("#moveButton").attr('disabled', true);
-                $("#moveTargetMenu").attr('disabled', true);
-            } else {
-                $("#deleteButton").attr('disabled', false);
-                $("#moveButton").attr('disabled', false);
-                $("#moveTargetMenu").attr('disabled', false);
-            }
-        });
-    });
-
-</script>
+<script src="<s:url value='/roller-ui/scripts/media-library.js'/>"></script>

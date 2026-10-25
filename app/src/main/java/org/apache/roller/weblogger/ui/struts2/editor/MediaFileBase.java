@@ -211,6 +211,21 @@ public class MediaFileBase extends UIAction {
         }
     }
 
+    /** Size for display, see {@link MediaFileDisplay#formatSize(long)}. */
+    public String formatSize(long bytes) {
+        return MediaFileDisplay.formatSize(bytes);
+    }
+
+    /** File type for display, see {@link MediaFileDisplay#formatType(String, String)}. */
+    public String formatType(String contentType, String fileName) {
+        return MediaFileDisplay.formatType(contentType, fileName);
+    }
+
+    /** Icon class for a file without a thumbnail. */
+    public String typeIcon(String contentType) {
+        return MediaFileDisplay.typeIcon(contentType);
+    }
+
     public String[] getSelectedMediaFiles() {
         return selectedMediaFiles;
     }

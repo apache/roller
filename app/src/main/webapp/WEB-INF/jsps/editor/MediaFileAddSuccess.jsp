@@ -18,7 +18,24 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 
-<p class="subtitle"><s:text name="mediaFileSuccess.subtitle"/></p>
+<s:if test="failedCount == 0">
+    <p class="subtitle"><s:text name="mediaFileSuccess.subtitle"/></p>
+</s:if>
+<s:else>
+    <p class="subtitle"><s:text name="mediaFileSuccess.partial"/></p>
+    <ul class="media-upload-failed">
+        <s:iterator var="result" value="uploadResults">
+            <s:if test="!#result.uploaded">
+                <li>
+                    <span class="bi bi-x-circle text-danger" aria-hidden="true"></span>
+                    <strong><s:property value="#result.fileName"/></strong>:
+                    <%-- error is message text whose arguments UIAction.getText() already escaped --%>
+                    <s:property value="#result.error" escapeHtml="false"/>
+                </li>
+            </s:if>
+        </s:iterator>
+    </ul>
+</s:else>
 <p class="pagetip"><s:text name="mediaFileSuccess.pageTip"/></p>
 
 <s:form id="entry" theme="bootstrap" cssClass="form-horizontal">
@@ -136,7 +153,7 @@
                 <div class="row">
 
                     <div class="col-md-1">
-                        <input type="radio" name="enclosure"
+                        <input type="radio" name="enclosure" class="enclosure-choice"
                                data-enclosure-url="" data-enclosure-type=""
                                data-enclosure-length="" />
                     </div>
@@ -167,13 +184,11 @@
         <s:submit theme="simple" cssClass="btn btn-success" id="submit" value="%{getText('mediaFileSuccess.createPost')}"
                   action="entryAddWithMediaFile"/>
 
-        <button class="btn btn-outline-secondary" onclick='window.load("<s:property value='%{mediaFileAddURL}'/>")'>
-            <s:text name="mediaFileSuccess.uploadMore"/>
-        </button>
+        <a class="btn btn-outline-secondary" href="<s:property value='%{mediaFileAddURL}'/>">
+            <s:text name="mediaFileSuccess.uploadMore"/></a>
 
-        <button class="btn btn-outline-secondary" onclick='window.load("<s:property value='%{mediaFileViewURL}'/>")'>
-            <s:text name="generic.cancel"/>
-        </button>
+        <a class="btn btn-outline-secondary" href="<s:property value='%{mediaFileViewURL}'/>">
+            <s:text name="mediaFileSuccess.viewLibrary"/></a>
     </div>
 
 </s:form>

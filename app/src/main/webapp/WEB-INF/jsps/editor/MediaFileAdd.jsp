@@ -27,8 +27,6 @@
     <s:hidden name="weblog"/>
     <s:hidden name="directoryName"/>
 
-    <s:textfield name="bean.name" maxlength="255" label="%{getText('generic.name')}"/>
-
     <s:textarea name="bean.description"  rows="3" label="%{getText('generic.description')}"/>
 
     <s:textarea name="bean.copyrightText" rows="3" label="%{getText('mediaFileAdd.copyright')}"/>
@@ -61,8 +59,12 @@
         <div class="col-sm-9 offset-sm-3">
             <s:submit id="uploadButton" cssClass="btn btn-primary" theme="simple"
                       value="%{getText('mediaFileAdd.upload')}" action="mediaFileAdd!save"/>
-            <s:submit cssClass="btn btn-outline-secondary" theme="simple"
-                      value="%{getText('generic.cancel')}" action="mediaFileAdd!cancel"/>
+            <s:url var="mediaFileViewURL" action="mediaFileView">
+                <s:param name="weblog" value="%{actionWeblog.handle}"/>
+                <s:param name="directoryName" value="%{directoryName}"/>
+            </s:url>
+            <a class="btn btn-outline-secondary" href="<s:property value='%{mediaFileViewURL}'/>">
+                <s:text name="generic.cancel"/></a>
         </div>
     </div>
 
@@ -73,54 +75,16 @@
 
 <script>
 
+    // Upload is enabled once a file is chosen. Each file keeps its own name.
     $(document).ready(function () {
-
+        var uploadButton = $("#uploadButton");
+        uploadButton.attr("disabled", true);
         $("input[type='file']").change(function () {
-
-            var name = '';
-            var count = 0;
-            var fileControls = $("input[type='file']");
-
-            for (var i = 0; i < fileControls.length; i++) {
-                if (jQuery.trim(fileControls.get(i).value).length > 0) {
-                    count++;
-                    name = fileControls.get(i).value;
-                }
-            }
-
-            var entryBean = $("#entry_bean_name");
-            if (count === 1) {
-                entryBean.get(0).disabled = false;
-                entryBean.get(0).value = getFileName(name);
-
-            } else if (count > 1) {
-                entryBean.css("font-style", "italic");
-                entryBean.css("color", "grey");
-                entryBean.get(0).value = "<s:text name="mediaFileAdd.multipleNames"  />";
-                entryBean.get(0).disabled = true;
-            }
-
-            if (count > 0) {
-                $("#uploadButton:first").attr("disabled", false)
-            }
+            var chosen = $("input[type='file']").filter(function () {
+                return this.value.length > 0;
+            }).length;
+            uploadButton.attr("disabled", chosen === 0);
         });
-
-        $("#uploadButton:first").attr("disabled", true)
     });
-
-    function getFileName(fullName) {
-        var backslashIndex = fullName.lastIndexOf('/');
-        var fwdslashIndex = fullName.lastIndexOf('\\');
-        var fileName;
-        if (backslashIndex >= 0) {
-            fileName = fullName.substring(backslashIndex + 1);
-        } else if (fwdslashIndex >= 0) {
-            fileName = fullName.substring(fwdslashIndex + 1);
-        }
-        else {
-            fileName = fullName;
-        }
-        return fileName;
-    }
 
 </script>
