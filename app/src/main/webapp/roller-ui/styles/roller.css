@@ -30,9 +30,31 @@ p {
     margin: 1em;
 }
 
+/* Bootstrap 5 sizes everything for a 16px root, which reads large in this
+   dense admin UI; 15px scales text, controls and spacing down together. */
+html {
+    font-size: 15px;
+}
+
 .roller-page-title {
     margin-top: 0px;
     margin-bottom: 5px;
+    font-size: 1.75rem;
+}
+
+/* Section headings in sidebar cards */
+.roller-column-left h3 {
+    font-size: 1.25rem;
+}
+
+.roller-column-left h4 {
+    font-size: 1.1rem;
+}
+
+/* Cards stacked in a column (sidebar cards, setup steps, upload results)
+   would otherwise touch */
+.card + .card {
+    margin-top: 1rem;
 }
 
 .roller-column-right {
