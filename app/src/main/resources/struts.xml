@@ -326,11 +326,8 @@
             <result name="input" type="tiles">.MediaFileAdd</result>
             <result name="success" type="tiles">.MediaFileAddSuccess</result>
             <result name="error" type="tiles">.MediaFileAdd</result>
-            <result name="cancel" type="redirectAction">
-                <param name="actionName">mediaFileView</param>
-                <param name="weblog">${weblog}</param>
-            </result>
-            <allowed-methods>execute,save</allowed-methods>
+            <result name="json" type="dispatcher">/WEB-INF/jsps/editor/MediaFileAddResult.jsp</result>
+            <allowed-methods>execute,save,done</allowed-methods>
         </action>
 
         <action name="mediaFileEdit"

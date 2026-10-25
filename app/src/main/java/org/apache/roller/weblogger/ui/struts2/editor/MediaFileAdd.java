@@ -23,7 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -32,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
@@ -69,6 +75,15 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
     private final List<UploadResult> uploadResults = new ArrayList<>();
 
     private String directoryName = null;
+
+    // "json" when the upload page sends the files with fetch() and wants the
+    // per-file results as JSON (MediaFileAddResult.jsp)
+    private String format = null;
+
+    // comma separated IDs of files just uploaded, for done()
+    private String uploadedIds = null;
+
+    static final String JSON = "json";
 
     public MediaFileAdd() {
         this.actionName = "mediaFileAdd";
@@ -149,6 +164,13 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
 
             MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
 
+            long fileCount = uploadedFiles == null ? 0
+                    : uploadedFiles.stream().filter(u -> u != null).count();
+            if (fileCount > getMaxFiles()) {
+                addError("mediaFileAdd.tooManyFiles", Integer.toString(getMaxFiles()));
+                return result(INPUT);
+            }
+
             if (uploadedFiles != null && !uploadedFiles.isEmpty()) {
 
                 // loop over uploaded files and try saving each one; a file that
@@ -226,19 +248,56 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
 
                 if (newImages.isEmpty() && newFiles.isEmpty()) {
                     // nothing was saved; the errors are on the upload form
-                    return INPUT;
+                    return result(INPUT);
                 }
 
                 // Files that were saved are listed on the success page, with
                 // any that failed, so a partial upload is never hidden.
                 this.pageTitle = "mediaFileAddSuccess.title";
-                return SUCCESS;
+                return result(SUCCESS);
 
             } else {
                 addError("error.upload.file");
             }
         }
-        return INPUT;
+        return result(INPUT);
+    }
+
+    private String result(String pageResult) {
+        return JSON.equals(format) ? JSON : pageResult;
+    }
+
+    /**
+     * Shows the success page for files already uploaded, after the upload page
+     * sent them with fetch(). Only files of this weblog are shown.
+     */
+    @SkipValidation
+    public String done() {
+        if (StringUtils.isNotBlank(uploadedIds)) {
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            for (String id : StringUtils.split(uploadedIds, ',')) {
+                try {
+                    MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), id.trim());
+                    if (mediaFile == null) {
+                        continue;
+                    }
+                    if (mediaFile.isImageFile()) {
+                        newImages.add(mediaFile);
+                    } else {
+                        newFiles.add(mediaFile);
+                    }
+                    uploadResults.add(UploadResult.uploaded(mediaFile));
+                    bean.setDirectoryId(mediaFile.getDirectory().getId());
+                } catch (WebloggerException ex) {
+                    log.error("Error looking up uploaded media file " + id, ex);
+                }
+            }
+        }
+        if (newImages.isEmpty() && newFiles.isEmpty()) {
+            return INPUT;
+        }
+        this.pageTitle = "mediaFileAddSuccess.title";
+        return SUCCESS;
     }
 
     /**
@@ -322,6 +381,79 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
         this.newFiles = newFiles;
     }
 
+    /**
+     * The upload outcome for the upload page's script: one entry per file,
+     * the form errors, and a fresh salt for a retry (salts are single-use).
+     */
+    public String getResultJson() {
+        List<Map<String, Object>> files = new ArrayList<>();
+        for (UploadResult r : uploadResults) {
+            Map<String, Object> file = new LinkedHashMap<>();
+            file.put("name", r.getFileName());
+            file.put("uploaded", r.isUploaded());
+            if (r.isUploaded()) {
+                file.put("id", r.getMediaFile().getId());
+                file.put("url", r.getMediaFile().getPermalink());
+            } else {
+                file.put("error", r.getErrorText());
+            }
+            files.add(file);
+        }
+        List<String> errors = new ArrayList<>();
+        if (uploadResults.isEmpty()) {
+            // errors for the whole upload: uploads off, too many files, no files
+            for (String error : getActionErrors()) {
+                errors.add(StringEscapeUtils.unescapeHtml4(error.replaceAll("<[^>]*>", "")));
+            }
+        }
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("files", files);
+        result.put("errors", errors);
+        result.put("salt", getSalt());
+        try {
+            return new ObjectMapper().writeValueAsString(result);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /** Most files one upload may contain (uploads.maxFilesPerRequest). */
+    public int getMaxFiles() {
+        return Math.max(1, WebloggerConfig.getIntProperty("uploads.maxFilesPerRequest", 20));
+    }
+
+    public boolean isUploadsEnabled() {
+        return WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled");
+    }
+
+    /** Largest file allowed, in MB, as configured. */
+    public String getMaxFileMB() {
+        return WebloggerRuntimeConfig.getProperty("uploads.file.maxsize");
+    }
+
+    /** Largest total for all of a weblog's files, in MB, as configured. */
+    public String getMaxDirMB() {
+        return WebloggerRuntimeConfig.getProperty("uploads.dir.maxsize");
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    @StrutsParameter
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public String getUploadedIds() {
+        return uploadedIds;
+    }
+
+    @StrutsParameter
+    public void setUploadedIds(String uploadedIds) {
+        this.uploadedIds = uploadedIds;
+    }
+
     public List<UploadResult> getUploadResults() {
         return uploadResults;
     }
@@ -378,6 +510,12 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
         /** Why the file failed, as escaped message HTML; null if it was saved. */
         public String getError() {
             return error;
+        }
+
+        /** Why the file failed, as plain text; null if it was saved. */
+        public String getErrorText() {
+            return error == null ? null
+                    : StringEscapeUtils.unescapeHtml4(error.replaceAll("<[^>]*>", ""));
         }
 
         public boolean isUploaded() {

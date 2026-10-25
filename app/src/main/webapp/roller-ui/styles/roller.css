@@ -783,6 +783,144 @@ body {
     }
 }
 
+/* media upload (MediaFileAdd.jsp) */
+
+.media-upload > fieldset > * + * {
+    margin-top: 1rem;
+}
+
+.media-upload-folder .form-select {
+    max-width: 20rem;
+}
+
+.media-drop-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2rem 1rem;
+    border: 2px dashed var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+    background-color: var(--bs-tertiary-bg);
+    text-align: center;
+}
+
+.media-drop-zone.dragging {
+    border-color: var(--bs-primary);
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+.media-drop-zone > .bi {
+    font-size: 2.5rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-drop-zone .form-control {
+    max-width: 28rem;
+}
+
+.media-upload-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.media-upload-list:empty {
+    display: none;
+}
+
+.media-upload-item {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr) auto auto;
+    grid-template-areas: "preview name size remove" "preview state state remove";
+    align-items: center;
+    gap: 0 0.75rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.media-upload-preview {
+    grid-area: preview;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--bs-tertiary-bg);
+    border-radius: var(--bs-border-radius-sm);
+}
+
+.media-upload-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.media-upload-preview .bi {
+    font-size: 1.5rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-upload-name {
+    grid-area: name;
+    overflow-wrap: anywhere;
+}
+
+.media-upload-size {
+    grid-area: size;
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-upload-state {
+    grid-area: state;
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-upload-remove {
+    grid-area: remove;
+}
+
+.media-upload-item[data-state="uploaded"] .media-upload-state {
+    color: var(--bs-success-text-emphasis);
+}
+
+.media-upload-item[data-state="failed"] .media-upload-state,
+.media-upload-item[data-state="unknown"] .media-upload-state {
+    color: var(--bs-danger-text-emphasis);
+}
+
+.media-upload-shared summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.media-upload-shared .form-label {
+    margin-top: 0.75rem;
+}
+
+.media-upload-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.media-upload-status:empty {
+    display: none;
+}
+
+.media-upload-failed {
+    list-style: none;
+    padding: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .media-drop-zone {
+        transition: border-color 0.15s, background-color 0.15s;
+    }
+}
+
 /* Narrow screens (media pages set a device-width viewport): the folder list
    gives way to the folder picker in the page header */
 .media-folder-picker {
