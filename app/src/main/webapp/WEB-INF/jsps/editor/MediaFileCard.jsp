@@ -17,10 +17,46 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<%-- One media file in the library grid or list. Expects #mediaFile on the value stack and
-     libraryQuery on the action. The checkbox selects the file; the preview and name open its
-     details page, which links back to this library page. --%>
+<%-- One media file in the library grid or list, or in the editor's media chooser.
+     Expects #mediaFile on the value stack. In the library (libraryQuery on the action) the
+     checkbox selects the file and the preview and name open its details page, which links
+     back to this library page. In the chooser (#chooserMode set) the preview and name insert
+     the file into the entry, with its description as the alt text. --%>
 
+<s:if test="#chooserMode">
+    <s:set var="altText" value="(#mediaFile.description != null && !#mediaFile.description.trim().isEmpty()) ? #mediaFile.description.trim() : #mediaFile.name"/>
+<li class="media-card">
+    <button type="button" class="media-card-preview mediafile-select-target" tabindex="-1" aria-hidden="true"
+            data-mediafile-name="<s:property value='#mediaFile.name'/>"
+            data-mediafile-url="<s:property value='#mediaFile.permalink'/>"
+            data-mediafile-alt="<s:property value='#altText'/>"
+            data-mediafile-is-image="<s:property value='#mediaFile.imageFile'/>">
+        <s:if test="#mediaFile.imageFile">
+            <img src="<s:property value='#mediaFile.thumbnailURL'/>" alt="" loading="lazy"
+                 data-fallback-icon="<s:property value='typeIcon(#mediaFile.contentType)'/>"/>
+        </s:if>
+        <s:else>
+            <span class="bi <s:property value='typeIcon(#mediaFile.contentType)'/>" aria-hidden="true"></span>
+        </s:else>
+    </button>
+    <div class="media-card-body">
+        <div class="media-card-text">
+            <button type="button" class="media-card-name mediafile-select-target"
+                    data-mediafile-name="<s:property value='#mediaFile.name'/>"
+                    data-mediafile-url="<s:property value='#mediaFile.permalink'/>"
+                    data-mediafile-alt="<s:property value='#altText'/>"
+                    data-mediafile-is-image="<s:property value='#mediaFile.imageFile'/>"
+                    aria-label="<s:text name='mediaFileImageChooser.insert' escapeHtml='true'><s:param value='#mediaFile.name'/></s:text>"
+                    title="<s:property value='#mediaFile.name'/>"><s:property value="#mediaFile.name"/></button>
+            <span class="media-card-meta">
+                <span class="media-card-type"><s:property value="formatType(#mediaFile.contentType, #mediaFile.name)"/></span>
+                <span class="media-card-size"><s:property value="formatSize(#mediaFile.length)"/></span>
+            </span>
+        </div>
+    </div>
+</li>
+</s:if>
+<s:else>
 <s:url var="detailsURL" escapeAmp="false" action="mediaFileEdit">
     <s:param name="weblog" value="%{actionWeblog.handle}"/>
     <s:param name="mediaFileId" value="%{#mediaFile.id}"/>
@@ -56,3 +92,4 @@
     </div>
 
 </li>
+</s:else>

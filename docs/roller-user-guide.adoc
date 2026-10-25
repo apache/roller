@@ -424,86 +424,101 @@ limit. To accept larger pasted images, set `maxPostSize` on the Tomcat
 entry text.
 
 If you’d like to upload images or other files for use in your weblog, go
-to your weblog’s *Create & Edit -> Media Files* page. From there you can
-upload files, browse and search files. You can also manage your files,
-organize them into directories and post them to your weblog.
+to your weblog’s *Create & Edit -> Media Files* page, the media library.
+From there you can upload, find and organize files, and post them to your
+weblog.
 
-image::user-guide-12-media.png[]
-
-You can see the Media File View page above. Below we’ll discuss all of
-the things you can do with Media Files via the Media File View page and
-the new Media File browser that we’ve added to the Weblog Editor.
+The library shows one folder at a time. The folders are listed on the left;
+on a narrow screen, choose the folder from the list at the top instead. Files
+show as a grid of previews, or as a list with name, type, size and upload
+date; use the buttons next to *Sort by* to switch. Your choice is kept in
+your browser. The library shows 48 files a page, newest first. Use *Sort by*
+to sort by oldest first, name or type, and the buttons above and below the
+files to move between pages.
 
 ==== How to upload files
 
-To upload files you follow the *Add Media File* link in the top right of
-the page. You will see the Media File Add page, which is pictured below.
+Click *Upload files*. Choose the folder for the files, then choose files with
+the file picker or drag them onto the page. You can upload up to 20 files at
+a time; the page shows this limit and the size limits your site allows. Each
+file is listed with its name and size, and you can remove a file from the
+list before you upload.
 
-image::user-guide-13-add-media.png[]
+Under *Apply to these files* you can enter a description, tags and a
+copyright statement for all the files, and choose whether to include them in
+the Gallery, which makes them available in the Media File Feed for your
+blog. Each file keeps its own name; you can rename a file later on its
+details page.
 
-You can upload up to five files at a time and you can enter information
-about the images including title, description, copyright statement and
-tags. You can pick which directory should receive the uploaded images.
+The description of an image is its _alt text_: Roller uses it when you insert
+the image in an entry, for readers who cannot see the image. Describe what the
+image shows.
 
-You can also decide whether or not you want your images to be included
-in the Gallery, which means that they will be made available in the
-Media File Feed for your blog.
+Click *Upload*. Each file in the list shows whether it was uploaded or why it
+failed. If some files fail, *Retry failed files* sends only those files again;
+files that were uploaded are never sent twice. If the connection is lost
+after the files were sent, Roller cannot tell which files were saved. Open
+the folder to check before you upload them again.
 
-After your file upload completes, Roller will show you the *Upload
-Complete* page (below) with the files that you uploaded and will offer
-to include them in a new weblog post for you. You can choose any or all
-of the images, or you can skip this step and return to the Media File
-View.
+When the files are uploaded, Roller shows the *Upload Complete* page with the
+files that you uploaded and offers to include them in a new weblog post for
+you. You can choose any or all of the images, or skip this step and return to
+the library.
 
-image::user-guide-14-upload-complete.png[]
+==== How to find files
 
-==== How to edit and update files
+Above the files, enter the start of a file name and click *Search*. Upper and
+lower case do not matter. You can also limit the search to a file type, and
+choose whether to search the current folder or all folders. *Filters* has
+more criteria: file size and tags. The line above the results shows what you
+searched for and how many files match; *Clear search* returns to the folder.
 
-From the Media File View page, you can edit any Media File simply by
-clicking on it. When you click you will be shown the Media File Edit
-page (below). From this page, you can edit the same information that you
-entered when you uploaded the file.
+==== How to see and edit a file
 
-You can also upload a new version of the file. The file will maintain
-the same URL as before the update, so no worries about broken links. If
-the file is an image, a new thumbnail will be generated for you and
-image size information will be updated.
+Click a file’s preview or name to open its details page. It shows a larger
+preview, the file’s type, size, image dimensions, upload date and folder, and
+its URL. *Copy URL* copies the URL for use elsewhere, *Open original* opens
+the file, *Create entry* starts a new weblog entry with the file, and
+*Delete* deletes it.
 
-image::user-guide-15-edit-media.png[]
+Below that you can edit the name, description, tags, copyright statement,
+folder and Gallery setting, and click *Save*. *Back to the media library*
+returns you to the same folder, search, sort and page that you came from.
 
-==== How to use Media File Directories
+==== How to use folders
 
-You can use directories to organize your Media Files. You can move files
-around and not worry about breaking any links because directory and file
-names are not part of URLs.
+You can use folders to organize your files. You can move files around and not
+worry about breaking any links because folder and file names are not part of
+file URLs.
 
-To create a new directory, enter a new directory name in the new
-directory control, and click the create button.
+To create a folder, click *New folder* above the folder list, enter a name
+and click *Create*.
 
-image::user-guide-media-directory.png[]
+To move files, select them with their checkboxes, choose the destination
+folder in the toolbar above the files, and click *Move*. *Select this page*
+selects every file on the current page.
 
-To navigate into a directory in the Media File View page, simply click
-on the directory.
+==== How to delete files and folders
 
-==== How to delete Media Files
+To delete files, select them with their checkboxes and click *Delete* in the
+toolbar above the files, or click *Delete* on a file’s details page. You will
+have to confirm the delete before it executes. Deleting a file cannot be
+undone, and links to it stop working.
 
-To delete Media Files, go to the *Media File View* page, select the
-checkboxes of the files you wish to delete and then click the Delete
-button. You will have to confirm the delete before it executes.
-
-==== How to delete Media File Directories
-
-To delete Media File Directories you must first empty them out. You can
-only delete directories that are empty.
+To delete a folder, open it and click *Delete folder* below the files. This
+deletes the folder and all the files in it. You cannot delete the default
+folder.
 
 ==== How to post media files to your weblog
 
-We explained above how to post images during the upload process. From
-the Blog entry edit page, click on the "Add Media File" link located
-above and to the right of the Content field. Roller will insert the
-media file at the cursor location in the content field. If there’s a
-problem with the insertion location, hit Ctrl-Z to undo the action and
-try again.
+We explained above how to post images during the upload process. From the
+Blog entry edit page, click on the "Add Media File" link located above and to
+the right of the Content field. Choose a folder, or search for the file by
+name, and click the file. Roller inserts an image as a thumbnail that links to
+the full image, with the image’s description as its alt text, and inserts any
+other file as a link. Roller inserts the media file at the cursor location in
+the content field. If there’s a problem with the insertion location, hit
+Ctrl-Z to undo the action and try again.
 
 ==== How to post a podcast to your weblog
 

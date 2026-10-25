@@ -121,7 +121,8 @@
 
         <s:textfield name="bean.name" maxlength="255" label="%{getText('generic.name')}"/>
 
-        <s:textarea name="bean.description" rows="2" label="%{getText('generic.description')}"/>
+        <s:textarea name="bean.description" rows="2" label="%{getText('mediaFileEdit.descriptionAlt')}"
+                    tooltip="%{getText('mediaFileEdit.descriptionAltHelp')}"/>
 
         <s:textfield name="bean.tagsAsString" maxlength="255" label="%{getText('mediaFileEdit.tags')}"/>
 

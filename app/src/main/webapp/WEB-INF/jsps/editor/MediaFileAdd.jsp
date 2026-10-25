@@ -97,7 +97,7 @@
         <summary><s:text name="mediaFileAdd.shared"/></summary>
         <p class="form-text"><s:text name="mediaFileAdd.sharedHelp"/></p>
 
-        <label class="form-label" for="uploadDescription"><s:text name="generic.description"/></label>
+        <label class="form-label" for="uploadDescription"><s:text name="mediaFileEdit.descriptionAlt"/></label>
         <s:textarea id="uploadDescription" name="bean.description" rows="2" cssClass="form-control"/>
 
         <label class="form-label" for="uploadTags"><s:text name="mediaFileAdd.tags"/></label>

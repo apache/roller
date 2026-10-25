@@ -59,12 +59,13 @@
                     <div class="row">
 
                         <div class="col-md-1">
-                            <input type="checkbox" name="selectedImages" value="<s:property value="#newImage.id"/>"/>
+                            <input type="checkbox" name="selectedImages" value="<s:property value="#newImage.id"/>"
+                                   class="form-check-input"
+                                   aria-label="<s:text name='mediaFileView.selectFile' escapeHtml='true'><s:param value='#newImage.name'/></s:text>"/>
                         </div>
 
                         <div class="col-md-2">
-                            <img align="center" class="mediaFileImage"
-                                 src='<s:property value="%{#newImage.thumbnailURL}" />' alt="thumbnail"/>
+                            <img class="mediaFileImage" src='<s:property value="%{#newImage.thumbnailURL}" />' alt=""/>
                         </div>
 
                         <div class="col-md-9">
@@ -80,9 +81,11 @@
 
                             <p>
                                 <b><s:text name="mediaFileSuccess.size"/></b>
-                                <s:property value="%{#newImage.length}"/> <s:text name="mediaFileSuccess.bytes"/>,
-                                <s:property value="%{#newImage.width}"/> x
-                                <s:property value="%{#newImage.height}"/> <s:text name="mediaFileSuccess.pixels"/>
+                                <s:property value="formatSize(#newImage.length)"/>,
+                                <s:text name="mediaFileEdit.pixels">
+                                    <s:param value="#newImage.width"/>
+                                    <s:param value="#newImage.height"/>
+                                </s:text>
                             </p>
 
                             <p>
@@ -131,9 +134,7 @@
                                 <s:property value="%{#newFile.contentType}"/>,&nbsp;
 
                                 <b><s:text name="mediaFileSuccess.size"/></b>
-                                <s:property value="%{#newFile.length}"/> <s:text name="mediaFileSuccess.bytes"/>,
-                                <s:property value="%{#newFile.width}"/> x
-                                <s:property value="%{#newFile.height}"/> <s:text name="mediaFileSuccess.pixels"/>
+                                <s:property value="formatSize(#newFile.length)"/>
                             </p>
 
                             <p>

@@ -948,78 +948,23 @@ body {
     }
 }
 
-/* media files: legacy rules, still used by the editor's media chooser */
+/* media chooser in the entry editor (MediaFileImageChooser.jsp) */
 
-.align-images {
-    display:inline;
-    float:left;
-    margin:5px;
-    list-style-type:none;
-    width:140px;
-    max-height:200px;
-    border: 1px solid #ccc;
-    text-align: center;
+.media-chooser-search {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
 }
 
-#sortByMenu {
-    width: 15em;
+.media-chooser-name {
+    flex: 1 1 12rem;
 }
 
-#viewDirectoryMenu {
-    width: 15em;
+.mediaFileImage {
+    max-width: 100%;
 }
-
-#moveTargetMenu {
-    width: 15em;
-}
-
-.mediaObject {
-    width:120px;
-    max-height:120px;
-    margin-top: 10px;
-    margin-left: 10px;
-}
-
-.mediaObjectInfo {
-    font-size:11px;
-}
-
-span.glyphicon-file {
-    font-size: 6em;
-}
-
-.highlight {
-    border: 3px solid #aaa;
-}
-
-span.button {
-    height:15px;
-    width:15px;
-    float:right;
-}
-
-.sortByMenu, .viewDirectoryMenu {
-    display: inline;
-}
-
-#imageGrid {
-    display: block;
-    overflow: auto;
-    margin: 1em 0 1em 0;
-}
-
-#imageGrid > div > ul {
-    padding-left:0;
-}
-
-div.image-controls,
-div.image-controls div,
-div.image-controls span,
-div.image-controls select,
-div.image-controls input {
-    display: inline;
-}
-
 
 /* theme edit */
 
