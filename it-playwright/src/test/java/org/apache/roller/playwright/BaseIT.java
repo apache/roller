@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -350,10 +351,17 @@ abstract class BaseIT {
      */
     protected void assertPublishingTimeOnOneLine() {
         page.locator("a[href='#collapseAdvanced']").click();
+        // Bootstrap marks the panel "collapsing" while it animates open and
+        // "collapse show" once it is done; wait for the layout to settle
+        page.locator("#collapseAdvanced.collapse.show").waitFor();
         assertThat(page.locator("#collapseAdvanced")).isVisible();
-        double hours = page.locator("select[name='bean.hours']").boundingBox().y;
-        double minutes = page.locator("select[name='bean.minutes']").boundingBox().y;
-        double seconds = page.locator("select[name='bean.seconds']").boundingBox().y;
+        // read all three positions in one pass, so a scroll or layout shift
+        // between separate reads can't make them disagree
+        List<?> tops = (List<?>) page.evaluate("() => ['hours', 'minutes', 'seconds'].map(name =>"
+                + " document.querySelector(\"select[name='bean.\" + name + \"']\").getBoundingClientRect().top)");
+        double hours = ((Number) tops.get(0)).doubleValue();
+        double minutes = ((Number) tops.get(1)).doubleValue();
+        double seconds = ((Number) tops.get(2)).doubleValue();
         org.junit.jupiter.api.Assertions.assertTrue(
                 Math.abs(hours - minutes) < 2 && Math.abs(minutes - seconds) < 2,
                 "publishing time selects should share a line, but sit at y=" + hours + ", " + minutes + ", " + seconds);
