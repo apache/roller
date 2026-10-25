@@ -17,15 +17,19 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<%-- One media file in the library grid or list. Expects #mediaFile on the value stack.
-     The checkbox selects the file; the preview and name open its details. --%>
+<%-- One media file in the library grid or list. Expects #mediaFile on the value stack and
+     libraryQuery on the action. The checkbox selects the file; the preview and name open its
+     details page, which links back to this library page. --%>
+
+<s:url var="detailsURL" escapeAmp="false" action="mediaFileEdit">
+    <s:param name="weblog" value="%{actionWeblog.handle}"/>
+    <s:param name="mediaFileId" value="%{#mediaFile.id}"/>
+    <s:param name="returnQuery" value="%{libraryQuery}"/>
+</s:url>
 
 <li class="media-card">
 
-    <button type="button" class="media-card-preview mediafile-edit-target"
-            data-mediafile-id="<s:property value='#mediaFile.id'/>"
-            data-mediafile-name="<s:property value='#mediaFile.name'/>"
-            aria-label="<s:text name='mediaFileView.openDetails' escapeHtml='true'><s:param value='#mediaFile.name'/></s:text>">
+    <a class="media-card-preview" href="<s:property value='%{detailsURL}'/>" tabindex="-1" aria-hidden="true">
         <s:if test="#mediaFile.imageFile">
             <img src="<s:property value='#mediaFile.thumbnailURL'/>" alt="" loading="lazy"
                  data-fallback-icon="<s:property value='typeIcon(#mediaFile.contentType)'/>"/>
@@ -33,7 +37,7 @@
         <s:else>
             <span class="bi <s:property value='typeIcon(#mediaFile.contentType)'/>" aria-hidden="true"></span>
         </s:else>
-    </button>
+    </a>
 
     <div class="media-card-body">
         <input type="checkbox" class="form-check-input media-select" name="selectedMediaFiles"
@@ -41,10 +45,8 @@
                value="<s:property value='#mediaFile.id'/>"
                aria-label="<s:text name='mediaFileView.selectFile' escapeHtml='true'><s:param value='#mediaFile.name'/></s:text>"/>
         <div class="media-card-text">
-            <button type="button" class="media-card-name mediafile-edit-target"
-                    data-mediafile-id="<s:property value='#mediaFile.id'/>"
-                    data-mediafile-name="<s:property value='#mediaFile.name'/>"
-                    title="<s:property value='#mediaFile.name'/>"><s:property value="#mediaFile.name"/></button>
+            <a class="media-card-name" href="<s:property value='%{detailsURL}'/>"
+               title="<s:property value='#mediaFile.name'/>"><s:property value="#mediaFile.name"/></a>
             <span class="media-card-meta">
                 <span class="media-card-type"><s:property value="formatType(#mediaFile.contentType, #mediaFile.name)"/></span>
                 <span class="media-card-size"><s:property value="formatSize(#mediaFile.length)"/></span>

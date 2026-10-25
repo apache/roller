@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
@@ -55,6 +56,7 @@ import org.apache.roller.weblogger.pojos.FileContent;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
+import org.apache.roller.weblogger.pojos.MediaFileFilter.MediaFileOrder;
 import org.apache.roller.weblogger.pojos.MediaFileTag;
 import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.roller.weblogger.pojos.User;
@@ -584,27 +586,26 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         List<Object> params = new ArrayList<>();
         String queryString = "SELECT m " + mediaFilesFromWhere(weblog, filter, params);
-        StringBuilder orderBy = new StringBuilder();
-
-        if (filter.getOrder() != null) {
-            switch (filter.getOrder()) {
-            case NAME:
-                orderBy.append(" order by m.name");
-                break;
-            case DATE_UPLOADED:
-                orderBy.append(" order by m.dateUploaded");
-                break;
-            case TYPE:
-                orderBy.append(" order by m.contentType");
-                break;
-            default:
-            }
-        } else {
-            orderBy.append(" order by m.name");
+        // ID breaks ties, so a page boundary never repeats or skips a file
+        String orderBy;
+        MediaFileOrder order = filter.getOrder() != null ? filter.getOrder() : MediaFileOrder.NAME;
+        switch (order) {
+        case DATE_UPLOADED:
+            orderBy = " ORDER BY m.dateUploaded, m.id";
+            break;
+        case DATE_UPLOADED_DESC:
+            orderBy = " ORDER BY m.dateUploaded DESC, m.id DESC";
+            break;
+        case TYPE:
+            orderBy = " ORDER BY m.contentType, LOWER(m.name), m.id";
+            break;
+        case NAME:
+        default:
+            orderBy = " ORDER BY LOWER(m.name), m.id";
         }
 
         TypedQuery<MediaFile> query = strategy.getDynamicQuery(queryString
-                + orderBy.toString(), MediaFile.class);
+                + orderBy, MediaFile.class);
         for (int i = 0; i < params.size(); i++) {
             query.setParameter(i + 1, params.get(i));
         }
@@ -645,14 +646,19 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         params.add(size++, weblog);
         whereClause.append("m.directory.weblog = ?").append(size);
 
+        if (filter.getDirectory() != null) {
+            params.add(size++, filter.getDirectory());
+            whereClause.append(" AND m.directory = ?").append(size);
+        }
+
         if (!StringUtils.isEmpty(filter.getName())) {
             String nameFilter = filter.getName();
             nameFilter = nameFilter.trim();
             if (!nameFilter.endsWith("%")) {
                 nameFilter = nameFilter + "%";
             }
-            params.add(size++, nameFilter);
-            whereClause.append(" AND m.name like ?").append(size);
+            params.add(size++, nameFilter.toLowerCase(Locale.ROOT));
+            whereClause.append(" AND LOWER(m.name) like ?").append(size);
         }
 
         if (filter.getSize() > 0) {

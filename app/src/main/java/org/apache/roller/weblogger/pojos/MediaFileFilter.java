@@ -33,10 +33,11 @@ public class MediaFileFilter {
 	public enum SizeFilterType {GT, GTE, EQ, LT, LTE};
 
 	/**
-	 * Enumeration of possible sort orders for media files. 
-	 *
+	 * Enumeration of possible sort orders for media files. NAME and TYPE sort
+	 * ascending; DATE_UPLOADED is oldest first and DATE_UPLOADED_DESC newest
+	 * first. Equal values are ordered by ID, so paging is stable.
 	 */
-	public enum MediaFileOrder {NAME, DATE_UPLOADED, TYPE};
+	public enum MediaFileOrder {NAME, DATE_UPLOADED, DATE_UPLOADED_DESC, TYPE};
 
 	// Search criteria - name
 	String name;
@@ -52,6 +53,9 @@ public class MediaFileFilter {
 	
 	// Search criteria - list of tags
 	List<String> tags;
+
+	// Search criteria - folder; null searches every folder of the weblog
+	MediaFileDirectory directory;
 	
 	// sort order for search results
 	MediaFileOrder order;
@@ -108,6 +112,14 @@ public class MediaFileFilter {
 
 	public void setSizeFilterType(SizeFilterType sizeFilterType) {
 		this.sizeFilterType = sizeFilterType;
+	}
+
+	public MediaFileDirectory getDirectory() {
+		return directory;
+	}
+
+	public void setDirectory(MediaFileDirectory directory) {
+		this.directory = directory;
 	}
 
 	public int getStartIndex() {

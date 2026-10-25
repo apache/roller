@@ -59,7 +59,7 @@
         <div class="col-sm-9 offset-sm-3">
             <s:submit id="uploadButton" cssClass="btn btn-primary" theme="simple"
                       value="%{getText('mediaFileAdd.upload')}" action="mediaFileAdd!save"/>
-            <s:url var="mediaFileViewURL" action="mediaFileView">
+            <s:url var="mediaFileViewURL" escapeAmp="false" action="mediaFileView">
                 <s:param name="weblog" value="%{actionWeblog.handle}"/>
                 <s:param name="directoryName" value="%{directoryName}"/>
             </s:url>

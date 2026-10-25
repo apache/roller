@@ -795,6 +795,88 @@ public class MediaFileTest  {
     }
 
     /**
+     * Test the folder criterion, case-insensitive name order, newest-first
+     * order, and that equal sort values page without repeats or gaps.
+     */
+    @Test
+    public void testSearchMediaFileFolderAndStableOrder() throws Exception {
+        User testUser = TestUtils.setupUser("mediaFileTestUser11");
+        Weblog testWeblog = TestUtils.setupWeblog("mediaFileTestWeblog11", testUser);
+        try {
+            MediaFileManager mfMgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+            MediaFileDirectory defaultDir = mfMgr.getDefaultMediaFileDirectory(testWeblog);
+            MediaFileDirectory otherDir = mfMgr.createMediaFileDirectory(testWeblog, "other");
+            TestUtils.endSession(true);
+
+            testWeblog = TestUtils.getManagedWebsite(testWeblog);
+            defaultDir = mfMgr.getMediaFileDirectory(defaultDir.getId());
+            otherDir = mfMgr.getMediaFileDirectory(otherDir.getId());
+
+            // B and c share an upload time, so only the ID orders them by date
+            long now = System.currentTimeMillis();
+            Object[][] files = {
+                    {"B.png", defaultDir, now},
+                    {"a.png", defaultDir, now - 60000},
+                    {"c.png", defaultDir, now},
+                    {"a2.png", otherDir, now - 120000}};
+            for (Object[] f : files) {
+                MediaFile mediaFile = new MediaFile();
+                mediaFile.setName((String) f[0]);
+                mediaFile.setLength(2000);
+                mediaFile.setDirectory((MediaFileDirectory) f[1]);
+                mediaFile.setWeblog(testWeblog);
+                mediaFile.setInputStream(getClass().getResourceAsStream(TEST_IMAGE));
+                mediaFile.setContentType("image/png");
+                mediaFile.setDateUploaded(new Timestamp((Long) f[2]));
+                mfMgr.createMediaFile(testWeblog, mediaFile, new RollerMessages());
+                ((MediaFileDirectory) f[1]).getMediaFiles().add(mediaFile);
+            }
+            TestUtils.endSession(true);
+            testWeblog = TestUtils.getManagedWebsite(testWeblog);
+            defaultDir = mfMgr.getMediaFileDirectory(defaultDir.getId());
+
+            MediaFileFilter inFolder = new MediaFileFilter();
+            inFolder.setDirectory(defaultDir);
+            inFolder.setOrder(MediaFileOrder.NAME);
+            List<MediaFile> byName = mfMgr.searchMediaFiles(testWeblog, inFolder);
+            assertEquals(List.of("a.png", "B.png", "c.png"),
+                    byName.stream().map(MediaFile::getName).toList());
+            assertEquals(3, mfMgr.getMediaFileCount(testWeblog, inFolder));
+
+            MediaFileFilter everywhere = new MediaFileFilter();
+            everywhere.setName("a");
+            assertEquals(2, mfMgr.getMediaFileCount(testWeblog, everywhere));
+            everywhere.setName("b");
+            assertEquals(1, mfMgr.getMediaFileCount(testWeblog, everywhere), "name match ignores case");
+            everywhere.setName(null);
+            assertEquals(4, mfMgr.getMediaFileCount(testWeblog, everywhere));
+
+            MediaFileFilter newest = new MediaFileFilter();
+            newest.setOrder(MediaFileOrder.DATE_UPLOADED_DESC);
+            List<MediaFile> all = mfMgr.searchMediaFiles(testWeblog, newest);
+            assertEquals(4, all.size());
+            assertEquals("a.png", all.get(2).getName());
+            assertEquals("a2.png", all.get(3).getName());
+
+            // one file per page gives the same files, in the same order
+            List<String> paged = new ArrayList<>();
+            for (int page = 0; page < 4; page++) {
+                newest.setStartIndex(page);
+                newest.setLength(1);
+                List<MediaFile> one = mfMgr.searchMediaFiles(testWeblog, newest);
+                assertEquals(1, one.size());
+                paged.add(one.get(0).getId());
+            }
+            assertEquals(all.stream().map(MediaFile::getId).toList(), paged);
+
+            TestUtils.endSession(true);
+        } finally {
+            TestUtils.teardownWeblog(testWeblog.getId());
+            TestUtils.teardownUser(testUser.getUserName());
+        }
+    }
+
+    /**
      * Test media file update
      */
     @Test

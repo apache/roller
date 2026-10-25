@@ -229,9 +229,11 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
-    <definition name=".MediaFileEdit" extends=".tiles-popuppage" >
+    <definition name=".MediaFileEdit" extends=".tiles-mediapage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
     <definition name=".MediaFileAddExternalInclude" extends=".tiles-popuppage-only-content" >
@@ -260,11 +262,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccessInclude.jsp" />
     </definition>
     
-    <definition name=".MediaFileEditSuccess" extends=".tiles-popuppage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEditSuccess.jsp" />
-    </definition>
-
     <definition name=".MediaFileView" extends=".tiles-mediapage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileView.jsp" />

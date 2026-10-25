@@ -336,7 +336,7 @@
         <action name="mediaFileEdit"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MediaFileEdit">
             <result name="input" type="tiles">.MediaFileEdit</result>
-            <result name="success" type="tiles">.MediaFileEditSuccess</result>
+            <result name="success" type="tiles">.MediaFileEdit</result>
             <allowed-methods>execute,save</allowed-methods>
         </action>
 

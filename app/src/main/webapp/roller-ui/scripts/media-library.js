@@ -17,153 +17,222 @@
 */
 
 /*
- * Media library page (MediaFileView.jsp, MediaFileSidebar.jsp, MediaFileCard.jsp).
- * Localized strings and action URLs arrive in data-* attributes; file names are
- * only ever written with text APIs.
+ * Media library (MediaFileView.jsp, MediaFileSidebar.jsp, MediaFileCard.jsp) and
+ * media file details (MediaFileEdit.jsp). Localized strings and action URLs arrive
+ * in data-* attributes; file names are only ever written with text APIs.
  */
 $(function () {
-    var library = $("#mediaLibrary");
-    if (!library.length) {
-        return;
-    }
-    var urls = $("#mediaFileUrls");
-    var form = document.mediaFileViewForm;
 
     function format(message, value) {
         return message.replace("{0}", value);
     }
 
-    // ----- selection ---------------------------------------------------------
-
-    function selected() {
-        return $(".media-select:checked");
-    }
-
-    function updateSelection() {
-        var count = selected().length;
-        $(".media-select").each(function () {
-            $(this).closest(".media-card").toggleClass("selected", this.checked);
-        });
-        $("#selectedCount").text(count > 0 ? format(library.data("selected-count"), count) : "");
-        $("#moveButton, #deleteButton, #moveTargetMenu, #clearSelectionButton").prop("disabled", count === 0);
-    }
-
-    $(document).on("change", ".media-select", updateSelection);
-
-    $("#selectPageButton").on("click", function () {
-        $(".media-select").prop("checked", true);
-        updateSelection();
-    });
-
-    $("#clearSelectionButton").on("click", function () {
-        $(".media-select").prop("checked", false);
-        updateSelection();
-    });
-
-    updateSelection();
-
-    // ----- actions on the selection, the folder and the view -----------------
-
-    function submitTo(url) {
-        form.action = url;
-        form.submit();
-    }
-
-    $("#deleteButton").on("click", function () {
-        if (confirm(format(library.data("confirm-delete"), selected().length))) {
-            submitTo(urls.data("delete-selected-url"));
-        }
-    });
-
-    $("#moveButton").on("click", function () {
-        if (confirm(library.data("confirm-move"))) {
-            submitTo(urls.data("move-selected-url"));
-        }
-    });
-
-    $("#deleteFolderButton").on("click", function () {
-        if (confirm(library.data("confirm-delete-folder"))) {
-            submitTo(urls.data("delete-folder-url"));
-        }
-    });
-
-    $("#sortByMenu").on("change", function () {
-        form.submit();
-    });
-
-    // ----- folders -------------------------------------------------------------
-
-    // narrow screens pick the folder from a list in the header
-    $("#folderPicker").on("change", function () {
-        window.location.href = this.value;
-    });
-
-    // ----- new folder (sidebar) ----------------------------------------------
-
-    var newFolderName = $("#newDirectoryName");
-    var newFolderButton = $("#newDirectoryButton");
-
-    newFolderName.on("input", function () {
-        newFolderButton.prop("disabled", $.trim(newFolderName.val()).length === 0);
-    }).on("keydown", function (e) {
-        if (e.key === "Enter" && !newFolderButton.prop("disabled")) {
-            e.preventDefault();
-            newFolderButton.click();
-        }
-    });
-
-    newFolderButton.on("click", function () {
-        form.newDirectoryName.value = $.trim(newFolderName.val());
-        submitTo(urls.data("create-folder-url"));
-    });
-
-    // ----- search result pages -----------------------------------------------
-
-    $(document).on("click", ".media-search-page", function () {
-        $("#beanPageNum").val($(this).data("page"));
-        $("#mediaFileSearchForm").submit();
-    });
-
-    // ----- previews ----------------------------------------------------------
-
-    // A thumbnail that fails to load shows the file type icon instead.
+    // A preview that fails to load shows the file type icon instead.
     document.addEventListener("error", function (e) {
         var img = e.target;
-        if (img.tagName === "IMG" && img.closest(".media-card-preview")) {
+        if (img.tagName === "IMG" && img.closest(".media-card-preview, .media-details-preview")) {
             var icon = document.createElement("span");
             icon.className = "bi " + (img.getAttribute("data-fallback-icon") || "bi-file-earmark");
             icon.setAttribute("aria-hidden", "true");
-            img.replaceWith(icon);
+            (img.closest("a") || img).replaceWith(icon);
         }
     }, true);
 
-    // ----- details dialog ----------------------------------------------------
+    var library = $("#mediaLibrary");
+    if (library.length) {
+        initLibrary(library);
+    }
+    var details = $("#mediaDetails");
+    if (details.length) {
+        initDetails(details);
+    }
 
-    var editor = $("#mediaFileEditor");
-    var dialog = $("#mediafile_edit_lightbox");
-    var opener = null;
+    function initLibrary(library) {
+        var urls = $("#mediaFileUrls");
+        var form = document.mediaFileViewForm;
 
-    $(document).on("click", ".mediafile-edit-target", function () {
-        opener = this;
-        $("#edit-subtitle").text($(this).attr("data-mediafile-name"));
-        editor.attr("src", urls.data("edit-url") + "&mediaFileId="
-            + encodeURIComponent($(this).attr("data-mediafile-id")));
-        dialog.modal("show");
-    });
+        // ----- selection ---------------------------------------------------
 
-    dialog.on("hidden.bs.modal", function () {
-        editor.attr("src", "about:blank");
-        if (opener) {
-            opener.focus();
+        function selected() {
+            return $(".media-select:checked");
         }
-    });
 
-    // called by MediaFileEdit.jsp and MediaFileEditSuccess.jsp inside the dialog
-    window.onEditSuccess = function () {
-        dialog.modal("hide");
-        form.submit();
-    };
-    window.onEditCancelled = function () {
-        dialog.modal("hide");
-    };
+        function updateSelection() {
+            var count = selected().length;
+            $(".media-select").each(function () {
+                $(this).closest(".media-card").toggleClass("selected", this.checked);
+            });
+            $("#selectedCount").text(count > 0 ? format(library.data("selected-count"), count) : "");
+            $("#moveButton, #deleteButton, #moveTargetMenu, #clearSelectionButton").prop("disabled", count === 0);
+        }
+
+        $(document).on("change", ".media-select", updateSelection);
+
+        $("#selectPageButton").on("click", function () {
+            $(".media-select").prop("checked", true);
+            updateSelection();
+        });
+
+        $("#clearSelectionButton").on("click", function () {
+            $(".media-select").prop("checked", false);
+            updateSelection();
+        });
+
+        updateSelection();
+
+        // ----- actions on the selection and the folder -----------------------
+
+        function submitTo(url) {
+            form.action = url;
+            form.submit();
+        }
+
+        $("#deleteButton").on("click", function () {
+            if (confirm(format(library.data("confirm-delete"), selected().length))) {
+                submitTo(urls.data("delete-selected-url"));
+            }
+        });
+
+        $("#moveButton").on("click", function () {
+            if (confirm(library.data("confirm-move"))) {
+                submitTo(urls.data("move-selected-url"));
+            }
+        });
+
+        $("#deleteFolderButton").on("click", function () {
+            if (confirm(library.data("confirm-delete-folder"))) {
+                submitTo(urls.data("delete-folder-url"));
+            }
+        });
+
+        // ----- search, sort and folders --------------------------------------
+
+        var searchForm = $("#mediaFileSearchForm");
+
+        // leave empty and default criteria out of the URL
+        searchForm.on("submit", function () {
+            $(this).find("[name]").add("#sortByMenu").each(function () {
+                var empty = this.value === "" || this.value === "mediaFileView.any"
+                    || (this.name === "bean.scope" && this.value === "folder")
+                    || (this.name === "bean.sortBy" && this.value === "newest");
+                var sizeUnused = /^bean\.size/.test(this.name) && !Number($("#beanSize").val());
+                if (empty || sizeUnused) {
+                    this.disabled = true;
+                }
+            });
+        });
+
+        // fields disabled above stay disabled when the browser restores this page
+        $(window).on("pageshow", function () {
+            searchForm.find("[name]").add("#sortByMenu").prop("disabled", false);
+        });
+
+        $("#sortByMenu").on("change", function () {
+            searchForm.trigger("submit");
+        });
+
+        // narrow screens pick the folder from a list in the header
+        $("#folderPicker").on("change", function () {
+            window.location.href = this.value;
+        });
+
+        // ----- grid or list, remembered in this browser ----------------------
+
+        var grid = $("#mediaGrid");
+
+        function showView(view) {
+            grid.toggleClass("media-list", view === "list");
+            $("[data-media-view]").each(function () {
+                var on = $(this).data("media-view") === view;
+                $(this).attr("aria-pressed", String(on)).toggleClass("active", on);
+            });
+        }
+
+        var savedView = "grid";
+        try {
+            savedView = localStorage.getItem("roller.mediaView") || "grid";
+        } catch (e) {
+            // storage unavailable; use the grid
+        }
+        showView(savedView);
+
+        $("[data-media-view]").on("click", function () {
+            var view = $(this).data("media-view");
+            showView(view);
+            try {
+                localStorage.setItem("roller.mediaView", view);
+            } catch (e) {
+                // storage unavailable; the choice lasts for this page only
+            }
+        });
+
+        // ----- new folder (sidebar) ------------------------------------------
+
+        var newFolderName = $("#newDirectoryName");
+        var newFolderButton = $("#newDirectoryButton");
+
+        newFolderName.on("input", function () {
+            newFolderButton.prop("disabled", $.trim(newFolderName.val()).length === 0);
+        }).on("keydown", function (e) {
+            if (e.key === "Enter" && !newFolderButton.prop("disabled")) {
+                e.preventDefault();
+                newFolderButton.click();
+            }
+        });
+
+        newFolderButton.on("click", function () {
+            form.newDirectoryName.value = $.trim(newFolderName.val());
+            submitTo(urls.data("create-folder-url"));
+        });
+    }
+
+    function initDetails(details) {
+
+        // ----- copy URL ------------------------------------------------------
+
+        var urlField = $("#mediaFileURL");
+        var status = $("#copyStatus");
+
+        $("#copyURLButton").on("click", function () {
+            var url = urlField.val();
+            function copied() {
+                status.text(details.data("copied"));
+            }
+            function failed() {
+                urlField.trigger("focus").trigger("select");
+                status.text(details.data("copy-failed"));
+            }
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(copied, failed);
+            } else {
+                failed();
+            }
+        });
+
+        // ----- delete ----------------------------------------------------------
+
+        $("#deleteMediaFileForm").on("submit", function (e) {
+            if (!confirm(details.data("confirm-delete"))) {
+                e.preventDefault();
+            }
+        });
+
+        // ----- warn before leaving with unsaved edits --------------------------
+
+        var editForm = $("#mediaFileEditForm");
+        var saved = editForm.serialize();
+        var submitting = false;
+
+        editForm.on("submit", function () {
+            submitting = true;
+        });
+
+        $(window).on("beforeunload", function (e) {
+            if (!submitting && editForm.serialize() !== saved) {
+                e.preventDefault();
+                e.originalEvent.returnValue = details.data("unsaved");
+                return details.data("unsaved");
+            }
+        });
+    }
 });

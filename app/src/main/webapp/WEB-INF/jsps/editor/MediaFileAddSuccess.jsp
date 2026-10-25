@@ -171,12 +171,12 @@
     <%-- buttons for create new weblog, cancel and upload more --%>
 
     <div>
-        <s:url var="mediaFileAddURL" action="mediaFileAdd">
+        <s:url var="mediaFileAddURL" escapeAmp="false" action="mediaFileAdd">
             <s:param name="weblog" value="%{actionWeblog.handle}"/>
             <s:param name="directoryName" value="%{directoryName}"/>
         </s:url>
 
-        <s:url var="mediaFileViewURL" action="mediaFileView">
+        <s:url var="mediaFileViewURL" escapeAmp="false" action="mediaFileView">
             <s:param name="weblog" value="%{actionWeblog.handle}"/>
             <s:param name="directoryId" value="%{bean.directoryId}"/>
         </s:url>

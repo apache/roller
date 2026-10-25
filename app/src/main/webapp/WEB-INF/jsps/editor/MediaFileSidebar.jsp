@@ -23,31 +23,35 @@
 
     <div class="media-folders-header">
         <h3 id="mediaFoldersHeading"><s:text name="mediaFileView.folders"/></h3>
-        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse"
-                data-bs-target="#newFolderForm" aria-expanded="false" aria-controls="newFolderForm">
-            <span class="bi bi-folder-plus" aria-hidden="true"></span>
-            <s:text name="mediaFileView.newFolder"/>
-        </button>
+        <s:if test="actionName == 'mediaFileView'">
+            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse"
+                    data-bs-target="#newFolderForm" aria-expanded="false" aria-controls="newFolderForm">
+                <span class="bi bi-folder-plus" aria-hidden="true"></span>
+                <s:text name="mediaFileView.newFolder"/>
+            </button>
+        </s:if>
     </div>
 
-    <div id="newFolderForm" class="collapse media-new-folder">
-        <label class="form-label" for="newDirectoryName"><s:text name="mediaFileView.directoryName"/></label>
-        <div class="input-group input-group-sm">
-            <input type="text" id="newDirectoryName" class="form-control" maxlength="25"/>
-            <button type="button" id="newDirectoryButton" class="btn btn-primary" disabled>
-                <s:text name="mediaFileView.create"/></button>
+    <s:if test="actionName == 'mediaFileView'">
+        <div id="newFolderForm" class="collapse media-new-folder">
+            <label class="form-label" for="newDirectoryName"><s:text name="mediaFileView.directoryName"/></label>
+            <div class="input-group input-group-sm">
+                <input type="text" id="newDirectoryName" class="form-control" maxlength="25"/>
+                <button type="button" id="newDirectoryButton" class="btn btn-primary" disabled>
+                    <s:text name="mediaFileView.create"/></button>
+            </div>
         </div>
-    </div>
+    </s:if>
 
     <ul class="media-folder-list">
         <s:iterator var="folder" value="allDirectories">
-            <s:url var="folderURL" action="mediaFileView">
+            <s:url var="folderURL" escapeAmp="false" action="mediaFileView">
                 <s:param name="weblog" value="%{actionWeblog.handle}"/>
                 <s:param name="directoryId" value="%{#folder.id}"/>
             </s:url>
             <li>
                 <a href="<s:property value='%{folderURL}'/>"
-                   <s:if test="!pager && #folder.id == currentDirectory.id">class="active" aria-current="page"</s:if>>
+                   <s:if test="actionName == 'mediaFileView' && !(search && bean.allFolders) && #folder.id == currentDirectory.id">class="active" aria-current="page"</s:if>>
                     <span class="bi bi-folder2" aria-hidden="true"></span>
                     <span class="media-folder-name"><s:property value="#folder.name"/></span>
                 </a>
