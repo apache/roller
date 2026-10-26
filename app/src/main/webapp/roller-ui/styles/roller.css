@@ -427,7 +427,16 @@ body {
     gap: 0.5rem;
 }
 
-.media-toolbar .form-select {
+.media-results-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+}
+
+.media-toolbar .form-select,
+.media-view-options .form-select {
     width: auto;
     max-width: 12rem;
 }
@@ -580,7 +589,7 @@ body {
     overflow-wrap: anywhere;
 }
 
-.media-toolbar .btn-group {
+.media-view-options .btn-group {
     margin-left: 0.5rem;
 }
 
@@ -778,7 +787,7 @@ body {
 
 /* media upload (MediaFileAdd.jsp) */
 
-.media-upload > fieldset > * + * {
+.media-upload > * + * {
     margin-top: 1rem;
 }
 
@@ -889,7 +898,8 @@ body {
     font-weight: 600;
 }
 
-.media-upload-shared .form-label {
+.media-upload-shared .form-label,
+.media-upload-shared .form-check {
     margin-top: 0.75rem;
 }
 

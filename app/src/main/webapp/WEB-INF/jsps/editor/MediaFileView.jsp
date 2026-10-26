@@ -122,8 +122,9 @@
     </div>
 </s:form>
 
-<%-- What is shown: criteria, scope and count --%>
+<%-- What is shown: criteria, scope and count, then sort order and layout --%>
 
+<div class="media-results-bar">
 <div class="media-result-summary" role="status">
     <s:if test="search">
         <s:text name="mediaFileView.matchCount"><s:param value="pager.totalCount"/></s:text>
@@ -151,6 +152,29 @@
     <s:elseif test="pager.totalCount > 0">
         <s:text name="mediaFileView.fileCount"><s:param value="pager.totalCount"/></s:text>
     </s:elseif>
+</div>
+<s:if test="pager.items.size() > 0">
+    <div class="media-toolbar-group media-view-options">
+        <label for="sortByMenu"><s:text name="mediaFileView.sortBy"/></label>
+        <%-- belongs to the GET search form, so sorting keeps the criteria --%>
+        <select id="sortByMenu" name="bean.sortBy" form="mediaFileSearchForm" class="form-select form-select-sm">
+            <s:iterator var="option" value="sortOptions">
+                <option value="<s:property value='#option.key'/>"
+                        <s:if test="#option.key == bean.sortBy">selected</s:if>><s:property value="#option.value"/></option>
+            </s:iterator>
+        </select>
+        <div class="btn-group btn-group-sm" role="group" aria-label="<s:text name='mediaFileView.layout'/>">
+            <button type="button" class="btn btn-outline-secondary" data-media-view="grid" aria-pressed="true"
+                    title="<s:text name='mediaFileView.gridView'/>">
+                <span class="bi bi-grid-3x3-gap" aria-hidden="true"></span>
+                <span class="visually-hidden"><s:text name="mediaFileView.gridView"/></span></button>
+            <button type="button" class="btn btn-outline-secondary" data-media-view="list" aria-pressed="false"
+                    title="<s:text name='mediaFileView.listView'/>">
+                <span class="bi bi-list-ul" aria-hidden="true"></span>
+                <span class="visually-hidden"><s:text name="mediaFileView.listView"/></span></button>
+        </div>
+    </div>
+</s:if>
 </div>
 
 <%-- Files, with the selection toolbar above them --%>
@@ -187,26 +211,6 @@
                 <button type="button" class="btn btn-outline-danger btn-sm" id="deleteButton" disabled>
                     <span class="bi bi-trash" aria-hidden="true"></span>
                     <s:text name="generic.delete"/></button>
-            </div>
-            <div class="media-toolbar-group ms-auto">
-                <label for="sortByMenu"><s:text name="mediaFileView.sortBy"/></label>
-                <%-- belongs to the GET search form, so sorting keeps the criteria --%>
-                <select id="sortByMenu" name="bean.sortBy" form="mediaFileSearchForm" class="form-select form-select-sm">
-                    <s:iterator var="option" value="sortOptions">
-                        <option value="<s:property value='#option.key'/>"
-                                <s:if test="#option.key == bean.sortBy">selected</s:if>><s:property value="#option.value"/></option>
-                    </s:iterator>
-                </select>
-                <div class="btn-group btn-group-sm" role="group" aria-label="<s:text name='mediaFileView.layout'/>">
-                    <button type="button" class="btn btn-outline-secondary" data-media-view="grid" aria-pressed="true"
-                            title="<s:text name='mediaFileView.gridView'/>">
-                        <span class="bi bi-grid-3x3-gap" aria-hidden="true"></span>
-                        <span class="visually-hidden"><s:text name="mediaFileView.gridView"/></span></button>
-                    <button type="button" class="btn btn-outline-secondary" data-media-view="list" aria-pressed="false"
-                            title="<s:text name='mediaFileView.listView'/>">
-                        <span class="bi bi-list-ul" aria-hidden="true"></span>
-                        <span class="visually-hidden"><s:text name="mediaFileView.listView"/></span></button>
-                </div>
             </div>
         </div>
 
