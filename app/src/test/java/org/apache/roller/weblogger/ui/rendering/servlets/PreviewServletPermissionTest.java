@@ -78,6 +78,14 @@ class PreviewServletPermissionTest {
     }
 
     @Test
+    void globalAdminWithoutRoleCanPreview() throws Exception {
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        mgr.grantRole("admin", user(other));
+        TestUtils.endSession(true);
+        assertTrue(PreviewServlet.canPreview(TestUtils.getManagedWebsite(weblog), user(other)));
+    }
+
+    @Test
     void disabledOwnerCannotPreview() throws Exception {
         // a detached copy, so the stored owner stays enabled
         User disabled = new User();

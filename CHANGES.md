@@ -58,6 +58,9 @@
 - **Startup fails if the XML-RPC parser cannot be configured.** Roller used to
   log an error and continue. It now stops at startup, so check the log if a
   custom XML parser is on the classpath.
+- **Previews need a role in the weblog.** Previewing a weblog's pages or
+  theme resources now requires an enabled user with a role in that weblog
+  (Limited, Author or Admin), or a global admin.
 
 ### Bug fixes
 
