@@ -25,7 +25,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.search.lucene.FieldConstants;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
@@ -37,6 +39,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.roller.weblogger.ui.rendering.model.SearchResultsModel.RESULTS_PER_PAGE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test Search Manager business layer operations.
@@ -96,6 +99,13 @@ public class IndexManagerTest {
                 testWeblog.getHandle(), null, testWeblog.getLocale(), 0, RESULTS_PER_PAGE,
                 WebloggerFactory.getWeblogger().getUrlStrategy());
             assertEquals(1, result.getResults().size());
+
+            // index fields that are not search fields cannot be queried
+            String handlePrefix = testWeblog.getHandle().substring(0, 3).toLowerCase() + "*";
+            assertThrows(WebloggerException.class, () -> indexManager.search(
+                FieldConstants.WEBSITE_HANDLE + ":" + handlePrefix,
+                testWeblog.getHandle(), null, testWeblog.getLocale(), 0, RESULTS_PER_PAGE,
+                WebloggerFactory.getWeblogger().getUrlStrategy()));
 
         } finally {
             for (WeblogEntry entry : entries) {
