@@ -432,46 +432,50 @@ public class LuceneIndexManager implements IndexManager {
 
         List<WeblogEntryWrapper> results = new ArrayList<>();
 
-        // determine offset
-        int offset = pageNum * entryCount;
-        if (offset >= hits.length) {
-            offset = 0;
-        }
-
-        // determine limit
-        int limit = entryCount;
-        if (offset + limit > hits.length) {
-            limit = hits.length - offset;
-        }
-
         try {
-            Set<String> categories = new TreeSet<>();
-            TreeSet<String> categorySet = new TreeSet<>();
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 
-            WeblogEntry entry;
-            Document doc;
-            String handle;
+            // The index can lag behind the entries, so page through the hits
+            // whose entry is published now (and not a future post). Only
+            // those count toward the offset and limit.
+            List<WeblogEntry> visible = new ArrayList<>();
+            List<Document> visibleDocs = new ArrayList<>();
             Timestamp now = new Timestamp(new Date().getTime());
-            for (int i = offset; i < offset + limit; i++) {
-                doc = search.getSearcher().doc(hits[i].doc);
-                handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
-                entry = weblogMgr.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue());
+            for (ScoreDoc hit : hits) {
+                Document doc = search.getSearcher().doc(hit.doc);
+                // maybe null if search result returned inactive user
+                // or entry's user is not the requested user
+                WeblogEntry entry = weblogMgr.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue());
+                if (entry != null && entry.isPublished()
+                        && entry.getPubTime() != null && entry.getPubTime().before(now)) {
+                    visible.add(entry);
+                    visibleDocs.add(doc);
+                }
+            }
 
+            // determine offset
+            int offset = pageNum * entryCount;
+            if (offset >= visible.size()) {
+                offset = 0;
+            }
+
+            // determine limit
+            int limit = entryCount;
+            if (offset + limit > visible.size()) {
+                limit = visible.size() - offset;
+            }
+
+            Set<String> categories = new TreeSet<>();
+            TreeSet<String> categorySet = new TreeSet<>();
+            for (int i = offset; i < offset + limit; i++) {
+                Document doc = visibleDocs.get(i);
+                String handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
                 if (!(websiteSpecificSearch && handle.equals(weblogHandle))
                     && doc.getField(FieldConstants.CATEGORY) != null) {
                     categorySet.add(doc.getField(FieldConstants.CATEGORY).stringValue());
                 }
-
-                // maybe null if search result returned inactive user
-                // or entry's user is not the requested user.
-                // The index can lag behind the entry, so return only entries
-                // that are published now, and not future posts
-                if (entry != null && entry.isPublished()
-                        && entry.getPubTime() != null && entry.getPubTime().before(now)) {
-                    results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
-                }
+                results.add(WeblogEntryWrapper.wrap(visible.get(i), urlStrategy));
             }
 
             if (!categorySet.isEmpty()) {

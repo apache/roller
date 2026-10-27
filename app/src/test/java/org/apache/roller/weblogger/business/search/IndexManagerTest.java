@@ -98,8 +98,18 @@ public class IndexManagerTest {
             assertEquals(1, result.getResults().size());
 
             // an entry returned to draft leaves search results even before
-            // its index document is removed
+            // its index document is removed, and does not use up a page slot
             WeblogEntryManager entryMgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+            WeblogEntry action = TestUtils.getManagedWeblogEntry(entries.get(1));
+            action.setStatus(WeblogEntry.PubStatus.DRAFT);
+            entryMgr.saveWeblogEntry(action);
+            TestUtils.endSession(true);
+            result = indexManager.search("Enterprise",
+                testWeblog.getHandle(), null, testWeblog.getLocale(), 0, 1,
+                WebloggerFactory.getWeblogger().getUrlStrategy());
+            assertEquals(1, result.getResults().size());
+            assertEquals("The Tholian Web", result.getResults().get(0).getTitle());
+
             WeblogEntry tholian = TestUtils.getManagedWeblogEntry(entries.get(0));
             tholian.setStatus(WeblogEntry.PubStatus.DRAFT);
             entryMgr.saveWeblogEntry(tholian);
