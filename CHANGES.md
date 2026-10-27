@@ -58,6 +58,10 @@
 - **Startup fails if the XML-RPC parser cannot be configured.** Roller used to
   log an error and continue. It now stops at startup, so check the log if a
   custom XML parser is on the classpath.
+- **The user picker matches user names only, except for global admins.** When
+  a user who is not a global admin searches for users (for example to invite a
+  member), only user names are matched. Global admins can still search by
+  email address. `%` and `_` in the search text match only themselves.
 
 ### Bug fixes
 

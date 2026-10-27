@@ -154,6 +154,13 @@ public class UserTest  {
         assertEquals(0, mgr.getUsersStartingWith("%", Boolean.TRUE, 0, 10).size());
         assertEquals(0, mgr.getUsersStartingWith("us_r", Boolean.TRUE, 0, 10).size());
         assertEquals(0, mgr.getUsersStartingWith("us_r", null, 0, 10).size());
+
+        // the user-name-only lookup does not match email addresses
+        assertEquals(1, mgr.getUsersWithUserNameStartingWith(
+                testUser.getUserName().substring(0, 3), Boolean.TRUE, 0, 10).size());
+        assertEquals(0, mgr.getUsersWithUserNameStartingWith(
+                testUser.getEmailAddress().substring(0, 3), Boolean.TRUE, 0, 10).size());
+        assertEquals(0, mgr.getUsersWithUserNameStartingWith("us_r", null, 0, 10).size());
         
         // make sure disable users are not returned
         user.setEnabled(Boolean.FALSE);

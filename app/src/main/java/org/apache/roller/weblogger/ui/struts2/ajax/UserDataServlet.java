@@ -106,14 +106,11 @@ public class UserDataServlet extends HttpServlet {
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             UserManager umgr = roller.getUserManager();
-            List<User> users = umgr.getUsersStartingWith(startsWith,
-                    enabledOnly, offset, length);
+            // only admins, who see email addresses, may search by them
+            List<User> users = admin
+                    ? umgr.getUsersStartingWith(startsWith, enabledOnly, offset, length)
+                    : umgr.getUsersWithUserNameStartingWith(startsWith, enabledOnly, offset, length);
             for (User user : users) {
-                // the query also matches email addresses, which only
-                // admins may search by
-                if (!admin && !userNameStartsWith(user, startsWith)) {
-                    continue;
-                }
                 response.getWriter().print(user.getUserName());
                 if (admin) {
                     response.getWriter().print(",");
@@ -127,15 +124,6 @@ public class UserDataServlet extends HttpServlet {
         } catch (WebloggerException e) {
             throw new ServletException(e.getMessage());
         }
-    }
-
-    static boolean userNameStartsWith(User user, String startsWith) {
-        if (startsWith == null) {
-            return true;
-        }
-        String userName = user.getUserName();
-        return userName != null
-                && userName.regionMatches(true, 0, startsWith, 0, startsWith.length());
     }
 
 }

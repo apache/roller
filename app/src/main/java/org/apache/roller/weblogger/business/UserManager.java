@@ -162,6 +162,18 @@ public interface UserManager {
      */
     List<User> getUsersStartingWith(String startsWith,
             Boolean enabled, int offset, int length) throws WebloggerException;
+
+    /**
+     * Lookup users whose usernames start with a string.
+     *
+     * @param startsWith String to match userNames against
+     * @param enabled    True for only enabled, false for disabled, null for all
+     * @param offset     Offset into results (for paging)
+     * @param length     Max to return (for paging)
+     * @return List of (up to length) users that match startsWith string
+     */
+    List<User> getUsersWithUserNameStartingWith(String startsWith,
+            Boolean enabled, int offset, int length) throws WebloggerException;
     
     
     /**

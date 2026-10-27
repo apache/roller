@@ -289,6 +289,27 @@ public class JPAUserManagerImpl implements UserManager {
         return query.getResultList();
     }
 
+    @Override
+    public List<User> getUsersWithUserNameStartingWith(String startsWith, Boolean enabled,
+            int offset, int length) throws WebloggerException {
+        TypedQuery<User> query;
+        if (enabled != null) {
+            query = strategy.getNamedQuery("User.getByEnabled&UserNameStartsWith", User.class);
+            query.setParameter(1, enabled);
+            query.setParameter(2, likePrefix(startsWith == null ? "" : startsWith));
+        } else {
+            query = strategy.getNamedQuery("User.getByUserNameStartsWith", User.class);
+            query.setParameter(1, likePrefix(startsWith == null ? "" : startsWith));
+        }
+        if (offset != 0) {
+            query.setFirstResult(offset);
+        }
+        if (length != -1) {
+            query.setMaxResults(length);
+        }
+        return query.getResultList();
+    }
+
     /**
      * LIKE pattern that matches values starting with the given text. The
      * named queries use '!' as the escape character, so '%' and '_' in the
