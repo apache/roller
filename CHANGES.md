@@ -58,6 +58,11 @@
 - **Startup fails if the XML-RPC parser cannot be configured.** Roller used to
   log an error and continue. It now stops at startup, so check the log if a
   custom XML parser is on the classpath.
+- **OPML import keeps only web links.** An imported bookmark is kept only when
+  its link is an absolute `http` or `https` URL; others are skipped and named
+  in the log. A feed URL that is not one is dropped. Blogroll links shown on
+  weblog pages must be relative or use `http`, `https`, `ftp` or `mailto`;
+  other links are shown without a target.
 
 ### Bug fixes
 

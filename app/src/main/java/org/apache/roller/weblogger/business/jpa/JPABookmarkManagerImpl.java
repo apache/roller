@@ -232,8 +232,17 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         url =     null!=htmlUrl ? htmlUrl : url;
 
         // keep only web links; an outline with anything else gets no url
-        xmlUrl = webLinkOrNull(xmlUrl);
+        String importedUrl = url;
+        String importedXmlUrl = xmlUrl;
         url = webLinkOrNull(url);
+        xmlUrl = webLinkOrNull(xmlUrl);
+        if (importedUrl != null && url == null) {
+            log.warn("OPML import skipped outline '" + title
+                    + "': its link is not an absolute http or https URL: " + importedUrl);
+        } else if (importedXmlUrl != null && xmlUrl == null) {
+            log.warn("OPML import dropped the feed URL of outline '" + title
+                    + "': it is not an absolute http or https URL: " + importedXmlUrl);
+        }
         
         // better to truncate imported OPML fields than to fail import or drop whole bookmark
         int maxLength = RollerConstants.TEXTWIDTH_255;
