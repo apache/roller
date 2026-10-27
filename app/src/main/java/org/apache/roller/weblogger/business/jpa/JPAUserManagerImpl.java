@@ -264,8 +264,8 @@ public class JPAUserManagerImpl implements UserManager {
                 query = strategy.getNamedQuery(
                         "User.getByEnabled&UserNameOrEmailAddressStartsWith", User.class);
                 query.setParameter(1, enabled);
-                query.setParameter(2, startsWith + '%');
-                query.setParameter(3, startsWith + '%');
+                query.setParameter(2, likePrefix(startsWith));
+                query.setParameter(3, likePrefix(startsWith));
             } else {
                 query = strategy.getNamedQuery(
                         "User.getByEnabled", User.class);
@@ -275,7 +275,7 @@ public class JPAUserManagerImpl implements UserManager {
             if (startsWith != null) {
                 query = strategy.getNamedQuery(
                         "User.getByUserNameOrEmailAddressStartsWith", User.class);
-                query.setParameter(1, startsWith +  '%');
+                query.setParameter(1, likePrefix(startsWith));
             } else {
                 query = strategy.getNamedQuery("User.getAll", User.class);
             }
@@ -287,6 +287,15 @@ public class JPAUserManagerImpl implements UserManager {
             query.setMaxResults(length);
         }
         return query.getResultList();
+    }
+
+    /**
+     * LIKE pattern that matches values starting with the given text. The
+     * named queries use '!' as the escape character, so '%' and '_' in the
+     * text match only themselves.
+     */
+    static String likePrefix(String startsWith) {
+        return startsWith.replace("!", "!!").replace("%", "!%").replace("_", "!_") + '%';
     }
 
     

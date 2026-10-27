@@ -149,6 +149,11 @@ public class UserTest  {
         user = users2.get(0);
         assertNotNull(user);
         assertEquals(testUser.getUserName(), user.getUserName());
+
+        // '%' and '_' in the search text match only themselves
+        assertEquals(0, mgr.getUsersStartingWith("%", Boolean.TRUE, 0, 10).size());
+        assertEquals(0, mgr.getUsersStartingWith("us_r", Boolean.TRUE, 0, 10).size());
+        assertEquals(0, mgr.getUsersStartingWith("us_r", null, 0, 10).size());
         
         // make sure disable users are not returned
         user.setEnabled(Boolean.FALSE);
