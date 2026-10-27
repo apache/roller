@@ -58,6 +58,9 @@
 - **Startup fails if the XML-RPC parser cannot be configured.** Roller used to
   log an error and continue. It now stops at startup, so check the log if a
   custom XML parser is on the classpath.
+- **Disabled accounts cannot sign in with OpenID.** Signing in with an OpenID
+  URL now refuses an account that an administrator has disabled, as user name
+  and password sign-in already does.
 
 ### Bug fixes
 
