@@ -116,6 +116,13 @@ public class UtilitiesTest  {
     }
 
     @Test
+    public void testRemoveHTMLUnclosedTagAfterLessThanText() {
+        assertEquals("a < b", Utilities.removeHTML("a < b <img src=x", false));
+        assertEquals("a < b < c", Utilities.removeHTML("a < b < c", false));
+        assertEquals("1 <2 <3", Utilities.removeHTML("1 <2 <3", false));
+    }
+
+    @Test
     public void testTruncateNicely1() {
         String test = "blah blah blah blah blah";
         String expect = "blah blah blah";

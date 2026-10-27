@@ -183,13 +183,20 @@ public class Utilities {
                 start = endTag + 1;
                 beginTag = str.indexOf('<', start);
             }
-            // if no endTag found, the rest is text unless it starts a tag,
-            // which a browser would still parse as markup
+            // if no endTag found, drop the rest if this '<' starts a tag,
+            // which a browser would still parse as markup; otherwise keep the
+            // '<' as text and look at the next one
             else {
-                if (!startsTag(str, beginTag)) {
-                    ret.append(str.substring(beginTag));
+                if (startsTag(str, beginTag)) {
+                    break;
                 }
-                break;
+                ret.append('<');
+                start = beginTag + 1;
+                beginTag = str.indexOf('<', start);
+                if (beginTag == -1) {
+                    ret.append(str.substring(start));
+                    break;
+                }
             }
         }
         // append everything after the last endTag
