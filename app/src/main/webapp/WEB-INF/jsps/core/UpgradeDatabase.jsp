@@ -51,7 +51,7 @@
     <p><s:text name="installer.tablesUpgradedExplanation"/></p>
     <p>
         <s:text name="installer.tryBootstrapping">
-            <s:param><s:url action="install!bootstrap"/></s:param>
+            <s:param><s:url action="install!bootstrap"><s:param name="salt" value="%{salt}"/></s:url></s:param>
         </s:text>
     </p>
 
