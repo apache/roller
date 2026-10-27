@@ -183,9 +183,12 @@ public class Utilities {
                 start = endTag + 1;
                 beginTag = str.indexOf('<', start);
             }
-            // if no endTag found, get rest of str and break
+            // if no endTag found, the rest is text unless it starts a tag,
+            // which a browser would still parse as markup
             else {
-                ret.append(str.substring(beginTag));
+                if (!startsTag(str, beginTag)) {
+                    ret.append(str.substring(beginTag));
+                }
                 break;
             }
         }
@@ -194,6 +197,19 @@ public class Utilities {
             ret.append(str.substring(endTag + 1));
         }
         return ret.toString().trim();
+    }
+
+    /**
+     * True if the '&lt;' at the given index opens a tag, comment or declaration,
+     * as browsers parse it: it is followed by a letter, '/', '!' or '?'.
+     */
+    private static boolean startsTag(String str, int index) {
+        if (index + 1 >= str.length()) {
+            return false;
+        }
+        char next = str.charAt(index + 1);
+        return (next >= 'a' && next <= 'z') || (next >= 'A' && next <= 'Z')
+                || next == '/' || next == '!' || next == '?';
     }
 
     // ------------------------------------------------------------------------
