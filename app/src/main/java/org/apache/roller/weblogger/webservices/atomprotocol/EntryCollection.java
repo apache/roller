@@ -267,6 +267,8 @@ public class EntryCollection {
                     CacheManager.invalidate(rollerEntry.getWebsite());
                     if (rollerEntry.isPublished()) {
                         roller.getIndexManager().addEntryReIndexOperation(rollerEntry);
+                    } else {
+                        roller.getIndexManager().removeEntryIndexOperation(rollerEntry);
                     }
                     log.debug("Exiting");
                     return;

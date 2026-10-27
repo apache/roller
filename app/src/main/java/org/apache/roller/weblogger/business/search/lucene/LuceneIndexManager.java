@@ -466,8 +466,10 @@ public class LuceneIndexManager implements IndexManager {
 
                 // maybe null if search result returned inactive user
                 // or entry's user is not the requested user.
-                // but don't return future posts
-                if (entry != null && entry.getPubTime().before(now)) {
+                // The index can lag behind the entry, so return only entries
+                // that are published now, and not future posts
+                if (entry != null && entry.isPublished()
+                        && entry.getPubTime() != null && entry.getPubTime().before(now)) {
                     results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
                 }
             }
