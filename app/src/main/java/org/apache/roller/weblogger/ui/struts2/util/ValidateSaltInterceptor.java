@@ -19,6 +19,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
+import java.util.Set;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,12 +35,22 @@ import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 
 /**
- * Validates salts after Struts has wrapped a multipart form request.
+ * Validates salts after Struts has wrapped a multipart form request, and on
+ * requests other than POST that call an action method which changes data.
  */
 public class ValidateSaltInterceptor extends AbstractInterceptor implements StrutsStatics {
 
     private static final long serialVersionUID = 2446434402795510394L;
     private static final Log log = LogFactory.getLog(ValidateSaltInterceptor.class);
+
+    /**
+     * Action methods that only display data. Links and redirects may reach
+     * these without a salt; any other method needs a POST or a salt.
+     */
+    static final Set<String> DISPLAY_METHODS = Set.of(
+            "execute", "input", "view", "search", "query", "edit", "cancel",
+            "firstSave", "folderCreated", "deleteConfirm",
+            "fetchDirectoryContentLight", "activate");
 
     @Override
     public String intercept(ActionInvocation invocation) throws Exception {
@@ -64,6 +76,19 @@ public class ValidateSaltInterceptor extends AbstractInterceptor implements Stru
             }
             request.setAttribute(
                     SaltValidator.VALIDATED_REQUEST_ATTRIBUTE, Boolean.TRUE);
+        }
+
+        if (!"POST".equalsIgnoreCase(request.getMethod())
+                && !DISPLAY_METHODS.contains(invocation.getProxy().getMethod())) {
+            try {
+                SaltValidator.requireSubmittedSalt(request);
+            } catch (ServletException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Valid salt value not found on " + request.getMethod()
+                            + " to URL : " + request.getServletPath());
+                }
+                throw e;
+            }
         }
 
         return invocation.invoke();

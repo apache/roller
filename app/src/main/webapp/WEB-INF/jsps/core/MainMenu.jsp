@@ -35,6 +35,7 @@
         </s:text>
         
         <s:url action="menu!accept" var="acceptInvite">
+            <s:param name="salt" value="%{salt}" />
             <s:param name="inviteId" value="#invite.weblog.id" />
         </s:url>
         <a href='<s:property value="acceptInvite" />'>
@@ -42,6 +43,7 @@
         </a> 
         &nbsp;|&nbsp;
         <s:url action="menu!decline" var="declineInvite">
+            <s:param name="salt" value="%{salt}" />
             <s:param name="inviteId" value="#invite.weblog.id" />
         </s:url>
         <a href='<s:property value="declineInvite" />'>

@@ -36,6 +36,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.ActionProxy;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -195,6 +196,55 @@ public class ValidateSaltInterceptorTest {
 
         verify(request, never()).getParameter("salt");
         verify(invocation).invoke();
+    }
+
+    @Test
+    public void testGetToDataChangingMethodWithoutSaltIsRejected() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            configureGet("/roller-ui/authoring/pings!disable.rol", "disable");
+
+            assertThrows(ServletException.class, () -> interceptor.intercept(invocation));
+            verify(invocation, never()).invoke();
+        }
+    }
+
+    @Test
+    public void testGetToDataChangingMethodWithSaltIsAllowed() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
+             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            configureGet("/roller-ui/authoring/pings!enable.rol", "enable");
+            when(request.getParameter("salt")).thenReturn("validSalt");
+            when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
+            when(saltCache.get("validSalt")).thenReturn("userId");
+            when(invocation.invoke()).thenReturn("success");
+
+            assertEquals("success", interceptor.intercept(invocation));
+            verify(saltCache).remove("validSalt");
+        }
+    }
+
+    @Test
+    public void testGetToDisplayMethodNeedsNoSalt() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            for (String method : new String[] {"execute", "view", "firstSave"}) {
+                configureGet("/roller-ui/authoring/page!" + method + ".rol", method);
+                when(invocation.invoke()).thenReturn("success");
+                assertEquals("success", interceptor.intercept(invocation));
+            }
+            verify(request, never()).getParameter("salt");
+        }
+    }
+
+    private void configureGet(String servletPath, String method) {
+        ActionProxy proxy = mock(ActionProxy.class);
+        when(proxy.getMethod()).thenReturn(method);
+        when(invocation.getProxy()).thenReturn(proxy);
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getServletPath()).thenReturn(servletPath);
     }
 
     private void configureMultipartPost(String servletPath) {

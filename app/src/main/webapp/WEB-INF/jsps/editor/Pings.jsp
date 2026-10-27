@@ -69,6 +69,7 @@
     <td class="rollertable" align="center" >
         <s:if test="pingStatus[#pingTarget.id]">
             <s:url var="disableUrl" action="pings!disable" >
+                <s:param name="salt" value="%{salt}" />
                 <s:param name="weblog" value="%{actionWeblog.handle}" />
                 <s:param name="pingTargetId" value="#pingTarget.id" />
             </s:url>
@@ -76,6 +77,7 @@
         </s:if>
         <s:else>
             <s:url var="enableUrl" action="pings!enable" >
+                <s:param name="salt" value="%{salt}" />
                 <s:param name="weblog" value="%{actionWeblog.handle}" />
                 <s:param name="pingTargetId" value="#pingTarget.id" />
             </s:url>
@@ -85,6 +87,7 @@
     
     <td class="rollertable">
         <s:url var="pingNowUrl" action="pings!pingNow" >
+            <s:param name="salt" value="%{salt}" />
             <s:param name="weblog" value="%{actionWeblog.handle}" />
             <s:param name="pingTargetId" value="#pingTarget.id" />
         </s:url>

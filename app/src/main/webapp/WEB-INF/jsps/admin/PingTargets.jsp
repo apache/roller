@@ -54,6 +54,7 @@
             <td class="rollertable" align="center">
                 <s:if test="#pingTarget.autoEnabled">
                     <s:url var="disablePing" action="commonPingTargets!disable">
+                        <s:param name="salt" value="%{salt}" />
                         <s:param name="pingTargetId" value="#pingTarget.id"/>
                     </s:url>
                     <s:a href="%{disablePing}">
@@ -62,6 +63,7 @@
                 </s:if>
                 <s:else>
                     <s:url var="enablePing" action="commonPingTargets!enable">
+                        <s:param name="salt" value="%{salt}" />
                         <s:param name="pingTargetId" value="#pingTarget.id"/>
                     </s:url>
                     <s:a href="%{enablePing}">
