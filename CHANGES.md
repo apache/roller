@@ -58,6 +58,11 @@
 - **Startup fails if the XML-RPC parser cannot be configured.** Roller used to
   log an error and continue. It now stops at startup, so check the log if a
   custom XML parser is on the classpath.
+- **Search queries can name only the search fields.** A weblog search may
+  name entry content, title or comment text (for example `title:roller`). A
+  query that names another field is treated like a query that cannot be
+  parsed. Comment email addresses are no longer added to the search index;
+  rebuild the index after upgrading to remove those already there.
 
 ### Bug fixes
 
