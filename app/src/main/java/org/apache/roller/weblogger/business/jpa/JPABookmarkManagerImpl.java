@@ -19,6 +19,8 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import java.io.StringReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
@@ -228,6 +230,10 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         desc =    null!=desc ? desc : title;
         xmlUrl =  null!=xmlUrl ? xmlUrl : url;
         url =     null!=htmlUrl ? htmlUrl : url;
+
+        // keep only web links; an outline with anything else gets no url
+        xmlUrl = webLinkOrNull(xmlUrl);
+        url = webLinkOrNull(url);
         
         // better to truncate imported OPML fields than to fail import or drop whole bookmark
         int maxLength = RollerConstants.TEXTWIDTH_255;
@@ -268,6 +274,26 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
                 importOpmlElement(subelem, folder );
             }
         }
+    }
+
+    /**
+     * Returns the value if it is an absolute http or https URL, else null.
+     */
+    static String webLinkOrNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        try {
+            URI uri = new URI(value.trim());
+            String scheme = uri.getScheme();
+            if (scheme != null && uri.getHost() != null
+                    && ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme))) {
+                return uri.toString();
+            }
+        } catch (URISyntaxException e) {
+            log.debug("Skipping OPML URL that is not valid: " + value);
+        }
+        return null;
     }
 
     /**

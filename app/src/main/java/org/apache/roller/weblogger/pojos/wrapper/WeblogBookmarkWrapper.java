@@ -18,6 +18,11 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
+import java.util.Locale;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 
 
@@ -25,6 +30,9 @@ import org.apache.roller.weblogger.pojos.WeblogBookmark;
  * Pojo safety wrapper for WeblogBookmark object.
  */
 public final class WeblogBookmarkWrapper {
+
+    private static final Pattern SCHEME = Pattern.compile("^([a-zA-Z][a-zA-Z0-9+.-]*):");
+    private static final Set<String> ALLOWED_SCHEMES = Set.of("http", "https", "ftp", "mailto");
     
     // keep a reference to the wrapped pojo
     private final WeblogBookmark pojo;
@@ -59,7 +67,7 @@ public final class WeblogBookmarkWrapper {
     
     
     public String getUrl() {
-        return this.pojo.getUrl();
+        return linkOrEmpty(this.pojo.getUrl());
     }
 
     public Integer getPriority() {
@@ -67,12 +75,29 @@ public final class WeblogBookmarkWrapper {
     }
 
     public String getImage() {
-        return this.pojo.getImage();
+        return linkOrEmpty(this.pojo.getImage());
     }
     
     
     public String getFeedUrl() {
-        return this.pojo.getFeedUrl();
+        return linkOrEmpty(this.pojo.getFeedUrl());
+    }
+
+    /**
+     * Returns the link if it is relative or uses a scheme a blogroll link
+     * needs (http, https, ftp, mailto), else an empty string. Browsers ignore tabs and
+     * line breaks inside a scheme, so those are removed before the check.
+     */
+    static String linkOrEmpty(String link) {
+        if (link == null) {
+            return null;
+        }
+        String compact = link.replaceAll("[\\t\\n\\r]", "").trim();
+        Matcher m = SCHEME.matcher(compact);
+        if (m.find() && !ALLOWED_SCHEMES.contains(m.group(1).toLowerCase(Locale.ROOT))) {
+            return "";
+        }
+        return link;
     }
     
     
