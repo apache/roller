@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -52,6 +53,9 @@ public class RollerUserDetailsService implements UserDetailsService {
                     }
                 } catch (WebloggerException ex) {
                     throw new DataRetrievalFailureException("ERROR in user lookup", ex);
+                }
+                if (userData != null && !Boolean.TRUE.equals(userData.getEnabled())) {
+                    throw new DisabledException("User account is disabled: " + userData.getUserName());
                 }
                 String name;
                 String password;
