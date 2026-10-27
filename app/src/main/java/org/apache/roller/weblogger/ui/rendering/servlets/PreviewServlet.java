@@ -19,7 +19,9 @@
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
 import org.apache.roller.util.RollerConstants;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Template;
@@ -45,6 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspFactory;
 import javax.servlet.jsp.PageContext;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
@@ -99,6 +102,11 @@ public class PreviewServlet extends HttpServlet {
         } catch (Exception e) {
             // some kind of error parsing the request or getting weblog
             log.debug("error creating preview request", e);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        if (!canPreview(weblog, previewRequest.getUser())) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -293,4 +301,21 @@ public class PreviewServlet extends HttpServlet {
         log.debug("Exiting");
     }
     
+
+    /**
+     * Previews show unpublished content, so only an enabled user with a role
+     * in the weblog (or a global admin) may see them.
+     */
+    static boolean canPreview(Weblog weblog, User user) {
+        if (weblog == null || user == null || !Boolean.TRUE.equals(user.getEnabled())) {
+            return false;
+        }
+        try {
+            return WebloggerFactory.getWeblogger().getUserManager().checkPermission(
+                    new WeblogPermission(weblog, Collections.singletonList(WeblogPermission.EDIT_DRAFT)), user);
+        } catch (WebloggerException e) {
+            log.error("Error checking preview permission", e);
+            return false;
+        }
+    }
 }

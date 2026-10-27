@@ -91,6 +91,11 @@ public class PreviewResourceServlet extends HttpServlet {
             return;
         }
 
+        if (!PreviewServlet.canPreview(weblog, resourceRequest.getUser())) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
         log.debug("Resource requested [" + resourceRequest.getResourcePath()
                 + "]");
 
