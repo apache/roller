@@ -38,17 +38,17 @@
             <s:param name="salt" value="%{salt}" />
             <s:param name="inviteId" value="#invite.weblog.id" />
         </s:url>
-        <a href='<s:property value="acceptInvite" />'>
+        <s:a href="%{acceptInvite}">
             <s:text name="yourWebsites.accept" />
-        </a> 
+        </s:a> 
         &nbsp;|&nbsp;
         <s:url action="menu!decline" var="declineInvite">
             <s:param name="salt" value="%{salt}" />
             <s:param name="inviteId" value="#invite.weblog.id" />
         </s:url>
-        <a href='<s:property value="declineInvite" />'>
+        <s:a href="%{declineInvite}">
             <s:text name="yourWebsites.decline" />
-        </a><br />
+        </s:a><br />
     </s:iterator>
     <br />
 </s:elseif>

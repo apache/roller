@@ -61,8 +61,9 @@
 - **Links and URLs that change data need the form token.** A request other
   than a POST that calls an action method which changes data, for example a
   `pings!enable.rol` link, must carry the page's `salt`, as a form POST does.
-  Roller's own links carry it. A bookmark or script that calls such a URL
-  directly is refused.
+  Roller's own links carry it, and after the change they return to the page
+  without the `salt` in the address. Saving a common ping target needs a POST.
+  A bookmark or script that calls such a URL directly is refused.
 
 ### Bug fixes
 

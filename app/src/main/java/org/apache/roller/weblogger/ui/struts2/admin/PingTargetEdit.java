@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,13 +28,14 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 
 /**
  * Add or modify a common ping target.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class PingTargetEdit extends UIAction {
+public class PingTargetEdit extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(PingTargetEdit.class);
 
@@ -41,6 +44,8 @@ public class PingTargetEdit extends UIAction {
 
     // ping target we are working on, if any
     private PingTarget pingTarget = null;
+
+    private String httpMethod = "GET";
 
     public PingTargetEdit() {
         this.desiredMenu = "admin";
@@ -84,6 +89,10 @@ public class PingTargetEdit extends UIAction {
      */
     @Override
     public String execute() {
+        if (!"POST".equals(httpMethod)) {
+            return INPUT;
+        }
+
         myValidate();
 
         if (!hasActionErrors()) {
@@ -146,5 +155,10 @@ public class PingTargetEdit extends UIAction {
 
     public void setBean(PingTargetBean bean) {
         this.bean = bean;
+    }
+
+    @Override
+    public void setServletRequest(HttpServletRequest req) {
+        httpMethod = req.getMethod();
     }
 }
