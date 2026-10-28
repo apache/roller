@@ -11,8 +11,21 @@
         <h1>Archives</h1>
       </header>
       ## Roller caps recent entries at 100; count per year and month first so
-      ## the headers can show totals, then render in publication order.
+      ## the headers can show totals, then render in publication order. When
+      ## older entries are cut off, the oldest year and month listed are only
+      ## partial, so their totals are left out and a link leads to the month
+      ## archives for the rest.
       #set($archiveEntries = $model.weblog.getRecentWeblogEntries("nil", 100))
+      #set($truncated = false)
+      #set($oldestYear = "")
+      #set($oldestMonth = "")
+      #if($archiveEntries.size() > 0 && $model.weblog.entryCount > $archiveEntries.size())
+      #set($truncated = true)
+      #set($lastIndex = $archiveEntries.size() - 1)
+      #set($oldestEntry = $archiveEntries.get($lastIndex))
+      #set($oldestYear = $utils.formatDate($oldestEntry.pubTime, "yyyy"))
+      #set($oldestMonth = $utils.formatDate($oldestEntry.pubTime, "yyyy-MM"))
+      #end
       #set($yearCounts = {})
       #set($monthCounts = {})
       #foreach($entry in $archiveEntries)
@@ -45,7 +58,9 @@
       <div class="archive-year">
         <h2 class="archive-year-header" id="$y">
           <a class="archive-header-link" href="#$y">$y</a>
+          #if(!$truncated || $y != $oldestYear)
           <sup class="archive-count">&nbsp;$yearCounts.get($y)</sup>
+          #end
         </h2>
       #set($currentYear = $y)
       #end
@@ -54,7 +69,9 @@
         <div class="archive-month">
           <h3 class="archive-month-header" id="$y-$monthName">
             <a class="archive-header-link" href="#$y-$monthName">$monthName</a>
+            #if(!$truncated || $m != $oldestMonth)
             <sup class="archive-count">&nbsp;$monthCounts.get($m)</sup>
+            #end
           </h3>
           <div class="archive-posts">
       #set($currentMonth = $m)
@@ -69,6 +86,13 @@
           </div>
         </div>
       </div>
+      #end
+      #if($truncated)
+      <footer class="page-footer">
+        <nav class="pagination">
+          <a class="next" href="$url.date($utils.formatDate($oldestEntry.pubTime, "yyyyMM"))">Older posts by month, from $utils.formatDate($oldestEntry.pubTime, "MMMM yyyy")&nbsp;»</a>
+        </nav>
+      </footer>
       #end
     </main>
     #includeTemplate($model.weblog "standard_footer")

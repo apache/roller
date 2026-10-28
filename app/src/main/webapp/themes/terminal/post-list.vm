@@ -42,17 +42,35 @@
   #if($listEntries.size() == 0)
   <p class="post-list-empty">No posts here yet.</p>
   #end
-  #if($pager.prevLink || $pager.nextLink)
+  ## Day and month archives page through their own entries first, then link to
+  ## the next or previous day or month once there are no more pages.
+  #set($newerLink = false)
+  #set($olderLink = false)
+  #if($pager.prevLink)
+    #set($newerLink = $pager.prevLink)
+    #set($newerName = "Newer posts")
+  #elseif($pager.nextCollectionLink)
+    #set($newerLink = $pager.nextCollectionLink)
+    #set($newerName = $pager.nextCollectionName)
+  #end
+  #if($pager.nextLink)
+    #set($olderLink = $pager.nextLink)
+    #set($olderName = "Older posts")
+  #elseif($pager.prevCollectionLink)
+    #set($olderLink = $pager.prevCollectionLink)
+    #set($olderName = $pager.prevCollectionName)
+  #end
+  #if($newerLink || $olderLink)
   <div class="pagination">
     <div class="pagination__buttons">
-      #if($pager.prevLink)
-      <a href="$pager.prevLink" class="button inline prev">&lt; [<span class="button__text">Newer posts</span>]</a>
+      #if($newerLink)
+      <a href="$newerLink" class="button inline prev">&lt; [<span class="button__text">$newerName</span>]</a>
       #end
-      #if($pager.prevLink && $pager.nextLink)
+      #if($newerLink && $olderLink)
       ::
       #end
-      #if($pager.nextLink)
-      <a href="$pager.nextLink" class="button inline next">[<span class="button__text">Older posts</span>] &gt;</a>
+      #if($olderLink)
+      <a href="$olderLink" class="button inline next">[<span class="button__text">$olderName</span>] &gt;</a>
       #end
     </div>
   </div>

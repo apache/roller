@@ -36,6 +36,13 @@
         #if($currentYear != "")
         </ul>
         #end
+        ## Roller returns at most 100 recent entries, so send readers to the
+        ## month archives for the rest.
+        #if($archiveEntries.size() > 0 && $model.weblog.entryCount > $archiveEntries.size())
+          #set($lastIndex = $archiveEntries.size() - 1)
+          #set($oldestEntry = $archiveEntries.get($lastIndex))
+        <p><a href="$url.date($utils.formatDate($oldestEntry.pubTime, "yyyyMM"))">Older posts by month, from $utils.formatDate($oldestEntry.pubTime, "MMMM yyyy") &rarr;</a></p>
+        #end
 
         #set($archiveCategories = $model.weblog.weblogCategories)
         #if($archiveCategories.size() > 0)

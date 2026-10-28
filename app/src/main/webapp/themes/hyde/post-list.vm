@@ -29,17 +29,35 @@
   #end
 </div>
 
-#if($pager.prevLink || $pager.nextLink)
+## Day and month archives page through their own entries first, then link to
+## the next or previous day or month once there are no more pages.
+#set($olderLink = false)
+#set($newerLink = false)
+#set($olderName = "Older")
+#set($newerName = "Newer")
+#if($pager.nextLink)
+  #set($olderLink = $pager.nextLink)
+#elseif($pager.prevCollectionLink)
+  #set($olderLink = $pager.prevCollectionLink)
+  #set($olderName = $pager.prevCollectionName)
+#end
+#if($pager.prevLink)
+  #set($newerLink = $pager.prevLink)
+#elseif($pager.nextCollectionLink)
+  #set($newerLink = $pager.nextCollectionLink)
+  #set($newerName = $pager.nextCollectionName)
+#end
+#if($olderLink || $newerLink)
 <div class="pagination">
-  #if($pager.nextLink)
-  <a class="pagination-item older" href="$pager.nextLink">Older</a>
+  #if($olderLink)
+  <a class="pagination-item older" href="$olderLink">$olderName</a>
   #else
-  <span class="pagination-item older">Older</span>
+  <span class="pagination-item older">$olderName</span>
   #end
-  #if($pager.prevLink)
-  <a class="pagination-item newer" href="$pager.prevLink">Newer</a>
+  #if($newerLink)
+  <a class="pagination-item newer" href="$newerLink">$newerName</a>
   #else
-  <span class="pagination-item newer">Newer</span>
+  <span class="pagination-item newer">$newerName</span>
   #end
 </div>
 #end
