@@ -438,11 +438,17 @@ public class LuceneIndexManager implements IndexManager {
 
             // The index can lag behind the entries, so page through the hits
             // whose entry is published now (and not a future post). Only
-            // those count toward the offset and limit.
+            // those count toward the offset and limit. Stop once the requested
+            // page is filled; if the hits run out first, an out-of-range page
+            // falls back to the first page below.
             List<WeblogEntry> visible = new ArrayList<>();
             List<Document> visibleDocs = new ArrayList<>();
             Timestamp now = new Timestamp(new Date().getTime());
+            long wanted = (long) (pageNum + 1) * entryCount;
             for (ScoreDoc hit : hits) {
+                if (visible.size() >= wanted) {
+                    break;
+                }
                 Document doc = search.getSearcher().doc(hit.doc);
                 // maybe null if search result returned inactive user
                 // or entry's user is not the requested user
