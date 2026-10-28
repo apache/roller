@@ -18,8 +18,10 @@ package org.apache.roller.weblogger.business.search.lucene;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -44,6 +46,11 @@ class SearchFieldsQueryParserTest {
     }
 
     @Test
+    void matchAllParses() throws Exception {
+        assertEquals(new MatchAllDocsQuery(), parser().parse("*:*"));
+    }
+
+    @Test
     void otherFieldsAreRefused() {
         for (String query : new String[] {
                 FieldConstants.C_EMAIL + ":a*",
@@ -53,6 +60,8 @@ class SearchFieldsQueryParserTest {
                 FieldConstants.ANCHOR + ":[a TO z]",
                 FieldConstants.C_EMAIL + ":/re.*/",
                 FieldConstants.C_EMAIL + ":reader~",
+                "*:a*",
+                FieldConstants.C_EMAIL + ":*",
                 "roller AND " + FieldConstants.C_EMAIL + ":r?ader"}) {
             assertThrows(ParseException.class, () -> parser().parse(query), query);
         }

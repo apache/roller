@@ -278,7 +278,10 @@ public class SearchOperation extends ReadFromIndexOperation {
 
         @Override
         protected Query getWildcardQuery(String field, String termStr) throws ParseException {
-            checkField(field);
+            // *:* matches every entry and reads no field
+            if (!("*".equals(field) && "*".equals(termStr))) {
+                checkField(field);
+            }
             return super.getWildcardQuery(field, termStr);
         }
 
