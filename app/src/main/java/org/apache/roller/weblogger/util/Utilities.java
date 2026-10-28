@@ -170,16 +170,15 @@ public class Utilities {
         while (beginTag >= start) {
             if (beginTag > 0) {
                 ret.append(str.substring(start, beginTag));
-
-                // replace each tag with a space (looks better)
-                if (addSpace) {
-                    ret.append(" ");
-                }
             }
             endTag = str.indexOf('>', beginTag);
 
             // if endTag found move "cursor" forward
             if (endTag > -1) {
+                // replace each tag with a space (looks better)
+                if (addSpace && beginTag > 0) {
+                    ret.append(" ");
+                }
                 start = endTag + 1;
                 beginTag = str.indexOf('<', start);
             }
@@ -207,16 +206,37 @@ public class Utilities {
     }
 
     /**
-     * True if the '&lt;' at the given index opens a tag, comment or declaration,
-     * as browsers parse it: it is followed by a letter, '/', '!' or '?'.
+     * True if the unclosed '&lt;' at the given index opens a comment, a
+     * declaration, an end tag, or a tag with attributes: a tag name, then
+     * whitespace or '/', and an '=' later on. Text such as "x&lt;y" or
+     * "a&lt;b and b&lt;c" is not a tag.
      */
     private static boolean startsTag(String str, int index) {
-        if (index + 1 >= str.length()) {
+        int i = index + 1;
+        if (i >= str.length()) {
             return false;
         }
-        char next = str.charAt(index + 1);
-        return (next >= 'a' && next <= 'z') || (next >= 'A' && next <= 'Z')
-                || next == '/' || next == '!' || next == '?';
+        char next = str.charAt(i);
+        if (next == '/' || next == '!' || next == '?') {
+            return true;
+        }
+        if (!isAsciiLetter(next)) {
+            return false;
+        }
+        while (i < str.length() && (isAsciiLetter(str.charAt(i))
+                || Character.isDigit(str.charAt(i)) || str.charAt(i) == '-')) {
+            i++;
+        }
+        if (i >= str.length()) {
+            return false;
+        }
+        char after = str.charAt(i);
+        return (Character.isWhitespace(after) || after == '/')
+                && str.indexOf('=', i) > -1;
+    }
+
+    private static boolean isAsciiLetter(char c) {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
     }
 
     // ------------------------------------------------------------------------

@@ -113,6 +113,20 @@ public class UtilitiesTest  {
         assertEquals("a < b", Utilities.removeHTML("a < b", false));
         assertEquals("1 <2", Utilities.removeHTML("1 <2", false));
         assertEquals("x <", Utilities.removeHTML("x <", false));
+        assertEquals("x<y", Utilities.removeHTML("x<y", false));
+        assertEquals("List<String", Utilities.removeHTML("List<String", false));
+        assertEquals("C<C++ fans", Utilities.removeHTML("C<C++ fans", false));
+        assertEquals("a<b and b<c", Utilities.removeHTML("a<b and b<c", false));
+    }
+
+    @Test
+    public void testRemoveHTMLDefaultAddsSpaceOnlyForTags() {
+        assertEquals("about", Utilities.removeHTML("about <img src=x"));
+        assertEquals("about", Utilities.removeHTML("about<img/src=x"));
+        assertEquals("x<y", Utilities.removeHTML("x<y"));
+        assertEquals("C<C++ fans", Utilities.removeHTML("C<C++ fans"));
+        assertEquals("a < b", Utilities.removeHTML("a < b"));
+        assertEquals("a b", Utilities.removeHTML("a<br>b"));
     }
 
     @Test

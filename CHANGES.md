@@ -59,9 +59,10 @@
   log an error and continue. It now stops at startup, so check the log if a
   custom XML parser is on the classpath.
 - **Text with an unclosed tag loses the tag.** Where Roller strips HTML from
-  plain-text fields (for example a weblog's description), a tag with no closing
-  `>`, such as `text <img src=x`, is now dropped. A `<` that does not start a
-  tag, as in `a < b`, is kept. The Your Weblogs page shows a weblog's
+  plain-text fields (for example a weblog's description), a tag with attributes
+  and no closing `>`, such as `text <img src=x`, is now dropped. Other text with
+  a `<`, as in `a < b`, `x<y` or `C<C++ fans`, is kept, and no longer gets a
+  space added before the `<`. The Your Weblogs page shows a weblog's
   description as text.
 
 ### Bug fixes
