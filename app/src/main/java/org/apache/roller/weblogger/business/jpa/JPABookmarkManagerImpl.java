@@ -19,8 +19,6 @@
 package org.apache.roller.weblogger.business.jpa;
 
 import java.io.StringReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
@@ -34,6 +32,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.LinkScheme;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.JDOMParseException;
@@ -286,21 +285,20 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
     }
 
     /**
-     * Returns the value if it is an absolute http or https URL, else null.
+     * Returns the value, trimmed, if it is an absolute http or https URL with
+     * a host, else null. The scheme is read as the blogroll reads it (see
+     * {@link LinkScheme#of(String)}), so links that browsers accept are kept.
      */
     static String webLinkOrNull(String value) {
         if (value == null) {
             return null;
         }
-        try {
-            URI uri = new URI(value.trim());
-            String scheme = uri.getScheme();
-            if (scheme != null && uri.getHost() != null
-                    && ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme))) {
-                return uri.toString();
+        String scheme = LinkScheme.of(value);
+        if ("http".equals(scheme) || "https".equals(scheme)) {
+            String rest = LinkScheme.compact(value).substring(scheme.length() + 1);
+            if (rest.startsWith("//") && rest.length() > 2 && rest.charAt(2) != '/') {
+                return value.trim();
             }
-        } catch (URISyntaxException e) {
-            log.debug("Skipping OPML URL that is not valid: " + value);
         }
         return null;
     }

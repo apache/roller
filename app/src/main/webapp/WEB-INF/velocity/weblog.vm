@@ -478,22 +478,16 @@ Show bookmarks as a HTML ul list.
     #foreach($bookmark in $bookmarks)
         <li class="rFolderItem">
         #if($utils.isNotEmpty($bookmark.Image))
-          #if( $bookmark.Image.startsWith("http://") )
           <a href="$utils.escapeHTML($bookmark.url)">
-             <img alt="$bookmark.description" border="0"
+             <img alt="$utils.escapeHTML($bookmark.description)" border="0"
                 src="$utils.escapeHTML($bookmark.image)" class="rBookmark" /></a>
-          #else
-          <a href="$utils.escapeHTML($bookmark.url)">
-             <img alt="$bookmark.description" border="0"
-                src="$utils.escapeHTML($bookmark.image)" class="rBookmark" /></a>
-          #end
         #else
             #if($utils.isNotEmpty( $bookmark.FeedUrl))
             <a href="$utils.escapeHTML($bookmark.feedUrl)"><img class="smrssbadge"
                src="$url.absoluteSite/images/smrssbadge.gif"
                alt="$text.get("macro.bookmark.urlFeed")"/></a>
             #end
-            <a href="$utils.escapeHTML($bookmark.url)" title="$bookmark.description">$bookmark.name</a>
+            <a href="$utils.escapeHTML($bookmark.url)" title="$utils.escapeHTML($bookmark.description)">$utils.escapeHTML($bookmark.name)</a>
         #end
         </li>
     #end

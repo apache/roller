@@ -146,6 +146,8 @@ public class BookmarkImportParsingTest {
                 + "<outline text=\"mail\" htmlUrl=\"mailto:reader@example.com\"/>"
                 + "<outline text=\"relative\" htmlUrl=\"/a/b\"/>"
                 + "<outline text=\"spaces\" htmlUrl=\"http://example.com/a b\"/>"
+                + "<outline text=\"underscore\" htmlUrl=\" https://my_blog.example.com/ \"/>"
+                + "<outline text=\"nohost\" htmlUrl=\"http:///a\"/>"
                 + "<outline text=\"feed\" htmlUrl=\"https://example.com/b\" xmlUrl=\"file:///etc/feed\"/>"
                 + "</body></opml>";
         bookmarkManager().importBookmarks(TestUtils.getManagedWebsite(testWeblog), folderName, opml);
@@ -155,10 +157,12 @@ public class BookmarkImportParsingTest {
         for (WeblogBookmark b : importedBookmarks()) {
             byName.put(b.getName(), b);
         }
-        assertEquals(java.util.Set.of("web", "feed"), byName.keySet());
+        // links that browsers accept are kept even when java.net.URI refuses them
+        assertEquals(java.util.Set.of("web", "feed", "spaces", "underscore"), byName.keySet());
         assertEquals("https://example.com/a", byName.get("web").getUrl());
         assertEquals("http://example.com/feed", byName.get("web").getFeedUrl());
         assertEquals("https://example.com/b", byName.get("feed").getUrl());
         assertNull(byName.get("feed").getFeedUrl());
+        assertEquals("https://my_blog.example.com/", byName.get("underscore").getUrl());
     }
 }

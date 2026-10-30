@@ -45,4 +45,12 @@ class WeblogBookmarkWrapperTest {
         assertEquals("", WeblogBookmarkWrapper.linkOrEmpty("FILE:///etc/x"));
         assertEquals("", WeblogBookmarkWrapper.linkOrEmpty(" fi\tle:///etc/x"));
     }
+
+    @Test
+    void dropsCharacterReferencesBeforeThePath() {
+        assertEquals("", WeblogBookmarkWrapper.linkOrEmpty("x&#58;y"));
+        assertEquals("", WeblogBookmarkWrapper.linkOrEmpty("x&colon;y"));
+        assertEquals("", WeblogBookmarkWrapper.linkOrEmpty("&#120;:y"));
+        assertEquals("/a?b=1&c=2", WeblogBookmarkWrapper.linkOrEmpty("/a?b=1&c=2"));
+    }
 }
