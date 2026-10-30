@@ -64,6 +64,30 @@
   a `<`, as in `a < b`, `x<y` or `C<C++ fans`, is kept, and no longer gets a
   space added before the `<`. The Your Weblogs page shows a weblog's
   description as text.
+- **OPML import keeps only web links.** An imported bookmark is kept only when
+  its link is an absolute `http` or `https` URL; others are skipped and named
+  in the log. A feed URL that is not one is dropped. Blogroll links shown on
+  weblog pages must be relative or use `http`, `https`, `ftp` or `mailto`;
+  other links, and links with `&` before the path, are shown without a
+  target. The blogroll escapes bookmark names and descriptions.
+- **The user picker matches user names only, except for global admins.** When
+  a user who is not a global admin searches for users (for example to invite a
+  member), only user names are matched. Global admins can still search by
+  email address. For other users the picker lists enabled users only, at
+  most 50 at a time. `%` and `_` in the search text match only themselves.
+- **Previews need a role in the weblog.** Previewing a weblog's pages or
+  theme resources now requires an enabled user with a role in that weblog
+  (Limited, Author or Admin), or a global admin.
+- **Disabled accounts cannot sign in with an OpenID URL.** An account that an
+  administrator has disabled is now refused whenever its OpenID URL is used to
+  sign in, on every sign-in form, as user name and password sign-in already
+  does.
+- **Search queries can name only the search fields.** A weblog search may
+  name entry content, title or comment text (for example `title:roller`). A
+  query that names another field is treated like a query that cannot be
+  parsed. Author user names and comment author names and email addresses are
+  no longer added to the search index. An index built by an earlier version
+  is rebuilt in the background at the first startup after the upgrade.
 - **Search shows only published entries.** Weblog search returns entries that
   are published at the time of the search, even if the search index still
   holds an entry that has since gone back to draft. Updating an entry through

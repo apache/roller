@@ -39,6 +39,7 @@ import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.FieldInfos;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -151,6 +152,14 @@ public class LuceneIndexManager implements IndexManager {
                 try {
                     synchronized(this) {
                         reader = DirectoryReader.open(getIndexDirectory());
+                        if (hasRemovedFields(reader)) {
+                            logger.info("Search index holds fields that are no longer indexed, scheduling rebuild.");
+                            reader.close();
+                            reader = null;
+                            inconsistentAtStartup = true;
+                            deleteIndex();
+                            createIndex(getIndexDirectory());
+                        }
                     }
                 } catch (IOException | IllegalArgumentException ex) {  // IAE for incompatible codecs
                     logger.warn("Failed to open search index, scheduling rebuild.", ex);
@@ -341,6 +350,20 @@ public class LuceneIndexManager implements IndexManager {
             logger.error("Problem accessing index directory", e);
         }
         return null;
+    }
+
+    /**
+     * True if the index holds a field that earlier versions indexed but this
+     * one does not, so the index must be rebuilt to drop that data.
+     */
+    static boolean hasRemovedFields(IndexReader reader) {
+        FieldInfos fields = FieldInfos.getMergedFieldInfos(reader);
+        for (String removed : FieldConstants.REMOVED_FIELDS) {
+            if (fields.fieldInfo(removed) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean indexExists() {

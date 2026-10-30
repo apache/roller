@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
+import org.apache.roller.weblogger.ui.core.security.OpenIdUrls;
 
 
 /**
@@ -91,12 +92,8 @@ public class RollerSession
                     User user = umgr.getUserByUserName(principal.getName());
                     
                     // check for OpenID username (in the form of a URL)
-                    if (user == null && principal.getName() != null && principal.getName().startsWith("http://")) {
-                        String openidurl = principal.getName();
-                        if (openidurl.endsWith("/")) {
-                            openidurl = openidurl.substring(0, openidurl.length() - 1);
-                        }
-                        user = umgr.getUserByOpenIdUrl(openidurl);
+                    if (user == null && OpenIdUrls.isOpenIdUrl(principal.getName())) {
+                        user = umgr.getUserByOpenIdUrl(OpenIdUrls.normalize(principal.getName()));
                     }
                     
                     // try one time to auto-provision, only happens if user==null
