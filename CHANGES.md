@@ -64,6 +64,12 @@
   a `<`, as in `a < b`, `x<y` or `C<C++ fans`, is kept, and no longer gets a
   space added before the `<`. The Your Weblogs page shows a weblog's
   description as text.
+- **OPML import keeps only web links.** An imported bookmark is kept only when
+  its link is an absolute `http` or `https` URL; others are skipped and named
+  in the log. A feed URL that is not one is dropped. Blogroll links shown on
+  weblog pages must be relative or use `http`, `https`, `ftp` or `mailto`;
+  other links, and links with `&` before the path, are shown without a
+  target. The blogroll escapes bookmark names and descriptions.
 
 ### Bug fixes
 
