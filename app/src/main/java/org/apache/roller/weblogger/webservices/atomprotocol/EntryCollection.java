@@ -48,7 +48,6 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -265,11 +264,7 @@ public class EntryCollection {
                     roller.flush();
                     
                     CacheManager.invalidate(rollerEntry.getWebsite());
-                    if (rollerEntry.isPublished()) {
-                        roller.getIndexManager().addEntryReIndexOperation(rollerEntry);
-                    } else {
-                        roller.getIndexManager().removeEntryIndexOperation(rollerEntry);
-                    }
+                    roller.getIndexManager().updateEntryIndex(rollerEntry);
                     log.debug("Exiting");
                     return;
                 }
@@ -293,7 +288,7 @@ public class EntryCollection {
             if (RollerAtomHandler.canEdit(user, rollerEntry)) {
                 WeblogEntryManager mgr = roller.getWeblogEntryManager();
                 CacheManager.invalidate(rollerEntry.getWebsite());
-                reindexEntry(rollerEntry);
+                roller.getIndexManager().removeEntryIndexOperation(rollerEntry);
                 mgr.removeWeblogEntry(rollerEntry);
                 log.debug("Deleted entry:" + rollerEntry.getAnchor());
                 roller.flush();
@@ -462,15 +457,4 @@ public class EntryCollection {
         rollerEntry.setTagsAsString(tags);        
     }
 
-    private void reindexEntry(WeblogEntry entry) throws WebloggerException {
-        IndexManager manager = roller.getIndexManager();
-        
-        // TODO: figure out what's up here and at WeblogEntryFormAction line 696
-        //manager.removeEntryIndexOperation(entry);
-        
-        // if published, index the entry
-        if (entry.isPublished()) {
-            manager.addEntryReIndexOperation(entry);
-        }
-    }
 }

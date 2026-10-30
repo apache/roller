@@ -61,7 +61,8 @@
 - **Search shows only published entries.** Weblog search returns entries that
   are published at the time of the search, even if the search index still
   holds an entry that has since gone back to draft. Updating an entry through
-  AtomPub so that it is no longer published also removes it from the index.
+  AtomPub so that it is no longer published also removes it from the index,
+  and so does deleting an entry through AtomPub.
 
 ### Bug fixes
 

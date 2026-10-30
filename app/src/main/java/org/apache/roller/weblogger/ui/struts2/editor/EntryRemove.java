@@ -78,20 +78,11 @@ public class EntryRemove extends UIAction {
                 WeblogEntry entry = getRemoveEntry();
                 IndexManager manager = WebloggerFactory.getWeblogger().getIndexManager();
 
-                try {
-                    // remove the entry from the search index
-                    // TODO: can we do this in a better way?
-                    WeblogEntry.PubStatus originalStatus = entry.getStatus();
-                    entry.setStatus(WeblogEntry.PubStatus.DRAFT);
-                    manager.addEntryReIndexOperation(entry);
-                    entry.setStatus(originalStatus);
-                } catch (WebloggerException ex) {
-                    log.warn("Trouble triggering entry indexing", ex);
-                }
-
                 // remove from search index
-                if (entry.isPublished()) {
+                try {
                     manager.removeEntryIndexOperation(entry);
+                } catch (WebloggerException ex) {
+                    log.warn("Trouble removing entry from search index", ex);
                 }
 
                 // flush caches

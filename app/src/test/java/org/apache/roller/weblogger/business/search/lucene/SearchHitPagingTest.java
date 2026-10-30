@@ -71,7 +71,7 @@ class SearchHitPagingTest {
         SearchResultList result = convert(entries, 50, 2);
         assertEquals(0, result.getOffset());
         assertEquals("id0", result.getResults().get(0).getId());
-        verify(entries, times(HITS)).getWeblogEntry(anyString());
+        verify(entries, times(2)).getWeblogEntry(anyString());
     }
 
     /** Entries id0..id19, published in the past; the one at draftIndex is a draft. */
