@@ -70,6 +70,11 @@
   weblog pages must be relative or use `http`, `https`, `ftp` or `mailto`;
   other links, and links with `&` before the path, are shown without a
   target. The blogroll escapes bookmark names and descriptions.
+- **The user picker matches user names only, except for global admins.** When
+  a user who is not a global admin searches for users (for example to invite a
+  member), only user names are matched. Global admins can still search by
+  email address. For other users the picker lists enabled users only, at
+  most 50 at a time. `%` and `_` in the search text match only themselves.
 
 ### Bug fixes
 

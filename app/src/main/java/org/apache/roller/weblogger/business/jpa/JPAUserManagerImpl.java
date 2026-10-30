@@ -257,15 +257,28 @@ public class JPAUserManagerImpl implements UserManager {
     @Override
     public List<User> getUsersStartingWith(String startsWith, Boolean enabled,
             int offset, int length) throws WebloggerException {
+        return findUsersStartingWith(startsWith, true, enabled, offset, length);
+    }
+
+    @Override
+    public List<User> getUsersWithUserNameStartingWith(String startsWith, Boolean enabled,
+            int offset, int length) throws WebloggerException {
+        return findUsersStartingWith(startsWith, false, enabled, offset, length);
+    }
+
+    private List<User> findUsersStartingWith(String startsWith, boolean matchEmail,
+            Boolean enabled, int offset, int length) throws WebloggerException {
         TypedQuery<User> query;
+        String match = matchEmail ? "UserNameOrEmailAddressStartsWith" : "UserNameStartsWith";
 
         if (enabled != null) {
             if (startsWith != null) {
-                query = strategy.getNamedQuery(
-                        "User.getByEnabled&UserNameOrEmailAddressStartsWith", User.class);
+                query = strategy.getNamedQuery("User.getByEnabled&" + match, User.class);
                 query.setParameter(1, enabled);
-                query.setParameter(2, startsWith + '%');
-                query.setParameter(3, startsWith + '%');
+                query.setParameter(2, likePrefix(startsWith));
+                if (matchEmail) {
+                    query.setParameter(3, likePrefix(startsWith));
+                }
             } else {
                 query = strategy.getNamedQuery(
                         "User.getByEnabled", User.class);
@@ -273,9 +286,8 @@ public class JPAUserManagerImpl implements UserManager {
             }
         } else {
             if (startsWith != null) {
-                query = strategy.getNamedQuery(
-                        "User.getByUserNameOrEmailAddressStartsWith", User.class);
-                query.setParameter(1, startsWith +  '%');
+                query = strategy.getNamedQuery("User.getBy" + match, User.class);
+                query.setParameter(1, likePrefix(startsWith));
             } else {
                 query = strategy.getNamedQuery("User.getAll", User.class);
             }
@@ -287,6 +299,15 @@ public class JPAUserManagerImpl implements UserManager {
             query.setMaxResults(length);
         }
         return query.getResultList();
+    }
+
+    /**
+     * LIKE pattern that matches values starting with the given text. The
+     * named queries use '!' as the escape character, so '%' and '_' in the
+     * text match only themselves.
+     */
+    static String likePrefix(String startsWith) {
+        return startsWith.replace("!", "!!").replace("%", "!%").replace("_", "!_") + '%';
     }
 
     
