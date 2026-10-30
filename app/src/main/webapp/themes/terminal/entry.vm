@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="$model.weblog.localeInstance.toLanguageTag()">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>$model.weblogEntry.title :: $model.weblog.name</title>
+  </head>
+  <body>
+    <div class="container">
+      #includeTemplate($model.weblog "standard_header")
+      <main class="content">
+        #set($entry = $model.weblogEntry)
+        <article class="post">
+          <h1 class="post-title">
+            <a href="$url.entry($entry.anchor)">$entry.title</a>
+          </h1>
+          <div class="post-meta">
+            <time class="post-date" datetime="$utils.formatIso8601Date($entry.pubTime)">$utils.formatDate($entry.pubTime, "yyyy-MM-dd")</time>
+            #set($authorName = $entry.creator.fullName)
+            #if($utils.isEmpty($authorName))#set($authorName = $entry.creator.screenName)#end
+            #if($utils.isNotEmpty($authorName))
+            <span class="post-author">$authorName</span>
+            #end
+            #if($entry.category)
+            <span class="post-category"><a href="$url.category($entry.category.name)">$entry.category.name</a></span>
+            #end
+            #if($utils.isUserAuthorizedToAuthor($entry.website))
+            <span class="post-edit"><a href="$url.editEntry($entry.anchor)">Edit</a></span>
+            #end
+          </div>
+
+          #if($entry.tags && $entry.tags.size() > 0)
+          <span class="post-tags">
+            #foreach($tag in $entry.tags)
+            &#35;<a href="$url.tag($tag.name)" rel="tag">$tag.name</a>&nbsp;
+            #end
+          </span>
+          #end
+
+          <div class="post-content">
+            $entry.displayContent
+          </div>
+
+          #set($pager = $model.getWeblogEntriesPager())
+          #if($pager.prevLink || $pager.nextLink)
+          <div class="pagination">
+            <div class="pagination__title">
+              <span class="pagination__title-h">Read other posts</span>
+              <hr>
+            </div>
+            <div class="pagination__buttons">
+              #if($pager.prevLink)
+              <a href="$pager.prevLink" class="button inline prev">&lt; [<span class="button__text">$pager.prevName</span>]</a>
+              #end
+              #if($pager.prevLink && $pager.nextLink)
+              ::
+              #end
+              #if($pager.nextLink)
+              <a href="$pager.nextLink" class="button inline next">[<span class="button__text">$pager.nextName</span>] &gt;</a>
+              #end
+            </div>
+          </div>
+          #end
+
+          <section class="post-comments">
+            #showWeblogEntryComments($entry)
+            #showWeblogEntryCommentForm($entry)
+          </section>
+        </article>
+      </main>
+      #includeTemplate($model.weblog "standard_footer")
+    </div>
+  </body>
+</html>

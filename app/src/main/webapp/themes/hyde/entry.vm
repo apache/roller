@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="$model.weblog.localeInstance.toLanguageTag()">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>$model.weblogEntry.title &middot; $model.weblog.name</title>
+  </head>
+  <body>
+    #includeTemplate($model.weblog "standard_sidebar")
+
+    <main class="content container">
+      #set($entry = $model.weblogEntry)
+      <article class="post">
+        <h1 class="post-title">$entry.title</h1>
+        <span class="post-date"><time datetime="$utils.formatIso8601Date($entry.pubTime)">$utils.formatDate($entry.pubTime, "dd MMM yyyy")</time></span>
+        $entry.displayContent
+
+        <p class="post-meta">
+          #set($authorName = $entry.creator.fullName)
+          #if($utils.isEmpty($authorName))#set($authorName = $entry.creator.screenName)#end
+          #if($utils.isNotEmpty($authorName))
+          <span>By $authorName</span>
+          #end
+          #if($entry.category)
+          <span>in <a href="$url.category($entry.category.name)">$entry.category.name</a></span>
+          #end
+          #if($entry.tags && $entry.tags.size() > 0)
+          <span class="post-tags">
+            #foreach($tag in $entry.tags)
+            <a href="$url.tag($tag.name)" rel="tag">$tag.name</a>
+            #end
+          </span>
+          #end
+          #if($utils.isUserAuthorizedToAuthor($entry.website))
+          <a class="post-edit" href="$url.editEntry($entry.anchor)">Edit</a>
+          #end
+        </p>
+      </article>
+
+      ## Hyde's related posts: other recent entries in this entry's category.
+      #set($relatedEntries = [])
+      #if($entry.category)
+        #set($candidates = $model.weblog.getRecentWeblogEntries($entry.category.name, 4))
+      #else
+        #set($candidates = $model.weblog.getRecentWeblogEntries("nil", 4))
+      #end
+      #foreach($candidate in $candidates)
+        #if($candidate.anchor != $entry.anchor && $relatedEntries.size() < 3)
+          #set($added = $relatedEntries.add($candidate))
+        #end
+      #end
+      #if($relatedEntries.size() > 0)
+      <div class="related">
+        <h2>Related Posts</h2>
+        <ul class="related-posts">
+          #foreach($related in $relatedEntries)
+          <li>
+            <h3>
+              <a href="$url.entry($related.anchor)">
+                $related.title
+                <small>$utils.formatDate($related.pubTime, "dd MMM yyyy")</small>
+              </a>
+            </h3>
+          </li>
+          #end
+        </ul>
+      </div>
+      #end
+
+      #set($pager = $model.getWeblogEntriesPager())
+      #if($pager.prevLink || $pager.nextLink)
+      <nav class="pagination" aria-label="More posts">
+        #if($pager.prevLink)
+        <a class="pagination-item older" href="$pager.prevLink">$pager.prevName</a>
+        #else
+        <span class="pagination-item older">Older</span>
+        #end
+        #if($pager.nextLink)
+        <a class="pagination-item newer" href="$pager.nextLink">$pager.nextName</a>
+        #else
+        <span class="pagination-item newer">Newer</span>
+        #end
+      </nav>
+      #end
+
+      <section class="post-comments">
+        #showWeblogEntryComments($entry)
+        #showWeblogEntryCommentForm($entry)
+      </section>
+    </main>
+  </body>
+</html>
