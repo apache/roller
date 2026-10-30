@@ -75,6 +75,9 @@
   member), only user names are matched. Global admins can still search by
   email address. For other users the picker lists enabled users only, at
   most 50 at a time. `%` and `_` in the search text match only themselves.
+- **Previews need a role in the weblog.** Previewing a weblog's pages or
+  theme resources now requires an enabled user with a role in that weblog
+  (Limited, Author or Admin), or a global admin.
 
 ### Bug fixes
 
