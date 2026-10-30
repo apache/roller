@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.roller.weblogger.business.MediaFileManager;
-import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.WeblogCustomTheme;
@@ -44,7 +43,6 @@ import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -63,7 +61,6 @@ class PreviewResourceServletTest {
 
     private MockedStatic<WebloggerFactory> factory;
     private MediaFileManager media;
-    private UserManager users;
     private User user;
     private Weblog weblog;
     private PreviewResourceServlet servlet;
@@ -73,16 +70,14 @@ class PreviewResourceServletTest {
         media = mock(MediaFileManager.class);
         Weblogger roller = mock(Weblogger.class);
         when(roller.getMediaFileManager()).thenReturn(media);
-        users = mock(UserManager.class);
-        when(roller.getUserManager()).thenReturn(users);
         user = mock(User.class);
         when(user.getEnabled()).thenReturn(Boolean.TRUE);
-        when(users.checkPermission(any(WeblogPermission.class), eq(user))).thenReturn(true);
         factory = mockStatic(WebloggerFactory.class);
         factory.when(WebloggerFactory::getWeblogger).thenReturn(roller);
 
         weblog = mock(Weblog.class);
         when(weblog.getTheme()).thenReturn(new WeblogCustomTheme(weblog));
+        when(weblog.hasUserPermission(user, WeblogPermission.EDIT_DRAFT)).thenReturn(true);
 
         ServletContext context = mock(ServletContext.class);
         when(context.getMimeType("page.html")).thenReturn("text/html");
@@ -130,7 +125,7 @@ class PreviewResourceServletTest {
 
     @Test
     void userWithoutWeblogRoleGetsNotFound() throws Exception {
-        when(users.checkPermission(any(WeblogPermission.class), eq(user))).thenReturn(false);
+        when(weblog.hasUserPermission(user, WeblogPermission.EDIT_DRAFT)).thenReturn(false);
         HttpServletResponse response = serve(null, "/css/site.css", "body {}", "");
 
         verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);

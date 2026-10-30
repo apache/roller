@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.roller.weblogger.ui.rendering.servlets;
+package org.apache.roller.weblogger.ui.rendering.util;
 
 import java.util.Collections;
 
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Previews are for users with a role in the weblog being previewed.
  */
-class PreviewServletPermissionTest {
+class PreviewAccessTest {
 
     private User owner;
     private User other;
@@ -59,13 +59,13 @@ class PreviewServletPermissionTest {
 
     @Test
     void ownerCanPreview() throws Exception {
-        assertTrue(PreviewServlet.canPreview(TestUtils.getManagedWebsite(weblog), user(owner)));
+        assertTrue(PreviewAccess.canPreview(TestUtils.getManagedWebsite(weblog), user(owner)));
     }
 
     @Test
     void userWithoutRoleCannotPreview() throws Exception {
-        assertFalse(PreviewServlet.canPreview(TestUtils.getManagedWebsite(weblog), user(other)));
-        assertFalse(PreviewServlet.canPreview(TestUtils.getManagedWebsite(weblog), null));
+        assertFalse(PreviewAccess.canPreview(TestUtils.getManagedWebsite(weblog), user(other)));
+        assertFalse(PreviewAccess.canPreview(TestUtils.getManagedWebsite(weblog), null));
     }
 
     @Test
@@ -74,7 +74,16 @@ class PreviewServletPermissionTest {
         mgr.grantWeblogPermission(TestUtils.getManagedWebsite(weblog), user(other),
                 Collections.singletonList(WeblogPermission.EDIT_DRAFT));
         TestUtils.endSession(true);
-        assertTrue(PreviewServlet.canPreview(TestUtils.getManagedWebsite(weblog), user(other)));
+        assertTrue(PreviewAccess.canPreview(TestUtils.getManagedWebsite(weblog), user(other)));
+    }
+
+    @Test
+    void pendingInviteCannotPreview() throws Exception {
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        mgr.grantWeblogPermissionPending(TestUtils.getManagedWebsite(weblog), user(other),
+                Collections.singletonList(WeblogPermission.EDIT_DRAFT));
+        TestUtils.endSession(true);
+        assertFalse(PreviewAccess.canPreview(TestUtils.getManagedWebsite(weblog), user(other)));
     }
 
     @Test
@@ -82,7 +91,7 @@ class PreviewServletPermissionTest {
         UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
         mgr.grantRole("admin", user(other));
         TestUtils.endSession(true);
-        assertTrue(PreviewServlet.canPreview(TestUtils.getManagedWebsite(weblog), user(other)));
+        assertTrue(PreviewAccess.canPreview(TestUtils.getManagedWebsite(weblog), user(other)));
     }
 
     @Test
@@ -91,7 +100,7 @@ class PreviewServletPermissionTest {
         User disabled = new User();
         disabled.setUserName(owner.getUserName());
         disabled.setEnabled(Boolean.FALSE);
-        assertFalse(PreviewServlet.canPreview(TestUtils.getManagedWebsite(weblog), disabled));
+        assertFalse(PreviewAccess.canPreview(TestUtils.getManagedWebsite(weblog), disabled));
     }
 
     private static User user(User u) throws Exception {

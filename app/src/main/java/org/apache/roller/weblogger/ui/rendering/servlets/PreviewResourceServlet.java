@@ -40,6 +40,7 @@ import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
+import org.apache.roller.weblogger.ui.rendering.util.PreviewAccess;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewResourceRequest;
 
 /**
@@ -91,7 +92,7 @@ public class PreviewResourceServlet extends HttpServlet {
             return;
         }
 
-        if (!PreviewServlet.canPreview(weblog, resourceRequest.getUser())) {
+        if (!PreviewAccess.canPreview(weblog, resourceRequest.getUser())) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
