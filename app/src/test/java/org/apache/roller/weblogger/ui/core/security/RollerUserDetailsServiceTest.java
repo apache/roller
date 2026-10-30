@@ -17,6 +17,7 @@
 package org.apache.roller.weblogger.ui.core.security;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -27,10 +28,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
@@ -59,7 +62,7 @@ class RollerUserDetailsServiceTest {
         factory.close();
     }
 
-    private User user(boolean enabled) throws Exception {
+    private User user(Boolean enabled) throws Exception {
         User user = new User();
         user.setUserName("reader");
         user.setPassword("x");
@@ -81,5 +84,33 @@ class RollerUserDetailsServiceTest {
         user(false);
         assertThrows(DisabledException.class,
                 () -> new RollerUserDetailsService().loadUserByUsername(OPENID));
+    }
+
+    @Test
+    void enabledOpenIdUserIsMarkedEnabled() throws Exception {
+        user(true);
+        assertTrue(new RollerUserDetailsService().loadUserByUsername(OPENID).isEnabled());
+    }
+
+    @Test
+    void openIdUserWithNoEnabledFlagIsRefused() throws Exception {
+        user(null);
+        assertThrows(DisabledException.class,
+                () -> new RollerUserDetailsService().loadUserByUsername(OPENID));
+    }
+
+    @Test
+    void disabledOpenIdUserIsRefusedWithTrailingSlash() throws Exception {
+        user(false);
+        assertThrows(DisabledException.class,
+                () -> new RollerUserDetailsService().loadUserByUsername(OPENID + "/"));
+    }
+
+    @Test
+    void unknownOpenIdUrlGetsTheRegistrationPlaceholder() throws Exception {
+        UserDetails details = new RollerUserDetailsService().loadUserByUsername(OPENID);
+        assertEquals("openid", details.getUsername());
+        assertEquals(List.of("rollerOpenidLogin"), details.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
     }
 }
