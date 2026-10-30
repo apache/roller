@@ -71,7 +71,7 @@
             <p> <a href='<s:property value="#perms.weblog.absoluteURL" />'>
             <s:property value="#perms.weblog.absoluteURL" /></a></p>
 
-            <p><s:property value="#perms.weblog.about" escapeHtml="false" /></p>
+            <p><s:property value="#perms.weblog.about" /></p>
 
             <p>You have 
             <s:if test='#perms.hasAction("admin")'>ADMIN </s:if>
