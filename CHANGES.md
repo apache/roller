@@ -64,6 +64,17 @@
   a `<`, as in `a < b`, `x<y` or `C<C++ fans`, is kept, and no longer gets a
   space added before the `<`. The Your Weblogs page shows a weblog's
   description as text.
+- **OPML import keeps only web links.** An imported bookmark is kept only when
+  its link is an absolute `http` or `https` URL; others are skipped and named
+  in the log. A feed URL that is not one is dropped. Blogroll links shown on
+  weblog pages must be relative or use `http`, `https`, `ftp` or `mailto`;
+  other links, and links with `&` before the path, are shown without a
+  target. The blogroll escapes bookmark names and descriptions.
+- **The user picker matches user names only, except for global admins.** When
+  a user who is not a global admin searches for users (for example to invite a
+  member), only user names are matched. Global admins can still search by
+  email address. For other users the picker lists enabled users only, at
+  most 50 at a time. `%` and `_` in the search text match only themselves.
 - **Previews need a role in the weblog.** Previewing a weblog's pages or
   theme resources now requires an enabled user with a role in that weblog
   (Limited, Author or Admin), or a global admin.
