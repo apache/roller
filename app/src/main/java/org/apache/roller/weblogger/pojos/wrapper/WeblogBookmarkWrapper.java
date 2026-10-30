@@ -18,13 +18,18 @@
 
 package org.apache.roller.weblogger.pojos.wrapper;
 
+import java.util.Set;
+
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
+import org.apache.roller.weblogger.util.LinkScheme;
 
 
 /**
  * Pojo safety wrapper for WeblogBookmark object.
  */
 public final class WeblogBookmarkWrapper {
+
+    private static final Set<String> ALLOWED_SCHEMES = Set.of("http", "https", "ftp", "mailto");
     
     // keep a reference to the wrapped pojo
     private final WeblogBookmark pojo;
@@ -59,7 +64,7 @@ public final class WeblogBookmarkWrapper {
     
     
     public String getUrl() {
-        return this.pojo.getUrl();
+        return linkOrEmpty(this.pojo.getUrl());
     }
 
     public Integer getPriority() {
@@ -67,12 +72,28 @@ public final class WeblogBookmarkWrapper {
     }
 
     public String getImage() {
-        return this.pojo.getImage();
+        return linkOrEmpty(this.pojo.getImage());
     }
     
     
     public String getFeedUrl() {
-        return this.pojo.getFeedUrl();
+        return linkOrEmpty(this.pojo.getFeedUrl());
+    }
+
+    /**
+     * Returns the link if it is relative or uses a scheme a blogroll link
+     * needs (http, https, ftp, mailto), else an empty string. See
+     * {@link LinkScheme#of(String)} for how the scheme is read.
+     */
+    static String linkOrEmpty(String link) {
+        if (link == null) {
+            return null;
+        }
+        String scheme = LinkScheme.of(link);
+        if (scheme == null || (!scheme.isEmpty() && !ALLOWED_SCHEMES.contains(scheme))) {
+            return "";
+        }
+        return link;
     }
     
     
