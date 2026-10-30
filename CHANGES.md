@@ -58,6 +58,12 @@
 - **Startup fails if the XML-RPC parser cannot be configured.** Roller used to
   log an error and continue. It now stops at startup, so check the log if a
   custom XML parser is on the classpath.
+- **Text with an unclosed tag loses the tag.** Where Roller strips HTML from
+  plain-text fields (for example a weblog's description), a tag with attributes
+  and no closing `>`, such as `text <img src=x`, is now dropped. Other text with
+  a `<`, as in `a < b`, `x<y` or `C<C++ fans`, is kept, and no longer gets a
+  space added before the `<`. The Your Weblogs page shows a weblog's
+  description as text.
 - **The user picker matches user names only, except for global admins.** When
   a user who is not a global admin searches for users (for example to invite a
   member), only user names are matched. Global admins can still search by
