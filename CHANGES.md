@@ -58,12 +58,13 @@
 - **Startup fails if the XML-RPC parser cannot be configured.** Roller used to
   log an error and continue. It now stops at startup, so check the log if a
   custom XML parser is on the classpath.
-- **Links and URLs that change data need the form token.** A request other
-  than a POST that calls an action method which changes data, for example a
-  `pings!enable.rol` link, must carry the page's `salt`, as a form POST does.
-  Roller's own links carry it, and after the change they return to the page
-  without the `salt` in the address. Saving a common ping target needs a POST.
-  A bookmark or script that calls such a URL directly is refused.
+- **Actions that change data need a POST.** A request other than a POST
+  that calls an action method which changes data, for example
+  `pings!enable.rol`, is refused with `405 Method Not Allowed`. Roller's own
+  ping, invitation and installer links are now small forms that POST with
+  the page's form token, and return to the page afterwards. Saving a common
+  ping target needs a POST. A bookmark or script that calls such a URL with
+  a GET is refused.
 
 ### Bug fixes
 

@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,13 +31,14 @@ import org.apache.roller.weblogger.ui.core.filters.SaltValidator;
 import org.apache.struts2.StrutsStatics;
 import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 
+import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 
 /**
- * Validates salts after Struts has wrapped a multipart form request, and on
- * requests other than POST that call an action method which changes data.
+ * Validates salts after Struts has wrapped a multipart form request, and
+ * refuses requests other than POST to action methods that change data.
  */
 public class ValidateSaltInterceptor extends AbstractInterceptor implements StrutsStatics {
 
@@ -44,8 +46,10 @@ public class ValidateSaltInterceptor extends AbstractInterceptor implements Stru
     private static final Log log = LogFactory.getLog(ValidateSaltInterceptor.class);
 
     /**
-     * Action methods that only display data. Links and redirects may reach
-     * these without a salt; any other method needs a POST or a salt.
+     * Action methods that a GET may call. They only display data, except
+     * "activate", which the account activation e-mail links to and which is
+     * guarded by its one-time activation code. Any other method needs a POST,
+     * which ValidateSaltFilter checks for a salt.
      */
     static final Set<String> DISPLAY_METHODS = Set.of(
             "execute", "input", "view", "search", "query", "edit", "cancel",
@@ -80,15 +84,14 @@ public class ValidateSaltInterceptor extends AbstractInterceptor implements Stru
 
         if (!"POST".equalsIgnoreCase(request.getMethod())
                 && !DISPLAY_METHODS.contains(invocation.getProxy().getMethod())) {
-            try {
-                SaltValidator.requireSubmittedSalt(request);
-            } catch (ServletException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Valid salt value not found on " + request.getMethod()
-                            + " to URL : " + request.getServletPath());
-                }
-                throw e;
+            if (log.isDebugEnabled()) {
+                log.debug("Refused " + request.getMethod() + " to URL : "
+                        + request.getServletPath() + "; the action method needs a POST");
             }
+            HttpServletResponse response = (HttpServletResponse) context.get(HTTP_RESPONSE);
+            response.setHeader("Allow", "POST");
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            return Action.NONE;
         }
 
         return invocation.invoke();

@@ -53,22 +53,18 @@
 
             <td class="rollertable" align="center">
                 <s:if test="#pingTarget.autoEnabled">
-                    <s:url var="disablePing" action="commonPingTargets!disable">
-                        <s:param name="salt" value="%{salt}" />
-                        <s:param name="pingTargetId" value="#pingTarget.id"/>
-                    </s:url>
-                    <s:a href="%{disablePing}">
-                        <s:text name="pingTarget.disable"/>
-                    </s:a>
+                    <s:url var="pingActionUrl" action="commonPingTargets!disable" />
+                    <s:set var="pingActionLabel" value="'pingTarget.disable'" />
                 </s:if>
                 <s:else>
-                    <s:url var="enablePing" action="commonPingTargets!enable">
-                        <s:param name="salt" value="%{salt}" />
-                        <s:param name="pingTargetId" value="#pingTarget.id"/>
-                    </s:url>
-                    <s:a href="%{enablePing}">
-                        <s:text name="pingTarget.enable"/></s:a>
+                    <s:url var="pingActionUrl" action="commonPingTargets!enable" />
+                    <s:set var="pingActionLabel" value="'pingTarget.enable'" />
                 </s:else>
+                <form action="<s:property value="#pingActionUrl" />" method="post" style="display: inline;">
+                    <input type="hidden" name="salt" value="<s:property value="salt" />" />
+                    <input type="hidden" name="pingTargetId" value="<s:property value="#pingTarget.id" />" />
+                    <button type="submit" class="btn btn-link" style="padding: 0; border: 0; vertical-align: baseline;"><s:text name="%{#pingActionLabel}" /></button>
+                </form>
             </td>
 
             <td class="rollertable" align="center">

@@ -68,30 +68,29 @@
     <!-- TODO: Use icons here -->
     <td class="rollertable" align="center" >
         <s:if test="pingStatus[#pingTarget.id]">
-            <s:url var="disableUrl" action="pings!disable" >
-                <s:param name="salt" value="%{salt}" />
-                <s:param name="weblog" value="%{actionWeblog.handle}" />
-                <s:param name="pingTargetId" value="#pingTarget.id" />
-            </s:url>
-            <s:a href="%{disableUrl}"><s:text name="pingTarget.disable"/></s:a>
+            <s:url var="pingActionUrl" action="pings!disable" />
+            <s:set var="pingActionLabel" value="'pingTarget.disable'" />
         </s:if>
         <s:else>
-            <s:url var="enableUrl" action="pings!enable" >
-                <s:param name="salt" value="%{salt}" />
-                <s:param name="weblog" value="%{actionWeblog.handle}" />
-                <s:param name="pingTargetId" value="#pingTarget.id" />
-            </s:url>
-            <s:a href="%{enableUrl}"><s:text name="pingTarget.enable"/></s:a>
+            <s:url var="pingActionUrl" action="pings!enable" />
+            <s:set var="pingActionLabel" value="'pingTarget.enable'" />
         </s:else>
+        <form action="<s:property value="#pingActionUrl" />" method="post" style="display: inline;">
+            <input type="hidden" name="salt" value="<s:property value="salt" />" />
+            <input type="hidden" name="weblog" value="<s:property value="actionWeblog.handle" />" />
+            <input type="hidden" name="pingTargetId" value="<s:property value="#pingTarget.id" />" />
+            <button type="submit" class="btn btn-link" style="padding: 0; border: 0; vertical-align: baseline;"><s:text name="%{#pingActionLabel}" /></button>
+        </form>
     </td>
     
     <td class="rollertable">
-        <s:url var="pingNowUrl" action="pings!pingNow" >
-            <s:param name="salt" value="%{salt}" />
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-            <s:param name="pingTargetId" value="#pingTarget.id" />
-        </s:url>
-        <s:a href="%{pingNowUrl}"><s:text name="pingTarget.sendPingNow"/></s:a>
+        <s:url var="pingNowUrl" action="pings!pingNow" />
+        <form action="<s:property value="#pingNowUrl" />" method="post" style="display: inline;">
+            <input type="hidden" name="salt" value="<s:property value="salt" />" />
+            <input type="hidden" name="weblog" value="<s:property value="actionWeblog.handle" />" />
+            <input type="hidden" name="pingTargetId" value="<s:property value="#pingTarget.id" />" />
+            <button type="submit" class="btn btn-link" style="padding: 0; border: 0; vertical-align: baseline;"><s:text name="pingTarget.sendPingNow" /></button>
+        </form>
     </td>
     
     </tr>
