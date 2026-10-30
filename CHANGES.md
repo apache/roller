@@ -93,6 +93,13 @@
   holds an entry that has since gone back to draft. Updating an entry through
   AtomPub so that it is no longer published also removes it from the index,
   and so does deleting an entry through AtomPub.
+- **Actions that change data need a POST.** A request other than a POST
+  that calls an action method which changes data, for example
+  `pings!enable.rol`, is refused with `405 Method Not Allowed`. Roller's own
+  ping, invitation and installer links are now small forms that POST with
+  the page's form token, and return to the page afterwards. Saving a common
+  ping target needs a POST. A bookmark or script that calls such a URL with
+  a GET is refused.
 
 ### Bug fixes
 

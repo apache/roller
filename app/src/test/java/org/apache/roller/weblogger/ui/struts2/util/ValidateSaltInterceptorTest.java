@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.ui.struts2.util;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.RollerSession;
@@ -34,8 +35,10 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 
+import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.ActionProxy;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -195,6 +198,63 @@ public class ValidateSaltInterceptorTest {
 
         verify(request, never()).getParameter("salt");
         verify(invocation).invoke();
+    }
+
+    @Test
+    public void testGetToDataChangingMethodIsRefused() throws Exception {
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(context.get(StrutsStatics.HTTP_RESPONSE)).thenReturn(response);
+        configureGet("/roller-ui/authoring/pings!disable.rol", "disable");
+
+        assertEquals(Action.NONE, interceptor.intercept(invocation));
+        verify(response).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        verify(response).setHeader("Allow", "POST");
+        verify(invocation, never()).invoke();
+    }
+
+    @Test
+    public void testGetToDataChangingMethodIsRefusedEvenWithSalt() throws Exception {
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(context.get(StrutsStatics.HTTP_RESPONSE)).thenReturn(response);
+        configureGet("/roller-ui/authoring/pings!enable.rol", "enable");
+        when(request.getParameter("salt")).thenReturn("validSalt");
+
+        assertEquals(Action.NONE, interceptor.intercept(invocation));
+        verify(response).sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        verify(invocation, never()).invoke();
+    }
+
+    @Test
+    public void testPostToDataChangingMethodIsInvoked() throws Exception {
+        ActionProxy proxy = mock(ActionProxy.class);
+        when(proxy.getMethod()).thenReturn("enable");
+        when(invocation.getProxy()).thenReturn(proxy);
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getContentType()).thenReturn("application/x-www-form-urlencoded");
+        when(invocation.invoke()).thenReturn("done");
+
+        assertEquals("done", interceptor.intercept(invocation));
+    }
+
+    @Test
+    public void testGetToDisplayMethodNeedsNoSalt() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            for (String method : new String[] {"execute", "view", "firstSave"}) {
+                configureGet("/roller-ui/authoring/page!" + method + ".rol", method);
+                when(invocation.invoke()).thenReturn("success");
+                assertEquals("success", interceptor.intercept(invocation));
+            }
+            verify(request, never()).getParameter("salt");
+        }
+    }
+
+    private void configureGet(String servletPath, String method) {
+        ActionProxy proxy = mock(ActionProxy.class);
+        when(proxy.getMethod()).thenReturn(method);
+        when(invocation.getProxy()).thenReturn(proxy);
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getServletPath()).thenReturn(servletPath);
     }
 
     private void configureMultipartPost(String servletPath) {

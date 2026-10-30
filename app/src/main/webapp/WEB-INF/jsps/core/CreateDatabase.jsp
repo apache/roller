@@ -31,11 +31,23 @@
     <h2><s:text name="installer.tablesCreated" /></h2>
     
     <p><s:text name="installer.tablesCreatedExplanation" /></p>
+    <%-- the message's link submits this form; bootstrapping needs a POST --%>
     <p>
         <s:text name="installer.tryBootstrapping">
-            <s:param><s:url action="install!bootstrap"/></s:param>
+            <s:param>#bootstrap</s:param>
         </s:text>
     </p>
+    <s:url var="bootstrapUrl" action="install!bootstrap" />
+    <form id="bootstrapForm" action="<s:property value="#bootstrapUrl" />" method="post">
+        <input type="hidden" name="salt" value="<s:property value="salt" />" />
+        <noscript><button type="submit"><s:text name="installer.finishUpgrade" /></button></noscript>
+    </form>
+    <script>
+        document.querySelector('a[href="#bootstrap"]').addEventListener('click', function (event) {
+            event.preventDefault();
+            document.getElementById('bootstrapForm').submit();
+        });
+    </script>
     
 <pre>
 <s:iterator value="messages"><s:property/><br /></s:iterator>

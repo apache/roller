@@ -77,7 +77,7 @@ public class MainMenu extends UIAction {
             addError("yourWebsites.permNotFound");
         }
         
-        return SUCCESS;
+        return DONE;
     }
     
     
@@ -99,7 +99,7 @@ public class MainMenu extends UIAction {
             addError("yourWebsites.permNotFound");
         }
         
-        return SUCCESS;
+        return DONE;
     }
 
     public List<WeblogPermission> getExistingPermissions() {
