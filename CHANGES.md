@@ -69,7 +69,8 @@
   in the log. A feed URL that is not one is dropped. Blogroll links shown on
   weblog pages must be relative or use `http`, `https`, `ftp` or `mailto`;
   other links, and links with `&` before the path, are shown without a
-  target. The blogroll escapes bookmark names and descriptions.
+  target. The blogroll shows bookmark names and descriptions as plain text,
+  without HTML formatting.
 - **The user picker matches user names only, except for global admins.** When
   a user who is not a global admin searches for users (for example to invite a
   member), only user names are matched. Global admins can still search by
