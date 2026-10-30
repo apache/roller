@@ -71,6 +71,28 @@ public class UserDataServletTest {
         assertEquals("alice,alice@example.com\n", body.replace("\r", ""));
     }
 
+    @Test
+    public void testNonAdminGetsEnabledUsersOnePageAtATime() throws Exception {
+        User caller = mock(User.class);
+        when(caller.hasGlobalPermission("admin")).thenReturn(false);
+        UserManager users = userManager();
+
+        search(caller, users, "false", "100000");
+
+        verify(users).getUsersWithUserNameStartingWith("ali", Boolean.TRUE, 0, 50);
+    }
+
+    @Test
+    public void testAdminKeepsRequestedParameters() throws Exception {
+        User caller = mock(User.class);
+        when(caller.hasGlobalPermission("admin")).thenReturn(true);
+        UserManager users = userManager();
+
+        search(caller, users, "false", "100");
+
+        verify(users).getUsersStartingWith("ali", Boolean.FALSE, 0, 100);
+    }
+
     private static UserManager userManager() throws Exception {
         User alice = mock(User.class);
         when(alice.getUserName()).thenReturn("alice");
@@ -83,13 +105,18 @@ public class UserDataServletTest {
     }
 
     private static String search(User caller, UserManager users) throws Exception {
+        return search(caller, users, "true", "50");
+    }
+
+    private static String search(User caller, UserManager users, String enabled, String length)
+            throws Exception {
         Weblogger weblogger = mock(Weblogger.class);
         when(weblogger.getUserManager()).thenReturn(users);
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getParameter("startsWith")).thenReturn("ali");
-        when(request.getParameter("enabled")).thenReturn("true");
-        when(request.getParameter("length")).thenReturn("50");
+        when(request.getParameter("enabled")).thenReturn(enabled);
+        when(request.getParameter("length")).thenReturn(length);
         HttpServletResponse response = mock(HttpServletResponse.class);
         StringWriter body = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(body, true));

@@ -257,15 +257,28 @@ public class JPAUserManagerImpl implements UserManager {
     @Override
     public List<User> getUsersStartingWith(String startsWith, Boolean enabled,
             int offset, int length) throws WebloggerException {
+        return findUsersStartingWith(startsWith, true, enabled, offset, length);
+    }
+
+    @Override
+    public List<User> getUsersWithUserNameStartingWith(String startsWith, Boolean enabled,
+            int offset, int length) throws WebloggerException {
+        return findUsersStartingWith(startsWith, false, enabled, offset, length);
+    }
+
+    private List<User> findUsersStartingWith(String startsWith, boolean matchEmail,
+            Boolean enabled, int offset, int length) throws WebloggerException {
         TypedQuery<User> query;
+        String match = matchEmail ? "UserNameOrEmailAddressStartsWith" : "UserNameStartsWith";
 
         if (enabled != null) {
             if (startsWith != null) {
-                query = strategy.getNamedQuery(
-                        "User.getByEnabled&UserNameOrEmailAddressStartsWith", User.class);
+                query = strategy.getNamedQuery("User.getByEnabled&" + match, User.class);
                 query.setParameter(1, enabled);
                 query.setParameter(2, likePrefix(startsWith));
-                query.setParameter(3, likePrefix(startsWith));
+                if (matchEmail) {
+                    query.setParameter(3, likePrefix(startsWith));
+                }
             } else {
                 query = strategy.getNamedQuery(
                         "User.getByEnabled", User.class);
@@ -273,33 +286,11 @@ public class JPAUserManagerImpl implements UserManager {
             }
         } else {
             if (startsWith != null) {
-                query = strategy.getNamedQuery(
-                        "User.getByUserNameOrEmailAddressStartsWith", User.class);
+                query = strategy.getNamedQuery("User.getBy" + match, User.class);
                 query.setParameter(1, likePrefix(startsWith));
             } else {
                 query = strategy.getNamedQuery("User.getAll", User.class);
             }
-        }
-        if (offset != 0) {
-            query.setFirstResult(offset);
-        }
-        if (length != -1) {
-            query.setMaxResults(length);
-        }
-        return query.getResultList();
-    }
-
-    @Override
-    public List<User> getUsersWithUserNameStartingWith(String startsWith, Boolean enabled,
-            int offset, int length) throws WebloggerException {
-        TypedQuery<User> query;
-        if (enabled != null) {
-            query = strategy.getNamedQuery("User.getByEnabled&UserNameStartsWith", User.class);
-            query.setParameter(1, enabled);
-            query.setParameter(2, likePrefix(startsWith == null ? "" : startsWith));
-        } else {
-            query = strategy.getNamedQuery("User.getByUserNameStartsWith", User.class);
-            query.setParameter(1, likePrefix(startsWith == null ? "" : startsWith));
         }
         if (offset != 0) {
             query.setFirstResult(offset);

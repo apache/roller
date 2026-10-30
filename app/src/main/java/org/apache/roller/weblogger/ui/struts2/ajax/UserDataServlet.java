@@ -102,6 +102,13 @@ public class UserDataServlet extends HttpServlet {
             length = Integer.parseInt(request.getParameter("length"));
         } catch (Exception ignored) {
         }
+        if (!admin) {
+            // others pick from enabled users only, one page at a time
+            enabledOnly = Boolean.TRUE;
+            if (length < 0 || length > MAX_LENGTH) {
+                length = MAX_LENGTH;
+            }
+        }
 
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {

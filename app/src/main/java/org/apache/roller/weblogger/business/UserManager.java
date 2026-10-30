@@ -153,11 +153,14 @@ public interface UserManager {
 
     /**
      * Lookup users whose usernames or email addresses start with a string.
+     * Because it matches email addresses, use it only for callers who may
+     * see them (global admins); others use
+     * {@link #getUsersWithUserNameStartingWith}.
      *
      * @param startsWith String to match userNames and emailAddresses against
      * @param offset     Offset into results (for paging)
      * @param length     Max to return (for paging)
-     * @param enabled    True for only enalbed, false for disabled, null for all
+     * @param enabled    True for only enabled, false for disabled, null for all
      * @return List of (up to length) users that match startsWith string
      */
     List<User> getUsersStartingWith(String startsWith,
