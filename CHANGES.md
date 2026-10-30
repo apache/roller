@@ -88,6 +88,11 @@
   parsed. Author user names and comment author names and email addresses are
   no longer added to the search index. An index built by an earlier version
   is rebuilt in the background at the first startup after the upgrade.
+- **Search shows only published entries.** Weblog search returns entries that
+  are published at the time of the search, even if the search index still
+  holds an entry that has since gone back to draft. Updating an entry through
+  AtomPub so that it is no longer published also removes it from the index,
+  and so does deleting an entry through AtomPub.
 
 ### Bug fixes
 

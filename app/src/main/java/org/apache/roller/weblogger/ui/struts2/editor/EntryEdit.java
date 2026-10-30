@@ -289,11 +289,7 @@ public final class EntryEdit extends UIAction {
                 entrySaved = true;
 
                 // notify search of the new entry
-                if (weblogEntry.isPublished()) {
-                    indexMgr.addEntryReIndexOperation(entry);
-                } else if ("entryEdit".equals(actionName)) {
-                    indexMgr.removeEntryIndexOperation(entry);
-                }
+                indexMgr.updateEntryIndex(weblogEntry);
 
                 // notify caches
                 CacheManager.invalidate(weblogEntry);

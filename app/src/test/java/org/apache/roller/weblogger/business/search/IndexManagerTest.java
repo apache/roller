@@ -107,6 +107,28 @@ public class IndexManagerTest {
                 testWeblog.getHandle(), null, testWeblog.getLocale(), 0, RESULTS_PER_PAGE,
                 WebloggerFactory.getWeblogger().getUrlStrategy()));
 
+            // an entry returned to draft leaves search results even before
+            // its index document is removed, and does not use up a page slot
+            WeblogEntryManager entryMgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+            WeblogEntry action = TestUtils.getManagedWeblogEntry(entries.get(1));
+            action.setStatus(WeblogEntry.PubStatus.DRAFT);
+            entryMgr.saveWeblogEntry(action);
+            TestUtils.endSession(true);
+            result = indexManager.search("Enterprise",
+                testWeblog.getHandle(), null, testWeblog.getLocale(), 0, 1,
+                WebloggerFactory.getWeblogger().getUrlStrategy());
+            assertEquals(1, result.getResults().size());
+            assertEquals("The Tholian Web", result.getResults().get(0).getTitle());
+
+            WeblogEntry tholian = TestUtils.getManagedWeblogEntry(entries.get(0));
+            tholian.setStatus(WeblogEntry.PubStatus.DRAFT);
+            entryMgr.saveWeblogEntry(tholian);
+            TestUtils.endSession(true);
+            result = indexManager.search("Tholian",
+                testWeblog.getHandle(), null, testWeblog.getLocale(), 0, RESULTS_PER_PAGE,
+                WebloggerFactory.getWeblogger().getUrlStrategy());
+            assertEquals(0, result.getResults().size());
+
         } finally {
             for (WeblogEntry entry : entries) {
                 indexManager.removeEntryIndexOperation(TestUtils.getManagedWeblogEntry(entry));
@@ -126,6 +148,7 @@ public class IndexManagerTest {
         List<WeblogEntry> entries = Instancio.ofList(WeblogEntry.class).size(10).create();
 
         entries.get(0).setTitle("The Tholian Web");
+        entries.get(0).setStatus(WeblogEntry.PubStatus.PUBLISHED);
         entries.get(0).setPubTime(new Timestamp(System.currentTimeMillis()));
         entries.get(0).setText(
             "When the Enterprise attempts to ascertain the fate of the  "
@@ -135,6 +158,7 @@ public class IndexManagerTest {
         Thread.sleep(500);
 
         entries.get(1).setTitle("A Piece of the Action");
+        entries.get(1).setStatus(WeblogEntry.PubStatus.PUBLISHED);
         entries.get(1).setPubTime(new Timestamp(System.currentTimeMillis()));
         entries.get(1).setText(
             "The crew of the Enterprise attempts to make contact with "
