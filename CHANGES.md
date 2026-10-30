@@ -78,6 +78,10 @@
 - **Previews need a role in the weblog.** Previewing a weblog's pages or
   theme resources now requires an enabled user with a role in that weblog
   (Limited, Author or Admin), or a global admin.
+- **Disabled accounts cannot sign in with an OpenID URL.** An account that an
+  administrator has disabled is now refused whenever its OpenID URL is used to
+  sign in, on every sign-in form, as user name and password sign-in already
+  does.
 
 ### Bug fixes
 
