@@ -75,24 +75,17 @@ public abstract class IndexOperation implements Runnable {
                 "search.index.comments", true);
 
         String commentContent = "";
-        String commentName = "";
         if (indexComments) {
             List<WeblogEntryComment> comments = data.getComments();
             if (comments != null) {
                 StringBuilder commentContentBld = new StringBuilder();
-                StringBuilder commentNameBld = new StringBuilder();
                 for (WeblogEntryComment comment : comments) {
                     if (comment.getContent() != null) {
                         commentContentBld.append(comment.getContent());
                         commentContentBld.append(",");
                     }
-                    if (comment.getName() != null) {
-                        commentNameBld.append(comment.getName());
-                        commentNameBld.append(",");
-                    }
                 }
                 commentContent = commentContentBld.toString();
-                commentName = commentNameBld.toString();
             }
         }
 
@@ -105,12 +98,6 @@ public abstract class IndexOperation implements Runnable {
         // keyword
         doc.add(new StringField(FieldConstants.WEBSITE_HANDLE, data
                 .getWebsite().getHandle(), Field.Store.YES));
-
-        // text, don't index deleted/disabled users of a group blog
-        if (data.getCreator() != null) {
-            doc.add(new TextField(FieldConstants.USERNAME, data.getCreator()
-                    .getUserName().toLowerCase(), Field.Store.YES));
-        }
 
         // text
         doc.add(new TextField(FieldConstants.TITLE, data.getTitle(),
@@ -144,10 +131,6 @@ public abstract class IndexOperation implements Runnable {
         // index Comments, unstored
         doc.add(new TextField(FieldConstants.C_CONTENT, commentContent,
                 Field.Store.NO));
-
-        // keyword
-        doc.add(new StringField(FieldConstants.C_NAME, commentName,
-                Field.Store.YES));
 
         return doc;
     }

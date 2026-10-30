@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.business.search.lucene;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -32,6 +33,7 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.QueryVisitor;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
@@ -235,7 +237,9 @@ public class SearchOperation extends ReadFromIndexOperation {
     /**
      * Query parser that accepts explicit field names only for the fields that
      * searches are meant to cover. Other index fields hold data that is not
-     * shown on the weblog, so a query naming one is a parse error.
+     * shown on the weblog, so a query naming one is a parse error. The check
+     * walks the parsed query, so it covers every kind of query the parser
+     * can build.
      */
     static class SearchFieldsQueryParser extends MultiFieldQueryParser {
 
@@ -246,56 +250,30 @@ public class SearchOperation extends ReadFromIndexOperation {
             this.searchFields = Set.of(fields);
         }
 
-        private void checkField(String field) throws ParseException {
-            if (field != null && !searchFields.contains(field)) {
-                throw new ParseException("Cannot search field: " + field);
+        @Override
+        public Query parse(String query) throws ParseException {
+            Query parsed = super.parse(query);
+            Set<String> fields = new HashSet<>();
+            parsed.visit(new QueryVisitor() {
+                @Override
+                public boolean acceptField(String field) {
+                    fields.add(field);
+                    return true;
+                }
+
+                @Override
+                public void consumeTerms(Query q, Term... terms) {
+                    for (Term t : terms) {
+                        fields.add(t.field());
+                    }
+                }
+            });
+            for (String field : fields) {
+                if (!searchFields.contains(field)) {
+                    throw new ParseException("Cannot search field: " + field);
+                }
             }
-        }
-
-        @Override
-        protected Query getFieldQuery(String field, String queryText, int slop) throws ParseException {
-            checkField(field);
-            return super.getFieldQuery(field, queryText, slop);
-        }
-
-        @Override
-        protected Query getFieldQuery(String field, String queryText, boolean quoted) throws ParseException {
-            checkField(field);
-            return super.getFieldQuery(field, queryText, quoted);
-        }
-
-        @Override
-        protected Query getFuzzyQuery(String field, String termStr, float minSimilarity) throws ParseException {
-            checkField(field);
-            return super.getFuzzyQuery(field, termStr, minSimilarity);
-        }
-
-        @Override
-        protected Query getPrefixQuery(String field, String termStr) throws ParseException {
-            checkField(field);
-            return super.getPrefixQuery(field, termStr);
-        }
-
-        @Override
-        protected Query getWildcardQuery(String field, String termStr) throws ParseException {
-            // *:* matches every entry and reads no field
-            if (!("*".equals(field) && "*".equals(termStr))) {
-                checkField(field);
-            }
-            return super.getWildcardQuery(field, termStr);
-        }
-
-        @Override
-        protected Query getRegexpQuery(String field, String termStr) throws ParseException {
-            checkField(field);
-            return super.getRegexpQuery(field, termStr);
-        }
-
-        @Override
-        protected Query getRangeQuery(String field, String part1, String part2,
-                boolean startInclusive, boolean endInclusive) throws ParseException {
-            checkField(field);
-            return super.getRangeQuery(field, part1, part2, startInclusive, endInclusive);
+            return parsed;
         }
     }
 }

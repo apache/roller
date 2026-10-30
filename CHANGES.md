@@ -61,8 +61,9 @@
 - **Search queries can name only the search fields.** A weblog search may
   name entry content, title or comment text (for example `title:roller`). A
   query that names another field is treated like a query that cannot be
-  parsed. Comment email addresses are no longer added to the search index;
-  rebuild the index after upgrading to remove those already there.
+  parsed. Author user names and comment author names and email addresses are
+  no longer added to the search index. An index built by an earlier version
+  is rebuilt in the background at the first startup after the upgrade.
 
 ### Bug fixes
 

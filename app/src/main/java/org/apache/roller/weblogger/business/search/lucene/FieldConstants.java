@@ -43,4 +43,7 @@ public final class FieldConstants {
     public static final String CONSTANT_V = "v";
     public static final String WEBSITE_HANDLE = "handle";
     public static final String LOCALE = "locale";
+
+    /** Fields that earlier versions indexed; an index holding one is rebuilt. */
+    static final java.util.List<String> REMOVED_FIELDS = java.util.List.of(USERNAME, C_EMAIL, C_NAME);
 }
