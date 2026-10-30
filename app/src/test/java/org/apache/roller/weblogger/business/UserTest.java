@@ -149,6 +149,21 @@ public class UserTest  {
         user = users2.get(0);
         assertNotNull(user);
         assertEquals(testUser.getUserName(), user.getUserName());
+
+        // '%' and '_' in the search text match only themselves
+        // (an unescaped '_' would let the probe match the test user's name)
+        String name = testUser.getUserName();
+        String underscoreProbe = name.charAt(0) + "_" + name.substring(2, 5);
+        assertEquals(0, mgr.getUsersStartingWith("%", Boolean.TRUE, 0, 10).size());
+        assertEquals(0, mgr.getUsersStartingWith(underscoreProbe, Boolean.TRUE, 0, 10).size());
+        assertEquals(0, mgr.getUsersStartingWith(underscoreProbe, null, 0, 10).size());
+
+        // the user-name-only lookup does not match email addresses
+        assertEquals(1, mgr.getUsersWithUserNameStartingWith(
+                testUser.getUserName().substring(0, 3), Boolean.TRUE, 0, 10).size());
+        assertEquals(0, mgr.getUsersWithUserNameStartingWith(
+                testUser.getEmailAddress().substring(0, 3), Boolean.TRUE, 0, 10).size());
+        assertEquals(0, mgr.getUsersWithUserNameStartingWith(underscoreProbe, null, 0, 10).size());
         
         // make sure disable users are not returned
         user.setEnabled(Boolean.FALSE);
