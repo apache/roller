@@ -138,22 +138,20 @@
 
     <s:if test="template.custom">
 
-        <div class="accordion" id="accordion" style="margin-top:2em">
+        <div class="accordion my-4" id="accordion">
 
-        <div class="card" id="panel-plugins">
+        <div class="accordion-item" id="panel-plugins">
 
-            <div class="card-header">
+            <h2 class="accordion-header">
+                <button type="button" class="accordion-button collapsed"
+                        data-bs-toggle="collapse" data-bs-target="#collapseAdvanced"
+                        aria-expanded="false" aria-controls="collapseAdvanced">
+                    <s:text name="pageForm.advancedSettings"/>
+                </button>
+            </h2>
 
-                <h4 class="card-title">
-                    <a class="collapsed text-body text-decoration-none" data-bs-toggle="collapse" data-bs-target="#collapseAdvanced" href="#">
-                        <s:text name="pageForm.advancedSettings"/>
-                    </a>
-                </h4>
-
-            </div>
-
-            <div id="collapseAdvanced" class="collapse">
-                <div class="card-body">
+            <div id="collapseAdvanced" class="accordion-collapse collapse">
+                <div class="accordion-body">
 
                     <s:select name="bean.templateLanguage" list="templateLanguages" size="1"
                               label="%{getText('pageForm.templateLanguage')}"/>

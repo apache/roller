@@ -99,30 +99,24 @@ public class Comments extends UIAction {
     public void loadComments() {
 
         List<WeblogEntryComment> comments = Collections.emptyList();
-        boolean hasMore = false;
+        long totalCount = 0;
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
                     .getWeblogEntryManager();
 
             if (!resolveQueryEntry(wmgr)) {
                 setPager(new CommentsPager(buildBaseUrl(), getBean().getPage(),
-                        comments, false));
+                        comments, 0, COUNT));
                 return;
             }
 
             CommentSearchCriteria csc = getCommentSearchCriteria();
+            totalCount = wmgr.getCommentCount(csc);
             csc.setOffset(getBean().getPage() * COUNT);
-            csc.setMaxResults(COUNT + 1);
+            csc.setMaxResults(COUNT);
 
-            List<WeblogEntryComment> rawComments = wmgr.getComments(csc);
-            comments = new ArrayList<>();
-            comments.addAll(rawComments);
+            comments = new ArrayList<>(wmgr.getComments(csc));
             if (!comments.isEmpty()) {
-                if (comments.size() > COUNT) {
-                    comments.remove(comments.size() - 1);
-                    hasMore = true;
-                }
-
                 setFirstComment(comments.get(0));
                 setLastComment(comments.get(comments
                         .size() - 1));
@@ -135,7 +129,7 @@ public class Comments extends UIAction {
         // build comments pager
         String baseUrl = buildBaseUrl();
         setPager(new CommentsPager(baseUrl, getBean().getPage(), comments,
-                hasMore));
+                totalCount, COUNT));
     }
 
     // use the action data to build a url representing this action, including
@@ -191,19 +185,9 @@ public class Comments extends UIAction {
             return LIST;
         }
 
-        try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-
-            CommentSearchCriteria csc = getCommentSearchCriteria();
-
-            List<WeblogEntryComment> allMatchingComments = wmgr.getComments(csc);
-            if (allMatchingComments.size() > COUNT) {
-                setBulkDeleteCount(allMatchingComments.size());
-            }
-
-        } catch (WebloggerException ex) {
-            log.error("Error looking up comments", ex);
-            addError("Error looking up comments");
+        // offer bulk delete when the matches span more than one page
+        if (getPager().getTotalCount() > COUNT) {
+            setBulkDeleteCount((int) getPager().getTotalCount());
         }
 
         return LIST;

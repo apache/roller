@@ -63,15 +63,24 @@ public class EntryEditorAssetsTest {
 
     @Test
     public void panelChevronIsOnlyOnCollapseToggles() throws IOException {
+        // The entry editor's panels are Bootstrap 5 accordions, which draw their own
+        // chevron on .accordion-button. A roller.css chevron on ".panel-heading a"
+        // also lands on the rich text editor's menu items, so none may come back.
         String css = read(WEBAPP.resolve("roller-ui/styles/roller.css"));
-        Matcher rule = Pattern.compile("([^{}]*\\.panel-heading\\s+a[^{}]*:after)\\s*\\{").matcher(css);
-        boolean found = false;
-        while (rule.find()) {
-            found = true;
-            assertTrue(rule.group(1).contains("[data-toggle=\"collapse\"]"),
-                    "rule must be limited to collapse toggles: " + rule.group(1).trim());
+        assertFalse(Pattern.compile("\\.panel-heading[^{}]*:after").matcher(css).find(),
+                "roller.css must not add a chevron to .panel-heading links");
+
+        for (String jsp : new String[] {"EntryEdit.jsp", "EntryEditor.jsp"}) {
+            String page = read(WEBAPP.resolve("WEB-INF/jsps/editor/" + jsp));
+            Matcher toggle = Pattern.compile("<[^>]*data-bs-toggle=\"collapse\"[^>]*>").matcher(page);
+            boolean found = false;
+            while (toggle.find()) {
+                found = true;
+                assertTrue(toggle.group().contains("accordion-button"),
+                        jsp + " collapse toggle must be an accordion button: " + toggle.group());
+            }
+            assertTrue(found, jsp + " has collapsible panels");
         }
-        assertTrue(found, "roller.css still styles the panel collapse toggles");
     }
 
     private static String read(Path file) throws IOException {

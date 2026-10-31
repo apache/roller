@@ -349,11 +349,16 @@ abstract class BaseIT {
      * stacked form rows.
      */
     protected void assertPublishingTimeOnOneLine() {
-        page.locator("a[href='#collapseAdvanced']").click();
-        assertThat(page.locator("#collapseAdvanced")).isVisible();
-        double hours = page.locator("select[name='bean.hours']").boundingBox().y;
-        double minutes = page.locator("select[name='bean.minutes']").boundingBox().y;
-        double seconds = page.locator("select[name='bean.seconds']").boundingBox().y;
+        page.locator("[data-bs-target='#collapseAdvanced']").click();
+        // Bootstrap adds "show" only when the collapse transition ends; read
+        // all three positions at once so the layout cannot move between reads
+        assertThat(page.locator("#collapseAdvanced.show:not(.collapsing)")).isVisible();
+        @SuppressWarnings("unchecked")
+        var ys = (java.util.List<Number>) page.evaluate("() => ['hours', 'minutes', 'seconds'].map(f =>"
+                + " document.querySelector(`select[name='bean.${f}']`).getBoundingClientRect().y)");
+        double hours = ys.get(0).doubleValue();
+        double minutes = ys.get(1).doubleValue();
+        double seconds = ys.get(2).doubleValue();
         org.junit.jupiter.api.Assertions.assertTrue(
                 Math.abs(hours - minutes) < 2 && Math.abs(minutes - seconds) < 2,
                 "publishing time selects should share a line, but sit at y=" + hours + ", " + minutes + ", " + seconds);

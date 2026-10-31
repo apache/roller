@@ -84,46 +84,32 @@
 
         <div class="tablenav">
 
-            <div style="float:left;">
-                <s:text name="commentManagement.nowShowing">
-                    <s:param value="pager.items.size()"/>
-                </s:text>
-            </div>
-            <div style="float:right;">
-                <s:if test="firstComment.postTime != null">
-                    <s:text name="commentManagement.date.toStringFormat">
-                        <s:param value="firstComment.postTime"/>
+            <div class="d-flex flex-wrap justify-content-between gap-2">
+                <div>
+                    <s:text name="commentManagement.nowShowing">
+                        <s:param value="pager.items.size()"/>
                     </s:text>
-                </s:if>
-                ---
-                <s:if test="lastComment.postTime != null">
-                    <s:text name="commentManagement.date.toStringFormat">
-                        <s:param value="lastComment.postTime"/>
-                    </s:text>
-                </s:if>
+                </div>
+                <div class="text-body-secondary">
+                    <s:if test="firstComment.postTime != null">
+                        <s:text name="commentManagement.date.toStringFormat">
+                            <s:param value="firstComment.postTime"/>
+                        </s:text>
+                    </s:if>
+                    ---
+                    <s:if test="lastComment.postTime != null">
+                        <s:text name="commentManagement.date.toStringFormat">
+                            <s:param value="lastComment.postTime"/>
+                        </s:text>
+                    </s:if>
+                </div>
             </div>
-            <br/>
 
 
                 <%-- ============================================================= --%>
                 <%-- Next / previous links --%>
 
-            <nav>
-                <ul class="pager">
-                    <s:if test="pager.prevLink != null">
-                        <li class="previous">
-                            <a href="<s:property value="pager.prevLink" />">
-                                <span aria-hidden="true">&larr;</span>Newer</a>
-                        </li>
-                    </s:if>
-                    <s:if test="pager.nextLink != null">
-                        <li class="next">
-                            <a href="<s:property value="pager.nextLink"/>">Older
-                                <span aria-hidden="true">&rarr;</span></a>
-                        </li>
-                    </s:if>
-                </ul>
-            </nav>
+            <s:include value="/WEB-INF/jsps/editor/Pager.jsp"/>
 
         </div> <%-- class="tablenav" --%>
 
@@ -143,231 +129,218 @@
             </p>
         </s:if>
 
-        <table class="rollertable table table-striped" width="100%">
+        <div class="table-responsive">
+            <table class="rollertable table table-striped" width="100%">
 
-                <%-- ======================================================== --%>
-                <%-- Comment table header --%>
+                    <%-- ======================================================== --%>
+                    <%-- Comment table header --%>
 
-            <tr>
-                <s:if test="actionName == 'comments'">
+                <tr>
+                    <s:if test="actionName == 'comments'">
+                        <th class="rollertable" width="5%">
+                            <s:text name="commentManagement.columnApproved"/>
+                        </th>
+                    </s:if>
                     <th class="rollertable" width="5%">
-                        <s:text name="commentManagement.columnApproved"/>
+                        <s:text name="commentManagement.columnSpam"/>
                     </th>
-                </s:if>
-                <th class="rollertable" width="5%">
-                    <s:text name="commentManagement.columnSpam"/>
-                </th>
-                <th class="rollertable" width="5%">
-                    <s:text name="generic.delete"/>
-                </th>
-                <th class="rollertable">
-                    <s:text name="commentManagement.columnComment"/>
-                </th>
-            </tr>
+                    <th class="rollertable" width="5%">
+                        <s:text name="generic.delete"/>
+                    </th>
+                    <th class="rollertable">
+                        <s:text name="commentManagement.columnComment"/>
+                    </th>
+                </tr>
 
-                <%-- ======================================================== --%>
-                <%-- Select ALL and NONE buttons --%>
+                    <%-- ======================================================== --%>
+                    <%-- Select ALL and NONE buttons --%>
 
-            <tr class="actionrow">
-                <s:if test="actionName == 'comments'">
+                <tr class="actionrow">
+                    <s:if test="actionName == 'comments'">
+                        <td align="center">
+                            <s:text name="commentManagement.select"/><br/>
+
+                            <span id="checkallapproved"><a href="#"><s:text name="generic.all"/></a></span><br/>
+                            <span id="clearallapproved"><a href="#"><s:text name="generic.none"/></a></span>
+                        </td>
+                    </s:if>
                     <td align="center">
                         <s:text name="commentManagement.select"/><br/>
 
-                        <span id="checkallapproved"><a href="#"><s:text name="generic.all"/></a></span><br/>
-                        <span id="clearallapproved"><a href="#"><s:text name="generic.none"/></a></span>
+                        <span id="checkallspam"><a href="#"><s:text name="generic.all"/></a></span><br/>
+                        <span id="clearallspam"><a href="#"><s:text name="generic.none"/></a></span>
                     </td>
-                </s:if>
-                <td align="center">
-                    <s:text name="commentManagement.select"/><br/>
+                    <td align="center">
+                        <s:text name="commentManagement.select"/><br/>
 
-                    <span id="checkallspam"><a href="#"><s:text name="generic.all"/></a></span><br/>
-                    <span id="clearallspam"><a href="#"><s:text name="generic.none"/></a></span>
-                </td>
-                <td align="center">
-                    <s:text name="commentManagement.select"/><br/>
-
-                    <span id="checkalldelete"><a href="#"><s:text name="generic.all"/></a></span><br/>
-                    <span id="clearalldelete"><a href="#"><s:text name="generic.none"/></a></span>
-                </td>
-                <td align="right">
-                    <br/>
-                    <span class="pendingCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <s:text name="commentManagement.pending"/>&nbsp;&nbsp;
-                    <span class="spamCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <s:text name="commentManagement.spam"/>&nbsp;&nbsp;
-                </td>
-            </tr>
-
-
-                <%-- ========================================================= --%>
-                <%-- Loop through comments --%>
-
-                <%-- it is a bit funky to use checkbox list here, but using checkbox didn't work for me :( 
-                we are effectively just creating a checkbox list of 1 item for each iteration of our collection. --%>
-
-            <s:iterator var="comment" value="pager.items" status="rowstatus">
-                <tr>
-                    <s:if test="actionName == 'comments'">
-                        <%-- only blog admins (not the global admin) can approve blog comments --%>
-                        <td>
-                            <s:checkboxlist name="bean.approvedComments" cssClass="comment-select"
-                                            list="#comment" listKey="id" listValue="" />
-                        </td>
-                    </s:if>
-                    <td>
-                        <s:checkboxlist name="bean.spamComments" cssClass="comment-select"
-                                        list="#comment" listKey="id" listValue="" />
+                        <span id="checkalldelete"><a href="#"><s:text name="generic.all"/></a></span><br/>
+                        <span id="clearalldelete"><a href="#"><s:text name="generic.none"/></a></span>
                     </td>
-                    <td>
-                        <s:checkboxlist name="bean.deleteComments" cssClass="comment-select"
-                                        list="#comment" listKey="id" listValue="" />
-                    </td>
-
-                        <%-- ======================================================== --%>
-                        <%-- Display comment details and text --%>
-
-                        <%-- <td> with style if comment is spam or pending --%>
-                    <s:if test="#comment.status.name() == 'SPAM'">
-                    <td class="spamcomment">
-                        </s:if>
-                        <s:elseif test="#comment.status.name() == 'PENDING'">
-                    <td class="pendingcomment">
-                        </s:elseif>
-                        <s:else>
-                    <td>
-                        </s:else>
-
-                            <%-- comment details table in table --%>
-                        <table class="innertable">
-                            <tr>
-                                <td class="viewbody">
-
-                                    <div class="viewdetails bot">
-
-                                        <div class="details">
-                                            <s:text name="commentManagement.entryTitled"/>&nbsp;:&nbsp;
-                                            <a href="<s:property value="#comment.weblogEntry.permalink" />">
-                                                <s:property value="#comment.weblogEntry.title"/></a>
-                                        </div>
-
-                                        <div class="details">
-                                            <s:text name="commentManagement.commentBy"/>&nbsp;:&nbsp;
-                                            <s:if test="#comment.email != null && #comment.name != null">
-                                                <s:text name="commentManagement.commentByBoth">
-                                                    <s:param><s:property value="#comment.name"/></s:param>
-                                                    <s:param><s:property value="#comment.email"/></s:param>
-                                                    <s:param><s:property value="#comment.email"/></s:param>
-                                                    <s:param><s:property value="#comment.remoteHost"/></s:param>
-                                                </s:text>
-                                            </s:if>
-                                            <s:elseif test="#comment.email == null && #comment.name == null">
-                                                <s:text name="commentManagement.commentByIP">
-                                                    <s:param><s:property value="#comment.remoteHost"/></s:param>
-                                                </s:text>
-                                            </s:elseif>
-                                            <s:else>
-                                                <s:text name="commentManagement.commentByName">
-                                                    <s:param><s:property value="#comment.name"/></s:param>
-                                                    <s:param><s:property value="#comment.remoteHost"/></s:param>
-                                                </s:text>
-                                            </s:else>
-                                        </div>
-
-                                        <s:set var="safeCommentUrl" value="#comment.safeUrl"/>
-                                        <s:if test="#safeCommentUrl != null">
-                                            <div class="details">
-                                                <s:text name="commentManagement.commentByURL"/>&nbsp;:&nbsp;
-                                                <a href="<s:property value="#safeCommentUrl" escapeHtml="true" />">
-                                                    <str:truncateNicely upper="60" appendToEnd="..."><s:property
-                                                            value="#safeCommentUrl" escapeHtml="true"/></str:truncateNicely></a>
-                                            </div>
-                                        </s:if>
-                                        <s:elseif test="#comment.url != null && #comment.url.trim().length() > 0">
-                                            <div class="details">
-                                                <s:text name="commentManagement.commentByURL"/>&nbsp;:&nbsp;
-                                                <str:truncateNicely upper="60" appendToEnd="..."><s:property
-                                                        value="#comment.url" escapeHtml="true"/></str:truncateNicely>
-                                            </div>
-                                        </s:elseif>
-
-                                        <div class="details">
-                                            <s:text name="commentManagement.postTime"/>&nbsp;:&nbsp;
-                                            <s:date name="#comment.postTime"/>
-                                        </div>
-
-                                    </div>
-                                    <div class="viewdetails bot">
-
-                                        <div class="details bot">
-
-                                            <s:if test="#comment.content.length() > 1000">
-                                                <div class="bot" id="comment-<s:property value="#comment.id"/>">
-                                                    <str:truncateNicely upper="1000" appendToEnd="...">
-                                                        <s:property value="#comment.content" escapeHtml="true"/>
-                                                    </str:truncateNicely>
-                                                </div>
-                                                <div id="link-<s:property value="#comment.id"/>">
-                                                    <a onclick='readMoreComment("<s:property
-                                                            value="#comment.id"/>")'><s:text
-                                                            name="commentManagement.readmore"/></a>
-                                                </div>
-                                            </s:if>
-                                            <s:else>
-                                                <span width="200px"
-                                                      id="comment-<s:property value="#comment.id"/>"><s:property
-                                                        value="#comment.content" escapeHtml="true"/></span>
-                                            </s:else>
-                                        </div>
-
-                                        <s:if test="actionName == 'comments'">
-                                            <div class="details">
-                                                <a id="editlink-<s:property value="#comment.id"/>"
-                                                   onclick='editComment("<s:property value="#comment.id"/>")'>
-                                                    <s:text name="generic.edit"/>
-                                                </a>
-                                            </div>
-                                            <div class="details">
-                                              <span id="savelink-<s:property value="#comment.id"/>"
-                                                    style="display: none">
-                                                   <a onclick='saveComment("<s:property value="#comment.id"/>")'><s:text
-                                                           name="generic.save"/></a> &nbsp;|&nbsp;
-                                              </span>
-                                                <span id="cancellink-<s:property value="#comment.id"/>"
-                                                      style="display: none">
-                                                   <a onclick='editCommentCancel("<s:property
-                                                           value="#comment.id"/>")'><s:text name="generic.cancel"/></a>
-                                              </span>
-                                            </div>
-                                        </s:if>
-
-                                    </div>
-                            </tr>
-                        </table>
-                            <%-- end comment details table in table --%>
+                    <td align="right">
+                        <br/>
+                        <span class="pendingCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <s:text name="commentManagement.pending"/>&nbsp;&nbsp;
+                        <span class="spamCommentBox">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <s:text name="commentManagement.spam"/>&nbsp;&nbsp;
                     </td>
                 </tr>
-            </s:iterator>
-        </table>
+
+
+                    <%-- ========================================================= --%>
+                    <%-- Loop through comments --%>
+
+                    <%-- it is a bit funky to use checkbox list here, but using checkbox didn't work for me :( 
+                    we are effectively just creating a checkbox list of 1 item for each iteration of our collection. --%>
+
+                <s:iterator var="comment" value="pager.items" status="rowstatus">
+                    <tr>
+                        <s:if test="actionName == 'comments'">
+                            <%-- only blog admins (not the global admin) can approve blog comments --%>
+                            <td>
+                                <s:checkboxlist name="bean.approvedComments" cssClass="comment-select"
+                                                list="#comment" listKey="id" listValue="" />
+                            </td>
+                        </s:if>
+                        <td>
+                            <s:checkboxlist name="bean.spamComments" cssClass="comment-select"
+                                            list="#comment" listKey="id" listValue="" />
+                        </td>
+                        <td>
+                            <s:checkboxlist name="bean.deleteComments" cssClass="comment-select"
+                                            list="#comment" listKey="id" listValue="" />
+                        </td>
+
+                            <%-- ======================================================== --%>
+                            <%-- Display comment details and text --%>
+
+                            <%-- <td> with style if comment is spam or pending --%>
+                        <s:if test="#comment.status.name() == 'SPAM'">
+                        <td class="spamcomment">
+                            </s:if>
+                            <s:elseif test="#comment.status.name() == 'PENDING'">
+                        <td class="pendingcomment">
+                            </s:elseif>
+                            <s:else>
+                        <td>
+                            </s:else>
+
+                                <%-- comment details table in table --%>
+                            <table class="innertable">
+                                <tr>
+                                    <td class="viewbody">
+
+                                        <div class="viewdetails bot">
+
+                                            <div class="details">
+                                                <s:text name="commentManagement.entryTitled"/>&nbsp;:&nbsp;
+                                                <a href="<s:property value="#comment.weblogEntry.permalink" />">
+                                                    <s:property value="#comment.weblogEntry.title"/></a>
+                                            </div>
+
+                                            <div class="details">
+                                                <s:text name="commentManagement.commentBy"/>&nbsp;:&nbsp;
+                                                <s:if test="#comment.email != null && #comment.name != null">
+                                                    <s:text name="commentManagement.commentByBoth">
+                                                        <s:param><s:property value="#comment.name"/></s:param>
+                                                        <s:param><s:property value="#comment.email"/></s:param>
+                                                        <s:param><s:property value="#comment.email"/></s:param>
+                                                        <s:param><s:property value="#comment.remoteHost"/></s:param>
+                                                    </s:text>
+                                                </s:if>
+                                                <s:elseif test="#comment.email == null && #comment.name == null">
+                                                    <s:text name="commentManagement.commentByIP">
+                                                        <s:param><s:property value="#comment.remoteHost"/></s:param>
+                                                    </s:text>
+                                                </s:elseif>
+                                                <s:else>
+                                                    <s:text name="commentManagement.commentByName">
+                                                        <s:param><s:property value="#comment.name"/></s:param>
+                                                        <s:param><s:property value="#comment.remoteHost"/></s:param>
+                                                    </s:text>
+                                                </s:else>
+                                            </div>
+
+                                            <s:set var="safeCommentUrl" value="#comment.safeUrl"/>
+                                            <s:if test="#safeCommentUrl != null">
+                                                <div class="details">
+                                                    <s:text name="commentManagement.commentByURL"/>&nbsp;:&nbsp;
+                                                    <a href="<s:property value="#safeCommentUrl" escapeHtml="true" />">
+                                                        <str:truncateNicely upper="60" appendToEnd="..."><s:property
+                                                                value="#safeCommentUrl" escapeHtml="true"/></str:truncateNicely></a>
+                                                </div>
+                                            </s:if>
+                                            <s:elseif test="#comment.url != null && #comment.url.trim().length() > 0">
+                                                <div class="details">
+                                                    <s:text name="commentManagement.commentByURL"/>&nbsp;:&nbsp;
+                                                    <str:truncateNicely upper="60" appendToEnd="..."><s:property
+                                                            value="#comment.url" escapeHtml="true"/></str:truncateNicely>
+                                                </div>
+                                            </s:elseif>
+
+                                            <div class="details">
+                                                <s:text name="commentManagement.postTime"/>&nbsp;:&nbsp;
+                                                <s:date name="#comment.postTime"/>
+                                            </div>
+
+                                        </div>
+                                        <div class="viewdetails bot">
+
+                                            <div class="details bot">
+
+                                                <s:if test="#comment.content.length() > 1000">
+                                                    <div class="bot" id="comment-<s:property value="#comment.id"/>">
+                                                        <str:truncateNicely upper="1000" appendToEnd="...">
+                                                            <s:property value="#comment.content" escapeHtml="true"/>
+                                                        </str:truncateNicely>
+                                                    </div>
+                                                    <div id="link-<s:property value="#comment.id"/>">
+                                                        <a onclick='readMoreComment("<s:property
+                                                                value="#comment.id"/>")'><s:text
+                                                                name="commentManagement.readmore"/></a>
+                                                    </div>
+                                                </s:if>
+                                                <s:else>
+                                                    <span width="200px"
+                                                          id="comment-<s:property value="#comment.id"/>"><s:property
+                                                            value="#comment.content" escapeHtml="true"/></span>
+                                                </s:else>
+                                            </div>
+
+                                            <s:if test="actionName == 'comments'">
+                                                <div class="details">
+                                                    <a id="editlink-<s:property value="#comment.id"/>"
+                                                       onclick='editComment("<s:property value="#comment.id"/>")'>
+                                                        <s:text name="generic.edit"/>
+                                                    </a>
+                                                </div>
+                                                <div class="details">
+                                                  <span id="savelink-<s:property value="#comment.id"/>"
+                                                        style="display: none">
+                                                       <a onclick='saveComment("<s:property value="#comment.id"/>")'><s:text
+                                                               name="generic.save"/></a> &nbsp;|&nbsp;
+                                                  </span>
+                                                    <span id="cancellink-<s:property value="#comment.id"/>"
+                                                          style="display: none">
+                                                       <a onclick='editCommentCancel("<s:property
+                                                               value="#comment.id"/>")'><s:text name="generic.cancel"/></a>
+                                                  </span>
+                                                </div>
+                                            </s:if>
+
+                                        </div>
+                                </tr>
+                            </table>
+                                <%-- end comment details table in table --%>
+                        </td>
+                    </tr>
+                </s:iterator>
+            </table>
+        </div>
 
         <%-- ============================================================= --%>
         <%-- Next / previous links --%>
 
-        <nav>
-            <ul class="pager">
-                <s:if test="pager.prevLink != null">
-                    <li class="previous">
-                        <a href="<s:property value="pager.prevLink" />">
-                            <span aria-hidden="true">&larr;</span>Newer</a>
-                    </li>
-                </s:if>
-                <s:if test="pager.nextLink != null">
-                    <li class="next">
-                        <a href="<s:property value="pager.nextLink"/>">Older
-                            <span aria-hidden="true">&rarr;</span></a>
-                    </li>
-                </s:if>
-            </ul>
-        </nav>
+        <s:include value="/WEB-INF/jsps/editor/Pager.jsp"/>
 
         <%-- ========================================================= --%>
         <%-- Save changes and cancel buttons --%>

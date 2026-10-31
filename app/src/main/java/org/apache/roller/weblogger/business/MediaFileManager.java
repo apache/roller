@@ -104,6 +104,13 @@ public interface MediaFileManager {
             MediaFileFilter filter) throws WebloggerException;
 
     /**
+     * Count the media files searchMediaFiles() would return for the same filter,
+     * ignoring start index, length and order. Used to size pagers.
+     */
+    long getMediaFileCount(Weblog weblog,
+            MediaFileFilter filter) throws WebloggerException;
+
+    /**
      * Create default folder for media files in a weblog.
      */
     MediaFileDirectory createDefaultMediaFileDirectory(Weblog weblog)

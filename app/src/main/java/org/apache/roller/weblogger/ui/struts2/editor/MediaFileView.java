@@ -277,16 +277,12 @@ public class MediaFileView extends MediaFileBase {
             bean.copyTo(filter);
             MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
             try {
-                List<MediaFile> rawResults = manager.searchMediaFiles(getActionWeblog(), filter);
-                boolean hasMore = false;
-                List<MediaFile> results = new ArrayList<>(rawResults);
-                if (results.size() > MediaFileSearchBean.PAGE_SIZE) {
-                    results.remove(results.size() - 1);
-                    hasMore = true;
-                }
+                List<MediaFile> results = new ArrayList<>(
+                        manager.searchMediaFiles(getActionWeblog(), filter));
+                long totalCount = manager.getMediaFileCount(getActionWeblog(), filter);
 
                 this.pager = new MediaFilePager(bean.getPageNum(), results,
-                        hasMore);
+                        totalCount, MediaFileSearchBean.PAGE_SIZE);
 
             } catch (Exception e) {
                 log.error("Error applying search criteria", e);
