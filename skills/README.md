@@ -30,6 +30,7 @@ of living in one committer's head.
 |---|---|
 | [`roller-release`](roller-release/SKILL.md) | Preparing, building, signing, verifying, staging, voting on and publishing a release, plus the release website and announcement drafts. |
 | [`roller-security`](roller-security/SKILL.md) | Security report triage, private case tracking, CVE preparation, reporter coordination and disclosure planning. |
+| [`roller-board-report`](roller-board-report/SKILL.md) | Drafting, reviewing and submitting the quarterly report to the ASF board, and following up on board feedback. |
 
 ## Reading them
 
