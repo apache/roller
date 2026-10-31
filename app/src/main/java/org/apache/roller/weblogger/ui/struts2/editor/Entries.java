@@ -128,7 +128,7 @@ public class Entries extends UIAction {
         Map<String, String> params = new HashMap<>();
         
         if(!StringUtils.isEmpty(getBean().getCategoryName())) {
-            params.put("bean.categoryPath", getBean().getCategoryName());
+            params.put("bean.categoryName", getBean().getCategoryName());
         }
         if(!StringUtils.isEmpty(getBean().getTagsAsString())) {
             params.put("bean.tagsAsString", getBean().getTagsAsString());
