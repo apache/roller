@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -349,11 +350,23 @@ abstract class BaseIT {
      * stacked form rows.
      */
     protected void assertPublishingTimeOnOneLine() {
+        // Wait for the collapse animation to end, then read all three positions
+        // in one pass so the panel or page cannot move between readings.
+        page.evaluate("() => document.querySelector('#collapseAdvanced').addEventListener('shown.bs.collapse',"
+                + " () => window.rollerAdvancedShown = true, {once: true})");
         page.locator("a[href='#collapseAdvanced']").click();
+        page.waitForFunction("() => window.rollerAdvancedShown === true");
         assertThat(page.locator("#collapseAdvanced")).isVisible();
-        double hours = page.locator("select[name='bean.hours']").boundingBox().y;
-        double minutes = page.locator("select[name='bean.minutes']").boundingBox().y;
-        double seconds = page.locator("select[name='bean.seconds']").boundingBox().y;
+        // a hidden select reports top 0, so make sure all three are shown
+        for (String field : List.of("hours", "minutes", "seconds")) {
+            assertThat(page.locator("select[name='bean." + field + "']")).isVisible();
+        }
+        @SuppressWarnings("unchecked")
+        List<Number> tops = (List<Number>) page.evaluate("() => ['hours', 'minutes', 'seconds'].map(n =>"
+                + " document.querySelector(`select[name='bean.${n}']`).getBoundingClientRect().top)");
+        double hours = tops.get(0).doubleValue();
+        double minutes = tops.get(1).doubleValue();
+        double seconds = tops.get(2).doubleValue();
         org.junit.jupiter.api.Assertions.assertTrue(
                 Math.abs(hours - minutes) < 2 && Math.abs(minutes - seconds) < 2,
                 "publishing time selects should share a line, but sit at y=" + hours + ", " + minutes + ", " + seconds);
