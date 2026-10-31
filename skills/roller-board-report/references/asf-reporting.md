@@ -32,7 +32,8 @@ Verify against the authoritative sources each quarter; this is a summary.
 Roller reports in February, May, August and November. The board usually meets
 on the third Wednesday of the month; check the board calendar for the date.
 Reports are due one week before the meeting; a late report is postponed to the
-next meeting. The board-chair reminder mail, sent to the chair with private@ in copy, gives both dates.
+next meeting. The board-chair reminder mail, sent to the chair with private@ in
+copy, gives both dates.
 
 ## Submission mechanisms
 
