@@ -266,6 +266,18 @@ public class PageServlet extends HttpServlet {
 
         log.debug("Looking for template to use for rendering");
 
+        // a weblog whose shared theme is not installed has no templates
+        WeblogTheme theme = weblog.getTheme();
+        if (theme == null) {
+            log.error("Weblog " + weblog.getHandle() + " uses theme '"
+                    + weblog.getEditorTheme() + "', which is not installed");
+            if (!response.isCommitted()) {
+                response.reset();
+            }
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
         // figure out what template to use
         ThemeTemplate page = null;
 
@@ -274,7 +286,7 @@ public class PageServlet extends HttpServlet {
         if (request.getParameter("popup") != null) {
             try {
                 // Does user have a popupcomments page?
-                page = weblog.getTheme().getTemplateByName("_popupcomments");
+                page = theme.getTemplateByName("_popupcomments");
             } catch (Exception e) {
                 // ignored ... considered page not found
             }
@@ -304,7 +316,7 @@ public class PageServlet extends HttpServlet {
         } else if ("tags".equals(pageRequest.getContext())
                 && pageRequest.getTags() != null) {
             try {
-                page = weblog.getTheme().getTemplateByAction(
+                page = theme.getTemplateByAction(
                         ComponentType.TAGSINDEX);
             } catch (Exception e) {
                 log.error("Error getting weblog page for action 'tagsIndex'", e);
@@ -323,7 +335,7 @@ public class PageServlet extends HttpServlet {
             // If this is a permalink then look for a permalink template
         } else if (pageRequest.getWeblogAnchor() != null) {
             try {
-                page = weblog.getTheme().getTemplateByAction(
+                page = theme.getTemplateByAction(
                         ComponentType.PERMALINK);
             } catch (Exception e) {
                 log.error("Error getting weblog page for action 'permalink'", e);
@@ -333,7 +345,7 @@ public class PageServlet extends HttpServlet {
         // if we haven't found a page yet then try our default page
         if (page == null) {
             try {
-                page = weblog.getTheme().getDefaultTemplate();
+                page = theme.getDefaultTemplate();
             } catch (Exception e) {
                 log.error(
                         "Error getting default page for weblog = "

@@ -80,6 +80,11 @@ public class ThemeEdit extends UIAction {
                 .getThemeManager();
         themes = themeMgr.getEnabledThemesList();
 
+        // a shared theme that is not installed has no stylesheet to check
+        if (isMissingSharedTheme()) {
+            return;
+        }
+
         // See if we're using a shared theme with a custom template
         try {
             if (!WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme())
@@ -110,6 +115,12 @@ public class ThemeEdit extends UIAction {
             setThemeId(null);
             setSelectedThemeId(null);
             setImportTheme(false);
+        } else if (isMissingSharedTheme()) {
+            // let the user choose an installed theme
+            addError("themeEditor.themeNotInstalled",
+                    getActionWeblog().getEditorTheme());
+            setThemeId(null);
+            setSelectedThemeId(null);
         } else {
             setThemeId(getActionWeblog().getTheme().getId());
             setSelectedThemeId(getThemeId());
@@ -188,7 +199,9 @@ public class ThemeEdit extends UIAction {
                     WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
 
                     // Remove old style sheet
-                    if (!originalTheme.equals(selectedThemeId) && getActionWeblog().getTheme().getStylesheet() != null) {
+                    WeblogTheme currentTheme = getActionWeblog().getTheme();
+                    if (!originalTheme.equals(selectedThemeId) && currentTheme != null
+                            && currentTheme.getStylesheet() != null) {
                         WeblogTemplate stylesheet = mgr.getTemplateByAction(getActionWeblog(),
                                 ComponentType.STYLESHEET);
 
@@ -229,6 +242,11 @@ public class ThemeEdit extends UIAction {
 
     public boolean isCustomTheme() {
         return (WeblogTheme.CUSTOM.equals(getActionWeblog().getEditorTheme()));
+    }
+
+    // is the weblog set to a shared theme that is not installed?
+    private boolean isMissingSharedTheme() {
+        return !isCustomTheme() && getActionWeblog().getTheme() == null;
     }
 
     // has this weblog had a custom theme before?

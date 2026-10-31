@@ -194,7 +194,12 @@
         <s:else>
         originalType = "shared"
         updateView($('#sharedRadio'));
-        previewImage('<s:property value="themeId"/>');
+        if (originalThemeId === "") {
+            // the weblog's theme is not installed, so propose the selected one
+            proposeSharedThemeChange($('#themeSelector').val());
+        } else {
+            previewImage(originalThemeId);
+        }
         </s:else>
     });
 
