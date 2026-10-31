@@ -29,10 +29,10 @@ Verify against the authoritative sources each quarter; this is a summary.
 
 ## Schedule
 
-Roller reports in February, May, August and November. The board meets on a
-Wednesday in the third week of the month. Reports are due one week before the
-meeting; a late report is postponed to the next meeting. The board-chair
-reminder mail, sent to the chair with private@ in copy, gives both dates.
+Roller reports in February, May, August and November. The board usually meets
+on the third Wednesday of the month; check the board calendar for the date.
+Reports are due one week before the meeting; a late report is postponed to the
+next meeting. The board-chair reminder mail, sent to the chair with private@ in copy, gives both dates.
 
 ## Submission mechanisms
 
@@ -65,8 +65,8 @@ month is acceptable.
 ## Private text
 
 Approved reports are published in the board minutes. Text in
-`<private>...</private>` is kept out of the published minutes. Directors can
-also mark text private after submission. Keep undisclosed security details out of the public text.
+`<private>...</private>` is kept out of the published minutes. Keep undisclosed
+security details out of the public text.
 
 ## Feedback
 

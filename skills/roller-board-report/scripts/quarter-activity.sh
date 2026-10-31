@@ -28,6 +28,10 @@ set -uo pipefail
 
 since="${1:?usage: quarter-activity.sh <since> [<until>]}"
 until="${2:-$(date +%Y-%m-%d)}"
+# git reads a bare date as that date at the current time of day, so pin the
+# window to whole days
+git_since="$since 00:00:00"
+git_until="$until 23:59:59"
 branches=(origin/master origin/roller-6.1.x)
 repo="apache/roller"
 
@@ -43,26 +47,26 @@ echo "Window: $since .. $until"
 echo
 
 for b in "${refs[@]}"; do
-    n=$(git rev-list --count --no-merges --since="$since" --until="$until" "$b")
+    n=$(git rev-list --count --no-merges --since="$git_since" --until="$git_until" "$b")
     echo "== Commits on $b (no merges): $n"
-    git shortlog -sn --no-merges --since="$since" --until="$until" "$b" | sed 's/^/  /'
+    git shortlog -sn --no-merges --since="$git_since" --until="$git_until" "$b" | sed 's/^/  /'
     echo
 done
 
 echo "== Commits on both lines, counted once"
-git shortlog -sne --no-merges --since="$since" --until="$until" "${refs[@]}" | sed 's/^/  /'
+git shortlog -sn --no-merges --since="$git_since" --until="$git_until" "${refs[@]}" | sed 's/^/  /'
 echo
 
 echo "== Authors whose first commit is in the window"
 found=""
 while IFS= read -r email; do
     [ -n "$email" ] || continue
-    if [ -z "$(git log --all -1 --format=%h --until="$since" --author="<$email>")" ]; then
+    if [ -z "$(git log --all -1 --format=%h --until="$git_since" --author="<$email>")" ]; then
         name=$(git log "${refs[@]}" -1 --format=%aN --author="<$email>")
         echo "  $name <$email>"
         found=1
     fi
-done < <(git log --no-merges --since="$since" --until="$until" --format=%aE "${refs[@]}" | sort -u)
+done < <(git log --no-merges --since="$git_since" --until="$git_until" --format=%aE "${refs[@]}" | sort -u)
 [ -n "$found" ] || echo "  (none)"
 echo
 
