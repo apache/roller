@@ -381,19 +381,67 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     @Override
     public List<WeblogEntry> getWeblogEntries(WeblogEntrySearchCriteria wesc) throws WebloggerException {
 
+        List<Object> params = new ArrayList<>();
+        StringBuilder queryString = new StringBuilder("SELECT e ");
+        queryString.append(weblogEntriesFromWhere(wesc, params));
+
+        if (wesc.getSortBy() != null && wesc.getSortBy().equals(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME)) {
+            queryString.append(" ORDER BY e.updateTime ");
+        } else {
+            queryString.append(" ORDER BY e.pubTime ");
+        }
+        
+        if (wesc.getSortOrder() != null && wesc.getSortOrder().equals(WeblogEntrySearchCriteria.SortOrder.ASCENDING)) {
+            queryString.append("ASC ");
+        } else {
+            queryString.append("DESC ");
+        }
+        
+        
+        TypedQuery<WeblogEntry> query = strategy.getDynamicQuery(queryString.toString(), WeblogEntry.class);
+        for (int i=0; i<params.size(); i++) {
+            query.setParameter(i+1, params.get(i));
+        }
+        
+        setFirstMax( query, wesc.getOffset(), wesc.getMaxResults() );
+        return query.getResultList();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public long getWeblogEntryCount(WeblogEntrySearchCriteria wesc) throws WebloggerException {
+        List<Object> params = new ArrayList<>();
+        // COUNT(e), not COUNT(DISTINCT e): the tag join can repeat an entry, and the
+        // count must match the rows getWeblogEntries() pages through.
+        TypedQuery<Long> query = strategy.getDynamicQuery(
+                "SELECT COUNT(e) " + weblogEntriesFromWhere(wesc, params), Long.class);
+        for (int i=0; i<params.size(); i++) {
+            query.setParameter(i+1, params.get(i));
+        }
+        return query.getSingleResult();
+    }
+
+    /**
+     * Build the FROM and WHERE clauses shared by getWeblogEntries() and
+     * getWeblogEntryCount(), adding positional parameters to params.
+     */
+    private String weblogEntriesFromWhere(WeblogEntrySearchCriteria wesc, List<Object> params)
+            throws WebloggerException {
+
         WeblogCategory cat = null;
         if (StringUtils.isNotEmpty(wesc.getCatName()) && wesc.getWeblog() != null) {
             cat = getWeblogCategoryByName(wesc.getWeblog(), wesc.getCatName());
         }
 
-        List<Object> params = new ArrayList<>();
-        int size = 0;
+        int size = params.size();
         StringBuilder queryString = new StringBuilder();
         
         if (wesc.getTags() == null || wesc.getTags().isEmpty()) {
-            queryString.append("SELECT e FROM WeblogEntry e WHERE ");
+            queryString.append("FROM WeblogEntry e WHERE ");
         } else {
-            queryString.append("SELECT e FROM WeblogEntry e JOIN e.tags t WHERE ");
+            queryString.append("FROM WeblogEntry e JOIN e.tags t WHERE ");
             queryString.append("(");
             for (int i = 0; i < wesc.getTags().size(); i++) {
                 if (i != 0) {
@@ -453,26 +501,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             queryString.append(") ");
         }
 
-        if (wesc.getSortBy() != null && wesc.getSortBy().equals(WeblogEntrySearchCriteria.SortBy.UPDATE_TIME)) {
-            queryString.append(" ORDER BY e.updateTime ");
-        } else {
-            queryString.append(" ORDER BY e.pubTime ");
-        }
-        
-        if (wesc.getSortOrder() != null && wesc.getSortOrder().equals(WeblogEntrySearchCriteria.SortOrder.ASCENDING)) {
-            queryString.append("ASC ");
-        } else {
-            queryString.append("DESC ");
-        }
-        
-        
-        TypedQuery<WeblogEntry> query = strategy.getDynamicQuery(queryString.toString(), WeblogEntry.class);
-        for (int i=0; i<params.size(); i++) {
-            query.setParameter(i+1, params.get(i));
-        }
-        
-        setFirstMax( query, wesc.getOffset(), wesc.getMaxResults() );
-        return query.getResultList();
+        return queryString.toString();
     }
     
     /**
@@ -631,10 +660,46 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     public List<WeblogEntryComment> getComments(CommentSearchCriteria csc) throws WebloggerException {
         
         List<Object> params = new ArrayList<>();
-        int size = 0;
-        StringBuilder queryString = new StringBuilder();
-        queryString.append("SELECT c FROM WeblogEntryComment c ");
+        StringBuilder queryString = new StringBuilder("SELECT c ");
+        queryString.append(commentsFromWhere(csc, params));
+        if (csc.isReverseChrono()) {
+            queryString.append(" ORDER BY c.postTime DESC");
+        } else {
+            queryString.append(" ORDER BY c.postTime ASC");
+        }
         
+        TypedQuery<WeblogEntryComment> query = strategy.getDynamicQuery(queryString.toString(), WeblogEntryComment.class);
+        setFirstMax( query, csc.getOffset(), csc.getMaxResults());
+        for (int i=0; i<params.size(); i++) {
+            query.setParameter(i+1, params.get(i));
+        }
+        return query.getResultList();
+        
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public long getCommentCount(CommentSearchCriteria csc) throws WebloggerException {
+        List<Object> params = new ArrayList<>();
+        TypedQuery<Long> query = strategy.getDynamicQuery(
+                "SELECT COUNT(c) " + commentsFromWhere(csc, params), Long.class);
+        for (int i=0; i<params.size(); i++) {
+            query.setParameter(i+1, params.get(i));
+        }
+        return query.getSingleResult();
+    }
+
+    /**
+     * Build the FROM and WHERE clauses shared by getComments() and
+     * getCommentCount(), adding positional parameters to params.
+     */
+    private String commentsFromWhere(CommentSearchCriteria csc, List<Object> params) {
+
+        int size = params.size();
+        StringBuilder queryString = new StringBuilder("FROM WeblogEntryComment c ");
+
         StringBuilder whereClause = new StringBuilder();
         if (csc.getEntry() != null) {
             params.add(size++, csc.getEntry());
@@ -669,19 +734,8 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         if(whereClause.length() != 0) {
             queryString.append(" WHERE ").append(whereClause);
         }
-        if (csc.isReverseChrono()) {
-            queryString.append(" ORDER BY c.postTime DESC");
-        } else {
-            queryString.append(" ORDER BY c.postTime ASC");
-        }
-        
-        TypedQuery<WeblogEntryComment> query = strategy.getDynamicQuery(queryString.toString(), WeblogEntryComment.class);
-        setFirstMax( query, csc.getOffset(), csc.getMaxResults());
-        for (int i=0; i<params.size(); i++) {
-            query.setParameter(i+1, params.get(i));
-        }
-        return query.getResultList();
-        
+
+        return queryString.toString();
     }
     
     

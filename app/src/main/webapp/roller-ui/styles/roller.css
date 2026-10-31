@@ -30,9 +30,31 @@ p {
     margin: 1em;
 }
 
+/* Bootstrap 5 sizes everything for a 16px root, which reads large in this
+   dense admin UI; 15px scales text, controls and spacing down together. */
+html {
+    font-size: 15px;
+}
+
 .roller-page-title {
     margin-top: 0px;
     margin-bottom: 5px;
+    font-size: 1.75rem;
+}
+
+/* Section headings in sidebar cards */
+.roller-column-left h3 {
+    font-size: 1.25rem;
+}
+
+.roller-column-left h4 {
+    font-size: 1.1rem;
+}
+
+/* Cards stacked in a column (sidebar cards, setup steps, upload results)
+   would otherwise touch */
+.card + .card {
+    margin-top: 1rem;
 }
 
 .roller-column-right {
@@ -82,20 +104,34 @@ table.mm_table_actions td {
 
 /* edit entry page */
 
-/* Only the panel collapse toggles, not links in other toolbars that use
-   .panel-heading, such as the rich text editor's menus */
-.panel-heading a[data-toggle="collapse"]:after {
-    font-family:'Glyphicons Halflings';
-    content:"\e114";
-    float: right;
-    color: grey;
-}
-.panel-heading a[data-toggle="collapse"].collapsed:after {
-    content:"\e080";
+/* Panel titles at the size of a section label, not a page heading */
+.accordion-button {
+    font-size: 1.1rem;
+    font-weight: 500;
 }
 
-#panel-plugins {      /* Kludge for EntryEditor.jsp */
-    margin-top: 6px;  /* Without this there no space between Summary and Plugins to Apply panels */
+/* entries and comments pages */
+
+/* Sidebar filter forms: the bootstrap theme adds no spacing to form-vertical groups */
+.roller-filter-form > div {
+    margin-bottom: 1rem;
+}
+
+.roller-filter-form input[type="submit"] {
+    margin-top: 0.5rem;
+}
+
+.roller-pager {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.roller-pager-page {
+    color: var(--bs-secondary-color);
+    font-size: 0.875rem;
 }
 
 /* keep jQuery UI datepicker in front of other elements */
@@ -165,6 +201,8 @@ table.innertable tbody td {
 }
 table.innertable td.viewbody {
     padding: 5px;
+    /* spam often holds long unbroken URLs; let them wrap so the table fits the page */
+    overflow-wrap: anywhere;
 }
 table.innertable tr .bot {
     margin-bottom: 5px;
@@ -355,6 +393,12 @@ tr.rollertable_pending {
 .form-select[disabled] {
     background-color: var(--bs-secondary-bg);
     opacity: 1;
+}
+
+/* Date fields are readonly only so the picker sets them; they are not locked */
+.form-control.date-picker[readonly] {
+    background-color: var(--bs-body-bg);
+    cursor: pointer;
 }
 
 /* Field hint icons sit next to the label rather than in the text flow. */

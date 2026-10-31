@@ -354,7 +354,7 @@ abstract class BaseIT {
         // in one pass so the panel or page cannot move between readings.
         page.evaluate("() => document.querySelector('#collapseAdvanced').addEventListener('shown.bs.collapse',"
                 + " () => window.rollerAdvancedShown = true, {once: true})");
-        page.locator("a[href='#collapseAdvanced']").click();
+        page.locator("[data-bs-target='#collapseAdvanced']").click();
         page.waitForFunction("() => window.rollerAdvancedShown === true");
         assertThat(page.locator("#collapseAdvanced")).isVisible();
         // a hidden select reports top 0, so make sure all three are shown

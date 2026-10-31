@@ -209,6 +209,7 @@ public class WeblogEntryTest  {
         assertNotNull(entries);
         assertEquals(5, entries.size());
         assertEquals(entry3, entries.get(0));
+        assertEquals(5, mgr.getWeblogEntryCount(wesc));
         
         // get all (non-future) PUBLISHED entries in category 
         WeblogEntrySearchCriteria wesc9 = new WeblogEntrySearchCriteria();
@@ -226,6 +227,7 @@ public class WeblogEntryTest  {
         entries = mgr.getWeblogEntries(wesc2);
         assertNotNull(entries);
         assertEquals(3, entries.size());
+        assertEquals(3, mgr.getWeblogEntryCount(wesc2));
         
         // get all entries in date range
         WeblogEntrySearchCriteria wesc3 = new WeblogEntrySearchCriteria();
@@ -244,6 +246,8 @@ public class WeblogEntryTest  {
         entries = mgr.getWeblogEntries(wesc4);
         assertNotNull(entries);
         assertEquals(2, entries.size());
+        // the count ignores maxResults: it sizes the pager across all pages
+        assertEquals(5, mgr.getWeblogEntryCount(wesc4));
         
         // get all entries in category
         WeblogEntrySearchCriteria wesc5 = new WeblogEntrySearchCriteria();
@@ -262,6 +266,7 @@ public class WeblogEntryTest  {
         assertNotNull(entries);
         assertEquals(1, entries.size());
         assertEquals(entry2, entries.get(0));
+        assertEquals(5, mgr.getWeblogEntryCount(wesc6));
         
         // get all entries, limited by locale
         WeblogEntrySearchCriteria wesc7 = new WeblogEntrySearchCriteria();
@@ -271,6 +276,7 @@ public class WeblogEntryTest  {
         assertNotNull(entries);
         assertEquals(4, entries.size());
         assertEquals(entry3, entries.get(0));
+        assertEquals(4, mgr.getWeblogEntryCount(wesc7));
         
         // get pinned entries only
         entries = mgr.getWeblogEntriesPinnedToMain(5);
@@ -572,6 +578,39 @@ public class WeblogEntryTest  {
             t.printStackTrace(pw);
             log.info(sw.toString());
         }
+    }
+
+
+    /**
+     * The entry count must match the rows getWeblogEntries() returns, even when a
+     * multi-tag search joins an entry once per matching tag, or the pager's last page is wrong.
+     */
+    @Test
+    public void testWeblogEntryCountWithMultipleTags() throws Exception {
+
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testUser = TestUtils.getManagedUser(testUser);
+        WeblogEntry entry1 = TestUtils.setupWeblogEntry("entry1", testWeblog, testUser);
+        entry1.addTag("counttagone");
+        entry1.addTag("counttagtwo");
+        mgr.saveWeblogEntry(entry1);
+        WeblogEntry entry2 = TestUtils.setupWeblogEntry("entry2", testWeblog, testUser);
+        entry2.addTag("counttagone");
+        mgr.saveWeblogEntry(entry2);
+        TestUtils.endSession(true);
+
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        WeblogEntrySearchCriteria wesc = new WeblogEntrySearchCriteria();
+        wesc.setWeblog(testWeblog);
+        wesc.setTags(Arrays.asList("counttagone", "counttagtwo"));
+        List<WeblogEntry> results = mgr.getWeblogEntries(wesc);
+        assertEquals(results.size(), mgr.getWeblogEntryCount(wesc));
+
+        TestUtils.teardownWeblogEntry(entry1.getId());
+        TestUtils.teardownWeblogEntry(entry2.getId());
+        TestUtils.endSession(true);
     }
 
 

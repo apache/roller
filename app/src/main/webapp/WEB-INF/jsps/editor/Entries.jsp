@@ -30,22 +30,7 @@
 <%-- ============================================================= --%>
 <%-- Next / previous links --%>
 
-<nav>
-    <ul class="pager">
-        <s:if test="pager.prevLink != null">
-            <li class="previous">
-                <a href='<s:property value="pager.prevLink" />'> 
-                    <span aria-hidden="true">&larr;</span>Newer</a>
-            </li>
-        </s:if>
-        <s:if test="pager.nextLink != null">
-            <li class="next">
-                <a href='<s:property value="pager.nextLink"/>'>Older
-                    <span aria-hidden="true">&rarr;</span></a>
-            </li>
-        </s:if>
-    </ul>
-</nav>
+<s:include value="/WEB-INF/jsps/editor/Pager.jsp"/>
 
 
 <%-- ============================================================= --%>
@@ -60,120 +45,107 @@
     <s:text name="weblogEntryQuery.scheduled" />&nbsp;&nbsp;
 </p>
 
-<table class="rollertable table table-striped" width="100%">
+<div class="table-responsive">
+    <table class="rollertable table table-striped" width="100%">
 
-<tr>
-    <th class="rollertable" width="3%"> </th>
-    <th class="rollertable" width="7%">
-        <s:text name="weblogEntryQuery.pubTime" />
-    </th>
-    <th class="rollertable" width="7%">
-        <s:text name="weblogEntryQuery.updateTime" />
-    </th>
-    <th class="rollertable">
-        <s:text name="weblogEntryQuery.title" />
-    </th>
-    <th class="rollertable" width="15%">
-        <s:text name="weblogEntryQuery.category" />
-    </th>
-    <th class="rollertable" width="3%"> </th>
-</tr>
-
-<s:iterator var="post" value="pager.items">
-    <%-- <td> with style if comment is spam or pending --%>
-    <s:if test="#post.status.name() == 'DRAFT'">
-        <tr class="draftentry"> 
-    </s:if>
-    <s:elseif test="#post.status.name() == 'PENDING'">
-        <tr class="pendingentry"> 
-    </s:elseif>
-    <s:elseif test="#post.status.name() == 'SCHEDULED'">
-        <tr class="scheduledentry"> 
-    </s:elseif>
-    <s:else>
-        <tr>
-    </s:else>
-
-    <td>
-        <s:url var="editUrl" action="entryEdit">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
-            <s:param name="bean.id" value="#post.id" />
-        </s:url>
-        <s:a href="%{editUrl}">
-            <span class="bi bi-pencil-square" data-bs-toggle="tooltip" data-bs-placement="top"
-                  title="<s:text name='generic.edit'/>">
-            </span>
-        </s:a>
-    </td>
-
-    <td>
-        <s:if test="#post.pubTime != null">
-            <s:text name="weblogEntryQuery.date.toStringFormat">
-                <s:param value="#post.pubTime" />
-            </s:text>
-        </s:if>
-    </td>
-    
-    <td>
-        <s:if test="#post.updateTime != null">
-            <s:text name="weblogEntryQuery.date.toStringFormat">
-                <s:param value="#post.updateTime" />
-            </s:text>
-        </s:if>
-    </td>
-    
-    <td>
-        <s:if test="#post.status.name() == 'PUBLISHED'">
-            <a href='<s:property value="#post.permalink" />'>
-                <str:truncateNicely upper="80"><s:property value="#post.displayTitle" /></str:truncateNicely>
-            </a>
-        </s:if>
-        <s:else>
-            <str:truncateNicely upper="80"><s:property value="#post.displayTitle" /></str:truncateNicely>
-        </s:else>
-    </td>
-    
-    <td>
-        <s:property value="#post.category.name" />
-    </td>
-
-    <td>
-        <s:set var="postId" value="#post.id" />
-        <s:set var="postTitle" value="#post.title" />
-        <a href="#" class="entry-delete-link"
-            data-post-id="<s:property value="postId" />"
-            data-post-title="<s:property value="postTitle"/>">
-            <span class="bi bi-trash"
-                  data-bs-toggle="tooltip" data-bs-placement="top" title="<s:text name='generic.delete'/>">
-            </span>
-        </a>
-    </td>
-
+    <tr>
+        <th class="rollertable" width="3%"> </th>
+        <th class="rollertable" width="7%">
+            <s:text name="weblogEntryQuery.pubTime" />
+        </th>
+        <th class="rollertable" width="7%">
+            <s:text name="weblogEntryQuery.updateTime" />
+        </th>
+        <th class="rollertable">
+            <s:text name="weblogEntryQuery.title" />
+        </th>
+        <th class="rollertable" width="15%">
+            <s:text name="weblogEntryQuery.category" />
+        </th>
+        <th class="rollertable" width="3%"> </th>
     </tr>
-</s:iterator>
 
-</table>
+    <s:iterator var="post" value="pager.items">
+        <%-- <td> with style if comment is spam or pending --%>
+        <s:if test="#post.status.name() == 'DRAFT'">
+            <tr class="draftentry"> 
+        </s:if>
+        <s:elseif test="#post.status.name() == 'PENDING'">
+            <tr class="pendingentry"> 
+        </s:elseif>
+        <s:elseif test="#post.status.name() == 'SCHEDULED'">
+            <tr class="scheduledentry"> 
+        </s:elseif>
+        <s:else>
+            <tr>
+        </s:else>
+
+        <td>
+            <s:url var="editUrl" action="entryEdit">
+                <s:param name="weblog" value="%{actionWeblog.handle}" />
+                <s:param name="bean.id" value="#post.id" />
+            </s:url>
+            <s:a href="%{editUrl}">
+                <span class="bi bi-pencil-square" data-bs-toggle="tooltip" data-bs-placement="top"
+                      title="<s:text name='generic.edit'/>">
+                </span>
+            </s:a>
+        </td>
+
+        <td>
+            <s:if test="#post.pubTime != null">
+                <s:text name="weblogEntryQuery.date.toStringFormat">
+                    <s:param value="#post.pubTime" />
+                </s:text>
+            </s:if>
+        </td>
+    
+        <td>
+            <s:if test="#post.updateTime != null">
+                <s:text name="weblogEntryQuery.date.toStringFormat">
+                    <s:param value="#post.updateTime" />
+                </s:text>
+            </s:if>
+        </td>
+    
+        <td>
+            <s:if test="#post.status.name() == 'PUBLISHED'">
+                <a href='<s:property value="#post.permalink" />'>
+                    <str:truncateNicely upper="80"><s:property value="#post.displayTitle" /></str:truncateNicely>
+                </a>
+            </s:if>
+            <s:else>
+                <str:truncateNicely upper="80"><s:property value="#post.displayTitle" /></str:truncateNicely>
+            </s:else>
+        </td>
+    
+        <td>
+            <s:property value="#post.category.name" />
+        </td>
+
+        <td>
+            <s:set var="postId" value="#post.id" />
+            <s:set var="postTitle" value="#post.title" />
+            <a href="#" class="entry-delete-link"
+                data-post-id="<s:property value="postId" />"
+                data-post-title="<s:property value="postTitle"/>">
+                <span class="bi bi-trash"
+                      data-bs-toggle="tooltip" data-bs-placement="top" title="<s:text name='generic.delete'/>">
+                </span>
+            </a>
+        </td>
+
+        </tr>
+    </s:iterator>
+
+    </table>
+</div>
 
 
 <%-- ============================================================= --%>
 <%-- Next / previous links --%>
 
-<nav>
-    <ul class="pager">
-        <s:if test="pager.prevLink != null">
-            <li class="previous">
-                <a href='<s:property value="pager.prevLink" />'>
-                    <span aria-hidden="true">&larr;</span> Older</a>
-            </li>
-        </s:if>
-        <s:if test="pager.nextLink != null">
-            <li class="next">
-                <a href='<s:property value="pager.nextLink"/>'>Newer
-                    <span aria-hidden="true">&rarr;</span></a>
-            </li>
-        </s:if>
-    </ul>
-</nav>
+<s:include value="/WEB-INF/jsps/editor/Pager.jsp"/>
 
 <s:if test="pager.items.isEmpty">
     <s:text name="weblogEntryQuery.noneFound" />

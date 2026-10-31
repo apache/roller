@@ -188,9 +188,7 @@ public class MediaFileSearchBean {
 
         dataHolder.setStartIndex(pageNum * PAGE_SIZE);
 
-        // set length to fetch to one more than what is required.
-        // this would help us determine whether there are more pages
-        dataHolder.setLength(PAGE_SIZE + 1);
+        dataHolder.setLength(PAGE_SIZE);
 
         MediaFileOrder order;
         switch (this.sortOption) {

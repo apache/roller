@@ -85,7 +85,7 @@ public class Entries extends UIAction {
         }
         
         List<WeblogEntry> entries = null;
-        boolean hasMore = false;
+        long totalCount = 0;
         try {
             String status = getBean().getStatus();
             
@@ -99,18 +99,12 @@ public class Entries extends UIAction {
             wesc.setStatus("ALL".equals(status) ? null : WeblogEntry.PubStatus.valueOf(status));
             wesc.setText(getBean().getText());
             wesc.setSortBy(getBean().getSortBy());
+            totalCount = wmgr.getWeblogEntryCount(wesc);
             wesc.setOffset(getBean().getPage() * COUNT);
-            wesc.setMaxResults(COUNT + 1);
-            List<WeblogEntry> rawEntries = wmgr.getWeblogEntries(wesc);
-            entries = new ArrayList<>();
-            entries.addAll(rawEntries);
+            wesc.setMaxResults(COUNT);
+            entries = new ArrayList<>(wmgr.getWeblogEntries(wesc));
             if (!entries.isEmpty()) {
-                log.debug("query found "+rawEntries.size()+" results");
-                
-                if(rawEntries.size() > COUNT) {
-                    entries.remove(entries.size()-1);
-                    hasMore = true;
-                }
+                log.debug("query found "+entries.size()+" of "+totalCount+" results");
                 
                 setFirstEntry(entries.get(0));
                 setLastEntry(entries.get(entries.size()-1));
@@ -122,7 +116,7 @@ public class Entries extends UIAction {
         
         // build entries pager
         String baseUrl = buildBaseUrl();
-        setPager(new EntriesPager(baseUrl, getBean().getPage(), entries, hasMore));
+        setPager(new EntriesPager(baseUrl, getBean().getPage(), entries, totalCount, COUNT));
                 
         return LIST;
     }
@@ -134,7 +128,7 @@ public class Entries extends UIAction {
         Map<String, String> params = new HashMap<>();
         
         if(!StringUtils.isEmpty(getBean().getCategoryName())) {
-            params.put("bean.categoryPath", getBean().getCategoryName());
+            params.put("bean.categoryName", getBean().getCategoryName());
         }
         if(!StringUtils.isEmpty(getBean().getTagsAsString())) {
             params.put("bean.tagsAsString", getBean().getTagsAsString());

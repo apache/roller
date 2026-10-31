@@ -53,7 +53,7 @@
 
         <s:if test="pager.items.size() > 0">
         <s:text name="mediaFileView.matchingResults">
-            <s:param value="pager.items.size()"/>
+            <s:param value="pager.totalCount"/>
         </s:text>
         </s:if>
         <s:else>
@@ -93,6 +93,8 @@
             </li>
         </s:if>
     </ul>
+
+    <s:include value="/WEB-INF/jsps/editor/MediaFilePager.jsp"/>
 
 </s:elseif>
 
@@ -274,6 +276,10 @@
         </div>
 
         <div style="clear:left;"></div>
+
+        <s:if test="pager">
+            <s:include value="/WEB-INF/jsps/editor/MediaFilePager.jsp"/>
+        </s:if>
 
         <s:if test="(!pager && childFiles.size() > 0) || (pager && pager.items.size() > 0) || (currentDirectory.name != 'default' && !pager)">
 

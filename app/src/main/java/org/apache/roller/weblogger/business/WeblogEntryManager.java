@@ -80,6 +80,16 @@ public interface WeblogEntryManager {
             throws WebloggerException;
 
     /**
+     * Count the rows getWeblogEntries() would return for the same criteria,
+     * ignoring offset, max results and sort order. Used to size pagers.
+     * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
+     * @return number of matching rows
+     * @throws WebloggerException
+     */
+    long getWeblogEntryCount(WeblogEntrySearchCriteria wesc)
+            throws WebloggerException;
+
+    /**
      * Get Weblog Entries grouped by day.
      * @param wesc WeblogEntrySearchCriteria object listing desired search parameters
      * @return Map of Lists of WeblogEntries keyed by calendar day
@@ -226,6 +236,14 @@ public interface WeblogEntryManager {
      * @return list of comments fitting search criteria
      */
     List<WeblogEntryComment> getComments(CommentSearchCriteria csc) throws WebloggerException;
+
+    /**
+     * Count the comments getComments() would return for the same criteria,
+     * ignoring offset, max results and sort order. Used to size pagers.
+     * @param csc CommentSearchCriteria object with fields indicating search criteria
+     * @return number of matching comments
+     */
+    long getCommentCount(CommentSearchCriteria csc) throws WebloggerException;
 
     /**
      * Deletes comments that match paramters.

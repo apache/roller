@@ -22,7 +22,7 @@
 
 <p><s:text name="weblogEntryQuery.sidebarDescription"/></p>
 
-<s:form action="entries" theme="bootstrap" cssClass="form-vertical">
+<s:form action="entries" theme="bootstrap" cssClass="form-vertical roller-filter-form">
     <s:hidden name="salt"/>
     <s:hidden name="weblog"/>
 
@@ -49,7 +49,7 @@
     <%-- filter by date --%>
 
     <div class="control-group">
-        <label for="bean.startDateString" class="col-form-label">
+        <label for="entries_bean_startDateString" class="col-form-label">
             <s:text name="weblogEntryQuery.label.startDate"/>
         </label>
         <div class="controls">
@@ -57,16 +57,21 @@
 
                 <s:textfield name="bean.startDateString" readonly="true"
                              theme="simple" cssClass="date-picker form-control"/>
-                <label for="bean.startDateString" class="input-group-text btn">
-                    <span class="bi bi-calendar"></span>
-                </label>
+                <button type="button" class="btn btn-outline-secondary date-picker-show"
+                        title="<s:text name='generic.chooseDate'/>" aria-label="<s:text name='generic.chooseDate'/>">
+                    <span class="bi bi-calendar" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-outline-secondary date-picker-clear"
+                        title="<s:text name='generic.clearDate'/>" aria-label="<s:text name='generic.clearDate'/>">
+                    <span class="bi bi-x-lg" aria-hidden="true"></span>
+                </button>
 
             </div>
         </div>
     </div>
 
     <div class="control-group">
-        <label for="bean.endDateString" class="col-form-label">
+        <label for="entries_bean_endDateString" class="col-form-label">
             <s:text name="weblogEntryQuery.label.endDate"/>
         </label>
         <div class="controls">
@@ -74,15 +79,18 @@
 
                 <s:textfield name="bean.endDateString" readonly="true"
                              theme="simple" cssClass="date-picker form-control"/>
-                <label for="bean.endDateString" class="input-group-text btn">
-                    <span class="bi bi-calendar"></span>
-                </label>
+                <button type="button" class="btn btn-outline-secondary date-picker-show"
+                        title="<s:text name='generic.chooseDate'/>" aria-label="<s:text name='generic.chooseDate'/>">
+                    <span class="bi bi-calendar" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-outline-secondary date-picker-clear"
+                        title="<s:text name='generic.clearDate'/>" aria-label="<s:text name='generic.clearDate'/>">
+                    <span class="bi bi-x-lg" aria-hidden="true"></span>
+                </button>
 
             </div>
         </div>
     </div>
-
-    <br/>
 
     <%-- ========================================================= --%>
     <%-- filter by status --%>
@@ -106,12 +114,4 @@
 
 </s:form>
 
-<script>
-
-    $(document).ready(function () {
-        $("#entries_bean_startDateString").datepicker();
-        $("#entries_bean_endDateString").datepicker();
-    });
-
-</script>
 
