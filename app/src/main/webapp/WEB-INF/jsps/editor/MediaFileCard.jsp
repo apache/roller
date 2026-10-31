@@ -19,7 +19,7 @@
 
 <%-- One media file in the library grid or list, or in the editor's media chooser.
      Expects #mediaFile on the value stack. In the library (libraryQuery on the action) the
-     checkbox selects the file and the preview and name open its details page, which links
+     checkbox (shown over the preview on hover) selects the file and the preview and name open its details page, which links
      back to this library page. In the chooser (#chooserMode set) the preview and name insert
      the file into the entry, with its description as the alt text. --%>
 
@@ -65,6 +65,12 @@
 
 <li class="media-card">
 
+    <%-- over the preview in the grid; the first column in the list --%>
+    <input type="checkbox" class="form-check-input media-select" name="selectedMediaFiles"
+           id="select-<s:property value='#mediaFile.id'/>"
+           value="<s:property value='#mediaFile.id'/>"
+           aria-label="<s:text name='mediaFileView.selectFile' escapeHtml='true'><s:param value='#mediaFile.name'/></s:text>"/>
+
     <a class="media-card-preview" href="<s:property value='%{detailsURL}'/>" tabindex="-1" aria-hidden="true">
         <s:if test="#mediaFile.imageFile">
             <img src="<s:property value='#mediaFile.thumbnailURL'/>" alt="" loading="lazy"
@@ -76,10 +82,6 @@
     </a>
 
     <div class="media-card-body">
-        <input type="checkbox" class="form-check-input media-select" name="selectedMediaFiles"
-               id="select-<s:property value='#mediaFile.id'/>"
-               value="<s:property value='#mediaFile.id'/>"
-               aria-label="<s:text name='mediaFileView.selectFile' escapeHtml='true'><s:param value='#mediaFile.name'/></s:text>"/>
         <div class="media-card-text">
             <a class="media-card-name" href="<s:property value='%{detailsURL}'/>"
                title="<s:property value='#mediaFile.name'/>"><s:property value="#mediaFile.name"/></a>

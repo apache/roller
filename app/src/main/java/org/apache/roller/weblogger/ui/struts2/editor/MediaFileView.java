@@ -108,15 +108,13 @@ public class MediaFileView extends MediaFileBase {
                             getText("mediaFileView.le")), new KeyValueObject(
                             "mediaFileView.lt", getText("mediaFileView.lt")));
 
-            FILE_TYPES = Arrays.asList(new KeyValueObject("mediaFileView.any",
-                    getText("mediaFileView.any")), new KeyValueObject(
-                    "mediaFileView.others", getText("mediaFileView.others")),
-                    new KeyValueObject("mediaFileView.image",
-                            getText("mediaFileView.image")),
-                    new KeyValueObject("mediaFileView.video",
-                            getText("mediaFileView.video")),
-                    new KeyValueObject("mediaFileView.audio",
-                            getText("mediaFileView.audio")));
+            // in the order the type chips show them
+            FILE_TYPES = Arrays.asList(
+                    new KeyValueObject("mediaFileView.any", getText("mediaFileView.any")),
+                    new KeyValueObject("mediaFileView.image", getText("mediaFileView.image")),
+                    new KeyValueObject("mediaFileView.video", getText("mediaFileView.video")),
+                    new KeyValueObject("mediaFileView.audio", getText("mediaFileView.audio")),
+                    new KeyValueObject("mediaFileView.others", getText("mediaFileView.others")));
 
             SIZE_UNITS = Arrays.asList(new KeyValueObject(
                     "mediaFileView.bytes", getText("mediaFileView.bytes")),

@@ -336,34 +336,67 @@ body {
 }
 
 .media-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
     font-size: 1.25rem;
     margin: 0;
     overflow-wrap: anywhere;
 }
 
+.media-count {
+    font-size: 0.875rem;
+    font-weight: normal;
+    color: var(--bs-secondary-color);
+}
+
+/* Search: one box holding the name, its scope and the button, then Filters */
 .media-search {
-    margin: 1rem 0;
+    margin: 1rem 0 0.5rem;
 }
 
 .media-search-row {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 0.75rem;
-}
-
-.media-search-name {
-    flex: 1 1 14rem;
-}
-
-.media-search-type {
-    flex: 0 1 10rem;
-}
-
-.media-search-buttons {
-    display: flex;
-    flex-wrap: wrap;
     gap: 0.5rem;
+}
+
+.media-search-box {
+    flex: 1 1 20rem;
+    flex-wrap: nowrap;
+}
+
+.media-search-box .input-group-text {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-secondary-color);
+}
+
+.media-search-box .form-control {
+    border-left: 0;
+    min-width: 6rem;
+}
+
+.media-search-box .media-search-scope {
+    flex: 0 1 auto;
+    width: auto;
+    max-width: 13rem;
+    background-color: var(--bs-tertiary-bg);
+}
+
+.media-filters-button {
+    position: relative;
+}
+
+/* a set filter that the collapsed panel would otherwise hide */
+.media-filters-dot {
+    position: absolute;
+    top: 0.3rem;
+    right: 0.3rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--bs-primary);
 }
 
 .media-filters {
@@ -403,92 +436,182 @@ body {
     flex: 1 1 14rem;
 }
 
-.media-result-summary {
-    color: var(--bs-secondary-color);
-}
-
-.media-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 1rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--bs-border-color);
-    background-color: var(--bs-body-bg);
+/* The bar above the files: type, sort and layout, or the selection's actions.
+   It stays in view while scrolling, so the actions are always at hand. */
+.media-bar {
     position: sticky;
     top: 0;
     z-index: 2;
+    padding: 0.5rem 0;
+    background-color: var(--bs-body-bg);
 }
 
-.media-toolbar-group {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.media-results-bar {
+.media-results-bar,
+.media-selection-bar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem 1rem;
+    min-height: 2.5rem;
 }
 
-.media-toolbar .form-select,
-.media-view-options .form-select {
-    width: auto;
-    max-width: 12rem;
+.media-results-bar[hidden],
+.media-selection-bar[hidden] {
+    display: none;
 }
 
-.media-selected-count {
-    font-size: 0.875rem;
-    color: var(--bs-secondary-color);
-}
-
-/* Equal cards whatever the thumbnail shape; the preview keeps the whole image */
-.media-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
-    gap: 1rem;
-    list-style: none;
-    padding: 0;
-    margin: 1rem 0;
-}
-
-.media-card {
+.media-type-chips {
     display: flex;
-    flex-direction: column;
-    min-width: 0;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+}
+
+.media-chip {
+    border-radius: var(--bs-border-radius-pill);
+    padding: 0.2rem 0.85rem;
     border: 1px solid var(--bs-border-color);
-    border-radius: var(--bs-border-radius);
+    color: var(--bs-body-color);
     background-color: var(--bs-body-bg);
 }
 
-.media-card.selected {
-    outline: 2px solid var(--bs-primary);
-    outline-offset: -1px;
+.media-chip:hover {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.btn-check:checked + .media-chip {
+    border-color: var(--bs-primary-bg-subtle);
+    background-color: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary-text-emphasis);
+    font-weight: 600;
+}
+
+.btn-check:focus-visible + .media-chip {
+    box-shadow: var(--bs-focus-ring-x, 0) var(--bs-focus-ring-y, 0) 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.media-view-options {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-sort {
+    width: auto;
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--bs-body-color);
+}
+
+.media-sort:hover {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.media-view-options .btn-group {
+    margin-left: 0.5rem;
+}
+
+.media-selection-bar {
+    justify-content: flex-start;
+    padding: 0 0.5rem;
+    border-radius: var(--bs-border-radius-lg);
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+.media-selection-close {
+    color: var(--bs-body-color);
+}
+
+.media-selected-count {
+    font-weight: 600;
+}
+
+.media-selection-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.media-selection-actions .btn {
+    background-color: var(--bs-body-bg);
+}
+
+.media-selection-actions .btn-outline-danger:hover {
+    background-color: var(--bs-danger);
+}
+
+.media-selection-actions .btn-outline-primary:hover,
+.media-selection-actions .btn-outline-primary.show {
+    background-color: var(--bs-primary);
+}
+
+.media-result-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+    margin: 0.25rem 0 0.5rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-criteria {
+    display: contents;
+    list-style: none;
+}
+
+.media-criteria li {
+    padding: 0 0.5rem;
+    border-radius: var(--bs-border-radius-pill);
+    background-color: var(--bs-secondary-bg);
+    color: var(--bs-body-color);
+    font-size: 0.875rem;
+    overflow-wrap: anywhere;
+}
+
+/* Grid: equal tiles whatever the image shape. The preview box has a fixed shape
+   and keeps the whole image inside it, so names line up across a row. */
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: 1.25rem 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 1.5rem;
+}
+
+.media-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
 }
 
 .media-card-preview {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 1;
     width: 100%;
-    padding: 0.5rem;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
     border: 0;
-    border-bottom: 1px solid var(--bs-border-color);
-    border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0;
+    border-radius: var(--bs-border-radius-lg);
     /* a tinted frame keeps white and transparent images visible */
     background-color: var(--bs-tertiary-bg);
     cursor: pointer;
+    transition: box-shadow 0.15s ease-in-out;
 }
 
 .media-card-preview img {
-    max-width: 100%;
-    max-height: 100%;
+    position: absolute;
+    inset: 0.5rem;
+    width: calc(100% - 1rem);
+    height: calc(100% - 1rem);
     object-fit: contain;
+    transition: transform 0.15s ease-in-out;
 }
 
 .media-card-preview .bi {
@@ -496,43 +619,80 @@ body {
     color: var(--bs-secondary-color);
 }
 
-.media-card-body {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    min-width: 0;
+.media-card:hover .media-card-preview {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
 }
 
-.media-card-body .form-check-input {
-    flex: none;
-    margin-top: 0.2rem;
+.media-card.selected .media-card-preview {
+    box-shadow: inset 0 0 0 3px var(--bs-primary);
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+.media-card.selected .media-card-preview img {
+    transform: scale(0.88);
+}
+
+/* The checkbox sits over the preview, shown on hover or focus, and always
+   while files are selected or on touch screens */
+.media-card > .media-select {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 1;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin: 0;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+    cursor: pointer;
+}
+
+.media-card:hover > .media-select,
+.media-card > .media-select:focus-visible,
+.media-card > .media-select:checked,
+.media-library.selecting .media-card > .media-select {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    .media-card > .media-select {
+        opacity: 1;
+    }
+}
+
+.media-card-body {
+    display: flex;
+    padding: 0.4rem 0.125rem 0;
+    min-width: 0;
 }
 
 .media-card-text {
     display: flex;
     flex-direction: column;
     min-width: 0;
+    width: 100%;
 }
 
-/* Long names wrap within two lines; the full name is on the details page */
+/* One line per name; the full name is in the tooltip and on the details page */
 .media-card-name {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    display: block;
     overflow: hidden;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     padding: 0;
     border: 0;
     background: none;
     text-align: start;
     font-size: 0.875rem;
-    color: var(--bs-link-color);
+    color: var(--bs-body-color);
     text-decoration: none;
     cursor: pointer;
 }
 
 .media-card-name:hover {
+    color: var(--bs-link-color);
     text-decoration: underline;
 }
 
@@ -563,34 +723,8 @@ body {
     text-align: end;
 }
 
-.media-search-scope {
-    flex: 0 1 12rem;
-}
-
-.media-result-summary {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.25rem 0.75rem;
-    margin-bottom: 0.5rem;
-}
-
-.media-criteria {
-    display: contents;
-    list-style: none;
-}
-
-.media-criteria li {
-    padding: 0 0.5rem;
-    border-radius: var(--bs-border-radius-pill);
-    background-color: var(--bs-secondary-bg);
-    color: var(--bs-body-color);
-    font-size: 0.875rem;
-    overflow-wrap: anywhere;
-}
-
-.media-view-options .btn-group {
-    margin-left: 0.5rem;
+.media-library .roller-pager {
+    justify-content: center;
 }
 
 .media-list-header {
@@ -606,13 +740,19 @@ body {
 .media-grid.media-list .media-list-header,
 .media-grid.media-list .media-card {
     display: grid;
-    grid-template-columns: 1.25rem 3rem minmax(0, 1fr) 5rem 5rem 6rem;
+    grid-template-columns: 1.35rem 3rem minmax(0, 1fr) 5rem 5rem 6rem;
     align-items: center;
     gap: 0.75rem;
     padding: 0.35rem 0.5rem;
-    border: 0;
     border-bottom: 1px solid var(--bs-border-color);
-    border-radius: 0;
+}
+
+.media-grid.media-list .media-card:hover {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.media-grid.media-list .media-card.selected {
+    background-color: var(--bs-primary-bg-subtle);
 }
 
 .media-grid.media-list .media-list-header {
@@ -627,18 +767,28 @@ body {
     display: contents;
 }
 
-.media-grid.media-list .media-card-body .form-check-input {
+.media-grid.media-list .media-card > .media-select {
     order: 1;
-    margin-top: 0;
+    position: static;
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 0.25em;
+    box-shadow: none;
+    opacity: 1;
 }
 
 .media-grid.media-list .media-card-preview {
     order: 2;
     width: 3rem;
-    aspect-ratio: 1;
-    padding: 2px;
-    border: 0;
     border-radius: var(--bs-border-radius-sm);
+    box-shadow: none;
+}
+
+.media-grid.media-list .media-card-preview img {
+    inset: 2px;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    transform: none;
 }
 
 .media-grid.media-list .media-card-preview .bi {
@@ -647,7 +797,6 @@ body {
 
 .media-grid.media-list .media-card-name {
     order: 3;
-    -webkit-line-clamp: 1;
 }
 
 .media-grid.media-list .media-card-type {
@@ -670,9 +819,13 @@ body {
 }
 
 @media (max-width: 575.98px) {
+    .media-grid {
+        grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+    }
+
     .media-grid.media-list .media-list-header,
     .media-grid.media-list .media-card {
-        grid-template-columns: 1.25rem 3rem minmax(0, 1fr) 4.5rem;
+        grid-template-columns: 1.35rem 3rem minmax(0, 1fr) 4.5rem;
     }
 
     .media-grid.media-list .media-list-header span:nth-child(4),

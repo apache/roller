@@ -78,7 +78,8 @@ class WeblogMediaLibraryIT extends BaseIT {
     private static final String CARD_NAME = ".media-card-name";
     private static final String CARD_CHECKBOX = ".media-select";
     private static final String SELECTED_COUNT = "#selectedCount";
-    private static final String MOVE_TARGET = "#moveTargetMenu";
+    private static final String SELECTION_BAR = "#selectionBar";
+    private static final String MOVE_MENU = "#moveTargetMenu";
     private static final String MOVE_BUTTON = "#moveButton";
     private static final String DELETE_BUTTON = "#deleteButton";
     private static final String SEARCH_NAME = "#beanName";
@@ -145,7 +146,7 @@ class WeblogMediaLibraryIT extends BaseIT {
 
         openFolder(folder);
         assertThat(page.locator(CARD)).hasCount(3);
-        assertThat(page.locator(RESULT_SUMMARY)).containsText("3 file(s)");
+        assertThat(page.locator(FOLDER_HEADING)).containsText("3 file(s)");
     }
 
     @Test
@@ -188,11 +189,12 @@ class WeblogMediaLibraryIT extends BaseIT {
         assertThat(page).hasTitle(Pattern.compile("Media File Upload Complete"));
 
         openFolder(source);
+        assertThat(page.locator(SELECTION_BAR)).isHidden();
         card("one.png").locator(CARD_CHECKBOX).check();
-        assertThat(page.locator(SELECTED_COUNT)).hasText("1 selected on this page");
-        page.locator(MOVE_TARGET).selectOption(new SelectOption().setLabel(target));
-        page.onceDialog(dialog -> dialog.accept());
+        assertThat(page.locator(SELECTION_BAR)).isVisible();
+        assertThat(page.locator(SELECTED_COUNT)).hasText("1 selected");
         page.locator(MOVE_BUTTON).click();
+        page.locator(MOVE_MENU).getByText(target, new Locator.GetByTextOptions().setExact(true)).click();
 
         assertThat(page.locator(MESSAGES)).containsText("moved");
         assertThat(page.locator(FOLDER_HEADING)).containsText(source);
@@ -229,6 +231,12 @@ class WeblogMediaLibraryIT extends BaseIT {
         page.getByText("Clear search").first().click();
         assertThat(page.locator(FOLDER_HEADING)).containsText(first);
         assertThat(page.locator(CARD)).hasCount(2);
+
+        // a type chip searches at once
+        page.locator("label[for='type-mediaFileView.others']").click();
+        assertThat(page.locator(RESULT_SUMMARY)).containsText("0 matching file(s)");
+        page.locator("label[for='type-mediaFileView.image']").click();
+        assertThat(page.locator(RESULT_SUMMARY)).containsText("2 matching file(s)");
     }
 
     @Test

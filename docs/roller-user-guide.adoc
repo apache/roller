@@ -431,10 +431,10 @@ weblog.
 The library shows one folder at a time. The folders are listed on the left;
 on a narrow screen, choose the folder from the list at the top instead. Files
 show as a grid of previews, or as a list with name, type, size and upload
-date; use the buttons next to *Sort by* to switch. Your choice is kept in
-your browser. The library shows 48 files a page, newest first. Use *Sort by*
-to sort by oldest first, name or type, and the buttons above and below the
-files to move between pages.
+date; use the two buttons at the right above the files to switch. Your choice
+is kept in your browser. The library shows 48 files a page, newest first. Use
+the menu next to those buttons to sort by oldest first, name or type, and the
+buttons below the files to move between pages.
 
 ==== How to upload files
 
@@ -467,10 +467,11 @@ the library.
 
 ==== How to find files
 
-Above the files, enter the start of a file name and click *Search*. Upper and
-lower case do not matter. You can also limit the search to a file type, and
-choose whether to search the current folder or all folders. *Filters* has
-more criteria: file size and tags. The line above the results shows what you
+Enter the start of a file name in the search box and click *Search*. Upper
+and lower case do not matter. Next to the box, choose whether to search the
+current folder or all folders. To show only one type of file, click *Image*,
+*Video*, *Audio* or *Others* above the files; *All* shows every type.
+*Filters* has more criteria: file size and tags. The line above the results shows what you
 searched for and how many files match; *Clear search* returns to the folder.
 
 ==== How to see and edit a file
@@ -494,14 +495,17 @@ file URLs.
 To create a folder, click *New folder* above the folder list, enter a name
 and click *Create*.
 
-To move files, select them with their checkboxes, choose the destination
-folder in the toolbar above the files, and click *Move*. *Select this page*
-selects every file on the current page.
+To select a file, point at its preview and click the checkbox that appears
+in the corner; on a touch screen the checkboxes are always shown. While files
+are selected, the bar above the files shows how many are selected and what
+you can do with them. *Select all on this page* selects every file on the
+current page, and the *X* clears the selection.
+
+To move the selected files, click *Move to* and choose the folder.
 
 ==== How to delete files and folders
 
-To delete files, select them with their checkboxes and click *Delete* in the
-toolbar above the files, or click *Delete* on a file’s details page. You will
+To delete files, select them and click *Delete* in the bar above the files, or click *Delete* on a file’s details page. You will
 have to confirm the delete before it executes. Deleting a file cannot be
 undone, and links to it stop working.
 

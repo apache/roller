@@ -34,7 +34,7 @@ $(function () {
             var icon = document.createElement("span");
             icon.className = "bi " + (img.getAttribute("data-fallback-icon") || "bi-file-earmark");
             icon.setAttribute("aria-hidden", "true");
-            (img.closest("a") || img).replaceWith(icon);
+            img.replaceWith(icon);
         }
     }, true);
 
@@ -57,13 +57,16 @@ $(function () {
             return $(".media-select:checked");
         }
 
+        // while files are selected, the selection bar replaces the type, sort and layout bar
         function updateSelection() {
             var count = selected().length;
             $(".media-select").each(function () {
                 $(this).closest(".media-card").toggleClass("selected", this.checked);
             });
+            library.toggleClass("selecting", count > 0);
+            $(".media-results-bar").prop("hidden", count > 0);
+            $("#selectionBar").prop("hidden", count === 0);
             $("#selectedCount").text(count > 0 ? format(library.data("selected-count"), count) : "");
-            $("#moveButton, #deleteButton, #moveTargetMenu, #clearSelectionButton").prop("disabled", count === 0);
         }
 
         $(document).on("change", ".media-select", updateSelection);
@@ -93,10 +96,10 @@ $(function () {
             }
         });
 
-        $("#moveButton").on("click", function () {
-            if (confirm(library.data("confirm-move"))) {
-                submitTo(urls.data("move-selected-url"));
-            }
+        // moving can be undone, so it needs no confirmation
+        $("#moveTargetMenu").on("click", "[data-folder-id]", function () {
+            form.selectedDirectory.value = $(this).data("folder-id");
+            submitTo(urls.data("move-selected-url"));
         });
 
         $("#deleteFolderButton").on("click", function () {
@@ -109,9 +112,10 @@ $(function () {
 
         var searchForm = $("#mediaFileSearchForm");
 
-        // leave empty and default criteria out of the URL
+        // leave empty and default criteria out of the URL; the type chips and the
+        // sort menu sit outside the form and join it through their form attribute
         searchForm.on("submit", function () {
-            $(this).find("[name]").add("#sortByMenu").each(function () {
+            $(this.elements).filter("[name]").each(function () {
                 var empty = this.value === "" || this.value === "mediaFileView.any"
                     || (this.name === "bean.scope" && this.value === "folder")
                     || (this.name === "bean.sortBy" && this.value === "newest");
@@ -124,10 +128,10 @@ $(function () {
 
         // fields disabled above stay disabled when the browser restores this page
         $(window).on("pageshow", function () {
-            searchForm.find("[name]").add("#sortByMenu").prop("disabled", false);
+            $(searchForm[0].elements).prop("disabled", false);
         });
 
-        $("#sortByMenu").on("change", function () {
+        $("#sortByMenu, [name='bean.type']").on("change", function () {
             searchForm.trigger("submit");
         });
 
