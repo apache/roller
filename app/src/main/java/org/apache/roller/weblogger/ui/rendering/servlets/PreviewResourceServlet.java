@@ -33,12 +33,14 @@ import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.business.themes.WeblogCustomTheme;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.Theme;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.ui.rendering.util.ModDateHeaderUtil;
+import org.apache.roller.weblogger.ui.rendering.util.PreviewAccess;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewResourceRequest;
 
 /**
@@ -90,11 +92,17 @@ public class PreviewResourceServlet extends HttpServlet {
             return;
         }
 
+        if (!PreviewAccess.canPreview(weblog, resourceRequest.getUser())) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
         log.debug("Resource requested [" + resourceRequest.getResourcePath()
                 + "]");
 
         long resourceLastMod = 0;
         InputStream resourceStream = null;
+        boolean fromThemeMedia = false;
 
         // first, see if we have a preview theme to operate from
         if (!StringUtils.isEmpty(resourceRequest.getThemeName())) {
@@ -104,6 +112,7 @@ public class PreviewResourceServlet extends HttpServlet {
             if (resource != null) {
                 resourceLastMod = resource.getLastModified();
                 resourceStream = resource.getInputStream();
+                fromThemeMedia = WeblogCustomTheme.isMediaFile(resource);
             }
         }
 
@@ -117,6 +126,7 @@ public class PreviewResourceServlet extends HttpServlet {
                     if (resource != null) {
                         resourceLastMod = resource.getLastModified();
                         resourceStream = resource.getInputStream();
+                        fromThemeMedia = WeblogCustomTheme.isMediaFile(resource);
                     }
                 }
             } catch (Exception ex) {
@@ -169,6 +179,11 @@ public class PreviewResourceServlet extends HttpServlet {
             // Uploaded through the media library, so it is governed by the
             // same policy as any other media response.
             MediaTypePolicy.applyResponseHeaders(response, resourceType,
+                    resourceRequest.getResourcePath());
+        } else if (fromThemeMedia) {
+            // Found by a custom theme, but held in the media library like any
+            // other upload.
+            MediaTypePolicy.applyThemeMediaHeaders(response, resourceType,
                     resourceRequest.getResourcePath());
         } else {
             // A theme resource: authored as part of the theme and served as

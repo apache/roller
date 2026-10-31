@@ -477,23 +477,23 @@ Show bookmarks as a HTML ul list.
     #set($divId = $utils.replace($folderObject.name, " ", "_" ))
     #foreach($bookmark in $bookmarks)
         <li class="rFolderItem">
+        ## name and description may be stored as sanitized HTML; show them
+        ## as plain text, escaped once
+        #set($bookmarkName = "")
+        #set($bookmarkDescription = "")
+        #set($bookmarkName = $utils.unescapeHTML($utils.removeHTML($bookmark.name, false)))
+        #set($bookmarkDescription = $utils.unescapeHTML($utils.removeHTML($bookmark.description, false)))
         #if($utils.isNotEmpty($bookmark.Image))
-          #if( $bookmark.Image.startsWith("http://") )
-          <a href="$bookmark.url">
-             <img alt="$bookmark.description" border="0"
-                src="$bookmark.image" class="rBookmark" /></a>
-          #else
-          <a href="$bookmark.url">
-             <img alt="$bookmark.description" border="0"
-                src="$bookmark.image" class="rBookmark" /></a>
-          #end
+          <a href="$utils.escapeHTML($bookmark.url)">
+             <img alt="$!utils.escapeHTML($bookmarkDescription)" border="0"
+                src="$utils.escapeHTML($bookmark.image)" class="rBookmark" /></a>
         #else
             #if($utils.isNotEmpty( $bookmark.FeedUrl))
-            <a href="$bookmark.feedUrl"><img class="smrssbadge"
+            <a href="$utils.escapeHTML($bookmark.feedUrl)"><img class="smrssbadge"
                src="$url.absoluteSite/images/smrssbadge.gif"
                alt="$text.get("macro.bookmark.urlFeed")"/></a>
             #end
-            <a href="$bookmark.url" title="$bookmark.description">$bookmark.name</a>
+            <a href="$utils.escapeHTML($bookmark.url)" title="$!utils.escapeHTML($bookmarkDescription)">$!utils.escapeHTML($bookmarkName)</a>
         #end
         </li>
     #end

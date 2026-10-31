@@ -170,6 +170,14 @@ public class WeblogCustomTheme extends WeblogTheme {
         return resource;
     }
 
+    /**
+     * @return true when the resource is a file in the weblog's media library,
+     *         rather than one that ships with a theme
+     */
+    public static boolean isMediaFile(ThemeResource resource) {
+        return resource instanceof MediaFileThemeResource;
+    }
+
     private static final class MediaFileThemeResource implements ThemeResource {
         private final MediaFile mediaFile;
 

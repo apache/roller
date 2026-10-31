@@ -34,6 +34,7 @@ import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
+import org.apache.roller.weblogger.ui.rendering.util.PreviewAccess;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
 import org.apache.roller.weblogger.util.cache.CachedContent;
 
@@ -99,6 +100,11 @@ public class PreviewServlet extends HttpServlet {
         } catch (Exception e) {
             // some kind of error parsing the request or getting weblog
             log.debug("error creating preview request", e);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        if (!PreviewAccess.canPreview(weblog, previewRequest.getUser())) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -292,5 +298,5 @@ public class PreviewServlet extends HttpServlet {
         
         log.debug("Exiting");
     }
-    
+
 }

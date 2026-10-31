@@ -63,6 +63,9 @@ public abstract class UIAction extends ActionSupport
     
     // a result for a cancel.
     public static final String CANCEL = "cancel";
+
+    // a result that redirects back to the page after a link changed data
+    public static final String DONE = "done";
     
     // the authenticated user accessing this action, or null if client is not logged in
     private User authenticatedUser = null;

@@ -102,12 +102,21 @@ public class UserDataServlet extends HttpServlet {
             length = Integer.parseInt(request.getParameter("length"));
         } catch (Exception ignored) {
         }
+        if (!admin) {
+            // others pick from enabled users only, one page at a time
+            enabledOnly = Boolean.TRUE;
+            if (length < 0 || length > MAX_LENGTH) {
+                length = MAX_LENGTH;
+            }
+        }
 
         Weblogger roller = WebloggerFactory.getWeblogger();
         try {
             UserManager umgr = roller.getUserManager();
-            List<User> users = umgr.getUsersStartingWith(startsWith,
-                    enabledOnly, offset, length);
+            // only admins, who see email addresses, may search by them
+            List<User> users = admin
+                    ? umgr.getUsersStartingWith(startsWith, enabledOnly, offset, length)
+                    : umgr.getUsersWithUserNameStartingWith(startsWith, enabledOnly, offset, length);
             for (User user : users) {
                 response.getWriter().print(user.getUserName());
                 if (admin) {

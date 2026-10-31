@@ -130,7 +130,7 @@ public class Pings extends UIAction {
             }
         }
         
-        return execute();
+        return DONE;
     }
     
     
@@ -150,7 +150,7 @@ public class Pings extends UIAction {
             }
         }
         
-        return execute();
+        return DONE;
     }
     
     
@@ -189,7 +189,7 @@ public class Pings extends UIAction {
             }
         }
         
-        return execute();
+        return DONE;
     }
     
     

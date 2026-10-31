@@ -32,12 +32,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Covers the OPML bookmark import's handling of document type declarations:
  * documents that carry one are refused, while ordinary OPML still imports.
+ * Also checks that imported links are kept only when they are web links.
  */
 public class BookmarkImportParsingTest {
 
@@ -132,5 +135,34 @@ public class BookmarkImportParsingTest {
 
         assertTrue(importedBookmarks().isEmpty(),
                 "a document carrying a DOCTYPE was still imported");
+    }
+
+    /** Only absolute http and https links are imported. */
+    @Test
+    public void importKeepsOnlyWebLinks() throws Exception {
+        String opml = "<?xml version=\"1.0\"?><opml version=\"1.1\"><head><title>t</title></head><body>"
+                + "<outline text=\"web\" htmlUrl=\"https://example.com/a\" xmlUrl=\"http://example.com/feed\"/>"
+                + "<outline text=\"ftp\" htmlUrl=\"ftp://example.com/a\"/>"
+                + "<outline text=\"mail\" htmlUrl=\"mailto:reader@example.com\"/>"
+                + "<outline text=\"relative\" htmlUrl=\"/a/b\"/>"
+                + "<outline text=\"spaces\" htmlUrl=\"http://example.com/a b\"/>"
+                + "<outline text=\"underscore\" htmlUrl=\" https://my_blog.example.com/ \"/>"
+                + "<outline text=\"nohost\" htmlUrl=\"http:///a\"/>"
+                + "<outline text=\"feed\" htmlUrl=\"https://example.com/b\" xmlUrl=\"file:///etc/feed\"/>"
+                + "</body></opml>";
+        bookmarkManager().importBookmarks(TestUtils.getManagedWebsite(testWeblog), folderName, opml);
+        TestUtils.endSession(true);
+
+        java.util.Map<String, WeblogBookmark> byName = new java.util.HashMap<>();
+        for (WeblogBookmark b : importedBookmarks()) {
+            byName.put(b.getName(), b);
+        }
+        // links that browsers accept are kept even when java.net.URI refuses them
+        assertEquals(java.util.Set.of("web", "feed", "spaces", "underscore"), byName.keySet());
+        assertEquals("https://example.com/a", byName.get("web").getUrl());
+        assertEquals("http://example.com/feed", byName.get("web").getFeedUrl());
+        assertEquals("https://example.com/b", byName.get("feed").getUrl());
+        assertNull(byName.get("feed").getFeedUrl());
+        assertEquals("https://my_blog.example.com/", byName.get("underscore").getUrl());
     }
 }

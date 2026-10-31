@@ -179,7 +179,13 @@
         
         <action name="menu"
                 class="org.apache.roller.weblogger.ui.struts2.core.MainMenu">
+            <interceptor-ref name="rollerStack"/>
+            <!-- keep messages across the redirect after accept or decline -->
+            <interceptor-ref name="store">
+                <param name="operationMode">AUTOMATIC</param>
+            </interceptor-ref>
             <result type="tiles">.MainMenu</result>
+            <result name="done" type="redirectAction">menu</result>
             <allowed-methods>accept,decline,execute</allowed-methods>
         </action>
 
@@ -269,7 +275,13 @@
         <action name="commonPingTargets"
                 class="org.apache.roller.weblogger.ui.struts2.admin.PingTargets">
             <result name="list" type="tiles">.PingTargets</result>
+            <interceptor-ref name="rollerStack"/>
+            <!-- keep messages across the redirect after enable or disable -->
+            <interceptor-ref name="store">
+                <param name="operationMode">AUTOMATIC</param>
+            </interceptor-ref>
             <result name="confirm" type="tiles">.PingTargetConfirm</result>
+            <result name="done" type="redirectAction">commonPingTargets</result>
             <allowed-methods>delete,deleteConfirm,disable,enable,execute</allowed-methods>
         </action>
         
@@ -640,7 +652,16 @@
 
         <action name="pings"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Pings">
+            <interceptor-ref name="rollerStack"/>
+            <!-- keep messages across the redirect after enable, disable or ping -->
+            <interceptor-ref name="store">
+                <param name="operationMode">AUTOMATIC</param>
+            </interceptor-ref>
             <result name="list" type="tiles">.Pings</result>
+            <result name="done" type="redirectAction">
+                <param name="actionName">pings</param>
+                <param name="weblog">${actionWeblog.handle}</param>
+            </result>
             <allowed-methods>disable,enable,execute,pingNow</allowed-methods>
         </action>
 

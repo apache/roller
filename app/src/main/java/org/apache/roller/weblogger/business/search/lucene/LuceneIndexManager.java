@@ -39,6 +39,7 @@ import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.FieldInfos;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -151,6 +152,14 @@ public class LuceneIndexManager implements IndexManager {
                 try {
                     synchronized(this) {
                         reader = DirectoryReader.open(getIndexDirectory());
+                        if (hasRemovedFields(reader)) {
+                            logger.info("Search index holds fields that are no longer indexed, scheduling rebuild.");
+                            reader.close();
+                            reader = null;
+                            inconsistentAtStartup = true;
+                            deleteIndex();
+                            createIndex(getIndexDirectory());
+                        }
                     }
                 } catch (IOException | IllegalArgumentException ex) {  // IAE for incompatible codecs
                     logger.warn("Failed to open search index, scheduling rebuild.", ex);
@@ -343,6 +352,20 @@ public class LuceneIndexManager implements IndexManager {
         return null;
     }
 
+    /**
+     * True if the index holds a field that earlier versions indexed but this
+     * one does not, so the index must be rebuilt to drop that data.
+     */
+    static boolean hasRemovedFields(IndexReader reader) {
+        FieldInfos fields = FieldInfos.getMergedFieldInfos(reader);
+        for (String removed : FieldConstants.REMOVED_FIELDS) {
+            if (fields.fieldInfo(removed) != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean indexExists() {
         try {
             return DirectoryReader.indexExists(getIndexDirectory());
@@ -432,44 +455,58 @@ public class LuceneIndexManager implements IndexManager {
 
         List<WeblogEntryWrapper> results = new ArrayList<>();
 
-        // determine offset
-        int offset = pageNum * entryCount;
-        if (offset >= hits.length) {
-            offset = 0;
-        }
-
-        // determine limit
-        int limit = entryCount;
-        if (offset + limit > hits.length) {
-            limit = hits.length - offset;
-        }
-
         try {
-            Set<String> categories = new TreeSet<>();
-            TreeSet<String> categorySet = new TreeSet<>();
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
 
-            WeblogEntry entry;
-            Document doc;
-            String handle;
+            // a page past the last hit falls back to the first page; check
+            // before loading any entries
+            if ((long) pageNum * entryCount >= hits.length) {
+                pageNum = 0;
+            }
+
+            // The index can lag behind the entries, so page through the hits
+            // whose entry is published now (and not a future post). Only
+            // those count toward the offset and limit. Stop once the requested
+            // page is filled; if the hits run out first, an out-of-range page
+            // falls back to the first page below.
+            List<VisibleHit> visible = new ArrayList<>();
             Timestamp now = new Timestamp(new Date().getTime());
-            for (int i = offset; i < offset + limit; i++) {
-                doc = search.getSearcher().doc(hits[i].doc);
-                handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
-                entry = weblogMgr.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue());
-
-                if (!(websiteSpecificSearch && handle.equals(weblogHandle))
-                    && doc.getField(FieldConstants.CATEGORY) != null) {
-                    categorySet.add(doc.getField(FieldConstants.CATEGORY).stringValue());
+            long wanted = (long) (pageNum + 1) * entryCount;
+            for (ScoreDoc hit : hits) {
+                if (visible.size() >= wanted) {
+                    break;
                 }
-
+                Document doc = search.getSearcher().doc(hit.doc);
                 // maybe null if search result returned inactive user
-                // or entry's user is not the requested user.
-                // but don't return future posts
-                if (entry != null && entry.getPubTime().before(now)) {
-                    results.add(WeblogEntryWrapper.wrap(entry, urlStrategy));
+                // or entry's user is not the requested user
+                WeblogEntry entry = weblogMgr.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue());
+                if (entry != null && entry.isPublished()
+                        && entry.getPubTime() != null && entry.getPubTime().before(now)) {
+                    visible.add(new VisibleHit(entry, doc));
                 }
+            }
+
+            // determine offset
+            int offset = pageNum * entryCount;
+            if (offset >= visible.size()) {
+                offset = 0;
+            }
+
+            // determine limit
+            int limit = entryCount;
+            if (offset + limit > visible.size()) {
+                limit = visible.size() - offset;
+            }
+
+            Set<String> categories = new TreeSet<>();
+            TreeSet<String> categorySet = new TreeSet<>();
+            for (VisibleHit hit : visible.subList(offset, offset + limit)) {
+                if (!(websiteSpecificSearch && hit.handle.equals(weblogHandle))
+                    && hit.category != null) {
+                    categorySet.add(hit.category);
+                }
+                results.add(WeblogEntryWrapper.wrap(hit.entry, urlStrategy));
             }
 
             if (!categorySet.isEmpty()) {
@@ -480,6 +517,20 @@ public class LuceneIndexManager implements IndexManager {
 
         } catch (IOException e) {
             throw new WebloggerException(e);
+        }
+    }
+
+    /** A hit whose entry is shown, with the index fields the page needs. */
+    private static final class VisibleHit {
+        private final WeblogEntry entry;
+        private final String handle;
+        private final String category;
+
+        VisibleHit(WeblogEntry entry, Document doc) {
+            this.entry = entry;
+            this.handle = doc.getField(FieldConstants.WEBSITE_HANDLE).stringValue();
+            this.category = doc.getField(FieldConstants.CATEGORY) == null
+                    ? null : doc.getField(FieldConstants.CATEGORY).stringValue();
         }
     }
 }

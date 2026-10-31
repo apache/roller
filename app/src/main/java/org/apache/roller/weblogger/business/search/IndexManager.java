@@ -62,6 +62,19 @@ public interface IndexManager {
     /** Remove entry from index, returns immediately and operates in background */
     void removeEntryIndexOperation(WeblogEntry entry) throws WebloggerException;
 
+    /**
+     * Bring the index in line with an entry that was saved: re-index it if it
+     * is published, else remove it. Returns immediately and operates in
+     * background.
+     */
+    default void updateEntryIndex(WeblogEntry entry) throws WebloggerException {
+        if (entry.isPublished()) {
+            addEntryReIndexOperation(entry);
+        } else {
+            removeEntryIndexOperation(entry);
+        }
+    }
+
     SearchResultList search(
         String term,
         String weblogHandle,

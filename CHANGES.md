@@ -91,6 +91,13 @@
 - **Tag names can no longer contain `"`, `&`, `'`, `<`, `>` or `` ` ``.**
   These characters are removed when a tag is saved, and from existing tag
   names when they are shown.
+- **Custom-theme files in the media library follow the media rules.** A weblog
+  with a custom theme still serves its stylesheets and scripts from the media
+  library as before. Other files there, such as HTML or SVG, are served like
+  any other media file: as a download unless they are an image, audio, video,
+  PDF or plain text. The media file editor sets a file's original path only
+  when `mediafile.originalPathEdit.enabled=true`, as its form already shows.
+  AtomPub media uploads no longer set one.
 - **Planet is off by default.** `planet.aggregator.enabled` now defaults to
   `false`. While it is off, the Planet admin pages, `/planetrss` and the
   Planet background tasks (`RefreshRollerPlanetTask`, `SyncWebsitesTask`) do
@@ -103,6 +110,49 @@
 - **Startup fails if the XML-RPC parser cannot be configured.** Roller used to
   log an error and continue. It now stops at startup, so check the log if a
   custom XML parser is on the classpath.
+- **Text with an unclosed tag loses the tag.** Where Roller strips HTML from
+  plain-text fields (for example a weblog's description), a tag with attributes
+  and no closing `>`, such as `text <img src=x`, is now dropped. Other text with
+  a `<`, as in `a < b`, `x<y` or `C<C++ fans`, is kept, and no longer gets a
+  space added before the `<`. The Your Weblogs page shows a weblog's
+  description as text.
+- **OPML import keeps only web links.** An imported bookmark is kept only when
+  its link is an absolute `http` or `https` URL; others are skipped and named
+  in the log. A feed URL that is not one is dropped. Blogroll links shown on
+  weblog pages must be relative or use `http`, `https`, `ftp` or `mailto`;
+  other links, and links with `&` before the path, are shown without a
+  target. The blogroll shows bookmark names and descriptions as plain text,
+  without HTML formatting.
+- **The user picker matches user names only, except for global admins.** When
+  a user who is not a global admin searches for users (for example to invite a
+  member), only user names are matched. Global admins can still search by
+  email address. For other users the picker lists enabled users only, at
+  most 50 at a time. `%` and `_` in the search text match only themselves.
+- **Previews need a role in the weblog.** Previewing a weblog's pages or
+  theme resources now requires an enabled user with a role in that weblog
+  (Limited, Author or Admin), or a global admin.
+- **Disabled accounts cannot sign in with an OpenID URL.** An account that an
+  administrator has disabled is now refused whenever its OpenID URL is used to
+  sign in, on every sign-in form, as user name and password sign-in already
+  does.
+- **Search queries can name only the search fields.** A weblog search may
+  name entry content, title or comment text (for example `title:roller`). A
+  query that names another field is treated like a query that cannot be
+  parsed. Author user names and comment author names and email addresses are
+  no longer added to the search index. An index built by an earlier version
+  is rebuilt in the background at the first startup after the upgrade.
+- **Search shows only published entries.** Weblog search returns entries that
+  are published at the time of the search, even if the search index still
+  holds an entry that has since gone back to draft. Updating an entry through
+  AtomPub so that it is no longer published also removes it from the index,
+  and so does deleting an entry through AtomPub.
+- **Actions that change data need a POST.** A request other than a POST
+  that calls an action method which changes data, for example
+  `pings!enable.rol`, is refused with `405 Method Not Allowed`. Roller's own
+  ping, invitation and installer links are now small forms that POST with
+  the page's form token, and return to the page afterwards. Saving a common
+  ping target needs a POST. A bookmark or script that calls such a URL with
+  a GET is refused.
 
 ### Bug fixes
 

@@ -19,9 +19,12 @@
 package org.apache.roller.weblogger.business.search.lucene;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
@@ -30,6 +33,7 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.QueryVisitor;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
@@ -104,7 +108,7 @@ public class SearchOperation extends ReadFromIndexOperation {
             IndexReader reader = manager.getSharedIndexReader();
             searcher = new IndexSearcher(reader);
 
-            MultiFieldQueryParser multiParser = new MultiFieldQueryParser(
+            MultiFieldQueryParser multiParser = new SearchFieldsQueryParser(
                     SEARCH_FIELDS, LuceneIndexManager.getAnalyzer());
 
             // Make it an AND by default. Comment this out for an or (default)
@@ -229,4 +233,47 @@ public class SearchOperation extends ReadFromIndexOperation {
         this.locale = locale;
     }
 
+
+    /**
+     * Query parser that accepts explicit field names only for the fields that
+     * searches are meant to cover. Other index fields hold data that is not
+     * shown on the weblog, so a query naming one is a parse error. The check
+     * walks the parsed query, so it covers every kind of query the parser
+     * can build.
+     */
+    static class SearchFieldsQueryParser extends MultiFieldQueryParser {
+
+        private final Set<String> searchFields;
+
+        SearchFieldsQueryParser(String[] fields, Analyzer analyzer) {
+            super(fields, analyzer);
+            this.searchFields = Set.of(fields);
+        }
+
+        @Override
+        public Query parse(String query) throws ParseException {
+            Query parsed = super.parse(query);
+            Set<String> fields = new HashSet<>();
+            parsed.visit(new QueryVisitor() {
+                @Override
+                public boolean acceptField(String field) {
+                    fields.add(field);
+                    return true;
+                }
+
+                @Override
+                public void consumeTerms(Query q, Term... terms) {
+                    for (Term t : terms) {
+                        fields.add(t.field());
+                    }
+                }
+            });
+            for (String field : fields) {
+                if (!searchFields.contains(field)) {
+                    throw new ParseException("Cannot search field: " + field);
+                }
+            }
+            return parsed;
+        }
+    }
 }

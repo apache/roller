@@ -129,6 +129,9 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
             try {
                 MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), getMediaFileId());
                 bean.copyTo(mediaFile);
+                if (getBooleanProp("mediafile.originalPathEdit.enabled")) {
+                    mediaFile.setOriginalPath(bean.getOriginalPath());
+                }
 
                 if (uploadedFile != null
                         && uploadedFile.getContent() instanceof File uploadFile) {
