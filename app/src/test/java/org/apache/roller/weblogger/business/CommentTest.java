@@ -30,6 +30,7 @@ import java.io.StringWriter;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,6 +86,7 @@ public class CommentTest  {
     /**
      * Test basic persistence operations ... Create, Update, Delete
      */
+    @Test
     public void testCommentCRUD() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -132,6 +134,7 @@ public class CommentTest  {
     /**
      * Test lookup mechanisms ... 
      */
+    @Test
     public void testCommentLookups() throws Exception {
         
         WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
@@ -149,6 +152,7 @@ public class CommentTest  {
         comments = mgr.getComments(csc);
         assertNotNull(comments);
         assertEquals(3, comments.size());
+        assertEquals(3, mgr.getCommentCount(csc));
         
         // get all comments for entry
         testEntry = TestUtils.getManagedWeblogEntry(testEntry);
@@ -169,6 +173,7 @@ public class CommentTest  {
         comments = mgr.getComments(csc);
         assertNotNull(comments);
         assertEquals(1, comments.size());
+        assertEquals(1, mgr.getCommentCount(csc));
         
         // get approved comments
         csc.setStatus(ApprovalStatus.APPROVED);
@@ -182,6 +187,8 @@ public class CommentTest  {
         comments = mgr.getComments(csc);
         assertNotNull(comments);
         assertEquals(2, comments.size());
+        // the count ignores offset: it sizes the pager across all pages
+        assertEquals(3, mgr.getCommentCount(csc));
         
         // remove test comments
         TestUtils.teardownComment(comment1.getId());
@@ -197,6 +204,7 @@ public class CommentTest  {
      * should delete all comments on that entry, and deleting a weblog should
      * delete all comments, etc.
      */
+    @Test
     public void testCommentParentDeletes() throws Exception {
         
         log.info("BEGIN");

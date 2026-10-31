@@ -153,7 +153,9 @@ for f in "${archives[@]}"; do
     names=$(list_archive "$f")
 
     for required in LICENSE NOTICE; do
-        if printf '%s\n' "$names" | grep -qE "(^|/)$required(\.txt)?$"; then
+        # not grep -q: it stops reading at the first match, printf then gets
+        # SIGPIPE, and pipefail turns a found file into a failure
+        if printf '%s\n' "$names" | grep -E "(^|/)$required(\.txt)?$" >/dev/null; then
             pass "$base contains $required"
         else
             bad "$base is missing $required"

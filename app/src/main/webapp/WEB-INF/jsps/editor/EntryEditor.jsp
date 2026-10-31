@@ -30,19 +30,16 @@
 
 <%-- summary --%>
 
-<div class="card" id="panel-summary">
-    <div class="card-header">
-
-        <h4 class="card-title">
-            <a href="#" class="collapsed text-body text-decoration-none"
-               data-bs-toggle="collapse" data-bs-target="#collapseSummaryEditor">
-                <s:text name="weblogEdit.summary"/>
-            </a>
-        </h4>
-
-    </div>
-    <div id="collapseSummaryEditor" class="collapse">
-        <div class="card-body">
+<div class="accordion-item" id="panel-summary">
+    <h2 class="accordion-header">
+        <button type="button" class="accordion-button collapsed"
+                data-bs-toggle="collapse" data-bs-target="#collapseSummaryEditor"
+                aria-expanded="false" aria-controls="collapseSummaryEditor">
+            <s:text name="weblogEdit.summary"/>
+        </button>
+    </h2>
+    <div id="collapseSummaryEditor" class="accordion-collapse collapse">
+        <div class="accordion-body">
 
             <s:textarea id="edit_summary" name="bean.summary"
                         tabindex="6" rows="10" cssClass="col-sm-12" theme="simple"/>

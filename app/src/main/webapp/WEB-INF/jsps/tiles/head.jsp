@@ -32,6 +32,7 @@ You can override it with your own file via WEB-INF/tiles-def.xml
      the URL. Keeping the +1 here 404s and breaks the date picker/autocomplete. --%>
 <script src="<s:url value='/webjars/jquery-ui/1.14.2/jquery-ui.min.js' />"></script>
 <link href="<s:url value='/webjars/jquery-ui/1.14.2/jquery-ui.css' />" rel="stylesheet" />
+<script src="<s:url value='/roller-ui/scripts/date-fields.js' />"></script>
 
 <script src="<s:url value='/webjars/jquery-validation/1.21.0/jquery.validate.min.js' />"></script>
 

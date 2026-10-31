@@ -99,7 +99,7 @@ public class GlobalCommentManagement extends UIAction {
     public void loadComments() {
         
         List<WeblogEntryComment> comments = Collections.emptyList();
-        boolean hasMore = false;
+        long totalCount = 0;
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
 
@@ -109,19 +109,13 @@ public class GlobalCommentManagement extends UIAction {
             csc.setEndDate(getBean().getEndDate());
             csc.setStatus(getBean().getStatus());
             csc.setReverseChrono(true);
+            totalCount = wmgr.getCommentCount(csc);
             csc.setOffset(getBean().getPage() * COUNT);
-            csc.setMaxResults(COUNT+1);
+            csc.setMaxResults(COUNT);
 
-            List<WeblogEntryComment> rawComments = wmgr.getComments(csc);
-            comments = new ArrayList<>();
-            comments.addAll(rawComments);   
+            comments = new ArrayList<>(wmgr.getComments(csc));
             
             if(!comments.isEmpty()) {
-                if(comments.size() > COUNT) {
-                    comments.remove(comments.size()-1);
-                    hasMore = true;
-                }
-                
                 setFirstComment(comments.get(0));
                 setLastComment(comments.get(comments.size()-1));
             }
@@ -132,7 +126,7 @@ public class GlobalCommentManagement extends UIAction {
         
         // build comments pager
         String baseUrl = buildBaseUrl();
-        setPager(new CommentsPager(baseUrl, getBean().getPage(), comments, hasMore));
+        setPager(new CommentsPager(baseUrl, getBean().getPage(), comments, totalCount, COUNT));
     }
     
     
@@ -184,25 +178,9 @@ public class GlobalCommentManagement extends UIAction {
         // load bean data using comments list
         getBean().loadCheckboxes(getPager().getItems());
         
-        try {
-            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-
-            CommentSearchCriteria csc = new CommentSearchCriteria();
-            csc.setSearchText(getBean().getSearchString());
-            csc.setStartDate(getBean().getStartDate());
-            csc.setEndDate(getBean().getEndDate());
-            csc.setStatus(getBean().getStatus());
-            csc.setReverseChrono(true);
-
-            List<WeblogEntryComment> allMatchingComments = wmgr.getComments(csc);
-
-            if(allMatchingComments.size() > COUNT) {
-                setBulkDeleteCount(allMatchingComments.size());
-            }
-            
-        } catch (WebloggerException ex) {
-            log.error("Error looking up comments", ex);
-            addError("commentManagement.lookupError");
+        // offer bulk delete when the matches span more than one page
+        if (getPager().getTotalCount() > COUNT) {
+            setBulkDeleteCount((int) getPager().getTotalCount());
         }
         
         return LIST;

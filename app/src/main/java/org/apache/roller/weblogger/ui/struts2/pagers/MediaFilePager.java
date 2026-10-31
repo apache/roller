@@ -23,8 +23,9 @@ import java.util.List;
 import org.apache.roller.weblogger.pojos.MediaFile;
 
 /**
- * A pager implementation for a collection of media files.
- *
+ * A pager implementation for a collection of media files. Media file search
+ * is a POSTed form, so instead of links this exposes page numbers that the
+ * page resubmits the search form with.
  */
 public class MediaFilePager {
     
@@ -34,13 +35,16 @@ public class MediaFilePager {
     // What page we are on
     private final int pageNum;
     
-    // Are there more items?
-    private final boolean moreItems;
+    // media files matching the search across all pages
+    private final long totalCount;
+
+    private final int pageSize;
     
-    public MediaFilePager(int page, List<MediaFile> mediaFiles, boolean hasMore) {
+    public MediaFilePager(int page, List<MediaFile> mediaFiles, long totalCount, int pageSize) {
         this.pageNum = page;
         this.items = mediaFiles;
-        this.moreItems = hasMore;
+        this.totalCount = totalCount;
+        this.pageSize = pageSize;
     }
     
     public List<MediaFile> getItems() {
@@ -48,33 +52,26 @@ public class MediaFilePager {
     }
 
     public boolean isMoreItems() {
-        return moreItems;
+        return (long) (pageNum + 1) * pageSize < totalCount;
     }
 
-    /**
-     * Indicates whether there are more than one page of item.
-     * 
-     */
-    public boolean isJustOnePage() {
-    	return (pageNum == 0 && !moreItems);
+    public long getTotalCount() {
+        return totalCount;
     }
-    
-    /**
-     * Has previous page?
-     * 
-     */
-    public boolean hasPrevious() {
-    	return (pageNum > 0);
+
+    /** Zero-based page number, as the search form submits it. */
+    public int getPageNum() {
+        return pageNum;
     }
-    
-    /**
-     * Has next page?
-     * 
-     */
-    public boolean hasNext() {
-    	return this.moreItems;
+
+    /** One-based page number, for display. */
+    public int getPageNumber() {
+        return pageNum + 1;
     }
-    
-    
+
+    /** Number of pages; at least 1, so an empty result reads "Page 1 of 1". */
+    public int getPageCount() {
+        return (int) Math.max(1, (totalCount + pageSize - 1) / pageSize);
+    }
 
 }

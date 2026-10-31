@@ -30,7 +30,6 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
-import com.microsoft.playwright.TimeoutError;
 import com.microsoft.playwright.Tracing;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -345,39 +344,29 @@ abstract class BaseIT {
         }
     }
 
-    private static final String ADVANCED_PANEL = "#collapseAdvanced";
-    private static final String PUBLISHING_TIME_TOPS = "() => ['hours', 'minutes', 'seconds'].map(name =>"
-            + " document.querySelector(`select[name='bean.${name}']`).getBoundingClientRect().top)";
-
     /**
      * Expands the entry editor's advanced settings and checks the publishing
      * time's hour, minute and second selects sit on one line rather than as
      * stacked form rows.
      */
     protected void assertPublishingTimeOnOneLine() {
-        // the selects only settle into place once Bootstrap has finished
-        // animating the panel open, so wait for the shown event
-        page.evaluate("sel => document.querySelector(sel).addEventListener('shown.bs.collapse',"
-                + " () => window.rollerAdvancedShown = true, {once: true})", ADVANCED_PANEL);
-        page.locator("a[href='" + ADVANCED_PANEL + "']").click();
+        // Wait for the collapse animation to end, then read all three positions
+        // in one pass so the panel or page cannot move between readings.
+        page.evaluate("() => document.querySelector('#collapseAdvanced').addEventListener('shown.bs.collapse',"
+                + " () => window.rollerAdvancedShown = true, {once: true})");
+        page.locator("[data-bs-target='#collapseAdvanced']").click();
         page.waitForFunction("() => window.rollerAdvancedShown === true");
-        assertThat(page.locator(ADVANCED_PANEL)).isVisible();
-
-        // poll until the three selects share a line, retrying the way
-        // Playwright's own assertions do; a timeout falls through to the
-        // assertion below, which reports where they ended up
-        try {
-            page.waitForFunction("() => { const y = (" + PUBLISHING_TIME_TOPS + ")();"
-                    + " return Math.abs(y[0] - y[1]) < 2 && Math.abs(y[1] - y[2]) < 2; }");
-        } catch (TimeoutError e) {
-            // reported by the assertion below
+        assertThat(page.locator("#collapseAdvanced")).isVisible();
+        // a hidden select reports top 0, so make sure all three are shown
+        for (String field : List.of("hours", "minutes", "seconds")) {
+            assertThat(page.locator("select[name='bean." + field + "']")).isVisible();
         }
-        // read all three positions in one pass, so a layout shift between
-        // separate reads can't make them disagree
-        List<?> tops = (List<?>) page.evaluate(PUBLISHING_TIME_TOPS);
-        double hours = ((Number) tops.get(0)).doubleValue();
-        double minutes = ((Number) tops.get(1)).doubleValue();
-        double seconds = ((Number) tops.get(2)).doubleValue();
+        @SuppressWarnings("unchecked")
+        List<Number> tops = (List<Number>) page.evaluate("() => ['hours', 'minutes', 'seconds'].map(n =>"
+                + " document.querySelector(`select[name='bean.${n}']`).getBoundingClientRect().top)");
+        double hours = tops.get(0).doubleValue();
+        double minutes = tops.get(1).doubleValue();
+        double seconds = tops.get(2).doubleValue();
         org.junit.jupiter.api.Assertions.assertTrue(
                 Math.abs(hours - minutes) < 2 && Math.abs(minutes - seconds) < 2,
                 "publishing time selects should share a line, but sit at y=" + hours + ", " + minutes + ", " + seconds);
