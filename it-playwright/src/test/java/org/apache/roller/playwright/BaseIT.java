@@ -357,6 +357,10 @@ abstract class BaseIT {
         page.locator("a[href='#collapseAdvanced']").click();
         page.waitForFunction("() => window.rollerAdvancedShown === true");
         assertThat(page.locator("#collapseAdvanced")).isVisible();
+        // a hidden select reports top 0, so make sure all three are shown
+        for (String field : List.of("hours", "minutes", "seconds")) {
+            assertThat(page.locator("select[name='bean." + field + "']")).isVisible();
+        }
         @SuppressWarnings("unchecked")
         List<Number> tops = (List<Number>) page.evaluate("() => ['hours', 'minutes', 'seconds'].map(n =>"
                 + " document.querySelector(`select[name='bean.${n}']`).getBoundingClientRect().top)");
