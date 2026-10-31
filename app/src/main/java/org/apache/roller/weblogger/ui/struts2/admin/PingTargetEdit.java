@@ -18,6 +18,8 @@
 
 package org.apache.roller.weblogger.ui.struts2.admin;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,6 +44,8 @@ public class PingTargetEdit extends UIAction {
 
     // ping target we are working on, if any
     private PingTarget pingTarget = null;
+
+    private String httpMethod = "GET";
 
     public PingTargetEdit() {
         this.desiredMenu = "admin";
@@ -85,6 +89,10 @@ public class PingTargetEdit extends UIAction {
      */
     @Override
     public String execute() {
+        if (!"POST".equals(httpMethod)) {
+            return INPUT;
+        }
+
         myValidate();
 
         if (!hasActionErrors()) {
@@ -148,5 +156,11 @@ public class PingTargetEdit extends UIAction {
 
     public void setBean(PingTargetBean bean) {
         this.bean = bean;
+    }
+
+    @Override
+    public void withServletRequest(HttpServletRequest req) {
+        super.withServletRequest(req);
+        httpMethod = req.getMethod();
     }
 }

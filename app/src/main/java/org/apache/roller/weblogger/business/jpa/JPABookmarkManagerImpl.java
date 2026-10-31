@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.util.LinkScheme;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.JDOMParseException;
@@ -228,6 +229,19 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
         desc =    null!=desc ? desc : title;
         xmlUrl =  null!=xmlUrl ? xmlUrl : url;
         url =     null!=htmlUrl ? htmlUrl : url;
+
+        // keep only web links; an outline with anything else gets no url
+        String importedUrl = url;
+        String importedXmlUrl = xmlUrl;
+        url = webLinkOrNull(url);
+        xmlUrl = webLinkOrNull(xmlUrl);
+        if (importedUrl != null && url == null) {
+            log.warn("OPML import skipped outline '" + title
+                    + "': its link is not an absolute http or https URL: " + importedUrl);
+        } else if (importedXmlUrl != null && xmlUrl == null) {
+            log.warn("OPML import dropped the feed URL of outline '" + title
+                    + "': it is not an absolute http or https URL: " + importedXmlUrl);
+        }
         
         // better to truncate imported OPML fields than to fail import or drop whole bookmark
         int maxLength = RollerConstants.TEXTWIDTH_255;
@@ -268,6 +282,25 @@ public class JPABookmarkManagerImpl implements BookmarkManager {
                 importOpmlElement(subelem, folder );
             }
         }
+    }
+
+    /**
+     * Returns the value, trimmed, if it is an absolute http or https URL with
+     * a host, else null. The scheme is read as the blogroll reads it (see
+     * {@link LinkScheme#of(String)}), so links that browsers accept are kept.
+     */
+    static String webLinkOrNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        String scheme = LinkScheme.of(value);
+        if ("http".equals(scheme) || "https".equals(scheme)) {
+            String rest = LinkScheme.compact(value).substring(scheme.length() + 1);
+            if (rest.startsWith("//") && rest.length() > 2 && rest.charAt(2) != '/') {
+                return value.trim();
+            }
+        }
+        return null;
     }
 
     /**

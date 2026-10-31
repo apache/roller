@@ -117,7 +117,7 @@ public class PingTargets extends UIAction {
             addError("commonPingTargets.error.enabling");
         }
         
-        return LIST;
+        return DONE;
     }
     
     
@@ -141,7 +141,7 @@ public class PingTargets extends UIAction {
             addError("commonPingTargets.error.disabling");
         }
         
-        return LIST;
+        return DONE;
     }
 
     /**

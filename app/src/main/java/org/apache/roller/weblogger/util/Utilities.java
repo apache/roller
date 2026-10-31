@@ -188,23 +188,32 @@ public class Utilities {
         while (beginTag >= start) {
             if (beginTag > 0) {
                 ret.append(str.substring(start, beginTag));
-
-                // replace each tag with a space (looks better)
-                if (addSpace) {
-                    ret.append(" ");
-                }
             }
             endTag = str.indexOf('>', beginTag);
 
             // if endTag found move "cursor" forward
             if (endTag > -1) {
+                // replace each tag with a space (looks better)
+                if (addSpace && beginTag > 0) {
+                    ret.append(" ");
+                }
                 start = endTag + 1;
                 beginTag = str.indexOf('<', start);
             }
-            // if no endTag found, get rest of str and break
+            // if no endTag found, drop the rest if this '<' starts a tag,
+            // which a browser would still parse as markup; otherwise keep the
+            // '<' as text and look at the next one
             else {
-                ret.append(str.substring(beginTag));
-                break;
+                if (startsTag(str, beginTag)) {
+                    break;
+                }
+                ret.append('<');
+                start = beginTag + 1;
+                beginTag = str.indexOf('<', start);
+                if (beginTag == -1) {
+                    ret.append(str.substring(start));
+                    break;
+                }
             }
         }
         // append everything after the last endTag
@@ -212,6 +221,40 @@ public class Utilities {
             ret.append(str.substring(endTag + 1));
         }
         return ret.toString().trim();
+    }
+
+    /**
+     * True if the unclosed '&lt;' at the given index opens a comment, a
+     * declaration, an end tag, or a tag with attributes: a tag name, then
+     * whitespace or '/', and an '=' later on. Text such as "x&lt;y" or
+     * "a&lt;b and b&lt;c" is not a tag.
+     */
+    private static boolean startsTag(String str, int index) {
+        int i = index + 1;
+        if (i >= str.length()) {
+            return false;
+        }
+        char next = str.charAt(i);
+        if (next == '/' || next == '!' || next == '?') {
+            return true;
+        }
+        if (!isAsciiLetter(next)) {
+            return false;
+        }
+        while (i < str.length() && (isAsciiLetter(str.charAt(i))
+                || Character.isDigit(str.charAt(i)) || str.charAt(i) == '-')) {
+            i++;
+        }
+        if (i >= str.length()) {
+            return false;
+        }
+        char after = str.charAt(i);
+        return (Character.isWhitespace(after) || after == '/')
+                && str.indexOf('=', i) > -1;
+    }
+
+    private static boolean isAsciiLetter(char c) {
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
     }
 
     // ------------------------------------------------------------------------

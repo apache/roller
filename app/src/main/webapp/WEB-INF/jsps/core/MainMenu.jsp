@@ -34,19 +34,19 @@
             <s:param value="#invite.weblog.handle" />
         </s:text>
         
-        <s:url action="menu!accept" var="acceptInvite">
-            <s:param name="inviteId" value="#invite.weblog.id" />
-        </s:url>
-        <a href='<s:property value="acceptInvite" />'>
-            <s:text name="yourWebsites.accept" />
-        </a> 
+        <s:url action="menu!accept" var="acceptInvite" />
+        <form action="<s:property value="#acceptInvite" />" method="post" style="display: inline;">
+            <input type="hidden" name="salt" value="<s:property value="salt" />" />
+            <input type="hidden" name="inviteId" value="<s:property value="#invite.weblog.id" />" />
+            <button type="submit" class="btn btn-link" style="padding: 0; border: 0; vertical-align: baseline;"><s:text name="yourWebsites.accept" /></button>
+        </form>
         &nbsp;|&nbsp;
-        <s:url action="menu!decline" var="declineInvite">
-            <s:param name="inviteId" value="#invite.weblog.id" />
-        </s:url>
-        <a href='<s:property value="declineInvite" />'>
-            <s:text name="yourWebsites.decline" />
-        </a><br />
+        <s:url action="menu!decline" var="declineInvite" />
+        <form action="<s:property value="#declineInvite" />" method="post" style="display: inline;">
+            <input type="hidden" name="salt" value="<s:property value="salt" />" />
+            <input type="hidden" name="inviteId" value="<s:property value="#invite.weblog.id" />" />
+            <button type="submit" class="btn btn-link" style="padding: 0; border: 0; vertical-align: baseline;"><s:text name="yourWebsites.decline" /></button>
+        </form><br />
     </s:iterator>
     <br />
 </s:elseif>
@@ -71,7 +71,7 @@
             <p> <a href='<s:property value="#perms.weblog.absoluteURL" />'>
             <s:property value="#perms.weblog.absoluteURL" /></a></p>
 
-            <p><s:property value="#perms.weblog.about" escapeHtml="false" /></p>
+            <p><s:property value="#perms.weblog.about" /></p>
 
             <p>You have 
             <s:if test='#perms.hasAction("admin")'>ADMIN </s:if>
