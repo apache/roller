@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="$model.weblog.localeInstance.toLanguageTag()">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>Archives &middot; $model.weblog.name</title>
+  </head>
+  <body>
+    #includeTemplate($model.weblog "standard_sidebar")
+
+    <main class="content container">
+      <div class="page archives">
+        <h1 class="page-title">Archives</h1>
+        <p class="post-date">$model.weblog.entryCount #if($model.weblog.entryCount == 1)post#{else}posts#end</p>
+
+        #set($archiveEntries = $model.weblog.getRecentWeblogEntries("nil", 100))
+        #set($currentYear = "")
+        #foreach($archiveEntry in $archiveEntries)
+          #set($entryYear = $utils.formatDate($archiveEntry.pubTime, "yyyy"))
+          #if($entryYear != $currentYear)
+            #if($currentYear != "")
+        </ul>
+            #end
+            #set($currentYear = $entryYear)
+        <h2>$entryYear</h2>
+        <ul class="related-posts archive-list">
+          #end
+          <li>
+            <h3>
+              <a href="$url.entry($archiveEntry.anchor)">
+                $archiveEntry.title
+                <small>$utils.formatDate($archiveEntry.pubTime, "dd MMM")</small>
+              </a>
+            </h3>
+          </li>
+        #end
+        #if($currentYear != "")
+        </ul>
+        #end
+        ## Roller returns at most 100 recent entries, so send readers to the
+        ## month archives for the rest.
+        #if($archiveEntries.size() > 0 && $model.weblog.entryCount > $archiveEntries.size())
+          #set($lastIndex = $archiveEntries.size() - 1)
+          #set($oldestEntry = $archiveEntries.get($lastIndex))
+        <p><a href="$url.date($utils.formatDate($oldestEntry.pubTime, "yyyyMM"))">Older posts by month, from $utils.formatDate($oldestEntry.pubTime, "MMMM yyyy") &rarr;</a></p>
+        #end
+
+        #set($archiveCategories = $model.weblog.weblogCategories)
+        #if($archiveCategories.size() > 0)
+        <h2>Categories</h2>
+        <ul class="archive-terms">
+          #foreach($archiveCategory in $archiveCategories)
+          <li><a href="$url.category($archiveCategory.name)">$archiveCategory.name</a></li>
+          #end
+        </ul>
+        #end
+
+        #set($archiveTags = $model.weblog.getPopularTags(-1, 50))
+        #if($archiveTags.size() > 0)
+        <h2>Tags</h2>
+        <ul class="archive-terms">
+          #foreach($archiveTag in $archiveTags)
+          <li><a href="$url.tag($archiveTag.name)">$archiveTag.name</a> <small>($archiveTag.count)</small></li>
+          #end
+        </ul>
+        #end
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+## Terminal's header.html, logo.html, menu.html, and mobile-menu.html.
+## The mobile menu uses <details> instead of Terminal's menu.js.
+#set($navPages = [])
+#foreach($navPage in $model.weblog.templates)
+  #if($navPage.navbar && !$navPage.hidden && $navPage.link)
+    #set($added = $navPages.add($navPage))
+  #end
+#end
+<header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="$url.home">
+        <div class="logo">$model.weblog.name</div>
+      </a>
+    </div>
+    <details class="menu menu--mobile">
+      <summary class="menu__trigger">Menu&nbsp;&#9662;</summary>
+      <ul class="menu__dropdown">
+        <li><a href="$url.home">Home</a></li>
+        #foreach($navPage in $navPages)
+        <li><a href="$url.page($navPage.link)">$navPage.name</a></li>
+        #end
+        <li><a href="$url.search">Search</a></li>
+      </ul>
+    </details>
+  </div>
+  <nav class="navigation-menu" aria-label="Pages">
+    <ul class="navigation-menu__inner menu--desktop">
+      <li><a href="$url.home">Home</a></li>
+      #foreach($navPage in $navPages)
+      <li><a href="$url.page($navPage.link)"#if($model.weblogPage && $model.weblogPage.id == $navPage.id) aria-current="page"#end>$navPage.name</a></li>
+      #end
+      <li><a href="$url.search"#if($model.searchResults) aria-current="page"#end>Search</a></li>
+    </ul>
+  </nav>
+</header>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    #if($model.weblogCategory)
+    <title>$model.weblogCategory.name | $model.weblog.name</title>
+    #else
+    <title>$model.weblog.name#if($utils.isNotEmpty($model.weblog.tagline)) | $model.weblog.tagline#end</title>
+    #end
+  </head>
+  <body class="list" id="top">
+    #includeTemplate($model.weblog "standard_header")
+    <main class="main">
+      #set($pager = $model.getWeblogEntriesPager())
+      ## Page 1 of the latest-entries view is the home page; category and date
+      ## archives (which have next/previous collection links) are not.
+      #set($pageParam = $model.getRequestParameter("page"))
+      #set($isHome = !$model.weblogCategory && !$pager.prevLink && !$pager.prevCollectionLink && !$pager.nextCollectionLink && (!$pageParam || $pageParam == "0"))
+      #set($firstEntry = false)
+      #if($model.weblogCategory)
+      <header class="page-header">
+        <h1>$model.weblogCategory.name</h1>
+        #if($utils.isNotEmpty($model.weblogCategory.description))
+        <div class="post-description">$model.weblogCategory.description</div>
+        #end
+      </header>
+      #elseif($isHome && $utils.isNotEmpty($model.weblog.about))
+      <article class="first-entry home-info">
+        <header class="entry-header">
+          <h1>$model.weblog.name</h1>
+        </header>
+        <div class="entry-content md-content">
+          #set($about = $model.weblog.about.trim())
+          #if($about.startsWith("<"))$about#{else}<p>$about</p>#end
+        </div>
+      </article>
+      #elseif($isHome)
+      #set($firstEntry = true)
+      #end
+      #includeTemplate($model.weblog "_post_list")
+    </main>
+    #includeTemplate($model.weblog "standard_footer")
+  </body>
+</html>

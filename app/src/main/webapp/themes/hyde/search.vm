@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="$model.weblog.localeInstance.toLanguageTag()">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>Search: $model.term &middot; $model.weblog.name</title>
+  </head>
+  <body>
+    #includeTemplate($model.weblog "standard_sidebar")
+
+    <main class="content container">
+      <div class="page">
+        <h1 class="page-title">Search</h1>
+        <form class="search-form" method="get" action="$url.search" role="search">
+          <label class="sr-only" for="search-q">Search $model.weblog.name</label>
+          <input id="search-q" name="q" type="search" value="$model.term">
+          <button type="submit">Search</button>
+        </form>
+        #if($utils.isNotEmpty($model.errorMessage))
+        <p class="message">$model.errorMessage</p>
+        #elseif($model.hits > 0)
+        #set($firstHit = $model.offset + 1)
+        #set($lastHit = $model.offset + $model.limit)
+        #if($lastHit > $model.hits)#set($lastHit = $model.hits)#end
+        <p class="post-date">Showing $firstHit&ndash;$lastHit of $model.hits #if($model.hits == 1)result#{else}results#end for &ldquo;$model.term&rdquo;</p>
+        #elseif($utils.isNotEmpty($model.term))
+        <p class="message">No posts matched &ldquo;$model.term&rdquo;. Try a different word.</p>
+        #end
+      </div>
+      #if($model.hits > 0)
+      #set($pager = $model.getWeblogEntriesPager())
+      #includeTemplate($model.weblog "_post_list")
+      #end
+    </main>
+  </body>
+</html>
