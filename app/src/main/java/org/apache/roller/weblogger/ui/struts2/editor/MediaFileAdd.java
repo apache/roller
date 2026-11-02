@@ -287,7 +287,10 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
                         newFiles.add(mediaFile);
                     }
                     uploadResults.add(UploadResult.uploaded(mediaFile));
+                    // the completion URL names no folder, so take it from the files
+                    setDirectory(mediaFile.getDirectory());
                     bean.setDirectoryId(mediaFile.getDirectory().getId());
+                    directoryName = mediaFile.getDirectory().getName();
                 } catch (WebloggerException ex) {
                     log.error("Error looking up uploaded media file " + id, ex);
                 }

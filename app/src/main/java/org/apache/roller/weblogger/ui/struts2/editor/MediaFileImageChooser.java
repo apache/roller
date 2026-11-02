@@ -81,12 +81,6 @@ public class MediaFileImageChooser extends MediaFileBase {
     }
 
     /**
-     * Fetches and displays list of media file for the given directory. The
-     * directory could be chosen by ID or path.
-     * 
-     * @return String The result of the action.
-     */
-    /**
      * Shows a page of a folder's files, newest first, optionally only those
      * whose name starts with the search text. Same query as the library.
      */

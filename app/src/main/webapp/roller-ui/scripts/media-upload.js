@@ -88,6 +88,9 @@
     // ----- the file list ----------------------------------------------------
 
     function addFiles(files) {
+        if (busy) {
+            return; // the list is fixed while a request is out; see update()
+        }
         Array.prototype.forEach.call(files, function (file) {
             var duplicate = entries.some(function (e) {
                 return e.state !== "uploaded" && e.file.name === file.name
@@ -179,6 +182,11 @@
         var anyUploaded = uploadedIds.length > 0;
 
         button.disabled = busy || sendable.length === 0 || sendable.length > maxFiles;
+        // no files can be added while a request is out, so none is left behind
+        // when the page moves on
+        input.disabled = busy;
+        dropZone.classList.toggle("disabled", busy);
+        dropZone.setAttribute("aria-disabled", String(busy));
         buttonLabel.textContent = anyUploaded && anyFailed ? text("retry") : uploadLabel;
 
         continueLink.hidden = busy || !anyUploaded;
@@ -308,7 +316,10 @@
                 var failed = entries.filter(function (e) {
                     return e.state === "failed";
                 }).length;
-                if (failed === 0 && uploadedIds.length > 0) {
+                var allUploaded = entries.every(function (e) {
+                    return e.state === "uploaded";
+                });
+                if (allUploaded && uploadedIds.length > 0) {
                     window.location.href = continueLink.href;
                 } else if (uploadedIds.length > 0) {
                     showStatus(format(text("some-failed"), uploadedIds.length, failed));

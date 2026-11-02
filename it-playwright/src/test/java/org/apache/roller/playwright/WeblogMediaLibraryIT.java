@@ -26,12 +26,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Route;
 import com.microsoft.playwright.options.FilePayload;
 import com.microsoft.playwright.options.SelectOption;
 
@@ -378,6 +380,87 @@ class WeblogMediaLibraryIT extends BaseIT {
     // ----------------------------------------------------------------------
 
     /** Creates a folder with a unique name from the library page and returns its name. */
+    @Test
+    @DisplayName("accepts no new files while an upload is in progress, so none is left behind")
+    void refusesFilesWhileUploading() {
+        String folder = createFolder("busy");
+        upload(folder, png("inflight.png", Color.CYAN));
+
+        // hold the upload request until the page has been checked
+        AtomicReference<Route> held = new AtomicReference<>();
+        page.route("**/mediaFileAdd!save.rol**", route -> {
+            if ("POST".equals(route.request().method())) {
+                held.set(route);
+            } else {
+                route.resume();
+            }
+        });
+        page.locator(UPLOAD_BUTTON).click();
+        page.waitForCondition(() -> held.get() != null);
+        assertThat(page.locator(FILE_INPUT)).isDisabled();
+
+        held.get().resume();
+        assertThat(page).hasTitle(Pattern.compile("Media File Upload Complete"));
+        page.unrouteAll();
+        openFolder(folder);
+        assertThat(page.locator(CARD)).hasCount(1);
+    }
+
+    @Test
+    @DisplayName("keeps the details form after a validation error, so the values can be corrected")
+    void correctsInvalidDetails() {
+        String folder = createFolder("invalid");
+        upload(folder, png("fixme.png", Color.PINK));
+        page.locator(UPLOAD_BUTTON).click();
+        assertThat(page).hasTitle(Pattern.compile("Media File Upload Complete"));
+
+        openFolder(folder);
+        card("fixme.png").locator(CARD_NAME).click();
+        Locator name = page.locator("#mediaFileEditForm input[name='bean.name']");
+        name.fill("");
+        page.locator(DETAILS_SAVE).click();
+        assertThat(page.locator(".alert-danger").first()).containsText("Name is a required field");
+        assertThat(page.locator("#mediaFileEditForm")).hasCount(1);
+
+        page.locator("#mediaFileEditForm input[name='bean.name']").fill("fixed.png");
+        page.locator(DETAILS_SAVE).click();
+        assertThat(page.locator(MESSAGES)).containsText("updated");
+        assertThat(page.locator(DETAILS_NAME)).hasText("fixed.png");
+    }
+
+    @Test
+    @DisplayName("uploads a second batch into the same folder from the success page")
+    void uploadMoreKeepsTheFolder() {
+        String folder = createFolder("again");
+        upload(folder, png("first.png", Color.RED));
+        page.locator(UPLOAD_BUTTON).click();
+        assertThat(page).hasTitle(Pattern.compile("Media File Upload Complete"));
+
+        page.getByText("Upload more files").click();
+        assertThat(page.locator("#uploadFolder option:checked")).hasText(folder);
+        page.locator(FILE_INPUT).setInputFiles(png("second.png", Color.GREEN));
+        page.locator(UPLOAD_BUTTON).click();
+        assertThat(page).hasTitle(Pattern.compile("Media File Upload Complete"));
+
+        openFolder(folder);
+        assertThat(page.locator(CARD)).hasCount(2);
+    }
+
+    @Test
+    @DisplayName("creates a folder on a narrow screen, where the folder list is hidden")
+    void createsAFolderOnANarrowScreen() {
+        page.setViewportSize(390, 844);
+        goTo(LIBRARY_PAGE);
+        assertThat(page.locator("#folderPicker")).isVisible();
+        assertThat(page.locator(".media-folder-list")).isHidden();
+
+        String name = "narrow" + (System.nanoTime() % 1_000_000);
+        page.locator(NEW_FOLDER_BUTTON).click();
+        page.locator(NEW_FOLDER_NAME).fill(name);
+        page.locator(NEW_FOLDER_CREATE).click();
+        assertThat(page.locator("#folderPicker option:checked")).hasText(name);
+    }
+
     private String createFolder(String prefix) {
         String name = prefix + (System.nanoTime() % 1_000_000);
         goTo(LIBRARY_PAGE);

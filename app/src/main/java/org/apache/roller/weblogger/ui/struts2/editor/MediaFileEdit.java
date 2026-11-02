@@ -82,8 +82,14 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(getActionWeblog(), bean.getDirectoryId()));
             }
+            // Loaded here, not only in execute() and save(): when field
+            // validation fails, Struts returns INPUT without calling save(),
+            // and the page still needs the file to show the form again.
+            if (!StringUtils.isEmpty(getMediaFileId())) {
+                this.mediaFile = mgr.getMediaFile(getActionWeblog(), getMediaFileId());
+            }
         } catch (WebloggerException ex) {
-            log.error("Error looking up media file directory", ex);
+            log.error("Error looking up media file or directory", ex);
         }
 
     }
@@ -220,8 +226,8 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
 
     /**
      * The library page to return to. Only the query string comes from the
-     * request, and only URL-safe characters are kept, so the link always
-     * points at the library of this weblog.
+     * request, and only URL-safe characters are kept. getLibraryURL() sets
+     * the weblog itself, so the link always points at this weblog's library.
      */
     @StrutsParameter
     public void setReturnQuery(String returnQuery) {
@@ -230,12 +236,17 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
     }
 
     public String getLibraryURL() {
-        String query = returnQuery;
-        if (StringUtils.isEmpty(query)) {
-            query = "weblog=" + URLUtilities.encode(getActionWeblog().getHandle());
-            if (mediaFile != null) {
-                query += "&directoryId=" + URLUtilities.encode(mediaFile.getDirectory().getId());
+        StringBuilder query = new StringBuilder("weblog=")
+                .append(URLUtilities.encode(getActionWeblog().getHandle()));
+        if (StringUtils.isNotEmpty(returnQuery)) {
+            // any weblog in the returned query is dropped; this one is used
+            for (String param : StringUtils.split(returnQuery, '&')) {
+                if (!param.equals("weblog") && !param.startsWith("weblog=")) {
+                    query.append('&').append(param);
+                }
             }
+        } else if (mediaFile != null) {
+            query.append("&directoryId=").append(URLUtilities.encode(mediaFile.getDirectory().getId()));
         }
         return WebloggerRuntimeConfig.getRelativeContextURL()
                 + "/roller-ui/authoring/mediaFileView.rol?" + query;

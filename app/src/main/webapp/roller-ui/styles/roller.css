@@ -960,6 +960,10 @@ body {
     text-align: center;
 }
 
+.media-drop-zone.disabled {
+    opacity: 0.6;
+}
+
 .media-drop-zone.dragging {
     border-color: var(--bs-primary);
     background-color: var(--bs-primary-bg-subtle);
@@ -1077,8 +1081,9 @@ body {
     }
 }
 
-/* Narrow screens (media pages set a device-width viewport): the sidebar cards
-   give way to the folder picker in the page header */
+/* Narrow screens (media pages set a device-width viewport): the folder list
+   gives way to the folder picker in the page header. On the library page the
+   Folders card stays for its New folder form; elsewhere it is hidden. */
 .media-folder-picker {
     display: none;
 }
@@ -1090,7 +1095,8 @@ body {
         padding-right: 0.75rem;
     }
 
-    .roller-column-left .card:has(.media-folders),
+    .roller-column-left .card:has(.media-folders):not(:has(#newFolderForm)),
+    .media-folders .media-folder-list,
     .roller-branding-card {
         display: none;
     }

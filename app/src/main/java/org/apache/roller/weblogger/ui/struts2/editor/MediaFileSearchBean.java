@@ -140,8 +140,9 @@ public class MediaFileSearchBean {
         return page;
     }
 
+    /** Sets the page, kept small enough that page * PAGE_SIZE cannot overflow. */
     public void setPage(int page) {
-        this.page = Math.max(0, page);
+        this.page = Math.min(Math.max(0, page), Integer.MAX_VALUE / PAGE_SIZE);
     }
 
     public String getSortBy() {

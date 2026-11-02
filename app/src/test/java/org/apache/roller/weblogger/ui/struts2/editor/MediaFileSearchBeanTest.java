@@ -95,6 +95,15 @@ class MediaFileSearchBeanTest {
     }
 
     @Test
+    void hugePageStillGivesAPositiveStartIndex() {
+        MediaFileSearchBean bean = new MediaFileSearchBean();
+        bean.setPage(50_000_000);
+        MediaFileFilter filter = new MediaFileFilter();
+        bean.copyTo(filter);
+        assertTrue(filter.getStartIndex() >= 0, "start index " + filter.getStartIndex());
+    }
+
+    @Test
     void allFoldersScopeOnlyMattersWhenSearching() {
         MediaFileSearchBean bean = new MediaFileSearchBean();
         bean.setScope("all");
