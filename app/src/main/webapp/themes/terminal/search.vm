@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="$model.weblog.localeInstance.toLanguageTag()">
+  <head>
+    #includeTemplate($model.weblog "standard_head")
+    <title>Search: $model.term :: $model.weblog.name</title>
+  </head>
+  <body>
+    <div class="container">
+      #includeTemplate($model.weblog "standard_header")
+      <main class="content">
+        <h1>Search</h1>
+        <form class="search-form" method="get" action="$url.search" role="search">
+          <label class="sr-only" for="search-q">Search $model.weblog.name</label>
+          <span class="search-prompt" aria-hidden="true">$</span>
+          <input id="search-q" name="q" type="search" value="$model.term" placeholder="grep posts">
+          <button type="submit">Search</button>
+        </form>
+        #if($utils.isNotEmpty($model.errorMessage))
+        <p class="post-meta">$model.errorMessage</p>
+        #elseif($model.hits > 0)
+        #set($firstHit = $model.offset + 1)
+        #set($lastHit = $model.offset + $model.limit)
+        #if($lastHit > $model.hits)#set($lastHit = $model.hits)#end
+        <p class="post-meta">Showing $firstHit&ndash;$lastHit of $model.hits #if($model.hits == 1)result#{else}results#end for &ldquo;$model.term&rdquo;</p>
+        #set($pager = $model.getWeblogEntriesPager())
+        #includeTemplate($model.weblog "_post_list")
+        #elseif($utils.isNotEmpty($model.term))
+        <p class="post-meta">No posts matched &ldquo;$model.term&rdquo;. Try a different word.</p>
+        #end
+      </main>
+      #includeTemplate($model.weblog "standard_footer")
+    </div>
+  </body>
+</html>
