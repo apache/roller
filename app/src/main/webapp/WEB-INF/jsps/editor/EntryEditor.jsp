@@ -212,14 +212,19 @@
         $("#mediaFileEditor").attr('src', 'about:blank');
     }
 
-    function onSelectMediaFile(name, url, isImage) {
+    // Called by the media chooser. The markup is built with DOM APIs, so names,
+    // descriptions and URLs are escaped. The alt text is the file's description,
+    // or its name when it has none.
+    function onSelectMediaFile(name, url, isImage, alt) {
         $("#mediafile_edit_lightbox").modal("hide");
         $("#mediaFileEditor").attr('src', 'about:blank');
+        var link = $('<a>').attr('href', url);
         if (isImage === "true") {
-            insertMediaFile('<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name + '" /></a>');
+            link.append($('<img>').attr({src: url + '?t=true', alt: alt || name}));
         } else {
-            insertMediaFile('<a href="' + url + '">' + name + '</a>');
+            link.text(name);
         }
+        insertMediaFile(link.prop('outerHTML'));
     }
 
 </script>

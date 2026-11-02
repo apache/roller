@@ -17,143 +17,46 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<div class="sidebarFade">
-    <div class="menu-tr">
-        <div class="menu-tl">
-            <div class="sidebarInner">
+<%-- Media library sidebar: the weblog's folders. Roller folders are flat, so this is a plain list. --%>
 
-                <h3><s:text name="mediaFileSidebar.actions"/></h3>
+<nav class="media-folders" aria-labelledby="mediaFoldersHeading">
 
-                <div style="clear:right">
-                    <span class="bi bi-image"></span>
-                    <s:url var="mediaFileAddURL" action="mediaFileAdd">
-                        <s:param name="weblog" value="%{actionWeblog.handle}"/>
-                        <s:param name="directoryName" value="%{directoryName}"/>
-                    </s:url>
-                    <a href='<s:property escapeHtml="false" value="%{mediaFileAddURL}" />'
-                            <s:if test="actionName.equals('mediaFileAdd')"> style='font-weight:bold;'</s:if> >
-                        <s:text name="mediaFileSidebar.add"/>
-                    </a>
-                </div>
+    <div class="media-folders-header">
+        <h3 id="mediaFoldersHeading"><s:text name="mediaFileView.folders"/></h3>
+        <s:if test="actionName == 'mediaFileView'">
+            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse"
+                    data-bs-target="#newFolderForm" aria-expanded="false" aria-controls="newFolderForm">
+                <span class="bi bi-folder-plus" aria-hidden="true"></span>
+                <s:text name="mediaFileView.newFolder"/>
+            </button>
+        </s:if>
+    </div>
 
-                <s:if test="!pager">
-                    <%-- Only show Create New Directory control when NOT showing search results --%>
-
-                    <div style="clear:right; margin-top: 1em">
-
-                        <span class="bi bi-folder2-open"></span>
-                        <s:text name="mediaFileView.addDirectory"/> <br />
-
-                        <label for="newDirectoryName">
-                            <s:text name="mediaFileView.directoryName"/>
-                        </label>
-                        <input type="text" id="newDirectoryName" name="newDirectoryName" size="8" maxlength="25"/>
-
-                        <input type="button" id="newDirectoryButton" class="btn btn-primary" style="clear:left"
-                               value='<s:text name="mediaFileView.create" />' onclick="onCreateDirectory()"/>
-
-                    </div>
-                </s:if>
-
-                <hr size="1" noshade="noshade"/>
-
-                <h3><s:text name="mediaFileView.search"/></h3>
-
-                <s:form id="mediaFileSearchForm" name="mediaFileSearchForm"
-                        action="mediaFileView!search" theme="bootstrap" cssClass="form-vertical">
-                    <s:hidden name="salt"/>
-                    <s:hidden name="weblog"/>
-                    <input type="hidden" name="mediaFileId" value=""/>
-                    <%-- set by the result pager buttons; a new search starts at page 0 --%>
-                    <input type="hidden" id="beanPageNum" name="bean.pageNum" value="0"/>
-
-                    <s:textfield id="beanName" name="bean.name" size="20" maxlength="255"
-                                 label="%{getText('generic.name')}"/>
-
-                    <s:select id="beanType" name="bean.type"
-                              list="fileTypes" listKey="key" listValue="value"
-                              label="%{getText('mediaFileView.type')}"/>
-
-                    <s:select name="bean.sizeFilterType" id="sizeFilterTypeCombo"
-                              list="sizeFilterTypes" listKey="key" listValue="value"
-                              label="%{getText('mediaFileView.size')}"/>
-
-                    <s:textfield id="beanSize" name="bean.size" size="3" maxlength="10"/>
-
-                    <s:select name="bean.sizeUnit" list="sizeUnits" listKey="key" listValue="value"/>
-
-                    <s:textfield id="beanTags" name="bean.tags" size="20" maxlength="50"
-                                 label="%{getText('mediaFileView.tags')}"/>
-
-                    <s:submit id="searchButton" theme="simple" cssClass="btn btn-primary"
-                              value="%{getText('mediaFileView.search')}" cssStyle="margin:5px 0;"/>
-
-                    <s:if test="pager">
-                        <input id="resetButton" style="margin:5px 0;" type="button" class="btn btn-outline-secondary"
-                               name="reset" value='<s:text name="mediaFileView.reset" />'/>
-                    </s:if>
-
-                </s:form>
-
+    <s:if test="actionName == 'mediaFileView'">
+        <div id="newFolderForm" class="collapse media-new-folder">
+            <label class="form-label" for="newDirectoryName"><s:text name="mediaFileView.directoryName"/></label>
+            <div class="input-group input-group-sm">
+                <input type="text" id="newDirectoryName" class="form-control" maxlength="25"/>
+                <button type="button" id="newDirectoryButton" class="btn btn-primary" disabled>
+                    <s:text name="mediaFileView.create"/></button>
             </div>
         </div>
-    </div>
-</div>
+    </s:if>
 
-
-<script>
-
-    function onCreateDirectory() {
-        document.mediaFileViewForm.newDirectoryName.value = $("#newDirectoryName").get(0).value;
-        document.mediaFileViewForm.action = '<s:url action="mediaFileView!createNewDirectory" />';
-        document.mediaFileViewForm.submit();
-    }
-
-    $("#newDirectoryButton").ready(function () {
-        $("#newDirectoryName").bind("keyup", maintainDirectoryButtonState);
-        $("#newDirectoryButton").attr("disabled", true);
-    });
-
-    function maintainDirectoryButtonState(e) {
-        if (jQuery.trim($("#newDirectoryName").get(0).value).length === 0) {
-            $("#newDirectoryButton").attr("disabled", true);
-        } else {
-            $("#newDirectoryButton").attr("disabled", false);
-        }
-    }
-
-    // result pager buttons (MediaFilePager.jsp) resubmit this search for their page
-    $(document).on("click", ".media-search-page", function () {
-        $("#beanPageNum").val($(this).data("page"));
-        $("#mediaFileSearchForm").submit();
-    });
-
-    $("#searchButton").ready(function () {
-
-        maintainSearchButtonState();
-        $("input").bind("keyup", maintainSearchButtonState);
-        $("select").bind("change", maintainSearchButtonState);
-
-        $("#resetButton").bind("click", function () {
-            <s:url var="mediaFileViewURL" action="mediaFileView">
-            <s:param name="weblog" value="%{actionWeblog.handle}" />
+    <ul class="media-folder-list">
+        <s:iterator var="folder" value="allDirectories">
+            <s:url var="folderURL" escapeAmp="false" action="mediaFileView">
+                <s:param name="weblog" value="%{actionWeblog.handle}"/>
+                <s:param name="directoryId" value="%{#folder.id}"/>
             </s:url>
-            window.location = '<s:property value="%{mediaFileViewURL}" />';
-        });
-    });
+            <li>
+                <a href="<s:property value='%{folderURL}'/>"
+                   <s:if test="actionName == 'mediaFileView' && !(search && bean.allFolders) && #folder.id == currentDirectory.id">class="active" aria-current="page"</s:if>>
+                    <span class="bi bi-folder2" aria-hidden="true"></span>
+                    <span class="media-folder-name"><s:property value="#folder.name"/></span>
+                </a>
+            </li>
+        </s:iterator>
+    </ul>
 
-    function maintainSearchButtonState(e) {
-        var beanSize = $("#beanSize").get(0).value;
-        var beanType = $("#beanType").get(0).value;
-
-        if (jQuery.trim($("#beanName").get(0).value).length === 0
-            && jQuery.trim($("#beanTags").get(0).value).length === 0
-            && (jQuery.trim(beanSize).length === 0 || beanSize === 0)
-            && (beanType.length === 0 || beanType === "mediaFileView.any")) {
-            $("#searchButton").attr("disabled", true);
-        } else {
-            $("#searchButton").attr("disabled", false);
-        }
-    }
-
-</script>
+</nav>

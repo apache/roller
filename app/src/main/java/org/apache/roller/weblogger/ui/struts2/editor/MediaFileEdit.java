@@ -28,11 +28,13 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.struts2.action.UploadedFilesAware;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.util.RollerMessages;
+import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.dispatcher.multipart.UploadedFile;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
@@ -41,7 +43,9 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import java.util.List;
 
 /**
- * Edits metadata for a media file.
+ * The media file details page: a preview, facts and actions for one file,
+ * and a form to edit its metadata. It links back to the library page the
+ * user came from, which the library passes as returnQuery.
  */
 @SuppressWarnings("serial")
 // TODO: make this work @AllowedMethods({"execute","save"})
@@ -55,10 +59,16 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
     // by the actionFileUpload interceptor
     private UploadedFile uploadedFile = null;
 
+    // the file shown, as stored; the form edits a copy in the bean
+    private MediaFile mediaFile = null;
+
+    // library query string (MediaFileView.getLibraryQuery()) to return to
+    private String returnQuery = null;
+
     public MediaFileEdit() {
         this.actionName = "mediaFileEdit";
         this.desiredMenu = "editor";
-        this.pageTitle = "mediaFile.edit.title";
+        this.pageTitle = "mediaFileEdit.title";
     }
 
     /**
@@ -72,8 +82,14 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(getActionWeblog(), bean.getDirectoryId()));
             }
+            // Loaded here, not only in execute() and save(): when field
+            // validation fails, Struts returns INPUT without calling save(),
+            // and the page still needs the file to show the form again.
+            if (!StringUtils.isEmpty(getMediaFileId())) {
+                this.mediaFile = mgr.getMediaFile(getActionWeblog(), getMediaFileId());
+            }
         } catch (WebloggerException ex) {
-            log.error("Error looking up media file directory", ex);
+            log.error("Error looking up media file or directory", ex);
         }
 
     }
@@ -103,8 +119,12 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
     public String execute() {
         MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
         try {
-            MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), getMediaFileId());
-            this.bean.copyFrom(mediaFile);
+            this.mediaFile = manager.getMediaFile(getActionWeblog(), getMediaFileId());
+            if (this.mediaFile == null) {
+                addError("MediaFile.error.view");
+                return INPUT;
+            }
+            this.bean.copyFrom(this.mediaFile);
 
         } catch (FileIOException ex) {
             addError("uploadFiles.error.upload", bean.getName());
@@ -123,11 +143,24 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
      * @return String The result of the action.
      */
     public String save() {
+        if (this.mediaFile == null) {
+            try {
+                this.mediaFile = WebloggerFactory.getWeblogger().getMediaFileManager()
+                        .getMediaFile(getActionWeblog(), getMediaFileId());
+            } catch (WebloggerException ex) {
+                log.error("Error looking up media file " + getMediaFileId(), ex);
+            }
+        }
+        if (this.mediaFile == null) {
+            addError("MediaFile.error.view");
+            return INPUT;
+        }
         myValidate();
         if (!hasActionErrors()) {
             MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
             try {
                 MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), getMediaFileId());
+                this.mediaFile = mediaFile;
                 bean.copyTo(mediaFile);
                 if (getBooleanProp("mediafile.originalPathEdit.enabled")) {
                     mediaFile.setOriginalPath(bean.getOriginalPath());
@@ -167,6 +200,8 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
                 WebloggerFactory.getWeblogger().flush();
 
                 addMessage("mediaFile.update.success");
+                this.mediaFile = manager.getMediaFile(getActionWeblog(), getMediaFileId());
+                this.bean.copyFrom(this.mediaFile);
                 return SUCCESS;
 
             } catch (FileIOException ex) {
@@ -179,6 +214,42 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
 
         }
         return INPUT;
+    }
+
+    public MediaFile getMediaFile() {
+        return mediaFile;
+    }
+
+    public String getReturnQuery() {
+        return returnQuery;
+    }
+
+    /**
+     * The library page to return to. Only the query string comes from the
+     * request, and only URL-safe characters are kept. getLibraryURL() sets
+     * the weblog itself, so the link always points at this weblog's library.
+     */
+    @StrutsParameter
+    public void setReturnQuery(String returnQuery) {
+        this.returnQuery = returnQuery != null && returnQuery.length() <= 2000
+                && returnQuery.matches("[A-Za-z0-9._~%&=+-]*") ? returnQuery : null;
+    }
+
+    public String getLibraryURL() {
+        StringBuilder query = new StringBuilder("weblog=")
+                .append(URLUtilities.encode(getActionWeblog().getHandle()));
+        if (StringUtils.isNotEmpty(returnQuery)) {
+            // any weblog in the returned query is dropped; this one is used
+            for (String param : StringUtils.split(returnQuery, '&')) {
+                if (!param.equals("weblog") && !param.startsWith("weblog=")) {
+                    query.append('&').append(param);
+                }
+            }
+        } else if (mediaFile != null) {
+            query.append("&directoryId=").append(URLUtilities.encode(mediaFile.getDirectory().getId()));
+        }
+        return WebloggerRuntimeConfig.getRelativeContextURL()
+                + "/roller-ui/authoring/mediaFileView.rol?" + query;
     }
 
     @StrutsParameter(depth = 1)

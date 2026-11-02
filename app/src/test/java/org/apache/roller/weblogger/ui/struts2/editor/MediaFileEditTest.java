@@ -17,6 +17,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.roller.weblogger.business.MediaFileManager;
+import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.MediaFile;
@@ -57,6 +58,8 @@ class MediaFileEditTest {
         media = mock(MediaFileManager.class);
         Weblogger weblogger = mock(Weblogger.class);
         when(weblogger.getMediaFileManager()).thenReturn(media);
+        // save() shows the saved file again, which builds its URLs
+        when(weblogger.getUrlStrategy()).thenReturn(mock(URLStrategy.class));
         factory = mockStatic(WebloggerFactory.class);
         factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
 

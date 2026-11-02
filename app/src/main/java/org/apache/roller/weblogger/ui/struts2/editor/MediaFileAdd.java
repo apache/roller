@@ -21,15 +21,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
@@ -63,7 +71,19 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
 
     private List<MediaFile> newFiles = new ArrayList<>();
 
+    // the outcome for each file in the upload, in the order they were sent
+    private final List<UploadResult> uploadResults = new ArrayList<>();
+
     private String directoryName = null;
+
+    // "json" when the upload page sends the files with fetch() and wants the
+    // per-file results as JSON (MediaFileAddResult.jsp)
+    private String format = null;
+
+    // comma separated IDs of files just uploaded, for done()
+    private String uploadedIds = null;
+
+    static final String JSON = "json";
 
     public MediaFileAdd() {
         this.actionName = "mediaFileAdd";
@@ -144,12 +164,17 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
 
             MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
 
-            RollerMessages errors = new RollerMessages();
-            List<MediaFile> uploaded = new ArrayList<>();
+            long fileCount = uploadedFiles == null ? 0
+                    : uploadedFiles.stream().filter(u -> u != null).count();
+            if (fileCount > getMaxFiles()) {
+                addError("mediaFileAdd.tooManyFiles", Integer.toString(getMaxFiles()));
+                return result(INPUT);
+            }
 
             if (uploadedFiles != null && !uploadedFiles.isEmpty()) {
 
-                // loop over uploaded files and try saving them
+                // loop over uploaded files and try saving each one; a file that
+                // fails does not stop the others
                 for (UploadedFile upload : uploadedFiles) {
 
                     // skip null files
@@ -159,24 +184,26 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
                         continue;
                     }
 
+                    String fileName = upload.getOriginalName();
+                    int terminated = fileName.indexOf('\000');
+                    if (terminated != -1) {
+                        // disallow sneaky null terminated strings
+                        fileName = fileName.substring(0, terminated).trim();
+                    }
+
+                    // make sure fileName is valid
+                    if (fileName.indexOf('/') != -1
+                            || fileName.indexOf('\\') != -1
+                            || fileName.contains("..")) {
+                        failed(fileName, getText("uploadFiles.error.badPath",
+                                Collections.singletonList(fileName)));
+                        continue;
+                    }
+
+                    RollerMessages errors = new RollerMessages();
                     try {
                         MediaFile mediaFile = new MediaFile();
                         bean.copyTo(mediaFile);
-
-                        String fileName = upload.getOriginalName();
-                        int terminated = fileName.indexOf('\000');
-                        if (terminated != -1) {
-                            // disallow sneaky null terminated strings
-                            fileName = fileName.substring(0, terminated).trim();
-                        }
-
-                        // make sure fileName is valid
-                        if (fileName.indexOf('/') != -1
-                                || fileName.indexOf('\\') != -1
-                                || fileName.contains("..")) {
-                            addError("uploadFiles.error.badPath", fileName);
-                            continue;
-                        }
 
                         mediaFile.setName(fileName);
                         mediaFile.setDirectory(getDirectory());
@@ -191,6 +218,7 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
                         if (!WebloggerFactory.getWeblogger().getFileContentManager().canSave(
                                 getActionWeblog(), fileName, declaredType,
                                 uploadFile.length(), errors)) {
+                            failed(fileName, messageText(errors));
                             continue;
                         }
                         mediaFile.setContentType(MediaTypePolicy.storedTypeFor(
@@ -198,6 +226,10 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
                                 RollerContext.getServletContext()::getMimeType));
 
                         manager.createMediaFile(getActionWeblog(), mediaFile, errors);
+                        if (errors.getErrorCount() > 0) {
+                            failed(fileName, messageText(errors));
+                            continue;
+                        }
                         WebloggerFactory.getWeblogger().flush();
 
                         if (mediaFile.isImageFile()) {
@@ -205,36 +237,89 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
                         } else {
                             newFiles.add(mediaFile);
                         }
-
-                        uploaded.add(mediaFile);
+                        uploadResults.add(UploadResult.uploaded(mediaFile));
 
                     } catch (Exception e) {
-                        log.error("Error uploading media file", e);
-                        addError("mediaFileAdd.errorUploading", bean.getName());
+                        log.error("Error uploading media file " + fileName, e);
+                        failed(fileName, getText("mediaFileAdd.errorUploading",
+                                Collections.singletonList(fileName)));
                     }
                 }
 
-                for (Iterator<RollerMessage> it = errors.getErrors(); it.hasNext();) {
-                    RollerMessage msg = it.next();
-                    addError(msg.getKey(), Arrays.asList(msg.getArgs()));
+                if (newImages.isEmpty() && newFiles.isEmpty()) {
+                    // nothing was saved; the errors are on the upload form
+                    return result(INPUT);
                 }
 
-                if (!uploaded.isEmpty() && !this.errorsExist()) {
-                    addMessage("uploadFiles.uploadedFiles");
-                    for (MediaFile upload : uploaded) {
-                        addMessage("uploadFiles.uploadedFile",
-                                upload.getPermalink());
-                    }
-
-                } else {
-                    return INPUT;
-                }
-
+                // Files that were saved are listed on the success page, with
+                // any that failed, so a partial upload is never hidden.
                 this.pageTitle = "mediaFileAddSuccess.title";
-                return SUCCESS;
+                return result(SUCCESS);
+
+            } else {
+                addError("error.upload.file");
             }
         }
-        return INPUT;
+        return result(INPUT);
+    }
+
+    private String result(String pageResult) {
+        return JSON.equals(format) ? JSON : pageResult;
+    }
+
+    /**
+     * Shows the success page for files already uploaded, after the upload page
+     * sent them with fetch(). Only files of this weblog are shown.
+     */
+    @SkipValidation
+    public String done() {
+        if (StringUtils.isNotBlank(uploadedIds)) {
+            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
+            for (String id : StringUtils.split(uploadedIds, ',')) {
+                try {
+                    MediaFile mediaFile = manager.getMediaFile(getActionWeblog(), id.trim());
+                    if (mediaFile == null) {
+                        continue;
+                    }
+                    if (mediaFile.isImageFile()) {
+                        newImages.add(mediaFile);
+                    } else {
+                        newFiles.add(mediaFile);
+                    }
+                    uploadResults.add(UploadResult.uploaded(mediaFile));
+                    // the completion URL names no folder, so take it from the files
+                    setDirectory(mediaFile.getDirectory());
+                    bean.setDirectoryId(mediaFile.getDirectory().getId());
+                    directoryName = mediaFile.getDirectory().getName();
+                } catch (WebloggerException ex) {
+                    log.error("Error looking up uploaded media file " + id, ex);
+                }
+            }
+        }
+        if (newImages.isEmpty() && newFiles.isEmpty()) {
+            return INPUT;
+        }
+        this.pageTitle = "mediaFileAddSuccess.title";
+        return SUCCESS;
+    }
+
+    /**
+     * Record a file that was not saved, and report it as an action error that
+     * names the file. The reason is message text with escaped arguments.
+     */
+    private void failed(String fileName, String reason) {
+        uploadResults.add(UploadResult.failed(fileName, reason));
+        addActionError(StringEscapeUtils.escapeHtml4(fileName) + ": " + reason);
+    }
+
+    private String messageText(RollerMessages messages) {
+        List<String> texts = new ArrayList<>();
+        for (Iterator<RollerMessage> it = messages.getErrors(); it.hasNext();) {
+            RollerMessage msg = it.next();
+            texts.add(msg.getArgs() == null ? getText(msg.getKey())
+                    : getText(msg.getKey(), Arrays.asList(msg.getArgs())));
+        }
+        return String.join(" ", texts);
     }
 
     /**
@@ -300,6 +385,87 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
     }
 
     /**
+     * The upload outcome for the upload page's script: one entry per file,
+     * the form errors, and a fresh salt for a retry (salts are single-use).
+     */
+    public String getResultJson() {
+        List<Map<String, Object>> files = new ArrayList<>();
+        for (UploadResult r : uploadResults) {
+            Map<String, Object> file = new LinkedHashMap<>();
+            file.put("name", r.getFileName());
+            file.put("uploaded", r.isUploaded());
+            if (r.isUploaded()) {
+                file.put("id", r.getMediaFile().getId());
+                file.put("url", r.getMediaFile().getPermalink());
+            } else {
+                file.put("error", r.getErrorText());
+            }
+            files.add(file);
+        }
+        List<String> errors = new ArrayList<>();
+        if (uploadResults.isEmpty()) {
+            // errors for the whole upload: uploads off, too many files, no files
+            for (String error : getActionErrors()) {
+                errors.add(StringEscapeUtils.unescapeHtml4(error.replaceAll("<[^>]*>", "")));
+            }
+        }
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("files", files);
+        result.put("errors", errors);
+        result.put("salt", getSalt());
+        try {
+            return new ObjectMapper().writeValueAsString(result);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /** Most files one upload may contain (uploads.maxFilesPerRequest). */
+    public int getMaxFiles() {
+        return Math.max(1, WebloggerConfig.getIntProperty("uploads.maxFilesPerRequest", 20));
+    }
+
+    public boolean isUploadsEnabled() {
+        return WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled");
+    }
+
+    /** Largest file allowed, in MB, as configured. */
+    public String getMaxFileMB() {
+        return WebloggerRuntimeConfig.getProperty("uploads.file.maxsize");
+    }
+
+    /** Largest total for all of a weblog's files, in MB, as configured. */
+    public String getMaxDirMB() {
+        return WebloggerRuntimeConfig.getProperty("uploads.dir.maxsize");
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    @StrutsParameter
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public String getUploadedIds() {
+        return uploadedIds;
+    }
+
+    @StrutsParameter
+    public void setUploadedIds(String uploadedIds) {
+        this.uploadedIds = uploadedIds;
+    }
+
+    public List<UploadResult> getUploadResults() {
+        return uploadResults;
+    }
+
+    public int getFailedCount() {
+        return (int) uploadResults.stream().filter(r -> !r.isUploaded()).count();
+    }
+
+    /**
      * @return the directoryName
      */
     public String getDirectoryName() {
@@ -313,5 +479,50 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
     @StrutsParameter
     public void setDirectoryName(String directoryName) {
         this.directoryName = directoryName;
+    }
+
+    /** What happened to one file in an upload. */
+    public static final class UploadResult {
+        private final String fileName;
+        private final MediaFile mediaFile;
+        private final String error;
+
+        private UploadResult(String fileName, MediaFile mediaFile, String error) {
+            this.fileName = fileName;
+            this.mediaFile = mediaFile;
+            this.error = error;
+        }
+
+        static UploadResult uploaded(MediaFile mediaFile) {
+            return new UploadResult(mediaFile.getName(), mediaFile, null);
+        }
+
+        static UploadResult failed(String fileName, String error) {
+            return new UploadResult(fileName, null, error);
+        }
+
+        public String getFileName() {
+            return fileName;
+        }
+
+        /** The saved file, or null if it failed. */
+        public MediaFile getMediaFile() {
+            return mediaFile;
+        }
+
+        /** Why the file failed, as escaped message HTML; null if it was saved. */
+        public String getError() {
+            return error;
+        }
+
+        /** Why the file failed, as plain text; null if it was saved. */
+        public String getErrorText() {
+            return error == null ? null
+                    : StringEscapeUtils.unescapeHtml4(error.replaceAll("<[^>]*>", ""));
+        }
+
+        public boolean isUploaded() {
+            return mediaFile != null;
+        }
     }
 }

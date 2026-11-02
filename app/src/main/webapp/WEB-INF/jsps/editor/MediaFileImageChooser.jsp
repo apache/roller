@@ -17,124 +17,73 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<style>
+<%-- The entry editor's media chooser, shown in a dialog frame. A page of one folder's files,
+     newest first; choosing one calls the editor's onSelectMediaFile() with values from data-*
+     attributes (MediaFileCard.jsp, chooser mode). --%>
 
-</style>
-
-<script>
-    function onSelectDirectory(id) {
-        window.location = "?directoryId=" + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
-    }
-</script>
-
-
-<%-- ********************************************************************* --%>
-
-<%-- Subtitle and folder path --%>
-
-<s:if test="childFiles || allDirectories">
+<div class="media-chooser">
 
     <s:form id="mediaFileChooserForm" name="mediaFileChooserForm" action="mediaFileImageChooser"
-            theme="bootstrap" cssClass="form-vertical">
-        <s:hidden name="salt"/>
+            method="get" theme="simple" cssClass="media-chooser-search" role="search">
         <s:hidden name="weblog"/>
-        <input type="hidden" name="mediaFileId" value=""/>
-
-        <p class="pagetip"><s:text name="mediaFileImageChooser.pageTip"/></p>
-
-        <%-- ***************************************************************** --%>
-        <%-- Maybe show media directory selector --%>
-
-        <s:if test="!allDirectories.isEmpty">
-            <s:select name="directoryId" emptyOption="true" label="%{getText('mediaFileView.viewFolder')}"
-                      list="allDirectories" listKey="id" listValue="name" onchange="onView()"/>
-        </s:if>
-
-        <%-- ***************************************************************** --%>
-        <%-- Media files grid --%>
-
-        <div id="imageGrid" class="card">
-            <div class="card-body">
-
-                <ul>
-
-                    <s:if test="childFiles.size() == 0">
-                        <p style="text-align: center"><s:text name="mediaFileView.noFiles"/></p>
-                    </s:if>
-
-                    <s:if test="childFiles.size() > 0">
-
-                        <s:iterator var="mediaFile" value="childFiles">
-
-                            <s:url var="mediaFileURL" includeContext="false" value="%{#mediaFile.permalink}"/>
-                            <s:url var="mediaFileThumbnailURL" value="%{#mediaFile.thumbnailURL}"/>
-
-                            <li class="align-images"
-                                onmouseover="highlight(this, true)" onmouseout="highlight(this, false)">
-
-                                <div class="mediaObject mediafile-select-target"
-                                     data-mediafile-name="<s:property value="#mediaFile.name"/>"
-                                     data-mediafile-url="<s:property value="%{mediaFileURL}"/>"
-                                     data-mediafile-is-image="<s:property value="#mediaFile.isImageFile()"/>">
-
-                                    <s:if test="#mediaFile.imageFile">
-                                        <img border="0" src="<s:property value='%{mediaFileThumbnailURL}' />"
-                                             width="<s:property value='#mediaFile.thumbnailWidth'/>"
-                                             height="<s:property value='#mediaFile.thumbnailHeight'/>"
-                                             alt="<s:property value='#mediaFile.name' />"/>
-                                    </s:if>
-
-                                    <s:else>
-                                        <span class="bi bi-file-earmark"></span>
-                                    </s:else>
-
-                                </div>
-
-                                <div class="mediaObjectInfo">
-                                    <str:truncateNicely upper="60">
-                                        <s:property value="#mediaFile.name"/>
-                                    </str:truncateNicely>
-                                </div>
-
-                            </li>
-
-                        </s:iterator>
-                    </s:if>
-
-                </ul>
-            </div>
+        <div>
+            <label class="form-label" for="chooserFolder"><s:text name="mediaFileView.viewFolder"/></label>
+            <s:select id="chooserFolder" name="directoryId" list="allDirectories" listKey="id" listValue="name"
+                      cssClass="form-select"/>
         </div>
-
-        <div style="clear:left;"></div>
-
+        <div class="media-chooser-name">
+            <label class="form-label" for="chooserName"><s:text name="mediaFileView.nameStartsWith"/></label>
+            <s:textfield id="chooserName" name="bean.name" maxlength="255" cssClass="form-control"/>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary"><s:text name="generic.search"/></button>
+        </div>
     </s:form>
 
-</s:if>
+    <p class="pagetip"><s:text name="mediaFileImageChooser.pageTip"/></p>
 
+    <s:if test="childFiles.size() > 0">
+        <s:include value="/WEB-INF/jsps/editor/Pager.jsp"/>
+        <s:set var="chooserMode" value="true"/>
+        <ul class="media-grid">
+            <s:iterator var="mediaFile" value="childFiles">
+                <s:include value="/WEB-INF/jsps/editor/MediaFileCard.jsp"/>
+            </s:iterator>
+        </ul>
+        <s:include value="/WEB-INF/jsps/editor/Pager.jsp"/>
+    </s:if>
+    <s:else>
+        <div class="media-empty">
+            <span class="bi bi-images" aria-hidden="true"></span>
+            <p><s:if test="bean.search"><s:text name="mediaFileView.noResults"/></s:if>
+               <s:else><s:text name="mediaFileView.noFiles"/></s:else></p>
+        </div>
+    </s:else>
+
+</div>
 
 <script>
-
-    function onSelectMediaFile(name, url, isImage) {
-        window.parent.onSelectMediaFile(name, url, isImage);
-    }
-
     // Values come from data-* attributes and are bound via delegated listeners.
     $(document).on('click', '.mediafile-select-target', function () {
-        onSelectMediaFile($(this).attr('data-mediafile-name'),
+        window.parent.onSelectMediaFile($(this).attr('data-mediafile-name'),
                 $(this).attr('data-mediafile-url'),
-                $(this).attr('data-mediafile-is-image'));
+                $(this).attr('data-mediafile-is-image'),
+                $(this).attr('data-mediafile-alt'));
     });
 
-    function highlight(el, flag) {
-        if (flag) {
-            $(el).addClass("highlight");
-        } else {
-            $(el).removeClass("highlight");
+    $('#chooserFolder').on('change', function () {
+        $('#chooserName').val('');
+        this.form.submit();
+    });
+
+    // A thumbnail that fails to load shows the file type icon instead.
+    document.addEventListener('error', function (e) {
+        var img = e.target;
+        if (img.tagName === 'IMG' && img.closest('.media-card-preview')) {
+            var icon = document.createElement('span');
+            icon.className = 'bi ' + (img.getAttribute('data-fallback-icon') || 'bi-file-earmark');
+            icon.setAttribute('aria-hidden', 'true');
+            img.replaceWith(icon);
         }
-    }
-
-    function onView() {
-        document.mediaFileChooserForm.submit();
-    }
-
+    }, true);
 </script>

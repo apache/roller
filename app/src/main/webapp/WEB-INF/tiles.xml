@@ -34,6 +34,8 @@
     <definition name=".tiles-tabbedpage" template="/WEB-INF/jsps/tiles/tiles-tabbedpage.jsp">
         <put-attribute name="banner"       value="/WEB-INF/jsps/tiles/bannerStatus.jsp" />
         <put-attribute name="userStatus"   value="/WEB-INF/jsps/tiles/userStatus.jsp" />
+        <put-attribute name="branding"     value="/WEB-INF/jsps/tiles/brandingCard.jsp" />
+        <put-attribute name="viewport"     value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="head"         value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="styles"       value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="menu"         value="/WEB-INF/jsps/tiles/empty.jsp" />
@@ -42,6 +44,12 @@
         <put-attribute name="content"      value="${content}" />
         <put-attribute name="sidebar"      value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="footer"       value="/WEB-INF/jsps/tiles/footer.jsp" />
+    </definition>
+
+    <!-- media pages -->
+    <definition name=".tiles-mediapage" extends=".tiles-tabbedpage">
+        <!-- media pages are laid out for narrow screens; other tabbed pages are not yet -->
+        <put-attribute name="viewport"     value="/WEB-INF/jsps/tiles/viewport.jsp" />
     </definition>
 
     <definition name=".tiles-simplepage" template="/WEB-INF/jsps/tiles/tiles-simplepage.jsp">
@@ -212,16 +220,18 @@
     </definition>
 
     <!-- weblog editor pages (and associates) -->
-    <definition name=".MediaFileAdd" extends=".tiles-tabbedpage" >
+    <definition name=".MediaFileAdd" extends=".tiles-mediapage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAdd.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/tiles/empty.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
-    <definition name=".MediaFileEdit" extends=".tiles-popuppage" >
+    <definition name=".MediaFileEdit" extends=".tiles-mediapage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEdit.jsp" />
+        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
+        <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
     <definition name=".MediaFileAddExternalInclude" extends=".tiles-popuppage-only-content" >
@@ -250,19 +260,14 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccessInclude.jsp" />
     </definition>
     
-    <definition name=".MediaFileEditSuccess" extends=".tiles-popuppage" >
-        <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileEditSuccess.jsp" />
-    </definition>
-
-    <definition name=".MediaFileView" extends=".tiles-tabbedpage" >
+    <definition name=".MediaFileView" extends=".tiles-mediapage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileView.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/MediaFileSidebar.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 
-    <definition name=".MediaFileAddSuccess" extends=".tiles-tabbedpage" >
+    <definition name=".MediaFileAddSuccess" extends=".tiles-mediapage" >
         <put-attribute name="head" value="/WEB-INF/jsps/tiles/head.jsp" />
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MediaFileAddSuccess.jsp" />
         <put-attribute name="sidebar" value="/WEB-INF/jsps/tiles/empty.jsp" />

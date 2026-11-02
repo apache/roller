@@ -18,25 +18,38 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.Arrays;
-
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
-import org.apache.roller.weblogger.pojos.MediaFileType;
 import org.apache.roller.weblogger.pojos.MediaFileFilter.MediaFileOrder;
 import org.apache.roller.weblogger.pojos.MediaFileFilter.SizeFilterType;
+import org.apache.roller.weblogger.pojos.MediaFileType;
 
 /**
- * Bean for holding media file search criteria.
+ * What the media library shows: search criteria, scope, sort and page. Folder
+ * browsing is the same query with no criteria, so one bean serves both.
  */
 public class MediaFileSearchBean {
     private transient ResourceBundle bundle =
             ResourceBundle.getBundle("ApplicationResources");
 
-    public static final int PAGE_SIZE = 10;
+    public static final int PAGE_SIZE = 48;
 
-    // Media file name as search criteria
+    public static final String SORT_NEWEST = "newest";
+    public static final String SORT_OLDEST = "oldest";
+    public static final String SORT_NAME = "name";
+    public static final String SORT_TYPE = "type";
+
+    public static final String SCOPE_FOLDER = "folder";
+    public static final String SCOPE_ALL = "all";
+
+    private static final String ANY_TYPE = "mediaFileView.any";
+
+    // Media file name as search criteria; matches names that start with it
     private String name;
 
     // Media file type as search criteria
@@ -54,11 +67,14 @@ public class MediaFileSearchBean {
     // Tags as search criteria
     private String tags;
 
-    // Page number of results
-    private int pageNum = 0;
-    
-    // Sort option for search results
-    private int sortOption;
+    // Page number of results, from 0
+    private int page = 0;
+
+    // Sort order, one of the SORT_ values
+    private String sortBy = SORT_NEWEST;
+
+    // Search the current folder or all folders, one of the SCOPE_ values
+    private String scope = SCOPE_FOLDER;
 
     public String getName() {
         return name;
@@ -120,30 +136,88 @@ public class MediaFileSearchBean {
         this.tags = tags;
     }
 
-    public int getPageNum() {
-        return pageNum;
+    public int getPage() {
+        return page;
     }
 
-    public void setPageNum(int pageNum) {
-        this.pageNum = pageNum;
+    /** Sets the page, kept small enough that page * PAGE_SIZE cannot overflow. */
+    public void setPage(int page) {
+        this.page = Math.min(Math.max(0, page), Integer.MAX_VALUE / PAGE_SIZE);
     }
 
-    public int getSortOption() {
-        return sortOption;
+    public String getSortBy() {
+        return sortBy;
     }
 
-    public void setSortOption(int sortOption) {
-        this.sortOption = sortOption;
+    public void setSortBy(String sortBy) {
+        this.sortBy = Arrays.asList(SORT_NEWEST, SORT_OLDEST, SORT_NAME, SORT_TYPE).contains(sortBy)
+                ? sortBy : SORT_NEWEST;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = SCOPE_ALL.equals(scope) ? SCOPE_ALL : SCOPE_FOLDER;
+    }
+
+    public boolean isAllFolders() {
+        return SCOPE_ALL.equals(scope);
+    }
+
+    public boolean isTypeSet() {
+        return StringUtils.isNotEmpty(type) && !ANY_TYPE.equals(type);
+    }
+
+    /** True when any search criterion is set; otherwise the library browses a folder. */
+    public boolean isSearch() {
+        return StringUtils.isNotBlank(name) || StringUtils.isNotBlank(tags)
+                || isTypeSet() || size > 0;
+    }
+
+    /** True when a criterion behind the Filters button is set, so the filters start open. */
+    public boolean isFiltersSet() {
+        return StringUtils.isNotBlank(tags) || size > 0;
     }
 
     /**
-     * Copies data from this bean to media file filter object.
-     *
+     * The library state as request parameters, without the page: criteria
+     * that are set, sort and scope. Values are not encoded.
+     */
+    public Map<String, String> toParams() {
+        Map<String, String> params = new LinkedHashMap<>();
+        if (StringUtils.isNotBlank(name)) {
+            params.put("bean.name", name.trim());
+        }
+        if (isTypeSet()) {
+            params.put("bean.type", type);
+        }
+        if (size > 0) {
+            params.put("bean.sizeFilterType", StringUtils.defaultString(sizeFilterType));
+            params.put("bean.size", Long.toString(size));
+            params.put("bean.sizeUnit", StringUtils.defaultString(sizeUnit));
+        }
+        if (StringUtils.isNotBlank(tags)) {
+            params.put("bean.tags", tags.trim());
+        }
+        if (isSearch() && isAllFolders()) {
+            params.put("bean.scope", SCOPE_ALL);
+        }
+        if (!SORT_NEWEST.equals(sortBy)) {
+            params.put("bean.sortBy", sortBy);
+        }
+        return params;
+    }
+
+    /**
+     * Copies data from this bean to media file filter object. The folder is
+     * set by the caller, since it depends on the scope.
      */
     public void copyTo(MediaFileFilter dataHolder) {
-        dataHolder.setName(this.name);
+        dataHolder.setName(StringUtils.trimToNull(this.name));
 
-        if (!StringUtils.isEmpty(this.type)) {
+        if (isTypeSet()) {
             MediaFileType filterType = null;
             if ("mediaFileView.audio".equals(this.type)) {
                 filterType = MediaFileType.AUDIO;
@@ -153,8 +227,7 @@ public class MediaFileSearchBean {
                 filterType = MediaFileType.IMAGE;
             } else if ("mediaFileView.others".equals(this.type)) {
                 filterType = MediaFileType.OTHERS;
-            } 
-
+            }
             dataHolder.setType(filterType);
         }
 
@@ -173,37 +246,34 @@ public class MediaFileSearchBean {
             }
             dataHolder.setSizeFilterType(sftype);
 
-            long filterSize = this.size ;
+            long filterSize = this.size;
             if ("mediaFileView.kb".equals(this.sizeUnit)) {
                 filterSize = this.size * RollerConstants.ONE_KB_IN_BYTES;
             } else if ("mediaFileView.mb".equals(this.sizeUnit)) {
-                    filterSize = this.size * RollerConstants.ONE_MB_IN_BYTES;
+                filterSize = this.size * RollerConstants.ONE_MB_IN_BYTES;
             }
             dataHolder.setSize(filterSize);
         }
 
-        if (!StringUtils.isEmpty(this.tags)) {
-            dataHolder.setTags(Arrays.asList(this.tags.split(" ")));
+        if (StringUtils.isNotBlank(this.tags)) {
+            dataHolder.setTags(Arrays.asList(StringUtils.split(this.tags.trim())));
         }
 
-        dataHolder.setStartIndex(pageNum * PAGE_SIZE);
-
+        dataHolder.setStartIndex(page * PAGE_SIZE);
         dataHolder.setLength(PAGE_SIZE);
 
-        MediaFileOrder order;
-        switch (this.sortOption) {
-            case 0:
-                order = MediaFileOrder.NAME;
+        switch (sortBy) {
+            case SORT_OLDEST:
+                dataHolder.setOrder(MediaFileOrder.DATE_UPLOADED);
                 break;
-            case 1:
-                order = MediaFileOrder.DATE_UPLOADED;
+            case SORT_NAME:
+                dataHolder.setOrder(MediaFileOrder.NAME);
                 break;
-            case 2:
-                order = MediaFileOrder.TYPE;
+            case SORT_TYPE:
+                dataHolder.setOrder(MediaFileOrder.TYPE);
                 break;
             default:
-                order = null;
+                dataHolder.setOrder(MediaFileOrder.DATE_UPLOADED_DESC);
         }
-        dataHolder.setOrder(order);
     }
 }

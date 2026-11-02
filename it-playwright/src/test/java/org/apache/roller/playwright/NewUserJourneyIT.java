@@ -95,7 +95,7 @@ class NewUserJourneyIT extends BaseIT {
 
     // media file upload form
     private static final String MEDIA_UPLOAD_PAGE = "roller-ui/authoring/mediaFileAdd.rol?weblog=" + BLOG_HANDLE;
-    private static final String MEDIA_FILE_INPUT = "#fileControl0";
+    private static final String MEDIA_FILE_INPUT = "#fileInput";
     private static final String MEDIA_UPLOAD_SUBMIT = "#uploadButton";
     private static final String MEDIA_THUMBNAIL = "img.mediaFileImage";
 

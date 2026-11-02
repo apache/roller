@@ -284,78 +284,850 @@ body {
     text-align: center;
 }
 
-/* media files */
+/* media library (MediaFileView.jsp, MediaFileSidebar.jsp, MediaFileCard.jsp) */
 
-.align-images {
-    display:inline;
-    float:left;
-    margin:5px;
-    list-style-type:none;
-    width:140px;
-    max-height:200px;
-    border: 1px solid #ccc;
+.media-folders-header,
+.media-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.media-folders-header h3 {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.media-new-folder {
+    margin-top: 0.75rem;
+}
+
+.media-folder-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0;
+}
+
+.media-folder-list a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.5rem;
+    border-radius: var(--bs-border-radius);
+    text-decoration: none;
+    color: var(--bs-body-color);
+}
+
+.media-folder-list a:hover,
+.media-folder-list a:focus-visible {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.media-folder-list a.active {
+    background-color: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary-text-emphasis);
+    font-weight: 600;
+}
+
+.media-folder-name {
+    overflow-wrap: anywhere;
+}
+
+.media-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.media-count {
+    font-size: 0.875rem;
+    font-weight: normal;
+    color: var(--bs-secondary-color);
+}
+
+/* Search: one box holding the name, its scope and the button, then Filters */
+.media-search {
+    margin: 1rem 0 0.5rem;
+}
+
+.media-search-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.media-search-box {
+    flex: 1 1 20rem;
+    flex-wrap: nowrap;
+}
+
+.media-search-box .input-group-text {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-secondary-color);
+}
+
+.media-search-box .form-control {
+    border-left: 0;
+    min-width: 6rem;
+}
+
+.media-search-box .media-search-scope {
+    flex: 0 1 auto;
+    width: auto;
+    max-width: 13rem;
+    background-color: var(--bs-tertiary-bg);
+}
+
+.media-filters-button {
+    position: relative;
+}
+
+/* a set filter that the collapsed panel would otherwise hide */
+.media-filters-dot {
+    position: absolute;
+    top: 0.3rem;
+    right: 0.3rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--bs-primary);
+}
+
+.media-filters {
+    margin-top: 0.75rem;
+}
+
+.media-filters.show,
+.media-filters.collapsing {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.media-filter-size {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.media-filter-size legend {
+    width: 100%;
+    float: none;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.media-filter-size .form-select {
+    width: auto;
+}
+
+.media-filter-size .form-control {
+    width: 7rem;
+}
+
+.media-filter-tags {
+    flex: 1 1 14rem;
+}
+
+/* The bar above the files: type, sort and layout, or the selection's actions.
+   It stays in view while scrolling, so the actions are always at hand. */
+.media-bar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 0.5rem 0;
+    background-color: var(--bs-body-bg);
+}
+
+.media-results-bar,
+.media-selection-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    min-height: 2.5rem;
+}
+
+.media-results-bar[hidden],
+.media-selection-bar[hidden] {
+    display: none;
+}
+
+.media-type-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+}
+
+.media-chip {
+    border-radius: var(--bs-border-radius-pill);
+    padding: 0.2rem 0.85rem;
+    border: 1px solid var(--bs-border-color);
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+}
+
+.media-chip:hover {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.btn-check:checked + .media-chip {
+    border-color: var(--bs-primary-bg-subtle);
+    background-color: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary-text-emphasis);
+    font-weight: 600;
+}
+
+.btn-check:focus-visible + .media-chip {
+    box-shadow: var(--bs-focus-ring-x, 0) var(--bs-focus-ring-y, 0) 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.media-view-options {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-sort {
+    width: auto;
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--bs-body-color);
+}
+
+.media-sort:hover {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.media-view-options .btn-group {
+    margin-left: 0.5rem;
+}
+
+.media-selection-bar {
+    justify-content: flex-start;
+    padding: 0 0.5rem;
+    border-radius: var(--bs-border-radius-lg);
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+.media-selection-close {
+    color: var(--bs-body-color);
+}
+
+.media-selected-count {
+    font-weight: 600;
+}
+
+.media-selection-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.media-selection-actions .btn {
+    background-color: var(--bs-body-bg);
+}
+
+.media-selection-actions .btn-outline-danger:hover {
+    background-color: var(--bs-danger);
+}
+
+.media-selection-actions .btn-outline-primary:hover,
+.media-selection-actions .btn-outline-primary.show {
+    background-color: var(--bs-primary);
+}
+
+.media-result-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+    margin: 0.25rem 0 0.5rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-criteria {
+    display: contents;
+    list-style: none;
+}
+
+.media-criteria li {
+    padding: 0 0.5rem;
+    border-radius: var(--bs-border-radius-pill);
+    background-color: var(--bs-secondary-bg);
+    color: var(--bs-body-color);
+    font-size: 0.875rem;
+    overflow-wrap: anywhere;
+}
+
+/* Grid: equal tiles whatever the image shape. The preview box has a fixed shape
+   and keeps the whole image inside it, so names line up across a row. */
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: 1.25rem 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 1.5rem;
+}
+
+.media-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.media-card-preview {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    width: 100%;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+    border: 0;
+    border-radius: var(--bs-border-radius-lg);
+    /* a tinted frame keeps white and transparent images visible */
+    background-color: var(--bs-tertiary-bg);
+    cursor: pointer;
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.media-card-preview img {
+    position: absolute;
+    inset: 0.5rem;
+    width: calc(100% - 1rem);
+    height: calc(100% - 1rem);
+    object-fit: contain;
+    transition: transform 0.15s ease-in-out;
+}
+
+.media-card-preview .bi {
+    font-size: 3rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-card:hover .media-card-preview {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
+}
+
+.media-card.selected .media-card-preview {
+    box-shadow: inset 0 0 0 3px var(--bs-primary);
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+.media-card.selected .media-card-preview img {
+    transform: scale(0.88);
+}
+
+/* The checkbox sits over the preview, shown on hover or focus, and always
+   while files are selected or on touch screens */
+.media-card > .media-select {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 1;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin: 0;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+    cursor: pointer;
+}
+
+.media-card:hover > .media-select,
+.media-card > .media-select:focus-visible,
+.media-card > .media-select:checked,
+.media-library.selecting .media-card > .media-select {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    .media-card > .media-select {
+        opacity: 1;
+    }
+}
+
+.media-card-body {
+    display: flex;
+    padding: 0.4rem 0.125rem 0;
+    min-width: 0;
+}
+
+.media-card-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    width: 100%;
+}
+
+/* One line per name; the full name is in the tooltip and on the details page */
+.media-card-name {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: start;
+    font-size: 0.875rem;
+    color: var(--bs-body-color);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.media-card-name:hover {
+    color: var(--bs-link-color);
+    text-decoration: underline;
+}
+
+.media-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.5rem;
+    font-size: 0.75rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-card-date {
+    display: none;
+}
+
+.media-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-empty .bi {
+    font-size: 3rem;
+}
+
+.media-folder-actions {
+    margin-top: 1rem;
+    text-align: end;
+}
+
+.media-library .roller-pager {
+    justify-content: center;
+}
+
+.media-list-header {
+    display: none;
+}
+
+/* List view: one row per file, with name, type, size and upload date columns */
+.media-grid.media-list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+}
+
+.media-grid.media-list .media-list-header,
+.media-grid.media-list .media-card {
+    display: grid;
+    grid-template-columns: 1.35rem 3rem minmax(0, 1fr) 5rem 5rem 6rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.media-grid.media-list .media-card:hover {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.media-grid.media-list .media-card.selected {
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+.media-grid.media-list .media-list-header {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--bs-secondary-color);
+}
+
+.media-grid.media-list .media-card-body,
+.media-grid.media-list .media-card-text,
+.media-grid.media-list .media-card-meta {
+    display: contents;
+}
+
+.media-grid.media-list .media-card > .media-select {
+    order: 1;
+    position: static;
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 0.25em;
+    box-shadow: none;
+    opacity: 1;
+}
+
+.media-grid.media-list .media-card-preview {
+    order: 2;
+    width: 3rem;
+    border-radius: var(--bs-border-radius-sm);
+    box-shadow: none;
+}
+
+.media-grid.media-list .media-card-preview img {
+    inset: 2px;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    transform: none;
+}
+
+.media-grid.media-list .media-card-preview .bi {
+    font-size: 1.5rem;
+}
+
+.media-grid.media-list .media-card-name {
+    order: 3;
+}
+
+.media-grid.media-list .media-card-type {
+    order: 4;
+}
+
+.media-grid.media-list .media-card-size {
+    order: 5;
+}
+
+.media-grid.media-list .media-card-date {
+    order: 6;
+    display: block;
+}
+
+.media-grid.media-list .media-card-type,
+.media-grid.media-list .media-card-size,
+.media-grid.media-list .media-card-date {
+    font-size: 0.875rem;
+}
+
+@media (max-width: 575.98px) {
+    .media-grid {
+        grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+    }
+
+    .media-grid.media-list .media-list-header,
+    .media-grid.media-list .media-card {
+        grid-template-columns: 1.35rem 3rem minmax(0, 1fr) 4.5rem;
+    }
+
+    .media-grid.media-list .media-list-header span:nth-child(4),
+    .media-grid.media-list .media-list-header span:nth-child(6),
+    .media-grid.media-list .media-card-type,
+    .media-grid.media-list .media-card-date {
+        display: none;
+    }
+}
+
+/* media file details (MediaFileEdit.jsp) */
+
+.media-back {
+    margin-bottom: 1rem;
+}
+
+.media-details-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.5rem;
+}
+
+.media-details-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 12rem;
+    padding: 0.75rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    background-color: var(--bs-tertiary-bg);
+}
+
+.media-details-preview img {
+    max-width: 100%;
+    max-height: 24rem;
+    object-fit: contain;
+}
+
+.media-details-preview .bi {
+    font-size: 5rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-details-name {
+    font-size: 1.25rem;
+    overflow-wrap: anywhere;
+}
+
+.media-facts {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 0.25rem 1rem;
+    margin: 1rem 0;
+}
+
+.media-facts dt {
+    font-weight: 600;
+}
+
+.media-facts dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.media-copy-status {
+    min-height: 1.5rem;
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+    color: var(--bs-success-text-emphasis);
+}
+
+.media-details-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.media-details-actions form {
+    margin: 0;
+}
+
+.media-edit-heading {
+    font-size: 1.1rem;
+    margin: 2rem 0 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--bs-border-color);
+}
+
+/* The bootstrap theme adds no spacing to form-vertical groups */
+.media-edit-form > fieldset > div,
+.media-edit-form > fieldset > details {
+    margin-bottom: 1rem;
+}
+
+.media-advanced summary {
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+}
+
+.media-edit-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+@media (max-width: 767.98px) {
+    .media-details-top {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* media upload (MediaFileAdd.jsp) */
+
+.media-upload > * + * {
+    margin-top: 1rem;
+}
+
+.media-upload-folder .form-select {
+    max-width: 20rem;
+}
+
+.media-drop-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2rem 1rem;
+    border: 2px dashed var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+    background-color: var(--bs-tertiary-bg);
     text-align: center;
 }
 
-#sortByMenu {
-    width: 15em;
+.media-drop-zone.disabled {
+    opacity: 0.6;
 }
 
-#viewDirectoryMenu {
-    width: 15em;
+.media-drop-zone.dragging {
+    border-color: var(--bs-primary);
+    background-color: var(--bs-primary-bg-subtle);
 }
 
-#moveTargetMenu {
-    width: 15em;
+.media-drop-zone > .bi {
+    font-size: 2.5rem;
+    color: var(--bs-secondary-color);
 }
 
-.mediaObject {
-    width:120px;
-    max-height:120px;
-    margin-top: 10px;
-    margin-left: 10px;
+.media-drop-zone .form-control {
+    max-width: 28rem;
 }
 
-.mediaObjectInfo {
-    font-size:11px;
+.media-upload-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-span.glyphicon-file {
-    font-size: 6em;
+.media-upload-list:empty {
+    display: none;
 }
 
-.highlight {
-    border: 3px solid #aaa;
+.media-upload-item {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr) auto auto;
+    grid-template-areas: "preview name size remove" "preview state state remove";
+    align-items: center;
+    gap: 0 0.75rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--bs-border-color);
 }
 
-span.button {
-    height:15px;
-    width:15px;
-    float:right;
+.media-upload-preview {
+    grid-area: preview;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background-color: var(--bs-tertiary-bg);
+    border-radius: var(--bs-border-radius-sm);
 }
 
-.sortByMenu, .viewDirectoryMenu {
-    display: inline;
+.media-upload-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
-#imageGrid {
-    display: block;
-    overflow: auto;
-    margin: 1em 0 1em 0;
+.media-upload-preview .bi {
+    font-size: 1.5rem;
+    color: var(--bs-secondary-color);
 }
 
-#imageGrid > div > ul {
-    padding-left:0;
+.media-upload-name {
+    grid-area: name;
+    overflow-wrap: anywhere;
 }
 
-div.image-controls,
-div.image-controls div,
-div.image-controls span,
-div.image-controls select,
-div.image-controls input {
-    display: inline;
+.media-upload-size {
+    grid-area: size;
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
 }
 
+.media-upload-state {
+    grid-area: state;
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
+}
+
+.media-upload-remove {
+    grid-area: remove;
+}
+
+.media-upload-item[data-state="uploaded"] .media-upload-state {
+    color: var(--bs-success-text-emphasis);
+}
+
+.media-upload-item[data-state="failed"] .media-upload-state,
+.media-upload-item[data-state="unknown"] .media-upload-state {
+    color: var(--bs-danger-text-emphasis);
+}
+
+.media-upload-shared summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.media-upload-shared .form-label,
+.media-upload-shared .form-check {
+    margin-top: 0.75rem;
+}
+
+.media-upload-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.media-upload-status:empty {
+    display: none;
+}
+
+.media-upload-failed {
+    list-style: none;
+    padding: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .media-drop-zone {
+        transition: border-color 0.15s, background-color 0.15s;
+    }
+}
+
+/* Narrow screens (media pages set a device-width viewport): the folder list
+   gives way to the folder picker in the page header. On the library page the
+   Folders card stays for its New folder form; elsewhere it is hidden. */
+.media-folder-picker {
+    display: none;
+}
+
+@media (max-width: 767.98px) {
+    .roller-column-left,
+    .roller-column-right {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .roller-column-left .card:has(.media-folders):not(:has(#newFolderForm)),
+    .media-folders .media-folder-list,
+    .roller-branding-card {
+        display: none;
+    }
+
+    .media-folder-picker {
+        display: block;
+        flex: 1 1 100%;
+    }
+
+    .media-header .media-heading {
+        display: none;
+    }
+}
+
+/* media chooser in the entry editor (MediaFileImageChooser.jsp) */
+
+.media-chooser-search {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.media-chooser-name {
+    flex: 1 1 12rem;
+}
+
+.mediaFileImage {
+    max-width: 100%;
+}
 
 /* theme edit */
 

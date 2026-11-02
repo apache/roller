@@ -19,20 +19,26 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileComparator;
-import org.apache.roller.weblogger.pojos.MediaFileComparator.MediaFileComparatorType;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator;
 import org.apache.roller.weblogger.pojos.MediaFileDirectoryComparator.DirectoryComparatorType;
+import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
+import org.apache.roller.weblogger.ui.struts2.pagers.MediaFilePager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
+import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -50,6 +56,10 @@ public class MediaFileImageChooser extends MediaFileBase {
 
     private List<MediaFile> childFiles;
     private MediaFileDirectory currentDirectory;
+
+    // name search and page; the chooser always shows one folder, newest first
+    private MediaFileSearchBean bean = new MediaFileSearchBean();
+    private MediaFilePager pager;
 
     public MediaFileImageChooser() {
         this.actionName = "mediaFileImageChooser";
@@ -71,60 +81,72 @@ public class MediaFileImageChooser extends MediaFileBase {
     }
 
     /**
-     * Fetches and displays list of media file for the given directory. The
-     * directory could be chosen by ID or path.
-     * 
-     * @return String The result of the action.
+     * Shows a page of a folder's files, newest first, optionally only those
+     * whose name starts with the search text. Same query as the library.
      */
     @SkipValidation
     @Override
     public String execute() {
         MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
         try {
-
-            MediaFileDirectory directory;
-            if (this.directoryId != null) {
+            MediaFileDirectory directory = null;
+            if (StringUtils.isNotEmpty(this.directoryId)) {
                 directory = manager.getMediaFileDirectory(getActionWeblog(), this.directoryId);
-            } else if (this.directoryName != null) {
+            } else if (StringUtils.isNotEmpty(this.directoryName)) {
                 directory = manager.getMediaFileDirectoryByName(getActionWeblog(), this.directoryName);
-                this.directoryId = directory.getId();
-            } else {
+            }
+            if (directory == null) {
                 directory = manager.getDefaultMediaFileDirectory(getActionWeblog());
-                this.directoryId = directory.getId();
             }
-
-            this.childFiles = new ArrayList<>();
-            this.childFiles.addAll(directory.getMediaFiles());
-            this.childFiles.sort(new MediaFileComparator( MediaFileComparatorType.NAME));
             this.currentDirectory = directory;
+            this.directoryId = directory.getId();
 
-            // List of available directories
-            List<MediaFileDirectory> sortedDirList = new ArrayList<>();
-            List<MediaFileDirectory> directories = manager.getMediaFileDirectories(getActionWeblog());
-            for (MediaFileDirectory mediaFileDirectory : directories) {
-                if (!"default".equals(mediaFileDirectory.getName()) || !"default".equals(directory.getName())) {
-                    sortedDirList.add(mediaFileDirectory);
-                }
-            }
+            bean.setSortBy(MediaFileSearchBean.SORT_NEWEST);
+            bean.setScope(MediaFileSearchBean.SCOPE_FOLDER);
+            MediaFileFilter filter = new MediaFileFilter();
+            bean.copyTo(filter);
+            filter.setDirectory(directory);
 
-            sortedDirList.sort(new MediaFileDirectoryComparator(
-                DirectoryComparatorType.NAME));
+            long totalCount = manager.getMediaFileCount(getActionWeblog(), filter);
+            this.childFiles = new ArrayList<>(manager.searchMediaFiles(getActionWeblog(), filter));
+
+            Map<String, String> params = new LinkedHashMap<>();
+            params.put("weblog", getActionWeblog().getHandle());
+            params.put("directoryId", directoryId);
+            params.putAll(bean.toParams());
+            String baseUrl = WebloggerRuntimeConfig.getRelativeContextURL()
+                    + "/roller-ui/authoring/overlay/mediaFileImageChooser.rol?"
+                    + params.entrySet().stream()
+                        .map(e -> e.getKey() + "=" + URLUtilities.encode(e.getValue()))
+                        .collect(Collectors.joining("&"));
+            this.pager = new MediaFilePager(baseUrl, bean.getPage(), childFiles, totalCount,
+                    MediaFileSearchBean.PAGE_SIZE);
+
+            List<MediaFileDirectory> sortedDirList = new ArrayList<>(
+                    manager.getMediaFileDirectories(getActionWeblog()));
+            sortedDirList.sort(new MediaFileDirectoryComparator(DirectoryComparatorType.NAME));
             setAllDirectories(sortedDirList);
-
-            return SUCCESS;
 
         } catch (Exception ex) {
             log.error("Error viewing media file directory ", ex);
             addError("MediaFile.error.view");
-
         }
         return SUCCESS;
     }
 
-    /**
-     * Returns the hierarchy of the current directory. This is useful in
-     * displaying path information as breadcrumb.
-     */
+    public MediaFilePager getPager() {
+        return pager;
+    }
+
+    @StrutsParameter(depth = 1)
+    public MediaFileSearchBean getBean() {
+        return bean;
+    }
+
+    public void setBean(MediaFileSearchBean bean) {
+        this.bean = bean;
+    }
+
     public List<KeyValueObject> getCurrentDirectoryHierarchy() {
         List<KeyValueObject> directoryHierarchy = new ArrayList<>();
 

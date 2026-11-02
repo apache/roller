@@ -46,7 +46,8 @@ public class ValidateSaltInterceptor extends AbstractInterceptor implements Stru
     private static final Log log = LogFactory.getLog(ValidateSaltInterceptor.class);
 
     /**
-     * Action methods that a GET may call. They only display data, except
+     * Action methods that a GET may call. They only display data (as does
+     * "done", the media upload's results page), except
      * "activate", which the account activation e-mail links to and which is
      * guarded by its one-time activation code. Any other method needs a POST,
      * which ValidateSaltFilter checks for a salt.
@@ -54,7 +55,7 @@ public class ValidateSaltInterceptor extends AbstractInterceptor implements Stru
     static final Set<String> DISPLAY_METHODS = Set.of(
             "execute", "input", "view", "search", "query", "edit", "cancel",
             "firstSave", "folderCreated", "deleteConfirm",
-            "fetchDirectoryContentLight", "activate");
+            "fetchDirectoryContentLight", "done", "activate");
 
     @Override
     public String intercept(ActionInvocation invocation) throws Exception {
