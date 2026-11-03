@@ -198,7 +198,7 @@ public class WeblogPageRequest extends WeblogRequest {
          * weblog entry (old way) entry - specifies a weblog entry
          * 
          * we only allow request params if the path info is null or on user
-         * defined pages (for backwards compatability). this way we prevent
+         * defined pages (for backwards compatibility). this way we prevent
          * mixing of path based and query param style urls.
          */
         if (pathInfo == null || this.weblogPageName != null) {

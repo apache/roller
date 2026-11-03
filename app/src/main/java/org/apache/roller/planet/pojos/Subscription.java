@@ -207,12 +207,12 @@ public class Subscription implements Serializable, Comparable<Subscription> {
     }
 
 
-    // for backwards compatability?
+    // for backwards compatibility?
     public String getName() {
         return getTitle();
     }
     
-    // for backwards compatability?
+    // for backwards compatibility?
     public String getURL() {
         return siteUrl;
     }
