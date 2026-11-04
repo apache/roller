@@ -232,7 +232,7 @@ public class MediaFileEdit extends MediaFileBase implements UploadedFilesAware {
     @StrutsParameter
     public void setReturnQuery(String returnQuery) {
         this.returnQuery = returnQuery != null && returnQuery.length() <= 2000
-                && returnQuery.matches("[A-Za-z0-9._~%&=+-]*") ? returnQuery : null;
+                && returnQuery.matches("[A-Za-z0-9._~%&=+*-]*") ? returnQuery : null;
     }
 
     public String getLibraryURL() {

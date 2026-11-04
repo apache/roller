@@ -46,7 +46,8 @@ public final class MediaFileDisplay {
         do {
             value /= 1024;
             unit++;
-        } while (value >= 1024 && unit < UNITS.length - 1);
+            // 1023.5 and up would print as "1024", so use the next unit
+        } while (value >= 1023.5 && unit < UNITS.length - 1);
         String number = value < 10
                 ? String.format(Locale.ROOT, "%.1f", value).replace(".0", "")
                 : String.format(Locale.ROOT, "%.0f", value);

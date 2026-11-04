@@ -116,6 +116,9 @@ class MediaFileSearchBeanTest {
         edit.setReturnQuery("weblog=roller&directoryId=abc&bean.name=a%20b&bean.page=2");
         assertEquals("weblog=roller&directoryId=abc&bean.name=a%20b&bean.page=2", edit.getReturnQuery());
 
+        edit.setReturnQuery("weblog=roller&bean.name=IMG*");
+        assertEquals("weblog=roller&bean.name=IMG*", edit.getReturnQuery());
+
         edit.setReturnQuery("weblog=roller\"><script>");
         assertNull(edit.getReturnQuery());
 

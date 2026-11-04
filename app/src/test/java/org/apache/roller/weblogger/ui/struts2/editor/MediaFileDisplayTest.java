@@ -33,6 +33,9 @@ class MediaFileDisplayTest {
         assertEquals("200 KB", MediaFileDisplay.formatSize(200 * 1024 + 300));
         assertEquals("2.3 MB", MediaFileDisplay.formatSize((long) (2.3 * 1024 * 1024)));
         assertEquals("5 GB", MediaFileDisplay.formatSize(5L * 1024 * 1024 * 1024));
+        assertEquals("1 MB", MediaFileDisplay.formatSize(1048575));
+        assertEquals("1 GB", MediaFileDisplay.formatSize(1073741823));
+        assertEquals("1023 KB", MediaFileDisplay.formatSize(1023 * 1024));
     }
 
     @Test

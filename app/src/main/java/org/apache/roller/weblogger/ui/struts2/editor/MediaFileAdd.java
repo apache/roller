@@ -252,7 +252,11 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
                 }
 
                 // Files that were saved are listed on the success page, with
-                // any that failed, so a partial upload is never hidden.
+                // any that failed, so a partial upload is never hidden. That
+                // list replaces the error box; the overlay page has no list.
+                if (!isOverlayMode()) {
+                    clearActionErrors();
+                }
                 this.pageTitle = "mediaFileAddSuccess.title";
                 return result(SUCCESS);
 
