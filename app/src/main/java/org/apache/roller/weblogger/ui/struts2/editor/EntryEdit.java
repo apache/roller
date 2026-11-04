@@ -128,6 +128,9 @@ public final class EntryEdit extends UIAction {
             if (!requireEntry()) {
                 return ERROR;
             }
+            if (!canWriteEntry()) {
+                return DENIED;
+            }
             // load bean with pojo data
             getBean().copyFrom(getEntry(), getLocale());
         } else {
@@ -155,6 +158,9 @@ public final class EntryEdit extends UIAction {
         if (!requireEntry()) {
             return INPUT;
         }
+        if (!canWriteEntry()) {
+            return DENIED;
+        }
         getBean().setStatus(PubStatus.DRAFT.name());
         if (entry.isPublished()) {
             // entry reverted from published to non-viewable draft
@@ -172,6 +178,9 @@ public final class EntryEdit extends UIAction {
     public String publish() {
         if (!requireEntry()) {
             return INPUT;
+        }
+        if (!canWriteEntry()) {
+            return DENIED;
         }
         if (getActionWeblog().hasUserPermission(
                 getAuthenticatedUser(), WeblogPermission.POST)) {
@@ -616,6 +625,22 @@ public final class EntryEdit extends UIAction {
             return false;
         }
         return true;
+    }
+
+    /**
+     * The action lets LIMITED users in; a saved entry then decides what they
+     * may do with it. A new entry has nothing to check.
+     */
+    private boolean canWriteEntry() {
+        if (getBean().getId() == null) {
+            return true;
+        }
+        try {
+            return entry.hasWritePermissions(getAuthenticatedUser());
+        } catch (WebloggerException ex) {
+            log.error("Error checking permissions on entry " + getBean().getId(), ex);
+            return false;
+        }
     }
 
     @SkipValidation
