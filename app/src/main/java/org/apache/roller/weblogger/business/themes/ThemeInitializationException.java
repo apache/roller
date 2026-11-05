@@ -22,7 +22,7 @@ import org.apache.roller.weblogger.WebloggerException;
 
 
 /**
- * Thrown when there is a problem initalizing a theme object.
+ * Thrown when there is a problem initializing a theme object.
  */
 public class ThemeInitializationException extends WebloggerException {
     
