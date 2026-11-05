@@ -18,6 +18,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.business.MediaFileManager;
@@ -79,20 +80,21 @@ public class EntryAddWithMediaFile extends MediaFileBase {
                     }
                     String link;
 
+                    // escaped: names and descriptions are author text
+                    String name = StringEscapeUtils.escapeHtml4(mediaFile.getName());
                     if (mediaFile.isImageFile()) {
-                        link = "<p>" + mediaFile.getName() + "</p>";
-                        link += "<a href=\"<url>\"><img src=\"<urlt>\" alt=\"<name>\" width=\"<width>\" height=\"<height>\"></img></a>";
-                        link = link.replace("<url>", mediaFile.getPermalink())
-                                   .replace("<urlt>", mediaFile.getThumbnailURL())
-                                   .replace("<name>", mediaFile.getName())
-                                   .replace("<width>", ""+mediaFile.getThumbnailWidth())
-                                   .replace("<height>", ""+mediaFile.getThumbnailHeight());
+                        String alt = StringUtils.isNotBlank(mediaFile.getDescription())
+                                ? mediaFile.getDescription().trim() : mediaFile.getName();
+                        link = "<p>" + name + "</p>"
+                                + "<a href=\"" + StringEscapeUtils.escapeHtml4(mediaFile.getPermalink()) + "\">"
+                                + "<img src=\"" + StringEscapeUtils.escapeHtml4(mediaFile.getThumbnailURL())
+                                + "\" alt=\"" + StringEscapeUtils.escapeHtml4(alt)
+                                + "\" width=\"" + mediaFile.getThumbnailWidth()
+                                + "\" height=\"" + mediaFile.getThumbnailHeight() + "\"></a>";
                     } else {
-                        link = "<a href=\"<url>\"><name></a> (<size> bytes, <type>)";
-                        link = link.replace("<url>", mediaFile.getPermalink())
-                                   .replace("<name>", mediaFile.getName())
-                                   .replace("<size>",""+mediaFile.getLength())
-                                   .replace("<type>",mediaFile.getContentType());
+                        link = "<a href=\"" + StringEscapeUtils.escapeHtml4(mediaFile.getPermalink()) + "\">"
+                                + name + "</a> (" + mediaFile.getLength() + " bytes, "
+                                + StringEscapeUtils.escapeHtml4(mediaFile.getContentType()) + ")";
                     }
                     sb.append(link);
                 }
@@ -102,8 +104,8 @@ public class EntryAddWithMediaFile extends MediaFileBase {
                 sb.append("<p>")
                   .append(getText("mediaFileEdit.includesEnclosure"))
                   .append("<br />")
-                  .append("<a href=\"" + bean.getEnclosureURL() + "\">")
-                  .append(bean.getEnclosureURL())
+                  .append("<a href=\"" + StringEscapeUtils.escapeHtml4(bean.getEnclosureURL()) + "\">")
+                  .append(StringEscapeUtils.escapeHtml4(bean.getEnclosureURL()))
                   .append("</a></p>");
             }
 

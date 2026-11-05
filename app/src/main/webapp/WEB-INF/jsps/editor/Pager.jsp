@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <%-- First / Newer / Older / Last buttons for pages whose action has a LinkPager named "pager".
-     MediaFileView.jsp draws the same control with buttons that resubmit its search form. --%>
+     The previous and next labels come from the pager. --%>
 
 <s:if test="pager.prevLink != null || pager.nextLink != null">
     <nav class="roller-pager" aria-label="<s:text name='generic.pagination'/>">
@@ -37,12 +37,12 @@
         <s:if test="pager.prevLink != null">
             <a class="btn btn-outline-primary btn-sm" href="<s:property value='pager.prevLink'/>">
                 <span class="bi bi-chevron-left" aria-hidden="true"></span>
-                <s:text name="generic.newer"/></a>
+                <s:text name="%{pager.prevKey}"/></a>
         </s:if>
         <s:else>
             <span class="btn btn-outline-secondary btn-sm disabled" aria-disabled="true">
                 <span class="bi bi-chevron-left" aria-hidden="true"></span>
-                <s:text name="generic.newer"/></span>
+                <s:text name="%{pager.prevKey}"/></span>
         </s:else>
 
         <span class="roller-pager-page">
@@ -54,12 +54,12 @@
 
         <s:if test="pager.nextLink != null">
             <a class="btn btn-outline-primary btn-sm" href="<s:property value='pager.nextLink'/>">
-                <s:text name="generic.older"/>
+                <s:text name="%{pager.nextKey}"/>
                 <span class="bi bi-chevron-right" aria-hidden="true"></span></a>
         </s:if>
         <s:else>
             <span class="btn btn-outline-secondary btn-sm disabled" aria-disabled="true">
-                <s:text name="generic.older"/>
+                <s:text name="%{pager.nextKey}"/>
                 <span class="bi bi-chevron-right" aria-hidden="true"></span></span>
         </s:else>
 

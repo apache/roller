@@ -18,7 +18,24 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 
-<p class="subtitle"><s:text name="mediaFileSuccess.subtitle"/></p>
+<s:if test="failedCount == 0">
+    <p class="subtitle"><s:text name="mediaFileSuccess.subtitle"/></p>
+</s:if>
+<s:else>
+    <p class="subtitle"><s:text name="mediaFileSuccess.partial"/></p>
+    <ul class="media-upload-failed">
+        <s:iterator var="result" value="uploadResults">
+            <s:if test="!#result.uploaded">
+                <li>
+                    <span class="bi bi-x-circle text-danger" aria-hidden="true"></span>
+                    <strong><s:property value="#result.fileName"/></strong>:
+                    <%-- error is message text whose arguments UIAction.getText() already escaped --%>
+                    <s:property value="#result.error" escapeHtml="false"/>
+                </li>
+            </s:if>
+        </s:iterator>
+    </ul>
+</s:else>
 <p class="pagetip"><s:text name="mediaFileSuccess.pageTip"/></p>
 
 <s:form id="entry" theme="bootstrap" cssClass="form-horizontal">
@@ -42,12 +59,13 @@
                     <div class="row">
 
                         <div class="col-md-1">
-                            <input type="checkbox" name="selectedImages" value="<s:property value="#newImage.id"/>"/>
+                            <input type="checkbox" name="selectedImages" value="<s:property value="#newImage.id"/>"
+                                   class="form-check-input"
+                                   aria-label="<s:text name='mediaFileView.selectFile' escapeHtml='true'><s:param value='#newImage.name'/></s:text>"/>
                         </div>
 
                         <div class="col-md-2">
-                            <img align="center" class="mediaFileImage"
-                                 src='<s:property value="%{#newImage.thumbnailURL}" />' alt="thumbnail"/>
+                            <img class="mediaFileImage" src='<s:property value="%{#newImage.thumbnailURL}" />' alt=""/>
                         </div>
 
                         <div class="col-md-9">
@@ -63,9 +81,11 @@
 
                             <p>
                                 <b><s:text name="mediaFileSuccess.size"/></b>
-                                <s:property value="%{#newImage.length}"/> <s:text name="mediaFileSuccess.bytes"/>,
-                                <s:property value="%{#newImage.width}"/> x
-                                <s:property value="%{#newImage.height}"/> <s:text name="mediaFileSuccess.pixels"/>
+                                <s:property value="formatSize(#newImage.length)"/>,
+                                <s:text name="mediaFileEdit.pixels">
+                                    <s:param value="#newImage.width"/>
+                                    <s:param value="#newImage.height"/>
+                                </s:text>
                             </p>
 
                             <p>
@@ -114,9 +134,7 @@
                                 <s:property value="%{#newFile.contentType}"/>,&nbsp;
 
                                 <b><s:text name="mediaFileSuccess.size"/></b>
-                                <s:property value="%{#newFile.length}"/> <s:text name="mediaFileSuccess.bytes"/>,
-                                <s:property value="%{#newFile.width}"/> x
-                                <s:property value="%{#newFile.height}"/> <s:text name="mediaFileSuccess.pixels"/>
+                                <s:property value="formatSize(#newFile.length)"/>
                             </p>
 
                             <p>
@@ -136,7 +154,7 @@
                 <div class="row">
 
                     <div class="col-md-1">
-                        <input type="radio" name="enclosure"
+                        <input type="radio" name="enclosure" class="enclosure-choice"
                                data-enclosure-url="" data-enclosure-type=""
                                data-enclosure-length="" />
                     </div>
@@ -154,12 +172,12 @@
     <%-- buttons for create new weblog, cancel and upload more --%>
 
     <div>
-        <s:url var="mediaFileAddURL" action="mediaFileAdd">
+        <s:url var="mediaFileAddURL" escapeAmp="false" action="mediaFileAdd">
             <s:param name="weblog" value="%{actionWeblog.handle}"/>
             <s:param name="directoryName" value="%{directoryName}"/>
         </s:url>
 
-        <s:url var="mediaFileViewURL" action="mediaFileView">
+        <s:url var="mediaFileViewURL" escapeAmp="false" action="mediaFileView">
             <s:param name="weblog" value="%{actionWeblog.handle}"/>
             <s:param name="directoryId" value="%{bean.directoryId}"/>
         </s:url>
@@ -167,13 +185,11 @@
         <s:submit theme="simple" cssClass="btn btn-success" id="submit" value="%{getText('mediaFileSuccess.createPost')}"
                   action="entryAddWithMediaFile"/>
 
-        <button class="btn btn-outline-secondary" onclick='window.load("<s:property value='%{mediaFileAddURL}'/>")'>
-            <s:text name="mediaFileSuccess.uploadMore"/>
-        </button>
+        <a class="btn btn-outline-secondary" href="<s:property value='%{mediaFileAddURL}'/>">
+            <s:text name="mediaFileSuccess.uploadMore"/></a>
 
-        <button class="btn btn-outline-secondary" onclick='window.load("<s:property value='%{mediaFileViewURL}'/>")'>
-            <s:text name="generic.cancel"/>
-        </button>
+        <a class="btn btn-outline-secondary" href="<s:property value='%{mediaFileViewURL}'/>">
+            <s:text name="mediaFileSuccess.viewLibrary"/></a>
     </div>
 
 </s:form>

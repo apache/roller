@@ -17,110 +17,116 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<%-- Upload media files. One file picker (or drag and drop) fills a list; the shared metadata
+     comes after it. With JavaScript (media-upload.js) the files go in one request whose per-file
+     results come back as JSON, so failed files can be retried alone. Without it, the form posts
+     normally and the success page lists the results. --%>
 
-<p class="subtitle"> <s:text name="mediaFileAdd.title"/> </p>
-<p class="pagetip"> <s:text name="mediaFileAdd.pageTip"/> </p>
+<s:url var="mediaFileViewURL" escapeAmp="false" action="mediaFileView">
+    <s:param name="weblog" value="%{actionWeblog.handle}"/>
+    <s:param name="directoryName" value="%{directoryName}"/>
+</s:url>
 
-<s:form id="entry" action="mediaFileAdd!save"
-        method="POST" enctype="multipart/form-data" theme="bootstrap" cssClass="form-horizontal">
+<p class="media-back">
+    <a href="<s:property value='%{mediaFileViewURL}'/>">
+        <span class="bi bi-arrow-left" aria-hidden="true"></span>
+        <s:text name="mediaFileEdit.backToLibrary"/></a>
+</p>
+
+<s:if test="!uploadsEnabled">
+    <div class="alert alert-warning"><s:text name="mediaFileAdd.uploadsDisabled"/></div>
+</s:if>
+<s:else>
+
+<s:url var="doneURL" escapeAmp="false" action="mediaFileAdd!done">
+    <s:param name="weblog" value="%{actionWeblog.handle}"/>
+</s:url>
+<s:url var="folderNewestURL" escapeAmp="false" action="mediaFileView">
+    <s:param name="weblog" value="%{actionWeblog.handle}"/>
+</s:url>
+
+<s:form id="uploadForm" action="mediaFileAdd!save" method="POST" enctype="multipart/form-data"
+        theme="simple" cssClass="media-upload">
     <s:hidden name="salt"/>
     <s:hidden name="weblog"/>
     <s:hidden name="directoryName"/>
 
-    <s:textfield name="bean.name" maxlength="255" label="%{getText('generic.name')}"/>
+    <div id="mediaUpload" hidden
+         data-max-files="<s:property value='maxFiles'/>"
+         data-max-file-mb="<s:property value='maxFileMB'/>"
+         data-done-url="<s:property value='%{doneURL}'/>"
+         data-folder-url="<s:property value='%{folderNewestURL}'/>"
+         data-status-queued="<s:text name='mediaFileAdd.statusQueued'/>"
+         data-status-uploading="<s:text name='mediaFileAdd.statusUploading'/>"
+         data-status-uploaded="<s:text name='mediaFileAdd.statusUploaded'/>"
+         data-status-failed="<s:text name='mediaFileAdd.statusFailed'/>"
+         data-status-unknown="<s:text name='mediaFileAdd.statusUnknown'/>"
+         data-too-large="<s:text name='mediaFileAdd.tooLarge'/>"
+         data-too-many="<s:text name='mediaFileAdd.tooManyFiles'/>"
+         data-remove="<s:text name='mediaFileAdd.remove'/>"
+         data-selected-count="<s:text name='mediaFileAdd.selectedCount'/>"
+         data-uploading="<s:text name='mediaFileAdd.uploading'/>"
+         data-some-failed="<s:text name='mediaFileAdd.someFailed'/>"
+         data-retry="<s:text name='mediaFileAdd.retry'/>"
+         data-unknown-outcome="<s:text name='mediaFileAdd.unknownOutcome'/>"
+         data-server-error="<s:text name='mediaFileAdd.serverError'/>"></div>
 
-    <s:textarea name="bean.description"  rows="3" label="%{getText('generic.description')}"/>
-
-    <s:textarea name="bean.copyrightText" rows="3" label="%{getText('mediaFileAdd.copyright')}"/>
-
-    <s:textfield name="bean.tagsAsString" maxlength="255" label="%{getText('mediaFileAdd.tags')}"/>
-
-    <s:select name="bean.directoryId" list="allDirectories"
-              listKey="id" listValue="name" label="%{getText('mediaFileAdd.directory')}"/>
-
-    <s:checkbox name="bean.sharedForGallery"
-                label="%{getText('mediaFileAdd.includeGallery')}"
-                tooltip="%{getText('mediaFileEdit.includeGalleryHelp')}"/>
-
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-title">
-                <s:text name="mediaFileAdd.fileLocation"/>
-            </h4>
-        </div>
-        <div class="card-body">
-            <s:file id="fileControl0" name="uploadedFiles" size="30" cssClass="form-control mb-2" />
-            <s:file id="fileControl1" name="uploadedFiles" size="30" cssClass="form-control mb-2" />
-            <s:file id="fileControl2" name="uploadedFiles" size="30" cssClass="form-control mb-2" />
-            <s:file id="fileControl3" name="uploadedFiles" size="30" cssClass="form-control mb-2" />
-            <s:file id="fileControl4" name="uploadedFiles" size="30" cssClass="form-control mb-2" />
-        </div>
+    <div class="media-upload-folder">
+        <label class="form-label" for="uploadFolder"><s:text name="mediaFileAdd.folder"/></label>
+        <s:select id="uploadFolder" name="bean.directoryId" list="allDirectories" listKey="id" listValue="name"
+                  cssClass="form-select"/>
     </div>
 
-    <div class="row mb-3">
-        <div class="col-sm-9 offset-sm-3">
-            <s:submit id="uploadButton" cssClass="btn btn-primary" theme="simple"
-                      value="%{getText('mediaFileAdd.upload')}" action="mediaFileAdd!save"/>
-            <s:submit cssClass="btn btn-outline-secondary" theme="simple"
-                      value="%{getText('generic.cancel')}" action="mediaFileAdd!cancel"/>
-        </div>
+    <div id="dropZone" class="media-drop-zone">
+        <span class="bi bi-cloud-arrow-up" aria-hidden="true"></span>
+        <label class="form-label" for="fileInput"><s:text name="mediaFileAdd.dropHere"/></label>
+        <input type="file" id="fileInput" name="uploadedFiles" multiple class="form-control"
+               aria-describedby="uploadLimits"/>
+        <p class="form-text" id="uploadLimits">
+            <s:text name="mediaFileAdd.limits">
+                <s:param value="maxFiles"/>
+                <s:param value="maxFileMB"/>
+                <s:param value="maxDirMB"/>
+            </s:text>
+        </p>
     </div>
+
+    <ul id="fileList" class="media-upload-list" aria-label="<s:text name='mediaFileAdd.fileListLabel'/>"></ul>
+
+    <details class="media-upload-shared">
+        <summary><s:text name="mediaFileAdd.shared"/></summary>
+        <p class="form-text"><s:text name="mediaFileAdd.sharedHelp"/></p>
+
+        <label class="form-label" for="uploadDescription"><s:text name="mediaFileEdit.descriptionAlt"/></label>
+        <s:textarea id="uploadDescription" name="bean.description" rows="2" cssClass="form-control"/>
+
+        <label class="form-label" for="uploadTags"><s:text name="mediaFileAdd.tags"/></label>
+        <s:textfield id="uploadTags" name="bean.tagsAsString" maxlength="255" cssClass="form-control"/>
+
+        <label class="form-label" for="uploadCopyright"><s:text name="mediaFileAdd.copyright"/></label>
+        <s:textarea id="uploadCopyright" name="bean.copyrightText" rows="2" cssClass="form-control"/>
+
+        <div class="form-check">
+            <s:checkbox id="uploadGallery" name="bean.sharedForGallery" cssClass="form-check-input"/>
+            <label class="form-check-label" for="uploadGallery"><s:text name="mediaFileAdd.includeGallery"/></label>
+            <p class="form-text"><s:text name="mediaFileEdit.includeGalleryHelp"/></p>
+        </div>
+    </details>
+
+    <div class="media-upload-buttons">
+        <button type="submit" id="uploadButton" class="btn btn-primary">
+            <span class="bi bi-upload" aria-hidden="true"></span>
+            <span id="uploadButtonLabel"><s:text name="mediaFileAdd.upload"/></span></button>
+        <a class="btn btn-outline-secondary" href="<s:property value='%{mediaFileViewURL}'/>">
+            <s:text name="generic.cancel"/></a>
+        <a class="btn btn-outline-success" id="continueLink" hidden href="#">
+            <s:text name="mediaFileAdd.continue"/></a>
+    </div>
+
+    <div id="uploadStatus" class="media-upload-status" role="status" aria-live="polite"></div>
 
 </s:form>
 
+<script src="<s:url value='/roller-ui/scripts/media-upload.js'/>"></script>
 
-<%-- ================================================================== --%>
-
-<script>
-
-    $(document).ready(function () {
-
-        $("input[type='file']").change(function () {
-
-            var name = '';
-            var count = 0;
-            var fileControls = $("input[type='file']");
-
-            for (var i = 0; i < fileControls.length; i++) {
-                if (jQuery.trim(fileControls.get(i).value).length > 0) {
-                    count++;
-                    name = fileControls.get(i).value;
-                }
-            }
-
-            var entryBean = $("#entry_bean_name");
-            if (count === 1) {
-                entryBean.get(0).disabled = false;
-                entryBean.get(0).value = getFileName(name);
-
-            } else if (count > 1) {
-                entryBean.css("font-style", "italic");
-                entryBean.css("color", "grey");
-                entryBean.get(0).value = "<s:text name="mediaFileAdd.multipleNames"  />";
-                entryBean.get(0).disabled = true;
-            }
-
-            if (count > 0) {
-                $("#uploadButton:first").attr("disabled", false)
-            }
-        });
-
-        $("#uploadButton:first").attr("disabled", true)
-    });
-
-    function getFileName(fullName) {
-        var backslashIndex = fullName.lastIndexOf('/');
-        var fwdslashIndex = fullName.lastIndexOf('\\');
-        var fileName;
-        if (backslashIndex >= 0) {
-            fileName = fullName.substring(backslashIndex + 1);
-        } else if (fwdslashIndex >= 0) {
-            fileName = fullName.substring(fwdslashIndex + 1);
-        }
-        else {
-            fileName = fullName;
-        }
-        return fileName;
-    }
-
-</script>
+</s:else>

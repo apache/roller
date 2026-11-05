@@ -4,6 +4,15 @@
 
 ### Improvements
 
+- **Redesigned media library.** Browsing, search and upload were rebuilt
+  around one page per folder (PR #233).
+  - One search box with type filters, a search scope (this folder or all
+    folders), sorting by date, name or type, and paging that keeps its place.
+  - Upload several files at once by choosing or dragging them. Each file
+    gets its own result, and only the files that failed are retried.
+  - A details page for each file, with a preview, its facts, a copy-URL
+    button and the edit form. The description is used as the image's alt text.
+
 - **AtomPub can manage templates and categories.** New collections
   in each weblog's workspace, documented in the user guide:
   - Templates (standard and mobile versions) for weblog administrators,

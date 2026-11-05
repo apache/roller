@@ -85,6 +85,16 @@ public class LinkPager<T> {
     }
 
 
+    /** Message key for the previous-page button; entry and comment lists run newest first. */
+    public String getPrevKey() {
+        return "generic.newer";
+    }
+
+    /** Message key for the next-page button. */
+    public String getNextKey() {
+        return "generic.older";
+    }
+
     public List<T> getItems() {
         return items;
     }

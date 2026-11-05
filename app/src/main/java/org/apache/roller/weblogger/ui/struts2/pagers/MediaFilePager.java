@@ -23,55 +23,22 @@ import java.util.List;
 import org.apache.roller.weblogger.pojos.MediaFile;
 
 /**
- * A pager implementation for a collection of media files. Media file search
- * is a POSTed form, so instead of links this exposes page numbers that the
- * page resubmits the search form with.
+ * Pager for the media library. The library can sort by name or type as well
+ * as by date, so its buttons say Previous and Next rather than Newer and Older.
  */
-public class MediaFilePager {
-    
-    // the collection for the pager
-    private final List<MediaFile> items;
-    
-    // What page we are on
-    private final int pageNum;
-    
-    // media files matching the search across all pages
-    private final long totalCount;
+public class MediaFilePager extends LinkPager<MediaFile> {
 
-    private final int pageSize;
-    
-    public MediaFilePager(int page, List<MediaFile> mediaFiles, long totalCount, int pageSize) {
-        this.pageNum = page;
-        this.items = mediaFiles;
-        this.totalCount = totalCount;
-        this.pageSize = pageSize;
-    }
-    
-    public List<MediaFile> getItems() {
-        return items;
+    public MediaFilePager(String url, int page, List<MediaFile> mediaFiles, long totalCount, int pageSize) {
+        super(url, page, mediaFiles, totalCount, pageSize);
     }
 
-    public boolean isMoreItems() {
-        return (long) (pageNum + 1) * pageSize < totalCount;
+    @Override
+    public String getPrevKey() {
+        return "generic.previous";
     }
 
-    public long getTotalCount() {
-        return totalCount;
+    @Override
+    public String getNextKey() {
+        return "generic.next";
     }
-
-    /** Zero-based page number, as the search form submits it. */
-    public int getPageNum() {
-        return pageNum;
-    }
-
-    /** One-based page number, for display. */
-    public int getPageNumber() {
-        return pageNum + 1;
-    }
-
-    /** Number of pages; at least 1, so an empty result reads "Page 1 of 1". */
-    public int getPageCount() {
-        return (int) Math.max(1, (totalCount + pageSize - 1) / pageSize);
-    }
-
 }

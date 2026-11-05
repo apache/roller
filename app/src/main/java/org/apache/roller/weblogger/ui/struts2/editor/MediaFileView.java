@@ -19,7 +19,10 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -28,20 +31,23 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.MediaFile;
-import org.apache.roller.weblogger.pojos.MediaFileComparator;
-import org.apache.roller.weblogger.pojos.MediaFileComparator.MediaFileComparatorType;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.MediaFileFilter;
 import org.apache.roller.weblogger.ui.struts2.pagers.MediaFilePager;
 import org.apache.roller.weblogger.ui.struts2.util.KeyValueObject;
+import org.apache.roller.weblogger.util.URLUtilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
- * View media files.
+ * The media library: one page of the files in a folder, or of the files that
+ * match a search in that folder or in all folders. Browsing and searching are
+ * the same query, so both sort and page the same way. The page state travels
+ * in GET parameters, so links, the back button and the pager keep it.
  */
 @SuppressWarnings("serial")
 // TODO: make this work @AllowedMethods({"execute","view","search","delete","deleteSelected","deleteFolder","includeInGallery","moveSelected"})
@@ -51,7 +57,6 @@ public class MediaFileView extends MediaFileBase {
 
     private String directoryId;
     private String directoryName;
-    private String sortBy;
     private String newDirectoryName;
 
     private List<MediaFile> childFiles;
@@ -66,10 +71,10 @@ public class MediaFileView extends MediaFileBase {
     // Search criteria - drop-down for size unit
     private static List<KeyValueObject> SIZE_UNITS = null;
 
-    // Sort options for search results.
+    // Sort options
     private static List<KeyValueObject> SORT_OPTIONS = null;
 
-    // Pager for displaying search results.
+    // the page of files shown
     private MediaFilePager pager;
 
     // Path of new directory to be created.
@@ -103,15 +108,13 @@ public class MediaFileView extends MediaFileBase {
                             getText("mediaFileView.le")), new KeyValueObject(
                             "mediaFileView.lt", getText("mediaFileView.lt")));
 
-            FILE_TYPES = Arrays.asList(new KeyValueObject("mediaFileView.any",
-                    getText("mediaFileView.any")), new KeyValueObject(
-                    "mediaFileView.others", getText("mediaFileView.others")),
-                    new KeyValueObject("mediaFileView.image",
-                            getText("mediaFileView.image")),
-                    new KeyValueObject("mediaFileView.video",
-                            getText("mediaFileView.video")),
-                    new KeyValueObject("mediaFileView.audio",
-                            getText("mediaFileView.audio")));
+            // in the order the type chips show them
+            FILE_TYPES = Arrays.asList(
+                    new KeyValueObject("mediaFileView.any", getText("mediaFileView.any")),
+                    new KeyValueObject("mediaFileView.image", getText("mediaFileView.image")),
+                    new KeyValueObject("mediaFileView.video", getText("mediaFileView.video")),
+                    new KeyValueObject("mediaFileView.audio", getText("mediaFileView.audio")),
+                    new KeyValueObject("mediaFileView.others", getText("mediaFileView.others")));
 
             SIZE_UNITS = Arrays.asList(new KeyValueObject(
                     "mediaFileView.bytes", getText("mediaFileView.bytes")),
@@ -119,10 +122,11 @@ public class MediaFileView extends MediaFileBase {
                             getText("mediaFileView.kb")), new KeyValueObject(
                             "mediaFileView.mb", getText("mediaFileView.mb")));
 
-            SORT_OPTIONS = Arrays.asList(new KeyValueObject("name",
-                    getText("generic.name")), new KeyValueObject(
-                    "date_uploaded", getText("mediaFileView.date")),
-                    new KeyValueObject("type", getText("mediaFileView.type")));
+            SORT_OPTIONS = Arrays.asList(
+                    new KeyValueObject(MediaFileSearchBean.SORT_NEWEST, getText("mediaFileView.sortNewest")),
+                    new KeyValueObject(MediaFileSearchBean.SORT_OLDEST, getText("mediaFileView.sortOldest")),
+                    new KeyValueObject(MediaFileSearchBean.SORT_NAME, getText("generic.name")),
+                    new KeyValueObject(MediaFileSearchBean.SORT_TYPE, getText("mediaFileView.type")));
         }
 
         refreshAllDirectories();
@@ -154,8 +158,9 @@ public class MediaFileView extends MediaFileBase {
                     addMessage("mediaFile.directoryCreate.success",
                             this.newDirectoryName);
 
-                    // Switch to folder
+                    // Switch to the new, empty folder
                     setDirectoryId(dir.getId());
+                    clearSearch();
 
                     dirCreated = true;
                 } else {
@@ -180,17 +185,9 @@ public class MediaFileView extends MediaFileBase {
     }
 
     /**
-     * Returns directory content in JSON format.
-     */
-    public String fetchDirectoryContentLight() {
-        execute();
-        return "success.json";
-    }
-
-    /**
-     * Fetches and displays list of media file for the given directory. The
-     * directory could be chosen by ID or path.
-     * 
+     * Shows a page of the library: the folder chosen by ID or name (the
+     * default folder otherwise), filtered by any search criteria.
+     *
      * @return String The result of the action.
      */
     @SkipValidation
@@ -198,43 +195,37 @@ public class MediaFileView extends MediaFileBase {
     public String execute() {
         MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
         try {
-            MediaFileDirectory directory;
+            MediaFileDirectory directory = null;
             if (StringUtils.isNotEmpty(this.directoryId)) {
                 directory = manager.getMediaFileDirectory(getActionWeblog(), this.directoryId);
-
             } else if (StringUtils.isNotEmpty(this.directoryName)) {
                 directory = manager.getMediaFileDirectoryByName(
                         getActionWeblog(), this.directoryName);
-
-            } else {
+            }
+            if (directory == null) {
                 directory = manager.getDefaultMediaFileDirectory(getActionWeblog());
             }
+            this.currentDirectory = directory;
             this.directoryId = directory.getId();
             this.directoryName = directory.getName();
+            setViewDirectoryId(directory.getId());
 
-            this.childFiles = new ArrayList<>();
-            this.childFiles.addAll(directory.getMediaFiles());
-
-            if ("type".equals(sortBy)) {
-                this.childFiles.sort(new MediaFileComparator(MediaFileComparatorType.TYPE));
-
-            } else if ("date_uploaded".equals(sortBy)) {
-                this.childFiles.sort(new MediaFileComparator(MediaFileComparatorType.DATE_UPLOADED));
-
-            } else {
-                // default to sort by name
-                sortBy = "name";
-                this.childFiles.sort(new MediaFileComparator(MediaFileComparatorType.NAME));
+            MediaFileFilter filter = new MediaFileFilter();
+            bean.copyTo(filter);
+            if (!bean.isSearch() || !bean.isAllFolders()) {
+                filter.setDirectory(directory);
             }
 
-            this.currentDirectory = directory;
-
-            // set current directory if valid
-            if (directory != null) {
-                setViewDirectoryId(directory.getId());
+            long totalCount = manager.getMediaFileCount(getActionWeblog(), filter);
+            if (totalCount > 0 && filter.getStartIndex() >= totalCount) {
+                // past the end, e.g. after deleting the last files of the last page
+                bean.setPage((int) ((totalCount - 1) / MediaFileSearchBean.PAGE_SIZE));
+                bean.copyTo(filter);
             }
-
-            return SUCCESS;
+            List<MediaFile> files = new ArrayList<>(manager.searchMediaFiles(getActionWeblog(), filter));
+            this.childFiles = files;
+            this.pager = new MediaFilePager(getPagerBaseURL(), bean.getPage(), files,
+                    totalCount, MediaFileSearchBean.PAGE_SIZE);
 
         } catch (FileIOException ex) {
             log.error("Error viewing media file directory ", ex);
@@ -247,51 +238,74 @@ public class MediaFileView extends MediaFileBase {
     }
 
     /**
+     * Returns directory content in JSON format.
+     */
+    public String fetchDirectoryContentLight() {
+        execute();
+        return "success.json";
+    }
+
+    /**
      * View the contents of another Media folder.
      */
     public String view() {
-        try {
-            MediaFileManager manager = WebloggerFactory.getWeblogger()
-                    .getMediaFileManager();
-            if (!StringUtils.isEmpty(viewDirectoryId)) {
-                setDirectoryId(viewDirectoryId);
-                setCurrentDirectory(manager.getMediaFileDirectory(getActionWeblog(), viewDirectoryId));
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up directory", ex);
+        if (!StringUtils.isEmpty(viewDirectoryId)) {
+            setDirectoryId(viewDirectoryId);
         }
         return execute();
     }
 
     /**
-     * Save a media file.
-     * 
-     * @return String The result of the action.
+     * Search. Kept for old links; the library searches whenever criteria are set.
      */
+    @SkipValidation
     public String search() {
+        return execute();
+    }
 
-        boolean valSuccess = myValidate();
+    private void clearSearch() {
+        MediaFileSearchBean fresh = new MediaFileSearchBean();
+        fresh.setSortBy(bean.getSortBy());
+        this.bean = fresh;
+    }
 
-        if (valSuccess) {
-            MediaFileFilter filter = new MediaFileFilter();
-            bean.copyTo(filter);
-            MediaFileManager manager = WebloggerFactory.getWeblogger().getMediaFileManager();
-            try {
-                List<MediaFile> results = new ArrayList<>(
-                        manager.searchMediaFiles(getActionWeblog(), filter));
-                long totalCount = manager.getMediaFileCount(getActionWeblog(), filter);
-
-                this.pager = new MediaFilePager(bean.getPageNum(), results,
-                        totalCount, MediaFileSearchBean.PAGE_SIZE);
-
-            } catch (Exception e) {
-                log.error("Error applying search criteria", e);
-                addError("Error applying search criteria - check Roller logs");
-            }
-
+    /**
+     * The library state, as an encoded query string without a leading "?":
+     * weblog, folder, criteria, sort and page. Pages linked from the library
+     * pass it back so the user returns to the same place.
+     */
+    public String getLibraryQuery() {
+        Map<String, String> params = stateParams();
+        if (bean.getPage() > 0) {
+            params.put("bean.page", Integer.toString(bean.getPage()));
         }
+        return queryString(params);
+    }
 
-        return SUCCESS;
+    private String getPagerBaseURL() {
+        return WebloggerRuntimeConfig.getRelativeContextURL()
+                + "/roller-ui/authoring/mediaFileView.rol?" + queryString(stateParams());
+    }
+
+    private Map<String, String> stateParams() {
+        Map<String, String> params = new LinkedHashMap<>();
+        params.put("weblog", getActionWeblog().getHandle());
+        if (directoryId != null) {
+            params.put("directoryId", directoryId);
+        }
+        params.putAll(bean.toParams());
+        return params;
+    }
+
+    private static String queryString(Map<String, String> params) {
+        return params.entrySet().stream()
+                .map(e -> e.getKey() + "=" + URLUtilities.encode(e.getValue()))
+                .collect(Collectors.joining("&"));
+    }
+
+    /** True when search criteria are set, rather than browsing a folder. */
+    public boolean isSearch() {
+        return bean.isSearch();
     }
 
     /**
@@ -342,6 +356,7 @@ public class MediaFileView extends MediaFileBase {
                         .getDefaultMediaFileDirectory(getActionWeblog());
                 setDirectoryId(mediaFileDir.getId());
                 setDirectoryName(mediaFileDir.getName());
+                clearSearch();
             } else {
                 log.error("(System error) No directory ID provided for media file folder delete.");
             }
@@ -410,28 +425,6 @@ public class MediaFileView extends MediaFileBase {
     @StrutsParameter
     public void setDirectoryName(String path) {
         this.directoryName = path;
-    }
-
-    public String getSortBy() {
-        return sortBy;
-    }
-
-    @StrutsParameter
-    public void setSortBy(String sortBy) {
-        this.sortBy = sortBy;
-    }
-
-    /**
-     * Validates search input
-     */
-    public boolean myValidate() {
-        if (StringUtils.isEmpty(bean.getName())
-                && StringUtils.isEmpty(bean.getTags())
-                && StringUtils.isEmpty(bean.getType()) && bean.getSize() == 0) {
-            addError("MediaFile.error.search.empty");
-            return false;
-        }
-        return true;
     }
 
     @StrutsParameter(depth = 1)

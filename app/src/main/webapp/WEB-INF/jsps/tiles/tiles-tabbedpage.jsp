@@ -22,6 +22,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <tiles:insertAttribute name="viewport"/>
     <link rel="icon" href="<%= request.getContextPath() %>/favicon.svg" type="image/x-icon">
     <title><s:property value="getProp('site.shortName')"/>: <s:property value="pageTitle"/></title>
     <tiles:insertAttribute name="head"/>
@@ -41,22 +42,9 @@
 
         <div class="col-md-3 roller-column-left">
 
-            <div class="card">
-                <div class="card-body" style="text-align: center">
-
-                    <img src='<s:url value="/roller-ui/images/feather.svg" />'
-                         alt="ASF feat" height="100" align="center"/>
-                    <h4><s:text name="generic.poweredBy" /></h4>
-
-                    <s:if test="authenticatedUser != null || actionWeblog != null">
-                        <tiles:insertAttribute name="userStatus"/>
-                    </s:if>
-
-                </div>
-            </div>
+            <tiles:insertAttribute name="branding"/>
 
             <c:if test="${sidebar != '/WEB-INF/jsps/tiles/empty.jsp'}">
-                <s:property value="sidebar"/>
                 <div class="card">
                     <div class="card-body">
 
