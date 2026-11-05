@@ -25,6 +25,12 @@
     
 ### Behaviour changes worth reading before upgrading
 
+- **Weblog update pings no longer use the XML-RPC client library.** Roller
+  builds the `weblogUpdates.ping` request and reads the response itself, with a
+  connection timeout, a read timeout and a 1 MB cap on the response, and reads
+  only the `flerror` and `message` fields the protocol defines. Ping behaviour
+  is otherwise unchanged.
+
 - **AtomPub honours `webservices.enableAtomPub` on every request.** While the
   setting is off, every AtomPub URL answers 404, not only the service document.
 - **AtomPub entry bodies default to a 1 MiB limit.** A larger entry is refused
