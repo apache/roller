@@ -246,7 +246,7 @@ public interface WeblogEntryManager {
     long getCommentCount(CommentSearchCriteria csc) throws WebloggerException;
 
     /**
-     * Deletes comments that match paramters.
+     * Deletes comments that match parameters.
      * @param website    Website or null for all comments on site
      * @param entry      Entry or null to include all comments
      * @param startDate  Start date or null for no restriction
