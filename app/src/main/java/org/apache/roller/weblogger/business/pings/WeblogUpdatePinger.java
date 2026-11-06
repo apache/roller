@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -173,9 +174,16 @@ public final class WeblogUpdatePinger {
      * POST the request body to the ping target and return the response bytes,
      * capped at {@link #MAX_RESPONSE_BYTES}.
      */
-    private static byte[] exchange(String pingTargetUrl, String requestBody) throws IOException {
+    static byte[] exchange(String pingTargetUrl, String requestBody) throws IOException {
         URL url = new URL(pingTargetUrl);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        URLConnection connection = url.openConnection();
+        if (!(connection instanceof HttpURLConnection)) {
+            // Ping targets are HTTP(S) XML-RPC endpoints. Refuse anything else
+            // (for example file: or ftp:) with an IOException rather than failing
+            // with a ClassCastException that callers do not handle.
+            throw new IOException("Ping target URL is not an HTTP URL: " + pingTargetUrl);
+        }
+        HttpURLConnection conn = (HttpURLConnection) connection;
         try {
             conn.setRequestMethod("POST");
             conn.setConnectTimeout(CONNECT_TIMEOUT_MS);
@@ -191,8 +199,13 @@ public final class WeblogUpdatePinger {
             }
 
             int status = conn.getResponseCode();
-            InputStream in = (status >= 200 && status < 300) ? conn.getInputStream() : conn.getErrorStream();
-            return readCapped(in);
+            if (status < 200 || status >= 300) {
+                // A non-2xx status is a transport-level failure, not a ping
+                // result. Surface it so the ping is treated as failed (and
+                // retried by the queue processor), as the old client did.
+                throw new IOException("Ping target returned HTTP status " + status);
+            }
+            return readCapped(conn.getInputStream());
         } finally {
             conn.disconnect();
         }

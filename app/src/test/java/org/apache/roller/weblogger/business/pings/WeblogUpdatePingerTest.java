@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.business.pings;
 
+import com.sun.net.httpserver.HttpServer;
 import org.apache.roller.weblogger.business.pings.WeblogUpdatePinger.PingResult;
 import org.apache.xmlrpc.XmlRpcException;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,9 +26,13 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
@@ -160,6 +165,53 @@ public class WeblogUpdatePingerTest {
         assertTrue(request.contains("A &amp; B &lt;blog&gt;"), "parameters must be XML-escaped");
         assertTrue(request.contains("<string>http://example.test/</string>"));
         assertFalse(request.contains("<blog>"), "raw markup must not leak into the request");
+    }
+
+    @Test
+    public void nonSuccessHttpStatusThrows() throws Exception {
+        // A non-2xx response is a transport failure, not a successful ping.
+        HttpServer server = startServer(500, "<html>error</html>");
+        try {
+            String url = "http://127.0.0.1:" + server.getAddress().getPort() + "/";
+            assertThrows(IOException.class, () -> WeblogUpdatePinger.exchange(url, "<methodCall/>"));
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    public void successHttpStatusReturnsBody() throws Exception {
+        String body = "<?xml version=\"1.0\"?><methodResponse><params><param>"
+                + "<value><string>ok</string></value></param></params></methodResponse>";
+        HttpServer server = startServer(200, body);
+        try {
+            String url = "http://127.0.0.1:" + server.getAddress().getPort() + "/";
+            byte[] bytes = WeblogUpdatePinger.exchange(url, "<methodCall/>");
+            assertEquals(body, new String(bytes, StandardCharsets.UTF_8));
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    public void nonHttpTargetThrowsIoException() {
+        // A file:/ftp: target must not escape as a ClassCastException.
+        assertThrows(IOException.class,
+                () -> WeblogUpdatePinger.exchange("file:///no/such/file", "<methodCall/>"));
+    }
+
+    private static HttpServer startServer(int status, String body) throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
+        server.createContext("/", exchange -> {
+            exchange.getRequestBody().readAllBytes();
+            byte[] out = body.getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(status, out.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(out);
+            }
+        });
+        server.start();
+        return server;
     }
 
     private static PingResult parse(String response) {
