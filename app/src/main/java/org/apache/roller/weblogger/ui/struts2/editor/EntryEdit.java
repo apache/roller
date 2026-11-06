@@ -80,6 +80,9 @@ public final class EntryEdit extends UIAction {
     // the entry we are adding or editing
     private WeblogEntry entry = null;
 
+    // set by myPrepare() when the user may not write the saved entry
+    private boolean writeDenied = false;
+
     public EntryEdit() {
         this.desiredMenu = "editor";
     }
@@ -108,6 +111,13 @@ public final class EntryEdit extends UIAction {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
                         .getWeblogEntryManager();
                 setEntry(wmgr.getWeblogEntry(getActionWeblog(), getBean().getId()));
+                // Checked here, not in the methods: when field validation
+                // fails, Struts returns INPUT without calling them, and the
+                // page shows the entry.
+                if (entry != null && !canWriteEntry()) {
+                    writeDenied = true;
+                    entry = null;
+                }
             } catch (WebloggerException ex) {
                 log.error(
                         "Error looking up entry by id - " + getBean().getId(),
@@ -124,12 +134,12 @@ public final class EntryEdit extends UIAction {
     @SkipValidation
     @Override
     public String execute() {
+        if (writeDenied) {
+            return DENIED;
+        }
         if (getActionName().equals("entryEdit")) {
             if (!requireEntry()) {
                 return ERROR;
-            }
-            if (!canWriteEntry()) {
-                return DENIED;
             }
             // load bean with pojo data
             getBean().copyFrom(getEntry(), getLocale());
@@ -155,11 +165,11 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String saveDraft() {
+        if (writeDenied) {
+            return DENIED;
+        }
         if (!requireEntry()) {
             return INPUT;
-        }
-        if (!canWriteEntry()) {
-            return DENIED;
         }
         getBean().setStatus(PubStatus.DRAFT.name());
         if (entry.isPublished()) {
@@ -176,11 +186,11 @@ public final class EntryEdit extends UIAction {
      * @return String The result of the action.
      */
     public String publish() {
+        if (writeDenied) {
+            return DENIED;
+        }
         if (!requireEntry()) {
             return INPUT;
-        }
-        if (!canWriteEntry()) {
-            return DENIED;
         }
         if (getActionWeblog().hasUserPermission(
                 getAuthenticatedUser(), WeblogPermission.POST)) {
@@ -629,12 +639,9 @@ public final class EntryEdit extends UIAction {
 
     /**
      * The action lets LIMITED users in; a saved entry then decides what they
-     * may do with it. A new entry has nothing to check.
+     * may do with it.
      */
     private boolean canWriteEntry() {
-        if (getBean().getId() == null) {
-            return true;
-        }
         try {
             return entry.hasWritePermissions(getAuthenticatedUser());
         } catch (WebloggerException ex) {
@@ -645,6 +652,9 @@ public final class EntryEdit extends UIAction {
 
     @SkipValidation
     public String firstSave() {
+        if (writeDenied) {
+            return DENIED;
+        }
         if (!requireEntry()) {
             return ERROR;
         }

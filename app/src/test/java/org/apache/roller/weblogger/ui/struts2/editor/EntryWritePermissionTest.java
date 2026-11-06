@@ -38,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -141,6 +142,16 @@ class EntryWritePermissionTest {
 
         assertEquals(PubStatus.PUBLISHED, entry.getStatus());
         verify(entries, never()).saveWeblogEntry(any());
+    }
+
+    @Test
+    void failedValidationShowsNoEntryToALimitedMember() throws Exception {
+        // Struts returns INPUT without calling saveDraft() or publish() when
+        // a field fails validation; the page then shows getEntry().
+        memberHas(WeblogPermission.EDIT_DRAFT);
+
+        assertNull(editAction(entry(PubStatus.PUBLISHED)).getEntry());
+        assertNull(editAction(entry(PubStatus.SCHEDULED)).getEntry());
     }
 
     @Test
