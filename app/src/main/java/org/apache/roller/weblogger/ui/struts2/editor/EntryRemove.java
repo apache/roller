@@ -144,7 +144,8 @@ public class EntryRemove extends UIAction {
         return removeEntry;
     }
 
-    private void setRemoveEntry(WeblogEntry removeEntry) {
+    // package-private: set by the action only, never bound from a request
+    void setRemoveEntry(WeblogEntry removeEntry) {
         this.removeEntry = removeEntry;
     }
 
