@@ -81,6 +81,9 @@ public class Pings extends UIAction {
         
         PingTargetManager pingTargetMgr = WebloggerFactory.getWeblogger().getPingTargetManager();
         
+        // The ping target always comes from the stored ping targets, by id.
+        pingTarget = null;
+        
         // load selected ping target, if possible
         if(getPingTargetId() != null) {
             try {
@@ -252,7 +255,7 @@ public class Pings extends UIAction {
         return pingTarget;
     }
 
-    public void setPingTarget(PingTarget pingTarget) {
+    private void setPingTarget(PingTarget pingTarget) {
         this.pingTarget = pingTarget;
     }
 

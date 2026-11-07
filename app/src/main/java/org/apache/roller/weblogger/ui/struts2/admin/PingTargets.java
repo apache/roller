@@ -78,6 +78,9 @@ public class PingTargets extends UIAction {
         // load list of ping targets
         loadPingTargets();
 
+        // The ping target always comes from the stored targets, by id.
+        pingTarget = null;
+
         // load specified ping target if possible
         if(!StringUtils.isEmpty(getPingTargetId())) {
             try {
@@ -196,7 +199,7 @@ public class PingTargets extends UIAction {
         return pingTarget;
     }
 
-    public void setPingTarget(PingTarget pingTarget) {
+    private void setPingTarget(PingTarget pingTarget) {
         this.pingTarget = pingTarget;
     }
 

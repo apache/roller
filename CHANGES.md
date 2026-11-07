@@ -86,6 +86,12 @@
     
 ### Behaviour changes worth reading before upgrading
 
+- **Weblog update pings no longer use the XML-RPC client library.** Roller
+  builds the `weblogUpdates.ping` request and reads the response itself, with a
+  connection timeout, a read timeout and a 1 MB cap on the response, and reads
+  only the `flerror` and `message` fields the protocol defines. Ping behaviour
+  is otherwise unchanged.
+
 - **AtomPub honours `webservices.enableAtomPub` on every request.** While the
   setting is off, every AtomPub URL answers 404, not only the service document.
 - **AtomPub entry bodies default to a 1 MiB limit.** A larger entry is refused
@@ -107,6 +113,9 @@
   PDF or plain text. The media file editor sets a file's original path only
   when `mediafile.originalPathEdit.enabled=true`, as its form already shows.
   AtomPub media uploads no longer set one.
+- **The entry editor applies the Limited role to each entry.** A Limited member
+  can open, change and remove draft and pending entries only, as in AtomPub and
+  XML-RPC. Other entries answer with the access denied page.
 - **Planet is off by default.** `planet.aggregator.enabled` now defaults to
   `false`. While it is off, the Planet admin pages, `/planetrss` and the
   Planet background tasks (`RefreshRollerPlanetTask`, `SyncWebsitesTask`) do

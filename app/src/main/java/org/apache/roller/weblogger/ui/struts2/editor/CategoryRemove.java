@@ -73,6 +73,8 @@ public class CategoryRemove extends UIAction {
     public void myPrepare() {
         try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+            // The category always comes from the weblog, by id.
+            category = null;
             if(!StringUtils.isEmpty(getRemoveId())) {
                 setCategory(wmgr.getWeblogCategory(getActionWeblog(), getRemoveId()));
             }
@@ -161,7 +163,7 @@ public class CategoryRemove extends UIAction {
         return category;
     }
 
-    public void setCategory(WeblogCategory category) {
+    private void setCategory(WeblogCategory category) {
         this.category = category;
     }
 

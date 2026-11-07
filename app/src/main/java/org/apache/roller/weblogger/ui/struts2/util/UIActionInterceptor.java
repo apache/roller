@@ -63,27 +63,26 @@ public class UIActionInterceptor extends MethodFilterInterceptor implements
 
             UIAction theAction = (UIAction) action;
 
-            // extract the authenticated user and set it
+            // Set the authenticated user from the session. Always overwrite,
+            // so a value bound from request parameters cannot survive.
             RollerSession rses = RollerSession.getRollerSession(request);
-            if (rses != null) {
-                theAction.setAuthenticatedUser(rses.getAuthenticatedUser());
-            }
+            theAction.setAuthenticatedUser(rses != null ? rses.getAuthenticatedUser() : null);
 
-            // extract the work weblog and set it
+            // Set the action weblog by looking up the weblog handle. Always
+            // overwrite (to null when no weblog resolves), so a value bound
+            // from request parameters cannot survive.
+            Weblog weblog = null;
             String weblogHandle = theAction.getWeblog();
             if (!StringUtils.isEmpty(weblogHandle)) {
-                Weblog weblog = null;
                 try {
                     weblog = WebloggerFactory.getWeblogger().getWeblogManager()
                             .getWeblogByHandle(weblogHandle);
-                    if (weblog != null) {
-                        theAction.setActionWeblog(weblog);
-                    }
                 } catch (Exception e) {
                     log.error("Error looking up action weblog - "
                             + weblogHandle, e);
                 }
             }
+            theAction.setActionWeblog(weblog);
         }
 
         return invocation.invoke();
