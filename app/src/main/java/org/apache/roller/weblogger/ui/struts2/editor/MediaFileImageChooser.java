@@ -73,6 +73,8 @@ public class MediaFileImageChooser extends MediaFileBase {
     @Override
     public void myPrepare() {
         refreshAllDirectories();
+        // The current directory is set from the weblog, by id.
+        currentDirectory = null;
     }
 
     @Override
@@ -221,7 +223,7 @@ public class MediaFileImageChooser extends MediaFileBase {
      * @param currentDirectory
      *            the currentDirectory to set
      */
-    public void setCurrentDirectory(MediaFileDirectory currentDirectory) {
+    private void setCurrentDirectory(MediaFileDirectory currentDirectory) {
         this.currentDirectory = currentDirectory;
     }
 

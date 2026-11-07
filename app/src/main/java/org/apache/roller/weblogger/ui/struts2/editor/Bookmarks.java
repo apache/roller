@@ -305,7 +305,7 @@ public class Bookmarks extends UIAction {
         return folder;
     }
 
-    public void setFolder(WeblogBookmarkFolder folder) {
+    private void setFolder(WeblogBookmarkFolder folder) {
         this.folder = folder;
         if ( folder != null ) {
             this.folderId = folder.getId();
