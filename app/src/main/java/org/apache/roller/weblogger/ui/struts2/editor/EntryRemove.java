@@ -70,10 +70,17 @@ public class EntryRemove extends UIAction {
 
     @Override
     public String execute() {
+        if (!canRemoveEntry()) {
+            return DENIED;
+        }
         return INPUT;
     }
 
     public String remove() {
+
+        if (!canRemoveEntry()) {
+            return DENIED;
+        }
 
         if (getRemoveEntry() != null) {
             try {
@@ -113,6 +120,18 @@ public class EntryRemove extends UIAction {
         return INPUT;
     }
 
+    private boolean canRemoveEntry() {
+        if (getRemoveEntry() == null) {
+            return true;
+        }
+        try {
+            return getRemoveEntry().hasWritePermissions(getAuthenticatedUser());
+        } catch (WebloggerException ex) {
+            log.error("Error checking permissions on entry " + getRemoveId(), ex);
+            return false;
+        }
+    }
+
     public String getRemoveId() {
         return removeId;
     }
@@ -129,7 +148,7 @@ public class EntryRemove extends UIAction {
         this.removeEntry = removeEntry;
     }
 
-    // allow LIMITED users to delete their own draft/pending blog entries
+    // lets LIMITED users in; canRemoveEntry() limits them to draft/pending entries
     @Override
     public List<String> requiredWeblogPermissionActions() {
         return Collections.singletonList(WeblogPermission.EDIT_DRAFT);

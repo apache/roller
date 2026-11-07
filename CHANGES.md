@@ -52,6 +52,9 @@
   PDF or plain text. The media file editor sets a file's original path only
   when `mediafile.originalPathEdit.enabled=true`, as its form already shows.
   AtomPub media uploads no longer set one.
+- **The entry editor applies the Limited role to each entry.** A Limited member
+  can open, change and remove draft and pending entries only, as in AtomPub and
+  XML-RPC. Other entries answer with the access denied page.
 - **Planet is off by default.** `planet.aggregator.enabled` now defaults to
   `false`. While it is off, the Planet admin pages, `/planetrss` and the
   Planet background tasks (`RefreshRollerPlanetTask`, `SyncWebsitesTask`) do
