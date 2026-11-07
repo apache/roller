@@ -606,7 +606,8 @@ public final class EntryEdit extends UIAction {
         return entry;
     }
 
-    public void setEntry(WeblogEntry entry) {
+    // package-private: set by the action only, never bound from a request
+    void setEntry(WeblogEntry entry) {
         this.entry = entry;
     }
 

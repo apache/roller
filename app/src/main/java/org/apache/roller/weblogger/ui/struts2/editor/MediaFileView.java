@@ -125,6 +125,9 @@ public class MediaFileView extends MediaFileBase {
         }
 
         refreshAllDirectories();
+
+        // The current directory is set by view(), from the weblog, by id.
+        currentDirectory = null;
     }
 
     /**
@@ -400,7 +403,7 @@ public class MediaFileView extends MediaFileBase {
         return currentDirectory;
     }
 
-    public void setCurrentDirectory(MediaFileDirectory currentDirectory) {
+    private void setCurrentDirectory(MediaFileDirectory currentDirectory) {
         this.currentDirectory = currentDirectory;
     }
 

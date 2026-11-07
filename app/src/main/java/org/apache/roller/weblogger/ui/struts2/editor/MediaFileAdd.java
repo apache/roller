@@ -82,6 +82,8 @@ public class MediaFileAdd extends MediaFileBase {
         try {
             MediaFileManager mgr = WebloggerFactory.getWeblogger()
                     .getMediaFileManager();
+            // The directory always comes from the weblog, by id or name.
+            directory = null;
             if (!StringUtils.isEmpty(bean.getDirectoryId())) {
                 setDirectory(mgr.getMediaFileDirectory(getActionWeblog(), bean.getDirectoryId()));
 
@@ -260,7 +262,7 @@ public class MediaFileAdd extends MediaFileBase {
         return directory;
     }
 
-    public void setDirectory(MediaFileDirectory directory) {
+    private void setDirectory(MediaFileDirectory directory) {
         this.directory = directory;
     }
 

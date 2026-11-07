@@ -366,7 +366,7 @@ public class StylesheetEdit extends UIAction {
      * Sets the template.
      * @param template the new template
      */
-    public void setTemplate(WeblogTemplate template) {
+    private void setTemplate(WeblogTemplate template) {
         this.template = template;
     }
 

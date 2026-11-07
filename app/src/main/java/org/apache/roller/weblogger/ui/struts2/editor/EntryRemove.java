@@ -55,6 +55,8 @@ public class EntryRemove extends UIAction {
 
     @Override
     public void myPrepare() {
+        // The entry always comes from the weblog, by id.
+        removeEntry = null;
         if (getRemoveId() != null) {
             try {
                 WeblogEntryManager wmgr = WebloggerFactory.getWeblogger()
@@ -123,7 +125,7 @@ public class EntryRemove extends UIAction {
         return removeEntry;
     }
 
-    public void setRemoveEntry(WeblogEntry removeEntry) {
+    private void setRemoveEntry(WeblogEntry removeEntry) {
         this.removeEntry = removeEntry;
     }
 
