@@ -196,7 +196,7 @@ public class TemplateEdit extends UIAction {
         return template;
     }
 
-    public void setTemplate(WeblogTemplate template) {
+    private void setTemplate(WeblogTemplate template) {
         this.template = template;
     }
 }
