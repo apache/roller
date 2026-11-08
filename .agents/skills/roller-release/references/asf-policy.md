@@ -25,8 +25,12 @@ Consult these sources when cutting a release; this skill is not a policy snapsho
   distribution channels, signatures, digests, download links and archive handling.
 - [Release signing](https://infra.apache.org/release-signing.html): key and signature guidance.
 - [Release publishing](https://infra.apache.org/release-publishing.html): operational steps.
+- [ATR migration](https://releases.apache.org/docs/moving-to-atr) and
+  [ATR release phases](https://releases.apache.org/docs/making-releases): current
+  staging, voting and publication behavior for the Roller 7 workflow.
 - [Roller release process](https://cwiki.apache.org/confluence/spaces/ROLLER/pages/75651/Release+Process):
-  project instructions; verify paths and commands against the current checkout.
+  historical project guidance; verify paths and commands against the current
+  checkout and the selected workflow in this skill.
 
 A source release is the approved artifact; binary packages are convenience
 artifacts. Release approval requires at least three positive binding votes and

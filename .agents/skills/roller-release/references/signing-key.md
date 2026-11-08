@@ -41,10 +41,21 @@ usage; in versions supporting positional inputs, run from the repository root:
 assembly-release/sign-release.sh "$VERSION" "$RC_SUFFIX"
 ```
 
+For Roller 7 through [ATR](atr.md), omit the RC suffix:
+
+```sh
+assembly-release/sign-release.sh "$VERSION"
+```
+
+Keep final filenames throughout the ATR vote and publication; use the RC Git tag
+and pinned ATR revision to identify the candidate. The optional suffix invocation
+above remains available for the legacy SVN workflow.
+
 The current script expects `ROLLER_SIGNING_KEY` in its environment. Export it
 explicitly in the release session. Confirm that the script signs with the intended
 key and uses an approved digest. Do not transplant an old signing script from
-release notes. Generate armored detached signatures and SHA-256 and/or SHA-512
+release notes. For ATR, confirm ATR has imported the signer from SVN-managed
+KEYS before uploading. Generate armored detached signatures and SHA-256 and/or SHA-512
 checksum sidecars; avoid legacy digest formats.
 
 Verify every archive's signature against its bytes and every checksum from the

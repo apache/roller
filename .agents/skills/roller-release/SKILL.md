@@ -1,6 +1,6 @@
 ---
 name: roller-release
-description: Prepare, build, sign, verify, stage, vote on and publish Apache Roller releases, including release website updates and announcement drafts.
+description: Prepare, build, sign, verify, stage, vote on and publish Apache Roller releases, using Apache Trusted Releases for Roller 7 and the legacy SVN process for 6.1.x, including website updates and announcement drafts.
 ---
 
 <!--
@@ -27,11 +27,21 @@ Use the current checkout, project release decisions and
 personal signing setup and undisclosed security scope outside this skill.
 Loading the skill does not authorize sending mail, pushing tags or publishing.
 
+## Select the workflow
+
+Use [Apache Trusted Releases (ATR)](references/atr.md) for Roller 7. Build locally
+and sign with the release manager's personal key. ATR manages staging, voting,
+publication and announcement; this does not enable CI signing or Trusted Publishing.
+Keep [legacy SVN distribution](references/dist-svn.md) for 6.1.x until a separate
+project decision after the Roller 7 pilot. Do not switch an active vote between
+workflows or run both publication paths for the same candidate.
+
 ## Establish release inputs
 
 Record the source checkout, target branch and exact commit; release version;
 RC number and tag; release-manager ASF ID; signing-key fingerprint; distribution
-working copies; and website checkout. Supply these from the actual release,
+working copies for the legacy path, or ATR project and candidate revision; and
+website checkout. Supply these from the actual release,
 not defaults from an earlier session. Use a clean tree or isolated checkout.
 
 Check build documentation and CI for the branch's supported JDK. Confirm Maven,
@@ -53,24 +63,32 @@ Use [signing-key guidance](references/signing-key.md) before building a candidat
    (normally `mvn -V -ntp clean install`). Build `assembly-release` separately
    with `mvn -f assembly-release/pom.xml package`; it is outside the root reactor.
 5. Inspect the source and binary tar/zip archives. Sign and generate checksums
-   using [signing instructions](references/signing-key.md).
+   using [signing instructions](references/signing-key.md). For ATR, use final
+   archive filenames from the start; identify RCs with Git tags and ATR revisions.
 6. Run `scripts/check-release.sh <artifact-dir>` from this skill. Its optional
    `--build` compiles the source archive with tests skipped; it does not replace
    the test suite, a full license review, or independent voter verification.
-7. Stage and download the candidate using [distribution guidance](references/dist-svn.md).
-   Verify signatures, checksums, contents and source build from the downloaded files.
+7. Stage and download through the selected workflow: [ATR compose](references/atr.md)
+   for Roller 7 or [SVN staging](references/dist-svn.md) for 6.1.x. Verify signatures,
+   checksums, contents and a source build with tests from the downloaded files.
 
 ## Vote and publish
 
-Use [vote and announcement templates](references/vote-and-announce.md). Normally
-allow at least 72 hours and require at least three positive binding votes and
+Follow the selected workflow and review
+[vote and announcement templates](references/vote-and-announce.md). Normally allow at least 72 hours and require at least three positive binding votes and
 more positive than negative binding votes. Check current policy for exceptions.
 Record the result and the exact approved candidate.
 
-Promote the approved artifact bytes; do not rebuild. If filenames lose the RC
-suffix, detached signatures still verify those unchanged bytes, but checksum
-filenames must be updated and verified. Point the final Git tag at the approved
-RC commit. Inspect remote destination paths before distribution changes.
+For Roller 7, follow [ATR vote and finish](references/atr.md). Review ATR's email
+forms and tally; publish explicitly after approval, then update the website before
+triggering ATR's announcement. Do not also send the legacy messages or promote
+files with SVN. Keep automatic publication and archiving off for the pilot.
+
+For legacy SVN releases, promote the approved artifact bytes; do not rebuild. If
+filenames lose the RC suffix, detached signatures still verify those unchanged
+bytes, but checksum filenames must be updated and verified. For either workflow,
+point the final Git tag at the approved RC commit. Inspect remote destination
+paths before distribution changes.
 
 Update and publish the [website](references/website.md), verify public download
 links and propagation, then announce. Prune superseded distributions only after
@@ -87,10 +105,10 @@ when the advisory is published.
 
 - [ASF policy](references/asf-policy.md): authoritative sources and review boundaries.
 - [Signing](references/signing-key.md): explicit signer selection and verification.
-- [Distribution](references/dist-svn.md): staging, promotion and pruning.
+- [Legacy distribution](references/dist-svn.md): 6.1.x staging, promotion and pruning.
 - [Vote and announcement](references/vote-and-announce.md): reusable message drafts.
 - [Website](references/website.md): source edits, rebuild and link verification.
-- [Release tooling](references/atr.md): evaluating Apache Trusted Releases.
+- [ATR](references/atr.md): Roller 7 setup, compose, vote, finish and pilot follow-up.
 
 Resolve helper paths relative to this skill; when using the repository copy,
-they are under `skills/roller-release/scripts/`. Helpers do not commit or publish.
+they are under `.agents/skills/roller-release/scripts/`. Helpers do not commit or publish.

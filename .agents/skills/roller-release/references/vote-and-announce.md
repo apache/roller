@@ -22,7 +22,27 @@ artifact checksums and signer fingerprint. Do not send messages merely because a
 template has been filled. Keep undisclosed security characterization out of public
 vote threads and release notes before coordinated announcement.
 
-## Vote
+## ATR messages (Roller 7)
+
+Use ATR's vote, result and announcement forms. Review the actual generated text,
+recipients, candidate revision, source commit, fingerprint and public URLs before
+sending. The templates below are content guidance; they are not ATR template
+syntax. Do not paste bracketed placeholders into project settings. Consult the
+variables offered by each ATR field if customizing its stored templates.
+
+For the vote, replace `[staging URL]` with the pinned ATR candidate page, the sole
+authoritative artifact location. Link committee KEYS; source tag and release notes
+are informational, not alternate artifact downloads. Resolve the result in ATR
+after checking the tally against the thread. Trigger the announcement through ATR
+only after publication, propagation and live website verification. Do not also
+send the manual messages below. See [ATR procedure](atr.md).
+
+## Legacy messages (6.1.x)
+
+Send these drafts manually only for the legacy SVN workflow, after review and
+authorization. For either workflow, keep recipients and binding-vote checks current.
+
+### Vote
 
 Subject: [VOTE] Release Apache Roller [version] ([candidate])
 
@@ -43,7 +63,7 @@ at least 72 hours for review under the normal process.
 
 [Release manager name]
 
-## Result
+### Result
 
 Subject: [RESULT][VOTE] Release Apache Roller [version] ([candidate])
 
@@ -58,7 +78,7 @@ Approved candidate, if passed: [exact tag, commit and artifact location]
 
 [Release manager name]
 
-## Release announcement
+### Release announcement
 
 Subject: [ANNOUNCE] Apache Roller [version] released
 
@@ -77,8 +97,8 @@ formatting. Tally binding votes by PMC membership; do not count every +1 as bind
 Check membership against the ASF roster (for example the public LDAP projects data),
 not the project website's committer list, which can lag.
 
-Send the announcement from your `@apache.org` address; announce@apache.org rejects
-other senders without warning. Confirm it in the announce@ archive.
+For a manual announcement, send from your `@apache.org` address; announce@apache.org rejects
+other senders without warning. Confirm delivery in the announce@ archive for either workflow.
 
 When a release carries undisclosed security fixes, keep the announcement, release
 notes, blog posts and website neutral until the advisories are sent: describe
