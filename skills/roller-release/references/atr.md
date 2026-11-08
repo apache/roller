@@ -15,16 +15,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# Apache Trusted Releases for Roller 7
+# Apache Trusted Releases
 
-Use [ATR](https://releases.apache.org/docs/) for the Roller 7 pilot with local
-builds and personal OpenPGP signing. This replaces manual `dist/dev` staging and
-SVN promotion. The PMC still approves the release; ATR checks supplement human
-verification. [Trusted Publishing](https://releases.apache.org/docs/trusted-publishing)
+Use [ATR](https://releases.apache.org/docs/) for Roller 7.x and later with local
+builds and personal OpenPGP signing. ATR manages staging and publication. The PMC
+approves the release; ATR checks supplement human verification. [Trusted Publishing](https://releases.apache.org/docs/trusted-publishing)
 is a separate CI signing workflow requiring reproducibility and ASF approvals;
 it is outside this process. Recheck current ATR documentation at release time.
 
-## Before the first candidate
+## Release prerequisites
 
 Follow [Getting started](https://releases.apache.org/docs/getting-started) and
 [Moving to ATR](https://releases.apache.org/docs/moving-to-atr):
@@ -34,7 +33,7 @@ Follow [Getting started](https://releases.apache.org/docs/getting-started) and
   catalog; do not assume seeded data is correct.
 - Confirm the signing public key is associated with Roller and is present in the
   published committee KEYS file. Retain SVN-managed KEYS (ATR's default import
-  mode); update keys in SVN rather than changing ownership for this pilot.
+  mode); update keys in SVN.
 - Review [project configuration](https://releases.apache.org/docs/project-configuration):
   metadata, release version policy, source checks, vote recipients and templates,
   download page, announcement recipients and destination suffix. Check the actual
@@ -42,8 +41,8 @@ Follow [Getting started](https://releases.apache.org/docs/getting-started) and
   destination without reviewing it. Record the resolved path in the release work
   record, not as an assumed path in this skill.
 - Use Email vote mode and the normal minimum of 72 hours. Keep automatic
-  publication and auto-archive off. Review settings that affect both 7 and 6.1.x;
-  do not retire a supported line or archive its latest release during the pilot.
+  publication and auto-archive off. Review settings shared across release lines;
+  preserve the latest release of each supported line.
 - Inspect any `.asf.yaml` project configuration before editing settings in ATR:
   synchronization from the default branch can overwrite manual changes. Record
   required configuration work separately; reading this skill does not configure
@@ -102,7 +101,7 @@ Follow [Promoting to release](https://releases.apache.org/docs/promoting-to-rele
 
 1. After the vote passes, review the finish page's destination and approved
    inventory. Confirm KEYS availability and explicitly publish through ATR. ATR
-   commits to `svn:dist:release`; do not also run the legacy SVN promotion steps.
+   commits to `svn:dist:release`; do not also run the SVN promotion steps.
    Preserve approved filenames, bytes and signatures. Record the resulting SVN
    revision and download URL; point the final Git tag at the approved RC commit.
 2. Check public downloads, signatures and checksums against the approved candidate.
@@ -116,12 +115,4 @@ Follow [Promoting to release](https://releases.apache.org/docs/promoting-to-rele
    and ASF Security using the main skill's confidentiality requirements.
 4. Leave automatic archiving disabled. Any later cleanup must confirm archive
    availability, website links and which releases remain supported, including
-   6.1.x; do not prune it merely because Roller 7 was published.
-
-## Pilot follow-up
-
-Record practical issues, required manual intervention, verification results and
-vote/publication evidence in the release work record. After Roller 7, assess ATR
-with the PMC before deciding whether to use it for 6.1.x. Until then, keep the
-[legacy SVN procedure](dist-svn.md) available. Do not switch an active release
-between systems without reconciling candidate identity and vote evidence.
+   6.1.x.

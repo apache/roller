@@ -41,7 +41,7 @@ usage; in versions supporting positional inputs, run from the repository root:
 assembly-release/sign-release.sh "$VERSION" "$RC_SUFFIX"
 ```
 
-For Roller 7 through [ATR](atr.md), omit the RC suffix:
+For releases through [ATR](atr.md), omit the RC suffix:
 
 ```sh
 assembly-release/sign-release.sh "$VERSION"
@@ -49,7 +49,7 @@ assembly-release/sign-release.sh "$VERSION"
 
 Keep final filenames throughout the ATR vote and publication; use the RC Git tag
 and pinned ATR revision to identify the candidate. The optional suffix invocation
-above remains available for the legacy SVN workflow.
+above remains available for the SVN workflow.
 
 The current script expects `ROLLER_SIGNING_KEY` in its environment. Export it
 explicitly in the release session. Confirm that the script signs with the intended

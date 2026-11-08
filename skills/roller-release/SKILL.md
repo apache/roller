@@ -1,6 +1,6 @@
 ---
 name: roller-release
-description: Prepare, build, sign, verify, stage, vote on and publish Apache Roller releases, using Apache Trusted Releases for Roller 7 and the legacy SVN process for 6.1.x, including website updates and announcement drafts.
+description: Prepare, build, sign, verify, stage, vote on and publish Apache Roller releases, using Apache Trusted Releases for Roller 7.x and later and SVN for 6.1.x, including website updates and announcement drafts.
 ---
 
 <!--
@@ -29,18 +29,17 @@ Loading the skill does not authorize sending mail, pushing tags or publishing.
 
 ## Select the workflow
 
-Use [Apache Trusted Releases (ATR)](references/atr.md) for Roller 7. Build locally
-and sign with the release manager's personal key. ATR manages staging, voting,
+Use [Apache Trusted Releases (ATR)](references/atr.md) for Roller 7.x and later.
+Build locally and sign with the release manager's personal key. ATR manages staging, voting,
 publication and announcement; this does not enable CI signing or Trusted Publishing.
-Keep [legacy SVN distribution](references/dist-svn.md) for 6.1.x until a separate
-project decision after the Roller 7 pilot. Do not switch an active vote between
-workflows or run both publication paths for the same candidate.
+Use [SVN distribution](references/dist-svn.md) for 6.1.x.
+Do not switch an active vote between workflows or run both publication paths for the same candidate.
 
 ## Establish release inputs
 
 Record the source checkout, target branch and exact commit; release version;
 RC number and tag; release-manager ASF ID; signing-key fingerprint; distribution
-working copies for the legacy path, or ATR project and candidate revision; and
+working copies for the SVN path, or ATR project and candidate revision; and
 website checkout. Supply these from the actual release,
 not defaults from an earlier session. Use a clean tree or isolated checkout.
 
@@ -69,8 +68,8 @@ Use [signing-key guidance](references/signing-key.md) before building a candidat
    `--build` compiles the source archive with tests skipped; it does not replace
    the test suite, a full license review, or independent voter verification.
 7. Stage and download through the selected workflow: [ATR compose](references/atr.md)
-   for Roller 7 or [SVN staging](references/dist-svn.md) for 6.1.x. Verify signatures,
-   checksums, contents and a source build with tests from the downloaded files.
+   for Roller 7.x and later or [SVN staging](references/dist-svn.md) for 6.1.x.
+   Verify signatures, checksums, contents and a source build with tests from the downloaded files.
 
 ## Vote and publish
 
@@ -79,12 +78,12 @@ Follow the selected workflow and review
 more positive than negative binding votes. Check current policy for exceptions.
 Record the result and the exact approved candidate.
 
-For Roller 7, follow [ATR vote and finish](references/atr.md). Review ATR's email
+For ATR releases, follow [ATR vote and finish](references/atr.md). Review ATR's email
 forms and tally; publish explicitly after approval, then update the website before
-triggering ATR's announcement. Do not also send the legacy messages or promote
-files with SVN. Keep automatic publication and archiving off for the pilot.
+triggering ATR's announcement. Do not also send the manual SVN messages or promote
+files with SVN. Keep automatic publication and archiving off.
 
-For legacy SVN releases, promote the approved artifact bytes; do not rebuild. If
+For SVN releases, promote the approved artifact bytes; do not rebuild. If
 filenames lose the RC suffix, detached signatures still verify those unchanged
 bytes, but checksum filenames must be updated and verified. For either workflow,
 point the final Git tag at the approved RC commit. Inspect remote destination
@@ -105,10 +104,10 @@ when the advisory is published.
 
 - [ASF policy](references/asf-policy.md): authoritative sources and review boundaries.
 - [Signing](references/signing-key.md): explicit signer selection and verification.
-- [Legacy distribution](references/dist-svn.md): 6.1.x staging, promotion and pruning.
+- [SVN distribution](references/dist-svn.md): 6.1.x staging, promotion and pruning.
 - [Vote and announcement](references/vote-and-announce.md): reusable message drafts.
 - [Website](references/website.md): source edits, rebuild and link verification.
-- [ATR](references/atr.md): Roller 7 setup, compose, vote, finish and pilot follow-up.
+- [ATR](references/atr.md): setup, compose, vote and finish.
 
 Resolve helper paths relative to this skill; when using the repository copy,
 they are under `skills/roller-release/scripts/`. Helpers do not commit or publish.

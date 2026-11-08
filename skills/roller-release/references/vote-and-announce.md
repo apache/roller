@@ -22,7 +22,7 @@ artifact checksums and signer fingerprint. Do not send messages merely because a
 template has been filled. Keep undisclosed security characterization out of public
 vote threads and release notes before coordinated announcement.
 
-## ATR messages (Roller 7)
+## ATR messages
 
 Use ATR's vote, result and announcement forms. Review the actual generated text,
 recipients, candidate revision, source commit, fingerprint and public URLs before
@@ -37,9 +37,9 @@ after checking the tally against the thread. Trigger the announcement through AT
 only after publication, propagation and live website verification. Do not also
 send the manual messages below. See [ATR procedure](atr.md).
 
-## Legacy messages (6.1.x)
+## SVN messages (6.1.x)
 
-Send these drafts manually only for the legacy SVN workflow, after review and
+Send these drafts manually only for the SVN workflow, after review and
 authorization. For either workflow, keep recipients and binding-vote checks current.
 
 ### Vote

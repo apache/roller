@@ -15,10 +15,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# Legacy SVN distribution for Roller 6.1.x
+# SVN distribution for Roller 6.1.x
 
-Use this procedure for 6.1.x pending a decision after the Roller 7 ATR pilot.
-For Roller 7 use [ATR](atr.md), which owns staging and publication. Do not run
+Use this procedure for 6.1.x.
+For Roller 7.x and later use [ATR](atr.md), which owns staging and publication. Do not run
 these promotion steps alongside ATR for the same candidate.
 
 Confirm the current project layout before preparing paths:
