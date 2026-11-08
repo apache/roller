@@ -111,4 +111,4 @@ when the advisory is published.
 - [ATR](references/atr.md): Roller 7 setup, compose, vote, finish and pilot follow-up.
 
 Resolve helper paths relative to this skill; when using the repository copy,
-they are under `.agents/skills/roller-release/scripts/`. Helpers do not commit or publish.
+they are under `skills/roller-release/scripts/`. Helpers do not commit or publish.
