@@ -69,19 +69,21 @@ Use [signing-key guidance](references/signing-key.md) before building a candidat
    the test suite, a full license review, or independent voter verification.
 7. Stage and download through the selected workflow: [ATR compose](references/atr.md)
    for Roller 7.x and later or [SVN staging](references/dist-svn.md) for 6.1.x.
-   Verify signatures, checksums, contents and a source build with tests from the downloaded files.
+   Verify signatures, checksums and contents. From the unpacked downloaded source,
+   run `mvn -V -ntp clean install` to build and test the files voters will receive.
 
 ## Vote and publish
 
 Follow the selected workflow and review
-[vote and announcement templates](references/vote-and-announce.md). Normally allow at least 72 hours and require at least three positive binding votes and
+[vote and announcement templates](references/vote-and-announce.md). Normally
+allow at least 72 hours and require at least three positive binding votes and
 more positive than negative binding votes. Check current policy for exceptions.
 Record the result and the exact approved candidate.
 
-For ATR releases, follow [ATR vote and finish](references/atr.md). Review ATR's email
-forms and tally; publish explicitly after approval, then update the website before
-triggering ATR's announcement. Do not also send the manual SVN messages or promote
-files with SVN. Keep automatic publication and archiving off.
+For ATR releases, follow [ATR vote and finish](references/atr.md). Review ATR's
+email forms and tally; publish explicitly after approval, then update the website
+before triggering ATR's announcement. Do not also send the manual SVN messages or
+promote files with SVN. Keep automatic publication and archiving off.
 
 For SVN releases, promote the approved artifact bytes; do not rebuild. If
 filenames lose the RC suffix, detached signatures still verify those unchanged

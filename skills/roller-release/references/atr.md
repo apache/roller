@@ -36,13 +36,20 @@ Follow [Getting started](https://releases.apache.org/docs/getting-started) and
   mode); update keys in SVN.
 - Review [project configuration](https://releases.apache.org/docs/project-configuration):
   metadata, release version policy, source checks, vote recipients and templates,
-  download page, announcement recipients and destination suffix. Check the actual
-  SVN layout and website before choosing the suffix; do not accept ATR's default
-  destination without reviewing it. Record the resolved path in the release work
-  record, not as an assumed path in this skill.
-- Use Email vote mode and the normal minimum of 72 hours. Keep automatic
-  publication and auto-archive off. Review settings shared across release lines;
-  preserve the latest release of each supported line.
+  download page, announcement recipients and destination suffix. ATR's default
+  top-level project path can publish directly under `dist/release/<committee>/`,
+  while Roller uses `dist/release/roller-<major.minor>/v<version>/`. Set and
+  verify the destination suffix on the Finish page. Its supported tokens are
+  `{{PROJECT_KEY}}`, `{{VERSION}}`, and `{{MAJOR_VERSION}}`; do not assume a
+  custom path token. The ATR client's `--auto-publish` option does not honor the
+  configured path, so leave it off and publish manually from the reviewed Finish
+  page. Record the resolved path in the release work record.
+- Use Email vote mode and the normal minimum of 72 hours. Roller may default to
+  Trusted vote mode; explicitly select Email when starting the vote. On the
+  start-vote form, leave **Automatically publish to SVN distribution area when
+  this vote resolves** unchecked. On the Finish tab, leave **Allow auto-archive**
+  disabled. Review settings shared across release lines; preserve the latest
+  release of each supported line.
 - Inspect any `.asf.yaml` project configuration before editing settings in ATR:
   synchronization from the default branch can overwrite manual changes. Record
   required configuration work separately; reading this skill does not configure
@@ -64,9 +71,14 @@ Follow [Getting started](https://releases.apache.org/docs/getting-started) and
    browser requests, upload smaller batches; if necessary follow ATR's documented
    rsync route and explicitly record the same source commit.
 4. Resolve blockers and investigate other concerns, including source comparison
-   and licensing. Document any justified acknowledgments; do not suppress checks
-   just to start voting. Record the final ATR revision, candidate URL, manifest,
-   archive filenames and digests, signer fingerprint, RC tag and source commit.
+   and licensing. The source archive named
+   `apache-roller-<version>-source.tar.gz` currently extracts to
+   `roller-weblogger-<version>-source/`, so ATR reports an archive-structure
+   concern because the root does not match the archive base. Review and
+   acknowledge that concern with the reason, or rename the root before the first
+   Roller 7 release. Do not suppress checks just to start voting. Record the final
+   ATR revision, candidate URL, manifest, archive filenames and digests, signer
+   fingerprint, RC tag and source commit.
    Optionally give the revision an immutable RC tag in ATR.
 5. Download that revision to a fresh directory using its candidate page's download
    instructions. Verify the inventory against the
@@ -78,10 +90,18 @@ Follow [Getting started](https://releases.apache.org/docs/getting-started) and
 ## Vote and replacement candidates
 
 Review the vote email form against [the message guidance](vote-and-announce.md).
-Use the ATR candidate page as the sole authoritative artifact location, plus
-committee KEYS. Identify the pinned revision and source tag/commit; do not present
-another artifact copy as part of the vote. Start the email vote through ATR only
-when sending it is authorized. See
+Include the SHA-512 digest for every candidate archive in the vote email; the
+same final filenames are reused across RCs, so voters need the digests to identify
+the bytes under review. Copy the values from the candidate's checksum sidecars
+and verify them against the pinned revision. ATR can fetch vote and announcement
+email templates from an `apache.org` or `raw.githubusercontent.com` URL configured
+for the project; whoever sends the email can review and edit the fetched text.
+Use that facility when Roller has reviewed plain-text templates hosted in this
+repository, and verify the rendered email before sending. Use the ATR candidate
+page as the sole authoritative artifact location, plus committee KEYS. Identify
+the pinned revision and source tag/commit; do not present another artifact copy
+as part of the vote. Start the email vote through ATR only when sending it is
+authorized. See
 [Staging and voting](https://releases.apache.org/docs/staging-and-voting).
 
 Allow the normal voting period, then check ATR's tally against the mailing-list
@@ -100,7 +120,9 @@ reuse an earlier approval for changed bytes.
 Follow [Promoting to release](https://releases.apache.org/docs/promoting-to-release):
 
 1. After the vote passes, review the finish page's destination and approved
-   inventory. Confirm KEYS availability and explicitly publish through ATR. ATR
+   inventory. Confirm KEYS availability and explicitly click Publish on the
+   Finish page. Automatic publication is controlled by a checkbox on the
+   start-vote form, not by the Finish tab. ATR
    commits to `svn:dist:release`; do not also run the SVN promotion steps.
    Preserve approved filenames, bytes and signatures. Record the resulting SVN
    revision and download URL; point the final Git tag at the approved RC commit.
