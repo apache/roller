@@ -41,9 +41,6 @@ See comments in editor-menu.xml for info about attributes.
                    name="tabbedmenu.admin.commentManagement" />
         
         <!-- globalPerms="admin" -->
-        <menu-item action="commonPingTargets"
-                   name="tabbedmenu.admin.pingTargets"
-                   subactions="commonPingTargetAdd,commonPingTargetEdit" />
         
         <!-- globalPerms="admin" -->
         <menu-item action="cacheInfo"

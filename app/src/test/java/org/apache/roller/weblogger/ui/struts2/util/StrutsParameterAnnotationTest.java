@@ -63,7 +63,6 @@ public class StrutsParameterAnnotationTest {
      */
     private static final Set<String> NOT_BOUND = Set.of(
             // set from the static <param> of the action mapping in struts.xml
-            "PingTargetEdit.actionName",
             "FolderEdit.actionName",
             // no such property; the hidden fields are leftovers in the JSPs
             "Categories.categoryId",
@@ -74,9 +73,6 @@ public class StrutsParameterAnnotationTest {
      * form id. An empty list skips the form.
      */
     private static final Map<String, List<String>> FORM_TARGETS = Map.of(
-            // posted by JavaScript to actionName + ".rol"
-            "admin/PingTargets.jsp#pingTargetEditForm",
-            List.of("commonPingTargetAdd", "commonPingTargetEdit"),
             // popup that is not reachable from any page
             "editor/MediaFileAddExternalInclude.jsp#entry", List.of());
 

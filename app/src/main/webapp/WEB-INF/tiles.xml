@@ -193,13 +193,7 @@
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
     
-    <definition name=".PingTargets" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/admin/PingTargets.jsp" />
-    </definition>
 
-    <definition name=".PingTargetEdit" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/tiles/empty.jsp" />
-    </definition>
     
     <definition name=".CacheInfo" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/admin/CacheInfo.jsp" />
@@ -378,9 +372,6 @@
         <put-attribute name="content" value="/WEB-INF/jsps/editor/MemberResign.jsp" />
     </definition>
 
-    <definition name=".Pings" extends=".tiles-tabbedpage" >
-        <put-attribute name="content" value="/WEB-INF/jsps/editor/Pings.jsp" />
-    </definition>
 
     <definition name=".Maintenance" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Maintenance.jsp" />

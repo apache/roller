@@ -25,7 +25,6 @@ import org.apache.struts2.inject.Container;
 import org.apache.struts2.util.ValueStack;
 import org.apache.struts2.util.ValueStackFactory;
 import org.apache.struts2.util.reflection.ReflectionContextState;
-import org.apache.roller.weblogger.ui.struts2.admin.PingTargets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -37,7 +36,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * No editor or ping-target action lets a request parameter create the domain
+ * No editor action lets a request parameter create the domain
  * object it works on. Those objects are loaded only by the action, from the
  * weblog, by id.
  */
@@ -79,10 +78,6 @@ class EditorActionTargetBindingTest {
 
     private List<Case> cases() {
         return Arrays.asList(
-            new Case("Pings.pingTarget", Pings::new, "pingTarget.pingUrl",
-                a -> ((Pings) a).getPingTarget()),
-            new Case("PingTargets.pingTarget", PingTargets::new, "pingTarget.pingUrl",
-                a -> ((PingTargets) a).getPingTarget()),
             new Case("CategoryRemove.category", CategoryRemove::new, "category.name",
                 a -> ((CategoryRemove) a).getCategory()),
             new Case("EntryRemove.removeEntry", EntryRemove::new, "removeEntry.anchor",

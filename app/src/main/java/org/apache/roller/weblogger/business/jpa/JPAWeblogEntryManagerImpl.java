@@ -178,7 +178,7 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
     /**
      * @inheritDoc
      */
-    // TODO: perhaps the createAnchor() and queuePings() items should go outside this method?
+    // TODO: perhaps createAnchor() should go outside this method?
     @Override
     public void saveWeblogEntry(WeblogEntry entry) throws WebloggerException {
 
@@ -246,10 +246,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             roller.getWeblogManager().saveWeblog(entry.getWebsite());
         }
         
-        if(entry.isPublished()) {
-            // Queue applicable pings for this update.
-            roller.getAutopingManager().queueApplicableAutoPings(entry);
-        }
     }
     
     /**
