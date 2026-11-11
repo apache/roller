@@ -41,6 +41,15 @@
 - **The rich text editor's menus show their labels again.** Summernote is
   upgraded to 0.9.1, and the panel chevron no longer appears on the
   editor's menu items.
+- **Fixes found while upgrading a 6.1 site to a 7.0.0 snapshot.**
+  - The database create and upgrade result pages show a clear status, one
+    Start Roller button, and the script output in a panel you can expand.
+  - The media library opens for weblogs that have no default media folder;
+    it creates the folder instead of failing.
+  - A custom template with no content logs one warning line instead of a
+    stack trace, and requests for unknown pages no longer log one either.
+  - The 404 page shows a plain message and a link to the home page, not
+    the server's internal error text.
 
 ### Behaviour changes worth reading before upgrading
 

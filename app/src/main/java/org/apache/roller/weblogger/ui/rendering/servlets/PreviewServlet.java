@@ -33,6 +33,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RendererManager;
+import org.apache.roller.weblogger.ui.rendering.RenderingException;
 import org.apache.roller.weblogger.ui.rendering.model.ModelLoader;
 import org.apache.roller.weblogger.ui.rendering.util.PreviewAccess;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPreviewRequest;
@@ -256,6 +257,17 @@ public class PreviewServlet extends HttpServlet {
         try {
             log.debug("Looking up renderer");
             renderer = RendererManager.getRenderer(page, deviceType);
+        } catch (RenderingException e) {
+            // expected when a custom template has no content; one line is enough
+            log.warn("No renderer for template '" + page.getName() + "' (" + page.getId()
+                    + ") of weblog '" + weblog.getHandle() + "': " + e.getMessage()
+                    + " The template may have no content for this device type.");
+
+            if (!response.isCommitted()) {
+                response.reset();
+            }
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
         } catch(Exception e) {
             // nobody wants to render my content :(
             log.error("Couldn't find renderer for page "+page.getId(), e);

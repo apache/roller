@@ -26,7 +26,8 @@
             <s:hidden name="salt" />
             <div class="mb-3">
                 <label class="form-label" for="setup-token"><s:text name="installer.bootstrap.tokenLabel" /></label>
-                <s:textfield id="setup-token" name="token" theme="simple"
+                <%-- value="" keeps Struts from reading the write-only token property back --%>
+                <s:textfield id="setup-token" name="token" value="" theme="simple"
                         cssClass="form-control" autocomplete="off" autofocus="autofocus"
                         required="required"
                         oninput="document.getElementById('setup-token-submit').disabled = !this.value.trim()" />

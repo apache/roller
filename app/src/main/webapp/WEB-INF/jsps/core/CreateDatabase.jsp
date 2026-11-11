@@ -17,60 +17,49 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+
 <s:if test="error">
-    
-    <h2><s:text name="installer.errorCreatingTables" /></h2> 
-    <p><s:text name="installer.errorCreatingTablesExplanation" /></p> 
-<pre>
-<s:iterator value="messages"><s:property/><br /></s:iterator>
-</pre>
-    
+
+        <h2><s:text name="installer.errorCreatingTables" /></h2>
+        <div class="alert alert-danger" role="alert">
+            <s:text name="installer.errorCreatingTablesExplanation" />
+        </div>
+        <%@ include file="/WEB-INF/jsps/core/InstallMessages.jspf" %>
+
 </s:if>
 <s:elseif test="success">
 
-    <h2><s:text name="installer.tablesCreated" /></h2>
-    
-    <p><s:text name="installer.tablesCreatedExplanation" /></p>
-    <%-- the message's link submits this form; bootstrapping needs a POST --%>
-    <p>
-        <s:text name="installer.tryBootstrapping">
-            <s:param>#bootstrap</s:param>
-        </s:text>
-    </p>
-    <s:url var="bootstrapUrl" action="install!bootstrap" />
-    <form id="bootstrapForm" action="<s:property value="#bootstrapUrl" />" method="post">
-        <input type="hidden" name="salt" value="<s:property value="salt" />" />
-        <noscript><button type="submit"><s:text name="installer.finishUpgrade" /></button></noscript>
-    </form>
-    <script>
-        document.querySelector('a[href="#bootstrap"]').addEventListener('click', function (event) {
-            event.preventDefault();
-            document.getElementById('bootstrapForm').submit();
-        });
-    </script>
-    
-<pre>
-<s:iterator value="messages"><s:property/><br /></s:iterator>
-</pre>
+        <h2><s:text name="installer.tablesCreated" /></h2>
+        <div class="alert alert-success" role="status">
+            <s:text name="installer.tablesCreatedExplanation" />
+        </div>
+
+        <s:form action="install!bootstrap" theme="simple">
+            <s:hidden name="salt" />
+            <s:submit value="%{getText('installer.finishUpgrade')}" cssClass="btn btn-primary" />
+        </s:form>
+
+        <%@ include file="/WEB-INF/jsps/core/InstallMessages.jspf" %>
 
 </s:elseif>
 <s:else>
-    
-    <h2><s:text name="installer.noDatabaseTablesFound" /></h2>
 
-    <p>
-        <s:text name="installer.noDatabaseTablesExplanation">
-            <s:param value="databaseProductName" />
-        </s:text>
-    </p>
-    <p><s:text name="installer.createTables" /></p>
+        <h2><s:text name="installer.noDatabaseTablesFound" /></h2>
+        <p>
+            <s:text name="installer.noDatabaseTablesExplanation">
+                <s:param value="databaseProductName" />
+            </s:text>
+        </p>
+        <p><s:text name="installer.createTables" /></p>
 
-    <s:form action="install!create">
-		<s:hidden name="salt" />
-        <s:submit theme="simple" value="%{getText('installer.yesCreateTables')}" cssClass="btn btn-outline-secondary" />
-    </s:form>
-    
+        <s:form action="install!create" theme="simple">
+            <s:hidden name="salt" />
+            <s:submit value="%{getText('installer.yesCreateTables')}" cssClass="btn btn-primary" />
+        </s:form>
+
 </s:else>
 
-<br />
-<br />
+    </div>
+</div>
