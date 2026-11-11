@@ -65,8 +65,7 @@ public class StrutsParameterAnnotationTest {
             // set from the static <param> of the action mapping in struts.xml
             "PingTargetEdit.actionName",
             "FolderEdit.actionName",
-            // no such property; the hidden fields are leftovers in the JSPs
-            "Categories.categoryId",
+            // no such property; the hidden field is a leftover in the JSP
             "WeblogConfig.defaultPlugins");
 
     /**

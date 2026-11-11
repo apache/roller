@@ -652,6 +652,26 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
         int entryCount = q.getResultList().size();
         return entryCount > 0;
     }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public Map<String, Long> getWeblogCategoryEntryCounts(Weblog weblog)
+            throws WebloggerException {
+        if (weblog == null) {
+            throw new WebloggerException("weblog is null");
+        }
+        TypedQuery<Object[]> q = strategy.getDynamicQuery(
+                "SELECT e.category.id, COUNT(e) FROM WeblogEntry e WHERE e.website = ?1 "
+                + "GROUP BY e.category.id", Object[].class);
+        q.setParameter(1, weblog);
+        Map<String, Long> counts = new HashMap<>();
+        for (Object[] row : q.getResultList()) {
+            counts.put((String) row[0], ((Number) row[1]).longValue());
+        }
+        return counts;
+    }
     
     /**
      * @inheritDoc

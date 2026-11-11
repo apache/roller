@@ -280,11 +280,11 @@ abstract class BaseIT {
     }
 
     // authoring dialogs (Bootstrap modals)
-    private static final String CATEGORY_ADD_LINK = "a[onclick*='showCategoryAddModal']";
+    private static final String CATEGORY_ADD_BUTTON = "#addCategoryButton";
     private static final String CATEGORY_DIALOG = "#category-edit-modal";
     private static final String CATEGORY_NAME_FIELD = "#categoryEditForm_bean_name";
-    private static final String CATEGORY_SAVE_BUTTON = CATEGORY_DIALOG + " .modal-footer .btn-primary";
-    private static final String CATEGORY_TABLE = "table.rollertable";
+    private static final String CATEGORY_SAVE_BUTTON = "#categorySaveButton";
+    private static final String CATEGORY_LIST = "#categoryList";
     private static final String ENTRY_DELETE_LINK = ".entry-delete-link";
     private static final String ENTRY_DELETE_DIALOG = "#delete-entry-modal";
     private static final String ENTRY_DELETE_NO = ENTRY_DELETE_DIALOG + " .modal-footer button[data-bs-dismiss='modal']";
@@ -296,17 +296,15 @@ abstract class BaseIT {
     /** Adds a category through the Add Category dialog on the categories page. */
     protected void addCategoryThroughDialog(String weblogHandle, String name) {
         goTo("roller-ui/authoring/categories.rol?weblog=" + weblogHandle);
-        page.locator(CATEGORY_ADD_LINK).first().click();
+        page.locator(CATEGORY_ADD_BUTTON).click();
         assertThat(page.locator(CATEGORY_DIALOG)).isVisible();
 
         page.locator(CATEGORY_NAME_FIELD).fill(name);
-        // the dialog validates on keyup, which fill() does not fire
-        page.locator(CATEGORY_NAME_FIELD).press("End");
         page.locator(CATEGORY_SAVE_BUTTON).click();
 
         // a successful save closes the dialog and reloads the list
         assertThat(page.locator(CATEGORY_DIALOG)).isHidden();
-        assertThat(page.locator(CATEGORY_TABLE)).containsText(name);
+        assertThat(page.locator(CATEGORY_LIST)).containsText(name);
     }
 
     /** Opens the delete dialog for an entry on the entries page and cancels it. */

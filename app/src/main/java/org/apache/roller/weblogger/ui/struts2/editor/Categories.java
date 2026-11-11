@@ -18,8 +18,13 @@
 
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -28,52 +33,113 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
-import org.apache.struts2.convention.annotation.AllowedMethods;
+import org.apache.roller.weblogger.util.cache.CacheManager;
+import org.apache.struts2.interceptor.parameter.StrutsParameter;
 
 /**
- * Manage weblog categories.
+ * Manage weblog categories: list them with their entry counts, and change
+ * their order. Adding, editing and removing are done by CategoryEdit and
+ * CategoryRemove.
  */
-// TODO: make this work @AllowedMethods({"execute","move"})
 public class Categories extends UIAction {
 
-	private static Log log = LogFactory.getLog(Categories.class);
+    private static final Log log = LogFactory.getLog(Categories.class);
 
-	// all categories from the action weblog
-	private List<WeblogCategory> allCategories;
+    // all categories from the action weblog, in display order
+    private List<WeblogCategory> allCategories = Collections.emptyList();
 
-	public Categories() {
-		this.actionName = "categories";
-		this.desiredMenu = "editor";
-		this.pageTitle = "categoriesForm.rootTitle";
-	}
+    // number of entries in each category, by category id
+    private Map<String, Long> entryCounts = Collections.emptyMap();
 
-	@Override
-	public List<String> requiredWeblogPermissionActions() {
-		return Collections.singletonList(WeblogPermission.POST);
-	}
+    // category ids in their new order, posted by reorder
+    private List<String> categoryIds = new ArrayList<>();
 
-	@Override
-	public String execute() {
-		try {
+    public Categories() {
+        this.actionName = "categories";
+        this.desiredMenu = "editor";
+        this.pageTitle = "categoriesForm.rootTitle";
+    }
+
+    @Override
+    public List<String> requiredWeblogPermissionActions() {
+        return Collections.singletonList(WeblogPermission.POST);
+    }
+
+    @Override
+    public String execute() {
+        try {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
-			allCategories = wmgr.getWeblogCategories(getActionWeblog());
-		} catch (WebloggerException ex) {
-			log.error("Error building categories list", ex);
-			addError("Error building categories list");
-		}
+            allCategories = wmgr.getWeblogCategories(getActionWeblog());
+            entryCounts = wmgr.getWeblogCategoryEntryCounts(getActionWeblog());
+        } catch (WebloggerException ex) {
+            log.error("Error building categories list", ex);
+            addError("generic.error.check.logs");
+        }
+        return LIST;
+    }
 
-		return LIST;
-	}
+    /**
+     * Save a new display order. The posted ids must name every category of
+     * the weblog exactly once.
+     */
+    public String reorder() {
+        try {
+            WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+            List<WeblogCategory> current = wmgr.getWeblogCategories(getActionWeblog());
 
-	public String move() {
-		return execute();
-	}
+            Set<String> currentIds = new HashSet<>();
+            for (WeblogCategory category : current) {
+                currentIds.add(category.getId());
+            }
+            if (categoryIds.size() != current.size()
+                    || !currentIds.equals(new HashSet<>(categoryIds))) {
+                addError("categoriesForm.error.reorder");
+                return execute();
+            }
 
-	public List<WeblogCategory> getAllCategories() {
-		return allCategories;
-	}
+            for (int position = 0; position < categoryIds.size(); position++) {
+                WeblogCategory category = wmgr.getWeblogCategory(getActionWeblog(), categoryIds.get(position));
+                if (category.getPosition() != position) {
+                    category.setPosition(position);
+                    wmgr.saveWeblogCategory(category);
+                }
+            }
+            WebloggerFactory.getWeblogger().flush();
+            CacheManager.invalidate(getActionWeblog());
+            addMessage("categoriesForm.orderSaved");
+        } catch (WebloggerException ex) {
+            log.error("Error saving category order", ex);
+            addError("generic.error.check.logs");
+        }
+        return execute();
+    }
 
-	public void setAllCategories(List<WeblogCategory> allCategories) {
-		this.allCategories = allCategories;
-	}
+    public List<WeblogCategory> getAllCategories() {
+        return allCategories;
+    }
+
+    /** Number of entries in the category, in any status. */
+    public long getEntryCount(String categoryId) {
+        Long count = entryCounts.get(categoryId);
+        return count == null ? 0 : count;
+    }
+
+    /**
+     * True if removing the category means moving something to another one:
+     * its entries, or its role as the blogging clients' default category.
+     */
+    public boolean isInUse(String categoryId) {
+        WeblogCategory clientDefault = getActionWeblog().getBloggerCategory();
+        return getEntryCount(categoryId) > 0
+                || (clientDefault != null && categoryId.equals(clientDefault.getId()));
+    }
+
+    public List<String> getCategoryIds() {
+        return categoryIds;
+    }
+
+    @StrutsParameter
+    public void setCategoryIds(List<String> categoryIds) {
+        this.categoryIds = categoryIds == null ? new ArrayList<>() : categoryIds;
+    }
 }

@@ -13,6 +13,14 @@
   - A details page for each file, with a preview, its facts, a copy-URL
     button and the edit form. The description is used as the image's alt text.
 
+- **Redesigned categories page.** Categories are one list you can reorder.
+  - Drag a category by its handle, or use the arrow keys on the handle, to
+    change the order themes show categories in.
+  - Each category shows how many entries it has, linked to those entries.
+  - Add and edit in one dialog with field-level checks and an image preview.
+    Deleting a category that has entries asks where to move them.
+  - The page works on phones, and a short message confirms each change.
+
 - **AtomPub can manage templates and categories.** New collections
   in each weblog's workspace, documented in the user guide:
   - Templates (standard and mobile versions) for weblog administrators,

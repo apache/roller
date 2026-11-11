@@ -297,7 +297,8 @@
     
     <definition name=".Categories" extends=".tiles-tabbedpage" >
         <put-attribute name="content" value="/WEB-INF/jsps/editor/Categories.jsp" />
-        <put-attribute name="sidebar" value="/WEB-INF/jsps/editor/CategoriesSidebar.jsp" />
+        <!-- laid out for narrow screens, like the media pages -->
+        <put-attribute name="viewport" value="/WEB-INF/jsps/tiles/viewport.jsp" />
         <put-attribute name="styles" value="/WEB-INF/jsps/tiles/empty.jsp" />
     </definition>
 

@@ -24,6 +24,8 @@ import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -200,4 +202,27 @@ public class WeblogCategoryCRUDTest  {
         log.info("END");
     }
     
+
+    /**
+     * Entry counts per category include entries in any status and leave out
+     * categories with no entries.
+     */
+    @Test
+    public void testCategoryEntryCounts() throws Exception {
+
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testUser = TestUtils.getManagedUser(testUser);
+
+        WeblogCategory busy = TestUtils.setupWeblogCategory(testWeblog, "Busy");
+        WeblogCategory empty = TestUtils.setupWeblogCategory(testWeblog, "Empty");
+        TestUtils.setupWeblogEntry("count-1", busy, WeblogEntry.PubStatus.PUBLISHED, testWeblog, testUser);
+        TestUtils.setupWeblogEntry("count-2", busy, WeblogEntry.PubStatus.DRAFT, testWeblog, testUser);
+        TestUtils.endSession(true);
+
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        Map<String, Long> counts = mgr.getWeblogCategoryEntryCounts(testWeblog);
+        assertEquals(Long.valueOf(2), counts.get(busy.getId()));
+        assertFalse(counts.containsKey(empty.getId()));
+    }
 }
