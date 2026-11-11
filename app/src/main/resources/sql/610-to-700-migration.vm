@@ -17,16 +17,11 @@
 *#
 
 -- Remove the obsolete weblog update ping feature. Drop the referencing table first.
-#if ($db.DBTYPE == "DERBY")
--- Derby has no DROP TABLE IF EXISTS; these tables exist in the 6.1 schema.
+-- Every 6.1 schema has these tables, and not every supported database accepts
+-- DROP TABLE IF EXISTS, so use plain DROP TABLE.
 drop table autoping;
 drop table pingqueueentry;
 drop table pingtarget;
-#else
-#dropTableIfExists('autoping')
-#dropTableIfExists('pingqueueentry')
-#dropTableIfExists('pingtarget')
-#end
 
 delete from roller_properties where name like 'pings.%';
 delete from roller_tasklock where name = 'PingQueueTask';
