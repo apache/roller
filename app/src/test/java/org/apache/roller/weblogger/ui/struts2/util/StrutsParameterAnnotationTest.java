@@ -64,7 +64,6 @@ public class StrutsParameterAnnotationTest {
     private static final Set<String> NOT_BOUND = Set.of(
             // set from the static <param> of the action mapping in struts.xml
             "PingTargetEdit.actionName",
-            "FolderEdit.actionName",
             // no such property; the hidden fields are leftovers in the JSPs
             "Categories.categoryId",
             "WeblogConfig.defaultPlugins");

@@ -17,838 +17,406 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
+<%-- Blogroll: the weblog's blogrolls (bookmark folders) on the left, or in a strip above on a
+     phone, and the links of one of them. Links are dragged (or moved with the arrow keys on their
+     handle) to reorder; selected links can be moved or deleted. Dialogs post with AJAX and reload
+     the page, which then shows a short confirmation. Text the script needs is in data-* attributes. --%>
 
-<%--
-Blogroll link management
+<s:url var="importURL" action="bookmarksImport">
+    <s:param name="weblog" value="%{actionWeblog.handle}"/>
+</s:url>
 
-We used to call them Bookmarks and Folders, now we call them Blogroll links and Blogrolls.
---%>
+<div id="blogrollPage" class="blogroll-page"
+     data-folder-id="<s:property value='folderId'/>"
+     data-folder-name="<s:property value='folder.name'/>"
+     data-folder-url="<s:url action='bookmarks' escapeAmp='false'><s:param name='weblog' value='%{actionWeblog.handle}'/></s:url>"
+     data-msg-link-added="<s:text escapeHtml="true" name='bookmarkForm.created'/>"
+     data-msg-link-saved="<s:text escapeHtml="true" name='bookmarkForm.updated'/>"
+     data-msg-folder-added="<s:text escapeHtml="true" name='folderForm.created'/>"
+     data-msg-folder-renamed="<s:text escapeHtml="true" name='folderForm.updatedNamed'/>"
+     data-msg-folder-deleted="<s:text escapeHtml="true" name='bookmarksForm.folderDeleted'/>"
+     data-msg-deleted-one="<s:text escapeHtml="true" name='bookmarksForm.deletedOne'/>"
+     data-msg-deleted-many="<s:text escapeHtml="true" name='bookmarksForm.deletedMany'/>"
+     data-msg-moved-one="<s:text escapeHtml="true" name='bookmarksForm.movedOne'/>"
+     data-msg-moved-many="<s:text escapeHtml="true" name='bookmarksForm.movedMany'/>"
+     data-msg-order-saved="<s:text escapeHtml="true" name='bookmarksForm.orderSaved'/>"
+     data-msg-error="<s:text escapeHtml="true" name='generic.error.check.logs'/>"
+     data-msg-name-required="<s:text escapeHtml="true" name='bookmarkForm.nameRequired'/>"
+     data-msg-url-required="<s:text escapeHtml="true" name='bookmarkForm.urlRequired'/>"
+     data-msg-bad-url="<s:text escapeHtml="true" name='bookmarkForm.badUrl'/>"
+     data-msg-folder-name-required="<s:text escapeHtml="true" name='bookmarksForm.blogroll.requiredFields'/>"
+     data-msg-selected="<s:text escapeHtml="true" name='bookmarksForm.selectedCount'/>"
+     data-title-add-link="<s:text escapeHtml="true" name='bookmarksForm.addLink.title'/>"
+     data-title-edit-link="<s:text escapeHtml="true" name='bookmarksForm.editLink.title'/>"
+     data-title-add-folder="<s:text escapeHtml="true" name='bookmarksForm.addBlogroll.title'/>"
+     data-title-rename-folder="<s:text escapeHtml="true" name='bookmarksForm.editBlogroll.title'/>"
+     data-title-delete-one="<s:text escapeHtml="true" name='bookmarksForm.deleteOne.title'/>"
+     data-title-delete-many="<s:text escapeHtml="true" name='bookmarksForm.deleteMany.title'/>">
 
-<%-- ================================================================================================ --%>
-
-<%-- Main blogroll/folder management interface, a checkbox-table with some buttons  --%>
-
-<p class="subtitle"><s:text name="bookmarksForm.subtitle"> <s:param value="weblog"/> </s:text></p>
-
-<s:if test="folder.name == 'default'">
-    <p class="pagetip"><s:text name="bookmarksForm.rootPrompt"/></p>
-</s:if>
-<s:else>
-    <p class="pagetip"><s:text name="bookmarksForm.otherPrompt"/></p>
-</s:else>
-
-
-<%-- table of blogroll links with selection checkboxes, wrapped in a form --%>
-
-<s:form action="bookmarks!delete" theme="bootstrap" cssClass="form-horizontal">
-    <s:hidden name="salt"/>
-    <s:hidden name="weblog"/>
-    <s:hidden name="folderId"/>
-
-    <%-- for default blogroll, show page "tip" and read-only folder name --%>
-
-    <s:if test="folder.name == 'default'">
-
-        <div class="row mb-3">
-            <label class="col-sm-3 col-form-label" for="bookmarks_folder_name">
-                <s:text name="bookmarksForm.blogrollName"/>
-            </label>
-            <div class="col-sm-9 controls">
-                <div class="form-control"><s:property value="folder.name"/></div>
-            </div>
-        </div>
-
-    </s:if>
-
-    <s:if test="folder.name != 'default'">
-
-        <%-- Blogroll / Folder Name --%>
-
-        <%-- for other blogrolls, show textarea so user can rename it --%>
-        <%-- don't use Struts tags here so button can be on same line as text input --%>
-
-        <div class="row mb-3">
-            <label class="col-sm-3 col-form-label" for="bookmarks_folder_name">
-                <s:text name="bookmarksForm.blogrollName"/>
-            </label>
-            <div class="col-sm-9 controls">
-                <div style="display:flex; gap:1em;">
-                    <input type="text" name="folder.name" style="flex:1;"
-                           value="<s:property value='folder.name'/>" id="bookmarks_folder_name" class="form-control"
-                           onchange="nameChanged()"
-                           onkeyup="nameChanged()"/>
-                    <button type="button" id="rename_button" class="btn btn-success"
-                            onclick="renameFolder(); return false;"
-                            onsubmit="return false;">
-                        <s:text name="generic.rename"/>
-                    </button>
-                    <button type="button" id="rename_cancel" class="btn btn-outline-secondary"
-                            onclick="cancelRenameFolder(); return false;"
-                            onsubmit="return false;">
-                        <s:text name="generic.cancel"/>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-    </s:if>
-
-    <%-- allow user to select the bookmark folder to view --%>
-
-    <div class="form-group ">
-        <label class="col-sm-3 control-label" for="bookmarks_viewFolderId">
-            <s:text name="bookmarksForm.switchTo"/>
-        </label>
-        <div class="col-sm-9 controls">
-            <s:select name="viewFolderId" list="allFolders" listKey="id" listValue="name" emptyOption="true"
-                      theme="simple" cssClass="form-control" onchange="viewChanged()"/>
-        </div>
+<div class="blogroll-header">
+    <p class="subtitle mb-0">
+        <s:text name="bookmarksForm.subtitle">
+            <s:param value="weblog"/>
+        </s:text>
+    </p>
+    <div class="blogroll-header-actions">
+        <a class="btn btn-outline-secondary" href="<s:property value='%{importURL}'/>">
+            <span class="bi bi-upload" aria-hidden="true"></span>
+            <s:text escapeHtml="true" name="bookmarksForm.importBookmarks"/>
+        </a>
+        <button type="button" id="addFolderButton" class="btn btn-outline-primary">
+            <span class="bi bi-folder-plus" aria-hidden="true"></span>
+            <s:text escapeHtml="true" name="bookmarksForm.addFolder"/>
+        </button>
     </div>
+</div>
 
-    <table class="rollertable table table-striped">
+<div class="blogroll-layout">
 
-        <tr class="rHeaderTr">
-            <th width="5%">
-                <input name="control" type="checkbox"
-                       onclick="toggleFunctionAll(this.checked); selectionChanged()"
-                       title="<s:text name="bookmarksForm.selectAllLabel"/>"/>
-            </th>
-            <th class="rollertable" width="25%"><s:text name="generic.name"/></th>
-            <th class="rollertable" width="70%"><s:text name="bookmarksForm.url"/></th>
-            <th class="rollertable" width="5%"><s:text name="generic.edit"/></th>
-        </tr>
-
-        <s:if test="folder.bookmarks.size > 0">
-
-            <%-- Bookmarks --%>
-            <s:iterator var="bookmark" value="folder.bookmarks" status="rowstatus">
-                <tr class="rollertable_odd">
-
-                    <td class="rollertable center" style="vertical-align:middle">
-                        <input type="checkbox" name="selectedBookmarks" onchange="selectionChanged()"
-                               title="<s:text name="bookmarksForm.selectOneLabel"><s:param value="#bookmark.name"/></s:text>"
-                               value="<s:property value="#bookmark.id"/>"/>
-                    </td>
-
-                    <td>
-                        <str:truncateNicely lower="40" upper="50">
-                            <s:property value="#bookmark.name"/>
-                        </str:truncateNicely>
-                    </td>
-
-                    <td>
-                        <s:if test="#bookmark.url != null">
-                            <a href="<s:property value="#bookmark.url" />" target="_blank">
-                                <str:truncateNicely lower="70" upper="90">
-                                    <s:property value="#bookmark.url"/>
-                                </str:truncateNicely>
-                                <span class="bi bi-play-circle"></span>
-                            </a>
-                        </s:if>
-
-                    </td>
-
-                    <td align="center">
-
-                        <a href="#" class="bookmark-edit-link"
-                           data-bookmark-id="<s:property value="#bookmark.id"/>"
-                           data-bookmark-name="<s:property value="#bookmark.name"/>"
-                           data-bookmark-url="<s:property value="#bookmark.url"/>"
-                           data-bookmark-feed-url="<s:property value="#bookmark.feedUrl"/>"
-                           data-bookmark-description="<s:property value="#bookmark.description"/>"
-                           data-bookmark-image="<s:property value="#bookmark.image"/>">
-                            <span class="bi bi-pencil-square"></span>
-                        </a>
-
-                    </td>
-
-                </tr>
-
+    <%-- the blogrolls; a GET link each, so a blogroll can be reloaded, bookmarked and reached with Back --%>
+    <nav class="blogroll-nav" aria-label="<s:text escapeHtml="true" name='bookmarksForm.folders'/>">
+        <ul class="blogroll-folders">
+            <s:iterator var="f" value="allFolders">
+                <s:url var="folderURL" action="bookmarks" escapeAmp="false">
+                    <s:param name="weblog" value="%{actionWeblog.handle}"/>
+                    <s:param name="folderId" value="%{#f.id}"/>
+                </s:url>
+                <li>
+                    <a href="<s:property value='%{folderURL}'/>"
+                       class="blogroll-folder<s:if test='#f.id == folderId'> active</s:if>"
+                       <s:if test="#f.id == folderId">aria-current="page"</s:if>>
+                        <span class="blogroll-folder-name">
+                            <s:if test="#f.name == 'default'"><span class="bi bi-star" aria-hidden="true"></span></s:if>
+                            <s:property value="#f.name"/>
+                        </span>
+                        <span class="blogroll-folder-count"><s:property value="linkCount(#f)"/></span>
+                    </a>
+                </li>
             </s:iterator>
+        </ul>
+    </nav>
 
-        </s:if>
+    <section class="blogroll-main" aria-labelledby="blogrollTitle">
 
-        <s:else>
-            <tr>
-                <td style="vertical-align:middle; padding-top: 1em;" colspan="7">
-                    <s:text name="bookmarksForm.noresults"/>
-                </td>
-            </tr>
-        </s:else>
-
-    </table>
-
-    <%-- Add new blogroll link --%>
-    <button type="button" class="btn btn-success" onclick="addBookmark();return false;"
-            style="float:left; margin-right: 2em">
-        <s:text name="bookmarksForm.addBookmark"/>
-    </button>
-
-    <s:if test="!allFolders.isEmpty && folder.bookmarks.size > 0">
-        <%-- Move-selected button --%>
-        <s:submit id="move_selected" value="%{getText('bookmarksForm.move')}" theme="simple"
-                  cssClass="btn btn-warning" cssStyle="float:left; margin-right: 0.5em"
-                  action="bookmarks!move" onclick="onMoveToFolder();return false;"/>
-        <%-- Move-to combo-box --%>
-        <s:select name="targetFolderId" theme="simple"
-                  cssClass="form-select" cssStyle="float:left; width:auto; margin-right: 2em"
-                  list="allFolders" listKey="id" listValue="name"/>
-    </s:if>
-
-    <s:if test="folder.bookmarks.size > 0">
-        <%-- Delete-selected button --%>
-        <input id="delete_selected" value="<s:text name="bookmarksForm.delete"/>" type="button"
-               class="btn btn-danger" style="float:left;"
-               onclick="confirmDeleteSelected();return false;"/>
-    </s:if>
-
-    <s:if test="folder.name != 'default'">
-        <%-- Delete the whole blogroll --%>
-        <s:submit value="%{getText('bookmarksForm.deleteFolder')}" theme="simple"
-                  cssClass="btn btn-danger" cssStyle="float:right; clear:left; margin-top:2em"
-                  action="bookmarks!deleteFolder"
-                  onclick="confirmDeleteFolder();return false;"/>
-
-    </s:if>
-
-</s:form>
-
-
-<%-- -------------------------------------------------------- --%>
-
-<%-- JavaScript for Main blogroll/folder management interface --%>
-
-<script>
-
-    var originalName;
-    var renameButton;
-    var renameCancel;
-    var deleteSelectedButton;
-    var moveSelectedButton;
-    var viewSelector;
-    var moveToSelector;
-
-    $(document).ready(function () {
-
-        originalName = $("#bookmarks_folder_name:first").val();
-
-        if (!originalName) {
-            originalName = 'default';
-        }
-
-        renameButton = $("#rename_button:first");
-        renameCancel = $("#rename_cancel:first");
-        deleteSelectedButton = $("#delete_selected:first");
-        moveSelectedButton = $("#move_selected:first");
-        viewSelector = $("#bookmarks_viewFolderId:first");
-        moveToSelector = $("#bookmarks_targetFolderId:first");
-
-        nameChanged();
-        selectionChanged();
-
-        // add the "New Blogroll" option to blogroll selectors
-        viewSelector.append(new Option('<s:text name="bookmarksForm.newBlogroll"/>', "new_blogroll"));
-    });
-
-
-    function selectionChanged() {
-        var checked = false;
-        var selected = $("[name=selectedBookmarks]");
-        for (var i in selected) {
-            if (selected[i].checked) {
-                checked = true;
-                break;
-            }
-        }
-        if (checked) {
-            deleteSelectedButton.attr("disabled", false);
-            deleteSelectedButton.addClass("btn-danger");
-
-            moveSelectedButton.attr("disabled", false);
-            moveSelectedButton.addClass("btn-warning");
-
-            moveToSelector.attr("disabled", false);
-
-        } else {
-            deleteSelectedButton.attr("disabled", true);
-            deleteSelectedButton.removeClass("btn-danger");
-
-            moveSelectedButton.attr("disabled", true);
-            moveSelectedButton.removeClass("btn-warning");
-
-            moveToSelector.attr("disabled", true);
-        }
-    }
-
-    function nameChanged() {
-        var newName = $("#bookmarks_folder_name:first").val();
-        if (newName && newName !== originalName && newName.trim().length > 0) {
-            renameButton.attr("disabled", false);
-            renameButton.addClass("btn-success");
-
-            renameCancel.attr("disabled", false);
-
-        } else {
-            renameButton.attr("disabled", true);
-            renameButton.removeClass("btn-success");
-
-            renameCancel.attr("disabled", true);
-        }
-    }
-
-    function renameFolder() {
-
-        var newName = $("#bookmarks_folder_name:first").val();
-        $("#folderEditForm_bean_name").val(newName);
-
-        var folderId = $("#bookmarks_folderId").val();
-        $("#folderEditForm_bean_id").val(folderId);
-
-        // post blogroll via AJAX
-        var folderEditForm = $("#folderEditForm")[0];
-        $.ajax({
-            method: 'post',
-            url: folderEditForm.attributes["action"].value,
-            data: $("#folderEditForm").serialize(),
-            context: document.body
-
-        }).done(function (data, status, response) {
-
-            refreshSalt(data);
-
-            var errors = actionErrors(data);
-            if (errors.length > 0) {
-                alert(errors.join("\n"));
-
-            } else {
-                originalName = newName;
-                nameChanged();
-            }
-
-        }).fail(function (data) {
-            alert('<s:text name="generic.error.check.logs" />');
-        });
-    }
-
-    function cancelRenameFolder(event) {
-        $("#bookmarks_folder_name:first").val(originalName);
-        nameChanged();
-    }
-
-    function confirmDeleteSelected() {
-        $('#delete-links-modal').modal('show');
-    }
-
-    function deleteSelected() {
-        document.bookmarks[0].submit();
-    }
-
-    function confirmDeleteFolder() {
-        $('#boomarks_delete_folder_folderId').val($('#bookmarks_folderId:first').val());
-        $('#deleteBlogrollName').text($('#deleteBlogrollName').data('folder-name'));
-        $('#delete-blogroll-modal').modal('show');
-    }
-
-    function onMoveToFolder() {
-        var bookmarksForm = $("#bookmarks")[0];
-        bookmarksForm.action = "bookmarks!move.rol";
-        bookmarksForm.submit();
-    }
-
-    function viewChanged() {
-
-        var bookmarksForm = $("#bookmarks")[0];
-        var folderEditForm = $("#folderEditForm")[0];
-
-        if ("new_blogroll" === bookmarksForm.viewFolderId.value) {
-            newBlogroll();
-
-        } else {
-            // user changed the blogroll/folder, post to "view" action to get new page
-            bookmarksForm.action = "bookmarks!view.rol";
-            bookmarksForm.submit();
-        }
-    }
-
-    function newBlogroll() {
-
-        // user selected New Blogroll option, show the add/edit blogroll modal
-        $('#blogroll-edit-title').html('<s:text name="bookmarksForm.addBlogroll.title" />');
-
-        folderEditForm.action = "folderAdd!save.rol";
-        folderEditForm.actionName.value = "folderAdd";
-
-        // disable save button until valid name is entered
-
-        $('#addedit-bookmarkfolder-modal').modal('show');
-
-        onBlogrollFormChanged();
-    }
-
-</script>
-
-
-<%-- ================================================================================================ --%>
-
-<%-- add/edit blogroll / folder form --%>
-
-<div id="addedit-bookmarkfolder-modal" class="modal fade addedit-bookmarkfolder-modal" tabindex="-1" role="dialog">
-
-    <div class="modal-dialog modal-lg">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h3 id="blogroll-edit-title"></h3>
+        <div class="blogroll-main-header">
+            <div class="blogroll-title-block">
+                <h3 id="blogrollTitle" class="blogroll-title"><s:property value="folder.name"/></h3>
+                <span class="blogroll-meta">
+                    <s:text escapeHtml="true" name="bookmarksForm.linkCount"><s:param value="links.size()"/></s:text>
+                    <s:if test="defaultFolder">
+                        &middot; <s:text escapeHtml="true" name="bookmarksForm.defaultNote"/>
+                    </s:if>
+                </span>
             </div>
-
-            <div class="modal-body">
-                <s:form action="folderEdit" id="folderEditForm" theme="bootstrap" cssClass="form-horizontal">
-                    <s:hidden name="salt"/>
-                    <s:hidden name="actionName"/>
-                    <s:hidden name="weblog"/>
-                    <s:hidden name="bean.id"/>
-
-                    <%-- action needed here because we are using AJAX to post this form --%>
-                    <s:hidden name="action:folderEdit!save" value="save"/>
-
-                    <s:textfield name="bean.name" label="%{getText('generic.name')}" maxlength="255"
-                                 onchange="onBlogrollFormChanged()"
-                                 onkeyup="onBlogrollFormChanged()"
-                    />
-                </s:form>
-            </div> <!-- modal-body-->
-
-            <div class="modal-footer">
-                <p id="feedback-area-blogroll-edit"></p>
-                <button id="save_blogroll" onclick="submitEditedBlogroll()" class="btn btn-primary">
-                    <s:text name="generic.save"/>
+            <div class="blogroll-main-actions">
+                <button type="button" id="addLinkButton" class="btn btn-primary">
+                    <span class="bi bi-plus-lg" aria-hidden="true"></span>
+                    <s:text escapeHtml="true" name="bookmarksForm.addBookmark"/>
                 </button>
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                    <s:text name="generic.cancel"/>
-                </button>
-            </div>
-
-        </div> <!-- modal-content-->
-
-    </div> <!-- modal-dialog -->
-
-</div>
-
-<script>
-
-    <%-- JavaScript for add/edit blogroll modal --%>
-
-    function onBlogrollFormChanged() {
-
-        var saveBlogrollButton = $('#save_blogroll:first');
-
-        var name = $('#folderEditForm_bean_name:first').val().trim();
-
-        if (name.length > 0) {
-            saveBlogrollButton.attr("disabled", false);
-            console.log("Button enabled!");
-
-        } else {
-            saveBlogrollButton.attr("disabled", true);
-            console.log("Button disabled!");
-        }
-
-    }
-
-
-    function submitEditedBlogroll() {
-
-        var folderEditForm = $('#folderEditForm')[0];
-
-        var feedbackAreaBlogrollEdit = $("#feedback-area-blogroll-edit");
-
-        // if name is empty reject and show error message
-        if ($("#folderEditForm_bean_name").val().trim() === "") {
-            feedbackAreaBlogrollEdit.html('<s:text name="bookmarksForm.blogroll.requiredFields" />');
-            feedbackAreaBlogrollEdit.css("color", "red");
-            return;
-        }
-
-        // post blogroll via AJAX
-        $.ajax({
-            method: 'post',
-            url: folderEditForm.attributes["action"].value,
-            data: $("#folderEditForm").serialize(),
-            context: document.body
-
-        }).done(function (data, status, response) {
-
-            refreshSalt(data);
-
-            var errors = actionErrors(data);
-            if (errors.length > 0) {
-                feedbackAreaBlogrollEdit.css("color", "red");
-                feedbackAreaBlogrollEdit.text(errors.join(" "));
-
-            } else {
-                feedbackAreaBlogrollEdit.css("color", "green");
-                feedbackAreaBlogrollEdit.html('<s:text name="generic.success" />');
-                $('#blogroll-edit-modal').modal("hide");
-
-                // kludge get folderId from response header send back by Struts action
-                var newFolderId = response.getResponseHeader('folderId');
-                viewSelector.append(new Option('', newFolderId));
-                $("#bookmarks_viewFolderId").val(newFolderId);
-
-                var bookmarksForm = $("#bookmarks")[0];
-                bookmarksForm.action = "bookmarks!view.rol";
-                bookmarksForm.submit();
-            }
-
-        }).fail(function (data) {
-            feedbackAreaBlogrollEdit.html('<s:text name="generic.error.check.logs" />');
-            feedbackAreaBlogrollEdit.css("color", "red");
-        });
-    }
-
-</script>
-
-
-<%-- ========================================================================================== --%>
-
-<%-- delete blogroll confirmation modal --%>
-
-<div id="delete-links-modal" class="modal fade delete-links-modal" tabindex="-1" role="dialog">
-
-    <div class="modal-dialog modal-lg">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h3>
-                    <s:text name="bookmarksForm.delete.confirm"/>
-                </h3>
-            </div>
-
-            <s:form theme="bootstrap" cssClass="form-horizontal">
-                <div class="modal-body">
-                    <s:text name="bookmarksForm.delete.areYouSure" />
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" value="%{getText('generic.yes')}" onclick="deleteSelected()">
-                        <s:text name="generic.yes"/>
+                <s:if test="!defaultFolder">
+                    <button type="button" id="renameFolderButton" class="btn btn-outline-secondary">
+                        <span class="bi bi-pencil" aria-hidden="true"></span>
+                        <s:text escapeHtml="true" name="generic.rename"/>
                     </button>
-                    &nbsp;
-                    <button type="button" class="btn btn-outline-secondary btn-primary" data-bs-dismiss="modal">
-                        <s:text name="generic.no"/>
+                    <button type="button" id="deleteFolderButton" class="btn btn-outline-danger">
+                        <span class="bi bi-trash" aria-hidden="true"></span>
+                        <s:text escapeHtml="true" name="bookmarksForm.deleteFolder"/>
                     </button>
-                </div>
-            </s:form>
-
+                </s:if>
+            </div>
         </div>
-    </div>
-</div>
 
+        <p class="pagetip" id="blogrollTip">
+            <s:if test="defaultFolder"><s:text escapeHtml="true" name="bookmarksForm.rootPrompt"/></s:if>
+            <s:else><s:text escapeHtml="true" name="bookmarksForm.otherPrompt"/></s:else>
+        </p>
 
-<%-- ========================================================================================== --%>
+        <%-- carries the salt for the reorder post; the link ids are added by the script --%>
+        <s:form id="linksReorderForm" action="bookmarks!reorder" theme="simple">
+            <s:hidden name="salt"/>
+            <s:hidden name="weblog"/>
+            <s:hidden name="folderId"/>
+        </s:form>
 
-<%-- delete blogroll confirmation modal --%>
+        <s:if test="!links.isEmpty()">
 
-<div id="delete-blogroll-modal" class="modal fade delete-blogroll-modal" tabindex="-1" role="dialog">
-
-    <div class="modal-dialog modal-lg">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h3>
-                    <s:text name="blogrollDeleteOK.removeBlogroll"/>:
-                    <span id="blogroll-name"></span>
-                </h3>
-            </div>
-
-            <s:form id="boomarks_delete_folder" action="bookmarks!deleteFolder" theme="bootstrap"
-                    cssClass="form-horizontal">
+            <%-- move and delete the selected links; the ids are added by the script --%>
+            <s:form id="linksMoveForm" action="bookmarks!move" theme="simple" cssClass="blogroll-bulkbar">
                 <s:hidden name="salt"/>
                 <s:hidden name="weblog"/>
                 <s:hidden name="folderId"/>
-
-                <div class="modal-body">
-                    <s:text name="blogrollDeleteOK.areYouSure" />
-                    <span id="deleteBlogrollName"
-                          data-folder-name="<s:property value="%{folder.name}"/>"></span>?
+                <div class="form-check mb-0">
+                    <input type="checkbox" class="form-check-input" id="selectAllLinks">
+                    <label class="form-check-label" for="selectAllLinks" id="selectedCount"><s:text escapeHtml="true" name="bookmarksForm.selectAllLabel"/></label>
                 </div>
-
-                <div class="modal-footer">
-                    <s:submit theme="simple" cssClass="btn btn-outline-secondary" value="%{getText('generic.yes')}"/>&nbsp;
-                    <button type="button" class="btn btn-outline-secondary btn-primary" data-bs-dismiss="modal">
-                        <s:text name="generic.no"/>
+                <div class="blogroll-bulk-actions">
+                    <s:if test="!moveTargets.isEmpty()">
+                        <div class="input-group input-group-sm blogroll-move">
+                            <label class="input-group-text" for="linksMoveForm_targetFolderId"><s:text escapeHtml="true" name="bookmarksForm.moveTo"/></label>
+                            <s:select name="targetFolderId" id="linksMoveForm_targetFolderId" list="moveTargets"
+                                      listKey="id" listValue="name" cssClass="form-select" disabled="true"/>
+                            <button type="button" id="moveLinksButton" class="btn btn-outline-secondary" disabled>
+                                <s:text escapeHtml="true" name="bookmarksForm.move"/>
+                            </button>
+                        </div>
+                    </s:if>
+                    <button type="button" id="deleteLinksButton" class="btn btn-sm btn-outline-danger" disabled>
+                        <span class="bi bi-trash" aria-hidden="true"></span>
+                        <s:text escapeHtml="true" name="bookmarksForm.delete"/>
                     </button>
                 </div>
-
             </s:form>
 
+            <ul id="linkList" class="link-list" aria-describedby="blogrollTip">
+                <s:iterator var="bookmark" value="links">
+                    <li class="link-row"
+                        data-link-id="<s:property value='#bookmark.id'/>"
+                        data-link-name="<s:property value='plainText(#bookmark.name)'/>"
+                        data-link-url="<s:property value='#bookmark.url'/>"
+                        data-link-feed="<s:property value='#bookmark.feedUrl'/>"
+                        data-link-desc="<s:property value='plainText(#bookmark.description)'/>"
+                        data-link-image="<s:property value='#bookmark.image'/>">
+
+                        <input type="checkbox" class="form-check-input link-select" value="<s:property value='#bookmark.id'/>"
+                               aria-label="<s:text escapeHtml="true" name='bookmarksForm.selectOneLabel'><s:param value='plainText(#bookmark.name)'/></s:text>">
+
+                        <button type="button" class="link-handle"
+                                aria-label="<s:text escapeHtml="true" name='bookmarksForm.moveHandle'><s:param value='plainText(#bookmark.name)'/></s:text>">
+                            <span class="bi bi-grip-vertical" aria-hidden="true"></span>
+                        </button>
+
+                        <s:if test="#bookmark.image != null && #bookmark.image != ''">
+                            <img class="link-image" src="<s:property value='#bookmark.image'/>" alt="" loading="lazy">
+                        </s:if>
+                        <s:else>
+                            <span class="link-image link-image-none" aria-hidden="true"><span class="bi bi-link-45deg"></span></span>
+                        </s:else>
+
+                        <div class="link-main">
+                            <a href="#" class="link-name link-edit"><s:property value="plainText(#bookmark.name)"/></a>
+                            <a class="link-url" href="<s:property value='#bookmark.url'/>" target="_blank" rel="noopener noreferrer"
+                               title="<s:text escapeHtml="true" name='bookmarksForm.visitLink.tip'/>"><s:property value="#bookmark.url"/><span
+                               class="bi bi-box-arrow-up-right" aria-hidden="true"></span></a>
+                            <s:if test="#bookmark.description != null && #bookmark.description != ''">
+                                <span class="link-desc"><s:property value="plainText(#bookmark.description)"/></span>
+                            </s:if>
+                        </div>
+
+                        <%-- OPML import sets a link's feed to its own URL when the file names none --%>
+                        <s:if test="#bookmark.feedUrl != null && #bookmark.feedUrl != '' && #bookmark.feedUrl != #bookmark.url">
+                            <a class="link-feed" href="<s:property value='#bookmark.feedUrl'/>" target="_blank" rel="noopener noreferrer"
+                               title="<s:text escapeHtml="true" name='bookmarksForm.feedurl'/>"
+                               aria-label="<s:text escapeHtml="true" name='bookmarksForm.feedOf'><s:param value='plainText(#bookmark.name)'/></s:text>">
+                                <span class="bi bi-rss" aria-hidden="true"></span>
+                            </a>
+                        </s:if>
+
+                        <div class="link-actions">
+                            <button type="button" class="btn btn-sm btn-outline-secondary link-edit">
+                                <span class="bi bi-pencil" aria-hidden="true"></span>
+                                <s:text escapeHtml="true" name="generic.edit"/>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger link-delete">
+                                <span class="bi bi-trash" aria-hidden="true"></span>
+                                <s:text escapeHtml="true" name="generic.delete"/>
+                            </button>
+                        </div>
+                    </li>
+                </s:iterator>
+            </ul>
+        </s:if>
+
+        <s:else>
+            <div class="blogroll-empty">
+                <span class="bi bi-link-45deg" aria-hidden="true"></span>
+                <p><s:text escapeHtml="true" name="bookmarksForm.noresults"/></p>
+                <div class="blogroll-empty-actions">
+                    <button type="button" class="btn btn-primary" id="emptyAddLinkButton">
+                        <span class="bi bi-plus-lg" aria-hidden="true"></span>
+                        <s:text escapeHtml="true" name="bookmarksForm.addBookmark"/>
+                    </button>
+                    <a class="btn btn-outline-secondary" href="<s:property value='%{importURL}'/>">
+                        <span class="bi bi-upload" aria-hidden="true"></span>
+                        <s:text escapeHtml="true" name="bookmarksForm.importBookmarks"/>
+                    </a>
+                </div>
+            </div>
+        </s:else>
+    </section>
+</div>
+
+<div id="blogrollStatus" class="visually-hidden" role="status" aria-live="polite"></div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="blogrollToast" class="toast align-items-center text-bg-success border-0" role="status" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="<s:text escapeHtml="true" name='generic.close'/>"></button>
         </div>
     </div>
 </div>
 
+<%-- add/edit link dialog --%>
 
-<%-- ================================================================================================ --%>
-
-<%-- add/edit link form: a modal --%>
-
-<div id="addedit-bookmark-modal" class="modal fade addedit-bookmark-modal" tabindex="-1" role="dialog">
-
-    <div class="modal-dialog modal-lg">
-
+<div id="link-edit-modal" class="modal fade" tabindex="-1" aria-labelledby="link-edit-title" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
-
             <div class="modal-header">
-
-                <%-- Titling, processing actions different between add and edit --%>
-                <s:if test="actionName == 'bookmarkEdit'">
-                    <s:set var="subtitleKey">bookmarkForm.edit.subtitle</s:set>
-                    <s:set var="mainAction">bookmarkEdit</s:set>
-                </s:if>
-                <s:else>
-                    <s:set var="subtitleKey">bookmarkForm.add.subtitle</s:set>
-                    <s:set var="mainAction">bookmarkAdd</s:set>
-                </s:else>
-
-                <h3>
-                    <s:text name="%{#subtitleKey}"> </s:text> <span id="subtitle_folder_name"></span>
-                </h3>
-
-                <div id="bookmark_required_fields" role="alert" class="alert">
-                    <s:text name="bookmarkForm.requiredFields"/>
-                </div>
-
+                <h3 class="modal-title fs-5" id="link-edit-title"></h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<s:text escapeHtml="true" name='generic.close'/>"></button>
             </div>
-            <%-- modal header --%>
-
             <div class="modal-body">
-
-                <s:form action="bookmarkEdit" theme="bootstrap" cssClass="form-horizontal">
+                <div id="linkEditErrors" class="alert alert-danger d-none" role="alert"></div>
+                <s:form action="bookmarkEdit!save" id="linkEditForm" theme="simple" novalidate="novalidate">
                     <s:hidden name="salt"/>
                     <s:hidden name="weblog"/>
-                    <%--
-                        Edit action uses folderId for redirection back to proper bookmarks folder on cancel
-                        (as configured in struts.xml); add action also, plus to know which folder to put new
-                        bookmark in.
-                    --%>
                     <s:hidden name="folderId"/>
-                    <s:hidden name="bean.id"/>
+                    <s:hidden name="bean.id" id="linkEditForm_bean_id"/>
 
-                    <s:textfield name="bean.name" maxlength="255"
-                                 onchange="onBookmarkFormChanged()"
-                                 onkeyup="onBookmarkFormChanged()"
-                                 label="%{getText('generic.name')}"/>
+                    <div class="mb-3">
+                        <label class="form-label" for="linkEditForm_bean_url"><s:text escapeHtml="true" name="bookmarkForm.url"/></label>
+                        <s:textfield name="bean.url" id="linkEditForm_bean_url" value="" maxlength="255" type="url"
+                                     cssClass="form-control" required="required" placeholder="https://"
+                                     aria-describedby="linkUrlFeedback"/>
+                        <div id="linkUrlFeedback" class="invalid-feedback"></div>
+                    </div>
 
-                    <s:textfield name="bean.url" maxlength="255"
-                                 onchange="onBookmarkFormChanged()"
-                                 onkeyup="onBookmarkFormChanged()"
-                                 label="%{getText('bookmarkForm.url')}"/>
+                    <div class="mb-3">
+                        <label class="form-label" for="linkEditForm_bean_name"><s:text escapeHtml="true" name="generic.name"/></label>
+                        <s:textfield name="bean.name" id="linkEditForm_bean_name" value="" maxlength="255"
+                                     cssClass="form-control" required="required"
+                                     aria-describedby="linkNameFeedback linkNameHelp"/>
+                        <div id="linkNameFeedback" class="invalid-feedback"></div>
+                        <div id="linkNameHelp" class="form-text"><s:text escapeHtml="true" name="bookmarkForm.nameHelp"/></div>
+                    </div>
 
-                    <s:textfield name="bean.feedUrl" maxlength="255"
-                                 onchange="onBookmarkFormChanged()"
-                                 onkeyup="onBookmarkFormChanged()"
-                                 label="%{getText('bookmarkForm.rssUrl')}"/>
+                    <div class="mb-3">
+                        <label class="form-label" for="linkEditForm_bean_description"><s:text escapeHtml="true" name="generic.description"/></label>
+                        <s:textfield name="bean.description" id="linkEditForm_bean_description" value="" maxlength="255"
+                                     cssClass="form-control"/>
+                    </div>
 
-                    <s:textfield name="bean.description" maxlength="255"
-                                 onchange="onBookmarkFormChanged()"
-                                 onkeyup="onBookmarkFormChanged()"
-                                 label="%{getText('generic.description')}"/>
-
-                    <s:textfield name="bean.image" maxlength="255"
-                                 onchange="onBookmarkFormChanged()"
-                                 onkeyup="onBookmarkFormChanged()"
-                                 label="%{getText('bookmarkForm.image')}"/>
+                    <details id="linkAdvanced" class="link-advanced">
+                        <summary><s:text escapeHtml="true" name="bookmarkForm.advanced"/></summary>
+                        <div class="mt-3 mb-3">
+                            <label class="form-label" for="linkEditForm_bean_feedUrl"><s:text escapeHtml="true" name="bookmarkForm.rssUrl"/></label>
+                            <s:textfield name="bean.feedUrl" id="linkEditForm_bean_feedUrl" value="" maxlength="255" type="url"
+                                         cssClass="form-control" aria-describedby="linkFeedHelp linkFeedFeedback"/>
+                            <div id="linkFeedFeedback" class="invalid-feedback"></div>
+                            <div id="linkFeedHelp" class="form-text"><s:text escapeHtml="true" name="bookmarkForm.feedHelp"/></div>
+                        </div>
+                        <div class="mb-1">
+                            <label class="form-label" for="linkEditForm_bean_image"><s:text escapeHtml="true" name="bookmarkForm.image"/></label>
+                            <s:textfield name="bean.image" id="linkEditForm_bean_image" value="" maxlength="255" type="url"
+                                         cssClass="form-control" aria-describedby="linkImageHelp linkImageFeedback"/>
+                            <div id="linkImageFeedback" class="invalid-feedback"></div>
+                            <div id="linkImageHelp" class="form-text"><s:text escapeHtml="true" name="bookmarkForm.imageHelp"/></div>
+                            <img id="linkImagePreview" class="link-image-preview d-none" alt="">
+                        </div>
+                    </details>
                 </s:form>
-
             </div>
-
-            <div class="modal-body">
-                <div class="modal-footer">
-                    <p id="feedback-area-edit"></p>
-                    <button type="button" id="save_bookmark" onclick="saveBookmark()" class="btn btn-primary">
-                        <s:text name="generic.save"/>
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <s:text name="generic.cancel"/>
-                    </button>
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><s:text escapeHtml="true" name="generic.cancel"/></button>
+                <button type="button" id="linkSaveButton" class="btn btn-primary"><s:text escapeHtml="true" name="generic.save"/></button>
             </div>
-
-
         </div>
-        <%-- modal content --%>
-
     </div>
-    <%-- modal dialog --%>
+</div>
 
-</div> <%-- modal --%>
+<%-- add/rename blogroll dialog --%>
 
+<div id="folder-edit-modal" class="modal fade" tabindex="-1" aria-labelledby="folder-edit-title" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title fs-5" id="folder-edit-title"></h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<s:text escapeHtml="true" name='generic.close'/>"></button>
+            </div>
+            <div class="modal-body">
+                <div id="folderEditErrors" class="alert alert-danger d-none" role="alert"></div>
+                <s:form action="folderEdit!save" id="folderEditForm" theme="simple" novalidate="novalidate">
+                    <s:hidden name="salt"/>
+                    <s:hidden name="weblog"/>
+                    <s:hidden name="bean.id" id="folderEditForm_bean_id" value=""/>
+                    <label class="form-label" for="folderEditForm_bean_name"><s:text escapeHtml="true" name="bookmarksForm.blogrollName"/></label>
+                    <s:textfield name="bean.name" id="folderEditForm_bean_name" value="" maxlength="255"
+                                 cssClass="form-control" required="required" aria-describedby="folderNameFeedback"/>
+                    <div id="folderNameFeedback" class="invalid-feedback"></div>
+                </s:form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><s:text escapeHtml="true" name="generic.cancel"/></button>
+                <button type="button" id="folderSaveButton" class="btn btn-primary"><s:text escapeHtml="true" name="generic.save"/></button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<%-- ---------------------------------------------------- --%>
+<%-- delete links dialog --%>
 
-<%-- JavaScript for add/edit link modal --%>
+<div id="delete-links-modal" class="modal fade" tabindex="-1" aria-labelledby="delete-links-title" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title fs-5" id="delete-links-title"></h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<s:text escapeHtml="true" name='generic.close'/>"></button>
+            </div>
+            <div class="modal-body">
+                <div id="deleteLinksErrors" class="alert alert-danger d-none" role="alert"></div>
+                <s:form id="linksDeleteForm" action="bookmarks!delete" theme="simple">
+                    <s:hidden name="salt"/>
+                    <s:hidden name="weblog"/>
+                    <s:hidden name="folderId"/>
+                </s:form>
+                <p class="mb-0"><s:text escapeHtml="true" name="bookmarksForm.delete.areYouSure"/></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><s:text escapeHtml="true" name="generic.cancel"/></button>
+                <button type="button" id="deleteLinksConfirm" class="btn btn-danger"><s:text escapeHtml="true" name="generic.delete"/></button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<script>
+<%-- delete blogroll dialog --%>
 
-    function addBookmark() {
+<s:if test="!defaultFolder">
+<div id="delete-folder-modal" class="modal fade" tabindex="-1" aria-labelledby="delete-folder-title" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title fs-5" id="delete-folder-title">
+                    <s:text escapeHtml="true" name="blogrollDeleteOK.removeBlogroll"><s:param value="folder.name"/></s:text>
+                </h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<s:text escapeHtml="true" name='generic.close'/>"></button>
+            </div>
+            <div class="modal-body">
+                <div id="deleteFolderErrors" class="alert alert-danger d-none" role="alert"></div>
+                <s:form id="folderDeleteForm" action="bookmarks!deleteFolder" theme="simple">
+                    <s:hidden name="salt"/>
+                    <s:hidden name="weblog"/>
+                    <s:hidden name="folderId"/>
+                </s:form>
+                <p class="mb-0">
+                    <s:if test="!links.isEmpty()">
+                        <s:text escapeHtml="true" name="blogrollDeleteOK.areYouSure"><s:param value="folder.name"/><s:param value="links.size()"/></s:text>
+                    </s:if>
+                    <s:else>
+                        <s:text escapeHtml="true" name="blogrollDeleteOK.empty"><s:param value="folder.name"/></s:text>
+                    </s:else>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><s:text escapeHtml="true" name="generic.cancel"/></button>
+                <button type="button" id="deleteFolderConfirm" class="btn btn-danger"><s:text escapeHtml="true" name="bookmarksForm.deleteFolder"/></button>
+            </div>
+        </div>
+    </div>
+</div>
+</s:if>
 
-        var saveBookmarkButton = $('#save_bookmark:first');
-        saveBookmarkButton.attr("disabled", true);
+</div>
 
-        var elem = $('#bookmark_required_fields:first');
-        elem.html('<s:text name="bookmarkForm.requiredFields" />');
-        elem.removeClass("alert-success");
-        elem.removeClass("alert-danger");
-        elem.addClass("alert-info");
-
-        $('#bookmarkEdit_bean_name:first').val('');
-        $('#bookmarkEdit_bean_url:first').val('');
-        $('#bookmarkEdit_bean_image:first').val('');
-        $('#bookmarkEdit_bean_feedUrl:first').val('');
-
-        $('#subtitle_folder_name:first').text(originalName);
-
-        $('#addedit-bookmark-modal').modal('show');
-    }
-
-
-    // Values come from data-* attributes and are bound via delegated listeners.
-    $(document).on('click', '.bookmark-edit-link', function (event) {
-        event.preventDefault();
-        editBookmark($(this).attr('data-bookmark-id'),
-                $(this).attr('data-bookmark-name'),
-                $(this).attr('data-bookmark-url'),
-                $(this).attr('data-bookmark-feed-url'),
-                $(this).attr('data-bookmark-description'),
-                $(this).attr('data-bookmark-image'));
-    });
-
-    function editBookmark(id, name, url, feedUrl, description, image) {
-
-        var saveBookmarkButton = $('#save_bookmark:first');
-        saveBookmarkButton.attr("disabled", true);
-
-        var elem = $('#bookmark_required_fields:first');
-        elem.html('<s:text name="bookmarkForm.requiredFields" />');
-        elem.removeClass("alert-success");
-        elem.removeClass("alert-danger");
-        elem.addClass("alert-info");
-
-        $('#bookmarkEdit_bean_id:first').val(id);
-        $('#bookmark_folderId').val(id);
-        $('#bookmarkEdit_bean_name:first').val(name);
-        $('#bookmarkEdit_bean_url:first').val(url);
-        $('#bookmarkEdit_bean_feedUrl:first').val(feedUrl);
-        $('#bookmarkEdit_bean_description:first').val(description);
-        $('#bookmarkEdit_bean_image:first').val(image);
-
-        $('#subtitle_folder_name:first').text(originalName);
-
-        $('#addedit-bookmark-modal').modal('show');
-    }
-
-
-    function onBookmarkFormChanged() {
-
-        var saveBookmarkButton = $('#save_bookmark:first');
-
-        var name = $('#bookmarkEdit_bean_name:first').val().trim();
-        var url = $('#bookmarkEdit_bean_url:first').val().trim();
-        var image = $('#bookmarkEdit_bean_image:first').val().trim();
-        var feedUrl = $('#bookmarkEdit_bean_feedUrl:first').val().trim();
-
-        var badUrls = [];
-
-        if (url.length > 0) {
-            if (!isValidUrl(url)) {
-                badUrls.push("Bookmark URL")
-            }
-        }
-
-        if (image.length > 0) {
-            if (!isValidUrl(image)) {
-                badUrls.push("Image URL")
-            }
-        }
-
-        if (feedUrl.length > 0) {
-            if (!isValidUrl(feedUrl)) {
-                badUrls.push("Newsfeed URL")
-            }
-        }
-
-        var elem = $('#bookmark_required_fields:first');
-        var message = '';
-
-        if (name.length > 0 && url.length > 0 && badUrls.length === 0) {
-            saveBookmarkButton.attr("disabled", false);
-
-            message = '<s:text name="generic.looksGood" />';
-            elem.removeClass("alert-info");
-            elem.removeClass("alert-danger");
-            elem.addClass("alert-success");
-            elem.text(message);
-
-        } else {
-            saveBookmarkButton.attr("disabled", true);
-
-            if (name.length === 0 || url.length === 0) {
-                message = '<s:text name="bookmarkForm.required" />';
-            }
-            if (badUrls.length > 0) {
-                message = '<s:text name="bookmarkForm.badUrls" />';
-                var sep = " ";
-                for (i in badUrls) {
-                    message = message + sep + badUrls[i];
-                    sep = ", ";
-                }
-            }
-            elem.removeClass("alert-info");
-            elem.removeClass("alert-success");
-            elem.addClass("alert-danger");
-            elem.text(message);
-        }
-    }
-
-
-    function saveBookmark() {
-
-        var feedbackAreaEdit = $("#feedback-area-edit");
-
-        // post bookmark via AJAX
-        $.ajax({
-            method: 'post',
-            url: "bookmarkEdit!save.rol",
-            data: $("#bookmarkEdit").serialize(),
-            context: document.body
-
-        }).done(function (data) {
-
-            refreshSalt(data);
-
-            var errors = actionErrors(data);
-            if (errors.length > 0) {
-                feedbackAreaEdit.css("color", "red");
-                feedbackAreaEdit.text(errors.join(" "));
-
-            } else {
-                feedbackAreaEdit.css("color", "green");
-                feedbackAreaEdit.html('<s:text name="generic.success" />');
-                $('#addedit-bookmark-modal').modal("hide");
-
-                // cause page to be reloaded so that edit appears
-                // and make sure we end up on the right folder
-                bookmarksForm = $("#bookmarks")[0];
-                bookmarksForm.viewFolderId.value = bookmarksForm.folderId.value;
-                viewChanged();
-            }
-
-        }).fail(function (data) {
-            feedbackAreaEdit.html('<s:text name="generic.error.check.logs" />');
-            feedbackAreaEdit.css("color", "red");
-        });
-    }
-
-</script>
+<script src="<s:url value='/roller-ui/scripts/blogroll.js'/>"></script>

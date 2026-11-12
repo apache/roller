@@ -20,7 +20,10 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -31,18 +34,22 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.CacheManager;
-import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 /**
- * List bookmarks and folders and allow for moving them around and deleting them.
+ * The blogroll page: a weblog's blogrolls (bookmark folders) and the links in
+ * one of them. Links can be reordered, moved to another blogroll and deleted;
+ * a blogroll other than the default one can be deleted.
  */
-// TODO: make this work @AllowedMethods({"execute","delete","deleteFolder","move","view","folderCreated"})
 public class Bookmarks extends UIAction {
 
-    private static Log log = LogFactory.getLog(Bookmarks.class);
+    private static final Log log = LogFactory.getLog(Bookmarks.class);
+
+    /** The blogroll that themes show; it can't be renamed or deleted. */
+    public static final String DEFAULT_FOLDER = "default";
 
     // the id of folder being viewed
     private String folderId = null;
@@ -50,16 +57,16 @@ public class Bookmarks extends UIAction {
     // the folder being viewed
     private WeblogBookmarkFolder folder = null;
 
-    // the list of bookmarks to move or delete
+    // the links to move or delete
     private String[] selectedBookmarks = null;
 
-    // the target folder to move items to
+    // the folder to move links to
     private String targetFolderId = null;
 
-    // a new folder the user wishes to view
-    private String viewFolderId = null;
+    // the links of the folder, in their new order
+    private List<String> bookmarkIds = new ArrayList<>();
 
-    // all folders from the action weblog
+    // all folders of the weblog: default first, then by name
     private List<WeblogBookmarkFolder> allFolders = Collections.emptyList();
 
     public Bookmarks() {
@@ -68,202 +75,222 @@ public class Bookmarks extends UIAction {
         this.pageTitle = "bookmarksForm.rootTitle";
     }
 
+    /**
+     * Loads the requested blogroll. Without one, opens the default blogroll if
+     * it has links, otherwise the first blogroll that has links, so the page
+     * doesn't open on an empty list while the links are elsewhere.
+     */
     @Override
     public void myPrepare() {
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            if (!StringUtils.isEmpty(getFolderId())) {
-                setFolder(bmgr.getFolderById(getActionWeblog(), getFolderId()));
-            } else {
-                setFolder(bmgr.getDefaultFolder(getActionWeblog()));
-                if (getFolder() != null) {
-                    setFolderId(getFolder().getId());
-                }
+            List<WeblogBookmarkFolder> folders = new ArrayList<>(bmgr.getAllFolders(getActionWeblog()));
+            folders.sort(Comparator
+                    .comparing((WeblogBookmarkFolder f) -> !DEFAULT_FOLDER.equals(f.getName()))
+                    .thenComparing(f -> StringUtils.defaultString(f.getName()), String.CASE_INSENSITIVE_ORDER));
+            allFolders = folders;
+
+            WeblogBookmarkFolder requested = StringUtils.isEmpty(getFolderId())
+                    ? null : bmgr.getFolderById(getActionWeblog(), getFolderId());
+            if (requested == null) {
+                requested = folders.stream()
+                        .filter(f -> !f.getBookmarks().isEmpty())
+                        .findFirst()
+                        .orElse(folders.isEmpty() ? null : folders.get(0));
             }
+            setFolder(requested);
         } catch (WebloggerException ex) {
             log.error("Error looking up folder", ex);
         }
     }
 
     /**
-     * Present the bookmarks available in the folder specified by the request.
+     * Shows the blogroll.
      */
+    @SkipValidation
     @Override
     public String execute() {
-
-        // build list of folders that the user can navigate to
-        List<WeblogBookmarkFolder> newFolders = new ArrayList<>();
-
-        try {
-            // Build list of all folders, except for current one
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            List<WeblogBookmarkFolder> folders = bmgr.getAllFolders(getActionWeblog());
-            for (WeblogBookmarkFolder fd : folders) {
-                if (!fd.getId().equals(getFolderId())) {
-                    newFolders.add(fd);
-                }
-            }
-
-        } catch (WebloggerException ex) {
-            log.error("Error building folders list", ex);
-            addError("Error building folders list");
-        }
-
-        if (!newFolders.isEmpty()) {
-            setAllFolders(newFolders);
-        }
-
         return LIST;
     }
 
     /**
-     * Delete bookmarks.
+     * Deletes the selected links.
      */
     public String delete() {
-
-        BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-
-        try {
-            WeblogBookmark bookmark;
-            String bookmarks[] = getSelectedBookmarks();
-            if (null != bookmarks && bookmarks.length > 0) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Processing delete of " + bookmarks.length
-                            + " bookmarks.");
-                }
-                for (int j = 0; j < bookmarks.length; j++) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Deleting bookmark - " + bookmarks[j]);
-                    }
-                    bookmark = bmgr.getBookmark(getActionWeblog(), bookmarks[j]);
-                    if (bookmark != null) {
-                        bmgr.removeBookmark(bookmark);
-                    }
-
-                }
-            }
-
-            // flush changes
-            WebloggerFactory.getWeblogger().flush();
-
-            // notify caches
-            CacheManager.invalidate(getActionWeblog());
-
-        } catch (WebloggerException ex) {
-            log.error("Error doing bookmark deletes", ex);
-            addError("Error doing bookmark deletes");
+        List<WeblogBookmark> links = selectedLinks();
+        if (links == null) {
+            addError("bookmarksForm.error.notFound");
+            return execute();
         }
-
+        try {
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
+            for (WeblogBookmark link : links) {
+                folder.getBookmarks().remove(link);
+                bmgr.removeBookmark(link);
+            }
+            WebloggerFactory.getWeblogger().flush();
+            CacheManager.invalidate(getActionWeblog());
+            addMessage(links.size() == 1 ? "bookmarksForm.deletedOne" : "bookmarksForm.deletedMany",
+                    String.valueOf(links.size()));
+        } catch (WebloggerException ex) {
+            log.error("Error deleting links", ex);
+            addError("generic.error.check.logs");
+        }
         return execute();
     }
 
+    /**
+     * Deletes the blogroll being viewed and its links, then shows the default blogroll.
+     */
     public String deleteFolder() {
-
+        if (folder == null) {
+            addError("folderForm.notFound");
+            return execute();
+        }
+        if (isDefaultFolder()) {
+            addError("bookmarksForm.error.deleteDefault");
+            return execute();
+        }
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            WeblogBookmarkFolder fd = bmgr.getFolderById(getActionWeblog(), getFolderId());
+            String name = folder.getName();
+            bmgr.removeFolder(folder);
+            WebloggerFactory.getWeblogger().flush();
+            CacheManager.invalidate(getActionWeblog());
+            addMessage("bookmarksForm.folderDeleted", name);
 
-            if (fd != null) {
-
-                if ( "default".equals( fd.getName() ) ) {
-                    addError("Cannot delete default bookmark");
-                    return execute();
-                }
-                bmgr.removeFolder(fd);
-
-                // flush changes
-                WebloggerFactory.getWeblogger().flush();
-
-                // notify caches
-                CacheManager.invalidate(getActionWeblog());
-
-                // re-route to default folder
-                setFolder(bmgr.getDefaultFolder(getActionWeblog()));
-                setFolderId(getFolder().getId());
-            }
-
+            allFolders = new ArrayList<>(allFolders);
+            allFolders.remove(folder);
+            setFolder(bmgr.getDefaultFolder(getActionWeblog()));
         } catch (WebloggerException ex) {
             log.error("Error deleting folder", ex);
+            addError("generic.error.check.logs");
         }
         return execute();
     }
 
     @SkipValidation
     public String folderCreated() {
-        // action from FolderEdit upon creation of a new folder, to display
-        // a success message prior to showing the new folder.
-        addMessage("folderForm.created");
-        return execute();
-    }
-
-    /**
-     * View the contents of another bookmark folder.
-     */
-    public String view() {
-
-        try {
-            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            if (!StringUtils.isEmpty(viewFolderId)) {
-                setFolder(bmgr.getFolderById(getActionWeblog(), viewFolderId));
-                setFolderId(viewFolderId);
-            }
-        } catch (WebloggerException ex) {
-            log.error("Error looking up folder", ex);
+        // reached by a redirect from FolderEdit after it creates a folder, and
+        // from BookmarksImport after it imports links into a new one
+        if (folder != null) {
+            addMessage("folderForm.created", folder.getName());
         }
         return execute();
     }
 
     /**
-     * Move bookmarks to a new folder.
+     * Moves the selected links to the end of another blogroll.
      */
     public String move() {
-
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-
-            if (log.isDebugEnabled()) {
-                log.debug("Moving bookmarks to folder - " + getTargetFolderId());
-            }
-
-            // Move bookmarks to new parent folder.
-            WeblogBookmarkFolder newFolder = bmgr.getFolderById(getActionWeblog(), getTargetFolderId());
-            String bookmarks[] = getSelectedBookmarks();
-
-            if (newFolder == null) {
+            WeblogBookmarkFolder target = StringUtils.isEmpty(getTargetFolderId())
+                    ? null : bmgr.getFolderById(getActionWeblog(), getTargetFolderId());
+            List<WeblogBookmark> links = selectedLinks();
+            if (target == null || links == null || target.equals(folder)) {
                 addError("bookmarksForm.error.move");
                 return execute();
             }
-
-            if (null != bookmarks && bookmarks.length > 0) {
-                List<WeblogBookmark> bookmarksToMove = new ArrayList<>();
-                for (String bookmarkId : bookmarks) {
-                    WeblogBookmark bd = bmgr.getBookmark(getActionWeblog(), bookmarkId);
-                    if (bd == null) {
-                        addError("bookmarksForm.error.move");
-                        return execute();
-                    }
-                    bookmarksToMove.add(bd);
-                }
-                for (WeblogBookmark bd : bookmarksToMove) {
-                    newFolder.addBookmark(bd);
-                    bd.setFolder(newFolder);
-                    bmgr.saveBookmark(bd);
-                    folder.getBookmarks().remove(bd);
-                }
+            for (WeblogBookmark link : links) {
+                folder.getBookmarks().remove(link);
+                target.addBookmark(link);
+                link.setFolder(target);
+                // recalculated by saveBookmark: after the target's last link
+                link.setPriority(null);
+                bmgr.saveBookmark(link);
             }
-
-            // flush changes
             WebloggerFactory.getWeblogger().flush();
-
-            // notify caches
             CacheManager.invalidate(getActionWeblog());
-
+            addMessage(links.size() == 1 ? "bookmarksForm.movedOne" : "bookmarksForm.movedMany",
+                    List.of(String.valueOf(links.size()), target.getName()));
         } catch (WebloggerException e) {
-            log.error("Error doing bookmark move", e);
+            log.error("Error moving links", e);
             addError("bookmarksForm.error.move");
         }
-
         return execute();
+    }
+
+    /**
+     * Saves a new order for the links of the blogroll. The posted ids must be
+     * exactly the blogroll's links.
+     */
+    public String reorder() {
+        if (folder == null) {
+            addError("folderForm.notFound");
+            return execute();
+        }
+        List<WeblogBookmark> links = folder.getBookmarks();
+        Set<String> ids = new HashSet<>(bookmarkIds);
+        if (ids.size() != bookmarkIds.size() || ids.size() != links.size()
+                || links.stream().anyMatch(link -> !ids.contains(link.getId()))) {
+            addError("bookmarksForm.error.reorder");
+            return execute();
+        }
+        try {
+            BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
+            for (WeblogBookmark link : links) {
+                link.setPriority(bookmarkIds.indexOf(link.getId()));
+                bmgr.saveBookmark(link);
+            }
+            links.sort(Comparator.comparing(WeblogBookmark::getPriority));
+            WebloggerFactory.getWeblogger().flush();
+            CacheManager.invalidate(getActionWeblog());
+            addMessage("bookmarksForm.orderSaved");
+        } catch (WebloggerException ex) {
+            log.error("Error reordering links", ex);
+            addError("generic.error.check.logs");
+        }
+        return execute();
+    }
+
+    /**
+     * The selected links, or null if any of them is not in the blogroll being viewed.
+     */
+    private List<WeblogBookmark> selectedLinks() {
+        if (folder == null || selectedBookmarks == null || selectedBookmarks.length == 0) {
+            return null;
+        }
+        List<WeblogBookmark> links = new ArrayList<>();
+        for (String id : selectedBookmarks) {
+            WeblogBookmark link = folder.getBookmarks().stream()
+                    .filter(b -> b.getId().equals(id))
+                    .findFirst().orElse(null);
+            if (link == null) {
+                return null;
+            }
+            links.add(link);
+        }
+        return links;
+    }
+
+    /**
+     * The links of the blogroll being viewed, as a plain list: Struts doesn't
+     * allow the page to call methods on the persistence provider's list.
+     */
+    public List<WeblogBookmark> getLinks() {
+        return folder == null ? Collections.emptyList() : new ArrayList<>(folder.getBookmarks());
+    }
+
+    public int linkCount(WeblogBookmarkFolder f) {
+        return f == null ? 0 : f.getBookmarks().size();
+    }
+
+    /**
+     * A link's name or description as plain text. They are stored sanitized,
+     * so may hold markup and entities; the page shows them as themes do.
+     */
+    public String plainText(String text) {
+        return text == null ? "" : Utilities.unescapeHTML(Utilities.removeHTML(text, false));
+    }
+
+    public boolean isDefaultFolder() {
+        return folder != null && DEFAULT_FOLDER.equals(folder.getName());
+    }
+
+    /** The blogrolls the selected links can be moved to: all but the one being viewed. */
+    public List<WeblogBookmarkFolder> getMoveTargets() {
+        return allFolders.stream().filter(f -> !f.equals(folder)).toList();
     }
 
     public String getFolderId() {
@@ -293,12 +320,17 @@ public class Bookmarks extends UIAction {
         this.targetFolderId = targetFolderId;
     }
 
-    public List<WeblogBookmarkFolder> getAllFolders() {
-        return allFolders;
+    public List<String> getBookmarkIds() {
+        return bookmarkIds;
     }
 
-    public void setAllFolders(List<WeblogBookmarkFolder> allFolders) {
-        this.allFolders = allFolders;
+    @StrutsParameter
+    public void setBookmarkIds(List<String> bookmarkIds) {
+        this.bookmarkIds = bookmarkIds == null ? new ArrayList<>() : bookmarkIds;
+    }
+
+    public List<WeblogBookmarkFolder> getAllFolders() {
+        return allFolders;
     }
 
     public WeblogBookmarkFolder getFolder() {
@@ -307,17 +339,8 @@ public class Bookmarks extends UIAction {
 
     private void setFolder(WeblogBookmarkFolder folder) {
         this.folder = folder;
-        if ( folder != null ) {
+        if (folder != null) {
             this.folderId = folder.getId();
         }
-    }
-
-    public String getViewFolderId() {
-        return viewFolderId;
-    }
-
-    @StrutsParameter
-    public void setViewFolderId(String viewFolderId) {
-        this.viewFolderId = viewFolderId;
     }
 }

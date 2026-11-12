@@ -157,6 +157,12 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
             addError("folderForm.notFound");
             return;
         }
+        // themes find the default blogroll by its name
+        if (!isAdd() && Bookmarks.DEFAULT_FOLDER.equals(folder.getName())
+                && !Bookmarks.DEFAULT_FOLDER.equals(getBean().getName())) {
+            addError("folderForm.error.renameDefault");
+            return;
+        }
         // make sure new name is not a duplicate of an existing folder
         if ( isAdd() || !getBean().getName().equals(folder.getName()) ) {
             if (folder.getWeblog().hasBookmarkFolder(getBean().getName())) {
