@@ -38,9 +38,6 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
-import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.business.pings.PingQueueManager;
-import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.plugins.PluginManagerImpl;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
@@ -63,10 +60,7 @@ public class JPAWebloggerModule implements Module {
         
         binder.bind(JPAPersistenceStrategy.class);       
         
-        binder.bind(AutoPingManager.class).to(     JPAAutoPingManagerImpl.class);   
         binder.bind(BookmarkManager.class).to(     JPABookmarkManagerImpl.class);  
-        binder.bind(PingQueueManager.class).to(    JPAPingQueueManagerImpl.class);   
-        binder.bind(PingTargetManager.class).to(   JPAPingTargetManagerImpl.class); 
         binder.bind(PropertiesManager.class).to(   JPAPropertiesManagerImpl.class);   
         binder.bind(ThreadManager.class).to(       JPAThreadManagerImpl.class);
         binder.bind(UserManager.class).to(         JPAUserManagerImpl.class);   

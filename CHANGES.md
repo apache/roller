@@ -54,6 +54,14 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **The obsolete weblog update ping feature is removed.** Public ping services
+  have largely shut down following years of ping spam. The 7.0 database upgrade
+  drops the three ping tables and removes their settings and task lock. Remove
+  `PingQueueTask` from `tasks.enabled`, and remove any `tasks.PingQueueTask.*`
+  and `pings.*` settings from `roller-custom.properties` before upgrading.
+  If the removed task class is still configured, Roller logs a task-loading
+  error and continues startup.
+
 - **Roller now runs on Jakarta EE**
   ([ROL-2183](https://issues.apache.org/jira/browse/ROL-2183)). It needs Java 17
   or later and a Servlet 6.1 container such as Tomcat 11. Tomcat 9 and other

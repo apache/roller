@@ -497,9 +497,6 @@ public class Weblog implements Serializable {
      * This includes a change to weblog settings, entries, themes, templates, 
      * comments, categories, bookmarks, folders, etc.
      *
-     * Pings are explicitly not included because pings do not
-     * affect visible changes to a weblog.
-     *
      */
     public Date getLastModified() {
         return lastModified;

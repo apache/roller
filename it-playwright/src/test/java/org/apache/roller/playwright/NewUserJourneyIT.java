@@ -119,6 +119,7 @@ class NewUserJourneyIT extends BaseIT {
         register();
         signIn();
         createWeblog();
+        assertRetiredPingPagesAreUnavailable();
         publishEntry(BLOG_HANDLE, ENTRY_TITLE, ENTRY_TEXT);
         assertEntryOnBlog(BLOG_HANDLE, ENTRY_TITLE, ENTRY_TEXT);
         enableUploads();
@@ -128,6 +129,21 @@ class NewUserJourneyIT extends BaseIT {
         cancelEntryDeleteDialog(BLOG_HANDLE, ENTRY_TITLE);
         insertMediaFileThroughDialog(BLOG_HANDLE);
         assertPublishingTimeOnOneLine();
+    }
+
+    private void assertRetiredPingPagesAreUnavailable() {
+        goTo(GLOBAL_CONFIG_PAGE);
+        assertThat(page.locator("a[href*='commonPingTarget']")).hasCount(0);
+        goTo("roller-ui/authoring/entries.rol?weblog=" + BLOG_HANDLE);
+        assertThat(page.locator("a[href*='pings.rol']")).hasCount(0);
+        for (String url : new String[] {
+                "roller-ui/admin/commonPingTargets.rol",
+                "roller-ui/admin/commonPingTargetAdd.rol",
+                "roller-ui/admin/commonPingTargetEdit.rol",
+                "roller-ui/authoring/pings.rol?weblog=" + BLOG_HANDLE}) {
+            APIResponse response = page.request().get(baseUrl + url);
+            Assertions.assertEquals(404, response.status(), "Retired page should be absent: " + url);
+        }
     }
 
     private void register() {

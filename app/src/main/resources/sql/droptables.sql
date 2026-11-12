@@ -29,9 +29,6 @@ drop table roller_audit_log;
 drop table roller_tasklock;
 
 -- supplemental services tables
-drop table pingqueueentry;
-drop table autoping;
-drop table pingtarget;
 drop table bookmark;
 drop table bookmark_folder;
 drop table roller_mediafiletag;

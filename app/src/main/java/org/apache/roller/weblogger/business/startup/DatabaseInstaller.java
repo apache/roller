@@ -49,7 +49,7 @@ public class DatabaseInstaller {
     private static final String DBVERSION_PROP = "roller.database.version";
 
     // Update this when adding a database or data migration step below.
-    private static final int LATEST_DATABASE_UPGRADE_VERSION = 610;
+    private static final int LATEST_DATABASE_UPGRADE_VERSION = 700;
 
 
     public DatabaseInstaller(DatabaseProvider dbProvider, DatabaseScriptProvider scriptProvider) {
@@ -265,6 +265,12 @@ public class DatabaseInstaller {
             if(dbversion < 610) {
                 upgradeTo610(con, runScripts);
                 dbversion = 610;
+                schemaUpgraded = true;
+            }
+
+            if (dbversion < 700) {
+                upgradeTo700(con, runScripts);
+                dbversion = 700;
                 schemaUpgraded = true;
             }
 
@@ -758,6 +764,13 @@ public class DatabaseInstaller {
         simpleUpgrade(con, 520, 610, runScripts);
     }
     
+    /**
+     * Upgrade database to Roller 7.0.
+     */
+    private void upgradeTo700(Connection con, boolean runScripts) throws StartupException {
+        simpleUpgrade(con, 610, 700, runScripts);
+    }
+
     /**
      * Simple upgrade using single SQL migration script.
      */

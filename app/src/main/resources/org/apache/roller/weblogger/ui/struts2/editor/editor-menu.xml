@@ -118,9 +118,6 @@ Each menu or menu item is governed by four attributes:
                    enabledProperty="groupblogging.enabled"/>
         
         <!-- globalPerms="login" weblogPerms="admin" -->
-        <menu-item action="pings"
-                   name="tabbedmenu.weblog.pingSetup" 
-                   disabledProperty="pings.disablePingUsage" />
         
         <!-- globalPerms="login" weblogPerms="admin" -->
         <menu-item action="maintenance"
