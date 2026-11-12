@@ -1,5 +1,11 @@
 # Apache Roller — Changes
 
+## 6.1.8
+
+### Bug fixes
+- **Check and clear site.frontpage.weblog.handle** If weblog being deleted is front page
+  clear property so Welcome to Roller page is shown.
+
 ## 6.1.7
 
 ### Improvements
@@ -138,8 +144,6 @@
 - **Decimal settings can be saved on the configuration page.** The maximum
   upload file and directory sizes accepted only whole numbers in the browser,
   although they are measured in megabytes with decimals (default `2.00`).
-- **Check and clear site.frontpage.weblog.handle** If weblog being deleted is front page
-  clear property so Welcome to Roller page is shown.
 
 ## 6.1.6
 
