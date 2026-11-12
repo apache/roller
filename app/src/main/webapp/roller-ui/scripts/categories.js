@@ -155,6 +155,7 @@
         imagePreview.classList.add("d-none");
         imagePreview.removeAttribute("src");
         saveButton.disabled = adding;
+        showChooser(false);
         if (!adding) {
             validate();
         }
@@ -204,6 +205,63 @@
     document.getElementById("category-edit-modal").addEventListener("shown.bs.modal", function () {
         nameField.focus();
     });
+
+    // --- choosing an image from the media library ---------------------------
+    // Only when uploads are on; otherwise the page has no chooser and these are null.
+
+    var chooser = document.getElementById("categoryImageChooser");
+    var chooserFrame = document.getElementById("categoryImageChooserFrame");
+    var editTitle = document.getElementById("category-edit-title");
+    var formTitle = "";
+
+    // the dialog shows either the form or the chooser, which needs a wider dialog
+    function showChooser(on) {
+        if (!chooser) {
+            return;
+        }
+        var showing = !chooser.classList.contains("d-none");
+        if (on === showing) {
+            return;
+        }
+        if (on) {
+            formTitle = editTitle.textContent;
+            editTitle.textContent = chooser.dataset.title;
+            chooserFrame.setAttribute("src", chooser.dataset.src);
+        } else {
+            editTitle.textContent = formTitle || editTitle.textContent;
+            chooserFrame.setAttribute("src", "about:blank");
+        }
+        chooser.classList.toggle("d-none", !on);
+        editForm.classList.toggle("d-none", on);
+        document.querySelector("#category-edit-modal .modal-dialog").classList.toggle("modal-lg", on);
+        document.getElementById("categoryChooserBackButton").classList.toggle("d-none", !on);
+        document.getElementById("categoryCancelButton").classList.toggle("d-none", on);
+        saveButton.classList.toggle("d-none", on);
+    }
+
+    if (chooser) {
+        document.getElementById("categoryImageChooseButton").addEventListener("click", function () {
+            showChooser(true);
+        });
+        document.getElementById("categoryChooserBackButton").addEventListener("click", function () {
+            showChooser(false);
+            document.getElementById("categoryImageChooseButton").focus();
+        });
+        document.getElementById("category-edit-modal").addEventListener("hidden.bs.modal", function () {
+            showChooser(false);
+        });
+
+        // called by the chooser in the frame (MediaFileImageChooser.jsp); it lists only images
+        window.onSelectMediaFile = function (name, url, isImage) {
+            if (isImage !== "true") {
+                return;
+            }
+            imageField.value = url;
+            showChooser(false);
+            validate();
+            imageField.focus();
+        };
+    }
 
     // --- delete ----------------------------------------------------------------
 

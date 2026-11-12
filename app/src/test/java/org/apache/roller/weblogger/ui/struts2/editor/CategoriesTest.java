@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -47,7 +48,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * The categories page saves a new display order and reports entry counts.
+ * The categories page saves a new display order, reports entry counts, and offers the
+ * media library for category images only when uploads are on.
  */
 class CategoriesTest {
 
@@ -146,5 +148,15 @@ class CategoriesTest {
         assertFalse(action.isInUse("c-roller"));
         // blogging clients post to it, so removing it needs a replacement
         assertTrue(action.isInUse("c-general"));
+    }
+
+    @Test
+    void offersTheMediaLibraryOnlyWhenUploadsAreOn() {
+        try (MockedStatic<WebloggerRuntimeConfig> config = mockStatic(WebloggerRuntimeConfig.class)) {
+            config.when(() -> WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")).thenReturn(true);
+            assertTrue(action.isMediaLibraryEnabled());
+            config.when(() -> WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")).thenReturn(false);
+            assertFalse(action.isMediaLibraryEnabled());
+        }
     }
 }

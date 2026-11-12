@@ -18,7 +18,9 @@
     change the order themes show categories in.
   - Each category shows how many entries it has, linked to those entries.
   - Add and edit in one dialog with field-level checks and an image preview.
-    Deleting a category that has entries asks where to move them.
+    When media uploads are on, the dialog can choose the category image
+    from the media library. Deleting a category that has entries asks
+    where to move them.
   - The page works on phones, and a short message confirms each change.
 
 - **AtomPub can manage templates and categories.** New collections

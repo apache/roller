@@ -17,8 +17,9 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<%-- The entry editor's media chooser, shown in a dialog frame. A page of one folder's files,
-     newest first; choosing one calls the editor's onSelectMediaFile() with values from data-*
+<%-- The media chooser, shown in a dialog frame by the entry editor and, with only images
+     (bean.type set to images), by the categories page. A page of one folder's files, newest
+     first; choosing one calls the parent page's onSelectMediaFile() with values from data-*
      attributes (MediaFileCard.jsp, chooser mode). --%>
 
 <div class="media-chooser">
@@ -26,6 +27,7 @@
     <s:form id="mediaFileChooserForm" name="mediaFileChooserForm" action="mediaFileImageChooser"
             method="get" theme="simple" cssClass="media-chooser-search" role="search">
         <s:hidden name="weblog"/>
+        <s:if test="imagesOnly"><s:hidden name="bean.type"/></s:if>
         <div>
             <label class="form-label" for="chooserFolder"><s:text name="mediaFileView.viewFolder"/></label>
             <s:select id="chooserFolder" name="directoryId" list="allDirectories" listKey="id" listValue="name"
@@ -40,11 +42,12 @@
         </div>
     </s:form>
 
-    <p class="pagetip"><s:text name="mediaFileImageChooser.pageTip"/></p>
+    <p class="pagetip"><s:text name="%{imagesOnly ? 'mediaFileImageChooser.imagePageTip' : 'mediaFileImageChooser.pageTip'}"/></p>
 
     <s:if test="childFiles.size() > 0">
         <s:include value="/WEB-INF/jsps/editor/Pager.jsp"/>
         <s:set var="chooserMode" value="true"/>
+        <s:set var="chooserLabelKey" value="imagesOnly ? 'mediaFileImageChooser.choose' : 'mediaFileImageChooser.insert'"/>
         <ul class="media-grid">
             <s:iterator var="mediaFile" value="childFiles">
                 <s:include value="/WEB-INF/jsps/editor/MediaFileCard.jsp"/>
@@ -55,7 +58,8 @@
     <s:else>
         <div class="media-empty">
             <span class="bi bi-images" aria-hidden="true"></span>
-            <p><s:if test="bean.search"><s:text name="mediaFileView.noResults"/></s:if>
+            <p><s:if test="imagesOnly && (bean.name == null || bean.name.trim().isEmpty())"><s:text name="mediaFileImageChooser.noImages"/></s:if>
+               <s:elseif test="bean.search"><s:text name="mediaFileView.noResults"/></s:elseif>
                <s:else><s:text name="mediaFileView.noFiles"/></s:else></p>
         </div>
     </s:else>

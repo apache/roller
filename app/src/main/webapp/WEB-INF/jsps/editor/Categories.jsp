@@ -166,17 +166,44 @@
 
                     <div class="mb-1">
                         <label class="form-label" for="categoryEditForm_bean_image"><s:text escapeHtml="true" name="categoryForm.image"/></label>
-                        <s:textfield name="bean.image" id="categoryEditForm_bean_image" value="" maxlength="255"
-                                     cssClass="form-control" type="url"
-                                     aria-describedby="categoryImageHelp categoryImageFeedback"/>
-                        <div id="categoryImageFeedback" class="invalid-feedback"></div>
-                        <div id="categoryImageHelp" class="form-text"><s:text escapeHtml="true" name="categoryForm.imageHelp"/></div>
+                        <div class="input-group has-validation">
+                            <s:textfield name="bean.image" id="categoryEditForm_bean_image" value="" maxlength="255"
+                                         cssClass="form-control" type="url"
+                                         aria-describedby="categoryImageHelp categoryImageFeedback"/>
+                            <s:if test="mediaLibraryEnabled">
+                                <button type="button" id="categoryImageChooseButton" class="btn btn-outline-secondary">
+                                    <span class="bi bi-images" aria-hidden="true"></span>
+                                    <s:text escapeHtml="true" name="categoryForm.chooseImage"/>
+                                </button>
+                            </s:if>
+                            <div id="categoryImageFeedback" class="invalid-feedback"></div>
+                        </div>
+                        <div id="categoryImageHelp" class="form-text"><s:text escapeHtml="true" name="%{mediaLibraryEnabled ? 'categoryForm.imageHelpMedia' : 'categoryForm.imageHelp'}"/></div>
                         <img id="categoryImagePreview" class="category-image-preview d-none" alt="">
                     </div>
                 </s:form>
+                <s:if test="mediaLibraryEnabled">
+                    <%-- the media chooser, images only; shown in place of the form --%>
+                    <s:url var="imageChooserURL" action="mediaFileImageChooser" namespace="overlay" escapeAmp="false">
+                        <s:param name="weblog" value="%{actionWeblog.handle}"/>
+                        <s:param name="bean.type" value="'mediaFileView.image'"/>
+                    </s:url>
+                    <div id="categoryImageChooser" class="d-none"
+                         data-src="<s:property value='%{imageChooserURL}'/>"
+                         data-title="<s:text escapeHtml="true" name='categoryForm.chooseImage.title'/>">
+                        <iframe id="categoryImageChooserFrame" class="category-image-chooser"
+                                title="<s:text escapeHtml="true" name='categoryForm.chooseImage.title'/>"></iframe>
+                    </div>
+                </s:if>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><s:text escapeHtml="true" name="generic.cancel"/></button>
+                <s:if test="mediaLibraryEnabled">
+                    <button type="button" id="categoryChooserBackButton" class="btn btn-outline-secondary d-none me-auto">
+                        <span class="bi bi-arrow-left" aria-hidden="true"></span>
+                        <s:text escapeHtml="true" name="categoryForm.chooseImage.back"/>
+                    </button>
+                </s:if>
+                <button type="button" id="categoryCancelButton" class="btn btn-outline-secondary" data-bs-dismiss="modal"><s:text escapeHtml="true" name="generic.cancel"/></button>
                 <button type="button" id="categorySaveButton" class="btn btn-primary"><s:text escapeHtml="true" name="generic.save"/></button>
             </div>
         </div>

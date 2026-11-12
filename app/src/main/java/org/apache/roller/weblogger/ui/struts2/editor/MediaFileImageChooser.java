@@ -51,6 +51,9 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 public class MediaFileImageChooser extends MediaFileBase {
     private static Log log = LogFactory.getLog(MediaFileImageChooser.class);
 
+    /** The search bean's type for images; the categories page opens the chooser with it. */
+    static final String IMAGES_ONLY = "mediaFileView.image";
+
     private String directoryId;
     private String directoryName;
 
@@ -134,6 +137,11 @@ public class MediaFileImageChooser extends MediaFileBase {
             addError("MediaFile.error.view");
         }
         return SUCCESS;
+    }
+
+    /** True when the chooser lists only images, as when choosing a category image. */
+    public boolean isImagesOnly() {
+        return IMAGES_ONLY.equals(bean.getType());
     }
 
     public MediaFilePager getPager() {

@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -132,6 +133,11 @@ public class Categories extends UIAction {
         WeblogCategory clientDefault = getActionWeblog().getBloggerCategory();
         return getEntryCount(categoryId) > 0
                 || (clientDefault != null && categoryId.equals(clientDefault.getId()));
+    }
+
+    /** True when media uploads are on, so an image can be chosen from the media library. */
+    public boolean isMediaLibraryEnabled() {
+        return WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled");
     }
 
     public List<String> getCategoryIds() {

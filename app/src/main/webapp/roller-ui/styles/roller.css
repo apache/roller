@@ -402,6 +402,14 @@ body {
     border: 1px solid var(--bs-border-color);
 }
 
+/* the media chooser, in the category dialog in place of the form */
+.category-image-chooser {
+    display: block;
+    width: 100%;
+    height: min(36rem, 65vh);
+    border: 0;
+}
+
 @media (max-width: 575.98px) {
     /* name and description on one line, count and buttons under them */
     .category-row {
