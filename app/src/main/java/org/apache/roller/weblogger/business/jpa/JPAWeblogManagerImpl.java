@@ -25,6 +25,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.pings.AutoPingManager;
 import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
@@ -39,7 +40,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.roller.weblogger.business.FrontpageSettings;
 import org.apache.roller.weblogger.business.MediaFileManager;
+import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
@@ -49,6 +52,7 @@ import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.PingQueueEntry;
 import org.apache.roller.weblogger.pojos.PingTarget;
+import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.StatCountCountComparator;
 import org.apache.roller.weblogger.pojos.TagStat;
@@ -110,6 +114,18 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // remove contents first, then remove weblog
         this.removeWeblogContents(weblog);
+        
+        // Clear frontpage weblog if set
+        if (WebloggerRuntimeConfig.isFrontPageWeblog(weblog.getHandle())) {
+
+            PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
+
+            RuntimeConfigProperty handleProp = mgr.getProperty(FrontpageSettings.HANDLE_PROPERTY);
+
+            mgr.compareAndSetProperty(FrontpageSettings.HANDLE_PROPERTY, handleProp.getValue(), "");
+
+        }
+        
         this.strategy.remove(weblog);
         
         // remove entry from cache mapping
