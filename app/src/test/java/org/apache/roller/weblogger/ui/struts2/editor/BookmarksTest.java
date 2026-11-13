@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.roller.weblogger.business.BookmarkManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -56,6 +57,7 @@ class BookmarksTest {
     private MockedStatic<CacheManager> cache;
     private Weblogger weblogger;
     private BookmarkManager bookmarks;
+    private WeblogManager weblogs;
     private Weblog weblog;
     private WeblogBookmarkFolder defaultFolder;
     private WeblogBookmarkFolder friends;
@@ -68,7 +70,9 @@ class BookmarksTest {
     void setUp() throws Exception {
         bookmarks = mock(BookmarkManager.class);
         weblogger = mock(Weblogger.class);
+        weblogs = mock(WeblogManager.class);
         when(weblogger.getBookmarkManager()).thenReturn(bookmarks);
+        when(weblogger.getWeblogManager()).thenReturn(weblogs);
         factory = mockStatic(WebloggerFactory.class);
         factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
         cache = mockStatic(CacheManager.class);
@@ -160,6 +164,9 @@ class BookmarksTest {
         assertEquals(1, roller.getPriority());
         assertEquals(2, asf.getPriority());
         assertEquals(List.of(tomcat, roller, asf), apache.getBookmarks());
+        // one save of the weblog, not one per link
+        verify(weblogs).saveWeblog(weblog);
+        verify(bookmarks, never()).saveBookmark(any());
         verify(weblogger).flush();
     }
 
@@ -252,5 +259,55 @@ class BookmarksTest {
         verify(bookmarks).removeFolder(friends);
         assertEquals(defaultFolder, action.getFolder());
         assertFalse(action.getAllFolders().contains(friends));
+    }
+    @Test
+    void doesNotDeleteAnotherBlogrollWhenTheOneAskedForIsGone() throws Exception {
+        // "Old" was deleted in another tab; Apache is the first blogroll with links
+        Bookmarks action = action("f-old");
+
+        action.deleteFolder();
+
+        assertTrue(action.hasActionErrors());
+        verify(bookmarks, never()).removeFolder(any());
+        // the page still shows something
+        assertEquals(apache, action.getFolder());
+    }
+
+    @Test
+    void doesNotDeleteLinksWhenTheBlogrollAskedForIsGone() throws Exception {
+        Bookmarks action = action("f-old");
+        action.setSelectedBookmarks(new String[] {"b-asf"});
+
+        action.delete();
+
+        assertTrue(action.hasActionErrors());
+        verify(bookmarks, never()).removeBookmark(any());
+    }
+
+    @Test
+    void refusesToMoveALinkIntoABlogrollThatHasOneWithTheSameName() throws Exception {
+        link(friends, "b-other-roller", "Roller", 0);
+        Bookmarks action = action("f-apache");
+        action.setSelectedBookmarks(new String[] {"b-roller"});
+        action.setTargetFolderId("f-friends");
+
+        action.move();
+
+        assertTrue(action.hasActionErrors());
+        assertEquals(apache, roller.getFolder());
+        verify(bookmarks, never()).saveBookmark(any());
+    }
+
+    @Test
+    void announcesACreatedBlogrollOnlyForTheOneAskedFor() throws Exception {
+        Bookmarks asked = action("f-friends");
+        asked.folderCreated();
+        assertFalse(asked.getActionMessages().isEmpty());
+
+        // an import that could not find its blogroll: no id, so the fallback is shown
+        Bookmarks notAsked = action(null);
+        notAsked.folderCreated();
+        assertTrue(notAsked.getActionMessages().isEmpty());
+        assertEquals(apache, notAsked.getFolder());
     }
 }

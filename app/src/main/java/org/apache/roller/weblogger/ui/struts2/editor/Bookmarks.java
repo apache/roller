@@ -21,8 +21,10 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +59,9 @@ public class Bookmarks extends UIAction {
     // the folder being viewed
     private WeblogBookmarkFolder folder = null;
 
+    // true if the request named a folder, false if the one shown is a fallback
+    private boolean folderRequested = false;
+
     // the links to move or delete
     private String[] selectedBookmarks = null;
 
@@ -90,15 +95,12 @@ public class Bookmarks extends UIAction {
                     .thenComparing(f -> StringUtils.defaultString(f.getName()), String.CASE_INSENSITIVE_ORDER));
             allFolders = folders;
 
-            WeblogBookmarkFolder requested = StringUtils.isEmpty(getFolderId())
-                    ? null : bmgr.getFolderById(getActionWeblog(), getFolderId());
-            if (requested == null) {
-                requested = folders.stream()
-                        .filter(f -> !f.getBookmarks().isEmpty())
-                        .findFirst()
-                        .orElse(folders.isEmpty() ? null : folders.get(0));
-            }
-            setFolder(requested);
+            // A blogroll that was asked for but is gone stays null, so the actions that
+            // change things report "not found" instead of acting on another blogroll;
+            // execute() shows a fallback.
+            folderRequested = !StringUtils.isEmpty(getFolderId());
+            setFolder(folderRequested
+                    ? bmgr.getFolderById(getActionWeblog(), getFolderId()) : fallbackFolder());
         } catch (WebloggerException ex) {
             log.error("Error looking up folder", ex);
         }
@@ -110,7 +112,18 @@ public class Bookmarks extends UIAction {
     @SkipValidation
     @Override
     public String execute() {
+        if (folder == null) {
+            setFolder(fallbackFolder());
+        }
         return LIST;
+    }
+
+    // the default blogroll if it has links, otherwise the first one that has
+    private WeblogBookmarkFolder fallbackFolder() {
+        return allFolders.stream()
+                .filter(f -> !f.getBookmarks().isEmpty())
+                .findFirst()
+                .orElse(allFolders.isEmpty() ? null : allFolders.get(0));
     }
 
     /**
@@ -173,7 +186,8 @@ public class Bookmarks extends UIAction {
     public String folderCreated() {
         // reached by a redirect from FolderEdit after it creates a folder, and
         // from BookmarksImport after it imports links into a new one
-        if (folder != null) {
+        // only for the blogroll that was asked for, not for the fallback
+        if (folder != null && folderRequested) {
             addMessage("folderForm.created", folder.getName());
         }
         return execute();
@@ -191,6 +205,15 @@ public class Bookmarks extends UIAction {
             if (target == null || links == null || target.equals(folder)) {
                 addError("bookmarksForm.error.move");
                 return execute();
+            }
+            // link names are unique within a blogroll, as BookmarkEdit enforces
+            Set<String> names = new HashSet<>();
+            for (WeblogBookmark link : links) {
+                if (target.hasBookmarkOfName(link.getName()) || !names.add(link.getName())) {
+                    addError("bookmarksForm.error.moveDuplicate",
+                            List.of(plainText(link.getName()), plainText(target.getName())));
+                    return execute();
+                }
             }
             for (WeblogBookmark link : links) {
                 folder.getBookmarks().remove(link);
@@ -229,10 +252,16 @@ public class Bookmarks extends UIAction {
         }
         try {
             BookmarkManager bmgr = WebloggerFactory.getWeblogger().getBookmarkManager();
-            for (WeblogBookmark link : links) {
-                link.setPriority(bookmarkIds.indexOf(link.getId()));
-                bmgr.saveBookmark(link);
+            // the links are managed, so setting the priorities is enough; the weblog
+            // is saved once, to update its last-modified time
+            Map<String, Integer> positions = new HashMap<>();
+            for (int i = 0; i < bookmarkIds.size(); i++) {
+                positions.put(bookmarkIds.get(i), i);
             }
+            for (WeblogBookmark link : links) {
+                link.setPriority(positions.get(link.getId()));
+            }
+            WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(getActionWeblog());
             links.sort(Comparator.comparing(WeblogBookmark::getPriority));
             WebloggerFactory.getWeblogger().flush();
             CacheManager.invalidate(getActionWeblog());

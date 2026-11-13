@@ -67,7 +67,9 @@
         } catch (e) {
             // storage unavailable: reload without the confirmation
         }
-        location.href = text("folderUrl") + "&folderId=" + encodeURIComponent(folderId || text("folderId"));
+        // "" asks for the default view, as after deleting the blogroll that was open
+        var id = folderId === undefined ? text("folderId") : folderId;
+        location.href = text("folderUrl") + "&folderId=" + encodeURIComponent(id);
     }
 
     function showFlash() {
@@ -95,16 +97,34 @@
 
     // --- posting -----------------------------------------------------------
 
+    // Each post spends the page's salt and returns a new one, so the posts of all
+    // the forms go out one at a time. The form is read when its turn comes, so it
+    // carries the salt the last post returned.
+    var inFlight = $.Deferred().resolve().promise();
+
     function post(form, extra) {
-        var data = $(form).serialize() + (extra || "");
-        return $.ajax({ method: "post", url: form.action, data: data }).done(function (html) {
-            refreshSalt(html);
-        }).fail(function (xhr) {
-            // the salt just sent is spent whether or not the post worked
-            if (xhr && xhr.responseText) {
-                refreshSalt(xhr.responseText);
-            }
-        });
+        var result = $.Deferred();
+        function send() {
+            var data = $(form).serialize() + (extra || "");
+            return $.ajax({ method: "post", url: form.action, data: data }).done(function (html) {
+                refreshSalt(html);
+                // A page without the blogroll (a login page after the session ended,
+                // say) is not a success, unless it carries the errors to show.
+                if (html.indexOf('id="blogrollPage"') < 0 && actionErrors(html).length === 0) {
+                    result.reject({ responseText: "" });
+                } else {
+                    result.resolve(html);
+                }
+            }).fail(function (xhr) {
+                // the salt just sent is spent whether or not the post worked
+                if (xhr && xhr.responseText) {
+                    refreshSalt(xhr.responseText);
+                }
+                result.reject(xhr);
+            });
+        }
+        inFlight = inFlight.then(send, send);
+        return result.promise();
     }
 
     function showErrors(box, errors) {
@@ -113,19 +133,23 @@
     }
 
     // posts a dialog's form; errors from the server go in the dialog
+    // (form.dataset.busy marks a post in flight: validation re-enables the button)
     function submit(form, extra, button, errorBox, onSuccess) {
         button.disabled = true;
+        form.dataset.busy = "true";
         post(form, extra).done(function (html) {
             var errors = actionErrors(html);
             if (errors.length > 0) {
                 showErrors(errorBox, errors);
                 button.disabled = false;
+                delete form.dataset.busy;
             } else {
                 onSuccess(html);
             }
         }).fail(function () {
             showErrors(errorBox, [text("msgError")]);
             button.disabled = false;
+            delete form.dataset.busy;
         });
     }
 
@@ -203,8 +227,10 @@
         linkForm.action = linkForm.action.replace(/bookmark(Add|Edit)!save/, adding ? "bookmarkAdd!save" : "bookmarkEdit!save");
         byId("linkEditForm_bean_id").value = adding ? "" : data.linkId;
         linkUrl.value = data.linkUrl || "";
-        linkName.value = data.linkName || "";
-        linkDesc.value = data.linkDesc || "";
+        // the stored values, not the display text, so an edit of another field
+        // doesn't strip the markup they hold
+        linkName.value = data.linkStoredName || "";
+        linkDesc.value = data.linkStoredDesc || "";
         linkFeed.value = data.linkFeed || "";
         linkImage.value = data.linkImage || "";
         byId("linkAdvanced").open = !!(data.linkFeed || data.linkImage);
@@ -218,7 +244,8 @@
     }
 
     function saveLink() {
-        if (!validateLink(true)) {
+        // Enter still works while the button is disabled for a post in flight
+        if (linkForm.dataset.busy || !validateLink(true)) {
             return;
         }
         var adding = linkForm.dataset.adding === "true";
@@ -248,7 +275,8 @@
         event.preventDefault();
     });
     linkForm.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" && event.target.matches("input")) {
+        // isComposing: an IME's Enter confirms the text, it does not save
+        if (event.key === "Enter" && !event.isComposing && event.target.matches("input")) {
             event.preventDefault();
             saveLink();
         }
@@ -292,7 +320,7 @@
     }
 
     function saveFolder() {
-        if (!validateFolder(true)) {
+        if (folderForm.dataset.busy || !validateFolder(true)) {
             return;
         }
         var adding = folderForm.dataset.adding === "true";

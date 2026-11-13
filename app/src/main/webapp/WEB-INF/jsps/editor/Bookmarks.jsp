@@ -87,7 +87,7 @@
                        <s:if test="#f.id == folderId">aria-current="page"</s:if>>
                         <span class="blogroll-folder-name">
                             <s:if test="#f.name == 'default'"><span class="bi bi-star" aria-hidden="true"></span></s:if>
-                            <s:property value="#f.name"/>
+                            <s:property value="plainText(#f.name)"/>
                         </span>
                         <span class="blogroll-folder-count"><s:property value="linkCount(#f)"/></span>
                     </a>
@@ -100,7 +100,7 @@
 
         <div class="blogroll-main-header">
             <div class="blogroll-title-block">
-                <h3 id="blogrollTitle" class="blogroll-title"><s:property value="folder.name"/></h3>
+                <h3 id="blogrollTitle" class="blogroll-title"><s:property value="plainText(folder.name)"/></h3>
                 <span class="blogroll-meta">
                     <s:text escapeHtml="true" name="bookmarksForm.linkCount"><s:param value="links.size()"/></s:text>
                     <s:if test="defaultFolder">
@@ -175,6 +175,8 @@
                         data-link-url="<s:property value='#bookmark.url'/>"
                         data-link-feed="<s:property value='#bookmark.feedUrl'/>"
                         data-link-desc="<s:property value='plainText(#bookmark.description)'/>"
+                        data-link-stored-name="<s:property value='#bookmark.name'/>"
+                        data-link-stored-desc="<s:property value='#bookmark.description'/>"
                         data-link-image="<s:property value='#bookmark.image'/>">
 
                         <input type="checkbox" class="form-check-input link-select" value="<s:property value='#bookmark.id'/>"
@@ -400,7 +402,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title fs-5" id="delete-folder-title">
-                    <s:text escapeHtml="true" name="blogrollDeleteOK.removeBlogroll"><s:param value="folder.name"/></s:text>
+                    <s:text escapeHtml="true" name="blogrollDeleteOK.removeBlogroll"><s:param value="plainText(folder.name)"/></s:text>
                 </h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<s:text escapeHtml="true" name='generic.close'/>"></button>
             </div>
@@ -413,10 +415,10 @@
                 </s:form>
                 <p class="mb-0">
                     <s:if test="!links.isEmpty()">
-                        <s:text escapeHtml="true" name="blogrollDeleteOK.areYouSure"><s:param value="folder.name"/><s:param value="links.size()"/></s:text>
+                        <s:text escapeHtml="true" name="blogrollDeleteOK.areYouSure"><s:param value="plainText(folder.name)"/><s:param value="links.size()"/></s:text>
                     </s:if>
                     <s:else>
-                        <s:text escapeHtml="true" name="blogrollDeleteOK.empty"><s:param value="folder.name"/></s:text>
+                        <s:text escapeHtml="true" name="blogrollDeleteOK.empty"><s:param value="plainText(folder.name)"/></s:text>
                     </s:else>
                 </p>
             </div>
