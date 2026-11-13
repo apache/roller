@@ -120,9 +120,7 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
             PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
 
-            RuntimeConfigProperty handleProp = mgr.getProperty(FrontpageSettings.HANDLE_PROPERTY);
-
-            mgr.compareAndSetProperty(FrontpageSettings.HANDLE_PROPERTY, handleProp.getValue(), "");
+            mgr.compareAndSetProperty(FrontpageSettings.HANDLE_PROPERTY, weblog.getHandle(), "");
 
         }
         
