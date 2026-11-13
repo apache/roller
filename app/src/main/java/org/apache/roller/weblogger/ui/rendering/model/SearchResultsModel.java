@@ -59,6 +59,7 @@ public class SearchResultsModel extends PageModel {
 	private SearchResultsPager pager = null;
 
 	private int hits = 0;
+	private boolean more = false;
 	private int offset = 0;
 	private int limit = 0;
 	private Set<String> categories = new TreeSet<String>();
@@ -100,7 +101,8 @@ public class SearchResultsModel extends PageModel {
 				RESULTS_PER_PAGE,
 				urlStrategy
 			);
-			hits = searchResultList.getResults().size();
+			hits = searchResultList.getTotalHits();
+			more = searchResultList.hasMore();
 			offset = searchResultList.getOffset();
 			limit = searchResultList.getLimit();
 			categories = searchResultList.getCategories();
@@ -118,7 +120,7 @@ public class SearchResultsModel extends PageModel {
 
 		// search completed, setup pager based on results
 		pager = new SearchResultsPager(
-			urlStrategy, searchRequest, results, (hits > (offset + limit)));
+			urlStrategy, searchRequest, results, more);
 	}
 
 	private void addEntryToResults(

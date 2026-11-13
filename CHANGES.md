@@ -27,6 +27,10 @@
 
 ### Bug fixes
 
+- **Search shows how many entries matched and pages through all of them.**
+  The count was the number of results on the current page, so it never went
+  above ten and there was no link to a second page. Results past the first
+  500 matches can now be reached too.
 - **AtomPub fixes found while running a 7.0.0 snapshot.**
   - Uploaded media files get the usual extension for their type:
     `image/svg+xml` gives `.svg`, parameters such as `charset` are ignored,

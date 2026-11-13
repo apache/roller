@@ -100,7 +100,6 @@ public class SearchOperation extends ReadFromIndexOperation {
      */
     @Override
     public void doRun() {
-        final int docLimit = 500;
         searchresults = null;
         searcher = null;
 
@@ -141,7 +140,9 @@ public class SearchOperation extends ReadFromIndexOperation {
                     .build();
             }
 
-            searchresults = searcher.search(query, docLimit, SORTER);
+            // ask for every match, so that results past the first few hundred
+            // can still be paged to
+            searchresults = searcher.search(query, Math.max(1, reader.maxDoc()), SORTER);
 
         } catch (IOException e) {
             logger.error("Error searching index", e);

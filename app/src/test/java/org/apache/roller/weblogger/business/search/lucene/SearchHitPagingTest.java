@@ -33,6 +33,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -49,11 +51,24 @@ class SearchHitPagingTest {
     private static final int HITS = 20;
 
     @Test
-    void firstPageLoadsOnlyItsEntries() throws Exception {
+    void firstPageLoadsItsEntriesAndOneMore() throws Exception {
         WeblogEntryManager entries = entries(-1);
         SearchResultList result = convert(entries, 0, 2);
         assertEquals(2, result.getResults().size());
-        verify(entries, times(2)).getWeblogEntry(anyString());
+        // the third load is the look ahead that says whether there is a next page
+        verify(entries, times(3)).getWeblogEntry(anyString());
+        assertTrue(result.hasMore());
+        assertEquals(HITS, result.getTotalHits());
+    }
+
+    @Test
+    void lastPageHasNothingAfterIt() throws Exception {
+        WeblogEntryManager entries = entries(-1);
+        SearchResultList result = convert(entries, HITS / 2 - 1, 2);
+        assertEquals(2, result.getResults().size());
+        assertEquals("id" + (HITS - 1), result.getResults().get(1).getId());
+        assertFalse(result.hasMore());
+        assertEquals(HITS, result.getTotalHits());
     }
 
     @Test
@@ -62,7 +77,7 @@ class SearchHitPagingTest {
         SearchResultList result = convert(entries, 0, 2);
         assertEquals(2, result.getResults().size());
         assertEquals("id1", result.getResults().get(0).getId());
-        verify(entries, times(3)).getWeblogEntry(anyString());
+        verify(entries, times(4)).getWeblogEntry(anyString());
     }
 
     @Test
@@ -71,7 +86,7 @@ class SearchHitPagingTest {
         SearchResultList result = convert(entries, 50, 2);
         assertEquals(0, result.getOffset());
         assertEquals("id0", result.getResults().get(0).getId());
-        verify(entries, times(2)).getWeblogEntry(anyString());
+        verify(entries, times(3)).getWeblogEntry(anyString());
     }
 
     /** Entries id0..id19, published in the past; the one at draftIndex is a draft. */

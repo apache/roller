@@ -29,12 +29,26 @@ public class SearchResultList {
     int offset;
     Set<String> categories;
     List<WeblogEntryWrapper> results;
+    int totalHits;
+    boolean more;
+
+    /**
+     * @param results    the entries on the requested page
+     * @param categories the categories of those entries
+     * @param limit      how many entries are on the page
+     * @param offset     position of the page's first entry among all results
+     * @param totalHits  how many entries matched the search, on every page
+     * @param more       whether there are results after this page
+     */
     public SearchResultList(
-        List<WeblogEntryWrapper> results, Set<String> categories, int limit, int offset) {
+        List<WeblogEntryWrapper> results, Set<String> categories, int limit, int offset,
+        int totalHits, boolean more) {
         this.results = results;
         this.categories = categories;
         this.limit = limit;
         this.offset = offset;
+        this.totalHits = totalHits;
+        this.more = more;
     }
     public int getLimit() {
         return limit;
@@ -44,6 +58,14 @@ public class SearchResultList {
     }
     public List<WeblogEntryWrapper> getResults() {
         return results;
+    }
+    /** How many entries matched the search, counting every page. */
+    public int getTotalHits() {
+        return totalHits;
+    }
+    /** Whether there are results after this page. */
+    public boolean hasMore() {
+        return more;
     }
     public Set<String> getCategories() {
         return categories;
