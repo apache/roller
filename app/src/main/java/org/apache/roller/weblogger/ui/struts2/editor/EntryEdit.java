@@ -399,11 +399,7 @@ public final class EntryEdit extends UIAction {
                 MediaFileManager mediaManager = WebloggerFactory.getWeblogger()
                         .getMediaFileManager();
                 MediaFileDirectory directory = mediaManager
-                        .getDefaultMediaFileDirectory(getActionWeblog());
-                if (directory == null) {
-                    directory = mediaManager.createDefaultMediaFileDirectory(
-                            getActionWeblog());
-                }
+                        .getOrCreateDefaultMediaFileDirectory(getActionWeblog());
                 Map<String, String> mediaUrls = new HashMap<>();
                 getBean().setText(replaceInlineImages(submittedText,
                         textImages, images, mediaUrls, directory,

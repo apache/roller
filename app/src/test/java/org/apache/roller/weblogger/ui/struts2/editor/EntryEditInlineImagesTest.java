@@ -105,7 +105,7 @@ class EntryEditInlineImagesTest {
         factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
         when(urls.getMediaFileURL(any(), anyString(), anyBoolean()))
                 .thenAnswer(call -> "https://blog.example/media/" + call.getArgument(1));
-        when(mediaManager.getDefaultMediaFileDirectory(any()))
+        when(mediaManager.getOrCreateDefaultMediaFileDirectory(any()))
                 .thenReturn(new MediaFileDirectory());
         when(contentManager.canSave(any(), anyString(), anyString(), anyLong(), any()))
                 .thenReturn(true);

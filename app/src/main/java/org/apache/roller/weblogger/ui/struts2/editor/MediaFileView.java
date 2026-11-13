@@ -193,19 +193,6 @@ public class MediaFileView extends MediaFileBase {
      *
      * @return String The result of the action.
      */
-    /**
-     * Returns the weblog's default media folder, creating it if it is missing.
-     * Weblogs created by old Roller versions may not have one.
-     */
-    private MediaFileDirectory defaultDirectory(MediaFileManager manager) throws WebloggerException {
-        MediaFileDirectory directory = manager.getDefaultMediaFileDirectory(getActionWeblog());
-        if (directory == null) {
-            directory = manager.createDefaultMediaFileDirectory(getActionWeblog());
-            WebloggerFactory.getWeblogger().flush();
-        }
-        return directory;
-    }
-
     @SkipValidation
     @Override
     public String execute() {
@@ -219,7 +206,7 @@ public class MediaFileView extends MediaFileBase {
                         getActionWeblog(), this.directoryName);
             }
             if (directory == null) {
-                directory = defaultDirectory(manager);
+                directory = manager.getOrCreateDefaultMediaFileDirectory(getActionWeblog());
             }
             this.currentDirectory = directory;
             this.directoryId = directory.getId();
@@ -368,7 +355,7 @@ public class MediaFileView extends MediaFileBase {
                 CacheManager.invalidate(getActionWeblog());
 
                 // re-route to default folder
-                mediaFileDir = defaultDirectory(manager);
+                mediaFileDir = manager.getOrCreateDefaultMediaFileDirectory(getActionWeblog());
                 setDirectoryId(mediaFileDir.getId());
                 setDirectoryName(mediaFileDir.getName());
                 clearSearch();

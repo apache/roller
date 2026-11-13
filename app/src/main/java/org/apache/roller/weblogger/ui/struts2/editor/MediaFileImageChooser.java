@@ -98,12 +98,7 @@ public class MediaFileImageChooser extends MediaFileBase {
                 directory = manager.getMediaFileDirectoryByName(getActionWeblog(), this.directoryName);
             }
             if (directory == null) {
-                directory = manager.getDefaultMediaFileDirectory(getActionWeblog());
-            }
-            if (directory == null) {
-                // weblogs created by old Roller versions may have no default folder
-                directory = manager.createDefaultMediaFileDirectory(getActionWeblog());
-                WebloggerFactory.getWeblogger().flush();
+                directory = manager.getOrCreateDefaultMediaFileDirectory(getActionWeblog());
             }
             this.currentDirectory = directory;
             this.directoryId = directory.getId();

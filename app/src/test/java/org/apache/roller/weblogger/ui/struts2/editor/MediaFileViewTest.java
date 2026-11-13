@@ -85,27 +85,13 @@ class MediaFileViewTest {
     }
 
     @Test
-    void createsMissingDefaultFolder() throws Exception {
-        MediaFileDirectory created = new MediaFileDirectory(weblog, "default", "default directory");
-        when(media.getDefaultMediaFileDirectory(weblog)).thenReturn(null);
-        when(media.createDefaultMediaFileDirectory(weblog)).thenReturn(created);
+    void showsTheDefaultFolderWhenNoneIsChosen() throws Exception {
+        MediaFileDirectory directory = new MediaFileDirectory(weblog, "default", "default directory");
+        when(media.getOrCreateDefaultMediaFileDirectory(weblog)).thenReturn(directory);
 
         action.execute();
 
         assertFalse(action.hasActionErrors());
-        assertSame(created, action.getCurrentDirectory());
-        verify(weblogger).flush();
-    }
-
-    @Test
-    void usesExistingDefaultFolder() throws Exception {
-        MediaFileDirectory existing = new MediaFileDirectory(weblog, "default", "default directory");
-        when(media.getDefaultMediaFileDirectory(weblog)).thenReturn(existing);
-
-        action.execute();
-
-        assertFalse(action.hasActionErrors());
-        assertSame(existing, action.getCurrentDirectory());
-        verify(media, never()).createDefaultMediaFileDirectory(any());
+        assertSame(directory, action.getCurrentDirectory());
     }
 }
