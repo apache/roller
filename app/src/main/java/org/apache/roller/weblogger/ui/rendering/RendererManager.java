@@ -98,9 +98,15 @@ public final class RendererManager {
         // iterate over our renderer factories and see if one of them
         // wants to handle this content
         for (RendererFactory rendererFactory : rendererFactories) {
-            Renderer renderer = rendererFactory.getRenderer(template, deviceType);
-            if (renderer != null) {
-                return renderer;
+            try {
+                Renderer renderer = rendererFactory.getRenderer(template, deviceType);
+                if (renderer != null) {
+                    return renderer;
+                }
+            } catch (RuntimeException e) {
+                // a factory that fails must not stop the others, or turn a 404 into a 500
+                log.error("Renderer factory " + rendererFactory.getClass().getName()
+                        + " failed for template " + template.getId(), e);
             }
         }
         return null;

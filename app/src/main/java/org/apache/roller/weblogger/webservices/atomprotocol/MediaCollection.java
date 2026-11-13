@@ -301,7 +301,8 @@ public class MediaCollection {
                 dir = fmgr.getMediaFileDirectoryByName(website, path);
             } else {
                 log.debug("Fetching root resource collection from weblog " + handle);
-                dir = fmgr.getOrCreateDefaultMediaFileDirectory(website);
+                // a read: don't create the folder, the 404 below says it is missing
+                dir = fmgr.getDefaultMediaFileDirectory(website);
             }
             if (dir == null) {
                 throw new AtomNotFoundException("Cannot find media directory: " + path);

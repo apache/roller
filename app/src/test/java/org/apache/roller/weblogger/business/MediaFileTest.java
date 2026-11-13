@@ -170,6 +170,32 @@ public class MediaFileTest  {
     }
 
     /**
+     * Two requests can each create the default folder of a weblog that has
+     * none; looking it up must still work.
+     */
+    @Test
+    public void testDuplicateDefaultMediaFileDirectoryIsTolerated() throws Exception {
+        User testUser = TestUtils.setupUser("mediaFileDupUser");
+        Weblog testWeblog = TestUtils.setupWeblog("mediaFileDupWeblog", testUser);
+        TestUtils.endSession(true);
+
+        MediaFileManager mfMgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        mfMgr.createMediaFileDirectory(new MediaFileDirectory(testWeblog, "default", "second"));
+        WebloggerFactory.getWeblogger().flush();
+        TestUtils.endSession(true);
+
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        assertNotNull(mfMgr.getDefaultMediaFileDirectory(testWeblog));
+        assertNotNull(mfMgr.getOrCreateDefaultMediaFileDirectory(testWeblog));
+
+        TestUtils.endSession(true);
+        TestUtils.teardownWeblog(testWeblog.getId());
+        TestUtils.teardownUser(testUser.getUserName());
+        TestUtils.endSession(true);
+    }
+
+    /**
      * Test directory creation
      */
     @Test

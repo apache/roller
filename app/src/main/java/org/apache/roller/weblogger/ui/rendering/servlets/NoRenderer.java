@@ -37,7 +37,7 @@ final class NoRenderer {
 
     static void sendNotFound(HttpServletResponse response, Template page, Weblog weblog, Log log)
             throws IOException {
-        if (hasNoContent(page)) {
+        if (hasNoContent(page, log)) {
             // nothing else logs this case
             log.warn("No renderer for template '" + page.getName() + "' (" + page.getId()
                     + ") of weblog '" + weblog.getHandle() + "': it has no content.");
@@ -51,10 +51,11 @@ final class NoRenderer {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
-    private static boolean hasNoContent(Template page) {
+    private static boolean hasNoContent(Template page, Log log) {
         try {
             return page.getTemplateRendition(RenditionType.STANDARD) == null;
         } catch (WebloggerException e) {
+            log.warn("Could not read the content of template " + page.getId(), e);
             return false;
         }
     }
