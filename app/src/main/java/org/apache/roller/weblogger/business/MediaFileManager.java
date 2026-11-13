@@ -176,6 +176,15 @@ public interface MediaFileManager {
             throws WebloggerException;
 
     /**
+     * Get the default folder for media files, creating it first if the weblog
+     * has none. Weblogs created by old Roller versions may not have one, so
+     * callers that need a folder should use this, not
+     * {@link #getDefaultMediaFileDirectory(Weblog)}.
+     */
+    MediaFileDirectory getOrCreateDefaultMediaFileDirectory(Weblog weblog)
+            throws WebloggerException;
+
+    /**
      * Move a set of media files to a new directory.
      */
     void moveMediaFiles(Collection<MediaFile> mediaFiles,

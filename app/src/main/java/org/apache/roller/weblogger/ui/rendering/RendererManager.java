@@ -81,17 +81,28 @@ public final class RendererManager {
     public static Renderer getRenderer(Template template, MobileDeviceRepository.DeviceType deviceType)
             throws RenderingException {
 
-        Renderer renderer;
+        Renderer renderer = findRenderer(template, deviceType);
+        if (renderer == null) {
+            throw new RenderingException("No renderer found for template " + template.getId() + "!");
+        }
+        return renderer;
+    }
+
+    /**
+     * Like {@link #getRenderer}, but returns null when no factory can render
+     * the template, for callers that answer that case with a 404. A factory
+     * that fails while creating a renderer has already logged why.
+     */
+    public static Renderer findRenderer(Template template, MobileDeviceRepository.DeviceType deviceType) {
 
         // iterate over our renderer factories and see if one of them
         // wants to handle this content
         for (RendererFactory rendererFactory : rendererFactories) {
-            renderer = rendererFactory.getRenderer(template, deviceType);
+            Renderer renderer = rendererFactory.getRenderer(template, deviceType);
             if (renderer != null) {
                 return renderer;
             }
         }
-
-        throw new RenderingException("No renderer found for template " + template.getId() + "!");
+        return null;
     }
 }

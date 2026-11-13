@@ -84,7 +84,7 @@ class MediaCollectionPathTest {
 
         defaultDir = mock(MediaFileDirectory.class);
         when(defaultDir.getMediaFiles()).thenReturn(Collections.emptySet());
-        when(files.getDefaultMediaFileDirectory(weblog)).thenReturn(defaultDir);
+        when(files.getOrCreateDefaultMediaFileDirectory(weblog)).thenReturn(defaultDir);
         when(files.getMediaFileDirectoryByName(weblog, "default")).thenReturn(defaultDir);
 
         collection = new MediaCollection(new User(), "https://blog.example/roller-services/app");
@@ -118,7 +118,7 @@ class MediaCollectionPathTest {
                 () -> collection.postMedia(request("/blog/resources"), mediaEntry(null)));
 
         assertTrue(refused.getMessage().contains("refused"), refused.getMessage());
-        verify(files).getDefaultMediaFileDirectory(weblog);
+        verify(files).getOrCreateDefaultMediaFileDirectory(weblog);
     }
 
     @Test

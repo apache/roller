@@ -112,10 +112,7 @@ public class MediaFileAdd extends MediaFileBase implements UploadedFilesAware {
 
             } else {
                 MediaFileDirectory root = mgr
-                        .getDefaultMediaFileDirectory(getActionWeblog());
-                if (root == null) {
-                    root = mgr.createDefaultMediaFileDirectory(getActionWeblog());
-                }
+                        .getOrCreateDefaultMediaFileDirectory(getActionWeblog());
                 setDirectory(root);
             }
             if (getDirectory() == null) {

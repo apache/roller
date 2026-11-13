@@ -528,6 +528,20 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      * {@inheritDoc}
      */
     @Override
+    public MediaFileDirectory getOrCreateDefaultMediaFileDirectory(Weblog weblog)
+            throws WebloggerException {
+        MediaFileDirectory directory = getDefaultMediaFileDirectory(weblog);
+        if (directory == null) {
+            directory = createDefaultMediaFileDirectory(weblog);
+            roller.flush();
+        }
+        return directory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<MediaFileDirectory> getMediaFileDirectories(Weblog weblog)
             throws WebloggerException {
 
@@ -789,12 +803,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                                     // create weblog's mediafile directory if
                                     // needed
                                     MediaFileDirectory root = this
-                                            .getDefaultMediaFileDirectory(weblog);
-                                    if (root == null) {
-                                        root = this
-                                                .createDefaultMediaFileDirectory(weblog);
-                                        roller.flush();
-                                    }
+                                            .getOrCreateDefaultMediaFileDirectory(weblog);
 
                                     // upgrade!
                                     upgradeUploadsDir(

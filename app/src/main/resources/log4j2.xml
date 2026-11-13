@@ -74,6 +74,11 @@ limitations under the License.
         <Logger name="org.apache.velocity"     level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
         <Logger name="org.springframework"     level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
         <Logger name="org.apache.struts2"      level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        <!-- Struts logs a full stack trace for every request to an unknown .rol URL; the user gets a 404 -->
+        <Logger name="org.apache.struts2.dispatcher.Dispatcher" level="info" additivity="false">
+            <RegexFilter regex="Could not find action or result: .*" onMatch="DENY" onMismatch="NEUTRAL"/>
+            <AppenderRef ref="asyncRoller"/>
+        </Logger>
         <Logger name="org.openid4java"         level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
         <Logger name="org.apache.tiles"        level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
         <Logger name="org.eclipse.persistence" level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
