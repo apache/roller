@@ -27,6 +27,9 @@
 
 ### Bug fixes
 
+- **Page menus list a weblog's custom pages again.** `#showPageMenu` and the
+  menus in the Gaurav and PaperMod themes loop over `$weblog.pages`, which
+  had stopped existing, so pages marked "include in page menu" never appeared.
 - **AtomPub fixes found while running a 7.0.0 snapshot.**
   - Uploaded media files get the usual extension for their type:
     `image/svg+xml` gives `.svg`, parameters such as `charset` are ignored,
