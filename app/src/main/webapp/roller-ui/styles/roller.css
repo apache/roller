@@ -1367,6 +1367,29 @@ nav.navbar {
     touch-action: none;
 }
 
+.link-move {
+    display: none;
+    flex: none;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.link-move .btn {
+    line-height: 1;
+    padding: 0.2rem 0.5rem;
+}
+
+/* a finger cannot drag the handle (jQuery UI sortable has no touch support), so use buttons */
+@media (pointer: coarse) {
+    .link-handle {
+        display: none;
+    }
+
+    .link-move {
+        display: flex;
+    }
+}
+
 .link-handle:hover,
 .link-handle:focus-visible {
     background-color: var(--bs-tertiary-bg);

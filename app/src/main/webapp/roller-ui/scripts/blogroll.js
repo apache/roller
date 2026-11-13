@@ -99,6 +99,11 @@
         var data = $(form).serialize() + (extra || "");
         return $.ajax({ method: "post", url: form.action, data: data }).done(function (html) {
             refreshSalt(html);
+        }).fail(function (xhr) {
+            // the salt just sent is spent whether or not the post worked
+            if (xhr && xhr.responseText) {
+                refreshSalt(xhr.responseText);
+            }
         });
     }
 
@@ -468,8 +473,18 @@
     // --- reordering ------------------------------------------------------------
 
     var saveTimer = null;
+    var saving = false;
+    var saveAgain = false;
 
+    // Each post spends the page's salt and returns a new one, so only one save
+    // can be in flight. A change made meanwhile is sent afterwards, from the
+    // list as it is then.
     function saveOrder() {
+        if (saving) {
+            saveAgain = true;
+            return;
+        }
+        saving = true;
         var ids = Array.prototype.map.call(list.querySelectorAll(".link-row"), function (row) {
             return "&bookmarkIds=" + encodeURIComponent(row.dataset.linkId);
         }).join("");
@@ -483,6 +498,12 @@
             }
         }).fail(function () {
             showToast(text("msgError"), true);
+        }).always(function () {
+            saving = false;
+            if (saveAgain) {
+                saveAgain = false;
+                saveOrder();
+            }
         });
     }
 
@@ -504,24 +525,39 @@
         });
     }
 
+    // one step up or down; the arrow keys on the handle and the buttons shown
+    // on touch screens (where the handle cannot be dragged) both use it
+    function moveRow(row, up) {
+        var sibling = up ? row.previousElementSibling : row.nextElementSibling;
+        if (!sibling) {
+            return false;
+        }
+        if (up) {
+            list.insertBefore(row, sibling);
+        } else {
+            list.insertBefore(sibling, row);
+        }
+        saveOrderSoon();
+        return true;
+    }
+
     list.addEventListener("keydown", function (event) {
         var handle = event.target.closest(".link-handle");
         if (!handle || (event.key !== "ArrowUp" && event.key !== "ArrowDown")) {
             return;
         }
         event.preventDefault();
-        var row = handle.closest(".link-row");
-        var sibling = event.key === "ArrowUp" ? row.previousElementSibling : row.nextElementSibling;
-        if (!sibling) {
-            return;
+        if (moveRow(handle.closest(".link-row"), event.key === "ArrowUp")) {
+            handle.focus();
         }
-        if (event.key === "ArrowUp") {
-            list.insertBefore(row, sibling);
-        } else {
-            list.insertBefore(sibling, row);
+    });
+
+    list.addEventListener("click", function (event) {
+        var button = event.target.closest(".link-move-up, .link-move-down");
+        if (button) {
+            moveRow(button.closest(".link-row"), button.classList.contains("link-move-up"));
+            button.focus();
         }
-        handle.focus();
-        saveOrderSoon();
     });
 
     selectionChanged();

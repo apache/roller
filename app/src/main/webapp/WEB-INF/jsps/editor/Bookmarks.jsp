@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <%-- Blogroll: the weblog's blogrolls (bookmark folders) on the left, or in a strip above on a
-     phone, and the links of one of them. Links are dragged (or moved with the arrow keys on their
+     phone, and the links of one of them. Links are dragged (or moved with the arrow keys or touch-screen buttons on their
      handle) to reorder; selected links can be moved or deleted. Dialogs post with AJAX and reload
      the page, which then shows a short confirmation. Text the script needs is in data-* attributes. --%>
 
@@ -184,6 +184,18 @@
                                 aria-label="<s:text escapeHtml="true" name='bookmarksForm.moveHandle'><s:param value='plainText(#bookmark.name)'/></s:text>">
                             <span class="bi bi-grip-vertical" aria-hidden="true"></span>
                         </button>
+
+                        <%-- shown instead of the handle on touch screens, where it cannot be dragged --%>
+                        <span class="link-move">
+                            <button type="button" class="btn btn-sm btn-outline-secondary link-move-up"
+                                    aria-label="<s:text escapeHtml="true" name='bookmarksForm.moveUp'><s:param value='plainText(#bookmark.name)'/></s:text>">
+                                <span class="bi bi-chevron-up" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary link-move-down"
+                                    aria-label="<s:text escapeHtml="true" name='bookmarksForm.moveDown'><s:param value='plainText(#bookmark.name)'/></s:text>">
+                                <span class="bi bi-chevron-down" aria-hidden="true"></span>
+                            </button>
+                        </span>
 
                         <s:if test="#bookmark.image != null && #bookmark.image != ''">
                             <img class="link-image" src="<s:property value='#bookmark.image'/>" alt="" loading="lazy">
