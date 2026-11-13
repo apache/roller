@@ -1,5 +1,11 @@
 # Apache Roller — Changes
 
+## 6.1.8
+
+### Bug fixes
+- **Check and clear site.frontpage.weblog.handle** If weblog being deleted is front page
+  clear property so Welcome to Roller page is shown.
+
 ## 6.1.7
 
 ### Improvements
