@@ -27,6 +27,9 @@
 
 ### Bug fixes
 
+- **Reading a weblog no longer starts a session.** Every page, feed and
+  resource request from a visitor or crawler was given an HTTP session and a
+  form token it had no use for.
 - **AtomPub fixes found while running a 7.0.0 snapshot.**
   - Uploaded media files get the usual extension for their type:
     `image/svg+xml` gives `.svg`, parameters such as `charset` are ignored,

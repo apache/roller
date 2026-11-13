@@ -32,11 +32,17 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
  */
 public class LoadSaltFilter implements Filter {
 
+    static final String RENDERING_PATH = "/roller-ui/rendering/";
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
 
         HttpServletRequest httpReq = (HttpServletRequest) request;
+        if (isRenderingRequest(httpReq)) {
+            chain.doFilter(request, response);
+            return;
+        }
         httpReq.getSession(true);
         RollerSession rollerSession = RollerSession.getRollerSession(httpReq);
         if (rollerSession != null) {
@@ -50,6 +56,18 @@ public class LoadSaltFilter implements Filter {
         chain.doFilter(request, response);
     }
  
+    /**
+     * Weblog pages, feeds and resources are forwarded to the rendering servlets,
+     * which sit under /roller-ui and so pass through this filter. They contain
+     * none of Roller's own forms, so they need no salt, and creating a session
+     * for each one would give every anonymous page view and crawler request a
+     * session and a salt cache entry.
+     */
+    static boolean isRenderingRequest(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path != null && path.startsWith(RENDERING_PATH);
+    }
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
