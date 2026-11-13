@@ -100,16 +100,28 @@
 
     // --- posting -----------------------------------------------------------
 
+    // Each post spends the page's salt and returns a new one, so the posts of all
+    // three forms (add/edit, delete, order) go out one at a time. The form is
+    // read when its turn comes, so it carries the salt the last post returned.
+    var inFlight = $.Deferred().resolve().promise();
+
     function post(form, extra) {
-        var data = $(form).serialize() + (extra || "");
-        return $.ajax({ method: "post", url: form.action, data: data }).done(function (html) {
-            refreshSalt(html);
-        }).fail(function (xhr) {
-            // the salt just sent is spent whether or not the post worked
-            if (xhr && xhr.responseText) {
-                refreshSalt(xhr.responseText);
-            }
-        });
+        var result = $.Deferred();
+        function send() {
+            var data = $(form).serialize() + (extra || "");
+            return $.ajax({ method: "post", url: form.action, data: data }).done(function (html) {
+                refreshSalt(html);
+                result.resolve(html);
+            }).fail(function (xhr) {
+                // the salt just sent is spent whether or not the post worked
+                if (xhr && xhr.responseText) {
+                    refreshSalt(xhr.responseText);
+                }
+                result.reject(xhr);
+            });
+        }
+        inFlight = inFlight.then(send, send);
+        return result.promise();
     }
 
     function showErrors(box, errors) {
@@ -137,15 +149,19 @@
         }
     }
 
+    // the image address that last failed to load; it stays hidden until the address changes
+    var failedImage = null;
+
     function validate() {
         var nameOk = nameField.value.trim() !== "";
         var image = imageUrl();
         setInvalid(nameField, "categoryNameFeedback", nameOk ? "" : text("msgNameRequired"));
         setInvalid(imageField, "categoryImageFeedback", image === null ? text("msgBadUrl") : "");
-        imagePreview.classList.toggle("d-none", !image);
         if (image && imagePreview.getAttribute("src") !== image) {
+            failedImage = null;
             imagePreview.setAttribute("src", image);
         }
+        imagePreview.classList.toggle("d-none", !image || image === failedImage);
         saveButton.disabled = !nameOk || image === null;
         return !saveButton.disabled;
     }
@@ -162,6 +178,7 @@
         setInvalid(imageField, "categoryImageFeedback", "");
         imagePreview.classList.add("d-none");
         imagePreview.removeAttribute("src");
+        failedImage = null;
         saveButton.disabled = adding;
         showChooser(false);
         if (!adding) {
@@ -170,23 +187,29 @@
         editModal.show();
     }
 
+    var savingCategory = false;
+
     function saveCategory() {
-        if (!validate()) {
+        // validate() re-enables the button, so the disabled state can't stop a second Enter
+        if (savingCategory || !validate()) {
             return;
         }
         var adding = document.getElementById("categoryEditForm_bean_id").value === "";
         var name = nameField.value.trim();
+        savingCategory = true;
         saveButton.disabled = true;
         post(editForm).done(function (html) {
             var errors = actionErrors(html);
             if (errors.length > 0) {
                 showErrors(document.getElementById("categoryEditErrors"), errors);
+                savingCategory = false;
                 saveButton.disabled = false;
             } else {
                 reloadWith(format(adding ? text("msgAdded") : text("msgSaved"), name), name);
             }
         }).fail(function () {
             showErrors(document.getElementById("categoryEditErrors"), [text("msgError")]);
+            savingCategory = false;
             saveButton.disabled = false;
         });
     }
@@ -194,6 +217,7 @@
     nameField.addEventListener("input", validate);
     imageField.addEventListener("input", validate);
     imagePreview.addEventListener("error", function () {
+        failedImage = imagePreview.getAttribute("src");
         imagePreview.classList.add("d-none");
     });
     saveButton.addEventListener("click", saveCategory);
@@ -202,7 +226,8 @@
         event.preventDefault();
     });
     editForm.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" && event.target.matches("input")) {
+        // isComposing: an IME's Enter confirms the text, it does not save
+        if (event.key === "Enter" && !event.isComposing && event.target.matches("input")) {
             event.preventDefault();
             saveCategory();
         }
@@ -311,7 +336,15 @@
             var errors = actionErrors(html);
             if (errors.length > 0) {
                 showErrors(document.getElementById("categoryDeleteErrors"), errors);
-                deleteButton.disabled = false;
+                if (targetSelect.disabled) {
+                    // entries arrived after the page loaded (another tab, a blogging
+                    // client): ask where to move them instead of failing again
+                    document.getElementById("categoryMoveTarget").classList.remove("d-none");
+                    targetSelect.disabled = false;
+                    deleteButton.disabled = targetSelect.value === "";
+                } else {
+                    deleteButton.disabled = false;
+                }
             } else {
                 reloadWith(format(text("msgRemoved"), name), null);
             }

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
@@ -58,6 +59,7 @@ class CategoriesTest {
     private MockedStatic<CacheManager> cache;
     private Weblogger weblogger;
     private WeblogEntryManager entries;
+    private WeblogManager weblogs;
     private Weblog weblog;
     private WeblogCategory java;
     private WeblogCategory roller;
@@ -68,7 +70,9 @@ class CategoriesTest {
     void setUp() throws Exception {
         entries = mock(WeblogEntryManager.class);
         weblogger = mock(Weblogger.class);
+        weblogs = mock(WeblogManager.class);
         when(weblogger.getWeblogEntryManager()).thenReturn(entries);
+        when(weblogger.getWeblogManager()).thenReturn(weblogs);
         factory = mockStatic(WebloggerFactory.class);
         factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
         cache = mockStatic(CacheManager.class);
@@ -112,7 +116,9 @@ class CategoriesTest {
         assertEquals(0, general.getPosition());
         assertEquals(1, java.getPosition());
         assertEquals(2, roller.getPosition());
-        verify(entries).saveWeblogCategory(general);
+        // one save of the weblog, not one per category
+        verify(weblogs).saveWeblog(weblog);
+        verify(entries, never()).saveWeblogCategory(any());
         verify(weblogger).flush();
     }
 
@@ -142,7 +148,7 @@ class CategoriesTest {
 
         assertTrue(action.hasActionErrors());
         assertEquals(2, general.getPosition());
-        verify(entries, never()).saveWeblogCategory(any());
+        verify(weblogs, never()).saveWeblog(any());
         verify(weblogger, never()).flush();
     }
 
@@ -153,7 +159,7 @@ class CategoriesTest {
         action.reorder();
 
         assertTrue(action.hasActionErrors());
-        verify(entries, never()).saveWeblogCategory(any());
+        verify(weblogs, never()).saveWeblog(any());
     }
 
     @Test

@@ -225,4 +225,41 @@ public class WeblogCategoryCRUDTest  {
         assertEquals(Long.valueOf(2), counts.get(busy.getId()));
         assertFalse(counts.containsKey(empty.getId()));
     }
+    /**
+     * After a reorder, a new session must read the weblog's own category list in
+     * the new order: themes read it, and the shared cache keeps the old list unless
+     * the change is carried into it.
+     */
+    @Test
+    public void testReorderIsSeenByLaterSessions() throws Exception {
+
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        WeblogCategory first = TestUtils.setupWeblogCategory(testWeblog, "OrderFirst");
+        WeblogCategory second = TestUtils.setupWeblogCategory(testWeblog, "OrderSecond");
+        TestUtils.endSession(true);
+
+        // warm the shared cache with the old order
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        String oldFirst = testWeblog.getWeblogCategories().get(testWeblog.getWeblogCategories().size() - 2).getName();
+        assertEquals("OrderFirst", oldFirst);
+        TestUtils.endSession(true);
+
+        // what Categories.reorder() does
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        WeblogCategory a = mgr.getWeblogCategory(first.getId());
+        WeblogCategory b = mgr.getWeblogCategory(second.getId());
+        int pa = a.getPosition();
+        a.setPosition(b.getPosition());
+        b.setPosition(pa);
+        WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(testWeblog);
+        testWeblog.getWeblogCategories().sort(java.util.Comparator.comparingInt(WeblogCategory::getPosition));
+        WebloggerFactory.getWeblogger().flush();
+        TestUtils.endSession(true);
+
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        int size = testWeblog.getWeblogCategories().size();
+        assertEquals("OrderSecond", testWeblog.getWeblogCategories().get(size - 2).getName());
+        assertEquals("OrderFirst", testWeblog.getWeblogCategories().get(size - 1).getName());
+    }
 }

@@ -99,13 +99,12 @@ public class Categories extends UIAction {
                 return execute();
             }
 
+            // the categories are managed, so setting the positions is enough;
+            // the weblog is saved once, to update its last-modified time
             for (int position = 0; position < categoryIds.size(); position++) {
-                WeblogCategory category = byId.get(categoryIds.get(position));
-                if (category.getPosition() != position) {
-                    category.setPosition(position);
-                    wmgr.saveWeblogCategory(category);
-                }
+                byId.get(categoryIds.get(position)).setPosition(position);
             }
+            WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(getActionWeblog());
             // the weblog's own list is sorted only when it is loaded, and themes
             // and new categories read it, so put it in the new order too
             getActionWeblog().getWeblogCategories()
