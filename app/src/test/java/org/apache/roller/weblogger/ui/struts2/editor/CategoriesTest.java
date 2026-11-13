@@ -17,6 +17,7 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,7 @@ class CategoriesTest {
         roller = category("c-roller", "Roller", 1);
         general = category("c-general", "General", 2);
         when(entries.getWeblogCategories(weblog)).thenReturn(Arrays.asList(java, roller, general));
+        when(weblog.getWeblogCategories()).thenReturn(new ArrayList<>(List.of(java, roller, general)));
         when(entries.getWeblogCategoryEntryCounts(weblog)).thenReturn(Map.of("c-java", 17L));
 
         action = spy(new Categories());
@@ -115,6 +117,24 @@ class CategoriesTest {
     }
 
     @Test
+    void putsTheWeblogsOwnCategoryListInTheNewOrder() throws Exception {
+        action.setCategoryIds(List.of("c-general", "c-java", "c-roller"));
+
+        action.reorder();
+
+        assertEquals(List.of(general, java, roller), weblog.getWeblogCategories());
+    }
+
+    @Test
+    void readsEachCategoryOnlyOnce() throws Exception {
+        action.setCategoryIds(List.of("c-general", "c-java", "c-roller"));
+
+        action.reorder();
+
+        verify(entries, never()).getWeblogCategory(any(Weblog.class), anyString());
+    }
+
+    @Test
     void rejectsAnOrderThatLeavesOutACategory() throws Exception {
         action.setCategoryIds(List.of("c-general", "c-java"));
 
@@ -134,6 +154,11 @@ class CategoriesTest {
 
         assertTrue(action.hasActionErrors());
         verify(entries, never()).saveWeblogCategory(any());
+    }
+
+    @Test
+    void choosesImagesOnlyFromTheMediaLibrary() {
+        assertEquals("mediaFileView.image", action.getImageChooserType());
     }
 
     @Test

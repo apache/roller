@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
 <%-- Categories: one list in display order. Rows are dragged (or moved with the arrow keys on
-     their handle) to reorder; Add, Edit and Delete open dialogs that post with AJAX and reload
+     their handle, or the up and down buttons on touch screens) to reorder; Add, Edit and Delete open dialogs that post with AJAX and reload
      the page, which then shows a short confirmation. Text the script needs is in data-* attributes. --%>
 
 <div id="categoriesPage" class="categories-page"
@@ -75,6 +75,18 @@
                     aria-label="<s:text escapeHtml="true" name='categoriesForm.moveHandle'><s:param value='#category.name'/></s:text>">
                 <span class="bi bi-grip-vertical" aria-hidden="true"></span>
             </button>
+
+            <%-- shown instead of the handle on touch screens, where it cannot be dragged --%>
+            <span class="category-move">
+                <button type="button" class="btn btn-sm btn-outline-secondary category-move-up"
+                        aria-label="<s:text escapeHtml="true" name='categoriesForm.moveUp'><s:param value='#category.name'/></s:text>">
+                    <span class="bi bi-chevron-up" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary category-move-down"
+                        aria-label="<s:text escapeHtml="true" name='categoriesForm.moveDown'><s:param value='#category.name'/></s:text>">
+                    <span class="bi bi-chevron-down" aria-hidden="true"></span>
+                </button>
+            </span>
 
             <s:if test="#category.image != null && #category.image != ''">
                 <img class="category-image" src="<s:property value='#category.image'/>" alt="" loading="lazy">
@@ -186,7 +198,7 @@
                     <%-- the media chooser, images only; shown in place of the form --%>
                     <s:url var="imageChooserURL" action="mediaFileImageChooser" namespace="overlay" escapeAmp="false">
                         <s:param name="weblog" value="%{actionWeblog.handle}"/>
-                        <s:param name="bean.type" value="'mediaFileView.image'"/>
+                        <s:param name="bean.type" value="imageChooserType"/>
                     </s:url>
                     <div id="categoryImageChooser" class="d-none"
                          data-src="<s:property value='%{imageChooserURL}'/>"

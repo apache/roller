@@ -20,10 +20,11 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -88,23 +89,27 @@ public class Categories extends UIAction {
             WeblogEntryManager wmgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
             List<WeblogCategory> current = wmgr.getWeblogCategories(getActionWeblog());
 
-            Set<String> currentIds = new HashSet<>();
+            Map<String, WeblogCategory> byId = new HashMap<>();
             for (WeblogCategory category : current) {
-                currentIds.add(category.getId());
+                byId.put(category.getId(), category);
             }
             if (categoryIds.size() != current.size()
-                    || !currentIds.equals(new HashSet<>(categoryIds))) {
+                    || !byId.keySet().equals(new HashSet<>(categoryIds))) {
                 addError("categoriesForm.error.reorder");
                 return execute();
             }
 
             for (int position = 0; position < categoryIds.size(); position++) {
-                WeblogCategory category = wmgr.getWeblogCategory(getActionWeblog(), categoryIds.get(position));
+                WeblogCategory category = byId.get(categoryIds.get(position));
                 if (category.getPosition() != position) {
                     category.setPosition(position);
                     wmgr.saveWeblogCategory(category);
                 }
             }
+            // the weblog's own list is sorted only when it is loaded, and themes
+            // and new categories read it, so put it in the new order too
+            getActionWeblog().getWeblogCategories()
+                    .sort(Comparator.comparingInt(WeblogCategory::getPosition));
             WebloggerFactory.getWeblogger().flush();
             CacheManager.invalidate(getActionWeblog());
             addMessage("categoriesForm.orderSaved");
@@ -133,6 +138,11 @@ public class Categories extends UIAction {
         WeblogCategory clientDefault = getActionWeblog().getBloggerCategory();
         return getEntryCount(categoryId) > 0
                 || (clientDefault != null && categoryId.equals(clientDefault.getId()));
+    }
+
+    /** The media library filter that offers only images, for the category image chooser. */
+    public String getImageChooserType() {
+        return MediaFileImageChooser.IMAGES_ONLY;
     }
 
     /** True when media uploads are on, so an image can be chosen from the media library. */

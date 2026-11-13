@@ -342,6 +342,29 @@ body {
     touch-action: none;
 }
 
+.category-move {
+    display: none;
+    flex: none;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.category-move .btn {
+    line-height: 1;
+    padding: 0.2rem 0.5rem;
+}
+
+/* a finger cannot drag the handle (jQuery UI sortable has no touch support), so use buttons */
+@media (pointer: coarse) {
+    .category-handle {
+        display: none;
+    }
+
+    .category-move {
+        display: flex;
+    }
+}
+
 .category-handle:hover,
 .category-handle:focus-visible {
     background-color: var(--bs-tertiary-bg);
