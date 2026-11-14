@@ -40,7 +40,7 @@ limitations under the License.
     </scm>
 
     <properties>
-        <derby.version>10.16.1.1</derby.version>
+        <derby.version>10.17.1.0</derby.version>
         <jetty.plugin.version>12.1.13</jetty.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -63,7 +63,7 @@ limitations under the License.
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.16.0</version>
                     <configuration>
-                        <release>17</release>
+                        <release>21</release>
                         <fork>true</fork>
                         <compilerArgs>
                             <arg>-Xlint:all</arg>

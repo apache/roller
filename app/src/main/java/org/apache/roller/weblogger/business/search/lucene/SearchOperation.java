@@ -212,7 +212,7 @@ public class SearchOperation extends ReadFromIndexOperation {
         if (searchresults == null) {
             return -1;
         }
-        return (int) searchresults.totalHits.value;
+        return (int) searchresults.totalHits.value();
     }
 
     /**

@@ -21,7 +21,7 @@
 
 # STAGE 1 - BUILD ------------------------------------------------
 
-FROM maven:3-eclipse-temurin-17 AS builder
+FROM maven:3.9.16-eclipse-temurin-21 AS builder
 
 COPY . /project
 WORKDIR /project
@@ -30,7 +30,7 @@ RUN mvn -Duser.home=/builder/home -DskipTests=true -B clean install
 
 # STAGE 2 - PACKAGE ------------------------------------------------
 
-FROM tomcat:11.0-jdk17-temurin
+FROM tomcat:11.0.29-jdk21-temurin
 
 # Remove existing Tomcat webapps
 

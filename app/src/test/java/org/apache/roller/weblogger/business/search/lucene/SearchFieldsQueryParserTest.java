@@ -47,7 +47,7 @@ class SearchFieldsQueryParserTest {
 
     @Test
     void matchAllParses() throws Exception {
-        assertEquals(new MatchAllDocsQuery(), parser().parse("*:*"));
+        assertEquals(MatchAllDocsQuery.INSTANCE, parser().parse("*:*"));
     }
 
     @Test
