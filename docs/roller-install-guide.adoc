@@ -1124,3 +1124,6 @@ longer indexes, and Roller 7's Lucene 10 can't read the Lucene 8 index of
 Roller 6.0. Search results are complete again once the log shows
 "Completed rebuilding index". To force a rebuild at any time, stop Roller
 and delete the directory that `search.index.dir` names.
+If you go back to Roller 6.1.x afterwards, it can't read the index Roller 7
+wrote. It deletes the index and rebuilds it in the background, and searches
+return an error until that rebuild finishes.
