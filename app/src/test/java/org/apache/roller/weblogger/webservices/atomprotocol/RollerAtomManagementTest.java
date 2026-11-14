@@ -70,6 +70,14 @@ public class RollerAtomManagementTest {
         TestUtils.setupWeblogger();
         owner = TestUtils.setupUser("atommgmtowner");
         author = TestUtils.setupUser("atommgmtauthor");
+        // Exercise weblog permissions without the first-user site-admin role.
+        var userManager = WebloggerFactory.getWeblogger().getUserManager();
+        for (User user : List.of(owner, author)) {
+            if (userManager.hasRole("admin", user)) {
+                userManager.revokeRole("admin", user);
+            }
+        }
+        TestUtils.endSession(true);
         weblog = TestUtils.setupWeblog(HANDLE, owner);
         otherWeblog = TestUtils.setupWeblog(OTHER_HANDLE, owner);
         WebloggerFactory.getWeblogger().getUserManager().grantWeblogPermission(

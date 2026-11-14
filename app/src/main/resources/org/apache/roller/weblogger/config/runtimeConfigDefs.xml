@@ -78,10 +78,6 @@
          <type>string</type>
          <default-value></default-value>
       </property-def>
-      <property-def name="pings.suspendPingProcessing" key="configForm.suspendPingProcessing">
-         <type>boolean</type>
-         <default-value>false</default-value>
-      </property-def>
    </display-group >
 
    <!-- User Settings Group -->

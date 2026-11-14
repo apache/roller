@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
@@ -157,9 +158,17 @@ public class FolderEdit extends UIAction implements ServletResponseAware {
             addError("folderForm.notFound");
             return;
         }
+        // themes find the default blogroll by its name
+        if (!isAdd() && Bookmarks.DEFAULT_FOLDER.equals(folder.getName())
+                && !Bookmarks.DEFAULT_FOLDER.equals(getBean().getName())) {
+            addError("folderForm.error.renameDefault");
+            return;
+        }
         // make sure new name is not a duplicate of an existing folder
-        if ( isAdd() || !getBean().getName().equals(folder.getName()) ) {
-            if (folder.getWeblog().hasBookmarkFolder(getBean().getName())) {
+        // names are stored sanitized, so compare the sanitized form
+        String name = HTMLSanitizer.conditionallySanitize(getBean().getName());
+        if ( isAdd() || !name.equals(folder.getName()) ) {
+            if (folder.getWeblog().hasBookmarkFolder(name)) {
                 addError("folderForm.error.duplicateName", getBean().getName());
             }
         }

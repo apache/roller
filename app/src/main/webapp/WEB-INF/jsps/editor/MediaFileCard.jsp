@@ -46,7 +46,7 @@
                     data-mediafile-url="<s:property value='#mediaFile.permalink'/>"
                     data-mediafile-alt="<s:property value='#altText'/>"
                     data-mediafile-is-image="<s:property value='#mediaFile.imageFile'/>"
-                    aria-label="<s:text name='mediaFileImageChooser.insert' escapeHtml='true'><s:param value='#mediaFile.name'/></s:text>"
+                    aria-label="<s:text name='%{#chooserLabelKey}' escapeHtml='true'><s:param value='#mediaFile.name'/></s:text>"
                     title="<s:property value='#mediaFile.name'/>"><s:property value="#mediaFile.name"/></button>
             <span class="media-card-meta">
                 <span class="media-card-type"><s:property value="formatType(#mediaFile.contentType, #mediaFile.name)"/></span>

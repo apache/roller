@@ -1,6 +1,6 @@
-<%--
+#**
   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  The ASF licenses this file to You
+  contributor license agreements.  The ASF licenses this file to You
   under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -14,30 +14,14 @@
   limitations under the License.  For additional information regarding
   copyright in this work, please see the NOTICE file in the top level
   directory of this distribution.
---%>
-<%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
+*#
 
-<h3><s:text name="mainPage.actions"/></h3>
-<hr size="1" noshade="noshade"/>
+-- Remove the obsolete weblog update ping feature. Drop the referencing table first.
+-- Every 6.1 schema has these tables, and not every supported database accepts
+-- DROP TABLE IF EXISTS, so use plain DROP TABLE.
+drop table autoping;
+drop table pingqueueentry;
+drop table pingtarget;
 
-<p>
-    <%-- Add Blogroll --%>
-
-    <a href="#" onclick="newBlogroll()">
-        <span class="bi bi-plus-lg"></span>
-        <s:text name="bookmarksForm.addFolder"/>
-    </a>
-</p>
-
-<%-- Import bookmarks
-<p>
-    <s:url var="importBookmarks" action="bookmarksImport">
-        <s:param name="weblog" value="%{actionWeblog.handle}"/>
-    </s:url>
-    <s:a href="%{importBookmarks}">
-        <span class="bi bi-plus-lg"></span>
-        <s:text name="bookmarksForm.importBookmarks"/>
-    </s:a>
-</p>
---%>
-
+delete from roller_properties where name like 'pings.%';
+delete from roller_tasklock where name = 'PingQueueTask';

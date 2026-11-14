@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.action.UploadedFilesAware;
@@ -48,6 +49,9 @@ public final class BookmarksImport extends UIAction implements UploadedFilesAwar
     // only write files out that are below this threshold
     private static final long WRITE_THRESHOLD_IN_MB = 4;
     private static final long WRITE_THRESHOLD = WRITE_THRESHOLD_IN_MB * 1024000;
+
+    // the blogroll the links were imported into, for the redirect to it
+    private String folderId = null;
 
     // uploaded opml file, injected by the actionFileUpload interceptor
     private UploadedFile opmlFile = null;
@@ -107,8 +111,9 @@ public final class BookmarksImport extends UIAction implements UploadedFilesAwar
                     // notify caches
                     CacheManager.invalidate(getActionWeblog());
 
-                    // message to user
-                    addMessage("bookmarksImport.imported", folderName);
+                    // the blogroll page opens the new blogroll and says it was imported
+                    WeblogBookmarkFolder imported = bm.getFolder(getActionWeblog(), folderName);
+                    folderId = imported == null ? null : imported.getId();
 
                     // destroy the temporary file created
                     opmlFile.delete();
@@ -139,4 +144,8 @@ public final class BookmarksImport extends UIAction implements UploadedFilesAwar
         return INPUT;
     }
 
+
+    public String getFolderId() {
+        return folderId;
+    }
 }

@@ -31,12 +31,14 @@ import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -100,6 +102,26 @@ class FolderEditSaveTest {
 
         assertEquals(FolderEdit.SUCCESS, action.save());
         verify(response).addHeader("folderId", "new-folder");
+    }
+
+    @Test
+    void theDefaultFolderCannotBeRenamed() throws Exception {
+        WeblogBookmarkFolder folder = new WeblogBookmarkFolder();
+        folder.setId("folder-default");
+        folder.setName("default");
+        folder.setWeblog(weblog);
+        when(bookmarks.getFolderById(weblog, "folder-default")).thenReturn(folder);
+
+        FolderEdit action = action("folderEdit");
+        action.getBean().setId("folder-default");
+        action.myPrepare();
+        action.getBean().setName("Links");
+
+        assertEquals(FolderEdit.INPUT, action.save());
+        assertTrue(action.hasActionErrors());
+        // themes find the default blogroll by its name
+        assertEquals("default", folder.getName());
+        verify(bookmarks, never()).saveFolder(any());
     }
 
     private FolderEdit action(String actionName) {

@@ -22,8 +22,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
 import jakarta.persistence.NoResultException;
@@ -45,10 +43,7 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.pojos.AutoPing;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
-import org.apache.roller.weblogger.pojos.PingQueueEntry;
-import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.StatCount;
 import org.apache.roller.weblogger.pojos.StatCountCountComparator;
 import org.apache.roller.weblogger.pojos.TagStat;
@@ -155,21 +150,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
                 "WeblogEntryTagAggregate.removeByTotalLessEqual");
         removeCounts.setParameter(1, 0);
         removeCounts.executeUpdate();
-        
-        // Remove the weblog's ping queue entries
-        TypedQuery<PingQueueEntry> q = strategy.getNamedQuery("PingQueueEntry.getByWebsite", PingQueueEntry.class);
-        q.setParameter(1, weblog);
-        List<PingQueueEntry> queueEntries = q.getResultList();
-        for (Object obj : queueEntries) {
-            this.strategy.remove(obj);
-        }
-        
-        // Remove the weblog's auto ping configurations
-        AutoPingManager autoPingMgr = roller.getAutopingManager();
-        List<AutoPing> autopings = autoPingMgr.getAutoPingsByWebsite(weblog);
-        for (AutoPing autoPing : autopings) {
-            this.strategy.remove(autoPing);
-        }
         
         // remove associated templates
         TypedQuery<WeblogTemplate> templateQuery = strategy.getNamedQuery("WeblogTemplate.getByWeblog",
@@ -347,19 +327,6 @@ public class JPAWeblogManagerImpl implements WeblogManager {
 
         // flush so that all data up to this point can be available in db
         this.strategy.flush();
-
-        // add any auto enabled ping targets
-        PingTargetManager pingTargetMgr = roller.getPingTargetManager();
-        AutoPingManager autoPingMgr = roller.getAutopingManager();
-        
-        for (PingTarget pingTarget : pingTargetMgr.getCommonPingTargets()) {
-            if(pingTarget.isAutoEnabled()) {
-                AutoPing autoPing = new AutoPing(
-                        null, pingTarget, newWeblog);
-                autoPingMgr.saveAutoPing(autoPing);
-            }
-        }
-
     }
     
     @Override

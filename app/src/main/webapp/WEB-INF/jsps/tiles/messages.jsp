@@ -19,8 +19,9 @@
 
 <script>
     $(document).ready(function () {
-        // Remove the alert box after 10 seconds
-        $(".alert").delay(10000).slideUp(200, function() {
+        // Remove the alert boxes after 10 seconds, except those in dialogs: their
+        // error boxes must stay until the dialog is used again.
+        $(".alert").not(".modal .alert").delay(10000).slideUp(200, function() {
             $(this).alert('close');
         });
     });

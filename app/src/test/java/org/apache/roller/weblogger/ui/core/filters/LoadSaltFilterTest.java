@@ -127,6 +127,57 @@ public class LoadSaltFilterTest {
         }
     }
 
+    @Test
+    void weblogPagesGetNoSessionAndNoSalt() throws Exception {
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            when(request.getServletPath()).thenReturn("/roller-ui/rendering/page");
+
+            filter.doFilter(request, response, chain);
+
+            verify(request, never()).getSession(true);
+            verify(request, never()).getSession();
+            verify(request, never()).setAttribute(eq("salt"), anyString());
+            verify(saltCache, never()).put(anyString(), anyString());
+            verify(chain).doFilter(request, response);
+        }
+    }
+
+    @Test
+    void forwardedCommentPostsGetNoSessionAndNoSalt() throws Exception {
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            // A comment is posted to the entry's permalink and forwarded here.
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getServletPath()).thenReturn("/roller-ui/rendering/comment");
+
+            filter.doFilter(request, response, chain);
+
+            verify(request, never()).getSession(true);
+            verify(request, never()).getSession();
+            verify(request, never()).setAttribute(eq("salt"), anyString());
+            verify(saltCache, never()).put(anyString(), anyString());
+            verify(chain).doFilter(request, response);
+        }
+    }
+
+    @Test
+    void otherRollerUiPathsStillGetASalt() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
+             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(request)).thenReturn(rollerSession);
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
+            // A path that only starts with the same letters is not a rendering path.
+            when(request.getServletPath()).thenReturn("/roller-ui/rendering-settings.rol");
+
+            filter.doFilter(request, response, chain);
+
+            verify(request).getSession(true);
+            verify(request).setAttribute(eq("salt"), anyString());
+        }
+    }
+
     private static class TestUser extends User {
         private final String id;
 

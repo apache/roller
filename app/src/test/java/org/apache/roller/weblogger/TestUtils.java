@@ -39,14 +39,10 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
-import org.apache.roller.weblogger.business.pings.AutoPingManager;
-import org.apache.roller.weblogger.business.pings.PingTargetManager;
 import org.apache.roller.weblogger.business.startup.ClasspathDatabaseScriptProvider;
 import org.apache.roller.weblogger.business.startup.SQLScriptRunner;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
-import org.apache.roller.weblogger.pojos.AutoPing;
-import org.apache.roller.weblogger.pojos.PingTarget;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogBookmarkFolder;
@@ -480,94 +476,6 @@ public final class TestUtils {
 
         // remove the comment
         mgr.removeComment(comment);
-
-        // flush to db
-        WebloggerFactory.getWeblogger().flush();
-    }
-
-    /**
-     * Convenience method for creating a ping target.
-     */
-    public static PingTarget setupPingTarget(String name, String url)
-            throws Exception {
-
-        PingTarget testPing = new PingTarget();
-        testPing.setName("testCommonPing");
-        testPing.setPingUrl("http://localhost/testCommonPing");
-
-        // store ping
-        PingTargetManager pingMgr = WebloggerFactory.getWeblogger()
-                .getPingTargetManager();
-        pingMgr.savePingTarget(testPing);
-
-        // flush to db
-        WebloggerFactory.getWeblogger().flush();
-
-        // query for it
-        PingTarget ping = pingMgr.getPingTarget(testPing.getId());
-
-        if (ping == null) {
-            throw new WebloggerException("error setting up ping target");
-        }
-
-        return ping;
-    }
-
-    /**
-     * Convenience method for removing a ping target.
-     */
-    public static void teardownPingTarget(String id) throws Exception {
-
-        // query for it
-        PingTargetManager pingMgr = WebloggerFactory.getWeblogger()
-                .getPingTargetManager();
-        PingTarget ping = pingMgr.getPingTarget(id);
-
-        // remove the ping
-        pingMgr.removePingTarget(ping);
-
-        // flush to db
-        WebloggerFactory.getWeblogger().flush();
-    }
-
-    /**
-     * Convenience method for creating an auto ping.
-     */
-    public static AutoPing setupAutoPing(PingTarget ping, Weblog weblog)
-            throws Exception {
-
-        AutoPingManager mgr = WebloggerFactory.getWeblogger()
-                .getAutopingManager();
-
-        // store auto ping
-        AutoPing autoPing = new AutoPing(null, ping, getManagedWebsite(weblog));
-        mgr.saveAutoPing(autoPing);
-
-        // flush to db
-        WebloggerFactory.getWeblogger().flush();
-
-        // query for it
-        autoPing = mgr.getAutoPing(autoPing.getId());
-
-        if (autoPing == null) {
-            throw new WebloggerException("error setting up auto ping");
-        }
-
-        return autoPing;
-    }
-
-    /**
-     * Convenience method for removing an auto ping.
-     */
-    public static void teardownAutoPing(String id) throws Exception {
-
-        // query for it
-        AutoPingManager mgr = WebloggerFactory.getWeblogger()
-                .getAutopingManager();
-        AutoPing autoPing = mgr.getAutoPing(id);
-
-        // remove the auto ping
-        mgr.removeAutoPing(autoPing);
 
         // flush to db
         WebloggerFactory.getWeblogger().flush();

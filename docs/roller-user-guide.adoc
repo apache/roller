@@ -37,7 +37,7 @@ You’ll learn how to register as a new user. You’ll learn how to create
 one or more weblogs for yourself or a group of your friends. You’ll
 learn how to create, edit and post weblog entries. We will also cover
 more advanced topics such as adjusting your weblog’s settings, how to
-customize your blogroller, how to manage weblog pings and more.
+customize your blogroll and more.
 
 First, let’s get some terminology out of the way because there’s a lot
 of jargon in weblogging. Here’s a list of some of the terms we use in
@@ -1083,120 +1083,6 @@ are participating in and what privileges you have on each weblog.
 To resign from a group blog, login, on the Main Menu page, navigate to
 the blog information for which you wish to resign. Select 'Resign'.
 
-== Using weblog pings
-
-Weblog update pings provide a means for you to notify aggregation and
-indexing sites (for example Weblogs.com, Technorati and javablogs.com)
-that your weblog has changed so that they will pick up your latest
-content from your RSS feed.
-
-Roller supports the conventional XML-RPC weblog update ping mechanism
-used by many sites for such notifications.
-
-=== Registering with an Aggregator
-
-Generally speaking, aggregation sites first require you to register your
-weblog with their site. During this registration process you normally
-provide both the HTTP URL and the RSS feed URL for your weblog. This is
-important because the ping message conveys only the normal HTTP URL of
-your site, and the site will use that to lookup the registered RSS feed
-URL to fetch from.
-
-Aggregation sites that accept ping notifications generally publish the
-ping URL to use to ping their site on their (human-readable) web site.
-Once you have registered your site with an aggregator, you can set up
-your weblog to deliver pings to that site.
-
-=== Ping Targets, Common and Custom
-
-You can set up the Roller server to ping sites of your choice
-automatically whenever you post published updates to your weblog.
-
-Roller uses the term *ping target* to refer to a site, such as an
-aggregator, that accepts weblog update ping notifications. A ping target
-is configured with a (display) name and the ping URL needed to reach the
-site. Before you can send a ping to a site, you must configure a ping
-target in Roller for the site. Roller comes pre-shipped with multiple
-ping targets and the Roller administrator can configure additional ones
-as desired.
-
-=== Setting up Automated Pings
-
-Once a ping target has been configured for the site that you wish to
-ping, you can use the *Weblog:Pings* page (shown below) to enable
-automatic pings and send manual pings.
-
-image::user-guide-23-ping.png[]
-
-To enable automatic pings to a ping target, find the ping target on the
-page and click the *Enable* link in the Automatic column. The status
-indicator turns to *ON* and the link changes to *Disable* (as shown for
-some sites in the screenshot above). To disable automatic pings to a
-ping target click the *Disable* link in the Automatic column. The status
-indicator turns to *OFF* and the link changes to *Enable*.
-
-When you have enabled automatic pinging for a ping target, Roller will
-automatically send a ping to that site whenever you publish a new weblog
-entry or update a published weblog entry.
-
-NOTE: In actuality, Roller queues a request to send the ping and
-processes this request in the background, so that you can get on with
-your blogging. The ping queue is processed at an interval configured by
-the site administrator; this interval is 5 minutes in a default
-configuration. In case the aggregator site is temporarily unreachable,
-Roller will requeue your ping request and retry on subsequent passes
-through the queue; in a default configuration the ping is requeued for
-up to 3 ping attempts._
-
-=== Sending a Manual Ping
-
-You can also send a manual ping to a ping target using the *Send Ping
-Now* link listed for the target on the *Weblog:Pings* page. When you
-send a manual ping the ping is not queued, it is sent immediately and
-attempted only once. Roller shows you the response status (success or a
-failure message) that results from the ping.
-
-You do not need to enable automatic pinging in order to send manual
-pings. You can send a manual ping whether or not you have enabled
-automatic pinging for that target.
-
-You can use manual pings if you ping a site very rarely, or if you are
-feeling a bit impatient, and you don’t want to wait for the next queue
-processing interval.
-
-If you don’t find a ping target listed for the site you wish to ping,
-you can request that your administrator add a a new one for all blogs to
-have available. See Chapter 10 for more information on adding ping
-targets.
-
-=== More on Registering with an Aggregator
-
-When you register with an aggregator, you will usually need to provide
-two pieces of information as part of the registration, your blog’s base
-(HTML) url and your RSS feed (XML) URL. Make sure to read the
-aggregator’s documentation and help on registering.
-
-For Roller weblogs, you get your weblog’s base URL by viewing your
-weblog and taking the URL to the point just following your weblog’s
-handle. (In other words it should end with _page_/_handlenamehere_).
-
-The RSS feed URL for your whole feed can be obtained by substituting
-_page_ in your weblog’s URL with _RSS_. Most browsers will display this
-link in the status bar when you place your mouse over RSS badge (the
-little orange XML box) on your weblog page.
-
-You also have category-specific feeds, which are useful for registering
-with topical aggregators like *java.blogs*. To get a category-specific
-feed URL, just append _?catname=/categoryname_ substituting _name_ for
-the category name. The "basic" theme has some category RSS feeds just
-below the RSS badge in the right-hand vertical bar.
-
-Some aggregators can also scrape (read and parse the HTML of your
-weblog) to discover the feed URL automatically when provided with the
-HTML URL. The default Roller theme template pages include hints in the
-form of tags that many sites can use to determine the feed URL
-automatically.
-
 == Roller administration
 
 This section of the Roller user guide is for users with the global admin
@@ -1205,9 +1091,8 @@ system gets that role and then can grant it to other users via the
 *Global Admin->User Admin* page, which just happens to be the first
 topic we’ll cover in the section.
 
-We’ll also describe how to configure Roller via the **Global
-Admin->Configuration **page and how to configure Roller’s custom ping
-facility via the *Global Admin->Ping Targets* page.
+We’ll also describe how to configure Roller via the *Global
+Admin->Configuration* page.
 
 === Managing users
 
@@ -1273,8 +1158,6 @@ like the frontpage weblog’s RSS and Atom feeds to be an aggregation of
 all weblogs on the Roller site.
 * *Absolute URL to this site*: to be used as basis for creating absolute
 URLs. Required for Roller’s Planet aggregator feature.
-* *Suspend all ping processing*: Allows you to turn off all (outgoing)
-weblogs pings for all weblogs in the system.
 * *Enable debug mode*: currently not used.
 
 image::user-guide-27-comments.png[]
@@ -1339,182 +1222,6 @@ defined. Note that even if individual overrides are disallowed bloggers
 can still place their own tracking code within their blog templates if
 you enable custom themes (in the "Theme Settings" section on this
 configuration page.)
-
-== Weblog update ping administration
-
-This section, intended for Roller administrators, describes how the
-Roller weblog update ping feature works and how to configure and
-administer it.
-
-=== Creating and editing common ping targets
-
-Common ping targets are ping targets that are shared by all users. You
-can create and edit common ping targets using the *Global Admin->Ping
-Targets* page.
-
-image::user-guide-30-ping.png[]
-
-You can create and edit common ping in the same way that regular users
-create and edit custom ping targets, but keep in mind that common ping
-targets are shared amongst all users, and that your changes affect all
-users using the ping target. Administrators should make sure to test new
-common ping targets after creating them.
-
-Before adding a ping target, the administrator must determine the proper
-ping URL for the site that you wish to ping. This information can be
-obtained from the aggregator’s web site or from another knowledgeable
-source.
-
-It can be hard to find the aggregator’s documentation for the specific
-ping URL to use to notify their site. Commonly aggregators list this on
-their web site under a topic providing help about registering your feed,
-or under a topic providing information for developers. Keep in mind that
-some aggregators only use periodic polling and do not accept ping
-notifications at all. If you can’t find any information about pinging on
-the aggregator’s web site, the site may not support pinging.
-
-Click the *Add New* button to add a new ping target. This will bring up
-a form with a *Name* field and a *Ping URL* field. Fill in both fields,
-and click the *Save* button.
-
-image::user-guide-31-add-ping.png[]
-
-Once the new ping target has been created, it will be listed for all
-blogs on their *Weblog:Pings* page with the default activation status
-defined by the administrator. From this page, individual users can
-override the ping target’s enable status for their own blog as well as
-send manual pings to the new target.
-
-=== How Roller Processes Weblog Update Pings
-
-Roller processes weblog update pings in the background. When a user
-updates his or her weblog, Roller automatically queues any required
-automated pings on a queue. Roller only keeps one ping queue entry for a
-given user weblog and ping target. Subsequent updates to a weblog
-occurring before the ping is processed will not cause additional pings
-to be queued.
-
-Roller makes a full pass through the ping queue at regular intervals.
-(Configuration of this interval is discussed below) In each pass, Roller
-will attempt to send every queued ping request once. If any send fails
-(and provided the failure appears to be a transient one), the ping
-request will be re-queued, until the ping succeeds or a configured
-number of attempts has been made. Note that when a ping request fails
-and is re-queued, it is processed again only on subsequent ping passes.
-If the number of attempts to reach a given ping target reaches the
-maximum without succeeding, then an error message is logged and the ping
-request is dropped.
-
-There is currently no mechanism for alerting users of failing ping
-targets (though we plan some improvements in subsequent releases to
-provide condition information on the weblog *Preferences->Pings* page,
-as well as a failure policy to deactivate persistently failing ping
-targets).
-
-=== Configuration Properties Controlling Ping Processing
-
-These properties control processing of the ping queue. They are
-configured in the __roller.properties __file.
-
-**pings.queueProcessingIntervalMins **The interval in minutes between
-ping queue processing runs. This must be a value in the range 0 to 120.
-The default value is 5 minutes. We think the default value should work
-for most sites, and is tolerable for most users. The number of users
-publishing or updating entries in a given interval determines the length
-of the queue, and Roller requires enough time in an interval to process
-the queue once. We think that for all but the largest and most active
-sites, it can probably be lowered as low as 1 minute if desired.
-*IMPORTANT*: The value 0 (zero) has a special meaning. If the processing
-interval is set to 0, ping queue processing is disabled on the server.
-This can be used to exclude all but one host from sending pings in a
-clustered environment where multiple Roller servers are sharing one
-database schema. *Make sure to retain one host in the cluster that does
-process the ping queue!* If multiple hosts in a cluster process the ping
-queue, you may send duplicate pings and failing ping requests may drop
-out of the queue sooner than the expected maximum (configured by the
-next parameter). If no hosts in a cluster process the ping queue, auto
-ping requests will accumulate in the queue and this will eventually
-cause the database to run out of space, so don’t try to use this as a
-way to disable ping features. You can use the properties described in
-the following sections to disable ping features.
-
-**pings.maxPingAttempts **The maximum number of ping attempts made
-before the ping request will no longer be requeued and will instead be
-dropped from the queue. The default value is 3. We think this value is
-fine for most sites.
-
-=== Suspending all ping processing
-
-Administrators can suspend all ping processing at runtime by checking
-the *Suspend ping processing?* checkbox under the *Site Settings*
-heading on the *Global Admin->Configuration* page and saving that form.
-
-When this checkbox is set, all ping processing is suspended. New
-automatic ping requests are not added to the queue, and existing entries
-on the queue are not processed. Manual pings are not sent either; they
-result in a message telling the user that ping processing has been
-suspended. Suspending ping processing is appropriate to temporarily stop
-all ping processing if problems are encountered.
-
-Unchecking the checkbox and saving allows normal ping processing to
-resume. Note, however, that autopings for weblogs that are updated while
-ping processing is suspended will never be queued and hence never sent,
-but pings queued before the suspension are sent once the suspension is
-lifted.
-
-=== Controlling and disabling ping usage
-
-Since use of a ping target causes an outbound network connection to the
-ping site, some administrators may not want to allow users to create
-their own custom ping targets. It is possible to enable or disable the
-use of custom ping targets across the whole site and also to disable all
-ping usage. The following two properties are used to control this.
-
-**pings.disallowCustomTargets. **This property controls whether users
-are allowed to create custom ping targets. If set to true, all existing
-custom ping targets are _removed_, and the *Weblog:Custom Ping Targets*
-page and the associated actions are disabled preventing any
-configuration of custom ping targets. *Note:* __Setting this to true
-this will cause the Roller server to __remove _any custom ping targets
-that users have created when Roller is next started._
-
-Administrators may also wish to disable ping functionality entirely. The
-following property, used in conjunction with the above property, can be
-used to do this.
-
-**pings.disablePingUsage. **This property controls whether users are
-allowed to set up automatic pings or send manual pings. If set to true,
-all existing autoping configurations are removed (i.e. disabled), the
-weblog *Preferences->Pings* page and associated actions are disabled,
-preventing any use of the ping features by regular users. *Note:*
-__Setting this to true will cause the Roller server to __remove _any
-autopings that users have configured when Roller is next started._
-
-If both of the above properties are set to true, all ping functionality
-is effectively disabled for regular users. The *Global Admin:Ping
-Targets* page is still accessible (to administrators); you can use that
-page to clear out any common targets if you wish. No user (including
-administrators) will be able to configure automatic pings or send pings.
-Ping queue processing continues but the queue will always be empty; you
-can safely disable ping queue processing (by setting the processing
-interval to zero) in this situation.
-
-=== Initialization of common ping targets
-
-The initial set of common ping targets is determined by the following
-configuration property.
-
-**pings.initialCommonTargets. **This value is used to initialize the set
-of common ping targets. The value consists of a comma-separated list of
-ping targets, where each ping target is specified in the form
-
-{{name}{url}}
-
-This value is used every time Roller starts _and finds an empty list of
-common ping targets._ Normally, this is only the first time Roller is
-started on a fresh or upgraded database; note, however, that if you
-really want to maintain an empty list of common ping targets, you will
-need to comment out this value or set it to an empty string.
 
 == Weblog Export
 

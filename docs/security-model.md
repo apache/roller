@@ -71,7 +71,6 @@ flowchart TB
   subgraph Admins["Global admins"]
     AD["Admin UI<br/>(/roller-ui/admin)"]
     PL["Planet feed aggregator"]
-    PG["Ping targets"]
   end
   subgraph Setup["First run only"]
     IN["Installer + setup token"]
@@ -86,7 +85,6 @@ flowchart TB
   AD --> DB
   IN --> DB
   PL -->|fetches| NET(("Network"))
-  PG -->|pings| NET
 ```
 
 Everything in the Roller WAR is in scope, including the bundled themes. Build
@@ -133,9 +131,9 @@ do everything a Limited member can.
 | **Anonymous visitor** | Read published entries, feeds and search; post comments; register, when registration is on | See drafts, settings or anything unpublished; change anything | No |
 | **Registered user** (global `editor`) | Log in; edit own profile; comment; create weblogs, when the site allows it | Act in a weblog where they hold no role | No |
 | **Limited** (`edit_draft`) | Create and edit draft entries in that weblog | Publish; manage comments, categories or media; act in other weblogs | No |
-| **Author** (`post`) | Everything Limited can do; publish entries; manage comments and categories; manage media, when uploads are on | Change weblog settings, members, bookmarks, pings or design | No |
-| **Admin** (`admin`) | Everything Author can do; weblog settings, members, bookmarks (including OPML import), pings, maintenance; theme and templates, when custom themes are on | Touch other weblogs; read server files; run Java code; read other users' private data; run script in other users' browsers | **No** |
-| **Global admin** (global `admin`) | Everything in every weblog; users; site settings; Planet feeds; ping targets | Get shell or file access on the host | Yes |
+| **Author** (`post`) | Everything Limited can do; publish entries; manage comments and categories; manage media, when uploads are on | Change weblog settings, members, bookmarks or design | No |
+| **Admin** (`admin`) | Everything Author can do; weblog settings, members, bookmarks (including OPML import), maintenance; theme and templates, when custom themes are on | Touch other weblogs; read server files; run Java code; read other users' private data; run script in other users' browsers | **No** |
+| **Global admin** (global `admin`) | Everything in every weblog; users; site settings; Planet feeds | Get shell or file access on the host | Yes |
 | **Network attacker** | Read or change traffic when the site runs over plain HTTP | Anything, once the site runs over HTTPS | No |
 | **Operator** | Owns the container, JVM, database, configuration files and logs | — | Yes, out of scope |
 
@@ -164,7 +162,6 @@ attack by an anonymous visitor, not by that user.
 | OPML bookmark import | Weblog Admins |
 | Remote API requests (XML-RPC, AtomPub) | Anyone, before authentication |
 | Feeds fetched by Planet | Whoever runs the feed's host |
-| Responses from ping targets | Whoever runs the ping target |
 | Installer forms | Anyone, until setup is complete |
 
 Only the operator controls `roller-custom.properties`, JNDI resources and the
@@ -202,7 +199,7 @@ flowchart LR
    - Uploaded files are never served as active content (see below).
 4. **Server → network.** Users below global admin cannot make the server fetch
    a URL of their choice. Entry enclosure URLs are stored, not fetched. Global
-   admins can point the server at any URL through Planet feeds and ping targets.
+   admins can point the server at any URL through Planet feeds.
    That is by design.
 
 Two more rules protect the whole site:
@@ -333,7 +330,7 @@ Roller does not protect against:
   installation and upgrades.
 - Keep the database, data directories and `roller-custom.properties` private.
 - If the server can reach internal services, put egress rules on Roller's
-  outbound traffic (Planet, pings).
+  outbound traffic (Planet).
 - Run the current release. Older releases are not patched.
 
 ## Common mistakes

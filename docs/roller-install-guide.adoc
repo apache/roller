@@ -933,7 +933,7 @@ planet.aggregator.enabled=true
 
 # Tasks which are enabled.  Only tasks listed here will be run.
 tasks.enabled=ScheduledEntriesTask,ResetHitCountsTask,\
-PingQueueTask,RefreshRollerPlanetTask,SyncWebsitesTask
+RefreshRollerPlanetTask,SyncWebsitesTask
 
 # Set of page models specifically for site-wide rendering
 rendering.siteModels=\

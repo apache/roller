@@ -281,6 +281,15 @@ public interface WeblogEntryManager {
      */
     boolean isWeblogCategoryInUse(WeblogCategory data)
             throws WebloggerException;    
+
+    /**
+     * Count the entries in each of a weblog's categories, in any status.
+     *
+     * @return entry counts keyed by category id; categories with no entries
+     *         are not in the map
+     */
+    Map<String, Long> getWeblogCategoryEntryCounts(Weblog weblog)
+            throws WebloggerException;
     
     
     /**
