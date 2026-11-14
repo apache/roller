@@ -143,6 +143,9 @@
 - Apache XML-RPC (`xmlrpc-common`, `xmlrpc-server`) and `ws-commons-util`
   are no longer shipped. Apache XML-RPC is end of life, and 3.1.3 has an
   unfixed denial-of-service issue (CVE-2016-5004).
+- **The WAR no longer includes jcl-over-slf4j.** Roller logs through
+  commons-logging 1.4, which sends everything straight to Log4j. A deployment
+  that added its own commons-logging bridge should remove it.
 - The source distribution now extracts to `apache-roller-<version>-source/`,
   matching its file name, instead of `roller-weblogger-<version>-source/`.
 

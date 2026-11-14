@@ -328,13 +328,13 @@ limitations under the License.
             <version>${slf4j.version}</version>
         </dependency>
 
-        <!-- slf4j implementing the apache commons-logging interfaces -->
-        <!-- note: commons-logging needs to be excluded in all dependencies transitive depending on it.
-        See 2006 RFE https://issues.apache.org/jira/browse/MNG-1977 for maven's missing feature of global exclusions -->
+        <!-- Roller logs through the commons-logging API. Since 1.3 it finds the Log4j API
+             on its own and logs straight to it, so no bridge jar is needed. Spring 7
+             depends on it directly too. -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons-logging.version}</version>
         </dependency>
 
         <!-- slf4j implementing java.util.logging interfaces (needed for WebJars, ..) -->
@@ -407,13 +407,6 @@ limitations under the License.
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
-            <exclusions>
-                <!-- in jcl-over-slf4j  -->
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-jcl</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
