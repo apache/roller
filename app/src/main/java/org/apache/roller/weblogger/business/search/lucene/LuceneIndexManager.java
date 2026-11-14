@@ -515,8 +515,10 @@ public class LuceneIndexManager implements IndexManager {
             }
 
             boolean more = visible.size() > offset + limit;
+            // the total is every match in the index; hits holds at most
+            // search.results.max of them
             return new SearchResultList(results, categories, limit, offset,
-                    hits.length, more);
+                    search.getResultsCount(), more);
 
         } catch (IOException e) {
             throw new WebloggerException(e);

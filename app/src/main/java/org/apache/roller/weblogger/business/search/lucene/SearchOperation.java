@@ -37,8 +37,10 @@ import org.apache.lucene.search.QueryVisitor;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopFieldCollectorManager;
 import org.apache.lucene.search.TopFieldDocs;
 import org.apache.roller.weblogger.business.search.IndexManager;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 /**
  * An operation that searches the index.
@@ -62,6 +64,9 @@ public class SearchOperation extends ReadFromIndexOperation {
     private static final Sort SORTER = new Sort(new SortField(
             FieldConstants.PUBLISHED, SortField.Type.STRING, true));
 
+    /** Most matches one search can page through, unless search.results.max says otherwise. */
+    static final int DEFAULT_MAX_RESULTS = 5000;
+
     // ~ Instance fields
     // ========================================================
 
@@ -73,6 +78,8 @@ public class SearchOperation extends ReadFromIndexOperation {
     private String category;
     private String locale;
     private String parseError;
+    private int maxResults = WebloggerConfig.getIntProperty(
+            "search.results.max", DEFAULT_MAX_RESULTS);
 
     // ~ Constructors
     // ===========================================================
@@ -91,6 +98,14 @@ public class SearchOperation extends ReadFromIndexOperation {
 
     public void setTerm(String term) {
         this.term = term;
+    }
+
+    /**
+     * Sets how many matches the search keeps, which is how far its results
+     * can be paged. Matches past that are still counted.
+     */
+    void setMaxResults(int maxResults) {
+        this.maxResults = maxResults;
     }
 
     /*
@@ -140,9 +155,13 @@ public class SearchOperation extends ReadFromIndexOperation {
                     .build();
             }
 
-            // ask for every match, so that results past the first few hundred
-            // can still be paged to
-            searchresults = searcher.search(query, Math.max(1, reader.maxDoc()), SORTER);
+            // Keep at most maxResults hits, so the work one search does is
+            // bounded however large the index is, but count every match.
+            // searcher.search(query, n, sort) would not do: past 1,000
+            // matches the total it reports is only a lower bound.
+            int keep = Math.max(1, Math.min(maxResults, reader.maxDoc()));
+            searchresults = searcher.search(query, new TopFieldCollectorManager(
+                    SORTER, keep, null, Integer.MAX_VALUE));
 
         } catch (IOException e) {
             logger.error("Error searching index", e);
@@ -184,9 +203,10 @@ public class SearchOperation extends ReadFromIndexOperation {
     }
 
     /**
-     * Gets the results count.
-     * 
-     * @return the results count
+     * Gets the number of matches in the index, which can be more than the
+     * hits in {@link #getResults()} when the search stopped at its limit.
+     *
+     * @return the results count, or -1 if the search failed
      */
     public int getResultsCount() {
         if (searchresults == null) {

@@ -53,7 +53,10 @@
 - **Search shows how many entries matched and pages through all of them.**
   The count was the number of results on the current page, so it never went
   above ten and there was no link to a second page. Results past the first
-  500 matches can now be reached too.
+  500 matches can now be reached too: paging goes as far as the newest 5,000
+  matches, a limit the new `search.results.max` property sets. The count is
+  the number of matches in the search index, so it can be higher than the
+  number of entries the pages reach.
 - **AtomPub fixes found while running a 7.0.0 snapshot.**
   - Uploaded media files get the usual extension for their type:
     `image/svg+xml` gives `.svg`, parameters such as `charset` are ignored,

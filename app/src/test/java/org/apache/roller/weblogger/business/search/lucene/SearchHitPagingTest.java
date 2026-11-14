@@ -116,6 +116,7 @@ class SearchHitPagingTest {
         }
         SearchOperation search = mock(SearchOperation.class);
         when(search.getSearcher()).thenReturn(searcher);
+        when(search.getResultsCount()).thenReturn(HITS);
         Weblogger weblogger = mock(Weblogger.class);
         when(weblogger.getWeblogEntryManager()).thenReturn(entries);
         try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class)) {
