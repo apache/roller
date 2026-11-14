@@ -1336,6 +1336,30 @@ tr.rollertable_pending {
     font-weight: 700;
 }
 
+/* Forms put each label above its field at every width, as they already did on
+   narrow screens. Beside the field, a short label such as "Title" sat a long way
+   from its input, and long labels wrapped onto two lines. The label and field
+   columns the forms are written with (3 and 9 of 12) become full-width rows. */
+.form-horizontal .row > .col-sm-3,
+.form-horizontal .row > .col-md-3,
+.form-horizontal .row > .col-sm-9,
+.form-horizontal .row > .col-md-9 {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+}
+
+.form-horizontal .row > .col-form-label {
+    padding-top: 0;
+    padding-bottom: 0.25rem;
+}
+
+/* An empty label only held the field in the second column. */
+.form-horizontal .row > label:empty {
+    display: none;
+}
+
 /* Bootstrap 5 leaves readonly inputs looking editable; shade them like
    disabled ones so fields the user cannot change read as such. */
 .form-control[readonly],

@@ -45,6 +45,13 @@
   - The default blogroll can't be renamed, since themes find it by its
     name, and the page works on phones.
 
+- **Form labels sit above their fields.** In the admin forms a label used to
+  sit in a column beside its field, so short labels were a long way from
+  their inputs and long ones wrapped onto two lines. Labels are now above
+  their fields at every width, as they already were on phones. On the entry
+  editor, the Permalink and Status rows line up with the rest and the status
+  is shown as a badge.
+
 ### Bug fixes
 
 - **A bad date pattern in a theme no longer blanks the page.**
