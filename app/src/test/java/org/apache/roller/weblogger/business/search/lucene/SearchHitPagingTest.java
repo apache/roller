@@ -81,6 +81,19 @@ class SearchHitPagingTest {
     }
 
     @Test
+    void totalCountsIndexMatchesIncludingOnesNotShown() throws Exception {
+        // the draft sits in the middle of the hits: it is skipped when paging
+        // but still counted, so the total is one more than can be paged to
+        WeblogEntryManager entries = entries(HITS / 2);
+        SearchResultList result = convert(entries, HITS / 2 - 1, 2);
+        assertEquals(1, result.getResults().size());
+        assertEquals("id" + (HITS - 1), result.getResults().get(0).getId());
+        assertEquals(HITS - 2, result.getOffset());
+        assertFalse(result.hasMore());
+        assertEquals(HITS, result.getTotalHits());
+    }
+
+    @Test
     void pageBeyondTheHitsFallsBackToTheFirstPage() throws Exception {
         WeblogEntryManager entries = entries(-1);
         SearchResultList result = convert(entries, 50, 2);

@@ -37,7 +37,7 @@ public class SearchResultList {
      * @param categories the categories of those entries
      * @param limit      how many entries are on the page
      * @param offset     position of the page's first entry among all results
-     * @param totalHits  how many entries matched the search, on every page
+     * @param totalHits  how many entries in the index matched the search
      * @param more       whether there are results after this page
      */
     public SearchResultList(
@@ -59,7 +59,15 @@ public class SearchResultList {
     public List<WeblogEntryWrapper> getResults() {
         return results;
     }
-    /** How many entries matched the search, counting every page. */
+    /**
+     * How many entries in the search index matched the search. This can be
+     * more than the entries a visitor can page through, for two reasons. The
+     * index can hold matches that are not shown: drafts, entries scheduled for
+     * later, and entries deleted since they were indexed. Counting only the
+     * entries that are shown would mean loading every match on each search.
+     * And paging stops at the search.results.max property, while this count
+     * does not.
+     */
     public int getTotalHits() {
         return totalHits;
     }
