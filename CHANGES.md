@@ -132,6 +132,9 @@
 
 ### Build and packaging
 
+- Third-party libraries are updated to their latest patch and minor releases,
+  among them Struts 7.4.0, Spring 7.0.10 and Spring Security 7.1.2. OGNL is
+  pinned to 3.4.17, which fixes CVE-2026-113730.
 - The source distribution now extracts to `apache-roller-<version>-source/`,
   matching its file name, instead of `roller-weblogger-<version>-source/`.
 
