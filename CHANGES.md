@@ -1,5 +1,14 @@
 # Apache Roller — Changes
 
+## 6.1.8 (in development)
+
+### Bug fixes
+
+- **Meta descriptions are always encoded.** A weblog's "about" text or an
+  entry's search description containing a quote no longer cuts the
+  `<meta name="description">` tag short, whether or not weblog admins are
+  trusted.
+
 ## 6.1.7
 
 ### Improvements
