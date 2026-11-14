@@ -38,8 +38,10 @@ Follow [Getting started](https://releases.apache.org/docs/getting-started) and
   metadata, release version policy, source checks, vote recipients and templates,
   download page, announcement recipients and destination suffix. ATR's default
   top-level project path can publish directly under `dist/release/<committee>/`,
-  while Roller uses `dist/release/roller-<major.minor>/v<version>/`. Set and
-  verify the destination suffix on the Finish page. Its supported tokens are
+  while Roller uses `dist/release/roller/roller-<major.minor>/v<version>/`.
+  Set and verify the destination suffix on the Finish page, for example
+  `roller-7.0/v7.0.0` (ATR adds the `roller/` committee directory itself). Its
+  supported tokens are
   `{{PROJECT_KEY}}`, `{{VERSION}}`, and `{{MAJOR_VERSION}}`; do not assume a
   custom path token. The ATR client's `--auto-publish` option does not honor the
   configured path, so leave it off and publish manually from the reviewed Finish
