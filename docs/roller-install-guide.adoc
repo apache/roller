@@ -90,15 +90,13 @@ specifically, here’s what you need to install and run Roller:
 * *Java Development Kit*, specifically Java 21 or later. The computer on
 which you install Roller should already have the JDK installed and
 configured.
-* *Java EE 6 Application Server*, or more specifically a Servlet
-container that supports at least the Servlet 2.4 API. Hereinafter, we’ll
-just call this your _server_. Roller has traditionally worked best on
-Tomcat and Tomcat only, but Roller 6.0.0 is known to run on:
-** Tomcat 8
-** Jetty 9
+* *Jakarta EE Servlet container* that supports the Servlet 6.1 API.
+Hereinafter, we’ll just call this your _server_. Roller is tested on:
+** Tomcat 11
+** Jetty 12 (EE 11)
 * *Relational database* such as MySQL or Apache Derby. Roller stores
 blog entries, comments, bookmarks and almost all other data in a
-relational database accessed via the Java Persistence API 2.0.
+relational database accessed via Jakarta Persistence.
 PostgresSQL, MySQL and Derby are best supported but Roller. Roller also
 includes database creation scripts for DB2, HSQL-DB, Microsoft SQL
 Server and Oracle but these have not been tested recently.
@@ -108,8 +106,8 @@ for comments and other events via the JavaMail and Activation APIs.
 Roller WAR file, ready to deploy to your server, plus Roller license
 files, README and documentation. Unpack using either file based on a
 compression method your operating system supports:
-** roller-release-6.0.0-standard.zip
-** roller-release-6.0.0-standard.tar.gz
+** apache-roller-<version>-binary.zip
+** apache-roller-<version>-binary.tar.gz
 
 This step can also be done after deployment and determination that you
 would like themes other than the defaults available available, just
