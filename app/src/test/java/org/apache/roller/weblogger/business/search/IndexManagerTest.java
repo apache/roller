@@ -39,6 +39,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.roller.weblogger.ui.rendering.model.SearchResultsModel.RESULTS_PER_PAGE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -99,6 +101,21 @@ public class IndexManagerTest {
                 testWeblog.getHandle(), null, testWeblog.getLocale(), 0, RESULTS_PER_PAGE,
                 WebloggerFactory.getWeblogger().getUrlStrategy());
             assertEquals(1, result.getResults().size());
+
+            // the total counts every match, not only those on the page, and
+            // the last page says there is nothing after it
+            result = indexManager.search("Enterprise",
+                testWeblog.getHandle(), null, testWeblog.getLocale(), 0, 1,
+                WebloggerFactory.getWeblogger().getUrlStrategy());
+            assertEquals(1, result.getResults().size());
+            assertEquals(2, result.getTotalHits());
+            assertTrue(result.hasMore());
+            result = indexManager.search("Enterprise",
+                testWeblog.getHandle(), null, testWeblog.getLocale(), 1, 1,
+                WebloggerFactory.getWeblogger().getUrlStrategy());
+            assertEquals(1, result.getResults().size());
+            assertEquals(2, result.getTotalHits());
+            assertFalse(result.hasMore());
 
             // index fields that are not search fields cannot be queried
             String handlePrefix = testWeblog.getHandle().substring(0, 3).toLowerCase() + "*";
