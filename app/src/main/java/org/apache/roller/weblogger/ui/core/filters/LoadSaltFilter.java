@@ -58,10 +58,12 @@ public class LoadSaltFilter implements Filter {
  
     /**
      * Weblog pages, feeds and resources are forwarded to the rendering servlets,
-     * which sit under /roller-ui and so pass through this filter. They contain
-     * none of Roller's own forms, so they need no salt, and creating a session
-     * for each one would give every anonymous page view and crawler request a
-     * session and a salt cache entry.
+     * which sit under /roller-ui and so pass through this filter. Their only
+     * form is the comment form, which submits no salt and is not checked for
+     * one: it posts to the entry's permalink, and ValidateSaltFilter does not
+     * run on the forward to the comment servlet. So they need no salt, and
+     * creating a session for each one would give every anonymous page view and
+     * crawler request a session and a salt cache entry.
      */
     static boolean isRenderingRequest(HttpServletRequest request) {
         String path = request.getServletPath();
