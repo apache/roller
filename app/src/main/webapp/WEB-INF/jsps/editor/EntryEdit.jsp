@@ -230,7 +230,7 @@
                         <%-- global admin can pin items to front page weblog --%>
                     <s:if test="authenticatedUser.hasGlobalPermission('admin')">
                         <s:checkbox label="%{getText('weblogEdit.pinnedToMain')}" name="bean.pinnedToMain"
-                                    tooltop="%{getText('weblogEdit.pinnedToMain.tooltip')}"/>
+                                    tooltip="%{getText('weblogEdit.pinnedToMain.tooltip')}"/>
                     </s:if>
 
                     <s:textfield label="%{getText('weblogEdit.searchDescription')}" name="bean.searchDescription"
