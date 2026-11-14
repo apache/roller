@@ -624,6 +624,16 @@ limitations under the License.
                 <version>${maven-war.version}</version>
                 <configuration>
                     <attachClasses>true</attachClasses>
+                    <webResources>
+                        <resource>
+                            <directory>${project.basedir}/../binary-includes</directory>
+                            <targetPath>META-INF</targetPath>
+                            <includes>
+                                <include>LICENSE.txt</include>
+                                <include>NOTICE.txt</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
 

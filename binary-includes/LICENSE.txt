@@ -202,8 +202,441 @@
    limitations under the License.
 
 -------------------------------------------------------------------------------
-This product bundles JDOM XML parser library, which is available under a
-"JDOM" license. For details, see http://www.jdom.org/.
+The paths in the sections below that start with images/, roller-ui/ or themes/
+are inside the roller.war web application.
+
+-------------------------------------------------------------------------------
+This product bundles some snippets of code from the Blojsom and Pebble
+blog servers, which are both licensed under the terms of the BSD license
+(http://www.opensource.org/licenses/bsd-license.php).
+
+-------------------------------------------------------------------------------
+This product bundles YUI 3.17.2 CSS Grids and Pure 0.4.2, which are available
+under a "BSD" license. For details, see
+themes/fauxcoly/css/cssgrids-min.css
+http://yuilibrary.com/license/
+https://github.com/yui/pure/blob/master/LICENSE.md
+
+Software License Agreement (BSD License)
+
+Copyright (c) 2014, Yahoo! Inc. All rights reserved.
+
+Redistribution and use of this software in source and binary forms, with or
+without modification, are permitted provided that the following conditions are
+met:
+
+  * Redistributions of source code must retain the above copyright notice, this
+    list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+  * Neither the name of Yahoo! Inc. nor the names of YUI's contributors may be
+    used to endorse or promote products derived from this software without
+    specific prior written permission of Yahoo! Inc.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-------------------------------------------------------------------------------
+This product bundles jQuery 3.7.1, which is available under a "MIT" license.
+For details, see
+themes/gaurav/js/jquery.js
+https://jquery.org/license/
+
+The MIT License (MIT)
+
+Copyright OpenJS Foundation and other contributors, https://openjsf.org/
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+This product bundles CSS from jQuery Mobile 1.4.2, which is available under a
+"MIT" license. For details, see
+roller-ui/styles/jquery.mobile-theme/
+https://jquery.org/license/
+
+The MIT License (MIT)
+
+Copyright 2010, 2014 jQuery Foundation, Inc. and other contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+This product bundles Bootstrap 3.4.1, which includes normalize.css 3.0.3, in
+the Gaurav theme. Both are available under a "MIT" license. For details, see
+themes/gaurav/css/bootstrap.css
+themes/gaurav/js/bootstrap.js
+https://github.com/twbs/bootstrap/blob/v3.4.1/LICENSE
+https://github.com/necolas/normalize.css/blob/master/LICENSE.md
+
+The MIT License (MIT)
+
+Copyright (c) 2011-2019 Twitter, Inc.
+Copyright (c) 2011-2019 The Bootstrap Authors
+Copyright (c) Nicolas Gallagher and Jonathan Neal
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+This product bundles Font Awesome 3.2.1 by Dave Gandy (http://fontawesome.io)
+in the Gaurav theme. Its CSS is available under a "MIT" license, and its font
+files are available under the SIL Open Font License 1.1. For details, see
+themes/gaurav/css/font-awesome.min.css
+themes/gaurav/font/
+https://opensource.org/licenses/MIT
+https://openfontlicense.org/open-font-license-official-text/
+
+-------------------------------------------------------------------------------
+This product bundles the Hyde theme, a port of the Hyde theme for Jekyll,
+which is available under a "MIT" license. For details, see
+themes/hyde/theme.css
+https://github.com/poole/hyde/blob/master/LICENSE.md
+
+The MIT License (MIT)
+
+Copyright (c) 2013 Mark Otto.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+This product bundles the PaperMod theme, a port of the PaperMod theme for
+Hugo, which is available under a "MIT" license. For details, see
+themes/papermod/theme.css
+themes/papermod/theme.js
+https://github.com/adityatelange/hugo-PaperMod/blob/master/LICENSE
+
+The MIT License (MIT)
+
+Copyright (c) 2020 nanxiaobei and adityatelange
+Copyright (c) 2021-2026 adityatelange
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+This product bundles the Terminal theme, a port of the Terminal theme for
+Hugo, which is available under a "MIT" license. For details, see
+themes/terminal/theme.css
+https://github.com/panr/hugo-theme-terminal/blob/master/LICENSE.md
+
+The MIT License (MIT)
+
+Copyright (c) 2024 panr
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+This product bundles an icon from GitHub Octicons, which is available under a
+"MIT" license. For details, see
+roller-ui/images/clippy.svg
+https://github.com/primer/octicons/blob/main/LICENSE
+
+The MIT License (MIT)
+
+Copyright (c) GitHub Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+This product bundles icons from the Silk icon set by Mark James
+(http://www.famfamfam.com/lab/icons/silk/), which is available under the
+Creative Commons Attribution 2.5 license. Many of the small PNG icons in
+these directories come from this set, for example page_white.png, folder.png
+and tag_blue.png:
+images/
+themes/fauxcoly/icons/
+themes/gaurav/icons/
+https://creativecommons.org/licenses/by/2.5/
+
+-------------------------------------------------------------------------------
+The roller.war web application bundles the following third-party libraries in
+WEB-INF/lib and the following web assets served from WebJars. Many of these
+jars also carry their own license files, usually under META-INF/.
+
+-------------------------------------------------------------------------------
+This product bundles the following components, which are available under the
+Apache License 2.0 (the text of which is above):
+
+  Apache Commons BeanUtils 1.11.0, Codec 1.23.0, Collections 3.2.2,
+    Digester 2.1, Digester 3.2, FileUpload 2.0.0-M5, IO 2.22.0, Lang 3.22.0,
+    Logging 1.4.0, Secure XML 1.1.1, Text 1.15.0 and Validator 1.11.0
+  Apache FreeMarker 2.3.35
+  Apache Log4j 2.26.1 (log4j-api, log4j-core, log4j-slf4j2-impl)
+  Apache Lucene 10.6.0 (see the Lucene section below)
+  Apache Struts 7.4.0 (struts2-core, struts2-convention-plugin,
+    struts2-spring-plugin, struts2-tiles-plugin) and Struts Annotations 2.0
+  Apache Velocity Engine 2.4.1
+  Caffeine 3.2.4
+  cglib 2.2.2
+  Error Prone annotations 2.49.0
+  Google Guava 33.8.0-jre and failureaccess 1.0.3
+  Google Guice 7.0.0
+  J2ObjC annotations 3.1
+  Jackson 2.23 (jackson-annotations, jackson-core, jackson-databind)
+  Jakarta Dependency Injection API 2.0.1
+  Javassist 3.33.0-GA (offered under MPL 1.1, LGPL 2.1 or Apache License 2.0;
+    used here under the Apache License 2.0)
+  JCIP annotations 1.0-1 (com.github.stephenc.jcip)
+  JSpecify 1.0.0
+  json-smart and accessors-smart 2.6.0
+  Micrometer 1.16.8 (commons, observation) and 1.17.2 (core)
+  Nimbus Content Type 2.3, Nimbus JOSE+JWT 10.9.1, Nimbus LangTag 1.7 and
+    OAuth 2.0 SDK with OpenID Connect extensions 11.38.2
+  OGNL 3.4.17
+  ROME 2.1.0 (rome, rome-utils)
+  Spring Framework 7.0.10 (spring-aop, spring-beans, spring-context,
+    spring-core, spring-expression, spring-tx, spring-web)
+  Spring LDAP 4.1.2
+  Spring Security 7.1.2 (acl, config, core, crypto, ldap, oauth2-client,
+    oauth2-core, oauth2-jose, taglibs, web)
+  Struts2 Bootstrap Plugin 6.2.0
+
+-------------------------------------------------------------------------------
+Apache Lucene 10.6.0 bundles code derived from third-party sources, including
+Unicode, Python, Brics Automaton, moman/finenight, ICU, LZ4 and the Snowball
+stemmers, under BSD, MIT and similar licenses. For details, see
+META-INF/LICENSE.txt in WEB-INF/lib/lucene-core-10.6.0.jar
+
+-------------------------------------------------------------------------------
+Spring Framework 7.0.10 (spring-core) repackages ASM, CGLIB, JavaPoet and
+Objenesis. For details, see META-INF/license.txt in
+WEB-INF/lib/spring-core-7.0.10.jar
+
+-------------------------------------------------------------------------------
+Apache Struts 7.4.0 (struts2-core) includes code from XWork, which is
+available under the OpenSymphony Software License 1.1, a license derived from
+the Apache Software License. For details, see XWORK-LICENSE.txt in
+WEB-INF/lib/struts2-core-7.4.0.jar
+
+-------------------------------------------------------------------------------
+Jackson 2.23.0 (jackson-core) bundles FastDoubleParser and the Schubfach
+number writing code, which are available under a "MIT" license, plus code
+from fast_float under the Boost Software License 1.0. For details, see
+META-INF/FastDoubleParser-LICENSE, META-INF/FastDoubleParser-ThirdParty-LICENSE
+and META-INF/Schubfach-LICENSE in WEB-INF/lib/jackson-core-2.23.0.jar
+
+-------------------------------------------------------------------------------
+This product bundles SLF4J 2.0.20 (slf4j-api, jul-to-slf4j), which is
+available under a "MIT" license. For details, see
+https://www.slf4j.org/license.html
+
+The MIT License (MIT)
+
+Copyright (c) 2004-2023 QOS.ch
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+This product bundles Bouncy Castle Provider 1.87 (bcprov-jdk18on), which is
+available under a "MIT" license. For details, see
+https://www.bouncycastle.org/about/license/
+
+The MIT License (MIT)
+
+Copyright (c) 2000-2026 The Legion of the Bouncy Castle Inc. (https://www.bouncycastle.org)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+This product bundles webjars-locator-lite 1.1.4, which is available under a
+"MIT" license. For details, see
+https://github.com/webjars/webjars-locator-lite/blob/main/LICENSE.md
+
+-------------------------------------------------------------------------------
+This product bundles ASM 9.11.1 (asm, asm-commons, asm-tree), which is
+available under a "BSD 3-clause" license. For details, see
+https://asm.ow2.io/license.html
+
+Copyright (c) 2000-2011 INRIA, France Telecom
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holders nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+THE POSSIBILITY OF SUCH DAMAGE.
+
+-------------------------------------------------------------------------------
+This product bundles HdrHistogram 2.2.2, which is dedicated to the public
+domain under CC0 and is also available under a "BSD 2-clause" license.
+For details, see META-INF/LICENSE.txt in WEB-INF/lib/HdrHistogram-2.2.2.jar
+https://github.com/HdrHistogram/HdrHistogram/blob/master/LICENSE.txt
+
+-------------------------------------------------------------------------------
+This product bundles JDOM 2.0.6.1 (jdom2), which is available under a "JDOM"
+license. For details, see http://www.jdom.org/.
 
  Copyright (C) 2000-2012 Jason Hunter & Brett McLaughlin.
  All rights reserved.
@@ -255,195 +688,101 @@ This product bundles JDOM XML parser library, which is available under a
  Brett McLaughlin <brett_AT_jdom_DOT_org>. For more information
  on the JDOM Project, please see <http://www.jdom.org/>.
 
-
 -------------------------------------------------------------------------------
-This product bundles YUI, which is available under a "BSD" license.
-For details, see
-app/src/main/webapp/roller-ui/yui3
-http://yuilibrary.com/license/
+This product bundles the following components, which are available under the
+Eclipse Distribution License 1.0 (a BSD 3-clause license). EclipseLink and
+Jakarta Persistence are offered under EPL 2.0 or EDL 1.0; they are used here
+under EDL 1.0.
 
-Software License Agreement (BSD License)
-========================================
+  Angus Activation 2.0.3
+  EclipseLink 5.0.2 (org.eclipse.persistence.core, extension, jpa, jpa.jpql)
+  Eclipse Implementation of JAXB 4.0.9 (jaxb-core, jaxb-runtime, txw2)
+  istack common utility code runtime 4.1.2
+  Jakarta Activation API 2.1.4
+  Jakarta Persistence API 3.2.0
+  Jakarta XML Binding API 4.0.5
 
-Copyright (c) 2013, Yahoo! Inc. All rights reserved.
-----------------------------------------------------
+Eclipse Distribution License - v 1.0
 
-Redistribution and use of this software in source and binary forms, with or
-without modification, are permitted provided that the following conditions are
-met:
+Copyright (c) 2007, Eclipse Foundation, Inc. and its licensors.
 
-  * Redistributions of source code must retain the above copyright notice, this
-    list of conditions and the following disclaimer.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+  * Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
   * Redistributions in binary form must reproduce the above copyright notice,
     this list of conditions and the following disclaimer in the documentation
     and/or other materials provided with the distribution.
-  * Neither the name of Yahoo! Inc. nor the names of YUI's contributors may be
-    used to endorse or promote products derived from this software without
-    specific prior written permission of Yahoo! Inc.
+  * Neither the name of the Eclipse Foundation, Inc. nor the names of its
+    contributors may be used to endorse or promote products derived from this
+    software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
--------------------------------------------------------------------------------
-This product bundles jQuery and jQuery plugins, which are available under a "MIT" license.
-For details, see
-roller-ui/scripts/jquery-2.1.1.min.js.
-roller-ui/jquery-ui-1.11.0/jquery-ui.min.js
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
 
 -------------------------------------------------------------------------------
+This product bundles the following components in binary form, which are
+available under the Eclipse Public License 2.0. They are also offered under
+GPL 2.0 with the Classpath Exception; they are used here under EPL 2.0.
+For details, see META-INF/LICENSE.md in each jar and
+https://www.eclipse.org/legal/epl-2.0/
 
-This product bundles some snippets of code from the Blojsom and Pebble
-blog servers, which are both licensed under the terms of the BSD license 
-(http://www.opensource.org/licenses/bsd-license.php).
-
--------------------------------------------------------------------------------
-
-This product bundles some themes which use Font Awesome by Dave Gandy
-(http://fontawesome.io), whose licensing is subject to the SIL OFL 1.1:
-http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
-
--------------------------------------------------------------------------------
-
-This product bundles some themes which use the MIT-licensed Bootstrap:
-For details, see
-themes/gaurav/js/bootstrap.js
-https://github.com/twbs/bootstrap/blob/master/LICENSE
-
-The MIT License (MIT)
-
-Copyright (c) 2011-2019 Twitter, Inc.
-Copyright (c) 2011-2019 The Bootstrap Authors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
--------------------------------------------------------------------------------
-This product bundles Summernote WYSIWYG editor, which is available under a
-"MIT" license. For details, see
-/webjars/summernote/0.8.11/dist/summernote.min.js
-https://github.com/summernote/summernote/blob/develop/LICENSE
-
-The MIT License (MIT)
-
-Copyright (c) 2015~ Summernote Team (https://github.com/orgs/summernote/people)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+  Jakarta Expression Language API 5.0.0 (jakarta.el-api)
+    https://projects.eclipse.org/projects/ee4j.el
+  Jakarta Standard Tag Library API 3.0.2 (jakarta.servlet.jsp.jstl-api)
+  Jakarta Standard Tag Library Implementation 3.0.1 (jakarta.servlet.jsp.jstl)
+    https://projects.eclipse.org/projects/ee4j.jstl
 
 -------------------------------------------------------------------------------
--------------------------------------------------------------------------------
-Binary distribution specific license
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
+This product bundles the following web assets from WebJars, which are
+available under a "MIT" license:
 
-This product bundles Spring Framework 4.1.4.RELEASE, which is available under a
-"Apache 2.0" license. For details, see
-https://github.com/spring-projects/spring-framework
+  Bootstrap 5.3.8 (org.webjars:bootstrap)
+    Copyright (c) 2011-2025 The Bootstrap Authors
+    https://github.com/twbs/bootstrap/blob/main/LICENSE
+  Bootstrap Icons 1.13.2 (org.webjars.npm:bootstrap-icons)
+    Copyright (c) 2019-2024 The Bootstrap Authors
+    https://github.com/twbs/icons/blob/main/LICENSE
+  clipboard.js 2.0.11 (org.webjars:clipboard.js)
+    Copyright (c) Zeno Rocha
+    https://github.com/zenorocha/clipboard.js/blob/master/LICENSE
+  jQuery 4.0.0 (org.webjars:jquery)
+    Copyright OpenJS Foundation and other contributors
+    https://jquery.org/license/
+  jQuery UI 1.14.2 (org.webjars:jquery-ui)
+    Copyright OpenJS Foundation and other contributors
+    https://github.com/jquery/jquery-ui/blob/main/LICENSE.txt
+  jQuery Validation 1.22.1 (org.webjars.npm:jquery-validation)
+    Copyright Jorn Zaefferer
+    https://github.com/jquery-validation/jquery-validation/blob/master/LICENSE.md
+  Summernote 0.9.1 (org.webjars.npm:summernote)
+    Copyright (c) 2015~ Summernote Team
+    https://github.com/summernote/summernote/blob/main/LICENSE
 
--------------------------------------------------------------------------------
-
-This product bundles Google Guice 4.2.2, which is available under a
-"Apache 2.0" license. For details, see
-https://github.com/google/guice/blob/master/COPYING
-
--------------------------------------------------------------------------------
-
-This product bundles SLF4J 1.7.26, which is available under a
-"MIT" license. For details, see
-https://www.slf4j.org/license.html
-
--------------------------------------------------------------------------------
-
-This product bundles struts2-bootstrap 2.5.2, which is available under a
-"Apache 2.0" license. For details, see
-https://github.com/struts-community-plugins/struts2-bootstrap/blob/release/2.5.x/LICENSE
-
--------------------------------------------------------------------------------
-
-This product bundles romtools 1.12.0, which is available under a
-"Apache 2.0" license. For details, see
-https://github.com/rometools/rome/blob/master/LICENSE
+The MIT License text is in the jQuery 3.7.1 section above.
 
 -------------------------------------------------------------------------------
+The PDF guides in the docs/ directory of the binary distribution embed
+subsets of the following fonts, added by Asciidoctor PDF:
 
-This product bundles webjars-servlet-2.x 1.5, which is available under a
-"MIT" license. For details, see
-https://github.com/webjars/webjars-servlet-2.x/blob/master/LICENSE
-
-The MIT License (MIT)
-
-Copyright (c) 2015 Angel Ruiz Calvo
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
--------------------------------------------------------------------------------
-
-This product bundles oauth-provider 20100527, which is available under a
-"Apache 2.0" license. For details, see
-https://mvnrepository.com/artifact/net.oauth.core/oauth-provider
-
--------------------------------------------------------------------------------
-
-This product bundles Apache Ant 1.10.5 , which is available under a
-"Apache 2.0" license. For details, see
-https://ant.apache.org/license.html
--------------------------------------------------------------------------------
-
-This product bundles Apache Derby 10.11.1.1 , which is available under a
-"Apache 2.0" license. For details, see
-https://db.apache.org/derby/license.html
+  Noto Serif, available under the SIL Open Font License 1.1
+    https://openfontlicense.org/open-font-license-official-text/
+  Font Awesome 5 Free Solid, available under the SIL Open Font License 1.1
+    https://fontawesome.com/license/free
+  M+ 1mn, available under the M+ FONTS LICENSE, which permits use,
+    copying and distribution with or without modification
+    https://mplusfonts.github.io/
 
 -------------------------------------------------------------------------------
