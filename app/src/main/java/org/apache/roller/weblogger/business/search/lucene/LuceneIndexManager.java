@@ -382,7 +382,12 @@ public class LuceneIndexManager implements IndexManager {
             
             String[] files = directory.listAll();
             for (String file : files) {
-                Files.delete(Path.of(indexDir, file));
+                // The marker says this run hasn't shut down cleanly yet. It must
+                // survive, so a crash during the rebuild that follows is caught
+                // at the next start.
+                if (!file.equals(indexConsistencyMarker.getName())) {
+                    Files.delete(Path.of(indexDir, file));
+                }
             }
         } catch (IOException ex) {
              logger.error("Problem accessing index directory", ex);

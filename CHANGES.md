@@ -47,6 +47,10 @@
 
 ### Bug fixes
 
+- **A search index rebuild that is interrupted is redone at the next start.**
+  When Roller replaced the index at startup it also deleted the marker that
+  records an unclean shutdown, so if it was stopped during the rebuild, the
+  next start kept the incomplete index.
 - **A bad date pattern in a theme no longer blanks the page.**
   `$utils.formatDate` logs a warning and uses the locale's standard date and
   time format. Older themes often pass a message key that no longer exists,
