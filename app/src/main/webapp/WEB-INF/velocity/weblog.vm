@@ -77,7 +77,8 @@ Parse and include page template from weblog.
 Show RSS, Atom and RSD auto-discovery links as HTML link elements.
 *#
 #macro(showAutodiscoveryLinks $weblog)
-    #if ($weblog.enableBloggerApi)
+    ## only advertise the RSD while the site and the weblog both answer XML-RPC
+    #if ($weblog.enableBloggerApi && $config.xmlRpcEnabled)
        <link rel="EditURI"   type="application/rsd+xml" title="RSD" href="$url.rsd"/>
     #end
 

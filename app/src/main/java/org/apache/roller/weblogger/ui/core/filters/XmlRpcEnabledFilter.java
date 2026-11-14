@@ -49,7 +49,7 @@ public class XmlRpcEnabledFilter implements Filter {
                          FilterChain chain) throws IOException, ServletException {
 
         if (!WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc")) {
-            LOG.warn("XML-RPC service is disabled; rejecting request");
+            LOG.debug("XML-RPC service is disabled; rejecting request");
             HttpServletResponse httpResponse = (HttpServletResponse) response;
             httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             httpResponse.setContentType("text/plain;charset=UTF-8");

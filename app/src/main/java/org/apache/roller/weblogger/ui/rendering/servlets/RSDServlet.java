@@ -94,6 +94,13 @@ public class RSDServlet extends HttpServlet {
             return;
         }
 
+        // The RSD describes the XML-RPC endpoint, so there is nothing to
+        // describe while the site or the weblog doesn't answer it
+        if (!describesXmlRpc(weblog)) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
         // Respond with 304 Not Modified if it is not modified.
         long lastModified = System.currentTimeMillis();
         if (weblog.getLastModified() != null) {
@@ -164,4 +171,10 @@ public class RSDServlet extends HttpServlet {
         log.debug("Exiting");
     }
 
+
+    /** True while both the site and this weblog answer the Blogger and MetaWeblog APIs. */
+    static boolean describesXmlRpc(Weblog weblog) {
+        return WebloggerRuntimeConfig.getBooleanProperty("webservices.enableXmlRpc")
+                && Boolean.TRUE.equals(weblog.getEnableBloggerApi());
+    }
 }

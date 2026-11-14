@@ -47,6 +47,12 @@
 
 ### Bug fixes
 
+- **Weblogs no longer advertise XML-RPC while it is switched off.** With
+  `webservices.enableXmlRpc` off, each weblog page still linked to an RSD
+  document listing the Blogger and MetaWeblog endpoints, which then answered
+  404. The link now appears, and the RSD document answers, only while both
+  that setting and the weblog's client support are on. Refused XML-RPC
+  requests are logged at debug level instead of as a warning each.
 - **A bad date pattern in a theme no longer blanks the page.**
   `$utils.formatDate` logs a warning and uses the locale's standard date and
   time format. Older themes often pass a message key that no longer exists,
