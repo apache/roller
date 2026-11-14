@@ -24,6 +24,8 @@ import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogCategory;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
+import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -200,4 +202,64 @@ public class WeblogCategoryCRUDTest  {
         log.info("END");
     }
     
+
+    /**
+     * Entry counts per category include entries in any status and leave out
+     * categories with no entries.
+     */
+    @Test
+    public void testCategoryEntryCounts() throws Exception {
+
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        testUser = TestUtils.getManagedUser(testUser);
+
+        WeblogCategory busy = TestUtils.setupWeblogCategory(testWeblog, "Busy");
+        WeblogCategory empty = TestUtils.setupWeblogCategory(testWeblog, "Empty");
+        TestUtils.setupWeblogEntry("count-1", busy, WeblogEntry.PubStatus.PUBLISHED, testWeblog, testUser);
+        TestUtils.setupWeblogEntry("count-2", busy, WeblogEntry.PubStatus.DRAFT, testWeblog, testUser);
+        TestUtils.endSession(true);
+
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        Map<String, Long> counts = mgr.getWeblogCategoryEntryCounts(testWeblog);
+        assertEquals(Long.valueOf(2), counts.get(busy.getId()));
+        assertFalse(counts.containsKey(empty.getId()));
+    }
+    /**
+     * After a reorder, a new session must read the weblog's own category list in
+     * the new order: themes read it, and the shared cache keeps the old list unless
+     * the change is carried into it.
+     */
+    @Test
+    public void testReorderIsSeenByLaterSessions() throws Exception {
+
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        WeblogCategory first = TestUtils.setupWeblogCategory(testWeblog, "OrderFirst");
+        WeblogCategory second = TestUtils.setupWeblogCategory(testWeblog, "OrderSecond");
+        TestUtils.endSession(true);
+
+        // warm the shared cache with the old order
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        String oldFirst = testWeblog.getWeblogCategories().get(testWeblog.getWeblogCategories().size() - 2).getName();
+        assertEquals("OrderFirst", oldFirst);
+        TestUtils.endSession(true);
+
+        // what Categories.reorder() does
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        WeblogCategory a = mgr.getWeblogCategory(first.getId());
+        WeblogCategory b = mgr.getWeblogCategory(second.getId());
+        int pa = a.getPosition();
+        a.setPosition(b.getPosition());
+        b.setPosition(pa);
+        WebloggerFactory.getWeblogger().getWeblogManager().saveWeblog(testWeblog);
+        testWeblog.getWeblogCategories().sort(java.util.Comparator.comparingInt(WeblogCategory::getPosition));
+        WebloggerFactory.getWeblogger().flush();
+        TestUtils.endSession(true);
+
+        testWeblog = TestUtils.getManagedWebsite(testWeblog);
+        int size = testWeblog.getWeblogCategories().size();
+        assertEquals("OrderSecond", testWeblog.getWeblogCategories().get(size - 2).getName());
+        assertEquals("OrderFirst", testWeblog.getWeblogCategories().get(size - 1).getName());
+    }
 }

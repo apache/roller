@@ -284,6 +284,183 @@ body {
     text-align: center;
 }
 
+/* categories (Categories.jsp, categories.js) */
+
+.categories-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.category-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    border-top: 1px solid var(--bs-border-color);
+}
+
+.category-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.25rem;
+    border-bottom: 1px solid var(--bs-border-color);
+    background-color: var(--bs-body-bg);
+}
+
+.category-row.ui-sortable-helper {
+    box-shadow: var(--bs-box-shadow);
+    border: 1px solid var(--bs-border-color);
+}
+
+.category-row.ui-sortable-placeholder {
+    visibility: visible !important;
+    background-color: var(--bs-tertiary-bg);
+}
+
+.category-row-changed {
+    background-color: var(--bs-success-bg-subtle);
+    transition: background-color 2s ease-out;
+}
+
+.category-handle {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--bs-border-radius);
+    background: none;
+    color: var(--bs-secondary-color);
+    cursor: grab;
+    touch-action: none;
+}
+
+.category-move {
+    display: none;
+    flex: none;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.category-move .btn {
+    line-height: 1;
+    padding: 0.2rem 0.5rem;
+}
+
+/* a finger cannot drag the handle (jQuery UI sortable has no touch support), so use buttons */
+@media (pointer: coarse) {
+    .category-handle {
+        display: none;
+    }
+
+    .category-move {
+        display: flex;
+    }
+}
+
+.category-handle:hover,
+.category-handle:focus-visible {
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+}
+
+.category-image {
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    object-fit: cover;
+    border-radius: var(--bs-border-radius-sm);
+}
+
+.category-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.category-name {
+    font-weight: 600;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.category-name:hover,
+.category-name:focus-visible {
+    text-decoration: underline;
+}
+
+.category-desc {
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
+    overflow-wrap: anywhere;
+}
+
+.category-count {
+    flex: none;
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
+    white-space: nowrap;
+}
+
+.category-actions {
+    flex: none;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.category-image-preview {
+    display: block;
+    max-width: 8rem;
+    max-height: 8rem;
+    margin-top: 0.5rem;
+    border-radius: var(--bs-border-radius);
+    border: 1px solid var(--bs-border-color);
+}
+
+/* the media chooser, in the category dialog in place of the form */
+.category-image-chooser {
+    display: block;
+    width: 100%;
+    height: min(36rem, 65vh);
+    border: 0;
+}
+
+@media (max-width: 575.98px) {
+    /* name and description on one line, count and buttons under them */
+    .category-row {
+        flex-wrap: wrap;
+        row-gap: 0.25rem;
+    }
+
+    .category-main {
+        flex-basis: calc(100% - 3rem);
+    }
+
+    .category-row:has(.category-image) .category-main {
+        flex-basis: calc(100% - 5.75rem);
+    }
+
+    .category-count {
+        margin-left: 2.75rem;
+    }
+
+    .category-actions {
+        margin-left: auto;
+    }
+
+    .category-actions .btn {
+        min-height: 2.75rem;
+    }
+}
+
 /* media library (MediaFileView.jsp, MediaFileSidebar.jsp, MediaFileCard.jsp) */
 
 .media-folders-header,
