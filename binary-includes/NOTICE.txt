@@ -16,8 +16,6 @@ Copyright 2009 Sun Microsystems, Inc.
 The product includes snippets of code from Spring Mobile
 Copyright (c) 2010-2014 Pivotal, Inc. All Rights Reserved.
 
-The product includes icons by Mark James (http://www.famfamfam.com/lab/icons)
-
 ===============================================================================
 The binary distribution and roller.war bundle third-party libraries whose
 NOTICE files require the following notices.

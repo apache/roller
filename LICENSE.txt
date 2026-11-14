@@ -330,13 +330,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 -------------------------------------------------------------------------------
-This product bundles Font Awesome 3.2.1 by Dave Gandy (http://fontawesome.io)
-in the Gaurav theme. Its CSS is available under a "MIT" license, and its font
-files are available under the SIL Open Font License 1.1. For details, see
-app/src/main/webapp/themes/gaurav/css/font-awesome.min.css
-app/src/main/webapp/themes/gaurav/font/
-https://opensource.org/licenses/MIT
-https://openfontlicense.org/open-font-license-official-text/
+This product bundles icon outlines from Bootstrap Icons 1.13.2, which is
+available under a "MIT" license, drawn inline as SVG in the templates and
+CSS of the Gaurav and Fauxcoly themes. For details, see
+app/src/main/webapp/themes/gaurav/
+app/src/main/webapp/themes/fauxcoly/
+https://github.com/twbs/icons/blob/v1.13.2/LICENSE
+
+Copyright (c) 2019-2024 The Bootstrap Authors
 
 -------------------------------------------------------------------------------
 This product bundles the Hyde theme, a port of the Hyde theme for Jekyll,
@@ -451,16 +452,5 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
--------------------------------------------------------------------------------
-This product bundles icons from the Silk icon set by Mark James
-(http://www.famfamfam.com/lab/icons/silk/), which is available under the
-Creative Commons Attribution 2.5 license. Many of the small PNG icons in
-these directories come from this set, for example page_white.png, folder.png
-and tag_blue.png:
-app/src/main/webapp/images/
-app/src/main/webapp/themes/fauxcoly/icons/
-app/src/main/webapp/themes/gaurav/icons/
-https://creativecommons.org/licenses/by/2.5/
 
 -------------------------------------------------------------------------------
