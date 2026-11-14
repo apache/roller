@@ -49,11 +49,10 @@ Follow [Getting started](https://releases.apache.org/docs/getting-started) and
 - Use Email vote mode and the normal minimum of 72 hours. Roller may default to
   Trusted vote mode, and the start-vote form doesn't offer a choice, so set Vote
   mode to Email in the project settings and confirm it took effect before
-  starting the vote. On the
-  start-vote form, leave **Automatically publish to SVN distribution area when
-  this vote resolves** unchecked. On the Finish tab, leave **Allow auto-archive**
-  disabled. Review settings shared across release lines; preserve the latest
-  release of each supported line.
+  starting the vote. On the start-vote form, leave **Automatically publish to
+  SVN distribution area when this vote resolves** unchecked. On the Finish tab,
+  leave **Allow auto-archive** disabled. Review settings shared across release
+  lines; preserve the latest release of each supported line.
 - Inspect any `.asf.yaml` project configuration before editing settings in ATR:
   synchronization from the default branch can overwrite manual changes. Record
   required configuration work separately; reading this skill does not configure
@@ -105,7 +104,9 @@ repository, and verify the rendered email before sending. Use the ATR candidate
 page as the sole authoritative artifact location, plus committee KEYS. Identify
 the pinned revision and source tag/commit; do not present another artifact copy
 as part of the vote. Start the email vote through ATR only when sending it is
-authorized. See
+authorized. On the start-vote form, leave **Automatically publish to SVN
+distribution area when this vote resolves** unchecked; publish manually from the
+reviewed Finish page. See
 [Staging and voting](https://releases.apache.org/docs/staging-and-voting).
 
 Allow the normal voting period, then check ATR's tally against the mailing-list
