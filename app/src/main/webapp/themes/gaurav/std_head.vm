@@ -1,9 +1,9 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src * data:; font-src 'self'; base-uri 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'">
 #if ($model.permalink == false)
-   <meta name="Description" content="$model.weblog.about">
+   <meta name="Description" content="$utils.escapeHTML($utils.unescapeHTML($utils.removeHTML($model.weblog.about)))">
 #else
-   <meta name="Description" content="$model.weblogEntry.searchDescription">
+   <meta name="Description" content="$utils.escapeHTML($utils.unescapeHTML($utils.removeHTML($model.weblogEntry.searchDescription)))">
 #end
 <meta name="viewport" content="initial-scale=1.0">
 

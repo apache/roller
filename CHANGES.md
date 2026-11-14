@@ -47,6 +47,10 @@
 
 ### Bug fixes
 
+- **Meta descriptions are always encoded.** A weblog's "about" text or an
+  entry's search description containing a quote no longer cuts the
+  `<meta name="description">` tag short, whether or not weblog admins are
+  trusted.
 - **Page menus list a weblog's custom pages again.** `#showPageMenu` and the
   menus in the Gaurav and PaperMod themes loop over `$weblog.pages`, which
   had stopped existing, so pages marked "include in page menu" never appeared.
