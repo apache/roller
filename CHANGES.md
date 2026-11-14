@@ -50,6 +50,9 @@
 - **Page menus list a weblog's custom pages again.** `#showPageMenu` and the
   menus in the Gaurav and PaperMod themes loop over `$weblog.pages`, which
   had stopped existing, so pages marked "include in page menu" never appeared.
+- **Reading a weblog no longer starts a session.** Every page, feed and
+  resource request from a visitor or crawler was given an HTTP session and a
+  form token it had no use for.
 - **Search shows how many entries matched and pages through all of them.**
   The count was the number of results on the current page, so it never went
   above ten and there was no link to a second page. Results past the first

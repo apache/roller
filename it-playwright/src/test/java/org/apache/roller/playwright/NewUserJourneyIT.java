@@ -28,6 +28,8 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 
 import com.microsoft.playwright.APIResponse;
+import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.Page;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -39,6 +41,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 /**
  * The path a brand new Roller install puts its first visitor through: register
  * an account, sign in, create a weblog, then publish and read back an entry,
+ * comment on it as the author and as a visitor,
  * upload a media file (the first user is the admin, so the journey also turns
  * file uploads on, which Roller ships disabled), and finally use the authoring
  * dialogs: add a category, cancel an entry delete, and insert the media file
@@ -104,6 +107,17 @@ class NewUserJourneyIT extends BaseIT {
     private static final String OPML_FILE_INPUT = "input[name='opmlFile']";
     private static final String OPML_IMPORT_SUBMIT = "input.btn-primary[type='submit']";
 
+    // the comment form under a rendered entry
+    private static final String COMMENTS_LINK = "a.commentsLink";
+    private static final String COMMENTS = "#comments";
+    private static final String COMMENT_NAME = "form[name='commentForm'] input[name='name']";
+    private static final String COMMENT_EMAIL = "form[name='commentForm'] input[name='email']";
+    private static final String COMMENT_CONTENT = "form[name='commentForm'] textarea[name='content']";
+    private static final String COMMENT_AUTHENTICATOR = "#commentAuthenticator";
+    private static final String COMMENT_ANSWER = COMMENT_AUTHENTICATOR + " input[name='answer']";
+    private static final String COMMENT_SUBMIT = "form[name='commentForm'] input[type='submit']";
+    private static final String COMMENT_STATUS = ".comments-form .status";
+
     @Override
     protected boolean usesSetupSession() {
         return true;
@@ -122,6 +136,7 @@ class NewUserJourneyIT extends BaseIT {
         assertRetiredPingPagesAreUnavailable();
         publishEntry(BLOG_HANDLE, ENTRY_TITLE, ENTRY_TEXT);
         assertEntryOnBlog(BLOG_HANDLE, ENTRY_TITLE, ENTRY_TEXT);
+        commentOnEntry();
         enableUploads();
         uploadMediaFile();
         importBookmarks();
@@ -129,6 +144,45 @@ class NewUserJourneyIT extends BaseIT {
         cancelEntryDeleteDialog(BLOG_HANDLE, ENTRY_TITLE);
         insertMediaFileThroughDialog(BLOG_HANDLE);
         assertPublishingTimeOnOneLine();
+    }
+
+    /**
+     * The comment form carries no salt, and a comment must be accepted without
+     * one from the signed-in author as well as from a visitor. Both have a
+     * session by the time they post: the visitor gets one from the comment
+     * authenticator, though not from reading the weblog.
+     */
+    private void commentOnEntry() {
+        postComment(page, "A comment from the author");
+
+        try (BrowserContext visitor = newVisitorContext()) {
+            Page visitorPage = visitor.newPage();
+            visitorPage.navigate(BLOG_HANDLE + "/");
+            assertThat(visitorPage.locator(COMMENTS_LINK).first()).isVisible();
+            Assertions.assertTrue(visitor.cookies().stream().noneMatch(c -> "JSESSIONID".equals(c.name)),
+                    "reading a weblog should not start a session");
+            postComment(visitorPage, "A comment from a visitor");
+        }
+    }
+
+    private void postComment(Page onPage, String text) {
+        onPage.navigate(BLOG_HANDLE + "/");
+        onPage.locator(COMMENTS_LINK).first().click();
+
+        onPage.locator(COMMENT_NAME).fill(FULL_NAME);
+        onPage.locator(COMMENT_EMAIL).fill(EMAIL);
+        onPage.locator(COMMENT_CONTENT).fill(text);
+        // the authenticator is fetched by script and asks for a sum, "3 + 42 ="
+        assertThat(onPage.locator(COMMENT_ANSWER)).isVisible();
+        var sum = Pattern.compile("(\\d+) \\+ (\\d+) =")
+                .matcher(onPage.locator(COMMENT_AUTHENTICATOR).textContent());
+        Assertions.assertTrue(sum.find(), "the comment authenticator should ask for a sum");
+        onPage.locator(COMMENT_ANSWER).fill(String.valueOf(
+                Integer.parseInt(sum.group(1)) + Integer.parseInt(sum.group(2))));
+        onPage.locator(COMMENT_SUBMIT).click();
+
+        assertThat(onPage.locator(COMMENT_STATUS)).containsText("Your comment has been accepted");
+        assertThat(onPage.locator(COMMENTS)).containsText(text);
     }
 
     private void assertRetiredPingPagesAreUnavailable() {

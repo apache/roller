@@ -234,6 +234,14 @@ abstract class BaseIT {
         return false;
     }
 
+    /**
+     * A browser context with no cookies: a visitor who has never signed in.
+     * The caller closes it.
+     */
+    protected static BrowserContext newVisitorContext() {
+        return browser.newContext(new Browser.NewContextOptions().setBaseURL(baseUrl));
+    }
+
     /** Navigates to a path relative to Roller's base URL. */
     protected void goTo(String relativePath) {
         page.navigate(relativePath.startsWith("/") ? relativePath.substring(1) : relativePath);
