@@ -98,6 +98,9 @@ public class JPAPersistenceStrategy {
                 emfProps.setProperty("jakarta.persistence.jdbc.url", dbProvider.getJdbcConnectionURL());
                 emfProps.setProperty("jakarta.persistence.jdbc.user", dbProvider.getJdbcUsername());
                 emfProps.setProperty("jakarta.persistence.jdbc.password", dbProvider.getJdbcPassword());
+                // EclipseLink would otherwise try to decrypt the password and fail on one
+                // made only of hex digits
+                emfProps.putIfAbsent("eclipselink.login.encryptor", PlainTextPasswordEncryptor.class.getName());
             }
 
             try {
