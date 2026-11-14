@@ -42,6 +42,8 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 
 <script src="<s:url value='/webjars/clipboard.js/2.0.11/clipboard.min.js' />"></script>
 
+<%-- restores the three jQuery APIs Summernote 0.9.1 still uses; remove with a jQuery 4 ready Summernote --%>
+<script src="<s:url value='/roller-ui/scripts/jquery4-summernote-compat.js' />"></script>
 <script src="<s:url value='/webjars/summernote/0.9.1/dist/summernote-bs5.min.js' />"></script>
 <link href="<s:url value='/webjars/summernote/0.9.1/dist/summernote-bs5.min.css' />" rel="stylesheet" />
 
