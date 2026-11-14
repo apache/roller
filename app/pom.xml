@@ -280,7 +280,7 @@ limitations under the License.
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
-            <version>3.7.1</version>
+            <version>4.0.0</version>
         </dependency>
 
         <dependency>
@@ -297,10 +297,12 @@ limitations under the License.
             <version>0.9.1</version>
         </dependency>
 
+        <!-- 1.22 is the first release that supports jQuery 4. It is published
+             only as an npm webjar, which serves the scripts from dist/ -->
         <dependency>
-            <groupId>org.webjars</groupId>
+            <groupId>org.webjars.npm</groupId>
             <artifactId>jquery-validation</artifactId>
-            <version>1.21.0</version>
+            <version>1.22.1</version>
         </dependency>
 
         <dependency>
