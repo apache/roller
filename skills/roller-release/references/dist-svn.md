@@ -15,7 +15,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# Distribution staging and promotion
+# SVN distribution for Roller 6.1.x
+
+Use this procedure for 6.1.x.
+For Roller 7.x and later use [ATR](atr.md), which owns staging and publication. Do not run
+these promotion steps alongside ATR for the same candidate.
 
 Confirm the current project layout before preparing paths:
 
