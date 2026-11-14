@@ -468,11 +468,12 @@ public class LuceneIndexManager implements IndexManager {
             // The index can lag behind the entries, so page through the hits
             // whose entry is published now (and not a future post). Only
             // those count toward the offset and limit. Stop once the requested
-            // page is filled; if the hits run out first, an out-of-range page
-            // falls back to the first page below.
+            // page is filled and one more hit is found, which tells whether
+            // there is a next page; if the hits run out first, an out-of-range
+            // page falls back to the first page below.
             List<VisibleHit> visible = new ArrayList<>();
             Timestamp now = new Timestamp(new Date().getTime());
-            long wanted = (long) (pageNum + 1) * entryCount;
+            long wanted = (long) (pageNum + 1) * entryCount + 1;
             for (ScoreDoc hit : hits) {
                 if (visible.size() >= wanted) {
                     break;
@@ -513,7 +514,11 @@ public class LuceneIndexManager implements IndexManager {
                 categories = categorySet;
             }
 
-            return new SearchResultList(results, categories, limit, offset);
+            boolean more = visible.size() > offset + limit;
+            // the total is every match in the index; hits holds at most
+            // search.results.max of them
+            return new SearchResultList(results, categories, limit, offset,
+                    search.getResultsCount(), more);
 
         } catch (IOException e) {
             throw new WebloggerException(e);
