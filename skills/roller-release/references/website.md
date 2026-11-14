@@ -42,6 +42,12 @@ be enabled, and inline HTML is the safer choice.
 A project security page must not list or hint at undisclosed CVEs. Link CVE records
 only once they are published.
 
+For ATR releases, [ATR](atr.md) publishes the approved artifacts first. Keep ATR's
+announcement pending until the live website and links have been verified; ATR's
+propagation check alone does not validate the project download page. Keep
+superseded-release cleanup manual and preserve supported 6.1.x
+releases. Use ATR's actual published paths when updating links.
+
 Publish the website only when the approved release artifacts are available.
 Verify the live page and links before announcement, then prune superseded
 releases within the agreed scope. Keep release-specific website defects in the
