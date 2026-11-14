@@ -41,7 +41,7 @@ limitations under the License.
 
     <properties>
         <derby.version>10.16.1.1</derby.version>
-        <jetty.plugin.version>12.1.13</jetty.plugin.version>
+        <jetty.plugin.version>12.1.15</jetty.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <roller.version>7.0.0-SNAPSHOT</roller.version>
@@ -159,7 +159,14 @@ limitations under the License.
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>33.7.2-jre</version>
+                <version>33.8.0-jre</version>
+            </dependency>
+            <!-- transitive through struts2-core; 3.4.12 lets reflection proxies bypass the
+                 stricter-invocation block list (CVE-2026-113730), fixed in 3.4.13 -->
+            <dependency>
+                <groupId>ognl</groupId>
+                <artifactId>ognl</artifactId>
+                <version>3.4.17</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
