@@ -132,6 +132,9 @@
 
 ### Build and packaging
 
+- **The WAR no longer includes jcl-over-slf4j.** Roller logs through
+  commons-logging 1.4, which sends everything straight to Log4j. A deployment
+  that added its own commons-logging bridge should remove it.
 - The source distribution now extracts to `apache-roller-<version>-source/`,
   matching its file name, instead of `roller-weblogger-<version>-source/`.
 
