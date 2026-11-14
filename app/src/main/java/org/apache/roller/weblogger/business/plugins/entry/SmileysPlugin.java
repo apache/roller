@@ -18,155 +18,115 @@
 
 package org.apache.roller.weblogger.business.plugins.entry;
 
-import java.util.Enumeration;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.text.StringEscapeUtils;
+import java.util.stream.Collectors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.WebloggerException;
-import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
-import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 
 /**
- * Converts ascii emoticons into HTML image tags.
+ * Converts ASCII emoticons into Unicode emoji.
+ *
+ * <p>Each emoticon listed in <code>smileys.properties</code> becomes
+ * <code>&lt;span class="smiley" title=":-)"&gt;&amp;#x1F642;&lt;/span&gt;</code>,
+ * so no image files are needed and the emoji scales with the text around it.
  */
 public class SmileysPlugin implements WeblogEntryPlugin {
-    
+
     private static final Log log = LogFactory.getLog(SmileysPlugin.class);
 
-    // public for tests
-    public static Pattern[] smileyPatterns = new Pattern[0];
-    static String[] imageTags = new String[0];
-    private static final Properties smileyDefs = new Properties();
-    
-    private final String name = "Emoticons";
-    private final String description = "Change ASCII emoticons to graphics.  " +
-            ":-) becomes <img src='./images/smileys/smile.gif'>";
-    
-    
+    private static final String NAME = "Emoticons";
+    private static final String DESCRIPTION =
+            "Change ASCII emoticons to emoji. :-) becomes a smiling face.";
+
+    /** Matches any of the emoticons, longest first. */
+    private static final Pattern SMILEY_PATTERN;
+
+    /** The markup that replaces each emoticon. */
+    private static final Map<String, String> REPLACEMENTS;
+
     static {
-        try {
-            smileyDefs.load(SmileysPlugin.class.getResourceAsStream("smileys.properties"));
-        } catch (Exception e) {
+        Properties smileyDefs = new Properties();
+        try (InputStream in = SmileysPlugin.class.getResourceAsStream("smileys.properties")) {
+            if (in == null) {
+                throw new IOException("smileys.properties is not on the classpath");
+            }
+            smileyDefs.load(in);
+        } catch (IOException e) {
             log.error("Unable to load smileys.properties", e);
         }
+
+        Map<String, String> replacements = new HashMap<>();
+        for (String smiley : smileyDefs.stringPropertyNames()) {
+            String codePoint = smileyDefs.getProperty(smiley).trim();
+            String title = StringEscapeUtils.escapeHtml4(smiley);
+            replacements.put(smiley, "<span class=\"smiley\" title=\"" + title + "\">&#x"
+                    + codePoint + ";</span>");
+        }
+        REPLACEMENTS = Collections.unmodifiableMap(replacements);
+
+        // One pass with the longest emoticons tried first, so that ":))" is
+        // not read as ":)" followed by ")", and markup that has already been
+        // inserted is never matched again
+        List<String> smileys = new ArrayList<>(replacements.keySet());
+        smileys.sort((a, b) -> b.length() != a.length()
+                ? b.length() - a.length() : a.compareTo(b));
+        SMILEY_PATTERN = smileys.isEmpty() ? null : Pattern.compile(
+                smileys.stream().map(Pattern::quote).collect(Collectors.joining("|")));
     }
 
-    
+
     public SmileysPlugin() {
         log.debug("SmileysPlugin instantiated.");
     }
-    
-    
+
+
     @Override
     public String getName() {
-        return name;
+        return NAME;
     }
-    
-    
+
+
     @Override
     public String getDescription() {
-        return StringEscapeUtils.escapeEcmaScript(description);
+        return StringEscapeUtils.escapeEcmaScript(DESCRIPTION);
     }
-    
-    
-    /*
-     * Convert the SmileyDefs into RegEx patterns and img tags for
-     * later use.  Need an HttpServletRequest though so that we can
-     * get the ServletContext Path.  But only do it once.
-     */
+
+
     @Override
-    public synchronized void init(Weblog website) throws WebloggerException {
-        // don't do this work if Smileys already loaded
-        if (SmileysPlugin.smileyPatterns.length < 1) {
-            String baseURL = WebloggerRuntimeConfig.getAbsoluteContextURL();
-            
-            Pattern[] tempP = new Pattern[SmileysPlugin.smileyDefs.size()];
-            String[] tempS = new String[SmileysPlugin.smileyDefs.size()];
-            log.debug("# smileys: " + smileyDefs.size());
-            int count = 0;
-            Enumeration<?> enum1 = SmileysPlugin.smileyDefs.propertyNames();
-            while(enum1.hasMoreElements()) {
-                String smiley = (String)enum1.nextElement();
-                String smileyAlt = htmlEscape(smiley);
-                tempP[count] = Pattern.compile(regexEscape(smiley));
-                tempS[count] = "<img src=\"" +
-                        baseURL + "/images/smileys/" +
-                        smileyDefs.getProperty(smiley, "smile.gif") +
-                        "\" class=\"smiley\"" +
-                        " alt=\"" + smileyAlt + "\"" +
-                        " title=\"" + smileyAlt +"\" />";
-                log.debug(smiley + "=" + tempS[count]);
-                count++;
-            }
-            SmileysPlugin.smileyPatterns = tempP;
-            SmileysPlugin.imageTags = tempS;
-        }
+    public void init(Weblog website) throws WebloggerException {
+        // nothing to do, the emoticons are loaded once when the class loads
     }
-    
-    
+
+
     /**
-     * Find occurences of ascii emoticons and turn them into HTML image pointers.
+     * Find occurrences of ASCII emoticons and turn them into emoji.
      */
     @Override
     public String render(WeblogEntry entry, String text) {
-        Matcher matcher;
-        for (int i=0; i<smileyPatterns.length; i++) {
-            matcher = smileyPatterns[i].matcher(text);
-            text = matcher.replaceAll(imageTags[i]);
+        if (SMILEY_PATTERN == null || text == null) {
+            return text;
         }
-        return text;
-    }
-    
-    
-    /*
-     * To display the smiley 'glyph' certain characters
-     * must be HTML escaped.
-     */
-    private String htmlEscape(String smiley) {
-        char[] chars = smiley.toCharArray();
-        StringBuilder buf = new StringBuilder();
-        for (int i=0; i<chars.length; i++) {
-            if (chars[i] == '"') {
-                buf.append("&quot;");
-            } else if (chars[i] == '>') {
-                buf.append("&gt;");
-            } else if (chars[i] == '<') {
-                buf.append("&lt;");
-            } else {
-                buf.append(chars[i]);
-            }
+        Matcher matcher = SMILEY_PATTERN.matcher(text);
+        StringBuilder result = new StringBuilder(text.length());
+        while (matcher.find()) {
+            matcher.appendReplacement(result,
+                    Matcher.quoteReplacement(REPLACEMENTS.get(matcher.group())));
         }
-        return buf.toString();
+        matcher.appendTail(result);
+        return result.toString();
     }
-    
-    /**
-     * Some characters have to escaped with a backslash before
-     * being compiled into a Regular Expression.
-     *
-     * @param smiley
-     * @return
-     */
-    private static final char[] escape_regex = new char[]
-    {'-', '(', ')', '\\', '|', ':', '^', '$', '*', '+', '?',
-     '{', '}', '!', '=', '<', '>', '&', '[', ']' };
-    
-    private String regexEscape(String smiley) {
-        char[] chars = smiley.toCharArray();
-        StringBuilder buf = new StringBuilder();
-        for (int i=0; i<chars.length; i++) {
-            for (int x=0; x<escape_regex.length; x++) {
-                if (escape_regex[x] == chars[i]) {
-                    buf.append("\\");
-                    break;
-                }
-            }
-            buf.append(chars[i]);
-        }
-        return buf.toString();
-    }
-    
+
 }

@@ -9,23 +9,11 @@
 		<style>
 		span.searchword { background-color:yellow; }
 		</style>
-		<script>
-			//<![CDATA[
-				searchhi_config = {ignore_site : '$url.absoluteSite'};
-			//]]>
-		</script>
-		<script type="application/x-javascript" src="$url.resource('js/searchhi.js')"></script>
-		<script>
-			//<![CDATA[
-			function loadSearchHighlight() {
-				searchhi.highlightWord(document.getElementById("search_results"), '$model.term');
-			}
-			//]]>
-		</script>
+		<script src="$url.resource('js/search-highlight.js')"></script>
    	#end
 	<link rel="stylesheet" href='$url.page("custom.css")' />
 </head>
-<body onload="loadSearchHighlight()">
+<body>
 
 	<!-- HEADER -->
 	<header>
@@ -50,7 +38,7 @@
 		        $text.get( "macro.weblog.searchhits", [$model.term, $model.hits])
         	</div>
         	#if ($model.hits > 0)
-				<div id="search_results">
+				<div id="search_results" data-search-term="$model.term">
 					 #showNextPrevSearchControl($pager)
 					 #set($pager = $model.getWeblogEntriesPager())
 					 #showWeblogEntriesPager($pager)
