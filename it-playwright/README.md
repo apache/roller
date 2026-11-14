@@ -24,7 +24,7 @@ CI runs them on every push and pull request (see `.github/workflows/main.yml`).
 
 The suite points at a running Roller and adapts to how it is configured:
 
-* `NewUserJourneyIT` covers what the old Selenium suite did: register the first user, sign in, create a weblog, publish an entry and read it back on the blog. Roller only accepts registrations while it has no users, so this test skips itself on an instance that already has one, and on an instance that delegates login to an identity provider.
+* `NewUserJourneyIT` covers what the old Selenium suite did: register the first user, sign in, create a weblog, publish an entry, read it back on the blog and comment on it, signed in and as a visitor. Roller only accepts registrations while it has no users, so this test skips itself on an instance that already has one, and on an instance that delegates login to an identity provider.
 * `OidcLoginIT` signs in through an external OIDC provider as an administrator and as a regular user, checks that only the administrator can reach server administration, and that a signed-in OIDC user can create a weblog and see it rendered. It skips itself when no provider is configured.
 * `LoginPageIT` checks the login page offers exactly the sign-in mechanisms of the configured authentication method. It only runs when you declare that method (see below).
 
