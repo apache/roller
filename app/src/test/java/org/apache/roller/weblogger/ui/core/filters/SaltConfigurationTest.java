@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SaltConfigurationTest {
@@ -46,6 +47,29 @@ public class SaltConfigurationTest {
         assertTrue(loadMapping >= 0, "LoadSaltFilter mapping is missing");
         assertTrue(validateMapping < loadMapping,
                 "ValidateSaltFilter must run before LoadSaltFilter");
+    }
+
+    /**
+     * The comment form on a weblog carries no salt. It posts to the entry's
+     * permalink, which is outside /roller-ui, and RequestMappingFilter forwards
+     * that to the comment servlet under /roller-ui/rendering. ValidateSaltFilter
+     * must stay off forwards, or it would reject the comment of anyone with a
+     * session: a signed-in user, or a visitor the comment authenticator gave one.
+     */
+    @Test
+    public void testSubmittedSaltIsNotValidatedOnForwards() throws Exception {
+        Path projectDirectory = Path.of(
+                System.getProperty("project.build.directory")).getParent();
+        String webXml = Files.readString(projectDirectory.resolve(
+                "src/main/webapp/WEB-INF/web.xml"));
+
+        int start = filterMappingPosition(webXml, "ValidateSaltFilter");
+        assertTrue(start >= 0, "ValidateSaltFilter mapping is missing");
+        String mapping = webXml.substring(start,
+                webXml.indexOf("</filter-mapping>", start));
+
+        assertFalse(mapping.contains("<dispatcher>FORWARD</dispatcher>"),
+                "ValidateSaltFilter must not run on forwards, comment posts have no salt");
     }
 
     @Test

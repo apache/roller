@@ -144,6 +144,24 @@ public class LoadSaltFilterTest {
     }
 
     @Test
+    void forwardedCommentPostsGetNoSessionAndNoSalt() throws Exception {
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            // A comment is posted to the entry's permalink and forwarded here.
+            when(request.getMethod()).thenReturn("POST");
+            when(request.getServletPath()).thenReturn("/roller-ui/rendering/comment");
+
+            filter.doFilter(request, response, chain);
+
+            verify(request, never()).getSession(true);
+            verify(request, never()).getSession();
+            verify(request, never()).setAttribute(eq("salt"), anyString());
+            verify(saltCache, never()).put(anyString(), anyString());
+            verify(chain).doFilter(request, response);
+        }
+    }
+
+    @Test
     void otherRollerUiPathsStillGetASalt() throws Exception {
         try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
              MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
