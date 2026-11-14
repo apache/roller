@@ -80,6 +80,9 @@ limitations under the License.
         <Logger name="com.opensymphony"        level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
         <Logger name="com.rometools"           level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
         <Logger name="org.webjars"             level="info"  additivity="false"> <AppenderRef ref="asyncRoller"/> </Logger>
+        <!-- Lucene warns on every start that the incubating Vector API isn't enabled. Enabling
+             it makes the JVM warn about incubator modules instead, so keep only its errors. -->
+        <Logger name="org.apache.lucene.internal.vectorization" level="error"/>
 
         <!-- server.log catches everything that hasn't been logged yet-->
         <Root level="info">
