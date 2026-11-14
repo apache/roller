@@ -143,6 +143,9 @@
 - Apache XML-RPC (`xmlrpc-common`, `xmlrpc-server`) and `ws-commons-util`
   are no longer shipped. Apache XML-RPC is end of life, and 3.1.3 has an
   unfixed denial-of-service issue (CVE-2016-5004).
+- Third-party libraries are updated to their latest patch and minor releases,
+  among them Struts 7.4.0, Spring 7.0.10 and Spring Security 7.1.2. OGNL is
+  pinned to 3.4.17, which fixes CVE-2026-113730.
 - **The WAR no longer includes jcl-over-slf4j.** Roller logs through
   commons-logging 1.4, which sends everything straight to Log4j. A deployment
   that added its own commons-logging bridge should remove it.
