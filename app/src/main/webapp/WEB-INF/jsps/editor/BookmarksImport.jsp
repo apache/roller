@@ -17,24 +17,33 @@
 --%>
 <%@ include file="/WEB-INF/jsps/taglibs-struts2.jsp" %>
 
-<p class="subtitle">
-    <s:text name="bookmarksImport.subtitle" >
-        <s:param value="actionWeblog.handle" />
-    </s:text>
-</p>
+<%-- Import an OPML file into a new blogroll; on success the blogroll page opens it. --%>
 
-<p class="pagetip">
-    <s:text name="bookmarksImport.prompt" />
-</p>     
+<s:url var="blogrollURL" action="bookmarks">
+    <s:param name="weblog" value="%{actionWeblog.handle}"/>
+</s:url>
 
-<s:form action="bookmarksImport!save" method="POST" enctype="multipart/form-data">
-	<s:hidden name="salt" />
-    <s:hidden name="weblog" />
-    <s:file name="opmlFile" />
-    <br />
-    <br />
-    <div class="mb-3">
-        <s:submit theme="simple" cssClass="btn btn-primary" value="%{getText('bookmarksImport.import')}" />
-        <s:submit theme="simple" cssClass="btn btn-outline-secondary" value="%{getText('generic.cancel')}" action="bookmarks" />
-    </div>
-</s:form>
+<div class="blogroll-import">
+    <p class="subtitle">
+        <s:text name="bookmarksImport.subtitle">
+            <s:param value="actionWeblog.handle"/>
+        </s:text>
+    </p>
+
+    <p class="pagetip"><s:text escapeHtml="true" name="bookmarksImport.prompt"/></p>
+
+    <s:form action="bookmarksImport!save" method="POST" enctype="multipart/form-data" theme="simple">
+        <s:hidden name="salt"/>
+        <s:hidden name="weblog"/>
+        <div class="mb-3">
+            <label class="form-label" for="opmlFile"><s:text escapeHtml="true" name="bookmarksImport.file"/></label>
+            <input type="file" class="form-control" id="opmlFile" name="opmlFile" required
+                   accept=".opml,.xml,text/xml,text/x-opml,application/xml" aria-describedby="opmlFileHelp">
+            <div id="opmlFileHelp" class="form-text"><s:text escapeHtml="true" name="bookmarksImport.fileHelp"/></div>
+        </div>
+        <div class="d-flex gap-2">
+            <s:submit theme="simple" cssClass="btn btn-primary" value="%{getText('bookmarksImport.import')}"/>
+            <a class="btn btn-outline-secondary" href="<s:property value='%{blogrollURL}'/>"><s:text escapeHtml="true" name="generic.cancel"/></a>
+        </div>
+    </s:form>
+</div>

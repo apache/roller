@@ -425,7 +425,7 @@
         <action name="categories"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Categories">
             <result name="list" type="tiles">.Categories</result>
-            <allowed-methods>execute,move</allowed-methods>
+            <allowed-methods>execute,reorder</allowed-methods>
         </action>
 
         <action name="categoryAdd"
@@ -480,7 +480,7 @@
         <action name="bookmarks"
                 class="org.apache.roller.weblogger.ui.struts2.editor.Bookmarks">
             <result name="list" type="tiles">.Bookmarks</result>
-            <allowed-methods>delete,deleteFolder,execute,folderCreated,move,view</allowed-methods>
+            <allowed-methods>delete,deleteFolder,execute,folderCreated,move,reorder</allowed-methods>
         </action>
 
         <action name="bookmarkAdd"
@@ -511,7 +511,12 @@
         <action name="bookmarksImport"
                 class="org.apache.roller.weblogger.ui.struts2.editor.BookmarksImport">
             <result name="input" type="tiles">.BookmarksImport</result>
-            <result name="success" type="chain">bookmarks</result>
+            <!-- redirect, so the blogroll page opens the new blogroll at its own URL -->
+            <result name="success" type="redirectAction">
+                <param name="actionName">bookmarks!folderCreated</param>
+                <param name="weblog">${weblog}</param>
+                <param name="folderId">${folderId}</param>
+            </result>
             <allowed-methods>execute,save</allowed-methods>
         </action>
 

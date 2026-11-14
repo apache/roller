@@ -82,6 +82,15 @@ public final class WeblogWrapper {
     }
     
     
+    /**
+     * The weblog's page templates, under the name the template guide documents
+     * and page menus use: $weblog.pages.
+     */
+    public List<ThemeTemplateWrapper> getPages() throws WebloggerException {
+        return getTemplates();
+    }
+    
+    
     public String getId() {
         return this.pojo.getId();
     }
