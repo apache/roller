@@ -20,12 +20,13 @@ package org.apache.roller.weblogger.ui.rendering.model;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.text.StringEscapeUtils;
@@ -52,8 +53,21 @@ public class UtilitiesModel implements Model {
     
     private static final Log log = LogFactory.getLog(UtilitiesModel.class);
 
-    /** Invalid date patterns already logged, so a busy page logs each one once. */
-    private static final Set<String> INVALID_DATE_PATTERNS = ConcurrentHashMap.newKeySet();
+    /** Most invalid date patterns remembered for logging; templates can hold any number. */
+    static final int MAX_INVALID_DATE_PATTERNS = 100;
+
+    /**
+     * Invalid date patterns already logged, so a busy page logs each one once.
+     * Least recently seen patterns are dropped past the limit, so templates can't
+     * grow it without bound.
+     */
+    static final Set<String> INVALID_DATE_PATTERNS = Collections.newSetFromMap(
+            Collections.synchronizedMap(new LinkedHashMap<String, Boolean>(16, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, Boolean> eldest) {
+                    return size() > MAX_INVALID_DATE_PATTERNS;
+                }
+            }));
 
     private ParsedRequest parsedRequest = null;
     private Weblog weblog = null;
