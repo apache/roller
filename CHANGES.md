@@ -13,6 +13,16 @@
   - A details page for each file, with a preview, its facts, a copy-URL
     button and the edit form. The description is used as the image's alt text.
 
+- **Redesigned categories page.** Categories are one list you can reorder.
+  - Drag a category by its handle, or use the arrow keys on the handle, to
+    change the order themes show categories in.
+  - Each category shows how many entries it has, linked to those entries.
+  - Add and edit in one dialog with field-level checks and an image preview.
+    When media uploads are on, the dialog can choose the category image
+    from the media library. Deleting a category that has entries asks
+    where to move them.
+  - The page works on phones, and a short message confirms each change.
+
 - **AtomPub can manage templates and categories.** New collections
   in each weblog's workspace, documented in the user guide:
   - Templates (standard and mobile versions) for weblog administrators,
@@ -25,8 +35,21 @@
   every AtomPub URI, permission, element and status code, with examples
   that the test suite checks against the code.
 
+- **Redesigned blogroll page.** A weblog's blogrolls are listed beside
+  their links, and each blogroll has its own address.
+  - Drag a link by its handle, or use the arrow keys on the handle, to
+    change the order themes show links in.
+  - Select links to move them to another blogroll or delete them.
+  - Add and edit links in one dialog that starts with the URL, fills in the
+    name from it, and checks each field. OPML import is back on the page.
+  - The default blogroll can't be renamed, since themes find it by its
+    name, and the page works on phones.
+
 ### Bug fixes
 
+- **Page menus list a weblog's custom pages again.** `#showPageMenu` and the
+  menus in the Gaurav and PaperMod themes loop over `$weblog.pages`, which
+  had stopped existing, so pages marked "include in page menu" never appeared.
 - **Search shows how many entries matched and pages through all of them.**
   The count was the number of results on the current page, so it never went
   above ten and there was no link to a second page. Results past the first

@@ -26,6 +26,7 @@ import org.apache.roller.weblogger.business.BookmarkManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.WeblogBookmark;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.util.HTMLSanitizer;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -131,10 +132,12 @@ public class BookmarkEdit extends UIAction {
             addError("bookmarkForm.notFound");
             return;
         }
-        // if name new or changed, check new name doesn't already exist
-        if ((isAdd() || !getBean().getName().equals(bookmark.getName()))
-             && bookmark.getFolder().hasBookmarkOfName(getBean().getName())) {
-                addError("bookmarkForm.error.duplicateName", getBean().getUrl());
+        // if name new or changed, check new name doesn't already exist; names are
+        // stored sanitized, so compare the sanitized form
+        String name = HTMLSanitizer.conditionallySanitize(getBean().getName());
+        if ((isAdd() || !StringUtils.equals(name, bookmark.getName()))
+             && bookmark.getFolder().hasBookmarkOfName(name)) {
+                addError("bookmarkForm.error.duplicateName", getBean().getName());
         }
     }
 
