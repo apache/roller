@@ -62,8 +62,9 @@ public class StrutsParameterAnnotationTest {
      * action class simple name and parameter name.
      */
     private static final Set<String> NOT_BOUND = Set.of(
-            // no such property; the hidden fields are leftovers in the JSPs
-            "Categories.categoryId",
+            // set from the static <param> of the action mapping in struts.xml
+            "FolderEdit.actionName",
+            // no such property; the hidden field is a leftover in the JSP
             "WeblogConfig.defaultPlugins");
 
     /**
