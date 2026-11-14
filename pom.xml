@@ -46,6 +46,7 @@ limitations under the License.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <roller.version>7.0.0-SNAPSHOT</roller.version>
         <slf4j.version>2.0.20</slf4j.version>
+        <commons-logging.version>1.4.0</commons-logging.version>
     </properties>
 
     <modules>
@@ -126,7 +127,6 @@ limitations under the License.
                             <inputExclude>/src/main/webapp/roller-ui/styles/jquery.mobile-theme/**</inputExclude>
                             <inputExclude>/docker/wait-for-it.sh</inputExclude>
                             <!-- data files read line by line, where a header would be data -->
-                            <inputExclude>/src/main/webapp/META-INF/org.apache.commons.logging.LogFactory</inputExclude>
                             <inputExclude>/src/main/resources/bannedwordslist.txt</inputExclude>
                             <inputExclude>/src/test/resources/blacklist.txt</inputExclude>
                             <inputExclude>/src/test/resources/bookmarks.opml</inputExclude>
