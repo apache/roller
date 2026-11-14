@@ -47,6 +47,10 @@
 
 ### Bug fixes
 
+- **A bad date pattern in a theme no longer blanks the page.**
+  `$utils.formatDate` logs a warning and uses the locale's standard date and
+  time format. Older themes often pass a message key that no longer exists,
+  such as `macro.weblog.date.timestampFormat`, which `$text.get` returns as is.
 - **Page menus list a weblog's custom pages again.** `#showPageMenu` and the
   menus in the Gaurav and PaperMod themes loop over `$weblog.pages`, which
   had stopped existing, so pages marked "include in page menu" never appeared.
@@ -85,6 +89,14 @@
     the server's internal error text.
 
 ### Behaviour changes worth reading before upgrading
+
+- **Themes from Roller 5.0 or earlier may need updating.** Roller 5.1 removed
+  the pre-3.0 macros in `WEB-INF/velocity/deprecated/`, such as
+  `#showWeblogEntries` and `#showBookmarks`, and referrer macros such as
+  `#showReferrersList`. A template that still calls one prints the call as
+  plain text. Compare your custom
+  templates with the macros in `WEB-INF/velocity/weblog.vm`, or switch to a
+  shared theme and customize from there.
 
 - **The obsolete weblog update ping feature is removed.** Public ping services
   have largely shut down following years of ping spam. The 7.0 database upgrade

@@ -18,11 +18,14 @@
 
 package org.apache.roller.weblogger.ui.rendering.model;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.text.StringEscapeUtils;
@@ -48,7 +51,10 @@ import org.apache.roller.weblogger.util.Utilities;
 public class UtilitiesModel implements Model {
     
     private static final Log log = LogFactory.getLog(UtilitiesModel.class);
-    
+
+    /** Invalid date patterns already logged, so a busy page logs each one once. */
+    private static final Set<String> INVALID_DATE_PATTERNS = ConcurrentHashMap.newKeySet();
+
     private ParsedRequest parsedRequest = null;
     private Weblog weblog = null;
     
@@ -137,7 +143,19 @@ public class UtilitiesModel implements Model {
             return fmt;
         }
         
-        SimpleDateFormat format = new SimpleDateFormat(fmt, weblog.getLocaleInstance());
+        DateFormat format;
+        try {
+            format = new SimpleDateFormat(fmt, weblog.getLocaleInstance());
+        } catch (IllegalArgumentException e) {
+            // Usually an older theme passing a message key that no longer exists,
+            // which $text.get returns as is. Format the date rather than fail the page.
+            if (INVALID_DATE_PATTERNS.add(fmt)) {
+                log.warn("Invalid date pattern '" + fmt + "' in a template of weblog '"
+                        + weblog.getHandle() + "'; using the default format instead: " + e.getMessage());
+            }
+            format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT,
+                    weblog.getLocaleInstance());
+        }
         if(tzOverride != null) {
             format.setTimeZone(tzOverride);
         }
