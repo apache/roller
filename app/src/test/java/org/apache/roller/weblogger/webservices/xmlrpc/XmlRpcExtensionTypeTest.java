@@ -17,7 +17,6 @@
  */
 package org.apache.roller.weblogger.webservices.xmlrpc;
 
-import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -27,11 +26,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.xmlrpc.parser.XmlRpcRequestParser;
-import org.apache.xmlrpc.common.XmlRpcHttpRequestConfigImpl;
-import org.apache.xmlrpc.common.TypeFactoryImpl;
-import org.apache.xmlrpc.common.XmlRpcController;
-import org.apache.xmlrpc.server.XmlRpcServer;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.ui.core.filters.XmlRpcEnabledFilter;
 import org.junit.jupiter.api.Test;
@@ -39,8 +33,6 @@ import org.mockito.MockedStatic;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,9 +48,9 @@ import static org.mockito.Mockito.mockStatic;
 /**
  * Covers how the XML-RPC endpoint treats vendor extension types.
  *
- * <p>Roller's XML-RPC API uses only the standard value types, so the library's
- * vendor extension types are switched off in <code>web.xml</code> and the
- * endpoint is closed entirely while the service is disabled.
+ * <p>Roller's XML-RPC API uses only the standard value types, so vendor
+ * extension types are refused, and the endpoint is closed entirely while the
+ * service is disabled.
  */
 public class XmlRpcExtensionTypeTest {
 
@@ -66,21 +58,8 @@ public class XmlRpcExtensionTypeTest {
             System.getProperty("project.basedir", System.getProperty("user.dir")),
             "src", "main", "webapp", "WEB-INF", "web.xml");
 
-    private String parseRequest(String xml, boolean extensionsEnabled) throws Exception {
-        XmlRpcServer server = new XmlRpcServer();
-        XmlRpcHttpRequestConfigImpl config = new XmlRpcHttpRequestConfigImpl();
-        config.setEnabledForExtensions(extensionsEnabled);
-
-        XmlRpcRequestParser parser = new XmlRpcRequestParser(
-                config, new TypeFactoryImpl((XmlRpcController) server));
-        javax.xml.parsers.SAXParserFactory saxFactory =
-                javax.xml.parsers.SAXParserFactory.newInstance();
-        saxFactory.setNamespaceAware(true);
-        XMLReader reader = saxFactory.newSAXParser().getXMLReader();
-        reader.setContentHandler(parser);
-        reader.parse(new InputSource(
-                new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))));
-        return parser.getMethodName();
+    private String parseRequest(String xml) throws Exception {
+        return XmlRpcRequestParser.parse(xml.getBytes(StandardCharsets.UTF_8)).methodName();
     }
 
     private static final String ORDINARY_REQUEST =
@@ -104,22 +83,21 @@ public class XmlRpcExtensionTypeTest {
         }
     }
 
-    /** The shipped configuration must not enable the extension types. */
+    /** No init-param may switch the endpoint into a vendor-extension mode. */
     @Test
-    public void shippedConfigurationDisablesExtensionTypes() throws Exception {
-        Document document = webXml();
-        NodeList params = document.getElementsByTagNameNS("*", "init-param");
+    public void servletHasNoInitParameters() throws Exception {
+        NodeList servlets = webXml().getElementsByTagNameNS("*", "servlet");
         boolean found = false;
-        for (int i = 0; i < params.getLength(); i++) {
-            Element param = (Element) params.item(i);
-            NodeList names = param.getElementsByTagNameNS("*", "param-name");
-            if (names.getLength() > 0 && "enabledForExtensions".equals(names.item(0).getTextContent().trim())) {
+        for (int i = 0; i < servlets.getLength(); i++) {
+            Element servlet = (Element) servlets.item(i);
+            String servletClass = servlet.getElementsByTagNameNS("*", "servlet-class")
+                    .item(0).getTextContent().trim();
+            if (RollerXmlRpcServlet.class.getName().equals(servletClass)) {
                 found = true;
-                NodeList values = param.getElementsByTagNameNS("*", "param-value");
-                assertEquals("false", values.item(0).getTextContent().trim());
+                assertEquals(0, servlet.getElementsByTagNameNS("*", "init-param").getLength());
             }
         }
-        assertTrue(found, "enabledForExtensions init-param not found in web.xml");
+        assertTrue(found, "the XML-RPC servlet was not found in web.xml");
     }
 
     /** The endpoint is closed by a filter while the service is switched off. */
@@ -150,15 +128,16 @@ public class XmlRpcExtensionTypeTest {
     /** Ordinary XML-RPC calls must still parse with extensions disabled. */
     @Test
     public void ordinaryCallsStillParseWithExtensionsDisabled() throws Exception {
-        String methodName = parseRequest(ORDINARY_REQUEST, false);
+        String methodName = parseRequest(ORDINARY_REQUEST);
         assertNotNull(methodName, "an ordinary XML-RPC call must still parse");
         assertEquals("blogger.getUsersBlogs", methodName);
     }
 
-    /** Vendor extension values must be rejected by the shipped parser policy. */
+    /** Vendor extension values are always refused. */
     @Test
-    public void extensionValuesAreRejectedWhenDisabled() {
-        assertThrows(Exception.class, () -> parseRequest(EXTENSION_REQUEST, false));
+    public void extensionValuesAreRejected() {
+        XmlRpcException e = assertThrows(XmlRpcException.class, () -> parseRequest(EXTENSION_REQUEST));
+        assertTrue(e.getMessage().contains("ex:nil"), e.getMessage());
     }
 
     /** Disabled requests receive a non-HTML response and never reach the chain. */

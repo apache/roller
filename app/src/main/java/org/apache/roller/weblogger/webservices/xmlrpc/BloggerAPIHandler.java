@@ -46,7 +46,6 @@ import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.ThemeTemplate.ComponentType;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.xmlrpc.XmlRpcException;
 
 /**
  * Weblogger XML-RPC Handler for the Blogger v1 API.

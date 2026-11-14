@@ -26,7 +26,6 @@ import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
-import org.apache.xmlrpc.common.XmlRpcNotAuthorizedException;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 

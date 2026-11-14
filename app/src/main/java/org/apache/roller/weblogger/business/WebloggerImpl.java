@@ -27,7 +27,6 @@ import org.apache.roller.weblogger.business.plugins.PluginManager;
 import org.apache.roller.weblogger.business.runnable.ThreadManager;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
-import org.apache.roller.weblogger.util.SecureXmlParsers;
 
 
 import java.io.IOException;
@@ -295,10 +294,6 @@ public abstract class WebloggerImpl implements Weblogger {
         getThreadManager().initialize();
         getIndexManager().initialize();
         getMediaFileManager().initialize();
-
-        // XML-RPC requests are parsed with Roller's standard parser
-        // configuration. If it cannot be applied, startup fails.
-        SecureXmlParsers.installForXmlRpc();
 
         // we always need to do a flush after initialization because it's
         // possible that some changes need to be persisted
