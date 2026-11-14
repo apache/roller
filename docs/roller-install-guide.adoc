@@ -1031,6 +1031,8 @@ Whenever Roller starts and finds setup work to do, it generates a cryptographica
 
 Upgrades that require no schema change issue no token and show no installer. Upgrading from any Roller 6.1.x release to another, including to 6.1.6, is such a case: the site starts up normally with no operator interaction.
 
+For an unattended or scripted upgrade, for example in a container or a deployment pipeline, set `installation.type=manual` and run the migration scripts yourself before starting the new version, as described in <<manual-table-creation-and-upgrade>>. In manual mode Roller issues no token and shows no installer; it expects the schema to be up to date already. The Docker image's `entry-point.sh` sets `installation.type=auto`, so an upgrade that needs a schema change asks for the token there.
+
 When a token is issued, open `/roller-ui/bootstrap-token.rol` over HTTPS (or a secured local tunnel) and enter the token before opening the installer or registering the first administrator. The token is accepted only in the POST body, expires after 60 minutes, and is consumed on successful entry. Restart Roller to obtain a new token if it expires or the browser session is lost. The token is never included in a URL or Roller page.
 
 NOTE: Because the token is written only to the server log, make sure you can read the Roller log — `roller.log`, or the container's console output — before you begin an upgrade that needs one. Plan for this in deployments where logs are shipped elsewhere or the console is not readily accessible.
