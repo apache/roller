@@ -38,6 +38,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
+import org.jdom2.input.SAXBuilder;
 
 /**
  * Reads an XML-RPC <code>methodCall</code>.
@@ -73,7 +74,11 @@ final class XmlRpcRequestParser {
     static XmlRpcRequest parse(byte[] body) throws XmlRpcException {
         Document document;
         try {
-            document = new SafeSAXBuilder().build(new ByteArrayInputStream(body));
+            SAXBuilder builder = new SafeSAXBuilder();
+            // SafeSAXBuilder already refuses document type declarations; saying
+            // so here as well keeps the setting next to the untrusted input
+            builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            document = builder.build(new ByteArrayInputStream(body));
         } catch (JDOMException | IOException e) {
             throw new XmlRpcException("Failed to parse XML-RPC request");
         }

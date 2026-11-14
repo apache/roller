@@ -28,9 +28,13 @@ public class XmlRpcException extends Exception {
     /** The fault code sent to the client. */
     public final int code;
 
-    public XmlRpcException(int code, String message) {
-        super(message);
+    /** The fault string sent to the client; written for the client, not the log. */
+    private final String faultString;
+
+    public XmlRpcException(int code, String faultString) {
+        super(faultString);
         this.code = code;
+        this.faultString = faultString;
     }
 
     /** A fault with code 0. */
@@ -40,5 +44,9 @@ public class XmlRpcException extends Exception {
 
     public int getCode() {
         return code;
+    }
+
+    public String getFaultString() {
+        return faultString;
     }
 }

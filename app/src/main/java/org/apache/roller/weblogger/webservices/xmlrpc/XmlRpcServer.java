@@ -97,7 +97,7 @@ final class XmlRpcServer {
             }
             result = invoke(request.methodName(), request.params());
         } catch (XmlRpcException e) {
-            return XmlRpcResponseWriter.fault(e.code, e.getMessage());
+            return XmlRpcResponseWriter.fault(e.code, e.getFaultString());
         }
         try {
             return XmlRpcResponseWriter.response(result);
