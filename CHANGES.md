@@ -104,6 +104,11 @@
   the largest allowed upload as base64. The limit also applies to the
   decompressed size of a gzip-encoded request. Only the standard XML-RPC
   value types are accepted.
+  Two other differences: characters outside the Basic Multilingual Plane,
+  such as emoji, are now sent as valid XML (the old library wrote each
+  surrogate half as its own reference, which clients rejected), and stored
+  carriage returns are now sent as `&#13;`, so clients receive line breaks
+  as stored rather than normalised to `\n`.
 
 - **Themes from Roller 5.0 or earlier may need updating.** Roller 5.1 removed
   the pre-3.0 macros in `WEB-INF/velocity/deprecated/`, such as
