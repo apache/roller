@@ -102,6 +102,11 @@
   `AtomHandlerFactory` (for example, for custom authentication) no longer has
   that handler. AtomPub clients see no change.
 
+### Build and packaging
+
+- The source distribution now extracts to `apache-roller-<version>-source/`,
+  matching its file name, instead of `roller-weblogger-<version>-source/`.
+
 ## 6.1.7
 
 ### Improvements
