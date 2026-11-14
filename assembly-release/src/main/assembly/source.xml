@@ -26,8 +26,7 @@
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<fileSet>
-			<outputDirectory>roller-weblogger-${pom.version}-source
-			</outputDirectory>
+			<outputDirectory>apache-roller-${pom.version}-source</outputDirectory>
 			<directory>${project.basedir}/../</directory>
 			<includes>
 				<include>app/**</include>

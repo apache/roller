@@ -74,12 +74,12 @@ Follow [Getting started](https://releases.apache.org/docs/getting-started) and
    browser requests, upload smaller batches; if necessary follow ATR's documented
    rsync route and explicitly record the same source commit.
 4. Resolve blockers and investigate other concerns, including source comparison
-   and licensing. The source archive named
-   `apache-roller-<version>-source.tar.gz` currently extracts to
-   `roller-weblogger-<version>-source/`, so ATR reports an archive-structure
-   concern because the root does not match the archive base. Review and
-   acknowledge that concern with the reason, or rename the root before the first
-   Roller 7 release. Do not suppress checks just to start voting. Record the final
+   and licensing. Each archive's root folder matches its name:
+   `apache-roller-<version>-source.tar.gz` extracts to
+   `apache-roller-<version>-source/` and the binary archives to
+   `apache-roller-<version>/`. If ATR still reports an archive-structure
+   concern, investigate it before acknowledging it. Do not suppress checks just
+   to start voting. Record the final
    ATR revision, candidate URL, manifest, archive filenames and digests, signer
    fingerprint, RC tag and source commit.
    Optionally give the revision an immutable RC tag in ATR.
