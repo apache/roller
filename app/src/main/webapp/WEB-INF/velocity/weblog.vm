@@ -128,12 +128,13 @@ blog entry (permalink) page.  If the relevant description value has not been con
 will be created.
 *#
 #macro(showMetaDescription)
+    ## escaped once whatever the trust setting: tags removed, entities decoded, then encoded
     #if ($model.permalink)
         #if ($utils.isNotEmpty($model.weblogEntry.searchDescription))
-            <meta name="description" content="$model.weblogEntry.searchDescription">
+            <meta name="description" content="$utils.escapeHTML($utils.unescapeHTML($utils.removeHTML($model.weblogEntry.searchDescription)))">
         #end
     #elseif ($utils.isNotEmpty($model.weblog.about))
-        <meta name="description" content="$model.weblog.about">
+        <meta name="description" content="$utils.escapeHTML($utils.unescapeHTML($utils.removeHTML($model.weblog.about)))">
     #end
 #end
 

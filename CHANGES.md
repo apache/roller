@@ -47,6 +47,10 @@
 
 ### Bug fixes
 
+- **Meta descriptions are always encoded.** A weblog's "about" text or an
+  entry's search description containing a quote no longer cuts the
+  `<meta name="description">` tag short, whether or not weblog admins are
+  trusted.
 - **A database password made only of hex digits no longer stops Roller from
   starting.** EclipseLink mistook such a password for an encrypted one and
   failed with "Database password was encrypted by deprecated algorithm".
