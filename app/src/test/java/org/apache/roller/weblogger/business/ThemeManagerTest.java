@@ -23,10 +23,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
+import org.apache.roller.weblogger.pojos.MediaFileDirectory;
+import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.Weblog;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -57,6 +61,40 @@ public class ThemeManagerTest  {
         assertNotNull( themeManager.getTheme("papermod").getStylesheet() );
         assertNotNull( themeManager.getTheme("terminal") );
         assertNotNull( themeManager.getTheme("terminal").getStylesheet() );
+    }
+
+    /** A weblog with no default media folder still gets a theme's root-level images. */
+    @Test
+    public void testImportThemeIntoWeblogWithoutDefaultMediaFolder() throws Exception {
+        User user = TestUtils.setupUser("themeImportUser");
+        Weblog weblog = TestUtils.setupWeblog("themeImportWeblog", user);
+        TestUtils.endSession(true);
+
+        MediaFileManager mfMgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+        weblog = TestUtils.getManagedWebsite(weblog);
+        mfMgr.removeMediaFileDirectory(mfMgr.getOrCreateDefaultMediaFileDirectory(weblog));
+        WebloggerFactory.getWeblogger().flush();
+        TestUtils.endSession(true);
+
+        ThemeManager themeManager = WebloggerFactory.getWeblogger().getThemeManager();
+        themeManager.initialize();
+        weblog = TestUtils.getManagedWebsite(weblog);
+        assertNull(mfMgr.getDefaultMediaFileDirectory(weblog));
+
+        // the frontpage theme lists root-level images such as roller-tan-logo.gif
+        themeManager.importTheme(weblog, themeManager.getTheme("frontpage"), false);
+        WebloggerFactory.getWeblogger().flush();
+        TestUtils.endSession(true);
+
+        weblog = TestUtils.getManagedWebsite(weblog);
+        MediaFileDirectory root = mfMgr.getDefaultMediaFileDirectory(weblog);
+        assertNotNull(root);
+        assertEquals(1, root.getMediaFiles().stream()
+                .filter(f -> "roller-tan-logo.gif".equals(f.getName())).count());
+
+        TestUtils.teardownWeblog(weblog.getId());
+        TestUtils.teardownUser(user.getUserName());
+        TestUtils.endSession(true);
     }
         
 }
