@@ -35,6 +35,16 @@
   every AtomPub URI, permission, element and status code, with examples
   that the test suite checks against the code.
 
+- **Redesigned blogroll page.** A weblog's blogrolls are listed beside
+  their links, and each blogroll has its own address.
+  - Drag a link by its handle, or use the arrow keys on the handle, to
+    change the order themes show links in.
+  - Select links to move them to another blogroll or delete them.
+  - Add and edit links in one dialog that starts with the URL, fills in the
+    name from it, and checks each field. OPML import is back on the page.
+  - The default blogroll can't be renamed, since themes find it by its
+    name, and the page works on phones.
+
 ### Bug fixes
 
 - **Page menus list a weblog's custom pages again.** `#showPageMenu` and the
