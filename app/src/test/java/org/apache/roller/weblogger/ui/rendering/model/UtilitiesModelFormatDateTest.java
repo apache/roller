@@ -89,4 +89,15 @@ public class UtilitiesModelFormatDateTest {
         assertTrue(html.contains("<h2>First entry</h2>") && html.contains("<h2>Second entry</h2>"), html);
         assertTrue(html.contains("2026"), html);
     }
+
+    @Test
+    public void rememberedInvalidPatternsStayBounded() {
+        DateFormat expected = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT, Locale.US);
+        expected.setTimeZone(UTC);
+        for (int i = 0; i < UtilitiesModel.MAX_INVALID_DATE_PATTERNS + 50; i++) {
+            assertEquals(expected.format(DATE), utils.formatDate(DATE, "missing.key." + i, UTC));
+        }
+        assertTrue(UtilitiesModel.INVALID_DATE_PATTERNS.size() <= UtilitiesModel.MAX_INVALID_DATE_PATTERNS,
+                "size " + UtilitiesModel.INVALID_DATE_PATTERNS.size());
+    }
 }
