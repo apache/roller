@@ -47,7 +47,9 @@ Follow [Getting started](https://releases.apache.org/docs/getting-started) and
   configured path, so leave it off and publish manually from the reviewed Finish
   page. Record the resolved path in the release work record.
 - Use Email vote mode and the normal minimum of 72 hours. Roller may default to
-  Trusted vote mode; explicitly select Email when starting the vote. On the
+  Trusted vote mode, and the start-vote form doesn't offer a choice, so set Vote
+  mode to Email in the project settings and confirm it took effect before
+  starting the vote. On the
   start-vote form, leave **Automatically publish to SVN distribution area when
   this vote resolves** unchecked. On the Finish tab, leave **Allow auto-archive**
   disabled. Review settings shared across release lines; preserve the latest
