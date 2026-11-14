@@ -871,20 +871,20 @@ Here is an explanation of each of the settings on the weblog
 
 image::user-guide-settings.png[]
 
-* *Title* - The title of your weblog may include HTML, but the HTML will
-be stripped out in your RSS feed. You can access your title in a page
-template with the expression _#showWebsiteTitle()_
+* *Title* - The title of your weblog. HTML is removed when you save it.
+You can access your title in a page template with the expression
+_$model.weblog.name_.
 
-* *Tagline* – Short description or sub title of your weblog. May include
-HTML, but the HTML will be stripped out in your RSS feed. You can access
-your tagline in a page template with the expression
-_#showWebsiteDescription()_.
+* *Tagline* – Short description or sub title of your weblog. HTML is
+removed when you save it. You can access your tagline in a page template
+with the expression _$model.weblog.tagline_.
 * *Icon* - The image file name (ex: thumbnail.jpg) or image url (ex:
 http://yoursite/thumbnail.com) that shows on some of the default themes.
 You’ll need to upload the image via the *Create & Edit:File Uploads* tab
 first.
 * About your blog – A more detailed description of the blog or blog
-author(s) that shows on some of the default themes.
+author(s) that shows on some of the default themes. HTML is removed when
+you save it.
 
 * *Email address of weblog owner*: Enter the email address that you
 would like people to use to contact the person in charge of your blog;
