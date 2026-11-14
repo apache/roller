@@ -499,19 +499,10 @@ public class PageServlet extends HttpServlet {
         }
 
         // lookup Renderer we are going to use
-        Renderer renderer;
-        try {
-            log.debug("Looking up renderer");
-            renderer = RendererManager.getRenderer(page,
-                    pageRequest.getDeviceType());
-        } catch (Exception e) {
-            // nobody wants to render my content :(
-            log.error("Couldn't find renderer for page " + page.getId(), e);
-
-            if (!response.isCommitted()) {
-                response.reset();
-            }
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        log.debug("Looking up renderer");
+        Renderer renderer = RendererManager.findRenderer(page, pageRequest.getDeviceType());
+        if (renderer == null) {
+            NoRenderer.sendNotFound(response, page, weblog, log);
             return;
         }
 

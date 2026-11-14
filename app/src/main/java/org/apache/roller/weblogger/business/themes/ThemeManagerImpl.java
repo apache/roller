@@ -201,11 +201,6 @@ public class ThemeManagerImpl implements ThemeManager {
 		WeblogManager wmgr = roller.getWeblogManager();
 		MediaFileManager fileMgr = roller.getMediaFileManager();
 
-		MediaFileDirectory root = fileMgr.getDefaultMediaFileDirectory(weblog);
-        if (root == null) {
-            log.warn("Weblog " + weblog.getHandle() + " does not have a root MediaFile directory");
-        }
-
 		Set<ComponentType> importedActionTemplates = EnumSet.noneOf(ComponentType.class);
 		ThemeTemplate stylesheetTemplate = theme.getStylesheet();
 		for (ThemeTemplate themeTemplate : theme.getTemplates()) {
@@ -314,7 +309,7 @@ public class ThemeManagerImpl implements ThemeManager {
 				String justPath;
 
 				if (resourcePath.indexOf('/') == -1) {
-					mdir = fileMgr.getDefaultMediaFileDirectory(weblog);
+					mdir = fileMgr.getOrCreateDefaultMediaFileDirectory(weblog);
 					justPath = "";
 					justName = resourcePath;
 

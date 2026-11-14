@@ -440,11 +440,14 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 .getNamedQuery("MediaFileDirectory.getByWeblogAndName", MediaFileDirectory.class);
         q.setParameter(1, weblog);
         q.setParameter(2, name);
-        try {
-            return q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
+        // Two requests that both found no folder can each have created one, and
+        // the table has no unique constraint, so don't fail on a duplicate
+        List<MediaFileDirectory> found = q.getResultList();
+        if (found.size() > 1) {
+            log.warn("Weblog " + weblog.getHandle() + " has " + found.size()
+                    + " media folders named '" + name + "'; using the first");
         }
+        return found.isEmpty() ? null : found.get(0);
     }
 
     /**
@@ -522,6 +525,20 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     public MediaFileDirectory getDefaultMediaFileDirectory(Weblog weblog)
             throws WebloggerException {
         return getMediaFileDirectoryByName(weblog, "default");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MediaFileDirectory getOrCreateDefaultMediaFileDirectory(Weblog weblog)
+            throws WebloggerException {
+        MediaFileDirectory directory = getDefaultMediaFileDirectory(weblog);
+        if (directory == null) {
+            directory = createDefaultMediaFileDirectory(weblog);
+            roller.flush();
+        }
+        return directory;
     }
 
     /**
@@ -789,12 +806,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                                     // create weblog's mediafile directory if
                                     // needed
                                     MediaFileDirectory root = this
-                                            .getDefaultMediaFileDirectory(weblog);
-                                    if (root == null) {
-                                        root = this
-                                                .createDefaultMediaFileDirectory(weblog);
-                                        roller.flush();
-                                    }
+                                            .getOrCreateDefaultMediaFileDirectory(weblog);
 
                                     // upgrade!
                                     upgradeUploadsDir(

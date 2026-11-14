@@ -108,12 +108,11 @@ abstract class BaseIT {
             p.waitForLoadState();
 
             // a database Roller has not installed yet: create the tables, then
-            // follow the installer's link, which posts the bootstrap form, to
-            // start the application
+            // press Start Roller to start the application
             var createTables = p.locator("form[action*='install!create'] input[type='submit']");
             if (createTables.count() > 0) {
                 createTables.click();
-                p.locator("a[href='#bootstrap']").click();
+                p.locator("form[action*='install!bootstrap'] input[type='submit']").click();
                 p.waitForLoadState();
             }
 

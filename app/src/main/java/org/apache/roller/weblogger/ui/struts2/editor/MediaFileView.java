@@ -206,7 +206,7 @@ public class MediaFileView extends MediaFileBase {
                         getActionWeblog(), this.directoryName);
             }
             if (directory == null) {
-                directory = manager.getDefaultMediaFileDirectory(getActionWeblog());
+                directory = manager.getOrCreateDefaultMediaFileDirectory(getActionWeblog());
             }
             this.currentDirectory = directory;
             this.directoryId = directory.getId();
@@ -355,8 +355,7 @@ public class MediaFileView extends MediaFileBase {
                 CacheManager.invalidate(getActionWeblog());
 
                 // re-route to default folder
-                mediaFileDir = manager
-                        .getDefaultMediaFileDirectory(getActionWeblog());
+                mediaFileDir = manager.getOrCreateDefaultMediaFileDirectory(getActionWeblog());
                 setDirectoryId(mediaFileDir.getId());
                 setDirectoryName(mediaFileDir.getName());
                 clearSearch();

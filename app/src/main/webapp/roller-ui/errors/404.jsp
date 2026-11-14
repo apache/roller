@@ -28,34 +28,11 @@
     </head>
     <body>
         
+        <%-- show only a plain message: the container's error message can name internal actions --%>
         <div style="padding: 15px 25px 25px 25px">
             <h2 class="error"><fmt:message key="error.title.404" /></h2>
-            
-            <c:set var="status_code" value="${requestScope['jakarta.servlet.error.status_code']}" />
-            <c:set var="message"     value="${requestScope['jakarta.servlet.error.message']}" />
-            <c:set var="type"        value="${requestScope['jakarta.servlet.error.type']}" />
-            
-            <table width="80%" border="1px" style="border-collapse: collapse;">
-                <tr>
-                    <td width="20%">Status Code</td>
-                    <td><c:out value="${status_code}" /></td>
-                </tr>
-                <tr>
-                    <td width="20%">Message</td>
-                    <td><c:out value="${message}" /></td>
-                </tr>
-                <tr>
-                    <td width="20%">Type</td>
-                    <td><c:out value="${type}" /></td>
-                </tr>
-                <tr>
-                    <td width="20%">Exception</td>
-                    <td><fmt:message key="error.text.404" /></td>
-                </tr>
-            </table>
+            <p><fmt:message key="error.text.404" /></p>
+            <p><a href="<c:url value="/"/>"><fmt:message key="error.home" /></a></p>
         </div>
-        
-        <br />
-        <br />
     </body>
 </html>
