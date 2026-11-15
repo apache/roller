@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.pojos.WeblogEntry;
+import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.pojos.WeblogEntrySearchCriteria;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.util.DateUtil;
@@ -106,15 +107,12 @@ public class BigWeblogCalendarModel extends WeblogCalendarModel {
                     sb.append(((WeblogEntry)entries.get(i)).getPermalink());
                     sb.append("\">");
                     
-                    String title = ((WeblogEntry)entries.get(i)).getTitle().trim();
-                    if ( title.length()==0 ) {
+                    String title = ((WeblogEntry)entries.get(i)).getTitle();
+                    if (title == null || title.trim().isEmpty()) {
                         title = ((WeblogEntry)entries.get(i)).getAnchor();
                     }
-                    if ( title.length() > 20 ) {
-                        title = title.substring(0,20)+"...";
-                    }
-                    
-                    sb.append( title );
+                    // the title is printed as text, cut to fit the day's box
+                    sb.append(Utilities.plainTextExcerpt(title, 20, 20, "..."));
                     sb.append("</a></div>");
                 }
                 

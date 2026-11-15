@@ -1,11 +1,34 @@
 # Apache Roller — Changes
 
-## 6.1.8 (in development)
+## 6.1.8
+
+### Behaviour changes worth reading before upgrading
+
+- **The Design pages follow "Allow custom themes".** While
+  `themes.customtheme.allowed` is off (the default), the theme, stylesheet and
+  template pages answer as unavailable, as the hidden Design menu already
+  implied, and the XML-RPC `blogger.setTemplate` call is refused. Weblogs that
+  already use custom templates keep showing them. Turn the setting on in
+  Server Settings to edit templates again.
 
 ### Bug fixes
 
-- **Check and clear site.frontpage.weblog.handle** If weblog being deleted is front page
-  clear property so Welcome to Roller page is shown.
+- **Requested tags are checked and encoded on every weblog page.** A custom
+  page given `tags=` together with an entry now answers 404 for tags the
+  weblog doesn't have, as it already did without an entry. The tag names are
+  HTML-encoded in the feed link titles and in the Gaurav and Fauxcoly tag
+  pages. The page cache keys such pages by page name and tags, so they are no
+  longer served in place of each other.
+- **Entry titles show as text in the next/previous links and the big
+  calendar.** The links on a permalink page and the titles in
+  `#showWeblogEntryCalendarBig` now drop markup, decode entities and encode the
+  result, the same way the rest of the page shows titles. A title saved with
+  `&amp;` no longer turns into `&amp;amp;`, and the calendar cuts long titles
+  at 20 visible characters.
+- **Deleting the front page weblog brings back the welcome page.** The site
+  kept pointing at the deleted weblog's handle, so the front page broke until
+  an admin chose another weblog. The setting is now cleared when that weblog is
+  deleted.
 - **Meta descriptions are always encoded.** A weblog's "about" text or an
   entry's search description containing a quote no longer cuts the
   `<meta name="description">` tag short, whether or not weblog admins are
