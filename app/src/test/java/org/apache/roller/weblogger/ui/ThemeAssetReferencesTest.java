@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,11 +45,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class ThemeAssetReferencesTest {
 
-    private static final Path WEBAPP = Paths.get(
-            System.getProperty("project.basedir", System.getProperty("user.dir")),
-            "src", "main", "webapp");
+    private static final Path WEBAPP = moduleDir().resolve("src/main/webapp");
 
     private static final Path THEMES = WEBAPP.resolve("themes");
+
+    /**
+     * The app module's directory, found from where this class was compiled to
+     * (target/test-classes), so the files are found whatever the working
+     * directory is, as when the test runs from an IDE.
+     */
+    private static Path moduleDir() {
+        try {
+            Path classes = Paths.get(ThemeAssetReferencesTest.class.getProtectionDomain()
+                    .getCodeSource().getLocation().toURI());
+            return classes.getParent().getParent();
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     /** {@code <resource path="..."/>} and {@code <contentsFile>...</contentsFile>} */
     private static final Pattern THEME_XML_FILE = Pattern.compile(
