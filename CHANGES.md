@@ -158,6 +158,24 @@
   extension point are removed, so a deployment that configured its own
   `AtomHandlerFactory` (for example, for custom authentication) no longer has
   that handler. AtomPub clients see no change.
+- **Icons and images without a compatible license are gone.** The Gaurav theme
+  no longer ships Font Awesome 3, and the Gaurav and Fauxcoly themes, the
+  admin pages and the Emoticons plugin no longer use Silk icons or images of
+  unknown origin. Bootstrap Icons replace them, drawn inline so they look the
+  same in a customized copy of a theme. The Emoticons plugin now turns `:-)`
+  into a Unicode emoji instead of an image from `/images/smileys/`, which is
+  removed along with `/images/editor/` and most Silk icons in `/images/`.
+  The standard feed icon, the RSS, Atom and OPML badges, the OpenID logo and
+  the permalink and launch-link icons in `/images/` are gone too, with feed
+  links now drawn as a Bootstrap Icons feed icon. The unused admin colour
+  themes under `/roller-ui/theme/` and three unused images in
+  `/roller-ui/images/` are removed.
+  Custom templates that link to those files, or to `font-awesome.min.css` or
+  the theme icons other than `asf-logo.png`, show broken images until they
+  are updated. Weblogs already using a customized copy keep their own copies
+  of the old files. Search term highlighting in both themes now uses a new
+  `js/search-highlight.js`; customized search pages that load `searchhi.js`
+  keep working only while their copy of that file remains.
 
 ### Build and packaging
 

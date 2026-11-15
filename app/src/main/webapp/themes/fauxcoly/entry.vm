@@ -196,24 +196,20 @@
 
     <table><tbody>
       <tr>
-        <td><img src="$url.resource('icons/delicious.gif')"
-               alt="del.icio.us" height="16" width="16" />
+        <td><svg class="bi" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/><path d="M8 4a.5.5 0 0 1 .5.5V6H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V7H6a.5.5 0 0 1 0-1h1.5V4.5A.5.5 0 0 1 8 4"/></svg>
             <a href="http://del.icio.us/post?url=$url.absoluteSite$model.weblogEntry.permaLink"
                title="bookmark it in del.icio.us">Bookmark it</a></td>
 
-        <td><img src="$url.resource('icons/digman.gif')"
-                alt="submit to dig digg.com" height="14" width="16" />
+        <td><svg class="bi" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z"/></svg>
             <a href="http://www.digg.com/submit?url=$url.absoluteSite$model.weblogEntry.permaLink&amp;phase=2" title="submit it to digg">
                 Digg it</a></td>
       </tr>
       <tr>
-        <td><img src="$url.resource('icons/slashdot-13x13.png')"
-                alt="slashdot" border="0" />
+        <td><svg class="bi" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5m-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"/></svg>
             <a href="http://slashdot.org/bookmark.pl?url=$url.absoluteSite$model.weblogEntry.permaLink" title="submit it to slashdot">
                 Slashdot it</a></td>
 
-        <td><img src="$url.resource('icons/technorati-16x15.png')" title="See who links to it"
-                border="0" alt="technorati" height="15" width="16" />
+        <td><svg class="bi" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"/></svg>
             <a href='http://technorati.com/search/$utils.encode("$url.absoluteSite$model.weblogEntry.permaLink")'>
                 See who links to it</a>
         </td>
