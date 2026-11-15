@@ -332,9 +332,14 @@ THE SOFTWARE.
 -------------------------------------------------------------------------------
 This product bundles icon outlines from Bootstrap Icons 1.13.2, which is
 available under a "MIT" license, drawn inline as SVG in the templates and
-CSS of the Gaurav and Fauxcoly themes. For details, see
+CSS of the Gaurav, Fauxcoly, Basic, Basic Mobile and Frontpage themes and in
+the blogroll macro. For details, see
 app/src/main/webapp/themes/gaurav/
 app/src/main/webapp/themes/fauxcoly/
+app/src/main/webapp/themes/basic/basic-custom.css
+app/src/main/webapp/themes/basicmobile/basic-custom.css
+app/src/main/webapp/themes/frontpage/weblog.vm
+app/src/main/webapp/WEB-INF/velocity/weblog.vm
 https://github.com/twbs/icons/blob/v1.13.2/LICENSE
 
 Copyright (c) 2019-2024 The Bootstrap Authors
