@@ -25,6 +25,10 @@
   result, the same way the rest of the page shows titles. A title saved with
   `&amp;` no longer turns into `&amp;amp;`, and the calendar cuts long titles
   at 20 visible characters.
+- **Deleting the front page weblog brings back the welcome page.** The site
+  kept pointing at the deleted weblog's handle, so the front page broke until
+  an admin chose another weblog. The setting is now cleared when that weblog is
+  deleted.
 - **Meta descriptions are always encoded.** A weblog's "about" text or an
   entry's search description containing a quote no longer cuts the
   `<meta name="description">` tag short, whether or not weblog admins are
