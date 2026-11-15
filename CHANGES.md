@@ -1,6 +1,6 @@
 # Apache Roller — Changes
 
-## 7.0.0 (in development)
+## 7.0.0
 
 ### Improvements
 
