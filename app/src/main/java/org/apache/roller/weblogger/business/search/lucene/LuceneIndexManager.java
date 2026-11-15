@@ -131,6 +131,8 @@ public class LuceneIndexManager implements IndexManager {
             if (indexConsistencyMarker.exists()) {
                 logger.debug("Index inconsistent: marker exists");
                 inconsistentAtStartup = true;
+                // deleteIndex() keeps the marker, so it stays in place until
+                // the rebuild that follows completes
                 deleteIndex();
             } else {
                 try {
