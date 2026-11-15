@@ -16,198 +16,138 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/*
- * Derived from org.apache.xmlrpc.webserver.XmlRpcServlet
- * in Apache XML-RPC 3.1.3. Forked into the Roller codebase because
- * xmlrpc-server has no Jakarta Servlet compatible release.
- */
 package org.apache.roller.weblogger.webservices.xmlrpc;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.util.Enumeration;
+import java.io.InputStream;
+import java.util.Locale;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xmlrpc.XmlRpcConfig;
-import org.apache.xmlrpc.XmlRpcException;
-import org.apache.xmlrpc.common.TypeConverterFactory;
-import org.apache.xmlrpc.server.AbstractReflectiveHandlerMapping;
-import org.apache.xmlrpc.server.PropertyHandlerMapping;
-import org.apache.xmlrpc.server.RequestProcessorFactoryFactory;
-import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
-import org.apache.xmlrpc.server.XmlRpcServer;
-import org.apache.xmlrpc.util.ReflectionUtil;
-
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 /**
- * A servlet for processing XML-RPC requests, derived from the Apache XML-RPC
- * library's {@code XmlRpcServlet}. The typical use is to configure it in
- * {@code web.xml} with an {@code XmlRpcServlet.properties} resource on the
- * classpath that maps handler names to implementation classes.
+ * The Blogger and MetaWeblog XML-RPC endpoint.
  *
- * <p>The servlet accepts the following init parameters:</p>
- * <table border="1">
- *   <tr><th>Name</th><th>Description</th></tr>
- *   <tr><td>enabledForExtensions</td><td>Sets the value of
- *     {@link XmlRpcConfig#isEnabledForExtensions()} to true.</td></tr>
- * </table>
+ * <p>Calls are answered by {@link BloggerAPIHandler} under
+ * <code>blogger.*</code> and {@link MetaWeblogAPIHandler} under
+ * <code>metaWeblog.*</code>; see {@link XmlRpcServer}. The endpoint is gated by
+ * <code>XmlRpcEnabledFilter</code> while <code>webservices.enableXmlRpc</code>
+ * is off.
+ *
+ * <p>Request bodies are capped before they are parsed: at 1 MiB, or, while
+ * uploads are on, at what the largest allowed upload takes as base64 plus room
+ * for the call around it, but never above 32 MiB. The whole body is read and
+ * parsed before the caller is authenticated, so the cap can't simply follow
+ * however large an upload the site allows. The cap applies to the decompressed
+ * size of a gzip-encoded request too.
  */
 public class RollerXmlRpcServlet extends HttpServlet {
-    private static final long serialVersionUID = 2348768267234L;
+    private static final long serialVersionUID = 1L;
     private static final Log log = LogFactory.getLog(RollerXmlRpcServlet.class);
 
-    /**
-     * Classpath location of the handler mapping properties file.
-     * Roller ships this at {@code org/apache/xmlrpc/webserver/XmlRpcServlet.properties}.
-     */
-    private static final String HANDLER_MAPPING_RESOURCE =
-            "org/apache/xmlrpc/webserver/XmlRpcServlet.properties";
+    /** Smallest request cap, in bytes; also the cap while uploads are off. */
+    static final int MIN_MAX_REQUEST_BYTES = 1024 * 1024;
 
-    private RollerXmlRpcServletServer server;
-    private AbstractReflectiveHandlerMapping.AuthenticationHandler authenticationHandler;
-    private RequestProcessorFactoryFactory requestProcessorFactoryFactory;
-    private TypeConverterFactory typeConverterFactory;
+    /** Largest request cap, in bytes, however large an upload the site allows. */
+    static final int MAX_MAX_REQUEST_BYTES = 32 * 1024 * 1024;
 
-    /**
-     * Returns the servlet's instance of {@link RollerXmlRpcServletServer}.
-     * @return The configurable server instance.
-     */
-    public RollerXmlRpcServletServer getXmlRpcServletServer() {
-        return server;
+    /** Room for the methodCall around a base64 upload, in bytes. */
+    static final int ENVELOPE_BYTES = 64 * 1024;
+
+    static final Map<String, Class<?>> HANDLERS = Map.of(
+            "blogger", BloggerAPIHandler.class,
+            "metaWeblog", MetaWeblogAPIHandler.class);
+
+    private transient XmlRpcServer server;
+
+    @Override
+    public void init() {
+        server = new XmlRpcServer(HANDLERS);
     }
 
-    private void handleInitParameters(ServletConfig pConfig) throws ServletException {
-        for (Enumeration en = pConfig.getInitParameterNames(); en.hasMoreElements(); ) {
-            String name = (String) en.nextElement();
-            String value = pConfig.getInitParameter(name);
-            try {
-                if (!ReflectionUtil.setProperty(this, name, value)
-                    && !ReflectionUtil.setProperty(server, name, value)
-                    && !ReflectionUtil.setProperty(server.getConfig(), name, value)) {
-                    throw new ServletException("Unknown init parameter " + name);
-                }
-            } catch (IllegalAccessException e) {
-                throw new ServletException("Illegal access to instance of " + server.getClass().getName()
-                        + " while setting property " + name + ": " + e.getMessage(), e);
-            } catch (InvocationTargetException e) {
-                Throwable t = e.getTargetException();
-                throw new ServletException("Failed to invoke setter for property " + name
-                        + " on instance of " + server.getClass().getName()
-                        + ": " + t.getMessage(), t);
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        int maxBytes = maxRequestBytes();
+        if (request.getContentLengthLong() > maxBytes) {
+            sendText(response, HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, "Request is too large");
+            return;
+        }
+
+        InputStream in = request.getInputStream();
+        String encoding = request.getHeader("Content-Encoding");
+        boolean gzip = false;
+        if (encoding != null && !encoding.isBlank()
+                && !"identity".equalsIgnoreCase(encoding.trim())) {
+            String name = encoding.trim().toLowerCase(Locale.ROOT);
+            if (!"gzip".equals(name) && !"x-gzip".equals(name)) {
+                sendText(response, HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
+                        "Unsupported Content-Encoding");
+                return;
             }
+            gzip = true;
         }
-    }
 
-    public void init(ServletConfig pConfig) throws ServletException {
-        super.init(pConfig);
+        byte[] body;
         try {
-            server = newXmlRpcServer(pConfig);
-            handleInitParameters(pConfig);
-            server.setHandlerMapping(newXmlRpcHandlerMapping());
-        } catch (XmlRpcException e) {
-            try {
-                log("Failed to create XmlRpcServer: " + e.getMessage(), e);
-            } catch (Throwable ignore) {
+            if (gzip) {
+                in = new GZIPInputStream(in);
             }
-            throw new ServletException(e);
-        }
-    }
-
-    /** Sets the servlet's {@link AbstractReflectiveHandlerMapping.AuthenticationHandler}. */
-    public void setAuthenticationHandler(AbstractReflectiveHandlerMapping.AuthenticationHandler pHandler) {
-        authenticationHandler = pHandler;
-    }
-
-    /** Returns the servlet's {@link AbstractReflectiveHandlerMapping.AuthenticationHandler}. */
-    public AbstractReflectiveHandlerMapping.AuthenticationHandler getAuthenticationHandler() {
-        return authenticationHandler;
-    }
-
-    /** Sets the servlet's {@link RequestProcessorFactoryFactory}. */
-    public void setRequestProcessorFactoryFactory(RequestProcessorFactoryFactory pFactory) {
-        requestProcessorFactoryFactory = pFactory;
-    }
-
-    /** Returns the servlet's {@link RequestProcessorFactoryFactory}. */
-    public RequestProcessorFactoryFactory getRequestProcessorFactoryFactory() {
-        return requestProcessorFactoryFactory;
-    }
-
-    /** Sets the servlet's {@link TypeConverterFactory}. */
-    public void setTypeConverterFactory(TypeConverterFactory pFactory) {
-        typeConverterFactory = pFactory;
-    }
-
-    /** Returns the servlet's {@link TypeConverterFactory}. */
-    public TypeConverterFactory getTypeConverterFactory() {
-        return typeConverterFactory;
-    }
-
-    /**
-     * Creates a new instance of {@link RollerXmlRpcServletServer} to process requests.
-     * @param pConfig The servlet's configuration.
-     * @throws XmlRpcException Creating the server failed.
-     */
-    protected RollerXmlRpcServletServer newXmlRpcServer(ServletConfig pConfig)
-            throws XmlRpcException {
-        return new RollerXmlRpcServletServer();
-    }
-
-    /**
-     * Creates a new handler mapping. Loads the property file from the classpath
-     * resource {@value #HANDLER_MAPPING_RESOURCE}.
-     */
-    protected XmlRpcHandlerMapping newXmlRpcHandlerMapping() throws XmlRpcException {
-        URL url = Thread.currentThread().getContextClassLoader()
-                .getResource(HANDLER_MAPPING_RESOURCE);
-        if (url == null) {
-            throw new XmlRpcException("Failed to locate resource " + HANDLER_MAPPING_RESOURCE);
-        }
-        try {
-            return newPropertyHandlerMapping(url);
+            // Read one byte past the cap, so an oversized body can be detected
+            // without holding more than that in memory.
+            body = in.readNBytes(maxBytes + 1);
         } catch (IOException e) {
-            throw new XmlRpcException("Failed to load resource " + url + ": " + e.getMessage(), e);
+            if (!gzip) {
+                throw e;
+            }
+            log.debug("Rejecting XML-RPC request with an unreadable gzip body", e);
+            sendText(response, HttpServletResponse.SC_BAD_REQUEST, "Invalid gzip request body");
+            return;
         }
-    }
-
-    /**
-     * Creates a new instance of {@link PropertyHandlerMapping} by loading
-     * the property file from the given URL.
-     */
-    protected PropertyHandlerMapping newPropertyHandlerMapping(URL url) throws IOException, XmlRpcException {
-        PropertyHandlerMapping mapping = new PropertyHandlerMapping();
-        mapping.setAuthenticationHandler(authenticationHandler);
-        if (requestProcessorFactoryFactory != null) {
-            mapping.setRequestProcessorFactoryFactory(requestProcessorFactoryFactory);
+        if (body.length > maxBytes) {
+            sendText(response, HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, "Request is too large");
+            return;
         }
-        if (typeConverterFactory != null) {
-            mapping.setTypeConverterFactory(typeConverterFactory);
-        } else {
-            mapping.setTypeConverterFactory(server.getTypeConverterFactory());
+
+        byte[] result = server.execute(body);
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("text/xml;charset=UTF-8");
+        response.setContentLength(result.length);
+        response.getOutputStream().write(result);
+    }
+
+    /** The largest request body accepted, in bytes. */
+    int maxRequestBytes() {
+        if (!WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")) {
+            return MIN_MAX_REQUEST_BYTES;
         }
-        mapping.setVoidMethodEnabled(server.getConfig().isEnabledForExtensions());
-        mapping.load(Thread.currentThread().getContextClassLoader(), url);
-        return mapping;
+        double megabytes;
+        try {
+            megabytes = Double.parseDouble(WebloggerRuntimeConfig.getProperty("uploads.file.maxsize"));
+        } catch (RuntimeException e) {
+            return MIN_MAX_REQUEST_BYTES;
+        }
+        if (!(megabytes > 0)) {
+            return MIN_MAX_REQUEST_BYTES;
+        }
+        double uploadBytes = Math.ceil(megabytes * 1024 * 1024);
+        // base64 takes 4 bytes per 3, plus CRLF after every 76 characters if the client wraps it
+        double base64Bytes = Math.ceil(uploadBytes / 3) * 4 * 78 / 76;
+        double limit = Math.max(MIN_MAX_REQUEST_BYTES, base64Bytes + ENVELOPE_BYTES);
+        return (int) Math.min(limit, MAX_MAX_REQUEST_BYTES);
     }
 
-    /** Handles an XML-RPC POST request. */
-    public void doPost(HttpServletRequest pRequest, HttpServletResponse pResponse) throws IOException, ServletException {
-        server.execute(pRequest, pResponse);
-    }
-
-    public void log(String pMessage, Throwable pThrowable) {
-        server.getErrorLogger().log(pMessage, pThrowable);
-    }
-
-    public void log(String pMessage) {
-        log.info(pMessage);
+    private static void sendText(HttpServletResponse response, int status, String text)
+            throws IOException {
+        response.setStatus(status);
+        response.setContentType("text/plain;charset=UTF-8");
+        response.getWriter().write(text);
     }
 }

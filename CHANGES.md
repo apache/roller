@@ -97,6 +97,21 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Blogger and MetaWeblog requests have a size limit.** Roller now answers
+  XML-RPC itself instead of through Apache XML-RPC. Clients see the same
+  methods, faults and fault codes, but a request larger than 1 MiB is
+  refused with HTTP 413. While uploads are on, the limit is raised to fit
+  the largest allowed upload as base64, up to 32 MiB, so a file larger
+  than about 23 MB has to be uploaded in the media library instead of
+  through a blog client. The limit also applies to the
+  decompressed size of a gzip-encoded request. Only the standard XML-RPC
+  value types are accepted.
+  Two other differences: characters outside the Basic Multilingual Plane,
+  such as emoji, are now sent as valid XML (the old library wrote each
+  surrogate half as its own reference, which clients rejected), and stored
+  carriage returns are now sent as `&#13;`, so clients receive line breaks
+  as stored rather than normalised to `\n`.
+
 - **Themes from Roller 5.0 or earlier may need updating.** Roller 5.1 removed
   the pre-3.0 macros in `WEB-INF/velocity/deprecated/`, such as
   `#showWeblogEntries` and `#showBookmarks`, and referrer macros such as
@@ -132,6 +147,9 @@
 
 ### Build and packaging
 
+- Apache XML-RPC (`xmlrpc-common`, `xmlrpc-server`) and `ws-commons-util`
+  are no longer shipped. Apache XML-RPC is end of life, and 3.1.3 has an
+  unfixed denial-of-service issue (CVE-2016-5004).
 - Third-party libraries are updated to their latest patch and minor releases,
   among them Struts 7.4.0, Spring 7.0.10 and Spring Security 7.1.2. OGNL is
   pinned to 3.4.17, which fixes CVE-2026-113730.

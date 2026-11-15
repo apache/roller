@@ -61,8 +61,6 @@ limitations under the License.
         <bootstrap.version>5.3.8</bootstrap.version>
         <bootstrap-icons.version>1.13.2</bootstrap-icons.version>
         <velocity.version>2.4.1</velocity.version>
-        <ws-commons-util.version>1.0.2</ws-commons-util.version>
-        <xmlrpc-version>3.1.3</xmlrpc-version>
     </properties>
 
     <dependencies>
@@ -400,47 +398,6 @@ limitations under the License.
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-secure-xml</artifactId>
             <version>${commons-secure-xml.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.xmlrpc</groupId>
-            <artifactId>xmlrpc-common</artifactId>
-            <version>${xmlrpc-version}</version>
-        </dependency>
-
-        <!-- Still needed: RollerXmlRpcServlet/RollerXmlRpcServletServer use
-             server-side classes (PropertyHandlerMapping, XmlRpcHttpServer, etc.)
-             that live in this artifact. The servlet classes themselves have been
-             forked into Roller so their javax.servlet imports can be migrated
-             to jakarta.servlet in Phase 2. TODO ROL-2183: evaluate whether
-             these server classes can also be forked to fully drop this dep. -->
-        <dependency>
-            <groupId>org.apache.xmlrpc</groupId>
-            <artifactId>xmlrpc-server</artifactId>
-            <version>${xmlrpc-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.ws.commons.util</groupId>
-            <artifactId>ws-commons-util</artifactId>
-            <version>${ws-commons-util.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-                <!-- has a compile scope dependency to junit for some reason -->
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
 

@@ -332,15 +332,6 @@
     <servlet>
         <servlet-name>XmlRpcServlet</servlet-name>
         <servlet-class>org.apache.roller.weblogger.webservices.xmlrpc.RollerXmlRpcServlet</servlet-class>
-        <init-param>
-            <description>
-                Sets whether the servlet supports vendor extensions for XML-RPC.
-                Roller uses only the standard XML-RPC value types; the library's
-                vendor extension types are unused and are switched off.
-            </description>
-            <param-name>enabledForExtensions</param-name>
-            <param-value>false</param-value>
-        </init-param>
     </servlet>
 
     <!-- Rendering Servlets -->

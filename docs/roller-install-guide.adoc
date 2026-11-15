@@ -878,6 +878,10 @@ username and password in requests; use HTTPS and protect stored credentials.
 For each weblog, also select *Enable weblog client support?* in its settings.
 Configure the client to use `https://<host>/<context>/roller-services/xmlrpc`.
 Enable file uploads separately if the client will upload media.
+A request may be up to 1 MiB. While uploads are on, the limit rises to fit the
+largest allowed upload (`uploads.file.maxsize`) as base64, but stops at 32 MiB
+whatever that setting is, because a request is read in full before the client
+is authenticated. Larger files, from about 23 MB, go through the media library.
 
 === Publishing HTML without sanitization
 
