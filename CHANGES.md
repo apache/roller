@@ -58,6 +58,8 @@
   When Roller replaced the index at startup it also deleted the marker that
   records an unclean shutdown, so if it was stopped during the rebuild, the
   next start kept the incomplete index.
+- **The entry editor's "Pinned to main" checkbox shows its tooltip.** The
+  attribute was misspelled, so the help text never appeared.
 - **A bad date pattern in a theme no longer blanks the page.**
   `$utils.formatDate` logs a warning and uses the locale's standard date and
   time format. Older themes often pass a message key that no longer exists,
