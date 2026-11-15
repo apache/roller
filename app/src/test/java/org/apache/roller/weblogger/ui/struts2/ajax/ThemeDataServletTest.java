@@ -32,6 +32,7 @@ import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
+import org.apache.roller.weblogger.business.themes.ThemeNotFoundException;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -110,5 +112,24 @@ public class ThemeDataServletTest {
         assertEquals(2, list.size());
         assertEquals("/themes/basic/sm-theme-basic.png", list.get(0).get("previewPath").asText());
         assertTrue(list.get(1).get("previewPath").isNull());
+    }
+
+    @Test
+    public void anUnknownThemeIsNotFound() throws Exception {
+        ThemeManager themes = mock(ThemeManager.class);
+        when(themes.getTheme("nosuchtheme"))
+                .thenThrow(new ThemeNotFoundException("Couldn't find theme [nosuchtheme]"));
+        Weblogger weblogger = mock(Weblogger.class);
+        when(weblogger.getThemeManager()).thenReturn(themes);
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameter("theme")).thenReturn("nosuchtheme");
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class)) {
+            factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
+            new ThemeDataServlet().doGet(request, response);
+        }
+        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND, "No such theme");
     }
 }
