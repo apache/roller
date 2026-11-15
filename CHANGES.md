@@ -126,6 +126,9 @@
     stack trace.
   - The 404 page shows a plain message and a link to the home page, not
     the server's internal error text.
+  - The Theme and Create Weblog pages work with a shared theme whose
+    `theme.xml` names a preview image that isn't there; they show no preview
+    instead of failing to load the theme's description.
 
 ### Behaviour changes worth reading before upgrading
 

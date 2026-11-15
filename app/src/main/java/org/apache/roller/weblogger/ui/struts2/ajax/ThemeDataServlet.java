@@ -22,6 +22,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
+import org.apache.roller.weblogger.pojos.ThemeResource;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -93,10 +94,19 @@ public class ThemeDataServlet extends HttpServlet {
             pw.print("\"description\" : \"");
             pw.print(StringEscapeUtils.escapeJson(theme.getDescription()));
             pw.print("\", ");
-            pw.print("\"previewPath\" : \"");
-            pw.print(StringEscapeUtils.escapeJson(
-                    "/themes" + "/" + theme.getId() + "/" + theme.getPreviewImage().getPath()));
-            pw.print("\" }");
+            // theme.xml can name a preview image that isn't there, and then the
+            // theme has none
+            pw.print("\"previewPath\" : ");
+            ThemeResource preview = theme.getPreviewImage();
+            if (preview == null) {
+                pw.print("null");
+            } else {
+                pw.print("\"");
+                pw.print(StringEscapeUtils.escapeJson(
+                        "/themes" + "/" + theme.getId() + "/" + preview.getPath()));
+                pw.print("\"");
+            }
+            pw.print(" }");
             if (it.hasNext()) {
                 pw.println(", ");
             }
