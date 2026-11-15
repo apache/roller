@@ -10,6 +10,12 @@
   HTML-encoded in the feed link titles and in the Gaurav and Fauxcoly tag
   pages. The page cache keys such pages by page name and tags, so they are no
   longer served in place of each other.
+- **Entry titles show as text in the next/previous links and the big
+  calendar.** The links on a permalink page and the titles in
+  `#showWeblogEntryCalendarBig` now drop markup, decode entities and encode the
+  result, the same way the rest of the page shows titles. A title saved with
+  `&amp;` no longer turns into `&amp;amp;`, and the calendar cuts long titles
+  at 20 visible characters.
 - **Meta descriptions are always encoded.** A weblog's "about" text or an
   entry's search description containing a quote no longer cuts the
   `<meta name="description">` tag short, whether or not weblog admins are
