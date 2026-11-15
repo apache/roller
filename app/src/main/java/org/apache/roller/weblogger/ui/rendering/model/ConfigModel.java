@@ -122,6 +122,11 @@ public class ConfigModel implements Model {
         return getProperty("analytics.default.tracking.code");
     }
 
+    /** Whether the site answers the Blogger and MetaWeblog APIs at all. */
+    public boolean getXmlRpcEnabled() {
+        return getBooleanProperty("webservices.enableXmlRpc");
+    }
+
     public boolean getAnalyticsOverrideAllowed() {
         return getBooleanProperty("analytics.code.override.allowed");
     }

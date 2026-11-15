@@ -54,6 +54,12 @@
 
 ### Bug fixes
 
+- **Weblogs no longer advertise XML-RPC while it is switched off.** With
+  `webservices.enableXmlRpc` off, each weblog page still linked to an RSD
+  document listing the Blogger and MetaWeblog endpoints, which then answered
+  404. The link now appears, and the RSD document answers, only while both
+  that setting and the weblog's client support are on. Refused XML-RPC
+  requests are logged at debug level instead of as a warning each.
 - **A search index rebuild that is interrupted is redone at the next start.**
   When Roller replaced the index at startup it also deleted the marker that
   records an unclean shutdown, so if it was stopped during the rebuild, the
