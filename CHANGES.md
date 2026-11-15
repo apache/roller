@@ -136,6 +136,11 @@
   same in a customized copy of a theme. The Emoticons plugin now turns `:-)`
   into a Unicode emoji instead of an image from `/images/smileys/`, which is
   removed along with `/images/editor/` and most Silk icons in `/images/`.
+  The standard feed icon, the RSS, Atom and OPML badges, the OpenID logo and
+  the permalink and launch-link icons in `/images/` are gone too, with feed
+  links now drawn as a Bootstrap Icons feed icon. The unused admin colour
+  themes under `/roller-ui/theme/` and three unused images in
+  `/roller-ui/images/` are removed.
   Custom templates that link to those files, or to `font-awesome.min.css` or
   the theme icons other than `asf-logo.png`, show broken images until they
   are updated. Weblogs already using a customized copy keep their own copies
