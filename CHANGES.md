@@ -62,6 +62,13 @@
   `$utils.formatDate` logs a warning and uses the locale's standard date and
   time format. Older themes often pass a message key that no longer exists,
   such as `macro.weblog.date.timestampFormat`, which `$text.get` returns as is.
+- **Requested tags are checked and encoded on every weblog page.** A custom
+  page given `tags=` together with an entry now answers 404 for tags the
+  weblog doesn't have, as it already did without an entry. The tag names are
+  HTML-encoded in the feed link titles and in the tag pages of the Gaurav,
+  Fauxcoly, Hyde, Terminal and PaperMod themes. The page cache, including the
+  front page weblog's, keys such pages by page name and tags, so they are no
+  longer served in place of each other.
 - **Meta descriptions are always encoded.** A weblog's "about" text or an
   entry's search description containing a quote no longer cuts the
   `<meta name="description">` tag short, whether or not weblog admins are
