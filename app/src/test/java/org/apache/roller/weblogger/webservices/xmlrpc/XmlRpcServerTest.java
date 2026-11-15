@@ -18,7 +18,10 @@
 
 package org.apache.roller.weblogger.webservices.xmlrpc;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -154,6 +157,46 @@ public class XmlRpcServerTest {
         String response = call("parent.breaks");
         assertFault(response, BaseAPIHandler.UNKNOWN_EXCEPTION, BaseAPIHandler.UNKNOWN_EXCEPTION_MSG);
         assertFalse(response.contains("internal detail"), response);
+    }
+
+    private String send(String document) {
+        return new String(server.execute(document.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+    }
+
+    @Test
+    public void refusesADocumentTypeDeclarationWithoutReadingWhatItNames() throws IOException {
+        Path secret = Files.createTempFile("xmlrpc-entity", ".txt");
+        try {
+            Files.writeString(secret, "parent.echo");
+            // If the entity were resolved, the method name would be parent.echo and the call would succeed
+            String response = send("<?xml version=\"1.0\"?><!DOCTYPE methodCall [<!ENTITY e SYSTEM \""
+                    + secret.toUri() + "\">]><methodCall><methodName>&e;</methodName><params><param>"
+                    + "<value><string>hello</string></value></param></params></methodCall>");
+            assertFault(response, 0, "Failed to parse XML-RPC request");
+            assertFalse(response.contains("hello"), response);
+
+            assertFault(send("<?xml version=\"1.0\"?><!DOCTYPE methodCall><methodCall>"
+                    + "<methodName>parent.echo</methodName></methodCall>"), 0, "Failed to parse XML-RPC request");
+        } finally {
+            Files.delete(secret);
+        }
+    }
+
+    @Test
+    public void answersAFaultWhenJdomRefusesADocumentTheParserAccepts() {
+        // XML 1.1 allows a reference to a control character; JDOM throws an unchecked exception for it
+        String response = send("<?xml version=\"1.1\"?><methodCall><methodName>parent.echo</methodName>"
+                + "<params><param><value>ctl&#1;</value></param></params></methodCall>");
+        assertFault(response, 0, "Failed to parse XML-RPC request");
+        assertFalse(response.contains("JDOM"), response);
+
+        // and XML 1.1 names may start with a supplementary-plane character, which JDOM refuses too
+        assertFault(send("<?xml version=\"1.1\"?><methodCall><methodName>parent.echo</methodName>"
+                + "<params><param><value><\uD800\uDC00>1</\uD800\uDC00></value></param></params></methodCall>"),
+                0, "Failed to parse XML-RPC request");
+
+        assertFault(send("<?xml version=\"1.1\"?><methodCall a=\"&#2;\"><methodName>parent.echo</methodName>"
+                + "</methodCall>"), 0, "Failed to parse XML-RPC request");
     }
 
     @Test

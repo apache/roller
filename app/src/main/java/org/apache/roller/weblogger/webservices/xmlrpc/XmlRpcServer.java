@@ -98,6 +98,11 @@ final class XmlRpcServer {
             result = invoke(request.methodName(), request.params());
         } catch (XmlRpcException e) {
             return XmlRpcResponseWriter.fault(e.code, e.getFaultString());
+        } catch (RuntimeException e) {
+            // Nothing a request does should reach the container as an
+            // unhandled exception: its error page would show the message.
+            log.error("XML-RPC request failed unexpectedly", e);
+            return unknownFault();
         }
         try {
             return XmlRpcResponseWriter.response(result);

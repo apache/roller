@@ -79,7 +79,11 @@ final class XmlRpcRequestParser {
             // so here as well keeps the setting next to the untrusted input
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             document = builder.build(new ByteArrayInputStream(body));
-        } catch (JDOMException | IOException e) {
+        } catch (JDOMException | IOException | RuntimeException e) {
+            // JDOM refuses some documents the XML parser accepts, such as an
+            // XML 1.1 document holding a control character, and does it with
+            // an unchecked exception. To the client that is still a request
+            // Roller could not read, not a server error.
             throw new XmlRpcException("Failed to parse XML-RPC request");
         }
 
