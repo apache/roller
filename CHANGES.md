@@ -58,6 +58,12 @@
   `$utils.formatDate` logs a warning and uses the locale's standard date and
   time format. Older themes often pass a message key that no longer exists,
   such as `macro.weblog.date.timestampFormat`, which `$text.get` returns as is.
+- **Entry titles show as text in the next/previous links and the big
+  calendar.** The links on a permalink page and the titles in
+  `#showWeblogEntryCalendarBig` now drop markup, decode entities and encode the
+  result, the same way the rest of the page shows titles. A title saved with
+  `&amp;` no longer turns into `&amp;amp;`, and the calendar cuts long titles
+  at 20 visible characters.
 - **Meta descriptions are always encoded.** A weblog's "about" text or an
   entry's search description containing a quote no longer cuts the
   `<meta name="description">` tag short, whether or not weblog admins are

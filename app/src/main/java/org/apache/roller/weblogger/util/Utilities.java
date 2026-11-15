@@ -658,6 +658,31 @@ public class Utilities {
     }
 
     /**
+     * Turns stored entry text, such as a title, into a short excerpt that is
+     * safe to print as HTML text: markup is removed, entities are decoded, the
+     * text is cut at a word boundary between <code>lower</code> and
+     * <code>upper</code> characters (with <code>appendToEnd</code> added when
+     * it is cut), and the result is HTML-encoded.
+     */
+    public static String plainTextExcerpt(String str, int lower, int upper,
+            String appendToEnd) {
+        String text = unescapeHTML(removeHTML(str, false));
+        if (upper < lower) {
+            upper = lower;
+        }
+        if (text.length() > upper) {
+            int loc = text.lastIndexOf(' ', upper);
+            if (loc >= lower) {
+                text = text.substring(0, loc);
+            } else {
+                text = text.substring(0, upper);
+            }
+            text = text + appendToEnd;
+        }
+        return escapeHTML(text);
+    }
+
+    /**
      * This method based on code from the String taglib at Apache Jakarta:
      * http:/
      * /cvs.apache.org/viewcvs/jakarta-taglibs/string/src/org/apache/taglibs
