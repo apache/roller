@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -57,6 +58,15 @@ public class StylesheetEdit extends UIAction {
         this.actionName = "stylesheetEdit";
         this.desiredMenu = "editor";
         this.pageTitle = "stylesheetEdit.title";
+    }
+
+    /**
+     * The Design pages are available only while the site allows weblogs to
+     * have custom themes, matching the Design menu.
+     */
+    @Override
+    public boolean isFeatureEnabled() {
+        return WebloggerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed");
     }
 
     @Override

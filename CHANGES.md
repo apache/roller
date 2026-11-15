@@ -2,6 +2,15 @@
 
 ## 6.1.8 (in development)
 
+### Behaviour changes worth reading before upgrading
+
+- **The Design pages follow "Allow custom themes".** While
+  `themes.customtheme.allowed` is off (the default), the theme, stylesheet and
+  template pages answer as unavailable, as the hidden Design menu already
+  implied, and the XML-RPC `blogger.setTemplate` call is refused. Weblogs that
+  already use custom templates keep showing them. Turn the setting on in
+  Server Settings to edit templates again.
+
 ### Bug fixes
 
 - **Requested tags are checked and encoded on every weblog page.** A custom
