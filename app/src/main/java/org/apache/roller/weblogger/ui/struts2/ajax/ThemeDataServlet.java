@@ -17,7 +17,7 @@
  */
 package org.apache.roller.weblogger.ui.struts2.ajax;
 
-import org.apache.commons.text.StringEscapeUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
@@ -25,10 +25,6 @@ import org.apache.roller.weblogger.business.themes.ThemeManager;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,6 +40,23 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class ThemeDataServlet extends HttpServlet {
 
+    private static final ObjectMapper JSON = new ObjectMapper();
+
+    private record ThemeData(
+            String id, String name, String description, String previewPath) {
+    }
+
+    private static ThemeData dataFor(SharedTheme theme) {
+        String id = theme.getId();
+        ThemeResource preview = theme.getPreviewImage();
+        String previewPath = preview == null
+                ? null
+                : "/themes/" + id + "/" + preview.getPath();
+
+        return new ThemeData(
+                id, theme.getName(), theme.getDescription(), previewPath);
+    }
+
     @Override
     protected void doPost(
             HttpServletRequest request, HttpServletResponse response)
@@ -56,19 +69,17 @@ public class ThemeDataServlet extends HttpServlet {
             HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<SharedTheme> themes;
-        String themeId;
-
-        themeId = request.getParameter("theme");
+        String themeId = request.getParameter("theme");
 
         ThemeManager themeMgr = WebloggerFactory.getWeblogger().getThemeManager();
+        Object payload;
         if (themeId == null) {
-            themes = themeMgr.getEnabledThemesList();
+            payload = themeMgr.getEnabledThemesList().stream()
+                    .map(ThemeDataServlet::dataFor)
+                    .toList();
         } else {
-            themes = new ArrayList<>(1);
             try {
-                SharedTheme theme = themeMgr.getTheme(themeId);
-                themes.add(theme);
+                payload = dataFor(themeMgr.getTheme(themeId));
             } catch (WebloggerException e) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "ERROR fetching theme data");
                 return;
@@ -76,44 +87,7 @@ public class ThemeDataServlet extends HttpServlet {
         }
 
         response.setContentType("application/json; charset=utf-8");
-        PrintWriter pw = response.getWriter();
-        if (themeId == null) {
-            pw.println("[" );
-        }
-        for (Iterator<SharedTheme> it = themes.iterator(); it.hasNext();) {
-            SharedTheme theme = it.next();
-            // Theme metadata comes from theme.xml, which an operator can edit
-            // or install; escape it so a quote or newline cannot break out of
-            // the string and produce malformed JSON.
-            pw.print("    { \"id\" : \"");
-            pw.print(StringEscapeUtils.escapeJson(theme.getId()));
-            pw.print("\", ");
-            pw.print("\"name\" : \"");
-            pw.print(StringEscapeUtils.escapeJson(theme.getName()));
-            pw.print("\", ");
-            pw.print("\"description\" : \"");
-            pw.print(StringEscapeUtils.escapeJson(theme.getDescription()));
-            pw.print("\", ");
-            // theme.xml can name a preview image that isn't there, and then the
-            // theme has none
-            pw.print("\"previewPath\" : ");
-            ThemeResource preview = theme.getPreviewImage();
-            if (preview == null) {
-                pw.print("null");
-            } else {
-                pw.print("\"");
-                pw.print(StringEscapeUtils.escapeJson(
-                        "/themes" + "/" + theme.getId() + "/" + preview.getPath()));
-                pw.print("\"");
-            }
-            pw.print(" }");
-            if (it.hasNext()) {
-                pw.println(", ");
-            }
-        }
-        if (themeId == null) {
-            pw.println("]" );
-        }
+        response.getWriter().write(JSON.writeValueAsString(payload));
         response.flushBuffer();
     }
 }
