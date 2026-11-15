@@ -1,11 +1,5 @@
 # Apache Roller — Changes
 
-### Bug fixes
-
-- **Remove Move jQuery validate email address from roller.js and add to page**
-  Validation should be done on the pages that need ie have an email field, rather than in the global
-  roller.js.  Stops js errors on pages with no jquery-validate js script.
-
 ## 6.1.7
 
 ### Improvements
