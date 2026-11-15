@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
 import java.io.StringWriter;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
@@ -90,7 +91,10 @@ public class RSDServletTest {
         props.setProperty("resource.loaders", "file");
         props.setProperty("resource.loader.file.class",
                 "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
-        props.setProperty("resource.loader.file.path", "src/main/webapp/WEB-INF/velocity");
+        // Relative to the module, not the working directory, so the test also runs from an IDE.
+        props.setProperty("resource.loader.file.path", Paths.get(
+                System.getProperty("project.basedir", System.getProperty("user.dir")),
+                "src", "main", "webapp", "WEB-INF", "velocity").toString());
         VelocityEngine engine = new VelocityEngine();
         engine.init(props);
 
