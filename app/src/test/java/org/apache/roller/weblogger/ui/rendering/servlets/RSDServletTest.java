@@ -19,6 +19,8 @@
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
 import java.io.StringWriter;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
@@ -86,15 +88,28 @@ public class RSDServletTest {
         }
     }
 
+    /**
+     * The app module's directory, found from where this class was compiled to
+     * (target/test-classes), so the templates are found whatever the working
+     * directory is, as when the test runs from an IDE.
+     */
+    private static Path moduleDir() {
+        try {
+            Path classes = Paths.get(RSDServletTest.class.getProtectionDomain()
+                    .getCodeSource().getLocation().toURI());
+            return classes.getParent().getParent();
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     private static String autodiscovery(boolean siteEnabled, boolean weblogEnabled) {
         Properties props = new Properties();
         props.setProperty("resource.loaders", "file");
         props.setProperty("resource.loader.file.class",
                 "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
-        // Relative to the module, not the working directory, so the test also runs from an IDE.
-        props.setProperty("resource.loader.file.path", Paths.get(
-                System.getProperty("project.basedir", System.getProperty("user.dir")),
-                "src", "main", "webapp", "WEB-INF", "velocity").toString());
+        props.setProperty("resource.loader.file.path",
+                moduleDir().resolve("src/main/webapp/WEB-INF/velocity").toString());
         VelocityEngine engine = new VelocityEngine();
         engine.init(props);
 
