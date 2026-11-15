@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.roller.weblogger.business.FrontpageSettings;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
@@ -106,6 +107,12 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         
         // remove contents first, then remove weblog
         this.removeWeblogContents(weblog);
+
+        // if this was the front page weblog, clear the setting so the site
+        // shows the welcome page instead of a weblog that no longer exists
+        roller.getPropertiesManager().compareAndSetProperty(
+                FrontpageSettings.HANDLE_PROPERTY, weblog.getHandle(), "");
+
         this.strategy.remove(weblog);
         
         // remove entry from cache mapping

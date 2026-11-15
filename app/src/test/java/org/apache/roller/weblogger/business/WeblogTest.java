@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.business;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.junit.jupiter.api.AfterEach;
@@ -229,5 +230,38 @@ public class WeblogTest  {
         log.info("END");
     }
     
-}
+    /**
+     * Deleting the front page weblog clears the front page setting, so the
+     * site shows the welcome page instead of a weblog that no longer exists.
+     */
+    @Test
+    public void removingTheFrontPageWeblogClearsTheSetting() throws Exception {
+        PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
+        RuntimeConfigProperty prop = pmgr.getProperty(FrontpageSettings.HANDLE_PROPERTY);
+        String original = prop.getValue();
+        try {
+            Weblog front = TestUtils.setupWeblog("frontWeblog", testUser);
+            Weblog other = TestUtils.setupWeblog("otherWeblog", testUser);
+            prop = pmgr.getProperty(FrontpageSettings.HANDLE_PROPERTY);
+            prop.setValue(front.getHandle());
+            pmgr.saveProperty(prop);
+            TestUtils.endSession(true);
 
+            // another weblog leaves the setting alone
+            TestUtils.teardownWeblog(other.getId());
+            TestUtils.endSession(true);
+            assertEquals(front.getHandle(),
+                    pmgr.getProperty(FrontpageSettings.HANDLE_PROPERTY).getValue());
+
+            TestUtils.teardownWeblog(front.getId());
+            TestUtils.endSession(true);
+            assertEquals("", pmgr.getProperty(FrontpageSettings.HANDLE_PROPERTY).getValue());
+        } finally {
+            prop = pmgr.getProperty(FrontpageSettings.HANDLE_PROPERTY);
+            prop.setValue(original);
+            pmgr.saveProperty(prop);
+            TestUtils.endSession(true);
+        }
+    }
+    
+}
