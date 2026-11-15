@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.struts2.editor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.TemplateRuleException;
@@ -61,6 +62,15 @@ public class Templates extends UIAction {
         this.actionName = "templates";
         this.desiredMenu = "editor";
         this.pageTitle = "pagesForm.title";
+    }
+
+    /**
+     * The Design pages are available only while the site allows weblogs to
+     * have custom themes, matching the Design menu.
+     */
+    @Override
+    public boolean isFeatureEnabled() {
+        return WebloggerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed");
     }
 
     @Override

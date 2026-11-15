@@ -48,11 +48,11 @@ limitations under the License.
         <eclipse-link.version>5.0.2</eclipse-link.version>
         <guice.version>7.0.0</guice.version>
         <log4j2.version>2.26.1</log4j2.version>
-        <lucene.version>9.12.3</lucene.version> <!-- lucene 10 requires JDK 21 -->
+        <lucene.version>10.6.0</lucene.version>
         <maven-war.version>3.5.1</maven-war.version>
         <maven-surefire.version>3.6.0</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
-        <rome.version>1.19.0</rome.version> <!-- ROME core; used for feeds/planet (AtomPub no longer uses Propono) -->
+        <rome.version>2.1.0</rome.version> <!-- ROME core; used for feeds/planet (AtomPub no longer uses Propono) -->
         <slf4j.version>2.0.20</slf4j.version>
         <spring.version>7.0.10</spring.version>
         <spring.security.version>7.1.2</spring.security.version>
@@ -61,8 +61,6 @@ limitations under the License.
         <bootstrap.version>5.3.8</bootstrap.version>
         <bootstrap-icons.version>1.13.2</bootstrap-icons.version>
         <velocity.version>2.4.1</velocity.version>
-        <ws-commons-util.version>1.0.2</ws-commons-util.version>
-        <xmlrpc-version>3.1.3</xmlrpc-version>
     </properties>
 
     <dependencies>
@@ -280,7 +278,7 @@ limitations under the License.
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
-            <version>3.7.1</version>
+            <version>4.0.0</version>
         </dependency>
 
         <dependency>
@@ -297,10 +295,12 @@ limitations under the License.
             <version>0.9.1</version>
         </dependency>
 
+        <!-- 1.22 is the first release that supports jQuery 4. It is published
+             only as an npm webjar, which serves the scripts from dist/ -->
         <dependency>
-            <groupId>org.webjars</groupId>
+            <groupId>org.webjars.npm</groupId>
             <artifactId>jquery-validation</artifactId>
-            <version>1.21.0</version>
+            <version>1.22.1</version>
         </dependency>
 
         <dependency>
@@ -400,47 +400,6 @@ limitations under the License.
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-secure-xml</artifactId>
             <version>${commons-secure-xml.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.xmlrpc</groupId>
-            <artifactId>xmlrpc-common</artifactId>
-            <version>${xmlrpc-version}</version>
-        </dependency>
-
-        <!-- Still needed: RollerXmlRpcServlet/RollerXmlRpcServletServer use
-             server-side classes (PropertyHandlerMapping, XmlRpcHttpServer, etc.)
-             that live in this artifact. The servlet classes themselves have been
-             forked into Roller so their javax.servlet imports can be migrated
-             to jakarta.servlet in Phase 2. TODO ROL-2183: evaluate whether
-             these server classes can also be forked to fully drop this dep. -->
-        <dependency>
-            <groupId>org.apache.xmlrpc</groupId>
-            <artifactId>xmlrpc-server</artifactId>
-            <version>${xmlrpc-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.ws.commons.util</groupId>
-            <artifactId>ws-commons-util</artifactId>
-            <version>${ws-commons-util.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-                <!-- has a compile scope dependency to junit for some reason -->
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
 
@@ -624,6 +583,16 @@ limitations under the License.
                 <version>${maven-war.version}</version>
                 <configuration>
                     <attachClasses>true</attachClasses>
+                    <webResources>
+                        <resource>
+                            <directory>${project.basedir}/../binary-includes</directory>
+                            <targetPath>META-INF</targetPath>
+                            <includes>
+                                <include>LICENSE.txt</include>
+                                <include>NOTICE.txt</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
 
@@ -737,6 +706,11 @@ limitations under the License.
 
                 <configuration>
                     <includeEmptyDirs>true</includeEmptyDirs>
+                    <!-- test resources are filtered; the search index
+                         fixtures are binary -->
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>zip</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
                 </configuration>
 
             </plugin>

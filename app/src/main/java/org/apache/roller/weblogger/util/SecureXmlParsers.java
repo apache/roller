@@ -23,7 +23,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.xml.secure.SecureSAXParserFactory;
-import org.apache.xmlrpc.util.SAXParsers;
 import org.jdom2.JDOMException;
 import org.jdom2.input.sax.XMLReaderJDOMFactory;
 import org.xml.sax.SAXException;
@@ -81,14 +80,5 @@ public final class SecureXmlParsers {
                     "The XML parser does not support refusing document type declarations", e);
         }
         return factory;
-    }
-
-    /**
-     * Makes the XML-RPC library parse requests with {@link #newSAXParserFactory()}.
-     *
-     * @throws IllegalStateException if the configuration cannot be applied
-     */
-    public static void installForXmlRpc() {
-        SAXParsers.setSAXParserFactory(newSAXParserFactory());
     }
 }

@@ -51,10 +51,10 @@
 
                     <td style="vertical-align:middle">
                         <s:if test="! #p.hidden">
-                            <img src='<s:url value="/images/page_white.png"/>' border="0" alt="icon"/>
+                            <span class="bi bi-file-earmark" aria-hidden="true"></span>
                         </s:if>
                         <s:else>
-                            <img src='<s:url value="/images/page_white_gear.png"/>' border="0" alt="icon"/>
+                            <span class="bi bi-gear" aria-hidden="true"></span>
                         </s:else>
                         <s:url var="edit" action="templateEdit">
                             <s:param name="weblog" value="actionWeblog.handle"/>

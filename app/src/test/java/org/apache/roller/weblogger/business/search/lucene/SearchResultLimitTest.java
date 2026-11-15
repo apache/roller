@@ -67,7 +67,7 @@ class SearchResultLimitTest {
             SearchOperation search = search(reader);
             search.run();
             assertEquals(MATCHES, search.getResultsCount());
-            assertEquals(TotalHits.Relation.EQUAL_TO, search.getResults().totalHits.relation);
+            assertEquals(TotalHits.Relation.EQUAL_TO, search.getResults().totalHits.relation());
             assertEquals(MATCHES, search.getResults().scoreDocs.length);
         }
     }
@@ -105,7 +105,7 @@ class SearchResultLimitTest {
             // an exact count, not the lower bound Lucene gives by default
             // when there are more than 1,000 matches and fewer are kept
             assertEquals(MATCHES, search.getResultsCount());
-            assertEquals(TotalHits.Relation.EQUAL_TO, search.getResults().totalHits.relation);
+            assertEquals(TotalHits.Relation.EQUAL_TO, search.getResults().totalHits.relation());
             assertEquals(max, search.getResults().scoreDocs.length);
 
             // the page before the limit has a next page

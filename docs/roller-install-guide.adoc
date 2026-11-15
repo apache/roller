@@ -87,18 +87,16 @@ Java, a Java Servlet container such as Tomcat, a connection to a
 database such as MySQL and optionally a connect to a mail server. More
 specifically, here’s what you need to install and run Roller:
 
-* *Java Development Kit*, specifically the Java 2 SE 1.6 JDK or more
-recent. The computer on which you install Roller should already have the
-JDK installed and configured.
-* *Java EE 6 Application Server*, or more specifically a Servlet
-container that supports at least the Servlet 2.4 API. Hereinafter, we’ll
-just call this your _server_. Roller has traditionally worked best on
-Tomcat and Tomcat only, but Roller 6.0.0 is known to run on:
-** Tomcat 8
-** Jetty 9
+* *Java Development Kit*, specifically Java 21 or later. The computer on
+which you install Roller should already have the JDK installed and
+configured.
+* *Jakarta EE Servlet container* that supports the Servlet 6.1 API.
+Hereinafter, we’ll just call this your _server_. Roller is tested on:
+** Tomcat 11
+** Jetty 12 (EE 11)
 * *Relational database* such as MySQL or Apache Derby. Roller stores
 blog entries, comments, bookmarks and almost all other data in a
-relational database accessed via the Java Persistence API 2.0.
+relational database accessed via Jakarta Persistence.
 PostgresSQL, MySQL and Derby are best supported but Roller. Roller also
 includes database creation scripts for DB2, HSQL-DB, Microsoft SQL
 Server and Oracle but these have not been tested recently.
@@ -108,8 +106,8 @@ for comments and other events via the JavaMail and Activation APIs.
 Roller WAR file, ready to deploy to your server, plus Roller license
 files, README and documentation. Unpack using either file based on a
 compression method your operating system supports:
-** roller-release-6.0.0-standard.zip
-** roller-release-6.0.0-standard.tar.gz
+** apache-roller-<version>-binary.zip
+** apache-roller-<version>-binary.tar.gz
 
 This step can also be done after deployment and determination that you
 would like themes other than the defaults available available, just
@@ -878,6 +876,10 @@ username and password in requests; use HTTPS and protect stored credentials.
 For each weblog, also select *Enable weblog client support?* in its settings.
 Configure the client to use `https://<host>/<context>/roller-services/xmlrpc`.
 Enable file uploads separately if the client will upload media.
+A request may be up to 1 MiB. While uploads are on, the limit rises to fit the
+largest allowed upload (`uploads.file.maxsize`) as base64, but stops at 32 MiB
+whatever that setting is, because a request is read in full before the client
+is authenticated. Larger files, from about 23 MB, go through the media library.
 
 === Publishing HTML without sanitization
 
@@ -1118,3 +1120,14 @@ Roller.
 
 *NOTE*: On Tomcat, before startup you should delete the contents of the
 Tomcat work directory (located under the webapps folder.)
+
+*NOTE*: Roller 7 keeps a search index written by Roller 6.1.7. It replaces
+an older index at first startup and rebuilds it in the background, with no
+action needed: an index from Roller 6.1.6 or earlier holds fields Roller no
+longer indexes, and Roller 7's Lucene 10 can't read the Lucene 8 index of
+Roller 6.0. Search results are complete again once the log shows
+"Completed rebuilding index". To force a rebuild at any time, stop Roller
+and delete the directory that `search.index.dir` names.
+If you go back to Roller 6.1.x afterwards, it can't read the index Roller 7
+wrote. It deletes the index and rebuilds it in the background, and searches
+return an error until that rebuild finishes.

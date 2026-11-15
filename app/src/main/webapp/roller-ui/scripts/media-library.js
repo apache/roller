@@ -176,7 +176,7 @@ $(function () {
         var newFolderButton = $("#newDirectoryButton");
 
         newFolderName.on("input", function () {
-            newFolderButton.prop("disabled", $.trim(newFolderName.val()).length === 0);
+            newFolderButton.prop("disabled", newFolderName.val().trim().length === 0);
         }).on("keydown", function (e) {
             if (e.key === "Enter" && !newFolderButton.prop("disabled")) {
                 e.preventDefault();
@@ -185,7 +185,7 @@ $(function () {
         });
 
         newFolderButton.on("click", function () {
-            form.newDirectoryName.value = $.trim(newFolderName.val());
+            form.newDirectoryName.value = newFolderName.val().trim();
             submitTo(urls.data("create-folder-url"));
         });
     }
