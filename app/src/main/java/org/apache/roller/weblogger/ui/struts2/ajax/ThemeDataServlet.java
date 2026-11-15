@@ -22,6 +22,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.themes.SharedTheme;
 import org.apache.roller.weblogger.business.themes.ThemeManager;
+import org.apache.roller.weblogger.business.themes.ThemeNotFoundException;
 import org.apache.roller.weblogger.pojos.ThemeResource;
 
 import java.io.IOException;
@@ -80,6 +81,9 @@ public class ThemeDataServlet extends HttpServlet {
         } else {
             try {
                 payload = dataFor(themeMgr.getTheme(themeId));
+            } catch (ThemeNotFoundException e) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such theme");
+                return;
             } catch (WebloggerException e) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "ERROR fetching theme data");
                 return;
