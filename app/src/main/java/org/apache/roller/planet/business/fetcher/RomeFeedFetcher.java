@@ -23,6 +23,7 @@ import com.rometools.rome.feed.synd.SyndCategory;
 import com.rometools.rome.feed.synd.SyndContent;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.feed.synd.SyndLink;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
@@ -100,7 +101,7 @@ public class RomeFeedFetcher implements FeedFetcher {
         // build planet subscription from fetched feed
         Subscription newSub = new Subscription();
         newSub.setFeedURL(feedURL);
-        newSub.setSiteURL(feed.getLink());
+        newSub.setSiteURL(siteURL(feed));
         newSub.setTitle(feed.getTitle());
         newSub.setAuthor(feed.getAuthor());
         newSub.setLastUpdated(feed.getPublishedDate());
@@ -159,6 +160,28 @@ public class RomeFeedFetcher implements FeedFetcher {
     }
     
     
+    // ROME 2 makes an Atom feed's rel="self" link (the feed itself) its link,
+    // so look for the alternate link to the site first, preferring an HTML
+    // one over alternates in other formats (another feed, JSON). RSS feeds
+    // have no links list and keep using the channel link.
+    private static String siteURL(SyndFeed feed) {
+        String firstAlternate = null;
+        for (SyndLink link : feed.getLinks()) {
+            String rel = link.getRel();
+            if (StringUtils.isBlank(rel) || "alternate".equals(rel)) {
+                String type = link.getType();
+                if (StringUtils.isBlank(type) || "text/html".equalsIgnoreCase(type)) {
+                    return link.getHref();
+                }
+                if (firstAlternate == null) {
+                    firstAlternate = link.getHref();
+                }
+            }
+        }
+        return firstAlternate != null ? firstAlternate : feed.getLink();
+    }
+
+
     // build a SubscriptionEntry from Rome SyndEntry and SyndFeed
     private SubscriptionEntry buildEntry(SyndEntry romeEntry) {
         

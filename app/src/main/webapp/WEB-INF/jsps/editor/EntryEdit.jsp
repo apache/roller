@@ -77,7 +77,7 @@
                         <a id="entry_bean_permalink" href='<s:property value="entry.permalink" />'>
                             <s:property value="entry.permalink"/>
                         </a>
-                        <img src='<s:url value="/images/launch-link.png"/>'/>
+                        <span class="bi bi-box-arrow-up-right" aria-hidden="true"></span>
                     </s:if>
                     <s:else>
                         <s:property value="entry.permalink"/>

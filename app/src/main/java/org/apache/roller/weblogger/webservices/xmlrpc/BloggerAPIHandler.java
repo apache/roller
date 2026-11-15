@@ -35,6 +35,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.CustomTemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.User;
@@ -148,7 +149,14 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             throw new XmlRpcException(
                     UNKNOWN_EXCEPTION, "Roller supports only main template");
         }
-        
+
+        // templates are edited only while the site allows custom themes,
+        // as on the Design pages
+        if (!WebloggerRuntimeConfig.getBooleanProperty("themes.customtheme.allowed")) {
+            throw new XmlRpcException(UNKNOWN_EXCEPTION,
+                    "Custom templates are not enabled on this site");
+        }
+
         try {
             WeblogTemplate template = WebloggerFactory.getWeblogger()
                     .getWeblogManager().getTemplateByAction(

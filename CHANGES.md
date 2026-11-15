@@ -54,10 +54,21 @@
 
 ### Bug fixes
 
+- **A search index rebuild that is interrupted is redone at the next start.**
+  When Roller replaced the index at startup it also deleted the marker that
+  records an unclean shutdown, so if it was stopped during the rebuild, the
+  next start kept the incomplete index.
 - **A bad date pattern in a theme no longer blanks the page.**
   `$utils.formatDate` logs a warning and uses the locale's standard date and
   time format. Older themes often pass a message key that no longer exists,
   such as `macro.weblog.date.timestampFormat`, which `$text.get` returns as is.
+- **Requested tags are checked and encoded on every weblog page.** A custom
+  page given `tags=` together with an entry now answers 404 for tags the
+  weblog doesn't have, as it already did without an entry. The tag names are
+  HTML-encoded in the feed link titles and in the tag pages of the Gaurav,
+  Fauxcoly, Hyde, Terminal and PaperMod themes. The page cache, including the
+  front page weblog's, keys such pages by page name and tags, so they are no
+  longer served in place of each other.
 - **Entry titles show as text in the next/previous links and the big
   calendar.** The links on a permalink page and the titles in
   `#showWeblogEntryCalendarBig` now drop markup, decode entities and encode the
@@ -109,6 +120,13 @@
     the server's internal error text.
 
 ### Behaviour changes worth reading before upgrading
+
+- **The Design pages follow "Allow custom themes".** While
+  `themes.customtheme.allowed` is off (the default), the theme, stylesheet and
+  template pages answer as unavailable, as the hidden Design menu already
+  implied, and the XML-RPC `blogger.setTemplate` call is refused. Weblogs that
+  already use custom templates keep showing them. Turn the setting on in
+  Server Settings to edit templates again.
 
 - **Blogger and MetaWeblog requests have a size limit.** Roller now answers
   XML-RPC itself instead of through Apache XML-RPC. Clients see the same
@@ -164,6 +182,24 @@
   extension point are removed, so a deployment that configured its own
   `AtomHandlerFactory` (for example, for custom authentication) no longer has
   that handler. AtomPub clients see no change.
+- **Icons and images without a compatible license are gone.** The Gaurav theme
+  no longer ships Font Awesome 3, and the Gaurav and Fauxcoly themes, the
+  admin pages and the Emoticons plugin no longer use Silk icons or images of
+  unknown origin. Bootstrap Icons replace them, drawn inline so they look the
+  same in a customized copy of a theme. The Emoticons plugin now turns `:-)`
+  into a Unicode emoji instead of an image from `/images/smileys/`, which is
+  removed along with `/images/editor/` and most Silk icons in `/images/`.
+  The standard feed icon, the RSS, Atom and OPML badges, the OpenID logo and
+  the permalink and launch-link icons in `/images/` are gone too, with feed
+  links now drawn as a Bootstrap Icons feed icon. The unused admin colour
+  themes under `/roller-ui/theme/` and three unused images in
+  `/roller-ui/images/` are removed.
+  Custom templates that link to those files, or to `font-awesome.min.css` or
+  the theme icons other than `asf-logo.png`, show broken images until they
+  are updated. Weblogs already using a customized copy keep their own copies
+  of the old files. Search term highlighting in both themes now uses a new
+  `js/search-highlight.js`; customized search pages that load `searchhi.js`
+  keep working only while their copy of that file remains.
 
 ### Build and packaging
 
@@ -178,6 +214,7 @@
   that added its own commons-logging bridge should remove it.
 - The source distribution now extracts to `apache-roller-<version>-source/`,
   matching its file name, instead of `roller-weblogger-<version>-source/`.
+- ROME, the feed library Planet uses, is upgraded from 1.19.0 to 2.1.0.
 - The admin UI now uses jQuery 4.0.0 and jQuery Validation 1.22.1.
 
 ## 6.1.7
