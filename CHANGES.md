@@ -1,5 +1,16 @@
 # Apache Roller — Changes
 
+## 6.1.8 (in development)
+
+### Bug fixes
+
+- **Entry titles show as text in the next/previous links and the big
+  calendar.** The links on a permalink page and the titles in
+  `#showWeblogEntryCalendarBig` now drop markup, decode entities and encode the
+  result, the same way the rest of the page shows titles. A title saved with
+  `&amp;` no longer turns into `&amp;amp;`, and the calendar cuts long titles
+  at 20 visible characters.
+
 ## 6.1.7
 
 ### Improvements
