@@ -134,6 +134,8 @@ public class LuceneIndexManager implements IndexManager {
             if (indexConsistencyMarker.exists()) {
                 logger.debug("Index inconsistent: marker exists");
                 inconsistentAtStartup = true;
+                // deleteIndex() keeps the marker, so it stays in place until
+                // the rebuild that follows completes
                 deleteIndex();
             } else {
                 try {
@@ -392,7 +394,12 @@ public class LuceneIndexManager implements IndexManager {
             
             String[] files = directory.listAll();
             for (String file : files) {
-                Files.delete(Path.of(indexDir, file));
+                // The marker says this run hasn't shut down cleanly yet. It must
+                // survive, so a crash during the rebuild that follows is caught
+                // at the next start.
+                if (!file.equals(indexConsistencyMarker.getName())) {
+                    Files.delete(Path.of(indexDir, file));
+                }
             }
         } catch (IOException ex) {
              logger.error("Problem accessing index directory", ex);
