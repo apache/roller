@@ -10,6 +10,10 @@
   result, the same way the rest of the page shows titles. A title saved with
   `&amp;` no longer turns into `&amp;amp;`, and the calendar cuts long titles
   at 20 visible characters.
+- **Meta descriptions are always encoded.** A weblog's "about" text or an
+  entry's search description containing a quote no longer cuts the
+  `<meta name="description">` tag short, whether or not weblog admins are
+  trusted.
 
 ## 6.1.7
 
