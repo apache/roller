@@ -10,6 +10,10 @@
   HTML-encoded in the feed link titles and in the Gaurav and Fauxcoly tag
   pages. The page cache keys such pages by page name and tags, so they are no
   longer served in place of each other.
+- **Meta descriptions are always encoded.** A weblog's "about" text or an
+  entry's search description containing a quote no longer cuts the
+  `<meta name="description">` tag short, whether or not weblog admins are
+  trusted.
 
 ## 6.1.7
 
