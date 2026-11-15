@@ -182,6 +182,12 @@
   replaces it at first startup and rebuilds it in the background, so no
   action is needed. Search results are complete again once the log shows
   "Completed rebuilding index".
+- **A search word with a hyphen or other punctuation must match all its
+  parts.** Search has always required every word, but a word the index splits
+  into parts, such as `spring-boot`, `wi-fi` or `AT&T`, used to match entries
+  with any one part. With Lucene 10 it needs all of them, so `spring-boot`
+  finds the same entries as `spring boot`, and such searches can return far
+  fewer results than before.
 - **OAuth 1.0a is removed** ([ROL-2183](https://issues.apache.org/jira/browse/ROL-2183)).
   AtomPub accepts only BASIC authentication, and the OAuth credentials page and
   consumer keys are gone. If `webservices.atomPubAuth` is still set to `oauth`,
