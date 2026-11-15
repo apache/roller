@@ -183,6 +183,34 @@ class RomeFeedFetcherLocalTest {
     }
 
     @Test
+    void atomFeedPrefersHtmlAlternateOverOtherFormats() throws Exception {
+        String url = serve("/atom-alternates", """
+                <?xml version="1.0" encoding="utf-8"?>
+                <feed xmlns="http://www.w3.org/2005/Atom">
+                  <title>Many Links</title>
+                  <id>urn:example:alternates</id>
+                  <link rel="alternate" type="application/atom+xml" href="https://alt.example.org/fr/atom"/>
+                  <link rel="alternate" type="application/feed+json" href="https://alt.example.org/feed.json"/>
+                  <link rel="alternate" type="text/html" href="https://alt.example.org/"/>
+                  <updated>2026-10-12T08:30:00Z</updated>
+                </feed>
+                """);
+        assertEquals("https://alt.example.org/", fetcher.fetchSubscription(url).getSiteURL());
+
+        String onlyFeeds = serve("/atom-feed-alternate", """
+                <?xml version="1.0" encoding="utf-8"?>
+                <feed xmlns="http://www.w3.org/2005/Atom">
+                  <title>Feed Links Only</title>
+                  <id>urn:example:feed-alternate</id>
+                  <link rel="self" type="application/atom+xml" href="https://only.example.org/atom"/>
+                  <link rel="alternate" type="application/rss+xml" href="https://only.example.org/rss"/>
+                  <updated>2026-10-12T08:30:00Z</updated>
+                </feed>
+                """);
+        assertEquals("https://only.example.org/rss", fetcher.fetchSubscription(onlyFeeds).getSiteURL());
+    }
+
+    @Test
     void unchangedFeedIsSkipped() throws Exception {
         String url = serve("/atom-unchanged", ATOM);
 

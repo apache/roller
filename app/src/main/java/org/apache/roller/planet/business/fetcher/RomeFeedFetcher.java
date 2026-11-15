@@ -161,16 +161,24 @@ public class RomeFeedFetcher implements FeedFetcher {
     
     
     // ROME 2 makes an Atom feed's rel="self" link (the feed itself) its link,
-    // so look for the alternate link to the site first. RSS feeds have no
-    // links list and keep using the channel link.
+    // so look for the alternate link to the site first, preferring an HTML
+    // one over alternates in other formats (another feed, JSON). RSS feeds
+    // have no links list and keep using the channel link.
     private static String siteURL(SyndFeed feed) {
+        String firstAlternate = null;
         for (SyndLink link : feed.getLinks()) {
             String rel = link.getRel();
             if (StringUtils.isBlank(rel) || "alternate".equals(rel)) {
-                return link.getHref();
+                String type = link.getType();
+                if (StringUtils.isBlank(type) || "text/html".equalsIgnoreCase(type)) {
+                    return link.getHref();
+                }
+                if (firstAlternate == null) {
+                    firstAlternate = link.getHref();
+                }
             }
         }
-        return feed.getLink();
+        return firstAlternate != null ? firstAlternate : feed.getLink();
     }
 
 
