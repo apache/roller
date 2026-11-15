@@ -89,8 +89,8 @@
     var saveButton;
 
     $( document ).ready(function() {
-    	
-    	jQuery("form.validate-form").validate();
+
+        jQuery("form.validate-form").validate();
         // Added method to check valid email address and add a custom error message
         jQuery.validator.addMethod(
             "regex",
