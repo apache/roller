@@ -36,8 +36,8 @@
 				<include>docs/**</include>
 				<include>it-playwright/**</include>
 				<include>CHANGES.md</include>
-				<include>LICENSE.txt</include>
-				<include>NOTICE.txt</include>
+				<include>LICENSE</include>
+				<include>NOTICE</include>
 				<include>pom.xml</include>
 				<include>README.md</include>
 			</includes>
