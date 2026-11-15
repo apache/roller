@@ -190,6 +190,7 @@
   that added its own commons-logging bridge should remove it.
 - The source distribution now extracts to `apache-roller-<version>-source/`,
   matching its file name, instead of `roller-weblogger-<version>-source/`.
+- ROME, the feed library Planet uses, is upgraded from 1.19.0 to 2.1.0.
 - The admin UI now uses jQuery 4.0.0 and jQuery Validation 1.22.1.
 
 ## 6.1.7

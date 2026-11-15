@@ -52,7 +52,7 @@ limitations under the License.
         <maven-war.version>3.5.1</maven-war.version>
         <maven-surefire.version>3.6.0</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
-        <rome.version>1.19.0</rome.version> <!-- ROME core; used for feeds/planet (AtomPub no longer uses Propono) -->
+        <rome.version>2.1.0</rome.version> <!-- ROME core; used for feeds/planet (AtomPub no longer uses Propono) -->
         <slf4j.version>2.0.20</slf4j.version>
         <spring.version>7.0.10</spring.version>
         <spring.security.version>7.1.2</spring.security.version>
