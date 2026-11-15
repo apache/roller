@@ -48,7 +48,7 @@ limitations under the License.
         <eclipse-link.version>5.0.2</eclipse-link.version>
         <guice.version>7.0.0</guice.version>
         <log4j2.version>2.26.1</log4j2.version>
-        <lucene.version>9.12.3</lucene.version> <!-- lucene 10 requires JDK 21 -->
+        <lucene.version>10.6.0</lucene.version>
         <maven-war.version>3.5.1</maven-war.version>
         <maven-surefire.version>3.6.0</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
@@ -696,6 +696,11 @@ limitations under the License.
 
                 <configuration>
                     <includeEmptyDirs>true</includeEmptyDirs>
+                    <!-- test resources are filtered; the search index
+                         fixtures are binary -->
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>zip</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
                 </configuration>
 
             </plugin>

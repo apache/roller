@@ -129,9 +129,16 @@
   error and continues startup.
 
 - **Roller now runs on Jakarta EE**
-  ([ROL-2183](https://issues.apache.org/jira/browse/ROL-2183)). It needs Java 17
+  ([ROL-2183](https://issues.apache.org/jira/browse/ROL-2183)). It needs Java 21
   or later and a Servlet 6.1 container such as Tomcat 11. Tomcat 9 and other
   `javax.servlet` containers can no longer run Roller.
+- **The search index is rebuilt when upgrading from Roller 6.1.6 or
+  earlier.** Roller 7 uses Lucene 10, which reads the index Roller 6.1.7
+  writes. An older index either holds fields Roller no longer indexes or,
+  like the Lucene 8 index of Roller 6.0, can't be read at all. Roller
+  replaces it at first startup and rebuilds it in the background, so no
+  action is needed. Search results are complete again once the log shows
+  "Completed rebuilding index".
 - **OAuth 1.0a is removed** ([ROL-2183](https://issues.apache.org/jira/browse/ROL-2183)).
   AtomPub accepts only BASIC authentication, and the OAuth credentials page and
   consumer keys are gone. If `webservices.atomPubAuth` is still set to `oauth`,
