@@ -173,6 +173,12 @@ public final class WeblogPageCache {
             // may contain spaces or other bad chars
             String anchor = URLEncoder.encode(pageRequest.getWeblogAnchor(), StandardCharsets.UTF_8);
             key.append("/entry/").append(anchor);
+
+            // a custom page can also name an entry, and must not share the
+            // entry's own key
+            if(pageRequest.getWeblogPageName() != null) {
+                key.append("/page/").append(pageRequest.getWeblogPageName());
+            }
         } else {
             
             if(pageRequest.getWeblogPageName() != null) {
@@ -188,14 +194,15 @@ public final class WeblogPageCache {
                 String cat = URLEncoder.encode(pageRequest.getWeblogCategoryName(), StandardCharsets.UTF_8);
                 key.append('/').append(cat);
             }
-            
-            if("tags".equals(pageRequest.getContext())) {
-                if(pageRequest.getTags() != null && !pageRequest.getTags().isEmpty()) {
-                    String[] tags = pageRequest.getTags().toArray(new String[0]);
-                    Arrays.sort(tags);
-                    key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
-                }
-            }
+        }
+
+        // tags come from the path in the tags context, or from a query
+        // parameter on a custom page; either way they change the page
+        if(pageRequest.getTags() != null && !pageRequest.getTags().isEmpty()) {
+            String[] tags = pageRequest.getTags().toArray(new String[0]);
+            Arrays.sort(tags);
+            String joined = Utilities.stringArrayToString(tags, "+");
+            key.append("/tags/").append(URLEncoder.encode(joined, StandardCharsets.UTF_8));
         }
         
         if(pageRequest.getLocale() != null) {

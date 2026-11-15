@@ -4,6 +4,12 @@
 
 ### Bug fixes
 
+- **Requested tags are checked and encoded on every weblog page.** A custom
+  page given `tags=` together with an entry now answers 404 for tags the
+  weblog doesn't have, as it already did without an entry. The tag names are
+  HTML-encoded in the feed link titles and in the Gaurav and Fauxcoly tag
+  pages. The page cache keys such pages by page name and tags, so they are no
+  longer served in place of each other.
 - **Entry titles show as text in the next/previous links and the big
   calendar.** The links on a permalink page and the titles in
   `#showWeblogEntryCalendarBig` now drop markup, decode entities and encode the
