@@ -67,12 +67,12 @@
     <s:if test="actionName == 'entryEdit'">
         <div class="row mb-3">
 
-            <label class="col-md-3" for="entry_bean_permalink">
+            <label class="col-sm-3 col-form-label" for="entry_bean_permalink">
                 <s:text name="weblogEdit.permaLink"/>
             </label>
 
-            <div class="controls col-md-9">
-                <p class="form-control-plaintext">
+            <div class="controls col-sm-9">
+                <div class="form-control-plaintext">
                     <s:if test="bean.published">
                         <a id="entry_bean_permalink" href='<s:property value="entry.permalink" />'>
                             <s:property value="entry.permalink"/>
@@ -82,7 +82,7 @@
                     <s:else>
                         <s:property value="entry.permalink"/>
                     </s:else>
-                </p>
+                </div>
             </div>
 
         </div>
@@ -107,43 +107,43 @@
 
     <%-- status --%>
     <div class="row mb-3">
-        <label class="col-md-3" for="weblogEdit.status"><s:text name="weblogEdit.status"/></label>
+        <label class="col-sm-3 col-form-label"><s:text name="weblogEdit.status"/></label>
 
-        <div class="controls col-md-9">
+        <div class="controls col-sm-9">
 
-            <p class="form-control-plaintext">
+            <div class="form-control-plaintext">
                 <s:if test="bean.published">
-                    <span class="label text-bg-success">
+                    <span class="badge text-bg-success">
                         <s:text name="weblogEdit.published"/>
                         (<s:text name="weblogEdit.updateTime"/>
                         <s:date name="entry.updateTime"/>)
                     </span>
                 </s:if>
                 <s:elseif test="bean.draft">
-                    <span class="label text-bg-info">
+                    <span class="badge text-bg-info">
                         <s:text name="weblogEdit.draft"/>
                         (<s:text name="weblogEdit.updateTime"/>
                         <s:date name="entry.updateTime"/>)
                     </span>
                 </s:elseif>
                 <s:elseif test="bean.pending">
-                    <span class="label text-bg-warning">
+                    <span class="badge text-bg-warning">
                         <s:text name="weblogEdit.pending"/>
                         (<s:text name="weblogEdit.updateTime"/>
                         <s:date name="entry.updateTime"/>)
                     </span>
                 </s:elseif>
                 <s:elseif test="bean.scheduled">
-                    <span class="label text-bg-info">
+                    <span class="badge text-bg-info">
                         <s:text name="weblogEdit.scheduled"/>
                         (<s:text name="weblogEdit.updateTime"/>
                         <s:date name="entry.updateTime"/>)
                     </span>
                 </s:elseif>
                 <s:else>
-                    <span class="label text-bg-danger"><s:text name="weblogEdit.unsaved"/></span>
+                    <span class="badge text-bg-danger"><s:text name="weblogEdit.unsaved"/></span>
                 </s:else>
-            </p>
+            </div>
 
         </div>
 
