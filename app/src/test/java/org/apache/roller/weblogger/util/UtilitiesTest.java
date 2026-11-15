@@ -169,4 +169,20 @@ public class UtilitiesTest  {
     }
      */
 
+    @Test
+    public void testPlainTextExcerpt() {
+        // markup is removed and the text is HTML-encoded once
+        assertEquals("Older", Utilities.plainTextExcerpt("<em>Older</em>", 15, 20, "..."));
+        assertEquals("A &amp; B bold", Utilities.plainTextExcerpt("A &amp; B <b>bold</b>", 15, 20, "..."));
+        assertEquals("&lt;i&gt; is italic",
+                Utilities.plainTextExcerpt("&lt;i&gt; is italic", 15, 20, "..."));
+        assertEquals("&quot;quoted&quot;", Utilities.plainTextExcerpt("\"quoted\"", 15, 20, "..."));
+
+        // long text is cut at a word boundary, then encoded
+        assertEquals("The quick brown fox...",
+                Utilities.plainTextExcerpt("The quick brown fox jumps over", 15, 20, "..."));
+        assertEquals("&lt;em&gt;Emphasis&lt;/em&gt;",
+                Utilities.plainTextExcerpt("&lt;em&gt;Emphasis&lt;/em&gt;", 20, 20, "..."));
+        assertEquals("", Utilities.plainTextExcerpt(null, 15, 20, "..."));
+    }
 }
