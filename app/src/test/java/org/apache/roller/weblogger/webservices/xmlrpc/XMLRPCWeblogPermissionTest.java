@@ -46,7 +46,6 @@ import org.apache.roller.weblogger.pojos.WeblogEntry.PubStatus;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.ui.core.RollerContext;
-import org.apache.xmlrpc.XmlRpcException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,6 +82,7 @@ public class XMLRPCWeblogPermissionTest {
     private WeblogEntry publishedEntry;
     private WeblogEntry deleteEntry;
     private String oldXmlRpcValue;
+    private String oldCustomThemeValue;
     private Object oldPasswordEncoder;
 
     @BeforeEach
@@ -97,6 +97,7 @@ public class XMLRPCWeblogPermissionTest {
         oldXmlRpcValue = xmlRpcProperty.getValue();
         xmlRpcProperty.setValue("true");
         propertiesManager.saveProperty(xmlRpcProperty);
+        oldCustomThemeValue = setCustomThemesAllowed(true);
 
         owner = TestUtils.setupUser("xmlrpcOwner");
         author = TestUtils.setupUser("xmlrpcAuthor");
@@ -151,8 +152,38 @@ public class XMLRPCWeblogPermissionTest {
                 .getProperty("webservices.enableXmlRpc");
         xmlRpcProperty.setValue(oldXmlRpcValue);
         propertiesManager.saveProperty(xmlRpcProperty);
+        RuntimeConfigProperty customThemeProperty = propertiesManager
+                .getProperty("themes.customtheme.allowed");
+        customThemeProperty.setValue(oldCustomThemeValue);
+        propertiesManager.saveProperty(customThemeProperty);
         TestUtils.endSession(true);
         restorePasswordEncoder();
+    }
+
+    @Test
+    public void testSetTemplateFollowsTheCustomThemeSetting() throws Exception {
+        String ownerName = owner.getUserName();
+        String handle = weblog.getHandle();
+
+        setCustomThemesAllowed(false);
+        TestUtils.endSession(true);
+
+        assertThrows(XmlRpcException.class, () -> blogger.setTemplate("", handle,
+                ownerName, PASSWORD, "changed-while-disallowed", "main"));
+        assertEquals("main-template-code", blogger.getTemplate("", handle,
+                ownerName, PASSWORD, "main"));
+    }
+
+    /** Sets themes.customtheme.allowed and returns its previous value. */
+    private String setCustomThemesAllowed(boolean allowed) throws Exception {
+        PropertiesManager propertiesManager = WebloggerFactory.getWeblogger()
+                .getPropertiesManager();
+        RuntimeConfigProperty property = propertiesManager
+                .getProperty("themes.customtheme.allowed");
+        String previous = property.getValue();
+        property.setValue(Boolean.toString(allowed));
+        propertiesManager.saveProperty(property);
+        return previous;
     }
 
     @Test

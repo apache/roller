@@ -35,7 +35,7 @@ If you want to run Roller in production, then you should down load the latest of
 ## Quick start: Running via Maven
 
 You probably should not run Roller in production using this technique, but it's a relatively easy way to try Roller for yourself. 
-Assuming you've got a UNIX shell, Java, Maven and Git:
+Assuming you've got a UNIX shell, Java 21 or later, Maven and Git:
 
 Get the code:
 

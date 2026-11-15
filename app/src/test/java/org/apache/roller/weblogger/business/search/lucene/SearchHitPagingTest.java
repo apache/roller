@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
+import org.apache.lucene.index.StoredFields;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.roller.weblogger.business.URLStrategy;
@@ -119,13 +120,15 @@ class SearchHitPagingTest {
     private static SearchResultList convert(WeblogEntryManager entries, int page, int size)
             throws Exception {
         IndexSearcher searcher = mock(IndexSearcher.class);
+        StoredFields storedFields = mock(StoredFields.class);
+        when(searcher.storedFields()).thenReturn(storedFields);
         ScoreDoc[] hits = new ScoreDoc[HITS];
         for (int i = 0; i < HITS; i++) {
             hits[i] = new ScoreDoc(i, 1f);
             Document doc = new Document();
             doc.add(new StringField(FieldConstants.ID, "id" + i, Field.Store.YES));
             doc.add(new StringField(FieldConstants.WEBSITE_HANDLE, "team", Field.Store.YES));
-            when(searcher.doc(i)).thenReturn(doc);
+            when(storedFields.document(i)).thenReturn(doc);
         }
         SearchOperation search = mock(SearchOperation.class);
         when(search.getSearcher()).thenReturn(searcher);

@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.xml.secure.SecureSAXParserFactory;
-import org.apache.xmlrpc.util.SAXParsers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.xml.sax.Attributes;
@@ -87,20 +86,6 @@ class SecureXmlParsersTest {
             // Refusing the document outright is also acceptable.
         }
         assertFalse(text.toString().contains("MARKER-CONTENT"));
-    }
-
-    @Test
-    void xmlRpcUsesTheSameConfiguration() throws Exception {
-        SAXParserFactory previous = SAXParsers.getSAXParserFactory();
-        try {
-            SecureXmlParsers.installForXmlRpc();
-            SAXParserFactory installed = SAXParsers.getSAXParserFactory();
-            assertTrue(installed.isNamespaceAware());
-            assertThrows(Exception.class, () -> installed.newSAXParser()
-                    .parse(bytes(WITH_DOCTYPE), new DefaultHandler()));
-        } finally {
-            SAXParsers.setSAXParserFactory(previous);
-        }
     }
 
     private static ByteArrayInputStream bytes(String xml) {

@@ -40,9 +40,12 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.FieldInfos;
+import org.apache.lucene.index.IndexFormatTooNewException;
+import org.apache.lucene.index.IndexFormatTooOldException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.StoredFields;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopFieldDocs;
 import org.apache.lucene.store.Directory;
@@ -131,6 +134,8 @@ public class LuceneIndexManager implements IndexManager {
             if (indexConsistencyMarker.exists()) {
                 logger.debug("Index inconsistent: marker exists");
                 inconsistentAtStartup = true;
+                // deleteIndex() keeps the marker, so it stays in place until
+                // the rebuild that follows completes
                 deleteIndex();
             } else {
                 try {
@@ -162,9 +167,16 @@ public class LuceneIndexManager implements IndexManager {
                         }
                     }
                 } catch (IOException | IllegalArgumentException ex) {  // IAE for incompatible codecs
-                    logger.warn("Failed to open search index, scheduling rebuild.", ex);
+                    if (ex instanceof IndexFormatTooOldException || ex instanceof IndexFormatTooNewException) {
+                        // for example the Lucene 8 index of Roller 6.0
+                        logger.warn("Search index uses an unsupported format, rebuilding it: " + ex.getMessage());
+                    } else {
+                        logger.warn("Failed to open search index, scheduling rebuild.", ex);
+                    }
                     inconsistentAtStartup = true;
                     deleteIndex();
+                    // until the rebuild is done, searches find nothing rather than fail
+                    createIndex(getIndexDirectory());
                 }
             } else {
                 logger.debug("Creating index");
@@ -382,7 +394,12 @@ public class LuceneIndexManager implements IndexManager {
             
             String[] files = directory.listAll();
             for (String file : files) {
-                Files.delete(Path.of(indexDir, file));
+                // The marker says this run hasn't shut down cleanly yet. It must
+                // survive, so a crash during the rebuild that follows is caught
+                // at the next start.
+                if (!file.equals(indexConsistencyMarker.getName())) {
+                    Files.delete(Path.of(indexDir, file));
+                }
             }
         } catch (IOException ex) {
              logger.error("Problem accessing index directory", ex);
@@ -474,11 +491,14 @@ public class LuceneIndexManager implements IndexManager {
             List<VisibleHit> visible = new ArrayList<>();
             Timestamp now = new Timestamp(new Date().getTime());
             long wanted = (long) (pageNum + 1) * entryCount + 1;
+            // a StoredFields may only be used on the thread that got it, and
+            // the search ran on another one
+            StoredFields storedFields = search.getSearcher().storedFields();
             for (ScoreDoc hit : hits) {
                 if (visible.size() >= wanted) {
                     break;
                 }
-                Document doc = search.getSearcher().doc(hit.doc);
+                Document doc = storedFields.document(hit.doc);
                 // maybe null if search result returned inactive user
                 // or entry's user is not the requested user
                 WeblogEntry entry = weblogMgr.getWeblogEntry(doc.getField(FieldConstants.ID).stringValue());

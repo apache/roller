@@ -48,7 +48,6 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerContext;
 import org.apache.roller.weblogger.util.RollerMessages;
 import org.apache.roller.weblogger.util.Utilities;
-import org.apache.xmlrpc.XmlRpcException;
 
 
 /**
@@ -113,7 +112,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
      * @param password Password for said username
      * @param struct Contents of the post
      * @param publish If true, the blog will be published immediately after the post is made
-     * @throws org.apache.xmlrpc.XmlRpcException
+     * @throws XmlRpcException
      * @return
      */
     public boolean editPost(String postid, String userid, String password,
@@ -213,7 +212,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
      * @param password Password for said username
      * @param struct Contents of the post
      * @param publish If true, the blog will be published immediately after the post is made
-     * @throws org.apache.xmlrpc.XmlRpcException
+     * @throws XmlRpcException
      * @return
      */
     public String newPost(String blogid, String userid, String password,

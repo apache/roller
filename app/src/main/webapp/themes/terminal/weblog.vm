@@ -3,7 +3,7 @@
   <head>
     #includeTemplate($model.weblog "standard_head")
     #if($model.tags && $model.tags.size() > 0)
-    <title>#foreach($tagName in $model.tags)$tagName#if($foreach.hasNext), #end#end :: $model.weblog.name</title>
+    <title>#foreach($tagName in $model.tags)$utils.escapeHTML($tagName)#if($foreach.hasNext), #end#end :: $model.weblog.name</title>
     #elseif($model.weblogCategory)
     <title>$model.weblogCategory.name :: $model.weblog.name</title>
     #else
@@ -16,7 +16,7 @@
       <main class="content">
         #set($pager = $model.getWeblogEntriesPager())
         #if($model.tags && $model.tags.size() > 0)
-        <h1>Posts for: #foreach($tagName in $model.tags)&#35;$tagName#if($foreach.hasNext), #end#end</h1>
+        <h1>Posts for: #foreach($tagName in $model.tags)&#35;$utils.escapeHTML($tagName)#if($foreach.hasNext), #end#end</h1>
         #elseif($model.weblogCategory)
         <h1>Posts in: $model.weblogCategory.name</h1>
         #if($utils.isNotEmpty($model.weblogCategory.description))

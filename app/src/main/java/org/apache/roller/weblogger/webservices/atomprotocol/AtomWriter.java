@@ -31,6 +31,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.roller.weblogger.util.XmlCharacters;
+
 /**
  * Serializes the AtomPub wire model ({@link AtomEntry}, {@link AtomFeed},
  * {@link AtomServiceDoc}) to XML using the JDK StAX API. Replaces the ROME and
@@ -276,32 +278,8 @@ public class AtomWriter {
         w.writeEndElement();
     }
 
-    /**
-     * Drops the characters that XML 1.0 does not allow in a document (most
-     * control characters, U+FFFE, U+FFFF and unpaired surrogates). Stored
-     * text can contain them, and a single one makes the whole response
-     * unreadable for a client.
-     */
+    /** See {@link XmlCharacters#withoutIllegalCharacters(String)}. */
     static String xml(String text) {
-        if (text == null) {
-            return null;
-        }
-        StringBuilder out = null;
-        int i = 0;
-        while (i < text.length()) {
-            int cp = text.codePointAt(i);
-            int len = Character.charCount(cp);
-            boolean legal = cp == 0x9 || cp == 0xA || cp == 0xD
-                    || (cp >= 0x20 && cp <= 0xD7FF)
-                    || (cp >= 0xE000 && cp <= 0xFFFD)
-                    || (cp >= 0x10000 && cp <= 0x10FFFF);
-            if (!legal && out == null) {
-                out = new StringBuilder(text.length()).append(text, 0, i);
-            } else if (legal && out != null) {
-                out.appendCodePoint(cp);
-            }
-            i += len;
-        }
-        return out == null ? text : out.toString();
+        return XmlCharacters.withoutIllegalCharacters(text);
     }
 }
