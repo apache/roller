@@ -19,6 +19,8 @@
 package org.apache.roller.weblogger.ui.rendering.util.cache;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
 
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.junit.jupiter.api.Test;
@@ -28,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * Requests that can render different content must get different page cache
- * keys.
+ * keys, in the weblog page cache and in the site-wide cache that the front
+ * page weblog uses.
  */
 public class WeblogPageCacheKeyTest {
 
@@ -45,36 +48,44 @@ public class WeblogPageCacheKeyTest {
         return request;
     }
 
-    private static String key(WeblogPageRequest request) {
-        return WeblogPageCache.getInstance().generateKey(request);
-    }
+    private static final List<Function<WeblogPageRequest, String>> CACHES = List.of(
+            request -> WeblogPageCache.getInstance().generateKey(request),
+            request -> SiteWideCache.getInstance().generateKey(request));
 
     @Test
     public void customPageNamingAnEntryHasItsOwnKey() {
-        String permalink = key(request("entry", "first-post", null));
-        String customPage = key(request("page", "first-post", "archives"));
-        assertNotEquals(permalink, customPage);
+        for (Function<WeblogPageRequest, String> key : CACHES) {
+            String permalink = key.apply(request("entry", "first-post", null));
+            String customPage = key.apply(request("page", "first-post", "archives"));
+            assertNotEquals(permalink, customPage);
+        }
     }
 
     @Test
     public void tagsOnACustomPageAreInTheKey() {
-        String plain = key(request("page", null, "archives"));
-        String tagged = key(request("page", null, "archives", "java"));
-        String otherTag = key(request("page", null, "archives", "roller"));
-        assertNotEquals(plain, tagged);
-        assertNotEquals(tagged, otherTag);
+        for (Function<WeblogPageRequest, String> key : CACHES) {
+            String plain = key.apply(request("page", null, "archives"));
+            String tagged = key.apply(request("page", null, "archives", "java"));
+            String otherTag = key.apply(request("page", null, "archives", "roller"));
+            assertNotEquals(plain, tagged);
+            assertNotEquals(tagged, otherTag);
+        }
     }
 
     @Test
     public void tagsOnACustomPageNamingAnEntryAreInTheKey() {
-        String untagged = key(request("page", "first-post", "archives"));
-        String tagged = key(request("page", "first-post", "archives", "java"));
-        assertNotEquals(untagged, tagged);
+        for (Function<WeblogPageRequest, String> key : CACHES) {
+            String untagged = key.apply(request("page", "first-post", "archives"));
+            String tagged = key.apply(request("page", "first-post", "archives", "java"));
+            assertNotEquals(untagged, tagged);
+        }
     }
 
     @Test
     public void tagOrderDoesNotChangeTheKey() {
-        assertEquals(key(request("tags", null, null, "java", "roller")),
-                key(request("tags", null, null, "roller", "java")));
+        for (Function<WeblogPageRequest, String> key : CACHES) {
+            assertEquals(key.apply(request("tags", null, null, "java", "roller")),
+                    key.apply(request("tags", null, null, "roller", "java")));
+        }
     }
 }
