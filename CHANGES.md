@@ -11,6 +11,13 @@
   already use custom templates keep showing them. Turn the setting on in
   Server Settings to edit templates again.
 
+### Bug fixes
+
+- **Meta descriptions are always encoded.** A weblog's "about" text or an
+  entry's search description containing a quote no longer cuts the
+  `<meta name="description">` tag short, whether or not weblog admins are
+  trusted.
+
 ## 6.1.7
 
 ### Improvements
