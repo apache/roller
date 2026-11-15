@@ -51,8 +51,8 @@ public class ThemeDataServletTest {
     private static SharedTheme theme(String id, String previewPath) {
         SharedTheme theme = mock(SharedTheme.class);
         when(theme.getId()).thenReturn(id);
-        when(theme.getName()).thenReturn(id + " name");
-        when(theme.getDescription()).thenReturn(id + " description");
+        when(theme.getName()).thenReturn(id + " \"name\"");
+        when(theme.getDescription()).thenReturn("first line\nsecond line");
         if (previewPath != null) {
             ThemeResource preview = mock(ThemeResource.class);
             when(preview.getPath()).thenReturn(previewPath);
@@ -95,6 +95,13 @@ public class ThemeDataServletTest {
     public void aThemeWithAPreviewImageHasItsPath() throws Exception {
         assertEquals("/themes/basic/sm-theme-basic.png",
                 themeData("basic").get("previewPath").asText());
+    }
+
+    @Test
+    public void themeMetadataWithQuotesAndNewlinesIsValidJson() throws Exception {
+        JsonNode theme = themeData("basic");
+        assertEquals("basic \"name\"", theme.get("name").asText());
+        assertEquals("first line\nsecond line", theme.get("description").asText());
     }
 
     @Test
