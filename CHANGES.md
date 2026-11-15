@@ -104,6 +104,13 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **The Design pages follow "Allow custom themes".** While
+  `themes.customtheme.allowed` is off (the default), the theme, stylesheet and
+  template pages answer as unavailable, as the hidden Design menu already
+  implied, and the XML-RPC `blogger.setTemplate` call is refused. Weblogs that
+  already use custom templates keep showing them. Turn the setting on in
+  Server Settings to edit templates again.
+
 - **Blogger and MetaWeblog requests have a size limit.** Roller now answers
   XML-RPC itself instead of through Apache XML-RPC. Clients see the same
   methods, faults and fault codes, but a request larger than 1 MiB is
