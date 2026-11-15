@@ -209,4 +209,16 @@ public class RollerXmlRpcServletTest {
             assertEquals(RollerXmlRpcServlet.MIN_MAX_REQUEST_BYTES, new RollerXmlRpcServlet().maxRequestBytes());
         }
     }
+
+    @Test
+    public void capStopsAt32MebibytesHoweverLargeAnUploadIsAllowed() {
+        try (MockedStatic<WebloggerRuntimeConfig> config = mockStatic(WebloggerRuntimeConfig.class)) {
+            config.when(() -> WebloggerRuntimeConfig.getBooleanProperty("uploads.enabled")).thenReturn(true);
+            config.when(() -> WebloggerRuntimeConfig.getProperty("uploads.file.maxsize")).thenReturn("100.00");
+            assertEquals(RollerXmlRpcServlet.MAX_MAX_REQUEST_BYTES, new RollerXmlRpcServlet().maxRequestBytes());
+
+            config.when(() -> WebloggerRuntimeConfig.getProperty("uploads.file.maxsize")).thenReturn("1e12");
+            assertEquals(RollerXmlRpcServlet.MAX_MAX_REQUEST_BYTES, new RollerXmlRpcServlet().maxRequestBytes());
+        }
+    }
 }

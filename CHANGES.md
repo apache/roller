@@ -101,7 +101,9 @@
   XML-RPC itself instead of through Apache XML-RPC. Clients see the same
   methods, faults and fault codes, but a request larger than 1 MiB is
   refused with HTTP 413. While uploads are on, the limit is raised to fit
-  the largest allowed upload as base64. The limit also applies to the
+  the largest allowed upload as base64, up to 32 MiB, so a file larger
+  than about 23 MB has to be uploaded in the media library instead of
+  through a blog client. The limit also applies to the
   decompressed size of a gzip-encoded request. Only the standard XML-RPC
   value types are accepted.
   Two other differences: characters outside the Basic Multilingual Plane,

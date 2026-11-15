@@ -43,8 +43,10 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
  *
  * <p>Request bodies are capped before they are parsed: at 1 MiB, or, while
  * uploads are on, at what the largest allowed upload takes as base64 plus room
- * for the call around it. The cap applies to the decompressed size of a
- * gzip-encoded request too.
+ * for the call around it, but never above 32 MiB. The whole body is read and
+ * parsed before the caller is authenticated, so the cap can't simply follow
+ * however large an upload the site allows. The cap applies to the decompressed
+ * size of a gzip-encoded request too.
  */
 public class RollerXmlRpcServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -52,6 +54,9 @@ public class RollerXmlRpcServlet extends HttpServlet {
 
     /** Smallest request cap, in bytes; also the cap while uploads are off. */
     static final int MIN_MAX_REQUEST_BYTES = 1024 * 1024;
+
+    /** Largest request cap, in bytes, however large an upload the site allows. */
+    static final int MAX_MAX_REQUEST_BYTES = 32 * 1024 * 1024;
 
     /** Room for the methodCall around a base64 upload, in bytes. */
     static final int ENVELOPE_BYTES = 64 * 1024;
@@ -136,7 +141,7 @@ public class RollerXmlRpcServlet extends HttpServlet {
         // base64 takes 4 bytes per 3, plus CRLF after every 76 characters if the client wraps it
         double base64Bytes = Math.ceil(uploadBytes / 3) * 4 * 78 / 76;
         double limit = Math.max(MIN_MAX_REQUEST_BYTES, base64Bytes + ENVELOPE_BYTES);
-        return (int) Math.min(limit, Integer.MAX_VALUE - 1);
+        return (int) Math.min(limit, MAX_MAX_REQUEST_BYTES);
     }
 
     private static void sendText(HttpServletResponse response, int status, String text)
