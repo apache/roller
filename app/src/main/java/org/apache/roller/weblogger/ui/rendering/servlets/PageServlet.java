@@ -384,7 +384,12 @@ public class PageServlet extends HttpServlet {
             if (pageRequest.getWeblogCategory() == null) {
                 invalid = true;
             }
-        } else if (pageRequest.getTags() != null && !pageRequest.getTags().isEmpty()) {
+        }
+
+        // tags may come with any of the above, for example as a query
+        // parameter on a custom page that also names an entry, so they are
+        // checked whenever they are given
+        if (!invalid && pageRequest.getTags() != null && !pageRequest.getTags().isEmpty()) {
 
             try {
                 // tags specified. make sure they exist.

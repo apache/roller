@@ -1,5 +1,16 @@
 # Apache Roller — Changes
 
+## 6.1.8 (in development)
+
+### Bug fixes
+
+- **Requested tags are checked and encoded on every weblog page.** A custom
+  page given `tags=` together with an entry now answers 404 for tags the
+  weblog doesn't have, as it already did without an entry. The tag names are
+  HTML-encoded in the feed link titles and in the Gaurav and Fauxcoly tag
+  pages. The page cache keys such pages by page name and tags, so they are no
+  longer served in place of each other.
+
 ## 6.1.7
 
 ### Improvements
