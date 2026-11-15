@@ -31,6 +31,7 @@
 			<includes>
 				<include>app/**</include>
 				<include>assembly-release/**</include>
+				<include>binary-includes/**</include>
 				<include>db-utils/**</include>
 				<include>docs/**</include>
 				<include>it-playwright/**</include>

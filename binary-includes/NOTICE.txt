@@ -13,10 +13,101 @@ Copyright 2003 Simon Brown, All rights reserved.
 The product includes snippets of code written by Sun Microsystems, Inc.
 Copyright 2009 Sun Microsystems, Inc.
 
-The product includes snippets of code written by Dave Johnson for RSS and Atom in Action
-Copyright 2005 David M Johnson (For RSS and Atom In Action)
-
 The product includes snippets of code from Spring Mobile
 Copyright (c) 2010-2014 Pivotal, Inc. All Rights Reserved.
 
-The product includes icons by Mark James (http://www.famfamfam.com/lab/icons)
+===============================================================================
+The binary distribution and roller.war bundle third-party libraries whose
+NOTICE files require the following notices.
+===============================================================================
+
+Spring Framework 7.0.10
+Copyright (c) 2002-2026 Broadcom Inc.
+
+Google Guice - Core Library
+Copyright 2006-2023 Google, Inc.
+
+Jackson JSON processor
+Copyright 2007-, Tatu Saloranta (tatu.saloranta@iki.fi)
+
+jackson-core bundles a shaded copy of FastDoubleParser
+(https://github.com/wrandelshofer/FastDoubleParser),
+Copyright (c) 2023 Werner Randelshofer, Switzerland, and a copy of the
+Schubfach number writing code (https://github.com/c4f7fcce9cb06515/Schubfach),
+Copyright 2018-2020 Raffaello Giulietti.
+
+Micrometer
+Copyright (c) 2017-Present VMware, Inc. All Rights Reserved.
+
+Micrometer contains a modified portion of 'io.netty.util.internal.logging',
+in the Netty/Common library distributed by The Netty Project:
+  * Copyright 2013 The Netty Project
+  * License: Apache License v2.0
+  * Homepage: https://netty.io
+
+Micrometer contains a modified portion of 'StringUtils.isBlank()',
+in the Commons Lang library distributed by The Apache Software Foundation:
+  * Copyright 2001-2019 The Apache Software Foundation
+  * License: Apache License v2.0
+  * Homepage: https://commons.apache.org/proper/commons-lang/
+
+Micrometer contains a modified portion of 'JsonUtf8Writer',
+in the Moshi library distributed by Square, Inc:
+  * Copyright 2010 Google Inc.
+  * License: Apache License v2.0
+  * Homepage: https://github.com/square/moshi
+
+Micrometer contains a modified portion of the 'org.springframework.lang'
+package in the Spring Framework library, distributed by VMware, Inc:
+  * Copyright 2002-2019 the original author or authors.
+  * License: Apache License v2.0
+  * Homepage: https://spring.io/projects/spring-framework
+
+Apache Log4j Core
+ResolverUtil.java
+Copyright 2005-2006 Tim Fennell
+
+Apache Struts
+Struts includes domTT (http://www.mojavelinux.com/projects/domtooltip/).
+
+Struts2 Bootstrap Plugin
+This product includes Twitter Bootstrap (https://github.com/twitter/bootstrap/).
+
+Apache Lucene
+Brics Automaton (under core/src/java/org/apache/lucene/util/automaton) is
+BSD-licensed, created by Anders Møller. See http://www.brics.dk/automaton/
+
+The levenshtein automata tables (under core/src/java/org/apache/lucene/util/automaton) were
+automatically generated with the moman/finenight FSA library, created by
+Jean-Philippe Barrette-LaPierre. This library is available under an MIT license,
+see http://sites.google.com/site/rrettesite/moman and
+http://bitbucket.org/jpbarrette/moman/overview/
+
+The class org.apache.lucene.util.WeakIdentityMap was derived from
+the Apache CXF project and is Apache License 2.0.
+
+The class org.apache.lucene.util.compress.LZ4 is a Java rewrite of the LZ4
+compression library (https://github.com/lz4/lz4/tree/dev/lib) that is licensed
+under the 2-clause BSD license.
+(https://opensource.org/licenses/bsd-license.php)
+
+The snowball stemmers in
+  analysis/common/src/java/net/sf/snowball
+were developed by Martin Porter and Richard Boulton.
+The snowball stopword lists in
+  analysis/common/src/resources/org/apache/lucene/analysis/snowball
+were developed by Martin Porter and Richard Boulton.
+The full snowball package is available from
+  https://snowballstem.org/
+
+The KStem stemmer in
+  analysis/common/src/org/apache/lucene/analysis/en
+was developed by Bob Krovetz and Sergio Guzman-Lara (CIIR-UMass Amherst)
+under the BSD-license.
+
+The Arabic,Persian,Romanian,Bulgarian, Hindi and Bengali analyzers (common) come with a default
+stopword list that is BSD-licensed created by Jacques Savoy.
+
+The German,Spanish,Finnish,French,Hungarian,Italian,Portuguese,Russian and Swedish light stemmers
+(common) are based on BSD-licensed reference implementations created by Jacques Savoy and
+Ljiljana Dolamic.
