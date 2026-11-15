@@ -1,6 +1,6 @@
 # Apache Roller — Changes
 
-## 6.1.8 (in development)
+## 6.1.8
 
 ### Behaviour changes worth reading before upgrading
 
