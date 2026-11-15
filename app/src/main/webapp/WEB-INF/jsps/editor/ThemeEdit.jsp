@@ -262,7 +262,11 @@
             data: {theme: themeId}, success: function (data) {
                 $('#themeDescription').text(data.description);
                 thumbnail = $('#themeThumbnail');
-                thumbnail.attr('src', '<s:property value="siteURL" />' + data.previewPath);
+                if (data.previewPath) {
+                    thumbnail.attr('src', '<s:property value="siteURL" />' + data.previewPath).show();
+                } else {
+                    thumbnail.removeAttr('src').hide();
+                }
             }
         });
     }

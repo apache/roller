@@ -115,7 +115,11 @@
         $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themedata",
             data: {theme:themeId}, success: function(data) {
                 $('#themedescription').text(data.description);
-                $('#themeThumbnail').attr('src','<s:property value="siteURL" />' + data.previewPath);
+                if (data.previewPath) {
+                    $('#themeThumbnail').attr('src','<s:property value="siteURL" />' + data.previewPath).show();
+                } else {
+                    $('#themeThumbnail').removeAttr('src').hide();
+                }
             }
         });
     }
