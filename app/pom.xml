@@ -556,7 +556,9 @@ limitations under the License.
             <scope>test</scope>
             <!-- Jing declares these with runtime scope, which would replace
                  the newer versions that reach the WAR through nekohtml.
-                 Jing uses the JDK's XML parser instead. -->
+                 Jing uses the JDK's XML parser instead. Saxon is only for
+                 Schematron, which Roller doesn't use, and its old JAXP
+                 TransformerFactory can't load Struts' configuration. -->
             <exclusions>
                 <exclusion>
                     <groupId>xerces</groupId>
@@ -565,6 +567,10 @@ limitations under the License.
                 <exclusion>
                     <groupId>xml-apis</groupId>
                     <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.sf.saxon</groupId>
+                    <artifactId>saxon</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
