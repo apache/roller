@@ -51,8 +51,15 @@ public class SmileysPlugin implements WeblogEntryPlugin {
     private static final String DESCRIPTION =
             "Change ASCII emoticons to emoji. :-) becomes a smiling face.";
 
-    /** Matches any of the emoticons, longest first. */
+    /**
+     * Matches an HTML tag or comment (group 1), which is kept as it is, or any
+     * of the emoticons, longest first. Without the tags, ":x" inside an
+     * attribute such as xmlns:xlink would turn into an emoji.
+     */
     private static final Pattern SMILEY_PATTERN;
+
+    /** A comment, or a tag: "<" then a letter, "/" or "!", up to ">". */
+    private static final String TAG = "(<!--.*?-->|<[A-Za-z/!][^>]*>)";
 
     /** The markup that replaces each emoticon. */
     private static final Map<String, String> REPLACEMENTS;
@@ -83,8 +90,9 @@ public class SmileysPlugin implements WeblogEntryPlugin {
         List<String> smileys = new ArrayList<>(replacements.keySet());
         smileys.sort((a, b) -> b.length() != a.length()
                 ? b.length() - a.length() : a.compareTo(b));
-        SMILEY_PATTERN = smileys.isEmpty() ? null : Pattern.compile(
-                smileys.stream().map(Pattern::quote).collect(Collectors.joining("|")));
+        SMILEY_PATTERN = smileys.isEmpty() ? null : Pattern.compile(TAG + "|"
+                + smileys.stream().map(Pattern::quote).collect(Collectors.joining("|")),
+                Pattern.DOTALL);
     }
 
 
@@ -122,8 +130,9 @@ public class SmileysPlugin implements WeblogEntryPlugin {
         Matcher matcher = SMILEY_PATTERN.matcher(text);
         StringBuilder result = new StringBuilder(text.length());
         while (matcher.find()) {
-            matcher.appendReplacement(result,
-                    Matcher.quoteReplacement(REPLACEMENTS.get(matcher.group())));
+            String replacement = matcher.group(1) != null
+                    ? matcher.group(1) : REPLACEMENTS.get(matcher.group());
+            matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
         }
         matcher.appendTail(result);
         return result.toString();

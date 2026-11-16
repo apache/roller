@@ -133,6 +133,9 @@
   - The Theme and Create Weblog pages work with a shared theme whose
     `theme.xml` names a preview image that isn't there; they show no preview
     instead of failing to load the theme's description.
+  - The Emoticons plugin no longer changes text inside HTML tags or
+    comments, so the `:x` in an attribute such as `xmlns:xlink` stays as it
+    is; in an embedded SVG it used to become an emoji.
 
 ### Behaviour changes worth reading before upgrading
 
