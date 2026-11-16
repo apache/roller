@@ -18,6 +18,7 @@
 package org.apache.roller.weblogger.ui.rendering.servlets;
 
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,6 +38,26 @@ class CommentServletTest {
         assertFalse(CommentServlet.isTooLong(null, 10));
         assertFalse(CommentServlet.isTooLong("", 10));
         assertFalse(CommentServlet.isTooLong("x".repeat(10), 10));
+    }
+
+    @Test
+    void nameEmailAndUrlAreLimitedToTheirColumnSize() {
+        String fits = "x".repeat(CommentServlet.MAX_FIELD_LENGTH);
+        String tooLong = fits + "x";
+
+        assertFalse(CommentServlet.hasTooLongField(comment(fits, fits, fits)));
+        assertFalse(CommentServlet.hasTooLongField(comment(null, null, null)));
+        assertTrue(CommentServlet.hasTooLongField(comment(tooLong, "a@example.com", "")));
+        assertTrue(CommentServlet.hasTooLongField(comment("Ann", tooLong, "")));
+        assertTrue(CommentServlet.hasTooLongField(comment("Ann", "a@example.com", tooLong)));
+    }
+
+    private static WeblogEntryComment comment(String name, String email, String url) {
+        WeblogEntryComment comment = new WeblogEntryComment();
+        comment.setName(name);
+        comment.setEmail(email);
+        comment.setUrl(url);
+        return comment;
     }
 
     @Test

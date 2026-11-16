@@ -83,6 +83,9 @@ public class CommentServlet extends HttpServlet {
 
     static final int DEFAULT_MAX_CONTENT_LENGTH = 10000;
 
+    /** Size of the roller_comment name, email and url columns. */
+    static final int MAX_FIELD_LENGTH = 255;
+
     /**
      * Initialization.
      */
@@ -263,7 +266,8 @@ public class CommentServlet extends HttpServlet {
         WeblogEntryCommentForm cf = new WeblogEntryCommentForm();
         cf.setData(comment);
         boolean tooLong = isTooLong(comment.getContent(), maxContentLength);
-        if (preview && !tooLong) {
+        boolean fieldTooLong = hasTooLongField(comment);
+        if (preview && !tooLong && !fieldTooLong) {
             cf.setPreview(comment);
         }
 
@@ -278,6 +282,10 @@ public class CommentServlet extends HttpServlet {
         } else if (tooLong) {
             error = messageUtils.getString("error.commentPostFailedTooLong",
                     new Object[] {maxContentLength});
+
+        } else if (fieldTooLong) {
+            error = messageUtils.getString("error.commentPostFailedFieldTooLong",
+                    new Object[] {MAX_FIELD_LENGTH});
 
             // Must have an email and also must be valid
         } else if (StringUtils.isEmpty(commentRequest.getEmail())
@@ -424,6 +432,16 @@ public class CommentServlet extends HttpServlet {
      */
     static boolean isTooLong(String content, int maxLength) {
         return content != null && content.length() > maxLength;
+    }
+
+    /**
+     * Whether the commenter's name, email or URL is longer than the
+     * MAX_FIELD_LENGTH characters Roller can store.
+     */
+    static boolean hasTooLongField(WeblogEntryComment comment) {
+        return isTooLong(comment.getName(), MAX_FIELD_LENGTH)
+                || isTooLong(comment.getEmail(), MAX_FIELD_LENGTH)
+                || isTooLong(comment.getUrl(), MAX_FIELD_LENGTH);
     }
 
 }
