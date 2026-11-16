@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.struts2.util;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.util.ValueStack;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -234,6 +235,25 @@ public abstract class UIAction extends ActionSupport
             cleanedArgs[i] = cleanTextArg(args[i]);
         }
         return super.getText(cleanTextKey(key), cleanTextKey(defaultValue), cleanedArgs);
+    }
+
+    // used by the <s:text> tag for its <s:param> values
+    @Override
+    public String getText(String key, String defaultValue, List<?> args, ValueStack stack) {
+        List<?> cleanedArgs = args == null ? null : cleanArgs(args);
+        return super.getText(cleanTextKey(key), cleanTextKey(defaultValue), cleanedArgs, stack);
+    }
+
+    @Override
+    public String getText(String key, String defaultValue, String[] args, ValueStack stack) {
+        String[] cleanedArgs = null;
+        if (args != null) {
+            cleanedArgs = new String[args.length];
+            for (int i = 0; i < args.length; ++i) {
+                cleanedArgs[i] = cleanTextArg(args[i]);
+            }
+        }
+        return super.getText(cleanTextKey(key), cleanTextKey(defaultValue), cleanedArgs, stack);
     }
 
     public void addError(String errorKey) {

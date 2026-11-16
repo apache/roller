@@ -86,21 +86,21 @@ function save() {
                 <td class="rollertable">
                     <input type="radio" 
                         <s:if test='#perm.hasAction("admin")'>checked</s:if>
-                        name='perm-<s:property value="#perm.user.id" />' value="admin" />
+                        name="perm-<s:property value="#perm.user.id" />" value="admin" />
                 </td>
                 <td class="rollertable">
 	                <input type="radio" 
                         <s:if test='#perm.hasAction("post")'>checked</s:if>
-                        name='perm-<s:property value="#perm.user.id" />' value="post" />
+                        name="perm-<s:property value="#perm.user.id" />" value="post" />
                 </td>                
                 <td class="rollertable">
                     <input type="radio" 
                         <s:if test='#perm.hasAction("edit_draft")'>checked</s:if>
-                        name='perm-<s:property value="#perm.user.id" />' value="edit_draft" />
+                        name="perm-<s:property value="#perm.user.id" />" value="edit_draft" />
                 </td>                
                 <td class="rollertable">
                     <input type="radio" 
-                        name='perm-<s:property value="#perm.user.id" />' value="-1" />
+                        name="perm-<s:property value="#perm.user.id" />" value="-1" />
                 </td>
            </tr>
        </s:iterator>

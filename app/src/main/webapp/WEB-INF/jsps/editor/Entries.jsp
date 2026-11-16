@@ -34,13 +34,13 @@
     <ul class="pager">
         <s:if test="pager.prevLink != null">
             <li class="previous">
-                <a href='<s:property value="pager.prevLink" />'> 
+                <a href="<s:property value="pager.prevLink" />"> 
                     <span aria-hidden="true">&larr;</span>Newer</a>
             </li>
         </s:if>
         <s:if test="pager.nextLink != null">
             <li class="next">
-                <a href='<s:property value="pager.nextLink"/>'>Older
+                <a href="<s:property value="pager.nextLink"/>">Older
                     <span aria-hidden="true">&rarr;</span></a>
             </li>
         </s:if>
@@ -124,7 +124,7 @@
     
     <td>
         <s:if test="#post.status.name() == 'PUBLISHED'">
-            <a href='<s:property value="#post.permalink" />'>
+            <a href="<s:property value="#post.permalink" />">
                 <str:truncateNicely upper="80"><s:property value="#post.displayTitle" /></str:truncateNicely>
             </a>
         </s:if>
@@ -162,13 +162,13 @@
     <ul class="pager">
         <s:if test="pager.prevLink != null">
             <li class="previous">
-                <a href='<s:property value="pager.prevLink" />'>
+                <a href="<s:property value="pager.prevLink" />">
                     <span aria-hidden="true">&larr;</span> Older</a>
             </li>
         </s:if>
         <s:if test="pager.nextLink != null">
             <li class="next">
-                <a href='<s:property value="pager.nextLink"/>'>Newer
+                <a href="<s:property value="pager.nextLink"/>">Newer
                     <span aria-hidden="true">&rarr;</span></a>
             </li>
         </s:if>

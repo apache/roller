@@ -21,7 +21,7 @@
 
 <script>
 function addImage() {
-    var filePointer = "<img src='<s:property value="%{mediaFileURL}" />' alt='<s:property value="bean.name" />' width='<width>' height='<height>' style='<style>' />";
+    var filePointer = "<img src=\"<s:property value="%{mediaFileURL}" escapeJavaScript="true" />\" alt=\"<s:property value="bean.name" escapeJavaScript="true" />\" width='<width>' height='<height>' style='<style>' />";
     filePointer = filePointer.replace('<width>', document.imageDimForm.imageWidth.value);
     filePointer = filePointer.replace('<height>', document.imageDimForm.imageHeight.value);
     var styleDescription = '';
@@ -55,7 +55,7 @@ function addImage() {
 <form name="imageDimForm" method="POST" onsubmit="addImage()">
 
     <div id="imageAlign" style="border:1px solid #000000;width:120px;height:100px;margin:5px;">
-        <img border="0" src='<s:property value="%{mediaFileURL}" />' width="120px" height="100px" />
+        <img border="0" src="<s:property value="%{mediaFileURL}" />" width="120px" height="100px" />
     </div>
 
     <table class="entryEditTable" cellpadding="0" cellspacing="0" width="100%">

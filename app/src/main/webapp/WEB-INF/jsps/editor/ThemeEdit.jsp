@@ -171,7 +171,7 @@
 
     var proposedChangeType = ""
     var proposedThemeId = ""
-    var originalThemeId = "<s:property value="themeId"/>"
+    var originalThemeId = "<s:property value="themeId" escapeHtml="false" escapeJavaScript="true"/>"
     var originalType = ""
 
     $.when( $.ready ).then(function() {
@@ -179,13 +179,13 @@
         <s:if test="customTheme">
         originalType = "custom"
         updateView($('#customRadio'));
-        previewImage('<s:property value="themes[0].id"/>');
+        previewImage('<s:property value="themes[0].id" escapeHtml="false" escapeJavaScript="true"/>');
         </s:if>
 
         <s:else>
         originalType = "shared"
         updateView($('#sharedRadio'));
-        previewImage('<s:property value="themeId"/>');
+        previewImage('<s:property value="themeId" escapeHtml="false" escapeJavaScript="true"/>');
         </s:else>
     });
 
@@ -248,7 +248,7 @@
             data: {theme: themeId}, success: function (data) {
                 $('#themeDescription').text(data.description);
                 thumbnail = $('#themeThumbnail');
-                thumbnail.attr('src', '<s:property value="siteURL" />' + data.previewPath);
+                thumbnail.attr('src', '<s:property value="siteURL" escapeHtml="false" escapeJavaScript="true" />' + data.previewPath);
             }
         });
     }

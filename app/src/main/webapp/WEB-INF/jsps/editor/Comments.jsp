@@ -254,21 +254,21 @@
                                             <s:text name="commentManagement.commentBy"/>&nbsp;:&nbsp;
                                             <s:if test="#comment.email != null && #comment.name != null">
                                                 <s:text name="commentManagement.commentByBoth">
-                                                    <s:param><s:property value="#comment.name"/></s:param>
-                                                    <s:param><s:property value="#comment.email"/></s:param>
-                                                    <s:param><s:property value="#comment.email"/></s:param>
-                                                    <s:param><s:property value="#comment.remoteHost"/></s:param>
+                                                    <s:param value="#comment.name"/>
+                                                    <s:param value="#comment.email"/>
+                                                    <s:param value="#comment.email"/>
+                                                    <s:param value="#comment.remoteHost"/>
                                                 </s:text>
                                             </s:if>
                                             <s:elseif test="#comment.email == null && #comment.name == null">
                                                 <s:text name="commentManagement.commentByIP">
-                                                    <s:param><s:property value="#comment.remoteHost"/></s:param>
+                                                    <s:param value="#comment.remoteHost"/>
                                                 </s:text>
                                             </s:elseif>
                                             <s:else>
                                                 <s:text name="commentManagement.commentByName">
-                                                    <s:param><s:property value="#comment.name"/></s:param>
-                                                    <s:param><s:property value="#comment.remoteHost"/></s:param>
+                                                    <s:param value="#comment.name"/>
+                                                    <s:param value="#comment.remoteHost"/>
                                                 </s:text>
                                             </s:else>
                                         </div>
@@ -307,8 +307,7 @@
                                                     </str:truncateNicely>
                                                 </div>
                                                 <div id="link-<s:property value="#comment.id"/>">
-                                                    <a onclick='readMoreComment("<s:property
-                                                            value="#comment.id"/>")'><s:text
+                                                    <a data-comment-id="<s:property value="#comment.id"/>" onclick="readMoreComment(this.dataset.commentId)"><s:text
                                                             name="commentManagement.readmore"/></a>
                                                 </div>
                                             </s:if>
@@ -322,20 +321,19 @@
                                         <s:if test="actionName == 'comments'">
                                             <div class="details">
                                                 <a id="editlink-<s:property value="#comment.id"/>"
-                                                   onclick='editComment("<s:property value="#comment.id"/>")'>
+                                                   data-comment-id="<s:property value="#comment.id"/>" onclick="editComment(this.dataset.commentId)">
                                                     <s:text name="generic.edit"/>
                                                 </a>
                                             </div>
                                             <div class="details">
                                               <span id="savelink-<s:property value="#comment.id"/>"
                                                     style="display: none">
-                                                   <a onclick='saveComment("<s:property value="#comment.id"/>")'><s:text
+                                                   <a data-comment-id="<s:property value="#comment.id"/>" onclick="saveComment(this.dataset.commentId)"><s:text
                                                            name="generic.save"/></a> &nbsp;|&nbsp;
                                               </span>
                                                 <span id="cancellink-<s:property value="#comment.id"/>"
                                                       style="display: none">
-                                                   <a onclick='editCommentCancel("<s:property
-                                                           value="#comment.id"/>")'><s:text name="generic.cancel"/></a>
+                                                   <a data-comment-id="<s:property value="#comment.id"/>" onclick="editCommentCancel(this.dataset.commentId)"><s:text name="generic.cancel"/></a>
                                               </span>
                                             </div>
                                         </s:if>

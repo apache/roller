@@ -23,7 +23,7 @@
 <s:else>
 <script>
     <s:url var="mediaFileURL" value="/roller-ui/rendering/media-resources/%{bean.id}" />
-    var filePointer = "<a href='<s:property value="%{mediaFileURL}" />'><s:property value="bean.name" /></a>";
+    var filePointer = "<a href=\"<s:property value="%{mediaFileURL}" escapeJavaScript="true" />\"><s:property value="bean.name" escapeJavaScript="true" /></a>";
     parent.onClose(filePointer);
 </script>
 </s:else>

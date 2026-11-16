@@ -30,7 +30,7 @@
 <s:if test="actionWeblog != null">
     <p>
     <s:text name="mainPage.currentWebsite" />:
-    <a href='<s:property value="actionWeblog.absoluteURL" />'>
+    <a href="<s:property value="actionWeblog.absoluteURL" />">
         <s:property value="actionWeblog.handle" />
     </a>
     </p>

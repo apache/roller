@@ -33,8 +33,8 @@
         <div class="form-group">
             <label class="control-label col-sm-3">Thumbnail</label>
             <div class="controls col-sm-9">
-                <a href='<s:property value="bean.permalink" />' target="_blank">
-                    <img alt="thumbnail" src='<s:property value="bean.thumbnailURL" />'
+                <a href="<s:property value="bean.permalink" />" target="_blank">
+                    <img alt="thumbnail" src="<s:property value="bean.thumbnailURL" />"
                          title='<s:text name="mediaFileEdit.clickToView" />'/>
                 </a>
             </div>
@@ -73,11 +73,11 @@
         <div class="controls col-sm-9">
 
             <input type="text" id="clip_text" size="57" 
-                   value='<s:property value="bean.permalink" />' readonly />
+                   value="<s:property value="bean.permalink" />" readonly />
 
             <s:url var="linkIconURL" value="/roller-ui/images/clippy.svg"/>
             <button class="clipbutton" data-clipboard-target="#clip_text" type="button">
-                <img src='<s:property value="%{linkIconURL}" />' alt="Copy to clipboard" style="width:0.9em; height:0.9em">
+                <img src="<s:property value="%{linkIconURL}" />" alt="Copy to clipboard" style="width:0.9em; height:0.9em">
             </button>
 
         </div>

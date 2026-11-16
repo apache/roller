@@ -18,6 +18,15 @@
 
 package org.apache.roller.weblogger.ui.struts2.util;
 
+import java.util.Collections;
+
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.LocalizedTextProvider;
+import com.opensymphony.xwork2.config.ConfigurationManager;
+import com.opensymphony.xwork2.config.providers.XWorkConfigurationProvider;
+import com.opensymphony.xwork2.inject.Container;
+import com.opensymphony.xwork2.util.ValueStack;
+import com.opensymphony.xwork2.util.ValueStackFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,6 +65,36 @@ public class UIActionTest  {
     public void testCleanTextArg() {
         assertEquals("&lt;i&gt;some text&lt;/i&gt;",UIAction.cleanTextArg("<i>some text</i>"));
         assertEquals("&lt;i&gt;some ${text}&lt;/i&gt;",UIAction.cleanTextArg("<i>some ${text}</i>"));
+    }
+
+    // the <s:text> tag formats its <s:param> values through these overloads
+    @Test
+    public void testGetTextWithValueStackEscapesStringArgs() {
+        ConfigurationManager configurationManager = new ConfigurationManager("xwork");
+        configurationManager.addContainerProvider(new XWorkConfigurationProvider());
+        Container container = configurationManager.getConfiguration().getContainer();
+        ValueStack stack = container.getInstance(ValueStackFactory.class).createValueStack();
+        ActionContext.setContext(new ActionContext(stack.getContext()));
+        try {
+            container.getInstance(LocalizedTextProvider.class)
+                    .addDefaultResourceBundle("ApplicationResources");
+            UIAction action = new UIAction() { };
+            container.inject(action);
+
+            // mediaFileView.filesNamed=Files named like <b>{0}</b>
+            assertEquals("Files named like <b>&lt;i&gt;x&lt;/i&gt; &amp; 'y'</b>",
+                    action.getText("mediaFileView.filesNamed", "mediaFileView.filesNamed",
+                            Collections.singletonList("<i>x</i> & 'y'"), stack));
+            assertEquals("Files named like <b>&lt;i&gt;x&lt;/i&gt;</b>",
+                    action.getText("mediaFileView.filesNamed", "mediaFileView.filesNamed",
+                            new String[] {"<i>x</i>"}, stack));
+            // numbers and other non-string values are passed through
+            assertEquals("Found <b>3</b> matching results.",
+                    action.getText("mediaFileView.matchingResults", "mediaFileView.matchingResults",
+                            Collections.singletonList(3), stack));
+        } finally {
+            ActionContext.setContext(null);
+        }
     }
 
 }
