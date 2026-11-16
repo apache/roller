@@ -57,6 +57,7 @@
 
         <form method="post" id="loginForm"
               action="<c:url value="<%= securityCheckUrl %>"/>" onsubmit="saveUsername(this)">
+            <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>" value="<c:out value="${_csrf.token}"/>"/>
 
             <div class="mb-3">
                 <s:if test="authMethod == 'DB_OIDC'">

@@ -45,6 +45,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,7 +59,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Sends requests through the filter chain SecurityConfig builds.
  *
  * <p>The request table was recorded from the security.xml this configuration
- * replaced, so it also checks that the move kept Roller's behaviour.
+ * replaced, so it also checks that the move kept Roller's behaviour. The one
+ * deliberate change since: the login form needs Spring's CSRF token.
  */
 class SecurityConfigTest {
 
@@ -171,14 +173,24 @@ class SecurityConfigTest {
         assertEquals(LOGIN, outcome(chain, page, new MockHttpServletResponse()));
 
         MockHttpServletResponse wrong = new MockHttpServletResponse();
-        outcome(chain, login("bob", "wrong", session), wrong);
+        outcome(chain, login(chain, "bob", "wrong", session), wrong);
         assertEquals("/roller-ui/login.rol?error=true", wrong.getRedirectedUrl());
         assertTrue(wrong.getHeaders("Set-Cookie").isEmpty(), "no remember-me cookie when it is off");
 
         MockHttpServletResponse right = new MockHttpServletResponse();
-        outcome(chain, login("bob", "secret", session), right);
+        outcome(chain, login(chain, "bob", "secret", session), right);
         assertEquals("http://localhost/roller-ui/authoring/entries.rol?weblog=myblog&continue",
                 right.getRedirectedUrl());
+    }
+
+    @Test
+    void loginNeedsTheLoginPageToken() throws Exception {
+        FilterChainProxy chain = chain(WithUser.class);
+        MockHttpServletRequest login = request("POST", "/roller_j_security_check", "");
+        login.setParameter("j_username", "bob");
+        login.setParameter("j_password", "secret");
+
+        assertEquals("403 null", outcome(chain, login, new MockHttpServletResponse()));
     }
 
     @Test
@@ -219,7 +231,7 @@ class SecurityConfigTest {
         setProperty("rememberme.key", "test-remember-me-key");
         FilterChainProxy chain = chain(WithUser.class);
 
-        MockHttpServletRequest login = login("bob", "secret", new MockHttpSession(servletContext));
+        MockHttpServletRequest login = login(chain, "bob", "secret", new MockHttpSession(servletContext));
         login.setParameter("remember-me", "on");
         MockHttpServletResponse response = new MockHttpServletResponse();
         outcome(chain, login, response);
@@ -247,7 +259,7 @@ class SecurityConfigTest {
 
         // bob only exists in the database login, which LDAP replaces
         MockHttpServletResponse response = new MockHttpServletResponse();
-        outcome(chain, login("bob", "secret", new MockHttpSession(servletContext)), response);
+        outcome(chain, login(chain, "bob", "secret", new MockHttpSession(servletContext)), response);
         assertEquals("/roller-ui/login.rol?error=true", response.getRedirectedUrl());
     }
 
@@ -285,10 +297,18 @@ class SecurityConfigTest {
         return request;
     }
 
-    private MockHttpServletRequest login(String user, String password, MockHttpSession session) {
+    /** A login form post, with the token the login page gives that session. */
+    private MockHttpServletRequest login(FilterChainProxy chain, String user, String password,
+            MockHttpSession session) throws Exception {
+        MockHttpServletRequest page = request("GET", "/roller-ui/login.rol", "");
+        page.setSession(session);
+        outcome(chain, page, new MockHttpServletResponse());
+        CsrfToken token = (CsrfToken) page.getAttribute(CsrfToken.class.getName());
+
         MockHttpServletRequest login = request("POST", "/roller_j_security_check", "");
         login.setParameter("j_username", user);
         login.setParameter("j_password", password);
+        login.setParameter(token.getParameterName(), token.getToken());
         login.setSession(session);
         return login;
     }

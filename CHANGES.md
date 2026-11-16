@@ -249,6 +249,11 @@
     `security.access.<path>=<roles>` properties, for example
     `security.access./family/**=family`. These rules match paths without
     regard to case.
+- **The login form needs Spring Security's CSRF token.** Roller's login page
+  includes it. A theme or script that posts straight to
+  `/roller_j_security_check` has to read the `_csrf` field from the login
+  page first and send it back. Other forms keep using Roller's own salt
+  check.
 
 ### Build and packaging
 

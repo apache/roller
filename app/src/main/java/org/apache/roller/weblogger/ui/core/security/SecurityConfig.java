@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -61,6 +62,8 @@ import org.springframework.web.util.pattern.PathPatternParser;
 public class SecurityConfig {
 
     static final String LOGIN_PAGE = "/roller-ui/login.rol";
+
+    static final String LOGIN_PROCESSING_URL = "/roller_j_security_check";
 
     private static final String ACCESS_PREFIX = "security.access.";
 
@@ -120,7 +123,7 @@ public class SecurityConfig {
                 .usernameParameter("j_username")
                 .passwordParameter("j_password")
                 .failureUrl(LOGIN_PAGE + "?error=true")
-                .loginProcessingUrl("/roller_j_security_check"));
+                .loginProcessingUrl(LOGIN_PROCESSING_URL));
 
         LoginUrlAuthenticationEntryPoint entryPoint = new LoginUrlAuthenticationEntryPoint(LOGIN_PAGE);
         entryPoint.setForceHttps(WebloggerConfig.getBooleanProperty("securelogin.enabled"));
@@ -147,8 +150,13 @@ public class SecurityConfig {
         // Roller has its own logout action
         http.logout(logout -> logout.disable());
 
-        // Roller already uses its own salt based CSRF protection
-        http.csrf(csrf -> csrf.disable());
+        // Roller protects its own forms with the salt that LoadSaltFilter and
+        // ValidateSaltFilter check on every POST under /roller-ui, so Spring's
+        // CSRF token is only required for the login form, which posts outside
+        // /roller-ui. The token is created only when the login page asks for
+        // it, so other pages don't start a session for it.
+        http.csrf(csrf -> csrf.requireCsrfProtectionMatcher(
+                PathPatternRequestMatcher.pathPattern(HttpMethod.POST, LOGIN_PROCESSING_URL)));
 
         // some Roller UI (i.e. media file editor) uses iframes
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
