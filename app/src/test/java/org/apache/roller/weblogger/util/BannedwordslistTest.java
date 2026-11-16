@@ -25,8 +25,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -79,5 +81,29 @@ public class BannedwordslistTest  {
         assertTrue(bannedwordslist.isBannedwordslisted("viagra.com"));
     }
     
+
+    // each bundled regex rule still matches the kind of domain it targets
+    @Test
+    public void testBundledRegexRules() {
+        assertTrue(bannedwordslist.isBannedwordslisted("see http://sub.lostr.info/x"));
+        assertTrue(bannedwordslist.isBannedwordslisted("cheap.dietpills-now.biz"));
+        assertTrue(bannedwordslist.isBannedwordslisted("onlinecasino-royal.net"));
+        assertTrue(bannedwordslist.isBannedwordslisted("prozac-store.org"));
+        assertTrue(bannedwordslist.isBannedwordslisted("tramadol.example.com"));
+        assertTrue(bannedwordslist.isBannedwordslisted("nexium.co"));
+        assertFalse(bannedwordslist.isBannedwordslisted("I went online to buy a casino book."));
+    }
+
+    // long text is checked in time proportional to its length
+    @Test
+    public void testLongTextIsCheckedQuickly() {
+        String[] units = {"a", "buy", "buyonline", "dietpills", "onlinecasino", "viagra"};
+        assertTimeoutPreemptively(Duration.ofSeconds(2), () -> {
+            for (String unit : units) {
+                String text = unit.repeat(40000 / unit.length());
+                assertFalse(bannedwordslist.isBannedwordslisted(text), unit);
+            }
+        });
+    }
 
 }

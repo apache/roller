@@ -79,6 +79,9 @@ public class CommentServlet extends HttpServlet {
     private CommentAuthenticator authenticator = null;
     private CommentValidationManager commentValidationManager = null;
     private GenericThrottle commentThrottle = null;
+    private int maxContentLength = DEFAULT_MAX_CONTENT_LENGTH;
+
+    static final int DEFAULT_MAX_CONTENT_LENGTH = 10000;
 
     /**
      * Initialization.
@@ -104,6 +107,9 @@ public class CommentServlet extends HttpServlet {
 
         // instantiate a comment validation manager for comment spam checking
         commentValidationManager = new CommentValidationManager();
+
+        maxContentLength = WebloggerConfig.getIntProperty(
+                "comment.maxLength", DEFAULT_MAX_CONTENT_LENGTH);
 
         // are we doing throttling?
         if (WebloggerConfig.getBooleanProperty("comment.throttle.enabled")) {
@@ -256,7 +262,8 @@ public class CommentServlet extends HttpServlet {
 
         WeblogEntryCommentForm cf = new WeblogEntryCommentForm();
         cf.setData(comment);
-        if (preview) {
+        boolean tooLong = isTooLong(comment.getContent(), maxContentLength);
+        if (preview && !tooLong) {
             cf.setPreview(comment);
         }
 
@@ -267,6 +274,10 @@ public class CommentServlet extends HttpServlet {
         // this checks site-wide settings, weblog settings, and entry settings
         if (!entry.getCommentsStillAllowed() || !entry.isPublished()) {
             error = messageUtils.getString("comments.disabled");
+
+        } else if (tooLong) {
+            error = messageUtils.getString("error.commentPostFailedTooLong",
+                    new Object[] {maxContentLength});
 
             // Must have an email and also must be valid
         } else if (StringUtils.isEmpty(commentRequest.getEmail())
@@ -405,6 +416,14 @@ public class CommentServlet extends HttpServlet {
         RequestDispatcher dispatcher = request
                 .getRequestDispatcher(dispatch_url);
         dispatcher.forward(request, response);
+    }
+
+    /**
+     * Whether comment content is longer than comment.maxLength characters.
+     * Such comments are refused before they are previewed or checked.
+     */
+    static boolean isTooLong(String content, int maxLength) {
+        return content != null && content.length() > maxLength;
     }
 
 }
