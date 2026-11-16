@@ -403,9 +403,41 @@ mechanism, i.e., using a Roller-provided database table (roller_user) to
 store usernames and encrypted passwords. Roller provides other
 authentication options defined by the `authentication.method`
 setting in _roller-custom.properties_: OpenID Connect (`oidc`), a combination
-of database passwords and OpenID Connect (`db-oidc`), and LDAP (`ldap`)
-(https://cwiki.apache.org/confluence/display/ROLLER/Roller+5.1+with+LDAP).
-See <<oidc-login>> for OpenID Connect configuration. Roller 7 replaces the older
+of database passwords and OpenID Connect (`db-oidc`), and LDAP (`ldap`).
+See <<oidc-login>> for OpenID Connect configuration.
+
+For LDAP, set `authentication.method=ldap` and point Roller at the directory:
+
+----
+users.ldap.url=ldap://ldap.example.com:389/dc=example,dc=com
+# optional: an account to search with, otherwise the search is anonymous
+users.ldap.managerDn=uid=roller,ou=services,dc=example,dc=com
+users.ldap.managerPassword=secret
+# where and how to find a user, relative to the base DN
+users.ldap.userSearchBase=ou=people
+users.ldap.userSearchFilter=(uid={0})
+# role every LDAP user gets, in addition to roles stored in Roller
+users.ldap.defaultRole=editor
+----
+
+Roller 7 no longer has a _WEB-INF/security.xml_ file to edit; these properties
+replace the LDAP beans that earlier versions asked you to uncomment there.
+
+To limit paths to users with certain roles, for example to keep a weblog
+private, add `security.access.` properties. The rest of each key is a path
+pattern, matched without regard to case, and the value lists the allowed roles,
+separated by commas. Visitors without one of those roles are sent to the login
+page. Roles are the names in Roller's `userrole` table.
+
+----
+security.access./family=family
+security.access./family/**=family
+----
+
+These rules apply to the paths visitors request. They are checked before
+Roller's own rules, longest pattern first. Content of the weblog can still
+appear elsewhere, for example in site-wide feeds and search, so test what a
+visitor without the role can see. Roller 7 replaces the older
 OpenID 2.0 integration with OpenID Connect; an old OpenID configuration needs
 an OIDC provider registration.
 These authentication methods are used less frequently so should be

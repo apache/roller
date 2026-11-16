@@ -239,6 +239,16 @@
   change the limit. The bundled `bannedwordslist.txt` rules match the same
   domains as before but look at most 63 characters between their parts; a
   copy of the old file in the uploads directory is still used if present.
+- **Spring Security is configured in Java; `WEB-INF/security.xml` is gone.**
+  Sites that edited that file move their changes to `roller-custom.properties`:
+  - LDAP login is set with `authentication.method=ldap` and the new
+    `users.ldap.url`, `users.ldap.managerDn`, `users.ldap.managerPassword`,
+    `users.ldap.userSearchBase`, `users.ldap.userSearchFilter` and
+    `users.ldap.defaultRole` properties, instead of uncommenting beans.
+  - Extra URL rules, such as a private weblog for one role, are
+    `security.access.<path>=<roles>` properties, for example
+    `security.access./family/**=family`. These rules match paths without
+    regard to case.
 
 ### Build and packaging
 

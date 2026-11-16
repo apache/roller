@@ -36,7 +36,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
  * Handle user logins.
  *
  * The standard blog login buttons route to login-redirect.rol, which is
- * intercepted by the Spring security.xml to first require a standard login (this class).
+ * intercepted by Spring Security (SecurityConfig) to first require a standard login (this class).
  * After successful authentication, login-redirect will either route the user to
  * registration (if the user logged in via an external method such as LDAP and doesn't
  * yet have a Roller account), or directly to the user's blog.
