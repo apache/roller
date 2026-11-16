@@ -21,8 +21,6 @@ package org.apache.roller.weblogger.ui.core;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
@@ -48,17 +46,14 @@ import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.core.security.RollerClientRegistrationRepository;
+import org.apache.roller.weblogger.ui.core.security.RollerPasswordEncoders;
+import org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService;
 import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -72,7 +67,7 @@ public class RollerContext extends ContextLoaderListener
     private static final Log log = LogFactory.getLog(RollerContext.class);
 
     private static ServletContext servletContext = null;
-    private static DelegatingPasswordEncoder encoder;
+    private static PasswordEncoder encoder;
 
 
     public RollerContext() {
@@ -280,7 +275,7 @@ public class RollerContext extends ContextLoaderListener
             }
         }
 
-        encoder = createPasswordEncoder();
+        encoder = RollerPasswordEncoders.create();
 
         String daoBeanName = "org.springframework.security.authentication.dao.DaoAuthenticationProvider#0";
 
@@ -288,6 +283,9 @@ public class RollerContext extends ContextLoaderListener
         if (ctx.containsBean(daoBeanName)) {
             DaoAuthenticationProvider provider = (DaoAuthenticationProvider) ctx.getBean(daoBeanName);
             provider.setPasswordEncoder(encoder);
+            // store passwords re-encoded after login (passwds.encryption.lazyUpgradeFrom)
+            provider.setUserDetailsPasswordService(
+                    ctx.getBean("rollerUserService", RollerUserDetailsService.class));
         }
 
         if (WebloggerConfig.getBooleanProperty("securelogin.enabled")) {
@@ -296,62 +294,6 @@ public class RollerContext extends ContextLoaderListener
             entryPoint.setForceHttps(true);
         }
     }
-
-    @SuppressWarnings("deprecation")
-    private DelegatingPasswordEncoder createPasswordEncoder() {
-
-        Map<String, PasswordEncoder> encoders = new HashMap<>();
-
-        // outdated digest encoder used for lazy upgrades from pws encoded by old roller versions.
-        String migrateFrom = WebloggerConfig.getProperty("passwds.encryption.lazyUpgradeFrom");
-        
-        if(migrateFrom == null || migrateFrom.isEmpty()) {
-            log.debug("lazy pw upgrade disabled");
-        } else if (migrateFrom.equals("plaintext")) {
-            encoders.put(null, org.springframework.security.crypto.password.NoOpPasswordEncoder.getInstance());
-        } else if (migrateFrom.equals("MD5")) {
-            encoders.put(null, new org.springframework.security.crypto.password.MessageDigestPasswordEncoder("MD5"));
-        } else if (migrateFrom.equals("SHA")) {
-            encoders.put(null, new org.springframework.security.crypto.password.MessageDigestPasswordEncoder("SHA-1"));
-        } else {
-            throw new RuntimeException("passwds.encryption.lazyUpgradeFrom="+migrateFrom+" is no valid encoding to upgrade from.");
-        }
-        
-        // supported encoders
-        encoders.put("bcrypt", new BCryptPasswordEncoder());
-        // pbkdf2 stores only salt+hash, so its parameters must stay as they were
-        // when existing passwords were encoded or those passwords stop verifying.
-        // scrypt and argon2 encode their parameters, so they can take v5_8.
-        encoders.put("pbkdf2", Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_5());
-        // provided by bouncy castle dependency
-        encoders.put("scrypt", SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8());
-        encoders.put("argon2", Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
-
-        // just for testing
-        encoders.put("noop", org.springframework.security.crypto.password.NoOpPasswordEncoder.getInstance());
-        
-        String algorithm = WebloggerConfig.getProperty("passwds.encryption.algorithm");
-        
-        if (WebloggerConfig.getBooleanProperty("passwds.encryption.enabled")) {
-            
-            if ("SHA".equals(algorithm) || "MD5".equals(algorithm)) {
-                throw new RuntimeException("passwds.encryption.algorithm="+algorithm+" is outdated,"
-                        + " please set passwds.encryption.algorithm to 'bcrypt' for automatic lazy upgrade.");
-            }
-            
-            if (!encoders.containsKey(algorithm)) {
-                throw new RuntimeException("passwds.encryption.algorithm="+algorithm+" is not supported.");
-            }
-        } else {
-            log.warn("New passwords are stored in plain text!");
-            algorithm = "noop";
-        }
-        
-        log.info("Password Encryption Algorithm set to '" + algorithm + "'");
-        
-        return new DelegatingPasswordEncoder(algorithm, encoders);
-    }
-
 
     /**
      * The OIDC client registrations declared in security.xml, or null when
