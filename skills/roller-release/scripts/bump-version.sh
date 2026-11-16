@@ -35,23 +35,33 @@ args = parser.parse_args(sys.argv[2:])
 for value in (args.old, args.new):
     if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+(?:-[A-Za-z0-9.-]+)?", value):
         parser.error("versions must be major.minor.patch with an optional suffix")
-expected = ["pom.xml", "app/pom.xml", "db-utils/pom.xml",
-            "assembly-release/pom.xml", "it-selenium/pom.xml"]
-missing = [name for name in expected if not (root / name).is_file()]
+required = ["pom.xml", "app/pom.xml", "db-utils/pom.xml",
+            "assembly-release/pom.xml"]
+# The browser tests are a separate project: it-selenium on 6.1.x,
+# it-playwright from 7.0 on. Update whichever the branch has.
+optional = ["it-selenium/pom.xml", "it-playwright/pom.xml"]
+missing = [name for name in required if not (root / name).is_file()]
 if missing:
     sys.exit("Missing expected files; no changes made: " + ", ".join(missing))
-# Match complete version element contents, not prefixes of other versions.
-pattern = re.compile(r"(?P<start><version>\s*)" + re.escape(args.old)
-                     + r"(?P<end>\s*</version>)")
+expected = required + [name for name in optional if (root / name).is_file()]
+# Match complete version element contents, not prefixes of other versions,
+# and the roller.version property that the root POM also carries.
+patterns = [re.compile(r"(?P<start><" + tag + r">\s*)" + re.escape(args.old)
+                       + r"(?P<end>\s*</" + tag + r">)")
+            for tag in ("version", "roller.version")]
 changes = []
 for name in expected:
     path = root / name
     original = path.read_bytes()
     text = original.decode("utf-8")
-    updated, count = pattern.subn(lambda m: m['start'] + args.new + m['end'], text)
+    count = 0
+    updated = text
+    for pattern in patterns:
+        updated, n = pattern.subn(lambda m: m['start'] + args.new + m['end'], updated)
+        count += n
     if count:
         changes.append((path, updated.encode("utf-8")))
-    print(f"{'update' if args.write else 'would update'} {name}: {count} version element(s)")
+    print(f"{'update' if args.write else 'would update'} {name}: {count} version value(s)")
 if args.write:
     for path, content in changes:
         path.write_bytes(content)
