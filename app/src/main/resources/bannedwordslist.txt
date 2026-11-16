@@ -8,11 +8,11 @@
 #
 #   Can also add domains to block via Roller blog Admin interface.
 #
-([\w\-_.]+\.)?(l(so|os)tr)\.[a-z]{2,}     # Catchall regex for lsotr.xxx and lostr.xxx with or without a subdomain
-(buy)[\w\-_.]*online[\w\-_.]*\.[a-z]{2,}     # Catchall regexp for many spam sites
-(diet|penis)[\w\-_.]*(pills|enlargement)[\w\-_.]*\.[a-z]{2,}     # Catchall regexp for many spam sites
-(online)[\w\-_.]*casino[\w\-_.]*\.[a-z]{2,}     # Catchall regexp for a hundred online casino sites
-(levitra|lolita|phentermine|viagra|vig-?rx|zyban|valtex|xenical|adipex|meridia\b)[\w\-_.]*\.[a-z]{2,}     # Super regexp for domains containing listed drug names
-(prozac|zoloft|xanax|valium|hydrocodone|vicodin|paxil|vioxx)[\w\-_.]*\.[a-z]{2,}     # Super regexp for domains containing drug names
-(ultram\b|\btenuate|tramadol|pheromones|phendimetrazine|ionamin|ortho.?tricyclen|retin.?a\b)[\w\-_.]*\.[a-z]{2,}     # Third drug super regexp
-(valtrex|zyrtec|\bhgh\b|ambien\b|flonase|allegra|didrex|renova\b|bontril|nexium)[\w\-_.]*\.[a-z]{2,}     # Fourth drug super regexp
+(l(so|os)tr)\.[a-z]{2,}     # Catchall regex for lsotr.xxx and lostr.xxx with or without a subdomain
+(buy)[\w\-_.]{0,63}online[\w\-_.]{0,63}\.[a-z]{2,}     # Catchall regexp for many spam sites
+(diet|penis)[\w\-_.]{0,63}(pills|enlargement)[\w\-_.]{0,63}\.[a-z]{2,}     # Catchall regexp for many spam sites
+(online)[\w\-_.]{0,63}casino[\w\-_.]{0,63}\.[a-z]{2,}     # Catchall regexp for a hundred online casino sites
+(levitra|lolita|phentermine|viagra|vig-?rx|zyban|valtex|xenical|adipex|meridia\b)[\w\-_.]{0,63}\.[a-z]{2,}     # Super regexp for domains containing listed drug names
+(prozac|zoloft|xanax|valium|hydrocodone|vicodin|paxil|vioxx)[\w\-_.]{0,63}\.[a-z]{2,}     # Super regexp for domains containing drug names
+(ultram\b|\btenuate|tramadol|pheromones|phendimetrazine|ionamin|ortho.?tricyclen|retin.?a\b)[\w\-_.]{0,63}\.[a-z]{2,}     # Third drug super regexp
+(valtrex|zyrtec|\bhgh\b|ambien\b|flonase|allegra|didrex|renova\b|bontril|nexium)[\w\-_.]{0,63}\.[a-z]{2,}     # Fourth drug super regexp
