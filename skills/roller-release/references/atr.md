@@ -78,8 +78,13 @@ Follow [Getting started](https://releases.apache.org/docs/getting-started) and
    `apache-roller-<version>-source.tar.gz` extracts to
    `apache-roller-<version>-source/` and the binary archives to
    `apache-roller-<version>/`. If ATR still reports an archive-structure
-   concern, investigate it before acknowledging it. Do not suppress checks just
-   to start voting. Record the final
+   concern, investigate it before acknowledging it. The source archive's root
+   needs files named exactly `LICENSE` and `NOTICE`: ATR's source check blocks
+   `LICENSE.txt` and `NOTICE.txt`, though its binary check accepts them
+   ([ATR #877](https://github.com/apache/tooling-trusted-releases/issues/877)).
+   ATR's license-header check accepts only the current ASF header text, so
+   files with an older ASF header show up as concerns. Do not suppress checks
+   just to start voting. Record the final
    ATR revision, candidate URL, manifest, archive filenames and digests, signer
    fingerprint, RC tag and source commit.
    Optionally give the revision an immutable RC tag in ATR.
@@ -88,7 +93,10 @@ Follow [Getting started](https://releases.apache.org/docs/getting-started) and
    [file manifest](https://releases.apache.org/docs/file-manifest), signatures,
    checksums and contents; run `scripts/check-release.sh <dir>` and build/test
    the downloaded source. ATR's manifest digests do not replace detached
-   signatures or the project's checksum sidecars.
+   signatures or the project's checksum sidecars. Large downloads from ATR can
+   stop partway; use `curl --retry 5 --retry-all-errors -C -` and compare each
+   file byte for byte with the uploaded set. When they match and the uploaded
+   source archive was already built and tested, that build covers the download.
 
 ## Vote and replacement candidates
 
@@ -106,8 +114,19 @@ the pinned revision and source tag/commit; do not present another artifact copy
 as part of the vote. Start the email vote through ATR only when sending it is
 authorized. On the start-vote form, leave **Automatically publish to SVN
 distribution area when this vote resolves** unchecked; publish manually from the
-reviewed Finish page. See
+reviewed Finish page. That option only takes effect when the release manager
+marks the vote passed. See
 [Staging and voting](https://releases.apache.org/docs/staging-and-voting).
+
+Roller's project settings hold the vote, result and announcement templates.
+They are written as plain paragraphs without hard wraps, and the vote and
+result emails open with "Hello Roller developers,". ATR has no template
+variable for the RC number, so the vote subject carries it literally
+(`[VOTE] Release Apache {{PROJECT_NAME}} {{VERSION}} RC1`): update it before
+each round. ATR has no variables for the RC tag or the SHA-512 digests either,
+so add those to the body by hand. After the vote starts, ATR may show a 404
+page because the draft has moved to the vote phase; check the candidate's vote
+page and the list archive to confirm the email went out.
 
 Allow the normal voting period, then check ATR's tally against the mailing-list
 thread and current PMC membership. Require at least three positive binding votes
