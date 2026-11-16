@@ -28,8 +28,9 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.util.List;
-import org.junit.jupiter.api.Disabled;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -89,14 +90,16 @@ class IPBanListTest {
         assertFalse(ipBanList.isBanned(null));
     }
 
-    @Disabled
     @Test
     @DisplayName("isBanned() reads the file if needed")
-    void isBanned4() {
+    void isBanned4() throws IOException {
+        FileTime loadedAt = Files.getLastModifiedTime(ipBanListPath);
         writeIpBanList("10.0.0.1");
-        try { // work around for intermittently failing test
-            Thread.sleep(500);
-        } catch (InterruptedException ignored) {}
+        // IPBanList notices changes by modification time, which filesystems
+        // with coarse timestamps may leave unchanged after a quick rewrite
+        Files.setLastModifiedTime(ipBanListPath,
+                FileTime.fromMillis(loadedAt.toMillis() + TimeUnit.MINUTES.toMillis(1)));
+
         assertTrue(ipBanList.isBanned("10.0.0.1"));
     }
 
