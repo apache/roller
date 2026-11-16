@@ -50,6 +50,24 @@ public class SmileysPluginTest {
     }
 
     @Test
+    public void emoticonsInsideTagsAreLeftAlone() {
+        // an Instagram embed's SVG has xmlns:xlink, which holds ":x"
+        String svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" "
+                + "xmlns:xlink=\"http://www.w3.org/1999/xlink\"><g></g></svg>";
+        assertEquals(svg, plugin.render(null, svg));
+        assertEquals("<a title=\"see :-)\" href=\"/x\">hi "
+                + "<span class=\"smiley\" title=\":-)\">&#x1F642;</span></a>",
+                plugin.render(null, "<a title=\"see :-)\" href=\"/x\">hi :-)</a>"));
+        assertEquals("<!-- :-) -->", plugin.render(null, "<!-- :-) -->"));
+    }
+
+    @Test
+    public void lessThanInTextDoesNotHideEmoticons() {
+        assertEquals("1 < 2 <span class=\"smiley\" title=\":-)\">&#x1F642;</span>",
+                plugin.render(null, "1 < 2 :-)"));
+    }
+
+    @Test
     public void textWithoutEmoticonsIsUnchanged() {
         String text = "<p>No faces here.</p>";
         assertEquals(text, plugin.render(null, text));
