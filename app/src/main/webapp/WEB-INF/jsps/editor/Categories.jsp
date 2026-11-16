@@ -70,21 +70,21 @@
             data-category-desc="<s:property value='#category.description'/>"
             data-category-image="<s:property value='#category.image'/>"
             data-in-use="<s:property value='isInUse(#category.id)'/>"
-            data-delete-text="<s:if test='getEntryCount(#category.id) > 0'><s:text escapeHtml="true" name='categoryDeleteOK.entriesInCategory'><s:param value='getEntryCount(#category.id)'/></s:text></s:if><s:elseif test='isInUse(#category.id)'><s:text escapeHtml="true" name='categoryDeleteOK.warningCatInUse'/></s:elseif><s:else><s:text escapeHtml="true" name='categoryDeleteOK.noEntriesInCat'/></s:else>">
+            data-delete-text="<s:if test='getEntryCount(#category.id) > 0'><s:text name='categoryDeleteOK.entriesInCategory'><s:param value='getEntryCount(#category.id)'/></s:text></s:if><s:elseif test='isInUse(#category.id)'><s:text escapeHtml="true" name='categoryDeleteOK.warningCatInUse'/></s:elseif><s:else><s:text escapeHtml="true" name='categoryDeleteOK.noEntriesInCat'/></s:else>">
 
             <button type="button" class="category-handle"
-                    aria-label="<s:text escapeHtml="true" name='categoriesForm.moveHandle'><s:param value='#category.name'/></s:text>">
+                    aria-label="<s:text name='categoriesForm.moveHandle'><s:param value='#category.name'/></s:text>">
                 <span class="bi bi-grip-vertical" aria-hidden="true"></span>
             </button>
 
             <%-- shown instead of the handle on touch screens, where it cannot be dragged --%>
             <span class="category-move">
                 <button type="button" class="btn btn-sm btn-outline-secondary category-move-up"
-                        aria-label="<s:text escapeHtml="true" name='categoriesForm.moveUp'><s:param value='#category.name'/></s:text>">
+                        aria-label="<s:text name='categoriesForm.moveUp'><s:param value='#category.name'/></s:text>">
                     <span class="bi bi-chevron-up" aria-hidden="true"></span>
                 </button>
                 <button type="button" class="btn btn-sm btn-outline-secondary category-move-down"
-                        aria-label="<s:text escapeHtml="true" name='categoriesForm.moveDown'><s:param value='#category.name'/></s:text>">
+                        aria-label="<s:text name='categoriesForm.moveDown'><s:param value='#category.name'/></s:text>">
                     <span class="bi bi-chevron-down" aria-hidden="true"></span>
                 </button>
             </span>
@@ -102,12 +102,12 @@
 
             <s:if test="getEntryCount(#category.id) > 0">
                 <a class="category-count" href="<s:property value='%{entriesURL}'/>"
-                   title="<s:text escapeHtml="true" name='categoriesForm.viewEntries'><s:param value='#category.name'/></s:text>">
-                    <s:text escapeHtml="true" name="categoriesForm.entryCount"><s:param value="getEntryCount(#category.id)"/></s:text>
+                   title="<s:text name='categoriesForm.viewEntries'><s:param value='#category.name'/></s:text>">
+                    <s:text name="categoriesForm.entryCount"><s:param value="getEntryCount(#category.id)"/></s:text>
                 </a>
             </s:if>
             <s:else>
-                <span class="category-count"><s:text escapeHtml="true" name="categoriesForm.entryCount"><s:param value="0"/></s:text></span>
+                <span class="category-count"><s:text name="categoriesForm.entryCount"><s:param value="0"/></s:text></span>
             </s:else>
 
             <div class="category-actions">

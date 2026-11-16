@@ -87,7 +87,7 @@
                          placeholder="%{getText('mediaFileView.searchPlaceholder')}"/>
             <label class="visually-hidden" for="beanScope"><s:text name="mediaFileView.searchIn"/></label>
             <select id="beanScope" name="bean.scope" class="form-select media-search-scope">
-                <option value="folder"><s:text name="mediaFileView.thisFolder" escapeHtml="true"><s:param value="currentDirectory.name"/></s:text></option>
+                <option value="folder"><s:text name="mediaFileView.thisFolder"><s:param value="currentDirectory.name"/></s:text></option>
                 <option value="all" <s:if test="bean.allFolders">selected</s:if>><s:text name="mediaFileView.allFolders"/></option>
             </select>
             <button type="submit" class="btn btn-primary"><s:text name="generic.search"/></button>
@@ -213,7 +213,7 @@
             <s:text name="mediaFileView.matchCount"><s:param value="pager.totalCount"/></s:text>
             <ul class="media-criteria">
                 <s:if test="bean.name != null && !bean.name.trim().isEmpty()">
-                    <li><s:text name="mediaFileView.criterionName" escapeHtml="true"><s:param value="bean.name.trim()"/></s:text></li>
+                    <li><s:text name="mediaFileView.criterionName"><s:param value="bean.name.trim()"/></s:text></li>
                 </s:if>
                 <s:if test="bean.typeSet">
                     <li><s:text name="mediaFileView.type"/>: <s:property value="bean.typeLabel"/></li>
@@ -227,7 +227,7 @@
                 </s:if>
                 <li>
                     <s:if test="bean.allFolders"><s:text name="mediaFileView.allFolders"/></s:if>
-                    <s:else><s:text name="mediaFileView.thisFolder" escapeHtml="true"><s:param value="currentDirectory.name"/></s:text></s:else>
+                    <s:else><s:text name="mediaFileView.thisFolder"><s:param value="currentDirectory.name"/></s:text></s:else>
                 </li>
             </ul>
             <a href="<s:property value='%{clearSearchURL}'/>"><s:text name="mediaFileView.clearSearch"/></a>

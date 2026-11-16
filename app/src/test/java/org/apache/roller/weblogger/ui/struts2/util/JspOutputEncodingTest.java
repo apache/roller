@@ -42,7 +42,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * <p>{@code <s:property>} escapes HTML special characters except the
  * apostrophe, so its output belongs in element content or double-quoted
  * attributes. Inside {@code <script>} blocks values are JavaScript-escaped
- * instead.
+ * instead. {@code <s:param>} strings are escaped by UIAction, so the
+ * {@code <s:text>} around them doesn't escape again.
  */
 class JspOutputEncodingTest {
 
@@ -52,6 +53,8 @@ class JspOutputEncodingTest {
             Pattern.compile("<script\\b[^>]*>(.*?)</script>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
     private static final Pattern PROPERTY_TAG =
             Pattern.compile("<s:property\\b[^>]*>", Pattern.DOTALL);
+    private static final Pattern TEXT_WITH_BODY =
+            Pattern.compile("<s:text\\b((?:[^>/]|/(?!>))*)>(.*?)</s:text>", Pattern.DOTALL);
     private static final Pattern SINGLE_QUOTED_ATTRIBUTE =
             Pattern.compile("[\\w:.-]+\\s*=\\s*'[^']*<s:property", Pattern.DOTALL);
 
@@ -114,6 +117,24 @@ class JspOutputEncodingTest {
             while (property.find()) {
                 if (property.group().contains("escapeHtml=\"false\"")) {
                     problems.add(name(jsp) + ": " + oneLine(property.group()));
+                }
+            }
+        }
+        assertEquals(Collections.emptyList(), problems);
+    }
+
+    /**
+     * UIAction escapes {@code <s:param>} strings, so a {@code <s:text>} that
+     * also escapes its output would show them escaped twice.
+     */
+    @Test
+    void textsWithParamsDoNotEscapeAgain() throws IOException {
+        List<String> problems = new ArrayList<>();
+        for (Path jsp : jsps) {
+            Matcher text = TEXT_WITH_BODY.matcher(read(jsp));
+            while (text.find()) {
+                if (text.group(1).contains("escapeHtml=\"true\"") && text.group(2).contains("<s:param")) {
+                    problems.add(name(jsp) + ": " + oneLine(text.group(1)));
                 }
             }
         }

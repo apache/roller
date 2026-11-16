@@ -103,7 +103,7 @@
             <div class="blogroll-title-block">
                 <h3 id="blogrollTitle" class="blogroll-title"><s:property value="plainText(folder.name)"/></h3>
                 <span class="blogroll-meta">
-                    <s:text escapeHtml="true" name="bookmarksForm.linkCount"><s:param value="links.size()"/></s:text>
+                    <s:text name="bookmarksForm.linkCount"><s:param value="links.size()"/></s:text>
                     <s:if test="defaultFolder">
                         &middot; <s:text escapeHtml="true" name="bookmarksForm.defaultNote"/>
                     </s:if>
@@ -181,21 +181,21 @@
                         data-link-image="<s:property value='#bookmark.image'/>">
 
                         <input type="checkbox" class="form-check-input link-select" value="<s:property value='#bookmark.id'/>"
-                               aria-label="<s:text escapeHtml="true" name='bookmarksForm.selectOneLabel'><s:param value='plainText(#bookmark.name)'/></s:text>">
+                               aria-label="<s:text name='bookmarksForm.selectOneLabel'><s:param value='plainText(#bookmark.name)'/></s:text>">
 
                         <button type="button" class="link-handle"
-                                aria-label="<s:text escapeHtml="true" name='bookmarksForm.moveHandle'><s:param value='plainText(#bookmark.name)'/></s:text>">
+                                aria-label="<s:text name='bookmarksForm.moveHandle'><s:param value='plainText(#bookmark.name)'/></s:text>">
                             <span class="bi bi-grip-vertical" aria-hidden="true"></span>
                         </button>
 
                         <%-- shown instead of the handle on touch screens, where it cannot be dragged --%>
                         <span class="link-move">
                             <button type="button" class="btn btn-sm btn-outline-secondary link-move-up"
-                                    aria-label="<s:text escapeHtml="true" name='bookmarksForm.moveUp'><s:param value='plainText(#bookmark.name)'/></s:text>">
+                                    aria-label="<s:text name='bookmarksForm.moveUp'><s:param value='plainText(#bookmark.name)'/></s:text>">
                                 <span class="bi bi-chevron-up" aria-hidden="true"></span>
                             </button>
                             <button type="button" class="btn btn-sm btn-outline-secondary link-move-down"
-                                    aria-label="<s:text escapeHtml="true" name='bookmarksForm.moveDown'><s:param value='plainText(#bookmark.name)'/></s:text>">
+                                    aria-label="<s:text name='bookmarksForm.moveDown'><s:param value='plainText(#bookmark.name)'/></s:text>">
                                 <span class="bi bi-chevron-down" aria-hidden="true"></span>
                             </button>
                         </span>
@@ -221,7 +221,7 @@
                         <s:if test="#bookmark.feedUrl != null && #bookmark.feedUrl != '' && #bookmark.feedUrl != #bookmark.url">
                             <a class="link-feed" href="<s:property value='#bookmark.feedUrl'/>" target="_blank" rel="noopener noreferrer"
                                title="<s:text escapeHtml="true" name='bookmarksForm.feedurl'/>"
-                               aria-label="<s:text escapeHtml="true" name='bookmarksForm.feedOf'><s:param value='plainText(#bookmark.name)'/></s:text>">
+                               aria-label="<s:text name='bookmarksForm.feedOf'><s:param value='plainText(#bookmark.name)'/></s:text>">
                                 <span class="bi bi-rss" aria-hidden="true"></span>
                             </a>
                         </s:if>
@@ -403,7 +403,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title fs-5" id="delete-folder-title">
-                    <s:text escapeHtml="true" name="blogrollDeleteOK.removeBlogroll"><s:param value="plainText(folder.name)"/></s:text>
+                    <s:text name="blogrollDeleteOK.removeBlogroll"><s:param value="plainText(folder.name)"/></s:text>
                 </h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<s:text escapeHtml="true" name='generic.close'/>"></button>
             </div>
@@ -416,10 +416,10 @@
                 </s:form>
                 <p class="mb-0">
                     <s:if test="!links.isEmpty()">
-                        <s:text escapeHtml="true" name="blogrollDeleteOK.areYouSure"><s:param value="plainText(folder.name)"/><s:param value="links.size()"/></s:text>
+                        <s:text name="blogrollDeleteOK.areYouSure"><s:param value="plainText(folder.name)"/><s:param value="links.size()"/></s:text>
                     </s:if>
                     <s:else>
-                        <s:text escapeHtml="true" name="blogrollDeleteOK.empty"><s:param value="plainText(folder.name)"/></s:text>
+                        <s:text name="blogrollDeleteOK.empty"><s:param value="plainText(folder.name)"/></s:text>
                     </s:else>
                 </p>
             </div>
