@@ -27,6 +27,7 @@ import org.openid4java.OpenIDException;
 import org.openid4java.discovery.DiscoveryException;
 import org.openid4java.discovery.xrds.XrdsParser;
 import org.openid4java.discovery.xrds.XrdsParserImpl;
+import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -37,8 +38,10 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * <p>Each document is first read with {@link SecureXmlParsers}, the parser
  * configuration Roller uses for the XML it reads itself, which refuses
- * document type declarations. XRDS documents don't need one. Documents that
- * pass are then handed to openid4java's own parser.
+ * document type declarations. XRDS documents don't need one, and they are
+ * checked against the XRDS schema bundled with openid4java, so they don't
+ * need to name a schema location either. Documents that pass are then handed
+ * to openid4java's own parser.
  */
 public class RollerXrdsParser implements XrdsParser {
 
@@ -50,10 +53,22 @@ public class RollerXrdsParser implements XrdsParser {
         return delegate.parseXrds(input, targetTypes);
     }
 
+    private static final String XSI = "http://www.w3.org/2001/XMLSchema-instance";
+
     static void check(String input) throws DiscoveryException {
+        DefaultHandler handler = new DefaultHandler() {
+            @Override
+            public void startElement(String uri, String localName, String qName, Attributes attributes)
+                    throws SAXException {
+                if (attributes.getIndex(XSI, "schemaLocation") >= 0
+                        || attributes.getIndex(XSI, "noNamespaceSchemaLocation") >= 0) {
+                    throw new SAXException("XRDS documents must not name a schema location");
+                }
+            }
+        };
         try {
             SecureXmlParsers.newSAXParserFactory().newSAXParser()
-                    .parse(new InputSource(new StringReader(input)), new DefaultHandler());
+                    .parse(new InputSource(new StringReader(input)), handler);
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new DiscoveryException("Could not read the XRDS document",
                     OpenIDException.XRDS_PARSING_ERROR, e);

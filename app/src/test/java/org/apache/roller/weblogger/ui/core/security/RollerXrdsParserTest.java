@@ -75,6 +75,19 @@ class RollerXrdsParserTest {
     }
 
     @Test
+    void refusesSchemaLocations() {
+        String xsi = "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" ";
+        String located = XRDS_BODY.replace("<xrds:XRDS ", "<xrds:XRDS " + xsi
+                + "xsi:schemaLocation=\"xri://$xrds http://schema.example.com/xrds.xsd\" ");
+        String unnamespaced = XRDS_BODY.replace("<XRD>", "<XRD " + xsi
+                + "xsi:noNamespaceSchemaLocation=\"http://schema.example.com/xrd.xsd\">");
+
+        // refused before openid4java's parser sees them
+        assertThrows(DiscoveryException.class, () -> RollerXrdsParser.check(located));
+        assertThrows(DiscoveryException.class, () -> RollerXrdsParser.check(unnamespaced));
+    }
+
+    @Test
     void refusesMalformedDocuments() {
         assertThrows(DiscoveryException.class,
                 () -> new RollerXrdsParser().parseXrds("<xrds:XRDS", types));
