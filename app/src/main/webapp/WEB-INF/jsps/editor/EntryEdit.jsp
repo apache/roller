@@ -75,7 +75,7 @@
             <div class="controls col-sm-9">
                 <div class="form-control-plaintext">
                     <s:if test="bean.published">
-                        <a id="entry_bean_permalink" href='<s:property value="entry.permalink" />'>
+                        <a id="entry_bean_permalink" href="<s:property value="entry.permalink" />">
                             <s:property value="entry.permalink"/>
                         </a>
                         <span class="bi bi-box-arrow-up-right" aria-hidden="true"></span>
@@ -365,7 +365,7 @@
 <script>
 
     function fullPreviewMode() {
-        window.open('<s:property value="previewURL" />', 'roller-preview');
+        window.open('<s:property value="previewURL" escapeHtml="false" escapeJavaScript="true" />', 'roller-preview');
     }
 
     $(function () {
@@ -387,7 +387,7 @@
             .autocomplete({
                 delay: 500,
                 source: function (request, response) {
-                    $.getJSON("<s:property value='jsonAutocompleteUrl' />", {
+                    $.getJSON("<s:property value='jsonAutocompleteUrl' escapeHtml="false" escapeJavaScript="true" />", {
                             format: 'json',
                             prefix: extractLast(request.term)
                         },

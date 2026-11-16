@@ -113,7 +113,7 @@
                 <s:iterator var="perms" value="permissions">
                     <tr>
                         <td width="%30">
-                            <a href='<s:property value="#perms.weblog.absoluteURL" />'>
+                            <a href="<s:property value="#perms.weblog.absoluteURL" />">
                                 <s:property value="#perms.weblog.name" /> [<s:property value="#perms.weblog.handle" />]
                             </a>
                         </td>
@@ -122,7 +122,7 @@
                                 <s:param name="weblog" value="#perms.weblog.handle" />
                             </s:url>
                             <span class="bi bi-pencil-square" aria-hidden="true"></span>
-                            <a href='<s:property value="newEntry" />'>
+                            <a href="<s:property value="newEntry" />">
                             <s:text name="userAdmin.newEntry" /></a>
                         </td>
                         <td width="%15">
@@ -130,7 +130,7 @@
                                 <s:param name="weblog" value="#perms.weblog.handle" />
                             </s:url>
                             <span class="bi bi-pencil-square" aria-hidden="true"></span>
-                            <a href='<s:property value="editEntries" />'>
+                            <a href="<s:property value="editEntries" />">
                             <s:text name="userAdmin.editEntries" /></a>
                         </td>
                         <td width="%15">
@@ -138,7 +138,7 @@
                                 <s:param name="weblog" value="#perms.weblog.handle" />
                             </s:url>
                             <span class="bi bi-pencil-square" aria-hidden="true"></span>
-                            <a href='<s:property value="manageWeblog" />'>
+                            <a href="<s:property value="manageWeblog" />">
                             <s:text name="userAdmin.manage" /></a>
                         </td>
                     </tr>

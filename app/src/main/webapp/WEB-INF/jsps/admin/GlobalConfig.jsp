@@ -72,13 +72,13 @@
             <s:elseif test="#pd.type == 'integer'">
                 <div class="row mb-3">
                     <label class="col-sm-3 col-form-label"
-                           for='globalConfig_<s:property value="#pd.nameWithUnderbars" />'>
+                           for="globalConfig_<s:property value="#pd.nameWithUnderbars" />">
                         <s:text name="%{#pd.key}"/>
                     </label>
                     <div class="col-sm-9 controls">
-                        <input type="number" name='<s:property value="#pd.name" />' size="35"
-                               value='<s:property value="%{properties[#pd.name].value}"/>'
-                               id='globalConfig_<s:property value="#pd.nameWithUnderbars" />'
+                        <input type="number" name="<s:property value="#pd.name" />" size="35"
+                               value="<s:property value="%{properties[#pd.name].value}"/>"
+                               id="globalConfig_<s:property value="#pd.nameWithUnderbars" />"
                                class="form-control integer" onkeyup="formChanged()"/>
                     </div>
                 </div>
@@ -89,13 +89,13 @@
             <s:elseif test="#pd.type == 'float'">
                 <div class="row mb-3">
                     <label class="col-sm-3 col-form-label"
-                           for='globalConfig_<s:property value="#pd.nameWithUnderbars" />'>
+                           for="globalConfig_<s:property value="#pd.nameWithUnderbars" />">
                         <s:text name="%{#pd.key}"/>
                     </label>
                     <div class="col-sm-9 controls">
-                        <input type="number" step="any" name='<s:property value="#pd.name" />' size="5"
-                               value='<s:property value="properties[#pd.name].value"/>'
-                               id='globalConfig_<s:property value="#pd.nameWithUnderbars" />'
+                        <input type="number" step="any" name="<s:property value="#pd.name" />" size="5"
+                               value="<s:property value="properties[#pd.name].value"/>"
+                               id="globalConfig_<s:property value="#pd.nameWithUnderbars" />"
                                class="form-control float" onkeyup="formChanged()"/>
                     </div>
                 </div>

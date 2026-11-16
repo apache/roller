@@ -111,7 +111,7 @@
     
         <td>
             <s:if test="#post.status.name() == 'PUBLISHED'">
-                <a href='<s:property value="#post.permalink" />'>
+                <a href="<s:property value="#post.permalink" />">
                     <str:truncateNicely upper="80"><s:property value="#post.displayTitle" /></str:truncateNicely>
                 </a>
             </s:if>

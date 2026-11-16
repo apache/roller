@@ -69,7 +69,7 @@
                 &nbsp;<s:property value="#perms.weblog.name" />
             </h3>
 
-            <p> <a href='<s:property value="#perms.weblog.absoluteURL" />'>
+            <p> <a href="<s:property value="#perms.weblog.absoluteURL" />">
             <s:property value="#perms.weblog.absoluteURL" /></a></p>
 
             <p><s:property value="#perms.weblog.about" /></p>
@@ -135,7 +135,7 @@
                                 <s:param name="weblog" value="#perms.weblog.handle" />
                             </s:url>
                         </s:else>
-                        <a href='<s:property value="weblogTheme" />' class="btn btn-outline-secondary">
+                        <a href="<s:property value="weblogTheme" />" class="btn btn-outline-secondary">
                             <span class="bi bi-eye" aria-hidden="true"></span>
                             <s:text name="yourWebsites.theme" />
                         </a>
@@ -145,7 +145,7 @@
                     <s:url action="weblogConfig" namespace="/roller-ui/authoring" var="manageWeblog">
                         <s:param name="weblog" value="#perms.weblog.handle"/>
                     </s:url>
-                    <a href='<s:property value="manageWeblog" />' class="btn btn-outline-secondary">
+                    <a href="<s:property value="manageWeblog" />" class="btn btn-outline-secondary">
                         <span class="bi bi-gear" aria-hidden="true"></span>
                         <s:text name="yourWebsites.manage"/>
                     </a>
@@ -160,7 +160,7 @@
                         <s:url action="memberResign" namespace="/roller-ui/authoring" var="resignWeblog">
                             <s:param name="weblog" value="#perms.weblog.handle"/>
                         </s:url>
-                        <a href='<s:property value="resignWeblog" />'>
+                        <a href="<s:property value="resignWeblog" />">
                             <s:text name='yourWebsites.resign'/>
                         </a>
                     </button>
