@@ -89,8 +89,11 @@ public class StylesheetEdit extends UIAction {
                 stylesheet = getActionWeblog().getTheme().getStylesheet();
             }
 
-            if(stylesheet == null) {
-                throw new WebloggerException("no stylesheet found");
+            if (stylesheet == null) {
+                // not every theme has a stylesheet, and the page explains that,
+                // so this is not an error
+                log.debug("No stylesheet in the theme of weblog " + getActionWeblog().getHandle());
+                return;
             }
 
             WeblogManager weblogManager = WebloggerFactory.getWeblogger().getWeblogManager();
