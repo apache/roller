@@ -114,10 +114,10 @@
         saveButton = $("#createWeblog_0");
 
         <s:if test="bean.theme == null">
-        previewImage('<s:property value="themes[0].id"/>');
+        previewImage('<s:property value="themes[0].id" escapeHtml="false" escapeJavaScript="true"/>');
         </s:if>
         <s:else>
-        previewImage('<s:property value="bean.theme"/>');
+        previewImage('<s:property value="bean.theme" escapeHtml="false" escapeJavaScript="true"/>');
         </s:else>
 
     });
@@ -134,10 +134,10 @@
     }
 
     function previewImage(themeId) {
-        $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themedata",
+        $.ajax({ url: "<s:property value='siteURL' escapeHtml="false" escapeJavaScript="true" />/roller-ui/authoring/themedata",
             data: {theme:themeId}, success: function(data) {
                 $('#themedescription').text(data.description);
-                $('#themeThumbnail').attr('src','<s:property value="siteURL" />' + data.previewPath);
+                $('#themeThumbnail').attr('src','<s:property value="siteURL" escapeHtml="false" escapeJavaScript="true" />' + data.previewPath);
             }
         });
     }

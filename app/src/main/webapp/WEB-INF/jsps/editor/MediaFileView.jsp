@@ -349,7 +349,7 @@
         <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
         $('#edit-subtitle').text(mediaFileName);
-        $('#mediaFileEditor').attr('src', '<s:property value="%{mediaFileEditURL}" />' + '&mediaFileId=' + mediaFileId);
+        $('#mediaFileEditor').attr('src', '<s:property value="%{mediaFileEditURL}" escapeHtml="false" escapeJavaScript="true" />' + '&mediaFileId=' + mediaFileId);
         $('#mediafile_edit_lightbox').modal({show: true});
     }
 
@@ -371,7 +371,7 @@
 
     function onSelectDirectory(id) {
         window.location = "<s:url action="mediaFileView" />?directoryId="
-            + id + "&weblog=" + '<s:property value="actionWeblog.handle" />';
+            + id + "&weblog=" + '<s:property value="actionWeblog.handle" escapeHtml="false" escapeJavaScript="true" />';
     }
 
     function onToggle() {

@@ -209,7 +209,7 @@
         <s:url var="mediaFileImageChooser" action="mediaFileImageChooser" namespace="overlay">
         <s:param name="weblog" value="%{actionWeblog.handle}" />
         </s:url>
-        $("#mediaFileEditor").attr('src', '<s:property value="%{mediaFileImageChooser}" />');
+        $("#mediaFileEditor").attr('src', '<s:property value="%{mediaFileImageChooser}" escapeHtml="false" escapeJavaScript="true" />');
         $('#mediafile_edit_lightbox').modal({show: true});
     }
 

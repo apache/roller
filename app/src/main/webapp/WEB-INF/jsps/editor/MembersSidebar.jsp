@@ -24,7 +24,7 @@
 <s:url action="invite" var="inviteUrl">
    <s:param name="weblog" value="%{actionWeblog.handle}" />
 </s:url>
-<a href='<s:property value="#inviteUrl" />'>
+<a href="<s:property value="#inviteUrl" />">
     <s:text name="memberPermissions.inviteMember" />
 </a>
 <s:text name="memberPermissions.whyInvite" />

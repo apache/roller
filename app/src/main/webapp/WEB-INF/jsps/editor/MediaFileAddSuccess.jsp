@@ -47,7 +47,7 @@
 
                         <div class="col-md-2">
                             <img align="center" class="mediaFileImage"
-                                 src='<s:property value="%{#newImage.thumbnailURL}" />' alt="thumbnail"/>
+                                 src="<s:property value="%{#newImage.thumbnailURL}" />" alt="thumbnail"/>
                         </div>
 
                         <div class="col-md-9">
@@ -167,11 +167,11 @@
         <s:submit cssClass="btn btn-success" id="submit" value="%{getText('mediaFileSuccess.createPost')}"
                   action="entryAddWithMediaFile"/>
 
-        <button class="btn btn-default" onclick='window.load("<s:property value='%{mediaFileAddURL}'/>")'>
+        <button class="btn btn-default" data-url="<s:property value="%{mediaFileAddURL}"/>" onclick="window.load(this.dataset.url)">
             <s:text name="mediaFileSuccess.uploadMore"/>
         </button>
 
-        <button class="btn" onclick='window.load("<s:property value='%{mediaFileViewURL}'/>")'>
+        <button class="btn" data-url="<s:property value="%{mediaFileViewURL}"/>" onclick="window.load(this.dataset.url)">
             <s:text name="generic.cancel"/>
         </button>
     </div>

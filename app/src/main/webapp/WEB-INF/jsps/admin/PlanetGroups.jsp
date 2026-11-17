@@ -64,7 +64,7 @@
     <%-- planet group delete logic --%>
 
     <s:form action="planetGroups!delete" id="deleteForm">
-        <input type="hidden" name="salt" value='<s:property value="salt" />' />
+        <input type="hidden" name="salt" value="<s:property value="salt" />" />
         <input type="hidden" name="group.handle"/>
     </s:form>
 
