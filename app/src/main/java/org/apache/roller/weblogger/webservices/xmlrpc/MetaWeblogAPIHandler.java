@@ -479,7 +479,10 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         struct.put("postid", entry.getId());
         
         struct.put("userid", entry.getCreator().getUserName());
-        struct.put("author", entry.getCreator().getEmailAddress());
+        // other weblog members see the creator's user name, not their email
+        if (entry.getCreator().getUserName().equals(userid)) {
+            struct.put("author", entry.getCreator().getEmailAddress());
+        }
        
         if ( entry.getCategory() != null ) {
             Vector<Object> catArray = new Vector<>();

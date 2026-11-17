@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -38,6 +39,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
@@ -113,9 +115,7 @@ public class MediaCollection {
                 String fileName = createFileName(website, baseName, contentType);
                 try {
                     tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
-                    FileOutputStream fos = new FileOutputStream(tempFile);
-                    Utilities.copyInputToOutput(is, fos);
-                    fos.close();
+                    copyUpToUploadLimit(is, tempFile);
 
                     // Parse pathinfo to determine file path
                     String path = filePathFromPathInfo(pathInfo);
@@ -186,6 +186,30 @@ public class MediaCollection {
             throw new AtomException("Posting media", re);
         } catch (IOException ioe) {
             throw new AtomException("Posting media", ioe);
+        }
+    }
+
+
+    /**
+     * Copies an upload to a file, refusing it as soon as it is larger than
+     * the uploads.file.maxsize setting, so an oversized body is not stored.
+     */
+    static void copyUpToUploadLimit(InputStream in, File file)
+            throws IOException, AtomException {
+        long maxBytes = (long) (RollerConstants.ONE_MB_IN_BYTES * Double.parseDouble(
+                WebloggerRuntimeConfig.getProperty("uploads.file.maxsize")));
+        try (OutputStream out = new FileOutputStream(file)) {
+            byte[] buffer = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
+            long total = 0;
+            int count;
+            while ((count = in.read(buffer)) != -1) {
+                total += count;
+                if (total > maxBytes) {
+                    throw new AtomException("File is larger than the upload limit",
+                            HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, null);
+                }
+                out.write(buffer, 0, count);
+            }
         }
     }
 
@@ -407,9 +431,8 @@ public class MediaCollection {
                     }
 
                     tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
-                    try (InputStream is = areq.getInputStream();
-                            FileOutputStream fos = new FileOutputStream(tempFile)) {
-                        Utilities.copyInputToOutput(is, fos);
+                    try (InputStream is = areq.getInputStream()) {
+                        copyUpToUploadLimit(is, tempFile);
                     }
 
                     FileInputStream fis = new FileInputStream(tempFile);

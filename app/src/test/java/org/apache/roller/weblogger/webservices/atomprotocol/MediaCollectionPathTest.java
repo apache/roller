@@ -66,6 +66,8 @@ class MediaCollectionPathTest {
         runtimeConfig = mockStatic(WebloggerRuntimeConfig.class);
         runtimeConfig.when(WebloggerRuntimeConfig::getAbsoluteContextURL)
                 .thenReturn("https://blog.example");
+        runtimeConfig.when(() -> WebloggerRuntimeConfig.getProperty("uploads.file.maxsize"))
+                .thenReturn("4.00");
 
         files = mock(MediaFileManager.class);
         content = mock(FileContentManager.class);
