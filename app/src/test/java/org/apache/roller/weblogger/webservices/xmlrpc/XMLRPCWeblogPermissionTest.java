@@ -188,6 +188,30 @@ public class XMLRPCWeblogPermissionTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    public void testPostAuthorEmailIsReturnedOnlyToTheCreator() throws Exception {
+        String authorName = author.getUserName();
+        Map<String, Object> seenByAuthor = (Map<String, Object>) metaWeblog.getPost(
+                publishedEntry.getId(), authorName, PASSWORD);
+        assertEquals(owner.getUserName(), seenByAuthor.get("userid"));
+        assertFalse(seenByAuthor.containsKey("author"));
+
+        List<Object> recent = (List<Object>) metaWeblog.getRecentPosts(weblog.getHandle(),
+                authorName, PASSWORD, 20);
+        assertFalse(recent.isEmpty());
+        for (Object post : recent) {
+            Map<String, Object> struct = (Map<String, Object>) post;
+            if (owner.getUserName().equals(struct.get("userid"))) {
+                assertFalse(struct.containsKey("author"));
+            }
+        }
+
+        Map<String, Object> seenByOwner = (Map<String, Object>) metaWeblog.getPost(
+                publishedEntry.getId(), owner.getUserName(), PASSWORD);
+        assertEquals("TestUser@dev.null", seenByOwner.get("author"));
+    }
+
+    @Test
     public void testAuthenticationAndWeblogDiscovery() throws Exception {
         @SuppressWarnings("unchecked")
         Hashtable<String, String> userInfo = (Hashtable<String, String>) blogger

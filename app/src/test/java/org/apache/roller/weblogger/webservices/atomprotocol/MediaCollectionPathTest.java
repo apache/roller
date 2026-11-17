@@ -17,6 +17,7 @@
 package org.apache.roller.weblogger.webservices.atomprotocol;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
+import org.apache.roller.weblogger.pojos.MediaFile;
 import org.apache.roller.weblogger.pojos.MediaFileDirectory;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -72,6 +74,8 @@ class MediaCollectionPathTest {
         runtimeConfig = mockStatic(WebloggerRuntimeConfig.class);
         runtimeConfig.when(WebloggerRuntimeConfig::getAbsoluteContextURL)
                 .thenReturn("https://blog.example");
+        runtimeConfig.when(() -> WebloggerRuntimeConfig.getProperty("uploads.file.maxsize"))
+                .thenReturn("4.00");
 
         files = mock(MediaFileManager.class);
         content = mock(FileContentManager.class);
@@ -144,6 +148,53 @@ class MediaCollectionPathTest {
         verify(content).canSave(eq(weblog), name.capture(), eq("image/png"), anyLong(), any());
         assertTrue(name.getValue().matches("blog-\\d+\\.png"), name.getValue());
         verify(files, never()).createMediaFile(any(), any(), any());
+    }
+
+    @Test
+    void mediaBodyIsReadOnlyUpToTheUploadLimit() throws Exception {
+        runtimeConfig.when(() -> WebloggerRuntimeConfig.getProperty("uploads.file.maxsize"))
+                .thenReturn("0.01");
+        long limit = (long) (1024 * 1024 * 0.01);
+        MediaFile existing = mock(MediaFile.class);
+        when(files.getMediaFileByPath(eq(weblog), anyString())).thenReturn(existing);
+        refuseUploads();
+
+        for (boolean put : new boolean[] {false, true}) {
+            CountingStream body = new CountingStream(50L * 1024 * 1024);
+            AtomRequest request = mock(AtomRequest.class);
+            when(request.getPathInfo()).thenReturn(
+                    put ? "/blog/resources/existing.png" : "/blog/resources");
+            when(request.getContentType()).thenReturn("image/png");
+            when(request.getHeader("Slug")).thenReturn("big");
+            when(request.getInputStream()).thenReturn(body);
+
+            AtomException e = put
+                    ? assertThrows(AtomException.class, () -> collection.putMedia(request))
+                    : assertThrows(AtomException.class,
+                            () -> collection.postMedia(request, mediaEntry(null)));
+            assertEquals(413, e.getStatus(), put ? "PUT" : "POST");
+            assertTrue(body.read < limit + 64 * 1024,
+                    "read " + body.read + " bytes for a limit of " + limit);
+        }
+    }
+
+    /** An input stream of the given length that counts what is read. */
+    private static class CountingStream extends InputStream {
+        private final long length;
+        long read;
+
+        CountingStream(long length) {
+            this.length = length;
+        }
+
+        @Override
+        public int read() {
+            if (read >= length) {
+                return -1;
+            }
+            read++;
+            return 'x';
+        }
     }
 
     private void refuseUploads() throws Exception {

@@ -201,6 +201,15 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             entry.setAnchor(this.createAnchor(entry));
         }
         
+        // if the entry was published to future, set status as SCHEDULED
+        // we only consider an entry future published if it is scheduled
+        // more than 1 minute into the future; decide this before updating the
+        // tag aggregates so a scheduled entry's tags are not counted early
+        if (PubStatus.PUBLISHED.equals(entry.getStatus()) &&
+                entry.getPubTime().after(new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
+            entry.setStatus(PubStatus.SCHEDULED);
+        }
+        
         if (entry.isPublished()) {
             // tag aggregates are updated only when entry published in order for
             // tag cloud counts to match published articles
@@ -228,14 +237,6 @@ public class JPAWeblogEntryManagerImpl implements WeblogEntryManager {
             removeWeblogEntryTag(tag);
         }
 
-        // if the entry was published to future, set status as SCHEDULED
-        // we only consider an entry future published if it is scheduled
-        // more than 1 minute into the future
-        if (PubStatus.PUBLISHED.equals(entry.getStatus()) &&
-                entry.getPubTime().after(new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
-            entry.setStatus(PubStatus.SCHEDULED);
-        }
-        
         // Store value object (creates new or updates existing)
         entry.setUpdateTime(new Timestamp(new Date().getTime()));
         

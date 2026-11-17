@@ -44,6 +44,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -254,7 +255,14 @@ public class EntryCollection {
                         "Cannot find specified entry/resource");  
                 }
                 if (RollerAtomHandler.canEdit(user, rollerEntry)) {
-            
+
+                    // a Limited member may edit a draft but not publish it
+                    if (!isDraft(entry)
+                            && !RollerAtomHandler.canEdit(user, rollerEntry.getWebsite())) {
+                        throw new AtomNotAuthorizedException(
+                                "ERROR not authorized to publish entry");
+                    }
+
                     RollerAtomHandler.oneSecondThrottle();
                     
                     WeblogEntryManager mgr = roller.getWeblogEntryManager();
@@ -335,9 +343,12 @@ public class EntryCollection {
         User creator = entry.getCreator();
         SyndPerson author = new Person();
         author.setName(         creator.getUserName());
-        author.setEmail(        creator.getEmailAddress());
+        // other weblog members see the creator's user name, not their email
+        if (user != null && creator.getUserName().equals(user.getUserName())) {
+            author.setEmail(    creator.getEmailAddress());
+        }
         atomEntry.setAuthors(Collections.singletonList(author));
-        
+
         // Add Atom category for Weblogger category, using category scheme
         List<Category> categories = new ArrayList<>();
         Category atomCat = new Category();
@@ -382,6 +393,15 @@ public class EntryCollection {
     }
     
     /**
+     * True if the client marked the entry as a draft with app:control.
+     */
+    private static boolean isDraft(Entry entry) {
+        AppModule control = (AppModule) entry.getModule(AppModule.URI);
+        return control != null && control.getDraft();
+    }
+
+
+    /**
      * Copy fields from ROME entry to Weblogger entry.
      */
     private void copyToRollerEntry(Entry entry, WeblogEntry rollerEntry) throws WebloggerException {
@@ -405,15 +425,21 @@ public class EntryCollection {
         }
         rollerEntry.setPubTime(pubTime);
         rollerEntry.setUpdateTime(updateTime);
-        
-        AppModule control =
-                (AppModule)entry.getModule(AppModule.URI);
-        if (control!=null && control.getDraft()) {
+
+        boolean wasPublished = PubStatus.PUBLISHED.equals(rollerEntry.getStatus());
+        if (isDraft(entry)) {
             rollerEntry.setStatus(PubStatus.DRAFT);
+        } else if (pubTime.after(new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
+            // like the entry editor, a publish time more than a minute ahead schedules the entry
+            rollerEntry.setStatus(PubStatus.SCHEDULED);
         } else {
             rollerEntry.setStatus(PubStatus.PUBLISHED);
         }
-                
+        if (wasPublished != rollerEntry.isPublished()) {
+            // the entry's tags enter or leave the weblog's tag counts
+            rollerEntry.setRefreshAggregates(true);
+        }
+
         // Process incoming categories:
         // Atom categories with weblog-level scheme are Weblogger categories.
         // Atom supports multiple cats, but Weblogger supports one/entry
