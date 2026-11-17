@@ -22,7 +22,9 @@ import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -81,6 +83,17 @@ class SecurityConfigTest {
             return new InMemoryUserDetailsManager(User.withUsername("bob")
                     .password(RollerPasswordEncoders.create().encode("secret"))
                     .authorities("editor").build());
+        }
+    }
+
+    /** One editor, carol/secret, whose password is an unsalted SHA-1 hash from an old Roller. */
+    @Configuration
+    static class WithLegacyUser extends SecurityConfig {
+        static final InMemoryUserDetailsManager USERS = new InMemoryUserDetailsManager();
+
+        @Override
+        UserDetailsService userDetailsService() {
+            return USERS;
         }
     }
 
@@ -197,6 +210,26 @@ class SecurityConfigTest {
         login.setParameter("j_password", "secret");
 
         assertEquals("403 null", outcome(chain, login, new MockHttpServletResponse()));
+    }
+
+    @Test
+    void loginUpgradesAnOldPasswordEncoding() throws Exception {
+        setProperty("passwds.encryption.enabled", "true");
+        setProperty("passwds.encryption.algorithm", "bcrypt");
+        setProperty("passwds.encryption.lazyUpgradeFrom", "SHA");
+        String sha1 = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-1")
+                .digest("secret".getBytes(StandardCharsets.UTF_8)));
+        WithLegacyUser.USERS.createUser(User.withUsername("carol").password(sha1).authorities("editor").build());
+        try {
+            FilterChainProxy chain = chain(WithLegacyUser.class);
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            outcome(chain, login(chain, "carol", "secret", new MockHttpSession(servletContext)), response);
+
+            assertEquals("/", response.getRedirectedUrl());
+            assertTrue(WithLegacyUser.USERS.loadUserByUsername("carol").getPassword().startsWith("{bcrypt}"));
+        } finally {
+            WithLegacyUser.USERS.deleteUser("carol");
+        }
     }
 
     @Test
