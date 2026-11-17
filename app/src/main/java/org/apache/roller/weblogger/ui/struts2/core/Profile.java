@@ -28,6 +28,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -124,6 +125,8 @@ public class Profile extends UIAction {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 mgr.saveUser(existingUser);
                 WebloggerFactory.getWeblogger().flush();
+                // a password change ends the user's other sessions, not this one
+                RollerSession.refreshPassword(getServletRequest(), existingUser);
                 addMessage("generic.changes.saved");
                 return SUCCESS;
             } catch (WebloggerException ex) {
