@@ -22,6 +22,11 @@
 <%-- ********************************************************************* --%>
 
 <%-- content --%>
+<s:if test="editor.id != 'editor-text.jsp'">
+<div id="edit_content_html_notice" class="alert alert-info" role="status" style="display: none">
+    <s:text name="weblogEdit.richEditorShowsHtml"/>
+</div>
+</s:if>
 <s:textarea id="edit_content" name="bean.text"
             tabindex="5" rows="18" cssClass="col-sm-12" theme="simple"/>
 
@@ -88,6 +93,10 @@
 
 </div>
 
+<s:if test="editor.id != 'editor-text.jsp'">
+<script src="<s:url value='/roller-ui/scripts/rich-editor-content.js' />"></script>
+</s:if>
+
 <script>
 
     <s:if test="editor.id == 'editor-text.jsp'">
@@ -146,7 +155,18 @@
 
     <%-- Rich text editor functions --%>
 
+    // Entries with HTML that Summernote would run or drop open in the textarea
+    // as HTML; see rich-editor-content.js. Summernote starts the editor on any
+    // call, so every call checks this first.
+    var richEditorStarted = false;
+
     $(document).ready(function () {
+        if (RollerRichEditor.hasActiveHtml(document.getElementById('edit_content').value)) {
+            $('#edit_content_html_notice').show();
+            $("#edit_content").one("change", warnBeforeLeaving);
+            return;
+        }
+        richEditorStarted = true;
         $('#edit_content').summernote({
                 toolbar: [
                     // [groupName, [list of button]]
@@ -180,25 +200,37 @@
             }
         );
         // Added event listener to confirm once the editor content is changed
-        $('#edit_content').on('summernote.change', function(we, contents, $editable) {
-            var confirmFunction = function(event) {
-                // Chrome requires returnValue to be set and original event is found as originalEvent
-                // see https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload#Example
-                if (event.originalEvent)
-                    event.originalEvent.returnValue = "Are you sure you want to leave?";
-                return "Are you sure you want to leave?";
-            }
-            $(window).on("beforeunload", confirmFunction);
-
-            // Remove it if it is form submit
-            $(this.form).on('submit', function() {
-                $(window).off("beforeunload", confirmFunction);
-            });
-        });
+        $('#edit_content').on('summernote.change', warnBeforeLeaving);
     });
 
+    function warnBeforeLeaving() {
+        var confirmFunction = function(event) {
+            // Chrome requires returnValue to be set and original event is found as originalEvent
+            // see https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload#Example
+            if (event.originalEvent)
+                event.originalEvent.returnValue = "Are you sure you want to leave?";
+            return "Are you sure you want to leave?";
+        }
+        $(window).on("beforeunload", confirmFunction);
+
+        // Remove it if it is form submit
+        $(this.form).on('submit', function() {
+            $(window).off("beforeunload", confirmFunction);
+        });
+    }
+
     function insertMediaFile(toInsert) {
-        $('#edit_content').summernote("pasteHTML", toInsert);
+        if (richEditorStarted) {
+            $('#edit_content').summernote("pasteHTML", toInsert);
+        } else {
+            var textArea = document.getElementById('edit_content');
+            var start = textArea.selectionStart;
+            textArea.value = textArea.value.substring(0, start) + toInsert
+                + textArea.value.substring(textArea.selectionEnd);
+            textArea.selectionStart = textArea.selectionEnd = start + toInsert.length;
+            textArea.focus();
+            $(textArea).trigger("change");
+        }
     }
 
     </s:else>
