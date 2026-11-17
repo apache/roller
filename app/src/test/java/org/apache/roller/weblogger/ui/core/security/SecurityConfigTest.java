@@ -209,7 +209,33 @@ class SecurityConfigTest {
         login.setParameter("j_username", "bob");
         login.setParameter("j_password", "secret");
 
-        assertEquals("403 null", outcome(chain, login, new MockHttpServletResponse()));
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        outcome(chain, login, response);
+        assertEquals("/roller-ui/login.rol?error=expired", response.getRedirectedUrl());
+    }
+
+    @Test
+    void loginFromAnExpiredLoginPageGoesBackToTheLoginPage() throws Exception {
+        FilterChainProxy chain = chain(WithUser.class);
+        // the token came with a session that has since timed out
+        MockHttpServletRequest login = login(chain, "bob", "secret", new MockHttpSession(servletContext));
+        login.setSession(new MockHttpSession(servletContext));
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        outcome(chain, login, response);
+        assertEquals("/roller-ui/login.rol?error=expired", response.getRedirectedUrl());
+
+        // the login page then gives a fresh token, and logging in works
+        MockHttpServletResponse retry = new MockHttpServletResponse();
+        outcome(chain, login(chain, "bob", "secret", (MockHttpSession) login.getSession()), retry);
+        assertEquals("/", retry.getRedirectedUrl());
+    }
+
+    @Test
+    void otherRefusedPostsStillGetTheAccessDeniedPage() throws Exception {
+        FilterChainProxy chain = chain(WithUser.class);
+        assertEquals("403 null", outcome(chain,
+                request("POST", "/roller-ui/admin/userAdmin.rol", "editor"), new MockHttpServletResponse()));
     }
 
     @Test

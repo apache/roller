@@ -94,9 +94,15 @@ public class Login extends UIAction {
     public String execute() {
 
         // set action error message if there was login error; OAuth2/OIDC
-        // failures redirect here with error=oidc, form login with error=true
+        // failures redirect here with error=oidc, a login post without a
+        // valid token with error=expired, and a failed form login with
+        // error=true
         if (getError() != null) {
-            addError("oidc".equals(getError()) ? "error.oidc.login" : "error.password.mismatch");
+            switch (getError()) {
+                case "oidc" -> addError("error.oidc.login");
+                case "expired" -> addError("error.login.expired");
+                default -> addError("error.password.mismatch");
+            }
         }
 
         return SUCCESS;

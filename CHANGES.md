@@ -255,8 +255,10 @@
 - **The login form needs Spring Security's CSRF token.** Roller's login page
   includes it. A theme or script that posts straight to
   `/roller_j_security_check` has to read the `_csrf` field from the login
-  page first and send it back. Other forms keep using Roller's own salt
-  check.
+  page first and send it back. A login posted without a valid token, for
+  example from a login page left open past the session timeout, goes back to
+  the login page with a message to try again. Other forms keep using Roller's
+  own salt check.
 
 ### Build and packaging
 

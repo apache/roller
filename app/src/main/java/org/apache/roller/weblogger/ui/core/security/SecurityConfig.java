@@ -42,9 +42,12 @@ import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.util.pattern.PathPatternParser;
@@ -127,7 +130,19 @@ public class SecurityConfig {
 
         LoginUrlAuthenticationEntryPoint entryPoint = new LoginUrlAuthenticationEntryPoint(LOGIN_PAGE);
         entryPoint.setForceHttps(WebloggerConfig.getBooleanProperty("securelogin.enabled"));
-        http.exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(entryPoint));
+        // a login post without a valid token (the login page was left open
+        // past the session timeout, or the server restarted) goes back to the
+        // login form instead of the bare 403 page
+        AccessDeniedHandler accessDenied = new AccessDeniedHandlerImpl();
+        http.exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(entryPoint)
+                .accessDeniedHandler((request, response, e) -> {
+                    if (e instanceof CsrfException) {
+                        response.sendRedirect(request.getContextPath() + LOGIN_PAGE + "?error=expired");
+                    } else {
+                        accessDenied.handle(request, response, e);
+                    }
+                }));
 
         if (WebloggerConfig.getBooleanProperty("rememberme.enabled")) {
             http.rememberMe(rememberMe -> rememberMe
