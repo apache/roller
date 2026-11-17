@@ -125,6 +125,13 @@ public final class SiteWideCache implements CacheHandler {
         if (!cacheEnabled) {
             return;
         }
+
+        // links in this content were built from the request's host because
+        // site.absoluteurl is unset, so it isn't safe to serve to others
+        if (WebloggerRuntimeConfig.isRequestAbsoluteContextURLUsed()) {
+            log.debug("NOT CACHED, uses request host "+key);
+            return;
+        }
         
         contentCache.put(key, value);
         log.debug("PUT "+key);

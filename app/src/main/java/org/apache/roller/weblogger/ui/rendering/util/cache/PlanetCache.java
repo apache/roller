@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.ui.rendering.util.PlanetRequest;
 import org.apache.roller.weblogger.util.cache.Cache;
 import org.apache.roller.weblogger.util.cache.CacheManager;
@@ -117,6 +118,13 @@ public final class PlanetCache {
     public void put(String key, Object value) {
         
         if (!cacheEnabled) {
+            return;
+        }
+
+        // links in this content were built from the request's host because
+        // site.absoluteurl is unset, so it isn't safe to serve to others
+        if (WebloggerRuntimeConfig.isRequestAbsoluteContextURLUsed()) {
+            log.debug("NOT CACHED, uses request host "+key);
             return;
         }
         

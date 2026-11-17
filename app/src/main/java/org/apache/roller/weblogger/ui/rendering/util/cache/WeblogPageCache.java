@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogPageRequest;
 import org.apache.roller.weblogger.util.Utilities;
 import org.apache.roller.weblogger.util.cache.Cache;
@@ -115,6 +116,13 @@ public final class WeblogPageCache {
     public void put(String key, Object value) {
         
         if (!cacheEnabled) {
+            return;
+        }
+
+        // links in this content were built from the request's host because
+        // site.absoluteurl is unset, so it isn't safe to serve to others
+        if (WebloggerRuntimeConfig.isRequestAbsoluteContextURLUsed()) {
+            log.debug("NOT CACHED, uses request host "+key);
             return;
         }
         

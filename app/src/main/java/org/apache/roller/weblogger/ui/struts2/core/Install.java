@@ -23,6 +23,8 @@ import java.io.StringWriter;
 import java.sql.Connection;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -30,9 +32,11 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.startup.StartupException;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.springframework.beans.FatalBeanException;
-import org.apache.struts2.ServletActionContext;
+import org.apache.roller.weblogger.ui.core.filters.InitFilter;
+import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 
 
@@ -40,7 +44,7 @@ import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
  * Walk user through install process.
  */
 // TODO: make this work @AllowedMethods({"execute","create","upgrade","bootstrap"})
-public class Install extends UIAction {
+public class Install extends UIAction implements ServletRequestAware {
 
     private static Log log = LogFactory.getLog(Install.class);
 
@@ -54,7 +58,17 @@ public class Install extends UIAction {
     private boolean success = false;
     private List<String> messages = null;
     private String databaseName = "Unknown";
+    private HttpServletRequest servletRequest = null;
 
+
+    protected HttpServletRequest getServletRequest() {
+        return servletRequest;
+    }
+
+    @Override
+    public void setServletRequest(HttpServletRequest servletRequest) {
+        this.servletRequest = servletRequest;
+    }
 
     @Override
     public void setPageTitle(String pageTitle) {
@@ -115,7 +129,7 @@ public class Install extends UIAction {
 
 
     public String create() {
-        if (!BootstrapSecurity.isValid(ServletActionContext.getRequest())) return BOOTSTRAP;
+        if (!BootstrapSecurity.isValid(getServletRequest())) return BOOTSTRAP;
 
         if (WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
@@ -136,7 +150,7 @@ public class Install extends UIAction {
 
 
     public String upgrade() {
-        if (!BootstrapSecurity.isValid(ServletActionContext.getRequest())) return BOOTSTRAP;
+        if (!BootstrapSecurity.isValid(getServletRequest())) return BOOTSTRAP;
 
         if (WebloggerFactory.isBootstrapped()) {
             return SUCCESS;
@@ -157,7 +171,7 @@ public class Install extends UIAction {
 
 
     public String bootstrap() {
-        if (!BootstrapSecurity.isValid(ServletActionContext.getRequest())) return BOOTSTRAP;
+        if (!BootstrapSecurity.isValid(getServletRequest())) return BOOTSTRAP;
         log.info("ENTERING");
 
         if (WebloggerFactory.isBootstrapped()) {
@@ -177,6 +191,10 @@ public class Install extends UIAction {
             // close the bootstrap gate. Close it now rather than leaving the
             // installer reachable until the next restart.
             BootstrapSecurity.completeIfInstalled(WebloggerFactory.getWeblogger());
+
+            // whoever runs the installer is setting up the site, so take the
+            // site's url from this request if none is configured
+            saveSiteUrlIfUnset();
 
             // also need to do planet if it's configured
             if (WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
@@ -205,6 +223,19 @@ public class Install extends UIAction {
         log.info("EXITING - Bootstrap failed, forwarding to error page");
         setPageTitle("installer.error.unknown.pageTitle");
         return BOOTSTRAP;
+    }
+
+
+    private void saveSiteUrlIfUnset() {
+        try {
+            if (WebloggerRuntimeConfig.saveAbsoluteContextURLIfUnset(
+                    InitFilter.getAbsoluteUrl(getServletRequest()))) {
+                WebloggerFactory.getWeblogger().flush();
+            }
+        } catch (Exception e) {
+            log.warn("Could not save site.absoluteurl; set it under Server "
+                    + "Administration > Configuration", e);
+        }
     }
 
 
