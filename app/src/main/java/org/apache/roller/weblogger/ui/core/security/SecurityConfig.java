@@ -22,7 +22,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import jakarta.servlet.DispatcherType;
@@ -30,6 +33,7 @@ import jakarta.servlet.ServletContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.springframework.context.annotation.Bean;
@@ -61,6 +65,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
@@ -87,6 +92,8 @@ public class SecurityConfig {
     static final String LOGIN_PROCESSING_URL = "/roller_j_security_check";
 
     private static final String ACCESS_PREFIX = "security.access.";
+
+    private static final String LDAP_ENV_PREFIX = "users.ldap.env.";
 
     private static final AuthorizationManager<RequestAuthorizationContext> ADMIN_OR_EDITOR =
             AuthorityAuthorizationManager.hasAnyAuthority("admin", "editor");
@@ -117,7 +124,9 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer staticResources() {
-        return web -> web.ignoring().requestMatchers("/images/**", "/scripts/**", "/styles/**");
+        // /images is a reserved name (rendering.weblogMapper.rollerProtectedUrls),
+        // so no weblog can sit under a path that skips the security.access rules
+        return web -> web.ignoring().requestMatchers("/images/**");
     }
 
     @Bean
@@ -131,11 +140,13 @@ public class SecurityConfig {
         // security.access.* rules add to Roller's own rules: a request needs
         // to pass both. The login endpoints and the files the login page loads
         // are left out of them, so a rule for /** can't lock everyone out.
-        AuthorizationManager<RequestAuthorizationContext> site = new SiteAccess(siteAccessRules());
+        AuthorizationManager<RequestAuthorizationContext> site =
+                new SiteAccess(siteAccessRules(), SETUP_PATHS, this::setupInProgress);
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers(LOGIN_PAGE, LOGIN_PROCESSING_URL, "/roller-ui/logout.rol",
                         "/oauth2/**", "/login/oauth2/**", "/favicon.*", "/webjars/**",
-                        "/roller-ui/scripts/**", "/theme/**").permitAll()
+                        "/roller-ui/scripts/**", "/roller-ui/styles/**", "/roller-ui/images/**",
+                        "/theme/**").permitAll()
                 .requestMatchers("/roller-ui/login-redirect**").access(allOf(site, ADMIN_OR_EDITOR))
                 .requestMatchers("/roller-ui/profile**").access(allOf(site, ADMIN_OR_EDITOR))
                 .requestMatchers("/roller-ui/createWeblog**").access(allOf(site, ADMIN_OR_EDITOR))
@@ -170,7 +181,7 @@ public class SecurityConfig {
                     }
                 }));
 
-        if (WebloggerConfig.getBooleanProperty("rememberme.enabled")) {
+        if (rememberMeEnabled()) {
             http.rememberMe(rememberMe -> rememberMe
                     .rememberMeServices(new RollerRememberMeServices(userDetailsService)));
         }
@@ -221,19 +232,49 @@ public class SecurityConfig {
         }
     }
 
-    /** A security.access.* rule: requests matching the path need one of the authorities. */
-    record AccessRule(String key, PathPattern pattern, RequestMatcher matcher, String[] authorities) {
+    /**
+     * Whether the login page offers "Remember me". Not with LDAP: the cookie
+     * is checked against Roller's database only, so it would keep working
+     * after the directory account is changed or removed.
+     */
+    public static boolean rememberMeEnabled() {
+        return WebloggerConfig.getBooleanProperty("rememberme.enabled")
+                && WebloggerConfig.getAuthMethod() != AuthMethod.LDAP;
+    }
 
-        AuthorizationManager<RequestAuthorizationContext> check() {
-            return AuthorityAuthorizationManager.hasAnyAuthority(authorities);
+    /**
+     * Whether Roller is being installed, upgraded or given its first
+     * administrator, when nobody can log in yet. Not a bean, so tests can
+     * override it.
+     */
+    boolean setupInProgress() {
+        return !WebloggerFactory.isBootstrapped() || !BootstrapSecurity.isCompleted();
+    }
+
+    /** The pages that set Roller up, which security.access rules leave alone during setup. */
+    private static final RequestMatcher SETUP_PATHS = new OrRequestMatcher(
+            PathPatternRequestMatcher.pathPattern("/roller-ui/install/**"),
+            PathPatternRequestMatcher.pathPattern("/roller-ui/bootstrap-token*"),
+            PathPatternRequestMatcher.pathPattern("/roller-ui/register*"),
+            PathPatternRequestMatcher.pathPattern("/roller-ui/setup*"));
+
+    /** A security.access.* rule: requests matching the path need one of the authorities. */
+    record AccessRule(String key, PathPattern pattern, RequestMatcher matcher, String[] authorities,
+            AuthorizationManager<RequestAuthorizationContext> check) {
+
+        AccessRule(String key, PathPattern pattern, RequestMatcher matcher, String[] authorities) {
+            this(key, pattern, matcher, authorities, AuthorityAuthorizationManager.hasAnyAuthority(authorities));
         }
     }
 
     /**
      * Applies the most specific security.access.* rule matching the path a
-     * visitor requested, and allows requests no rule matches.
+     * visitor requested, and allows requests no rule matches. During setup
+     * the setup pages are allowed, so a rule for /** can't block installing
+     * or upgrading Roller.
      */
-    record SiteAccess(List<AccessRule> rules) implements AuthorizationManager<RequestAuthorizationContext> {
+    record SiteAccess(List<AccessRule> rules, RequestMatcher setupPaths, BooleanSupplier setupInProgress)
+            implements AuthorizationManager<RequestAuthorizationContext> {
 
         @Override
         public AuthorizationResult authorize(Supplier<? extends Authentication> authentication,
@@ -241,6 +282,9 @@ public class SecurityConfig {
             // the rules are about the paths visitors ask for, not the JSPs and
             // servlets Roller forwards those requests to
             if (context.getRequest().getDispatcherType() != DispatcherType.REQUEST) {
+                return new AuthorizationDecision(true);
+            }
+            if (setupInProgress.getAsBoolean() && setupPaths.matches(context.getRequest())) {
                 return new AuthorizationDecision(true);
             }
             for (AccessRule rule : rules) {
@@ -309,6 +353,26 @@ public class SecurityConfig {
     }
 
     /**
+     * JNDI settings for the directory connection: connect and read timeouts,
+     * so a directory that stops answering can't hold login requests forever,
+     * and any users.ldap.env.* properties, for example
+     * users.ldap.env.java.naming.referral=follow.
+     */
+    static Map<String, Object> ldapEnvironment() {
+        Map<String, Object> env = new HashMap<>();
+        env.put("com.sun.jndi.ldap.connect.timeout", WebloggerConfig.getProperty("users.ldap.connectTimeout", "5000"));
+        env.put("com.sun.jndi.ldap.read.timeout", WebloggerConfig.getProperty("users.ldap.readTimeout", "10000"));
+        Enumeration<Object> keys = WebloggerConfig.keys();
+        while (keys.hasMoreElements()) {
+            String key = String.valueOf(keys.nextElement());
+            if (key.startsWith(LDAP_ENV_PREFIX) && key.length() > LDAP_ENV_PREFIX.length()) {
+                env.put(key.substring(LDAP_ENV_PREFIX.length()), WebloggerConfig.getProperty(key));
+            }
+        }
+        return env;
+    }
+
+    /**
      * The LDAP login provider, from the users.ldap.* properties.
      */
     static LdapAuthenticationProvider ldapProvider() {
@@ -323,6 +387,7 @@ public class SecurityConfig {
             contextSource.setUserDn(managerDn);
             contextSource.setPassword(WebloggerConfig.getProperty("users.ldap.managerPassword", ""));
         }
+        contextSource.setBaseEnvironmentProperties(ldapEnvironment());
         contextSource.afterPropertiesSet();
 
         FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch(

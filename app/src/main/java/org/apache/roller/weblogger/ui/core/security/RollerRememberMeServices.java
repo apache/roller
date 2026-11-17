@@ -21,16 +21,9 @@ package org.apache.roller.weblogger.ui.core.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 
 public class RollerRememberMeServices extends TokenBasedRememberMeServices {
 
@@ -49,35 +42,5 @@ public class RollerRememberMeServices extends TokenBasedRememberMeServices {
         }
 
         log.debug("initialized: RollerRememberMeServices with key");
-    }
-
-    /**
-     * Signs the cookie with the Roller password of the user. With LDAP, the
-     * password Roller stores for directory users is a placeholder, so the
-     * configured placeholder is used for every user.
-     */
-    @Override
-    protected String makeTokenSignature(long tokenExpiryTime, String username, String password,
-            RememberMeTokenAlgorithm algorithm) {
-        if (WebloggerConfig.getAuthMethod() == AuthMethod.LDAP) {
-            password = WebloggerConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
-        }
-        return super.makeTokenSignature(tokenExpiryTime, username, password, algorithm);
-    }
-
-    /**
-     * A directory user who hasn't registered with Roller yet logs in without
-     * a remember-me cookie, since there is no Roller account to check it
-     * against later.
-     */
-    @Override
-    public void onLoginSuccess(HttpServletRequest request, HttpServletResponse response,
-            Authentication successfulAuthentication) {
-        try {
-            super.onLoginSuccess(request, response, successfulAuthentication);
-        } catch (UsernameNotFoundException e) {
-            log.debug("No remember-me cookie for " + successfulAuthentication.getName()
-                    + ", who has no Roller account yet");
-        }
     }
 }

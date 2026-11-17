@@ -41,6 +41,7 @@ import org.apache.roller.weblogger.ui.core.plugins.UIPluginManagerImpl;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.core.security.RollerClientRegistrationRepository;
+import org.apache.roller.weblogger.ui.core.security.SecurityConfig;
 import org.apache.roller.weblogger.util.Reflection;
 import org.apache.roller.weblogger.util.cache.CacheManager;
 import org.apache.velocity.runtime.RuntimeSingleton;
@@ -253,9 +254,9 @@ public class RollerContext extends ContextLoaderListener
         ApplicationContext ctx =
                 WebApplicationContextUtils.getRequiredWebApplicationContext(context);
 
-        String rememberMe = WebloggerConfig.getProperty("rememberme.enabled");
-        log.info("Remember Me enabled: " + Boolean.valueOf(rememberMe));
-        context.setAttribute("rememberMeEnabled", rememberMe);
+        boolean rememberMe = SecurityConfig.rememberMeEnabled();
+        log.info("Remember Me enabled: " + rememberMe);
+        context.setAttribute("rememberMeEnabled", String.valueOf(rememberMe));
 
         // the encoder SecurityConfig gave the login provider
         encoder = ctx.getBean(PasswordEncoder.class);

@@ -64,24 +64,34 @@ public class WeblogRequestMapper implements RequestMapper {
     
     
     public WeblogRequestMapper() {
-        
-        this.restricted = new HashSet<>();
-        
-        // build roller restricted list
-        String restrictList = 
-                WebloggerConfig.getProperty("rendering.weblogMapper.rollerProtectedUrls");
-        if(restrictList != null && !restrictList.isBlank()) {
-            String[] restrict = restrictList.split(",");
-            this.restricted.addAll(Arrays.asList(restrict));
+        this.restricted = reservedNames();
+    }
+
+
+    /**
+     * The first path elements that are never weblog handles, from
+     * rendering.weblogMapper.rollerProtectedUrls and userProtectedUrls.
+     */
+    public static Set<String> reservedNames() {
+        Set<String> names = new HashSet<>();
+        for (String key : new String[] {"rendering.weblogMapper.rollerProtectedUrls",
+                "rendering.weblogMapper.userProtectedUrls"}) {
+            String list = WebloggerConfig.getProperty(key);
+            if (list != null && !list.isBlank()) {
+                for (String name : list.split(",")) {
+                    if (!name.isBlank()) {
+                        names.add(name.trim());
+                    }
+                }
+            }
         }
-        
-        // add user restricted list
-        restrictList = 
-                WebloggerConfig.getProperty("rendering.weblogMapper.userProtectedUrls");
-        if(restrictList != null && !restrictList.isBlank()) {
-            String[] restrict = restrictList.split(",");
-            this.restricted.addAll(Arrays.asList(restrict));
-        }
+        return names;
+    }
+
+
+    /** Whether a weblog with this handle could never be shown. */
+    public static boolean isReservedHandle(String handle) {
+        return handle != null && reservedNames().stream().anyMatch(handle::equalsIgnoreCase);
     }
     
     

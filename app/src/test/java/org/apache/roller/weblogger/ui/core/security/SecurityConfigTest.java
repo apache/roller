@@ -59,6 +59,7 @@ import org.springframework.security.ldap.authentication.LdapAuthenticationProvid
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -83,14 +84,28 @@ class SecurityConfigTest {
     private static final String PASS = "PASS";
     private static final String LOGIN = "302 /roller-ui/login.rol";
 
-    /** A configuration whose database login knows one editor, bob/secret. */
+    /** A configuration whose database login knows one editor, bob/secret, on a Roller that is set up. */
     @Configuration
     static class WithUser extends SecurityConfig {
+        @Override
+        boolean setupInProgress() {
+            return false;
+        }
+
         @Override
         UserDetailsService userDetailsService() {
             return new InMemoryUserDetailsManager(User.withUsername("bob")
                     .password(RollerPasswordEncoders.create().encode("secret"))
                     .authorities("editor").build());
+        }
+    }
+
+    /** A Roller still being installed. */
+    @Configuration
+    static class DuringSetup extends SecurityConfig {
+        @Override
+        boolean setupInProgress() {
+            return true;
         }
     }
 
@@ -185,7 +200,7 @@ class SecurityConfigTest {
         assertNull(page.getSession(false), "an anonymous page must not create a session");
 
         MockHttpServletResponse styleResponse = new MockHttpServletResponse();
-        assertEquals(PASS, outcome(chain, request("GET", "/styles/roller.css", ""), styleResponse));
+        assertEquals(PASS, outcome(chain, request("GET", "/images/roller-logo.png", ""), styleResponse));
         assertTrue(styleResponse.getHeaderNames().isEmpty(), "static files bypass Spring Security");
     }
 
@@ -349,7 +364,8 @@ class SecurityConfigTest {
         FilterChainProxy chain = chain(WithUser.class);
 
         for (String path : new String[] {"/roller-ui/login.rol", "/webjars/bootstrap/5.3.8/css/bootstrap.min.css",
-                "/roller-ui/scripts/date-fields.js", "/theme/scripts/roller.js", "/favicon.svg",
+                "/roller-ui/scripts/date-fields.js", "/roller-ui/styles/roller.css",
+                "/roller-ui/images/feather.svg", "/theme/scripts/roller.js", "/favicon.svg",
                 "/oauth2/authorization/keycloak", "/roller-ui/logout.rol"}) {
             MockHttpServletResponse response = new MockHttpServletResponse();
             String result = outcome(chain, request("GET", path, ""), response);
@@ -370,6 +386,31 @@ class SecurityConfigTest {
         outcome(chain, login(chain, "bob", "secret", new MockHttpSession(servletContext)), login);
         assertEquals("/", login.getRedirectedUrl());
         assertEquals("403 null", outcome(chain, request("GET", "/myblog/", "editor"), new MockHttpServletResponse()));
+    }
+
+    @Test
+    void aRuleForEverythingLeavesSetupWorking() throws Exception {
+        setProperty("security.access./**", "family");
+
+        FilterChainProxy installing = chain(DuringSetup.class);
+        for (String path : new String[] {"/roller-ui/install/install.rol", "/roller-ui/install/upgrade.rol",
+                "/roller-ui/bootstrap-token.rol", "/roller-ui/register.rol", "/roller-ui/setup.rol"}) {
+            assertEquals(PASS, outcome(installing, request("GET", path, ""), new MockHttpServletResponse()), path);
+        }
+        assertEquals(LOGIN, outcome(installing, request("GET", "/myblog/", ""), new MockHttpServletResponse()));
+        context.close();
+
+        // once Roller is set up, the rule covers registration again
+        FilterChainProxy setUp = chain(WithUser.class);
+        assertEquals(LOGIN, outcome(setUp, request("GET", "/roller-ui/register.rol", ""),
+                new MockHttpServletResponse()));
+    }
+
+    @Test
+    void aWeblogNamedLikeAnOldStaticPathKeepsItsRule() throws Exception {
+        setProperty("security.access./scripts/**", "family");
+        FilterChainProxy chain = chain(WithUser.class);
+        assertEquals(LOGIN, outcome(chain, request("GET", "/scripts/entry/x", ""), new MockHttpServletResponse()));
     }
 
     @Test
@@ -431,6 +472,29 @@ class SecurityConfigTest {
         MockHttpServletRequest later = request("GET", "/roller-ui/menu.rol", "");
         later.setCookies(cookie);
         assertEquals(PASS, outcome(chain, later, new MockHttpServletResponse()));
+    }
+
+    @Test
+    void rememberMeIsNotOfferedWithLdap() throws Exception {
+        setProperty("rememberme.enabled", "true");
+        setProperty("rememberme.key", "test-remember-me-key");
+        setProperty("authentication.method", "ldap");
+        setProperty("users.ldap.url", "ldap://127.0.0.1:1/dc=example,dc=com");
+
+        assertFalse(SecurityConfig.rememberMeEnabled());
+        FilterChainProxy chain = chain(WithUser.class);
+        assertTrue(chain.getFilters(SecurityConfig.LOGIN_PROCESSING_URL).stream()
+                .noneMatch(RememberMeAuthenticationFilter.class::isInstance));
+    }
+
+    @Test
+    void ldapConnectionsTimeOut() {
+        setPropertyUnchecked("users.ldap.readTimeout", "2000");
+        setPropertyUnchecked("users.ldap.env.java.naming.referral", "follow");
+        Map<String, Object> env = SecurityConfig.ldapEnvironment();
+        assertEquals("5000", env.get("com.sun.jndi.ldap.connect.timeout"));
+        assertEquals("2000", env.get("com.sun.jndi.ldap.read.timeout"));
+        assertEquals("follow", env.get("java.naming.referral"));
     }
 
     @Test
