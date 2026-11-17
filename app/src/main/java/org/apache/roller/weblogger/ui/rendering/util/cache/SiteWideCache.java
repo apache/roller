@@ -265,7 +265,7 @@ public final class SiteWideCache implements CacheHandler {
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
      *
-     * <handle>/<type>/<format>/[/category][/language][/excerpts]
+     * <handle>/<type>/<format>/[/category][/language][/excerpts][/page=N]
      *
      * examples ...
      *
@@ -307,6 +307,11 @@ public final class SiteWideCache implements CacheHandler {
             Arrays.sort(tags);
             key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
         }       
+        
+        // add page number when past the first page
+        if(feedRequest.getPage() > 0) {
+            key.append("/page=").append(feedRequest.getPage());
+        }
         
         return key.toString();
     }
