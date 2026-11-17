@@ -67,7 +67,6 @@
 
     <s:if test="authMethod == 'OIDC' || authMethod == 'DB_OIDC'">
         <%-- assigned by the identity provider at login, so shown read-only --%>
-        <s:hidden name="bean.openIdUrl"/>
         <s:textfield label="%{getText('userSettings.oidcIssuer')}"
                      tooltip="%{getText('userSettings.tip.oidcIssuer')}"
                      name="bean.oidcIssuer" readonly="true" disabled="true"/>
