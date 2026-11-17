@@ -163,6 +163,23 @@ public class LoadSaltFilterTest {
     }
 
     @Test
+    void staticFilesGetNoSessionAndNoSalt() throws Exception {
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            for (String path : new String[] {"/roller-ui/styles/roller.css", "/roller-ui/scripts/date-fields.js",
+                    "/roller-ui/images/feather.svg"}) {
+                when(request.getServletPath()).thenReturn(path);
+                filter.doFilter(request, response, chain);
+            }
+
+            verify(request, never()).getSession(true);
+            verify(request, never()).getSession();
+            verify(request, never()).setAttribute(eq("salt"), anyString());
+            verify(saltCache, never()).put(anyString(), anyString());
+        }
+    }
+
+    @Test
     void otherRollerUiPathsStillGetASalt() throws Exception {
         try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
              MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
