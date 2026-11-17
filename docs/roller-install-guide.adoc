@@ -449,10 +449,8 @@ security.access./family/**=family
 
 These rules apply to the paths visitors request, including the addresses under
 _/roller-ui/rendering/_ that Roller uses to render a weblog's pages, feeds,
-resources, search results and comments, as if they were the weblog's own path.
-Uploaded media files are served by their ID rather than their weblog's path,
-so a rule doesn't hide a file from someone who has its address. When several
-match, the most specific one applies. They add to Roller's own rules: a request has to pass
+resources, media files, search results and comments, as if they were the
+weblog's own path. When several match, the most specific one applies. They add to Roller's own rules: a request has to pass
 both, so a rule can't open Roller's admin or authoring pages to other roles.
 The login page, the login and OpenID Connect endpoints and the files the login
 page loads are left out of these rules, and so are the install, upgrade and

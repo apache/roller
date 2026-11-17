@@ -205,6 +205,18 @@ class SecurityConfigTest {
     }
 
     @Test
+    void rollersStaticFilesSkipTheChain() throws Exception {
+        FilterChainProxy chain = chain(SecurityConfig.class);
+        for (String path : new String[] {"/roller-ui/styles/roller.css", "/roller-ui/scripts/date-fields.js",
+                "/roller-ui/images/feather.svg", "/theme/scripts/roller.js",
+                "/webjars/jquery/4.0.0/jquery.min.js", "/images/roller-logo.png"}) {
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            assertEquals(PASS, outcome(chain, request("GET", path, ""), response), path);
+            assertTrue(response.getHeaderNames().isEmpty(), path + " can be cached: " + response.getHeaderNames());
+        }
+    }
+
+    @Test
     void loginReturnsToTheSavedRequest() throws Exception {
         FilterChainProxy chain = chain(WithUser.class);
         MockHttpSession session = new MockHttpSession(servletContext);
@@ -330,6 +342,7 @@ class SecurityConfigTest {
 
         for (String path : new String[] {"/roller-ui/rendering/page/fam", "/roller-ui/rendering/page/fam/entry/x",
                 "/roller-ui/rendering/feed/fam/entries/atom", "/roller-ui/rendering/resources/fam/style.css",
+                "/roller-ui/rendering/media-resources/fam/8f9c2a4e-1d3b-4c5e-9f6a-7b8c9d0e1f2a",
                 "/roller-ui/rendering/search/fam", "/roller-ui/rendering/rsd/fam",
                 "/roller-ui/rendering/comment/fam/entry/x", "/roller-ui/rendering/page/FAM/"}) {
             assertEquals(LOGIN, outcome(chain, request("GET", path, ""), new MockHttpServletResponse()), path);
@@ -363,7 +376,7 @@ class SecurityConfigTest {
     void weblogPathsOfRenderingRequests() {
         assertEquals("/fam/entry/x", SecurityConfig.weblogPath("/roller-ui/rendering/page/fam/entry/x"));
         assertEquals("/fam", SecurityConfig.weblogPath("/roller-ui/rendering/feed/fam"));
-        assertNull(SecurityConfig.weblogPath("/roller-ui/rendering/media-resources/abc123"));
+        assertEquals("/fam/abc", SecurityConfig.weblogPath("/roller-ui/rendering/media-resources/fam/abc"));
         assertNull(SecurityConfig.weblogPath("/roller-ui/menu.rol"));
         assertNull(SecurityConfig.weblogPath("/fam/entry/x"));
     }

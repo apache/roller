@@ -128,9 +128,12 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer staticResources() {
-        // /images is a reserved name (rendering.weblogMapper.rollerProtectedUrls),
-        // so no weblog can sit under a path that skips the security.access rules
-        return web -> web.ignoring().requestMatchers("/images/**");
+        // Roller's static files, served without security headers, so they can
+        // be cached. Each path is under a reserved name
+        // (rendering.weblogMapper.rollerProtectedUrls), so no weblog can sit
+        // under a path that skips the security.access rules.
+        return web -> web.ignoring().requestMatchers("/images/**", "/theme/**", "/webjars/**",
+                "/roller-ui/styles/**", "/roller-ui/scripts/**", "/roller-ui/images/**");
     }
 
     @Bean
@@ -148,9 +151,7 @@ public class SecurityConfig {
                 new SiteAccess(siteAccessRules(), SETUP_PATHS, this::setupInProgress);
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers(LOGIN_PAGE, LOGIN_PROCESSING_URL, "/roller-ui/logout.rol",
-                        "/oauth2/**", "/login/oauth2/**", "/favicon.*", "/webjars/**",
-                        "/roller-ui/scripts/**", "/roller-ui/styles/**", "/roller-ui/images/**",
-                        "/theme/**").permitAll()
+                        "/oauth2/**", "/login/oauth2/**", "/favicon.*").permitAll()
                 .requestMatchers("/roller-ui/login-redirect**").access(allOf(site, ADMIN_OR_EDITOR))
                 .requestMatchers("/roller-ui/profile**").access(allOf(site, ADMIN_OR_EDITOR))
                 .requestMatchers("/roller-ui/createWeblog**").access(allOf(site, ADMIN_OR_EDITOR))
@@ -265,14 +266,13 @@ public class SecurityConfig {
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
     /** Rendering servlets whose path starts with the weblog's handle. */
-    private static final Pattern RENDERING_PATH =
-            Pattern.compile("^/roller-ui/rendering/(?:page|feed|resources|search|rsd|comment)/([^/]+)(/.*)?$");
+    private static final Pattern RENDERING_PATH = Pattern.compile(
+            "^/roller-ui/rendering/(?:page|feed|resources|media-resources|search|rsd|comment)/([^/]+)(/.*)?$");
 
     /**
      * The public path of the weblog a rendering servlet request is for, for
      * example /family/entry/hello for /roller-ui/rendering/page/family/entry/hello,
-     * or null for other requests. Media files are served by their ID, not
-     * their weblog's handle, so they have no such path.
+     * or null for other requests.
      */
     static String weblogPath(String requestPath) {
         Matcher m = RENDERING_PATH.matcher(requestPath);

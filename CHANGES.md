@@ -264,8 +264,7 @@
     `security.access./family/**=family`. These rules match paths without
     regard to case, the most specific one applies, and they add to Roller's
     own rules rather than replacing them. They also apply to the addresses
-    Roller renders the weblog at internally; uploaded media files are served
-    by their ID and aren't covered. They don't cover the login page or
+    Roller renders the weblog at internally. They don't cover the login page or
     the files it loads, nor the install, upgrade and first-registration pages
     while Roller is being set up, so a rule for `/**` leaves login and setup
     working.
