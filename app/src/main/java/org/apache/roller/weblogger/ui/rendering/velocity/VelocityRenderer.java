@@ -21,14 +21,21 @@ package org.apache.roller.weblogger.ui.rendering.velocity;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.pojos.Template;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogTemplate;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.Renderer;
 import org.apache.roller.weblogger.ui.rendering.RenderingException;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository;
+import org.apache.roller.weblogger.ui.rendering.model.FeedModel;
+import org.apache.roller.weblogger.ui.rendering.model.PageModel;
+import org.apache.roller.weblogger.ui.rendering.model.SearchResultsFeedModel;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
@@ -41,6 +48,10 @@ import org.apache.velocity.exception.VelocityException;
 public class VelocityRenderer implements Renderer {
 
     private static final Log log = LogFactory.getLog(VelocityRenderer.class);
+
+    // ids Roller gives stored templates
+    private static final Pattern STORED_TEMPLATE_ID = Pattern.compile(
+            "\\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\\b");
 
     // the original template we are supposed to render
     private final Template renderTemplate;
@@ -79,6 +90,8 @@ public class VelocityRenderer implements Renderer {
             // in the case of a velocity error we want to render an
             // error page instead so the user knows what was wrong
             velocityException = ex;
+            log.warn("Error loading [" + template.getId() + "]: "
+                    + ex.getMessage());
 
             // need to lookup error page template
             velocityTemplate = RollerVelocity.getTemplate("error-page.vm", deviceType);
@@ -102,16 +115,19 @@ public class VelocityRenderer implements Renderer {
     public void render(Map<String, Object> model, Writer out)
             throws RenderingException {
 
+        if (velocityException != null) {
+
+            // Render exception
+            renderException(model, out, null);
+
+            // and we're done
+            return;
+        }
+
+        // the session bounds output and time, and scopes stored templates
+        // loaded by #parse and #include to the weblog being rendered
+        RenderSession session = RenderSession.begin(weblogIdFor(model));
         try {
-
-            if (velocityException != null) {
-
-                // Render exception
-                renderException(model, out, null);
-
-                // and we're done
-                return;
-            }
 
             long startTime = System.currentTimeMillis();
 
@@ -127,7 +143,7 @@ public class VelocityRenderer implements Renderer {
 
                 // render base template to a temporary StringWriter
                 StringWriter sw = new StringWriter();
-                velocityTemplate.merge(ctx, sw);
+                velocityTemplate.merge(ctx, new RenderLimitWriter(sw, session));
 
                 // put rendered template into context
                 ctx.put("decorator_body", sw.toString());
@@ -135,12 +151,12 @@ public class VelocityRenderer implements Renderer {
                 log.debug("Applying decorator " + velocityDecorator.getName());
 
                 // now render decorator to our output writer
-                velocityDecorator.merge(ctx, out);
+                velocityDecorator.merge(ctx, new RenderLimitWriter(out, session));
 
             } else {
 
                 // no decorator, so just merge template to our output writer
-                velocityTemplate.merge(ctx, out);
+                velocityTemplate.merge(ctx, new RenderLimitWriter(out, session));
             }
 
             long endTime = System.currentTimeMillis();
@@ -148,20 +164,81 @@ public class VelocityRenderer implements Renderer {
 
             log.debug("Rendered [" + renderTemplate.getId() + "] in "
                     + renderTime + " secs");
+            return;
 
-        } catch (VelocityException ex) {
+        } catch (Exception ex) {
+            RenderLimitException limit = findLimit(ex);
+            if (limit != null) {
+                // the partial output is discarded by the caller, which
+                // fails the request as for any other rendering error
+                log.error("Stopped rendering [" + renderTemplate.getId()
+                        + "]: " + limit.getMessage());
+                throw new RenderingException("Error during rendering", limit);
+            }
+            if (!(ex instanceof VelocityException)) {
+                // wrap and rethrow so caller can deal with it
+                throw new RenderingException("Error during rendering", ex);
+            }
 
             // in the case of a velocity error including a page we want to
             // render an error page instead so the user knows what was wrong
             velocityException = ex;
+            log.warn("Error rendering [" + renderTemplate.getId() + "]: "
+                    + ex.getMessage());
 
-            // need to lookup parse error template
-            renderException(model, out, "error-parse.vm");
-
-        } catch (Exception ex) {
-            // wrap and rethrow so caller can deal with it
-            throw new RenderingException("Error during rendering", ex);
+        } finally {
+            session.end();
         }
+
+        // need to lookup parse error template
+        renderException(model, out, "error-parse.vm");
+    }
+
+    /**
+     * @return the id of the weblog being rendered, from the template when it
+     *         is one of the weblog's own, otherwise from the page model; null
+     *         when the render is not for a weblog
+     */
+    private String weblogIdFor(Map<String, Object> model) {
+        if (renderTemplate instanceof WeblogTemplate) {
+            Weblog weblog = ((WeblogTemplate) renderTemplate).getWeblog();
+            return weblog == null ? null : weblog.getId();
+        }
+        Object pageModel = model == null ? null : model.get("model");
+        WeblogWrapper weblog = null;
+        if (pageModel instanceof PageModel) {
+            weblog = ((PageModel) pageModel).getWeblog();
+        } else if (pageModel instanceof FeedModel) {
+            weblog = ((FeedModel) pageModel).getWeblog();
+        } else if (pageModel instanceof SearchResultsFeedModel) {
+            weblog = ((SearchResultsFeedModel) pageModel).getWeblog();
+        }
+        return weblog == null ? null : weblog.getId();
+    }
+
+    /**
+     * @return the exception's message as the public error page shows it, with
+     *         template ids replaced by the template's name, or by "template"
+     *         for other stored templates; the ids stay in the log
+     */
+    private String publicMessage(Exception ex) {
+        String message = ex.getMessage();
+        if (message == null) {
+            return null;
+        }
+        if (renderTemplate.getId() != null && renderTemplate.getName() != null) {
+            message = message.replace(renderTemplate.getId(), renderTemplate.getName());
+        }
+        return STORED_TEMPLATE_ID.matcher(message).replaceAll("template");
+    }
+
+    private static RenderLimitException findLimit(Throwable t) {
+        for (int depth = 0; t != null && depth < 20; depth++, t = t.getCause()) {
+            if (t instanceof RenderLimitException) {
+                return (RenderLimitException) t;
+            }
+        }
+        return null;
     }
 
     /**
@@ -190,7 +267,7 @@ public class VelocityRenderer implements Renderer {
 
             Context ctx = new VelocityContext(model);
             ctx.put("exception", velocityException);
-            ctx.put("exceptionSource", renderTemplate.getId());
+            ctx.put("exceptionMessage", publicMessage(velocityException));
             ctx.put("exceptionDevice", deviceType);
             ctx.put("utils", new UtilitiesModel());
 
