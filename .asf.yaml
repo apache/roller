@@ -19,6 +19,8 @@ github:
       restrict_force_push: true
       required_pull_request_reviews:
         required_approving_review_count: 1
+        # the approval has to come after the last push, so it covers the head
+        require_last_push_approval: true
       required_status_checks:
         - "Build+Test on Linux/JDK 21"
         - "Build+Test on Linux/JDK 25"
@@ -40,6 +42,8 @@ github:
       restrict_force_push: true
       required_pull_request_reviews:
         required_approving_review_count: 1
+        # the approval has to come after the last push, so it covers the head
+        require_last_push_approval: true
       required_status_checks:
         - "Build+Test on Linux/JDK 11"
         - "Build+Test on Linux/JDK 17"
