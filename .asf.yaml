@@ -21,15 +21,24 @@ github:
         required_approving_review_count: 1
         # the approval has to come after the last push, so it covers the head
         require_last_push_approval: true
+      # checks reported by GitHub Actions workflows (CodeQL included)
       required_status_checks:
-        - "Build+Test on Linux/JDK 21"
-        - "Build+Test on Linux/JDK 25"
-        - "License headers"
-        - "UI tests (db)"
-        - "UI tests (db-oidc)"
-        - "UI tests (oidc)"
-        - "Analyze (java)"
-        - "Analyze (javascript)"
+        - name: "Build+Test on Linux/JDK 21"
+          app_slug: "github-actions"
+        - name: "Build+Test on Linux/JDK 25"
+          app_slug: "github-actions"
+        - name: "License headers"
+          app_slug: "github-actions"
+        - name: "UI tests (db)"
+          app_slug: "github-actions"
+        - name: "UI tests (db-oidc)"
+          app_slug: "github-actions"
+        - name: "UI tests (oidc)"
+          app_slug: "github-actions"
+        - name: "Analyze (java)"
+          app_slug: "github-actions"
+        - name: "Analyze (javascript)"
+          app_slug: "github-actions"
     - name: "6.1.x Branch Protection"
       type: branch
       branches:
@@ -44,10 +53,17 @@ github:
         required_approving_review_count: 1
         # the approval has to come after the last push, so it covers the head
         require_last_push_approval: true
+      # checks reported by GitHub Actions workflows (CodeQL included)
       required_status_checks:
-        - "Build+Test on Linux/JDK 11"
-        - "Build+Test on Linux/JDK 17"
-        - "Build+Test on Linux/JDK 21"
-        - "Build+Test on Linux/JDK 25"
-        - "Analyze (java)"
-        - "Analyze (javascript)"
+        - name: "Build+Test on Linux/JDK 11"
+          app_slug: "github-actions"
+        - name: "Build+Test on Linux/JDK 17"
+          app_slug: "github-actions"
+        - name: "Build+Test on Linux/JDK 21"
+          app_slug: "github-actions"
+        - name: "Build+Test on Linux/JDK 25"
+          app_slug: "github-actions"
+        - name: "Analyze (java)"
+          app_slug: "github-actions"
+        - name: "Analyze (javascript)"
+          app_slug: "github-actions"
