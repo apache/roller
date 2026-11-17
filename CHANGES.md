@@ -11,6 +11,14 @@
   already use custom templates keep showing them. Turn the setting on in
   Server Settings to edit templates again.
 
+- **Comments are limited to 10,000 characters.** Longer comments are refused,
+  with a message saying so, before they are previewed or checked by the
+  comment validators. The commenter's name, e-mail address and URL are limited
+  to 255 characters each, the size of the columns that store them. Set `comment.maxLength` in `roller-custom.properties` to
+  change the limit. The bundled `bannedwordslist.txt` rules match the same
+  domains as before but look at most 63 characters between their parts; a
+  copy of the old file in the uploads directory is still used if present.
+
 ### Bug fixes
 
 - **Requested tags are checked and encoded on every weblog page.** A custom
