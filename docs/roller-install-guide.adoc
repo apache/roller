@@ -416,26 +416,37 @@ users.ldap.managerPassword=secret
 # where and how to find a user, relative to the base DN
 users.ldap.userSearchBase=ou=people
 users.ldap.userSearchFilter=(uid={0})
-# role every LDAP user gets, in addition to roles stored in Roller
+# role every LDAP user gets, in addition to roles stored in Roller;
+# leave it blank to give directory users only the roles stored in Roller
 users.ldap.defaultRole=editor
 ----
 
+With `ldap`, every login goes to the directory: passwords in Roller's database
+are not checked, so administrators need directory accounts too.
+
 Roller 7 no longer has a _WEB-INF/security.xml_ file to edit; these properties
 replace the LDAP beans that earlier versions asked you to uncomment there.
+Roller refuses to start while a _WEB-INF/security.xml_ is still in place, so
+that its settings aren't silently ignored.
 
 To limit paths to users with certain roles, for example to keep a weblog
 private, add `security.access.` properties. The rest of each key is a path
 pattern, matched without regard to case, and the value lists the allowed roles,
-separated by commas. Visitors without one of those roles are sent to the login
-page. Roles are the names in Roller's `userrole` table.
+separated by commas. Visitors who aren't logged in are sent to the login page,
+and logged-in users without one of those roles get an access-denied page.
+Roles are the names in Roller's `userrole` table.
 
 ----
 security.access./family=family
 security.access./family/**=family
 ----
 
-These rules apply to the paths visitors request. They are checked before
-Roller's own rules, longest pattern first. Content of the weblog can still
+These rules apply to the paths visitors request. When several match, the most
+specific one applies. They add to Roller's own rules: a request has to pass
+both, so a rule can't open Roller's admin or authoring pages to other roles.
+The login page, the login and OpenID Connect endpoints and the files the login
+page loads are left out of these rules, so a rule for `/**` doesn't lock
+everyone out. Such a rule does cover registration and the install pages. Content of the weblog can still
 appear elsewhere, for example in site-wide feeds and search, so test what a
 visitor without the role can see. Roller 7 replaces the older
 OpenID 2.0 integration with OpenID Connect; an old OpenID configuration needs

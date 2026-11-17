@@ -17,12 +17,15 @@
 
 package org.apache.roller.weblogger.ui.core.security;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.function.Supplier;
 
+import jakarta.servlet.ServletContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -31,9 +34,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authorization.AuthorityAuthorizationManager;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,9 +56,15 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.csrf.CsrfException;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
+import org.springframework.web.util.pattern.PatternParseException;
+
+import static org.springframework.security.authorization.AuthorizationManagers.allOf;
 
 /**
  * Roller's Spring Security configuration, loaded by the web application
@@ -69,6 +83,12 @@ public class SecurityConfig {
     static final String LOGIN_PROCESSING_URL = "/roller_j_security_check";
 
     private static final String ACCESS_PREFIX = "security.access.";
+
+    private static final AuthorizationManager<RequestAuthorizationContext> ADMIN_OR_EDITOR =
+            AuthorityAuthorizationManager.hasAnyAuthority("admin", "editor");
+
+    private static final AuthorizationManager<RequestAuthorizationContext> ADMIN =
+            AuthorityAuthorizationManager.hasAuthority("admin");
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -99,27 +119,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, PasswordEncoder passwordEncoder,
             RollerClientRegistrationRepository clientRegistrationRepository,
-            RollerOidcUserService rollerOidcUserService) throws Exception {
+            RollerOidcUserService rollerOidcUserService, ServletContext servletContext) throws Exception {
 
+        refuseOldSecurityXml(servletContext);
         UserDetailsService userDetailsService = userDetailsService();
 
-        List<AccessRule> siteRules = siteAccessRules();
-        http.authorizeHttpRequests(requests -> {
-            for (AccessRule rule : siteRules) {
-                requests.requestMatchers(rule.matcher()).hasAnyAuthority(rule.authorities());
-            }
-            requests
-                .requestMatchers("/roller-ui/login-redirect**").hasAnyAuthority("admin", "editor")
-                .requestMatchers("/roller-ui/profile**").hasAnyAuthority("admin", "editor")
-                .requestMatchers("/roller-ui/createWeblog**").hasAnyAuthority("admin", "editor")
-                .requestMatchers("/roller-ui/menu**").hasAnyAuthority("admin", "editor")
-                .requestMatchers("/roller-ui/authoring/**").hasAnyAuthority("admin", "editor")
-                .requestMatchers("/roller-ui/admin/**").hasAuthority("admin")
-                .requestMatchers("/rewrite-status*").hasAuthority("admin")
-                .anyRequest().permitAll();
-        });
+        // security.access.* rules add to Roller's own rules: a request needs
+        // to pass both. The login endpoints and the files the login page loads
+        // are left out of them, so a rule for /** can't lock everyone out.
+        AuthorizationManager<RequestAuthorizationContext> site = new SiteAccess(siteAccessRules());
+        http.authorizeHttpRequests(requests -> requests
+                .requestMatchers(LOGIN_PAGE, LOGIN_PROCESSING_URL, "/roller-ui/logout.rol",
+                        "/oauth2/**", "/login/oauth2/**", "/favicon.*", "/webjars/**",
+                        "/roller-ui/scripts/**", "/theme/**").permitAll()
+                .requestMatchers("/roller-ui/login-redirect**").access(allOf(site, ADMIN_OR_EDITOR))
+                .requestMatchers("/roller-ui/profile**").access(allOf(site, ADMIN_OR_EDITOR))
+                .requestMatchers("/roller-ui/createWeblog**").access(allOf(site, ADMIN_OR_EDITOR))
+                .requestMatchers("/roller-ui/menu**").access(allOf(site, ADMIN_OR_EDITOR))
+                .requestMatchers("/roller-ui/authoring/**").access(allOf(site, ADMIN_OR_EDITOR))
+                .requestMatchers("/roller-ui/admin/**").access(allOf(site, ADMIN))
+                .requestMatchers("/rewrite-status*").access(allOf(site, ADMIN))
+                .anyRequest().access(site));
 
         http.authenticationProvider(loginProvider(userDetailsService, passwordEncoder));
+
+        // save the request that needed a login whatever its method, as
+        // security.xml did; Spring saves only GETs once CSRF is configured
+        http.requestCache(cache -> cache.requestCache(new HttpSessionRequestCache()));
 
         http.formLogin(form -> form
                 .loginPage(LOGIN_PAGE)
@@ -179,13 +205,42 @@ public class SecurityConfig {
         return http.build();
     }
 
-    /** A security.access.* rule: requests matching the path need one of the authorities. */
-    record AccessRule(String pattern, String[] authorities) {
+    /**
+     * Roller no longer reads WEB-INF/security.xml. A copy left in place would
+     * otherwise be ignored without a word, along with any access rules or LDAP
+     * login it sets up.
+     */
+    static void refuseOldSecurityXml(ServletContext servletContext) throws MalformedURLException {
+        if (servletContext != null && servletContext.getResource("/WEB-INF/security.xml") != null) {
+            throw new IllegalStateException("Roller no longer reads WEB-INF/security.xml. Move its "
+                    + "changes to roller-custom.properties (see \"Alternative Authentication Options\" in "
+                    + "the installation guide), then delete the file.");
+        }
+    }
 
-        RequestMatcher matcher() {
-            PathPatternParser parser = new PathPatternParser();
-            parser.setCaseSensitive(false);
-            return PathPatternRequestMatcher.withPathPatternParser(parser).matcher(pattern);
+    /** A security.access.* rule: requests matching the path need one of the authorities. */
+    record AccessRule(String key, PathPattern pattern, RequestMatcher matcher, String[] authorities) {
+
+        AuthorizationManager<RequestAuthorizationContext> check() {
+            return AuthorityAuthorizationManager.hasAnyAuthority(authorities);
+        }
+    }
+
+    /**
+     * Applies the most specific security.access.* rule matching the request,
+     * and allows requests no rule matches.
+     */
+    record SiteAccess(List<AccessRule> rules) implements AuthorizationManager<RequestAuthorizationContext> {
+
+        @Override
+        public AuthorizationResult authorize(Supplier<? extends Authentication> authentication,
+                RequestAuthorizationContext context) {
+            for (AccessRule rule : rules) {
+                if (rule.matcher().matches(context.getRequest())) {
+                    return rule.check().authorize(authentication, context);
+                }
+            }
+            return new AuthorizationDecision(true);
         }
     }
 
@@ -193,10 +248,15 @@ public class SecurityConfig {
      * Site-specific rules from roller.properties, for example to keep a weblog
      * private: security.access./fam/**=family. The key after security.access.
      * is a path pattern, matched without regard to case; the value lists the
-     * authorities (role names) allowed, separated by commas. These rules are
-     * checked before Roller's own, longest pattern first.
+     * authorities (role names) allowed, separated by commas. Only the most
+     * specific rule matching a request applies, and a request has to pass
+     * Roller's own rules as well.
      */
     static List<AccessRule> siteAccessRules() {
+        PathPatternParser parser = new PathPatternParser();
+        parser.setCaseSensitive(false);
+        PathPatternRequestMatcher.Builder matchers = PathPatternRequestMatcher.withPathPatternParser(parser);
+
         List<AccessRule> rules = new ArrayList<>();
         Enumeration<Object> keys = WebloggerConfig.keys();
         while (keys.hasMoreElements()) {
@@ -204,18 +264,25 @@ public class SecurityConfig {
             if (!key.startsWith(ACCESS_PREFIX)) {
                 continue;
             }
-            String pattern = key.substring(ACCESS_PREFIX.length());
+            String path = key.substring(ACCESS_PREFIX.length());
             String[] authorities = Arrays.stream(
                     StringUtils.split(StringUtils.defaultString(WebloggerConfig.getProperty(key)), ','))
                     .map(String::trim).filter(StringUtils::isNotEmpty).toArray(String[]::new);
-            if (!pattern.startsWith("/") || authorities.length == 0) {
+            if (!path.startsWith("/") || authorities.length == 0) {
                 throw new IllegalStateException(key + " needs a path starting with / and at least one "
                         + "role, for example security.access./private/**=admin");
             }
-            rules.add(new AccessRule(pattern, authorities));
+            PathPattern pattern;
+            try {
+                pattern = parser.parse(path);
+            } catch (PatternParseException e) {
+                throw new IllegalStateException(key + " has a path Roller can't read: " + e.getMessage()
+                        + ". ** can only come at the end, for example security.access./private/**=admin");
+            }
+            rules.add(new AccessRule(key, pattern, matchers.matcher(path), authorities));
         }
-        rules.sort(Comparator.comparingInt((AccessRule r) -> r.pattern().length()).reversed()
-                .thenComparing(AccessRule::pattern));
+        rules.sort(Comparator.comparing(AccessRule::pattern, PathPattern.SPECIFICITY_COMPARATOR)
+                .thenComparing(AccessRule::key));
         return rules;
     }
 
@@ -260,7 +327,11 @@ public class SecurityConfig {
         authenticator.setUserSearch(userSearch);
 
         AuthoritiesPopulator authorities = new AuthoritiesPopulator();
-        authorities.setDefaultRole(WebloggerConfig.getProperty("users.ldap.defaultRole", "editor"));
+        String defaultRole = WebloggerConfig.getProperty("users.ldap.defaultRole", "editor");
+        // a blank value gives directory users only the roles Roller has for them
+        if (StringUtils.isNotBlank(defaultRole)) {
+            authorities.setDefaultRole(defaultRole.trim());
+        }
 
         return new LdapAuthenticationProvider(authenticator, authorities);
     }

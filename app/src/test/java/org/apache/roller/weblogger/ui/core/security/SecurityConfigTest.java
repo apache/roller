@@ -23,8 +23,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -44,14 +46,19 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 import org.springframework.security.web.FilterChainProxy;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -203,6 +210,23 @@ class SecurityConfigTest {
     }
 
     @Test
+    void loginReturnsToTheSavedPostRequest() throws Exception {
+        FilterChainProxy chain = chain(WithUser.class);
+        MockHttpSession session = new MockHttpSession(servletContext);
+
+        // an author whose session timed out submits a form
+        MockHttpServletRequest post = request("POST", "/roller-ui/authoring/entryEdit!save.rol", "");
+        post.setQueryString("weblog=myblog");
+        post.setSession(session);
+        assertEquals(LOGIN, outcome(chain, post, new MockHttpServletResponse()));
+
+        MockHttpServletResponse right = new MockHttpServletResponse();
+        outcome(chain, login(chain, "bob", "secret", session), right);
+        assertEquals("http://localhost/roller-ui/authoring/entryEdit!save.rol?weblog=myblog&continue",
+                right.getRedirectedUrl());
+    }
+
+    @Test
     void loginNeedsTheLoginPageToken() throws Exception {
         FilterChainProxy chain = chain(WithUser.class);
         MockHttpServletRequest login = request("POST", "/roller_j_security_check", "");
@@ -268,7 +292,7 @@ class SecurityConfigTest {
     }
 
     @Test
-    void siteAccessRulesComeFirstAndIgnoreCase() throws Exception {
+    void siteAccessRulesIgnoreCase() throws Exception {
         setProperty("security.access./fam", "family");
         setProperty("security.access./fam/**", "family, admin");
         FilterChainProxy chain = chain(SecurityConfig.class);
@@ -288,6 +312,96 @@ class SecurityConfigTest {
         IllegalStateException e = assertThrows(IllegalStateException.class, SecurityConfig::siteAccessRules);
         assertEquals("security.access./fam/** needs a path starting with / and at least one role, "
                 + "for example security.access./private/**=admin", e.getMessage());
+    }
+
+    @Test
+    void siteAccessRulesCannotOpenRollerPages() throws Exception {
+        setProperty("security.access./**", "member, editor");
+        FilterChainProxy chain = chain(SecurityConfig.class);
+
+        assertEquals(PASS, outcome(chain, request("GET", "/myblog/", "member"), new MockHttpServletResponse()));
+        assertEquals(LOGIN, outcome(chain, request("GET", "/myblog/", ""), new MockHttpServletResponse()));
+        assertEquals("403 null", outcome(chain,
+                request("GET", "/roller-ui/admin/userAdmin.rol", "member"), new MockHttpServletResponse()));
+        assertEquals("403 null", outcome(chain,
+                request("GET", "/roller-ui/authoring/entries.rol", "member"), new MockHttpServletResponse()));
+        assertEquals("403 null", outcome(chain,
+                request("GET", "/roller-ui/admin/userAdmin.rol", "editor"), new MockHttpServletResponse()));
+        assertEquals(PASS, outcome(chain,
+                request("GET", "/roller-ui/authoring/entries.rol", "editor"), new MockHttpServletResponse()));
+    }
+
+    @Test
+    void siteAccessRulesCanNarrowRollerPages() throws Exception {
+        setProperty("security.access./roller-ui/authoring/**", "admin");
+        FilterChainProxy chain = chain(SecurityConfig.class);
+
+        assertEquals("403 null", outcome(chain,
+                request("GET", "/roller-ui/authoring/entries.rol", "editor"), new MockHttpServletResponse()));
+        assertEquals(PASS, outcome(chain,
+                request("GET", "/roller-ui/authoring/entries.rol", "admin"), new MockHttpServletResponse()));
+    }
+
+    @Test
+    void aRuleForEverythingLeavesLoginWorking() throws Exception {
+        setProperty("security.access./**", "family");
+        FilterChainProxy chain = chain(WithUser.class);
+
+        for (String path : new String[] {"/roller-ui/login.rol", "/webjars/bootstrap/5.3.8/css/bootstrap.min.css",
+                "/roller-ui/scripts/date-fields.js", "/theme/scripts/roller.js", "/favicon.svg",
+                "/oauth2/authorization/keycloak", "/roller-ui/logout.rol"}) {
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            String result = outcome(chain, request("GET", path, ""), response);
+            assertFalse(result.startsWith("302 /roller-ui/login.rol") || result.startsWith("403"),
+                    path + ": " + result);
+        }
+        // bob is an editor without the family role: he can log in, but not read the site
+        MockHttpServletResponse login = new MockHttpServletResponse();
+        outcome(chain, login(chain, "bob", "secret", new MockHttpSession(servletContext)), login);
+        assertEquals("/", login.getRedirectedUrl());
+        assertEquals("403 null", outcome(chain, request("GET", "/myblog/", "editor"), new MockHttpServletResponse()));
+    }
+
+    @Test
+    void theMostSpecificSiteAccessRuleApplies() throws Exception {
+        setProperty("security.access./{handle}/drafts/**", "admin");
+        setProperty("security.access./public/drafts/**", "editor");
+        FilterChainProxy chain = chain(SecurityConfig.class);
+
+        assertEquals(PASS, outcome(chain,
+                request("GET", "/public/drafts/x", "editor"), new MockHttpServletResponse()));
+        assertEquals("403 null", outcome(chain,
+                request("GET", "/other/drafts/x", "editor"), new MockHttpServletResponse()));
+    }
+
+    @Test
+    void siteAccessRuleWithAnUnreadablePathIsRefused() throws Exception {
+        setProperty("security.access./fam/**/drafts", "family");
+        IllegalStateException e = assertThrows(IllegalStateException.class, SecurityConfig::siteAccessRules);
+        assertTrue(e.getMessage().startsWith("security.access./fam/**/drafts has a path Roller can't read: "),
+                e.getMessage());
+    }
+
+    @Test
+    void anOldSecurityXmlStopsTheStart() {
+        MockServletContext withOldFile = new MockServletContext() {
+            @Override
+            public java.net.URL getResource(String path) throws java.net.MalformedURLException {
+                return "/WEB-INF/security.xml".equals(path)
+                        ? new java.net.URL("file:/WEB-INF/security.xml") : super.getResource(path);
+            }
+        };
+        AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
+        ctx.setServletContext(withOldFile);
+        ctx.register(SecurityConfig.class);
+        Exception e = assertThrows(Exception.class, ctx::refresh);
+        Throwable cause = e;
+        while (cause.getCause() != null) {
+            cause = cause.getCause();
+        }
+        assertEquals("Roller no longer reads WEB-INF/security.xml. Move its changes to "
+                + "roller-custom.properties (see \"Alternative Authentication Options\" in the installation "
+                + "guide), then delete the file.", cause.getMessage());
     }
 
     @Test
@@ -323,10 +437,32 @@ class SecurityConfigTest {
         setProperty("users.ldap.url", "ldap://127.0.0.1:1/dc=example,dc=com");
         FilterChainProxy chain = chain(WithUser.class);
 
-        // bob only exists in the database login, which LDAP replaces
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        outcome(chain, login(chain, "bob", "secret", new MockHttpSession(servletContext)), response);
-        assertEquals("/roller-ui/login.rol?error=true", response.getRedirectedUrl());
+        UsernamePasswordAuthenticationFilter form = chain.getFilters(SecurityConfig.LOGIN_PROCESSING_URL).stream()
+                .filter(UsernamePasswordAuthenticationFilter.class::isInstance)
+                .map(UsernamePasswordAuthenticationFilter.class::cast).findFirst().orElseThrow();
+        Field managerField = AbstractAuthenticationProcessingFilter.class.getDeclaredField("authenticationManager");
+        managerField.setAccessible(true);
+        ProviderManager manager = (ProviderManager) managerField.get(form);
+        Field parentField = ProviderManager.class.getDeclaredField("parent");
+        parentField.setAccessible(true);
+
+        // the only provider that checks passwords is the directory, here and in any parent
+        List<AuthenticationProvider> passwordProviders = new ArrayList<>();
+        for (Object m = manager; m != null; m = parentField.get(m)) {
+            ((ProviderManager) m).getProviders().stream()
+                    .filter(p -> p.supports(UsernamePasswordAuthenticationToken.class))
+                    .forEach(passwordProviders::add);
+        }
+        assertEquals(1, passwordProviders.size(), passwordProviders.toString());
+        assertTrue(passwordProviders.get(0) instanceof LdapAuthenticationProvider);
+    }
+
+    @Test
+    void ldapDefaultRoleCanBeLeftBlank() {
+        setPropertyUnchecked("authentication.method", "ldap");
+        setPropertyUnchecked("users.ldap.url", "ldap://127.0.0.1:1/dc=example,dc=com");
+        setPropertyUnchecked("users.ldap.defaultRole", "");
+        assertNotNull(SecurityConfig.ldapProvider());
     }
 
     @Test
@@ -392,6 +528,14 @@ class SecurityConfigTest {
         MockFilterChain end = new MockFilterChain();
         chain.doFilter(request, response, end);
         return end.getRequest() != null ? PASS : response.getStatus() + " " + response.getRedirectedUrl();
+    }
+
+    private void setPropertyUnchecked(String key, String value) {
+        try {
+            setProperty(key, value);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private void setProperty(String key, String value) throws ReflectiveOperationException {

@@ -63,7 +63,9 @@
   off or the algorithm is `noop`.
 - **"Remember me" on the login page works again.** The checkbox still used
   Spring Security 3's parameter name, so ticking it set no remember-me cookie
-  on sites with `rememberme.enabled=true`.
+  on sites with `rememberme.enabled=true`. With LDAP login, a directory user
+  who hasn't registered with Roller yet who ticks it is now logged in without
+  a cookie, instead of being shown a wrong-password message.
 - **Weblogs no longer advertise XML-RPC while it is switched off.** With
   `webservices.enableXmlRpc` off, each weblog page still linked to an RSD
   document listing the Blogger and MetaWeblog endpoints, which then answered
@@ -247,11 +249,18 @@
   - LDAP login is set with `authentication.method=ldap` and the new
     `users.ldap.url`, `users.ldap.managerDn`, `users.ldap.managerPassword`,
     `users.ldap.userSearchBase`, `users.ldap.userSearchFilter` and
-    `users.ldap.defaultRole` properties, instead of uncommenting beans.
+    `users.ldap.defaultRole` properties, instead of uncommenting beans. A
+    blank `users.ldap.defaultRole` gives directory users only the roles Roller
+    has for them. With `ldap`, every login goes to the directory, so database
+    passwords, including administrators', are no longer checked.
   - Extra URL rules, such as a private weblog for one role, are
     `security.access.<path>=<roles>` properties, for example
     `security.access./family/**=family`. These rules match paths without
-    regard to case.
+    regard to case, the most specific one applies, and they add to Roller's
+    own rules rather than replacing them. They don't cover the login page,
+    so a rule for `/**` leaves login working.
+  - Roller refuses to start while a `WEB-INF/security.xml` is still in
+    place, so a customized copy can't be ignored without notice.
 - **The login form needs Spring Security's CSRF token.** Roller's login page
   includes it. A theme or script that posts straight to
   `/roller_j_security_check` has to read the `_csrf` field from the login
