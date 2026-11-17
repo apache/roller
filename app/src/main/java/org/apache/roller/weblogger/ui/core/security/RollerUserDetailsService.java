@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.apache.roller.weblogger.WebloggerException;
@@ -40,7 +41,7 @@ import org.springframework.dao.DataRetrievalFailureException;
 /**
  * Spring Security UserDetailsService implemented using Weblogger API.
  */
-public class RollerUserDetailsService implements UserDetailsService {
+public class RollerUserDetailsService implements UserDetailsService, UserDetailsPasswordService {
     private static Log log = LogFactory.getLog(RollerUserDetailsService.class);
     
     /**
@@ -85,6 +86,38 @@ public class RollerUserDetailsService implements UserDetailsService {
 
     }
         
+    /**
+     * Stores a password that Spring Security re-encoded after a successful
+     * login, so passwords stored with an older encoding (for example the one
+     * named by passwds.encryption.lazyUpgradeFrom) move to
+     * passwds.encryption.algorithm. Nothing is stored when the re-encoding
+     * is plain text ({noop}), which is what passwds.encryption.enabled=false
+     * or passwds.encryption.algorithm=noop produce.
+     */
+    @Override
+    public UserDetails updatePassword(UserDetails user, String newPassword) {
+        if (newPassword == null || newPassword.startsWith("{noop}")) {
+            return user;
+        }
+        try {
+            Weblogger roller = WebloggerFactory.getWeblogger();
+            UserManager umgr = roller.getUserManager();
+            User userData = umgr.getUserByUserName(user.getUsername());
+            if (userData == null) {
+                return user;
+            }
+            userData.setPassword(newPassword);
+            umgr.saveUser(userData);
+            roller.flush();
+        } catch (WebloggerException ex) {
+            log.warn("Could not store the re-encoded password of " + user.getUsername(), ex);
+            return user;
+        }
+        log.info("Stored the re-encoded password of " + user.getUsername());
+        return org.springframework.security.core.userdetails.User.withUserDetails(user)
+                .password(newPassword).build();
+    }
+
      private List<SimpleGrantedAuthority> getAuthorities(User userData, UserManager umgr) throws WebloggerException {
          List<String> roles = umgr.getRoles(userData);
          List<SimpleGrantedAuthority> authorities = new ArrayList<>(roles.size());
