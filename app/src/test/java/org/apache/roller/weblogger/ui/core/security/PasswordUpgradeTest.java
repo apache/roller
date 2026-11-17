@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -36,6 +37,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -123,6 +127,34 @@ class PasswordUpgradeTest {
         TestUtils.endSession(true);
 
         assertEquals(legacyHash, storedPassword());
+    }
+
+    @Test
+    void aPasswordChangedDuringTheLoginIsKept() throws Exception {
+        String reset = "{bcrypt}" + new BCryptPasswordEncoder().encode("reset");
+        RollerUserDetailsService users = new RollerUserDetailsService();
+        // an administrator resets the password after this login has read the old one
+        UserDetailsService resetAfterRead = name -> {
+            UserDetails details = users.loadUserByUsername(name);
+            try {
+                UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+                User user = mgr.getUserByUserName(name);
+                user.setPassword(reset);
+                mgr.saveUser(user);
+                WebloggerFactory.getWeblogger().flush();
+            } catch (WebloggerException e) {
+                throw new IllegalStateException(e);
+            }
+            return details;
+        };
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(resetAfterRead);
+        provider.setPasswordEncoder(RollerPasswordEncoders.create());
+        provider.setUserDetailsPasswordService(users);
+
+        provider.authenticate(UsernamePasswordAuthenticationToken.unauthenticated(userName, "secret"));
+        TestUtils.endSession(true);
+
+        assertEquals(reset, storedPassword());
     }
 
     private static DaoAuthenticationProvider provider() {
