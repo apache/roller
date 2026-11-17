@@ -112,6 +112,17 @@
          Filter mappings - order IS important here.
          ****************************************** -->
 
+    <!-- Map everything to the PersistenceSessionFilter, which releases the
+    persistence session when the request is done. It comes first so that it
+    also releases the session of requests that Spring Security answers itself,
+    such as logins, which read users from the database. It doesn't read the
+    request, so it can come ahead of the CharEncodingFilter. -->
+    <filter-mapping>
+        <filter-name>PersistenceSessionFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
     <!-- This filter ensures that the request encoding is set to UTF-8 before any
      other processing forces request parsing using a default encoding.
     Note: Any filters preceding this one MUST not cause request parsing. -->
@@ -160,14 +171,6 @@
 
     <filter-mapping>
         <filter-name>BootstrapFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-
-    <!-- Map everything to the PersistenceSessionFilter.
-    NOTE: Any filters preceding this one MUST NOT use persistence sessions.-->
-    <filter-mapping>
-        <filter-name>PersistenceSessionFilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>

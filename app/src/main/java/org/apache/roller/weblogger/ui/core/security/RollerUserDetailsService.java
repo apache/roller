@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.ui.core.security;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -92,7 +93,8 @@ public class RollerUserDetailsService implements UserDetailsService, UserDetails
      * named by passwds.encryption.lazyUpgradeFrom) move to
      * passwds.encryption.algorithm. Nothing is stored when the re-encoding
      * is plain text ({noop}), which is what passwds.encryption.enabled=false
-     * or passwds.encryption.algorithm=noop produce.
+     * or passwds.encryption.algorithm=noop produce, or when the stored
+     * password is no longer the one the login checked.
      */
     @Override
     public UserDetails updatePassword(UserDetails user, String newPassword) {
@@ -101,9 +103,14 @@ public class RollerUserDetailsService implements UserDetailsService, UserDetails
         }
         try {
             Weblogger roller = WebloggerFactory.getWeblogger();
+            // read the user afresh: the password may have been changed since
+            // this login read it, and that change has to win
+            roller.release();
             UserManager umgr = roller.getUserManager();
             User userData = umgr.getUserByUserName(user.getUsername());
-            if (userData == null) {
+            if (userData == null || !Objects.equals(userData.getPassword(), user.getPassword())) {
+                log.info("Kept the stored password of " + user.getUsername()
+                        + ", which changed while they logged in");
                 return user;
             }
             userData.setPassword(newPassword);
