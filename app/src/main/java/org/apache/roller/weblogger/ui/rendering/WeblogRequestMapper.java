@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.ui.rendering;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import jakarta.servlet.RequestDispatcher;
