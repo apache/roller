@@ -37,6 +37,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
@@ -69,6 +72,11 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     private final JPAPersistenceStrategy strategy;
     private static final Log log = LogFactory.getFactory().getInstance(JPAMediaFileManagerImpl.class);
     public static final String MIGRATION_STATUS_FILENAME = "migration-status.properties";
+
+    // images with more pixels than this get no thumbnail, so that an upload
+    // can't make the server decode an arbitrarily large image
+    static final String THUMBNAIL_MAX_PIXELS_PROPERTY = "uploads.thumbnail.maxPixels";
+    static final int DEFAULT_THUMBNAIL_MAX_PIXELS = 50_000_000;
 
     /**
      * Creates a new instance of MediaFileManagerImpl
@@ -249,20 +257,65 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         }
     }
 
+    /**
+     * Record the image's size and save a thumbnail of it. The size is read
+     * from the image header first; images with more pixels than
+     * uploads.thumbnail.maxPixels are left without a thumbnail rather than
+     * decoded, and the rest are decoded subsampled to near thumbnail size.
+     * Content that no image reader recognizes gets no thumbnail, whatever
+     * content type the client sent.
+     */
     private void updateThumbnail(MediaFile mediaFile) {
         try {
             FileContentManager cmgr = WebloggerFactory.getWeblogger()
                     .getFileContentManager();
             FileContent fc = cmgr.getFileContent(mediaFile.getWeblog(),
                     mediaFile.getId());
+            int maxPixels = WebloggerConfig.getIntProperty(
+                    THUMBNAIL_MAX_PIXELS_PROPERTY, DEFAULT_THUMBNAIL_MAX_PIXELS);
             BufferedImage img;
 
-            img = ImageIO.read(fc.getInputStream());
+            try (InputStream in = fc.getInputStream();
+                 ImageInputStream iis = ImageIO.createImageInputStream(in)) {
+                Iterator<ImageReader> readers = iis == null
+                        ? null : ImageIO.getImageReaders(iis);
+                if (readers == null || !readers.hasNext()) {
+                    log.debug("No image reader for media file "
+                            + mediaFile.getId() + ", not creating a thumbnail");
+                    return;
+                }
+                ImageReader reader = readers.next();
+                try {
+                    reader.setInput(iis, true, true);
+                    int width = reader.getWidth(0);
+                    int height = reader.getHeight(0);
+                    if (width <= 0 || height <= 0
+                            || (long) width * height > maxPixels) {
+                        log.info("Not creating a thumbnail for media file "
+                                + mediaFile.getId() + " (" + width + "x"
+                                + height + "), it is larger than "
+                                + THUMBNAIL_MAX_PIXELS_PROPERTY + "="
+                                + maxPixels + " pixels");
+                        return;
+                    }
 
-            // determine and save width and height
-            mediaFile.setWidth(img.getWidth());
-            mediaFile.setHeight(img.getHeight());
-            strategy.store(mediaFile);
+                    // determine and save width and height
+                    mediaFile.setWidth(width);
+                    mediaFile.setHeight(height);
+                    strategy.store(mediaFile);
+
+                    // decode only every n-th pixel, keeping about twice the
+                    // thumbnail size so the smooth scaling below has detail
+                    int step = Math.max(1, Math.min(
+                            width / Math.max(1, 2 * mediaFile.getThumbnailWidth()),
+                            height / Math.max(1, 2 * mediaFile.getThumbnailHeight())));
+                    ImageReadParam param = reader.getDefaultReadParam();
+                    param.setSourceSubsampling(step, step, 0, 0);
+                    img = reader.read(0, param);
+                } finally {
+                    reader.dispose();
+                }
+            }
 
             int newWidth = mediaFile.getThumbnailWidth();
             int newHeight = mediaFile.getThumbnailHeight();
