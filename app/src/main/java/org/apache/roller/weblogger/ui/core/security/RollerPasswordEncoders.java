@@ -42,7 +42,7 @@ public final class RollerPasswordEncoders {
     }
 
     @SuppressWarnings("deprecation")
-    public static DelegatingPasswordEncoder create() {
+    public static PasswordEncoder create() {
 
         Map<String, PasswordEncoder> encoders = new HashMap<>();
 
@@ -93,6 +93,33 @@ public final class RollerPasswordEncoders {
 
         log.info("Password Encryption Algorithm set to '" + algorithm + "'");
 
-        return new DelegatingPasswordEncoder(algorithm, encoders);
+        return new ExternalLoginAware(new DelegatingPasswordEncoder(algorithm, encoders));
+    }
+
+    /**
+     * Users who log in through LDAP or the servlet container have no Roller
+     * password; Roller stores users.passwords.externalAuthValue in its place.
+     * That placeholder is not a password, so it never matches.
+     */
+    private record ExternalLoginAware(PasswordEncoder delegate) implements PasswordEncoder {
+
+        @Override
+        public String encode(CharSequence rawPassword) {
+            return delegate.encode(rawPassword);
+        }
+
+        @Override
+        public boolean matches(CharSequence rawPassword, String encodedPassword) {
+            String marker = WebloggerConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
+            if (rawPassword != null && marker != null && !marker.isEmpty() && marker.contentEquals(rawPassword)) {
+                return false;
+            }
+            return delegate.matches(rawPassword, encodedPassword);
+        }
+
+        @Override
+        public boolean upgradeEncoding(String encodedPassword) {
+            return delegate.upgradeEncoding(encodedPassword);
+        }
     }
 }
