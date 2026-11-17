@@ -66,7 +66,7 @@
                         </div>
 
                         <div class="col-md-2">
-                            <img class="mediaFileImage" src='<s:property value="%{#newImage.thumbnailURL}" />' alt=""/>
+                            <img class="mediaFileImage" src="<s:property value="%{#newImage.thumbnailURL}" />" alt=""/>
                         </div>
 
                         <div class="col-md-9">

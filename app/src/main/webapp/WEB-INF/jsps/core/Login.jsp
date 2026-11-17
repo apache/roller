@@ -44,7 +44,7 @@
                         <a href="${pageContext.request.contextPath}/oauth2/authorization/<s:property value="#provider.id"/>"
                            class="btn btn-primary">
                             <s:text name="loginPage.signInWith">
-                                <s:param><s:property value="#provider.name"/></s:param>
+                                <s:param value="#provider.name"/>
                             </s:text>
                         </a>
                     </s:iterator>

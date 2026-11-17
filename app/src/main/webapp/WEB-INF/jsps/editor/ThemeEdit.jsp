@@ -181,7 +181,7 @@
 
     var proposedChangeType = ""
     var proposedThemeId = ""
-    var originalThemeId = "<s:property value="themeId"/>"
+    var originalThemeId = "<s:property value="themeId" escapeHtml="false" escapeJavaScript="true"/>"
     var originalType = ""
 
     $.when( $.ready ).then(function() {
@@ -264,7 +264,7 @@
                 $('#themeDescription').text(data.description);
                 thumbnail = $('#themeThumbnail');
                 if (data.previewPath) {
-                    thumbnail.attr('src', '<s:property value="siteURL" />' + data.previewPath).show();
+                    thumbnail.attr('src', '<s:property value="siteURL" escapeHtml="false" escapeJavaScript="true" />' + data.previewPath).show();
                 } else {
                     thumbnail.removeAttr('src').hide();
                 }

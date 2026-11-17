@@ -113,11 +113,11 @@
     }
 
     function previewImage(themeId) {
-        $.ajax({ url: "<s:property value='siteURL' />/roller-ui/authoring/themedata",
+        $.ajax({ url: "<s:property value='siteURL' escapeHtml="false" escapeJavaScript="true" />/roller-ui/authoring/themedata",
             data: {theme:themeId}, success: function(data) {
                 $('#themedescription').text(data.description);
                 if (data.previewPath) {
-                    $('#themeThumbnail').attr('src','<s:property value="siteURL" />' + data.previewPath).show();
+                    $('#themeThumbnail').attr('src','<s:property value="siteURL" escapeHtml="false" escapeJavaScript="true" />' + data.previewPath).show();
                 } else {
                     $('#themeThumbnail').removeAttr('src').hide();
                 }

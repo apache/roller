@@ -157,7 +157,7 @@
         if (window.confirm('<s:text name="planetGroupSubs.delete.confirm" />')) {
             var form = $("#deleteForm");
             form.find('input[name="subUrl"]').val(subUrl);
-            form.find('input[name="groupHandle"]').val('<s:property value="groupHandle" />');
+            form.find('input[name="groupHandle"]').val('<s:property value="groupHandle" escapeHtml="false" escapeJavaScript="true" />');
             form.submit();
         }
     }
