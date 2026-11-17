@@ -74,8 +74,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Sends requests through the filter chain SecurityConfig builds.
  *
  * <p>The request table was recorded from the security.xml this configuration
- * replaced, so it also checks that the move kept Roller's behaviour. The one
- * deliberate change since: the login form needs Spring's CSRF token.
+ * replaced, so it also checks that the move kept Roller's behaviour. The
+ * deliberate changes since: the login form needs Spring's CSRF token, and a
+ * POST that needed a login isn't repeated after it.
  */
 class SecurityConfigTest {
 
@@ -210,11 +211,12 @@ class SecurityConfigTest {
     }
 
     @Test
-    void loginReturnsToTheSavedPostRequest() throws Exception {
+    void aPostThatNeedsALoginIsNotReplayed() throws Exception {
         FilterChainProxy chain = chain(WithUser.class);
         MockHttpSession session = new MockHttpSession(servletContext);
 
-        // an author whose session timed out submits a form
+        // an author whose session timed out submits a form; its one-time salt
+        // can't be used again, so the login doesn't send the browser back to it
         MockHttpServletRequest post = request("POST", "/roller-ui/authoring/entryEdit!save.rol", "");
         post.setQueryString("weblog=myblog");
         post.setSession(session);
@@ -222,8 +224,7 @@ class SecurityConfigTest {
 
         MockHttpServletResponse right = new MockHttpServletResponse();
         outcome(chain, login(chain, "bob", "secret", session), right);
-        assertEquals("http://localhost/roller-ui/authoring/entryEdit!save.rol?weblog=myblog&continue",
-                right.getRedirectedUrl());
+        assertEquals("/", right.getRedirectedUrl());
     }
 
     @Test
@@ -355,6 +356,15 @@ class SecurityConfigTest {
             assertFalse(result.startsWith("302 /roller-ui/login.rol") || result.startsWith("403"),
                     path + ": " + result);
         }
+        // the login action renders its page with a forward to a JSP
+        MockHttpServletRequest forward = request("GET", "/roller-ui/login.rol", "");
+        forward.setDispatcherType(DispatcherType.FORWARD);
+        forward.setRequestURI("/WEB-INF/jsps/tiles/tiles-simplepage.jsp");
+        forward.setServletPath("/WEB-INF/jsps/tiles/tiles-simplepage.jsp");
+        assertEquals(PASS, outcome(chain, forward, new MockHttpServletResponse()), "forward to the login JSP");
+        // while the path a visitor asks for is still covered
+        MockHttpServletRequest page = request("GET", "/myblog/", "");
+        assertEquals(LOGIN, outcome(chain, page, new MockHttpServletResponse()));
         // bob is an editor without the family role: he can log in, but not read the site
         MockHttpServletResponse login = new MockHttpServletResponse();
         outcome(chain, login(chain, "bob", "secret", new MockHttpSession(servletContext)), login);

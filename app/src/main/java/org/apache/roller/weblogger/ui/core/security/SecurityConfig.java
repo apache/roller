@@ -25,8 +25,11 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.function.Supplier;
 
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.ServletContext;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.springframework.context.annotation.Bean;
@@ -56,7 +59,6 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.csrf.CsrfException;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -77,6 +79,8 @@ import static org.springframework.security.authorization.AuthorizationManagers.a
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private static final Log log = LogFactory.getLog(SecurityConfig.class);
 
     static final String LOGIN_PAGE = "/roller-ui/login.rol";
 
@@ -143,10 +147,6 @@ public class SecurityConfig {
 
         http.authenticationProvider(loginProvider(userDetailsService, passwordEncoder));
 
-        // save the request that needed a login whatever its method, as
-        // security.xml did; Spring saves only GETs once CSRF is configured
-        http.requestCache(cache -> cache.requestCache(new HttpSessionRequestCache()));
-
         http.formLogin(form -> form
                 .loginPage(LOGIN_PAGE)
                 .usernameParameter("j_username")
@@ -212,9 +212,12 @@ public class SecurityConfig {
      */
     static void refuseOldSecurityXml(ServletContext servletContext) throws MalformedURLException {
         if (servletContext != null && servletContext.getResource("/WEB-INF/security.xml") != null) {
-            throw new IllegalStateException("Roller no longer reads WEB-INF/security.xml. Move its "
+            String message = "Roller no longer reads WEB-INF/security.xml. Move its "
                     + "changes to roller-custom.properties (see \"Alternative Authentication Options\" in "
-                    + "the installation guide), then delete the file.");
+                    + "the installation guide), then delete the file.";
+            // also in Roller's own log, not only in the container's stack trace
+            log.fatal(message);
+            throw new IllegalStateException(message);
         }
     }
 
@@ -227,14 +230,19 @@ public class SecurityConfig {
     }
 
     /**
-     * Applies the most specific security.access.* rule matching the request,
-     * and allows requests no rule matches.
+     * Applies the most specific security.access.* rule matching the path a
+     * visitor requested, and allows requests no rule matches.
      */
     record SiteAccess(List<AccessRule> rules) implements AuthorizationManager<RequestAuthorizationContext> {
 
         @Override
         public AuthorizationResult authorize(Supplier<? extends Authentication> authentication,
                 RequestAuthorizationContext context) {
+            // the rules are about the paths visitors ask for, not the JSPs and
+            // servlets Roller forwards those requests to
+            if (context.getRequest().getDispatcherType() != DispatcherType.REQUEST) {
+                return new AuthorizationDecision(true);
+            }
             for (AccessRule rule : rules) {
                 if (rule.matcher().matches(context.getRequest())) {
                     return rule.check().authorize(authentication, context);

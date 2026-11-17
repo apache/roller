@@ -61,6 +61,11 @@
   `passwds.encryption.algorithm`, bcrypt by default. Nothing is rewritten when
   that would store plain text, that is while `passwds.encryption.enabled` is
   off or the algorithm is `noop`.
+- **A form submitted after the session expired no longer ends in an error
+  after logging in.** Roller used to send the browser back to the form's
+  address with the old submission, which its form check then refused with an
+  "Unexpected Exception" page. The login now goes to the usual start page;
+  only pages opened with a plain link are returned to.
 - **"Remember me" on the login page works again.** The checkbox still used
   Spring Security 3's parameter name, so ticking it set no remember-me cookie
   on sites with `rememberme.enabled=true`. With LDAP login, a directory user
