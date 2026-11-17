@@ -1,4 +1,9 @@
 github:
+  pull_requests:
+    # merge a pull request once it has its review and its checks pass
+    allow_auto_merge: true
+    # delete a pull request's branch once it's merged
+    del_branch_on_merge: true
   rulesets:
     - name: "Default Branch Protection"
       type: branch
@@ -12,3 +17,33 @@ github:
         - root
       restrict_deletion: true
       restrict_force_push: true
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+      required_status_checks:
+        - "Build+Test on Linux/JDK 21"
+        - "Build+Test on Linux/JDK 25"
+        - "License headers"
+        - "UI tests (db)"
+        - "UI tests (db-oidc)"
+        - "UI tests (oidc)"
+        - "Analyze (java)"
+        - "Analyze (javascript)"
+    - name: "6.1.x Branch Protection"
+      type: branch
+      branches:
+        includes:
+          - "roller-6.1.x"
+        excludes: []
+      bypass_teams:
+        - root
+      restrict_deletion: true
+      restrict_force_push: true
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+      required_status_checks:
+        - "Build+Test on Linux/JDK 11"
+        - "Build+Test on Linux/JDK 17"
+        - "Build+Test on Linux/JDK 21"
+        - "Build+Test on Linux/JDK 25"
+        - "Analyze (java)"
+        - "Analyze (javascript)"
