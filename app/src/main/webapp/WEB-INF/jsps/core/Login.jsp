@@ -81,8 +81,8 @@
 
             <c:if test="${rememberMeEnabled}">
                 <div class="mb-3">
-                    <input type="checkbox" name="_spring_security_remember_me" id="_spring_security_remember_me"/>
-                    <label for="_spring_security_remember_me" > <s:text name="loginPage.rememberMe"/> </label>
+                    <input type="checkbox" name="remember-me" id="remember-me"/>
+                    <label for="remember-me" > <s:text name="loginPage.rememberMe"/> </label>
                 </div>
             </c:if>
 

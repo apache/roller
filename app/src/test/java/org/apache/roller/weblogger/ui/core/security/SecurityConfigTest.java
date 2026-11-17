@@ -17,10 +17,16 @@
 
 package org.apache.roller.weblogger.ui.core.security;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import jakarta.servlet.DispatcherType;
@@ -232,7 +238,8 @@ class SecurityConfigTest {
         FilterChainProxy chain = chain(WithUser.class);
 
         MockHttpServletRequest login = login(chain, "bob", "secret", new MockHttpSession(servletContext));
-        login.setParameter("remember-me", "on");
+        // the checkbox the login page renders
+        login.setParameter(rememberMeCheckboxName(), "on");
         MockHttpServletResponse response = new MockHttpServletResponse();
         outcome(chain, login, response);
         Cookie cookie = response.getCookie("remember-me");
@@ -270,6 +277,14 @@ class SecurityConfigTest {
         IllegalStateException e = assertThrows(IllegalStateException.class, SecurityConfig::ldapProvider);
         assertEquals("authentication.method=ldap needs users.ldap.url in roller-custom.properties",
                 e.getMessage());
+    }
+
+    private static String rememberMeCheckboxName() throws IOException {
+        String page = new String(Files.readAllBytes(
+                Paths.get("src/main/webapp/WEB-INF/jsps/core/Login.jsp")), StandardCharsets.UTF_8);
+        Matcher checkbox = Pattern.compile("<input type=\"checkbox\" name=\"([^\"]+)\"").matcher(page);
+        assertTrue(checkbox.find(), "Login.jsp has no checkbox");
+        return checkbox.group(1);
     }
 
     private FilterChainProxy chain(Class<?> config) {

@@ -61,6 +61,9 @@
   `passwds.encryption.algorithm`, bcrypt by default. Nothing is rewritten when
   that would store plain text, that is while `passwds.encryption.enabled` is
   off or the algorithm is `noop`.
+- **"Remember me" on the login page works again.** The checkbox still used
+  Spring Security 3's parameter name, so ticking it set no remember-me cookie
+  on sites with `rememberme.enabled=true`.
 - **Weblogs no longer advertise XML-RPC while it is switched off.** With
   `webservices.enableXmlRpc` off, each weblog page still linked to an RSD
   document listing the Blogger and MetaWeblog endpoints, which then answered
