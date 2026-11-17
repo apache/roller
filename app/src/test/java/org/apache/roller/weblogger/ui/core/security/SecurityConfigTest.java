@@ -323,6 +323,52 @@ class SecurityConfigTest {
     }
 
     @Test
+    void siteAccessRulesCoverTheWeblogsRenderingPaths() throws Exception {
+        setProperty("security.access./fam", "family");
+        setProperty("security.access./fam/**", "family");
+        FilterChainProxy chain = chain(WithUser.class);
+
+        for (String path : new String[] {"/roller-ui/rendering/page/fam", "/roller-ui/rendering/page/fam/entry/x",
+                "/roller-ui/rendering/feed/fam/entries/atom", "/roller-ui/rendering/resources/fam/style.css",
+                "/roller-ui/rendering/search/fam", "/roller-ui/rendering/rsd/fam",
+                "/roller-ui/rendering/comment/fam/entry/x", "/roller-ui/rendering/page/FAM/"}) {
+            assertEquals(LOGIN, outcome(chain, request("GET", path, ""), new MockHttpServletResponse()), path);
+            assertEquals("403 null", outcome(chain, request("GET", path, "editor"), new MockHttpServletResponse()),
+                    path);
+            assertEquals(PASS, outcome(chain, request("GET", path, "family"), new MockHttpServletResponse()), path);
+        }
+        // other weblogs, and Roller's own forwards from the public paths, which were checked there
+        assertEquals(PASS, outcome(chain, request("GET", "/roller-ui/rendering/page/myblog/", ""),
+                new MockHttpServletResponse()));
+        assertEquals(PASS, outcome(chain, request("GET", "/roller-ui/rendering/page/family/", ""),
+                new MockHttpServletResponse()));
+        MockHttpServletRequest forward = request("GET", "/roller-ui/rendering/page/fam", "");
+        forward.setDispatcherType(DispatcherType.FORWARD);
+        assertEquals(PASS, outcome(chain, forward, new MockHttpServletResponse()));
+    }
+
+    @Test
+    void aRuleForTheWeblogsPathsAloneCoversItsRenderingPaths() throws Exception {
+        setProperty("security.access./fam/**", "family");
+        FilterChainProxy chain = chain(WithUser.class);
+
+        assertEquals(LOGIN, outcome(chain, request("GET", "/roller-ui/rendering/page/fam", ""),
+                new MockHttpServletResponse()));
+        // an encoded handle is decoded before the rules are checked
+        assertEquals(LOGIN, outcome(chain, request("GET", "/roller-ui/rendering/page/%66am/", ""),
+                new MockHttpServletResponse()));
+    }
+
+    @Test
+    void weblogPathsOfRenderingRequests() {
+        assertEquals("/fam/entry/x", SecurityConfig.weblogPath("/roller-ui/rendering/page/fam/entry/x"));
+        assertEquals("/fam", SecurityConfig.weblogPath("/roller-ui/rendering/feed/fam"));
+        assertNull(SecurityConfig.weblogPath("/roller-ui/rendering/media-resources/abc123"));
+        assertNull(SecurityConfig.weblogPath("/roller-ui/menu.rol"));
+        assertNull(SecurityConfig.weblogPath("/fam/entry/x"));
+    }
+
+    @Test
     void siteAccessRuleWithoutRoleIsRefused() throws Exception {
         setProperty("security.access./fam/**", " ");
         IllegalStateException e = assertThrows(IllegalStateException.class, SecurityConfig::siteAccessRules);

@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.ServletContext;
@@ -39,6 +41,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.server.PathContainer;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authorization.AuthorityAuthorizationManager;
@@ -67,6 +70,7 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.pattern.PathPattern;
 import org.springframework.web.util.pattern.PathPatternParser;
 import org.springframework.web.util.pattern.PatternParseException;
@@ -258,6 +262,26 @@ public class SecurityConfig {
             PathPatternRequestMatcher.pathPattern("/roller-ui/register*"),
             PathPatternRequestMatcher.pathPattern("/roller-ui/setup*"));
 
+    private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
+
+    /** Rendering servlets whose path starts with the weblog's handle. */
+    private static final Pattern RENDERING_PATH =
+            Pattern.compile("^/roller-ui/rendering/(?:page|feed|resources|search|rsd|comment)/([^/]+)(/.*)?$");
+
+    /**
+     * The public path of the weblog a rendering servlet request is for, for
+     * example /family/entry/hello for /roller-ui/rendering/page/family/entry/hello,
+     * or null for other requests. Media files are served by their ID, not
+     * their weblog's handle, so they have no such path.
+     */
+    static String weblogPath(String requestPath) {
+        Matcher m = RENDERING_PATH.matcher(requestPath);
+        if (!m.matches()) {
+            return null;
+        }
+        return "/" + m.group(1) + (m.group(2) == null ? "" : m.group(2));
+    }
+
     /** A security.access.* rule: requests matching the path need one of the authorities. */
     record AccessRule(String key, PathPattern pattern, RequestMatcher matcher, String[] authorities,
             AuthorizationManager<RequestAuthorizationContext> check) {
@@ -289,7 +313,23 @@ public class SecurityConfig {
             }
             for (AccessRule rule : rules) {
                 if (rule.matcher().matches(context.getRequest())) {
-                    return rule.check().authorize(authentication, context);
+                    AuthorizationResult result = rule.check().authorize(authentication, context);
+                    if (result == null || !result.isGranted()) {
+                        return result;
+                    }
+                    break;
+                }
+            }
+            // Roller renders a weblog at /roller-ui/rendering/<servlet>/<handle>/...
+            // as well as at /<handle>/..., so the rules for the weblog's own
+            // path apply there too
+            String weblogPath = weblogPath(URL_PATH_HELPER.getPathWithinApplication(context.getRequest()));
+            if (weblogPath != null) {
+                PathContainer path = PathContainer.parsePath(weblogPath);
+                for (AccessRule rule : rules) {
+                    if (rule.pattern().matches(path)) {
+                        return rule.check().authorize(authentication, context);
+                    }
                 }
             }
             return new AuthorizationDecision(true);
