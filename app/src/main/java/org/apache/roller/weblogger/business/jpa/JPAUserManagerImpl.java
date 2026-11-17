@@ -514,6 +514,10 @@ public class JPAUserManagerImpl implements UserManager {
         } catch (NoResultException ignored) {
             throw new WebloggerException("ERROR: permission not found");
         }
+        // only an invitation can be declined; members leave by resigning
+        if (!existingPerm.isPending()) {
+            throw new WebloggerException("ERROR: permission is not a pending invitation");
+        }
         // remove permission
         this.strategy.remove(existingPerm);
     }
