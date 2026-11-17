@@ -142,13 +142,7 @@ public class WeblogFeedRequest extends WeblogRequest {
             this.excerpts = Boolean.valueOf(request.getParameter("excerpts"));
         }
         
-        if(request.getParameter("page") != null) {
-            try {
-                this.page = Integer.parseInt(request.getParameter("page"));
-            } catch(NumberFormatException e) {
-                // 
-            }
-        }     
+        this.page = parsePageNum(request.getParameter("page"));
         
         if(request.getParameter("q") != null && !request.getParameter("q").isBlank()) {
             this.term = URLUtilities.decode(request.getParameter("q"));

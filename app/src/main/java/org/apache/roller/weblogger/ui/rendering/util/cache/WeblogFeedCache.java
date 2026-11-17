@@ -152,7 +152,7 @@ public final class WeblogFeedCache {
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
      *
-     * <handle>/<type>/<format>/<term>[/category][/language][/excerpts]
+     * <handle>/<type>/<format>/<term>[/category][/language][/excerpts][/page=N]
      *
      * examples ...
      *
@@ -192,6 +192,11 @@ public final class WeblogFeedCache {
         
         if(feedRequest.isExcerpts()) {
             key.append("/excerpts");
+        }
+        
+        // add page number when past the first page
+        if(feedRequest.getPage() > 0) {
+            key.append("/page=").append(feedRequest.getPage());
         }
         
         return key.toString();

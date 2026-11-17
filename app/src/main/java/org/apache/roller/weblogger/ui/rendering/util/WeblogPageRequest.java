@@ -238,14 +238,7 @@ public class WeblogPageRequest extends WeblogRequest {
         }
 
         // page request param is supported in all views
-        if (request.getParameter("page") != null) {
-            String pageInt = request.getParameter("page");
-            try {
-                this.pageNum = Integer.parseInt(pageInt);
-            } catch (NumberFormatException e) {
-                // ignored, bad input
-            }
-        }
+        this.pageNum = parsePageNum(request.getParameter("page"));
 
         // build customParams Map, we remove built-in params because we only
         // want this map to represent params defined by the template author
