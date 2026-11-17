@@ -57,6 +57,9 @@ class JspOutputEncodingTest {
             Pattern.compile("<s:text\\b((?:[^>/]|/(?!>))*)>(.*?)</s:text>", Pattern.DOTALL);
     private static final Pattern SINGLE_QUOTED_ATTRIBUTE =
             Pattern.compile("[\\w:.-]+\\s*=\\s*'[^']*<s:property", Pattern.DOTALL);
+    private static final Pattern INLINE_HANDLER_PROPERTY =
+            Pattern.compile("(?<![\\w:.-])on[a-z]+\\s*=\\s*\"[^\"]*<s:property",
+                    Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
     /**
      * Pages whose unescaped values are escaped before they reach the page, or
@@ -101,6 +104,23 @@ class JspOutputEncodingTest {
             Matcher attribute = SINGLE_QUOTED_ATTRIBUTE.matcher(withoutScripts(read(jsp)));
             while (attribute.find()) {
                 problems.add(name(jsp) + ": " + oneLine(attribute.group()));
+            }
+        }
+        assertEquals(Collections.emptyList(), problems);
+    }
+
+    /**
+     * An HTML-escaped value inside an inline event handler is decoded by the
+     * browser before it runs as JavaScript, so values go in data-* attributes
+     * that the page's script reads instead.
+     */
+    @Test
+    void propertiesAreNotInInlineEventHandlers() throws IOException {
+        List<String> problems = new ArrayList<>();
+        for (Path jsp : jsps) {
+            Matcher handler = INLINE_HANDLER_PROPERTY.matcher(withoutScripts(read(jsp)));
+            while (handler.find()) {
+                problems.add(name(jsp) + ": " + oneLine(handler.group()));
             }
         }
         assertEquals(Collections.emptyList(), problems);
