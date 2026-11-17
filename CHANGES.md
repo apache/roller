@@ -232,6 +232,14 @@
   `js/search-highlight.js`; customized search pages that load `searchhi.js`
   keep working only while their copy of that file remains.
 
+- **Comments are limited to 10,000 characters.** Longer comments are refused,
+  with a message saying so, before they are previewed or checked by the
+  comment validators. The commenter's name, e-mail address and URL are limited
+  to 255 characters each, the size of the columns that store them. Set `comment.maxLength` in `roller-custom.properties` to
+  change the limit. The bundled `bannedwordslist.txt` rules match the same
+  domains as before but look at most 63 characters between their parts; a
+  copy of the old file in the uploads directory is still used if present.
+
 ### Build and packaging
 
 - Apache XML-RPC (`xmlrpc-common`, `xmlrpc-server`) and `ws-commons-util`
