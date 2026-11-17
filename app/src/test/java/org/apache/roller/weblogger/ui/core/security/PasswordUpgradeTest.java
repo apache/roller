@@ -115,6 +115,16 @@ class PasswordUpgradeTest {
         assertEquals(legacyHash, storedPassword());
     }
 
+    @Test
+    void nothingIsStoredWhenTheAlgorithmIsNoop() throws Exception {
+        setProperty("passwds.encryption.algorithm", "noop");
+
+        provider().authenticate(UsernamePasswordAuthenticationToken.unauthenticated(userName, "secret"));
+        TestUtils.endSession(true);
+
+        assertEquals(legacyHash, storedPassword());
+    }
+
     private static DaoAuthenticationProvider provider() {
         RollerUserDetailsService users = new RollerUserDetailsService();
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(users);

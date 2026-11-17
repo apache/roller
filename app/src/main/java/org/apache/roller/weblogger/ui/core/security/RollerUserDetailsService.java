@@ -90,13 +90,13 @@ public class RollerUserDetailsService implements UserDetailsService, UserDetails
      * Stores a password that Spring Security re-encoded after a successful
      * login, so passwords stored with an older encoding (for example the one
      * named by passwds.encryption.lazyUpgradeFrom) move to
-     * passwds.encryption.algorithm. Nothing is stored when
-     * passwds.encryption.enabled is false, because the re-encoding would then
-     * be plain text.
+     * passwds.encryption.algorithm. Nothing is stored when the re-encoding
+     * is plain text ({noop}), which is what passwds.encryption.enabled=false
+     * or passwds.encryption.algorithm=noop produce.
      */
     @Override
     public UserDetails updatePassword(UserDetails user, String newPassword) {
-        if (!WebloggerConfig.getBooleanProperty("passwds.encryption.enabled")) {
+        if (newPassword == null || newPassword.startsWith("{noop}")) {
             return user;
         }
         try {
