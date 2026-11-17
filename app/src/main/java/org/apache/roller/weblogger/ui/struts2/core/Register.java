@@ -36,6 +36,7 @@ import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.ui.core.RollerSession;
+import org.apache.roller.weblogger.ui.core.filters.InitFilter;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
@@ -197,7 +198,8 @@ public class Register extends UIAction {
         
         if (!hasActionErrors()) {
             try {
-                if (!BootstrapSecurity.isCompleted()) BootstrapSecurity.beginInitialAdmin();
+                boolean initialAdmin = !BootstrapSecurity.isCompleted();
+                if (initialAdmin) BootstrapSecurity.beginInitialAdmin();
 
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
 
@@ -241,6 +243,13 @@ public class Register extends UIAction {
                 mgr.addUser(ud);
                 WebloggerFactory.getWeblogger().getPropertiesManager().saveProperty(
                         new RuntimeConfigProperty(BootstrapSecurity.COMPLETION_PROPERTY, "true"));
+
+                // the first administrator is the one setting up the site, so
+                // take the site's url from this request if none is configured
+                if (initialAdmin) {
+                    WebloggerRuntimeConfig.saveAbsoluteContextURLIfUnset(
+                            InitFilter.getAbsoluteUrl(getServletRequest()));
+                }
 
                 WebloggerFactory.getWeblogger().flush();
                 if (!BootstrapSecurity.isCompleted()) BootstrapSecurity.complete();

@@ -22,11 +22,13 @@ package org.apache.roller.weblogger.config;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefsParser;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
@@ -49,7 +51,15 @@ public final class WebloggerRuntimeConfig {
     
     // special case for our context urls
     private static String relativeContextURL = null;
-    private static String absoluteContextURL = null;
+
+    // absolute url derived from the request being handled on this thread, used
+    // only while site.absoluteurl is unset and never kept past that request
+    private static final ThreadLocal<String> requestAbsoluteContextURL =
+            new ThreadLocal<>();
+    private static final ThreadLocal<Boolean> requestAbsoluteContextURLUsed =
+            new ThreadLocal<>();
+    private static final AtomicBoolean absoluteURLWarningLogged =
+            new AtomicBoolean(false);
     
     
     // prevent instantiations
@@ -169,21 +179,44 @@ public final class WebloggerRuntimeConfig {
     
     
     /**
-     * Special method which sets the non-persisted absolute url to this site.
+     * Set the absolute url of the request being handled on this thread. The
+     * InitFilter sets this at the start of each request and clears it with
+     * clearRequestAbsoluteContextURL() when the request is done.
      *
-     * This property is *not* persisted in any way.
+     * This value is *not* persisted or shared with other threads.
      */
-    public static void setAbsoluteContextURL(String url) {
-        absoluteContextURL = url;
+    public static void setRequestAbsoluteContextURL(String url) {
+        requestAbsoluteContextURL.set(url);
+        requestAbsoluteContextURLUsed.remove();
     }
-    
-    
+
+
+    /**
+     * Forget the absolute url of the request handled on this thread.
+     */
+    public static void clearRequestAbsoluteContextURL() {
+        requestAbsoluteContextURL.remove();
+        requestAbsoluteContextURLUsed.remove();
+    }
+
+
+    /**
+     * True if getAbsoluteContextURL() has returned the current request's url
+     * on this thread. Output built from that url depends on the request's Host
+     * header, so the rendering caches don't store it.
+     */
+    public static boolean isRequestAbsoluteContextURLUsed() {
+        return Boolean.TRUE.equals(requestAbsoluteContextURLUsed.get());
+    }
+
+
     /**
      * Get the absolute url to this site.
      *
      * This method will just return the value of the "site.absoluteurl"
-     * property if it is set, otherwise it will return the non-persisted
-     * value which is set by the InitFilter.
+     * property if it is set. Otherwise it returns the url of the request
+     * being handled on this thread, or null when there is no such request
+     * (for example in background tasks).
      */
     public static String getAbsoluteContextURL() {
         
@@ -192,8 +225,48 @@ public final class WebloggerRuntimeConfig {
         if(absURL != null && !absURL.isBlank()) {
             return absURL;
         }
-        
-        return absoluteContextURL;
+
+        if (absoluteURLWarningLogged.compareAndSet(false, true)) {
+            log.warn("The site's absolute URL (site.absoluteurl) is not set, so "
+                    + "links in emails and feeds will use the host name of each "
+                    + "request. Set \"Absolute URL to site\" under Server "
+                    + "Administration > Configuration.");
+        }
+
+        String requestURL = requestAbsoluteContextURL.get();
+        if (requestURL != null) {
+            requestAbsoluteContextURLUsed.set(Boolean.TRUE);
+        }
+        return requestURL;
+    }
+
+
+    /**
+     * Save the given url as site.absoluteurl if that property is empty.
+     * Called when the site is being set up, by the installer and by the
+     * registration of the first administrator.
+     *
+     * @return true if the url was saved; the caller must flush
+     */
+    public static boolean saveAbsoluteContextURLIfUnset(String url)
+            throws WebloggerException {
+
+        if (url == null || url.isBlank()) {
+            return false;
+        }
+        PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
+        RuntimeConfigProperty prop = pmgr.getProperty("site.absoluteurl");
+        if (prop != null && prop.getValue() != null && !prop.getValue().isBlank()) {
+            return false;
+        }
+        if (prop == null) {
+            prop = new RuntimeConfigProperty("site.absoluteurl", url);
+        } else {
+            prop.setValue(url);
+        }
+        pmgr.saveProperty(prop);
+        log.info("Set site.absoluteurl to " + url);
+        return true;
     }
     
     
