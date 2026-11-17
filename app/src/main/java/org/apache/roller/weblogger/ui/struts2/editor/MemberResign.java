@@ -67,6 +67,10 @@ public class MemberResign extends UIAction {
     public String resign() {
         try {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+            if (isLastAdmin(umgr)) {
+                addError("yourWebsites.resign.lastAdmin", getWeblog());
+                return SUCCESS;
+            }
             // TODO: notify website members that user has resigned
             // TODO EXCEPTIONS: better exception handling
             umgr.revokeWeblogPermission(getActionWeblog(), getAuthenticatedUser(), WeblogPermission.ALL_ACTIONS);
@@ -77,5 +81,26 @@ public class MemberResign extends UIAction {
             addError("Resignation failed - check system logs");
         }
         return SUCCESS;
+    }
+
+    /**
+     * Whether the user is the weblog's only administrator, which would leave
+     * the weblog without one. Pending invitations do not count.
+     */
+    private boolean isLastAdmin(UserManager umgr) throws WebloggerException {
+        String userName = getAuthenticatedUser().getUserName();
+        boolean isAdmin = false;
+        boolean otherAdmin = false;
+        // excludes pending invitations
+        for (WeblogPermission perm : umgr.getWeblogPermissions(getActionWeblog())) {
+            if (perm.hasAction(WeblogPermission.ADMIN)) {
+                if (userName.equals(perm.getUserName())) {
+                    isAdmin = true;
+                } else {
+                    otherAdmin = true;
+                }
+            }
+        }
+        return isAdmin && !otherAdmin;
     }
 }
