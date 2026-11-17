@@ -21,6 +21,7 @@ package org.apache.roller.weblogger.ui.core.filters;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.function.Supplier;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.weblogger.config.AuthMethod;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.openid.OpenIDAuthenticationToken;
@@ -43,6 +46,23 @@ public class CustomOpenIDAuthenticationProcessingFilter
         extends OpenIDAuthenticationFilter implements Filter {
 
     private static Log log = LogFactory.getLog(CustomOpenIDAuthenticationProcessingFilter.class);
+
+    private Supplier<AuthMethod> authMethod = WebloggerConfig::getAuthMethod;
+
+    // for tests
+    void setAuthMethod(Supplier<AuthMethod> authMethod) {
+        this.authMethod = authMethod;
+    }
+
+    /**
+     * Handles OpenID logins only when authentication.method allows them.
+     */
+    @Override
+    protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        AuthMethod method = authMethod.get();
+        boolean openIdEnabled = method == AuthMethod.OPENID || method == AuthMethod.DB_OPENID;
+        return openIdEnabled && super.requiresAuthentication(request, response);
+    }
 
     /**
      * @throws org.springframework.security.core.AuthenticationException
