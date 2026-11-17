@@ -19,6 +19,9 @@
 package org.apache.roller.weblogger.ui.core;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +38,7 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.security.AutoProvision;
 import org.apache.roller.weblogger.ui.core.security.OpenIdUrls;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 
 /**
@@ -47,6 +51,9 @@ public class RollerSession
 
     // the id of the user represented by this session
     private String userName = null;
+
+    // digest of the user's stored password hash when this session logged in
+    private String passwordDigest = null;
     
     private static final Log log;
     
@@ -70,10 +77,18 @@ public class RollerSession
                 // Create new session if none exists
                 rollerSession = new RollerSession();
                 session.setAttribute(ROLLER_SESSION, rollerSession);
-            } else if (rollerSession.getAuthenticatedUser() != null) {
+            } else if (rollerSession.userName != null) {
+                // A session that logged in ends once the user's password has
+                // changed or the user was disabled or removed, so changing a
+                // password also logs out the user's other browsers. This runs
+                // before the cache check below, which rebuilds the session
+                // from the login and would take on the new password.
+                if (!rollerSession.isCurrent()) {
+                    return endSession(request, session);
+                }
                 // Check if session is still valid in cache
                 RollerLoginSessionManager manager = RollerLoginSessionManager.getInstance();
-                String username = rollerSession.getAuthenticatedUser().getUserName();
+                String username = rollerSession.userName;
                 if (manager.get(username) == null) {
                     rollerSession = new RollerSession();
                     session.setAttribute(ROLLER_SESSION, rollerSession);
@@ -124,6 +139,80 @@ public class RollerSession
         return rollerSession;
     }
 
+    /**
+     * Keeps the current session logged in after its own user changed their
+     * password, or an administrator changed their own. Call it after the new
+     * password is saved; the user's other sessions still end.
+     */
+    public static void refreshPassword(HttpServletRequest request, User user) {
+        HttpSession session = request != null ? request.getSession(false) : null;
+        if (session == null || user == null) {
+            return;
+        }
+        Object attribute = session.getAttribute(ROLLER_SESSION);
+        if (attribute instanceof RollerSession
+                && user.getUserName().equals(((RollerSession) attribute).userName)) {
+            ((RollerSession) attribute).setAuthenticatedUser(user);
+        }
+    }
+
+    /**
+     * Whether the user this session logged in as is still enabled and still
+     * has the password the session logged in with. A failed lookup keeps the
+     * session, so a database error does not log everyone out.
+     */
+    private boolean isCurrent() {
+        User user;
+        try {
+            UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+            // only finds enabled users
+            user = mgr.getUserByUserName(userName);
+        } catch (WebloggerException ex) {
+            log.warn("Error looking up authenticated user " + userName, ex);
+            return true;
+        }
+        return user != null && digest(user).equals(passwordDigest);
+    }
+
+    /**
+     * Ends a session whose login no longer holds: invalidates it, clears the
+     * login from this request, and gives the rest of the request a new
+     * session with no user, as any visitor who is not logged in gets.
+     */
+    private static RollerSession endSession(HttpServletRequest request, HttpSession session) {
+        log.info("Ending session of a user whose password or account changed");
+        try {
+            session.invalidate();
+        } catch (IllegalStateException ignored) {
+            // already invalidated
+        }
+        SecurityContextHolder.clearContext();
+        RollerSession rollerSession = new RollerSession();
+        try {
+            request.getSession(true).setAttribute(ROLLER_SESSION, rollerSession);
+        } catch (IllegalStateException e) {
+            // response already committed, the next request gets a new session
+            log.debug("Could not start a new session", e);
+        }
+        return rollerSession;
+    }
+
+    /** Digest of the stored password hash, so the session does not hold it. */
+    private static String digest(User user) {
+        String password = user.getPassword() != null ? user.getPassword() : "";
+        try {
+            MessageDigest sha = MessageDigest.getInstance("SHA-256");
+            byte[] hash = sha.digest(password.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hex = new StringBuilder(hash.length * 2);
+            for (byte b : hash) {
+                hex.append(String.format("%02x", b));
+            }
+            return hex.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 is required by the Java spec", e);
+        }
+    }
+
     /** Create session's Roller instance */
     @Override
     public void sessionCreated(HttpSessionEvent se) {
@@ -171,6 +260,7 @@ public class RollerSession
      */
     public void setAuthenticatedUser(User authenticatedUser) {
         this.userName = authenticatedUser.getUserName();
+        this.passwordDigest = digest(authenticatedUser);
         RollerLoginSessionManager sessionManager = RollerLoginSessionManager.getInstance();
         sessionManager.register(authenticatedUser.getUserName(), this);
     }

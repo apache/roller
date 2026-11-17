@@ -27,7 +27,9 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 import java.util.Arrays;
@@ -35,14 +37,18 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Allows user to edit his/her profile.
  */
 // TODO: make this work @AllowedMethods({"execute","save"})
-public class Profile extends UIAction {
+public class Profile extends UIAction implements ServletRequestAware {
     private static Log log = LogFactory.getLog(Profile.class);
     
     private ProfileBean bean = new ProfileBean();
+
+    private HttpServletRequest servletRequest = null;
     private AuthMethod authMethod = WebloggerConfig.getAuthMethod();
 
     public Profile() {
@@ -122,6 +128,8 @@ public class Profile extends UIAction {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 mgr.saveUser(existingUser);
                 WebloggerFactory.getWeblogger().flush();
+                // a password change ends the user's other sessions, not this one
+                RollerSession.refreshPassword(getServletRequest(), existingUser);
                 addMessage("generic.changes.saved");
                 return SUCCESS;
             } catch (WebloggerException ex) {
@@ -174,6 +182,15 @@ public class Profile extends UIAction {
                 addError("error.add.user.invalid.locale");
             }
         }
+    }
+
+    protected HttpServletRequest getServletRequest() {
+        return servletRequest;
+    }
+
+    @Override
+    public void setServletRequest(HttpServletRequest servletRequest) {
+        this.servletRequest = servletRequest;
     }
 
     public String getAuthMethod() {

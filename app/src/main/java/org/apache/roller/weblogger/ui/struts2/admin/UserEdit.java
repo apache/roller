@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.CharSetUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,8 +40,10 @@ import org.apache.roller.weblogger.pojos.GlobalPermission;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerLoginSessionManager;
+import org.apache.roller.weblogger.ui.core.RollerSession;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -47,12 +51,14 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
  * Action that allows an admin to modify a users profile.
  */
 // TODO: make this work @AllowedMethods({"execute","save","firstSave"})
-public class UserEdit extends UIAction {
+public class UserEdit extends UIAction implements ServletRequestAware {
     
     private static Log log = LogFactory.getLog(UserEdit.class);
 
     // a bean to store our form data
     private CreateUserBean bean = new CreateUserBean();
+
+    private HttpServletRequest servletRequest = null;
 
     // user we are creating or modifying
     private User user = null;
@@ -212,6 +218,12 @@ public class UserEdit extends UIAction {
                 }
                 WebloggerFactory.getWeblogger().flush();
 
+                // a password change ends the user's sessions, except this one
+                // when the administrator edits their own account
+                if (!isAdd() && isUserEditingSelf()) {
+                    RollerSession.refreshPassword(getServletRequest(), user);
+                }
+
                 // successful add or edit: send user back to user admin page
                 bean = new CreateUserBean();
                 addMessage("userAdmin.userSaved");
@@ -270,6 +282,15 @@ public class UserEdit extends UIAction {
                 addError("generic.error.check.logs");
             }
         }
+    }
+
+    protected HttpServletRequest getServletRequest() {
+        return servletRequest;
+    }
+
+    @Override
+    public void setServletRequest(HttpServletRequest servletRequest) {
+        this.servletRequest = servletRequest;
     }
 
     public CreateUserBean getBean() {
