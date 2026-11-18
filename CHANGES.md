@@ -54,6 +54,14 @@
 
 ### Bug fixes
 
+- **New passwords can't be the external-login placeholder.** Registration,
+  the profile page and user administration refuse
+  `users.passwords.externalAuthValue` (by default `<externalAuth>`) as a
+  password, and it never works as one. An administrator can set a new password
+  for an account that used it (#304).
+- **Roller UI stylesheets, scripts and images don't start a session** (#310).
+- **The LDAP comment authenticator escapes the commenter's user name** when
+  it builds the bind name (#322).
 - **Changing a password ends the account's other sessions.** Saving a new
   password in the profile, an administrator's reset, or disabling an account
   now logs out that user's other browsers at their next Roller UI page; the
@@ -167,7 +175,8 @@
   or runs longer than `rendering.maxRenderSeconds` (30 seconds); `#foreach`
   stops at 100,000 passes, and `String.repeat` isn't available. `#parse` and
   `#include` load only the weblog's own templates, and macros defined inline
-  in a template are local to it, so weblogs can't affect each other's macros.
+  in a template stay with the page that defines them and the templates it
+  includes, so weblogs can't affect each other's macros.
   Library macros such as `roller.vm` and a site's own `roller-custom.vm` stay
   global. Error pages no longer show template ids (#317).
 - **Entries with scripts or embeds open as HTML.** If an entry contains
@@ -192,13 +201,17 @@
 - **The OpenID Connect identity can't be changed from the profile or
   registration forms**; only Roller's OpenID Connect login sets it (#322).
 - **Weblog pages ignore a `skipCache` query parameter** (#313).
-- **Set `site.absoluteurl`.** Roller no longer takes the site's URL from the
-  first request after a start. New installs save it during setup, and on an
-  upgraded site the first administrator to open the Roller UI saves it when
-  it's still empty. Until then, each request's own URL is used for its links
-  and emails, cached pages are kept per host name, and background tasks such
-  as the planet sync get no URL. Links now keep the request's https scheme
-  and port (#320).
+- **Check "Absolute URL to site" (`site.absoluteurl`) after upgrading.**
+  Roller no longer takes the site's URL from the first request after a
+  start. New installs save it during setup, and on an upgraded site where
+  it's empty, the first administrator to open the Roller UI saves it from
+  that request. Check it under Server Admin > Configuration, and correct it if
+  the site is reached through a proxy or more than one host name. While it's
+  empty, each request's own URL is used for its links, cached pages are kept
+  per host name, and background tasks such as the planet sync get no URL.
+  Links keep the request's https scheme and port.
+  `WebloggerRuntimeConfig.setAbsoluteContextURL` and `InitFilter.getAbsoluteUrl`
+  are removed (#320).
 - **The Design pages follow "Allow custom themes".** While
   `themes.customtheme.allowed` is off (the default), the theme, stylesheet and
   template pages answer as unavailable, as the hidden Design menu already
