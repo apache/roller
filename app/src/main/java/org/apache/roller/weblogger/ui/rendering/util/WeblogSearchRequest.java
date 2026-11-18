@@ -36,6 +36,9 @@ public class WeblogSearchRequest extends WeblogRequest {
     private static Log log = LogFactory.getLog(WeblogSearchRequest.class);
     
     public static final String SEARCH_SERVLET = "/roller-ui/rendering/search";
+
+    /** Longest search query kept, plenty for a person to type. */
+    public static final int MAX_QUERY_LENGTH = 256;
     
     // lightweight attributes
     private String query = null;
@@ -82,7 +85,7 @@ public class WeblogSearchRequest extends WeblogRequest {
          *   cat - limit results to a certain weblogCategoryName
          */
         if(request.getParameter("q") != null && !request.getParameter("q").isBlank()) {
-            this.query = request.getParameter("q");
+            this.query = capQuery(request.getParameter("q"));
         }
         
         if(request.getParameter("page") != null) {
@@ -98,6 +101,22 @@ public class WeblogSearchRequest extends WeblogRequest {
             this.weblogCategoryName =
                     URLUtilities.decode(request.getParameter("cat"));
         }
+    }
+
+    /**
+     * Keeps the first MAX_QUERY_LENGTH characters of a search query, so one
+     * request cannot hand the query parser unbounded work, such as thousands
+     * of nested parentheses. Does not split a surrogate pair.
+     */
+    public static String capQuery(String query) {
+        if (query == null || query.length() <= MAX_QUERY_LENGTH) {
+            return query;
+        }
+        int end = MAX_QUERY_LENGTH;
+        if (Character.isHighSurrogate(query.charAt(end - 1))) {
+            end--;
+        }
+        return query.substring(0, end);
     }
 
     public String getQuery() {
