@@ -100,7 +100,7 @@ public final class PlanetCache {
     public Object get(String key) {
         key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return null;
         }
         
@@ -119,7 +119,7 @@ public final class PlanetCache {
     public void put(String key, Object value) {
         key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return;
         }
         
@@ -131,7 +131,7 @@ public final class PlanetCache {
     public void remove(String key) {
         key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return;
         }
         

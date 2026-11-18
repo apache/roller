@@ -32,6 +32,10 @@ import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.ui.rendering.util.cache.PlanetCache;
+import org.apache.roller.weblogger.ui.rendering.util.cache.SiteWideCache;
+import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogFeedCache;
+import org.apache.roller.weblogger.ui.rendering.util.cache.WeblogPageCache;
 
 
 /**
@@ -54,7 +58,7 @@ public final class WebloggerRuntimeConfig {
 
     // absolute url derived from the request being handled on this thread, used
     // only while site.absoluteurl is unset and never kept past that request
-    private static final ThreadLocal<String> requestAbsoluteContextURL =
+    private static final ThreadLocal<RequestURLs> requestURLs =
             new ThreadLocal<>();
     private static final AtomicBoolean absoluteURLWarningLogged =
             new AtomicBoolean(false);
@@ -177,6 +181,24 @@ public final class WebloggerRuntimeConfig {
     
     
     /**
+     * The urls seen by the request being handled on this thread. The value of
+     * site.absoluteurl is read once per request, the first time it's needed,
+     * so that all links built for a request and the cache key its content is
+     * stored under agree, even if an administrator sets the property while
+     * the request is being handled.
+     */
+    private static final class RequestURLs {
+        private final String requestURL;
+        private String siteURL;
+        private boolean siteURLRead;
+
+        private RequestURLs(String requestURL) {
+            this.requestURL = requestURL;
+        }
+    }
+
+
+    /**
      * Set the absolute url of the request being handled on this thread. The
      * InitFilter sets this at the start of each request and clears it with
      * clearRequestAbsoluteContextURL() when the request is done.
@@ -184,36 +206,68 @@ public final class WebloggerRuntimeConfig {
      * This value is *not* persisted or shared with other threads.
      */
     public static void setRequestAbsoluteContextURL(String url) {
-        requestAbsoluteContextURL.set(url);
+        requestURLs.set(new RequestURLs(url));
     }
 
 
     /**
-     * Forget the absolute url of the request handled on this thread.
+     * Forget the urls of the request handled on this thread.
      */
     public static void clearRequestAbsoluteContextURL() {
-        requestAbsoluteContextURL.remove();
+        requestURLs.remove();
     }
 
 
     /**
-     * True if getAbsoluteContextURL() has returned the current request's url
-     * on this thread. Output built from that url depends on the request's Host
-     * header, so the rendering caches don't store it.
+     * The value of site.absoluteurl, or null if it is unset. Within a
+     * request this is the value the property had when the request first
+     * needed it.
      */
+    private static String configuredAbsoluteContextURL() {
+        RequestURLs request = requestURLs.get();
+        if (request == null) {
+            return liveAbsoluteContextURL();
+        }
+        if (!request.siteURLRead) {
+            request.siteURL = liveAbsoluteContextURL();
+            request.siteURLRead = true;
+        }
+        return request.siteURL;
+    }
+
+
+    private static String liveAbsoluteContextURL() {
+        String absURL = getProperty("site.absoluteurl");
+        return absURL == null || absURL.isBlank() ? null : absURL;
+    }
+
+
     /**
-     * The cache key to use for content rendered for the current request. While
-     * site.absoluteurl is unset, links are built from the request's own URL, so
-     * the key includes it: content cached for one host name is only served to
-     * requests for that host name.
+     * True if site.absoluteurl is set, so links can be built without a
+     * request. Background tasks check this before building links.
+     */
+    public static boolean isAbsoluteContextURLSet() {
+        return configuredAbsoluteContextURL() != null;
+    }
+
+
+    /**
+     * The cache key to use for content rendered for the current request, or
+     * null if the content must not be cached. While site.absoluteurl is
+     * unset, links are built from the request's own URL, so the key includes
+     * it: content cached for one host name is only served to requests for
+     * that host name. Content rendered outside a request while the property
+     * is unset is not cached, because its links are incomplete.
      */
     public static String cacheKey(String key) {
-        String absURL = getProperty("site.absoluteurl");
-        if (absURL != null && !absURL.isBlank()) {
+        if (key == null || configuredAbsoluteContextURL() != null) {
             return key;
         }
-        String requestURL = requestAbsoluteContextURL.get();
-        return requestURL == null ? key : key + "|" + requestURL;
+        RequestURLs request = requestURLs.get();
+        if (request == null || request.requestURL == null) {
+            return null;
+        }
+        return key + "|" + request.requestURL;
     }
 
     /**
@@ -222,13 +276,13 @@ public final class WebloggerRuntimeConfig {
      * time an administrator opens the Roller UI after an upgrade.
      */
     public static void saveAbsoluteContextURLForAdmin(User user) {
-        String absURL = getProperty("site.absoluteurl");
-        if ((absURL != null && !absURL.isBlank()) || user == null
+        if (liveAbsoluteContextURL() != null || user == null
                 || !user.hasGlobalPermission("admin")) {
             return;
         }
+        RequestURLs request = requestURLs.get();
         try {
-            if (saveAbsoluteContextURLIfUnset(requestAbsoluteContextURL.get())) {
+            if (request != null && saveAbsoluteContextURLIfUnset(request.requestURL)) {
                 WebloggerFactory.getWeblogger().flush();
             }
         } catch (WebloggerException e) {
@@ -248,8 +302,8 @@ public final class WebloggerRuntimeConfig {
     public static String getAbsoluteContextURL() {
         
         // db prop takes priority if it exists
-        String absURL = getProperty("site.absoluteurl");
-        if(absURL != null && !absURL.isBlank()) {
+        String absURL = configuredAbsoluteContextURL();
+        if (absURL != null) {
             return absURL;
         }
 
@@ -260,7 +314,8 @@ public final class WebloggerRuntimeConfig {
                     + "Administration > Configuration.");
         }
 
-        return requestAbsoluteContextURL.get();
+        RequestURLs request = requestURLs.get();
+        return request == null ? null : request.requestURL;
     }
 
 
@@ -268,6 +323,11 @@ public final class WebloggerRuntimeConfig {
      * Save the given url as site.absoluteurl if that property is empty.
      * Called when the site is being set up, by the installer and by the
      * registration of the first administrator.
+     *
+     * The property is only replaced if it is still empty when it is written,
+     * so of several requests trying at once, only one saves its url. The
+     * rendering caches are cleared when the url is saved, since they hold
+     * content cached per host name while the property was unset.
      *
      * @return true if the url was saved; the caller must flush
      */
@@ -279,20 +339,35 @@ public final class WebloggerRuntimeConfig {
         }
         PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
         RuntimeConfigProperty prop = pmgr.getProperty("site.absoluteurl");
-        if (prop != null && prop.getValue() != null && !prop.getValue().isBlank()) {
+        String current = prop == null ? null : prop.getValue();
+        if (current != null && !current.isBlank()) {
             return false;
         }
         if (prop == null) {
-            prop = new RuntimeConfigProperty("site.absoluteurl", url);
-        } else {
-            prop.setValue(url);
+            // the properties table is filled in at startup, so this only
+            // happens if that failed; a second insert would fail on flush
+            pmgr.saveProperty(new RuntimeConfigProperty("site.absoluteurl", url));
+        } else if (!pmgr.compareAndSetProperty("site.absoluteurl", current, url)) {
+            return false;
         }
-        pmgr.saveProperty(prop);
+        clearRenderingCaches();
         log.info("Set site.absoluteurl to " + url);
         return true;
     }
     
     
+    /**
+     * Clear the caches of rendered content, whose links may have been built
+     * from the url of a request.
+     */
+    private static void clearRenderingCaches() {
+        WeblogPageCache.getInstance().clear();
+        WeblogFeedCache.getInstance().clear();
+        SiteWideCache.getInstance().clear();
+        PlanetCache.getInstance().clear();
+    }
+
+
     /**
      * Special method which sets the non-persisted relative url to this site.
      *
