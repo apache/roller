@@ -92,7 +92,7 @@ public final class WeblogFeedCache {
     public Object get(String key, long lastModified) {
         key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return null;
         }
         
@@ -120,7 +120,7 @@ public final class WeblogFeedCache {
     public void put(String key, Object value) {
         key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return;
         }
         
@@ -132,7 +132,7 @@ public final class WeblogFeedCache {
     public void remove(String key) {
         key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return;
         }
         

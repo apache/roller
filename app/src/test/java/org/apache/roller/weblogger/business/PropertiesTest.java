@@ -22,6 +22,7 @@ package org.apache.roller.weblogger.business;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -127,6 +128,59 @@ public class PropertiesTest  {
             TestUtils.endSession(true);
         } finally {
             executor.shutdownNow();
+        }
+    }
+
+    @Test
+    public void onlyOneConcurrentRequestSavesTheSiteUrl() throws Exception {
+        PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
+        RuntimeConfigProperty prop = mgr.getProperty("site.absoluteurl");
+        String original = prop.getValue();
+        prop.setValue("");
+        mgr.saveProperty(prop);
+        TestUtils.endSession(true);
+
+        CountDownLatch ready = new CountDownLatch(2);
+        CountDownLatch start = new CountDownLatch(1);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            Future<Boolean> first = executor.submit(() -> saveSiteUrlAfterSignal(
+                    "https://first.example.org", ready, start));
+            Future<Boolean> second = executor.submit(() -> saveSiteUrlAfterSignal(
+                    "https://second.example.org", ready, start));
+            ready.await();
+            start.countDown();
+
+            boolean firstSaved = first.get();
+            boolean secondSaved = second.get();
+            assertNotEquals(firstSaved, secondSaved, "exactly one request must save the URL");
+
+            RuntimeConfigProperty saved = WebloggerFactory.getWeblogger()
+                    .getPropertiesManager().getProperty("site.absoluteurl");
+            assertEquals(firstSaved ? "https://first.example.org" : "https://second.example.org",
+                    saved.getValue());
+            saved.setValue(original);
+            WebloggerFactory.getWeblogger().getPropertiesManager().saveProperty(saved);
+            TestUtils.endSession(true);
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    private boolean saveSiteUrlAfterSignal(String url, CountDownLatch ready,
+            CountDownLatch start) throws Exception {
+        try {
+            // both requests find the property empty before either saves it
+            String current = WebloggerFactory.getWeblogger().getPropertiesManager()
+                    .getProperty("site.absoluteurl").getValue();
+            assertTrue(current == null || current.isEmpty());
+            ready.countDown();
+            start.await();
+            boolean saved = WebloggerRuntimeConfig.saveAbsoluteContextURLIfUnset(url);
+            WebloggerFactory.getWeblogger().flush();
+            return saved;
+        } finally {
+            WebloggerFactory.getWeblogger().release();
         }
     }
 

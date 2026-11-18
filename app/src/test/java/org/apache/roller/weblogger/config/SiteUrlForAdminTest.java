@@ -32,7 +32,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -99,6 +102,34 @@ class SiteUrlForAdminTest {
 
         WebloggerRuntimeConfig.saveAbsoluteContextURLForAdmin(admin);
 
+        verify(properties, never()).saveProperty(any());
+    }
+
+    @Test
+    void anEmptySiteUrlIsOnlySavedIfStillEmpty() throws Exception {
+        when(properties.getProperty("site.absoluteurl")).thenReturn(
+                new RuntimeConfigProperty("site.absoluteurl", ""));
+        when(properties.compareAndSetProperty("site.absoluteurl", "",
+                "https://blog.example.org/roller")).thenReturn(true);
+
+        assertTrue(WebloggerRuntimeConfig.saveAbsoluteContextURLIfUnset(
+                "https://blog.example.org/roller"));
+        verify(properties).compareAndSetProperty("site.absoluteurl", "",
+                "https://blog.example.org/roller");
+        verify(properties, never()).saveProperty(any());
+    }
+
+    @Test
+    void aSiteUrlSavedByAnotherRequestIsKept() throws Exception {
+        // this request read the property while it was empty, but another
+        // request saved a URL before this one could
+        when(properties.getProperty("site.absoluteurl")).thenReturn(
+                new RuntimeConfigProperty("site.absoluteurl", ""));
+        when(properties.compareAndSetProperty(eq("site.absoluteurl"), eq(""), any()))
+                .thenReturn(false);
+
+        assertFalse(WebloggerRuntimeConfig.saveAbsoluteContextURLIfUnset(
+                "https://blog.example.org/roller"));
         verify(properties, never()).saveProperty(any());
     }
 }
