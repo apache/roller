@@ -40,6 +40,7 @@ import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.ui.core.RollerLoginSessionManager;
 import org.apache.roller.weblogger.ui.struts2.core.Register;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.ui.core.security.ExternalLoginAwarePasswordEncoder;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
 
@@ -230,6 +231,10 @@ public class UserEdit extends UIAction {
     }
 
     private void myValidate() {
+        // the external-login marker never matches at login
+        if (ExternalLoginAwarePasswordEncoder.isExternalLoginMarker(getBean().getPassword())) {
+            addError("error.add.user.reservedPassword");
+        }
         if (isAdd()) {
             String allowed = WebloggerConfig.getProperty("username.allowedChars");
             if(allowed == null || allowed.isBlank()) {

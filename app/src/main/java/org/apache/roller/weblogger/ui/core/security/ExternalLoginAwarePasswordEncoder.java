@@ -23,14 +23,39 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 /**
  * Users who log in through LDAP or the servlet container have no Roller
  * password; Roller stores users.passwords.externalAuthValue in its place.
- * That placeholder is not a password, so this encoder never matches it.
+ * That placeholder is not a password, so this encoder never matches it, nor
+ * the default placeholder, nor an empty password.
  */
 public class ExternalLoginAwarePasswordEncoder implements PasswordEncoder {
+
+    /** Stored in place of a password when no other value is configured. */
+    public static final String DEFAULT_EXTERNAL_LOGIN_MARKER = "<externalAuth>";
 
     private final PasswordEncoder delegate;
 
     public ExternalLoginAwarePasswordEncoder(PasswordEncoder delegate) {
         this.delegate = delegate;
+    }
+
+    /**
+     * The value stored in place of a Roller password for users who log in
+     * through LDAP or the servlet container: users.passwords.externalAuthValue,
+     * or the default when that setting is empty.
+     */
+    public static String externalLoginMarker() {
+        String marker = WebloggerConfig.getProperty("users.passwords.externalAuthValue");
+        return marker == null || marker.isEmpty() ? DEFAULT_EXTERNAL_LOGIN_MARKER : marker;
+    }
+
+    /**
+     * Whether a password is the configured external-login marker or the
+     * default one, which accounts may still have stored from before the
+     * setting changed. Neither matches at login, so neither can be chosen as a
+     * Roller password.
+     */
+    public static boolean isExternalLoginMarker(CharSequence password) {
+        return password != null && (externalLoginMarker().contentEquals(password)
+                || DEFAULT_EXTERNAL_LOGIN_MARKER.contentEquals(password));
     }
 
     @Override
@@ -40,8 +65,7 @@ public class ExternalLoginAwarePasswordEncoder implements PasswordEncoder {
 
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
-        String marker = WebloggerConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
-        if (rawPassword != null && marker != null && !marker.isEmpty() && marker.contentEquals(rawPassword)) {
+        if (rawPassword == null || rawPassword.length() == 0 || isExternalLoginMarker(rawPassword)) {
             return false;
         }
         return delegate.matches(rawPassword, encodedPassword);

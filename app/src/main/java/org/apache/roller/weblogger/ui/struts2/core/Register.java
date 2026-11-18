@@ -39,6 +39,7 @@ import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
+import org.apache.roller.weblogger.ui.core.security.ExternalLoginAwarePasswordEncoder;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -356,7 +357,7 @@ public class Register extends UIAction implements ServletRequestAware {
         if (usingSSO) {
             // store an unused marker in the Roller DB for the passphrase in
             // the LDAP or CMA cases, as actual passwords are stored externally
-            String unusedPassword = WebloggerConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
+            String unusedPassword = ExternalLoginAwarePasswordEncoder.externalLoginMarker();
             
             // Preserve username and password, Spring Security case
             preserveUsernameAndPassword(unusedPassword);
@@ -388,6 +389,12 @@ public class Register extends UIAction implements ServletRequestAware {
             getBean().setPasswordConfirm(randomString);
         }
         
+        // the external-login marker is stored for users who log in elsewhere
+        // and never matches at login
+        if (!usingSSO && ExternalLoginAwarePasswordEncoder.isExternalLoginMarker(getBean().getPasswordText())) {
+            addError("error.add.user.reservedPassword");
+        }
+
         // check that passwords match 
         if (!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
             addError("userRegister.error.mismatchedPasswords");
