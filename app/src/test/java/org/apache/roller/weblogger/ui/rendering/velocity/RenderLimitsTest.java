@@ -221,6 +221,29 @@ public class RenderLimitsTest {
         }
     }
 
+    /**
+     * A string just under the output limit split into one-character pieces
+     * would allocate millions of strings before anything checks their size,
+     * so a split may return no more pieces than a #foreach can visit.
+     */
+    @Test
+    public void splittingIntoMorePiecesThanALoopCanVisitIsRefused() throws Exception {
+        // 10,485,760 characters, just under the output limit
+        String nearTheLimit = TEN_THOUSAND_DIGITS
+                + "#foreach($i in [1..10])#set($s = \"$s$s\")#end";
+        long allocated = allocatedByRender("limits-split.vm",
+                nearTheLimit + "$s.split('').size()", new HashMap<>());
+        // the string itself takes about 40 MB to build; the pieces would add
+        // over 500 MB
+        assertTrue(allocated < 160L * 1024 * 1024,
+                "split allocated " + allocated + " bytes before it was stopped");
+
+        Outcome ordinary = render("limits-split-ordinary.vm",
+                TEN_THOUSAND_DIGITS + "$s.split('0').size() $s.split('', 3).size()");
+        assertEquals(null, ordinary.failure);
+        assertEquals("1025 3", ordinary.out.getHead());
+    }
+
     /** String.format can pad to any width, so it is not offered. */
     @Test
     public void stringFormatIsNotAvailableToTemplates() throws Exception {
