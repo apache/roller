@@ -73,6 +73,16 @@ public class MailUtil {
     }
     
     /**
+     * True if site.absoluteurl is set. Links in emails are only built from
+     * that setting, never from the request that caused the email, because
+     * the request's host name is chosen by whoever sent it.
+     */
+    private static boolean canLinkToSite() {
+        return WebloggerRuntimeConfig.isAbsoluteContextURLSet();
+    }
+
+
+    /**
      * Send an email notice that a new pending entry has been submitted.
      */
     public static void sendPendingEntryNotice(WeblogEntry entry) throws WebloggerException {
@@ -82,6 +92,13 @@ public class MailUtil {
 
         if (mailSession == null) {
             throw new WebloggerException("Couldn't get mail Session");
+        }
+
+        if (!canLinkToSite()) {
+            log.warn("No email was sent about the pending entry \"" + entry.getTitle()
+                    + "\" because the site's absolute URL is not set. Set it under "
+                    + "Server Administration > Configuration.");
+            return;
         }
         
         try {
@@ -152,6 +169,13 @@ public class MailUtil {
             throw new WebloggerException("ERROR: Notification email(s) not sent, "
                     + "Roller's mail session not properly configured");
         }
+
+        if (!canLinkToSite()) {
+            throw new WebloggerException("The invitation was saved, but no email "
+                    + "was sent because the site's absolute URL is not set. An "
+                    + "administrator can set it under Server Administration > "
+                    + "Configuration.");
+        }
         
         try {
             String from = website.getEmailAddress();
@@ -207,6 +231,12 @@ public class MailUtil {
         if(mailSession == null) {
             throw new WebloggerException("ERROR: Notification email(s) not sent, "
                     + "Roller's mail session not properly configured");
+        }
+
+        if (!canLinkToSite()) {
+            throw new WebloggerException("No activation email was sent because "
+                    + "the site's absolute URL is not set. Set it under Server "
+                    + "Administration > Configuration.");
         }
         
         try {
@@ -335,19 +365,27 @@ public class MailUtil {
         msg.append((isPlainText) ? commentObject.getContent()
         : Utilities.transformToHTMLSubset(Utilities.escapeHTML(commentObject.getContent())));
         
-        msg.append((isPlainText) ? "\n\n----\n"
-                : "<br /><br /><hr /><span style=\"font-size: 11px\">");
-        msg.append(resources.getString("email.comment.respond") + ": ");
-        msg.append((isPlainText) ? "\n" : "<br />");
-        
-        // Build link back to comment
-        String commentURL = WebloggerFactory.getWeblogger()
-            .getUrlStrategy().getWeblogCommentsURL(weblog, null, entry.getAnchor(), true);
-        
-        if (isPlainText) {
-            msg.append(commentURL);
-        } else {
-            msg.append("<a href=\""+commentURL+"\">"+commentURL+"</a></span>");
+        // links are left out while the site's absolute URL is unset
+        boolean linkToSite = canLinkToSite();
+        if (!linkToSite) {
+            log.debug("Leaving links out of comment email because site.absoluteurl is not set");
+        }
+
+        if (linkToSite) {
+            msg.append((isPlainText) ? "\n\n----\n"
+                    : "<br /><br /><hr /><span style=\"font-size: 11px\">");
+            msg.append(resources.getString("email.comment.respond") + ": ");
+            msg.append((isPlainText) ? "\n" : "<br />");
+
+            // Build link back to comment
+            String commentURL = WebloggerFactory.getWeblogger()
+                .getUrlStrategy().getWeblogCommentsURL(weblog, null, entry.getAnchor(), true);
+
+            if (isPlainText) {
+                msg.append(commentURL);
+            } else {
+                msg.append("<a href=\""+commentURL+"\">"+commentURL+"</a></span>");
+            }
         }
         
         // next the additional information that is sent to the blog owner
@@ -400,19 +438,24 @@ public class MailUtil {
                 ownermsg.append((isPlainText) ? "\n\n" : "<br/><br/>");
             }
             // add link to weblog edit page so user can login to manage comments
-            ownermsg.append(resources.getString("email.comment.management.link") + ": ");
-            ownermsg.append((isPlainText) ? "\n" : "<br/>");
+            if (linkToSite) {
+                ownermsg.append(resources.getString("email.comment.management.link") + ": ");
+                ownermsg.append((isPlainText) ? "\n" : "<br/>");
 
-            Map<String, String> parameters = new HashMap<>();
-            parameters.put("bean.entryId", entry.getId());
-            String deleteURL = WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL(
-                    "comments", "/roller-ui/authoring", weblog.getHandle(), parameters, true);
+                Map<String, String> parameters = new HashMap<>();
+                parameters.put("bean.entryId", entry.getId());
+                String deleteURL = WebloggerFactory.getWeblogger().getUrlStrategy().getActionURL(
+                        "comments", "/roller-ui/authoring", weblog.getHandle(), parameters, true);
 
-            if (isPlainText) {
-                ownermsg.append(deleteURL);
-            } else {
-                ownermsg.append(
-                        "<a href=\"" + deleteURL + "\">" + deleteURL + "</a></span>");
+                if (isPlainText) {
+                    ownermsg.append(deleteURL);
+                } else {
+                    ownermsg.append("<a href=\"" + deleteURL + "\">" + deleteURL + "</a>");
+                }
+            }
+
+            if (!isPlainText) {
+                ownermsg.append("</span>");
                 msg.append("</Body></html>");
                 ownermsg.append("</Body></html>");
             }
@@ -534,9 +577,11 @@ public class MailUtil {
         
         StringBuilder msg = new StringBuilder();
         msg.append(resources.getString("email.comment.commentApproved"));
-        msg.append("\n\n");
-        msg.append(WebloggerFactory.getWeblogger().getUrlStrategy()
-            .getWeblogCommentsURL(weblog, null, entry.getAnchor(), true));
+        if (canLinkToSite()) {
+            msg.append("\n\n");
+            msg.append(WebloggerFactory.getWeblogger().getUrlStrategy()
+                .getWeblogCommentsURL(weblog, null, entry.getAnchor(), true));
+        }
         
         // send message to author of approved comment
         try {
