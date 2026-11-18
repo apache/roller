@@ -38,6 +38,8 @@ import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
@@ -80,6 +82,8 @@ class MediaResourceThumbnailTest {
         when(file.getLastModified()).thenReturn(0L);
         when(file.getInputStream()).thenAnswer(call -> stream("original"));
         when(media.getMediaFile(FILE_ID, true)).thenReturn(file);
+        // the servlet may look the file up in the addressed weblog first
+        when(media.getMediaFile(any(Weblog.class), eq(FILE_ID))).thenReturn(file);
 
         servlet = new MediaResourceServlet();
     }
