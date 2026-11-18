@@ -261,6 +261,8 @@
   matching its file name, instead of `roller-weblogger-<version>-source/`.
 - ROME, the feed library Planet uses, is upgraded from 1.19.0 to 2.1.0.
 - The admin UI now uses jQuery 4.1.0 and jQuery Validation 1.22.1.
+- The Gaurav theme no longer loads jQuery or Bootstrap's JavaScript. A small
+  script opens its navbar menu and Categories dropdown.
 
 ## 6.1.7
 

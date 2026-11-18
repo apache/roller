@@ -154,8 +154,7 @@
     <resource path="css/bootstrap.css" />
     <resource path="css/style.css" />
 
-    <resource path="js/jquery.js" />
-    <resource path="js/bootstrap.js" />
+    <resource path="js/navbar.js" />
     <resource path="js/search-highlight.js" />
 
     <resource path="icons/asf-logo.png" />
