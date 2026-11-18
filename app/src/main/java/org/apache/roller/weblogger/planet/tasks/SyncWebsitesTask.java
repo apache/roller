@@ -152,7 +152,7 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
         if (!WebloggerRuntimeConfig.isAbsoluteContextURLSet()) {
             log.warn("Not syncing local weblogs with planet subscriptions because "
                     + "the site's absolute URL is not set. Set it under Server "
-                    + "Administration > Configuration.");
+                    + "Admin > Configuration.");
             return;
         }
 

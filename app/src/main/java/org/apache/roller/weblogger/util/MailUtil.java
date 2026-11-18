@@ -96,7 +96,7 @@ public class MailUtil {
         if (!canLinkToSite()) {
             log.warn("No email was sent about the pending entry \"" + entry.getTitle()
                     + "\" because the site's absolute URL is not set. Set it under "
-                    + "Server Administration > Configuration.");
+                    + "Server Admin > Configuration.");
             return;
         }
         
@@ -172,7 +172,7 @@ public class MailUtil {
         if (!canLinkToSite()) {
             throw new WebloggerException("The invitation was saved, but no email "
                     + "was sent because the site's absolute URL is not set. An "
-                    + "administrator can set it under Server Administration > "
+                    + "administrator can set it under Server Admin > "
                     + "Configuration.");
         }
         
@@ -235,7 +235,7 @@ public class MailUtil {
         if (!canLinkToSite()) {
             throw new WebloggerException("No activation email was sent because "
                     + "the site's absolute URL is not set. Set it under Server "
-                    + "Administration > Configuration.");
+                    + "Admin > Configuration.");
         }
         
         try {

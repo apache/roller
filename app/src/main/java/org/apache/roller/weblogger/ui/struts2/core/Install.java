@@ -234,7 +234,7 @@ public class Install extends UIAction implements ServletRequestAware {
             }
         } catch (Exception e) {
             log.warn("Could not save site.absoluteurl; set it under Server "
-                    + "Administration > Configuration", e);
+                    + "Admin > Configuration", e);
         }
     }
 
