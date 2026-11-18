@@ -106,6 +106,15 @@ public class MediaResourceServlet extends HttpServlet {
             return;
         }
 
+        // An image too large for a thumbnail has none. Answer 404 rather than
+        // sending the full image, so previews show the file type icon.
+        if (resourceRequest.isThumbnail()
+                && mediaFile.isOverThumbnailPixelLimit()
+                && !hasThumbnail(mediaFile)) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
         // Respond with 304 Not Modified if it is not modified.
         if (ModDateHeaderUtil.respondIfNotModified(request, response,
                 resourceLastMod, resourceRequest.getDeviceType())) {
@@ -163,6 +172,14 @@ public class MediaResourceServlet extends HttpServlet {
             resourceStream.close();
         }
 
+    }
+
+    private static boolean hasThumbnail(MediaFile mediaFile) {
+        try (InputStream thumbnail = mediaFile.getThumbnailInputStream()) {
+            return thumbnail != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

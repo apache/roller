@@ -34,6 +34,7 @@ import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -365,6 +366,20 @@ public class MediaFile implements Serializable {
     public String getThumbnailURL() {
         return WebloggerFactory.getWeblogger().getUrlStrategy()
                 .getMediaFileThumbnailURL(getWeblog(), this.getId(), true);
+    }
+
+    /**
+     * True for an image whose recorded size is over uploads.thumbnail.maxPixels.
+     * Such images are stored without a thumbnail.
+     */
+    public boolean isOverThumbnailPixelLimit() {
+        if (!isImageFile() || getWidth() <= 0 || getHeight() <= 0) {
+            return false;
+        }
+        int maxPixels = WebloggerConfig.getIntProperty(
+                MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY,
+                MediaFileManager.DEFAULT_THUMBNAIL_MAX_PIXELS);
+        return (long) getWidth() * getHeight() > maxPixels;
     }
 
     public String getCreatorUserName() {

@@ -76,11 +76,6 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     private static final Log log = LogFactory.getFactory().getInstance(JPAMediaFileManagerImpl.class);
     public static final String MIGRATION_STATUS_FILENAME = "migration-status.properties";
 
-    // images with more pixels than this get no thumbnail, so that an upload
-    // can't make the server decode an arbitrarily large image
-    static final String THUMBNAIL_MAX_PIXELS_PROPERTY = "uploads.thumbnail.maxPixels";
-    static final int DEFAULT_THUMBNAIL_MAX_PIXELS = 50_000_000;
-
     /**
      * Creates a new instance of MediaFileManagerImpl
      */
@@ -266,16 +261,35 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      * uploads.thumbnail.maxPixels are left without a thumbnail rather than
      * decoded, and the rest are decoded subsampled to near thumbnail size.
      * Content that no image reader recognizes gets no thumbnail, whatever
-     * content type the client sent.
+     * content type the client sent. When no thumbnail is made, any thumbnail
+     * left from the file's previous content is removed.
      */
     private void updateThumbnail(MediaFile mediaFile) {
+        if (!createThumbnail(mediaFile)) {
+            removeThumbnail(mediaFile);
+        }
+    }
+
+    private void removeThumbnail(MediaFile mediaFile) {
+        try {
+            WebloggerFactory.getWeblogger().getFileContentManager()
+                    .deleteFile(mediaFile.getWeblog(), mediaFile.getId() + "_sm");
+        } catch (Exception e) {
+            // there was no thumbnail
+            log.debug("No thumbnail to remove for media file " + mediaFile.getId());
+        }
+    }
+
+    /** @return true if a thumbnail was saved */
+    private boolean createThumbnail(MediaFile mediaFile) {
         try {
             FileContentManager cmgr = WebloggerFactory.getWeblogger()
                     .getFileContentManager();
             FileContent fc = cmgr.getFileContent(mediaFile.getWeblog(),
                     mediaFile.getId());
             int maxPixels = WebloggerConfig.getIntProperty(
-                    THUMBNAIL_MAX_PIXELS_PROPERTY, DEFAULT_THUMBNAIL_MAX_PIXELS);
+                    MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY,
+                    MediaFileManager.DEFAULT_THUMBNAIL_MAX_PIXELS);
             BufferedImage img;
 
             try (InputStream in = fc.getInputStream();
@@ -285,27 +299,31 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                 if (readers == null || !readers.hasNext()) {
                     log.debug("No image reader for media file "
                             + mediaFile.getId() + ", not creating a thumbnail");
-                    return;
+                    return false;
                 }
                 ImageReader reader = readers.next();
                 try {
                     reader.setInput(iis, true, true);
                     int width = reader.getWidth(0);
                     int height = reader.getHeight(0);
-                    if (width <= 0 || height <= 0
-                            || (long) width * height > maxPixels) {
-                        log.info("Not creating a thumbnail for media file "
-                                + mediaFile.getId() + " (" + width + "x"
-                                + height + "), it is larger than "
-                                + THUMBNAIL_MAX_PIXELS_PROPERTY + "="
-                                + maxPixels + " pixels");
-                        return;
+                    if (width <= 0 || height <= 0) {
+                        return false;
                     }
 
-                    // determine and save width and height
+                    // save width and height, also for an image too large
+                    // for a thumbnail
                     mediaFile.setWidth(width);
                     mediaFile.setHeight(height);
                     strategy.store(mediaFile);
+
+                    if ((long) width * height > maxPixels) {
+                        log.info("Not creating a thumbnail for media file "
+                                + mediaFile.getId() + " (" + width + "x"
+                                + height + "), it is larger than "
+                                + MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY + "="
+                                + maxPixels + " pixels");
+                        return false;
+                    }
 
                     // decode only every n-th pixel, keeping about twice the
                     // thumbnail size so the smooth scaling below has detail
@@ -341,9 +359,11 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
             roller.flush();
             // Refresh associated parent for changes
             strategy.refresh(mediaFile.getDirectory());
+            return true;
 
         } catch (Exception e) {
             log.debug("ERROR creating thumbnail", e);
+            return false;
         }
     }
 

@@ -215,13 +215,15 @@
 
     // Called by the media chooser. The markup is built with DOM APIs, so names,
     // descriptions and URLs are escaped. The alt text is the file's description,
-    // or its name when it has none.
-    function onSelectMediaFile(name, url, isImage, alt) {
+    // or its name when it has none. An image too large for a thumbnail is
+    // inserted at its own URL.
+    function onSelectMediaFile(name, url, isImage, alt, hasThumbnail) {
         $("#mediafile_edit_lightbox").modal("hide");
         $("#mediaFileEditor").attr('src', 'about:blank');
         var link = $('<a>').attr('href', url);
         if (isImage === "true") {
-            link.append($('<img>').attr({src: url + '?t=true', alt: alt || name}));
+            var src = hasThumbnail === "false" ? url : url + '?t=true';
+            link.append($('<img>').attr({src: src, alt: alt || name}));
         } else {
             link.text(name);
         }

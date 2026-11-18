@@ -44,6 +44,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -131,6 +132,38 @@ public class MediaFileThumbnailTest {
 
         assertNotNull(saved.getInputStream(), "the upload itself must be kept");
         assertNull(saved.getThumbnailInputStream());
+        // the size still comes from the header, for the upload result page
+        assertEquals(50000, saved.getWidth());
+        assertEquals(50000, saved.getHeight());
+        assertTrue(saved.isOverThumbnailPixelLimit());
+    }
+
+    /**
+     * Replacing an image with one over the limit removes the old image's
+     * thumbnail and records the new image's size.
+     */
+    @Test
+    public void testReplacingWithHugeImageRemovesOldThumbnail() throws Exception {
+        MediaFile saved = upload("hawk.jpg", "image/jpeg",
+                getClass().getResourceAsStream(MediaFileTest.TEST_IMAGE), 2000);
+        assertNotNull(saved.getThumbnailInputStream());
+        saved.getThumbnailInputStream().close();
+        assertFalse(saved.isOverThumbnailPixelLimit());
+
+        byte[] png = pngHeaderOnly(50000, 50000);
+        MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+        MediaFile replaced = mgr.getMediaFile(saved.getId());
+        replaced.setContentType("image/png");
+        replaced.setLength(png.length);
+        mgr.updateMediaFile(TestUtils.getManagedWebsite(weblog), replaced,
+                new ByteArrayInputStream(png));
+        TestUtils.endSession(true);
+
+        MediaFile reloaded = mgr.getMediaFile(saved.getId(), true);
+        assertNull(reloaded.getThumbnailInputStream(),
+                "the previous image's thumbnail must not be kept");
+        assertEquals(50000, reloaded.getWidth());
+        assertEquals(50000, reloaded.getHeight());
     }
 
     /** The pixel limit comes from uploads.thumbnail.maxPixels. */
@@ -148,6 +181,8 @@ public class MediaFileThumbnailTest {
         }
         assertNotNull(saved.getInputStream());
         assertNull(saved.getThumbnailInputStream());
+        assertEquals(500, saved.getWidth());
+        assertEquals(373, saved.getHeight());
     }
 
     /** A valid PNG signature and header followed by a token amount of data. */

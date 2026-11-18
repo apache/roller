@@ -31,7 +31,8 @@
             data-mediafile-name="<s:property value='#mediaFile.name'/>"
             data-mediafile-url="<s:property value='#mediaFile.permalink'/>"
             data-mediafile-alt="<s:property value='#altText'/>"
-            data-mediafile-is-image="<s:property value='#mediaFile.imageFile'/>">
+            data-mediafile-is-image="<s:property value='#mediaFile.imageFile'/>"
+            data-mediafile-has-thumbnail="<s:property value='!#mediaFile.overThumbnailPixelLimit'/>">
         <s:if test="#mediaFile.imageFile">
             <img src="<s:property value='#mediaFile.thumbnailURL'/>" alt="" loading="lazy"
                  data-fallback-icon="<s:property value='typeIcon(#mediaFile.contentType)'/>"/>
@@ -47,6 +48,7 @@
                     data-mediafile-url="<s:property value='#mediaFile.permalink'/>"
                     data-mediafile-alt="<s:property value='#altText'/>"
                     data-mediafile-is-image="<s:property value='#mediaFile.imageFile'/>"
+                    data-mediafile-has-thumbnail="<s:property value='!#mediaFile.overThumbnailPixelLimit'/>"
                     aria-label="<s:text name='%{#chooserLabelKey}' escapeHtml='true'><s:param value='#mediaFile.name'/></s:text>"
                     title="<s:property value='#mediaFile.name'/>"><s:property value="#mediaFile.name"/></button>
             <span class="media-card-meta">
