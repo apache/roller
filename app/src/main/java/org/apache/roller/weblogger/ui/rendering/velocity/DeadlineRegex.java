@@ -61,13 +61,32 @@ final class DeadlineRegex {
                 return second == null ? NOT_HANDLED : replace(Pattern.compile(regex).matcher(text),
                         second.toString(), "replaceAll".equals(methodName));
             case "split":
-                if (args.length == 1) {
-                    return Pattern.compile(regex).split(text, 0);
+                Integer limit = args.length == 1 ? Integer.valueOf(0) : toInt(second);
+                if (limit == null) {
+                    return NOT_HANDLED;
                 }
-                Integer limit = toInt(second);
-                return limit == null ? NOT_HANDLED : Pattern.compile(regex).split(text, limit);
+                Pattern pattern = Pattern.compile(regex);
+                checkPieces(pattern.matcher(text), limit);
+                return pattern.split(text, limit);
             default:
                 return NOT_HANDLED;
+        }
+    }
+
+    /** No more pieces than a #foreach can visit (directive.foreach.max_loops). */
+    static final int MAX_SPLIT_PIECES = 100_000;
+
+    /**
+     * Counts the pieces a split would return, without allocating them, and
+     * throws if there are more than MAX_SPLIT_PIECES.
+     */
+    private static void checkPieces(Matcher m, int limit) {
+        int pieces = 1;
+        while ((limit <= 0 || pieces < limit) && m.find()) {
+            if (++pieces > MAX_SPLIT_PIECES) {
+                throw new RenderLimitException("split produced more than "
+                        + MAX_SPLIT_PIECES + " pieces");
+            }
         }
     }
 
