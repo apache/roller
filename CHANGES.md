@@ -247,7 +247,7 @@
   on x86-64 processors with AVX-512 (CVE-2026-114938). Sites that run Roller
   on their own server should update their JDK, or set the same option until
   they can; the install guide says how. A `CATALINA_OPTS` passed to the
-  container replaces this default, so include the option in it.
+  container is added to this option.
 - Apache XML-RPC (`xmlrpc-common`, `xmlrpc-server`) and `ws-commons-util`
   are no longer shipped. Apache XML-RPC is end of life, and 3.1.3 has an
   unfixed denial-of-service issue (CVE-2016-5004).
