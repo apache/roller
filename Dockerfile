@@ -69,12 +69,6 @@ RUN wget https://repo1.maven.org/maven2/jakarta/mail/jakarta.mail-api/2.1.5/jaka
 RUN wget https://repo1.maven.org/maven2/jakarta/activation/jakarta.activation-api/2.1.4/jakarta.activation-api-2.1.4.jar
 RUN wget https://repo1.maven.org/maven2/org/eclipse/angus/angus-activation/2.0.3/angus-activation-2.0.3.jar
 
-# Turn off the JVM's hardware-accelerated Base64 decoding, which has an
-# out-of-bounds write on x86-64 processors with AVX-512 in JDKs older than the
-# November 2026 updates (CVE-2026-114938). It only costs Base64 speed; an
-# image built on a patched JDK can drop it.
-ENV CATALINA_OPTS="-XX:-UseBASE64Intrinsics"
-
 # Add Roller entry-point and go!
 
 COPY docker/entry-point.sh /usr/local/tomcat/bin
