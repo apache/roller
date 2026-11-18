@@ -24,6 +24,7 @@ import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test utilities.
@@ -153,21 +154,39 @@ public class UtilitiesTest  {
         assertEquals(expect, result);
     }
     
-    /* broken because it uses UtilitiesModel which is part of .ui.* package
     @Test
     public void testAddNoFollow() {
         String test1 = "<p>this some text with a <a href=\"http://example.com\">link</a>";
         String expect1 = "<p>this some text with a <a href=\"http://example.com\" rel=\"nofollow\">link</a>";
-        String result1 = UtilitiesModel.addNofollow(test1);
-        assertEquals(expect1, result1);
-     
+        assertEquals(expect1, Utilities.addNofollow(test1));
+
         String test2 = "<p>this some text with a <A href=\"http://example.com\">link</a>";
         String expect2 = "<p>this some text with a <A href=\"http://example.com\" rel=\"nofollow\">link</a>";
-        String result2 = UtilitiesModel.addNofollow(test2);
-        assertEquals(expect2, result2);
-     
+        assertEquals(expect2, Utilities.addNofollow(test2));
+
+        // links that already have it are left alone
+        String test3 = "<a href=\"http://example.com\" rel=\"nofollow\">one</a> <a href=\"/two\">two</a>";
+        String expect3 = "<a href=\"http://example.com\" rel=\"nofollow\">one</a>"
+                + " <a href=\"/two\" rel=\"nofollow\">two</a>";
+        assertEquals(expect3, Utilities.addNofollow(test3));
+
+        assertEquals("no links", Utilities.addNofollow("no links"));
+        assertEquals("<a href=\"x\"", Utilities.addNofollow("<a href=\"x\""));
+        assertNull(Utilities.addNofollow(null));
     }
-     */
+
+    @Test
+    public void testUnclosedLinksTakeLinearTime() {
+        String escaped = "&lt;a href=".repeat(50000);
+        String raw = "<a href=".repeat(50000);
+
+        long start = System.nanoTime();
+        assertEquals(escaped, Utilities.transformToHTMLSubset(escaped));
+        assertEquals(escaped, Utilities.transformToHTMLSubset(Utilities.escapeHTML(raw)));
+        assertEquals(raw, Utilities.addNofollow(raw));
+        long millis = (System.nanoTime() - start) / 1_000_000;
+        assertTrue(millis < 200, "took " + millis + " ms");
+    }
 
     @Test
     public void testPlainTextExcerpt() {
