@@ -65,11 +65,12 @@ public class CommentDataServlet extends HttpServlet {
                 RollerSession rses = RollerSession.getRollerSession(request);
                 Weblog weblog = c.getWeblogEntry().getWebsite();
                 if (weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST)) {
+                    // HTML-escaped, since the page shows it as HTML
                     String content = Utilities.escapeHTML(c.getContent());
-                    content = StringEscapeUtils.escapeEcmaScript(content);
-                    String json = "{ id: \"" + c.getId() + "\"," + "content: \"" + content + "\" }";
+                    String json = "{\"id\":\"" + StringEscapeUtils.escapeJson(c.getId())
+                            + "\",\"content\":\"" + StringEscapeUtils.escapeJson(content) + "\"}";
                     response.setStatus(HttpServletResponse.SC_OK);
-                    response.setContentType("text/html; charset=utf-8");
+                    response.setContentType("application/json; charset=utf-8");
                     response.getWriter().print(json);
                     response.flushBuffer();
                     response.getWriter().flush();

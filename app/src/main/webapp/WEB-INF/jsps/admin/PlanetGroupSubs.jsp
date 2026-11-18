@@ -124,9 +124,9 @@
             <s:iterator var="sub" value="subscriptions">
                 <tr>
                     <td class="rollertable"><s:property value="#sub.title"/></td>
-                    <td><s:set var="feedURL" value="#sub.feedURL"/> ${fn:substring(feedURL, 0, 100)} </td>
+                    <td><s:set var="feedURL" value="#sub.feedURL"/> <c:out value="${fn:substring(feedURL, 0, 100)}"/> </td>
                     <td>
-                        <a href="javascript: void(0);" onclick="confirmDelete('<s:property value="feedURL"/>')">
+                        <a href="javascript: void(0);" class="delete-subscription" data-feed-url="<s:property value="#sub.feedURL"/>">
                             <span class="glyphicon glyphicon-remove" aria-hidden="true"> </span>
                             <s:text name="generic.delete"/>
                         </a>
@@ -151,6 +151,10 @@
 <%-- ================================================================== --%>
 
 <script>
+
+    $(".delete-subscription").on("click", function () {
+        confirmDelete($(this).attr("data-feed-url"));
+    });
 
     function confirmDelete(subUrl) {
         if (window.confirm('<s:text name="planetGroupSubs.delete.confirm" />')) {
