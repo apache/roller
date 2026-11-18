@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.rendering.util;
 
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -106,7 +107,8 @@ public class WeblogSearchRequest extends WeblogRequest {
     /**
      * Keeps the first MAX_QUERY_LENGTH characters of a search query, so one
      * request cannot hand the query parser unbounded work, such as thousands
-     * of nested parentheses. Does not split a surrogate pair.
+     * of nested parentheses. Does not split a surrogate pair, and drops the
+     * opening quote of a phrase the cap cuts off.
      */
     public static String capQuery(String query) {
         if (query == null || query.length() <= MAX_QUERY_LENGTH) {
@@ -116,7 +118,13 @@ public class WeblogSearchRequest extends WeblogRequest {
         if (Character.isHighSurrogate(query.charAt(end - 1))) {
             end--;
         }
-        return query.substring(0, end);
+        String capped = query.substring(0, end);
+        // drop a quote whose phrase the cap cut off, so the rest still parses
+        if (StringUtils.countMatches(capped, '"') % 2 != 0) {
+            int quote = capped.lastIndexOf('"');
+            capped = capped.substring(0, quote) + capped.substring(quote + 1);
+        }
+        return capped;
     }
 
     public String getQuery() {

@@ -62,6 +62,21 @@ class SearchQueryLengthTest {
         assertEquals("a".repeat(255), new WeblogSearchRequest(request).getQuery());
     }
 
+    @Test
+    void capDropsAQuoteItLeavesUnbalanced() throws Exception {
+        // the cap falls inside the quoted phrase
+        String query = "x".repeat(250) + " \"roller weblog\"";
+        HttpServletRequest request = request(WeblogSearchRequest.SEARCH_SERVLET, "/team", query);
+        assertEquals("x".repeat(250) + " roll", new WeblogSearchRequest(request).getQuery());
+    }
+
+    @Test
+    void capKeepsBalancedQuotes() throws Exception {
+        String query = "\"roller weblog\" " + "x".repeat(300);
+        HttpServletRequest request = request(WeblogSearchRequest.SEARCH_SERVLET, "/team", query);
+        assertEquals(query.substring(0, 256), new WeblogSearchRequest(request).getQuery());
+    }
+
     private static HttpServletRequest request(String servlet, String pathInfo, String query) {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getServletPath()).thenReturn(servlet);
