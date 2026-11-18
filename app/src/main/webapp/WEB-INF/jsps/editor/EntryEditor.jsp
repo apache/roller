@@ -223,8 +223,12 @@
         if (richEditorStarted) {
             $('#edit_content').summernote("pasteHTML", toInsert);
         } else {
+            // at the cursor, or at the end if the textarea hasn't had one
             var textArea = document.getElementById('edit_content');
             var start = textArea.selectionStart;
+            if (start === 0 && textArea.selectionEnd === 0) {
+                start = textArea.selectionEnd = textArea.value.length;
+            }
             textArea.value = textArea.value.substring(0, start) + toInsert
                 + textArea.value.substring(textArea.selectionEnd);
             textArea.selectionStart = textArea.selectionEnd = start + toInsert.length;

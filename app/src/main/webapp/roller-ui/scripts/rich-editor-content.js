@@ -26,17 +26,17 @@
  *
  * hasActiveHtml(html) parses the HTML in an inert document and returns true if
  * it contains anything the rich editor would run or can't keep: script, frame,
- * plugin and document-level elements, on* attributes, or javascript: and
+ * plugin, style and document-level elements, on* attributes, or javascript: and
  * vbscript: URLs in any attribute. It returns true if the HTML can't be parsed.
  */
 var RollerRichEditor = (function () {
 
-    // jQuery runs <script> elements it inserts; <base>, <meta> and <link> act
-    // on the whole page; <noscript> parses differently in the inert document,
+    // jQuery runs <script> elements it inserts; <base>, <meta>, <link> and
+    // <style> act on the whole page; <noscript> parses differently in the inert document,
     // which has scripting off, so its contents can't be checked; SVG <set> and
     // <animate> can change other attributes after loading.
     var ACTIVE_ELEMENTS = "script, iframe, frame, frameset, object, embed, applet, "
-        + "base, meta, link, noscript, set, animate";
+        + "base, meta, link, style, noscript, set, animate";
 
     // control characters and whitespace that browsers ignore inside a URL scheme
     var IGNORED_IN_SCHEME = /[\s\u0000-\u001f\u007f-\u00a0\u200b-\u200f\u2060\ufeff]/g;
@@ -74,7 +74,15 @@ var RollerRichEditor = (function () {
         }
         try {
             var doc = new DOMParser().parseFromString(html, "text/html");
-            return !doc || !doc.documentElement || hasActiveNodes(doc);
+            if (!doc || !doc.body || hasActiveNodes(doc)) {
+                return true;
+            }
+            // A full document drops table cells and rows found outside a
+            // table, but jQuery's html(), which Summernote uses, keeps them.
+            // Template contents are parsed the same way and stay inert.
+            var template = doc.createElement("template");
+            template.innerHTML = html;
+            return hasActiveNodes(template.content);
         } catch (e) {
             return true;
         }
