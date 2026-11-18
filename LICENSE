@@ -242,7 +242,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -------------------------------------------------------------------------------
-This product bundles jQuery 3.7.1, which is available under a "MIT" license.
+This product bundles jQuery 3.8.0, which is available under a "MIT" license.
 For details, see
 app/src/main/webapp/themes/gaurav/js/jquery.js
 https://jquery.org/license/

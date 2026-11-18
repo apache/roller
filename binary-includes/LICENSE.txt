@@ -246,7 +246,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -------------------------------------------------------------------------------
-This product bundles jQuery 3.7.1, which is available under a "MIT" license.
+This product bundles jQuery 3.8.0, which is available under a "MIT" license.
 For details, see
 themes/gaurav/js/jquery.js
 https://jquery.org/license/
@@ -753,7 +753,7 @@ available under a "MIT" license:
   clipboard.js 2.0.11 (org.webjars:clipboard.js)
     Copyright (c) Zeno Rocha
     https://github.com/zenorocha/clipboard.js/blob/master/LICENSE
-  jQuery 4.0.0 (org.webjars:jquery)
+  jQuery 4.1.0 (org.webjars:jquery)
     Copyright OpenJS Foundation and other contributors
     https://jquery.org/license/
   jQuery UI 1.14.2 (org.webjars:jquery-ui)
@@ -766,7 +766,7 @@ available under a "MIT" license:
     Copyright (c) 2015~ Summernote Team
     https://github.com/summernote/summernote/blob/main/LICENSE
 
-The MIT License text is in the jQuery 3.7.1 section above.
+The MIT License text is in the jQuery 3.8.0 section above.
 
 -------------------------------------------------------------------------------
 The PDF guides in the docs/ directory of the binary distribution embed
