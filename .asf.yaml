@@ -10,8 +10,6 @@ github:
       branches:
         includes:
           - "~DEFAULT_BRANCH"
-          - "release/*"
-          - "rel/*"
         excludes: []
       bypass_teams:
         - root
@@ -39,6 +37,23 @@ github:
           app_slug: "github-actions"
         - name: "Analyze (javascript)"
           app_slug: "github-actions"
+    # no workflow runs on pull requests to release branches, so requiring
+    # checks there would block every merge
+    - name: "Release Branch Protection"
+      type: branch
+      branches:
+        includes:
+          - "release/*"
+          - "rel/*"
+        excludes: []
+      bypass_teams:
+        - root
+      restrict_deletion: true
+      restrict_force_push: true
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        # the approval has to come after the last push, so it covers the head
+        require_last_push_approval: true
     - name: "6.1.x Branch Protection"
       type: branch
       branches:
