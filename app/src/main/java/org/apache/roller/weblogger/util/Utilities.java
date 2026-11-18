@@ -62,9 +62,6 @@ public class Utilities {
 
     private static final Pattern mLinkPattern = Pattern.compile("<a href=",
             Pattern.CASE_INSENSITIVE);
-    private static final Pattern REL_ATTRIBUTE_PATTERN = Pattern.compile(
-            "\\srel\\s*=\\s*(?:\"([^\"]*)\"|'([^']*)'|([^\\s\"'=<>`]+))",
-            Pattern.CASE_INSENSITIVE);
     private static final Pattern OPENING_B_TAG_PATTERN = Pattern.compile(
             "&lt;b&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern CLOSING_B_TAG_PATTERN = Pattern.compile(
@@ -342,24 +339,79 @@ public class Utilities {
     }
 
     private static String addNofollowToLink(String link) {
-        Matcher rel = REL_ATTRIBUTE_PATTERN.matcher(link);
-        if (!rel.find()) {
-            return link.substring(0, link.length() - 1) + " rel=\"nofollow\">";
+        // Walk the attributes the way findTagEnd does, so "rel=" inside
+        // another attribute's quoted value isn't taken for the link's rel.
+        // Browsers use the first rel when there are several.
+        int close = link.length() - 1;
+        int i = 2;
+        while (i < close) {
+            char c = link.charAt(i);
+            if (Character.isWhitespace(c) || c == '/') {
+                i++;
+                continue;
+            }
+            int nameStart = i++;
+            while (i < close && !isAttributeNameEnd(link.charAt(i))) {
+                i++;
+            }
+            int nameEnd = i;
+            while (i < close && Character.isWhitespace(link.charAt(i))) {
+                i++;
+            }
+            int valueStart = -1;
+            int valueEnd = -1;
+            boolean quoted = false;
+            if (i < close && link.charAt(i) == '=') {
+                i++;
+                while (i < close && Character.isWhitespace(link.charAt(i))) {
+                    i++;
+                }
+                char q = i < close ? link.charAt(i) : 0;
+                if (q == '"' || q == '\'') {
+                    quoted = true;
+                    valueStart = i + 1;
+                    valueEnd = link.indexOf(q, valueStart);
+                    if (valueEnd < 0 || valueEnd > close) {
+                        valueEnd = close;
+                    }
+                    i = Math.min(valueEnd + 1, close);
+                } else {
+                    valueStart = i;
+                    while (i < close && !Character.isWhitespace(link.charAt(i))) {
+                        i++;
+                    }
+                    valueEnd = i;
+                }
+            }
+            if ("rel".equalsIgnoreCase(link.substring(nameStart, nameEnd))) {
+                return addNofollowToRel(link, nameEnd, valueStart, valueEnd, quoted);
+            }
         }
-        int group = rel.group(1) != null ? 1 : rel.group(2) != null ? 2 : 3;
-        String value = rel.group(group);
+        return link.substring(0, close) + " rel=\"nofollow\">";
+    }
+
+    private static boolean isAttributeNameEnd(char c) {
+        return Character.isWhitespace(c) || c == '/' || c == '=';
+    }
+
+    private static String addNofollowToRel(String link, int nameEnd, int valueStart,
+            int valueEnd, boolean quoted) {
+        if (valueStart < 0) {
+            // a rel with no value
+            return link.substring(0, nameEnd) + "=\"nofollow\"" + link.substring(nameEnd);
+        }
+        String value = link.substring(valueStart, valueEnd);
         for (String token : StringUtils.split(value)) {
             if ("nofollow".equalsIgnoreCase(token)) {
                 return link;
             }
         }
         String values = value.isBlank() ? "nofollow" : value + " nofollow";
-        if (group == 3) {
+        if (!quoted) {
             // unquoted value: quote it so the added token stays part of it
-            return link.substring(0, rel.start(group)) + '"' + values + '"'
-                    + link.substring(rel.end(group));
+            values = '"' + values + '"';
         }
-        return link.substring(0, rel.start(group)) + values + link.substring(rel.end(group));
+        return link.substring(0, valueStart) + values + link.substring(valueEnd);
     }
 
     // ------------------------------------------------------------------------

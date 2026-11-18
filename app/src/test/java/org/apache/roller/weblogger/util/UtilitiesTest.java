@@ -181,6 +181,18 @@ public class UtilitiesTest  {
         assertEquals("<a href=\"/x\" rel=\"Nofollow external\">x</a>",
                 Utilities.addNofollow("<a href=\"/x\" rel=\"Nofollow external\">x</a>"));
 
+        // "rel=" inside another attribute's value isn't the link's rel
+        assertEquals("<a href=\"/x\" title='foo rel=external' rel=\"noopener nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" title='foo rel=external' rel=\"noopener\">x</a>"));
+        assertEquals("<a href=\"/x\" title=\"a rel='b'\" rel=\"nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" title=\"a rel='b'\">x</a>"));
+        assertEquals("<a href=\"/x\" data-rel=\"external\" rel=\"nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" data-rel=\"external\">x</a>"));
+        assertEquals("<a href=\"/x\"rel=\"external nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\"rel=\"external\">x</a>"));
+        assertEquals("<a href=\"/x\" rel=\"nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" rel>x</a>"));
+
         // a ">" inside a quoted attribute value doesn't end the tag
         assertEquals("<a href=\"/x\" title=\"a > b\" rel=\"nofollow\">x</a>",
                 Utilities.addNofollow("<a href=\"/x\" title=\"a > b\">x</a>"));
