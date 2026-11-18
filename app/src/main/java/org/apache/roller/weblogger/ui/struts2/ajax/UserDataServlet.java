@@ -117,6 +117,8 @@ public class UserDataServlet extends HttpServlet {
             List<User> users = admin
                     ? umgr.getUsersStartingWith(startsWith, enabledOnly, offset, length)
                     : umgr.getUsersWithUserNameStartingWith(startsWith, enabledOnly, offset, length);
+            // one "name,detail" line per user, read by ajax-user.js
+            response.setContentType("text/plain; charset=utf-8");
             for (User user : users) {
                 response.getWriter().print(user.getUserName());
                 if (admin) {

@@ -27,24 +27,33 @@ import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Flow;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.planet.pojos.SubscriptionEntry;
 import org.apache.roller.planet.pojos.Subscription;
-
-import static java.net.http.HttpResponse.BodyHandlers.ofInputStream;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 
 
 /**
@@ -60,8 +69,20 @@ public class RomeFeedFetcher implements FeedFetcher {
                                 .header("User-Agent", "RollerPlanetAggregator");
     
     private final HttpClient client;
+
+    // limits on a fetched feed's size and total download time, so a feed
+    // that is huge or arrives slowly can't hold up the feed updater
+    private final long maxBytes;
+    private final Duration maxTime;
     
     public RomeFeedFetcher() {
+        this(positiveProperty("planet.aggregator.fetch.maxBytes", 5 * 1024 * 1024),
+                Duration.ofSeconds(positiveProperty("planet.aggregator.fetch.maxSeconds", 30)));
+    }
+
+    RomeFeedFetcher(long maxBytes, Duration maxTime) {
+        this.maxBytes = maxBytes;
+        this.maxTime = maxTime;
         // immutable + thread safe, prefers HTTP/2, no redirects
         this.client = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(3)).build();
@@ -84,6 +105,13 @@ public class RomeFeedFetcher implements FeedFetcher {
 
         if(feedURL == null) {
             throw new IllegalArgumentException("feed url cannot be null");
+        }
+        
+        // only fetch over http and https
+        String scheme = feedURL.contains(":")
+                ? feedURL.substring(0, feedURL.indexOf(':')) : "";
+        if(!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme)) {
+            throw new FetcherException("Feed URL must start with http or https - "+feedURL);
         }
         
         // fetch the feed
@@ -229,10 +257,108 @@ public class RomeFeedFetcher implements FeedFetcher {
         
         HttpRequest request = requestBuilder.copy().uri(URI.create(url)).build();
         
-        try(XmlReader reader = new XmlReader(client.send(request, ofInputStream()).body())) {
+        // the request timeout only covers the response headers, so bound the
+        // whole download, including the body, here
+        CompletableFuture<HttpResponse<byte[]>> response = client.sendAsync(request,
+                info -> new LimitedBodySubscriber(maxBytes,
+                        info.headers().firstValueAsLong("Content-Length").orElse(-1)));
+        byte[] body;
+        try {
+            body = response.get(maxTime.toMillis(), TimeUnit.MILLISECONDS).body();
+        } catch (TimeoutException e) {
+            response.cancel(true);
+            throw new IOException("Feed was not received within "
+                    + maxTime.toSeconds() + " seconds");
+        } catch (InterruptedException e) {
+            response.cancel(true);
+            throw e;
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof IOException) {
+                throw (IOException) e.getCause();
+            }
+            throw new IOException(e.getCause());
+        }
+        
+        try(XmlReader reader = new XmlReader(new ByteArrayInputStream(body))) {
             return new SyndFeedInput().build(reader);
         }
        
+    }
+    
+    
+    // a property from roller.properties, or the default if it isn't positive
+    private static int positiveProperty(String name, int defaultValue) {
+        try {
+            int value = WebloggerConfig.getIntProperty(name, defaultValue);
+            return value > 0 ? value : defaultValue;
+        } catch (NumberFormatException e) {
+            log.warn("Invalid value for " + name + ", using " + defaultValue);
+            return defaultValue;
+        }
+    }
+    
+    
+    // collects a response body, failing once it grows past maxBytes
+    private static final class LimitedBodySubscriber
+            implements HttpResponse.BodySubscriber<byte[]> {
+        
+        private final CompletableFuture<byte[]> result = new CompletableFuture<>();
+        private final ByteArrayOutputStream body = new ByteArrayOutputStream();
+        private final long maxBytes;
+        private final long contentLength;
+        private Flow.Subscription subscription;
+        
+        LimitedBodySubscriber(long maxBytes, long contentLength) {
+            this.maxBytes = maxBytes;
+            this.contentLength = contentLength;
+        }
+        
+        @Override
+        public void onSubscribe(Flow.Subscription subscription) {
+            this.subscription = subscription;
+            if (contentLength > maxBytes) {
+                tooLarge();
+            } else {
+                subscription.request(Long.MAX_VALUE);
+            }
+        }
+        
+        @Override
+        public void onNext(List<ByteBuffer> buffers) {
+            if (result.isDone()) {
+                return;
+            }
+            for (ByteBuffer buffer : buffers) {
+                if (body.size() + (long) buffer.remaining() > maxBytes) {
+                    tooLarge();
+                    return;
+                }
+                byte[] bytes = new byte[buffer.remaining()];
+                buffer.get(bytes);
+                body.writeBytes(bytes);
+            }
+        }
+        
+        @Override
+        public void onError(Throwable throwable) {
+            result.completeExceptionally(throwable);
+        }
+        
+        @Override
+        public void onComplete() {
+            result.complete(body.toByteArray());
+        }
+        
+        @Override
+        public CompletionStage<byte[]> getBody() {
+            return result;
+        }
+        
+        private void tooLarge() {
+            subscription.cancel();
+            result.completeExceptionally(new IOException(
+                    "Feed is larger than " + maxBytes + " bytes"));
+        }
     }
     
 }

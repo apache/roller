@@ -321,8 +321,11 @@ public class MailUtil {
             msg.append(" color: black; font-size: 12px\">");
         }
         
+        // the commenter's name and email are shown as text in HTML messages
         if (!StringUtils.isEmpty(commentObject.getName())) {
-            msg.append(commentObject.getName() + " "
+            String name = (isPlainText) ? commentObject.getName()
+                    : Utilities.escapeHTML(commentObject.getName());
+            msg.append(name + " "
                     + resources.getString("email.comment.wrote")+": ");
         } else {
             msg.append(resources.getString("email.comment.anonymous")+": ");
@@ -395,7 +398,9 @@ public class MailUtil {
 
             // commenter email address: allow blog owner to reply via email instead of blog comment
             if (!StringUtils.isBlank(commentObject.getEmail())) {
-                ownermsg.append(resources.getString("email.comment.commenter.email") + ": " + commentObject.getEmail());
+                String email = (isPlainText) ? commentObject.getEmail()
+                        : Utilities.escapeHTML(commentObject.getEmail());
+                ownermsg.append(resources.getString("email.comment.commenter.email") + ": " + email);
                 ownermsg.append((isPlainText) ? "\n\n" : "<br/><br/>");
             }
             // add link to weblog edit page so user can login to manage comments
