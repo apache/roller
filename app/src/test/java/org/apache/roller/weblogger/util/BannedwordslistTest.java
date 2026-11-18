@@ -27,6 +27,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
@@ -105,6 +108,25 @@ public class BannedwordslistTest  {
                 assertFalse(bannedwordslist.isBannedwordslisted(text), unit);
             }
         });
+    }
+
+    // a weblog's rule that backtracks without end can't hold up the check;
+    // the text counts as a match, so a comment with it is caught as spam
+    @Test
+    public void testRuleThatBacktracksIsStopped() {
+        String text = "x".repeat(40) + "!";
+        // a regex rule, and a word rule, which is also used as a regex
+        for (String rule : new String[] {"((x+)+)+y", "x((x+)+)+y"}) {
+            List<String> stringRules = new ArrayList<>();
+            List<Pattern> regexRules = new ArrayList<>();
+            Bannedwordslist.populateSpamRules(rule, stringRules, regexRules, null);
+            assertTimeoutPreemptively(Duration.ofSeconds(8), () -> {
+                assertTrue(Bannedwordslist.matchesRulesOnly(text, stringRules, regexRules), rule);
+                assertTrue(bannedwordslist.isBannedwordslisted(text, stringRules, regexRules), rule);
+            }, rule);
+        }
+        // the limit applies to each value, not to every check that follows
+        assertFalse(bannedwordslist.isBannedwordslisted("an ordinary comment"));
     }
 
 }
