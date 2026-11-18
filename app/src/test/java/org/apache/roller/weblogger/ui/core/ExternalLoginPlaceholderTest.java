@@ -152,6 +152,22 @@ class ExternalLoginPlaceholderTest {
     }
 
     @Test
+    void aStoredPlaceholderWithAnEncoderPrefixIsNotAPassword() throws Exception {
+        setProperty("authentication.method", "ldap");
+        setProperty("users.passwords.externalAuthValue", "{noop}secret");
+        DaoAuthenticationProvider provider = provider();
+        // as CustomUserRegistry stores the configured placeholder
+        User user = TestUtils.setupUser("prefixuser");
+        userName = user.getUserName();
+        user.setPassword("{noop}secret");
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        assertThrows(AuthenticationException.class, () -> provider.authenticate(
+                new UsernamePasswordAuthenticationToken(userName, "secret")));
+    }
+
+    @Test
     void anOrdinaryPlaintextPasswordStillMatches() throws Exception {
         setProperty("authentication.method", "db");
         setProperty("passwds.encryption.lazyUpgradeFrom", "plaintext");
