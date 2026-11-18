@@ -25,6 +25,7 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
+import javax.naming.ldap.Rdn;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -153,7 +154,7 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 	 * @param ldapUser
 	 * @return
 	 */
-	private String getQualifedDc(String ldapDc, String ldapOu, String ldapUser) {
+	String getQualifedDc(String ldapDc, String ldapOu, String ldapUser) {
 		String qualifedDc = "";
 		for (String token : StringUtils.delimitedListToStringArray(ldapDc, ",")) {
 			if (!qualifedDc.isEmpty()) {
@@ -162,7 +163,9 @@ public class LdapCommentAuthenticator implements CommentAuthenticator {
 			qualifedDc += "dc=" + token;
 		}
 		
-		return "uid=" + ldapUser + ", ou=" + ldapOu + "," + qualifedDc;
+		// escape the user name so it stays the uid value and cannot add or
+		// change other parts of the bind name
+		return "uid=" + Rdn.escapeValue(ldapUser) + ", ou=" + ldapOu + "," + qualifedDc;
 	}
 
 	/**
