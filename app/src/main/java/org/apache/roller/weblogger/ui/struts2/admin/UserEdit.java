@@ -232,7 +232,10 @@ public class UserEdit extends UIAction {
         return actionName.equals("createUser");
     }
 
-    private void myValidate() {
+    void myValidate() {
+        if (RollerPasswordEncoders.isTooLong(getBean().getPassword())) {
+            addError("userRegister.error.passwordTooLong");
+        }
         // the external-login marker never matches at login
         if (RollerPasswordEncoders.isExternalLoginMarker(getBean().getPassword())) {
             addError("error.add.user.reservedPassword");

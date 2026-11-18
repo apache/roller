@@ -145,6 +145,9 @@ public class Profile extends UIAction {
             if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
                 addError("userRegister.error.mismatchedPasswords");
             }
+            if (RollerPasswordEncoders.isTooLong(getBean().getPasswordText())) {
+                addError("userRegister.error.passwordTooLong");
+            }
             if (authMethod == AuthMethod.OIDC) {
                 addError("userRegister.error.missingOpenID");
             }

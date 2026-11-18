@@ -17,7 +17,7 @@
 
 package org.apache.roller.weblogger.ui.core.security;
 
-
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -157,5 +157,20 @@ public final class RollerPasswordEncoders {
      */
     public static String randomUnusedPassword() {
         return RandomStringUtils.secure().nextAlphanumeric(64);
+    }
+
+    /**
+     * The longest password, in UTF-8 bytes, that every encoder accepts. BCrypt
+     * refuses longer ones.
+     */
+    public static final int MAX_PASSWORD_BYTES = 72;
+
+    /**
+     * Returns true when a typed password is longer than an encoder accepts, so
+     * that a form can say so instead of failing when the password is encoded.
+     */
+    public static boolean isTooLong(String password) {
+        return password != null
+                && password.getBytes(StandardCharsets.UTF_8).length > MAX_PASSWORD_BYTES;
     }
 }
