@@ -63,6 +63,10 @@ public class RollerSession
     
     public static final String ROLLER_SESSION = "org.apache.roller.weblogger.rollersession";
 
+    // user name and password digest of the login, kept beside the Roller
+    // session so they outlive it when the container passivates the session
+    private static final String LOGIN_PASSWORD = ROLLER_SESSION + ".login";
+
     static{
         WebloggerConfig.init(); // must be called before calls to logging APIs
         log = LogFactory.getLog(RollerSession.class);
@@ -135,7 +139,13 @@ public class RollerSession
                     }
                     // only set authenticated user if user is enabled
                     if (user != null && user.getEnabled()) {
+                        // a login whose password changed since it was first
+                        // seen ends here too, even with no Roller session left
+                        if (!sameLoginPassword(session, user)) {
+                            return endSession(request, session);
+                        }
                         rollerSession.setAuthenticatedUser(user);
+                        rememberLoginPassword(session, rollerSession);
                     }
                     
                 } catch (WebloggerException e) {
@@ -161,7 +171,25 @@ public class RollerSession
         if (attribute instanceof RollerSession rollerSession
                 && user.getUserName().equals(rollerSession.userName)) {
             rollerSession.setAuthenticatedUser(user);
+            rememberLoginPassword(session, rollerSession);
         }
+    }
+
+    /**
+     * Whether the login in this session first saw the user's current password,
+     * or the session has not recorded one for this user yet.
+     */
+    private static boolean sameLoginPassword(HttpSession session, User user) {
+        Object recorded = session.getAttribute(LOGIN_PASSWORD);
+        String prefix = user.getUserName() + "\n";
+        if (!(recorded instanceof String login) || !login.startsWith(prefix)) {
+            return true;
+        }
+        return login.equals(prefix + digest(user));
+    }
+
+    private static void rememberLoginPassword(HttpSession session, RollerSession rollerSession) {
+        session.setAttribute(LOGIN_PASSWORD, rollerSession.userName + "\n" + rollerSession.passwordDigest);
     }
 
     /**
