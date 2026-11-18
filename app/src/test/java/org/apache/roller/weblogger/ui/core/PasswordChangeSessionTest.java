@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.struts2.admin.CreateUserBean;
 import org.apache.roller.weblogger.ui.struts2.admin.UserEdit;
@@ -46,6 +47,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -193,6 +195,103 @@ class PasswordChangeSessionTest {
         saveAsAdmin(admin, bean -> bean.setFullName("Renamed User"));
 
         b.assertLoggedIn(userName);
+    }
+
+    @Test
+    void openIdProfileEditKeepsTheUsersOtherSessions() throws Exception {
+        linkOpenId(userName, "https://openid.example.com/sessionuser");
+        Browser a = new Browser(userName);
+        Browser b = new Browser(userName);
+        a.request();
+        b.request();
+        TestUtils.endSession(true);
+        String storedPassword = user(userName).getPassword();
+
+        a.request();
+        Profile profile = spy(new Profile());
+        stubText(profile);
+        setAuthMethod(profile, AuthMethod.OPENID);
+        User self = user(userName);
+        ProfileBean bean = new ProfileBean();
+        bean.copyFrom(self);
+        bean.setScreenName("Renamed");
+        profile.setBean(bean);
+        profile.setAuthenticatedUser(self);
+        profile.setServletRequest(a.httpRequest);
+        assertEquals(Profile.SUCCESS, profile.save(), () -> String.valueOf(profile.getActionErrors()));
+        TestUtils.endSession(true);
+
+        assertEquals("Renamed", user(userName).getScreenName());
+        assertEquals(storedPassword, user(userName).getPassword());
+        b.assertLoggedIn(userName);
+        a.assertLoggedIn(userName);
+    }
+
+    @Test
+    void adminEditOfAnOpenIdUserKeepsTheirSessions() throws Exception {
+        linkOpenId(userName, "https://openid.example.com/sessionuser");
+        Browser admin = new Browser(adminName);
+        Browser b = new Browser(userName);
+        admin.request();
+        b.request();
+        TestUtils.endSession(true);
+        String storedPassword = user(userName).getPassword();
+
+        admin.request();
+        UserEdit action = userEdit(admin, userName);
+        setAuthMethod(action, AuthMethod.DB_OPENID);
+        action.getBean().setFullName("Renamed User");
+        assertEquals(UserEdit.SUCCESS, action.save(), () -> String.valueOf(action.getActionErrors()));
+        TestUtils.endSession(true);
+
+        assertEquals(storedPassword, user(userName).getPassword());
+        b.assertLoggedIn(userName);
+    }
+
+    @Test
+    void switchingToOpenIdReplacesTheStoredPassword() throws Exception {
+        Browser admin = new Browser(adminName);
+        Browser b = new Browser(userName);
+        admin.request();
+        b.request();
+        TestUtils.endSession(true);
+        String storedPassword = user(userName).getPassword();
+
+        admin.request();
+        UserEdit action = userEdit(admin, userName);
+        setAuthMethod(action, AuthMethod.DB_OPENID);
+        action.getBean().setOpenIdUrl("https://openid.example.com/sessionuser");
+        assertEquals(UserEdit.SUCCESS, action.save(), () -> String.valueOf(action.getActionErrors()));
+        TestUtils.endSession(true);
+
+        assertNotEquals(storedPassword, user(userName).getPassword());
+        b.assertLoggedOut();
+    }
+
+    private static void linkOpenId(String name, String openIdUrl) throws Exception {
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        User u = mgr.getUserByUserName(name, null);
+        u.setOpenIdUrl(openIdUrl);
+        mgr.saveUser(u);
+        TestUtils.endSession(true);
+    }
+
+    private static void setAuthMethod(Object action, AuthMethod method) throws Exception {
+        // the action is a Mockito spy, a subclass of the real action
+        Field field = findField(action.getClass(), "authMethod");
+        field.setAccessible(true);
+        field.set(action, method);
+    }
+
+    private static Field findField(Class<?> type, String name) throws NoSuchFieldException {
+        for (Class<?> c = type; c != null; c = c.getSuperclass()) {
+            try {
+                return c.getDeclaredField(name);
+            } catch (NoSuchFieldException ignored) {
+                // keep looking in the superclass
+            }
+        }
+        throw new NoSuchFieldException(name);
     }
 
     private void saveAsAdmin(Browser admin, java.util.function.Consumer<CreateUserBean> change)

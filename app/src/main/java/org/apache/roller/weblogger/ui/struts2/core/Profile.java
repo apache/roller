@@ -79,6 +79,7 @@ public class Profile extends UIAction implements ServletRequestAware {
 
             // We ONLY modify the user currently logged in
             User existingUser = getAuthenticatedUser();
+            String previousOpenIdUrl = existingUser.getOpenIdUrl();
 
             // copy updated attributes
             getBean().copyTo(existingUser);
@@ -110,9 +111,13 @@ public class Profile extends UIAction implements ServletRequestAware {
                 }
             }
 
-            // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OPENID) ||
-                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+            // User.password does not allow null, so generate one when the user
+            // starts signing in with an OpenID URL. Keep the stored one when the
+            // OpenID URL is unchanged, so an edit doesn't end the user's sessions.
+            if ((authMethod.equals(AuthMethod.OPENID) ||
+                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl())))
+                    && (StringUtils.isEmpty(existingUser.getPassword())
+                        || !StringUtils.equals(previousOpenIdUrl, existingUser.getOpenIdUrl()))) {
                 String randomString = RandomStringUtils.randomAlphanumeric(255);
                 existingUser.resetPassword(randomString);
             }

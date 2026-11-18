@@ -147,6 +147,7 @@ public class UserEdit extends UIAction implements ServletRequestAware {
         myValidate();
         
         if (!hasActionErrors()) {
+            String previousOpenIdUrl = user.getOpenIdUrl();
             getBean().copyTo(user);
 
             if (authMethod == AuthMethod.DB_OPENID) {
@@ -162,9 +163,13 @@ public class UserEdit extends UIAction implements ServletRequestAware {
                 }
             }
 
-            // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OPENID) ||
-                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+            // User.password does not allow null, so generate one when the user
+            // starts signing in with an OpenID URL. Keep the stored one when the
+            // OpenID URL is unchanged, so an edit doesn't end the user's sessions.
+            if ((authMethod.equals(AuthMethod.OPENID) ||
+                    (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl())))
+                    && (StringUtils.isEmpty(user.getPassword())
+                        || !StringUtils.equals(previousOpenIdUrl, user.getOpenIdUrl()))) {
                 String randomString = RandomStringUtils.randomAlphanumeric(255);
                 user.resetPassword(randomString);
             }
