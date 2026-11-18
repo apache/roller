@@ -74,6 +74,13 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
             return super.fetchSubscription(feedURL, lastModified);
         }
         
+        // the subscription and its entries store absolute links to the
+        // weblog, which can't be built until site.absoluteurl is set
+        if (!WebloggerRuntimeConfig.isAbsoluteContextURLSet()) {
+            log.debug("Skipping LOCAL feed until site.absoluteurl is set - " + feedURL);
+            return null;
+        }
+
         // extract blog handle from our special feed url
         String weblogHandle = null;
         String[] items = feedURL.split(":", 2);

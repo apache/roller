@@ -39,6 +39,7 @@ import org.apache.roller.weblogger.business.runnable.RollerTask;
 import org.apache.roller.weblogger.business.runnable.RollerTaskWithLeasing;
 import org.apache.roller.weblogger.business.startup.WebloggerStartup;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.Weblog;
 
 
@@ -143,6 +144,15 @@ public class SyncWebsitesTask extends RollerTaskWithLeasing {
     public void runTask() {
         if (!WebloggerConfig.getBooleanProperty("planet.aggregator.enabled")) {
             log.debug("Planet is disabled; not running " + getName());
+            return;
+        }
+
+        // subscriptions store each weblog's absolute URL, which can't be
+        // built until site.absoluteurl is set
+        if (!WebloggerRuntimeConfig.isAbsoluteContextURLSet()) {
+            log.warn("Not syncing local weblogs with planet subscriptions because "
+                    + "the site's absolute URL is not set. Set it under Server "
+                    + "Administration > Configuration.");
             return;
         }
 
