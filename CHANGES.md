@@ -54,6 +54,22 @@
 
 ### Bug fixes
 
+- **Changing a password ends the account's other sessions.** Saving a new
+  password in the profile, an administrator's reset, or disabling an account
+  now logs out that user's other browsers at their next Roller UI page; the
+  session that made the change stays logged in (#321).
+- **Profiles of OpenID Connect users can be saved again.** Their random
+  placeholder password was longer than BCrypt accepts, so saving the profile
+  failed (#323).
+- **Later pages of a feed are cached separately.** A feed's `?page=N` now has
+  its own cache entry, and page numbers are kept between 0 and 10,000 (#313).
+- **"nofollow" is added to links that need it.** `addNofollow` only touched
+  links that already had `rel="nofollow"` (#318).
+- **Tags of a scheduled entry are counted once, when it goes live.** Entries
+  posted through AtomPub with a future date showed their tags in tag counts
+  early and counted them twice (#316).
+- **A weblog's only administrator can't resign from it**, and declining an
+  invitation only removes a pending invitation (#322).
 - **Passwords stored with an older encoding are upgraded at login.** With
   `passwds.encryption.lazyUpgradeFrom` set (`SHA` by default), passwords from
   older Roller versions could be used to log in, but they stayed stored in the
@@ -146,6 +162,36 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Weblog templates have render limits.** A page stops rendering, with a
+  logged error, once it writes more than `rendering.maxOutputChars` (10 MB)
+  or runs longer than `rendering.maxRenderSeconds` (30 seconds); `#foreach`
+  stops at 100,000 passes, and `String.repeat` isn't available. `#parse` and
+  `#include` load only the weblog's own templates, and macros defined inline
+  in a template are local to it, so weblogs can't affect each other's macros.
+  Library macros such as `roller.vm` and a site's own `roller-custom.vm` stay
+  global. Error pages no longer show template ids (#317).
+- **Entries with scripts or embeds open as HTML.** If an entry contains
+  scripts, frames, embedded objects, event-handler attributes or
+  `javascript:` links, the rich-text editor opens it in the HTML textarea
+  with a notice, and the stored HTML is kept as is (#319).
+- **Names are shown as text.** Screen and full names are HTML-escaped where
+  templates print them and written as plain text in feeds; commenter names
+  and addresses are escaped in HTML notification emails; HTML comments are
+  escaped unless the HTMLSubset plugin applies to them (#318).
+- **Limits on uploads and fetched feeds.** Images with more pixels than
+  `uploads.thumbnail.maxPixels` (50 million) are stored without a thumbnail
+  (#315). Planet stops reading a feed past `planet.aggregator.fetch.maxBytes`
+  (5 MB) or `planet.aggregator.fetch.maxSeconds` (30 seconds), and fetches
+  only http and https URLs (#314).
+- **AtomPub checks.** Publishing an entry through an AtomPub update needs the
+  permission to publish, media uploads over `uploads.file.maxsize` are
+  refused with 413 before they're stored, and entries show the creator's
+  email address only to the creator (also in MetaWeblog responses) (#316).
+- **Search queries are limited to 256 characters**, and a query the search
+  engine can't run finds nothing (#322).
+- **The OpenID Connect identity can't be changed from the profile or
+  registration forms**; only Roller's OpenID Connect login sets it (#322).
+- **Weblog pages ignore a `skipCache` query parameter** (#313).
 - **The Design pages follow "Allow custom themes".** While
   `themes.customtheme.allowed` is off (the default), the theme, stylesheet and
   template pages answer as unavailable, as the hidden Design menu already
