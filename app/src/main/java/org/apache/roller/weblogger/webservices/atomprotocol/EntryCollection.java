@@ -384,7 +384,8 @@ public class EntryCollection {
         
         List<Module> modules = new ArrayList<>();
         AppModule app = new AppModuleImpl();
-        app.setDraft(!WeblogEntry.PubStatus.PUBLISHED.equals(entry.getStatus()));
+        app.setDraft(!entry.isPublished()
+                && !WeblogEntry.PubStatus.SCHEDULED.equals(entry.getStatus()));
         app.setEdited(entry.getUpdateTime());
         modules.add(app);
         atomEntry.setModules(modules);

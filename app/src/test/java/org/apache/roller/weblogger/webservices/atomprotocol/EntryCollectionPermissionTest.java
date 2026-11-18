@@ -230,6 +230,113 @@ public class EntryCollectionPermissionTest {
         assertEquals(1, tagCount("scheduledtag"));
     }
 
+    private Entry atomEntry(String title, boolean draft, Date published,
+            String... tags) {
+        Entry entry = atomEntry(title, draft, published);
+        List<Category> categories = new ArrayList<>();
+        for (String name : tags) {
+            Category tag = new Category();
+            tag.setTerm(name);
+            categories.add(tag);
+        }
+        entry.setCategories(categories);
+        return entry;
+    }
+
+    private String post(Entry entry) throws Exception {
+        Entry created = new EntryCollection(TestUtils.getManagedUser(author), ATOM_URL)
+                .postEntry(request("/" + HANDLE + "/entries"), entry);
+        TestUtils.endSession(true);
+        return editId(created);
+    }
+
+    private void put(String id, Entry entry) throws Exception {
+        new EntryCollection(TestUtils.getManagedUser(author), ATOM_URL)
+                .putEntry(request("/" + HANDLE + "/entry/" + id), entry);
+        TestUtils.endSession(true);
+    }
+
+    @Test
+    public void unpublishingAnEntryWhileRemovingATagUncountsAllItsOldTags() throws Exception {
+        String id = post(atomEntry("now", false, null, "keeptag", "droptag"));
+        assertEquals(1, tagCount("keeptag"));
+        assertEquals(1, tagCount("droptag"));
+
+        put(id, atomEntry("draft", true, null, "keeptag"));
+        assertEquals(PubStatus.DRAFT, reload(id).getStatus());
+        assertEquals(0, tagCount("keeptag"));
+        assertEquals(0, tagCount("droptag"));
+
+        put(id, atomEntry("again", false, null, "keeptag"));
+        assertEquals(1, tagCount("keeptag"));
+        assertEquals(0, tagCount("droptag"));
+    }
+
+    @Test
+    public void savingAsDraftWhileChangingTagsUncountsTheOldTags() throws Exception {
+        String id = post(atomEntry("now", false, null, "atag"));
+        assertEquals(1, tagCount("atag"));
+
+        put(id, atomEntry("draft", true, null, "btag"));
+        assertEquals(PubStatus.DRAFT, reload(id).getStatus());
+        assertEquals(0, tagCount("atag"));
+        assertEquals(0, tagCount("btag"));
+    }
+
+    @Test
+    public void schedulingAnEntryWhileChangingItsTagsUncountsTheOldTags() throws Exception {
+        String id = post(atomEntry("now", false, null, "oldtag"));
+        assertEquals(1, tagCount("oldtag"));
+
+        put(id, atomEntry("later", false,
+                new Date(System.currentTimeMillis() + DAY_MS), "newtag"));
+        assertEquals(PubStatus.SCHEDULED, reload(id).getStatus());
+        assertEquals(0, tagCount("oldtag"));
+        assertEquals(0, tagCount("newtag"));
+
+        goLive(id);
+        assertEquals(0, tagCount("oldtag"));
+        assertEquals(1, tagCount("newtag"));
+    }
+
+    @Test
+    public void publishingADraftWhileChangingItsTagsCountsOnlyTheNewTags() throws Exception {
+        String id = post(atomEntry("draft", true, null, "drafttag"));
+        assertEquals(0, tagCount("drafttag"));
+
+        put(id, atomEntry("now", false, null, "livetag"));
+        assertEquals(PubStatus.PUBLISHED, reload(id).getStatus());
+        assertEquals(0, tagCount("drafttag"));
+        assertEquals(1, tagCount("livetag"));
+    }
+
+    @Test
+    public void changingThePublishedTagsCountsEachChangeOnce() throws Exception {
+        String id = post(atomEntry("now", false, null, "firsttag", "secondtag"));
+
+        put(id, atomEntry("still live", false, null, "secondtag", "thirdtag"));
+        assertEquals(0, tagCount("firsttag"));
+        assertEquals(1, tagCount("secondtag"));
+        assertEquals(1, tagCount("thirdtag"));
+    }
+
+    /** An entry read with GET and sent back unchanged with PUT stays scheduled. */
+    @Test
+    public void scheduledEntryStaysScheduledThroughGetAndPut() throws Exception {
+        String id = post(atomEntry("later", false,
+                new Date(System.currentTimeMillis() + DAY_MS), "scheduledtag"));
+        assertEquals(PubStatus.SCHEDULED, reload(id).getStatus());
+
+        String path = "/" + HANDLE + "/entry/" + id;
+        Entry fetched = new EntryCollection(TestUtils.getManagedUser(author), ATOM_URL)
+                .getEntry(request(path));
+        AppModule control = (AppModule) fetched.getModule(AppModule.URI);
+        assertEquals(false, control.getDraft(), "a scheduled entry is not a draft");
+        put(id, fetched);
+        assertEquals(PubStatus.SCHEDULED, reload(id).getStatus());
+        assertEquals(0, tagCount("scheduledtag"));
+    }
+
     private void goLive(String id) throws Exception {
         // move the publish time into the past, then let the scheduler promote it
         WeblogEntry entry = reload(id);
