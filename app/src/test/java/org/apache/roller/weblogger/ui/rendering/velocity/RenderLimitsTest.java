@@ -19,10 +19,13 @@
 
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
+import java.lang.management.ManagementFactory;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.roller.weblogger.ui.rendering.RenderingException;
+import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
 import org.apache.roller.weblogger.ui.rendering.velocity.RollerVelocityTestSupport.CeilingWriter;
 import org.junit.jupiter.api.BeforeAll;
@@ -58,12 +61,17 @@ public class RenderLimitsTest {
     }
 
     private static Outcome render(String name, String source) throws Exception {
+        return render(name, source, new HashMap<>());
+    }
+
+    private static Outcome render(String name, String source, Map<String, Object> context)
+            throws Exception {
         RollerVelocityTestSupport.addTemplate(name, source);
         Outcome outcome = new Outcome();
         VelocityRenderer renderer = new VelocityRenderer(
                 RollerVelocityTestSupport.page(name), DeviceType.standard);
         try {
-            renderer.render(new HashMap<>(), outcome.out);
+            renderer.render(context, outcome.out);
         } catch (RenderingException ex) {
             outcome.failure = ex;
         }
@@ -161,5 +169,82 @@ public class RenderLimitsTest {
                         + "[$s.getClass().forName('java.lang.Runtime')]");
         assertEquals("[$s.class.classLoader][$s.getClass().forName('java.lang.Runtime')]",
                 outcome.out.getHead());
+    }
+
+    /** A 10,240-character string of digits, 1,024 of them zeros. */
+    private static final String TEN_THOUSAND_DIGITS = "#set($s = '0123456789')"
+            + "#foreach($i in [1..10])#set($s = \"$s$s\")#end";
+
+    private static long allocatedBytes() {
+        return ((com.sun.management.ThreadMXBean) ManagementFactory.getThreadMXBean())
+                .getThreadAllocatedBytes(Thread.currentThread().getId());
+    }
+
+    /**
+     * Renders on this thread and returns how many bytes the render allocated,
+     * after a first render that loads the engine and compiles the template.
+     */
+    private static long allocatedByRender(String name, String source,
+            Map<String, Object> context) throws Exception {
+        Outcome warmUp = render(name, source, context);
+        assertNotNull(warmUp.failure, "rendering should have failed");
+        long before = allocatedBytes();
+        Outcome outcome = render(name, source, context);
+        long allocated = allocatedBytes() - before;
+        assertNotNull(outcome.failure, "rendering should have failed");
+        assertFalse(reachedTestCeiling(outcome.failure),
+                "only the test's own ceiling stopped rendering");
+        return allocated;
+    }
+
+    /**
+     * Each of these would build a string of about 42 million characters, four
+     * times the output limit. The call has to be refused before it runs, not
+     * after the result is built.
+     */
+    @Test
+    public void growingStringCallsAreRefusedBeforeTheyRun() throws Exception {
+        String[] calls = {
+            "$s.replace('0', \"$s$s$s$s\")",
+            "$s.replaceAll('0', \"$s$s$s$s\")",
+            "$utils.replace($s, '0', \"$s$s$s$s\")",
+        };
+        Map<String, Object> context = new HashMap<>();
+        context.put("utils", new UtilitiesModel());
+        for (int i = 0; i < calls.length; i++) {
+            long allocated = allocatedByRender("limits-growing-" + i + ".vm",
+                    TEN_THOUSAND_DIGITS + calls[i], context);
+            assertTrue(allocated < 16L * 1024 * 1024,
+                    calls[i] + " allocated " + allocated + " bytes before it was stopped");
+        }
+    }
+
+    /** String.format can pad to any width, so it is not offered. */
+    @Test
+    public void stringFormatIsNotAvailableToTemplates() throws Exception {
+        Outcome outcome = render("limits-format.vm",
+                "#set($s = 'x')$s.format('%05000000d', 1)");
+        assertFalse(outcome.out.getHead().contains("00000000"),
+                "String.format ran");
+        assertTrue(outcome.out.getCount() < 1024, "String.format wrote "
+                + outcome.out.getCount() + " chars");
+    }
+
+    @Test
+    public void ordinaryStringCallsStillWork() throws Exception {
+        Map<String, Object> context = new HashMap<>();
+        context.put("utils", new UtilitiesModel());
+        Outcome outcome = render("limits-ordinary.vm",
+                "#set($s = 'Hello, World')"
+                        + "[$s.replace('o', '0')][$s.replace('', '-')][$s.replaceAll('[A-Z]', '_')]"
+                        + "[$s.replaceFirst('l+', 'L')][$s.concat('!')][$s.toUpperCase()]"
+                        + "[$s.toLowerCase()][$s.substring(7)][$s.trim()]"
+                        + "[$utils.replace($s, ' ', '_')]",
+                context);
+        assertEquals(null, outcome.failure);
+        assertEquals("[Hell0, W0rld][-H-e-l-l-o-,- -W-o-r-l-d-][_ello, _orld]"
+                + "[HeLo, World][Hello, World!][HELLO, WORLD]"
+                + "[hello, world][World][Hello, World]"
+                + "[Hello,_World]", outcome.out.getHead());
     }
 }

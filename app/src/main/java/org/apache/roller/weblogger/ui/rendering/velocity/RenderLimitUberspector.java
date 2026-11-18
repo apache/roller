@@ -33,8 +33,10 @@ import org.apache.velocity.util.introspection.VelPropertyGet;
 /**
  * Chained after SecureUberspector, this keeps method calls from templates
  * inside the render limits: each call and property read checks the deadline,
- * a string a call returns may be no longer than the output limit, and
- * String.repeat, which can build a huge string in one call, is not offered.
+ * a string a call returns may be no longer than the output limit, a call that
+ * could build a longer string is stopped before it runs, and string methods
+ * whose result can't be bounded from the call (String.repeat, String.format
+ * and others; see StringGrowth) are not offered.
  */
 public class RenderLimitUberspector extends AbstractChainableUberspector {
 
@@ -48,12 +50,16 @@ public class RenderLimitUberspector extends AbstractChainableUberspector {
 
     @Override
     public VelMethod getMethod(Object obj, String methodName, Object[] args, Info i) {
-        if (obj instanceof String && "repeat".equals(methodName)) {
-            LOG.debug("Refusing String.repeat at " + i);
+        VelMethod method = super.getMethod(obj, methodName, args, i);
+        if (method == null) {
             return null;
         }
-        VelMethod method = super.getMethod(obj, methodName, args, i);
-        return method == null ? null : new LimitedMethod(method);
+        if (StringGrowth.isRefused(obj, methodName, method.getReturnType())) {
+            LOG.debug("Refusing " + obj.getClass().getSimpleName() + "." + methodName
+                    + " at " + i);
+            return null;
+        }
+        return new LimitedMethod(method);
     }
 
     @Override
@@ -81,6 +87,10 @@ public class RenderLimitUberspector extends AbstractChainableUberspector {
         public Object invoke(Object o, Object[] params)
                 throws IllegalAccessException, InvocationTargetException {
             RenderSession.checkDeadline();
+            if (RenderSession.current() != null) {
+                RenderSession.checkLength(StringGrowth.maxResultLength(
+                        o, method.getMethodName(), params));
+            }
             return checked(method.invoke(o, params));
         }
 
