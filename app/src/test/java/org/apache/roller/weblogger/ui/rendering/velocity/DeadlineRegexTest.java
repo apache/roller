@@ -33,6 +33,15 @@ class DeadlineRegexTest {
     private static final String[] REPLACEMENTS = {"", "x", "$0", "[$1]", "\\$"};
 
     @Test
+    void convertsArgumentsAsVelocityWould() {
+        assertArrayEquals("a,b,c".split(",", 2),
+                (String[]) DeadlineRegex.invoke("a,b,c", "split", new Object[] {",", "2"}));
+        assertArrayEquals("a,b,c".split(",", 2),
+                (String[]) DeadlineRegex.invoke("a,b,c", "split", new Object[] {",", 2L}));
+        assertEquals("a1b1c", DeadlineRegex.invoke("a,b,c", "replaceAll", new Object[] {",", 1}));
+    }
+
+    @Test
     void givesTheSameResultsAsString() {
         for (String s : TEXTS) {
             for (String p : PATTERNS) {
@@ -59,6 +68,7 @@ class DeadlineRegexTest {
     @Test
     void leavesOtherCallsToString() {
         assertSame(DeadlineRegex.NOT_HANDLED, DeadlineRegex.invoke("a", "replace", new Object[] {"a", "b"}));
-        assertSame(DeadlineRegex.NOT_HANDLED, DeadlineRegex.invoke("a", "split", new Object[] {'a'}));
+        assertSame(DeadlineRegex.NOT_HANDLED, DeadlineRegex.invoke("a", "split", new Object[] {"a", true}));
+        assertSame(DeadlineRegex.NOT_HANDLED, DeadlineRegex.invoke("a", "matches", new Object[] {null}));
     }
 }

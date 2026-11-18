@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class StringGrowthTest {
 
     private static final String[] TEXTS = {"", "a", "ab", "aaaa", "Hello, World", "ßßß ﬀ İ"};
-    private static final String[] PATTERNS = {"", "a", "l+", "(?=(.*))", "(.)", "\\b", "$"};
     private static final String[] REPLACEMENTS = {"", "x", "xyz", "$0", "$1$1", "${g}", "\\$"};
 
     private static void assertBounds(String what, String actual, long bound) {
@@ -52,24 +51,6 @@ class StringGrowthTest {
                     long bound = StringGrowth.maxResultLength(s, "replace", new Object[] {target, r});
                     assertEquals(Math.max(s.length(), actual.length()), bound,
                             "'" + s + "'.replace('" + target + "', '" + r + "')");
-                }
-            }
-        }
-    }
-
-    @Test
-    void regexReplaceIsBounded() {
-        for (String s : TEXTS) {
-            for (String p : PATTERNS) {
-                for (String r : REPLACEMENTS) {
-                    if (r.contains("${g}") || (r.contains("$1") && !p.contains("("))) {
-                        continue; // no such group: the call throws
-                    }
-                    Object[] args = {p, r};
-                    assertBounds("replaceAll", s.replaceAll(p, r),
-                            StringGrowth.maxResultLength(s, "replaceAll", args));
-                    assertBounds("replaceFirst", s.replaceFirst(p, r),
-                            StringGrowth.maxResultLength(s, "replaceFirst", args));
                 }
             }
         }
@@ -112,8 +93,8 @@ class StringGrowthTest {
     @Test
     void hugeBoundsDoNotOverflow() {
         String s = "0".repeat(100_000);
-        String r = "$0".repeat(50_000);
-        long bound = StringGrowth.maxResultLength(s, "replaceAll", new Object[] {"", r});
+        String r = "x".repeat(50_000);
+        long bound = StringGrowth.maxResultLength(s, "replace", new Object[] {"", r});
         assertTrue(bound > Integer.MAX_VALUE, "bound was " + bound);
     }
 

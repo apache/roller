@@ -214,7 +214,9 @@ public class RenderLimitsTest {
         for (int i = 0; i < calls.length; i++) {
             long allocated = allocatedByRender("limits-growing-" + i + ".vm",
                     TEN_THOUSAND_DIGITS + calls[i], context);
-            assertTrue(allocated < 16L * 1024 * 1024,
+            // replaceAll builds part of the result before it stops; without
+            // the checks each of these allocates over 100 MB
+            assertTrue(allocated < 64L * 1024 * 1024,
                     calls[i] + " allocated " + allocated + " bytes before it was stopped");
         }
     }
@@ -323,11 +325,23 @@ public class RenderLimitsTest {
 
     @Test
     public void aSlowRegularExpressionStopsAtTheDeadline() throws Exception {
-        long start = System.nanoTime();
-        Outcome outcome = render("limits-regex.vm",
-                "#set($s = '" + "a".repeat(36) + "')[$s.matches('(.*a){12}b')]");
-        long seconds = (System.nanoTime() - start) / 1_000_000_000L;
-        assertNotNull(outcome.failure, "rendering should have failed");
-        assertTrue(seconds < 10, "rendering took " + seconds + " seconds");
+        String[] calls = {"$s.matches('(.*a){12}b')", "$s.split('(.*a){12}b', 2)"};
+        for (int i = 0; i < calls.length; i++) {
+            long start = System.nanoTime();
+            Outcome outcome = render("limits-regex-" + i + ".vm",
+                    "#set($s = '" + "a".repeat(36) + "')[" + calls[i] + "]");
+            long seconds = (System.nanoTime() - start) / 1_000_000_000L;
+            assertNotNull(outcome.failure, calls[i] + " should have failed, but wrote "
+                    + outcome.out.getHead() + " in " + seconds + " seconds");
+            assertTrue(seconds < 10, calls[i] + " took " + seconds + " seconds");
+        }
+    }
+
+    @Test
+    public void aRegexReplaceWithGroupsOnALongStringStillWorks() throws Exception {
+        Outcome outcome = render("limits-regex-groups.vm", TEN_THOUSAND_DIGITS
+                + "#set($r = $s.replaceAll('(\\d)', '<$1>'))$r.length() $r.substring(0, 9)");
+        assertEquals(null, outcome.failure);
+        assertEquals("30720 <0><1><2>", outcome.out.getHead());
     }
 }

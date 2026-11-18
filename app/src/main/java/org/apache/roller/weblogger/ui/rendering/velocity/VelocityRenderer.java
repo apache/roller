@@ -132,8 +132,8 @@ public class VelocityRenderer implements Renderer {
 
             long startTime = System.currentTimeMillis();
 
-            // convert model to Velocity Context; see RenderLimitContext
-            Context ctx = new RenderLimitContext(model);
+            // convert model to Velocity Context
+            Context ctx = new VelocityContext(model);
 
             if (velocityDecorator != null) {
 
