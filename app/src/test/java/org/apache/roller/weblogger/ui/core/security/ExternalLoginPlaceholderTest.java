@@ -32,8 +32,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -99,6 +101,72 @@ class ExternalLoginPlaceholderTest {
 
         assertThrows(AuthenticationException.class, () -> provider().authenticate(
                 UsernamePasswordAuthenticationToken.unauthenticated(userName, "<externalAuth>")));
+    }
+
+    @Test
+    void anOrdinaryPlaintextPasswordStillMatches() throws Exception {
+        setProperty("authentication.method", "db");
+        setProperty("passwds.encryption.lazyUpgradeFrom", "plaintext");
+        // as older Roller versions stored passwords
+        User user = TestUtils.setupUser("plainuser");
+        userName = user.getUserName();
+        user.setPassword("an ordinary password");
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        assertTrue(provider().authenticate(UsernamePasswordAuthenticationToken.unauthenticated(
+                userName, "an ordinary password")).isAuthenticated());
+        assertTrue(RollerPasswordEncoders.create().matches("an ordinary password", "an ordinary password"));
+    }
+
+    @Test
+    void theDefaultPlaceholderIsNotAPasswordUnderAnotherConfiguredValue() throws Exception {
+        setProperty("authentication.method", "db");
+        setProperty("passwds.encryption.lazyUpgradeFrom", "plaintext");
+        setProperty("users.passwords.externalAuthValue", "<ldap>");
+        // stored before the setting was changed
+        User user = TestUtils.setupUser("olduser");
+        userName = user.getUserName();
+        user.setPassword("<externalAuth>");
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        assertThrows(AuthenticationException.class, () -> provider().authenticate(
+                UsernamePasswordAuthenticationToken.unauthenticated(userName, "<externalAuth>")));
+        assertFalse(RollerPasswordEncoders.create().matches("<ldap>", "<ldap>"));
+    }
+
+    @Test
+    void anEmptyConfiguredPlaceholderIsNotAPassword() throws Exception {
+        setProperty("authentication.method", "db");
+        setProperty("passwds.encryption.lazyUpgradeFrom", "plaintext");
+        setProperty("users.passwords.externalAuthValue", "");
+        // as CustomUserRegistry stored an empty placeholder before
+        User user = TestUtils.setupUser("emptyuser");
+        userName = user.getUserName();
+        user.setPassword("");
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        assertThrows(AuthenticationException.class, () -> provider().authenticate(
+                UsernamePasswordAuthenticationToken.unauthenticated(userName, "")));
+        assertFalse(RollerPasswordEncoders.create().matches("", ""));
+    }
+
+    @Test
+    void anEmptyConfiguredPlaceholderIsStoredAsTheDefault() throws Exception {
+        setProperty("authentication.method", "ldap");
+        setProperty("users.passwords.externalAuthValue", "");
+        SecurityContextHolder.getContext().setAuthentication(UsernamePasswordAuthenticationToken.authenticated(
+                org.springframework.security.core.userdetails.User.withUsername("ldapuser")
+                        .password("unused").authorities("editor").build(),
+                null, java.util.List.of()));
+        try {
+            User user = CustomUserRegistry.getUserDetailsFromAuthentication(null);
+            assertEquals("<externalAuth>", user.getPassword());
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
     }
 
     @Test

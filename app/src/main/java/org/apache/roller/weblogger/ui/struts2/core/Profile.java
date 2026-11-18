@@ -29,6 +29,7 @@ import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
+import org.apache.roller.weblogger.ui.core.security.RollerPasswordEncoders;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 
@@ -135,6 +136,10 @@ public class Profile extends UIAction {
     }
 
     public void myValidate() {
+        // the external-login marker never matches at login
+        if (RollerPasswordEncoders.isExternalLoginMarker(getBean().getPasswordText())) {
+            addError("error.add.user.reservedPassword");
+        }
         if (StringUtils.isEmpty(getBean().getOpenIdUrl())) {
             // check that passwords match if they were specified (w/StringUtils.equals, null == null)
             if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
