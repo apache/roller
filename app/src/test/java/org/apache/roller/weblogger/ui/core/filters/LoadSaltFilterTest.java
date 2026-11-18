@@ -114,7 +114,7 @@ public class LoadSaltFilterTest {
         try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
             mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
             for (String path : new String[] {"/roller-ui/styles/roller.css", "/roller-ui/scripts/date-fields.js",
-                    "/roller-ui/images/feather.svg"}) {
+                    "/roller-ui/images/feather.svg", "/roller-ui/theme/tan/menutab-sel.gif"}) {
                 when(request.getServletPath()).thenReturn(path);
                 filter.doFilter(request, response, chain);
             }
@@ -123,7 +123,7 @@ public class LoadSaltFilterTest {
             verify(request, never()).getSession();
             verify(request, never()).setAttribute(eq("salt"), anyString());
             verify(saltCache, never()).put(anyString(), anyString());
-            verify(chain, times(3)).doFilter(request, response);
+            verify(chain, times(4)).doFilter(request, response);
         }
     }
 
