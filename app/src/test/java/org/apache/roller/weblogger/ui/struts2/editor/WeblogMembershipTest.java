@@ -18,7 +18,15 @@
  */
 package org.apache.roller.weblogger.ui.struts2.editor;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.UserManager;
@@ -32,6 +40,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -132,6 +141,20 @@ class WeblogMembershipTest {
     }
 
     @Test
+    void disabledAdministratorDoesNotCountAsAnotherAdministrator() throws Exception {
+        users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.ADMIN));
+        User member = user(memberName);
+        member.setEnabled(Boolean.FALSE);
+        users().saveUser(member);
+        TestUtils.endSession(true);
+
+        MemberResign action = resign(ownerName);
+
+        assertTrue(action.hasActionErrors());
+        assertNotNull(permission(ownerName), "a disabled administrator can't manage the weblog");
+    }
+
+    @Test
     void administratorCanResignWhenAnotherRemains() throws Exception {
         users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.ADMIN));
         TestUtils.endSession(true);
@@ -152,6 +175,112 @@ class WeblogMembershipTest {
         assertFalse(action.hasActionErrors());
         assertNull(permission(memberName));
         assertNotNull(permission(ownerName));
+    }
+
+    @Test
+    void membershipUpdateRefusesToRemoveTheLastAdministrator() throws Exception {
+        users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.POST));
+        TestUtils.endSession(true);
+
+        assertFalse(users().updateWeblogMembership(weblog(),
+                Collections.singletonMap(ownerName, null)));
+        TestUtils.endSession(true);
+        assertNotNull(permission(ownerName));
+
+        assertFalse(users().updateWeblogMembership(weblog(),
+                Map.of(ownerName, List.of(WeblogPermission.POST))), "downgrading the last administrator");
+        TestUtils.endSession(true);
+        assertTrue(permission(ownerName).hasAction(WeblogPermission.ADMIN));
+    }
+
+    @Test
+    void membershipUpdateAppliesChangesThatKeepAnAdministrator() throws Exception {
+        users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.POST));
+        TestUtils.endSession(true);
+
+        // promote the member and remove the owner in one update
+        Map<String, List<String>> changes = new java.util.HashMap<>();
+        changes.put(memberName, List.of(WeblogPermission.ADMIN));
+        changes.put(ownerName, null);
+        assertTrue(users().updateWeblogMembership(weblog(), changes));
+        TestUtils.endSession(true);
+
+        assertNull(permission(ownerName));
+        assertTrue(permission(memberName).hasAction(WeblogPermission.ADMIN));
+    }
+
+    @Test
+    void membersPageChangesMembershipThroughTheSharedUpdate() throws Exception {
+        users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.POST));
+        TestUtils.endSession(true);
+
+        Members action = spy(new Members());
+        stubText(action);
+        action.setAuthenticatedUser(user(ownerName));
+        action.setActionWeblog(weblog());
+        doAnswer(call -> null).when(action).getParameter(anyString());
+        doAnswer(call -> WeblogPermission.ADMIN).when(action).getParameter("perm-" + user(ownerName).getId());
+        doAnswer(call -> WeblogPermission.ADMIN).when(action).getParameter("perm-" + user(memberName).getId());
+        action.save();
+        TestUtils.endSession(true);
+
+        assertFalse(action.hasActionErrors());
+        assertTrue(permission(memberName).hasAction(WeblogPermission.ADMIN));
+        assertTrue(permission(ownerName).hasAction(WeblogPermission.ADMIN));
+    }
+
+    @Test
+    void concurrentResignationsLeaveAnAdministrator() throws Exception {
+        for (int round = 0; round < 5; round++) {
+            for (String name : List.of(ownerName, memberName)) {
+                if (permission(name) != null) {
+                    users().revokeWeblogPermission(weblog(), user(name), WeblogPermission.ALL_ACTIONS);
+                }
+            }
+            TestUtils.endSession(true);
+            users().grantWeblogPermission(weblog(), user(ownerName), List.of(WeblogPermission.ADMIN));
+            users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.ADMIN));
+            TestUtils.endSession(true);
+
+            CyclicBarrier start = new CyclicBarrier(2);
+            ExecutorService pool = Executors.newFixedThreadPool(2);
+            try {
+                List<Future<Boolean>> results = new ArrayList<>();
+                for (String name : List.of(ownerName, memberName)) {
+                    results.add(pool.submit(() -> {
+                        try {
+                            MemberResign action = spy(new MemberResign());
+                            stubText(action);
+                            action.setAuthenticatedUser(user(name));
+                            action.setActionWeblog(weblog());
+                            action.setWeblog(handle);
+                            start.await(10, TimeUnit.SECONDS);
+                            action.resign();
+                            return !action.hasActionErrors();
+                        } finally {
+                            WebloggerFactory.getWeblogger().release();
+                        }
+                    }));
+                }
+                int resigned = 0;
+                for (Future<Boolean> result : results) {
+                    if (result.get(60, TimeUnit.SECONDS)) {
+                        resigned++;
+                    }
+                }
+                assertEquals(1, resigned, "only one of the two administrators can resign");
+            } finally {
+                pool.shutdownNow();
+            }
+            TestUtils.endSession(true);
+            int admins = 0;
+            for (WeblogPermission perm : users().getWeblogPermissions(weblog())) {
+                if (perm.hasAction(WeblogPermission.ADMIN)) {
+                    admins++;
+                }
+            }
+            assertEquals(1, admins, "the weblog keeps an administrator");
+        }
     }
 
     private MainMenu decline(String name) throws Exception {

@@ -20,7 +20,9 @@
 package org.apache.roller.weblogger.ui.struts2.editor;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
@@ -120,31 +122,36 @@ public class Members extends UIAction implements ParametersAware {
                 error = true;
             }
             // one iteration for each line (user) in the members table
+            Map<String, List<String>> changes = new LinkedHashMap<>();
             for (WeblogPermission perms : permsList) {
 
                 String sval = getParameter("perm-" + perms.getUser().getId());
                 if (sval != null) {
                     if (!error && !perms.hasAction(sval)) {
                         if ("-1".equals(sval)) {
-                             userMgr.revokeWeblogPermission(
-                                    perms.getWeblog(), perms.getUser(), WeblogPermission.ALL_ACTIONS);
+                            changes.put(perms.getUserName(), null);
                             removed++;
                         } else {
-                            userMgr.revokeWeblogPermission(
-                                    perms.getWeblog(), perms.getUser(), WeblogPermission.ALL_ACTIONS);
-                            userMgr.grantWeblogPermission(
-                                    perms.getWeblog(), perms.getUser(), Utilities.stringToStringList(sval, ","));
+                            changes.put(perms.getUserName(), Utilities.stringToStringList(sval, ","));
                             changed++;
                         }
                     }
                 }
             }
-            
-            if (removed > 0 || changed > 0) {
-                log.debug("Weblog permissions updated, flushing changes");                
-                WebloggerFactory.getWeblogger().flush();
+
+            // the admin check is repeated with the changes, as one operation,
+            // so concurrent membership changes can't leave no admin
+            if (!changes.isEmpty()) {
+                if (userMgr.updateWeblogMembership(getActionWeblog(), changes)) {
+                    log.debug("Weblog permissions updated, flushing changes");
+                    WebloggerFactory.getWeblogger().flush();
+                } else {
+                    addError("memberPermissions.oneAdminRequired");
+                    removed = 0;
+                    changed = 0;
+                }
             }
-            
+
         } catch (Exception ex) {
             log.error("Error saving permissions on weblog - "+getActionWeblog().getHandle(), ex);
             addError("memberPermissions.saveError");

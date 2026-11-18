@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -565,6 +567,59 @@ public class JPAUserManagerImpl implements UserManager {
                 WeblogPermission.class);
         q.setParameter(1, weblog.getHandle());
         return q.getResultList();
+    }
+
+    @Override
+    public boolean updateWeblogMembership(Weblog weblog, Map<String, List<String>> changes)
+            throws WebloggerException {
+
+        // lock the weblog's row so membership updates for it run one at a time
+        EntityManager em = strategy.getEntityManager(true);
+        Weblog locked = em.find(Weblog.class, weblog.getId(), LockModeType.PESSIMISTIC_WRITE);
+        if (locked == null) {
+            throw new WebloggerException("ERROR: weblog not found");
+        }
+
+        // read the memberships after taking the lock, not from the cache
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByWeblogIdIncludingPending",
+                WeblogPermission.class);
+        q.setParameter(1, locked.getHandle());
+        q.setHint("eclipselink.refresh", "true");
+        List<WeblogPermission> perms = q.getResultList();
+
+        boolean adminBefore = false;
+        boolean adminAfter = false;
+        for (WeblogPermission perm : perms) {
+            if (perm.isPending()) {
+                continue;
+            }
+            // a disabled user can't manage the weblog
+            if (perm.getUser() == null || !Boolean.TRUE.equals(perm.getUser().getEnabled())) {
+                continue;
+            }
+            boolean admin = perm.hasAction(WeblogPermission.ADMIN);
+            adminBefore |= admin;
+            if (changes.containsKey(perm.getUserName())) {
+                List<String> actions = changes.get(perm.getUserName());
+                admin = actions != null && actions.contains(WeblogPermission.ADMIN);
+            }
+            adminAfter |= admin;
+        }
+        if (adminBefore && !adminAfter) {
+            return false;
+        }
+
+        for (WeblogPermission perm : perms) {
+            if (!changes.containsKey(perm.getUserName())) {
+                continue;
+            }
+            List<String> actions = changes.get(perm.getUserName());
+            revokeWeblogPermission(locked, perm.getUser(), WeblogPermission.ALL_ACTIONS);
+            if (actions != null) {
+                grantWeblogPermission(locked, perm.getUser(), actions);
+            }
+        }
+        return true;
     }
 
     @Override
