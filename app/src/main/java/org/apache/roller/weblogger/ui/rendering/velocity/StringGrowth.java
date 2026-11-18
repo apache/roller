@@ -125,16 +125,9 @@ final class StringGrowth {
                 }
                 return len;
             case "replaceAll":
-            case "replaceFirst": {
-                // each match adds the replacement, and each group reference
-                // in it ($1, ${name}) can add up to the whole receiver; an
-                // empty pattern matches len + 1 times
-                long repl = length(a.length > 1 ? a[1] : null);
-                long refs = count(a.length > 1 ? a[1] : null, '$');
-                long perMatch = add(repl, multiply(refs, len));
-                long matches = "replaceAll".equals(methodName) ? len + 1 : 1;
-                return add(len, multiply(matches, perMatch));
-            }
+            case "replaceFirst":
+                // DeadlineRegex runs these and checks the limit as it goes
+                return 0;
             case "concat":
                 return add(len, length(a.length > 0 ? a[0] : null));
             case "toUpperCase":
@@ -198,20 +191,6 @@ final class StringGrowth {
             return ((char[]) value).length;
         }
         return value == null ? 0 : SCALAR_LENGTH;
-    }
-
-    private static long count(Object value, char c) {
-        if (!(value instanceof CharSequence)) {
-            return 0;
-        }
-        CharSequence cs = (CharSequence) value;
-        long n = 0;
-        for (int i = 0; i < cs.length(); i++) {
-            if (cs.charAt(i) == c) {
-                n++;
-            }
-        }
-        return n;
     }
 
     private static long add(long a, long b) {

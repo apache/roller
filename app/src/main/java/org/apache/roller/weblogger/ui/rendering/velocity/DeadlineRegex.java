@@ -19,15 +19,17 @@
 
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Runs the String methods that take a regular expression (matches,
  * replaceAll, replaceFirst and split) over text that checks the render
  * deadline as the expression reads it, so a slow expression stops with the
- * render instead of holding the thread. Each gives the same result as the
- * String method; see String's documentation for the Pattern call each one is
- * equivalent to.
+ * render instead of holding the thread, and replaceAll and replaceFirst stop
+ * at the output limit as they build the result. Each gives the same result
+ * as the String method; see String's documentation for the Pattern call each
+ * one is equivalent to.
  */
 final class DeadlineRegex {
 
@@ -37,34 +39,80 @@ final class DeadlineRegex {
     private DeadlineRegex() {
     }
 
+    /**
+     * @return the result of the call, or NOT_HANDLED when it isn't one of
+     *         these methods or its arguments don't fit them
+     */
     static Object invoke(String s, String methodName, Object[] args) {
-        if (args == null || args.length == 0 || !(args[0] instanceof String)) {
+        if (args == null || args.length == 0 || args.length > 2 || args[0] == null) {
             return NOT_HANDLED;
         }
-        String regex = (String) args[0];
+        // Velocity converts arguments to the method's parameter types after
+        // this sees them, so convert them the same way here
+        String regex = args[0].toString();
+        Object second = args.length > 1 ? args[1] : null;
         CharSequence text = new DeadlineText(s);
         switch (methodName) {
             case "matches":
                 return args.length == 1 ? Pattern.compile(regex).matcher(text).matches()
                         : NOT_HANDLED;
             case "replaceAll":
-                return args.length == 2 && args[1] instanceof String
-                        ? Pattern.compile(regex).matcher(text).replaceAll((String) args[1])
-                        : NOT_HANDLED;
             case "replaceFirst":
-                return args.length == 2 && args[1] instanceof String
-                        ? Pattern.compile(regex).matcher(text).replaceFirst((String) args[1])
-                        : NOT_HANDLED;
+                return second == null ? NOT_HANDLED : replace(Pattern.compile(regex).matcher(text),
+                        second.toString(), "replaceAll".equals(methodName));
             case "split":
                 if (args.length == 1) {
                     return Pattern.compile(regex).split(text, 0);
                 }
-                return args.length == 2 && args[1] instanceof Integer
-                        ? Pattern.compile(regex).split(text, (Integer) args[1])
-                        : NOT_HANDLED;
+                Integer limit = toInt(second);
+                return limit == null ? NOT_HANDLED : Pattern.compile(regex).split(text, limit);
             default:
                 return NOT_HANDLED;
         }
+    }
+
+    private static Integer toInt(Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).intValue();
+        }
+        if (value instanceof String) {
+            try {
+                return Integer.valueOf(((String) value).trim());
+            } catch (NumberFormatException ex) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Matcher.replaceAll and replaceFirst, checking before each replacement
+     * that it can't take the result past the output limit: a replacement adds
+     * at most its own length plus, for each group reference ($1, ${name}) in
+     * it, the longest group of that match.
+     */
+    private static String replace(Matcher m, String replacement, boolean all) {
+        long references = replacement.chars().filter(c -> c == '$').count();
+        StringBuilder out = new StringBuilder();
+        int previousEnd = 0;
+        while (m.find()) {
+            long longestGroup = 0;
+            for (int g = 0; g <= m.groupCount(); g++) {
+                if (m.start(g) >= 0) {
+                    longestGroup = Math.max(longestGroup, m.end(g) - m.start(g));
+                }
+            }
+            RenderSession.checkLength((long) out.length() + (m.start() - previousEnd)
+                    + replacement.length() + references * longestGroup);
+            m.appendReplacement(out, replacement);
+            previousEnd = m.end();
+            if (!all) {
+                break;
+            }
+        }
+        m.appendTail(out);
+        RenderSession.checkLength(out.length());
+        return out.toString();
     }
 
     /** A string that checks the deadline every few thousand character reads. */
