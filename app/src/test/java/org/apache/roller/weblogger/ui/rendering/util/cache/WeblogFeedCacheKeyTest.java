@@ -44,6 +44,18 @@ public class WeblogFeedCacheKeyTest {
         return request;
     }
 
+    private static WeblogFeedRequest search(String term, int page) {
+        WeblogFeedRequest request = request(page);
+        request.setTerm(term);
+        return request;
+    }
+
+    private static WeblogFeedRequest tagged(int page, String... tags) {
+        WeblogFeedRequest request = request(page);
+        request.setTags(List.of(tags));
+        return request;
+    }
+
     private static final List<Function<WeblogFeedRequest, String>> CACHES = List.of(
             request -> WeblogFeedCache.getInstance().generateKey(request),
             request -> SiteWideCache.getInstance().generateKey(request));
@@ -62,5 +74,38 @@ public class WeblogFeedCacheKeyTest {
                 WeblogFeedCache.getInstance().generateKey(request(0)));
         assertEquals("cache.sitewide:feed/blog/entries/atom",
                 SiteWideCache.getInstance().generateKey(request(0)));
+    }
+
+    @Test
+    public void searchTermsCannotLookLikeOtherKeyParts() {
+        for (Function<WeblogFeedRequest, String> key : CACHES) {
+            assertNotEquals(key.apply(search("foo/page=2", 0)),
+                    key.apply(search("foo", 2)));
+            // ?q=java%2Fpage%3D3 is decoded to the term "java/page=3"
+            assertNotEquals(key.apply(search("java/page=3", 0)),
+                    key.apply(search("java", 3)));
+            assertNotEquals(key.apply(search("foo/excerpts", 0)),
+                    excerpts(key, search("foo", 0)));
+            WeblogFeedRequest tagged = search("foo", 0);
+            tagged.setTags(List.of("x"));
+            assertNotEquals(key.apply(search("foo/tags/x", 0)),
+                    key.apply(tagged));
+        }
+    }
+
+    @Test
+    public void tagsCannotLookLikeOtherKeyParts() {
+        for (Function<WeblogFeedRequest, String> key : CACHES) {
+            assertNotEquals(key.apply(tagged(0, "java/page=2")),
+                    key.apply(tagged(2, "java")));
+            assertNotEquals(key.apply(tagged(0, "a+b")),
+                    key.apply(tagged(0, "a", "b")));
+        }
+    }
+
+    private static String excerpts(Function<WeblogFeedRequest, String> key,
+            WeblogFeedRequest request) {
+        request.setExcerpts(true);
+        return key.apply(request);
     }
 }

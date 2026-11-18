@@ -21,7 +21,6 @@ package org.apache.roller.weblogger.ui.rendering.util.cache;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -171,8 +170,10 @@ public final class WeblogFeedCache {
         key.append('/').append(feedRequest.getType());
         key.append('/').append(feedRequest.getFormat());
         
+        // the search term and tag names are URL-encoded so that a "/" in them
+        // can't be mistaken for the separator before another key part
         if (feedRequest.getTerm() != null) {
-            key.append("/search/").append(feedRequest.getTerm());
+            key.append("/search/").append(URLEncoder.encode(feedRequest.getTerm(), StandardCharsets.UTF_8));
         }
         
         if(feedRequest.getWeblogCategoryName() != null) {
@@ -181,8 +182,9 @@ public final class WeblogFeedCache {
         }
         
         if(feedRequest.getTags() != null && !feedRequest.getTags().isEmpty()) {
-            String[] tags = feedRequest.getTags().toArray(new String[0]);
-            Arrays.sort(tags);
+            String[] tags = feedRequest.getTags().stream()
+                    .map(tag -> URLEncoder.encode(tag, StandardCharsets.UTF_8))
+                    .sorted().toArray(String[]::new);
             key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
         }        
         
