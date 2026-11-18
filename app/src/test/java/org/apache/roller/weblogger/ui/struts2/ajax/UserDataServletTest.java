@@ -72,6 +72,17 @@ public class UserDataServletTest {
     }
 
     @Test
+    public void testResponseIsPlainText() throws Exception {
+        User caller = mock(User.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter(), true));
+
+        search(caller, userManager(), "true", "50", response);
+
+        verify(response).setContentType("text/plain; charset=utf-8");
+    }
+
+    @Test
     public void testNonAdminGetsEnabledUsersOnePageAtATime() throws Exception {
         User caller = mock(User.class);
         when(caller.hasGlobalPermission("admin")).thenReturn(false);
@@ -110,6 +121,15 @@ public class UserDataServletTest {
 
     private static String search(User caller, UserManager users, String enabled, String length)
             throws Exception {
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        StringWriter body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body, true));
+        search(caller, users, enabled, length, response);
+        return body.toString();
+    }
+
+    private static void search(User caller, UserManager users, String enabled, String length,
+            HttpServletResponse response) throws Exception {
         Weblogger weblogger = mock(Weblogger.class);
         when(weblogger.getUserManager()).thenReturn(users);
 
@@ -117,9 +137,6 @@ public class UserDataServletTest {
         when(request.getParameter("startsWith")).thenReturn("ali");
         when(request.getParameter("enabled")).thenReturn(enabled);
         when(request.getParameter("length")).thenReturn(length);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        StringWriter body = new StringWriter();
-        when(response.getWriter()).thenReturn(new PrintWriter(body, true));
 
         try (MockedStatic<WebloggerFactory> factory = mockStatic(WebloggerFactory.class);
              MockedConstruction<WeblogRequest> weblogRequests = mockConstruction(WeblogRequest.class,
@@ -127,6 +144,5 @@ public class UserDataServletTest {
             factory.when(WebloggerFactory::getWeblogger).thenReturn(weblogger);
             new UserDataServlet().doGet(request, response);
         }
-        return body.toString();
     }
 }

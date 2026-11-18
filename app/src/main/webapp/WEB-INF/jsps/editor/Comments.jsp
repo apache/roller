@@ -484,8 +484,8 @@
         $.ajax({
             type: "GET",
             url: '<%= request.getContextPath()%>/roller-ui/authoring/commentdata?id=' + id,
-            success: function (data) {
-                var cdata = eval("(" + data + ")");
+            dataType: "json",
+            success: function (cdata) {
                 $("#comment-" + cdata.id).html(cdata.content);
                 $("#link-" + id).detach();
                 if (callback) callback(id);
