@@ -192,6 +192,13 @@
 - **The OpenID Connect identity can't be changed from the profile or
   registration forms**; only Roller's OpenID Connect login sets it (#322).
 - **Weblog pages ignore a `skipCache` query parameter** (#313).
+- **Set `site.absoluteurl`.** Roller no longer takes the site's URL from the
+  first request after a start. New installs save it during setup (the
+  installer or the first administrator's registration). On a site where it's
+  still empty, each request's own URL is used for its links and emails, pages
+  and feeds built that way aren't cached, and background tasks such as the
+  planet sync get no URL, so set it in Server Administration. Links now keep
+  the request's https scheme and port (#320).
 - **The Design pages follow "Allow custom themes".** While
   `themes.customtheme.allowed` is off (the default), the theme, stylesheet and
   template pages answer as unavailable, as the hidden Design menu already
