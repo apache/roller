@@ -4,6 +4,17 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Set "Absolute URL to site" (`site.absoluteurl`) after upgrading.**
+  Roller no longer takes the site's URL from the first request after a
+  start. If it's empty, the first administrator to open the Roller UI saves
+  it from that request, so check it under Server Administration >
+  Configuration and correct it if your site is reached through a proxy or
+  more than one host name. Until it's set, each request's own URL is used for
+  its links and emails, cached pages are kept per host name, and weblog
+  update pings are skipped. Links now keep the request's https scheme and
+  port. `WebloggerRuntimeConfig.setAbsoluteContextURL` and
+  `InitFilter.getAbsoluteUrl` are removed (#337).
+
 - **Weblog templates have render limits.** A page stops rendering, with a
   logged error, once it writes more than `rendering.maxOutputChars` (10 MB)
   or runs longer than `rendering.maxRenderSeconds` (30 seconds); `#foreach`
