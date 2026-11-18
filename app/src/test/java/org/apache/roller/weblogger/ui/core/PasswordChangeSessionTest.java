@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -294,6 +295,49 @@ class PasswordChangeSessionTest {
         throw new NoSuchFieldException(name);
     }
 
+    @Test
+    void passwordChangeEndsASessionThatWasPassivated() throws Exception {
+        Browser a = new Browser(userName);
+        Browser b = new Browser(userName);
+        a.request();
+        b.request();
+        TestUtils.endSession(true);
+
+        // the container saves b's session and restores it later, which drops
+        // the Roller session but keeps the login
+        b.passivate();
+
+        a.request();
+        Profile profile = spy(new Profile());
+        stubText(profile);
+        User self = user(userName);
+        ProfileBean bean = new ProfileBean();
+        bean.copyFrom(self);
+        bean.setPasswordText("changed-password");
+        bean.setPasswordConfirm("changed-password");
+        profile.setBean(bean);
+        profile.setAuthenticatedUser(self);
+        profile.setServletRequest(a.httpRequest);
+        assertEquals(Profile.SUCCESS, profile.save());
+        TestUtils.endSession(true);
+
+        b.assertLoggedOut();
+        // the session that changed the password keeps working after a restore
+        a.passivate();
+        a.assertLoggedIn(userName);
+    }
+
+    @Test
+    void passivatedSessionStaysLoggedInWithoutAPasswordChange() throws Exception {
+        Browser b = new Browser(userName);
+        b.request();
+        TestUtils.endSession(true);
+
+        b.passivate();
+
+        b.assertLoggedIn(userName);
+    }
+
     private void saveAsAdmin(Browser admin, java.util.function.Consumer<CreateUserBean> change)
             throws Exception {
         admin.request();
@@ -377,6 +421,11 @@ class PasswordChangeSessionTest {
             }).when(s).setAttribute(anyString(), any());
             doAnswer(call -> {
                 checkValid(valid);
+                attributes.remove(call.<String>getArgument(0));
+                return null;
+            }).when(s).removeAttribute(anyString());
+            doAnswer(call -> {
+                checkValid(valid);
                 valid[0] = false;
                 attributes.clear();
                 ended = true;
@@ -392,6 +441,11 @@ class PasswordChangeSessionTest {
             if (!valid[0]) {
                 throw new IllegalStateException("session invalidated");
             }
+        }
+
+        /** The container saves this session and restores it later. */
+        void passivate() {
+            new RollerSession().sessionWillPassivate(new HttpSessionEvent(session));
         }
 
         RollerSession request() {
