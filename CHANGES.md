@@ -4,15 +4,16 @@
 
 ### Behaviour changes worth reading before upgrading
 
-- **Set "Absolute URL to site" (`site.absoluteurl`) after upgrading.**
+- **Check "Absolute URL to site" (`site.absoluteurl`) after upgrading.**
   Roller no longer takes the site's URL from the first request after a
-  start. If it's empty, the first administrator to open the Roller UI saves
-  it from that request, so check it under Server Administration >
-  Configuration and correct it if your site is reached through a proxy or
-  more than one host name. Until it's set, each request's own URL is used for
-  its links and emails, cached pages are kept per host name, and weblog
-  update pings are skipped. Links now keep the request's https scheme and
-  port. `WebloggerRuntimeConfig.setAbsoluteContextURL` and
+  start. New installs save it during setup, and on an upgraded site where
+  it's empty, the first administrator to open the Roller UI saves it from
+  that request. Check it under Server Admin > Configuration, and correct it if
+  the site is reached through a proxy or more than one host name. While it's
+  empty, each request's own URL is used for its links, cached pages are kept
+  per host name, and background tasks such as weblog update pings and the
+  planet sync are skipped or get no URL. Links keep the request's https scheme
+  and port. `WebloggerRuntimeConfig.setAbsoluteContextURL` and
   `InitFilter.getAbsoluteUrl` are removed (#337).
 
 - **Weblog templates have render limits.** A page stops rendering, with a
@@ -20,7 +21,8 @@
   or runs longer than `rendering.maxRenderSeconds` (30 seconds); `#foreach`
   stops at 100,000 passes, and `String.repeat` isn't available. `#parse` and
   `#include` load only the weblog's own templates, and macros defined inline
-  in a template are local to it. Library macros stay global. Error pages no
+  in a template stay with the page that defines them and the templates it
+  includes. Library macros stay global. Error pages no
   longer show template ids (#335).
 
 - **Entries with scripts or embeds open as HTML.** If an entry contains
@@ -72,14 +74,18 @@
   session that made the change stays logged in (#333).
 - **Later pages of a feed are cached separately.** A feed's `?page=N` now has
   its own cache entry, and page numbers are kept between 0 and 10,000 (#325).
-- **Media files are served only at their own weblog's address** (#329).
 - **"nofollow" is added to links that need it.** `addNofollow` only touched
   links that already had `rel="nofollow"` (#330).
 - **Tags of a scheduled entry are counted once, when it goes live** (#328).
 - **A weblog's only administrator can't resign from it**, and declining an
   invitation only removes a pending invitation (#334).
-- **The external-login placeholder isn't accepted as a password** (#306).
-- **Login requests release their database session** (#307).
+- **New passwords can't be the external-login placeholder.** Registration,
+  the profile page and user administration refuse
+  `users.passwords.externalAuthValue` (by default `<externalAuth>`) as a
+  password, and it never works as one. An administrator can set a new password
+  for an account that used it (#306).
+- **The LDAP comment authenticator escapes the commenter's user name** when
+  it builds the bind name (#334).
 - **Roller UI stylesheets, scripts and images don't start a session** (#332).
 - **Requested tags are checked and encoded on every weblog page.** A custom
   page given `tags=` together with an entry now answers 404 for tags the
