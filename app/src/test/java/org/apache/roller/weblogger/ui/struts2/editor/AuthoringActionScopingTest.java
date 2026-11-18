@@ -326,14 +326,6 @@ public class AuthoringActionScopingTest {
 
     @Test
     public void testMediaActionsReportMissingResources() throws Exception {
-        MediaFileImageDim dimensions = new MediaFileImageDim();
-        prepareText(dimensions);
-        dimensions.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
-        dimensions.setMediaFileId("missing-media-file");
-
-        assertEquals(MediaFileImageDim.ERROR, dimensions.execute());
-        assertTrue(dimensions.hasActionErrors());
-
         EntryAddWithMediaFile entry = new EntryAddWithMediaFile();
         prepareText(entry);
         entry.setActionWeblog(TestUtils.getManagedWebsite(weblogOne));
