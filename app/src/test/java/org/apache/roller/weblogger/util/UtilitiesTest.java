@@ -157,50 +157,59 @@ public class UtilitiesTest  {
     
     @Test
     public void testAddNoFollow() {
-        String test1 = "<p>this some text with a <a href=\"http://example.com\">link</a>";
-        String expect1 = "<p>this some text with a <a href=\"http://example.com\" rel=\"nofollow\">link</a>";
-        assertEquals(expect1, Utilities.addNofollow(test1));
-
-        String test2 = "<p>this some text with a <A href=\"http://example.com\">link</a>";
-        String expect2 = "<p>this some text with a <A href=\"http://example.com\" rel=\"nofollow\">link</a>";
-        assertEquals(expect2, Utilities.addNofollow(test2));
+        assertEquals("<p>this some text with a <a href=\"http://example.com\" rel=\"nofollow\">link</a></p>",
+                Utilities.addNofollow("<p>this some text with a <a href=\"http://example.com\">link</a>"));
+        assertEquals("<p>this some text with a <a href=\"http://example.com\" rel=\"nofollow\">link</a></p>",
+                Utilities.addNofollow("<p>this some text with a <A href=\"http://example.com\">link</a>"));
 
         // links that already have it are left alone
-        String test3 = "<a href=\"http://example.com\" rel=\"nofollow\">one</a> <a href=\"/two\">two</a>";
-        String expect3 = "<a href=\"http://example.com\" rel=\"nofollow\">one</a>"
-                + " <a href=\"/two\" rel=\"nofollow\">two</a>";
-        assertEquals(expect3, Utilities.addNofollow(test3));
+        assertEquals("<a href=\"http://example.com\" rel=\"nofollow\">one</a>"
+                + " <a href=\"/two\" rel=\"nofollow\">two</a>",
+                Utilities.addNofollow("<a href=\"http://example.com\" rel=\"nofollow\">one</a> <a href=\"/two\">two</a>"));
+        assertEquals("<a href=\"/x\" rel=\"Nofollow external\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" rel=\"Nofollow external\">x</a>"));
 
         // an existing rel gets nofollow added to its value
         assertEquals("<a href=\"/x\" rel=\"external nofollow\">x</a>",
                 Utilities.addNofollow("<a href=\"/x\" rel=\"external\">x</a>"));
-        assertEquals("<a href=\"/x\" REL='noopener nofollow'>x</a>",
+        assertEquals("<a href=\"/x\" rel=\"noopener nofollow\">x</a>",
                 Utilities.addNofollow("<a href=\"/x\" REL='noopener'>x</a>"));
         assertEquals("<a href=\"/x\" rel=\"external nofollow\">x</a>",
                 Utilities.addNofollow("<a href=\"/x\" rel=external>x</a>"));
-        assertEquals("<a href=\"/x\" rel=\"Nofollow external\">x</a>",
-                Utilities.addNofollow("<a href=\"/x\" rel=\"Nofollow external\">x</a>"));
+        assertEquals("<a href=\"/x\" rel=\"nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" rel>x</a>"));
+        // browsers use the first of two rel attributes, and so does jsoup
+        assertEquals("<a href=\"/x\" rel=\"noopener nofollow\">x</a>",
+                Utilities.addNofollow("<a href=\"/x\" rel=\"noopener\" rel=\"external\">x</a>"));
 
         // "rel=" inside another attribute's value isn't the link's rel
-        assertEquals("<a href=\"/x\" title='foo rel=external' rel=\"noopener nofollow\">x</a>",
+        assertEquals("<a href=\"/x\" title=\"foo rel=external\" rel=\"noopener nofollow\">x</a>",
                 Utilities.addNofollow("<a href=\"/x\" title='foo rel=external' rel=\"noopener\">x</a>"));
         assertEquals("<a href=\"/x\" title=\"a rel='b'\" rel=\"nofollow\">x</a>",
                 Utilities.addNofollow("<a href=\"/x\" title=\"a rel='b'\">x</a>"));
         assertEquals("<a href=\"/x\" data-rel=\"external\" rel=\"nofollow\">x</a>",
                 Utilities.addNofollow("<a href=\"/x\" data-rel=\"external\">x</a>"));
-        assertEquals("<a href=\"/x\"rel=\"external nofollow\">x</a>",
+        assertEquals("<a href=\"/x\" rel=\"external nofollow\">x</a>",
                 Utilities.addNofollow("<a href=\"/x\"rel=\"external\">x</a>"));
-        assertEquals("<a href=\"/x\" rel=\"nofollow\">x</a>",
-                Utilities.addNofollow("<a href=\"/x\" rel>x</a>"));
 
         // a ">" inside a quoted attribute value doesn't end the tag
-        assertEquals("<a href=\"/x\" title=\"a > b\" rel=\"nofollow\">x</a>",
+        assertEquals("<a href=\"/x\" title=\"a &gt; b\" rel=\"nofollow\">x</a>",
                 Utilities.addNofollow("<a href=\"/x\" title=\"a > b\">x</a>"));
-        assertEquals("<a href='/x?a>b' rel=\"nofollow\">x</a>",
+        assertEquals("<a href=\"/x?a&gt;b\" rel=\"nofollow\">x</a>",
                 Utilities.addNofollow("<a href='/x?a>b'>x</a>"));
 
+        // href doesn't have to come first, and links without one are left alone
+        assertEquals("<a title=\"x\" href=\"/y\" rel=\"nofollow\">y</a>",
+                Utilities.addNofollow("<a title=x href=/y>y</a>"));
+        assertEquals("<a name=\"top\">t</a>", Utilities.addNofollow("<a name=\"top\">t</a>"));
+
+        // escaped text stays escaped
+        assertEquals("&lt;script&gt;alert(1)&lt;/script&gt; <a href=\"/x\" rel=\"nofollow\">x</a> &amp; &nbsp;",
+                Utilities.addNofollow("&lt;script&gt;alert(1)&lt;/script&gt; <a href=\"/x\">x</a> &amp; &nbsp;"));
+
+        // a tag that never ends is dropped, as browsers do
+        assertEquals("", Utilities.addNofollow("<a href=\"x\""));
         assertEquals("no links", Utilities.addNofollow("no links"));
-        assertEquals("<a href=\"x\"", Utilities.addNofollow("<a href=\"x\""));
         assertNull(Utilities.addNofollow(null));
     }
 
@@ -212,7 +221,7 @@ public class UtilitiesTest  {
         long start = System.nanoTime();
         assertEquals(escaped, Utilities.transformToHTMLSubset(escaped));
         assertEquals(escaped, Utilities.transformToHTMLSubset(Utilities.escapeHTML(raw)));
-        assertEquals(raw, Utilities.addNofollow(raw));
+        assertEquals("", Utilities.addNofollow(raw));
         long millis = (System.nanoTime() - start) / 1_000_000;
         // a quadratic scan takes far longer than this; leave room for slow
         // build machines

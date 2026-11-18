@@ -50,6 +50,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.RollerConstants;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  * General purpose utilities, not for use in templates.
@@ -60,8 +63,6 @@ public class Utilities {
 
     public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
 
-    private static final Pattern mLinkPattern = Pattern.compile("<a href=",
-            Pattern.CASE_INSENSITIVE);
     private static final Pattern OPENING_B_TAG_PATTERN = Pattern.compile(
             "&lt;b&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern CLOSING_B_TAG_PATTERN = Pattern.compile(
@@ -285,133 +286,27 @@ public class Utilities {
     }
 
     /**
-     * Code (stolen from Pebble) to add rel="nofollow" string to all links in
-     * HTML that don't already have it. A link with another rel value gets
-     * nofollow added to that value.
+     * Adds nofollow to the rel attribute of every link in the HTML. The HTML
+     * is parsed with jsoup, so only a link's own rel attribute is changed,
+     * and the result is jsoup's serialization of the parsed fragment.
      */
     public static String addNofollow(String html) {
-        if (html == null || html.length() == 0) {
+        if (html == null || !StringUtils.containsIgnoreCase(html, "<a")) {
             return html;
         }
-        // Each link runs to the first ">" after its "href=" that isn't inside
-        // a quoted attribute value. Once no ">" is left, no later link can
-        // close either, so stop there.
-        Matcher m = mLinkPattern.matcher(html);
-        StringBuilder buf = new StringBuilder(html.length());
-        int end = 0;
-        while (m.find()) {
-            int close = findTagEnd(html, m.end());
-            if (close < 0) {
-                break;
+        Document doc = Jsoup.parseBodyFragment(html);
+        doc.outputSettings().prettyPrint(false);
+        for (Element link : doc.body().select("a[href]")) {
+            String rel = link.attr("rel").trim();
+            boolean hasNofollow = false;
+            for (String token : StringUtils.split(rel)) {
+                hasNofollow |= "nofollow".equalsIgnoreCase(token);
             }
-            buf.append(html, end, m.start());
-            buf.append(addNofollowToLink(html.substring(m.start(), close + 1)));
-            end = close + 1;
-            m.region(end, html.length());
-        }
-        buf.append(html, end, html.length());
-        return buf.toString();
-    }
-
-    /**
-     * Index of the ">" that ends the tag, skipping any inside quoted attribute
-     * values, or -1 if the tag doesn't end.
-     */
-    private static int findTagEnd(String html, int from) {
-        char quote = 0;
-        char previous = '=';
-        for (int i = from; i < html.length(); i++) {
-            char c = html.charAt(i);
-            if (quote != 0) {
-                if (c == quote) {
-                    quote = 0;
-                }
-            } else if ((c == '"' || c == '\'') && previous == '=') {
-                quote = c;
-            } else if (c == '>') {
-                return i;
-            }
-            if (!Character.isWhitespace(c)) {
-                previous = c;
+            if (!hasNofollow) {
+                link.attr("rel", rel.isEmpty() ? "nofollow" : rel + " nofollow");
             }
         }
-        return -1;
-    }
-
-    private static String addNofollowToLink(String link) {
-        // Walk the attributes the way findTagEnd does, so "rel=" inside
-        // another attribute's quoted value isn't taken for the link's rel.
-        // Browsers use the first rel when there are several.
-        int close = link.length() - 1;
-        int i = 2;
-        while (i < close) {
-            char c = link.charAt(i);
-            if (Character.isWhitespace(c) || c == '/') {
-                i++;
-                continue;
-            }
-            int nameStart = i++;
-            while (i < close && !isAttributeNameEnd(link.charAt(i))) {
-                i++;
-            }
-            int nameEnd = i;
-            while (i < close && Character.isWhitespace(link.charAt(i))) {
-                i++;
-            }
-            int valueStart = -1;
-            int valueEnd = -1;
-            boolean quoted = false;
-            if (i < close && link.charAt(i) == '=') {
-                i++;
-                while (i < close && Character.isWhitespace(link.charAt(i))) {
-                    i++;
-                }
-                char q = i < close ? link.charAt(i) : 0;
-                if (q == '"' || q == '\'') {
-                    quoted = true;
-                    valueStart = i + 1;
-                    valueEnd = link.indexOf(q, valueStart);
-                    if (valueEnd < 0 || valueEnd > close) {
-                        valueEnd = close;
-                    }
-                    i = Math.min(valueEnd + 1, close);
-                } else {
-                    valueStart = i;
-                    while (i < close && !Character.isWhitespace(link.charAt(i))) {
-                        i++;
-                    }
-                    valueEnd = i;
-                }
-            }
-            if ("rel".equalsIgnoreCase(link.substring(nameStart, nameEnd))) {
-                return addNofollowToRel(link, nameEnd, valueStart, valueEnd, quoted);
-            }
-        }
-        return link.substring(0, close) + " rel=\"nofollow\">";
-    }
-
-    private static boolean isAttributeNameEnd(char c) {
-        return Character.isWhitespace(c) || c == '/' || c == '=';
-    }
-
-    private static String addNofollowToRel(String link, int nameEnd, int valueStart,
-            int valueEnd, boolean quoted) {
-        if (valueStart < 0) {
-            // a rel with no value
-            return link.substring(0, nameEnd) + "=\"nofollow\"" + link.substring(nameEnd);
-        }
-        String value = link.substring(valueStart, valueEnd);
-        for (String token : StringUtils.split(value)) {
-            if ("nofollow".equalsIgnoreCase(token)) {
-                return link;
-            }
-        }
-        String values = value.isBlank() ? "nofollow" : value + " nofollow";
-        if (!quoted) {
-            // unquoted value: quote it so the added token stays part of it
-            values = '"' + values + '"';
-        }
-        return link.substring(0, valueStart) + values + link.substring(valueEnd);
+        return doc.body().html();
     }
 
     // ------------------------------------------------------------------------
