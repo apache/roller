@@ -17,9 +17,11 @@
 
 package org.apache.roller.weblogger.ui.core.security;
 
+
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
@@ -145,5 +147,15 @@ public final class RollerPasswordEncoders {
         public boolean upgradeEncoding(String encodedPassword) {
             return delegate.upgradeEncoding(encodedPassword);
         }
+    }
+
+    /**
+     * A random password for users who log in through OpenID Connect and never
+     * type one. It is 64 characters, so every encoder accepts it (BCrypt takes
+     * at most 72 bytes), and comes from a secure random source, since it still
+     * guards the account's database login.
+     */
+    public static String randomUnusedPassword() {
+        return RandomStringUtils.secure().nextAlphanumeric(64);
     }
 }

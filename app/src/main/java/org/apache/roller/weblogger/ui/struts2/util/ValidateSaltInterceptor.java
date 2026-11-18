@@ -34,6 +34,7 @@ import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 import org.apache.struts2.ActionContext;
 import org.apache.struts2.ActionInvocation;
 import org.apache.struts2.action.Action;
+import org.apache.struts2.action.UploadedFilesAware;
 import org.apache.struts2.interceptor.AbstractInterceptor;
 
 /**
@@ -65,8 +66,15 @@ public class ValidateSaltInterceptor extends AbstractInterceptor implements Stru
         if (SaltValidator.isMultipartFormPost(request)
                 && !Boolean.TRUE.equals(request.getAttribute(
                         SaltValidator.VALIDATED_REQUEST_ATTRIBUTE))) {
+            // When the upload can't be parsed, for example because it is too
+            // large, the salt may not have been read. An upload action gets the
+            // parse errors from the upload interceptor, and its workflow returns
+            // the input page before the action method runs, so it can say what
+            // went wrong. Struts gives the errors only to upload actions, so
+            // every other action still needs a valid salt.
             if (request instanceof MultiPartRequestWrapper
-                    && ((MultiPartRequestWrapper) request).hasErrors()) {
+                    && ((MultiPartRequestWrapper) request).hasErrors()
+                    && invocation.getAction() instanceof UploadedFilesAware) {
                 return invocation.invoke();
             }
 

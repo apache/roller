@@ -23,11 +23,11 @@ import java.util.TimeZone;
 import java.util.UUID;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.CharSetUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.ui.core.security.RollerPasswordEncoders;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.AuthMethod;
@@ -385,7 +385,7 @@ public class Register extends UIAction {
         // User.password does not allow null, so generate one for OIDC users
         if (getAuthMethod().equals(AuthMethod.OIDC.name()) ||
                 (getAuthMethod().equals(AuthMethod.DB_OIDC.name()) && !StringUtils.isEmpty(getBean().getOpenIdUrl()))) {
-            String randomString = RandomStringUtils.randomAlphanumeric(255);
+            String randomString = RollerPasswordEncoders.randomUnusedPassword();
             getBean().setPasswordText(randomString);
             getBean().setPasswordConfirm(randomString);
         }
