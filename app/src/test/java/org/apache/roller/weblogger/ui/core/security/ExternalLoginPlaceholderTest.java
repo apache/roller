@@ -154,6 +154,22 @@ class ExternalLoginPlaceholderTest {
     }
 
     @Test
+    void aStoredPlaceholderWithAnEncoderPrefixIsNotAPassword() throws Exception {
+        setProperty("authentication.method", "ldap");
+        setProperty("users.passwords.externalAuthValue", "{noop}secret");
+        // as CustomUserRegistry stores the configured placeholder
+        User user = TestUtils.setupUser("prefixuser");
+        userName = user.getUserName();
+        user.setPassword("{noop}secret");
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        assertThrows(AuthenticationException.class, () -> provider().authenticate(
+                UsernamePasswordAuthenticationToken.unauthenticated(userName, "secret")));
+        assertFalse(RollerPasswordEncoders.create().matches("secret", "{noop}secret"));
+    }
+
+    @Test
     void anEmptyConfiguredPlaceholderIsStoredAsTheDefault() throws Exception {
         setProperty("authentication.method", "ldap");
         setProperty("users.passwords.externalAuthValue", "");

@@ -137,7 +137,10 @@ public final class RollerPasswordEncoders {
 
         @Override
         public boolean matches(CharSequence rawPassword, String encodedPassword) {
-            if (rawPassword == null || rawPassword.length() == 0 || isExternalLoginMarker(rawPassword)) {
+            // a stored marker is checked before the delegate sees it, since a
+            // marker such as {noop}secret would otherwise match its own suffix
+            if (rawPassword == null || rawPassword.length() == 0 || isExternalLoginMarker(rawPassword)
+                    || isExternalLoginMarker(encodedPassword)) {
                 return false;
             }
             return delegate.matches(rawPassword, encodedPassword);
