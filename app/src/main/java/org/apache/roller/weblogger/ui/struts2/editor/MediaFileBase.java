@@ -48,7 +48,6 @@ public class MediaFileBase extends UIAction {
     private String selectedDirectory;
     private String mediaFileId;
     private List<MediaFileDirectory> allDirectories;
-    private boolean overlayMode;
 
     @Override
     public List<String> requiredWeblogPermissionActions() {
@@ -260,15 +259,6 @@ public class MediaFileBase extends UIAction {
     @StrutsParameter
     public void setMediaFileId(String mediaFileId) {
         this.mediaFileId = mediaFileId;
-    }
-
-    public boolean isOverlayMode() {
-        return overlayMode;
-
-    }
-
-    public void setOverlayMode(boolean mode) {
-        this.overlayMode = mode;
     }
 
     /**
