@@ -23,11 +23,11 @@ import java.util.TimeZone;
 import java.util.UUID;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.CharSetUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
+import org.apache.roller.weblogger.ui.core.security.RollerPasswordEncoders;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.config.AuthMethod;
@@ -40,6 +40,7 @@ import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
+import org.apache.roller.weblogger.ui.core.security.RollerPasswordEncoders;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -68,6 +69,10 @@ public class Register extends UIAction {
     
     private String activationCode = null;
     private ProfileBean bean = new ProfileBean();
+
+    // generated for OIDC users, kept out of the bean so that the form never
+    // renders it
+    private String unusedPassword = null;
 
     public Register() {
         this.pageTitle = "newUser.addNewUser";
@@ -210,7 +215,9 @@ public class Register extends UIAction {
                 ud.setEnabled(Boolean.TRUE);
 
                 // If user set both password and passwordConfirm then reset password
-                if (!StringUtils.isEmpty(getBean().getPasswordText()) &&
+                if (unusedPassword != null) {
+                    ud.resetPassword(unusedPassword);
+                } else if (!StringUtils.isEmpty(getBean().getPasswordText()) &&
                         !StringUtils.isEmpty(getBean().getPasswordConfirm())) {
                     ud.resetPassword(getBean().getPasswordText());
                 }
@@ -357,7 +364,7 @@ public class Register extends UIAction {
         if (usingSSO) {
             // store an unused marker in the Roller DB for the passphrase in
             // the LDAP or CMA cases, as actual passwords are stored externally
-            String unusedPassword = WebloggerConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
+            String unusedPassword = RollerPasswordEncoders.externalLoginMarker();
             
             // Preserve username and password, Spring Security case
             preserveUsernameAndPassword(unusedPassword);
@@ -382,16 +389,26 @@ public class Register extends UIAction {
         }
         
         // User.password does not allow null, so generate one for OIDC users
+        unusedPassword = null;
         if (getAuthMethod().equals(AuthMethod.OIDC.name()) ||
                 (getAuthMethod().equals(AuthMethod.DB_OIDC.name()) && !StringUtils.isEmpty(getBean().getOpenIdUrl()))) {
-            String randomString = RandomStringUtils.randomAlphanumeric(255);
-            getBean().setPasswordText(randomString);
-            getBean().setPasswordConfirm(randomString);
-        }
-        
-        // check that passwords match 
-        if (!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
-            addError("userRegister.error.mismatchedPasswords");
+            unusedPassword = RollerPasswordEncoders.randomUnusedPassword();
+        } else {
+            if (RollerPasswordEncoders.isTooLong(getBean().getPasswordText())) {
+                addError("userRegister.error.passwordTooLong");
+                return;
+            }
+
+            // the external-login marker is stored for users who log in
+            // elsewhere and never matches at login
+            if (!usingSSO && RollerPasswordEncoders.isExternalLoginMarker(getBean().getPasswordText())) {
+                addError("error.add.user.reservedPassword");
+            }
+
+            // check that passwords match
+            if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
+                addError("userRegister.error.mismatchedPasswords");
+            }
         }
         
         // check that username is not taken
