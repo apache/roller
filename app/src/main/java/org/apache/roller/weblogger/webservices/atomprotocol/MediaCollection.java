@@ -99,6 +99,7 @@ public class MediaCollection {
 
             // authenticated client posted a weblog entry
             File tempFile = null;
+            FileInputStream fis = null;
             String handle = pathInfo[0];
             MediaFileManager fileMgr = roller.getMediaFileManager();
             Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
@@ -136,7 +137,7 @@ public class MediaCollection {
                         throw new AtomException("Duplicate file name");
                     }
 
-                    FileInputStream fis = new FileInputStream(tempFile);
+                    fis = new FileInputStream(tempFile);
 
                     MediaFile mf = new MediaFile();
                     mf.setDirectory(mdir);
@@ -161,7 +162,6 @@ public class MediaCollection {
 
                     roller.flush();
 
-                    fis.close();
 
                     MediaFile stored = fileMgr.getMediaFile(mf.getId());
                     AtomEntry mediaEntry = createAtomResourceEntry(website, stored);
@@ -175,6 +175,7 @@ public class MediaCollection {
                     throw new AtomException(
                         "File upload disabled, over-quota or other error", fie);
                 } finally {
+                    closeQuietly(fis);
                     if (tempFile != null) {
                         tempFile.delete();
                     }
@@ -189,6 +190,16 @@ public class MediaCollection {
         }
     }
 
+
+    private static void closeQuietly(InputStream in) {
+        if (in != null) {
+            try {
+                in.close();
+            } catch (IOException e) {
+                log.debug("Could not close temporary upload file", e);
+            }
+        }
+    }
 
     /**
      * Copies an upload to a file, refusing it as soon as it is larger than
@@ -411,6 +422,7 @@ public class MediaCollection {
        try {
             // authenticated client posted a weblog entry
             File tempFile = null;
+            FileInputStream fis = null;
             String handle = pathInfo[0];
             MediaFileManager fmgr = roller.getMediaFileManager();
             WeblogManager wmgr = roller.getWeblogManager();
@@ -435,7 +447,7 @@ public class MediaCollection {
                         copyUpToUploadLimit(is, tempFile);
                     }
 
-                    FileInputStream fis = new FileInputStream(tempFile);
+                    fis = new FileInputStream(tempFile);
                     String replacementName = pathInfo[pathInfo.length - 1];
                     String declaredType = MediaTypePolicy.normalizeType(contentType);
                     RollerMessages errors = new RollerMessages();
@@ -453,7 +465,6 @@ public class MediaCollection {
 
                     roller.flush();
 
-                    fis.close();
 
                     log.debug("Exiting");
                     return;
@@ -467,6 +478,7 @@ public class MediaCollection {
                     throw new AtomException(
                         "Unexpected error during file upload", e);
                 } finally {
+                    closeQuietly(fis);
                     if (tempFile != null) {
                         tempFile.delete();
                     }

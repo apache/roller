@@ -357,7 +357,8 @@ public class EntryCollection {
         links.add(editlink);
         atomEntry.setLinks(links);
 
-        atomEntry.setDraft(!WeblogEntry.PubStatus.PUBLISHED.equals(entry.getStatus()));
+        atomEntry.setDraft(!entry.isPublished()
+                && !WeblogEntry.PubStatus.SCHEDULED.equals(entry.getStatus()));
         atomEntry.setEdited(entry.getUpdateTime());
 
         return atomEntry;

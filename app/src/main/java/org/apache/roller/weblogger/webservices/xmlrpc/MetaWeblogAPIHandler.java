@@ -164,6 +164,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             Timestamp current =
                     new Timestamp(System.currentTimeMillis());
             
+            boolean wasPublished = entry.isPublished();
             if ( !title.isEmpty() ) {
                 entry.setTitle(title);
             }
@@ -177,6 +178,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             if (dateCreated != null) {
                 entry.setPubTime(new Timestamp(dateCreated.getTime()));
             }
+            refreshAggregatesIfPublicationChanges(entry, wasPublished);
             
             if ( cat != null ) {
                 // Use first category specified by request

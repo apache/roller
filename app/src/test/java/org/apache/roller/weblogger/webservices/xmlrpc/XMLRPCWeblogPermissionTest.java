@@ -549,6 +549,71 @@ public class XMLRPCWeblogPermissionTest {
         return template;
     }
 
+    /** A published entry of the owner's with one tag, counted in the tag counts. */
+    private String taggedPublishedEntry(String anchor, String tag) throws Exception {
+        WeblogEntry entry = TestUtils.setupWeblogEntry(anchor,
+                TestUtils.getManagedWebsite(weblog).getWeblogCategories().iterator().next(),
+                PubStatus.PUBLISHED, TestUtils.getManagedWebsite(weblog),
+                TestUtils.getManagedUser(owner));
+        entry.addTag(tag);
+        WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(entry);
+        TestUtils.endSession(true);
+        assertEquals(1, tagCount(tag));
+        return entry.getId();
+    }
+
+    private int tagCount(String name) throws Exception {
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        return mgr.getTags(TestUtils.getManagedWebsite(weblog), null, null, 0, -1).stream()
+                .filter(t -> name.equals(t.getName()))
+                .mapToInt(org.apache.roller.weblogger.pojos.TagStat::getCount).sum();
+    }
+
+    private PubStatus status(String id) throws Exception {
+        TestUtils.endSession(true);
+        return WebloggerFactory.getWeblogger().getWeblogEntryManager()
+                .getWeblogEntry(id).getStatus();
+    }
+
+    @Test
+    public void testEditPostWithFutureDateUncountsTagsUntilTheEntryGoesLive() throws Exception {
+        String id = taggedPublishedEntry("xmlrpc-tagged-future", "xmlrpcfuturetag");
+
+        Hashtable<String, Object> struct = postStruct("later");
+        struct.put("dateCreated", new Date(System.currentTimeMillis() + 24L * 60 * 60 * 1000));
+        assertTrue(metaWeblog.editPost(id, owner.getUserName(), PASSWORD, struct, true));
+        assertEquals(PubStatus.SCHEDULED, status(id));
+        assertEquals(0, tagCount("xmlrpcfuturetag"));
+
+        // back to now: published again, counted once
+        struct = postStruct("now");
+        struct.put("dateCreated", new Date());
+        assertTrue(metaWeblog.editPost(id, owner.getUserName(), PASSWORD, struct, true));
+        assertEquals(PubStatus.PUBLISHED, status(id));
+        assertEquals(1, tagCount("xmlrpcfuturetag"));
+    }
+
+    @Test
+    public void testEditPostAsDraftUncountsTags() throws Exception {
+        String metaId = taggedPublishedEntry("xmlrpc-tagged-meta", "xmlrpcmetatag");
+        assertTrue(metaWeblog.editPost(metaId, owner.getUserName(), PASSWORD,
+                postStruct("draft"), false));
+        assertEquals(PubStatus.DRAFT, status(metaId));
+        assertEquals(0, tagCount("xmlrpcmetatag"));
+        assertTrue(metaWeblog.editPost(metaId, owner.getUserName(), PASSWORD,
+                postStruct("live"), true));
+        assertEquals(1, tagCount("xmlrpcmetatag"));
+
+        String bloggerId = taggedPublishedEntry("xmlrpc-tagged-blogger", "xmlrpcbloggertag");
+        assertTrue(blogger.editPost("", bloggerId, owner.getUserName(), PASSWORD,
+                "draft", false));
+        assertEquals(PubStatus.DRAFT, status(bloggerId));
+        assertEquals(0, tagCount("xmlrpcbloggertag"));
+        assertTrue(blogger.editPost("", bloggerId, owner.getUserName(), PASSWORD,
+                "live", true));
+        assertEquals(1, tagCount("xmlrpcbloggertag"));
+    }
+
     private Hashtable<String, Object> postStruct(String title) {
         Hashtable<String, Object> struct = new Hashtable<>();
         struct.put("title", title);

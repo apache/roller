@@ -32,6 +32,7 @@ import java.util.Vector;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
@@ -333,6 +334,22 @@ public class BloggerAPIHandler extends BaseAPIHandler {
      * @throws XmlRpcException
      * @return
      */
+    /**
+     * Have saveWeblogEntry() update the weblog's tag counts when an edit
+     * moves the entry into or out of PUBLISHED. saveWeblogEntry() schedules
+     * a PUBLISHED entry whose publish time is more than a minute ahead, so
+     * such an entry counts as not published here.
+     */
+    static void refreshAggregatesIfPublicationChanges(WeblogEntry entry,
+            boolean wasPublished) {
+        boolean published = entry.isPublished()
+                && (entry.getPubTime() == null || !entry.getPubTime().after(
+                        new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS)));
+        if (published != wasPublished) {
+            entry.setRefreshAggregates(true);
+        }
+    }
+
     public boolean editPost(String appkey, String postid, String userid,
             String password, String content, boolean publish)
             throws Exception {
@@ -352,6 +369,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
 
             Weblogger roller = WebloggerFactory.getWeblogger();
             WeblogEntryManager weblogMgr = roller.getWeblogEntryManager();
+            boolean wasPublished = entry.isPublished();
             entry.setText(content);
             entry.setUpdateTime(current);
             if (publish) {
@@ -359,6 +377,7 @@ public class BloggerAPIHandler extends BaseAPIHandler {
             } else {
                 entry.setStatus(PubStatus.DRAFT);
             }
+            refreshAggregatesIfPublicationChanges(entry, wasPublished);
 
             // save the entry
             weblogMgr.saveWeblogEntry(entry);
