@@ -173,7 +173,8 @@
                                      data-mediafile-id="<s:property value="#mediaFile.id"/>"
                                      data-mediafile-name="<s:property value="#mediaFile.name"/>">
 
-                                    <s:if test="#mediaFile.imageFile">
+                                    <%-- an image too large for a thumbnail shows the file icon --%>
+                                    <s:if test="#mediaFile.imageFile && !#mediaFile.overThumbnailPixelLimit">
                                         <img border="0" src="<s:property value='%{#mediaFile.thumbnailURL}' />"
                                              width="<s:property value='#mediaFile.thumbnailWidth' />"
                                              height="<s:property value='#mediaFile.thumbnailHeight' />"
@@ -227,7 +228,8 @@
                                      data-mediafile-id="<s:property value="#mediaFile.id"/>"
                                      data-mediafile-name="<s:property value="#mediaFile.name"/>">
 
-                                    <s:if test="#mediaFile.imageFile">
+                                    <%-- an image too large for a thumbnail shows the file icon --%>
+                                    <s:if test="#mediaFile.imageFile && !#mediaFile.overThumbnailPixelLimit">
                                         <img border="0" src="<s:property value='%{#mediaFile.thumbnailURL}' />"
                                              width="<s:property value='#mediaFile.thumbnailWidth'/>"
                                              height="<s:property value='#mediaFile.thumbnailHeight'/>"

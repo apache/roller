@@ -51,6 +51,9 @@ public class MediaResourceServlet extends HttpServlet {
 
     private static Log log = LogFactory.getLog(MediaResourceServlet.class);
 
+    // shown in place of the thumbnail of an image too large to have one
+    static final String PLACEHOLDER = "/images/page.png";
+
     @Override
     public void init(ServletConfig config) throws ServletException {
 
@@ -102,6 +105,15 @@ public class MediaResourceServlet extends HttpServlet {
             // still not found? then we don't have it, 404.
             log.debug("Unable to get resource", ex);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        // An image too large for a thumbnail has none. Send the file icon
+        // rather than the full image, so previews stay small.
+        if (resourceRequest.isThumbnail()
+                && mediaFile.isOverThumbnailPixelLimit()
+                && !hasThumbnail(mediaFile)) {
+            servePlaceholder(response);
             return;
         }
 
@@ -162,6 +174,31 @@ public class MediaResourceServlet extends HttpServlet {
             resourceStream.close();
         }
 
+    }
+
+    private void servePlaceholder(HttpServletResponse response) throws IOException {
+        try (InputStream icon = getServletContext().getResourceAsStream(PLACEHOLDER)) {
+            if (icon == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            response.setContentType("image/png");
+            OutputStream out = response.getOutputStream();
+            byte[] buf = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
+            int length;
+            while ((length = icon.read(buf)) > 0) {
+                out.write(buf, 0, length);
+            }
+            out.close();
+        }
+    }
+
+    private static boolean hasThumbnail(MediaFile mediaFile) {
+        try (InputStream thumbnail = mediaFile.getThumbnailInputStream()) {
+            return thumbnail != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

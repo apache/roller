@@ -217,11 +217,13 @@
         $("#mediaFileEditor").attr('src', 'about:blank');
     }
 
-    function onSelectMediaFile(name, url, isImage) {
+    // An image too large for a thumbnail is inserted at its own URL.
+    function onSelectMediaFile(name, url, isImage, hasThumbnail) {
         $("#mediafile_edit_lightbox").modal("hide");
         $("#mediaFileEditor").attr('src', 'about:blank');
         if (isImage === "true") {
-            insertMediaFile('<a href="' + url + '"><img src="' + url + '?t=true" alt="' + name + '" /></a>');
+            var src = hasThumbnail === "false" ? url : url + '?t=true';
+            insertMediaFile('<a href="' + url + '"><img src="' + src + '" alt="' + name + '" /></a>');
         } else {
             insertMediaFile('<a href="' + url + '">' + name + '</a>');
         }
