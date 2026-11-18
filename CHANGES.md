@@ -72,7 +72,10 @@
 - **Later pages of a feed are cached separately.** A feed's `?page=N` now has
   its own cache entry, and page numbers are kept between 0 and 10,000 (#313).
 - **"nofollow" is added to links that need it.** `addNofollow` only touched
-  links that already had `rel="nofollow"` (#318).
+  links that already had `rel="nofollow"`. It now parses the HTML with jsoup
+  and adds nofollow to each link's own `rel` value, so its output is jsoup's
+  normalized HTML: open tags are closed and attribute values are
+  double-quoted (#318).
 - **Tags of a scheduled entry are counted once, when it goes live.** Entries
   posted through AtomPub with a future date showed their tags in tag counts
   early and counted them twice (#316).
