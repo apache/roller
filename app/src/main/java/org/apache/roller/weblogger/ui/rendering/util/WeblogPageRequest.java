@@ -248,6 +248,9 @@ public class WeblogPageRequest extends WeblogRequest {
         customParams.remove("cat");
         customParams.remove("page");
         customParams.remove("tags");
+        // skipCache is read only as a request attribute set by the server, and
+        // custom params are part of the page cache key
+        customParams.remove("skipCache");
 
         if (log.isDebugEnabled()) {
             log.debug("context = " + this.context);

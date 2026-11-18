@@ -19,12 +19,15 @@
 
 package org.apache.roller.weblogger.ui.rendering.util;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -91,5 +94,19 @@ public class PageParameterTest {
         assertEquals(0, feedPage("-5"));
         assertEquals(0, weblogPage("-5"));
         assertEquals(0, searchPage("-5"));
+    }
+
+    @Test
+    public void skipCacheParameterIsNotATemplateParameter() throws Exception {
+        // custom params become part of the page cache key, and skipCache no
+        // longer changes how the page is cached, so it must not give each
+        // value its own cache entry
+        HttpServletRequest request = request("/roller-ui/rendering/page",
+                "/blog/page/custom", null);
+        when(request.getParameterMap()).thenReturn(Map.of(
+                "skipCache", new String[] {"42"}, "color", new String[] {"red"}));
+        Map<String, String[]> params = new WeblogPageRequest(request).getCustomParams();
+        assertFalse(params.containsKey("skipCache"));
+        assertTrue(params.containsKey("color"));
     }
 }
