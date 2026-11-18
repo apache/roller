@@ -103,6 +103,7 @@ public final class SiteWideCache implements CacheHandler {
     
     
     public Object get(String key) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
         if (!cacheEnabled) {
             return null;
@@ -121,15 +122,9 @@ public final class SiteWideCache implements CacheHandler {
     
     
     public void put(String key, Object value) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
         if (!cacheEnabled) {
-            return;
-        }
-
-        // links in this content were built from the request's host because
-        // site.absoluteurl is unset, so it isn't safe to serve to others
-        if (WebloggerRuntimeConfig.isRequestAbsoluteContextURLUsed()) {
-            log.debug("NOT CACHED, uses request host "+key);
             return;
         }
         
@@ -139,6 +134,7 @@ public final class SiteWideCache implements CacheHandler {
 
     
     public void remove(String key) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
         if (!cacheEnabled) {
             return;

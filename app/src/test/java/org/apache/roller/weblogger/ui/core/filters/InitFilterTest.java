@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.roller.weblogger.business.PropertiesManager;
+import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
@@ -153,9 +154,10 @@ public class InitFilterTest  {
      * in the shared caches, where other visitors would be served it.
      */
     @Test
-    public void testContentBuiltFromRequestHostIsNotCached() throws Exception {
+    public void testContentBuiltFromRequestHostIsCachedPerHost() throws Exception {
         String key = "InitFilterTest/" + System.nanoTime();
-        FilterChain chain = (req, res) -> {
+        AtomicReference<Object> seen = new AtomicReference<>();
+        FilterChain store = (req, res) -> {
             String url = WebloggerRuntimeConfig.getAbsoluteContextURL();
             WeblogPageCache.getInstance().put(key, url);
             WeblogFeedCache.getInstance().put(key, url);
@@ -163,15 +165,45 @@ public class InitFilterTest  {
         };
         try {
             new InitFilter().doFilter(request("http", "other.example.com", 80, "", "/"),
-                    mock(HttpServletResponse.class), chain);
-            assertNull(WeblogPageCache.getInstance().get(key, 0));
-            assertNull(WeblogFeedCache.getInstance().get(key, 0));
-            assertNull(SiteWideCache.getInstance().get(key));
+                    mock(HttpServletResponse.class), store);
+
+            // the same host gets the cached content back
+            FilterChain sameHost = (req, res) -> seen.set(WeblogPageCache.getInstance().get(key, 0));
+            new InitFilter().doFilter(request("http", "other.example.com", 80, "", "/"),
+                    mock(HttpServletResponse.class), sameHost);
+            assertEquals("http://other.example.com", seen.get());
+
+            // another host doesn't
+            FilterChain otherHost = (req, res) -> seen.set(new Object[] {
+                    WeblogPageCache.getInstance().get(key, 0),
+                    WeblogFeedCache.getInstance().get(key, 0),
+                    SiteWideCache.getInstance().get(key)});
+            new InitFilter().doFilter(request("http", SERVER_NAME, 80, "", "/"),
+                    mock(HttpServletResponse.class), otherHost);
+            Object[] others = (Object[]) seen.get();
+            assertNull(others[0]);
+            assertNull(others[1]);
+            assertNull(others[2]);
         } finally {
-            WeblogPageCache.getInstance().remove(key);
-            WeblogFeedCache.getInstance().remove(key);
-            SiteWideCache.getInstance().remove(key);
+            FilterChain cleanup = (req, res) -> {
+                WeblogPageCache.getInstance().remove(key);
+                WeblogFeedCache.getInstance().remove(key);
+                SiteWideCache.getInstance().remove(key);
+            };
+            new InitFilter().doFilter(request("http", "other.example.com", 80, "", "/"),
+                    mock(HttpServletResponse.class), cleanup);
         }
+    }
+
+    @Test
+    public void testCacheKeysIgnoreTheHostOnceTheSiteUrlIsSet() throws Exception {
+        PropertiesManager properties = WebloggerFactory.getWeblogger().getPropertiesManager();
+        when(properties.getProperty("site.absoluteurl")).thenReturn(
+                new RuntimeConfigProperty("site.absoluteurl", "https://configured.example.org"));
+        AtomicReference<String> key = new AtomicReference<>();
+        new InitFilter().doFilter(request("http", "other.example.com", 80, "", "/"),
+                mock(HttpServletResponse.class), (req, res) -> key.set(WebloggerRuntimeConfig.cacheKey("k")));
+        assertEquals("k", key.get());
     }
 
     /** Caching is unaffected for content that did not use the request host. */
@@ -179,12 +211,17 @@ public class InitFilterTest  {
     public void testOtherContentIsStillCached() throws Exception {
         String key = "InitFilterTest/" + System.nanoTime();
         FilterChain chain = (req, res) -> WeblogPageCache.getInstance().put(key, "page");
+        AtomicReference<Object> seen = new AtomicReference<>();
+        FilterChain lookup = (req, res) -> seen.set(WeblogPageCache.getInstance().get(key, 0));
         try {
             new InitFilter().doFilter(request("http", SERVER_NAME, 80, "", "/"),
                     mock(HttpServletResponse.class), chain);
-            assertNotNull(WeblogPageCache.getInstance().get(key, 0));
+            new InitFilter().doFilter(request("http", SERVER_NAME, 80, "", "/"),
+                    mock(HttpServletResponse.class), lookup);
+            assertNotNull(seen.get());
         } finally {
-            WeblogPageCache.getInstance().remove(key);
+            new InitFilter().doFilter(request("http", SERVER_NAME, 80, "", "/"),
+                    mock(HttpServletResponse.class), (req, res) -> WeblogPageCache.getInstance().remove(key));
         }
     }
 

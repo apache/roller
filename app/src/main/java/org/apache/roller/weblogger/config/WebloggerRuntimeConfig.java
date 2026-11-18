@@ -31,6 +31,7 @@ import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
+import org.apache.roller.weblogger.pojos.User;
 
 
 /**
@@ -54,8 +55,6 @@ public final class WebloggerRuntimeConfig {
     // absolute url derived from the request being handled on this thread, used
     // only while site.absoluteurl is unset and never kept past that request
     private static final ThreadLocal<String> requestAbsoluteContextURL =
-            new ThreadLocal<>();
-    private static final ThreadLocal<Boolean> requestAbsoluteContextURLUsed =
             new ThreadLocal<>();
     private static final AtomicBoolean absoluteURLWarningLogged =
             new AtomicBoolean(false);
@@ -186,7 +185,6 @@ public final class WebloggerRuntimeConfig {
      */
     public static void setRequestAbsoluteContextURL(String url) {
         requestAbsoluteContextURL.set(url);
-        requestAbsoluteContextURLUsed.remove();
     }
 
 
@@ -195,7 +193,6 @@ public final class WebloggerRuntimeConfig {
      */
     public static void clearRequestAbsoluteContextURL() {
         requestAbsoluteContextURL.remove();
-        requestAbsoluteContextURLUsed.remove();
     }
 
 
@@ -204,8 +201,39 @@ public final class WebloggerRuntimeConfig {
      * on this thread. Output built from that url depends on the request's Host
      * header, so the rendering caches don't store it.
      */
-    public static boolean isRequestAbsoluteContextURLUsed() {
-        return Boolean.TRUE.equals(requestAbsoluteContextURLUsed.get());
+    /**
+     * The cache key to use for content rendered for the current request. While
+     * site.absoluteurl is unset, links are built from the request's own URL, so
+     * the key includes it: content cached for one host name is only served to
+     * requests for that host name.
+     */
+    public static String cacheKey(String key) {
+        String absURL = getProperty("site.absoluteurl");
+        if (absURL != null && !absURL.isBlank()) {
+            return key;
+        }
+        String requestURL = requestAbsoluteContextURL.get();
+        return requestURL == null ? key : key + "|" + requestURL;
+    }
+
+    /**
+     * Saves site.absoluteurl from the current request when it is unset and the
+     * request comes from a global administrator, which is the case the first
+     * time an administrator opens the Roller UI after an upgrade.
+     */
+    public static void saveAbsoluteContextURLForAdmin(User user) {
+        String absURL = getProperty("site.absoluteurl");
+        if ((absURL != null && !absURL.isBlank()) || user == null
+                || !user.hasGlobalPermission("admin")) {
+            return;
+        }
+        try {
+            if (saveAbsoluteContextURLIfUnset(requestAbsoluteContextURL.get())) {
+                WebloggerFactory.getWeblogger().flush();
+            }
+        } catch (WebloggerException e) {
+            log.warn("Could not save site.absoluteurl", e);
+        }
     }
 
 
@@ -232,11 +260,7 @@ public final class WebloggerRuntimeConfig {
                     + "Administration > Configuration.");
         }
 
-        String requestURL = requestAbsoluteContextURL.get();
-        if (requestURL != null) {
-            requestAbsoluteContextURLUsed.set(Boolean.TRUE);
-        }
-        return requestURL;
+        return requestAbsoluteContextURL.get();
     }
 
 
