@@ -39,6 +39,7 @@ import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.weblogger.util.Utilities;
 
 
@@ -122,6 +123,12 @@ public class TagDataServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed URL");
                 return;
             }
+            // the page becomes a query offset (page * MAX), so use the same
+            // limit as the weblog and feed pagers
+            if (page < 0 || page > WeblogRequest.MAX_PAGE_NUM) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Malformed URL");
+                return;
+            }
         }
 
         Weblogger roller = WebloggerFactory.getWeblogger();
@@ -192,7 +199,7 @@ public class TagDataServlet extends HttpServlet {
                     break;
                 }
             }
-            if (tags.size() > MAX) {
+            if (tags.size() > MAX && page < WeblogRequest.MAX_PAGE_NUM) {
                 // get next URI, if site-wide then don't specify weblog
                 String nextURI = urlstrat.getWeblogTagsJsonURL(weblog, true, page + 1);
                 pw.println("<atom:link rel=\"next\" href=\"" + StringEscapeUtils.escapeXml10(nextURI) + "\" />");
