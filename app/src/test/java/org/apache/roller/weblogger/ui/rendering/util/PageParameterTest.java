@@ -57,12 +57,19 @@ public class PageParameterTest {
                 "/blog/", page)).getPageNum();
     }
 
+    private static int searchPage(String page) throws Exception {
+        return new WeblogSearchRequest(request("/roller-ui/rendering/search",
+                "/blog", page)).getPageNum();
+    }
+
     @Test
     public void ordinaryPageNumbersAreKept() throws Exception {
         assertEquals(0, feedPage(null));
         assertEquals(9, feedPage("9"));
         assertEquals(0, weblogPage(null));
         assertEquals(9, weblogPage("9"));
+        assertEquals(0, searchPage(null));
+        assertEquals(9, searchPage("9"));
     }
 
     @Test
@@ -70,10 +77,12 @@ public class PageParameterTest {
         for (String page : new String[] {"2147483647", "1000000000"}) {
             int feed = feedPage(page);
             int weblog = weblogPage(page);
-            assertTrue(feed > 0 && weblog > 0);
+            int search = searchPage(page);
+            assertTrue(feed > 0 && weblog > 0 && search > 0);
             // an offset at a generous page length still fits in an int
             assertDoesNotThrow(() -> Math.multiplyExact(feed, 1000));
             assertDoesNotThrow(() -> Math.multiplyExact(weblog, 1000));
+            assertDoesNotThrow(() -> Math.multiplyExact(search, 1000));
         }
     }
 
@@ -81,5 +90,6 @@ public class PageParameterTest {
     public void negativePageNumbersMeanTheFirstPage() throws Exception {
         assertEquals(0, feedPage("-5"));
         assertEquals(0, weblogPage("-5"));
+        assertEquals(0, searchPage("-5"));
     }
 }

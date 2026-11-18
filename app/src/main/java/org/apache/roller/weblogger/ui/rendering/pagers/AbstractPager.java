@@ -20,6 +20,7 @@ package org.apache.roller.weblogger.ui.rendering.pagers;
 
 import java.util.Map;
 import org.apache.roller.weblogger.business.URLStrategy;
+import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.weblogger.util.URLUtilities;
 
 
@@ -57,7 +58,7 @@ public abstract class AbstractPager<T> implements Pager<T> {
     
     @Override
     public String getNextLink() {
-        if(hasMoreItems()) {
+        if(hasNextPage()) {
             int nextPage = page + 1;
             return createURL(url, Map.of("page", ""+nextPage));
         }
@@ -67,7 +68,7 @@ public abstract class AbstractPager<T> implements Pager<T> {
     
     @Override
     public String getNextName() {
-        if(hasMoreItems()) {
+        if(hasNextPage()) {
             return "Next";
         }
         return null;
@@ -95,6 +96,15 @@ public abstract class AbstractPager<T> implements Pager<T> {
     
     public boolean hasMoreItems() {
         return false;
+    }
+    
+    
+    /**
+     * True if there are more items and the next page number is one the page
+     * request parser accepts, so the next link doesn't lead back here.
+     */
+    protected boolean hasNextPage() {
+        return hasMoreItems() && page < WeblogRequest.MAX_PAGE_NUM;
     }
     
     
