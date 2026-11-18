@@ -171,6 +171,14 @@ public class SearchOperation extends ReadFromIndexOperation {
         } catch (ParseException e) {
             // who cares?
             parseError = e.getMessage();
+
+        } catch (RuntimeException e) {
+            // Lucene rejects some queries that parse, such as an unfinished
+            // regular expression or a negative phrase slop, only when it
+            // builds or runs them. Treat them like a query that does not parse.
+            logger.warn("Could not run search query: " + e.getMessage());
+            searchresults = null;
+            parseError = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
         }
         // don't need to close the reader, since we didn't do any writing!
     }
