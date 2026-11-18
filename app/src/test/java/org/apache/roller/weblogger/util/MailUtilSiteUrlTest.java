@@ -67,7 +67,7 @@ import static org.mockito.Mockito.when;
  */
 class MailUtilSiteUrlTest {
 
-    private static final String REQUEST_URL = "http://forged.example.net";
+    private static final String REQUEST_URL = "http://request-host.example.net";
     private static final String SITE_URL = "https://blog.example.org";
 
     private MockedStatic<WebloggerFactory> factory;
@@ -175,7 +175,7 @@ class MailUtilSiteUrlTest {
 
         assertEquals(1, sent.size(), "the owner is still told about the comment");
         assertTrue(sent.get(0).contains("Nice post"));
-        assertFalse(sent.get(0).contains("forged.example.net"), sent.get(0));
+        assertFalse(sent.get(0).contains("request-host.example.net"), sent.get(0));
     }
 
     @Test
@@ -187,7 +187,7 @@ class MailUtilSiteUrlTest {
         assertEquals(1, sent.size());
         assertTrue(sent.get(0).contains(SITE_URL + "/blog/entry/first#comments"), sent.get(0));
         assertTrue(sent.get(0).contains(SITE_URL + "/roller-ui/authoring/comments.rol"), sent.get(0));
-        assertFalse(sent.get(0).contains("forged.example.net"));
+        assertFalse(sent.get(0).contains("request-host.example.net"));
     }
 
     @Test
@@ -196,7 +196,7 @@ class MailUtilSiteUrlTest {
                 I18nMessages.getMessages(Locale.ENGLISH));
 
         assertEquals(1, sent.size());
-        assertFalse(sent.get(0).contains("forged.example.net"), sent.get(0));
+        assertFalse(sent.get(0).contains("request-host.example.net"), sent.get(0));
     }
 
     @Test
