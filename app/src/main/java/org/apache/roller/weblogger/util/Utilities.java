@@ -53,6 +53,7 @@ import org.apache.roller.util.RollerConstants;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.safety.Safelist;
 
 /**
  * General purpose utilities, not for use in templates.
@@ -63,53 +64,12 @@ public class Utilities {
 
     public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
 
-    private static final Pattern OPENING_B_TAG_PATTERN = Pattern.compile(
-            "&lt;b&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_B_TAG_PATTERN = Pattern.compile(
-            "&lt;/b&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_I_TAG_PATTERN = Pattern.compile(
-            "&lt;i&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_I_TAG_PATTERN = Pattern.compile(
-            "&lt;/i&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_BLOCKQUOTE_TAG_PATTERN = Pattern
-            .compile("&lt;blockquote&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_BLOCKQUOTE_TAG_PATTERN = Pattern
-            .compile("&lt;/blockquote&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern BR_TAG_PATTERN = Pattern.compile(
-            "&lt;br */*&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_P_TAG_PATTERN = Pattern.compile(
-            "&lt;p&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_P_TAG_PATTERN = Pattern.compile(
-            "&lt;/p&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_PRE_TAG_PATTERN = Pattern.compile(
-            "&lt;pre&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_PRE_TAG_PATTERN = Pattern.compile(
-            "&lt;/pre&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_UL_TAG_PATTERN = Pattern.compile(
-            "&lt;ul&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_UL_TAG_PATTERN = Pattern.compile(
-            "&lt;/ul&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_OL_TAG_PATTERN = Pattern.compile(
-            "&lt;ol&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_OL_TAG_PATTERN = Pattern.compile(
-            "&lt;/ol&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_LI_TAG_PATTERN = Pattern.compile(
-            "&lt;li&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_LI_TAG_PATTERN = Pattern.compile(
-            "&lt;/li&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern CLOSING_A_TAG_PATTERN = Pattern.compile(
-            "&lt;/a&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_A_TAG_START_PATTERN = Pattern.compile(
-            "&lt;a\\s+href\\s*=", Pattern.CASE_INSENSITIVE);
-    private static final Pattern TAG_END_PATTERN = Pattern.compile(
-            "&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern A_HREF_PATTERN = Pattern.compile(
-            "&lt;a\\s+href\\s*=\\s*(?:\"([^\"]*)\"|'([^']*)'|([^\\s\"'=<>`]+))\\s*&gt;",
-            Pattern.CASE_INSENSITIVE);
-    private static final Pattern SUBSET_LINK_PATTERN = Pattern.compile(
-            "(?:https?://|mailto:)[^\\x00-\\x20\\x7f]+", Pattern.CASE_INSENSITIVE);
-    private static final Pattern QUOTE_PATTERN = Pattern.compile("&quot;",
-            Pattern.CASE_INSENSITIVE);
+    // Comment HTML that survives sanitizeToHTMLSubset: a few formatting tags,
+    // and links to http, https and mailto addresses
+    private static final Safelist HTML_SUBSET = new Safelist()
+            .addTags("a", "b", "blockquote", "br", "i", "li", "ol", "p", "pre", "ul")
+            .addAttributes("a", "href")
+            .addProtocols("a", "href", "http", "https", "mailto");
 
     // ------------------------------------------------------------------------
     /** Strip jsessionid off of a URL */
@@ -1043,78 +1003,36 @@ public class Utilities {
     }
 
     /**
-     * Transforms the given String into a subset of HTML displayable on a web
-     * page. The subset includes &lt;b&gt;, &lt;i&gt;, &lt;p&gt;, &lt;br&gt;,
-     * &lt;pre&gt; and &lt;a href&gt; (and their corresponding end tags).
-     * 
-     * @param s
-     *            the String to transform
-     * @return the transformed String
+     * Reduces HTML, such as a comment, to the subset of HTML a weblog page
+     * shows: &lt;b&gt;, &lt;i&gt;, &lt;blockquote&gt;, &lt;br&gt;, &lt;p&gt;,
+     * &lt;pre&gt;, lists, and links to http, https and mailto addresses.
+     * jsoup's Cleaner removes every other tag and attribute, keeping the text
+     * inside them, and the text is HTML-encoded.
+     *
+     * @param html the HTML to reduce
+     * @return the HTML subset, or null if html is null
+     */
+    public static String sanitizeToHTMLSubset(String html) {
+        if (html == null) {
+            return null;
+        }
+        return Jsoup.clean(html, "", HTML_SUBSET,
+                new Document.OutputSettings().prettyPrint(false));
+    }
+
+    /**
+     * Like sanitizeToHTMLSubset, for text that is already HTML-encoded, such
+     * as a comment passed through escapeHTML: the encoded tags in the subset
+     * become tags again.
+     *
+     * @param s the HTML-encoded text
+     * @return the HTML subset, or null if s is null
      */
     public static String transformToHTMLSubset(String s) {
-
         if (s == null) {
             return null;
         }
-
-        s = replace(s, OPENING_B_TAG_PATTERN, "<b>");
-        s = replace(s, CLOSING_B_TAG_PATTERN, "</b>");
-        s = replace(s, OPENING_I_TAG_PATTERN, "<i>");
-        s = replace(s, CLOSING_I_TAG_PATTERN, "</i>");
-        s = replace(s, OPENING_BLOCKQUOTE_TAG_PATTERN, "<blockquote>");
-        s = replace(s, CLOSING_BLOCKQUOTE_TAG_PATTERN, "</blockquote>");
-        s = replace(s, BR_TAG_PATTERN, "<br />");
-        s = replace(s, OPENING_P_TAG_PATTERN, "<p>");
-        s = replace(s, CLOSING_P_TAG_PATTERN, "</p>");
-        s = replace(s, OPENING_PRE_TAG_PATTERN, "<pre>");
-        s = replace(s, CLOSING_PRE_TAG_PATTERN, "</pre>");
-        s = replace(s, OPENING_UL_TAG_PATTERN, "<ul>");
-        s = replace(s, CLOSING_UL_TAG_PATTERN, "</ul>");
-        s = replace(s, OPENING_OL_TAG_PATTERN, "<ol>");
-        s = replace(s, CLOSING_OL_TAG_PATTERN, "</ol>");
-        s = replace(s, OPENING_LI_TAG_PATTERN, "<li>");
-        s = replace(s, CLOSING_LI_TAG_PATTERN, "</li>");
-        s = replace(s, QUOTE_PATTERN, "\"");
-
-        // Normalize supported links while retaining the surrounding text.
-        s = replace(s, CLOSING_A_TAG_PATTERN, "</a>");
-        // Each opening tag runs to the first "&gt;" after its "href=". Once no
-        // "&gt;" is left, no later tag can close either, so stop there; this
-        // keeps the scan linear on text with many unclosed tags.
-        Matcher m = OPENING_A_TAG_START_PATTERN.matcher(s);
-        Matcher tagEnd = TAG_END_PATTERN.matcher(s);
-        StringBuilder result = new StringBuilder(s.length());
-        int end = 0;
-        while (m.find() && tagEnd.find(m.end())) {
-            result.append(restoreSubsetEntities(s.substring(end, m.start())));
-            Matcher hrefMatcher = A_HREF_PATTERN.matcher(s.substring(m.start(), tagEnd.end()));
-            String link = "<a>";
-            if (hrefMatcher.matches()) {
-                String href = hrefMatcher.group(1);
-                if (href == null) {
-                    href = hrefMatcher.group(2);
-                }
-                if (href == null) {
-                    href = hrefMatcher.group(3);
-                }
-                href = StringEscapeUtils.unescapeHtml4(restoreSubsetEntities(href));
-                if (SUBSET_LINK_PATTERN.matcher(href).matches()) {
-                    link = "<a href=\"" + StringEscapeUtils.escapeHtml4(href) + "\">";
-                }
-            }
-            result.append(link);
-            end = tagEnd.end();
-            m.region(end, s.length());
-        }
-        result.append(restoreSubsetEntities(s.substring(end)));
-        return result.toString();
-    }
-
-    private static String restoreSubsetEntities(String s) {
-        s = s.replace("&amp;lt;", "&lt;");
-        s = s.replace("&amp;gt;", "&gt;");
-        s = s.replace("&amp;#", "&#");
-        return s;
+        return sanitizeToHTMLSubset(StringEscapeUtils.unescapeHtml4(s));
     }
 
     private static String replace(String string, Pattern pattern,

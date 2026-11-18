@@ -336,7 +336,7 @@ public class MailUtil {
 
         // Don't escape the content if email will be sent as plain text
         msg.append((isPlainText) ? commentObject.getContent()
-        : Utilities.transformToHTMLSubset(Utilities.escapeHTML(commentObject.getContent())));
+        : Utilities.sanitizeToHTMLSubset(commentObject.getContent()));
         
         msg.append((isPlainText) ? "\n\n----\n"
                 : "<br /><br /><hr /><span style=\"font-size: 11px\">");
