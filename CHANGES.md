@@ -202,16 +202,18 @@
   registration forms**; only Roller's OpenID Connect login sets it (#322).
 - **Weblog pages ignore a `skipCache` query parameter** (#313).
 - **Check "Absolute URL to site" (`site.absoluteurl`) after upgrading.**
-  Roller no longer takes the site's URL from the first request after a
-  start. New installs save it during setup, and on an upgraded site where
-  it's empty, the first administrator to open the Roller UI saves it from
-  that request. Check it under Server Admin > Configuration, and correct it if
-  the site is reached through a proxy or more than one host name. While it's
-  empty, each request's own URL is used for its links, cached pages are kept
-  per host name, and background tasks such as the planet sync get no URL.
-  Links keep the request's https scheme and port.
-  `WebloggerRuntimeConfig.setAbsoluteContextURL` and `InitFilter.getAbsoluteUrl`
-  are removed (#320).
+  Roller no longer takes the site's URL from the first request after a start.
+  New installs save it during setup, and on an upgraded site where it's empty,
+  the first administrator to open the Roller UI saves it from that request,
+  unless it's a local or private address. Check it under Server Admin >
+  Configuration, and correct it if the site is reached through a proxy or more
+  than one host name. While it's empty, each request's own URL is used for its
+  links, cached pages are kept per host name, comment notifications are sent
+  without links, account activation and invitation emails aren't sent, and
+  background tasks such as the planet sync wait for it. Links keep the
+  request's https scheme and port.
+  `WebloggerRuntimeConfig.setAbsoluteContextURL` and
+  `InitFilter.getAbsoluteUrl` are removed (#320).
 - **The Design pages follow "Allow custom themes".** While
   `themes.customtheme.allowed` is off (the default), the theme, stylesheet and
   template pages answer as unavailable, as the hidden Design menu already
