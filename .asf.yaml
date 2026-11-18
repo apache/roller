@@ -15,6 +15,8 @@ github:
         - root
       restrict_deletion: true
       restrict_force_push: true
+      # every review conversation has to be resolved before a merge
+      required_conversation_resolution: true
       required_pull_request_reviews:
         required_approving_review_count: 1
         # the approval has to come after the last push, so it covers the head
@@ -50,6 +52,8 @@ github:
         - root
       restrict_deletion: true
       restrict_force_push: true
+      # every review conversation has to be resolved before a merge
+      required_conversation_resolution: true
       required_pull_request_reviews:
         required_approving_review_count: 1
         # the approval has to come after the last push, so it covers the head
@@ -64,6 +68,8 @@ github:
         - root
       restrict_deletion: true
       restrict_force_push: true
+      # every review conversation has to be resolved before a merge
+      required_conversation_resolution: true
       required_pull_request_reviews:
         required_approving_review_count: 1
         # the approval has to come after the last push, so it covers the head
