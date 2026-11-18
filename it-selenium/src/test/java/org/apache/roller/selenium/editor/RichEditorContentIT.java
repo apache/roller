@@ -93,6 +93,8 @@ public class RichEditorContentIT {
         "<table><caption>c</caption><tr><td>1</td><td>2</td></tr></table>",
         "<ul><li>one</li><li>two</li></ul><blockquote cite=\"https://example.com/\">q</blockquote>",
         "<pre><code>if (a &lt; b) { run(); }</code></pre>",
+        "<pre>\n\nfirst line after a blank one</pre>",
+        "<p>One</p>\n<p>Two</p>\n",
     };
 
     private static WebDriver driver;
