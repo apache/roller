@@ -29,6 +29,7 @@ import jakarta.servlet.http.HttpSession;
 import org.apache.roller.weblogger.TestUtils;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.security.RollerPasswordEncoders;
 import org.apache.roller.weblogger.ui.struts2.admin.CreateUserBean;
@@ -41,10 +42,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -105,7 +109,7 @@ class PasswordChangeSessionTest {
         profile.setBean(bean);
         profile.setAuthenticatedUser(self);
         profile.withServletRequest(a.httpRequest);
-        assertEquals(Profile.SUCCESS, profile.save());
+        assertEquals(Profile.SUCCESS, profile.save(), () -> String.valueOf(profile.getActionErrors()));
         TestUtils.endSession(true);
 
         b.assertLoggedOut();
@@ -151,7 +155,7 @@ class PasswordChangeSessionTest {
         admin.request();
         UserEdit action = userEdit(admin, adminName);
         action.getBean().setPassword("reset-password");
-        assertEquals(UserEdit.SUCCESS, action.save());
+        assertEquals(UserEdit.SUCCESS, action.save(), () -> String.valueOf(action.getActionErrors()));
         TestUtils.endSession(true);
 
         other.assertLoggedOut();
@@ -171,12 +175,122 @@ class PasswordChangeSessionTest {
         b.assertLoggedIn(userName);
     }
 
+    @Test
+    void oidcProfileEditKeepsTheUsersOtherSessions() throws Exception {
+        useHashedPasswords();
+        linkOpenId(userName, "https://idp.example.com/sessionuser");
+        Browser a = new Browser(userName);
+        Browser b = new Browser(userName);
+        a.request();
+        b.request();
+        TestUtils.endSession(true);
+        String storedPassword = user(userName).getPassword();
+
+        a.request();
+        Profile profile = spy(new Profile());
+        stubText(profile);
+        setAuthMethod(profile, AuthMethod.OIDC);
+        User self = user(userName);
+        ProfileBean bean = new ProfileBean();
+        bean.copyFrom(self);
+        bean.setScreenName("Renamed");
+        profile.setBean(bean);
+        profile.setAuthenticatedUser(self);
+        profile.withServletRequest(a.httpRequest);
+        assertEquals(Profile.SUCCESS, profile.save(), () -> String.valueOf(profile.getActionErrors()));
+        TestUtils.endSession(true);
+
+        assertEquals("Renamed", user(userName).getScreenName());
+        assertEquals(storedPassword, user(userName).getPassword());
+        b.assertLoggedIn(userName);
+        a.assertLoggedIn(userName);
+    }
+
+    @Test
+    void adminEditOfAnOidcUserKeepsTheirSessions() throws Exception {
+        useHashedPasswords();
+        linkOpenId(userName, "https://idp.example.com/sessionuser");
+        Browser admin = new Browser(adminName);
+        Browser b = new Browser(userName);
+        admin.request();
+        b.request();
+        TestUtils.endSession(true);
+        String storedPassword = user(userName).getPassword();
+
+        admin.request();
+        UserEdit action = userEdit(admin, userName);
+        setAuthMethod(action, AuthMethod.DB_OIDC);
+        action.getBean().setFullName("Renamed User");
+        assertEquals(UserEdit.SUCCESS, action.save(), () -> String.valueOf(action.getActionErrors()));
+        TestUtils.endSession(true);
+
+        assertEquals(storedPassword, user(userName).getPassword());
+        b.assertLoggedIn(userName);
+    }
+
+    @Test
+    void switchingToOidcReplacesTheStoredPassword() throws Exception {
+        useHashedPasswords();
+        Browser admin = new Browser(adminName);
+        Browser b = new Browser(userName);
+        admin.request();
+        b.request();
+        TestUtils.endSession(true);
+        String storedPassword = user(userName).getPassword();
+
+        admin.request();
+        UserEdit action = userEdit(admin, userName);
+        setAuthMethod(action, AuthMethod.DB_OIDC);
+        action.getBean().setOpenIdUrl("https://idp.example.com/sessionuser");
+        assertEquals(UserEdit.SUCCESS, action.save(), () -> String.valueOf(action.getActionErrors()));
+        TestUtils.endSession(true);
+
+        assertNotEquals(storedPassword, user(userName).getPassword());
+        b.assertLoggedOut();
+    }
+
+    /**
+     * The test configuration stores passwords in plain text, and a generated
+     * 255-character password doesn't fit the column that way. tearDown puts
+     * the configured encoder back.
+     */
+    private static void useHashedPasswords() throws Exception {
+        swapEncoder(new DelegatingPasswordEncoder("pbkdf2",
+                Map.of("pbkdf2", Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8())));
+    }
+
+    private static void linkOpenId(String name, String openIdUrl) throws Exception {
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        User u = mgr.getUserByUserName(name, null);
+        u.setOpenIdUrl(openIdUrl);
+        mgr.saveUser(u);
+        TestUtils.endSession(true);
+    }
+
+    private static void setAuthMethod(Object action, AuthMethod method) throws Exception {
+        // the action is a Mockito spy, a subclass of the real action
+        Field field = findField(action.getClass(), "authMethod");
+        field.setAccessible(true);
+        field.set(action, method);
+    }
+
+    private static Field findField(Class<?> type, String name) throws NoSuchFieldException {
+        for (Class<?> c = type; c != null; c = c.getSuperclass()) {
+            try {
+                return c.getDeclaredField(name);
+            } catch (NoSuchFieldException ignored) {
+                // keep looking in the superclass
+            }
+        }
+        throw new NoSuchFieldException(name);
+    }
+
     private void saveAsAdmin(Browser admin, java.util.function.Consumer<CreateUserBean> change)
             throws Exception {
         admin.request();
         UserEdit action = userEdit(admin, userName);
         change.accept(action.getBean());
-        assertEquals(UserEdit.SUCCESS, action.save());
+        assertEquals(UserEdit.SUCCESS, action.save(), () -> String.valueOf(action.getActionErrors()));
         TestUtils.endSession(true);
     }
 

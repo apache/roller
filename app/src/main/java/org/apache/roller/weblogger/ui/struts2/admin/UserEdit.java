@@ -144,6 +144,7 @@ public class UserEdit extends UIAction {
         myValidate();
         
         if (!hasActionErrors()) {
+            String previousOpenIdUrl = user.getOpenIdUrl();
             getBean().copyTo(user);
 
             if (authMethod == AuthMethod.DB_OIDC) {
@@ -159,9 +160,13 @@ public class UserEdit extends UIAction {
                 }
             }
 
-            // User.password does not allow null, so generate one
-            if (authMethod.equals(AuthMethod.OIDC) ||
-                    (authMethod.equals(AuthMethod.DB_OIDC) && !StringUtils.isEmpty(bean.getOpenIdUrl()))) {
+            // User.password does not allow null, so generate one when the user
+            // starts signing in with an OpenID URL. Keep the stored one when the
+            // OpenID URL is unchanged, so an edit doesn't end the user's sessions.
+            if ((authMethod.equals(AuthMethod.OIDC) ||
+                    (authMethod.equals(AuthMethod.DB_OIDC) && !StringUtils.isEmpty(bean.getOpenIdUrl())))
+                    && (StringUtils.isEmpty(user.getPassword())
+                        || !StringUtils.equals(previousOpenIdUrl, user.getOpenIdUrl()))) {
                 String randomString = RandomStringUtils.randomAlphanumeric(255);
                 user.resetPassword(randomString);
             }
