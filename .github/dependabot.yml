@@ -55,10 +55,6 @@ updates:
       day: "monday"
     cooldown:
       default-days: 3
-    ignore:
-      # moving to a new major version means migrating the data volume
-      - dependency-name: "postgres"
-        update-types: ["version-update:semver-major"]
     groups:
       docker-compose:
         patterns:
