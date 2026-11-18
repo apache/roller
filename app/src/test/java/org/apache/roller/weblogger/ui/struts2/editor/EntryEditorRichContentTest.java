@@ -36,7 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * editor in EntryEditor.jsp checks the entry with rich-editor-content.js first
  * and opens entries that fail the check in the textarea. Summernote also starts
  * itself on any call, so each call must be behind the same check. The check
- * itself is verified in a browser; this keeps the page wired to it.
+ * itself runs in a browser in it-playwright's RichEditorContentIT; this keeps
+ * the page wired to it.
  */
 class EntryEditorRichContentTest {
 
@@ -66,9 +67,13 @@ class EntryEditorRichContentTest {
     }
 
     @Test
-    void contentCheckScriptExists() throws IOException {
-        String script = read("src/main/webapp/roller-ui/scripts/rich-editor-content.js");
-        assertTrue(script.contains("function hasActiveHtml(html)"));
-        assertTrue(script.contains("DOMParser"));
+    void theTextareaFallbackInsertsMediaAtTheCursor() throws IOException {
+        String jsp = read("src/main/webapp/WEB-INF/jsps/editor/EntryEditor.jsp");
+        int check = jsp.indexOf("RollerRichEditor.hasActiveHtml(");
+        int track = jsp.indexOf("RollerRichEditor.trackCursor(");
+        int start = jsp.indexOf("richEditorStarted = true;");
+        assertTrue(check > 0 && check < track && track < start,
+                "the fallback tracks the cursor before the rich editor would start");
+        assertTrue(jsp.contains("RollerRichEditor.insertAtCursor(textArea, toInsert);"));
     }
 }

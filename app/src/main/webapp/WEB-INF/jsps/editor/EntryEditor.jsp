@@ -159,6 +159,7 @@
     $(document).ready(function () {
         if (RollerRichEditor.hasActiveHtml(document.getElementById('edit_content').value)) {
             $('#edit_content_html_notice').show();
+            RollerRichEditor.trackCursor(document.getElementById('edit_content'));
             $("#edit_content").one("change", warnBeforeLeaving);
             return;
         }
@@ -221,14 +222,7 @@
         } else {
             // at the cursor, or at the end if the textarea hasn't had one
             var textArea = document.getElementById('edit_content');
-            var start = textArea.selectionStart;
-            if (start === 0 && textArea.selectionEnd === 0) {
-                start = textArea.selectionEnd = textArea.value.length;
-            }
-            textArea.value = textArea.value.substring(0, start) + toInsert
-                + textArea.value.substring(textArea.selectionEnd);
-            textArea.selectionStart = textArea.selectionEnd = start + toInsert.length;
-            textArea.focus();
+            RollerRichEditor.insertAtCursor(textArea, toInsert);
             $(textArea).trigger("change");
         }
     }
