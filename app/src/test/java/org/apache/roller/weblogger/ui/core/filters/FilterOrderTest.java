@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,15 +36,36 @@ class FilterOrderTest {
     void persistenceSessionFilterWrapsEveryOtherFilter() throws Exception {
         String webXml = new String(Files.readAllBytes(Paths.get("src/main/webapp/WEB-INF/web.xml")),
                 StandardCharsets.UTF_8);
-        Matcher mapping = Pattern.compile("<filter-mapping>\\s*<filter-name>([^<]+)</filter-name>")
-                .matcher(webXml);
-        List<String> order = new ArrayList<>();
-        while (mapping.find()) {
-            order.add(mapping.group(1).trim());
-        }
+        List<String> order = filterMappingOrder(webXml);
         // Spring Security reads users for logins and answers those requests
         // itself, so the filter that releases the persistence session has to
         // run around it
         assertEquals("PersistenceSessionFilter", order.get(0), order.toString());
+    }
+
+    @Test
+    void commentedOutMappingsAreIgnored() {
+        String webXml = "<web-app>\n"
+                + "  <!-- <filter-mapping>\n"
+                + "    <filter-name>OldFilter</filter-name>\n"
+                + "  </filter-mapping> -->\n"
+                + "  <filter-mapping>\n"
+                + "    <filter-name>FirstFilter</filter-name>\n"
+                + "  </filter-mapping>\n"
+                + "</web-app>\n";
+        assertEquals(Collections.singletonList("FirstFilter"), filterMappingOrder(webXml));
+    }
+
+    // the filter names of web.xml's filter mappings, in order, leaving out
+    // any that are commented out
+    private static List<String> filterMappingOrder(String webXml) {
+        String uncommented = webXml.replaceAll("(?s)<!--.*?-->", "");
+        Matcher mapping = Pattern.compile("<filter-mapping>\\s*<filter-name>([^<]+)</filter-name>")
+                .matcher(uncommented);
+        List<String> order = new ArrayList<>();
+        while (mapping.find()) {
+            order.add(mapping.group(1).trim());
+        }
+        return order;
     }
 }
