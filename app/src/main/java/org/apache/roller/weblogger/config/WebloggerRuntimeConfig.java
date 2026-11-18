@@ -321,7 +321,7 @@ public final class WebloggerRuntimeConfig {
             log.warn("The site's absolute URL (site.absoluteurl) is not set, so "
                     + "links in emails and feeds will use the host name of each "
                     + "request. Set \"Absolute URL to site\" under Server "
-                    + "Administration > Configuration.");
+                    + "Admin > Configuration.");
         }
 
         RequestURLs request = requestURLs.get();
@@ -352,7 +352,7 @@ public final class WebloggerRuntimeConfig {
                 log.warn("Not saving " + url + " as the site's absolute URL "
                         + "(site.absoluteurl) because it isn't a public host name. "
                         + "Set \"Absolute URL to site\" under Server "
-                        + "Administration > Configuration.");
+                        + "Admin > Configuration.");
             }
             return false;
         }
