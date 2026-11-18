@@ -182,7 +182,7 @@ public class MediaResourceServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            response.setContentType("image/png");
+            MediaTypePolicy.applyResponseHeaders(response, "image/png", "page.png");
             OutputStream out = response.getOutputStream();
             byte[] buf = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
             int length;
