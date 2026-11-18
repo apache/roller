@@ -4,6 +4,40 @@
 
 ### Behaviour changes worth reading before upgrading
 
+- **Weblog templates have render limits.** A page stops rendering, with a
+  logged error, once it writes more than `rendering.maxOutputChars` (10 MB)
+  or runs longer than `rendering.maxRenderSeconds` (30 seconds); `#foreach`
+  stops at 100,000 passes, and `String.repeat` isn't available. `#parse` and
+  `#include` load only the weblog's own templates, and macros defined inline
+  in a template are local to it. Library macros stay global. Error pages no
+  longer show template ids (#335).
+
+- **Entries with scripts or embeds open as HTML.** If an entry contains
+  scripts, frames, embedded objects, event-handler attributes or
+  `javascript:` links, the rich-text editor opens it in the HTML textarea
+  with a notice, and the stored HTML is kept as is (#331).
+
+- **Names are shown as text.** Screen and full names are HTML-escaped where
+  templates print them and written as plain text in feeds; commenter names
+  and addresses are escaped in HTML notification emails; HTML comments are
+  escaped unless the HTMLSubset plugin applies to them (#330).
+
+- **Limits on uploads and fetched feeds.** Images with more pixels than
+  `uploads.thumbnail.maxPixels` (50 million) are stored without a thumbnail
+  (#327). Planet stops reading a feed past `planet.aggregator.fetch.maxBytes`
+  (5 MB) or `planet.aggregator.fetch.maxSeconds` (30 seconds), and fetches
+  only http and https URLs (#326).
+
+- **AtomPub checks.** Publishing an entry through an AtomPub update needs the
+  permission to publish, media uploads over `uploads.file.maxsize` are
+  refused with 413 before they're stored, and entries show the creator's
+  email address only to the creator (also in MetaWeblog responses) (#328).
+
+- **Search queries are limited to 256 characters**, and a query the search
+  engine can't run finds nothing (#334).
+
+- **Weblog pages ignore a `skipCache` query parameter** (#325).
+
 - **The Design pages follow "Allow custom themes".** While
   `themes.customtheme.allowed` is off (the default), the theme, stylesheet and
   template pages answer as unavailable, as the hidden Design menu already
@@ -21,6 +55,21 @@
 
 ### Bug fixes
 
+- **Changing a password ends the account's other sessions.** Saving a new
+  password in the profile, an administrator's reset, or disabling an account
+  now logs out that user's other browsers at their next Roller UI page; the
+  session that made the change stays logged in (#333).
+- **Later pages of a feed are cached separately.** A feed's `?page=N` now has
+  its own cache entry, and page numbers are kept between 0 and 10,000 (#325).
+- **Media files are served only at their own weblog's address** (#329).
+- **"nofollow" is added to links that need it.** `addNofollow` only touched
+  links that already had `rel="nofollow"` (#330).
+- **Tags of a scheduled entry are counted once, when it goes live** (#328).
+- **A weblog's only administrator can't resign from it**, and declining an
+  invitation only removes a pending invitation (#334).
+- **The external-login placeholder isn't accepted as a password** (#306).
+- **Login requests release their database session** (#307).
+- **Roller UI stylesheets, scripts and images don't start a session** (#332).
 - **Requested tags are checked and encoded on every weblog page.** A custom
   page given `tags=` together with an entry now answers 404 for tags the
   weblog doesn't have, as it already did without an entry. The tag names are
