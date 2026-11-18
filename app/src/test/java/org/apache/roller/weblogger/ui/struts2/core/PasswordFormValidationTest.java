@@ -59,6 +59,25 @@ class PasswordFormValidationTest {
     }
 
     @Test
+    void profileRejectsPasswordTooLongToEncodeWithOpenIdUrl() {
+        Profile action = new Profile() {
+            @Override
+            public String getText(String key) {
+                return key;
+            }
+        };
+        action.getBean().setOpenIdUrl("https://idp.example.com#emoji");
+        action.getBean().setPasswordText(TOO_LONG);
+        action.getBean().setPasswordConfirm(TOO_LONG);
+        try (MockedStatic<WebloggerFactory> factory = mockUserManager()) {
+            action.myValidate();
+        } catch (Exception e) {
+            throw new AssertionError(e);
+        }
+        assertTrue(action.getActionErrors().contains("userRegister.error.passwordTooLong"));
+    }
+
+    @Test
     void profileAcceptsLongestPassword() {
         Profile action = new Profile() {
             @Override

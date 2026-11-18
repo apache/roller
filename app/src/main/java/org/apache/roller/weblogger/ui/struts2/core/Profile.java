@@ -136,6 +136,9 @@ public class Profile extends UIAction {
     }
 
     public void myValidate() {
+        if (RollerPasswordEncoders.isTooLong(getBean().getPasswordText())) {
+            addError("userRegister.error.passwordTooLong");
+        }
         // the external-login marker never matches at login
         if (RollerPasswordEncoders.isExternalLoginMarker(getBean().getPasswordText())) {
             addError("error.add.user.reservedPassword");
@@ -144,9 +147,6 @@ public class Profile extends UIAction {
             // check that passwords match if they were specified (w/StringUtils.equals, null == null)
             if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
                 addError("userRegister.error.mismatchedPasswords");
-            }
-            if (RollerPasswordEncoders.isTooLong(getBean().getPasswordText())) {
-                addError("userRegister.error.passwordTooLong");
             }
             if (authMethod == AuthMethod.OIDC) {
                 addError("userRegister.error.missingOpenID");
