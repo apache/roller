@@ -133,7 +133,7 @@ public class SecurityConfig {
         // (rendering.weblogMapper.rollerProtectedUrls), so no weblog can sit
         // under a path that skips the security.access rules.
         return web -> web.ignoring().requestMatchers("/images/**", "/theme/**", "/webjars/**",
-                "/roller-ui/styles/**", "/roller-ui/scripts/**", "/roller-ui/images/**");
+                "/roller-ui/styles/**", "/roller-ui/scripts/**", "/roller-ui/images/**", "/roller-ui/theme/**");
     }
 
     @Bean
@@ -311,25 +311,15 @@ public class SecurityConfig {
             if (setupInProgress.getAsBoolean() && setupPaths.matches(context.getRequest())) {
                 return new AuthorizationDecision(true);
             }
-            for (AccessRule rule : rules) {
-                if (rule.matcher().matches(context.getRequest())) {
-                    AuthorizationResult result = rule.check().authorize(authentication, context);
-                    if (result == null || !result.isGranted()) {
-                        return result;
-                    }
-                    break;
-                }
-            }
             // Roller renders a weblog at /roller-ui/rendering/<servlet>/<handle>/...
-            // as well as at /<handle>/..., so the rules for the weblog's own
-            // path apply there too
+            // as well as at /<handle>/..., so the rules are matched against the
+            // weblog's own path there, and the most specific rule for that path
+            // applies
             String weblogPath = weblogPath(URL_PATH_HELPER.getPathWithinApplication(context.getRequest()));
-            if (weblogPath != null) {
-                PathContainer path = PathContainer.parsePath(weblogPath);
-                for (AccessRule rule : rules) {
-                    if (rule.pattern().matches(path)) {
-                        return rule.check().authorize(authentication, context);
-                    }
+            PathContainer path = weblogPath == null ? null : PathContainer.parsePath(weblogPath);
+            for (AccessRule rule : rules) {
+                if (path != null ? rule.pattern().matches(path) : rule.matcher().matches(context.getRequest())) {
+                    return rule.check().authorize(authentication, context);
                 }
             }
             return new AuthorizationDecision(true);

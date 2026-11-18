@@ -208,7 +208,7 @@ class SecurityConfigTest {
     void rollersStaticFilesSkipTheChain() throws Exception {
         FilterChainProxy chain = chain(SecurityConfig.class);
         for (String path : new String[] {"/roller-ui/styles/roller.css", "/roller-ui/scripts/date-fields.js",
-                "/roller-ui/images/feather.svg", "/theme/scripts/roller.js",
+                "/roller-ui/images/feather.svg", "/roller-ui/theme/tan/menutab-sel.gif", "/theme/scripts/roller.js",
                 "/webjars/jquery/4.0.0/jquery.min.js", "/images/roller-logo.png"}) {
             MockHttpServletResponse response = new MockHttpServletResponse();
             assertEquals(PASS, outcome(chain, request("GET", path, ""), response), path);
@@ -373,6 +373,26 @@ class SecurityConfigTest {
     }
 
     @Test
+    void theMostSpecificRuleForTheWeblogsPathAppliesToItsRenderingPaths() throws Exception {
+        setProperty("security.access./**", "member");
+        setProperty("security.access./fam/**", "family");
+        FilterChainProxy chain = chain(WithUser.class);
+
+        for (String path : new String[] {"/fam/entry/x", "/roller-ui/rendering/page/fam/entry/x",
+                "/roller-ui/rendering/feed/fam/entries/atom"}) {
+            assertEquals(PASS, outcome(chain, request("GET", path, "family"), new MockHttpServletResponse()), path);
+            assertEquals("403 null", outcome(chain, request("GET", path, "member"), new MockHttpServletResponse()),
+                    path);
+            assertEquals(LOGIN, outcome(chain, request("GET", path, ""), new MockHttpServletResponse()), path);
+        }
+        for (String path : new String[] {"/myblog/entry/x", "/roller-ui/rendering/page/myblog/entry/x"}) {
+            assertEquals(PASS, outcome(chain, request("GET", path, "member"), new MockHttpServletResponse()), path);
+            assertEquals("403 null", outcome(chain, request("GET", path, "family"), new MockHttpServletResponse()),
+                    path);
+        }
+    }
+
+    @Test
     void weblogPathsOfRenderingRequests() {
         assertEquals("/fam/entry/x", SecurityConfig.weblogPath("/roller-ui/rendering/page/fam/entry/x"));
         assertEquals("/fam", SecurityConfig.weblogPath("/roller-ui/rendering/feed/fam"));
@@ -424,7 +444,8 @@ class SecurityConfigTest {
 
         for (String path : new String[] {"/roller-ui/login.rol", "/webjars/bootstrap/5.3.8/css/bootstrap.min.css",
                 "/roller-ui/scripts/date-fields.js", "/roller-ui/styles/roller.css",
-                "/roller-ui/images/feather.svg", "/theme/scripts/roller.js", "/favicon.svg",
+                "/roller-ui/images/feather.svg", "/roller-ui/theme/tan/menutab-sel.gif",
+                "/theme/scripts/roller.js", "/favicon.svg",
                 "/oauth2/authorization/keycloak", "/roller-ui/logout.rol"}) {
             MockHttpServletResponse response = new MockHttpServletResponse();
             String result = outcome(chain, request("GET", path, ""), response);
