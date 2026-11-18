@@ -132,4 +132,24 @@ class SiteUrlForAdminTest {
                 "https://blog.example.org/roller"));
         verify(properties, never()).saveProperty(any());
     }
+
+    @Test
+    void localAndInternalHostsAreNotSaved() throws Exception {
+        for (String url : List.of("http://localhost:8080/roller", "http://app.localhost/roller",
+                "http://127.0.0.1/roller", "http://[::1]:8080/roller", "http://10.0.0.5/roller",
+                "http://192.168.1.20:8080", "http://[fd00::1]/roller", "http://roller:8080/roller",
+                "http://blog.local/roller")) {
+            assertFalse(WebloggerRuntimeConfig.saveAbsoluteContextURLIfUnset(url), url);
+        }
+        verify(properties, never()).saveProperty(any());
+        verify(properties, never()).compareAndSetProperty(any(), any(), any());
+    }
+
+    @Test
+    void publicHostsMaySaveTheSiteUrl() {
+        for (String url : List.of("https://blog.example.org/roller", "http://93.184.215.14:8080",
+                "https://[2001:db8::1]/roller")) {
+            assertTrue(WebloggerRuntimeConfig.isPublicSiteURL(url), url);
+        }
+    }
 }

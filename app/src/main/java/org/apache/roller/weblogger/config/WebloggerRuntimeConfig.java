@@ -22,9 +22,16 @@ package org.apache.roller.weblogger.config;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefs;
 import org.apache.roller.weblogger.config.runtime.RuntimeConfigDefsParser;
@@ -62,6 +69,8 @@ public final class WebloggerRuntimeConfig {
     private static final ThreadLocal<RequestURLs> requestURLs =
             new ThreadLocal<>();
     private static final AtomicBoolean absoluteURLWarningLogged =
+            new AtomicBoolean(false);
+    private static final AtomicBoolean localURLWarningLogged =
             new AtomicBoolean(false);
     
     
@@ -338,6 +347,15 @@ public final class WebloggerRuntimeConfig {
         if (url == null || url.isBlank()) {
             return false;
         }
+        if (!isPublicSiteURL(url)) {
+            if (localURLWarningLogged.compareAndSet(false, true)) {
+                log.warn("Not saving " + url + " as the site's absolute URL "
+                        + "(site.absoluteurl) because it isn't a public host name. "
+                        + "Set \"Absolute URL to site\" under Server "
+                        + "Administration > Configuration.");
+            }
+            return false;
+        }
         PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
         RuntimeConfigProperty prop = pmgr.getProperty("site.absoluteurl");
         String current = prop == null ? null : prop.getValue();
@@ -357,6 +375,43 @@ public final class WebloggerRuntimeConfig {
     }
     
     
+    /**
+     * True if the url's host looks like a public name for the site, and so
+     * may be saved automatically. Loopback and private addresses, and host
+     * names without a dot (such as "localhost" or the name of a proxy's
+     * backend), are left for an administrator to set.
+     */
+    static boolean isPublicSiteURL(String url) {
+        String host;
+        try {
+            host = new URI(url).getHost();
+        } catch (URISyntaxException e) {
+            return false;
+        }
+        if (host == null) {
+            return false;
+        }
+        host = host.toLowerCase(Locale.ROOT);
+        if (host.startsWith("[") && host.endsWith("]")) {
+            host = host.substring(1, host.length() - 1);
+        }
+        if (InetAddressValidator.getInstance().isValid(host)) {
+            try {
+                // an address literal, so this doesn't look anything up
+                InetAddress address = InetAddress.getByName(host);
+                byte[] bytes = address.getAddress();
+                return !(address.isLoopbackAddress() || address.isAnyLocalAddress()
+                        || address.isLinkLocalAddress() || address.isSiteLocalAddress()
+                        || (address instanceof Inet6Address && (bytes[0] & 0xfe) == 0xfc));
+            } catch (UnknownHostException e) {
+                return false;
+            }
+        }
+        return host.indexOf('.') > 0 && !host.endsWith(".")
+                && !host.endsWith(".localhost") && !host.endsWith(".local");
+    }
+
+
     /**
      * Clear the caches of rendered content, whose links may have been built
      * from the url of a request.
