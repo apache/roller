@@ -62,6 +62,9 @@ public class Utilities {
 
     private static final Pattern mLinkPattern = Pattern.compile("<a href=",
             Pattern.CASE_INSENSITIVE);
+    private static final Pattern REL_ATTRIBUTE_PATTERN = Pattern.compile(
+            "\\srel\\s*=\\s*(?:\"([^\"]*)\"|'([^']*)'|([^\\s\"'=<>`]+))",
+            Pattern.CASE_INSENSITIVE);
     private static final Pattern OPENING_B_TAG_PATTERN = Pattern.compile(
             "&lt;b&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern CLOSING_B_TAG_PATTERN = Pattern.compile(
@@ -286,34 +289,77 @@ public class Utilities {
 
     /**
      * Code (stolen from Pebble) to add rel="nofollow" string to all links in
-     * HTML that don't already have it.
+     * HTML that don't already have it. A link with another rel value gets
+     * nofollow added to that value.
      */
     public static String addNofollow(String html) {
         if (html == null || html.length() == 0) {
             return html;
         }
-        // Each link runs to the first ">" after its "href=". Once no ">" is
-        // left, no later link can close either, so stop there.
+        // Each link runs to the first ">" after its "href=" that isn't inside
+        // a quoted attribute value. Once no ">" is left, no later link can
+        // close either, so stop there.
         Matcher m = mLinkPattern.matcher(html);
         StringBuilder buf = new StringBuilder(html.length());
         int end = 0;
         while (m.find()) {
-            int close = html.indexOf('>', m.end());
+            int close = findTagEnd(html, m.end());
             if (close < 0) {
                 break;
             }
-            String link = html.substring(m.start(), close + 1);
             buf.append(html, end, m.start());
-            if (link.contains("rel=\"nofollow\"")) {
-                buf.append(link);
-            } else {
-                buf.append(link, 0, link.length() - 1).append(" rel=\"nofollow\">");
-            }
+            buf.append(addNofollowToLink(html.substring(m.start(), close + 1)));
             end = close + 1;
             m.region(end, html.length());
         }
         buf.append(html, end, html.length());
         return buf.toString();
+    }
+
+    /**
+     * Index of the ">" that ends the tag, skipping any inside quoted attribute
+     * values, or -1 if the tag doesn't end.
+     */
+    private static int findTagEnd(String html, int from) {
+        char quote = 0;
+        char previous = '=';
+        for (int i = from; i < html.length(); i++) {
+            char c = html.charAt(i);
+            if (quote != 0) {
+                if (c == quote) {
+                    quote = 0;
+                }
+            } else if ((c == '"' || c == '\'') && previous == '=') {
+                quote = c;
+            } else if (c == '>') {
+                return i;
+            }
+            if (!Character.isWhitespace(c)) {
+                previous = c;
+            }
+        }
+        return -1;
+    }
+
+    private static String addNofollowToLink(String link) {
+        Matcher rel = REL_ATTRIBUTE_PATTERN.matcher(link);
+        if (!rel.find()) {
+            return link.substring(0, link.length() - 1) + " rel=\"nofollow\">";
+        }
+        int group = rel.group(1) != null ? 1 : rel.group(2) != null ? 2 : 3;
+        String value = rel.group(group);
+        for (String token : StringUtils.split(value)) {
+            if ("nofollow".equalsIgnoreCase(token)) {
+                return link;
+            }
+        }
+        String values = value.isBlank() ? "nofollow" : value + " nofollow";
+        if (group == 3) {
+            // unquoted value: quote it so the added token stays part of it
+            return link.substring(0, rel.start(group)) + '"' + values + '"'
+                    + link.substring(rel.end(group));
+        }
+        return link.substring(0, rel.start(group)) + values + link.substring(rel.end(group));
     }
 
     // ------------------------------------------------------------------------

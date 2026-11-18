@@ -29,7 +29,9 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
+import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryCommentWrapper;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -42,9 +44,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Entry authors in the built-in feeds are plain text, so the feed macros must
- * turn the HTML-escaped screen name from {@link UserWrapper} back into text
- * and XML-escape it once.
+ * Entry, comment and media file authors in the built-in feeds are plain text,
+ * so the feed macros must turn the HTML-escaped names from {@link UserWrapper}
+ * and {@link WeblogEntryCommentWrapper}, and screen names stored already
+ * encoded, back into text and XML-escape them once.
  */
 public class FeedAuthorEscapingTest {
 
@@ -56,6 +59,13 @@ public class FeedAuthorEscapingTest {
         {"José \"Pepe\" O'Brien", "José \"Pepe\" O'Brien"},
         // already encoded by the sanitizer (untrusted admins)
         {"Tom &amp; &quot;Jerry&quot;", "Tom & \"Jerry\""},
+    };
+
+    /** Comment author name as submitted, and the text the feed must contain. */
+    private static final String[][] COMMENT_NAMES = {
+        {"A & B", "A & B"},
+        {"<b>Bold</b>", "<b>Bold</b>"},
+        {"José \"Pepe\" O'Brien", "José \"Pepe\" O'Brien"},
     };
 
     /** Minimal stand-ins for the model objects the feed macros read. */
@@ -107,6 +117,78 @@ public class FeedAuthorEscapingTest {
         }
     }
 
+    /** Comment stand-in that takes its name from the real comment wrapper. */
+    public static class StubComment {
+        private final WeblogEntryCommentWrapper wrapper;
+
+        StubComment(String name) {
+            WeblogEntryComment comment = new WeblogEntryComment();
+            comment.setName(name);
+            this.wrapper = WeblogEntryCommentWrapper.wrap(comment, null);
+        }
+
+        public String getName() {
+            return wrapper.getName();
+        }
+
+        public StubEntry getWeblogEntry() {
+            return new StubEntry(null);
+        }
+
+        public String getTimestamp() {
+            return "0";
+        }
+
+        public Date getPostTime() {
+            return new Date(0);
+        }
+
+        public String getContent() {
+            return "Comment";
+        }
+    }
+
+    /** Media file stand-in; media files expose the creator's User directly. */
+    public static class StubFile {
+        private final User creator;
+
+        StubFile(User creator) {
+            this.creator = creator;
+        }
+
+        public String getPermalink() {
+            return "https://example.org/blog/mediaresource/file";
+        }
+
+        public String getName() {
+            return "file.png";
+        }
+
+        public User getCreator() {
+            return creator;
+        }
+
+        public Date getDateUploaded() {
+            return new Date(0);
+        }
+
+        public Date getLastUpdated() {
+            return new Date(0);
+        }
+
+        public List<Object> getTags() {
+            return Collections.emptyList();
+        }
+
+        public String getDescription() {
+            return null;
+        }
+
+        public String getContentType() {
+            return "image/png";
+        }
+    }
+
     public static class StubCategory {
         public String getName() {
             return "General";
@@ -126,6 +208,8 @@ public class FeedAuthorEscapingTest {
         when(user.getScreenName()).thenReturn(name);
         VelocityContext ctx = new VelocityContext();
         ctx.put("entries", List.of(new StubEntry(UserWrapper.wrap(user))));
+        ctx.put("comments", List.of(new StubComment(name)));
+        ctx.put("files", List.of(new StubFile(user)));
         ctx.put("utils", new UtilitiesModel());
         StringWriter out = new StringWriter();
         engine.evaluate(ctx, out, "test", "#parse('feeds.vm')" + macro);
@@ -157,6 +241,40 @@ public class FeedAuthorEscapingTest {
                     + "#showEntriesRSS20($entries)</channel></rss>", name[0]);
             Document feed = parse(xml);
             assertEquals(name[1], feed.getElementsByTagNameNS("http://purl.org/dc/elements/1.1/", "creator")
+                    .item(0).getTextContent(), xml);
+        }
+    }
+
+    @Test
+    public void atomCommentAuthorIsText() throws Exception {
+        for (String[] name : COMMENT_NAMES) {
+            String xml = render("<feed xmlns=\"http://www.w3.org/2005/Atom\">"
+                    + "#showCommentsAtom10($comments)</feed>", name[0]);
+            Document feed = parse(xml);
+            assertEquals(name[1], feed.getElementsByTagNameNS("http://www.w3.org/2005/Atom", "name")
+                    .item(0).getTextContent(), xml);
+        }
+    }
+
+    @Test
+    public void rssCommentCreatorIsText() throws Exception {
+        for (String[] name : COMMENT_NAMES) {
+            String xml = render("<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\""
+                    + " xmlns:atom=\"http://www.w3.org/2005/Atom\"><channel>"
+                    + "#showCommentsRSS20($comments)</channel></rss>", name[0]);
+            Document feed = parse(xml);
+            assertEquals(name[1], feed.getElementsByTagNameNS("http://purl.org/dc/elements/1.1/", "creator")
+                    .item(0).getTextContent(), xml);
+        }
+    }
+
+    @Test
+    public void atomMediaFileAuthorIsText() throws Exception {
+        for (String[] name : NAMES) {
+            String xml = render("<feed xmlns=\"http://www.w3.org/2005/Atom\">"
+                    + "#showFilesAtom10($files)</feed>", name[0]);
+            Document feed = parse(xml);
+            assertEquals(name[1], feed.getElementsByTagNameNS("http://www.w3.org/2005/Atom", "name")
                     .item(0).getTextContent(), xml);
         }
     }
