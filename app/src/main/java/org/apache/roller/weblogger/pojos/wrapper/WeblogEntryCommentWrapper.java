@@ -110,9 +110,9 @@ public final class WeblogEntryCommentWrapper {
     /**
      * Get the comment contents.
      *
-     * Plain text comments are html escaped. HTML comments are reduced to a
-     * subset of HTML by the HTMLSubset plugin, and are html escaped when that
-     * plugin isn't applied to them. Any configured comment plugins are then
+     * HTML comments are reduced to a subset of HTML by the HTMLSubset plugin;
+     * other comments, and HTML comments that plugin isn't applied to, are html
+     * escaped. Any configured comment plugins are then
      * applied, and rel="nofollow" is added to links.
      */
     public String getContent() {
@@ -120,11 +120,10 @@ public final class WeblogEntryCommentWrapper {
         String content = this.pojo.getContent();
         PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
         
-        // escape content if content-type is text/plain, or if it is text/html
-        // and the HTMLSubset plugin won't restrict it
-        if("text/plain".equals(this.pojo.getContentType())
-                || ("text/html".equals(this.pojo.getContentType())
-                    && !appliesHtmlSubset(pmgr))) {
+        // escape content unless it is text/html that the HTMLSubset plugin
+        // will restrict
+        if(!"text/html".equals(this.pojo.getContentType())
+                || !appliesHtmlSubset(pmgr)) {
             content = StringEscapeUtils.escapeHtml4(content);
         }
         

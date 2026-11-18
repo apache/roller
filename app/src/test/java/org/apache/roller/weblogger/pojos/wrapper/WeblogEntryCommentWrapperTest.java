@@ -129,6 +129,12 @@ class WeblogEntryCommentWrapperTest {
     }
 
     @Test
+    void commentWithoutContentTypeIsEscaped() {
+        assertEquals("&lt;b&gt;Hi&lt;/b&gt;&lt;img src=x onerror=alert(1)&gt;",
+                content(null, "HTMLSubset", List.of(new HTMLSubsetPlugin())));
+    }
+
+    @Test
     void plainTextCommentIsEscapedOnce() {
         assertEquals("&lt;b&gt;Hi&lt;/b&gt;&lt;img src=x onerror=alert(1)&gt;",
                 content("text/plain", "HTMLSubset", List.of(new HTMLSubsetPlugin())));
