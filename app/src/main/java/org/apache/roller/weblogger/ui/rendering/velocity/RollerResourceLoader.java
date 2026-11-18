@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
 import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.exception.VelocityException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
 import org.apache.velocity.util.ExtProperties;
@@ -52,6 +53,11 @@ public class RollerResourceLoader extends ResourceLoader {
 	public void init(ExtProperties configuration) {
 		if (logger.isDebugEnabled()) {
 			logger.debug(configuration);
+		}
+		// see inRenderScope()
+		if (configuration.getBoolean("cache", false)) {
+			throw new VelocityException("resource.loader.roller.cache must be false,"
+					+ " so that each weblog renders only its own templates");
 		}
 	}
 
@@ -122,7 +128,8 @@ public class RollerResourceLoader extends ResourceLoader {
 	 * one weblog cannot read or run another's templates by id. Outside
 	 * rendering, the template being loaded is the one the servlet chose. This
 	 * relies on resource.loader.roller.cache=false in velocity.properties, so
-	 * every load comes through here rather than from Velocity's cache.
+	 * every load comes through here rather than from Velocity's cache; init()
+	 * refuses to start with caching on.
 	 */
 	private static boolean inRenderScope(WeblogTemplate page) {
 		RenderSession session = RenderSession.current();
