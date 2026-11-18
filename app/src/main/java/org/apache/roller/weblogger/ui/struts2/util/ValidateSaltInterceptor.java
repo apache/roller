@@ -71,10 +71,12 @@ public class ValidateSaltInterceptor extends AbstractInterceptor implements Stru
             // parse errors from the upload interceptor, and its workflow returns
             // the input page before the action method runs, so it can say what
             // went wrong. Struts gives the errors only to upload actions, so
-            // every other action still needs a valid salt.
+            // every other action still needs a valid salt, and so does an
+            // upload whose salt was read despite the errors.
             if (request instanceof MultiPartRequestWrapper
                     && ((MultiPartRequestWrapper) request).hasErrors()
-                    && invocation.getAction() instanceof UploadedFilesAware) {
+                    && invocation.getAction() instanceof UploadedFilesAware
+                    && request.getParameter("salt") == null) {
                 return invocation.invoke();
             }
 
