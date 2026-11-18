@@ -36,7 +36,8 @@ public class LoadSaltFilter implements Filter {
     static final String RENDERING_PATH = "/roller-ui/rendering/";
 
     /** Roller UI static files, which never hold a form. */
-    static final String[] STATIC_PATHS = {"/roller-ui/styles/", "/roller-ui/scripts/", "/roller-ui/images/"};
+    static final String[] STATIC_PATHS = {"/roller-ui/styles/", "/roller-ui/scripts/", "/roller-ui/images/",
+        "/roller-ui/theme/"};
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
