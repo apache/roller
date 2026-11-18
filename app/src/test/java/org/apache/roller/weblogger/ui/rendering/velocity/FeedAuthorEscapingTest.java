@@ -1,0 +1,163 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package org.apache.roller.weblogger.ui.rendering.velocity;
+
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
+import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+/**
+ * Entry authors in the built-in feeds are plain text, so the feed macros must
+ * turn the HTML-escaped screen name from {@link UserWrapper} back into text
+ * and XML-escape it once.
+ */
+public class FeedAuthorEscapingTest {
+
+    /** Stored screen name, and the text the feed must contain. */
+    private static final String[][] NAMES = {
+        // stored as typed (trusted admins)
+        {"<script>alert(1)</script>", "<script>alert(1)</script>"},
+        {"Tom & Jerry", "Tom & Jerry"},
+        {"José \"Pepe\" O'Brien", "José \"Pepe\" O'Brien"},
+        // already encoded by the sanitizer (untrusted admins)
+        {"Tom &amp; &quot;Jerry&quot;", "Tom & \"Jerry\""},
+    };
+
+    /** Minimal stand-ins for the model objects the feed macros read. */
+    public static class StubEntry {
+        private final UserWrapper creator;
+
+        StubEntry(UserWrapper creator) {
+            this.creator = creator;
+        }
+
+        public String getPermalink() {
+            return "https://example.org/blog/entry/post";
+        }
+
+        public String getTitle() {
+            return "Post";
+        }
+
+        public UserWrapper getCreator() {
+            return creator;
+        }
+
+        public Date getPubTime() {
+            return new Date(0);
+        }
+
+        public Date getUpdateTime() {
+            return new Date(0);
+        }
+
+        public StubCategory getCategory() {
+            return new StubCategory();
+        }
+
+        public List<Object> getTags() {
+            return Collections.emptyList();
+        }
+
+        public String getText() {
+            return "Text";
+        }
+
+        public String getTransformedText() {
+            return "Text";
+        }
+
+        public String findEntryAttribute(String name) {
+            return null;
+        }
+    }
+
+    public static class StubCategory {
+        public String getName() {
+            return "General";
+        }
+    }
+
+    private static String render(String macro, String name) {
+        Properties props = new Properties();
+        props.setProperty("resource.loaders", "file");
+        props.setProperty("resource.loader.file.class",
+                "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
+        props.setProperty("resource.loader.file.path", "src/main/webapp/WEB-INF/velocity");
+        VelocityEngine engine = new VelocityEngine();
+        engine.init(props);
+
+        User user = mock(User.class);
+        when(user.getScreenName()).thenReturn(name);
+        VelocityContext ctx = new VelocityContext();
+        ctx.put("entries", List.of(new StubEntry(UserWrapper.wrap(user))));
+        ctx.put("utils", new UtilitiesModel());
+        StringWriter out = new StringWriter();
+        engine.evaluate(ctx, out, "test", "#parse('feeds.vm')" + macro);
+        return out.toString();
+    }
+
+    private static Document parse(String xml) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        return factory.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
+    }
+
+    @Test
+    public void atomAuthorIsText() throws Exception {
+        for (String[] name : NAMES) {
+            String xml = render("<feed xmlns=\"http://www.w3.org/2005/Atom\">"
+                    + "#showEntriesAtom10($entries)</feed>", name[0]);
+            Document feed = parse(xml);
+            assertEquals(name[1], feed.getElementsByTagNameNS("http://www.w3.org/2005/Atom", "name")
+                    .item(0).getTextContent(), xml);
+        }
+    }
+
+    @Test
+    public void rssCreatorIsText() throws Exception {
+        for (String[] name : NAMES) {
+            String xml = render("<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\""
+                    + " xmlns:atom=\"http://www.w3.org/2005/Atom\"><channel>"
+                    + "#showEntriesRSS20($entries)</channel></rss>", name[0]);
+            Document feed = parse(xml);
+            assertEquals(name[1], feed.getElementsByTagNameNS("http://purl.org/dc/elements/1.1/", "creator")
+                    .item(0).getTextContent(), xml);
+        }
+    }
+}

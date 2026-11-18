@@ -68,16 +68,16 @@
             </td>
 
             <td class="rollertable" align="center">
-                <a href="#" onclick="showAddEditModal('<s:property value="#pingTarget.id"/>',
-                        '<s:property value="#pingTarget.name" />',
-                        '<s:property value="#pingTarget.pingUrl" />'
-                        )">
+                <a href="#" class="edit-ping-target"
+                        data-ping-target-id="<s:property value="#pingTarget.id"/>"
+                        data-ping-target-name="<s:property value="#pingTarget.name" />"
+                        data-ping-target-url="<s:property value="#pingTarget.pingUrl" />">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true"> </span>
                 </a>
             </td>
 
             <td class="rollertable" align="center">
-                <a href="#" onclick="showDeleteModal('<s:property value="#pingTarget.id"/>')">
+                <a href="#" class="delete-ping-target" data-ping-target-id="<s:property value="#pingTarget.id"/>">
                     <span class="glyphicon glyphicon-trash" aria-hidden="true"> </span>
                 </a>
             </td>
@@ -211,6 +211,16 @@
 <%-- ================================================================================================ --%>
 
 <script>
+
+    $(".edit-ping-target").on("click", function () {
+        showAddEditModal($(this).attr("data-ping-target-id"),
+            $(this).attr("data-ping-target-name"),
+            $(this).attr("data-ping-target-url"));
+    });
+
+    $(".delete-ping-target").on("click", function () {
+        showDeleteModal($(this).attr("data-ping-target-id"));
+    });
 
     function showDeleteModal( removeId ) {
         $('#removeId').val(removeId);
