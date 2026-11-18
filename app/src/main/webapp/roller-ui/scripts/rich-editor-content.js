@@ -98,6 +98,24 @@ var RollerRichEditor = (function () {
         return false;
     }
 
+    // The elements under a node, with their namespaces and attributes, in
+    // order. Text is left out: a parser drops a newline at the start of a
+    // <pre> each time, which changes nothing that runs.
+    function shape(node) {
+        var out = "";
+        for (var child = node.firstChild; child; child = child.nextSibling) {
+            if (child.nodeType !== 1) {
+                continue;
+            }
+            out += "<" + child.namespaceURI + " " + child.localName;
+            for (var i = 0; i < child.attributes.length; i++) {
+                out += " " + child.attributes[i].name + "=" + JSON.stringify(child.attributes[i].value);
+            }
+            out += ">" + shape(child.content && child.content.nodeType === 11 ? child.content : child) + "</>";
+        }
+        return out;
+    }
+
     function parseFragment(doc, html) {
         var template = doc.createElement("template");
         template.innerHTML = html;
@@ -122,12 +140,10 @@ var RollerRichEditor = (function () {
             }
             // Summernote serializes its content and parses it again for undo
             // and code view; markup such as nested forms comes back as a
-            // different tree, which this check hasn't seen.
-            var body = doc.body.innerHTML;
-            var again = new DOMParser().parseFromString(body, "text/html");
-            var fragment = template.innerHTML;
-            return !again.body || again.body.innerHTML !== body
-                || parseFragment(doc, fragment).innerHTML !== fragment;
+            // different tree of elements, which this check hasn't seen.
+            var again = new DOMParser().parseFromString(doc.body.innerHTML, "text/html");
+            return !again.body || shape(again.body) !== shape(doc.body)
+                || shape(parseFragment(doc, template.innerHTML).content) !== shape(template.content);
         } catch (e) {
             return true;
         }
