@@ -319,4 +319,64 @@ public class PermissionTest  {
         TestUtils.endSession(true);
         log.info("END");
     }
+
+    /**
+     * Removing a weblog removes its pending invitations, so a weblog later
+     * created with the same handle doesn't inherit them.
+     */
+    @Test
+    public void testRemovingWeblogRemovesInvitations() throws Exception {
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        User invitee = TestUtils.setupUser("permsInvitee");
+        Weblog weblog = TestUtils.setupWeblog("permsInviteWeblog", testUser);
+        String handle = weblog.getHandle();
+        TestUtils.endSession(true);
+
+        mgr.grantWeblogPermissionPending(weblog, invitee, List.of(WeblogPermission.POST));
+        TestUtils.endSession(true);
+
+        TestUtils.teardownWeblog(weblog.getId());
+        TestUtils.endSession(true);
+
+        Weblog again = TestUtils.setupWeblog("permsInviteWeblog", testUser);
+        TestUtils.endSession(true);
+        try {
+            assertEquals(handle, again.getHandle());
+            assertTrue(mgr.getPendingWeblogPermissions(again).isEmpty(),
+                    "the new weblog has no invitations");
+        } finally {
+            TestUtils.teardownWeblog(again.getId());
+            TestUtils.teardownUser(invitee.getUserName());
+            TestUtils.endSession(true);
+        }
+    }
+
+    /**
+     * Removing a user removes their pending invitations, so a user later
+     * created with the same name doesn't inherit them.
+     */
+    @Test
+    public void testRemovingUserRemovesInvitations() throws Exception {
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        User invitee = TestUtils.setupUser("permsRemovedInvitee");
+        String userName = invitee.getUserName();
+        TestUtils.endSession(true);
+
+        mgr.grantWeblogPermissionPending(TestUtils.getManagedWebsite(testWeblog), invitee,
+                List.of(WeblogPermission.POST));
+        TestUtils.endSession(true);
+
+        TestUtils.teardownUser(userName);
+        TestUtils.endSession(true);
+
+        User again = TestUtils.setupUser("permsRemovedInvitee");
+        TestUtils.endSession(true);
+        try {
+            assertTrue(mgr.getPendingWeblogPermissions(again).isEmpty(),
+                    "the new user has no invitations");
+        } finally {
+            TestUtils.teardownUser(userName);
+            TestUtils.endSession(true);
+        }
+    }
 }

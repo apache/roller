@@ -79,7 +79,10 @@ public class JPAUserManagerImpl implements UserManager {
         String userName = user.getUserName();
         
         // remove permissions, maintaining both sides of relationship
-        List<WeblogPermission> perms = getWeblogPermissions(user);
+        List<WeblogPermission> perms = new ArrayList<>(getWeblogPermissions(user));
+        // and pending invitations, which a new user of the same name would
+        // otherwise inherit
+        perms.addAll(getPendingWeblogPermissions(user));
         for (WeblogPermission perm : perms) {
             this.strategy.remove(perm);
         }

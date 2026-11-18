@@ -220,8 +220,9 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         removeCategories.setParameter(1, weblog);
         removeCategories.executeUpdate();
 
-        // remove permissions
-        for (WeblogPermission perm : umgr.getWeblogPermissions(weblog)) {
+        // remove permissions, and pending invitations, which a new weblog with
+        // the same handle would otherwise inherit
+        for (WeblogPermission perm : umgr.getWeblogPermissionsIncludingPending(weblog)) {
             umgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(), WeblogPermission.ALL_ACTIONS);
         }
         
