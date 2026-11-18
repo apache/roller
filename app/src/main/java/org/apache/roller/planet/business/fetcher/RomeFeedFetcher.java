@@ -49,6 +49,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Flow;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -121,7 +123,11 @@ public class RomeFeedFetcher implements FeedFetcher {
         SyndFeed feed;
         try {
             feed = fetchFeed(feedURL);
-        } catch (FeedException | IOException | InterruptedException ex) {
+        } catch (InterruptedException ex) {
+            // let the caller see that it was asked to stop
+            Thread.currentThread().interrupt();
+            throw new FetcherException("Interrupted fetching subscription - "+feedURL, ex);
+        } catch (FeedException | IOException ex) {
             throw new FetcherException("Error fetching subscription - "+feedURL, ex);
         }
         
@@ -279,22 +285,34 @@ public class RomeFeedFetcher implements FeedFetcher {
     
     private SyndFeed fetchFeed(String url) throws IOException, InterruptedException, FeedException {
         
-        HttpRequest request = requestBuilder.copy().uri(URI.create(url)).build();
+        HttpRequest request;
+        try {
+            request = requestBuilder.copy().uri(URI.create(url)).build();
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Feed URL is not valid - " + url, e);
+        }
         
         // the request timeout only covers the response headers, so bound the
         // whole download, including the body, here
+        AtomicBoolean abandoned = new AtomicBoolean();
+        AtomicReference<LimitedBodySubscriber> subscriber = new AtomicReference<>();
         CompletableFuture<HttpResponse<byte[]>> response = client.sendAsync(request,
-                info -> new LimitedBodySubscriber(maxBytes,
-                        info.headers().firstValueAsLong("Content-Length").orElse(-1)));
+                info -> {
+                    LimitedBodySubscriber s = new LimitedBodySubscriber(maxBytes,
+                            info.headers().firstValueAsLong("Content-Length").orElse(-1),
+                            info.statusCode(), abandoned);
+                    subscriber.set(s);
+                    return s;
+                });
         byte[] body;
         try {
             body = response.get(maxTime.toMillis(), TimeUnit.MILLISECONDS).body();
         } catch (TimeoutException e) {
-            response.cancel(true);
+            abandon(response, abandoned, subscriber);
             throw new IOException("Feed was not received within "
                     + maxTime.toSeconds() + " seconds");
         } catch (InterruptedException e) {
-            response.cancel(true);
+            abandon(response, abandoned, subscriber);
             throw e;
         } catch (ExecutionException e) {
             if (e.getCause() instanceof IOException io) {
@@ -310,6 +328,20 @@ public class RomeFeedFetcher implements FeedFetcher {
     }
     
     
+    // stops a download we no longer wait for. On Java 11, cancelling the
+    // future doesn't stop the exchange, so the body subscriber also cancels
+    // its subscription, which closes the connection.
+    private static void abandon(CompletableFuture<?> response, AtomicBoolean abandoned,
+            AtomicReference<LimitedBodySubscriber> subscriber) {
+        abandoned.set(true);
+        LimitedBodySubscriber s = subscriber.get();
+        if (s != null) {
+            s.cancel(new IOException("Feed download abandoned"));
+        }
+        response.cancel(true);
+    }
+    
+    
     // a property from roller.properties, or the default if it isn't positive
     private static int positiveProperty(String name, int defaultValue) {
         try {
@@ -322,7 +354,8 @@ public class RomeFeedFetcher implements FeedFetcher {
     }
     
     
-    // collects a response body, failing once it grows past maxBytes
+    // collects a successful response's body, failing once it grows past
+    // maxBytes or once the fetcher stops waiting for it
     private static final class LimitedBodySubscriber
             implements HttpResponse.BodySubscriber<byte[]> {
         
@@ -330,17 +363,27 @@ public class RomeFeedFetcher implements FeedFetcher {
         private final ByteArrayOutputStream body = new ByteArrayOutputStream();
         private final long maxBytes;
         private final long contentLength;
+        private final int statusCode;
+        private final AtomicBoolean abandoned;
         private Flow.Subscription subscription;
+        private boolean cancelled;
         
-        LimitedBodySubscriber(long maxBytes, long contentLength) {
+        LimitedBodySubscriber(long maxBytes, long contentLength, int statusCode,
+                AtomicBoolean abandoned) {
             this.maxBytes = maxBytes;
             this.contentLength = contentLength;
+            this.statusCode = statusCode;
+            this.abandoned = abandoned;
         }
         
         @Override
-        public void onSubscribe(Flow.Subscription subscription) {
+        public synchronized void onSubscribe(Flow.Subscription subscription) {
             this.subscription = subscription;
-            if (contentLength > maxBytes) {
+            if (abandoned.get()) {
+                cancel(new IOException("Feed download abandoned"));
+            } else if (statusCode < 200 || statusCode > 299) {
+                cancel(new IOException("Feed request returned HTTP status " + statusCode));
+            } else if (contentLength > maxBytes) {
                 tooLarge();
             } else {
                 subscription.request(Long.MAX_VALUE);
@@ -348,8 +391,8 @@ public class RomeFeedFetcher implements FeedFetcher {
         }
         
         @Override
-        public void onNext(List<ByteBuffer> buffers) {
-            if (result.isDone()) {
+        public synchronized void onNext(List<ByteBuffer> buffers) {
+            if (cancelled || result.isDone()) {
                 return;
             }
             for (ByteBuffer buffer : buffers) {
@@ -379,9 +422,16 @@ public class RomeFeedFetcher implements FeedFetcher {
         }
         
         private void tooLarge() {
-            subscription.cancel();
-            result.completeExceptionally(new IOException(
-                    "Feed is larger than " + maxBytes + " bytes"));
+            cancel(new IOException("Feed is larger than " + maxBytes + " bytes"));
+        }
+        
+        // stops reading the body; safe to call from any thread
+        synchronized void cancel(IOException reason) {
+            if (!cancelled && subscription != null) {
+                cancelled = true;
+                subscription.cancel();
+            }
+            result.completeExceptionally(reason);
         }
     }
     

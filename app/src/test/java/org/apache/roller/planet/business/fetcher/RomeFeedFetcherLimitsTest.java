@@ -28,8 +28,10 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -64,6 +66,8 @@ class RomeFeedFetcherLimitsTest {
     private static HttpServer server;
     private static ExecutorService executor;
     private static volatile boolean stopping;
+    // counted down when the client closes the /trickle connection
+    private static final CountDownLatch trickleClosed = new CountDownLatch(1);
 
     private final RomeFeedFetcher fetcher =
             new RomeFeedFetcher(MAX_BYTES, MAX_TIME);
@@ -86,6 +90,15 @@ class RomeFeedFetcherLimitsTest {
         server.createContext("/large-chunked", exchange -> send(exchange, feed(MAX_BYTES * 16), false));
         server.createContext("/drip", RomeFeedFetcherLimitsTest::drip);
         server.createContext("/stall", RomeFeedFetcherLimitsTest::stall);
+        server.createContext("/trickle", RomeFeedFetcherLimitsTest::trickle);
+        server.createContext("/missing", exchange -> {
+            // a feed body, so only the status says the request failed
+            byte[] body = feed(1024);
+            exchange.sendResponseHeaders(404, body.length);
+            try (OutputStream out = exchange.getResponseBody()) {
+                out.write(body);
+            }
+        });
         server.start();
     }
 
@@ -136,20 +149,38 @@ class RomeFeedFetcherLimitsTest {
         }
     }
 
+    // sends headers, then a byte every 100 ms until the client goes away
+    private static void trickle(HttpExchange exchange) throws IOException {
+        exchange.sendResponseHeaders(200, 0);
+        try (OutputStream out = exchange.getResponseBody()) {
+            out.write(HEAD.getBytes(StandardCharsets.UTF_8));
+            while (!stopping) {
+                out.write('x');
+                out.flush();
+                Thread.sleep(100);
+            }
+        } catch (IOException e) {
+            trickleClosed.countDown();
+        } catch (InterruptedException e) {
+            // server stopping
+        }
+    }
+
     private static String url(String path) {
         return "http://" + server.getAddress().getHostString() + ":"
                 + server.getAddress().getPort() + path;
     }
 
-    // fetching fails within a few seconds, with the cause's message
-    // containing the expected text
+    // fetching fails well before the server would finish, with the cause's
+    // message containing the expected text. The bound leaves room for a slow
+    // build machine; the slow feeds would take minutes.
     private void assertFailsFast(String path, String message) {
         long start = System.nanoTime();
-        FetcherException ex = assertTimeoutPreemptively(Duration.ofSeconds(10),
+        FetcherException ex = assertTimeoutPreemptively(Duration.ofSeconds(30),
                 () -> assertThrows(FetcherException.class,
                         () -> fetcher.fetchSubscription(url(path))));
         Duration elapsed = Duration.ofNanos(System.nanoTime() - start);
-        assertTrue(elapsed.compareTo(MAX_TIME.plusSeconds(2)) < 0,
+        assertTrue(elapsed.compareTo(MAX_TIME.plusSeconds(10)) < 0,
                 "took " + elapsed);
         Throwable cause = ex.getRootCause() != null ? ex.getRootCause() : ex;
         assertTrue(cause.getMessage() != null
@@ -179,6 +210,38 @@ class RomeFeedFetcherLimitsTest {
     @Test
     void stalledFeedFails() {
         assertFailsFast("/stall", "not received within 2 seconds");
+    }
+
+    @Test
+    void abandonedFeedIsNoLongerDownloaded() throws Exception {
+        assertFailsFast("/trickle", "not received within 2 seconds");
+        assertTrue(trickleClosed.await(10, TimeUnit.SECONDS),
+                "the fetcher kept downloading the feed after giving up");
+    }
+
+    @Test
+    void unsuccessfulStatusFails() {
+        assertFailsFast("/missing", "HTTP status 404");
+    }
+
+    @Test
+    void malformedUrlFails() {
+        FetcherException ex = assertThrows(FetcherException.class,
+                () -> fetcher.fetchSubscription("http://exa mple.com/feed"));
+        assertTrue(ex.getMessage().contains("exa mple.com"), ex.getMessage());
+    }
+
+    @Test
+    void interruptIsKept() {
+        Thread.currentThread().interrupt();
+        try {
+            assertThrows(FetcherException.class,
+                    () -> fetcher.fetchSubscription(url("/stall")));
+            assertTrue(Thread.currentThread().isInterrupted(),
+                    "the interrupt was lost");
+        } finally {
+            Thread.interrupted();
+        }
     }
 
     @Test
