@@ -36,7 +36,8 @@ import org.apache.velocity.util.introspection.VelPropertyGet;
  * a string a call returns may be no longer than the output limit, a call that
  * could build a longer string is stopped before it runs, and string methods
  * whose result can't be bounded from the call (String.repeat, String.format
- * and others; see StringGrowth) are not offered.
+ * and others; see StringGrowth) are not offered. Regular expressions given to
+ * String methods check the deadline as they run; see DeadlineRegex.
  */
 public class RenderLimitUberspector extends AbstractChainableUberspector {
 
@@ -90,6 +91,12 @@ public class RenderLimitUberspector extends AbstractChainableUberspector {
             if (RenderSession.current() != null) {
                 RenderSession.checkLength(StringGrowth.maxResultLength(
                         o, method.getMethodName(), params));
+                if (o instanceof String) {
+                    Object result = DeadlineRegex.invoke((String) o, method.getMethodName(), params);
+                    if (result != DeadlineRegex.NOT_HANDLED) {
+                        return checked(result);
+                    }
+                }
             }
             return checked(method.invoke(o, params));
         }

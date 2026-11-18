@@ -247,4 +247,87 @@ public class RenderLimitsTest {
                 + "[hello, world][World][Hello, World]"
                 + "[Hello,_World]", outcome.out.getHead());
     }
+
+    @Test
+    public void ordinaryLiteralsSumsBlocksAndExpressionsStillWork() throws Exception {
+        Outcome outcome = render("limits-ordinary-literals.vm",
+                "#set($a = 'x')#set($b = \"[$a$a]\")#set($c = $a + $b + 1)"
+                        + "#define($d)<#if($a)$a#end>#end#set($e = $d + '')"
+                        + "#macro(wrap)($bodyContent)#end"
+                        + "$b|$c|$d|$e|#@wrap()$a#end|$a.matches('x')|$c.split('\\[').size()"
+                        + "|$c.replaceAll('[x]', 'y')");
+        assertEquals(null, outcome.failure);
+        assertEquals("[xx]|x[xx]1|<x>|<x>|(x)|true|2|y[yy]1", outcome.out.getHead());
+    }
+
+    /** A string of 5,242,880 digits, half the output limit. */
+    private static final String FIVE_MILLION_DIGITS = "#set($s = '0123456789')"
+            + "#foreach($i in [1..19])#set($s = \"$s$s\")#end";
+
+    /** About 30 million characters of text, from loops that insert nothing. */
+    private static final String THIRTY_MILLION_CHARS =
+            "#foreach($i in [1..100000])#foreach($j in [1..30])0123456789#end#end";
+
+    private static void assertStoppedInMemory(String name, String source) throws Exception {
+        Outcome outcome = render(name, source);
+        assertNotNull(outcome.failure, name + " should have failed, but wrote "
+                + outcome.out.getCount() + " chars");
+        assertFalse(reachedTestCeiling(outcome.failure),
+                "only the test's own ceiling stopped rendering");
+        assertTrue(outcome.out.getCount() < 1024, name + " wrote " + outcome.out.getCount());
+    }
+
+    @Test
+    public void aStringDoubledWithPlusStopsAtTheSizeLimit() throws Exception {
+        assertStoppedInMemory("limits-plus-doubling.vm", "#set($s = '0123456789')"
+                + "#foreach($i in [1..22])#set($s = $s + $s)#end$s.length()");
+    }
+
+    @Test
+    public void oneLongSumStopsAtTheSizeLimit() throws Exception {
+        assertStoppedInMemory("limits-plus-sum.vm", FIVE_MILLION_DIGITS
+                + "#set($t = $s + $s + $s + $s)$t.length()");
+    }
+
+    @Test
+    public void aStringLiteralWithManyReferencesStopsAtTheSizeLimit() throws Exception {
+        assertStoppedInMemory("limits-literal-refs.vm", FIVE_MILLION_DIGITS
+                + "#set($t = \"$s$s$s$s\")$t.length()");
+    }
+
+    @Test
+    public void loopsInsideAStringLiteralStopAtTheSizeLimit() throws Exception {
+        assertStoppedInMemory("limits-literal-loops.vm",
+                "#set($t = \"" + THIRTY_MILLION_CHARS + "\")$t.length()");
+    }
+
+    @Test
+    public void aDefinedBlockTurnedIntoAStringStopsAtTheSizeLimit() throws Exception {
+        assertStoppedInMemory("limits-define.vm",
+                "#define($b)" + THIRTY_MILLION_CHARS + "#end#set($t = $b + '')$t.length()");
+    }
+
+    @Test
+    public void macroRecursionThatWritesNothingStopsAtTheDeadline() throws Exception {
+        long start = System.nanoTime();
+        // four calls a level, 13 levels deep: about 90 million calls
+        String call = "#set($e = $d - 1)#spin($e)";
+        Outcome outcome = render("limits-macro-recursion.vm",
+                "#macro(spin $d)#if($d > 0)" + call + call + call + call + "#end#end"
+                        + "#spin(13)done");
+        long seconds = (System.nanoTime() - start) / 1_000_000_000L;
+        assertNotNull(outcome.failure, "rendering should have failed after "
+                + seconds + " seconds, but wrote " + outcome.out.getHead());
+        assertTrue(seconds < 10, "rendering took " + seconds + " seconds");
+    }
+
+    @Test
+    public void aSlowRegularExpressionStopsAtTheDeadline() throws Exception {
+        long start = System.nanoTime();
+        Outcome outcome = render("limits-regex.vm",
+                "#set($s = '" + "a".repeat(36) + "')[$s.matches('(.*a){12}b')]");
+        long seconds = (System.nanoTime() - start) / 1_000_000_000L;
+        assertNotNull(outcome.failure, "rendering should have failed");
+        assertTrue(seconds < 10, "rendering took " + seconds + " seconds");
+    }
 }

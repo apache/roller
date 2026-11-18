@@ -38,12 +38,15 @@ import org.apache.roller.weblogger.pojos.WeblogTemplate;
 import org.apache.roller.weblogger.pojos.WeblogTheme;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogWrapper;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
+import org.apache.velocity.exception.VelocityException;
+import org.apache.velocity.util.ExtProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -264,5 +267,21 @@ public class WeblogTemplateScopeTest {
         // weblog B does not see any of weblog A's macros
         String pageB = createTemplate(weblogB, "page", "[#fromLibrary()]");
         assertEquals("[#fromLibrary()]", render(weblogB, pageB).trim());
+    }
+
+    /**
+     * Velocity's cache would hand a template loaded for one weblog to another
+     * without asking the loader, so the stored template loader won't start
+     * with caching on.
+     */
+    @Test
+    public void theStoredTemplateLoaderDoesNotStartWithCachingOn() {
+        ExtProperties config = new ExtProperties();
+        config.setProperty("cache", "true");
+        assertThrows(VelocityException.class, () -> new RollerResourceLoader().init(config));
+
+        ExtProperties shipped = new ExtProperties();
+        shipped.setProperty("cache", "false");
+        new RollerResourceLoader().init(shipped);
     }
 }
