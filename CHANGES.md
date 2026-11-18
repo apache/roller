@@ -76,6 +76,10 @@
   and adds nofollow to each link's own `rel` value, so its output is jsoup's
   normalized HTML: open tags are closed and attribute values are
   double-quoted (#318).
+- **HTML comments are cleaned with jsoup.** The HTMLSubset comment plugin
+  and HTML comment e-mails keep the same tags and link schemes, but a tag
+  outside them is now removed, keeping its text, instead of being shown as
+  markup, and a link keeps its address when it has other attributes (#353).
 - **Tags of a scheduled entry are counted once, when it goes live.** Entries
   posted through AtomPub with a future date showed their tags in tag counts
   early and counted them twice (#316).
