@@ -92,7 +92,7 @@
     <entry>
         <id>${comment.weblogEntry.permalink}#comment-${comment.timestamp}</id> 
         <title type="html">Re: $utils.escapeXML($comment.weblogEntry.title)</title>
-        <author><name>$utils.escapeXML($utils.removeHTML($comment.name))</name></author>
+        <author><name>$utils.escapeXML($utils.unescapeHTML($comment.name))</name></author>
         <link rel="alternate" type="text/html" href="${comment.weblogEntry.permalink}#comment-${comment.timestamp}"/>
         <published>$utils.formatIso8601Date($comment.postTime)</published>
         <updated>$utils.formatIso8601Date($comment.postTime)</updated> 
@@ -106,7 +106,7 @@
     <item>
         <guid isPermaLink="true">${comment.weblogEntry.permalink}#comment-${comment.timestamp}</guid>
         <title>Re: $utils.escapeXML($comment.weblogEntry.title)</title>
-        <dc:creator>$utils.escapeXML($utils.removeHTML($comment.name))</dc:creator>
+        <dc:creator>$utils.escapeXML($utils.unescapeHTML($comment.name))</dc:creator>
         <pubDate>$utils.formatRfc822Date($comment.postTime)</pubDate>
         <description>$utils.escapeXML($comment.content)</description>
     </item>
@@ -118,7 +118,7 @@
     <entry>
         <id>$file.permalink</id>
         <title type="html">$utils.escapeXML($file.name)</title>
-        <author><name>$utils.escapeXML($utils.removeHTML($file.creator.screenName))</name></author>
+        <author><name>$utils.escapeXML($utils.unescapeHTML($file.creator.screenName))</name></author>
         <link rel="alternate" type="text/html" href="$file.permalink"/>
         <published>$utils.formatIso8601Date($file.dateUploaded)</published>
         <updated>$utils.formatIso8601Date($file.lastUpdated)</updated> 
