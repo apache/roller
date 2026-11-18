@@ -99,6 +99,7 @@ public final class PlanetCache {
     
     
     public Object get(String key) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
         if (!cacheEnabled) {
             return null;
@@ -117,15 +118,9 @@ public final class PlanetCache {
     
     
     public void put(String key, Object value) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
         if (!cacheEnabled) {
-            return;
-        }
-
-        // links in this content were built from the request's host because
-        // site.absoluteurl is unset, so it isn't safe to serve to others
-        if (WebloggerRuntimeConfig.isRequestAbsoluteContextURLUsed()) {
-            log.debug("NOT CACHED, uses request host "+key);
             return;
         }
         
@@ -135,6 +130,7 @@ public final class PlanetCache {
     
     
     public void remove(String key) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
         if (!cacheEnabled) {
             return;
