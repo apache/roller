@@ -207,8 +207,13 @@ public class WeblogConfig extends UIAction {
         List<String> stringRules = new ArrayList<>();
         try {
             // just for testing/counting, this does not persist rules in any way
-            Bannedwordslist.populateSpamRules(getBean().getBannedwordslist(), stringRules, regexRules, null);
-            addMessage("websiteSettings.acceptedBannedwordslist", List.of(""+stringRules.size(), ""+regexRules.size()));
+            Bannedwordslist.populateSpamRules(getBean().getBannedwordslist(), stringRules, regexRules, null,
+                    weblogAdminsUntrusted);
+            if (weblogAdminsUntrusted) {
+                addMessage("websiteSettings.acceptedBannedwordsAsWords", List.of(""+regexRules.size()));
+            } else {
+                addMessage("websiteSettings.acceptedBannedwordslist", List.of(""+stringRules.size(), ""+regexRules.size()));
+            }
         } catch (Exception e) {
             addError("websiteSettings.error.processingBannedwordslist", e.getMessage());
         }

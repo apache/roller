@@ -439,10 +439,36 @@ public final class Bannedwordslist {
     /** Utility method to populate lists based a bannedwordslist in string form */
     public static void populateSpamRules(
         String bannedwordslist, List<String> stringRules, List<Pattern> regexRules, String addendum) {
-        String weblogWords = bannedwordslist;
-        weblogWords = (weblogWords == null) ? "" : weblogWords;
-        String siteWords = (addendum != null) ? addendum : "";
-        StringTokenizer toker = new StringTokenizer(siteWords + "\n" + weblogWords, "\n");
+        populateSpamRules(bannedwordslist, stringRules, regexRules, addendum, false);
+    }
+
+    /**
+     * Populates the rule lists from a weblog's banned words and the site-wide
+     * addendum. With weblogRulesAsWords, the weblog's own lines are matched as
+     * plain words (case-insensitive, at word boundaries) rather than as
+     * regular expressions, so an untrusted weblog admin can't write a rule
+     * that backtracks; the addendum's rules are still regular expressions.
+     */
+    public static void populateSpamRules(String bannedwordslist, List<String> stringRules,
+            List<Pattern> regexRules, String addendum, boolean weblogRulesAsWords) {
+        if (weblogRulesAsWords) {
+            readRules(addendum, stringRules, regexRules);
+            StringTokenizer toker = new StringTokenizer(bannedwordslist == null ? "" : bannedwordslist, "\n");
+            while (toker.hasMoreTokens()) {
+                String token = toker.nextToken().trim();
+                if (!token.isEmpty() && !token.startsWith("#")) {
+                    regexRules.add(wordPattern(token));
+                }
+            }
+        } else {
+            String weblogWords = (bannedwordslist == null) ? "" : bannedwordslist;
+            String siteWords = (addendum != null) ? addendum : "";
+            readRules(siteWords + "\n" + weblogWords, stringRules, regexRules);
+        }
+    }
+
+    private static void readRules(String rules, List<String> stringRules, List<Pattern> regexRules) {
+        StringTokenizer toker = new StringTokenizer(rules == null ? "" : rules, "\n");
         while (toker.hasMoreTokens()) {
             String token = toker.nextToken().trim();
             if (token.startsWith("#")) {
@@ -453,9 +479,30 @@ public final class Bannedwordslist {
             } else {
                 stringRules.add(token);
             }
-        }        
+        }
     }
-        
+
+    /**
+     * The literal text, case-insensitive, with a word boundary on each end
+     * that is a word character; {@code \b} next to "(" or "/" would need a
+     * word character beside it and so would rarely match.
+     */
+    private static Pattern wordPattern(String word) {
+        StringBuilder regex = new StringBuilder();
+        if (isWordChar(word.charAt(0))) {
+            regex.append("\\b");
+        }
+        regex.append(Pattern.quote(word));
+        if (isWordChar(word.charAt(word.length() - 1))) {
+            regex.append("\\b");
+        }
+        return Pattern.compile(regex.toString(), Pattern.CASE_INSENSITIVE);
+    }
+
+    private static boolean isWordChar(char c) {
+        return c == '_' || (c < 128 && Character.isLetterOrDigit(c));
+    }
+
     /**
      * Longest the rules may take to check one value, such as a comment's
      * text. A rule that backtracks without end, which a weblog's own banned
