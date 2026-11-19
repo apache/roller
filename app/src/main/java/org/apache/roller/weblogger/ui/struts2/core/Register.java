@@ -40,7 +40,6 @@ import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
 import org.apache.roller.weblogger.ui.core.security.BootstrapSecurity;
 import org.apache.roller.weblogger.ui.struts2.util.UIAction;
 import org.apache.roller.weblogger.util.MailUtil;
-import org.apache.roller.weblogger.ui.core.security.RollerPasswordEncoders;
 import org.apache.struts2.convention.annotation.AllowedMethods;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
 import org.apache.struts2.interceptor.validation.SkipValidation;
