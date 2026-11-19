@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -103,6 +104,18 @@ class SiteUrlForAdminTest {
         WebloggerRuntimeConfig.saveAbsoluteContextURLForAdmin(admin);
 
         verify(properties, never()).saveProperty(any());
+    }
+
+    @Test
+    void aFailureToSaveDoesNotFailTheAdministratorsRequest() throws Exception {
+        when(properties.getProperty("site.absoluteurl")).thenReturn(
+                new RuntimeConfigProperty("site.absoluteurl", ""));
+        when(properties.compareAndSetProperty(eq("site.absoluteurl"), any(), any()))
+                .thenThrow(new RuntimeException("lock timeout"));
+        User admin = mock(User.class);
+        when(admin.hasGlobalPermission("admin")).thenReturn(true);
+
+        assertDoesNotThrow(() -> WebloggerRuntimeConfig.saveAbsoluteContextURLForAdmin(admin));
     }
 
     @Test

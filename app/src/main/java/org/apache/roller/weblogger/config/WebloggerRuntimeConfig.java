@@ -295,7 +295,8 @@ public final class WebloggerRuntimeConfig {
             if (request != null && saveAbsoluteContextURLIfUnset(request.requestURL)) {
                 WebloggerFactory.getWeblogger().flush();
             }
-        } catch (WebloggerException e) {
+        } catch (Exception e) {
+            // a lock timeout, for one, is unchecked; the request goes on
             log.warn("Could not save site.absoluteurl", e);
         }
     }

@@ -17,18 +17,26 @@
 
 package org.apache.roller.weblogger.planet.business;
 
+import java.util.List;
+
+import org.apache.roller.planet.business.PlanetManager;
+import org.apache.roller.planet.business.fetcher.FetcherException;
 import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.Weblogger;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.planet.tasks.SyncWebsitesTask;
+import org.apache.roller.weblogger.planet.ui.PlanetGroupSubs;
 import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
@@ -40,6 +48,10 @@ import static org.mockito.Mockito.when;
  * unset, since they have no request to take a host name from.
  */
 class PlanetSiteUrlTest {
+
+    private static final String SITE_URL_UNSET = "This site's weblogs can't be "
+            + "added until the site's absolute URL is set. Set it under Server "
+            + "Admin > Configuration.";
 
     private MockedStatic<WebloggerFactory> factory;
     private Weblogger weblogger;
@@ -64,6 +76,39 @@ class PlanetSiteUrlTest {
     void localFeedsAreNotFetchedWhileTheSiteUrlIsUnset() throws Exception {
         assertNull(new WebloggerRomeFeedFetcher().fetchSubscription("weblogger:blog", null));
         verify(weblogger, never()).getWeblogManager();
+    }
+
+    @Test
+    void addingALocalFeedSaysTheSiteUrlMustBeSetFirst() throws Exception {
+        FetcherException ex = assertThrows(FetcherException.class,
+                () -> new WebloggerRomeFeedFetcher().fetchSubscription("weblogger:blog"));
+        assertEquals(SITE_URL_UNSET, ex.getMessage());
+        verify(weblogger, never()).getWeblogManager();
+    }
+
+    @Test
+    void theAdministratorAddingALocalFeedIsToldToSetTheSiteUrl() throws Exception {
+        PlanetManager planets = mock(PlanetManager.class);
+        when(weblogger.getPlanetManager()).thenReturn(planets);
+        when(weblogger.getFeedFetcher()).thenReturn(new WebloggerRomeFeedFetcher());
+
+        PlanetGroupSubs action = new PlanetGroupSubs() {
+            @Override
+            protected boolean isPostRequest() {
+                return true;
+            }
+
+            @Override
+            public String getText(String key, String defaultValue, String arg) {
+                return key + ": " + arg;
+            }
+        };
+        action.setSubUrl("weblogger:blog");
+
+        assertEquals("list", action.saveSubscription());
+        assertEquals(List.of("planetGroupSubs.error.fetchingFeed: " + SITE_URL_UNSET),
+                List.copyOf(action.getActionErrors()));
+        verify(planets, never()).saveSubscription(any());
     }
 
     @Test
