@@ -367,4 +367,26 @@ public class RenderLimitsTest {
         assertEquals(null, outcome.failure);
         assertEquals("30720 <0><1><2>", outcome.out.getHead());
     }
+
+    /**
+     * Velocity asks a node for its template's name to say where something
+     * went wrong, so the nodes the parser swaps in have to know it too.
+     */
+    @Test
+    public void arithmeticOnAnUndefinedReferenceStillRenders() throws Exception {
+        Outcome outcome = render("limits-undefined-sum.vm",
+                "#set($x = $undefined + 1)ok");
+        assertEquals(null, outcome.failure);
+        assertEquals("ok", outcome.out.getHead());
+    }
+
+    @Test
+    public void endlessMacroRecursionStopsAtTheDepthLimit() throws Exception {
+        Outcome outcome = render("limits-macro-depth.vm", "#macro(r)#r()#end#r()");
+        // Velocity's own error for a macro that calls itself too deeply gets
+        // the renderer's error page
+        assertEquals(null, outcome.failure);
+        assertTrue(outcome.out.getHead().contains("<!-- error-parse -->"),
+                "rendering wrote " + outcome.out.getHead());
+    }
 }
