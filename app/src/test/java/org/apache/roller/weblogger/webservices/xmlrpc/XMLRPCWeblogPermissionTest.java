@@ -211,6 +211,38 @@ public class XMLRPCWeblogPermissionTest {
         assertEquals("TestUser@dev.null", seenByOwner.get("author"));
     }
 
+    /**
+     * A database with a case-insensitive collation finds the user whatever
+     * the case of the login name; the creator still gets their own email.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testPostAuthorEmailIsReturnedToTheCreatorWhateverTheLoginCase()
+            throws Exception {
+        String storedName = owner.getUserName();
+        MetaWeblogAPIHandler caseInsensitive = new MetaWeblogAPIHandler() {
+            @Override
+            protected User validateUser(String username, String password)
+                    throws Exception {
+                return super.validateUser(storedName.equalsIgnoreCase(username)
+                        ? storedName : username, password);
+            }
+        };
+        String login = storedName.toUpperCase();
+
+        Map<String, Object> post = (Map<String, Object>) caseInsensitive.getPost(
+                publishedEntry.getId(), login, PASSWORD);
+        assertEquals("TestUser@dev.null", post.get("author"));
+
+        List<Object> recent = (List<Object>) caseInsensitive.getRecentPosts(
+                weblog.getHandle(), login, PASSWORD, 20);
+        assertFalse(recent.isEmpty());
+        for (Object recentPost : recent) {
+            assertEquals("TestUser@dev.null",
+                    ((Map<String, Object>) recentPost).get("author"));
+        }
+    }
+
     @Test
     public void testAuthenticationAndWeblogDiscovery() throws Exception {
         @SuppressWarnings("unchecked")
@@ -592,6 +624,28 @@ public class XMLRPCWeblogPermissionTest {
         assertTrue(metaWeblog.editPost(id, owner.getUserName(), PASSWORD, struct, true));
         assertEquals(PubStatus.PUBLISHED, status(id));
         assertEquals(1, tagCount("xmlrpcfuturetag"));
+    }
+
+    /**
+     * The handler and saveWeblogEntry() each compare the publish time with
+     * the clock; a publish time on the one-minute boundary must not be
+     * scheduled by one and published by the other.
+     */
+    @Test
+    public void testPublishTimeOnTheSchedulingBoundaryIsDecidedOnce() throws Exception {
+        String id = taggedPublishedEntry("xmlrpc-tagged-boundary", "xmlrpcboundarytag");
+        WeblogEntryManager mgr = WebloggerFactory.getWeblogger().getWeblogEntryManager();
+        WeblogEntry entry = mgr.getWeblogEntry(id);
+
+        // just over a minute ahead now, under a minute ahead at the save
+        entry.setPubTime(new Timestamp(System.currentTimeMillis() + 60_500L));
+        BloggerAPIHandler.refreshAggregatesIfPublicationChanges(entry, true);
+        Thread.sleep(1000L);
+        mgr.saveWeblogEntry(entry);
+        TestUtils.endSession(true);
+
+        assertEquals(PubStatus.SCHEDULED, status(id));
+        assertEquals(0, tagCount("xmlrpcboundarytag"));
     }
 
     @Test

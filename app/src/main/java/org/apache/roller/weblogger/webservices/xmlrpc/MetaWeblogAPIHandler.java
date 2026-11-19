@@ -341,7 +341,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         WeblogEntry entry = validateEntry(postid, user, null);
         
         try {
-            return createPostStruct(entry, userid);
+            return createPostStruct(entry, user.getUserName());
         } catch (Exception e) {
             String msg = "ERROR in MetaWeblogAPIHandler.getPost";
             mLogger.error(msg, e);
@@ -448,7 +448,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                     if (!entry.hasWritePermissions(user)) {
                         continue;
                     }
-                    results.addElement(createPostStruct(entry, userid));
+                    results.addElement(createPostStruct(entry, user.getUserName()));
                 }
             }
             return results;
