@@ -118,7 +118,8 @@ public class Profile extends UIAction implements ServletRequestAware {
             if ((authMethod.equals(AuthMethod.OPENID) ||
                     (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl())))
                     && (StringUtils.isEmpty(existingUser.getPassword())
-                        || !StringUtils.equals(previousOpenIdUrl, existingUser.getOpenIdUrl()))) {
+                        || !StringUtils.equals(StringUtils.removeEnd(previousOpenIdUrl, "/"),
+                                StringUtils.removeEnd(existingUser.getOpenIdUrl(), "/")))) {
                 String randomString = RandomStringUtils.randomAlphanumeric(255);
                 existingUser.resetPassword(randomString);
             }

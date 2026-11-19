@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import org.apache.roller.weblogger.TestUtils;
@@ -32,6 +33,8 @@ import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.AuthMethod;
 import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.ui.core.security.RollerLoginSuccessHandler;
+import org.apache.roller.weblogger.ui.core.security.RollerRememberMeServices;
 import org.apache.roller.weblogger.ui.struts2.admin.CreateUserBean;
 import org.apache.roller.weblogger.ui.struts2.admin.UserEdit;
 import org.apache.roller.weblogger.ui.struts2.core.Profile;
@@ -42,10 +45,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -338,6 +343,166 @@ class PasswordChangeSessionTest {
         b.assertLoggedIn(userName);
     }
 
+    @Test
+    void passwordChangeEndsALoginThatHasNotOpenedTheUiYet() throws Exception {
+        Browser a = new Browser(userName);
+        // b logged in and went to a weblog page, so Roller has not looked at
+        // its session yet
+        Browser b = new Browser(userName);
+        a.request();
+        TestUtils.endSession(true);
+
+        changeOwnPassword(a);
+
+        b.assertLoggedOut();
+        a.assertLoggedIn(userName);
+    }
+
+    @Test
+    void passwordChangeEndsARememberMeLoginThatHasNotOpenedTheUiYet() throws Exception {
+        Browser a = new Browser(userName);
+        Browser b = Browser.remembered(userName);
+        a.request();
+        TestUtils.endSession(true);
+
+        changeOwnPassword(a);
+
+        b.assertLoggedOut();
+        a.assertLoggedIn(userName);
+    }
+
+    @Test
+    void passwordChangeEndsAnOpenIdLoginThatHasNotOpenedTheUiYet() throws Exception {
+        // OpenID 2.0 logins carry the user's OpenID URL as the principal name
+        String openIdUrl = "https://openid.example.com/sessionuser";
+        linkOpenId(userName, openIdUrl);
+        Browser admin = new Browser(adminName);
+        Browser b = new Browser(openIdUrl + "/");
+        admin.request();
+        TestUtils.endSession(true);
+
+        saveAsAdmin(admin, bean -> bean.setPassword("reset-password"));
+
+        b.assertLoggedOut();
+    }
+
+    @Test
+    void loggingInAgainInAStaleSessionStaysLoggedIn() throws Exception {
+        Browser a = new Browser(userName);
+        Browser b = new Browser(userName);
+        a.request();
+        b.request();
+        TestUtils.endSession(true);
+
+        changeOwnPassword(a);
+
+        // b still has its old session and logs in again with the new
+        // password before making any other request
+        b.login();
+        b.assertLoggedIn(userName);
+        a.assertLoggedIn(userName);
+    }
+
+    @Test
+    void loggingInAsAnotherUserInTheSameSessionSwitchesUser() throws Exception {
+        Browser b = new Browser(userName);
+        assertEquals(userName, b.request().getAuthenticatedUser().getUserName());
+        TestUtils.endSession(true);
+
+        b.login(UsernamePasswordAuthenticationToken.authenticated(adminName, null, List.of()));
+
+        b.assertLoggedIn(adminName);
+    }
+
+    @Test
+    void requestOnASessionEndedByAnotherRequestIsLoggedOut() throws Exception {
+        Browser b = new Browser(userName);
+        b.request();
+        TestUtils.endSession(true);
+
+        b.sessionEndsDuringNextRequest();
+
+        b.assertLoggedOut();
+    }
+
+    @Test
+    void savingAProfileOnASessionEndedByAnotherRequestDoesNotFail() throws Exception {
+        Browser b = new Browser(userName);
+        b.request();
+        TestUtils.endSession(true);
+
+        b.sessionEndsDuringNextRequest();
+
+        assertDoesNotThrow(() -> RollerSession.refreshPassword(b.httpRequest, user(userName)));
+    }
+
+    @Test
+    void openIdProfileEditKeepsSessionsWhenTheStoredUrlEndsWithASlash() throws Exception {
+        linkOpenId(userName, "https://openid.example.com/sessionuser/");
+        Browser a = new Browser(userName);
+        Browser b = new Browser(userName);
+        a.request();
+        b.request();
+        TestUtils.endSession(true);
+        String storedPassword = user(userName).getPassword();
+
+        a.request();
+        Profile profile = spy(new Profile());
+        stubText(profile);
+        setAuthMethod(profile, AuthMethod.OPENID);
+        User self = user(userName);
+        ProfileBean bean = new ProfileBean();
+        bean.copyFrom(self);
+        bean.setScreenName("Renamed");
+        profile.setBean(bean);
+        profile.setAuthenticatedUser(self);
+        profile.setServletRequest(a.httpRequest);
+        assertEquals(Profile.SUCCESS, profile.save(), () -> String.valueOf(profile.getActionErrors()));
+        TestUtils.endSession(true);
+
+        assertEquals(storedPassword, user(userName).getPassword());
+        b.assertLoggedIn(userName);
+        a.assertLoggedIn(userName);
+    }
+
+    @Test
+    void adminEditKeepsSessionsWhenOnlyATrailingSlashIsAdded() throws Exception {
+        linkOpenId(userName, "https://openid.example.com/sessionuser");
+        Browser admin = new Browser(adminName);
+        Browser b = new Browser(userName);
+        admin.request();
+        b.request();
+        TestUtils.endSession(true);
+        String storedPassword = user(userName).getPassword();
+
+        admin.request();
+        UserEdit action = userEdit(admin, userName);
+        setAuthMethod(action, AuthMethod.DB_OPENID);
+        action.getBean().setOpenIdUrl("https://openid.example.com/sessionuser/");
+        assertEquals(UserEdit.SUCCESS, action.save(), () -> String.valueOf(action.getActionErrors()));
+        TestUtils.endSession(true);
+
+        assertEquals(storedPassword, user(userName).getPassword());
+        b.assertLoggedIn(userName);
+    }
+
+    /** The user of this browser changes their own password on the profile page. */
+    private void changeOwnPassword(Browser a) throws Exception {
+        a.request();
+        Profile profile = spy(new Profile());
+        stubText(profile);
+        User self = user(a.login.getName());
+        ProfileBean bean = new ProfileBean();
+        bean.copyFrom(self);
+        bean.setPasswordText("changed-password");
+        bean.setPasswordConfirm("changed-password");
+        profile.setBean(bean);
+        profile.setAuthenticatedUser(self);
+        profile.setServletRequest(a.httpRequest);
+        assertEquals(Profile.SUCCESS, profile.save(), () -> String.valueOf(profile.getActionErrors()));
+        TestUtils.endSession(true);
+    }
+
     private void saveAsAdmin(Browser admin, java.util.function.Consumer<CreateUserBean> change)
             throws Exception {
         admin.request();
@@ -386,17 +551,33 @@ class PasswordChangeSessionTest {
      */
     private static final class Browser {
         final HttpServletRequest httpRequest = mock(HttpServletRequest.class);
-        final Authentication login;
+        Authentication login;
         HttpSession session;
         // the session holding the login was invalidated
         boolean ended;
+        // a session another request invalidated after this one picked it up
+        HttpSession endedUnderneath;
 
         Browser(String name) {
-            login = UsernamePasswordAuthenticationToken.authenticated(name, null, List.of());
+            this(UsernamePasswordAuthenticationToken.authenticated(name, null, List.of()));
+        }
+
+        Browser(Authentication authentication) {
+            this(authentication, false);
+        }
+
+        private Browser(Authentication authentication, boolean remembered) {
             session = newSession();
-            // keep reporting the original login, so a rebuild from it would show
-            when(httpRequest.getUserPrincipal()).thenReturn(login);
-            when(httpRequest.getSession(false)).thenAnswer(call -> session);
+            // keep reporting the login, so a rebuild from it would show
+            when(httpRequest.getUserPrincipal()).thenAnswer(call -> login);
+            when(httpRequest.getSession(false)).thenAnswer(call -> {
+                if (endedUnderneath != null) {
+                    HttpSession stale = endedUnderneath;
+                    endedUnderneath = null;
+                    return stale;
+                }
+                return session;
+            });
             when(httpRequest.getSession(true)).thenAnswer(call -> {
                 if (session == null) {
                     session = newSession();
@@ -404,6 +585,54 @@ class PasswordChangeSessionTest {
                 return session;
             });
             when(httpRequest.getSession()).thenAnswer(call -> httpRequest.getSession(true));
+            if (remembered) {
+                rememberMeLogin(authentication.getName());
+            } else {
+                login(authentication);
+            }
+        }
+
+        /** A browser whose remember-me cookie logged it in. */
+        static Browser remembered(String name) {
+            return new Browser(UsernamePasswordAuthenticationToken.authenticated(name, null, List.of()), true);
+        }
+
+        /** Logs in again with the same account, in the session it has. */
+        void login() {
+            login(login);
+        }
+
+        /** Spring authenticated a login form or an OpenID sign-in. */
+        void login(Authentication authentication) {
+            login = authentication;
+            ended = false;
+            try {
+                new RollerLoginSuccessHandler((request, response, auth) -> { })
+                        .onAuthenticationSuccess(httpRequest, mock(HttpServletResponse.class), login);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+        /** Spring accepted the browser's remember-me cookie. */
+        private void rememberMeLogin(String name) {
+            UserDetails details = org.springframework.security.core.userdetails.User
+                    .withUsername(name).password("stored-hash").authorities(List.of()).build();
+            login = new RollerRememberMeServices(userName -> details) {
+                Authentication accept() {
+                    return createSuccessfulAuthentication(httpRequest, details);
+                }
+            }.accept();
+        }
+
+        /**
+         * Another request of this browser ends the session just after the
+         * next request has picked it up.
+         */
+        void sessionEndsDuringNextRequest() {
+            HttpSession current = session;
+            current.invalidate();
+            endedUnderneath = current;
         }
 
         private HttpSession newSession() {
@@ -424,6 +653,10 @@ class PasswordChangeSessionTest {
                 attributes.remove(call.<String>getArgument(0));
                 return null;
             }).when(s).removeAttribute(anyString());
+            when(s.getCreationTime()).thenAnswer(call -> {
+                checkValid(valid);
+                return 0L;
+            });
             doAnswer(call -> {
                 checkValid(valid);
                 valid[0] = false;
@@ -449,7 +682,7 @@ class PasswordChangeSessionTest {
         }
 
         RollerSession request() {
-            if (ended) {
+            if (ended && endedUnderneath == null) {
                 SecurityContextHolder.clearContext();
             } else {
                 SecurityContextHolder.getContext().setAuthentication(login);

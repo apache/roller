@@ -170,7 +170,8 @@ public class UserEdit extends UIAction implements ServletRequestAware {
             if ((authMethod.equals(AuthMethod.OPENID) ||
                     (authMethod.equals(AuthMethod.DB_OPENID) && !StringUtils.isEmpty(bean.getOpenIdUrl())))
                     && (StringUtils.isEmpty(user.getPassword())
-                        || !StringUtils.equals(previousOpenIdUrl, user.getOpenIdUrl()))) {
+                        || !StringUtils.equals(StringUtils.removeEnd(previousOpenIdUrl, "/"),
+                                StringUtils.removeEnd(user.getOpenIdUrl(), "/")))) {
                 String randomString = RandomStringUtils.randomAlphanumeric(255);
                 user.resetPassword(randomString);
             }
