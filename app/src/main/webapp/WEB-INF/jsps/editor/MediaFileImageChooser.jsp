@@ -116,8 +116,8 @@
 
 <script>
 
-    function onSelectMediaFile(name, url, isImage) {
-        window.parent.onSelectMediaFile(name, url, isImage);
+    function onSelectMediaFile(name, url, isImage, hasThumbnail) {
+        window.parent.onSelectMediaFile(name, url, isImage, hasThumbnail);
     }
 
     // Values come from data-* attributes and are bound via delegated listeners.

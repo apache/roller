@@ -185,6 +185,84 @@ public class MediaFileThumbnailTest {
         assertEquals(373, saved.getHeight());
     }
 
+    /**
+     * A limit that is not a positive int is ignored in favour of the default,
+     * both when deciding whether an image is over the limit and on upload.
+     */
+    @Test
+    public void testInvalidLimitFallsBackToDefault() throws Exception {
+        WebloggerConfig.init();
+        for (String value : new String[] {"50_000_000", "3000000000", "", "0", "-1"}) {
+            MediaFile saved;
+            try (MockedStatic<WebloggerConfig> config =
+                    mockStatic(WebloggerConfig.class, CALLS_REAL_METHODS)) {
+                config.when(() -> WebloggerConfig.getProperty(
+                        "uploads.thumbnail.maxPixels")).thenReturn(value);
+
+                MediaFile small = new MediaFile();
+                small.setContentType("image/png");
+                small.setWidth(500);
+                small.setHeight(373);
+                assertFalse(small.isOverThumbnailPixelLimit(), "limit '" + value + "'");
+
+                MediaFile huge = new MediaFile();
+                huge.setContentType("image/png");
+                huge.setWidth(50000);
+                huge.setHeight(50000);
+                assertTrue(huge.isOverThumbnailPixelLimit(), "limit '" + value + "'");
+
+                saved = upload("hawk" + value.length() + ".jpg", "image/jpeg",
+                        getClass().getResourceAsStream(MediaFileTest.TEST_IMAGE), 2000);
+            }
+            try (InputStream in = saved.getThumbnailInputStream()) {
+                assertNotNull(in, "limit '" + value + "' should not stop thumbnails");
+            }
+        }
+    }
+
+    /**
+     * Replacing an image with content no image reader recognizes forgets the
+     * previous image's size.
+     */
+    @Test
+    public void testReplacingWithUnrecognizedContentForgetsOldSize() throws Exception {
+        assertOldSizeIsForgotten("unrecognized.png",
+                "not an image".getBytes(StandardCharsets.US_ASCII));
+    }
+
+    /**
+     * Replacing an image with one whose header can't be read forgets the
+     * previous image's size.
+     */
+    @Test
+    public void testReplacingWithUnreadableHeaderForgetsOldSize() throws Exception {
+        // a PNG signature with a header cut off before the height
+        assertOldSizeIsForgotten("truncated.png",
+                java.util.Arrays.copyOf(pngHeaderOnly(50000, 50000), 22));
+    }
+
+    private void assertOldSizeIsForgotten(String name, byte[] replacement)
+            throws Exception {
+        byte[] png = pngHeaderOnly(50000, 50000);
+        MediaFile saved = upload(name, "image/png",
+                new ByteArrayInputStream(png), png.length);
+        assertTrue(saved.isOverThumbnailPixelLimit());
+
+        MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+        MediaFile replaced = mgr.getMediaFile(saved.getId());
+        replaced.setLength(replacement.length);
+        mgr.updateMediaFile(TestUtils.getManagedWebsite(weblog), replaced,
+                new ByteArrayInputStream(replacement));
+        TestUtils.endSession(true);
+
+        MediaFile reloaded = mgr.getMediaFile(saved.getId(), true);
+        assertNull(reloaded.getThumbnailInputStream());
+        assertEquals(-1, reloaded.getWidth());
+        assertEquals(-1, reloaded.getHeight());
+        assertFalse(reloaded.isOverThumbnailPixelLimit(),
+                "the previous image's size must not count against the new content");
+    }
+
     /** A valid PNG signature and header followed by a token amount of data. */
     private static byte[] pngHeaderOnly(int width, int height) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
