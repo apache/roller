@@ -158,11 +158,13 @@ public class PropertiesTest  {
                     .getPropertiesManager().getProperty("site.absoluteurl");
             assertEquals(firstSaved ? "https://first.example.org" : "https://second.example.org",
                     saved.getValue());
+        } finally {
+            executor.shutdownNow();
+            RuntimeConfigProperty saved = WebloggerFactory.getWeblogger()
+                    .getPropertiesManager().getProperty("site.absoluteurl");
             saved.setValue(original);
             WebloggerFactory.getWeblogger().getPropertiesManager().saveProperty(saved);
             TestUtils.endSession(true);
-        } finally {
-            executor.shutdownNow();
         }
     }
 
