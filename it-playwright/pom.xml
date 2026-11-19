@@ -51,7 +51,7 @@
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <playwright.version>1.63.0</playwright.version>
+        <playwright.version>1.65.0</playwright.version>
         <junit.jupiter.version>6.1.3</junit.jupiter.version>
         <!-- default matches "mvn jetty:run" -->
         <roller.baseUrl>http://localhost:8080/roller/</roller.baseUrl>
@@ -86,11 +86,11 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.4</version>
+                <version>3.7.0</version>
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.1</version>
                 <configuration>
                     <!-- LoginPageIT and NewUserJourneyIT must run before
                          OidcLoginIT: signing in through the provider creates

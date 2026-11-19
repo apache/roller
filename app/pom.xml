@@ -50,7 +50,7 @@ limitations under the License.
         <log4j2.version>2.26.1</log4j2.version>
         <lucene.version>10.6.0</lucene.version>
         <maven-war.version>3.5.1</maven-war.version>
-        <maven-surefire.version>3.6.0</maven-surefire.version>
+        <maven-surefire.version>3.6.1</maven-surefire.version>
         <maven-antrun.version>1.0b3</maven-antrun.version>
         <rome.version>2.1.0</rome.version> <!-- ROME core; used for feeds/planet (AtomPub no longer uses Propono) -->
         <slf4j.version>2.0.20</slf4j.version>
@@ -796,7 +796,7 @@ limitations under the License.
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
