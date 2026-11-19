@@ -22,10 +22,20 @@ package org.apache.roller.weblogger.webservices.tagdata;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.pojos.User;
+import org.apache.roller.weblogger.pojos.Weblog;
+import org.apache.roller.weblogger.pojos.WeblogEntry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,5 +77,71 @@ public class TagDataServletPageTest {
         // gets past page parsing to the weblog lookup
         verify(get("0")).sendError(HttpServletResponse.SC_BAD_REQUEST, "Weblog not found");
         verify(get("10000")).sendError(HttpServletResponse.SC_BAD_REQUEST, "Weblog not found");
+    }
+
+    private static String get(String handle, String format, int page) throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getPathInfo()).thenReturn("/weblog/" + handle);
+        when(request.getParameter("format")).thenReturn(format);
+        when(request.getParameter("page")).thenReturn(String.valueOf(page));
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        StringWriter body = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(body));
+        new TagDataServlet().doGet(request, response);
+        return body.toString();
+    }
+
+    private static int count(String text, String part) {
+        int count = 0;
+        for (int i = text.indexOf(part); i >= 0; i = text.indexOf(part, i + 1)) {
+            count++;
+        }
+        return count;
+    }
+
+    @Test
+    public void eachPageHoldsThePageSizeAndPagesDontOverlap() throws Exception {
+        // the default services.tagdata.max
+        int max = 30;
+        User user = TestUtils.setupUser("tagdatapageuser");
+        Weblog weblog = TestUtils.setupWeblog("tagdatapageweblog", user);
+        TestUtils.endSession(true);
+        try {
+            WeblogEntry entry = TestUtils.setupWeblogEntry("tagdatapageentry",
+                    TestUtils.getManagedWebsite(weblog), TestUtils.getManagedUser(user));
+            // one tag more than two full pages: pagetag00 ... pagetag60
+            for (int i = 0; i <= 2 * max; i++) {
+                entry.addTag(String.format("pagetag%02d", i));
+            }
+            WebloggerFactory.getWeblogger().getWeblogEntryManager().saveWeblogEntry(entry);
+            TestUtils.endSession(true);
+
+            for (int page = 0; page < 2; page++) {
+                String json = get(weblog.getHandle(), "json", page);
+                assertEquals(max, count(json, "{ \"tag\" : "));
+                assertTrue(json.contains(String.format("\"pagetag%02d\"", page * max)));
+                assertTrue(json.contains(String.format("\"pagetag%02d\"", page * max + max - 1)));
+                assertFalse(json.contains(String.format("\"pagetag%02d\"", page * max + max)));
+                assertEquals(max - 1, count(json, " }, "));
+
+                String xml = get(weblog.getHandle(), "xml", page);
+                assertEquals(max, count(xml, "<atom:category "));
+                assertTrue(xml.contains(String.format("term=\"pagetag%02d\"", page * max + max - 1)));
+                assertFalse(xml.contains(String.format("term=\"pagetag%02d\"", page * max + max)));
+                assertTrue(xml.contains("rel=\"next\""));
+            }
+
+            String lastJson = get(weblog.getHandle(), "json", 2);
+            assertEquals(1, count(lastJson, "{ \"tag\" : "));
+            assertTrue(lastJson.contains("\"pagetag60\""));
+            assertEquals(0, count(lastJson, " }, "));
+            String lastXml = get(weblog.getHandle(), "xml", 2);
+            assertEquals(1, count(lastXml, "<atom:category "));
+            assertFalse(lastXml.contains("rel=\"next\""));
+        } finally {
+            TestUtils.teardownWeblog(weblog.getId());
+            TestUtils.teardownUser(user.getUserName());
+            TestUtils.endSession(true);
+        }
     }
 }

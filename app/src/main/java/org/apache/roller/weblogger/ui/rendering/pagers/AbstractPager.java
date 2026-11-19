@@ -18,6 +18,7 @@
 
 package org.apache.roller.weblogger.ui.rendering.pagers;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
@@ -60,7 +61,7 @@ public abstract class AbstractPager<T> implements Pager<T> {
     public String getNextLink() {
         if(hasNextPage()) {
             int nextPage = page + 1;
-            return createURL(url, Map.of("page", ""+nextPage));
+            return createURL(url, pageParams(nextPage));
         }
         return null;
     }
@@ -79,7 +80,7 @@ public abstract class AbstractPager<T> implements Pager<T> {
     public String getPrevLink() {
         if (page > 0) {
             int prevPage = page - 1;
-            return createURL(url, Map.of("page", ""+prevPage));
+            return createURL(url, pageParams(prevPage));
         }
         return null;
     }
@@ -105,6 +106,14 @@ public abstract class AbstractPager<T> implements Pager<T> {
      */
     protected boolean hasNextPage() {
         return hasMoreItems() && page < WeblogRequest.MAX_PAGE_NUM;
+    }
+    
+    
+    // a mutable map, because subclasses add their own params in createURL()
+    private static Map<String, String> pageParams(int pageNum) {
+        Map<String, String> params = new HashMap<>();
+        params.put("page", ""+pageNum);
+        return params;
     }
     
     
