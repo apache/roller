@@ -64,7 +64,7 @@ public class RollerRememberMeServices extends TokenBasedRememberMeServices {
 
             // for LDAP we don't store its password in the roller_users table,
             // just an string indicating external auth method being used.
-            password = WebloggerConfig.getProperty("users.passwords.externalAuthValue","<externalAuth>");
+            password = ExternalLoginAwarePasswordEncoder.externalLoginMarker();
         }
 
         String data = username + ":" + tokenExpiryTime + ":" + password + ":" + getKey();

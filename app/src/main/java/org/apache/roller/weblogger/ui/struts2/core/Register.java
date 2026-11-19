@@ -396,7 +396,7 @@ public class Register extends UIAction implements ServletRequestAware {
         }
 
         // check that passwords match 
-        if (!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
+        if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
             addError("userRegister.error.mismatchedPasswords");
         }
         
