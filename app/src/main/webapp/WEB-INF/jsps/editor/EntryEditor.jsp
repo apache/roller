@@ -197,7 +197,7 @@
             }
         );
         // Added event listener to confirm once the editor content is changed
-        $('#edit_content').on('summernote.change', warnBeforeLeaving);
+        $('#edit_content').one('summernote.change', warnBeforeLeaving);
     });
 
     function warnBeforeLeaving() {

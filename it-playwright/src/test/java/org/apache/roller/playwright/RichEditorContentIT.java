@@ -79,8 +79,9 @@ class RichEditorContentIT {
     @BeforeEach
     void openPage() {
         page = browser.newPage();
-        page.setContent("<!DOCTYPE html><html><body>"
-                + "<textarea id=\"edit_content\">Hello world</textarea></body></html>");
+        // the entry editor's textarea, and so the rich editor, is in a form
+        page.setContent("<!DOCTYPE html><html><body><form id=\"entry\">"
+                + "<textarea id=\"edit_content\">Hello world</textarea></form></body></html>");
         page.addScriptTag(new Page.AddScriptTagOptions().setContent(script));
     }
 
@@ -126,6 +127,26 @@ class RichEditorContentIT {
         // as the rich editor does for undo and code view
         "<form><div></form><form><p>x</p>",
         "<form><math><mtext></form><form><mglyph><b>x</b></mglyph></form>",
+        // inside the entry form a nested form's start tag is ignored, so the
+        // image is an element there
+        "<math><mtext><p><form></form><mglyph><![CDATA[><img src onerror=go()>]]>",
+        // a control named "attributes" hides its form's attributes
+        "</form><form style=\"animation-name:spin;animation-duration:1ms\" onanimationstart=\"go()\">"
+            + "<input name=\"attributes\">x</form>",
+        // the rich editor drops a form's wrapper on save
+        "<form action=\"https://example.com/subscribe\"><input name=\"email\"></form>",
+        // controls join the entry form and are submitted with it
+        "<input type=\"hidden\" name=\"bean.status\" value=\"PUBLISHED\">",
+        "<button formaction=\"https://example.com/x\">Save</button>",
+        "<button>Save</button>",
+        "<select name=\"bean.categoryId\"><option>x</option></select>",
+        "<p formaction=\"https://example.com/x\">text</p>",
+        // an image's name replaces that property on its document
+        "<img name=body><img src onerror=go()>",
+        "<form name=body></form><img src onerror=go()>",
+        "<img name=documentElement><img src onerror=go()>",
+        "<img name=querySelectorAll><img src onerror=go()>",
+        "<img name=body><table><tr><td onclick=\"go()\">x</td></tr></table>",
     })
     void opensInTheTextarea(String html) {
         assertTrue(hasActiveHtml(html), html);
@@ -147,9 +168,38 @@ class RichEditorContentIT {
         "<pre><code>if (a &lt; b) { run(); }</code></pre>",
         "<pre>\n\nfirst line after a blank one</pre>",
         "<p>One</p>\n<p>Two</p>\n",
+        "<img name=\"body\" src=\"a.png\" alt=\"\"><p>text</p>",
+        "<img name=\"querySelector\" src=\"a.png\" alt=\"\">",
+        "<img name=\"querySelectorAll\" src=\"a.png\" alt=\"\">",
+        "<img name=\"createElement\" src=\"a.png\" alt=\"\">",
     })
     void staysInTheRichEditor(String html) {
         assertFalse(hasActiveHtml(html), html);
+    }
+
+    /**
+     * The rich editor loads an entry inside the entry form, where a nested
+     * form's start tag is ignored, so what the check lets through must not
+     * hold an event handler there either.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "<math><mtext><p><form></form><mglyph><![CDATA[><img src onerror=go()>]]>",
+        "<form><math><mtext></form><form><mglyph><style></math><img src onerror=go()>",
+        "</form><form onanimationstart=\"go()\"><input name=\"attributes\">x</form>",
+        "<p>Hello <b>world</b></p>",
+        "<table><caption>c</caption><tr><td>1</td><td>2</td></tr></table>",
+    })
+    void whatStaysInTheRichEditorHasNoEventHandlersInTheEntryForm(String html) {
+        boolean handlers = (Boolean) page.evaluate("html => {"
+                + "  const inert = document.implementation.createHTMLDocument('');"
+                + "  const form = inert.body.appendChild(inert.createElement('form'));"
+                + "  const holder = form.appendChild(inert.createElement('div'));"
+                + "  holder.innerHTML = html;"
+                + "  return Array.from(holder.querySelectorAll('*')).some(element =>"
+                + "      element.getAttributeNames().some(name => name.startsWith('on')));"
+                + "}", html);
+        assertTrue(hasActiveHtml(html) || !handlers, html);
     }
 
     private String insert(String text) {
