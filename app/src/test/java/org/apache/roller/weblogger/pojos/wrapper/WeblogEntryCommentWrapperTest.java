@@ -124,8 +124,8 @@ class WeblogEntryCommentWrapperTest {
 
     @Test
     void htmlCommentKeepsHtmlSubsetOutput() {
-        // the image isn't in the subset, so it's removed
-        assertEquals("<b>Hi</b>",
+        // the image isn't in the subset, so it's shown as text
+        assertEquals("<b>Hi</b>&lt;img src=x onerror=alert(1)&gt;",
                 content("text/html", "HTMLSubset", List.of(new HTMLSubsetPlugin())));
     }
 

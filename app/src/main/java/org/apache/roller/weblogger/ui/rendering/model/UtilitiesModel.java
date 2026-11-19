@@ -363,19 +363,24 @@ public class UtilitiesModel implements Model {
     }
         
     /**
-     * Code (stolen from Pebble) to add rel="nofollow" string to all links in HTML.
+     * Adds nofollow to the rel attribute of every link in the HTML.
+     *
+     * @param html the HTML to change
+     * @return the HTML as parsed and written out again by jsoup
      */
     public String addNofollow(String html) {
         return Utilities.addNofollow(html);
     }
     
     /**
-     * Transforms the given String into a subset of HTML displayable on a web
-     * page. The subset includes &lt;b&gt;, &lt;i&gt;, &lt;p&gt;, &lt;br&gt;,
-     * &lt;pre&gt; and &lt;a href&gt; (and their corresponding end tags).
+     * Turns HTML-encoded text, such as the output of escapeHTML, into the
+     * subset of HTML that comments may use: the encoded tags &lt;b&gt;,
+     * &lt;i&gt;, &lt;blockquote&gt;, &lt;br&gt;, &lt;p&gt;, &lt;pre&gt;,
+     * &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt; and links to http, https and mailto
+     * addresses become tags again. Every other tag stays text.
      *
-     * @param s   the String to transform
-     * @return    the transformed String
+     * @param s   the HTML-encoded text
+     * @return    the HTML subset, or null if s is null
      */
     public String transformToHTMLSubset(String s) {
         return Utilities.transformToHTMLSubset(s);
