@@ -76,8 +76,21 @@ public class RollerSession
      * Get RollerSession from request (and add user if not already present).
      */
     public static RollerSession getRollerSession(HttpServletRequest request) {
-        RollerSession rollerSession = null;
         HttpSession session = request.getSession(false);
+        try {
+            return getRollerSession(request, session);
+        } catch (IllegalStateException e) {
+            if (session == null || !isInvalidated(session)) {
+                throw e;
+            }
+            // another request of the same browser ended the session while
+            // this one was using it, so this one is logged out too
+            return endSession(request, session);
+        }
+    }
+
+    private static RollerSession getRollerSession(HttpServletRequest request, HttpSession session) {
+        RollerSession rollerSession = null;
         if (session != null) {
             rollerSession = (RollerSession)session.getAttribute(ROLLER_SESSION);
 
@@ -112,16 +125,7 @@ public class RollerSession
                 try {
                     
                     UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
-                    User user = umgr.getUserByUserName(principal.getName());
-
-                    // For OIDC-authenticated users, look up by OIDC subject
-                    if (user == null && principal instanceof OAuth2AuthenticationToken oauthToken) {
-                        Object oauthPrincipal = oauthToken.getPrincipal();
-                        if (oauthPrincipal instanceof OidcUser oidcUser) {
-                            String oidcSubject = RollerOidcUserService.toOidcSubject(oidcUser);
-                            user = umgr.getUserByOpenIdUrl(oidcSubject);
-                        }
-                    }
+                    User user = findUser(umgr, principal);
 
                     // try one time to auto-provision, only happens if user==null
                     // which means installation has LDAP enabled in security.xml
@@ -158,6 +162,46 @@ public class RollerSession
     }
 
     /**
+     * The enabled user a login belongs to, or null if there is none.
+     */
+    private static User findUser(UserManager umgr, Principal principal) throws WebloggerException {
+        User user = umgr.getUserByUserName(principal.getName());
+
+        // For OIDC-authenticated users, look up by OIDC subject
+        if (user == null && principal instanceof OAuth2AuthenticationToken oauthToken) {
+            Object oauthPrincipal = oauthToken.getPrincipal();
+            if (oauthPrincipal instanceof OidcUser oidcUser) {
+                String oidcSubject = RollerOidcUserService.toOidcSubject(oidcUser);
+                user = umgr.getUserByOpenIdUrl(oidcSubject);
+            }
+        }
+        return user;
+    }
+
+    /**
+     * Records a login in its session as soon as Spring Security accepts it:
+     * the user's password as it is now, so that a later password change ends
+     * the session even if Roller's pages are not opened in between. A login in
+     * a session that already had one replaces what that one left behind.
+     */
+    public static void loggedIn(HttpServletRequest request, Principal login) {
+        try {
+            HttpSession session = request.getSession(true);
+            session.removeAttribute(ROLLER_SESSION);
+            session.removeAttribute(LOGIN_PASSWORD);
+            if (WebloggerFactory.isBootstrapped()) {
+                UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
+                User user = findUser(umgr, login);
+                if (user != null) {
+                    session.setAttribute(LOGIN_PASSWORD, user.getUserName() + "\n" + digest(user));
+                }
+            }
+        } catch (WebloggerException e) {
+            log.error("ERROR: getting user object", e);
+        }
+    }
+
+    /**
      * Keeps the current session logged in after its own user changed their
      * password, or an administrator changed their own. Call it after the new
      * password is saved; the user's other sessions still end.
@@ -167,11 +211,18 @@ public class RollerSession
         if (session == null || user == null) {
             return;
         }
-        Object attribute = session.getAttribute(ROLLER_SESSION);
-        if (attribute instanceof RollerSession rollerSession
-                && user.getUserName().equals(rollerSession.userName)) {
-            rollerSession.setAuthenticatedUser(user);
-            rememberLoginPassword(session, rollerSession);
+        try {
+            Object attribute = session.getAttribute(ROLLER_SESSION);
+            if (attribute instanceof RollerSession rollerSession
+                    && user.getUserName().equals(rollerSession.userName)) {
+                rollerSession.setAuthenticatedUser(user);
+                rememberLoginPassword(session, rollerSession);
+            }
+        } catch (IllegalStateException e) {
+            if (!isInvalidated(session)) {
+                throw e;
+            }
+            // another request ended the session, there is no login to keep
         }
     }
 
@@ -208,6 +259,15 @@ public class RollerSession
             return true;
         }
         return user != null && digest(user).equals(passwordDigest);
+    }
+
+    private static boolean isInvalidated(HttpSession session) {
+        try {
+            session.getCreationTime();
+            return false;
+        } catch (IllegalStateException e) {
+            return true;
+        }
     }
 
     /**

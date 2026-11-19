@@ -45,6 +45,7 @@
                     username-parameter="j_username" 
                     password-parameter="j_password" 
                     authentication-failure-url="/roller-ui/login.rol?error=true"
+                    authentication-success-handler-ref="formLoginSuccessHandler"
                     login-processing-url="/roller_j_security_check"/>
 
         <remember-me services-ref="rollerRememberMeServices"
@@ -97,10 +98,23 @@
     <beans:bean id="rollerOidcUserService"
                 class="org.apache.roller.weblogger.ui.core.security.RollerOidcUserService"/>
 
-    <!-- honor the request that triggered login, like form login does -->
+    <!-- The success handlers record the login in its session, so a later
+         password change ends that session, then send the user on to the
+         request that triggered login. -->
+    <beans:bean id="formLoginSuccessHandler"
+                class="org.apache.roller.weblogger.ui.core.security.RollerLoginSuccessHandler">
+        <beans:constructor-arg>
+            <beans:bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler"/>
+        </beans:constructor-arg>
+    </beans:bean>
+
     <beans:bean id="oidcSuccessHandler"
-                class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
-        <beans:property name="defaultTargetUrl" value="/roller-ui/menu.rol"/>
+                class="org.apache.roller.weblogger.ui.core.security.RollerLoginSuccessHandler">
+        <beans:constructor-arg>
+            <beans:bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+                <beans:property name="defaultTargetUrl" value="/roller-ui/menu.rol"/>
+            </beans:bean>
+        </beans:constructor-arg>
     </beans:bean>
 
     <!-- send OAuth2/OIDC failures back with their own marker so the login

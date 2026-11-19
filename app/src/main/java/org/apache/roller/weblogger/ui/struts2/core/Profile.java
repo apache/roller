@@ -116,7 +116,8 @@ public class Profile extends UIAction {
             if ((authMethod.equals(AuthMethod.OIDC) ||
                     (authMethod.equals(AuthMethod.DB_OIDC) && !StringUtils.isEmpty(bean.getOpenIdUrl())))
                     && (StringUtils.isEmpty(existingUser.getPassword())
-                        || !StringUtils.equals(previousOpenIdUrl, existingUser.getOpenIdUrl()))) {
+                        || !StringUtils.equals(StringUtils.removeEnd(previousOpenIdUrl, "/"),
+                                StringUtils.removeEnd(existingUser.getOpenIdUrl(), "/")))) {
                 String randomString = RollerPasswordEncoders.randomUnusedPassword();
                 existingUser.resetPassword(randomString);
             }

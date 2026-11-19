@@ -167,7 +167,8 @@ public class UserEdit extends UIAction {
             if ((authMethod.equals(AuthMethod.OIDC) ||
                     (authMethod.equals(AuthMethod.DB_OIDC) && !StringUtils.isEmpty(bean.getOpenIdUrl())))
                     && (StringUtils.isEmpty(user.getPassword())
-                        || !StringUtils.equals(previousOpenIdUrl, user.getOpenIdUrl()))) {
+                        || !StringUtils.equals(StringUtils.removeEnd(previousOpenIdUrl, "/"),
+                                StringUtils.removeEnd(user.getOpenIdUrl(), "/")))) {
                 String randomString = RollerPasswordEncoders.randomUnusedPassword();
                 user.resetPassword(randomString);
             }
