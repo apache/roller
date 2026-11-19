@@ -94,12 +94,17 @@ public class Members extends UIAction implements HttpParametersAware {
             User user = getAuthenticatedUser();
             boolean error = false;
             for (WeblogPermission perms : permsList) {
-                String sval = getParameter("perm-" + perms.getUser().getId());
+                // a disabled member has no row that can be changed here
+                User member = perms.getUser();
+                if (member == null) {
+                    continue;
+                }
+                String sval = getParameter("perm-" + member.getId());
                 if (sval != null) {
                     if (sval.equals(WeblogPermission.ADMIN) && !perms.isPending()) {
                         numAdmins++;
                     }
-                    if (perms.getUser().getUserName().equals(user.getUserName())) {
+                    if (member.getUserName().equals(user.getUserName())) {
                         // can't modify self
                         if (!sval.equals(WeblogPermission.ADMIN)) {
                             error = true;
@@ -116,7 +121,11 @@ public class Members extends UIAction implements HttpParametersAware {
             Map<String, List<String>> changes = new LinkedHashMap<>();
             for (WeblogPermission perms : permsList) {
 
-                String sval = getParameter("perm-" + perms.getUser().getId());
+                User member = perms.getUser();
+                if (member == null) {
+                    continue;
+                }
+                String sval = getParameter("perm-" + member.getId());
                 if (sval != null) {
                     if (!error && !perms.hasAction(sval)) {
                         if ("-1".equals(sval)) {

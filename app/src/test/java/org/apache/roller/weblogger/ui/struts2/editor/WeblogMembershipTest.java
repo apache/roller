@@ -29,6 +29,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.roller.weblogger.TestUtils;
+import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.pojos.User;
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -230,6 +232,85 @@ class WeblogMembershipTest {
     }
 
     @Test
+    void disabledMemberCanBeRemoved() throws Exception {
+        users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.POST));
+        disable(memberName);
+
+        assertTrue(users().updateWeblogMembership(weblog(),
+                Collections.singletonMap(memberName, null)));
+        TestUtils.endSession(true);
+
+        assertNull(permission(memberName));
+    }
+
+    @Test
+    void disabledMemberCanBeDemoted() throws Exception {
+        users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.POST));
+        disable(memberName);
+
+        assertTrue(users().updateWeblogMembership(weblog(),
+                Map.of(memberName, List.of(WeblogPermission.EDIT_DRAFT))));
+        TestUtils.endSession(true);
+
+        assertEquals(List.of(WeblogPermission.EDIT_DRAFT), permission(memberName).getActionsAsList());
+    }
+
+    @Test
+    void changingAPendingInvitationKeepsItPending() throws Exception {
+        users().grantWeblogPermissionPending(weblog(), user(memberName),
+                List.of(WeblogPermission.POST));
+        TestUtils.endSession(true);
+
+        assertTrue(users().updateWeblogMembership(weblog(),
+                Map.of(memberName, List.of(WeblogPermission.ADMIN))));
+        TestUtils.endSession(true);
+
+        WeblogPermission invitation = permission(memberName);
+        assertEquals(List.of(WeblogPermission.ADMIN), invitation.getActionsAsList());
+        assertTrue(invitation.isPending(), "the invitation has not been accepted");
+    }
+
+    @Test
+    void nonMemberCannotResign() throws Exception {
+        MemberResign action = resign(memberName);
+
+        assertTrue(action.hasActionErrors());
+        assertFalse(action.hasActionMessages(), "nobody resigned");
+    }
+
+    @Test
+    void membershipUpdateRejectsAUserWithoutAMembership() throws Exception {
+        Map<String, List<String>> changes = new java.util.HashMap<>();
+        changes.put(ownerName, List.of(WeblogPermission.POST));
+        changes.put(memberName, List.of(WeblogPermission.ADMIN));
+
+        assertThrows(WebloggerException.class,
+                () -> users().updateWeblogMembership(weblog(), changes));
+        TestUtils.endSession(false);
+
+        assertTrue(permission(ownerName).hasAction(WeblogPermission.ADMIN), "nothing was changed");
+        assertNull(permission(memberName));
+    }
+
+    @Test
+    void membersPageSavesWhenAMemberIsDisabled() throws Exception {
+        users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.POST));
+        disable(memberName);
+
+        Members action = spy(new Members());
+        stubText(action);
+        action.setAuthenticatedUser(user(ownerName));
+        action.setActionWeblog(weblog());
+        doAnswer(call -> null).when(action).getParameter(anyString());
+        doAnswer(call -> WeblogPermission.ADMIN).when(action).getParameter("perm-" + user(ownerName).getId());
+        action.save();
+        TestUtils.endSession(true);
+
+        assertFalse(action.hasActionErrors(), () -> action.getActionErrors().toString());
+        assertTrue(permission(memberName).hasAction(WeblogPermission.POST));
+    }
+
+    @Test
     void concurrentResignationsLeaveAnAdministrator() throws Exception {
         for (int round = 0; round < 5; round++) {
             for (String name : List.of(ownerName, memberName)) {
@@ -302,6 +383,13 @@ class WeblogMembershipTest {
         action.resign();
         TestUtils.endSession(true);
         return action;
+    }
+
+    private static void disable(String name) throws Exception {
+        User user = user(name);
+        user.setEnabled(Boolean.FALSE);
+        users().saveUser(user);
+        TestUtils.endSession(true);
     }
 
     private WeblogPermission permission(String name) throws Exception {
