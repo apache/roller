@@ -90,7 +90,12 @@ public class WeblogRequestMapper implements RequestMapper {
 
     /** Whether a weblog with this handle could never be shown. */
     public static boolean isReservedHandle(String handle) {
-        return handle != null && reservedNames().stream().anyMatch(handle::equalsIgnoreCase);
+        return isReserved(reservedNames(), handle);
+    }
+
+
+    private static boolean isReserved(Set<String> names, String handle) {
+        return handle != null && names.stream().anyMatch(handle::equalsIgnoreCase);
     }
     
     
@@ -139,7 +144,7 @@ public class WeblogRequestMapper implements RequestMapper {
         log.debug("potential weblog handle = "+weblogHandle);
         
         // check if it's a valid weblog handle
-        if(restricted.contains(weblogHandle) || !this.isWeblog(weblogHandle)) {
+        if(isReserved(restricted, weblogHandle) || !this.isWeblog(weblogHandle)) {
             log.debug("SKIPPED "+weblogHandle);
             return false;
         }

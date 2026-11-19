@@ -394,11 +394,77 @@ class SecurityConfigTest {
 
     @Test
     void weblogPathsOfRenderingRequests() {
-        assertEquals("/fam/entry/x", SecurityConfig.weblogPath("/roller-ui/rendering/page/fam/entry/x"));
-        assertEquals("/fam", SecurityConfig.weblogPath("/roller-ui/rendering/feed/fam"));
-        assertEquals("/fam/abc", SecurityConfig.weblogPath("/roller-ui/rendering/media-resources/fam/abc"));
+        String[][] paths = {
+            // rendering path, the public path WeblogRequestMapper forwards to it from
+            {"/roller-ui/rendering/page/fam", "/fam"},
+            {"/roller-ui/rendering/page/fam/", "/fam/"},
+            {"/roller-ui/rendering/page/fam/entry/x", "/fam/entry/x"},
+            {"/roller-ui/rendering/page/fam/en/entry/x", "/fam/en/entry/x"},
+            {"/roller-ui/rendering/comment/fam/entry/x", "/fam/entry/x"},
+            {"/roller-ui/rendering/feed/fam", "/fam/feed"},
+            {"/roller-ui/rendering/feed/fam/entries/atom", "/fam/feed/entries/atom"},
+            {"/roller-ui/rendering/feed/fam/en/entries/atom", "/fam/en/feed/entries/atom"},
+            {"/roller-ui/rendering/feed/fam/en_US/entries/atom", "/fam/en_US/feed/entries/atom"},
+            {"/roller-ui/rendering/resources/fam/css/style.css", "/fam/resource/css/style.css"},
+            {"/roller-ui/rendering/resources/fam/js/app.js", "/fam/resource/js/app.js"},
+            {"/roller-ui/rendering/media-resources/fam/abc", "/fam/mediaresource/abc"},
+            {"/roller-ui/rendering/search/fam", "/fam/search"},
+            {"/roller-ui/rendering/search/fam/en", "/fam/en/search"},
+            {"/roller-ui/rendering/rsd/fam", "/fam/rsd"},
+            {"/roller-ui/rendering/page/fam/entry/x\u0085y", "/fam/entry/x\u0085y"},
+            {"/roller-ui/rendering/feed/fam/entries/a\nb", "/fam/feed/entries/a\nb"},
+        };
+        for (String[] path : paths) {
+            assertEquals(path[1], SecurityConfig.weblogPath(path[0]), path[0]);
+        }
         assertNull(SecurityConfig.weblogPath("/roller-ui/menu.rol"));
         assertNull(SecurityConfig.weblogPath("/fam/entry/x"));
+    }
+
+    @Test
+    void aRuleForOneKindOfWeblogPathCoversItsRenderingPath() throws Exception {
+        setProperty("security.access./fam/mediaresource/**", "family");
+        setProperty("security.access./fam/feed/**", "family");
+        setProperty("security.access./fam/resource/**", "family");
+        setProperty("security.access./fam/search", "family");
+        setProperty("security.access./fam/rsd", "family");
+        FilterChainProxy chain = chain(WithUser.class);
+
+        for (String path : new String[] {"/fam/mediaresource/abc", "/roller-ui/rendering/media-resources/fam/abc",
+                "/fam/feed/entries/atom", "/roller-ui/rendering/feed/fam/entries/atom",
+                "/fam/resource/style.css", "/roller-ui/rendering/resources/fam/style.css",
+                "/fam/search", "/roller-ui/rendering/search/fam",
+                "/fam/rsd", "/roller-ui/rendering/rsd/fam"}) {
+            assertEquals(LOGIN, outcome(chain, request("GET", path, ""), new MockHttpServletResponse()), path);
+            assertEquals(PASS, outcome(chain, request("GET", path, "family"), new MockHttpServletResponse()), path);
+        }
+        // the weblog's pages have no rule here
+        for (String path : new String[] {"/fam/entry/x", "/roller-ui/rendering/page/fam/entry/x"}) {
+            assertEquals(PASS, outcome(chain, request("GET", path, ""), new MockHttpServletResponse()), path);
+        }
+    }
+
+    @Test
+    void aLineBreakInARenderingPathDoesNotSkipTheWeblogsRule() throws Exception {
+        setProperty("security.access./fam/**", "family");
+        FilterChainProxy chain = chain(WithUser.class);
+
+        // U+0085 (next line), which the request firewall lets through
+        MockHttpServletRequest request = request("GET", "/roller-ui/rendering/page/fam/entry/x%C2%85", "");
+        request.setCharacterEncoding("UTF-8");
+        request.setServletPath("/roller-ui/rendering/page");
+        request.setPathInfo("/fam/entry/x\u0085");
+        assertEquals(LOGIN, outcome(chain, request, new MockHttpServletResponse()));
+    }
+
+    @Test
+    void aPropertySetTwiceIsRemovedAgainAfterTheTest() throws Exception {
+        String key = "security.test.unset";
+        assertNull(config().getProperty(key));
+        setProperty(key, "first");
+        setProperty(key, "second");
+        tearDown();
+        assertNull(config().getProperty(key));
     }
 
     @Test
@@ -694,7 +760,10 @@ class SecurityConfigTest {
 
     private void setProperty(String key, String value) throws ReflectiveOperationException {
         Properties config = config();
-        savedProperties.putIfAbsent(key, config.getProperty(key));
+        // a key that had no value is saved as null, so tearDown removes it
+        if (!savedProperties.containsKey(key)) {
+            savedProperties.put(key, config.getProperty(key));
+        }
         config.setProperty(key, value);
     }
 

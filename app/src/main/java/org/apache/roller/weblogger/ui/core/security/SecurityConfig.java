@@ -265,21 +265,53 @@ public class SecurityConfig {
 
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
-    /** Rendering servlets whose path starts with the weblog's handle. */
+    /**
+     * Rendering servlets whose path starts with the weblog's handle. The
+     * rest of the path can hold any character, line breaks included.
+     */
     private static final Pattern RENDERING_PATH = Pattern.compile(
-            "^/roller-ui/rendering/(?:page|feed|resources|media-resources|search|rsd|comment)/([^/]+)(/.*)?$");
+            "^/roller-ui/rendering/(page|feed|resources|media-resources|search|rsd|comment)/([^/]+)(/.*)?$",
+            Pattern.DOTALL);
+
+    /** A leading locale, as in /en/entries/atom or /en_US. */
+    private static final Pattern LOCALE_PATH = Pattern.compile(
+            "^(/[^/_]{2}(?:_[^/_]{2})?)(/.*)?$", Pattern.DOTALL);
+
+    /**
+     * The path element that sends a weblog's public address to each rendering
+     * servlet, as WeblogRequestMapper does. The page and comment servlets
+     * take the address as it is.
+     */
+    private static final Map<String, String> RENDERING_CONTEXTS = Map.of(
+            "feed", "/feed", "resources", "/resource", "media-resources", "/mediaresource",
+            "search", "/search", "rsd", "/rsd");
 
     /**
      * The public path of the weblog a rendering servlet request is for, for
-     * example /family/entry/hello for /roller-ui/rendering/page/family/entry/hello,
-     * or null for other requests.
+     * example /family/feed/entries/atom for
+     * /roller-ui/rendering/feed/family/entries/atom, or null for other
+     * requests.
      */
     static String weblogPath(String requestPath) {
         Matcher m = RENDERING_PATH.matcher(requestPath);
         if (!m.matches()) {
             return null;
         }
-        return "/" + m.group(1) + (m.group(2) == null ? "" : m.group(2));
+        String servlet = m.group(1);
+        String weblog = "/" + m.group(2);
+        String rest = StringUtils.defaultString(m.group(3));
+        String context = RENDERING_CONTEXTS.get(servlet);
+        if (context == null) {
+            return weblog + rest;
+        }
+        // a locale comes before the feed or search element in the public path
+        if ("feed".equals(servlet) || "search".equals(servlet)) {
+            Matcher locale = LOCALE_PATH.matcher(rest);
+            if (locale.matches()) {
+                return weblog + locale.group(1) + context + StringUtils.defaultString(locale.group(2));
+            }
+        }
+        return weblog + context + rest;
     }
 
     /** A security.access.* rule: requests matching the path need one of the authorities. */
