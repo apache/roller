@@ -23,23 +23,24 @@
 services:
 
    postgresql:
-      image: "postgres:16"
+      image: "postgres:18"
       ports:
          - "5432:5432"
       volumes:
          - type: bind
-           # PostgreSQL 16 cannot start on a data directory initialized by the
-           # PostgreSQL 10 image this file used before; a new directory avoids
-           # clobbering old data (pg_dump from the old container to migrate it)
-           source: ./docker/postgresql-16-data
-           target: /var/lib/postgresql/data
+           # A major version can't start on a data directory initialized by
+           # an earlier one, so each gets its own directory and old data is
+           # left alone (pg_dump from the old container to migrate it). The
+           # postgres:18 image keeps its data under /var/lib/postgresql.
+           source: ./docker/postgresql-18-data
+           target: /var/lib/postgresql
       environment:
          - POSTGRES_DB=rollerdb
          - POSTGRES_USER=scott
          - POSTGRES_PASSWORD=tiger
 
    keycloak:
-      image: "quay.io/keycloak/keycloak:26.7.1"
+      image: "quay.io/keycloak/keycloak:26.8.2"
       command: "start-dev --import-realm"
       volumes:
          - ./docker/realm-config:/opt/keycloak/data/import
