@@ -150,14 +150,17 @@ public class TagDataServlet extends HttpServlet {
             return;
         }
 
+        // the query fetches one tag more than a page holds, to tell whether
+        // there is a next page; that tag belongs to the next page
+        List<TagStat> pageTags = tags.size() > MAX ? tags.subList(0, MAX) : tags;
+
         if ("json".equals(format)) {
             response.setContentType("application/json; charset=utf-8");
             PrintWriter pw = response.getWriter();
             pw.println("{ \"prefix\": \"" + (prefix == null ? "" : StringEscapeUtils.escapeJson(prefix)) + "\",");
             pw.println("  \"weblog\": \"" + (!siteWide ? weblog.getHandle() : "") + "\",");
             pw.println("  \"tagcounts\": [" );
-            int count = 0;
-            for (Iterator<TagStat> it = tags.iterator(); it.hasNext();) {
+            for (Iterator<TagStat> it = pageTags.iterator(); it.hasNext();) {
                 TagStat stat = it.next();
                 pw.print("    { \"tag\" : \"");
                 pw.print(stat.getName());
@@ -167,9 +170,6 @@ public class TagDataServlet extends HttpServlet {
                 pw.print(" }");
                 if (it.hasNext()) {
                     pw.println(", ");
-                }
-                if (count++ > MAX) {
-                    break;
                 }
             }
             pw.println("\n  ]\n}");
@@ -184,8 +184,7 @@ public class TagDataServlet extends HttpServlet {
             pw.println("   xmlns=\"http://www.w3.org/2007/app\""); 
             pw.println("   xmlns:atom=\"http://www.w3.org/2005/Atom\""); 
             pw.println("   xmlns:tagdata=\"http://roller.apache.org/ns/tagdata\">");
-            int count = 0;
-            for (TagStat stat : tags) {
+            for (TagStat stat : pageTags) {
                 String term = stat.getName();
                 // gWCURL fields: weblog, locale, category, dateString, tags, pageNum, absolute
                 String viewURI = urlstrat.getWeblogCollectionURL(weblog,
@@ -195,9 +194,6 @@ public class TagDataServlet extends HttpServlet {
                 int frequency = stat.getCount();
                 pw.print("<atom:category term=\"" + term + "\" tagdata:frequency=\"" + frequency + "\" ");
                 pw.println("tagdata:href=\"" + StringEscapeUtils.escapeXml10(viewURI) + "\" />");
-                if (count++ > MAX) {
-                    break;
-                }
             }
             if (tags.size() > MAX && page < WeblogRequest.MAX_PAGE_NUM) {
                 // get next URI, if site-wide then don't specify weblog
