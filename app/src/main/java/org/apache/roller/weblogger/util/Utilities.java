@@ -275,13 +275,17 @@ public class Utilities {
             return html;
         }
         // Each link runs to the first ">" after its "href=" that isn't inside
-        // a quoted attribute value. Once no ">" is left, no later link can
-        // close either, so stop there.
+        // a quoted attribute value, or to the first ">" of any kind when a
+        // quote never closes. Once no ">" is left, no later link can close
+        // either, so stop there.
         Matcher m = mLinkPattern.matcher(html);
         StringBuilder buf = new StringBuilder(html.length());
         int end = 0;
         while (m.find()) {
             int close = findTagEnd(html, m.end());
+            if (close < 0) {
+                close = html.indexOf('>', m.end());
+            }
             if (close < 0) {
                 break;
             }
@@ -296,24 +300,33 @@ public class Utilities {
 
     /**
      * Index of the ">" that ends the tag, skipping any inside quoted attribute
-     * values, or -1 if the tag doesn't end.
+     * values, or -1 if the tag doesn't end. Starts right after an "=".
      */
     private static int findTagEnd(String html, int from) {
         char quote = 0;
-        char previous = '=';
+        // a quote only opens a value as its first character; inside an
+        // unquoted value it is part of the value
+        boolean valueNext = true;
+        boolean unquoted = false;
         for (int i = from; i < html.length(); i++) {
             char c = html.charAt(i);
             if (quote != 0) {
                 if (c == quote) {
                     quote = 0;
                 }
-            } else if ((c == '"' || c == '\'') && previous == '=') {
-                quote = c;
             } else if (c == '>') {
                 return i;
-            }
-            if (!Character.isWhitespace(c)) {
-                previous = c;
+            } else if (Character.isWhitespace(c)) {
+                unquoted = false;
+            } else if (valueNext) {
+                valueNext = false;
+                if (c == '"' || c == '\'') {
+                    quote = c;
+                } else {
+                    unquoted = true;
+                }
+            } else if (c == '=' && !unquoted) {
+                valueNext = true;
             }
         }
         return -1;
@@ -382,15 +395,24 @@ public class Utilities {
             return link.substring(0, nameEnd) + "=\"nofollow\"" + link.substring(nameEnd);
         }
         String value = link.substring(valueStart, valueEnd);
+        // a quoted value that runs to the end of the tag has no closing quote
+        boolean unclosed = quoted && valueEnd == link.length() - 1;
+        boolean found = false;
         for (String token : StringUtils.split(value)) {
             if ("nofollow".equalsIgnoreCase(token)) {
-                return link;
+                found = true;
             }
         }
-        String values = value.isBlank() ? "nofollow" : value + " nofollow";
+        if (found && !unclosed) {
+            return link;
+        }
+        String values = found ? value : value.isBlank() ? "nofollow" : value + " nofollow";
         if (!quoted) {
             // unquoted value: quote it so the added token stays part of it
             values = '"' + values + '"';
+        } else if (unclosed) {
+            // close the quote so the tag's ">" isn't part of the value
+            values += link.charAt(valueStart - 1);
         }
         return link.substring(0, valueStart) + values + link.substring(valueEnd);
     }
