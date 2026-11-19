@@ -31,12 +31,10 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.roller.weblogger.TestUtils;
-import org.apache.roller.weblogger.business.PropertiesManager;
 import org.apache.roller.weblogger.business.UserManager;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.business.runnable.ScheduledEntriesTask;
-import org.apache.roller.weblogger.pojos.RuntimeConfigProperty;
 import org.apache.roller.weblogger.pojos.TagStat;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
@@ -81,11 +79,6 @@ public class EntryCollectionPermissionTest {
                 List.of(WeblogPermission.POST));
         userManager.grantWeblogPermission(weblog, limited,
                 List.of(WeblogPermission.EDIT_DRAFT));
-
-        PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-        RuntimeConfigProperty enableAtomPub = pmgr.getProperty("webservices.enableAtomPub");
-        enableAtomPub.setValue("true");
-        pmgr.saveProperty(enableAtomPub);
         TestUtils.endSession(true);
     }
 
@@ -154,12 +147,13 @@ public class EntryCollectionPermissionTest {
                     () -> limitedCol.putEntry(request(path), atomEntry("published", false, null)));
             assertEquals(status, reload(id).getStatus());
 
-            // a Limited member may still edit the entry as a draft
+            // a Limited member may still edit the entry as a draft, which
+            // leaves an entry submitted for review waiting for review
             new EntryCollection(TestUtils.getManagedUser(limited), ATOM_URL)
                     .putEntry(request(path), atomEntry("still a draft", true, null));
             WeblogEntry edited = reload(id);
             assertEquals("still a draft", edited.getTitle());
-            assertEquals(PubStatus.DRAFT, edited.getStatus());
+            assertEquals(status, edited.getStatus());
 
             // an author may publish it
             new EntryCollection(TestUtils.getManagedUser(author), ATOM_URL)
@@ -297,6 +291,36 @@ public class EntryCollectionPermissionTest {
         put(id, fetched);
         assertEquals(PubStatus.SCHEDULED, reload(id).getStatus());
         assertEquals(0, tagCount("scheduledtag"));
+    }
+
+    /** A PUT with no atom:published does not publish a scheduled entry early. */
+    @Test
+    public void scheduledEntryStaysScheduledThroughPutWithoutPublished() throws Exception {
+        long future = (System.currentTimeMillis() / 1000) * 1000 + DAY_MS;
+        String id = post(atomEntry("later", false, new Date(future), "scheduledtag"));
+        assertEquals(PubStatus.SCHEDULED, reload(id).getStatus());
+
+        put(id, atomEntry("retitled", false, null, "scheduledtag"));
+        WeblogEntry edited = reload(id);
+        assertEquals("retitled", edited.getTitle());
+        assertEquals(PubStatus.SCHEDULED, edited.getStatus());
+        assertEquals(future, edited.getPubTime().getTime());
+        assertEquals(0, tagCount("scheduledtag"));
+    }
+
+    /** A PUT with no atom:published does not re-date a published entry. */
+    @Test
+    public void publishedEntryKeepsItsPublishTimeThroughPutWithoutPublished() throws Exception {
+        long past = (System.currentTimeMillis() / 1000) * 1000 - DAY_MS;
+        String id = post(atomEntry("earlier", false, new Date(past), "scheduledtag"));
+        assertEquals(PubStatus.PUBLISHED, reload(id).getStatus());
+
+        put(id, atomEntry("retitled", false, null, "scheduledtag"));
+        WeblogEntry edited = reload(id);
+        assertEquals("retitled", edited.getTitle());
+        assertEquals(PubStatus.PUBLISHED, edited.getStatus());
+        assertEquals(past, edited.getPubTime().getTime());
+        assertEquals(1, tagCount("scheduledtag"));
     }
 
     private void goLive(String id) throws Exception {

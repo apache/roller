@@ -372,8 +372,16 @@ public class EntryCollection {
         Timestamp current = new Timestamp(System.currentTimeMillis());
         Timestamp pubTime = current;
         Timestamp updateTime = current;
+        PubStatus oldStatus = rollerEntry.getStatus();
         if (entry.getPublished() != null) {
             pubTime = new Timestamp( entry.getPublished().getTime() );
+        } else if (rollerEntry.getPubTime() != null
+                && (PubStatus.PUBLISHED.equals(oldStatus)
+                    || PubStatus.SCHEDULED.equals(oldStatus))) {
+            // an update that names no publish time keeps the one a published
+            // or scheduled entry already has, so the entry is neither
+            // re-dated nor published early
+            pubTime = rollerEntry.getPubTime();
         }
         if (entry.getUpdated() != null) {
             updateTime = new Timestamp( entry.getUpdated().getTime() );
@@ -388,9 +396,13 @@ public class EntryCollection {
         rollerEntry.setPubTime(pubTime);
         rollerEntry.setUpdateTime(updateTime);
 
-        boolean wasPublished = PubStatus.PUBLISHED.equals(rollerEntry.getStatus());
+        boolean wasPublished = PubStatus.PUBLISHED.equals(oldStatus);
         if (entry.isDraft()) {
-            rollerEntry.setStatus(PubStatus.DRAFT);
+            // an entry waiting for review is reported as a draft, so a draft
+            // update leaves it waiting for review
+            if (!PubStatus.PENDING.equals(oldStatus)) {
+                rollerEntry.setStatus(PubStatus.DRAFT);
+            }
         } else if (pubTime.after(new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
             // like the entry editor, a publish time more than a minute ahead schedules the entry
             rollerEntry.setStatus(PubStatus.SCHEDULED);
