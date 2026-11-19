@@ -196,6 +196,12 @@ public class FeedAuthorEscapingTest {
     }
 
     private static String render(String macro, String name) {
+        User user = mock(User.class);
+        when(user.getScreenName()).thenReturn(name);
+        return render(macro, name, user);
+    }
+
+    private static String render(String macro, String name, User fileCreator) {
         Properties props = new Properties();
         props.setProperty("resource.loaders", "file");
         props.setProperty("resource.loader.file.class",
@@ -209,7 +215,7 @@ public class FeedAuthorEscapingTest {
         VelocityContext ctx = new VelocityContext();
         ctx.put("entries", List.of(new StubEntry(UserWrapper.wrap(user))));
         ctx.put("comments", List.of(new StubComment(name)));
-        ctx.put("files", List.of(new StubFile(user)));
+        ctx.put("files", List.of(new StubFile(fileCreator)));
         ctx.put("utils", new UtilitiesModel());
         StringWriter out = new StringWriter();
         engine.evaluate(ctx, out, "test", "#parse('feeds.vm')" + macro);
@@ -277,5 +283,29 @@ public class FeedAuthorEscapingTest {
             assertEquals(name[1], feed.getElementsByTagNameNS("http://www.w3.org/2005/Atom", "name")
                     .item(0).getTextContent(), xml);
         }
+    }
+
+    /** A comment saved without a name has an empty author, not template source. */
+    @Test
+    public void commentWithoutNameHasEmptyAuthor() throws Exception {
+        String atom = render("<feed xmlns=\"http://www.w3.org/2005/Atom\">"
+                + "#showCommentsAtom10($comments)</feed>", null);
+        assertEquals("", parse(atom).getElementsByTagNameNS("http://www.w3.org/2005/Atom", "name")
+                .item(0).getTextContent(), atom);
+
+        String rss = render("<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\""
+                + " xmlns:atom=\"http://www.w3.org/2005/Atom\"><channel>"
+                + "#showCommentsRSS20($comments)</channel></rss>", null);
+        assertEquals("", parse(rss).getElementsByTagNameNS("http://purl.org/dc/elements/1.1/", "creator")
+                .item(0).getTextContent(), rss);
+    }
+
+    /** A media file whose creator can't be found has an empty author. */
+    @Test
+    public void mediaFileWithoutCreatorHasEmptyAuthor() throws Exception {
+        String xml = render("<feed xmlns=\"http://www.w3.org/2005/Atom\">"
+                + "#showFilesAtom10($files)</feed>", "name", null);
+        assertEquals("", parse(xml).getElementsByTagNameNS("http://www.w3.org/2005/Atom", "name")
+                .item(0).getTextContent(), xml);
     }
 }

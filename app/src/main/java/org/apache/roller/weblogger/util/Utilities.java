@@ -35,8 +35,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Set;
 
 import jakarta.activation.FileTypeMap;
 import jakarta.activation.MimetypesFileTypeMap;
@@ -66,10 +65,16 @@ public class Utilities {
 
     // Comment HTML that survives sanitizeToHTMLSubset: a few formatting tags,
     // and links to http, https and mailto addresses
+    private static final String HTML_SUBSET_LINK_TAG = "a";
+    private static final Set<String> HTML_SUBSET_TAGS = Set.of(
+            HTML_SUBSET_LINK_TAG, "b", "blockquote", "br", "i", "li", "ol",
+            "p", "pre", "ul");
+    private static final int HTML_SUBSET_TAG_MAX_LENGTH = 10;
     private static final Safelist HTML_SUBSET = new Safelist()
-            .addTags("a", "b", "blockquote", "br", "i", "li", "ol", "p", "pre", "ul")
-            .addAttributes("a", "href")
-            .addProtocols("a", "href", "http", "https", "mailto");
+            .addTags(HTML_SUBSET_TAGS.toArray(new String[0]))
+            .addAttributes(HTML_SUBSET_LINK_TAG, "href")
+            .addProtocols(HTML_SUBSET_LINK_TAG, "href", "http", "https",
+                    "mailto");
 
     // ------------------------------------------------------------------------
     /** Strip jsessionid off of a URL */
@@ -1006,8 +1011,10 @@ public class Utilities {
      * Reduces HTML, such as a comment, to the subset of HTML a weblog page
      * shows: &lt;b&gt;, &lt;i&gt;, &lt;blockquote&gt;, &lt;br&gt;, &lt;p&gt;,
      * &lt;pre&gt;, lists, and links to http, https and mailto addresses.
-     * jsoup's Cleaner removes every other tag and attribute, keeping the text
-     * inside them, and the text is HTML-encoded.
+     * Everything else is shown as text: other tags, tags that never end,
+     * the formatting tags when they have attributes, and any other "&lt;".
+     * jsoup's Cleaner then removes the attributes a link may not have and
+     * HTML-encodes the text.
      *
      * @param html the HTML to reduce
      * @return the HTML subset, or null if html is null
@@ -1016,14 +1023,14 @@ public class Utilities {
         if (html == null) {
             return null;
         }
-        return Jsoup.clean(html, "", HTML_SUBSET,
+        return Jsoup.clean(encodeNonSubsetTags(html), "", HTML_SUBSET,
                 new Document.OutputSettings().prettyPrint(false));
     }
 
     /**
      * Like sanitizeToHTMLSubset, for text that is already HTML-encoded, such
      * as a comment passed through escapeHTML: the encoded tags in the subset
-     * become tags again.
+     * become tags again, and the other encoded tags stay text.
      *
      * @param s the HTML-encoded text
      * @return the HTML subset, or null if s is null
@@ -1035,10 +1042,135 @@ public class Utilities {
         return sanitizeToHTMLSubset(StringEscapeUtils.unescapeHtml4(s));
     }
 
-    private static String replace(String string, Pattern pattern,
-            String replacement) {
-        Matcher m = pattern.matcher(string);
-        return m.replaceAll(replacement);
+    /**
+     * HTML-encodes every "&lt;" that doesn't start a tag of the HTML subset,
+     * so that an HTML parser reads it as text instead of dropping it.
+     */
+    private static String encodeNonSubsetTags(String html) {
+        int lt = html.indexOf('<');
+        if (lt == -1) {
+            return html;
+        }
+        StringBuilder sb = new StringBuilder(html.length() + 16);
+        int copied = 0;
+        while (lt != -1) {
+            sb.append(html, copied, lt);
+            int end = subsetTagEnd(html, lt);
+            if (end == -1) {
+                sb.append("&lt;");
+                copied = lt + 1;
+            } else {
+                sb.append(html, lt, end);
+                copied = end;
+            }
+            lt = html.indexOf('<', copied);
+        }
+        return sb.append(html, copied, html.length()).toString();
+    }
+
+    /**
+     * Finds the end of the HTML subset tag that starts with the "&lt;" at
+     * the given index. A formatting tag or an end tag is its name, then
+     * optional whitespace or "/", then "&gt;". A link's start tag may also
+     * have attributes, each with a value, and ends at the first "&gt;"
+     * outside a quoted value. The scan never goes past the next "&lt;", so
+     * scanning from every "&lt;" in a text takes linear time.
+     *
+     * @return the index after the tag's "&gt;", or -1 if this isn't a tag of
+     *         the subset
+     */
+    private static int subsetTagEnd(String html, int lt) {
+        int length = html.length();
+        int i = lt + 1;
+        boolean endTag = i < length && html.charAt(i) == '/';
+        if (endTag) {
+            i++;
+        }
+        int nameStart = i;
+        while (i < length && i - nameStart <= HTML_SUBSET_TAG_MAX_LENGTH
+                && isAsciiLetter(html.charAt(i))) {
+            i++;
+        }
+        String name = html.substring(nameStart, i).toLowerCase(Locale.ROOT);
+        if (!HTML_SUBSET_TAGS.contains(name) || i == length
+                || !(isHtmlSpace(html.charAt(i)) || html.charAt(i) == '/'
+                        || html.charAt(i) == '>')) {
+            return -1;
+        }
+        boolean attributes = !endTag && HTML_SUBSET_LINK_TAG.equals(name);
+
+        // where the scan is, as an HTML parser sees it: between attributes,
+        // in an attribute's name, after the name, after its "=", or in a
+        // value that has no quotes
+        final int between = 0;
+        final int inName = 1;
+        final int afterName = 2;
+        final int beforeValue = 3;
+        final int inValue = 4;
+        int state = between;
+        char quote = 0;
+        for (; i < length; i++) {
+            char c = html.charAt(i);
+            if (c == '<') {
+                return -1;
+            }
+            if (quote != 0) {
+                if (c == quote) {
+                    quote = 0;
+                    state = between;
+                }
+                continue;
+            }
+            if (c == '>') {
+                // an attribute without a value is more likely to be text,
+                // such as "x<a and b>y", than part of a link
+                return (state == inName || state == afterName) ? -1 : i + 1;
+            }
+            boolean space = isHtmlSpace(c);
+            switch (state) {
+            case between:
+                if (!space && c != '/') {
+                    if (!attributes) {
+                        return -1;
+                    }
+                    state = inName;
+                }
+                break;
+            case inName:
+                if (c == '=') {
+                    state = beforeValue;
+                } else if (space) {
+                    state = afterName;
+                } else if (c == '/') {
+                    return -1;
+                }
+                break;
+            case afterName:
+                if (c == '=') {
+                    state = beforeValue;
+                } else if (!space) {
+                    return -1;
+                }
+                break;
+            case beforeValue:
+                if (c == '"' || c == '\'') {
+                    quote = c;
+                } else if (!space) {
+                    state = inValue;
+                }
+                break;
+            default:
+                if (space) {
+                    state = between;
+                }
+                break;
+            }
+        }
+        return -1;
+    }
+
+    private static boolean isHtmlSpace(char c) {
+        return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f';
     }
 
     public static String getContentTypeFromFileName(String fileName) {
