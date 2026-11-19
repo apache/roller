@@ -71,23 +71,25 @@ public class ValidateSaltInterceptor extends AbstractInterceptor implements Stru
             // parse errors from the upload interceptor, and its workflow returns
             // the input page before the action method runs, so it can say what
             // went wrong. Struts gives the errors only to upload actions, so
-            // every other action still needs a valid salt, and so does an
-            // upload whose salt was read despite the errors.
-            if (request instanceof MultiPartRequestWrapper
+            // every other action still needs a valid salt. An upload's salt that
+            // was read despite the errors has to be valid too, but it is kept,
+            // because nothing is saved and the upload page, which gets no new
+            // salt from the input page, sends it again when the user retries.
+            boolean uploadWithErrors = request instanceof MultiPartRequestWrapper
                     && ((MultiPartRequestWrapper) request).hasErrors()
-                    && invocation.getAction() instanceof UploadedFilesAware
-                    && request.getParameter("salt") == null) {
+                    && invocation.getAction() instanceof UploadedFilesAware;
+            if (uploadWithErrors && request.getParameter("salt") == null) {
                 return invocation.invoke();
             }
 
-            try {
-                SaltValidator.requireSubmittedSalt(request);
-            } catch (ServletException e) {
+            if (uploadWithErrors
+                    ? !SaltValidator.isSubmittedSaltValid(request)
+                    : !SaltValidator.consumeSubmittedSalt(request)) {
                 if (log.isDebugEnabled()) {
                     log.debug("Valid salt value not found on multipart POST to URL : "
                             + request.getServletPath());
                 }
-                throw e;
+                throw new ServletException("Security Violation");
             }
             request.setAttribute(
                     SaltValidator.VALIDATED_REQUEST_ATTRIBUTE, Boolean.TRUE);
