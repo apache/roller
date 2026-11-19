@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /** DeadlineRegex has to give the same results as the String methods it stands in for. */
 class DeadlineRegexTest {
@@ -70,5 +71,30 @@ class DeadlineRegexTest {
         assertSame(DeadlineRegex.NOT_HANDLED, DeadlineRegex.invoke("a", "replace", new Object[] {"a", "b"}));
         assertSame(DeadlineRegex.NOT_HANDLED, DeadlineRegex.invoke("a", "split", new Object[] {"a", true}));
         assertSame(DeadlineRegex.NOT_HANDLED, DeadlineRegex.invoke("a", "matches", new Object[] {null}));
+    }
+
+    /** Only the pieces split returns count: it drops trailing empty ones. */
+    @Test
+    void trailingEmptyPiecesDoNotCountTowardTheLimit() {
+        int max = DeadlineRegex.MAX_SPLIT_PIECES;
+        String commas = ",".repeat(max + 50_000);
+        assertArrayEquals(commas.split(","),
+                (String[]) DeadlineRegex.invoke(commas, "split", new Object[] {","}));
+
+        String atTheLimit = "a,".repeat(max) + commas;
+        assertEquals(max,
+                ((String[]) DeadlineRegex.invoke(atTheLimit, "split", new Object[] {","})).length);
+        // empty pieces before a piece that is kept are returned, so they count
+        assertEquals(max,
+                ((String[]) DeadlineRegex.invoke(",".repeat(max - 1) + "a,,", "split",
+                        new Object[] {","})).length);
+
+        assertThrows(RenderLimitException.class,
+                () -> DeadlineRegex.invoke("a," + atTheLimit, "split", new Object[] {","}));
+        assertThrows(RenderLimitException.class,
+                () -> DeadlineRegex.invoke(",".repeat(max) + "a", "split", new Object[] {","}));
+        // a negative limit keeps the trailing empty pieces
+        assertThrows(RenderLimitException.class,
+                () -> DeadlineRegex.invoke(commas, "split", new Object[] {",", -1}));
     }
 }

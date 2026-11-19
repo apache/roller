@@ -88,7 +88,13 @@ public class RenderLimitParser extends StandardParser {
         }
     }
 
-    /** Moves the children and source position of a parsed node to its replacement. */
+    /**
+     * Moves the children and source position of a parsed node to its
+     * replacement. The replacement's constructor copies the fields only a
+     * subclass can set: the last token and the template, which the parser no
+     * longer has once parsing is over and Velocity needs to say where in a
+     * template something went wrong.
+     */
     private static void moveChildren(SimpleNode from, SimpleNode to) {
         to.setFirstToken(from.getFirstToken());
         to.setInfo(from.getInfo());
@@ -166,6 +172,7 @@ public class RenderLimitParser extends StandardParser {
             super(parser, from.getType());
             moveChildren(from, this);
             this.last = from.getLastToken();
+            this.template = from.getTemplate();
         }
 
         @Override
@@ -193,6 +200,7 @@ public class RenderLimitParser extends StandardParser {
             super(parser, from.getType());
             moveChildren(from, this);
             this.last = from.getLastToken();
+            this.template = from.getTemplate();
             setPrefix(from.getPrefix());
             setPostfix(from.getPostfix());
             endsWithNewline = from.endsWithNewline;
@@ -215,6 +223,7 @@ public class RenderLimitParser extends StandardParser {
             super(parser, from.getType());
             moveChildren(from, this);
             this.last = from.getLastToken();
+            this.template = from.getTemplate();
         }
 
         @Override

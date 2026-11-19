@@ -19,6 +19,8 @@
 
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,9 +67,7 @@ final class DeadlineRegex {
                 if (limit == null) {
                     return NOT_HANDLED;
                 }
-                Pattern pattern = Pattern.compile(regex);
-                checkPieces(pattern.matcher(text), limit);
-                return pattern.split(text, limit);
+                return split(s, Pattern.compile(regex).matcher(text), limit);
             default:
                 return NOT_HANDLED;
         }
@@ -77,17 +77,42 @@ final class DeadlineRegex {
     static final int MAX_SPLIT_PIECES = 100_000;
 
     /**
-     * Counts the pieces a split would return, without allocating them, and
-     * throws if there are more than MAX_SPLIT_PIECES.
+     * Pattern.split, throwing if it would return more than MAX_SPLIT_PIECES.
+     * With a limit of 0 split drops trailing empty pieces, so those are
+     * neither counted nor allocated: empty pieces are only added once a piece
+     * that isn't empty follows them.
      */
-    private static void checkPieces(Matcher m, int limit) {
-        int pieces = 1;
-        while ((limit <= 0 || pieces < limit) && m.find()) {
-            if (++pieces > MAX_SPLIT_PIECES) {
-                throw new RenderLimitException("split produced more than "
-                        + MAX_SPLIT_PIECES + " pieces");
+    private static String[] split(String s, Matcher m, int limit) {
+        List<String> pieces = new ArrayList<>();
+        int heldBack = 0;
+        int index = 0;
+        boolean last = false;
+        while (!last) {
+            last = limit > 0 && pieces.size() + heldBack == limit - 1 || !m.find();
+            if (!last && m.end() == 0) {
+                // an empty match at the start doesn't make an empty first piece
+                continue;
             }
+            if (last && index == 0) {
+                // a string with no match is returned whole, even when empty
+                return new String[] {s};
+            }
+            int end = last ? s.length() : m.start();
+            if (limit == 0 && end == index) {
+                heldBack++;
+            } else {
+                if (pieces.size() + heldBack >= MAX_SPLIT_PIECES) {
+                    throw new RenderLimitException("split produced more than "
+                            + MAX_SPLIT_PIECES + " pieces");
+                }
+                for (; heldBack > 0; heldBack--) {
+                    pieces.add("");
+                }
+                pieces.add(s.substring(index, end));
+            }
+            index = last ? end : m.end();
         }
+        return pieces.toArray(new String[0]);
     }
 
     private static Integer toInt(Object value) {
