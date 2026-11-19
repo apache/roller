@@ -47,6 +47,9 @@ public class MediaFile implements Serializable {
 
     private static final Log log = LogFactory.getFactory().getInstance(MediaFile.class);
 
+    // the last invalid uploads.thumbnail.maxPixels value warned about
+    private static volatile String invalidMaxPixelsLogged;
+
     private String id = UUIDGenerator.generateUUID();
 
     private String name;
@@ -376,10 +379,36 @@ public class MediaFile implements Serializable {
         if (!isImageFile() || getWidth() <= 0 || getHeight() <= 0) {
             return false;
         }
-        int maxPixels = WebloggerConfig.getIntProperty(
-                MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY,
-                MediaFileManager.DEFAULT_THUMBNAIL_MAX_PIXELS);
-        return (long) getWidth() * getHeight() > maxPixels;
+        return (long) getWidth() * getHeight() > thumbnailMaxPixels();
+    }
+
+    /**
+     * The value of uploads.thumbnail.maxPixels. A value that is not a
+     * positive whole number is ignored in favour of the default, with a
+     * warning logged once for each such value.
+     */
+    public static int thumbnailMaxPixels() {
+        int maxPixels;
+        try {
+            maxPixels = WebloggerConfig.getIntProperty(
+                    MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY,
+                    MediaFileManager.DEFAULT_THUMBNAIL_MAX_PIXELS);
+        } catch (NumberFormatException e) {
+            maxPixels = 0;
+        }
+        if (maxPixels > 0) {
+            return maxPixels;
+        }
+        String value = WebloggerConfig.getProperty(
+                MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY);
+        if (!String.valueOf(value).equals(invalidMaxPixelsLogged)) {
+            invalidMaxPixelsLogged = String.valueOf(value);
+            log.warn(MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY + "=" + value
+                    + " is not a whole number between 1 and " + Integer.MAX_VALUE
+                    + ", using the default of "
+                    + MediaFileManager.DEFAULT_THUMBNAIL_MAX_PIXELS);
+        }
+        return MediaFileManager.DEFAULT_THUMBNAIL_MAX_PIXELS;
     }
 
     public String getCreatorUserName() {

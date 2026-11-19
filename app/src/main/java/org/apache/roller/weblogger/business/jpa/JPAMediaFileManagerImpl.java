@@ -282,14 +282,13 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
     /** @return true if a thumbnail was saved */
     private boolean createThumbnail(MediaFile mediaFile) {
+        boolean sizeRead = false;
         try {
             FileContentManager cmgr = WebloggerFactory.getWeblogger()
                     .getFileContentManager();
             FileContent fc = cmgr.getFileContent(mediaFile.getWeblog(),
                     mediaFile.getId());
-            int maxPixels = WebloggerConfig.getIntProperty(
-                    MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY,
-                    MediaFileManager.DEFAULT_THUMBNAIL_MAX_PIXELS);
+            int maxPixels = MediaFile.thumbnailMaxPixels();
             BufferedImage img;
 
             try (InputStream in = fc.getInputStream();
@@ -315,6 +314,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                     mediaFile.setWidth(width);
                     mediaFile.setHeight(height);
                     strategy.store(mediaFile);
+                    sizeRead = true;
 
                     if ((long) width * height > maxPixels) {
                         log.info("Not creating a thumbnail for media file "
@@ -364,6 +364,29 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
         } catch (Exception e) {
             log.debug("ERROR creating thumbnail", e);
             return false;
+        } finally {
+            if (!sizeRead) {
+                forgetSize(mediaFile);
+            }
+        }
+    }
+
+    /**
+     * Mark the image's size as unknown, so that the size of the file's
+     * previous content isn't taken for the size of content that could not
+     * be read.
+     */
+    private void forgetSize(MediaFile mediaFile) {
+        if (mediaFile.getWidth() == -1 && mediaFile.getHeight() == -1) {
+            return;
+        }
+        try {
+            mediaFile.setWidth(-1);
+            mediaFile.setHeight(-1);
+            strategy.store(mediaFile);
+        } catch (Exception e) {
+            log.debug("ERROR clearing the size of media file "
+                    + mediaFile.getId(), e);
         }
     }
 
