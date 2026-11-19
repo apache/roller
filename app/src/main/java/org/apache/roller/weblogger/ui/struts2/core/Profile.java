@@ -126,11 +126,11 @@ public class Profile extends UIAction {
     }
 
     public void myValidate() {
+        // check that passwords match if they were specified (w/StringUtils.equals, null == null)
+        if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
+            addError("userRegister.error.mismatchedPasswords");
+        }
         if (StringUtils.isEmpty(getBean().getOpenIdUrl())) {
-            // check that passwords match if they were specified (w/StringUtils.equals, null == null)
-            if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
-                addError("userRegister.error.mismatchedPasswords");
-            }
             if (authMethod == AuthMethod.OIDC) {
                 addError("userRegister.error.missingOpenID");
             }

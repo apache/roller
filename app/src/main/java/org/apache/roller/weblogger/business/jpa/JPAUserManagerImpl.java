@@ -590,6 +590,18 @@ public class JPAUserManagerImpl implements UserManager {
         q.setHint("eclipselink.refresh", "true");
         List<WeblogPermission> perms = q.getResultList();
 
+        // every change has to be for a member of, or a user invited to, the
+        // weblog
+        for (String userName : changes.keySet()) {
+            boolean found = false;
+            for (WeblogPermission perm : perms) {
+                found |= perm.getUserName().equals(userName);
+            }
+            if (!found) {
+                throw new WebloggerException("ERROR: permission not found");
+            }
+        }
+
         boolean adminBefore = false;
         boolean adminAfter = false;
         for (WeblogPermission perm : perms) {
@@ -616,10 +628,14 @@ public class JPAUserManagerImpl implements UserManager {
             if (!changes.containsKey(perm.getUserName())) {
                 continue;
             }
+            // change the row that was read, which also works for a disabled
+            // user and leaves an invitation pending
             List<String> actions = changes.get(perm.getUserName());
-            revokeWeblogPermission(locked, perm.getUser(), WeblogPermission.ALL_ACTIONS);
-            if (actions != null) {
-                grantWeblogPermission(locked, perm.getUser(), actions);
+            if (actions == null) {
+                this.strategy.remove(perm);
+            } else {
+                perm.setActionsAsList(actions);
+                this.strategy.store(perm);
             }
         }
         return true;

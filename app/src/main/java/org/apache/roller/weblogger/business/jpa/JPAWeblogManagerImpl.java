@@ -203,9 +203,10 @@ public class JPAWeblogManagerImpl implements WeblogManager {
         removeCategories.executeUpdate();
 
         // remove permissions, and pending invitations, which a new weblog with
-        // the same handle would otherwise inherit
+        // the same handle would otherwise inherit. The rows are removed
+        // directly, as a disabled user's can't be looked up through the user.
         for (WeblogPermission perm : umgr.getWeblogPermissionsIncludingPending(weblog)) {
-            umgr.revokeWeblogPermission(perm.getWeblog(), perm.getUser(), WeblogPermission.ALL_ACTIONS);
+            this.strategy.remove(perm);
         }
         
         // flush the changes before returning. This is required as there is a

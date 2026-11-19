@@ -159,6 +159,20 @@ class FederatedIdentityFormTest {
     }
 
     @Test
+    void mismatchedPasswordsAreRejectedForAUserWithAStoredIdentity() throws Exception {
+        setStoredIdentity(IDENTITY);
+        String password = user(userName).getPassword();
+        Profile profile = profile();
+        profile.getBean().setPasswordText("new-password");
+        profile.getBean().setPasswordConfirm("another-password");
+
+        assertEquals(UIAction.INPUT, profile.save());
+        TestUtils.endSession(false);
+
+        assertEquals(password, user(userName).getPassword());
+    }
+
+    @Test
     void registrationDoesNotSetTheIdentity() throws Exception {
         boolean completed = setBootstrapCompleted(true);
         HttpServletRequest request = mock(HttpServletRequest.class);
