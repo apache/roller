@@ -26,21 +26,33 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Flow;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Feeds that are too large, or that arrive too slowly, fail with a clear
@@ -65,6 +77,8 @@ class RomeFeedFetcherLimitsTest {
     private static volatile boolean stopping;
     // counted down when the client closes the /trickle connection
     private static final CountDownLatch trickleClosed = new CountDownLatch(1);
+    // counted down when a request for /hang arrives
+    private static final CountDownLatch hangRequested = new CountDownLatch(1);
 
     private final RomeFeedFetcher fetcher =
             new RomeFeedFetcher(MAX_BYTES, MAX_TIME);
@@ -88,6 +102,10 @@ class RomeFeedFetcherLimitsTest {
         server.createContext("/drip", RomeFeedFetcherLimitsTest::drip);
         server.createContext("/stall", RomeFeedFetcherLimitsTest::stall);
         server.createContext("/trickle", RomeFeedFetcherLimitsTest::trickle);
+        server.createContext("/hang", exchange -> {
+            hangRequested.countDown();
+            stall(exchange);
+        });
         server.createContext("/missing", exchange -> {
             // a feed body, so only the status says the request failed
             byte[] body = feed(1024);
@@ -221,24 +239,92 @@ class RomeFeedFetcherLimitsTest {
         assertFailsFast("/missing", "HTTP status 404");
     }
 
+    // whichever error reaches the subscriber first is the one reported, so
+    // the reason for stopping must be recorded before the subscription is
+    // cancelled: the HTTP client answers a cancel with an error of its own
+    @Test
+    void reasonForStoppingIsReported() {
+        RomeFeedFetcher.LimitedBodySubscriber subscriber =
+                new RomeFeedFetcher.LimitedBodySubscriber(MAX_BYTES, -1, 404,
+                        new AtomicBoolean());
+        subscriber.onSubscribe(new Flow.Subscription() {
+            @Override
+            public void request(long n) {
+            }
+
+            @Override
+            public void cancel() {
+                subscriber.onError(new IOException("closed"));
+            }
+        });
+        CompletionException ex = assertThrows(CompletionException.class,
+                () -> subscriber.getBody().toCompletableFuture().join());
+        assertEquals("Feed request returned HTTP status 404",
+                ex.getCause().getMessage());
+    }
+
     @Test
     void malformedUrlFails() {
+        String url = "http://exa mple.com/feed";
         FetcherException ex = assertThrows(FetcherException.class,
-                () -> fetcher.fetchSubscription("http://exa mple.com/feed"));
-        assertTrue(ex.getMessage().contains("exa mple.com"), ex.getMessage());
+                () -> fetcher.fetchSubscription(url));
+        // the message shown to the admin adding the subscription
+        assertEquals("Feed URL is not valid - " + url, ex.getRootCauseMessage());
     }
 
     @Test
     void interruptIsKept() {
-        Thread.currentThread().interrupt();
-        try {
-            assertThrows(FetcherException.class,
-                    () -> fetcher.fetchSubscription(url("/stall")));
-            assertTrue(Thread.currentThread().isInterrupted(),
-                    "the interrupt was lost");
-        } finally {
-            Thread.interrupted();
-        }
+        assertTimeoutPreemptively(Duration.ofSeconds(30), () -> {
+            // interrupt this thread once the request is waiting for its feed
+            Thread fetching = Thread.currentThread();
+            Thread interrupter = new Thread(() -> {
+                try {
+                    if (hangRequested.await(20, TimeUnit.SECONDS)) {
+                        fetching.interrupt();
+                    }
+                } catch (InterruptedException e) {
+                    // test is over
+                }
+            });
+            interrupter.start();
+            try {
+                FetcherException ex = assertThrows(FetcherException.class,
+                        () -> fetcher.fetchSubscription(url("/hang")));
+                assertInstanceOf(InterruptedException.class, ex.getRootCause(),
+                        ex.toString());
+                assertTrue(ex.getMessage().contains("Interrupted"),
+                        ex.getMessage());
+                assertTrue(Thread.currentThread().isInterrupted(),
+                        "the interrupt was lost");
+            } finally {
+                interrupter.interrupt();
+                Thread.interrupted();
+            }
+        });
+    }
+
+    @Test
+    void interruptedThreadSendsNoRequest() {
+        // a client whose requests never complete
+        HttpClient client = mock(HttpClient.class);
+        when(client.sendAsync(any(), any()))
+                .thenAnswer(invocation -> new CompletableFuture<>());
+        RomeFeedFetcher interrupted =
+                new RomeFeedFetcher(MAX_BYTES, MAX_TIME, client);
+        assertTimeoutPreemptively(Duration.ofSeconds(30), () -> {
+            Thread.currentThread().interrupt();
+            try {
+                FetcherException ex = assertThrows(FetcherException.class,
+                        () -> interrupted.fetchSubscription(url("/small")));
+                assertInstanceOf(InterruptedException.class, ex.getRootCause(),
+                        ex.toString());
+                assertTrue(Thread.currentThread().isInterrupted(),
+                        "the interrupt was lost");
+            } finally {
+                Thread.interrupted();
+            }
+        });
+        verify(client, never()).sendAsync(any(), any());
     }
 
     @Test

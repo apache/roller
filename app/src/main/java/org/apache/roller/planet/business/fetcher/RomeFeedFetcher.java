@@ -83,11 +83,15 @@ public class RomeFeedFetcher implements FeedFetcher {
     }
 
     RomeFeedFetcher(long maxBytes, Duration maxTime) {
+        // immutable + thread safe, prefers HTTP/2, no redirects
+        this(maxBytes, maxTime, HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(3)).build());
+    }
+
+    RomeFeedFetcher(long maxBytes, Duration maxTime, HttpClient client) {
         this.maxBytes = maxBytes;
         this.maxTime = maxTime;
-        // immutable + thread safe, prefers HTTP/2, no redirects
-        this.client = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(3)).build();
+        this.client = client;
     }
     
     /**
@@ -265,7 +269,13 @@ public class RomeFeedFetcher implements FeedFetcher {
         try {
             request = requestBuilder.copy().uri(URI.create(url)).build();
         } catch (IllegalArgumentException e) {
-            throw new IOException("Feed URL is not valid - " + url, e);
+            // not chained, so that this message is the one the admin sees
+            throw new IOException("Feed URL is not valid - " + url);
+        }
+        
+        // don't start a request the caller was already asked to give up on
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
         }
         
         // the request timeout only covers the response headers, so bound the
@@ -332,7 +342,7 @@ public class RomeFeedFetcher implements FeedFetcher {
     
     // collects a successful response's body, failing once it grows past
     // maxBytes or once the fetcher stops waiting for it
-    private static final class LimitedBodySubscriber
+    static final class LimitedBodySubscriber
             implements HttpResponse.BodySubscriber<byte[]> {
         
         private final CompletableFuture<byte[]> result = new CompletableFuture<>();
@@ -403,11 +413,13 @@ public class RomeFeedFetcher implements FeedFetcher {
         
         // stops reading the body; safe to call from any thread
         synchronized void cancel(IOException reason) {
+            // record the reason first: cancelling can make the client
+            // report an error of its own, and the first one reported wins
+            result.completeExceptionally(reason);
             if (!cancelled && subscription != null) {
                 cancelled = true;
                 subscription.cancel();
             }
-            result.completeExceptionally(reason);
         }
     }
     
