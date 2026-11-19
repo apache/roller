@@ -437,11 +437,9 @@ public class EntryCollection {
 
         boolean wasPublished = PubStatus.PUBLISHED.equals(oldStatus);
         if (isDraft(entry)) {
-            // an entry waiting for review is reported as a draft, so a draft
-            // update leaves it waiting for review
-            if (!PubStatus.PENDING.equals(oldStatus)) {
-                rollerEntry.setStatus(PubStatus.DRAFT);
-            }
+            // like Save as Draft in the entry editor and publish=false in
+            // XML-RPC, this also takes an entry out of the review queue
+            rollerEntry.setStatus(PubStatus.DRAFT);
         } else if (pubTime.after(new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
             // like the entry editor, a publish time more than a minute ahead schedules the entry
             rollerEntry.setStatus(PubStatus.SCHEDULED);

@@ -176,12 +176,12 @@ public class EntryCollectionPermissionTest {
             assertEquals(status, reload(id).getStatus());
 
             // a Limited member may still edit the entry as a draft, which
-            // leaves an entry submitted for review waiting for review
+            // takes an entry submitted for review out of the review queue
             new EntryCollection(TestUtils.getManagedUser(limited), ATOM_URL)
                     .putEntry(request(path), atomEntry("still a draft", true, null));
             WeblogEntry edited = reload(id);
             assertEquals("still a draft", edited.getTitle());
-            assertEquals(status, edited.getStatus());
+            assertEquals(PubStatus.DRAFT, edited.getStatus());
 
             // an author may publish it
             new EntryCollection(TestUtils.getManagedUser(author), ATOM_URL)
