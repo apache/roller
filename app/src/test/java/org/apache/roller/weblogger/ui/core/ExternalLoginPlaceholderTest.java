@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
+import org.apache.roller.weblogger.ui.core.security.RollerRememberMeServices;
 import org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,9 +60,11 @@ class ExternalLoginPlaceholderTest {
 
     private final Map<String, String> savedProperties = new HashMap<>();
     private String userName;
+    private Object savedEncoder;
 
     @BeforeEach
     void setUp() throws Exception {
+        savedEncoder = encoderField().get(null);
         TestUtils.setupWeblogger();
         setProperty("passwds.encryption.enabled", "true");
         setProperty("passwds.encryption.algorithm", "bcrypt");
@@ -71,19 +74,24 @@ class ExternalLoginPlaceholderTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        if (userName != null) {
-            TestUtils.teardownUser(userName);
-            TestUtils.endSession(true);
-        }
-        Properties config = config();
-        savedProperties.forEach((k, v) -> {
-            if (v == null) {
-                config.remove(k);
-            } else {
-                config.setProperty(k, v);
+        try {
+            if (userName != null) {
+                TestUtils.teardownUser(userName);
+                TestUtils.endSession(true);
             }
-        });
-        SecurityContextHolder.clearContext();
+        } finally {
+            Properties config = config();
+            savedProperties.forEach((k, v) -> {
+                if (v == null) {
+                    config.remove(k);
+                } else {
+                    config.setProperty(k, v);
+                }
+            });
+            SecurityContextHolder.clearContext();
+            // provider() replaces the encoder RollerContext shares
+            encoderField().set(null, savedEncoder);
+        }
     }
 
     @Test
@@ -196,6 +204,31 @@ class ExternalLoginPlaceholderTest {
         assertEquals("<externalAuth>", user.getPassword());
     }
 
+    @Test
+    void theRememberMeSignatureUsesTheDefaultForAnEmptyConfiguredPlaceholder() throws Exception {
+        setProperty("authentication.method", "ldap");
+        setProperty("rememberme.enabled", "false");
+        SigningRememberMeServices services = new SigningRememberMeServices();
+        setProperty("users.passwords.externalAuthValue", "<externalAuth>");
+        String signedWithTheDefault = services.sign();
+
+        // CustomUserRegistry stores the default for an empty setting
+        setProperty("users.passwords.externalAuthValue", "");
+
+        assertEquals(signedWithTheDefault, services.sign());
+    }
+
+    private static class SigningRememberMeServices extends RollerRememberMeServices {
+
+        SigningRememberMeServices() {
+            super(new RollerUserDetailsService());
+        }
+
+        String sign() {
+            return makeTokenSignature(1L, "ldapuser", "unused");
+        }
+    }
+
     /** The login form's provider, given its encoder the way RollerContext does at startup. */
     private static DaoAuthenticationProvider provider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -212,8 +245,17 @@ class ExternalLoginPlaceholderTest {
 
     private void setProperty(String key, String value) throws ReflectiveOperationException {
         Properties config = config();
-        savedProperties.putIfAbsent(key, config.getProperty(key));
+        // keep the first value seen, even when it is null (not set)
+        if (!savedProperties.containsKey(key)) {
+            savedProperties.put(key, config.getProperty(key));
+        }
         config.setProperty(key, value);
+    }
+
+    private static Field encoderField() throws ReflectiveOperationException {
+        Field field = RollerContext.class.getDeclaredField("encoder");
+        field.setAccessible(true);
+        return field;
     }
 
     private static Properties config() throws ReflectiveOperationException {
