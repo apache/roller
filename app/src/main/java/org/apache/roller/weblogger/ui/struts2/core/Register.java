@@ -381,9 +381,11 @@ public class Register extends UIAction {
         }
         
         // check password, it is required if OpenID and SSO are disabled
-        if (AuthMethod.ROLLERDB.name().equals(getAuthMethod())
+        if ((AuthMethod.ROLLERDB.name().equals(getAuthMethod())
+                || (AuthMethod.DB_OIDC.name().equals(getAuthMethod())
+                        && StringUtils.isEmpty(getBean().getOpenIdUrl())))
                 && StringUtils.isEmpty(getBean().getPasswordText())) {
-                addError("error.add.user.passwordEmpty");
+                addError("error.add.user.missingPassword");
                 return;
         }
         
@@ -393,7 +395,8 @@ public class Register extends UIAction {
                 (getAuthMethod().equals(AuthMethod.DB_OIDC.name()) && !StringUtils.isEmpty(getBean().getOpenIdUrl()))) {
             unusedPassword = RollerPasswordEncoders.randomUnusedPassword();
         } else {
-            if (RollerPasswordEncoders.isTooLong(getBean().getPasswordText())) {
+            // (with LDAP or CMA the bean holds the marker, not a typed password)
+            if (!usingSSO && RollerPasswordEncoders.isTooLong(getBean().getPasswordText())) {
                 addError("userRegister.error.passwordTooLong");
                 return;
             }

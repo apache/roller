@@ -130,9 +130,22 @@ public final class RollerPasswordEncoders {
      */
     private record ExternalLoginAware(PasswordEncoder delegate) implements PasswordEncoder {
 
+        /**
+         * Returns null for a password that BCrypt refuses as too long. A
+         * login re-encodes the password it has just checked against an older
+         * encoding, and for such a password that login has to succeed and
+         * leave the stored password as it is.
+         */
         @Override
         public String encode(CharSequence rawPassword) {
-            return delegate.encode(rawPassword);
+            try {
+                return delegate.encode(rawPassword);
+            } catch (IllegalArgumentException e) {
+                if (rawPassword != null && isTooLong(rawPassword.toString())) {
+                    return null;
+                }
+                throw e;
+            }
         }
 
         @Override
