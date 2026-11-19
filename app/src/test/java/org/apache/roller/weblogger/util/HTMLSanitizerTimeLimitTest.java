@@ -40,8 +40,40 @@ class HTMLSanitizerTimeLimitTest {
         for (String input : inputs) {
             String html = assertTimeoutPreemptively(Duration.ofSeconds(8),
                     () -> HTMLSanitizer.sanitize(input));
-            assertFalse(html.contains("<"), html.substring(0, 40));
+            assertFalse(html.contains("<"), start(html));
         }
+    }
+
+    @Test
+    void closingTagsLeftOpenIsStopped() {
+        assertStoppedAtTheLimit("");
+    }
+
+    @Test
+    void closingTagsInsideAClosedTagIsStopped() {
+        assertStoppedAtTheLimit("</i>");
+    }
+
+    /**
+     * Sanitizes more and more open tags, until that takes too long and they
+     * are escaped. Whatever the machine's speed, one of the sizes leaves the
+     * tags to be closed when the time is nearly up, and closing them must not
+     * run past the limit.
+     */
+    private static void assertStoppedAtTheLimit(String end) {
+        // the margin covers a pause on a busy build machine; closing the
+        // tags without the limit ran over by more than this
+        Duration allowed = Duration.ofMillis(HTMLSanitizer.TIME_LIMIT_MILLIS + 1000);
+        String html = "<";
+        for (int n = 20_000; html.contains("<"); n += n / 10) {
+            String input = "<i>" + "<b>".repeat(n) + end;
+            html = assertTimeoutPreemptively(allowed, () -> HTMLSanitizer.sanitize(input),
+                    n + " open tags");
+        }
+    }
+
+    private static String start(String html) {
+        return html.substring(0, Math.min(40, html.length()));
     }
 
     @Test

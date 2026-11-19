@@ -351,6 +351,7 @@ public class HTMLSanitizer {
                     // if found on top ok
                     for (int i = 1; i <= pos; i++) {
                         //pop all elements before tag and close it
+                        checkTime(deadline);
                         String poppedTag = openTags.pop();
                         cleanToken = cleanToken + "</" + poppedTag + ">";
                         isAcceptedToken = true;
@@ -378,6 +379,7 @@ public class HTMLSanitizer {
         // must close remaining tags
         while (!openTags.isEmpty()) {
             //pop all elements before tag and close it
+            checkTime(deadline);
             String poppedTag = openTags.pop();
             ret.html = ret.html + "</" + poppedTag + ">";
             ret.val = ret.val + "</" + poppedTag + ">";
