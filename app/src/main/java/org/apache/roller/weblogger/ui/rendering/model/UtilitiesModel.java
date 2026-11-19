@@ -250,8 +250,12 @@ public class UtilitiesModel implements Model {
         return StringEscapeUtils.escapeHtml4(str);
     }
     
+    /**
+     * Turn HTML entities back into text. Like removeHTML, returns an empty
+     * string for null, so a missing value prints as nothing in a template.
+     */
     public String unescapeHTML(String str) {
-        return StringEscapeUtils.unescapeHtml4(str);
+        return str == null ? "" : StringEscapeUtils.unescapeHtml4(str);
     }
     
     public String escapeXML(String str) {
