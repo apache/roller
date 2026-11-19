@@ -26,10 +26,11 @@
  *
  * hasActiveHtml(html) parses the HTML in an inert document and returns true if
  * it contains anything the rich editor would run or can't keep: script, frame,
- * plugin, style, raw text and document-level elements, on* attributes,
- * javascript: and vbscript: URLs in URL attributes, or markup that parses
- * differently once serialized and parsed again, as the rich editor does for
- * undo and code view. It returns true if the HTML can't be parsed.
+ * plugin, style, raw text and document-level elements, forms and form
+ * controls, on* and formaction attributes, javascript: and vbscript: URLs in
+ * URL attributes, or markup that parses differently once serialized and parsed
+ * again, as the rich editor does for undo and code view. It returns true if
+ * the HTML can't be parsed.
  *
  * insertAtCursor(textArea, text) inserts a media file into the textarea
  * fallback at the cursor, or at the end when trackCursor(textArea) hasn't seen
@@ -42,10 +43,12 @@ var RollerRichEditor = (function () {
     // which has scripting off, so its contents can't be checked; <textarea>,
     // <title>, <xmp>, <noembed>, <noframes> and <plaintext> hold raw text that
     // reads as markup when moved elsewhere; SVG <set> and <animate> can change
-    // other attributes after loading.
+    // other attributes after loading. The rich editor is inside the entry
+    // form, so it drops a <form>'s own tags on save, and <input>, <button> and
+    // <select> would be submitted with the entry or submit it themselves.
     var ACTIVE_ELEMENTS = "script, iframe, frame, frameset, object, embed, applet, "
         + "base, meta, link, style, noscript, textarea, title, xmp, noembed, "
-        + "noframes, plaintext, set, animate";
+        + "noframes, plaintext, set, animate, form, input, button, select";
 
     // attributes whose value the browser loads or follows as a URL
     var URL_ATTRIBUTES = ["href", "src", "action", "formaction", "xlink:href", "data",
@@ -53,6 +56,38 @@ var RollerRichEditor = (function () {
 
     // control characters and whitespace that browsers ignore inside a URL scheme
     var IGNORED_IN_SCHEME = /[\s\u0000-\u001f\u007f-\u00a0\u200b-\u200f\u2060\ufeff]/g;
+
+    // A form control named "attributes" or "firstChild" replaces that property
+    // on its form, and an image named "body" or "querySelectorAll" does on its
+    // document, so these read the properties from the prototypes instead.
+    function getter(prototype, name) {
+        return Object.getOwnPropertyDescriptor(prototype, name).get;
+    }
+    var attributesOf = getter(Element.prototype, "attributes");
+    var firstChildOf = getter(Node.prototype, "firstChild");
+    var nextSiblingOf = getter(Node.prototype, "nextSibling");
+    var contentOf = getter(HTMLTemplateElement.prototype, "content");
+    var bodyOf = getter(Document.prototype, "body");
+
+    function createElement(doc, name) {
+        return Document.prototype.createElement.call(doc, name);
+    }
+
+    // the elements under a document, fragment or element that match a selector
+    function select(root, selector) {
+        var prototype = Element.prototype;
+        if (root instanceof Document) {
+            prototype = Document.prototype;
+        } else if (root instanceof DocumentFragment) {
+            prototype = DocumentFragment.prototype;
+        }
+        return prototype.querySelectorAll.call(root, selector);
+    }
+
+    // a <template>'s contents, which are a separate fragment
+    function templateContent(element) {
+        return element instanceof HTMLTemplateElement ? contentOf.call(element) : null;
+    }
 
     function hasActiveScheme(url) {
         var compact = url.replace(IGNORED_IN_SCHEME, "").toLowerCase();
@@ -77,21 +112,24 @@ var RollerRichEditor = (function () {
     }
 
     function hasActiveNodes(root) {
-        if (root.querySelector(ACTIVE_ELEMENTS)) {
+        if (select(root, ACTIVE_ELEMENTS).length) {
             return true;
         }
-        var elements = root.querySelectorAll("*");
+        var elements = select(root, "*");
         for (var i = 0; i < elements.length; i++) {
             var element = elements[i];
-            var attributes = element.attributes;
+            var attributes = attributesOf.call(element);
             for (var j = 0; j < attributes.length; j++) {
                 var name = attributes[j].name.toLowerCase();
-                if (name.indexOf("on") === 0 || hasActiveUrl(name, attributes[j].value)) {
+                // formaction sends the entry form somewhere else
+                if (name.indexOf("on") === 0 || name === "formaction"
+                        || hasActiveUrl(name, attributes[j].value)) {
                     return true;
                 }
             }
-            // template contents are a separate fragment that querySelector skips
-            if (element.content && element.content.nodeType === 11 && hasActiveNodes(element.content)) {
+            // querySelector skips template contents
+            var content = templateContent(element);
+            if (content && hasActiveNodes(content)) {
                 return true;
             }
         }
@@ -103,21 +141,32 @@ var RollerRichEditor = (function () {
     // <pre> each time, which changes nothing that runs.
     function shape(node) {
         var out = "";
-        for (var child = node.firstChild; child; child = child.nextSibling) {
-            if (child.nodeType !== 1) {
+        for (var child = firstChildOf.call(node); child; child = nextSiblingOf.call(child)) {
+            if (!(child instanceof Element)) {
                 continue;
             }
+            var attributes = attributesOf.call(child);
             out += "<" + child.namespaceURI + " " + child.localName;
-            for (var i = 0; i < child.attributes.length; i++) {
-                out += " " + child.attributes[i].name + "=" + JSON.stringify(child.attributes[i].value);
+            for (var i = 0; i < attributes.length; i++) {
+                out += " " + attributes[i].name + "=" + JSON.stringify(attributes[i].value);
             }
-            out += ">" + shape(child.content && child.content.nodeType === 11 ? child.content : child) + "</>";
+            out += ">" + shape(templateContent(child) || child) + "</>";
         }
         return out;
     }
 
+    // The rich editor is inside the entry form, where the parser ignores the
+    // start tag of another <form>, so the same HTML can become different
+    // elements there.
+    function parseInForm(doc, html) {
+        var form = createElement(doc, "form");
+        var holder = form.appendChild(createElement(doc, "div"));
+        holder.innerHTML = html;
+        return holder;
+    }
+
     function parseFragment(doc, html) {
-        var template = doc.createElement("template");
+        var template = createElement(doc, "template");
         template.innerHTML = html;
         return template;
     }
@@ -128,7 +177,8 @@ var RollerRichEditor = (function () {
         }
         try {
             var doc = new DOMParser().parseFromString(html, "text/html");
-            if (!doc || !doc.body || hasActiveNodes(doc)) {
+            var body = doc && bodyOf.call(doc);
+            if (!body || hasActiveNodes(doc)) {
                 return true;
             }
             // A full document drops table cells and rows found outside a
@@ -138,12 +188,18 @@ var RollerRichEditor = (function () {
             if (hasActiveNodes(template.content)) {
                 return true;
             }
+            var inForm = parseInForm(doc, html);
+            if (hasActiveNodes(inForm)) {
+                return true;
+            }
             // Summernote serializes its content and parses it again for undo
             // and code view; markup such as nested forms comes back as a
             // different tree of elements, which this check hasn't seen.
-            var again = new DOMParser().parseFromString(doc.body.innerHTML, "text/html");
-            return !again.body || shape(again.body) !== shape(doc.body)
-                || shape(parseFragment(doc, template.innerHTML).content) !== shape(template.content);
+            var again = new DOMParser().parseFromString(body.innerHTML, "text/html");
+            var bodyAgain = again && bodyOf.call(again);
+            return !bodyAgain || shape(bodyAgain) !== shape(body)
+                || shape(parseFragment(doc, template.innerHTML).content) !== shape(template.content)
+                || shape(parseInForm(doc, inForm.innerHTML)) !== shape(inForm);
         } catch (e) {
             return true;
         }

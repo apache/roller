@@ -78,6 +78,35 @@ public class RichEditorContentIT {
         // as the rich editor does for undo and code view
         "<form><div></form><form><p>x</p>",
         "<form><math><mtext></form><form><mglyph><b>x</b></mglyph></form>",
+        // inside the entry form a nested form's start tag is ignored, so the
+        // image is an element there
+        "<math><mtext><p><form></form><mglyph><![CDATA[><img src onerror=go()>]]>",
+        // a control named "attributes" hides its form's attributes
+        "</form><form style=\"animation-name:spin;animation-duration:1ms\" onanimationstart=\"go()\">"
+            + "<input name=\"attributes\">x</form>",
+        // the rich editor drops a form's wrapper on save
+        "<form action=\"https://example.com/subscribe\"><input name=\"email\"></form>",
+        // controls join the entry form and are submitted with it
+        "<input type=\"hidden\" name=\"bean.status\" value=\"PUBLISHED\">",
+        "<button formaction=\"https://example.com/x\">Save</button>",
+        "<button>Save</button>",
+        "<select name=\"bean.categoryId\"><option>x</option></select>",
+        "<p formaction=\"https://example.com/x\">text</p>",
+        // an image's name replaces that property on its document
+        "<img name=body><img src onerror=go()>",
+        "<form name=body></form><img src onerror=go()>",
+        "<img name=documentElement><img src onerror=go()>",
+        "<img name=querySelectorAll><img src onerror=go()>",
+        "<img name=body><table><tr><td onclick=\"go()\">x</td></tr></table>",
+    };
+
+    // checked as the rich editor loads them: inside the entry form
+    private static final String[] LOADED_IN_THE_ENTRY_FORM = {
+        "<math><mtext><p><form></form><mglyph><![CDATA[><img src onerror=go()>]]>",
+        "<form><math><mtext></form><form><mglyph><style></math><img src onerror=go()>",
+        "</form><form onanimationstart=\"go()\"><input name=\"attributes\">x</form>",
+        "<p>Hello <b>world</b></p>",
+        "<table><caption>c</caption><tr><td>1</td><td>2</td></tr></table>",
     };
 
     private static final String[] STAY_IN_THE_RICH_EDITOR = {
@@ -95,6 +124,10 @@ public class RichEditorContentIT {
         "<pre><code>if (a &lt; b) { run(); }</code></pre>",
         "<pre>\n\nfirst line after a blank one</pre>",
         "<p>One</p>\n<p>Two</p>\n",
+        "<img name=\"body\" src=\"a.png\" alt=\"\"><p>text</p>",
+        "<img name=\"querySelector\" src=\"a.png\" alt=\"\">",
+        "<img name=\"querySelectorAll\" src=\"a.png\" alt=\"\">",
+        "<img name=\"createElement\" src=\"a.png\" alt=\"\">",
     };
 
     private static WebDriver driver;
@@ -117,11 +150,12 @@ public class RichEditorContentIT {
         }
     }
 
-    /** A blank page with the editor's textarea and the script loaded. */
+    /** A blank page with the editor's textarea, in a form, and the script loaded. */
     @Before
     public void openPage() {
         driver.get("about:blank");
-        js("document.body.innerHTML = '<textarea id=\"edit_content\">Hello world</textarea>';"
+        js("document.body.innerHTML = '<form id=\"entry\">"
+                + "<textarea id=\"edit_content\">Hello world</textarea></form>';"
                 + "var s = document.createElement('script');"
                 + "s.textContent = arguments[0];"
                 + "document.head.appendChild(s);", script);
@@ -155,6 +189,32 @@ public class RichEditorContentIT {
             }
         }
         assertEquals("should stay in the rich editor:", "", flagged.toString());
+    }
+
+    /**
+     * The rich editor loads an entry inside the entry form, where a nested
+     * form's start tag is ignored, so what the check lets through must not
+     * hold an event handler there either.
+     */
+    @Test
+    public void whatStaysInTheRichEditorHasNoEventHandlersInTheEntryForm() {
+        StringBuilder missed = new StringBuilder();
+        for (String html : LOADED_IN_THE_ENTRY_FORM) {
+            boolean handlers = (Boolean) js(
+                    "var inert = document.implementation.createHTMLDocument('');"
+                    + "var form = inert.body.appendChild(inert.createElement('form'));"
+                    + "var holder = form.appendChild(inert.createElement('div'));"
+                    + "holder.innerHTML = arguments[0];"
+                    + "return Array.from(holder.querySelectorAll('*')).some(function (element) {"
+                    + "  return element.getAttributeNames().some(function (name) {"
+                    + "    return name.indexOf('on') === 0;"
+                    + "  });"
+                    + "});", html);
+            if (handlers && !hasActiveHtml(html)) {
+                missed.append("\n  ").append(html);
+            }
+        }
+        assertEquals("should open in the textarea:", "", missed.toString());
     }
 
     private static String insert(String text) {

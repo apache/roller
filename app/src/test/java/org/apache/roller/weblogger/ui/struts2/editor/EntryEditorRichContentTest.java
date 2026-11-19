@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -45,6 +46,9 @@ class EntryEditorRichContentTest {
         return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
     }
 
+    /** Calls that pass Summernote a command name, in either quote style. */
+    private static final Pattern COMMAND_CALL = Pattern.compile("\\.summernote\\(\\s*[\"']");
+
     @Test
     void summernoteStartsOnlyAfterTheContentCheck() throws IOException {
         String jsp = read("src/main/webapp/WEB-INF/jsps/editor/EntryEditor.jsp");
@@ -56,7 +60,7 @@ class EntryEditorRichContentTest {
         assertTrue(check > 0 && check < start && start < init, "check, then start, then init");
 
         // every other call is guarded by the flag
-        Matcher call = Pattern.compile("\\.summernote\\(\\s*\"").matcher(jsp);
+        Matcher call = COMMAND_CALL.matcher(jsp);
         int calls = 0;
         while (call.find()) {
             calls++;
@@ -64,6 +68,21 @@ class EntryEditorRichContentTest {
             assertTrue(before.contains("if (richEditorStarted)"), "unguarded call near: " + before);
         }
         assertEquals(1, calls);
+    }
+
+    @Test
+    void commandCallsAreFoundInEitherQuoteStyle() {
+        assertTrue(COMMAND_CALL.matcher("$('#edit_content').summernote(\"code\", html);").find());
+        assertTrue(COMMAND_CALL.matcher("$('#edit_content').summernote('code', html);").find());
+        assertTrue(COMMAND_CALL.matcher("$('#edit_content').summernote( 'code');").find());
+    }
+
+    @Test
+    void theLeaveWarningIsAddedOnce() throws IOException {
+        String jsp = read("src/main/webapp/WEB-INF/jsps/editor/EntryEditor.jsp");
+        // each change would otherwise add another beforeunload handler
+        assertTrue(jsp.contains(".one('summernote.change', warnBeforeLeaving)"));
+        assertFalse(jsp.contains(".on('summernote.change'"));
     }
 
     @Test
