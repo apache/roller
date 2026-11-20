@@ -79,17 +79,17 @@ public final class UserWrapper {
     
     /**
      * Names are stored as typed when weblog admins are trusted. When they
-     * aren't, the sanitizer stores names with angle brackets and quotes
-     * encoded but leaves ampersands as they are, so decode just those four
-     * entities before escaping to encode them exactly once. Any other entity,
-     * such as a literal {@code &amp;}, was typed that way and is shown as
-     * typed.
+     * aren't, the sanitizer may encode angle brackets, quotes and
+     * non-breaking spaces but leaves ampersands as they are, so decode just
+     * those entities before escaping to encode them exactly once. Any other
+     * entity, such as a literal {@code &amp;}, was typed that way and is
+     * shown as typed.
      */
     private static String escapeOnce(String name) {
         if (name != null && WebloggerConfig.getBooleanProperty("weblogAdminsUntrusted")) {
             name = StringUtils.replaceEach(name,
-                    new String[] {"&lt;", "&gt;", "&quot;", "&#39;"},
-                    new String[] {"<", ">", "\"", "'"});
+                    new String[] {"&lt;", "&gt;", "&quot;", "&#39;", "&nbsp;"},
+                    new String[] {"<", ">", "\"", "'", "\u00A0"});
         }
         return StringEscapeUtils.escapeHtml4(name);
     }
