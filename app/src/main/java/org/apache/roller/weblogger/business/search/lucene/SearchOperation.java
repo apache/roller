@@ -40,6 +40,7 @@ import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopFieldCollectorManager;
 import org.apache.lucene.search.TopFieldDocs;
+import org.apache.lucene.util.automaton.TooComplexToDeterminizeException;
 import org.apache.roller.weblogger.business.search.IndexManager;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
@@ -172,11 +173,12 @@ public class SearchOperation extends ReadFromIndexOperation {
             // who cares?
             parseError = e.getMessage();
 
-        } catch (RuntimeException e) {
+        } catch (IllegalArgumentException | IndexSearcher.TooManyClauses
+                | TooComplexToDeterminizeException e) {
             // Lucene rejects some queries that parse, such as an unfinished
             // regular expression or a negative phrase slop, only when it
             // builds or runs them. Treat them like a query that does not parse.
-            logger.warn("Could not run search query: " + e.getMessage());
+            logger.debug("Could not run search query: " + e.getMessage());
             searchresults = null;
             parseError = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
         }
