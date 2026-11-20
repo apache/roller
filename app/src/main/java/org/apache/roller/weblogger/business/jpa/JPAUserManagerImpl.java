@@ -35,6 +35,7 @@ import java.util.TreeMap;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TypedQuery;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
@@ -575,30 +576,26 @@ public class JPAUserManagerImpl implements UserManager {
     public boolean updateWeblogMembership(Weblog weblog, Map<String, List<String>> changes)
             throws WebloggerException {
 
-        // lock the weblog's row so membership updates for it run one at a time
-        EntityManager em = strategy.getEntityManager(true);
-        Weblog locked = em.find(Weblog.class, weblog.getId(), LockModeType.PESSIMISTIC_WRITE);
-        if (locked == null) {
-            throw new WebloggerException("ERROR: weblog not found");
-        }
+        List<WeblogPermission> perms;
+        try {
+            // every change has to be for a member of, or a user invited to,
+            // the weblog; check before taking the lock, so a request for
+            // someone else's weblog doesn't wait for or hold it
+            checkMemberships(readMemberships(weblog.getHandle()), changes);
 
-        // read the memberships after taking the lock, not from the cache
-        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByWeblogIdIncludingPending",
-                WeblogPermission.class);
-        q.setParameter(1, locked.getHandle());
-        q.setHint("eclipselink.refresh", "true");
-        List<WeblogPermission> perms = q.getResultList();
+            // lock the weblog's row so membership updates for it run one at
+            // a time
+            EntityManager em = strategy.getEntityManager(true);
+            Weblog locked = em.find(Weblog.class, weblog.getId(), LockModeType.PESSIMISTIC_WRITE);
+            if (locked == null) {
+                throw new WebloggerException("ERROR: weblog not found");
+            }
 
-        // every change has to be for a member of, or a user invited to, the
-        // weblog
-        for (String userName : changes.keySet()) {
-            boolean found = false;
-            for (WeblogPermission perm : perms) {
-                found |= perm.getUserName().equals(userName);
-            }
-            if (!found) {
-                throw new WebloggerException("ERROR: permission not found");
-            }
+            // read the memberships again now that the lock is held
+            perms = readMemberships(locked.getHandle());
+            checkMemberships(perms, changes);
+        } catch (PersistenceException e) {
+            throw new WebloggerException(e);
         }
 
         boolean adminBefore = false;
@@ -638,6 +635,29 @@ public class JPAUserManagerImpl implements UserManager {
             }
         }
         return true;
+    }
+
+    // a weblog's memberships and invitations, read from the database rather
+    // than the cache
+    private List<WeblogPermission> readMemberships(String handle) throws WebloggerException {
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByWeblogIdIncludingPending",
+                WeblogPermission.class);
+        q.setParameter(1, handle);
+        q.setHint("eclipselink.refresh", "true");
+        return q.getResultList();
+    }
+
+    private static void checkMemberships(List<WeblogPermission> perms, Map<String, List<String>> changes)
+            throws WebloggerException {
+        for (String userName : changes.keySet()) {
+            boolean found = false;
+            for (WeblogPermission perm : perms) {
+                found |= perm.getUserName().equals(userName);
+            }
+            if (!found) {
+                throw new WebloggerException("ERROR: permission not found");
+            }
+        }
     }
 
     @Override
