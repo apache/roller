@@ -181,6 +181,9 @@ class StringGrowthTest {
         texts.add("a&lt;b&gt;b&lt;/b&gt;&lt;a href='http://x/\u00e9&quot;&amp;'&gt;y&lt;/a&gt;"
                 + "&lt;a href=\"mailto:\u03d1&#233;&\"&gt;&lt;br /&gt;&quot;");
         texts.add("<a href=\"x\" rel=\"nofollow\"> <A HREF=y rel=\"nofollow\">");
+        // links with no rel, with an unquoted or unclosed rel, and with one to add to
+        texts.add("<a href=x>".repeat(20) + "<A HREF=y rel=me>z<a href=z rel>"
+                + "<a href='q' rel=\"a>");
         texts.add("mailto:a.b-c@d.example.org, mailto:a.b-c@d.example.org and x@y.z w@v.u.");
         texts.add("\\u0041 \\x41 \\101 %41 %E2%82%AC &#x1F600; &thetasym; &#1;");
         for (Map.Entry<String, UnaryOperator<String>> call : oneStringCalls(utils).entrySet()) {

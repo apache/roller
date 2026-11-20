@@ -234,9 +234,10 @@ final class StringGrowth {
             case "autoformat":
                 return grown(s, "<br />".length(), c -> c == '\n');
             case "addNofollow":
-                // only a link that already has rel="nofollow" gets another
+                // each link (each "<a href=", in any case) gains at most
+                // ' rel="nofollow"', or less when it has a rel to add to
                 return s == null ? 0 : add(s.length(), multiply(" rel=\"nofollow\"".length(),
-                        occurrences(s.toString(), "rel=\"nofollow\"")));
+                        occurrencesIgnoringCase(s.toString(), "<a href=")));
             case "encodeEmail":
                 return encodedEmail(s);
             case "truncate":
@@ -324,10 +325,13 @@ final class StringGrowth {
         return n;
     }
 
-    private static long occurrences(String s, String target) {
+    private static long occurrencesIgnoringCase(String s, String target) {
         long n = 0;
-        for (int i = s.indexOf(target); i >= 0; i = s.indexOf(target, i + target.length())) {
-            n++;
+        for (int i = 0; i + target.length() <= s.length(); i++) {
+            if (s.regionMatches(true, i, target, 0, target.length())) {
+                n++;
+                i += target.length() - 1;
+            }
         }
         return n;
     }
