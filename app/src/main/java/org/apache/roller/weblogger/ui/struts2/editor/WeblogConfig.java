@@ -110,6 +110,7 @@ public class WeblogConfig extends UIAction {
         
         // load bean with data from weblog
         getBean().copyFrom(getActionWeblog());
+        listRulesMatchedAsText();
         
         return INPUT;
     }
@@ -214,6 +215,7 @@ public class WeblogConfig extends UIAction {
                     weblogAdminsUntrusted);
             if (weblogAdminsUntrusted) {
                 addMessage("websiteSettings.acceptedBannedwordsAsWords", List.of(""+regexRules.size()));
+                listRulesMatchedAsText();
             } else {
                 addMessage("websiteSettings.acceptedBannedwordslist", List.of(""+stringRules.size(), ""+regexRules.size()));
             }
@@ -223,6 +225,21 @@ public class WeblogConfig extends UIAction {
     }
     
     
+    /**
+     * Tells the weblog admin which banned words look like regular
+     * expressions, since with untrusted weblog admins they are matched as
+     * plain text; a list from an earlier version may have such lines.
+     */
+    private void listRulesMatchedAsText() {
+        if (weblogAdminsUntrusted) {
+            List<String> rules = Bannedwordslist.regexStyleRules(getBean().getBannedwordslist());
+            if (!rules.isEmpty()) {
+                addMessage("websiteSettings.bannedwordsMatchedAsText", String.join(", ", rules));
+            }
+        }
+    }
+
+
     @StrutsParameter(depth = 1)
     public WeblogConfigBean getBean() {
         return bean;

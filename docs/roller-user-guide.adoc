@@ -820,7 +820,8 @@ regardless of case, as a whole word: _casino_ matches "Casino" but not
 "casinos". A word in Chinese, Japanese, Thai or another script written
 without spaces matches anywhere in the text.
 ** By default (_weblogAdminsUntrusted=true_), every line is matched as
-plain text, including lines that begin with a left parenthesis. On a site
+plain text, including lines that begin with a left parenthesis, and Weblog
+Settings lists the lines that look like regular expressions. On a site
 where weblog administrators are trusted (_weblogAdminsUntrusted=false_),
 lines that begin with a left parenthesis are regular expressions, and other
 lines are matched as regular expressions at word boundaries (see the Java

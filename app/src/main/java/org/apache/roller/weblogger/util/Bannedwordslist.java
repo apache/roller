@@ -484,6 +484,21 @@ public final class Bannedwordslist {
         readRules(bannedwordslist, new ArrayList<>(), new ArrayList<>(), true);
     }
 
+    /**
+     * The lines of a weblog's banned words that only mean something as a
+     * regular expression, so that a weblog admin can be told they are
+     * matched as plain words.
+     */
+    public static List<String> regexStyleRules(String bannedwordslist) {
+        List<String> rules = new ArrayList<>();
+        for (String rule : ruleLines(bannedwordslist)) {
+            if (rule.startsWith("(") || StringUtils.containsAny(rule, "|\\[*+?{^$")) {
+                rules.add(rule);
+            }
+        }
+        return rules;
+    }
+
     /** The lines of a list that are rules, without comments or blank lines. */
     private static List<String> ruleLines(String rules) {
         List<String> lines = new ArrayList<>();

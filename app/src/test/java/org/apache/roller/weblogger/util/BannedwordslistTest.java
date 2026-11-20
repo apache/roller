@@ -214,6 +214,14 @@ public class BannedwordslistTest  {
         Bannedwordslist.validateRules("(casino)\nviagra");
     }
 
+    // lines that only mean something as a regex are listed for the weblog admin
+    @Test
+    public void testRegexStyleRules() {
+        assertEquals(List.of("(casino)", "viagra|cialis", "poker-?online"), Bannedwordslist.regexStyleRules(
+                "casino\n(casino)\nviagra|cialis\n# (comment)\nexample.com\npoker-?online\n"));
+        assertEquals(List.of(), Bannedwordslist.regexStyleRules(null));
+    }
+
     // each rule has its own time limit, so a long list of plain words
     // against a long comment is slow but isn't counted as a match
     @Test
