@@ -222,6 +222,53 @@ public class RenderLimitsTest {
     }
 
     /**
+     * $utils methods that escape or encode text can make each character
+     * several, so they too have to be refused before they run. Each of these
+     * on 6,291,456 characters would build at least twice the output limit.
+     */
+    @Test
+    public void expandingUtilityCallsAreRefusedBeforeTheyRun() throws Exception {
+        String[] calls = {
+            "$utils.escapeHTML($s)",
+            "$utils.escapeXML($s)",
+            "$utils.escapeJavaScript($s)",
+            "$utils.encode($s)",
+            "$utils.hexEncode($s)",
+            "$utils.autoformat($s)",
+        };
+        Map<String, Object> context = new HashMap<>();
+        context.put("utils", new UtilitiesModel());
+        String setup = "#set($s = \"<\u00e9\n\")#foreach($i in [1..21])#set($s = \"$s$s\")#end";
+        // building the string alone, without the call
+        String baselineName = "limits-expanding-baseline.vm";
+        render(baselineName, setup + "$s.length()", context);
+        long before = allocatedBytes();
+        Outcome baseline = render(baselineName, setup + "$s.length()", context);
+        long building = allocatedBytes() - before;
+        assertEquals(null, baseline.failure);
+        for (int i = 0; i < calls.length; i++) {
+            long allocated = allocatedByRender("limits-expanding-" + i + ".vm",
+                    setup + calls[i], context) - building;
+            // without the checks each call allocates at least 25 MB more
+            assertTrue(allocated < 16L * 1024 * 1024,
+                    calls[i] + " allocated " + allocated + " bytes before it was stopped");
+        }
+    }
+
+    /** A case change of a large ASCII string fits whenever the string does. */
+    @Test
+    public void caseChangesOfALargeAsciiStringStillWork() throws Exception {
+        Map<String, Object> context = new HashMap<>();
+        context.put("utils", new UtilitiesModel());
+        Outcome outcome = render("limits-case.vm", FIVE_MILLION_DIGITS
+                + "$s.toUpperCase().length() $s.toLowerCase().length()"
+                + " $utils.toUpperCase($s).length() $utils.escapeHTML($s).length()",
+                context);
+        assertEquals(null, outcome.failure);
+        assertEquals("5242880 5242880 5242880 5242880", outcome.out.getHead());
+    }
+
+    /**
      * A string just under the output limit split into one-character pieces
      * would allocate millions of strings before anything checks their size,
      * so a split may return no more pieces than a #foreach can visit.

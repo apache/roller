@@ -19,12 +19,15 @@
 
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
+import java.lang.management.ManagementFactory;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** DeadlineRegex has to give the same results as the String methods it stands in for. */
 class DeadlineRegexTest {
@@ -96,5 +99,34 @@ class DeadlineRegexTest {
         // a negative limit keeps the trailing empty pieces
         assertThrows(RenderLimitException.class,
                 () -> DeadlineRegex.invoke(commas, "split", new Object[] {",", -1}));
+    }
+
+    private static long allocatedBytes() {
+        return ((com.sun.management.ThreadMXBean) ManagementFactory.getThreadMXBean())
+                .getThreadAllocatedBytes(Thread.currentThread().getId());
+    }
+
+    /**
+     * A replacement that takes a string at the output limit one character
+     * past it has to stop before the rest of the string is copied after it.
+     */
+    @Test
+    void theTextAfterTheLastReplacementCountsTowardTheLimit() {
+        RenderSession session = RenderSession.begin(null);
+        try {
+            String s = "0".repeat((int) session.getMaxOutputChars());
+            for (String method : new String[] {"replaceFirst", "replaceAll"}) {
+                assertThrows(RenderLimitException.class,
+                        () -> DeadlineRegex.invoke(s, method, new Object[] {"^0", "xx"}));
+                long before = allocatedBytes();
+                assertThrows(RenderLimitException.class,
+                        () -> DeadlineRegex.invoke(s, method, new Object[] {"^0", "xx"}));
+                long allocated = allocatedBytes() - before;
+                assertTrue(allocated < 1024 * 1024,
+                        method + " allocated " + allocated + " bytes before it was stopped");
+            }
+        } finally {
+            session.end();
+        }
     }
 }
