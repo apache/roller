@@ -49,6 +49,21 @@ public final class SaltValidator {
      * @return true when no Roller session is present or the submitted salt is valid
      */
     public static boolean consumeSubmittedSalt(HttpServletRequest request) {
+        return checkSubmittedSalt(request, true);
+    }
+
+    /**
+     * Validates the salt submitted as a request parameter and leaves it in
+     * place, so that the form it came from can be sent again.
+     *
+     * @param request current request
+     * @return true when no Roller session is present or the submitted salt is valid
+     */
+    public static boolean isSubmittedSaltValid(HttpServletRequest request) {
+        return checkSubmittedSalt(request, false);
+    }
+
+    private static boolean checkSubmittedSalt(HttpServletRequest request, boolean consume) {
         RollerSession rollerSession = RollerSession.getRollerSession(request);
         if (rollerSession == null) {
             return true;
@@ -67,7 +82,9 @@ public final class SaltValidator {
             if (!Objects.equals(saltCache.get(salt), userId)) {
                 return false;
             }
-            saltCache.remove(salt);
+            if (consume) {
+                saltCache.remove(salt);
+            }
         }
         return true;
     }

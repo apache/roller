@@ -42,7 +42,7 @@ public class MultiPlanetURLStrategy implements PlanetURLStrategy {
         }
         
         StringBuilder url = new StringBuilder();
-        url.append(WebloggerRuntimeConfig.getProperty("site.absoluteurl"));
+        url.append(WebloggerRuntimeConfig.getAbsoluteContextURL());
         url.append('/').append(planet).append('/');
         
         return url.toString();

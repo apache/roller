@@ -154,7 +154,7 @@ public class CustomUserRegistry {
 
         // for LDAP we don't store its password in the roller_users table,
         // just an string indicating external auth method being used.
-        unusedPassword = WebloggerConfig.getProperty("users.passwords.externalAuthValue","<externalAuth>");
+        unusedPassword = RollerPasswordEncoders.externalLoginMarker();
         ud.setPassword(unusedPassword);
         ud.setEnabled(enabled ? Boolean.TRUE : Boolean.FALSE);
 

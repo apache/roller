@@ -39,6 +39,7 @@ import org.apache.struts2.ActionContext;
 import org.apache.struts2.ActionInvocation;
 import org.apache.struts2.ActionProxy;
 import org.apache.struts2.action.Action;
+import org.apache.struts2.action.UploadedFilesAware;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -122,17 +123,93 @@ public class ValidateSaltInterceptorTest {
 
     @Test
     public void testMultipartParsingErrorsReachUploadHandling() throws Exception {
-        when(context.get(StrutsStatics.HTTP_REQUEST)).thenReturn(multipartRequest);
-        when(multipartRequest.getMethod()).thenReturn("POST");
-        when(multipartRequest.getContentType()).thenReturn(
-                "multipart/form-data; boundary=abc123");
-        when(multipartRequest.hasErrors()).thenReturn(true);
-        when(invocation.invoke()).thenReturn("input");
+        try (MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            when(context.get(StrutsStatics.HTTP_REQUEST)).thenReturn(multipartRequest);
+            when(multipartRequest.getMethod()).thenReturn("POST");
+            when(multipartRequest.getContentType()).thenReturn(
+                    "multipart/form-data; boundary=abc123");
+            when(multipartRequest.hasErrors()).thenReturn(true);
+            when(invocation.getAction()).thenReturn(mock(UploadedFilesAware.class));
+            when(invocation.invoke()).thenReturn("input");
 
-        assertEquals("input", interceptor.intercept(invocation));
+            assertEquals("input", interceptor.intercept(invocation));
 
-        verify(multipartRequest, never()).getParameter("salt");
-        verify(invocation).invoke();
+            verifyNoInteractions(saltCache);
+            verify(multipartRequest, never()).setAttribute(
+                    SaltValidator.VALIDATED_REQUEST_ATTRIBUTE, Boolean.TRUE);
+            verify(invocation).invoke();
+        }
+    }
+
+    @Test
+    public void testSaltReadDespiteMultipartParsingErrorsIsCheckedButKept() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
+             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(multipartRequest)).thenReturn(rollerSession);
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            when(context.get(StrutsStatics.HTTP_REQUEST)).thenReturn(multipartRequest);
+            when(multipartRequest.getMethod()).thenReturn("POST");
+            when(multipartRequest.getContentType()).thenReturn(
+                    "multipart/form-data; boundary=abc123");
+            when(multipartRequest.hasErrors()).thenReturn(true);
+            when(multipartRequest.getParameter("salt")).thenReturn("validSalt");
+            when(rollerSession.getAuthenticatedUser()).thenReturn(new TestUser("userId"));
+            when(saltCache.get("validSalt")).thenReturn("userId");
+            when(invocation.getAction()).thenReturn(mock(UploadedFilesAware.class));
+            when(invocation.invoke()).thenReturn("input");
+
+            assertEquals("input", interceptor.intercept(invocation));
+
+            // the upload page sends the same salt again when the user retries
+            verify(saltCache).get("validSalt");
+            verify(saltCache, never()).remove(anyString());
+            verify(multipartRequest).setAttribute(
+                    SaltValidator.VALIDATED_REQUEST_ATTRIBUTE, Boolean.TRUE);
+            verify(invocation).invoke();
+        }
+    }
+
+    @Test
+    public void testInvalidSaltReadDespiteMultipartParsingErrorsIsRejected() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
+             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(multipartRequest)).thenReturn(rollerSession);
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            when(context.get(StrutsStatics.HTTP_REQUEST)).thenReturn(multipartRequest);
+            when(multipartRequest.getMethod()).thenReturn("POST");
+            when(multipartRequest.getContentType()).thenReturn(
+                    "multipart/form-data; boundary=abc123");
+            when(multipartRequest.hasErrors()).thenReturn(true);
+            when(multipartRequest.getParameter("salt")).thenReturn("usedSalt");
+            when(saltCache.get("usedSalt")).thenReturn(null);
+            when(invocation.getAction()).thenReturn(mock(UploadedFilesAware.class));
+
+            assertThrows(ServletException.class, () -> interceptor.intercept(invocation));
+
+            verify(multipartRequest, never()).setAttribute(
+                    SaltValidator.VALIDATED_REQUEST_ATTRIBUTE, Boolean.TRUE);
+            verify(invocation, never()).invoke();
+        }
+    }
+
+    @Test
+    public void testMultipartParsingErrorsDontSkipTheSaltForOtherActions() throws Exception {
+        try (MockedStatic<RollerSession> mockedRollerSession = mockStatic(RollerSession.class);
+             MockedStatic<SaltCache> mockedSaltCache = mockStatic(SaltCache.class)) {
+            mockedRollerSession.when(() -> RollerSession.getRollerSession(multipartRequest)).thenReturn(rollerSession);
+            mockedSaltCache.when(SaltCache::getInstance).thenReturn(saltCache);
+            when(context.get(StrutsStatics.HTTP_REQUEST)).thenReturn(multipartRequest);
+            when(multipartRequest.getMethod()).thenReturn("POST");
+            when(multipartRequest.getContentType()).thenReturn(
+                    "multipart/form-data; boundary=abc123");
+            // for example a form field longer than struts.multipart.maxStringLength
+            when(multipartRequest.hasErrors()).thenReturn(true);
+            when(invocation.getAction()).thenReturn(new Object());
+
+            assertThrows(ServletException.class, () -> interceptor.intercept(invocation));
+            verify(invocation, never()).invoke();
+        }
     }
 
     @Test

@@ -34,6 +34,7 @@ import org.apache.struts2.dispatcher.multipart.MultiPartRequestWrapper;
 import org.apache.struts2.ActionContext;
 import org.apache.struts2.ActionInvocation;
 import org.apache.struts2.action.Action;
+import org.apache.struts2.action.UploadedFilesAware;
 import org.apache.struts2.interceptor.AbstractInterceptor;
 
 /**
@@ -65,19 +66,30 @@ public class ValidateSaltInterceptor extends AbstractInterceptor implements Stru
         if (SaltValidator.isMultipartFormPost(request)
                 && !Boolean.TRUE.equals(request.getAttribute(
                         SaltValidator.VALIDATED_REQUEST_ATTRIBUTE))) {
-            if (request instanceof MultiPartRequestWrapper
-                    && ((MultiPartRequestWrapper) request).hasErrors()) {
+            // When the upload can't be parsed, for example because it is too
+            // large, the salt may not have been read. An upload action gets the
+            // parse errors from the upload interceptor, and its workflow returns
+            // the input page before the action method runs, so it can say what
+            // went wrong. Struts gives the errors only to upload actions, so
+            // every other action still needs a valid salt. An upload's salt that
+            // was read despite the errors has to be valid too, but it is kept,
+            // because nothing is saved and the upload page, which gets no new
+            // salt from the input page, sends it again when the user retries.
+            boolean uploadWithErrors = request instanceof MultiPartRequestWrapper
+                    && ((MultiPartRequestWrapper) request).hasErrors()
+                    && invocation.getAction() instanceof UploadedFilesAware;
+            if (uploadWithErrors && request.getParameter("salt") == null) {
                 return invocation.invoke();
             }
 
-            try {
-                SaltValidator.requireSubmittedSalt(request);
-            } catch (ServletException e) {
+            if (uploadWithErrors
+                    ? !SaltValidator.isSubmittedSaltValid(request)
+                    : !SaltValidator.consumeSubmittedSalt(request)) {
                 if (log.isDebugEnabled()) {
                     log.debug("Valid salt value not found on multipart POST to URL : "
                             + request.getServletPath());
                 }
-                throw e;
+                throw new ServletException("Security Violation");
             }
             request.setAttribute(
                     SaltValidator.VALIDATED_REQUEST_ATTRIBUTE, Boolean.TRUE);

@@ -26,6 +26,7 @@ import java.util.Set;
 import org.apache.roller.weblogger.business.URLStrategy;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.wrapper.WeblogEntryWrapper;
+import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogSearchRequest;
 import org.apache.roller.weblogger.util.I18nMessages;
 
@@ -102,7 +103,7 @@ public class SearchResultsPager implements WeblogEntriesPager {
     
     @Override
     public String getNextLink() {
-        if(moreResults) {
+        if(moreResults && page < WeblogRequest.MAX_PAGE_NUM) {
             return urlStrategy.getWeblogSearchURL(weblog, locale, query, category, page + 1, false);
         }
         return null;

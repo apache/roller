@@ -51,7 +51,10 @@ import org.apache.roller.weblogger.pojos.Weblog;
 public class WeblogRequest extends ParsedRequest {
     
     private static final Log log = LogFactory.getLog(WeblogRequest.class);
-    
+
+    /** Largest page number accepted from the page request parameter. */
+    public static final int MAX_PAGE_NUM = 10000;
+
     // lightweight attributes
     private String weblogHandle = null;
     private String locale = null;
@@ -156,8 +159,27 @@ public class WeblogRequest extends ParsedRequest {
         
         return isLocale;
     }
-    
-    
+
+
+    /**
+     * Parse a page number request parameter.  Pagers multiply the page number
+     * by the page length to get an offset, so the result is kept between 0
+     * and MAX_PAGE_NUM; missing or unparsable values mean the first page.
+     */
+    protected static int parsePageNum(String pageParam) {
+        if (pageParam == null) {
+            return 0;
+        }
+        try {
+            int pageNum = Integer.parseInt(pageParam);
+            return Math.max(0, Math.min(pageNum, MAX_PAGE_NUM));
+        } catch (NumberFormatException e) {
+            // ignored, bad input
+            return 0;
+        }
+    }
+
+
     public String getWeblogHandle() {
         return weblogHandle;
     }

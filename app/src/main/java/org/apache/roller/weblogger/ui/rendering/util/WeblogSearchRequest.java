@@ -90,14 +90,7 @@ public class WeblogSearchRequest extends WeblogRequest {
             this.query = capQuery(request.getParameter("q"));
         }
         
-        if(request.getParameter("page") != null) {
-            String pageInt = request.getParameter("page");
-            try {
-                this.pageNum = Integer.parseInt(pageInt);
-            } catch(NumberFormatException e) {
-                // ignored, bad input
-            }
-        }
+        this.pageNum = parsePageNum(request.getParameter("page"));
         
         if(request.getParameter("cat") != null && !request.getParameter("cat").isBlank()) {
             this.weblogCategoryName =

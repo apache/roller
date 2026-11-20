@@ -66,6 +66,8 @@ class MediaCollectionPathTest {
         runtimeConfig = mockStatic(WebloggerRuntimeConfig.class);
         runtimeConfig.when(WebloggerRuntimeConfig::getAbsoluteContextURL)
                 .thenReturn("https://blog.example");
+        runtimeConfig.when(() -> WebloggerRuntimeConfig.getProperty("uploads.file.maxsize"))
+                .thenReturn("4.00");
 
         files = mock(MediaFileManager.class);
         content = mock(FileContentManager.class);
@@ -182,6 +184,32 @@ class MediaCollectionPathTest {
     void putOfAnUnknownMediaResourceIsNotFound() {
         assertThrows(AtomNotFoundException.class,
                 () -> collection.putMedia(request("/blog/resource/default/missing.png")));
+    }
+
+    /** Refused uploads and replacements close the temporary file they read. */
+    @Test
+    void refusedMediaClosesItsTemporaryFile() throws Exception {
+        java.lang.management.OperatingSystemMXBean os =
+                java.lang.management.ManagementFactory.getOperatingSystemMXBean();
+        org.junit.jupiter.api.Assumptions.assumeTrue(
+                os instanceof com.sun.management.UnixOperatingSystemMXBean);
+        com.sun.management.UnixOperatingSystemMXBean unix =
+                (com.sun.management.UnixOperatingSystemMXBean) os;
+        MediaFile existing = mock(MediaFile.class);
+        when(files.getMediaFileByPath(eq(weblog), anyString())).thenReturn(existing);
+        refuseUploads();
+
+        long before = unix.getOpenFileDescriptorCount();
+        for (int i = 0; i < 50; i++) {
+            AtomRequest post = request("/blog/resources");
+            when(post.getContentType()).thenReturn("image/png");
+            assertThrows(AtomException.class, () -> collection.postMedia(post, mediaEntry("a")));
+            AtomRequest put = request("/blog/resources/existing.png");
+            when(put.getContentType()).thenReturn("image/png");
+            assertThrows(AtomException.class, () -> collection.putMedia(put));
+        }
+        long opened = unix.getOpenFileDescriptorCount() - before;
+        assertTrue(opened < 20, opened + " files left open by 100 refused uploads");
     }
 
     private void refuseUploads() throws Exception {
