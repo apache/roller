@@ -20,14 +20,19 @@
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
 import java.util.Set;
+import java.util.function.IntPredicate;
+import java.util.regex.Matcher;
 
+import org.apache.roller.util.RegexUtil;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 
 /**
  * Some string methods build a result much longer than their receiver and
  * arguments, so checking the result's length after the call is too late. This
  * works out, before a call from a template runs, the longest string it can
- * build, and names the methods whose result can't be bounded that way.
+ * build, and names the methods whose result can't be bounded that way. The
+ * same goes for the $utils methods (UtilitiesModel) that escape, encode or
+ * add to text.
  *
  * <p>Methods are matched by name so that methods added in later Java versions
  * (String.indent, String.formatted, StringBuilder.repeat) are covered when
@@ -48,11 +53,27 @@ final class StringGrowth {
     /** StringBuilder and StringBuffer methods that are not offered to templates. */
     private static final Set<String> REFUSED_BUILDER_METHODS = Set.of("repeat");
 
+    /**
+     * UtilitiesModel methods that return a string no longer than an argument,
+     * or a short one of fixed length.
+     */
+    private static final Set<String> NON_GROWING_UTILITIES_METHODS = Set.of(
+            "getModelName", "toString", "formatIso8601Date", "formatIso8601Day",
+            "formatRfc822Date", "format8charsDate", "left", "unescapeHTML",
+            "unescapeXML", "unescapeJavaScript", "removeHTML", "decode");
+
     /** Characters a number, boolean or other value appended to a builder may take. */
     private static final long SCALAR_LENGTH = 32;
 
-    /** Most characters toUpperCase or toLowerCase makes of one character. */
+    /**
+     * Most characters toUpperCase or toLowerCase makes of one character. Only
+     * characters outside ASCII grow (the Lithuanian lower case of an ASCII I
+     * gains a dot only before an accent, which is outside ASCII).
+     */
     private static final long CASE_GROWTH = 3;
+
+    /** Most characters a pattern letter of a date format writes, with room to spare. */
+    private static final long DATE_LETTER_LENGTH = 64;
 
     private StringGrowth() {
     }
@@ -74,6 +95,12 @@ final class StringGrowth {
         if (receiver instanceof StringBuilder || receiver instanceof StringBuffer) {
             return REFUSED_BUILDER_METHODS.contains(methodName);
         }
+        if (receiver instanceof UtilitiesModel) {
+            // a method added later is refused until it is bounded here
+            return returnType != null && CharSequence.class.isAssignableFrom(returnType)
+                    && !NON_GROWING_UTILITIES_METHODS.contains(methodName)
+                    && !isBoundedUtilitiesMethod(methodName);
+        }
         return false;
     }
 
@@ -85,6 +112,30 @@ final class StringGrowth {
             case "concat":
             case "toUpperCase":
             case "toLowerCase":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static boolean isBoundedUtilitiesMethod(String methodName) {
+        switch (methodName) {
+            case "replace":
+            case "toUpperCase":
+            case "escapeHTML":
+            case "transformToHTMLSubset":
+            case "escapeXML":
+            case "escapeJavaScript":
+            case "encode":
+            case "hexEncode":
+            case "autoformat":
+            case "addNofollow":
+            case "encodeEmail":
+            case "truncate":
+            case "truncateNicely":
+            case "truncateText":
+            case "toBase64":
+            case "formatDate":
                 return true;
             default:
                 return false;
@@ -103,17 +154,132 @@ final class StringGrowth {
         if (receiver instanceof StringBuilder || receiver instanceof StringBuffer) {
             return forBuilder((CharSequence) receiver, methodName, a);
         }
-        if (receiver instanceof UtilitiesModel && "replace".equals(methodName)
-                && a.length >= 3 && a[0] instanceof String) {
-            long maxCount = a.length > 3 && a[3] instanceof Number
-                    ? ((Number) a[3]).longValue() : -1;
-            if (!(a[1] instanceof String) || ((String) a[1]).isEmpty()) {
-                // StringUtils.replace leaves the text alone for an empty target
-                return 0;
-            }
-            return literalReplace((String) a[0], (String) a[1], length(a[2]), maxCount);
+        if (receiver instanceof UtilitiesModel) {
+            return forUtilities(methodName, a);
         }
         return 0;
+    }
+
+    private static long forUtilities(String methodName, Object[] a) {
+        // Velocity converts arguments to the method's parameter types after
+        // this sees them, so a number passed for a string is counted as one
+        CharSequence s = a.length > 0 ? text(a[0]) : null;
+        switch (methodName) {
+            case "replace": {
+                if (a.length < 3 || s == null) {
+                    return 0;
+                }
+                long maxCount = a.length > 3 && a[3] instanceof Number
+                        ? ((Number) a[3]).longValue() : -1;
+                CharSequence target = text(a[1]);
+                if (target == null || target.length() == 0) {
+                    // StringUtils.replace leaves the text alone for an empty target
+                    return 0;
+                }
+                return literalReplace(s.toString(), target.toString(), length(a[2]), maxCount);
+            }
+            case "toUpperCase":
+                return caseChange(s);
+            case "escapeHTML":
+            case "transformToHTMLSubset":
+                // an entity is at most ten characters (&thetasym;);
+                // transformToHTMLSubset only shrinks text apart from the link
+                // addresses it escapes the same way
+                return grown(s, 10, c -> c > 0x7e || c == '&' || c == '<' || c == '>'
+                        || c == '"');
+            case "escapeXML":
+                // at most six characters (&quot; or &#159;)
+                return grown(s, 6, c -> c < 0x20 || c > 0x7e || c == '&' || c == '<'
+                        || c == '>' || c == '"' || c == '\'');
+            case "escapeJavaScript":
+                // at most six characters (\u00e9)
+                return grown(s, 6, c -> c < 0x20 || c > 0x7e || c == '\'' || c == '"'
+                        || c == '\\' || c == '/');
+            case "encode":
+                // up to three UTF-8 bytes of %XX each; a space becomes '+'
+                return grown(s, 9, c -> !(c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z'
+                        || c >= '0' && c <= '9' || c == '.' || c == '-' || c == '*'
+                        || c == '_' || c == ' '));
+            case "hexEncode":
+                // every UTF-8 byte becomes %XX
+                return add(multiply(3, s == null ? 0 : s.length()),
+                        multiply(6, count(s, c -> c >= 0x80)));
+            case "autoformat":
+                return grown(s, "<br />".length(), c -> c == '\n');
+            case "addNofollow":
+                // only a link that already has rel="nofollow" gets another
+                return s == null ? 0 : add(s.length(), multiply(" rel=\"nofollow\"".length(),
+                        occurrences(s.toString(), "rel=\"nofollow\"")));
+            case "encodeEmail":
+                return encodedEmail(s);
+            case "truncate":
+            case "truncateNicely":
+            case "truncateText":
+                return add(length(s), length(a.length > 3 ? a[3] : null));
+            case "toBase64":
+                return a.length > 0 && a[0] instanceof byte[]
+                        ? multiply(4, (((byte[]) a[0]).length + 2) / 3) : 0;
+            case "formatDate": {
+                CharSequence fmt = a.length > 1 ? text(a[1]) : null;
+                return grown(fmt, DATE_LETTER_LENGTH,
+                        c -> c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z');
+            }
+            default:
+                return 0;
+        }
+    }
+
+    /**
+     * RegexUtil.encodeEmail hex encodes each mailto address, tripling it, and
+     * then turns the '@' and a '.' of each address into -AT- and -DOT-.
+     */
+    private static long encodedEmail(CharSequence s) {
+        if (s == null) {
+            return 0;
+        }
+        long mailtoChars = 0;
+        Matcher m = RegexUtil.MAILTO_PATTERN.matcher(s);
+        while (m.find()) {
+            mailtoChars += m.end(1) - m.start(1);
+        }
+        long perAt = "-AT-".length() - 1 + "-DOT-".length() - 1;
+        return add(add(s.length(), multiply(2, mailtoChars)),
+                multiply(perAt, count(s, c -> c == '@')));
+    }
+
+    /** Length of a case change of s. */
+    private static long caseChange(CharSequence s) {
+        return grown(s, CASE_GROWTH, c -> c >= 0x80);
+    }
+
+    /** Length of s when each character that matches can become up to perChar characters. */
+    private static long grown(CharSequence s, long perChar, IntPredicate grows) {
+        return s == null ? 0 : add(s.length(), multiply(perChar - 1, count(s, grows)));
+    }
+
+    private static long count(CharSequence s, IntPredicate matches) {
+        long n = 0;
+        for (int i = 0; s != null && i < s.length(); i++) {
+            if (matches.test(s.charAt(i))) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    private static long occurrences(String s, String target) {
+        long n = 0;
+        for (int i = s.indexOf(target); i >= 0; i = s.indexOf(target, i + target.length())) {
+            n++;
+        }
+        return n;
+    }
+
+    private static CharSequence text(Object value) {
+        if (value == null || value instanceof CharSequence) {
+            return (CharSequence) value;
+        }
+        return value instanceof char[] ? new String((char[]) value) : String.valueOf(value);
     }
 
     private static long forString(String s, String methodName, Object[] a) {
@@ -132,7 +298,7 @@ final class StringGrowth {
                 return add(len, length(a.length > 0 ? a[0] : null));
             case "toUpperCase":
             case "toLowerCase":
-                return multiply(CASE_GROWTH, len);
+                return caseChange(s);
             default:
                 return 0;
         }

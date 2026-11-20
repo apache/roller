@@ -130,10 +130,11 @@ final class DeadlineRegex {
     }
 
     /**
-     * Matcher.replaceAll and replaceFirst, checking before each replacement
-     * that it can't take the result past the output limit: a replacement adds
-     * at most its own length plus, for each group reference ($1, ${name}) in
-     * it, the longest group of that match.
+     * Matcher.replaceAll and replaceFirst, checking before each replacement,
+     * and before the text after the last one, that it can't take the result
+     * past the output limit: a replacement adds at most its own length plus,
+     * for each group reference ($1, ${name}) in it, the longest group of that
+     * match.
      */
     private static String replace(Matcher m, String replacement, boolean all) {
         long references = replacement.chars().filter(c -> c == '$').count();
@@ -154,8 +155,9 @@ final class DeadlineRegex {
                 break;
             }
         }
+        // the text after the last replacement is copied as it is
+        RenderSession.checkLength((long) out.length() + (m.regionEnd() - previousEnd));
         m.appendTail(out);
-        RenderSession.checkLength(out.length());
         return out.toString();
     }
 
