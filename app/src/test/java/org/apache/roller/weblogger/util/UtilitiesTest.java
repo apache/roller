@@ -66,6 +66,8 @@ public class UtilitiesTest  {
         assertEquals("", htmlSubset(""));
         String text = "<p><b>Bold</b> and <i>italic</i><br>line</p>";
         assertEquals("<p><b>Bold</b> and <i>italic</i><br>line</p>", htmlSubset(text));
+        // a tag left open ends with the comment
+        assertEquals("<b>bold <i>to the end</i></b>", htmlSubset("<b>bold <i>to the end"));
         assertEquals("A &lt;example&gt;", htmlSubset("&#65; &lt;example&gt;"));
         assertEquals("<blockquote><pre>code</pre></blockquote><ul><li>one</li></ul><ol><li>two</li></ol>",
                 htmlSubset("<blockquote><pre>code</pre></blockquote><ul><li>one</li></ul><ol><li>two</li></ol>"));
