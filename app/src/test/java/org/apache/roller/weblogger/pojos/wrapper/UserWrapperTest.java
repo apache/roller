@@ -59,13 +59,13 @@ class UserWrapperTest {
     void namesAreHtmlEscaped() {
         // stored as typed (trusted admins)
         withUntrustedAdmins(false, () -> assertNames(
-                "&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;Tom&quot;",
-                "<script>alert(1)</script> & \"Tom\""));
+                "&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;Tom&quot; O&#39;Brien",
+                "<script>alert(1)</script> & \"Tom\" O'Brien"));
 
         // stored with the angle brackets and quotes the sanitizer encodes
         // (untrusted admins): encoded once, not twice
         withUntrustedAdmins(true, () -> assertNames(
-                "Tom &amp; &quot;Jerry&quot; &lt;b&gt; O'Brien",
+                "Tom &amp; &quot;Jerry&quot; &lt;b&gt; O&#39;Brien",
                 "Tom & &quot;Jerry&quot; &lt;b&gt; O&#39;Brien"));
 
         // a non-breaking space, which jsoup writes as &nbsp;: escaped once

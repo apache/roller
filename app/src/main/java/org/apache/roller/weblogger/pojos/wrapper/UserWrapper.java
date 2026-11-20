@@ -83,7 +83,8 @@ public final class UserWrapper {
      * non-breaking spaces but leaves ampersands as they are, so decode just
      * those entities before escaping to encode them exactly once. Any other
      * entity, such as a literal {@code &amp;}, was typed that way and is
-     * shown as typed.
+     * shown as typed. Apostrophes are encoded too, so that a name is also
+     * safe inside a single-quoted attribute.
      */
     private static String escapeOnce(String name) {
         if (name != null && WebloggerConfig.getBooleanProperty("weblogAdminsUntrusted")) {
@@ -91,7 +92,7 @@ public final class UserWrapper {
                     new String[] {"&lt;", "&gt;", "&quot;", "&#39;", "&nbsp;"},
                     new String[] {"<", ">", "\"", "'", "\u00A0"});
         }
-        return StringEscapeUtils.escapeHtml4(name);
+        return StringUtils.replace(StringEscapeUtils.escapeHtml4(name), "'", "&#39;");
     }
     
     
