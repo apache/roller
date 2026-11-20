@@ -338,6 +338,23 @@ public class MediaFileThumbnailTest {
     }
 
     /**
+     * An image under the limit whose header can be read but whose pixels
+     * can't is stored without a size, as before the size was read from the
+     * header.
+     */
+    @Test
+    public void testUndecodableImageIsStoredWithoutSize() throws Exception {
+        byte[] png = pngHeaderOnly(2000, 1000);
+        MediaFile saved = upload("cut-off.png", "image/png",
+                new ByteArrayInputStream(png), png.length);
+
+        assertNull(saved.getThumbnailInputStream());
+        assertEquals(-1, saved.getWidth());
+        assertEquals(-1, saved.getHeight());
+        assertFalse(saved.isThumbnailSkipped());
+    }
+
+    /**
      * An image so much wider than tall that its thumbnail would be less than
      * a pixel high is stored with its size and without a thumbnail.
      */

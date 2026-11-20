@@ -50,6 +50,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileContentManager;
 import org.apache.roller.weblogger.business.FileIOException;
+import org.apache.roller.weblogger.business.FileNotFoundException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WeblogManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -277,18 +278,23 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
     }
 
     private void removeThumbnail(MediaFile mediaFile) {
+        mediaFile.setThumbnailContent(null);
         try {
             WebloggerFactory.getWeblogger().getFileContentManager()
                     .deleteFile(mediaFile.getWeblog(), mediaFile.getId() + "_sm");
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
             // there was no thumbnail
             log.debug("No thumbnail to remove for media file " + mediaFile.getId());
+        } catch (Exception e) {
+            log.warn("ERROR removing the thumbnail of media file "
+                    + mediaFile.getId(), e);
         }
     }
 
     /** @return true if a thumbnail was saved */
     private boolean createThumbnail(MediaFile mediaFile) {
         boolean sizeRead = false;
+        boolean thumbnailSaved = false;
         try {
             FileContentManager cmgr = WebloggerFactory.getWeblogger()
                     .getFileContentManager();
@@ -350,7 +356,18 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                     }
                     ImageReadParam param = reader.getDefaultReadParam();
                     param.setSourceSubsampling(step, step, 0, 0);
-                    img = reader.read(0, param);
+                    try {
+                        img = reader.read(0, param);
+                    } catch (OutOfMemoryError e) {
+                        log.warn("Not enough memory to create a thumbnail for"
+                                + " media file " + mediaFile.getId() + " ("
+                                + width + "x" + height + ")");
+                        return false;
+                    } catch (IOException | RuntimeException e) {
+                        // the header's size isn't that of a readable image
+                        sizeRead = false;
+                        throw e;
+                    }
                 } finally {
                     reader.dispose();
                 }
@@ -373,6 +390,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
             cmgr.saveFileContent(mediaFile.getWeblog(), mediaFile.getId()
                     + "_sm", new ByteArrayInputStream(baos.toByteArray()));
+            thumbnailSaved = true;
 
             roller.flush();
             // Refresh associated parent for changes
@@ -381,7 +399,7 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         } catch (Exception e) {
             log.debug("ERROR creating thumbnail", e);
-            return false;
+            return thumbnailSaved;
         } finally {
             if (!sizeRead) {
                 forgetSize(mediaFile);
