@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
@@ -36,18 +37,22 @@ import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 /**
  * Entry, comment and media file authors in the built-in feeds are plain text,
  * so the feed macros must turn the HTML-escaped names from {@link UserWrapper}
- * and {@link WeblogEntryCommentWrapper}, and screen names stored already
- * encoded, back into text and XML-escape them once.
+ * and {@link WeblogEntryCommentWrapper} back into text and XML-escape them
+ * once.
  */
 public class FeedAuthorEscapingTest {
 
@@ -57,13 +62,16 @@ public class FeedAuthorEscapingTest {
         {"<script>alert(1)</script>", "<script>alert(1)</script>"},
         {"Tom & Jerry", "Tom & Jerry"},
         {"José \"Pepe\" O'Brien", "José \"Pepe\" O'Brien"},
-        // already encoded by the sanitizer (untrusted admins)
-        {"Tom &amp; &quot;Jerry&quot;", "Tom & \"Jerry\""},
+        // quotes and angle brackets encoded by the sanitizer (untrusted admins)
+        {"Tom & &quot;Jerry&quot; &lt;3", "Tom & \"Jerry\" <3"},
+        // an entity typed as part of the name
+        {"Tom &amp; Jerry", "Tom &amp; Jerry"},
     };
 
     /** Comment author name as submitted, and the text the feed must contain. */
     private static final String[][] COMMENT_NAMES = {
         {"A & B", "A & B"},
+        {"Tom &amp; Jerry", "Tom &amp; Jerry"},
         {"<b>Bold</b>", "<b>Bold</b>"},
         {"José \"Pepe\" O'Brien", "José \"Pepe\" O'Brien"},
     };
@@ -282,6 +290,31 @@ public class FeedAuthorEscapingTest {
             Document feed = parse(xml);
             assertEquals(name[1], feed.getElementsByTagNameNS("http://www.w3.org/2005/Atom", "name")
                     .item(0).getTextContent(), xml);
+        }
+    }
+
+    /**
+     * Trusted admins' names are stored as typed, so an entity in one is text
+     * in every feed author.
+     */
+    @Test
+    public void trustedAdminNamesAreText() throws Exception {
+        try (MockedStatic<WebloggerConfig> config = mockStatic(WebloggerConfig.class, CALLS_REAL_METHODS)) {
+            config.when(() -> WebloggerConfig.getBooleanProperty("weblogAdminsUntrusted")).thenReturn(false);
+            for (String name : new String[] {"Tom &amp; Jerry", "&quot;Tom&quot; &lt;3"}) {
+                String atom = render("<feed xmlns=\"http://www.w3.org/2005/Atom\">"
+                        + "#showEntriesAtom10($entries)#showFilesAtom10($files)</feed>", name);
+                NodeList authors = parse(atom).getElementsByTagNameNS("http://www.w3.org/2005/Atom", "name");
+                assertEquals(2, authors.getLength(), atom);
+                assertEquals(name, authors.item(0).getTextContent(), atom);
+                assertEquals(name, authors.item(1).getTextContent(), atom);
+
+                String rss = render("<rss xmlns:dc=\"http://purl.org/dc/elements/1.1/\""
+                        + " xmlns:atom=\"http://www.w3.org/2005/Atom\"><channel>"
+                        + "#showEntriesRSS20($entries)</channel></rss>", name);
+                assertEquals(name, parse(rss).getElementsByTagNameNS("http://purl.org/dc/elements/1.1/", "creator")
+                        .item(0).getTextContent(), rss);
+            }
         }
     }
 
