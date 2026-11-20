@@ -105,6 +105,14 @@ public class RichEditorContentIT {
         // leaving code view removes <meta> tags, which here ends the comment
         "<!-- -<meta>-> <input> -->",
         "<!-- <iframe src=\"https://example.com/\"></iframe> -->",
+        // the rich editor shows these as HTML: a link's href in its link
+        // popover, and a URL-like word when the author types a space after it
+        "<p><a href=\"&lt;b&gt;bold&lt;/b&gt;\">text</a></p>",
+        "<p>See https://example.com/&lt;b&gt;bold&lt;/b&gt;</p>",
+        "<p>See www.example.com/&lt;b&gt;bold&lt;/b&gt;</p>",
+        // Bootstrap acts on clicks on these anywhere in the page
+        "<p><a data-toggle=\"modal\" data-target=\"#x\" href=\"/x\">text</a></p>",
+        "<p><a data-bs-toggle=\"collapse\" href=\"#x\">text</a></p>",
     };
 
     // checked as the rich editor loads them, with jQuery inside the entry
@@ -141,6 +149,7 @@ public class RichEditorContentIT {
         "<!-- more --><p>text</p>",
         "<!-- <b>bold</b> and <meta> --><p>text</p>",
         "<table><tr><td>1</td></tr></table><p>after the table</p>",
+        "<p>Use &lt;b&gt; for bold, as https://example.com/ shows</p>",
     };
 
     // the rich editor loads entries with jQuery's html()

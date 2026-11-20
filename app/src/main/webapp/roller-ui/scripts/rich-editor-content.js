@@ -29,9 +29,10 @@
  * if it contains anything the rich editor would run or can't keep: script,
  * frame, plugin, style, raw text and document-level elements, forms and form
  * controls, on* and formaction attributes, javascript: and vbscript: URLs in
- * URL attributes, or markup that parses differently once serialized and parsed
- * again, as the rich editor does for undo and code view. It returns true if
- * the HTML can't be parsed.
+ * URL attributes, Bootstrap's data attributes, markup in a link's href or in a
+ * URL in the text, or markup that parses differently once serialized and
+ * parsed again, as the rich editor does for undo and code view. It returns true
+ * if the HTML can't be parsed.
  *
  * insertAtCursor(textArea, text) inserts a media file into the textarea
  * fallback at the cursor, or at the end when trackCursor(textArea) hasn't seen
@@ -54,6 +55,17 @@ var RollerRichEditor = (function () {
     // attributes whose value the browser loads or follows as a URL
     var URL_ATTRIBUTES = ["href", "src", "action", "formaction", "xlink:href", "data",
         "poster", "background", "cite", "srcset"];
+
+    // Bootstrap's data API acts on clicks anywhere in the page; Bootstrap 3
+    // opens the dialog an element names and loads the element's link into it.
+    var BOOTSTRAP_ATTRIBUTES = ["data-toggle", "data-target", "data-dismiss", "data-slide",
+        "data-slide-to"];
+
+    // When the author types a space after a word that starts like a URL,
+    // Summernote's autolink parses the word as HTML to make the link's text.
+    // Its words end at spaces and no-break spaces only.
+    var AUTOLINKED = /^(?:[a-z][a-z0-9+,.-]*:\/\/|tel:|mailto:|xmpp:|www\.)/i;
+    var WORD_BREAK = /[ \u00a0]/;
 
     // control characters and whitespace that browsers ignore inside a URL scheme
     var IGNORED_IN_SCHEME = /[\s\u0000-\u001f\u007f- ​-‏⁠﻿]/g;
@@ -134,15 +146,35 @@ var RollerRichEditor = (function () {
             var attributes = attributesOf.call(element);
             for (var j = 0; j < attributes.length; j++) {
                 var name = attributes[j].name.toLowerCase();
-                // formaction sends the entry form somewhere else
-                if (name.indexOf("on") === 0 || name === "formaction"
-                        || hasActiveUrl(name, attributes[j].value)) {
+                var value = attributes[j].value;
+                // formaction sends the entry form somewhere else, and
+                // Summernote 0.8's link popover shows a link's href as HTML
+                if (name.indexOf("on") === 0 || name === "formaction" || hasActiveUrl(name, value)
+                        || (name === "href" && value.indexOf("<") !== -1)
+                        || BOOTSTRAP_ATTRIBUTES.indexOf(name) !== -1 || name.indexOf("data-bs-") === 0) {
                     return true;
                 }
             }
             // querySelector skips template contents
             var content = templateContent(element);
             if (content && hasActiveNodes(content)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // whether text under a node has a URL-like word with markup in it
+    function hasMarkupToAutolink(node) {
+        for (var child = firstChildOf.call(node); child; child = nextSiblingOf.call(child)) {
+            if (child.nodeType === Node.TEXT_NODE) {
+                var words = child.nodeValue.split(WORD_BREAK);
+                for (var i = 0; i < words.length; i++) {
+                    if (words[i].indexOf("<") !== -1 && AUTOLINKED.test(words[i])) {
+                        return true;
+                    }
+                }
+            } else if (hasMarkupToAutolink(child)) {
                 return true;
             }
         }
@@ -211,7 +243,7 @@ var RollerRichEditor = (function () {
         var parses = parseAsEditor(doc, html);
         for (var i = 0; i < parses.length; i++) {
             var content = parses[i].content;
-            if (!content || hasActiveNodes(parses[i].holder)) {
+            if (!content || hasActiveNodes(parses[i].holder) || hasMarkupToAutolink(content)) {
                 return true;
             }
             // Summernote serializes its content and loads it again for undo;
