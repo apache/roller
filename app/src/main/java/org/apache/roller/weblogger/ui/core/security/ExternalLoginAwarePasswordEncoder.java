@@ -89,7 +89,9 @@ public class ExternalLoginAwarePasswordEncoder implements PasswordEncoder {
 
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
-        if (rawPassword == null || rawPassword.length() == 0) {
+        // the delegate can throw for a missing or empty stored value
+        if (rawPassword == null || rawPassword.length() == 0
+                || encodedPassword == null || encodedPassword.isEmpty()) {
             return false;
         }
         Set<String> markers = externalLoginMarkers();

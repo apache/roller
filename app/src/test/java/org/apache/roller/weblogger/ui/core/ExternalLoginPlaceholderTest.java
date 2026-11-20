@@ -296,6 +296,15 @@ class ExternalLoginPlaceholderTest {
         assertTrue(encoder.matches("<old>x", encoder.encode("<old>x")));
     }
 
+    @Test
+    void anEmptyOrMissingStoredPasswordDoesNotMatch() throws Exception {
+        setProperty("passwds.encryption.lazyUpgradeFrom", "");
+        provider();
+        PasswordEncoder encoder = RollerContext.getPasswordEncoder();
+        assertFalse(encoder.matches("secret", ""));
+        assertFalse(encoder.matches("secret", null));
+    }
+
     /** The login form's provider, given its encoder the way RollerContext does at startup. */
     private static DaoAuthenticationProvider provider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
