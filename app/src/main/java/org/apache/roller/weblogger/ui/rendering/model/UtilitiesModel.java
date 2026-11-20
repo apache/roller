@@ -40,6 +40,7 @@ import org.apache.roller.weblogger.pojos.wrapper.Wrappers;
 import org.apache.roller.weblogger.ui.rendering.util.WeblogRequest;
 import org.apache.roller.util.DateUtil;
 import org.apache.roller.util.RegexUtil;
+import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.pojos.Weblog;
 import org.apache.roller.weblogger.pojos.WeblogPermission;
 import org.apache.roller.weblogger.pojos.wrapper.UserWrapper;
@@ -244,6 +245,14 @@ public class UtilitiesModel implements Model {
      */
     public String toUpperCase(String str) {
         return str == null ? null : str.toUpperCase(Locale.ROOT);
+    }
+    
+    /**
+     * Wrap a user, such as a media file's creator, so a template gets the
+     * same html escaped names as from an entry's creator.
+     */
+    public UserWrapper wrapUser(User user) {
+        return UserWrapper.wrap(user);
     }
     
     public String escapeHTML(String str) {
