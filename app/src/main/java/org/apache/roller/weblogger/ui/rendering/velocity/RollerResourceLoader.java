@@ -17,10 +17,8 @@
  */
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
+import java.io.StringReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -106,13 +104,8 @@ public class RollerResourceLoader extends ResourceLoader {
 			if (templateCode != null) {
 				contents = templateCode.getTemplate();
 			}
-			return new InputStreamReader(new ByteArrayInputStream(contents.getBytes(encoding)));
-
-		} catch (UnsupportedEncodingException uex) {
-			// This should never actually happen. We expect UTF-8 in all JRE
-			// installation.
-//			logger.error(uex);
-			throw new RuntimeException(uex);
+			// the template is already text, so it needs no encoding
+			return new StringReader(contents);
 
 		} catch (WebloggerException | ResourceNotFoundException re) {
 			String msg = "RollerResourceLoader Error: "
