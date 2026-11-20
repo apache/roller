@@ -495,6 +495,30 @@ class PasswordChangeSessionTest {
     }
 
     @Test
+    void ownRequestWhilePasswordIsSavedStaysLoggedIn() throws Exception {
+        Browser a = new Browser(userName);
+        Browser b = new Browser(userName);
+        a.request();
+        b.request();
+        TestUtils.endSession(true);
+
+        // what Profile.save does, with another request of a in between the
+        // commit and the end of the save
+        a.request();
+        User self = user(userName);
+        self.resetPassword("changed-password");
+        RollerSession.savingPassword(a.httpRequest, self);
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(self);
+        WebloggerFactory.getWeblogger().flush();
+        a.assertLoggedIn(userName);
+        RollerSession.refreshPassword(a.httpRequest, self);
+        TestUtils.endSession(true);
+
+        a.assertLoggedIn(userName);
+        b.assertLoggedOut();
+    }
+
+    @Test
     void savingAProfileOnASessionEndedByAnotherRequestDoesNotFail() throws Exception {
         Browser b = new Browser(userName);
         b.request();

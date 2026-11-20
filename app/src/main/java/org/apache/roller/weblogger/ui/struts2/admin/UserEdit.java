@@ -202,6 +202,9 @@ public class UserEdit extends UIAction implements ServletRequestAware {
                     // save new user
                     mgr.addUser(user);
                 } else {
+                    if (isUserEditingSelf()) {
+                        RollerSession.savingPassword(getServletRequest(), user);
+                    }
                     mgr.saveUser(user);
                 }
 

@@ -132,10 +132,11 @@ public class Profile extends UIAction implements ServletRequestAware {
 
             try {
                 // save the updated profile
+                // a password change ends the user's other sessions, not this one
+                RollerSession.savingPassword(getServletRequest(), existingUser);
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 mgr.saveUser(existingUser);
                 WebloggerFactory.getWeblogger().flush();
-                // a password change ends the user's other sessions, not this one
                 RollerSession.refreshPassword(getServletRequest(), existingUser);
                 addMessage("generic.changes.saved");
                 return SUCCESS;

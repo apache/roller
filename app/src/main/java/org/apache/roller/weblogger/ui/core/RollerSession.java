@@ -54,6 +54,9 @@ public class RollerSession
 
     // digest of the user's stored password hash when this session logged in
     private String passwordDigest = null;
+
+    // digest of a password hash this session's own request is saving
+    private volatile String savingPasswordDigest = null;
     
     private static final Log log;
     
@@ -103,7 +106,7 @@ public class RollerSession
                 // password also logs out the user's other browsers. This runs
                 // before the cache check below, which rebuilds the session
                 // from the login and would take on the new password.
-                if (!rollerSession.isCurrent()) {
+                if (!rollerSession.isCurrent(session)) {
                     return endSession(request, session);
                 }
                 // Check if session is still valid in cache
@@ -201,6 +204,30 @@ public class RollerSession
     }
 
     /**
+     * Keeps the current session's other requests logged in while it saves a
+     * new password for its own user. Call it before the new password is
+     * saved, and refreshPassword after.
+     */
+    public static void savingPassword(HttpServletRequest request, User user) {
+        HttpSession session = request != null ? request.getSession(false) : null;
+        if (session == null || user == null) {
+            return;
+        }
+        try {
+            Object attribute = session.getAttribute(ROLLER_SESSION);
+            if (attribute instanceof RollerSession
+                    && user.getUserName().equals(((RollerSession) attribute).userName)) {
+                ((RollerSession) attribute).savingPasswordDigest = digest(user);
+            }
+        } catch (IllegalStateException e) {
+            if (!isInvalidated(session)) {
+                throw e;
+            }
+            // another request ended the session, there is no login to keep
+        }
+    }
+
+    /**
      * Keeps the current session logged in after its own user changed their
      * password, or an administrator changed their own. Call it after the new
      * password is saved; the user's other sessions still end.
@@ -215,6 +242,7 @@ public class RollerSession
             if (attribute instanceof RollerSession
                     && user.getUserName().equals(((RollerSession) attribute).userName)) {
                 ((RollerSession) attribute).setAuthenticatedUser(user);
+                ((RollerSession) attribute).savingPasswordDigest = null;
                 rememberLoginPassword(session, (RollerSession) attribute);
             }
         } catch (IllegalStateException e) {
@@ -245,9 +273,10 @@ public class RollerSession
     /**
      * Whether the user this session logged in as is still enabled and still
      * has the password the session logged in with. A failed lookup keeps the
-     * session, so a database error does not log everyone out.
+     * session, so a database error does not log everyone out. A session that
+     * is saving a new password for its user takes it on once it is stored.
      */
-    private boolean isCurrent() {
+    private boolean isCurrent(HttpSession session) {
         User user;
         try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -257,7 +286,16 @@ public class RollerSession
             log.warn("Error looking up authenticated user " + userName, ex);
             return true;
         }
-        return user != null && digest(user).equals(passwordDigest);
+        if (user == null) {
+            return false;
+        }
+        String current = digest(user);
+        if (current.equals(savingPasswordDigest)) {
+            passwordDigest = current;
+            savingPasswordDigest = null;
+            rememberLoginPassword(session, this);
+        }
+        return current.equals(passwordDigest);
     }
 
     private static boolean isInvalidated(HttpSession session) {
