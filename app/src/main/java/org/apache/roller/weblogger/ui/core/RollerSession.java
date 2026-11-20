@@ -63,6 +63,9 @@ public class RollerSession
     // session so they outlive it when the container passivates the session
     private static final String LOGIN_PASSWORD = ROLLER_SESSION + ".login";
 
+    // request attribute that marks a request whose session was ended
+    private static final String SESSION_ENDED = ROLLER_SESSION + ".ended";
+
     static{
         WebloggerConfig.init(); // must be called before calls to logging APIs
         log = LogFactory.getLog(RollerSession.class);
@@ -283,6 +286,7 @@ public class RollerSession
             // already invalidated
         }
         SecurityContextHolder.clearContext();
+        request.setAttribute(SESSION_ENDED, Boolean.TRUE);
         RollerSession rollerSession = new RollerSession();
         try {
             request.getSession(true).setAttribute(ROLLER_SESSION, rollerSession);
@@ -291,6 +295,14 @@ public class RollerSession
             log.debug("Could not start a new session", e);
         }
         return rollerSession;
+    }
+
+    /**
+     * Whether this request's session was ended because its login no longer
+     * holds, so the request now has no user.
+     */
+    public static boolean isSessionEnded(HttpServletRequest request) {
+        return request.getAttribute(SESSION_ENDED) != null;
     }
 
     /** Digest of the stored password hash, so the session does not hold it. */

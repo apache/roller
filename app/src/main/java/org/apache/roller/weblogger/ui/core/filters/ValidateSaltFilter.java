@@ -62,6 +62,10 @@ public class ValidateSaltFilter implements Filter {
             try {
                 SaltValidator.requireSubmittedSalt(httpReq);
             } catch (ServletException e) {
+                // the salt was issued to a login whose session just ended
+                if (LoadSaltFilter.redirectEndedSession(httpReq, (HttpServletResponse) response)) {
+                    return;
+                }
                 if (isPostTooLarge(httpReq)) {
                     // The container dropped the form, salt included, because it
                     // is over its maximum POST size. Pasted images make this
