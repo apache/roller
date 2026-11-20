@@ -19,10 +19,13 @@
 
 package org.apache.roller.weblogger.ui.rendering.velocity;
 
+import java.util.BitSet;
 import java.util.Set;
 import java.util.function.IntPredicate;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 
@@ -74,6 +77,10 @@ final class StringGrowth {
 
     /** Most characters a pattern letter of a date format writes, with room to spare. */
     private static final long DATE_LETTER_LENGTH = 64;
+
+    /** The characters UtilitiesModel.escapeHTML and escapeXML escape. */
+    private static final Escaped HTML_ESCAPED = new Escaped(StringEscapeUtils::escapeHtml4);
+    private static final Escaped XML_ESCAPED = new Escaped(StringEscapeUtils::escapeXml11);
 
     private StringGrowth() {
     }
@@ -182,15 +189,11 @@ final class StringGrowth {
                 return caseChange(s);
             case "escapeHTML":
             case "transformToHTMLSubset":
-                // an entity is at most ten characters (&thetasym;);
                 // transformToHTMLSubset only shrinks text apart from the link
                 // addresses it escapes the same way
-                return grown(s, 10, c -> c > 0x7e || c == '&' || c == '<' || c == '>'
-                        || c == '"');
+                return HTML_ESCAPED.length(s);
             case "escapeXML":
-                // at most six characters (&quot; or &#159;)
-                return grown(s, 6, c -> c < 0x20 || c > 0x7e || c == '&' || c == '<'
-                        || c == '>' || c == '"' || c == '\'');
+                return XML_ESCAPED.length(s);
             case "escapeJavaScript":
                 // at most six characters (\u00e9)
                 return grown(s, 6, c -> c < 0x20 || c > 0x7e || c == '\'' || c == '"'
@@ -245,6 +248,31 @@ final class StringGrowth {
         long perAt = "-AT-".length() - 1 + "-DOT-".length() - 1;
         return add(add(s.length(), multiply(2, mailtoChars)),
                 multiply(perAt, count(s, c -> c == '@')));
+    }
+
+    /**
+     * The characters an escaper turns into more than one, found by escaping
+     * each one, so that text the escaper leaves alone (most letters outside
+     * ASCII) isn't counted.
+     */
+    private static final class Escaped {
+
+        private final BitSet grows = new BitSet(Character.MAX_VALUE + 1);
+        private long longest = 1;
+
+        Escaped(UnaryOperator<String> escape) {
+            for (int c = 0; c <= Character.MAX_VALUE; c++) {
+                int length = escape.apply(String.valueOf((char) c)).length();
+                if (length > 1) {
+                    grows.set(c);
+                    longest = Math.max(longest, length);
+                }
+            }
+        }
+
+        long length(CharSequence s) {
+            return grown(s, longest, grows::get);
+        }
     }
 
     /** Length of a case change of s. */

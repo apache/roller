@@ -211,6 +211,12 @@ class StringGrowthTest {
         }
         assertEquals(3 * plain.length(), StringGrowth.maxResultLength(utils, "hexEncode",
                 new Object[] {plain}));
+        // escapeHTML and escapeXML leave most letters outside ASCII alone
+        String text = "\u041f\u0440\u0438\u0432\u0435\u0442 \u4f60\u597d \u3053\u3093\u306b\u3061\u306f";
+        for (String name : new String[] {"escapeHTML", "escapeXML", "transformToHTMLSubset"}) {
+            assertEquals(text.length(), StringGrowth.maxResultLength(utils, name,
+                    new Object[] {text}), name);
+        }
         // Velocity converts a number to the string the method takes
         assertTrue(StringGrowth.maxResultLength(utils, "escapeHTML", new Object[] {12345}) <= 5);
         assertTrue(StringGrowth.maxResultLength(utils, "escapeHTML",
