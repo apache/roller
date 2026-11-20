@@ -54,9 +54,52 @@
         }
     });
 
+    function openDropdown(dropdown, toggle) {
+        closeDropdowns(dropdown);
+        dropdown.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+    }
+
+    // As Bootstrap 3's dropdown did: Arrow Up/Down on the toggle opens the
+    // menu, then moves between its items, and Escape closes it and returns
+    // focus to the toggle so it isn't left on a hidden link.
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
-            closeDropdowns(null);
+        var key = event.key;
+        if (key !== 'Escape' && key !== 'ArrowUp' && key !== 'ArrowDown') {
+            return;
         }
+        var dropdown = event.target.closest ? event.target.closest('.dropdown') : null;
+        var toggle = dropdown ? dropdown.querySelector('[data-toggle="dropdown"]') : null;
+        if (!toggle) {
+            if (key === 'Escape') {
+                closeDropdowns(null);
+            }
+            return;
+        }
+        var open = dropdown.classList.contains('open');
+        if (key === 'Escape') {
+            closeDropdowns(null);
+            if (open) {
+                toggle.focus();
+            }
+            return;
+        }
+        event.preventDefault();
+        if (!open) {
+            openDropdown(dropdown, toggle);
+            return;
+        }
+        var items = Array.prototype.slice.call(
+            dropdown.querySelectorAll('.dropdown-menu li:not(.disabled) a'));
+        if (items.length === 0) {
+            return;
+        }
+        var index = items.indexOf(document.activeElement);
+        if (key === 'ArrowUp' && index > 0) {
+            index--;
+        } else if (key === 'ArrowDown' && index < items.length - 1) {
+            index++;
+        }
+        items[Math.max(index, 0)].focus();
     });
 })();
