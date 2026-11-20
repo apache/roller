@@ -143,6 +143,13 @@
   - The Emoticons plugin no longer changes text inside HTML tags or
     comments, so the `:x` in an attribute such as `xmlns:xlink` stays as it
     is; in an embedded SVG it used to become an emoji.
+- **Links in HTML comments keep their address when they have other
+  attributes.** The HTML subset that comments may use is now built with
+  jsoup's Cleaner. A link such as `<a href="https://example.com/" title="x">`
+  keeps its `href` and loses only the other attributes; it used to lose the
+  `href` as well. A tag a comment leaves open is closed at the end of the
+  comment, so it no longer changes the rest of the page. Other markup, and
+  text such as `a<b` or `AT&T`, is shown as typed, as before.
 
 ### Behaviour changes worth reading before upgrading
 

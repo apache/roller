@@ -59,13 +59,13 @@ class UserWrapperTest {
     void namesAreHtmlEscaped() {
         // stored as typed (trusted admins)
         withUntrustedAdmins(false, () -> assertNames(
-                "&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;Tom&quot;",
-                "<script>alert(1)</script> & \"Tom\""));
+                "&lt;script&gt;alert(1)&lt;/script&gt; &amp; &quot;Tom&quot; O&#39;Brien",
+                "<script>alert(1)</script> & \"Tom\" O'Brien"));
 
         // stored with the angle brackets and quotes the sanitizer encodes
         // (untrusted admins): encoded once, not twice
         withUntrustedAdmins(true, () -> assertNames(
-                "Tom &amp; &quot;Jerry&quot; &lt;b&gt; O'Brien",
+                "Tom &amp; &quot;Jerry&quot; &lt;b&gt; O&#39;Brien",
                 "Tom & &quot;Jerry&quot; &lt;b&gt; O&#39;Brien"));
 
         // a non-breaking space, which jsoup writes as &nbsp;: escaped once
@@ -84,8 +84,17 @@ class UserWrapperTest {
                 assertNames("&amp;eacute; &amp;#169;", "&eacute; &#169;");
             });
         }
-        // trusted admins' names aren't encoded at all
-        withUntrustedAdmins(false, () -> assertNames("&amp;quot;Tom&amp;quot;", "&quot;Tom&quot;"));
+    }
+
+    /**
+     * A name saved while weblog admins were untrusted keeps its encoded
+     * quotes and angle brackets after the setting is turned off, and is
+     * still shown as it was typed.
+     */
+    @Test
+    void namesSavedWhileUntrustedAreShownAsTyped() {
+        withUntrustedAdmins(false, () -> assertNames(
+                "O&#39;Brien &quot;Tom&quot; &lt;3", "O&#39;Brien &quot;Tom&quot; &lt;3"));
     }
 
     @Test

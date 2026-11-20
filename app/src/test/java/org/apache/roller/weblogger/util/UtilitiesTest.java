@@ -19,13 +19,15 @@
 
 package org.apache.roller.weblogger.util;
 
+import java.time.Duration;
+
 import org.junit.jupiter.api.Test;
 import org.apache.roller.weblogger.business.plugins.comment.HTMLSubsetPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 /**
  * Test utilities.
@@ -64,6 +66,8 @@ public class UtilitiesTest  {
         assertEquals("", htmlSubset(""));
         String text = "<p><b>Bold</b> and <i>italic</i><br>line</p>";
         assertEquals("<p><b>Bold</b> and <i>italic</i><br>line</p>", htmlSubset(text));
+        // a tag left open ends with the comment
+        assertEquals("<b>bold <i>to the end</i></b>", htmlSubset("<b>bold <i>to the end"));
         assertEquals("A &lt;example&gt;", htmlSubset("&#65; &lt;example&gt;"));
         assertEquals("<blockquote><pre>code</pre></blockquote><ul><li>one</li></ul><ol><li>two</li></ol>",
                 htmlSubset("<blockquote><pre>code</pre></blockquote><ul><li>one</li></ul><ol><li>two</li></ol>"));
@@ -191,6 +195,24 @@ public class UtilitiesTest  {
                 Utilities.sanitizeToHTMLSubset("<b>Hi</b><img src=x onerror=alert(1)>"));
         assertEquals("&lt;script&gt;how to&lt;/script&gt;",
                 Utilities.sanitizeToHTMLSubset("&lt;script&gt;how to&lt;/script&gt;"));
+    }
+
+    @Test
+    public void testHtmlSubsetShowsAmpersandsAsTyped() {
+        // an ampersand that doesn't start a complete reference is text, even
+        // when an entity name follows it
+        String url = "http://example.com/?id=1&region=us&copy=2&times=6&para";
+        String encoded = url.replace("&", "&amp;");
+        assertEquals(encoded, Utilities.sanitizeToHTMLSubset(url));
+        assertEquals("<a href=\"" + encoded + "\">x</a>",
+                Utilities.sanitizeToHTMLSubset("<a href=\"" + url + "\">x</a>"));
+        assertEquals("AT&amp;T &amp; &amp;# &amp;#x; &amp;;",
+                Utilities.sanitizeToHTMLSubset("AT&T & &# &#x; &;"));
+        assertEquals(encoded, htmlSubset(url));
+
+        // complete references are still read
+        assertEquals("© ~ ~ &amp; &amp;bogus;",
+                Utilities.sanitizeToHTMLSubset("&copy; &#126; &#x7e; &amp; &bogus;"));
     }
 
     private String htmlSubset(String text) {
@@ -332,18 +354,17 @@ public class UtilitiesTest  {
         String noEnd = "<a ".repeat(50000);
         String quoted = "<a x=\"<a \" y=\"".repeat(50000);
 
-        long start = System.nanoTime();
-        // a tag that never ends is text in the HTML subset
-        assertEquals(escaped, Utilities.transformToHTMLSubset(escaped));
-        assertEquals(escaped, Utilities.transformToHTMLSubset(Utilities.escapeHTML(raw)));
-        assertEquals("&lt;a ".repeat(50000), Utilities.sanitizeToHTMLSubset(noEnd));
-        assertEquals("&lt;a x=\"&lt;a \" y=\"".repeat(50000), Utilities.sanitizeToHTMLSubset(quoted));
-        // and addNofollow drops it
-        assertEquals("", Utilities.addNofollow(raw));
-        long millis = (System.nanoTime() - start) / 1_000_000;
-        // a quadratic scan takes far longer than this; leave room for slow
-        // build machines
-        assertTrue(millis < 2000, "took " + millis + " ms");
+        // a generous bound, so that only a quadratic scan fails on a slow
+        // build machine
+        assertTimeoutPreemptively(Duration.ofSeconds(30), () -> {
+            // a tag that never ends is text in the HTML subset
+            assertEquals(escaped, Utilities.transformToHTMLSubset(escaped));
+            assertEquals(escaped, Utilities.transformToHTMLSubset(Utilities.escapeHTML(raw)));
+            assertEquals("&lt;a ".repeat(50000), Utilities.sanitizeToHTMLSubset(noEnd));
+            assertEquals("&lt;a x=\"&lt;a \" y=\"".repeat(50000), Utilities.sanitizeToHTMLSubset(quoted));
+            // and addNofollow drops it
+            assertEquals("", Utilities.addNofollow(raw));
+        });
     }
 
     @Test

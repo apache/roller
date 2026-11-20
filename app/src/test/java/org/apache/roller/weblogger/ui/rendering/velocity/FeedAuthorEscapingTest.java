@@ -295,13 +295,14 @@ public class FeedAuthorEscapingTest {
 
     /**
      * Trusted admins' names are stored as typed, so an entity in one is text
-     * in every feed author.
+     * in every feed author, except for the quotes, angle brackets and spaces
+     * that the sanitizer stores encoded.
      */
     @Test
     public void trustedAdminNamesAreText() throws Exception {
         try (MockedStatic<WebloggerConfig> config = mockStatic(WebloggerConfig.class, CALLS_REAL_METHODS)) {
             config.when(() -> WebloggerConfig.getBooleanProperty("weblogAdminsUntrusted")).thenReturn(false);
-            for (String name : new String[] {"Tom &amp; Jerry", "&quot;Tom&quot; &lt;3"}) {
+            for (String name : new String[] {"Tom &amp; Jerry", "&eacute; &#169;"}) {
                 String atom = render("<feed xmlns=\"http://www.w3.org/2005/Atom\">"
                         + "#showEntriesAtom10($entries)#showFilesAtom10($files)</feed>", name);
                 NodeList authors = parse(atom).getElementsByTagNameNS("http://www.w3.org/2005/Atom", "name");

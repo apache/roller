@@ -1012,8 +1012,9 @@ public class Utilities {
      * shows: &lt;b&gt;, &lt;i&gt;, &lt;blockquote&gt;, &lt;br&gt;, &lt;p&gt;,
      * &lt;pre&gt;, lists, and links to http, https and mailto addresses.
      * Everything else is shown as text: other tags, tags that never end,
-     * the formatting tags when they have attributes, and any other "&lt;".
-     * jsoup's Cleaner then removes the attributes a link may not have and
+     * the formatting tags when they have attributes, any other "&lt;", and
+     * any "&amp;" that doesn't start a complete character reference. jsoup's
+     * Cleaner then removes the attributes a link may not have and
      * HTML-encodes the text.
      *
      * @param html the HTML to reduce
@@ -1023,8 +1024,8 @@ public class Utilities {
         if (html == null) {
             return null;
         }
-        return Jsoup.clean(encodeNonSubsetTags(html), "", HTML_SUBSET,
-                new Document.OutputSettings().prettyPrint(false));
+        return Jsoup.clean(encodeNonSubsetTags(encodeBareAmpersands(html)), "",
+                HTML_SUBSET, new Document.OutputSettings().prettyPrint(false));
     }
 
     /**
@@ -1066,6 +1067,60 @@ public class Utilities {
             lt = html.indexOf('<', copied);
         }
         return sb.append(html, copied, html.length()).toString();
+    }
+
+    /**
+     * HTML-encodes every "&amp;" that doesn't start a complete character
+     * reference, such as "&amp;amp;" or "&amp;#126;", so that an HTML parser
+     * reads text such as "?a=1&amp;copy=2" as typed instead of decoding the
+     * entity names it allows without a semicolon.
+     */
+    private static String encodeBareAmpersands(String html) {
+        int amp = html.indexOf('&');
+        if (amp == -1) {
+            return html;
+        }
+        StringBuilder sb = new StringBuilder(html.length() + 16);
+        int copied = 0;
+        while (amp != -1) {
+            sb.append(html, copied, amp);
+            sb.append(isCharacterReference(html, amp) ? "&" : "&amp;");
+            copied = amp + 1;
+            amp = html.indexOf('&', copied);
+        }
+        return sb.append(html, copied, html.length()).toString();
+    }
+
+    /**
+     * Whether the "&amp;" at the given index starts a name, a decimal number
+     * or a hexadecimal number that ends with ";". The scan stops after a few
+     * dozen characters, longer than any entity name.
+     */
+    private static boolean isCharacterReference(String html, int amp) {
+        int length = html.length();
+        int i = amp + 1;
+        boolean numeric = i < length && html.charAt(i) == '#';
+        boolean hex = false;
+        if (numeric) {
+            i++;
+            hex = i < length && (html.charAt(i) == 'x' || html.charAt(i) == 'X');
+            if (hex) {
+                i++;
+            }
+        }
+        int start = i;
+        int max = Math.min(length, start + 32);
+        while (i < max) {
+            char c = html.charAt(i);
+            boolean digit = c >= '0' && c <= '9';
+            boolean hexLetter = (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+            if (!(numeric ? digit || (hex && hexLetter) : digit || isAsciiLetter(c))) {
+                break;
+            }
+            i++;
+        }
+        return i > start && i < length && html.charAt(i) == ';'
+                && (numeric || isAsciiLetter(html.charAt(start)));
     }
 
     /**
