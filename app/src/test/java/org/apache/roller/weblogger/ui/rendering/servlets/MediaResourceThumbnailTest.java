@@ -20,8 +20,6 @@ package org.apache.roller.weblogger.ui.rendering.servlets;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
@@ -50,9 +48,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * A thumbnail request for an image that is too large to get a thumbnail is
- * answered with the small file icon instead of the full image. Other images
- * without a thumbnail still get the original.
+ * A thumbnail request for an image without a thumbnail, also one too large
+ * to get a thumbnail, is answered with the original, so entries that embed
+ * the thumbnail address keep showing the image.
  */
 class MediaResourceThumbnailTest {
 
@@ -87,13 +85,7 @@ class MediaResourceThumbnailTest {
         // the servlet may look the file up in the addressed weblog first
         when(media.getMediaFile(any(Weblog.class), eq(FILE_ID))).thenReturn(file);
 
-        ServletContext context = mock(ServletContext.class);
-        when(context.getResourceAsStream(MediaResourceServlet.PLACEHOLDER))
-                .thenAnswer(call -> stream("icon"));
-        ServletConfig config = mock(ServletConfig.class);
-        when(config.getServletContext()).thenReturn(context);
         servlet = new MediaResourceServlet();
-        servlet.init(config);
     }
 
     @AfterEach
@@ -102,7 +94,7 @@ class MediaResourceThumbnailTest {
     }
 
     @Test
-    void thumbnailOfImageStoredWithoutOneIsTheFileIcon() throws Exception {
+    void thumbnailOfImageTooLargeForOneFallsBackToOriginal() throws Exception {
         when(file.getThumbnailInputStream()).thenReturn(null);
         when(file.isThumbnailSkipped()).thenReturn(true);
 
@@ -110,9 +102,7 @@ class MediaResourceThumbnailTest {
         HttpServletResponse response = serve(true, written);
 
         verify(response, never()).sendError(anyInt());
-        verify(response).setContentType("image/png");
-        verify(file, never()).getInputStream();
-        assertEquals("icon", written.toString(StandardCharsets.UTF_8.name()));
+        assertEquals("original", written.toString(StandardCharsets.UTF_8.name()));
     }
 
     @Test

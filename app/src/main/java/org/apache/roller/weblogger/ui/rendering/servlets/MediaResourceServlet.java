@@ -51,9 +51,6 @@ public class MediaResourceServlet extends HttpServlet {
 
     private static Log log = LogFactory.getLog(MediaResourceServlet.class);
 
-    // shown in place of the thumbnail of an image too large to have one
-    static final String PLACEHOLDER = "/images/page.png";
-
     @Override
     public void init(ServletConfig config) throws ServletException {
 
@@ -114,14 +111,6 @@ public class MediaResourceServlet extends HttpServlet {
             return;
         }
 
-        // An image over the thumbnail pixel limit and stored without a
-        // thumbnail has none. Send the file icon rather than the full image, so
-        // previews stay small.
-        if (resourceRequest.isThumbnail() && mediaFile.isThumbnailSkipped()) {
-            servePlaceholder(response);
-            return;
-        }
-
         // Respond with 304 Not Modified if it is not modified.
         if (ModDateHeaderUtil.respondIfNotModified(request, response,
                 resourceLastMod, resourceRequest.getDeviceType())) {
@@ -179,23 +168,6 @@ public class MediaResourceServlet extends HttpServlet {
             resourceStream.close();
         }
 
-    }
-
-    private void servePlaceholder(HttpServletResponse response) throws IOException {
-        try (InputStream icon = getServletContext().getResourceAsStream(PLACEHOLDER)) {
-            if (icon == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }
-            MediaTypePolicy.applyResponseHeaders(response, "image/png", "page.png");
-            OutputStream out = response.getOutputStream();
-            byte[] buf = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
-            int length;
-            while ((length = icon.read(buf)) > 0) {
-                out.write(buf, 0, length);
-            }
-            out.close();
-        }
     }
 
 }
