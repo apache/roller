@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.business.runnable.Job;
 import org.apache.roller.weblogger.config.WebloggerConfig;
+import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 import org.apache.roller.weblogger.pojos.StaticTemplate;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.TemplateRendition.TemplateLanguage;
@@ -102,6 +103,13 @@ public class WeblogCacheWarmupJob implements Job {
             return;
         }
         
+        // without site.absoluteurl, feeds rendered outside a request have no
+        // absolute links, so there is nothing worth caching yet
+        if (!WebloggerRuntimeConfig.isAbsoluteContextURLSet()) {
+            log.info("Skipping cache warmup because site.absoluteurl is not set");
+            return;
+        }
+
         // we are working on the feed cache
         WeblogFeedCache feedCache = WeblogFeedCache.getInstance();
         long start = System.currentTimeMillis();

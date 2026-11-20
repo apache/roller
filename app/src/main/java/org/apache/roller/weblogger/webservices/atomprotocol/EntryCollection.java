@@ -44,6 +44,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.WeblogEntryManager;
 import org.apache.roller.weblogger.business.Weblogger;
@@ -254,7 +255,14 @@ public class EntryCollection {
                         "Cannot find specified entry/resource");  
                 }
                 if (RollerAtomHandler.canEdit(user, rollerEntry)) {
-            
+
+                    // a Limited member may edit a draft but not publish it
+                    if (!isDraft(entry)
+                            && !RollerAtomHandler.canEdit(user, rollerEntry.getWebsite())) {
+                        throw new AtomNotAuthorizedException(
+                                "ERROR not authorized to publish entry");
+                    }
+
                     RollerAtomHandler.oneSecondThrottle();
                     
                     WeblogEntryManager mgr = roller.getWeblogEntryManager();
@@ -335,9 +343,12 @@ public class EntryCollection {
         User creator = entry.getCreator();
         SyndPerson author = new Person();
         author.setName(         creator.getUserName());
-        author.setEmail(        creator.getEmailAddress());
+        // other weblog members see the creator's user name, not their email
+        if (user != null && creator.getUserName().equals(user.getUserName())) {
+            author.setEmail(    creator.getEmailAddress());
+        }
         atomEntry.setAuthors(Collections.singletonList(author));
-        
+
         // Add Atom category for Weblogger category, using category scheme
         List<Category> categories = new ArrayList<>();
         Category atomCat = new Category();
@@ -373,7 +384,8 @@ public class EntryCollection {
         
         List<Module> modules = new ArrayList<>();
         AppModule app = new AppModuleImpl();
-        app.setDraft(!WeblogEntry.PubStatus.PUBLISHED.equals(entry.getStatus()));
+        app.setDraft(!entry.isPublished()
+                && !WeblogEntry.PubStatus.SCHEDULED.equals(entry.getStatus()));
         app.setEdited(entry.getUpdateTime());
         modules.add(app);
         atomEntry.setModules(modules);
@@ -382,6 +394,15 @@ public class EntryCollection {
     }
     
     /**
+     * True if the client marked the entry as a draft with app:control.
+     */
+    private static boolean isDraft(Entry entry) {
+        AppModule control = (AppModule) entry.getModule(AppModule.URI);
+        return control != null && control.getDraft();
+    }
+
+
+    /**
      * Copy fields from ROME entry to Weblogger entry.
      */
     private void copyToRollerEntry(Entry entry, WeblogEntry rollerEntry) throws WebloggerException {
@@ -389,8 +410,16 @@ public class EntryCollection {
         Timestamp current = new Timestamp(System.currentTimeMillis());
         Timestamp pubTime = current;
         Timestamp updateTime = current;
+        PubStatus oldStatus = rollerEntry.getStatus();
         if (entry.getPublished() != null) {
             pubTime = new Timestamp( entry.getPublished().getTime() );
+        } else if (rollerEntry.getPubTime() != null
+                && (PubStatus.PUBLISHED.equals(oldStatus)
+                    || PubStatus.SCHEDULED.equals(oldStatus))) {
+            // an update that names no publish time keeps the one a published
+            // or scheduled entry already has, so the entry is neither
+            // re-dated nor published early
+            pubTime = rollerEntry.getPubTime();
         }
         if (entry.getUpdated() != null) {
             updateTime = new Timestamp( entry.getUpdated().getTime() );
@@ -405,15 +434,23 @@ public class EntryCollection {
         }
         rollerEntry.setPubTime(pubTime);
         rollerEntry.setUpdateTime(updateTime);
-        
-        AppModule control =
-                (AppModule)entry.getModule(AppModule.URI);
-        if (control!=null && control.getDraft()) {
+
+        boolean wasPublished = PubStatus.PUBLISHED.equals(oldStatus);
+        if (isDraft(entry)) {
+            // like Save as Draft in the entry editor and publish=false in
+            // XML-RPC, this also takes an entry out of the review queue
             rollerEntry.setStatus(PubStatus.DRAFT);
+        } else if (pubTime.after(new Date(System.currentTimeMillis() + RollerConstants.MIN_IN_MS))) {
+            // like the entry editor, a publish time more than a minute ahead schedules the entry
+            rollerEntry.setStatus(PubStatus.SCHEDULED);
         } else {
             rollerEntry.setStatus(PubStatus.PUBLISHED);
         }
-                
+        if (wasPublished != rollerEntry.isPublished()) {
+            // the entry's tags enter or leave the weblog's tag counts
+            rollerEntry.setRefreshAggregates(true);
+        }
+
         // Process incoming categories:
         // Atom categories with weblog-level scheme are Weblogger categories.
         // Atom supports multiple cats, but Weblogger supports one/entry

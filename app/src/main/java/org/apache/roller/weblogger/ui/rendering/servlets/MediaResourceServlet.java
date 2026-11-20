@@ -94,6 +94,12 @@ public class MediaResourceServlet extends HttpServlet {
         MediaFile mediaFile;
 
         try {
+            // a media file is only served at its own weblog's address, so look
+            // it up in that weblog before loading its content
+            if (mfMgr.getMediaFile(weblog, resourceRequest.getResourceId()) == null) {
+                throw new WebloggerException("media file " + resourceRequest.getResourceId()
+                        + " is not in weblog " + weblog.getHandle());
+            }
             mediaFile = mfMgr.getMediaFile(resourceRequest.getResourceId(),
                     true);
             resourceLastMod = mediaFile.getLastModified();
