@@ -24,6 +24,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.roller.RollerException;
 import org.apache.roller.weblogger.ui.rendering.RenderingException;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
 import org.apache.roller.weblogger.ui.rendering.mobile.MobileDeviceRepository.DeviceType;
@@ -78,14 +79,41 @@ public class RenderLimitsTest {
         return outcome;
     }
 
+    /** RenderingException keeps its cause as the root cause, not in getCause(). */
+    private static Throwable causeOf(Throwable t) {
+        return t instanceof RollerException ? ((RollerException) t).getRootCause() : t.getCause();
+    }
+
     private static boolean reachedTestCeiling(Throwable t) {
-        for (; t != null; t = t.getCause()) {
+        for (; t != null; t = causeOf(t)) {
             if (t instanceof IllegalStateException
                     && "test ceiling reached".equals(t.getMessage())) {
                 return true;
             }
         }
         return false;
+    }
+
+    /** Asserts the render failed with this limit, rather than after doing the work. */
+    private static void assertLimit(Outcome outcome, String message) {
+        assertNotNull(outcome.failure, "rendering should have failed with \"" + message
+                + "\", but wrote " + outcome.out.getHead());
+        Throwable t = outcome.failure;
+        while (t != null && !(t instanceof RenderLimitException)) {
+            t = causeOf(t);
+        }
+        assertNotNull(t, "rendering failed with something other than a limit: "
+                + outcome.failure);
+        assertTrue(t.getMessage().startsWith(message), "stopped by: " + t.getMessage());
+    }
+
+    /** Renders with a smaller output limit, so a test needn't build tens of megabytes. */
+    private static Outcome renderWithLimit(String name, String source, int maxOutputChars)
+            throws Exception {
+        try (AutoCloseable limit = RollerVelocityTestSupport.property(
+                RenderSession.MAX_OUTPUT_CHARS, String.valueOf(maxOutputChars))) {
+            return render(name, source);
+        }
     }
 
     private static void assertStoppedByRoller(Outcome outcome) {
@@ -96,16 +124,31 @@ public class RenderLimitsTest {
                 "only the test's own ceiling stopped rendering");
     }
 
+    /**
+     * A loop longer than the limit fails the render rather than stopping
+     * quietly, which would serve and cache the page as if it were whole.
+     */
     @Test
-    public void aHugeForeachRangeStopsAtTheLoopLimit() {
+    public void aHugeForeachRangeFailsAtTheLoopLimit() {
         assertTimeoutPreemptively(WITHIN, () -> {
             Outcome outcome = render("limits-foreach.vm",
                     "#foreach($i in [1..2000000000])0123456789#end");
-            assertFalse(reachedTestCeiling(outcome.failure),
-                    "only the test's own ceiling stopped rendering");
+            assertLimit(outcome, "#foreach made more than 100000 passes");
             assertTrue(outcome.out.getCount() <= 100000 * 10,
                     "#foreach ran past 100000 passes: wrote " + outcome.out.getCount());
         });
+    }
+
+    @Test
+    public void aForeachOfExactlyTheLoopLimitCompletes() throws Exception {
+        Outcome whole = render("limits-foreach-whole.vm",
+                "#set($n = 0)#foreach($i in [1..100000])#set($n = $i)#end$n");
+        assertEquals(null, whole.failure);
+        assertEquals("100000", whole.out.getHead());
+
+        Outcome over = render("limits-foreach-over.vm",
+                "#set($n = 0)#foreach($i in [1..100001])#set($n = $i)#end$n");
+        assertLimit(over, "#foreach made more than 100000 passes");
     }
 
     @Test

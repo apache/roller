@@ -30,10 +30,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletContext;
 
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.Template;
 import org.apache.roller.weblogger.pojos.TemplateRendition;
 import org.apache.roller.weblogger.pojos.TemplateRendition.RenditionType;
@@ -76,6 +78,27 @@ final class RollerVelocityTestSupport {
         field.setAccessible(true);
         field.set(null, context);
         installed = true;
+    }
+
+    /**
+     * Sets a Roller property, or removes it when value is null, until the
+     * returned handle is closed, which puts the old value back.
+     */
+    static AutoCloseable property(String name, String value) throws Exception {
+        Field field = WebloggerConfig.class.getDeclaredField("config");
+        field.setAccessible(true);
+        Properties config = (Properties) field.get(null);
+        String old = config.getProperty(name);
+        set(config, name, value);
+        return () -> set(config, name, old);
+    }
+
+    private static void set(Properties config, String name, String value) {
+        if (value == null) {
+            config.remove(name);
+        } else {
+            config.setProperty(name, value);
+        }
     }
 
     /** Adds a template the engine can load by name. Names must be unique. */
