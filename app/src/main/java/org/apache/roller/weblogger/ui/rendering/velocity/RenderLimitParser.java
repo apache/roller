@@ -101,7 +101,8 @@ public class RenderLimitParser extends StandardParser {
         if (from.isInvalid()) {
             to.setInvalid();
         }
-        for (int i = 0; i < from.jjtGetNumChildren(); i++) {
+        // last child first, so the child array is allocated once
+        for (int i = from.jjtGetNumChildren() - 1; i >= 0; i--) {
             Node child = from.jjtGetChild(i);
             to.jjtAddChild(child, i);
             child.jjtSetParent(to);
