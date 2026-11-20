@@ -92,7 +92,7 @@ public class VelocityRenderer implements Renderer {
             // error page instead so the user knows what was wrong
             velocityException = ex;
             log.warn("Error loading [" + template.getId() + "]: "
-                    + ex.getMessage());
+                    + forLog(ex.getMessage()));
 
             // need to lookup error page template
             velocityTemplate = RollerVelocity.getTemplate("error-page.vm", deviceType);
@@ -185,7 +185,7 @@ public class VelocityRenderer implements Renderer {
             // render an error page instead so the user knows what was wrong
             velocityException = ex;
             log.warn("Error rendering [" + renderTemplate.getId() + "]: "
-                    + ex.getMessage());
+                    + forLog(ex.getMessage()));
 
         } finally {
             session.end();
@@ -223,7 +223,7 @@ public class VelocityRenderer implements Renderer {
      *         for other stored templates; the ids stay in the log
      */
     private String publicMessage(Exception ex) {
-        String message = ex.getMessage();
+        String message = brief(ex.getMessage());
         if (message == null) {
             return null;
         }
@@ -231,6 +231,24 @@ public class VelocityRenderer implements Renderer {
             message = message.replace(renderTemplate.getId(), renderTemplate.getName());
         }
         return STORED_TEMPLATE_ID.matcher(message).replaceAll("template");
+    }
+
+    /** Most characters of a template error's message that are logged or shown. */
+    private static final int MAX_MESSAGE_CHARS = 1000;
+
+    /**
+     * @return the start of a message, which can quote a value from the
+     *         template of any length
+     */
+    private static String brief(String message) {
+        return message == null || message.length() <= MAX_MESSAGE_CHARS ? message
+                : message.substring(0, MAX_MESSAGE_CHARS) + "...";
+    }
+
+    /** @return the start of a message, on one line */
+    private static String forLog(String message) {
+        String m = brief(message);
+        return m == null ? null : m.replace('\r', ' ').replace('\n', ' ');
     }
 
     private static RenderLimitException findLimit(Throwable t) {
