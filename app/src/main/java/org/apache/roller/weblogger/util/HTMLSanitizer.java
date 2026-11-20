@@ -45,10 +45,14 @@ import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 
 public class HTMLSanitizer {
+    private static final Log log = LogFactory.getLog(HTMLSanitizer.class);
+
     public static Boolean xssEnabled = WebloggerConfig.getBooleanProperty("weblogAdminsUntrusted", Boolean.FALSE);
 
     public static Pattern forbiddenTags = Pattern.compile("^(script|object|embed|link|style|form|input)$");
@@ -120,6 +124,24 @@ public class HTMLSanitizer {
     }
 
     public static SanitizeResult sanitizer(String html, Pattern allowedTags, Pattern forbiddenTags) {
+        try {
+            return sanitizer(html, allowedTags, forbiddenTags,
+                    System.nanoTime() + TIME_LIMIT_MILLIS * 1_000_000L);
+        } catch (TimeLimitException e) {
+            // escape all of it rather than hold the request or let markup through
+            log.warn("Sanitizing " + html.length() + " characters of HTML took over "
+                    + TIME_LIMIT_MILLIS + " ms, so all of it was escaped");
+            SanitizeResult ret = new SanitizeResult();
+            ret.html = htmlEncodeApexesAndTags(html);
+            ret.text = htmlEncodeApexesAndTags(removeLineFeed(html));
+            ret.val = ret.html;
+            ret.isValid = false;
+            return ret;
+        }
+    }
+
+    private static SanitizeResult sanitizer(String html, Pattern allowedTags, Pattern forbiddenTags,
+            long deadline) {
         SanitizeResult ret = new SanitizeResult();
         Stack<String> openTags = new Stack<>();
 
@@ -129,13 +151,14 @@ public class HTMLSanitizer {
         // -------------------   LOOP for every token --------------------------
         for (String token : tokens) {
             boolean isAcceptedToken = false;
+            checkTime(deadline);
 
-            Matcher startMatcher = tagStartPattern.matcher(token);
-            Matcher endMatcher = tagClosePattern.matcher(token);
+            Matcher startMatcher = tagStartPattern.matcher(new DeadlineText(token, deadline));
+            Matcher endMatcher = tagClosePattern.matcher(new DeadlineText(token, deadline));
 
 
             //--------------------------------------------------------------------------------  COMMENT    <!-- ......... -->
-            if (commentPattern.matcher(token).find()) {
+            if (commentPattern.matcher(new DeadlineText(token, deadline)).find()) {
                 ret.val = ret.val + token + (token.endsWith("-->") ? "" : "-->");
                 ret.invalidTags.add(token + (token.endsWith("-->") ? "" : "-->"));
                 continue;
@@ -176,7 +199,7 @@ public class HTMLSanitizer {
 
 
                     // then test properties
-                    Matcher attributes = attributesPattern.matcher(tokenBody);
+                    Matcher attributes = attributesPattern.matcher(new DeadlineText(tokenBody, deadline));
 
                     // URL flag
                     boolean foundURL = false;
@@ -233,7 +256,7 @@ public class HTMLSanitizer {
                         } else if ("style".equals(attr)) {
                             // <tag style="......">
                             // then test properties
-                            Matcher styles = stylePattern.matcher(val);
+                            Matcher styles = stylePattern.matcher(new DeadlineText(val, deadline));
                             String cleanStyle = "";
 
                             while (styles.find()) {
@@ -241,13 +264,13 @@ public class HTMLSanitizer {
                                 String styleValue = styles.group(2);
 
                                 // suppress invalid styles values
-                                if (forbiddenStylePattern.matcher(styleValue).find()) {
+                                if (forbiddenStylePattern.matcher(new DeadlineText(styleValue, deadline)).find()) {
                                     ret.invalidTags.add(tag + " " + attr + " " + styleValue);
                                     continue;
                                 }
 
                                 // check if valid url
-                                Matcher urlStyleMatcher = urlStylePattern.matcher(styleValue);
+                                Matcher urlStyleMatcher = urlStylePattern.matcher(new DeadlineText(styleValue, deadline));
                                 if (urlStyleMatcher.find()) {
                                     String[] customSchemes = {"http", "https"};
                                     String url = urlStyleMatcher.group(1);
@@ -328,6 +351,7 @@ public class HTMLSanitizer {
                     // if found on top ok
                     for (int i = 1; i <= pos; i++) {
                         //pop all elements before tag and close it
+                        checkTime(deadline);
                         String poppedTag = openTags.pop();
                         cleanToken = cleanToken + "</" + poppedTag + ">";
                         isAcceptedToken = true;
@@ -355,6 +379,7 @@ public class HTMLSanitizer {
         // must close remaining tags
         while (!openTags.isEmpty()) {
             //pop all elements before tag and close it
+            checkTime(deadline);
             String poppedTag = openTags.pop();
             ret.html = ret.html + "</" + poppedTag + ">";
             ret.val = ret.val + "</" + poppedTag + ">";
@@ -454,6 +479,60 @@ public class HTMLSanitizer {
         public String val = "";
         public boolean isValid = true;
         public List<String> invalidTags = new ArrayList<>();
+    }
+
+    /**
+     * Longest one sanitize call may take. Some of the expressions above
+     * backtrack on crafted markup, and the output is built by concatenation.
+     */
+    static final long TIME_LIMIT_MILLIS = 1000;
+
+    private static void checkTime(long deadline) {
+        if (System.nanoTime() - deadline > 0) {
+            throw new TimeLimitException();
+        }
+    }
+
+    private static final class TimeLimitException extends RuntimeException {
+        TimeLimitException() {
+            super(null, null, false, false);
+        }
+    }
+
+    /** Markup being matched, which stops a match once the time limit has passed. */
+    private static final class DeadlineText implements CharSequence {
+        private final CharSequence text;
+        private final long deadline;
+        private int reads;
+
+        DeadlineText(CharSequence text, long deadline) {
+            this.text = text;
+            this.deadline = deadline;
+        }
+
+        @Override
+        public char charAt(int index) {
+            // checking the clock on every read would slow ordinary matches
+            if ((++reads & 0x3FF) == 0) {
+                checkTime(deadline);
+            }
+            return text.charAt(index);
+        }
+
+        @Override
+        public int length() {
+            return text.length();
+        }
+
+        @Override
+        public CharSequence subSequence(int start, int end) {
+            return new DeadlineText(text.subSequence(start, end), deadline);
+        }
+
+        @Override
+        public String toString() {
+            return text.toString();
+        }
     }
 
     public static String encode(String s) {
