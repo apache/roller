@@ -213,7 +213,9 @@ public class PlanetGroupSubs extends PlanetUIAction implements ServletRequestAwa
                 addMessage("planetSubscription.success.saved");
 
             } catch (FetcherException ex) {
-                addError("planetGroupSubs.error.fetchingFeed", ex.getRootCauseMessage());
+                // not every fetcher error wraps another exception
+                addError("planetGroupSubs.error.fetchingFeed", ex.getRootCause() != null
+                        ? ex.getRootCauseMessage() : ex.getMessage());
 
             } catch (RollerException ex) {
                 log.error("Unexpected error saving subscription", ex);

@@ -237,14 +237,7 @@ public class WeblogPageRequest extends WeblogRequest {
         }
 
         // page request param is supported in all views
-        if (request.getParameter("page") != null) {
-            String pageInt = request.getParameter("page");
-            try {
-                this.pageNum = Integer.parseInt(pageInt);
-            } catch (NumberFormatException e) {
-                // ignored, bad input
-            }
-        }
+        this.pageNum = parsePageNum(request.getParameter("page"));
 
         // build customParams Map, we remove built-in params because we only
         // want this map to represent params defined by the template author
@@ -255,6 +248,9 @@ public class WeblogPageRequest extends WeblogRequest {
         customParams.remove("cat");
         customParams.remove("page");
         customParams.remove("tags");
+        // skipCache is read only as a request attribute set by the server, and
+        // custom params are part of the page cache key
+        customParams.remove("skipCache");
 
         if (log.isDebugEnabled()) {
             log.debug("context = " + this.context);

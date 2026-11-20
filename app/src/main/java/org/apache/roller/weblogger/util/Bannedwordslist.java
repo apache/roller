@@ -313,6 +313,7 @@ public final class Bannedwordslist {
         if (str == null || StringUtils.isEmpty(str)) {
             return false;
         }
+        CharSequence text = new DeadlineText(str);
 
         // First iterate over bannedwordslist, doing indexOf.
         // Then iterate over bannedwordslistRegex and test.
@@ -325,19 +326,23 @@ public final class Bannedwordslist {
             stringRules.addAll(moreStringRules);
             stringRules.addAll(bannedwordslistStr);
         }
-        if (testStringRules(str, stringRules)) {
+        try {
+            if (testStringRules(text, stringRules)) {
+                return true;
+            }
+        
+            // test regex bannedwordslisted
+            List<Pattern> regexRules = bannedwordslistRegex;
+            if (moreRegexRules != null && !moreRegexRules.isEmpty()) {
+                regexRules = new ArrayList<>();
+                regexRules.addAll(moreRegexRules);
+                regexRules.addAll(bannedwordslistRegex);
+            }
+            return testRegExRules(text, regexRules);
+        } catch (MatchTimeLimitException e) {
             return true;
         }
-        
-        // test regex bannedwordslisted
-        List<Pattern> regexRules = bannedwordslistRegex;
-        if (moreRegexRules != null && !moreRegexRules.isEmpty()) {
-            regexRules = new ArrayList<>();
-            regexRules.addAll(moreRegexRules);
-            regexRules.addAll(bannedwordslistRegex);
-        }
-        return testRegExRules(str, regexRules);
-    }      
+    }
 
     /** 
      * Test string only against rules provided by caller, NOT against built-in bannedwordslist.
@@ -347,22 +352,30 @@ public final class Bannedwordslist {
      */
     public static boolean matchesRulesOnly(
         String str, List<String> stringRules, List<Pattern> regexRules) {
-        return testStringRules(str, stringRules) || testRegExRules(str, regexRules);
+        if (str == null) {
+            return false;
+        }
+        CharSequence text = new DeadlineText(str);
+        try {
+            return testStringRules(text, stringRules) || testRegExRules(text, regexRules);
+        } catch (MatchTimeLimitException e) {
+            return true;
+        }
     }
         
     /** Test String against the RegularExpression rules. */
-    private static boolean testRegExRules(String str, List<Pattern> regexRules) {
+    private static boolean testRegExRules(CharSequence str, List<Pattern> regexRules) {
         for (Pattern testPattern : regexRules) {
             // want to see what it is matching on, but only in debug mode
             if (mLogger.isDebugEnabled()) {
                 Matcher matcher = testPattern.matcher(str);
-                if (matcher.find()) {
+                if (find(matcher, testPattern.pattern())) {
                     mLogger.debug(matcher.group()
                             + " matched by " + testPattern.pattern());
                     return true;
                 }
             } else {
-                if (testPattern.matcher(str).find()) {
+                if (find(testPattern.matcher(str), testPattern.pattern())) {
                     return true;
                 }
             }
@@ -381,7 +394,7 @@ public final class Bannedwordslist {
      *
      * @return true if a match was found, otherwise false
      */
-    private static boolean testStringRules(String source, List<String> rules) {
+    private static boolean testStringRules(CharSequence source, List<String> rules) {
         boolean matches = false;
         
         for (String rule : rules) {
@@ -400,13 +413,13 @@ public final class Bannedwordslist {
                 Matcher matcher;
                 matcher = pattern.matcher(source);
 
-                matches = matcher.find();
+                matches = find(matcher, rule);
                 if (matches) {
                     break;
                 }
             }
             catch (PatternSyntaxException e) {
-                matches = source.contains(rule);
+                matches = source.toString().contains(rule);
                 if (matches) {
                     break;
                 }
@@ -442,6 +455,69 @@ public final class Bannedwordslist {
         }        
     }
         
+    /**
+     * Longest the rules may take to check one value, such as a comment's
+     * text. A rule that backtracks without end, which a weblog's own banned
+     * words can include, would otherwise hold the request.
+     */
+    static final long MATCH_TIME_LIMIT_MILLIS = 1000;
+
+    private static boolean find(Matcher matcher, String rule) {
+        try {
+            return matcher.find();
+        } catch (MatchTimeLimitException e) {
+            mLogger.warn("Banned words rule took over " + MATCH_TIME_LIMIT_MILLIS
+                    + " ms and was counted as a match; consider simplifying it: " + rule);
+            throw e;
+        }
+    }
+
+    private static final class MatchTimeLimitException extends RuntimeException {
+        MatchTimeLimitException() {
+            super(null, null, false, false);
+        }
+    }
+
+    /** The checked text, which stops a match once the time limit has passed. */
+    private static final class DeadlineText implements CharSequence {
+        private final CharSequence text;
+        private final long deadline;
+        private int reads;
+
+        DeadlineText(CharSequence text) {
+            this(text, System.nanoTime() + MATCH_TIME_LIMIT_MILLIS * 1_000_000L);
+        }
+
+        private DeadlineText(CharSequence text, long deadline) {
+            this.text = text;
+            this.deadline = deadline;
+        }
+
+        @Override
+        public char charAt(int index) {
+            // checking the clock on every read would slow ordinary matches
+            if ((++reads & 0x3FF) == 0 && System.nanoTime() - deadline > 0) {
+                throw new MatchTimeLimitException();
+            }
+            return text.charAt(index);
+        }
+
+        @Override
+        public int length() {
+            return text.length();
+        }
+
+        @Override
+        public CharSequence subSequence(int start, int end) {
+            return new DeadlineText(text.subSequence(start, end), deadline);
+        }
+
+        @Override
+        public String toString() {
+            return text.toString();
+        }
+    }
+
     /** Return pretty list of String and RegEx rules. */
     @Override
     public String toString() {
