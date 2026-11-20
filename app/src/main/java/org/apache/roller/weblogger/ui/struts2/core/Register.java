@@ -357,7 +357,7 @@ public class Register extends UIAction {
         if (usingSSO) {
             // store an unused marker in the Roller DB for the passphrase in
             // the LDAP or CMA cases, as actual passwords are stored externally
-            String unusedPassword = WebloggerConfig.getProperty("users.passwords.externalAuthValue", "<externalAuth>");
+            String unusedPassword = RollerPasswordEncoders.externalLoginMarker();
             
             // Preserve username and password, Spring Security case
             preserveUsernameAndPassword(unusedPassword);
@@ -389,8 +389,14 @@ public class Register extends UIAction {
             getBean().setPasswordConfirm(randomString);
         }
         
+        // the external-login marker is stored for users who log in elsewhere
+        // and never matches at login
+        if (!usingSSO && RollerPasswordEncoders.isExternalLoginMarker(getBean().getPasswordText())) {
+            addError("error.add.user.reservedPassword");
+        }
+
         // check that passwords match 
-        if (!getBean().getPasswordText().equals(getBean().getPasswordConfirm())) {
+        if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
             addError("userRegister.error.mismatchedPasswords");
         }
         
