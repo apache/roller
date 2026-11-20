@@ -69,9 +69,8 @@ class FederatedIdentityFormTest {
     @BeforeEach
     void setUp() throws Exception {
         TestUtils.setupWeblogger();
-        // Profile gives OIDC users a 255 character random password, which
-        // neither bcrypt (72 byte limit) nor "{noop}" plus the password (past
-        // the 255 character column) can store, so store a short stand-in.
+        // RollerContext sets up its password encoder only when the webapp
+        // starts, so encode passwords with a cheap stand-in.
         savedEncoder = swapEncoder(new PasswordEncoder() {
             @Override
             public String encode(CharSequence raw) {
@@ -89,22 +88,25 @@ class FederatedIdentityFormTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        TestUtils.teardownUser(userName);
-        User registered = WebloggerFactory.getWeblogger().getUserManager()
-                .getUserByUserName("junitregistered", null);
-        if (registered != null) {
-            TestUtils.teardownUser(registered.getUserName());
-        }
-        TestUtils.endSession(true);
-        swapEncoder(savedEncoder);
-        Properties config = config();
-        savedProperties.forEach((k, v) -> {
-            if (v == null) {
-                config.remove(k);
-            } else {
-                config.setProperty(k, v);
+        try {
+            TestUtils.teardownUser(userName);
+            User registered = WebloggerFactory.getWeblogger().getUserManager()
+                    .getUserByUserName("junitregistered", null);
+            if (registered != null) {
+                TestUtils.teardownUser(registered.getUserName());
             }
-        });
+            TestUtils.endSession(true);
+        } finally {
+            swapEncoder(savedEncoder);
+            Properties config = config();
+            savedProperties.forEach((k, v) -> {
+                if (v == null) {
+                    config.remove(k);
+                } else {
+                    config.setProperty(k, v);
+                }
+            });
+        }
     }
 
     @Test
