@@ -164,6 +164,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             Timestamp current =
                     new Timestamp(System.currentTimeMillis());
             
+            boolean wasPublished = entry.isPublished();
             if ( !title.isEmpty() ) {
                 entry.setTitle(title);
             }
@@ -177,6 +178,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
             if (dateCreated != null) {
                 entry.setPubTime(new Timestamp(dateCreated.getTime()));
             }
+            refreshAggregatesIfPublicationChanges(entry, wasPublished);
             
             if ( cat != null ) {
                 // Use first category specified by request
@@ -339,7 +341,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         WeblogEntry entry = validateEntry(postid, user, null);
         
         try {
-            return createPostStruct(entry, userid);
+            return createPostStruct(entry, user.getUserName());
         } catch (Exception e) {
             String msg = "ERROR in MetaWeblogAPIHandler.getPost";
             mLogger.error(msg, e);
@@ -446,7 +448,7 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
                     if (!entry.hasWritePermissions(user)) {
                         continue;
                     }
-                    results.addElement(createPostStruct(entry, userid));
+                    results.addElement(createPostStruct(entry, user.getUserName()));
                 }
             }
             return results;
@@ -479,7 +481,10 @@ public class MetaWeblogAPIHandler extends BloggerAPIHandler {
         struct.put("postid", entry.getId());
         
         struct.put("userid", entry.getCreator().getUserName());
-        struct.put("author", entry.getCreator().getEmailAddress());
+        // other weblog members see the creator's user name, not their email
+        if (entry.getCreator().getUserName().equals(userid)) {
+            struct.put("author", entry.getCreator().getEmailAddress());
+        }
        
         if ( entry.getCategory() != null ) {
             Vector<Object> catArray = new Vector<>();
