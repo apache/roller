@@ -25,6 +25,7 @@ import java.util.function.IntPredicate;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
@@ -234,9 +235,18 @@ final class StringGrowth {
             case "autoformat":
                 return grown(s, "<br />".length(), c -> c == '\n');
             case "addNofollow":
-                // only a link that already has rel="nofollow" gets another
-                return s == null ? 0 : add(s.length(), multiply(" rel=\"nofollow\"".length(),
-                        occurrences(s.toString(), "rel=\"nofollow\"")));
+                // jsoup parses the HTML and writes it out again, adding the
+                // rel, closing tags, quotes, escapes and the elements a table
+                // implies, so the result can't be worked out exactly from the
+                // text. The most it was seen to grow is a <td> in a table,
+                // which gains its tbody and tr: 8.25 times. NOFOLLOW_GROWTH
+                // is above that, so the text it can be given is bounded.
+                // Text with no "<a" is returned as it is.
+                if (s == null) {
+                    return 0;
+                }
+                return StringUtils.containsIgnoreCase(s, "<a")
+                        ? multiply(NOFOLLOW_GROWTH, s.length()) : s.length();
             case "encodeEmail":
                 return encodedEmail(s);
             case "truncate":
@@ -320,14 +330,6 @@ final class StringGrowth {
             if (matches.test(s.charAt(i))) {
                 n++;
             }
-        }
-        return n;
-    }
-
-    private static long occurrences(String s, String target) {
-        long n = 0;
-        for (int i = s.indexOf(target); i >= 0; i = s.indexOf(target, i + target.length())) {
-            n++;
         }
         return n;
     }
