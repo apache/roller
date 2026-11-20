@@ -319,4 +319,113 @@ public class PermissionTest  {
         TestUtils.endSession(true);
         log.info("END");
     }
+
+    /**
+     * Removing a weblog removes its pending invitations, so a weblog later
+     * created with the same handle doesn't inherit them.
+     */
+    @Test
+    public void testRemovingWeblogRemovesInvitations() throws Exception {
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        User invitee = TestUtils.setupUser("permsInvitee");
+        Weblog weblog = TestUtils.setupWeblog("permsInviteWeblog", testUser);
+        String handle = weblog.getHandle();
+        TestUtils.endSession(true);
+
+        mgr.grantWeblogPermissionPending(weblog, invitee, List.of(WeblogPermission.POST));
+        TestUtils.endSession(true);
+
+        TestUtils.teardownWeblog(weblog.getId());
+        TestUtils.endSession(true);
+
+        Weblog again = TestUtils.setupWeblog("permsInviteWeblog", testUser);
+        TestUtils.endSession(true);
+        try {
+            assertEquals(handle, again.getHandle());
+            assertTrue(mgr.getPendingWeblogPermissions(again).isEmpty(),
+                    "the new weblog has no invitations");
+        } finally {
+            TestUtils.teardownWeblog(again.getId());
+            TestUtils.teardownUser(invitee.getUserName());
+            TestUtils.endSession(true);
+        }
+    }
+
+    /**
+     * Removing a user removes their pending invitations, so a user later
+     * created with the same name doesn't inherit them.
+     */
+    @Test
+    public void testRemovingUserRemovesInvitations() throws Exception {
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        User invitee = TestUtils.setupUser("permsRemovedInvitee");
+        String userName = invitee.getUserName();
+        TestUtils.endSession(true);
+
+        mgr.grantWeblogPermissionPending(TestUtils.getManagedWebsite(testWeblog), invitee,
+                List.of(WeblogPermission.POST));
+        TestUtils.endSession(true);
+
+        TestUtils.teardownUser(userName);
+        TestUtils.endSession(true);
+
+        User again = TestUtils.setupUser("permsRemovedInvitee");
+        TestUtils.endSession(true);
+        try {
+            assertTrue(mgr.getPendingWeblogPermissions(again).isEmpty(),
+                    "the new user has no invitations");
+        } finally {
+            TestUtils.teardownUser(userName);
+            TestUtils.endSession(true);
+        }
+    }
+
+    /**
+     * A weblog can be removed when one of its members, or a user invited to
+     * it, has since been disabled.
+     */
+    @Test
+    public void testRemovingWeblogWithDisabledMembers() throws Exception {
+        UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
+        User invitee = TestUtils.setupUser("permsDisabledInvitee");
+        User member = TestUtils.setupUser("permsDisabledMember");
+        Weblog weblog = TestUtils.setupWeblog("permsDisabledWeblog", testUser);
+        TestUtils.endSession(true);
+
+        mgr.grantWeblogPermissionPending(weblog, invitee, List.of(WeblogPermission.POST));
+        mgr.grantWeblogPermission(weblog, member, List.of(WeblogPermission.POST));
+        for (User user : List.of(invitee, member)) {
+            User stored = mgr.getUserByUserName(user.getUserName(), null);
+            stored.setEnabled(Boolean.FALSE);
+            mgr.saveUser(stored);
+        }
+        TestUtils.endSession(true);
+
+        try {
+            TestUtils.teardownWeblog(weblog.getId());
+            TestUtils.endSession(true);
+
+            assertNull(WebloggerFactory.getWeblogger().getWeblogManager().getWeblog(weblog.getId()));
+            assertTrue(mgr.getWeblogPermissionsIncludingPending(weblog).isEmpty(),
+                    "the removed weblog has no members or invitations");
+        } finally {
+            // start over in case the removal failed part way
+            TestUtils.endSession(false);
+            Weblog left = WebloggerFactory.getWeblogger().getWeblogManager().getWeblog(weblog.getId());
+            if (left != null) {
+                for (User user : List.of(invitee, member)) {
+                    User stored = mgr.getUserByUserName(user.getUserName(), null);
+                    // the removal may have got as far as the memberships
+                    if (mgr.getWeblogPermissionIncludingPending(left, stored) != null) {
+                        mgr.revokeWeblogPermission(left, stored, WeblogPermission.ALL_ACTIONS);
+                    }
+                }
+                TestUtils.endSession(true);
+                TestUtils.teardownWeblog(left.getId());
+            }
+            TestUtils.teardownUser(invitee.getUserName());
+            TestUtils.teardownUser(member.getUserName());
+            TestUtils.endSession(true);
+        }
+    }
 }

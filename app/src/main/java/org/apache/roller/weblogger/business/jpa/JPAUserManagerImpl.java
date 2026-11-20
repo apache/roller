@@ -32,7 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TypedQuery;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.GlobalPermission;
@@ -77,7 +80,10 @@ public class JPAUserManagerImpl implements UserManager {
         String userName = user.getUserName();
         
         // remove permissions, maintaining both sides of relationship
-        List<WeblogPermission> perms = getWeblogPermissions(user);
+        List<WeblogPermission> perms = new ArrayList<>(getWeblogPermissions(user));
+        // and pending invitations, which a new user of the same name would
+        // otherwise inherit
+        perms.addAll(getPendingWeblogPermissions(user));
         for (WeblogPermission perm : perms) {
             this.strategy.remove(perm);
         }
@@ -513,6 +519,10 @@ public class JPAUserManagerImpl implements UserManager {
         } catch (NoResultException ignored) {
             throw new WebloggerException("ERROR: permission not found");
         }
+        // only an invitation can be declined; members leave by resigning
+        if (!existingPerm.isPending()) {
+            throw new WebloggerException("ERROR: permission is not a pending invitation");
+        }
         // remove permission
         this.strategy.remove(existingPerm);
     }
@@ -560,6 +570,94 @@ public class JPAUserManagerImpl implements UserManager {
                 WeblogPermission.class);
         q.setParameter(1, weblog.getHandle());
         return q.getResultList();
+    }
+
+    @Override
+    public boolean updateWeblogMembership(Weblog weblog, Map<String, List<String>> changes)
+            throws WebloggerException {
+
+        List<WeblogPermission> perms;
+        try {
+            // every change has to be for a member of, or a user invited to,
+            // the weblog; check before taking the lock, so a request for
+            // someone else's weblog doesn't wait for or hold it
+            checkMemberships(readMemberships(weblog.getHandle()), changes);
+
+            // lock the weblog's row so membership updates for it run one at
+            // a time
+            EntityManager em = strategy.getEntityManager(true);
+            Weblog locked = em.find(Weblog.class, weblog.getId(), LockModeType.PESSIMISTIC_WRITE);
+            if (locked == null) {
+                throw new WebloggerException("ERROR: weblog not found");
+            }
+
+            // read the memberships again now that the lock is held
+            perms = readMemberships(locked.getHandle());
+            checkMemberships(perms, changes);
+        } catch (PersistenceException e) {
+            throw new WebloggerException(e);
+        }
+
+        boolean adminBefore = false;
+        boolean adminAfter = false;
+        for (WeblogPermission perm : perms) {
+            if (perm.isPending()) {
+                continue;
+            }
+            // a disabled user can't manage the weblog
+            if (perm.getUser() == null || !Boolean.TRUE.equals(perm.getUser().getEnabled())) {
+                continue;
+            }
+            boolean admin = perm.hasAction(WeblogPermission.ADMIN);
+            adminBefore |= admin;
+            if (changes.containsKey(perm.getUserName())) {
+                List<String> actions = changes.get(perm.getUserName());
+                admin = actions != null && actions.contains(WeblogPermission.ADMIN);
+            }
+            adminAfter |= admin;
+        }
+        if (adminBefore && !adminAfter) {
+            return false;
+        }
+
+        for (WeblogPermission perm : perms) {
+            if (!changes.containsKey(perm.getUserName())) {
+                continue;
+            }
+            // change the row that was read, which also works for a disabled
+            // user and leaves an invitation pending
+            List<String> actions = changes.get(perm.getUserName());
+            if (actions == null) {
+                this.strategy.remove(perm);
+            } else {
+                perm.setActionsAsList(actions);
+                this.strategy.store(perm);
+            }
+        }
+        return true;
+    }
+
+    // a weblog's memberships and invitations, read from the database rather
+    // than the cache
+    private List<WeblogPermission> readMemberships(String handle) throws WebloggerException {
+        TypedQuery<WeblogPermission> q = strategy.getNamedQuery("WeblogPermission.getByWeblogIdIncludingPending",
+                WeblogPermission.class);
+        q.setParameter(1, handle);
+        q.setHint("eclipselink.refresh", "true");
+        return q.getResultList();
+    }
+
+    private static void checkMemberships(List<WeblogPermission> perms, Map<String, List<String>> changes)
+            throws WebloggerException {
+        for (String userName : changes.keySet()) {
+            boolean found = false;
+            for (WeblogPermission perm : perms) {
+                found |= perm.getUserName().equals(userName);
+            }
+            if (!found) {
+                throw new WebloggerException("ERROR: permission not found");
+            }
+        }
     }
 
     @Override
