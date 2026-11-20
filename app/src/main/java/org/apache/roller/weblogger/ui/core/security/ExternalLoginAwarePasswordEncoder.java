@@ -21,6 +21,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -32,6 +34,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  * as equal to one of them, nor an empty password.
  */
 public class ExternalLoginAwarePasswordEncoder implements PasswordEncoder {
+
+    private static final Log log = LogFactory.getLog(ExternalLoginAwarePasswordEncoder.class);
 
     /** Stored in place of a password when no other value is configured. */
     public static final String DEFAULT_EXTERNAL_LOGIN_MARKER = "<externalAuth>";
@@ -97,7 +101,11 @@ public class ExternalLoginAwarePasswordEncoder implements PasswordEncoder {
         Set<String> markers = externalLoginMarkers();
         // a stored marker is checked before the delegate sees it, since a
         // marker such as {noop}secret would otherwise match its own suffix
-        if (markers.contains(encodedPassword) || markers.contains(rawPassword.toString())) {
+        if (markers.contains(encodedPassword)) {
+            return false;
+        }
+        if (markers.contains(rawPassword.toString())) {
+            logRefusal();
             return false;
         }
         if (!delegate.matches(rawPassword, encodedPassword)) {
@@ -107,10 +115,18 @@ public class ExternalLoginAwarePasswordEncoder implements PasswordEncoder {
         // so refuse any password whose stored value a marker matches too
         for (String marker : markers) {
             if (delegate.matches(marker, encodedPassword)) {
+                logRefusal();
                 return false;
             }
         }
         return true;
+    }
+
+    private static void logRefusal() {
+        // the password itself is never logged
+        log.info("Refused a password that Roller treats as an external-login marker"
+                + " (users.passwords.externalAuthValue or its .previous list). An"
+                + " administrator can set a new password for an account that uses one.");
     }
 
     @Override
