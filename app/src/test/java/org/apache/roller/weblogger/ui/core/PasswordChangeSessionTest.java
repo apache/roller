@@ -77,12 +77,14 @@ class PasswordChangeSessionTest {
     private String userName;
     private String adminName;
     private PasswordEncoder savedEncoder;
+    private boolean encoderSwapped;
 
     @BeforeEach
     void setUp() throws Exception {
         TestUtils.setupWeblogger();
         savedEncoder = swapEncoder(new DelegatingPasswordEncoder("bcrypt",
                 Map.of("bcrypt", new BCryptPasswordEncoder(4))));
+        encoderSwapped = true;
         userName = TestUtils.setupUser("sessionuser").getUserName();
         adminName = TestUtils.setupUser("sessionadmin").getUserName();
         TestUtils.endSession(true);
@@ -91,10 +93,20 @@ class PasswordChangeSessionTest {
     @AfterEach
     void tearDown() throws Exception {
         SecurityContextHolder.clearContext();
-        TestUtils.teardownUser(userName);
-        TestUtils.teardownUser(adminName);
-        TestUtils.endSession(true);
-        swapEncoder(savedEncoder);
+        try {
+            if (userName != null) {
+                TestUtils.teardownUser(userName);
+            }
+            if (adminName != null) {
+                TestUtils.teardownUser(adminName);
+            }
+            TestUtils.endSession(true);
+        } finally {
+            // later test classes must not run with this class's encoder
+            if (encoderSwapped) {
+                swapEncoder(savedEncoder);
+            }
+        }
     }
 
     @Test
