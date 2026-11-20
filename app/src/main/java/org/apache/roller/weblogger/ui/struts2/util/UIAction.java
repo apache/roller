@@ -19,6 +19,7 @@
 package org.apache.roller.weblogger.ui.struts2.util;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.interceptor.ParameterNameAware;
 import com.opensymphony.xwork2.util.ValueStack;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.business.UserManager;
@@ -54,7 +55,7 @@ import java.util.stream.IntStream;
  * getText(key) on the param passed into setError() and setSuccess().
  */
 public abstract class UIAction extends ActionSupport
-        implements UIActionPreparable, UISecurityEnforced, RequestAware {
+        implements UIActionPreparable, UISecurityEnforced, RequestAware, ParameterNameAware {
     
     // a result that sends the user to an access denied warning
     public static final String DENIED = "access-denied";
@@ -325,7 +326,30 @@ public abstract class UIAction extends ActionSupport
     }
     
     public String getPageTitle() {
-        return getText(pageTitle);
+        return isPageTitleKey(pageTitle) ? getText(pageTitle) : "";
+    }
+
+    /**
+     * A page title is a message key from struts.xml or the action, made of
+     * letters, digits, dots, dashes and underscores. Struts evaluates part of
+     * an unknown key, so nothing else is looked up.
+     */
+    static boolean isPageTitleKey(String key) {
+        return key != null && PAGE_TITLE_KEY.matcher(key).matches();
+    }
+
+    private static final java.util.regex.Pattern PAGE_TITLE_KEY =
+            java.util.regex.Pattern.compile("[A-Za-z0-9_.-]+");
+
+    /**
+     * Request parameters never set the page title. Some actions take it from
+     * struts.xml through their setter, which the params interceptor would
+     * otherwise also call with request values.
+     */
+    @Override
+    public boolean acceptableParameterName(String parameterName) {
+        return parameterName == null
+                || !parameterName.toLowerCase(Locale.ROOT).contains("pagetitle");
     }
 
     public void setPageTitle(String pageTitle) {
