@@ -221,8 +221,8 @@ class WeblogMembershipTest {
         action.setAuthenticatedUser(user(ownerName));
         action.setActionWeblog(weblog());
         doAnswer(call -> null).when(action).getParameter(anyString());
-        doAnswer(call -> WeblogPermission.ADMIN).when(action).getParameter("perm-" + user(ownerName).getId());
-        doAnswer(call -> WeblogPermission.ADMIN).when(action).getParameter("perm-" + user(memberName).getId());
+        doAnswer(call -> WeblogPermission.ADMIN).when(action).getParameter("perm-" + permission(ownerName).getId());
+        doAnswer(call -> WeblogPermission.ADMIN).when(action).getParameter("perm-" + permission(memberName).getId());
         action.save();
         TestUtils.endSession(true);
 
@@ -302,12 +302,40 @@ class WeblogMembershipTest {
         action.setAuthenticatedUser(user(ownerName));
         action.setActionWeblog(weblog());
         doAnswer(call -> null).when(action).getParameter(anyString());
-        doAnswer(call -> WeblogPermission.ADMIN).when(action).getParameter("perm-" + user(ownerName).getId());
+        doAnswer(call -> WeblogPermission.ADMIN).when(action).getParameter("perm-" + permission(ownerName).getId());
         action.save();
         TestUtils.endSession(true);
 
         assertFalse(action.hasActionErrors(), () -> action.getActionErrors().toString());
         assertTrue(permission(memberName).hasAction(WeblogPermission.POST));
+    }
+
+    @Test
+    void membersPageRemovesADisabledMember() throws Exception {
+        users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.POST));
+        disable(memberName);
+
+        Members action = membersSaving(Map.of(
+                ownerName, WeblogPermission.ADMIN,
+                memberName, "-1"));
+        TestUtils.endSession(true);
+
+        assertNull(permission(memberName), "the disabled member was removed");
+        assertFalse(action.hasActionErrors(), () -> action.getActionErrors().toString());
+    }
+
+    @Test
+    void membersPageChangesADisabledMembersRole() throws Exception {
+        users().grantWeblogPermission(weblog(), user(memberName), List.of(WeblogPermission.POST));
+        disable(memberName);
+
+        Members action = membersSaving(Map.of(
+                ownerName, WeblogPermission.ADMIN,
+                memberName, WeblogPermission.EDIT_DRAFT));
+        TestUtils.endSession(true);
+
+        assertEquals(List.of(WeblogPermission.EDIT_DRAFT), permission(memberName).getActionsAsList());
+        assertFalse(action.hasActionErrors(), () -> action.getActionErrors().toString());
     }
 
     @Test
@@ -382,6 +410,22 @@ class WeblogMembershipTest {
         action.setWeblog(handle);
         action.resign();
         TestUtils.endSession(true);
+        return action;
+    }
+
+    // saves the Members page with a choice for each named member, submitted
+    // in the field the page renders for that member's permission
+    private Members membersSaving(Map<String, String> choices) throws Exception {
+        Members action = spy(new Members());
+        stubText(action);
+        action.setAuthenticatedUser(user(ownerName));
+        action.setActionWeblog(weblog());
+        doAnswer(call -> null).when(action).getParameter(anyString());
+        for (Map.Entry<String, String> choice : choices.entrySet()) {
+            doAnswer(call -> choice.getValue()).when(action)
+                    .getParameter("perm-" + permission(choice.getKey()).getId());
+        }
+        action.save();
         return action;
     }
 
