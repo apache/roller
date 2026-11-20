@@ -66,6 +66,10 @@ public class MemberResign extends UIAction {
      * Resign from a weblog
      */
     public String resign() {
+        // isWeblogRequired() is false, so the weblog may not exist
+        if (getActionWeblog() == null) {
+            return DENIED;
+        }
         try {
             UserManager umgr = WebloggerFactory.getWeblogger().getUserManager();
             // TODO: notify website members that user has resigned
