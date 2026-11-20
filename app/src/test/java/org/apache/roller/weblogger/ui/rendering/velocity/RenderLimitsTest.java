@@ -615,6 +615,18 @@ public class RenderLimitsTest {
         assertEquals("[$s.splitWithDelimiters(',', 0)][$s.lines()]", outcome.out.getHead());
     }
 
+    /** $utils.addNofollow isn't offered to templates, like the String methods above. */
+    @Test
+    public void utilitiesAddNofollowIsNotAvailable() throws Exception {
+        Map<String, Object> context = new HashMap<>();
+        context.put("utils", new UtilitiesModel());
+        Outcome outcome = render("limits-add-nofollow.vm",
+                "#set($s = '<a href=\"/x\">x</a>')[$utils.addNofollow($s)][$s.repeat(2)]",
+                context);
+        assertEquals(null, outcome.failure);
+        assertEquals("[$utils.addNofollow($s)][$s.repeat(2)]", outcome.out.getHead());
+    }
+
     /** Velocity calls a class's static methods on its Class object. */
     @Test
     public void staticStringMethodsAreNotAvailableThroughTheClass() throws Exception {

@@ -186,7 +186,8 @@
   number past 100,000 bits, and a regular expression that repeats a part
   that can match an empty string. `String.repeat`, `format`, `join`, `lines`
   and `splitWithDelimiters` aren't available, nor are static methods called
-  through `$x.class`. `#parse` and `#include` load only the weblog's own
+  through `$x.class`. Templates can no longer call `$utils.addNofollow`, a
+  breaking change. `#parse` and `#include` load only the weblog's own
   templates, and macros defined inline in a template stay with the page that
   defines them and the templates it includes, so weblogs can't affect each
   other's macros. Library macros such as `roller.vm` and a site's own

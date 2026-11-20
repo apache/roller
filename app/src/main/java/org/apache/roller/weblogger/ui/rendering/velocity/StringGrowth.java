@@ -25,7 +25,6 @@ import java.util.function.IntPredicate;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.weblogger.ui.rendering.model.UtilitiesModel;
@@ -89,9 +88,6 @@ final class StringGrowth {
         }
         return c == 'I' || c == 'J' || c == '\u012e' ? Math.max(longest, 2) : longest;
     });
-
-    /** Most characters addNofollow is taken to make of one character; see forUtilities. */
-    private static final long NOFOLLOW_GROWTH = 9;
 
     /** Most characters a pattern letter of a date format writes, with room to spare. */
     private static final long DATE_LETTER_LENGTH = 64;
@@ -161,7 +157,6 @@ final class StringGrowth {
             case "encode":
             case "hexEncode":
             case "autoformat":
-            case "addNofollow":
             case "encodeEmail":
             case "truncate":
             case "truncateNicely":
@@ -234,19 +229,6 @@ final class StringGrowth {
                         multiply(6, count(s, c -> c >= 0x80)));
             case "autoformat":
                 return grown(s, "<br />".length(), c -> c == '\n');
-            case "addNofollow":
-                // jsoup parses the HTML and writes it out again, adding the
-                // rel, closing tags, quotes, escapes and the elements a table
-                // implies, so the result can't be worked out exactly from the
-                // text. The most it was seen to grow is a <td> in a table,
-                // which gains its tbody and tr: 8.25 times. NOFOLLOW_GROWTH
-                // is above that, so the text it can be given is bounded.
-                // Text with no "<a" is returned as it is.
-                if (s == null) {
-                    return 0;
-                }
-                return StringUtils.containsIgnoreCase(s, "<a")
-                        ? multiply(NOFOLLOW_GROWTH, s.length()) : s.length();
             case "encodeEmail":
                 return encodedEmail(s);
             case "truncate":

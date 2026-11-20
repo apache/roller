@@ -854,8 +854,6 @@ Here’s a comprehensive list of the $utils methods:
 
 * **User getAuthenticatedUser() **Get the current user, or null if no
 use is logged in.
-* *String addNowFollow(String s)* Adds the nofollow attribute to any
-HTML links found within the string.
 * *String autoformat(String s)* Converts any line-breaks in the string
 with* <br>* tags.
 * *String decode(String s)* Decodes a string that has been URL encoded.
