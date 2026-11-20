@@ -73,7 +73,8 @@
         window.parent.onSelectMediaFile($(this).attr('data-mediafile-name'),
                 $(this).attr('data-mediafile-url'),
                 $(this).attr('data-mediafile-is-image'),
-                $(this).attr('data-mediafile-alt'));
+                $(this).attr('data-mediafile-alt'),
+                $(this).attr('data-mediafile-has-thumbnail'));
     });
 
     $('#chooserFolder').on('change', function () {

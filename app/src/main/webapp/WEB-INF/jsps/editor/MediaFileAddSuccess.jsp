@@ -66,7 +66,13 @@
                         </div>
 
                         <div class="col-md-2">
-                            <img class="mediaFileImage" src="<s:property value="%{#newImage.thumbnailURL}" />" alt=""/>
+                            <%-- an image too large for a thumbnail shows its file type icon --%>
+                            <s:if test="#newImage.thumbnailSkipped">
+                                <span class="bi <s:property value='typeIcon(#newImage.contentType)'/> fs-1" aria-hidden="true"></span>
+                            </s:if>
+                            <s:else>
+                                <img class="mediaFileImage" src="<s:property value="%{#newImage.thumbnailURL}" />" alt=""/>
+                            </s:else>
                         </div>
 
                         <div class="col-md-9">
