@@ -247,6 +247,17 @@
   domains as before but look at most 63 characters between their parts; a
   copy of the old file in the uploads directory is still used if present.
 
+- **HTML from weblog users is cleaned with jsoup.** While
+  `weblogAdminsUntrusted` is on (the default), entry text, titles,
+  summaries, taglines, user names and blogroll names are now cleaned with
+  jsoup's Cleaner instead of the old sanitizer. The same tags, links, images
+  and image data are kept, but an attribute that isn't on the list is now
+  removed, where it used to be kept as encoded text. `width` and `height`
+  must be a number of pixels or a percentage, and a `style` keeps only the
+  declarations that can't load anything or run script, such as `color`, or
+  a `url()` to an http or https address. A `<` with no `>` after it, as in
+  `x<y`, is kept as text.
+
 ### Build and packaging
 
 - Apache XML-RPC (`xmlrpc-common`, `xmlrpc-server`) and `ws-commons-util`
