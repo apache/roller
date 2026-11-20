@@ -113,7 +113,7 @@ class WeblogMembershipTest {
         MainMenu menu = decline(memberName);
 
         assertNotNull(permission(memberName), "an accepted membership is not an invitation");
-        assertTrue(menu.hasActionErrors());
+        assertEquals(List.of("yourWebsites.declineMember"), new ArrayList<>(menu.getActionErrors()));
     }
 
     @Test
