@@ -33,6 +33,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -140,6 +141,51 @@ class ExternalLoginPlaceholderTest {
     }
 
     @Test
+    void aPreviousEncodedPlaceholderIsNotAPasswordAfterTheSettingChanges() throws Exception {
+        setProperty("authentication.method", "cma");
+        // as Register stored it for container-managed sign-ups
+        User user = TestUtils.setupUser("oldcmauser");
+        userName = user.getUserName();
+        user.setPassword(RollerPasswordEncoders.create().encode("<old>"));
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        setProperty("users.passwords.externalAuthValue", "<new>");
+        setProperty("users.passwords.externalAuthValue.previous", "<older>,<old>");
+
+        assertThrows(AuthenticationException.class, () -> provider().authenticate(
+                UsernamePasswordAuthenticationToken.unauthenticated(userName, "<old>")));
+        assertFalse(RollerPasswordEncoders.create().matches("<old>", user.getPassword()));
+    }
+
+    @Test
+    void aPreviousUnencodedPlaceholderIsNotAPasswordAfterTheSettingChanges() throws Exception {
+        setProperty("authentication.method", "ldap");
+        setProperty("users.passwords.externalAuthValue", "<new>");
+        setProperty("users.passwords.externalAuthValue.previous", "{noop}secret");
+        // as CustomUserRegistry stored it before the setting changed
+        User user = TestUtils.setupUser("oldldapuser");
+        userName = user.getUserName();
+        user.setPassword("{noop}secret");
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        assertThrows(AuthenticationException.class, () -> provider().authenticate(
+                UsernamePasswordAuthenticationToken.unauthenticated(userName, "secret")));
+        assertFalse(RollerPasswordEncoders.create().matches("secret", "{noop}secret"));
+    }
+
+    @Test
+    void emptyEntriesInThePreviousPlaceholdersAreIgnored() throws Exception {
+        setProperty("users.passwords.externalAuthValue.previous", "<older>, <old>,, ,");
+
+        assertTrue(RollerPasswordEncoders.isExternalLoginMarker("<older>"));
+        assertTrue(RollerPasswordEncoders.isExternalLoginMarker("<old>"));
+        assertFalse(RollerPasswordEncoders.isExternalLoginMarker(""));
+        assertFalse(RollerPasswordEncoders.isExternalLoginMarker(" "));
+    }
+
+    @Test
     void anEmptyConfiguredPlaceholderIsNotAPassword() throws Exception {
         setProperty("authentication.method", "db");
         setProperty("passwds.encryption.lazyUpgradeFrom", "plaintext");
@@ -208,6 +254,23 @@ class ExternalLoginPlaceholderTest {
         PasswordEncoder encoder = RollerPasswordEncoders.create();
         assertFalse(encoder.matches("<externalAuth>", encoder.encode("<externalAuth>")));
         assertTrue(encoder.matches("secret", encoder.encode("secret")));
+    }
+
+    @Test
+    void aPasswordThatBcryptTreatsAsEqualToThePlaceholderNeverMatches() throws Exception {
+        setProperty("users.passwords.externalAuthValue", "<new>");
+        setProperty("users.passwords.externalAuthValue.previous", "<old>");
+        PasswordEncoder encoder = RollerPasswordEncoders.create();
+        for (String marker : new String[] {"<new>", "<old>", "<externalAuth>"}) {
+            String stored = encoder.encode(marker);
+            // BCrypt repeats its key, a NUL byte after each copy, so this
+            // password gives the same hash as the placeholder
+            String sameKey = marker + '\0' + marker;
+            assertTrue(new BCryptPasswordEncoder().matches(sameKey, stored.substring("{bcrypt}".length())));
+            assertFalse(encoder.matches(sameKey, stored), marker);
+        }
+        // a password that only starts like a placeholder still matches
+        assertTrue(encoder.matches("<old>x", encoder.encode("<old>x")));
     }
 
     private static DaoAuthenticationProvider provider() {
