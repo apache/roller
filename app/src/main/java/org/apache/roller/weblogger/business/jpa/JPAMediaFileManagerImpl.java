@@ -71,6 +71,14 @@ import org.apache.roller.weblogger.util.Utilities;
 @com.google.inject.Singleton
 public class JPAMediaFileManagerImpl implements MediaFileManager {
 
+    /**
+     * Image formats that get thumbnails. Their readers decode a subsampled
+     * image without holding the whole image in memory; the TIFF reader, for
+     * one, reads a whole strip or tile at a time.
+     */
+    private static final Set<String> THUMBNAIL_FORMATS =
+            Set.of("jpeg", "png", "gif", "bmp");
+
     private final Weblogger roller;
     private final JPAPersistenceStrategy strategy;
     private static final Log log = LogFactory.getFactory().getInstance(JPAMediaFileManagerImpl.class);
@@ -260,8 +268,8 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
      * from the image header first; images with more pixels than
      * uploads.thumbnail.maxPixels are left without a thumbnail rather than
      * decoded, and the rest are decoded subsampled to near thumbnail size.
-     * Content that no image reader recognizes gets no thumbnail, whatever
-     * content type the client sent. When no thumbnail is made, any thumbnail
+     * Only JPEG, PNG, GIF and BMP content gets a thumbnail, whatever content
+     * type the client sent. When no thumbnail is made, any thumbnail
      * left from the file's previous content is removed.
      */
     private void updateThumbnail(MediaFile mediaFile) {
@@ -322,6 +330,14 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
                                 + height + "), it is larger than "
                                 + MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY + "="
                                 + maxPixels + " pixels");
+                        return false;
+                    }
+
+                    String format = reader.getFormatName().toLowerCase(Locale.ROOT);
+                    if (!THUMBNAIL_FORMATS.contains(format)) {
+                        log.debug("Not creating a thumbnail for media file "
+                                + mediaFile.getId() + ", " + format
+                                + " images get none");
                         return false;
                     }
 

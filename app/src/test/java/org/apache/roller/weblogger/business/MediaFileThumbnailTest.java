@@ -354,6 +354,24 @@ public class MediaFileThumbnailTest {
         assertFalse(saved.isThumbnailSkipped());
     }
 
+    /**
+     * A TIFF image is stored with its size and without a thumbnail, also when
+     * its name says it is another type.
+     */
+    @Test
+    public void testTiffImageIsStoredWithoutThumbnail() throws Exception {
+        byte[] tiff = encode(new BufferedImage(200, 100,
+                BufferedImage.TYPE_BYTE_GRAY), "tiff");
+        for (String name : new String[] {"scan.tif", "scan.png"}) {
+            MediaFile saved = upload(name, name.endsWith(".tif") ? "image/tiff" : "image/png",
+                    new ByteArrayInputStream(tiff), tiff.length);
+
+            assertNull(saved.getThumbnailInputStream(), name);
+            assertEquals(200, saved.getWidth(), name);
+            assertEquals(100, saved.getHeight(), name);
+        }
+    }
+
     private static byte[] encode(BufferedImage image, String format)
             throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
