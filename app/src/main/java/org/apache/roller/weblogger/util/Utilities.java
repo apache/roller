@@ -50,6 +50,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.roller.util.RegexUtil;
 import org.apache.roller.util.RollerConstants;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  * General purpose utilities, not for use in templates.
@@ -60,8 +63,6 @@ public class Utilities {
 
     public static final String TAG_SPLIT_CHARS = " ,\n\r\f\t";
 
-    private static final Pattern mLinkPattern = Pattern.compile("<a href=.*?>",
-            Pattern.CASE_INSENSITIVE);
     private static final Pattern OPENING_B_TAG_PATTERN = Pattern.compile(
             "&lt;b&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern CLOSING_B_TAG_PATTERN = Pattern.compile(
@@ -98,8 +99,10 @@ public class Utilities {
             "&lt;/li&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern CLOSING_A_TAG_PATTERN = Pattern.compile(
             "&lt;/a&gt;", Pattern.CASE_INSENSITIVE);
-    private static final Pattern OPENING_A_TAG_PATTERN = Pattern.compile(
-            "&lt;a\\s+href\\s*=.*?&gt;", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+    private static final Pattern OPENING_A_TAG_START_PATTERN = Pattern.compile(
+            "&lt;a\\s+href\\s*=", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TAG_END_PATTERN = Pattern.compile(
+            "&gt;", Pattern.CASE_INSENSITIVE);
     private static final Pattern A_HREF_PATTERN = Pattern.compile(
             "&lt;a\\s+href\\s*=\\s*(?:\"([^\"]*)\"|'([^']*)'|([^\\s\"'=<>`]+))\\s*&gt;",
             Pattern.CASE_INSENSITIVE);
@@ -283,31 +286,27 @@ public class Utilities {
     }
 
     /**
-     * Code (stolen from Pebble) to add rel="nofollow" string to all links in
-     * HTML.
+     * Adds nofollow to the rel attribute of every link in the HTML. The HTML
+     * is parsed with jsoup, so only a link's own rel attribute is changed,
+     * and the result is jsoup's serialization of the parsed fragment.
      */
     public static String addNofollow(String html) {
-        if (html == null || html.length() == 0) {
+        if (html == null || !StringUtils.containsIgnoreCase(html, "<a")) {
             return html;
         }
-        Matcher m = mLinkPattern.matcher(html);
-        StringBuilder buf = new StringBuilder();
-        while (m.find()) {
-            int start = m.start();
-            int end = m.end();
-            String link = html.substring(start, end);
-            buf.append(html.substring(0, start));
-            if (link.contains("rel=\"nofollow\"")) {
-                buf.append(link.substring(0, link.length() - 1)
-                        + " rel=\"nofollow\">");
-            } else {
-                buf.append(link);
+        Document doc = Jsoup.parseBodyFragment(html);
+        doc.outputSettings().prettyPrint(false);
+        for (Element link : doc.body().select("a[href]")) {
+            String rel = link.attr("rel").trim();
+            boolean hasNofollow = false;
+            for (String token : StringUtils.split(rel)) {
+                hasNofollow |= "nofollow".equalsIgnoreCase(token);
             }
-            html = html.substring(end, html.length());
-            m = mLinkPattern.matcher(html);
+            if (!hasNofollow) {
+                link.attr("rel", rel.isEmpty() ? "nofollow" : rel + " nofollow");
+            }
         }
-        buf.append(html);
-        return buf.toString();
+        return doc.body().html();
     }
 
     // ------------------------------------------------------------------------
@@ -1079,12 +1078,16 @@ public class Utilities {
 
         // Normalize supported links while retaining the surrounding text.
         s = replace(s, CLOSING_A_TAG_PATTERN, "</a>");
-        Matcher m = OPENING_A_TAG_PATTERN.matcher(s);
+        // Each opening tag runs to the first "&gt;" after its "href=". Once no
+        // "&gt;" is left, no later tag can close either, so stop there; this
+        // keeps the scan linear on text with many unclosed tags.
+        Matcher m = OPENING_A_TAG_START_PATTERN.matcher(s);
+        Matcher tagEnd = TAG_END_PATTERN.matcher(s);
         StringBuilder result = new StringBuilder(s.length());
         int end = 0;
-        while (m.find()) {
+        while (m.find() && tagEnd.find(m.end())) {
             result.append(restoreSubsetEntities(s.substring(end, m.start())));
-            Matcher hrefMatcher = A_HREF_PATTERN.matcher(m.group());
+            Matcher hrefMatcher = A_HREF_PATTERN.matcher(s.substring(m.start(), tagEnd.end()));
             String link = "<a>";
             if (hrefMatcher.matches()) {
                 String href = hrefMatcher.group(1);
@@ -1100,7 +1103,8 @@ public class Utilities {
                 }
             }
             result.append(link);
-            end = m.end();
+            end = tagEnd.end();
+            m.region(end, s.length());
         }
         result.append(restoreSubsetEntities(s.substring(end)));
         return result.toString();

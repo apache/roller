@@ -147,13 +147,13 @@ public class TagDataServlet extends HttpServlet {
             response.setContentType("application/json; charset=utf-8");
             PrintWriter pw = response.getWriter();
             pw.println("{ \"prefix\": \"" + (prefix == null ? "" : StringEscapeUtils.escapeJson(prefix)) + "\",");
-            pw.println("  \"weblog\": \"" + (!siteWide ? weblog.getHandle() : "") + "\",");
+            pw.println("  \"weblog\": \"" + (!siteWide ? StringEscapeUtils.escapeJson(weblog.getHandle()) : "") + "\",");
             pw.println("  \"tagcounts\": [" );
             int count = 0;
             for (Iterator<TagStat> it = tags.iterator(); it.hasNext();) {
                 TagStat stat = it.next();
                 pw.print("    { \"tag\" : \"");
-                pw.print(stat.getName());
+                pw.print(StringEscapeUtils.escapeJson(stat.getName()));
                 pw.print("\", ");
                 pw.print("\"count\" : ");
                 pw.print(stat.getCount());
@@ -186,7 +186,8 @@ public class TagDataServlet extends HttpServlet {
                         Collections.singletonList(stat.getName()),
                         0, true);
                 int frequency = stat.getCount();
-                pw.print("<atom:category term=\"" + term + "\" tagdata:frequency=\"" + frequency + "\" ");
+                pw.print("<atom:category term=\"" + StringEscapeUtils.escapeXml10(term)
+                        + "\" tagdata:frequency=\"" + frequency + "\" ");
                 pw.println("tagdata:href=\"" + StringEscapeUtils.escapeXml10(viewURI) + "\" />");
                 if (count++ > MAX) {
                     break;
