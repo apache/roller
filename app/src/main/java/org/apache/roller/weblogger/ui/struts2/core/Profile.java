@@ -69,6 +69,11 @@ public class Profile extends UIAction {
     }
 
     public String save() {
+        // The federated identity (issuer#subject) decides which account an
+        // OIDC login opens, so only the OIDC login code sets it. Use the stored
+        // value, whatever the request carries, for the checks below.
+        getBean().setOpenIdUrl(getAuthenticatedUser().getOpenIdUrl());
+
         myValidate();
 
         if (!hasActionErrors()) {
@@ -78,20 +83,6 @@ public class Profile extends UIAction {
 
             // copy updated attributes
             getBean().copyTo(existingUser);
-
-            if (StringUtils.isNotEmpty(getBean().getOpenIdUrl())) { 
-                try {
-                    String openidurl = getBean().getOpenIdUrl();
-                    if (openidurl != null && openidurl.endsWith("/")) {
-                        openidurl = openidurl.substring(0, openidurl.length() - 1);
-                    }
-                    existingUser.setOpenIdUrl(openidurl);
-                } catch (Exception ex) {
-                    log.error("Unexpected error saving user OpenID URL", ex);
-                    addError("generic.error.check.logs");
-                    return INPUT;
-                }
-            }
 
             if (authMethod == AuthMethod.DB_OIDC) {
                 if (StringUtils.isEmpty(existingUser.getPassword())
@@ -139,11 +130,11 @@ public class Profile extends UIAction {
         if (RollerPasswordEncoders.isExternalLoginMarker(getBean().getPasswordText())) {
             addError("error.add.user.reservedPassword");
         }
+        // check that passwords match if they were specified (w/StringUtils.equals, null == null)
+        if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
+            addError("userRegister.error.mismatchedPasswords");
+        }
         if (StringUtils.isEmpty(getBean().getOpenIdUrl())) {
-            // check that passwords match if they were specified (w/StringUtils.equals, null == null)
-            if (!StringUtils.equals(getBean().getPasswordText(), getBean().getPasswordConfirm())) {
-                addError("userRegister.error.mismatchedPasswords");
-            }
             if (authMethod == AuthMethod.OIDC) {
                 addError("userRegister.error.missingOpenID");
             }
@@ -152,7 +143,7 @@ public class Profile extends UIAction {
             try {
                 UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
                 User user = mgr.getUserByOpenIdUrl(bean.getOpenIdUrl());
-                if (user != null && !(user.getUserName().equals(bean.getUserName()))) {
+                if (user != null && !user.getUserName().equals(getAuthenticatedUser().getUserName())) {
                     addError("error.add.user.openIdInUse");
                 }
             } catch (WebloggerException ex) {

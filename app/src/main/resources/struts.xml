@@ -597,12 +597,17 @@
 
         <action name="memberResign"
                 class="org.apache.roller.weblogger.ui.struts2.editor.MemberResign">
+            <interceptor-ref name="rollerStack"/>
+            <!-- keep messages across the redirect to the main menu -->
+            <interceptor-ref name="store">
+                <param name="operationMode">AUTOMATIC</param>
+            </interceptor-ref>
             <result name="input" type="tiles">.MemberResign</result>
-            <result name="error" type="chain">
+            <result name="error" type="redirectAction">
                 <param name="actionName">menu</param>
                 <param name="namespace">/roller-ui</param>
             </result>
-            <result name="success" type="chain">
+            <result name="success" type="redirectAction">
                 <param name="actionName">menu</param>
                 <param name="namespace">/roller-ui</param>
             </result>
