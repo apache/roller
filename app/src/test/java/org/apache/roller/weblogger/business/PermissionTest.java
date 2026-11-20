@@ -414,8 +414,11 @@ public class PermissionTest  {
             Weblog left = WebloggerFactory.getWeblogger().getWeblogManager().getWeblog(weblog.getId());
             if (left != null) {
                 for (User user : List.of(invitee, member)) {
-                    mgr.revokeWeblogPermission(left, mgr.getUserByUserName(user.getUserName(), null),
-                            WeblogPermission.ALL_ACTIONS);
+                    User stored = mgr.getUserByUserName(user.getUserName(), null);
+                    // the removal may have got as far as the memberships
+                    if (mgr.getWeblogPermissionIncludingPending(left, stored) != null) {
+                        mgr.revokeWeblogPermission(left, stored, WeblogPermission.ALL_ACTIONS);
+                    }
                 }
                 TestUtils.endSession(true);
                 TestUtils.teardownWeblog(left.getId());

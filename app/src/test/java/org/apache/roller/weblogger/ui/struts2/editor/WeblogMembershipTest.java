@@ -80,14 +80,7 @@ class WeblogMembershipTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        // removing a weblog leaves pending invitations, which would carry over
-        // to the next test's weblog of the same handle
-        for (String name : List.of(ownerName, memberName)) {
-            if (permission(name) != null) {
-                users().revokeWeblogPermission(weblog(), user(name), WeblogPermission.ALL_ACTIONS);
-            }
-        }
-        TestUtils.endSession(true);
+        // removing the weblog also removes its memberships and invitations
         TestUtils.teardownWeblog(weblogId);
         TestUtils.teardownUser(ownerName);
         TestUtils.teardownUser(memberName);
