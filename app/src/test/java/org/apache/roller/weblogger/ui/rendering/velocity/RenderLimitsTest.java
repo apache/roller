@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -478,5 +479,213 @@ public class RenderLimitsTest {
         assertEquals(null, outcome.failure);
         assertTrue(outcome.out.getHead().contains("<!-- error-parse -->"),
                 "rendering wrote " + outcome.out.getHead());
+    }
+
+    /** 81,920 characters, for tests with a limit of 100,000. */
+    private static final String EIGHTY_THOUSAND_DIGITS = "#set($s = '0123456789')"
+            + "#foreach($i in [1..13])#set($s = \"$s$s\")#end";
+
+    /** A list or map is checked as text before Velocity turns it into one string. */
+    @Test
+    public void aLargeListIsRefusedBeforeItIsWrittenAsText() throws Exception {
+        String[] uses = {
+            "$r",
+            "$r.toString()",
+            "#set($t = '' + $r)",
+            "#set($s = 'x')$s.valueOf($r)",
+            "#if($r == 'x')yes#end",
+            "#set($m = {'k': $r})$m",
+        };
+        for (int i = 0; i < uses.length; i++) {
+            Outcome outcome = renderWithLimit("limits-list-text-" + i + ".vm",
+                    "#set($r = [1..2000000])" + uses[i], 100_000);
+            assertLimit(outcome, "a string would be longer than 100000 characters");
+        }
+    }
+
+    @Test
+    public void aDeeplyNestedListIsRefusedBeforeItIsWrittenAsText() throws Exception {
+        Outcome outcome = renderWithLimit("limits-nested-list.vm",
+                "#set($l = [1])#foreach($i in [1..20])#set($l = [$l, $l])#end$l", 100_000);
+        assertLimit(outcome, "a string would be longer than 100000 characters");
+    }
+
+    @Test
+    public void smallListsAndMapsStillPrint() throws Exception {
+        Outcome outcome = render("limits-list-ordinary.vm",
+                "#set($l = [1, 'two', [3]])#set($m = {'a': 1})"
+                        + "#set($x = $l.add($l))$l $m ${l.size()} #if($m != 'x')ne#end");
+        assertEquals(null, outcome.failure);
+        assertEquals("[1, two, [3], (this Collection)] {a=1} 4 ne", outcome.out.getHead());
+    }
+
+    @Test
+    public void aTemplateThatBuildsAHugeListStopsAtTheLimit() throws Exception {
+        Outcome doubled = render("limits-list-doubling.vm",
+                "#set($l = [1])#foreach($i in [1..24])#set($x = $l.addAll($l))#end$l.size()");
+        assertLimit(doubled, "rendering added more than 1000000 items");
+
+        // the range is refused before any of it is copied
+        Outcome copied = render("limits-list-copy.vm",
+                "#set($l = [])#set($x = $l.addAll([1..30000000]))$l.size()");
+        assertLimit(copied, "rendering added more than 1000000 items");
+
+        Outcome map = render("limits-map.vm",
+                "#set($m = {})#foreach($i in [1..1000])#foreach($j in [1..1001])"
+                        + "#set($x = $m.put(\"$i-$j\", $j))#end#end$m.size()");
+        assertLimit(map, "rendering added more than 1000000 items");
+    }
+
+    @Test
+    public void aTemplateThatKeepsManyLongStringsStopsAtTheLimit() throws Exception {
+        // each string is new, so the list would hold 50 times 81,920 characters
+        Outcome outcome = renderWithLimit("limits-kept-strings.vm", EIGHTY_THOUSAND_DIGITS
+                + "#set($l = [])#foreach($i in [1..50])#set($x = $l.add(\"$s$i\"))#end"
+                + "$l.size()", 100_000);
+        assertLimit(outcome, "rendering built more than 1000000 characters of strings");
+    }
+
+    @Test
+    public void comparingTwoLargeListsElementByElementIsRefused() throws Exception {
+        Outcome outcome = render("limits-contains-all.vm",
+                "#set($a = [1..100000])#set($b = [1..200])$a.containsAll($b)");
+        assertLimit(outcome, "containsAll would compare more than 10000000 pairs");
+
+        Outcome ordinary = render("limits-contains-all-ordinary.vm",
+                "#set($a = [1..1000])#set($b = [1..200])$a.containsAll($b)");
+        assertEquals(null, ordinary.failure);
+        assertEquals("true", ordinary.out.getHead());
+    }
+
+    @Test
+    public void aTemplateThatBuildsAHugeNumberStopsAtTheLimit() throws Exception {
+        String big = "#set($b = 9223372036854775807 + 1)";
+        String[] growth = {
+            "$b.shiftLeft(200000)",
+            "$b.pow(5000)",
+            "$b.setBit(200000)",
+            "#foreach($i in [1..15])#set($b = $b * $b)#end",
+        };
+        for (int i = 0; i < growth.length; i++) {
+            Outcome outcome = render("limits-number-" + i + ".vm", big + growth[i]);
+            assertLimit(outcome, "a number would have more than 100000 bits");
+        }
+        Outcome prime = render("limits-number-prime.vm", big + "$b.isProbablePrime(50)");
+        assertLimit(prime, "isProbablePrime is not available to templates");
+
+        Outcome ordinary = render("limits-number-ordinary.vm", big + "$b.shiftLeft(2) ${b.pow(2)}");
+        assertEquals(null, ordinary.failure);
+        assertEquals("36893488147419103232 85070591730234615865843651857942052864",
+                ordinary.out.getHead());
+    }
+
+    @Test
+    public void utilitiesSplitIntoMorePiecesThanALoopCanVisitIsRefused() throws Exception {
+        Map<String, Object> context = new HashMap<>();
+        context.put("utils", new UtilitiesModel());
+        context.put("s", "a,".repeat(150_000));
+        Outcome outcome = render("limits-utils-split.vm", "$utils.split($s, ',').size()",
+                context);
+        assertLimit(outcome, "split produced more than 100000 pieces");
+
+        context.put("s", ",,a,,b,c,,");
+        Outcome ordinary = render("limits-utils-split-ordinary.vm",
+                "$utils.split($s, ',').size()", context);
+        assertEquals(null, ordinary.failure);
+        assertEquals("3", ordinary.out.getHead());
+    }
+
+    @Test
+    public void stringMethodsThatSplitWithoutTheLimitsAreNotAvailable() throws Exception {
+        Outcome outcome = render("limits-split-delimiters.vm",
+                "#set($s = 'a,b')[$s.splitWithDelimiters(',', 0)][$s.lines()]");
+        assertEquals(null, outcome.failure);
+        assertEquals("[$s.splitWithDelimiters(',', 0)][$s.lines()]", outcome.out.getHead());
+    }
+
+    /** Velocity calls a class's static methods on its Class object. */
+    @Test
+    public void staticStringMethodsAreNotAvailableThroughTheClass() throws Exception {
+        Outcome outcome = render("limits-class-static.vm",
+                "#set($s = 'x')[$s.class.format('%s', 'y')][$s.getClass().join('-', ['a'])]"
+                        + "[$s.class.name][$s.getClass().getName()]");
+        assertEquals(null, outcome.failure);
+        assertEquals("[$s.class.format('%s', 'y')][$s.getClass().join('-', ['a'])]"
+                + "[java.lang.String][java.lang.String]", outcome.out.getHead());
+    }
+
+    /**
+     * A replace with a group that doesn't exist, or with no replacement,
+     * shows the template error page as before, rather than failing the page.
+     */
+    @Test
+    public void aRegexReplaceTheStringMethodRefusesShowsTheTemplateError() throws Exception {
+        String[] calls = {"$s.replaceAll('b', '$1')", "$s.replaceAll('b', $nothing)",
+            "$s.replaceFirst('x', $nothing)"};
+        for (int i = 0; i < calls.length; i++) {
+            Outcome outcome = render("limits-regex-error-" + i + ".vm",
+                    "#set($s = 'abc')[" + calls[i] + "]");
+            assertEquals(null, outcome.failure, calls[i]);
+            assertTrue(outcome.out.getHead().contains("<!-- error-parse -->"),
+                    calls[i] + " wrote " + outcome.out.getHead());
+        }
+        Outcome nothingToReplace = render("limits-regex-null-unmatched.vm",
+                "#set($s = 'abc')[$s.replaceAll('x', $nothing)]");
+        assertEquals(null, nothingToReplace.failure);
+        assertEquals("[abc]", nothingToReplace.out.getHead());
+    }
+
+    @Test
+    public void aRegexThatRepeatsAnEmptyMatchIsRefused() throws Exception {
+        Outcome outcome = render("limits-regex-empty.vm",
+                "#set($s = '')$s.matches('(?:a?|b?)(?:a?|b?)c')");
+        assertLimit(outcome, "a regular expression repeats a part that can match an empty");
+    }
+
+    /** A template error can quote a long value, which the error page shortens. */
+    @Test
+    public void aTemplateErrorAboutALongValueStaysShort() throws Exception {
+        Outcome outcome = render("limits-long-error.vm", TEN_THOUSAND_DIGITS
+                + "#set($t = \"x$s\")#set($i = 1)$i.parseInt($t)");
+        assertEquals(null, outcome.failure);
+        assertTrue(outcome.out.getHead().contains("<!-- error-parse -->"),
+                "rendering wrote " + outcome.out.getHead());
+        assertTrue(outcome.out.getCount() < 5000, "the error page wrote "
+                + outcome.out.getCount() + " chars");
+    }
+
+    @Test
+    public void aBlankOrInvalidLimitFallsBackToTheDefault() throws Exception {
+        for (String value : new String[] {"", " ", "ten"}) {
+            try (AutoCloseable limit = RollerVelocityTestSupport.property(
+                    RenderSession.MAX_OUTPUT_CHARS, value)) {
+                RenderSession session = RenderSession.begin(null);
+                try {
+                    assertEquals(10L * 1024 * 1024, session.getMaxOutputChars(), value);
+                } finally {
+                    session.end();
+                }
+            }
+        }
+    }
+
+    @Test
+    public void aSessionStartedInsideAnotherSharesItsBudget() throws Exception {
+        try (AutoCloseable limit = RollerVelocityTestSupport.property(
+                RenderSession.MAX_OUTPUT_CHARS, "1000")) {
+            RenderSession outer = RenderSession.begin(null);
+            try {
+                RenderSession.chargeBuilt(9000);
+                RenderSession inner = RenderSession.begin(null);
+                try {
+                    assertThrows(RenderLimitException.class,
+                            () -> RenderSession.chargeBuilt(2000));
+                } finally {
+                    inner.end();
+                }
+            } finally {
+                outer.end();
+            }
+        }
     }
 }

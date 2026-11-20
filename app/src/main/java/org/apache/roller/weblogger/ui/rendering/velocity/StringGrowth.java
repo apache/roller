@@ -56,7 +56,7 @@ final class StringGrowth {
     private static final Set<String> NON_GROWING_STRING_METHODS = Set.of(
             "substring", "subSequence", "trim", "strip", "stripLeading",
             "stripTrailing", "stripIndent", "translateEscapes", "intern",
-            "toString", "valueOf", "copyValueOf");
+            "toString", "copyValueOf");
 
     /** StringBuilder and StringBuffer methods that are not offered to templates. */
     private static final Set<String> REFUSED_BUILDER_METHODS = Set.of("repeat");
@@ -107,6 +107,12 @@ final class StringGrowth {
      *         build a string whose length can't be worked out from the call
      */
     static boolean isRefused(Object receiver, String methodName, Class<?> returnType) {
+        if (receiver instanceof Class) {
+            // Velocity calls a class's static methods on its Class object,
+            // which would offer String.format and join by another name.
+            // SecureUberspector allows only getName of Class's own methods.
+            return !"getName".equals(methodName);
+        }
         if (receiver instanceof String) {
             if (REFUSED_STRING_METHODS.contains(methodName)) {
                 return true;
@@ -136,6 +142,7 @@ final class StringGrowth {
             case "concat":
             case "toUpperCase":
             case "toLowerCase":
+            case "valueOf":
                 return true;
             default:
                 return false;
@@ -346,6 +353,9 @@ final class StringGrowth {
                 return 0;
             case "concat":
                 return add(len, length(a.length > 0 ? a[0] : null));
+            case "valueOf":
+                // a list or map passed as an Object is printed in full
+                return a.length == 1 ? length(a[0]) : 0;
             case "toUpperCase":
             case "toLowerCase":
                 return caseChange(s);
@@ -406,7 +416,42 @@ final class StringGrowth {
         if (value instanceof char[]) {
             return ((char[]) value).length;
         }
+        if (value instanceof java.util.Collection || value instanceof java.util.Map) {
+            RenderSession session = RenderSession.current();
+            return ValueLimits.textLength(value,
+                    session == null ? Long.MAX_VALUE : session.getMaxOutputChars());
+        }
         return value == null ? 0 : SCALAR_LENGTH;
+    }
+
+    /**
+     * Throws if $utils.split would return more pieces than a template loop
+     * can visit. It splits at any of the separator characters (whitespace
+     * when there are none) and drops empty pieces, so the pieces are the
+     * runs of other characters.
+     */
+    static void checkPieces(Object receiver, String methodName, Object[] args) {
+        if (!(receiver instanceof UtilitiesModel) || !"split".equals(methodName)
+                || args == null || args.length != 2 || !(args[0] instanceof CharSequence)) {
+            return;
+        }
+        CharSequence s = (CharSequence) args[0];
+        String separators = args[1] == null ? null : args[1].toString();
+        long pieces = 0;
+        boolean inPiece = false;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            boolean separator = separators == null ? Character.isWhitespace(c)
+                    : separators.indexOf(c) >= 0;
+            if (!separator && !inPiece) {
+                pieces++;
+            }
+            inPiece = !separator;
+        }
+        if (pieces > DeadlineRegex.MAX_SPLIT_PIECES) {
+            throw new RenderLimitException("split produced more than "
+                    + DeadlineRegex.MAX_SPLIT_PIECES + " pieces");
+        }
     }
 
     private static long add(long a, long b) {
