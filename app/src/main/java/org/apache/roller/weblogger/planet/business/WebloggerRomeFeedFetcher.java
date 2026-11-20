@@ -59,6 +59,23 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
     }
     
     
+    /**
+     * Fetch a feed for a new subscription. Unlike the updater's fetch, which
+     * quietly skips local weblogs until site.absoluteurl is set, this says
+     * why a local weblog can't be added yet.
+     */
+    @Override
+    public Subscription fetchSubscription(String feedURL) throws FetcherException {
+        if (feedURL != null && feedURL.startsWith("weblogger:")
+                && !WebloggerRuntimeConfig.isAbsoluteContextURLSet()) {
+            throw new FetcherException("This site's weblogs can't be added "
+                    + "until the site's absolute URL is set. Set it under "
+                    + "Server Admin > Configuration.");
+        }
+        return super.fetchSubscription(feedURL);
+    }
+
+
     @Override
     public Subscription fetchSubscription(String feedURL, Date lastModified)
             throws FetcherException {
@@ -74,6 +91,13 @@ public class WebloggerRomeFeedFetcher extends RomeFeedFetcher {
             return super.fetchSubscription(feedURL, lastModified);
         }
         
+        // the subscription and its entries store absolute links to the
+        // weblog, which can't be built until site.absoluteurl is set
+        if (!WebloggerRuntimeConfig.isAbsoluteContextURLSet()) {
+            log.debug("Skipping LOCAL feed until site.absoluteurl is set - " + feedURL);
+            return null;
+        }
+
         // extract blog handle from our special feed url
         String weblogHandle = null;
         String[] items = feedURL.split(":", 2);

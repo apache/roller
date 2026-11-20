@@ -268,7 +268,7 @@ limitations under the License.
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
-            <version>3.7.1</version>
+            <version>3.8.0</version>
         </dependency>
 
         <dependency>
@@ -576,6 +576,13 @@ limitations under the License.
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyclient</artifactId>
             <version>${derby.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.22.3</version>
             <scope>test</scope>
         </dependency>
 

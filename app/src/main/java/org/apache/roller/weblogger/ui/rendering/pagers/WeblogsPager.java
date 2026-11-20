@@ -94,7 +94,7 @@ public class WeblogsPager extends AbstractPager<WeblogWrapper> {
         // need to add letter param if it exists
         if(letter != null) {
             int page = getPage() + 1;
-            if(hasMoreItems()) {
+            if(hasNextPage()) {
                 return createURL(getUrl(), Map.of("page", ""+page, "letter", letter));
             }
             return null;
