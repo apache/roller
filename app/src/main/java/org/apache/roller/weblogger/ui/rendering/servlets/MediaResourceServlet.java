@@ -112,14 +112,6 @@ public class MediaResourceServlet extends HttpServlet {
             return;
         }
 
-        // An image over the thumbnail pixel limit and stored without a
-        // thumbnail has none. Answer 404 rather than sending the full image, so
-        // previews show the file type icon.
-        if (resourceRequest.isThumbnail() && mediaFile.isThumbnailSkipped()) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
-
         // Respond with 304 Not Modified if it is not modified.
         if (ModDateHeaderUtil.respondIfNotModified(request, response,
                 resourceLastMod, resourceRequest.getDeviceType())) {

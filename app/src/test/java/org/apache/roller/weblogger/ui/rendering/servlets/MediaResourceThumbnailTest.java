@@ -48,9 +48,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * A thumbnail request for an image that is too large to get a thumbnail is
- * answered with 404, so previews show the file type icon instead of loading
- * the full image. Other images without a thumbnail still get the original.
+ * A thumbnail request for an image without a thumbnail, also one too large
+ * to get a thumbnail, is answered with the original, so entries that embed
+ * the thumbnail address keep showing the image.
  */
 class MediaResourceThumbnailTest {
 
@@ -94,16 +94,15 @@ class MediaResourceThumbnailTest {
     }
 
     @Test
-    void thumbnailOfImageStoredWithoutOneIsNotFound() throws Exception {
+    void thumbnailOfImageTooLargeForOneFallsBackToOriginal() throws Exception {
         when(file.getThumbnailInputStream()).thenReturn(null);
         when(file.isThumbnailSkipped()).thenReturn(true);
 
         ByteArrayOutputStream written = new ByteArrayOutputStream();
         HttpServletResponse response = serve(true, written);
 
-        verify(response).sendError(HttpServletResponse.SC_NOT_FOUND);
-        verify(file, never()).getInputStream();
-        assertEquals("", written.toString(StandardCharsets.UTF_8.name()));
+        verify(response, never()).sendError(anyInt());
+        assertEquals("original", written.toString(StandardCharsets.UTF_8.name()));
     }
 
     @Test
