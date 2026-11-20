@@ -113,8 +113,8 @@ public class MediaResourceServlet extends HttpServlet {
             return;
         }
 
-        // An image stored without a thumbnail, because it was too large for
-        // one, has none. Send the file icon rather than the full image, so
+        // An image over the thumbnail pixel limit and stored without a
+        // thumbnail has none. Send the file icon rather than the full image, so
         // previews stay small.
         if (resourceRequest.isThumbnail() && mediaFile.isThumbnailSkipped()) {
             servePlaceholder(response);
