@@ -164,8 +164,7 @@
         if (RollerRichEditor.hasActiveHtml(document.getElementById('edit_content').value)) {
             $('#edit_content_html_notice').show();
             RollerRichEditor.trackCursor(document.getElementById('edit_content'));
-            // input, not change: change waits for the textarea to lose focus
-            $("#edit_content").one("input", warnBeforeLeaving);
+            armLeaveWarning();
             return;
         }
         richEditorStarted = true;
@@ -201,9 +200,18 @@
                 }
             }
         );
-        // Added event listener to confirm once the editor content is changed
-        $('#edit_content').one('summernote.change', warnBeforeLeaving);
+        armLeaveWarning();
     });
+
+    // Warns before leaving the page once the entry is edited. Input, not
+    // change, for the textarea: change waits for it to lose focus.
+    function armLeaveWarning() {
+        if (richEditorStarted) {
+            $('#edit_content').one('summernote.change', warnBeforeLeaving);
+        } else {
+            $("#edit_content").one("input", warnBeforeLeaving);
+        }
+    }
 
     function warnBeforeLeaving() {
         var confirmFunction = function(event) {
@@ -215,9 +223,11 @@
         }
         $(window).on("beforeunload", confirmFunction);
 
-        // Remove it if it is form submit
-        $(this.form).on('submit', function() {
+        // Remove it if it is form submit, and warn again on the next edit if
+        // the page stays, as when the submit is stopped
+        $(this.form).one('submit', function() {
             $(window).off("beforeunload", confirmFunction);
+            armLeaveWarning();
         });
     }
 
