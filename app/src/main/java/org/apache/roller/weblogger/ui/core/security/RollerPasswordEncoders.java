@@ -176,8 +176,10 @@ public final class RollerPasswordEncoders {
     }
 
     /**
-     * The longest password, in UTF-8 bytes, that every encoder accepts. BCrypt
-     * refuses longer ones.
+     * The longest password, in UTF-8 bytes, that BCrypt accepts. PBKDF2,
+     * SCrypt and Argon2 take longer ones, but the limit applies whatever the
+     * algorithm, so that a site can switch to BCrypt, the default, without
+     * leaving passwords it can't re-encode.
      */
     public static final int MAX_PASSWORD_BYTES = 72;
 
