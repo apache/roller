@@ -168,6 +168,8 @@ class RichEditorContentIT {
         // Bootstrap acts on clicks on these anywhere in the page
         "<p><a data-toggle=\"modal\" data-target=\"#x\" href=\"/x\">text</a></p>",
         "<p><a data-bs-toggle=\"collapse\" href=\"#x\">text</a></p>",
+        "<meta name=\"referrer\" content=\"no-referrer\">",
+        "<meta itemprop=\"isbn\" http-equiv=\"refresh\" content=\"0\">",
     })
     void opensInTheTextarea(String html) {
         assertTrue(hasActiveHtml(html), html);
@@ -197,6 +199,9 @@ class RichEditorContentIT {
         "<!-- <b>bold</b> and <meta> --><p>text</p>",
         "<table><tr><td>1</td></tr></table><p>after the table</p>",
         "<p>Use &lt;b&gt; for bold, as https://example.com/ shows</p>",
+        // an SVG tooltip, and microdata
+        "<svg width=\"10\" height=\"10\"><title>Chart</title><rect width=\"10\" height=\"10\"></rect></svg>",
+        "<div itemscope itemtype=\"https://schema.org/Book\"><meta itemprop=\"isbn\" content=\"123\"></div>",
     })
     void staysInTheRichEditor(String html) {
         assertFalse(hasActiveHtml(html), html);
