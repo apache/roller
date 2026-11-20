@@ -40,17 +40,21 @@
  */
 var RollerRichEditor = (function () {
 
-    // jQuery runs <script> elements it inserts; <base>, <meta>, <link> and
-    // <style> act on the whole page; <noscript> parses differently in the inert document,
+    // jQuery runs <script> elements it inserts; <base>, <link> and <style>
+    // act on the whole page, as does a <meta> that isn't microdata (see
+    // isActiveElement); <noscript> parses differently in the inert document,
     // which has scripting off, so its contents can't be checked; <textarea>,
-    // <title>, <xmp>, <noembed>, <noframes> and <plaintext> hold raw text that
-    // reads as markup when moved elsewhere; SVG <set> and <animate> can change
-    // other attributes after loading. The rich editor is inside the entry
-    // form, so it drops a <form>'s own tags on save, and <input>, <button> and
-    // <select> would be submitted with the entry or submit it themselves.
+    // HTML <title>, <xmp>, <noembed>, <noframes> and <plaintext> hold raw text
+    // that reads as markup when moved elsewhere; SVG <set> and <animate> can
+    // change other attributes after loading. The rich editor is inside the
+    // entry form, so it drops a <form>'s own tags on save, and <input>,
+    // <button> and <select> would be submitted with the entry or submit it
+    // themselves.
     var ACTIVE_ELEMENTS = "script, iframe, frame, frameset, object, embed, applet, "
-        + "base, meta, link, style, noscript, textarea, title, xmp, noembed, "
+        + "base, link, style, noscript, textarea, xmp, noembed, "
         + "noframes, plaintext, set, animate, form, input, button, select";
+
+    var HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 
     // attributes whose value the browser loads or follows as a URL
     var URL_ATTRIBUTES = ["href", "src", "action", "formaction", "xlink:href", "data",
@@ -136,6 +140,19 @@ var RollerRichEditor = (function () {
         return false;
     }
 
+    // An SVG <title> is a tooltip, not raw text, and a <meta> with itemprop
+    // and none of name, http-equiv and charset is microdata.
+    function isActiveElement(element) {
+        if (element.namespaceURI !== HTML_NAMESPACE) {
+            return false;
+        }
+        var has = function (name) {
+            return Element.prototype.hasAttribute.call(element, name);
+        };
+        return element.localName === "title" || (element.localName === "meta"
+            && (!has("itemprop") || has("name") || has("http-equiv") || has("charset")));
+    }
+
     function hasActiveNodes(root) {
         if (select(root, ACTIVE_ELEMENTS).length) {
             return true;
@@ -143,6 +160,9 @@ var RollerRichEditor = (function () {
         var elements = select(root, "*");
         for (var i = 0; i < elements.length; i++) {
             var element = elements[i];
+            if (isActiveElement(element)) {
+                return true;
+            }
             var attributes = attributesOf.call(element);
             for (var j = 0; j < attributes.length; j++) {
                 var name = attributes[j].name.toLowerCase();
