@@ -20,6 +20,7 @@
 package org.apache.roller.playwright;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,15 +56,22 @@ class RichEditorContentIT {
     private static final Path SCRIPT = Paths.get(
             "../app/src/main/webapp/roller-ui/scripts/rich-editor-content.js");
 
+    // the rich editor loads entries with jQuery's html()
+    private static final String JQUERY = "META-INF/resources/webjars/jquery/4.0.0/jquery.js";
+
     private static Playwright playwright;
     private static Browser browser;
     private static String script;
+    private static String jquery;
 
     private Page page;
 
     @BeforeAll
     static void launchBrowser() throws IOException {
         script = new String(Files.readAllBytes(SCRIPT), StandardCharsets.UTF_8);
+        try (InputStream in = RichEditorContentIT.class.getClassLoader().getResourceAsStream(JQUERY)) {
+            jquery = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        }
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
                 .setHeadless(!Boolean.getBoolean("playwright.headed")));
@@ -147,6 +155,11 @@ class RichEditorContentIT {
         "<img name=documentElement><img src onerror=go()>",
         "<img name=querySelectorAll><img src onerror=go()>",
         "<img name=body><table><tr><td onclick=\"go()\">x</td></tr></table>",
+        // jQuery parses HTML that starts with a table part inside a table
+        "<col><td onclick=\"go()\">x</td>",
+        // leaving code view removes <meta> tags, which here ends the comment
+        "<!-- -<meta>-> <input> -->",
+        "<!-- <iframe src=\"https://example.com/\"></iframe> -->",
     })
     void opensInTheTextarea(String html) {
         assertTrue(hasActiveHtml(html), html);
@@ -172,31 +185,36 @@ class RichEditorContentIT {
         "<img name=\"querySelector\" src=\"a.png\" alt=\"\">",
         "<img name=\"querySelectorAll\" src=\"a.png\" alt=\"\">",
         "<img name=\"createElement\" src=\"a.png\" alt=\"\">",
+        "<!-- more --><p>text</p>",
+        "<!-- <b>bold</b> and <meta> --><p>text</p>",
+        "<table><tr><td>1</td></tr></table><p>after the table</p>",
     })
     void staysInTheRichEditor(String html) {
         assertFalse(hasActiveHtml(html), html);
     }
 
     /**
-     * The rich editor loads an entry inside the entry form, where a nested
-     * form's start tag is ignored, so what the check lets through must not
-     * hold an event handler there either.
+     * The rich editor loads an entry with jQuery's html(), inside the entry
+     * form, where a nested form's start tag is ignored, so what the check lets
+     * through must not hold an event handler once jQuery has loaded it there.
+     * None of these handlers runs without a click.
      */
     @ParameterizedTest
     @ValueSource(strings = {
-        "<math><mtext><p><form></form><mglyph><![CDATA[><img src onerror=go()>]]>",
-        "<form><math><mtext></form><form><mglyph><style></math><img src onerror=go()>",
-        "</form><form onanimationstart=\"go()\"><input name=\"attributes\">x</form>",
+        "<form><div></form><form><p onclick=\"go()\">x</p>",
+        "</form><form onclick=\"go()\"><input name=\"attributes\">x</form>",
+        "<col><td onclick=\"go()\">x</td>",
+        "<caption onclick=\"go()\">x</caption>",
+        "<!--<tr>--><td onclick=\"go()\">x</td>",
         "<p>Hello <b>world</b></p>",
         "<table><caption>c</caption><tr><td>1</td><td>2</td></tr></table>",
     })
-    void whatStaysInTheRichEditorHasNoEventHandlersInTheEntryForm(String html) {
+    void whatStaysInTheRichEditorHasNoEventHandlersOnceJqueryLoadsIt(String html) {
+        page.addScriptTag(new Page.AddScriptTagOptions().setContent(jquery));
         boolean handlers = (Boolean) page.evaluate("html => {"
-                + "  const inert = document.implementation.createHTMLDocument('');"
-                + "  const form = inert.body.appendChild(inert.createElement('form'));"
-                + "  const holder = form.appendChild(inert.createElement('div'));"
-                + "  holder.innerHTML = html;"
-                + "  return Array.from(holder.querySelectorAll('*')).some(element =>"
+                + "  const editor = document.getElementById('entry').appendChild(document.createElement('div'));"
+                + "  jQuery(editor).html(html);"
+                + "  return Array.from(editor.querySelectorAll('*')).some(element =>"
                 + "      element.getAttributeNames().some(name => name.startsWith('on')));"
                 + "}", html);
         assertTrue(hasActiveHtml(html) || !handlers, html);

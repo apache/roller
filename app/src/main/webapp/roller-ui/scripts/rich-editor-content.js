@@ -24,9 +24,10 @@
  * would also drop some of it on save, so those entries open in the plain HTML
  * textarea instead. The stored HTML is never changed.
  *
- * hasActiveHtml(html) parses the HTML in an inert document and returns true if
- * it contains anything the rich editor would run or can't keep: script, frame,
- * plugin, style, raw text and document-level elements, forms and form
+ * hasActiveHtml(html) parses the HTML the way the rich editor loads it, with
+ * jQuery's html(), but in an inert standards-mode document, and returns true
+ * if it contains anything the rich editor would run or can't keep: script,
+ * frame, plugin, style, raw text and document-level elements, forms and form
  * controls, on* and formaction attributes, javascript: and vbscript: URLs in
  * URL attributes, or markup that parses differently once serialized and parsed
  * again, as the rich editor does for undo and code view. It returns true if
@@ -55,32 +56,44 @@ var RollerRichEditor = (function () {
         "poster", "background", "cite", "srcset"];
 
     // control characters and whitespace that browsers ignore inside a URL scheme
-    var IGNORED_IN_SCHEME = /[\s\u0000-\u001f\u007f-\u00a0\u200b-\u200f\u2060\ufeff]/g;
+    var IGNORED_IN_SCHEME = /[\s\u0000-\u001f\u007f- ​-‏⁠﻿]/g;
+
+    // jQuery's html() sets innerHTML in place, unless the HTML has one of
+    // these tags or its first tag, which can be inside a comment, is a table
+    // part. Then it parses the HTML in a detached element, inside the table
+    // elements that part needs.
+    var FIRST_TAG = /<([a-z][^\/\0>\x20\t\r\n\f]*)/i;
+    var NOT_IN_PLACE = /<script|<style|<link/i;
+    var TABLE_WRAPPERS = {
+        thead: ["table"], tbody: ["table"], tfoot: ["table"], colgroup: ["table"],
+        caption: ["table"], col: ["table", "colgroup"], tr: ["table", "tbody"],
+        td: ["table", "tbody", "tr"], th: ["table", "tbody", "tr"]
+    };
+
+    // Summernote 0.9 removes these tags from the HTML when the author leaves
+    // code view, and keeps an iframe only if it comes from one of a list of
+    // video sites.
+    var CODE_VIEW_FILTER = /<\/*(?:applet|b(?:ase|gsound|link)|embed|frame(?:set)?|ilayer|l(?:ayer|ink)|meta|object|s(?:cript|tyle)|t(?:itle|extarea)|xml)[^>]*?>/gi;
+    var CODE_VIEW_IFRAME = /<iframe/i;
+
+    // how many trips through code view in a row the check follows
+    var CODE_VIEW_TRIPS = 3;
 
     // A form control named "attributes" or "firstChild" replaces that property
-    // on its form, and an image named "body" or "querySelectorAll" does on its
-    // document, so these read the properties from the prototypes instead.
+    // on its form, so these read the properties from the prototypes instead.
     function getter(prototype, name) {
         return Object.getOwnPropertyDescriptor(prototype, name).get;
     }
     var attributesOf = getter(Element.prototype, "attributes");
     var firstChildOf = getter(Node.prototype, "firstChild");
+    var lastChildOf = getter(Node.prototype, "lastChild");
     var nextSiblingOf = getter(Node.prototype, "nextSibling");
+    var innerHtmlOf = getter(Element.prototype, "innerHTML");
     var contentOf = getter(HTMLTemplateElement.prototype, "content");
-    var bodyOf = getter(Document.prototype, "body");
 
-    function createElement(doc, name) {
-        return Document.prototype.createElement.call(doc, name);
-    }
-
-    // the elements under a document, fragment or element that match a selector
+    // the elements under a fragment or element that match a selector
     function select(root, selector) {
-        var prototype = Element.prototype;
-        if (root instanceof Document) {
-            prototype = Document.prototype;
-        } else if (root instanceof DocumentFragment) {
-            prototype = DocumentFragment.prototype;
-        }
+        var prototype = root instanceof DocumentFragment ? DocumentFragment.prototype : Element.prototype;
         return prototype.querySelectorAll.call(root, selector);
     }
 
@@ -155,20 +168,74 @@ var RollerRichEditor = (function () {
         return out;
     }
 
-    // The rich editor is inside the entry form, where the parser ignores the
-    // start tag of another <form>, so the same HTML can become different
-    // elements there.
-    function parseInForm(doc, html) {
-        var form = createElement(doc, "form");
-        var holder = form.appendChild(createElement(doc, "div"));
-        holder.innerHTML = html;
-        return holder;
+    // What jQuery's html() builds from the HTML, for jQuery 3 and 4: for each
+    // parse, a holder with every element the parser made, and the element
+    // whose children the rich editor gets, or null where jQuery would fail.
+    function parseAsEditor(doc, html) {
+        var tag = (FIRST_TAG.exec(html) || ["", ""])[1].toLowerCase();
+        var wrappers = TABLE_WRAPPERS.hasOwnProperty(tag) ? TABLE_WRAPPERS[tag] : null;
+        if (!wrappers && !NOT_IN_PLACE.test(html)) {
+            // In place, in the rich editor inside the entry form, where the
+            // parser ignores the start tag of another <form>. Outside it, the
+            // same HTML shows the forms the rich editor would drop on save.
+            var form = doc.createElement("form");
+            var editor = form.appendChild(doc.createElement("div"));
+            editor.innerHTML = html;
+            var outside = doc.createElement("div");
+            outside.innerHTML = html;
+            return [{holder: editor, content: editor}, {holder: outside, content: outside}];
+        }
+        wrappers = wrappers || [];
+        // jQuery 3 adds the wrappers' tags around the HTML, then takes the
+        // last child at each level
+        var asText = doc.createElement("div");
+        asText.innerHTML = "<" + wrappers.join("><") + ">" + html
+            + "</" + wrappers.slice().reverse().join("></") + ">";
+        var content = asText;
+        for (var i = 0; i < wrappers.length && content; i++) {
+            content = lastChildOf.call(content);
+        }
+        // jQuery 4 parses the HTML inside the wrapper elements
+        var asElements = doc.createElement("div");
+        var inner = asElements;
+        for (var j = 0; j < wrappers.length; j++) {
+            inner = inner.appendChild(doc.createElement(wrappers[j]));
+        }
+        inner.innerHTML = html;
+        return [{holder: asText, content: content}, {holder: asElements, content: inner}];
     }
 
-    function parseFragment(doc, html) {
-        var template = createElement(doc, "template");
-        template.innerHTML = html;
-        return template;
+    // Whether the rich editor could run or lose something in the HTML as it
+    // loads it, and as it loads it again for undo and when leaving code view.
+    function isActive(doc, html, codeViewTrips) {
+        var parses = parseAsEditor(doc, html);
+        for (var i = 0; i < parses.length; i++) {
+            var content = parses[i].content;
+            if (!content || hasActiveNodes(parses[i].holder)) {
+                return true;
+            }
+            // Summernote serializes its content and loads it again for undo;
+            // markup such as nested forms comes back as a different tree of
+            // elements, which this check hasn't seen.
+            var serialized = innerHtmlOf.call(content);
+            var again = parseAsEditor(doc, serialized);
+            for (var j = 0; j < again.length; j++) {
+                if (!again[j].content || shape(again[j].content) !== shape(content)) {
+                    return true;
+                }
+            }
+            // Leaving code view removes tags from the serialized HTML, which
+            // can turn text inside a comment or an attribute into markup.
+            if (CODE_VIEW_IFRAME.test(serialized)) {
+                return true;
+            }
+            var viewed = serialized.replace(CODE_VIEW_FILTER, "");
+            if (viewed !== serialized
+                    && (codeViewTrips === 0 || isActive(doc, viewed, codeViewTrips - 1))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function hasActiveHtml(html) {
@@ -176,30 +243,9 @@ var RollerRichEditor = (function () {
             return false;
         }
         try {
-            var doc = new DOMParser().parseFromString(html, "text/html");
-            var body = doc && bodyOf.call(doc);
-            if (!body || hasActiveNodes(doc)) {
-                return true;
-            }
-            // A full document drops table cells and rows found outside a
-            // table, but jQuery's html(), which Summernote uses, keeps them.
-            // Template contents are parsed the same way and stay inert.
-            var template = parseFragment(doc, html);
-            if (hasActiveNodes(template.content)) {
-                return true;
-            }
-            var inForm = parseInForm(doc, html);
-            if (hasActiveNodes(inForm)) {
-                return true;
-            }
-            // Summernote serializes its content and parses it again for undo
-            // and code view; markup such as nested forms comes back as a
-            // different tree of elements, which this check hasn't seen.
-            var again = new DOMParser().parseFromString(body.innerHTML, "text/html");
-            var bodyAgain = again && bodyOf.call(again);
-            return !bodyAgain || shape(bodyAgain) !== shape(body)
-                || shape(parseFragment(doc, template.innerHTML).content) !== shape(template.content)
-                || shape(parseInForm(doc, inForm.innerHTML)) !== shape(inForm);
+            // a standards-mode document, like the editor page, that runs nothing
+            var doc = document.implementation.createHTMLDocument("");
+            return isActive(doc, html, CODE_VIEW_TRIPS);
         } catch (e) {
             return true;
         }
