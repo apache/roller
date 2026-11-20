@@ -57,6 +57,7 @@
 
         <form method="post" id="loginForm"
               action="<c:url value="<%= securityCheckUrl %>"/>" onsubmit="saveUsername(this)">
+            <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>" value="<c:out value="${_csrf.token}"/>"/>
 
             <div class="mb-3">
                 <s:if test="authMethod == 'DB_OIDC'">
@@ -80,8 +81,8 @@
 
             <c:if test="${rememberMeEnabled}">
                 <div class="mb-3">
-                    <input type="checkbox" name="_spring_security_remember_me" id="_spring_security_remember_me"/>
-                    <label for="_spring_security_remember_me" > <s:text name="loginPage.rememberMe"/> </label>
+                    <input type="checkbox" name="remember-me" id="remember-me"/>
+                    <label for="remember-me" > <s:text name="loginPage.rememberMe"/> </label>
                 </div>
             </c:if>
 

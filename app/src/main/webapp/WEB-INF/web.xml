@@ -24,9 +24,15 @@
 
     <display-name>Roller Weblogger</display-name>
 
+    <!-- Spring Security is configured in Java, by SecurityConfig -->
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+    </context-param>
+
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/security.xml</param-value>
+        <param-value>org.apache.roller.weblogger.ui.core.security.SecurityConfig</param-value>
     </context-param>
 
     <context-param>

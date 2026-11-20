@@ -51,7 +51,7 @@ public class LogoutRedirect {
         this.clientRegistrationRepository = clientRegistrationRepository;
     }
 
-    /** Uses the client registrations configured in {@code security.xml}. */
+    /** Uses the client registrations configured in {@code SecurityConfig}. */
     public static LogoutRedirect forServletContext(ServletContext servletContext) {
         return new LogoutRedirect(WebApplicationContextUtils
                 .getRequiredWebApplicationContext(servletContext)

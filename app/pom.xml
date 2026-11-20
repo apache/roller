@@ -547,6 +547,14 @@ limitations under the License.
             <scope>test</scope>
         </dependency>
 
+        <!-- mock servlet requests for the security filter chain tests -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.instancio</groupId>
             <artifactId>instancio-junit</artifactId>
