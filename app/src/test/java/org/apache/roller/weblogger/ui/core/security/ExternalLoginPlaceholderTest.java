@@ -58,18 +58,21 @@ class ExternalLoginPlaceholderTest {
 
     @AfterEach
     void tearDown() throws Exception {
-        if (userName != null) {
-            TestUtils.teardownUser(userName);
-            TestUtils.endSession(true);
-        }
-        Properties config = config();
-        savedProperties.forEach((k, v) -> {
-            if (v == null) {
-                config.remove(k);
-            } else {
-                config.setProperty(k, v);
+        try {
+            if (userName != null) {
+                TestUtils.teardownUser(userName);
+                TestUtils.endSession(true);
             }
-        });
+        } finally {
+            Properties config = config();
+            savedProperties.forEach((k, v) -> {
+                if (v == null) {
+                    config.remove(k);
+                } else {
+                    config.setProperty(k, v);
+                }
+            });
+        }
     }
 
     @Test
@@ -186,6 +189,20 @@ class ExternalLoginPlaceholderTest {
     }
 
     @Test
+    void theRememberMeSignatureUsesTheDefaultForAnEmptyConfiguredPlaceholder() throws Exception {
+        setProperty("authentication.method", "ldap");
+        setProperty("rememberme.enabled", "false");
+        RollerRememberMeServices services = new RollerRememberMeServices(new RollerUserDetailsService());
+        setProperty("users.passwords.externalAuthValue", "<externalAuth>");
+        String signedWithTheDefault = services.makeTokenSignature(1L, "ldapuser", "unused");
+
+        // CustomUserRegistry stores the default for an empty setting
+        setProperty("users.passwords.externalAuthValue", "");
+
+        assertEquals(signedWithTheDefault, services.makeTokenSignature(1L, "ldapuser", "unused"));
+    }
+
+    @Test
     void theEncoderDoesNotMatchThePlaceholder() {
         // the encoder also checks AtomPub and XML-RPC passwords
         PasswordEncoder encoder = RollerPasswordEncoders.create();
@@ -201,7 +218,10 @@ class ExternalLoginPlaceholderTest {
 
     private void setProperty(String key, String value) throws ReflectiveOperationException {
         Properties config = config();
-        savedProperties.putIfAbsent(key, config.getProperty(key));
+        // keep the first value seen, even when it is null (not set)
+        if (!savedProperties.containsKey(key)) {
+            savedProperties.put(key, config.getProperty(key));
+        }
         config.setProperty(key, value);
     }
 

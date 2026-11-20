@@ -308,6 +308,92 @@ public class RollerAtomProtocolTest {
     }
 
     @Test
+    public void testMediaBodyIsReadOnlyUpToTheUploadLimit() throws Exception {
+        PropertiesManager pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
+        RuntimeConfigProperty maxSize = pmgr.getProperty("uploads.file.maxsize");
+        String oldMaxSize = maxSize.getValue();
+        maxSize.setValue("0.01");
+        pmgr.saveProperty(maxSize);
+        TestUtils.endSession(true);
+        long limit = (long) (1024 * 1024 * 0.01);
+        try {
+            for (boolean put : new boolean[] {false, true}) {
+                String path = "/" + HANDLE + "/resources/big.png";
+                if (put) {
+                    // replace an existing file
+                    path = "/" + HANDLE + "/resources/"
+                            + uploadImages("/resources", 1).get(0).getTitle();
+                }
+                CountingStream body = new CountingStream(50L * 1024 * 1024);
+                HttpServletRequest req = mock(HttpServletRequest.class);
+                lenient().when(req.getPathInfo()).thenReturn(
+                        put ? path : "/" + HANDLE + "/resources");
+                lenient().when(req.getContentType()).thenReturn("image/png");
+                lenient().when(req.getHeader("Slug")).thenReturn("big");
+                lenient().when(req.getInputStream()).thenReturn(body);
+                AtomRequest areq = AtomRequest.streaming(req);
+
+                MediaCollection mcol = new MediaCollection(managedUser(), ATOM_URL);
+                AtomException e;
+                if (put) {
+                    e = org.junit.jupiter.api.Assertions.assertThrows(AtomException.class,
+                            () -> mcol.putMedia(areq));
+                } else {
+                    AtomEntry mediaIn = new AtomEntry();
+                    AtomContent content = new AtomContent();
+                    content.setType("image/png");
+                    mediaIn.setContent(content);
+                    e = org.junit.jupiter.api.Assertions.assertThrows(AtomException.class,
+                            () -> mcol.postMedia(areq, mediaIn));
+                }
+                assertEquals(413, e.getStatus(), put ? "PUT" : "POST");
+                assertTrue(body.read < limit + 64 * 1024,
+                        "read " + body.read + " bytes for a limit of " + limit);
+                TestUtils.endSession(true);
+            }
+        } finally {
+            pmgr = WebloggerFactory.getWeblogger().getPropertiesManager();
+            maxSize = pmgr.getProperty("uploads.file.maxsize");
+            maxSize.setValue(oldMaxSize);
+            pmgr.saveProperty(maxSize);
+            TestUtils.endSession(true);
+        }
+    }
+
+    /** A servlet input stream of the given length that counts what is read. */
+    private static class CountingStream extends jakarta.servlet.ServletInputStream {
+        private final long length;
+        long read;
+
+        CountingStream(long length) {
+            this.length = length;
+        }
+
+        @Override
+        public int read() {
+            if (read >= length) {
+                return -1;
+            }
+            read++;
+            return 'x';
+        }
+
+        @Override
+        public boolean isFinished() {
+            return read >= length;
+        }
+
+        @Override
+        public boolean isReady() {
+            return true;
+        }
+
+        @Override
+        public void setReadListener(jakarta.servlet.ReadListener listener) {
+        }
+    }
+
+    @Test
     public void testMediaUpload() throws Exception {
         byte[] bytes = "fake-png-bytes".getBytes(StandardCharsets.UTF_8);
 

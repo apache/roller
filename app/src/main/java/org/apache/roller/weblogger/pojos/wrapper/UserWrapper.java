@@ -20,9 +20,9 @@
 package org.apache.roller.weblogger.pojos.wrapper;
 
 import java.util.Date;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
-import org.apache.roller.weblogger.util.HTMLSanitizer;
 
 
 /**
@@ -53,19 +53,36 @@ public final class UserWrapper {
      */
     public String getUserName() {
         if (WebloggerConfig.getBooleanProperty("user.hideUserNames")) {
-            return this.pojo.getScreenName();
+            return getScreenName();
         }
         return this.pojo.getUserName();
     }
     
     
+    /**
+     * Get the screen name as html escaped text, since users choose their own
+     * screen names and templates print them as they are.
+     */
     public String getScreenName() {
-        return HTMLSanitizer.conditionallySanitize(this.pojo.getScreenName());
+        return escapeOnce(this.pojo.getScreenName());
     }
     
     
+    /**
+     * Get the full name as html escaped text.
+     */
     public String getFullName() {
-        return HTMLSanitizer.conditionallySanitize(this.pojo.getFullName());
+        return escapeOnce(this.pojo.getFullName());
+    }
+    
+    
+    /**
+     * Names are stored as typed when weblog admins are trusted, and already
+     * html encoded by the sanitizer when they aren't, so decode any entities
+     * before escaping to encode them exactly once.
+     */
+    private static String escapeOnce(String name) {
+        return StringEscapeUtils.escapeHtml4(StringEscapeUtils.unescapeHtml4(name));
     }
     
     

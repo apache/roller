@@ -20,6 +20,7 @@
 package org.apache.roller.weblogger.ui.core.filters;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -35,9 +36,14 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.roller.weblogger.config.WebloggerRuntimeConfig;
 
 /**
- * A special initialization filter which ensures that we have an opportunity to
- * extract a few pieces of information about the environment we are running in
- * when the first request is sent.
+ * A special initialization filter which records a few pieces of information
+ * about the environment we are running in.
+ *
+ * The relative context url is taken from the first request. The absolute url
+ * of each request is made available to WebloggerRuntimeConfig for the length
+ * of that request only, so it can stand in for site.absoluteurl while that
+ * property is unset. It is never stored beyond the request, because it comes
+ * from the client's Host header.
  * 
  * @web.filter name="InitFilter"
  */
@@ -45,48 +51,38 @@ public class InitFilter implements Filter {
 
     private static final Log log = LogFactory.getLog(InitFilter.class);
 
-    private boolean initialized = false;
+    private static final UrlValidator URL_VALIDATOR = new UrlValidator(
+            new String[]{"http", "https"},
+            UrlValidator.ALLOW_LOCAL_URLS); // for integration tests
+
+    private volatile boolean initialized = false;
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res,
             FilterChain chain) throws IOException, ServletException {
 
-        if (!initialized) {
+        HttpServletRequest request = (HttpServletRequest) req;
+        String absPath = getAbsoluteUrl(request);
+
+        if (!initialized && absPath != null) {
 
             // first request, lets do our initialization
-            HttpServletRequest request = (HttpServletRequest) req;
-            
-            UrlValidator validator = new UrlValidator(
-                            new String[]{"http", "https"},
-                            UrlValidator.ALLOW_LOCAL_URLS); // for integration tests
+            String relPath = request.getContextPath();
+            WebloggerRuntimeConfig.setRelativeContextURL(relPath);
 
-            if(validator.isValid(request.getRequestURL().toString())) {
-                
-                // determine absolute and relative url paths to the app
-                String relPath = request.getContextPath();
-                String absPath = this.getAbsoluteUrl(request);
-
-                // set them in our config
-                WebloggerRuntimeConfig.setAbsoluteContextURL(absPath);
-                WebloggerRuntimeConfig.setRelativeContextURL(relPath);
-
-                if (log.isDebugEnabled()) {
-                    log.debug("relPath = " + relPath);
-                    log.debug("absPath = " + absPath);
-                }
-
-                this.initialized = true;
+            if (log.isDebugEnabled()) {
+                log.debug("relPath = " + relPath);
             }
 
+            this.initialized = true;
         }
 
-        chain.doFilter(req, res);
-    }
-
-    private String getAbsoluteUrl(HttpServletRequest request) {
-        return getAbsoluteUrl(request.isSecure(),
-                request.getServerName(), request.getContextPath(),
-                request.getRequestURI(), request.getRequestURL().toString());
+        WebloggerRuntimeConfig.setRequestAbsoluteContextURL(absPath);
+        try {
+            chain.doFilter(req, res);
+        } finally {
+            WebloggerRuntimeConfig.clearRequestAbsoluteContextURL();
+        }
     }
 
     @Override
@@ -97,42 +93,31 @@ public class InitFilter implements Filter {
     public void destroy() {
     }
 
-    protected static String getAbsoluteUrl(boolean secure, String serverName, String contextPath, String requestURI, String requestURL){
+    /**
+     * The absolute url of the application as seen by this request: scheme,
+     * host, port (when not the scheme's default) and context path. Returns
+     * null if the request url is not a valid http or https url.
+     */
+    public static String getAbsoluteUrl(HttpServletRequest request) {
 
-        String url;
-
-        String fullUrl;
-
-        if (!secure) {
-            fullUrl = requestURL;
-        } else {
-            fullUrl = "http://" + serverName + contextPath;
+        if (!URL_VALIDATOR.isValid(request.getRequestURL().toString())) {
+            return null;
         }
 
-        // if the uri is only "/" then we are basically done
-        if ("/".equals(requestURI)) {
-            if (log.isDebugEnabled()) {
-                log.debug("requestURI is only '/'. fullUrl: " + fullUrl);
-            }
-            return removeTrailingSlash(fullUrl);
+        String scheme = request.getScheme().toLowerCase(Locale.ROOT);
+        int port = request.getServerPort();
+
+        StringBuilder url = new StringBuilder(scheme)
+                .append("://").append(request.getServerName());
+        boolean defaultPort = ("http".equals(scheme) && port == 80)
+                || ("https".equals(scheme) && port == 443);
+        if (port > 0 && !defaultPort) {
+            url.append(':').append(port);
         }
-
-        // find first "/" starting after hostname is specified
-        int index = fullUrl.indexOf('/',
-                fullUrl.indexOf(serverName));
-
-        if (index != -1) {
-            // extract just the part leading up to uri
-            url = fullUrl.substring(0, index);
-        } else {
-            url = fullUrl.trim();
-        }
-
-        // then just add on the context path
-        url += contextPath;
+        url.append(request.getContextPath());
 
         // make certain that we don't end with a /
-        return removeTrailingSlash(url);
+        return removeTrailingSlash(url.toString());
     }
 
     protected static String removeTrailingSlash(String url) {

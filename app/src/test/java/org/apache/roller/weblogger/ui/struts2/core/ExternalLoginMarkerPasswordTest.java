@@ -34,6 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -125,6 +126,16 @@ class ExternalLoginMarkerPasswordTest {
     }
 
     @Test
+    void registrationWithoutAPasswordDoesNotFail() throws Exception {
+        // db-oidc does not require a password when the form is validated
+        setProperty("authentication.method", "db-oidc");
+        Register action = withText(new Register());
+        action.getBean().setUserName("newuser");
+
+        assertDoesNotThrow(action::myValidate);
+    }
+
+    @Test
     void theProfileRejectsTheMarker() throws Exception {
         User user = new User();
         user.setUserName("dbuser");
@@ -191,7 +202,10 @@ class ExternalLoginMarkerPasswordTest {
 
     private void setProperty(String key, String value) throws ReflectiveOperationException {
         Properties config = config();
-        savedProperties.putIfAbsent(key, config.getProperty(key));
+        // keep the first value seen, even when it is null (not set)
+        if (!savedProperties.containsKey(key)) {
+            savedProperties.put(key, config.getProperty(key));
+        }
         config.setProperty(key, value);
     }
 
