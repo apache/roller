@@ -19,6 +19,7 @@
 
 package org.apache.roller.selenium.editor;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -99,13 +100,21 @@ public class RichEditorContentIT {
         "<img name=documentElement><img src onerror=go()>",
         "<img name=querySelectorAll><img src onerror=go()>",
         "<img name=body><table><tr><td onclick=\"go()\">x</td></tr></table>",
+        // jQuery parses HTML that starts with a table part inside a table
+        "<col><td onclick=\"go()\">x</td>",
+        // leaving code view removes <meta> tags, which here ends the comment
+        "<!-- -<meta>-> <input> -->",
+        "<!-- <iframe src=\"https://example.com/\"></iframe> -->",
     };
 
-    // checked as the rich editor loads them: inside the entry form
+    // checked as the rich editor loads them, with jQuery inside the entry
+    // form; none of these handlers runs without a click
     private static final String[] LOADED_IN_THE_ENTRY_FORM = {
-        "<math><mtext><p><form></form><mglyph><![CDATA[><img src onerror=go()>]]>",
-        "<form><math><mtext></form><form><mglyph><style></math><img src onerror=go()>",
-        "</form><form onanimationstart=\"go()\"><input name=\"attributes\">x</form>",
+        "<form><div></form><form><p onclick=\"go()\">x</p>",
+        "</form><form onclick=\"go()\"><input name=\"attributes\">x</form>",
+        "<col><td onclick=\"go()\">x</td>",
+        "<caption onclick=\"go()\">x</caption>",
+        "<!--<tr>--><td onclick=\"go()\">x</td>",
         "<p>Hello <b>world</b></p>",
         "<table><caption>c</caption><tr><td>1</td><td>2</td></tr></table>",
     };
@@ -129,16 +138,26 @@ public class RichEditorContentIT {
         "<img name=\"querySelector\" src=\"a.png\" alt=\"\">",
         "<img name=\"querySelectorAll\" src=\"a.png\" alt=\"\">",
         "<img name=\"createElement\" src=\"a.png\" alt=\"\">",
+        "<!-- more --><p>text</p>",
+        "<!-- <b>bold</b> and <meta> --><p>text</p>",
+        "<table><tr><td>1</td></tr></table><p>after the table</p>",
     };
+
+    // the rich editor loads entries with jQuery's html()
+    private static final String JQUERY = "META-INF/resources/webjars/jquery/3.7.1/jquery.js";
 
     private static WebDriver driver;
     private static String script;
+    private static String jquery;
 
     @BeforeClass
     public static void startBrowser() throws Exception {
         script = new String(Files.readAllBytes(Paths.get(
                 "../app/src/main/webapp/roller-ui/scripts/rich-editor-content.js")),
                 StandardCharsets.UTF_8);
+        try (InputStream in = RichEditorContentIT.class.getClassLoader().getResourceAsStream(JQUERY)) {
+            jquery = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        }
         FirefoxOptions options = new FirefoxOptions();
         options.addArguments("-headless");
         driver = new FirefoxDriver(options);
@@ -193,19 +212,24 @@ public class RichEditorContentIT {
     }
 
     /**
-     * The rich editor loads an entry inside the entry form, where a nested
-     * form's start tag is ignored, so what the check lets through must not
-     * hold an event handler there either.
+     * The rich editor loads an entry with jQuery's html(), inside the entry
+     * form, where a nested form's start tag is ignored, so what the check lets
+     * through must not hold an event handler once jQuery has loaded it there.
+     * about:blank is in quirks mode and the editor page isn't, so jQuery loads
+     * the entry into a standards-mode document here.
      */
     @Test
-    public void whatStaysInTheRichEditorHasNoEventHandlersInTheEntryForm() {
+    public void whatStaysInTheRichEditorHasNoEventHandlersOnceJqueryLoadsIt() {
+        js("var s = document.createElement('script');"
+                + "s.textContent = arguments[0];"
+                + "document.head.appendChild(s);", jquery);
         StringBuilder missed = new StringBuilder();
         for (String html : LOADED_IN_THE_ENTRY_FORM) {
             boolean handlers = (Boolean) js(
-                    "var inert = document.implementation.createHTMLDocument('');"
-                    + "var form = inert.body.appendChild(inert.createElement('form'));"
-                    + "var holder = form.appendChild(inert.createElement('div'));"
-                    + "holder.innerHTML = arguments[0];"
+                    "var page = document.implementation.createHTMLDocument('');"
+                    + "var form = page.body.appendChild(page.createElement('form'));"
+                    + "var holder = form.appendChild(page.createElement('div'));"
+                    + "jQuery(holder).html(arguments[0]);"
                     + "return Array.from(holder.querySelectorAll('*')).some(function (element) {"
                     + "  return element.getAttributeNames().some(function (name) {"
                     + "    return name.indexOf('on') === 0;"

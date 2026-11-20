@@ -106,6 +106,15 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- RichEditorContentIT loads entries with the jQuery the rich editor
+             uses; keep in step with app/pom.xml -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>3.7.1</version>
+            <scope>test</scope>
+        </dependency>
+
         <!--
              Type "war" listed below makes this a WAR overlay (i.e., incorporating
              another WAR into this project in making a new WAR, with any additional
