@@ -55,7 +55,8 @@ import static org.mockito.Mockito.mockStatic;
 
 /**
  * Thumbnails are made for ordinary images, and skipped, without decoding the
- * image, for images whose pixel count is over uploads.thumbnail.maxPixels.
+ * image, for images whose pixel count is over uploads.thumbnail.maxPixels,
+ * images too narrow to scale and formats other than JPEG, PNG, GIF and BMP.
  * The upload itself succeeds either way.
  */
 public class MediaFileThumbnailTest {
@@ -130,7 +131,9 @@ public class MediaFileThumbnailTest {
         MediaFile saved = upload("huge.png", "image/png",
                 new ByteArrayInputStream(png), png.length);
 
-        assertNotNull(saved.getInputStream(), "the upload itself must be kept");
+        try (InputStream in = saved.getInputStream()) {
+            assertNotNull(in, "the upload itself must be kept");
+        }
         assertNull(saved.getThumbnailInputStream());
         // the size still comes from the header, for the upload result page
         assertEquals(50000, saved.getWidth());
@@ -146,8 +149,9 @@ public class MediaFileThumbnailTest {
     public void testReplacingWithHugeImageRemovesOldThumbnail() throws Exception {
         MediaFile saved = upload("hawk.jpg", "image/jpeg",
                 getClass().getResourceAsStream(MediaFileTest.TEST_IMAGE), 2000);
-        assertNotNull(saved.getThumbnailInputStream());
-        saved.getThumbnailInputStream().close();
+        try (InputStream in = saved.getThumbnailInputStream()) {
+            assertNotNull(in);
+        }
         assertFalse(saved.isThumbnailSkipped());
 
         byte[] png = pngHeaderOnly(50000, 50000);
@@ -179,7 +183,9 @@ public class MediaFileThumbnailTest {
             saved = upload("hawk.jpg", "image/jpeg",
                     getClass().getResourceAsStream(MediaFileTest.TEST_IMAGE), 2000);
         }
-        assertNotNull(saved.getInputStream());
+        try (InputStream in = saved.getInputStream()) {
+            assertNotNull(in);
+        }
         assertNull(saved.getThumbnailInputStream());
         assertEquals(500, saved.getWidth());
         assertEquals(373, saved.getHeight());
@@ -275,7 +281,9 @@ public class MediaFileThumbnailTest {
     @Test
     public void testInvalidLimitFallsBackToDefault() throws Exception {
         WebloggerConfig.init();
-        for (String value : new String[] {"50_000_000", "3000000000", "", "0", "-1"}) {
+        String[] values = {"50_000_000", "3000000000", "", "0", "-1"};
+        for (int i = 0; i < values.length; i++) {
+            String value = values[i];
             MediaFile saved;
             try (MockedStatic<WebloggerConfig> config =
                     mockStatic(WebloggerConfig.class, CALLS_REAL_METHODS)) {
@@ -285,7 +293,7 @@ public class MediaFileThumbnailTest {
                 assertEquals(MediaFileManager.DEFAULT_THUMBNAIL_MAX_PIXELS,
                         MediaFile.thumbnailMaxPixels(), "limit '" + value + "'");
 
-                saved = upload("hawk" + value.length() + ".jpg", "image/jpeg",
+                saved = upload("hawk" + i + ".jpg", "image/jpeg",
                         getClass().getResourceAsStream(MediaFileTest.TEST_IMAGE), 2000);
             }
             try (InputStream in = saved.getThumbnailInputStream()) {
