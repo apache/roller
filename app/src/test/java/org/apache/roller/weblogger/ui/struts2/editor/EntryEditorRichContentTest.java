@@ -86,6 +86,23 @@ class EntryEditorRichContentTest {
     }
 
     @Test
+    void theLeaveWarningComesBackAfterASubmitThatStaysOnThePage() throws IOException {
+        String jsp = read("src/main/webapp/WEB-INF/jsps/editor/EntryEditor.jsp");
+        int submit = jsp.indexOf("$(this.form).one('submit', function() {");
+        int off = jsp.indexOf("$(window).off(\"beforeunload\", confirmFunction);", submit);
+        int rearm = jsp.indexOf("armLeaveWarning();", off);
+        int end = jsp.indexOf("});", off);
+        assertTrue(submit > 0 && off > submit && rearm > off && rearm < end,
+                "the submit handler removes the warning, then arms it for the next edit");
+        // the rich editor and the textarea fallback both start through it
+        int check = jsp.indexOf("RollerRichEditor.hasActiveHtml(");
+        int start = jsp.indexOf("richEditorStarted = true;");
+        int fallback = jsp.indexOf("armLeaveWarning();", check);
+        int rich = jsp.indexOf("armLeaveWarning();", start);
+        assertTrue(fallback > check && fallback < start && rich > start);
+    }
+
+    @Test
     void theTextareaFallbackWarnsWhileTheAuthorTypes() throws IOException {
         String jsp = read("src/main/webapp/WEB-INF/jsps/editor/EntryEditor.jsp");
         // change waits for the textarea to lose focus, so an author who types
