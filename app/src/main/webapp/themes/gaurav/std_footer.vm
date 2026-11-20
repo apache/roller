@@ -12,5 +12,4 @@
     </div>
 </div>
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="$url.resource('js/jquery.js')"></script>
-<script src="$url.resource('js/bootstrap.js')"></script>
+<script src="$url.resource('js/navbar.js')"></script>

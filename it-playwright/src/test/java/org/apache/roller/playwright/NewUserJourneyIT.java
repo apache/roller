@@ -30,6 +30,7 @@ import javax.imageio.ImageIO;
 
 import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import org.junit.jupiter.api.Assertions;
@@ -41,7 +42,8 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * The path a brand new Roller install puts its first visitor through: register
- * an account, sign in, create a weblog, then publish and read back an entry,
+ * an account, sign in, create a weblog and use the Gaurav theme's Categories
+ * menu from the keyboard, then publish and read back an entry,
  * comment on it as the author and as a visitor,
  * upload a media file (the first user is the admin, so the journey also turns
  * file uploads on, which Roller ships disabled), and finally use the authoring
@@ -135,6 +137,7 @@ class NewUserJourneyIT extends BaseIT {
         register();
         signIn();
         createWeblog();
+        useGauravCategoriesMenuFromKeyboard();
         assertRetiredPingPagesAreUnavailable();
         publishEntry(BLOG_HANDLE, ENTRY_TITLE, ENTRY_TEXT);
         assertEntryOnBlog(BLOG_HANDLE, ENTRY_TITLE, ENTRY_TEXT);
@@ -253,6 +256,54 @@ class NewUserJourneyIT extends BaseIT {
         // the new weblog is now listed on the main menu
         goTo(MENU_PAGE);
         assertThat(page.getByText(BLOG_NAME).first()).isVisible();
+    }
+
+    /**
+     * The Gaurav theme's Categories menu, now plain JavaScript, keeps the
+     * keyboard behaviour of Bootstrap's dropdown: Arrow Down or Space opens it,
+     * Arrow Down moves through its links, Arrow Up moves back, and Escape
+     * closes it and returns focus to the toggle. Opening it with a click
+     * focuses the toggle, so the arrow keys work then too. A new weblog has
+     * several categories, so the menu is there.
+     */
+    private void useGauravCategoriesMenuFromKeyboard() {
+        goTo("roller-ui/authoring/preview/" + BLOG_HANDLE + "/?theme=gaurav");
+        Locator dropdown = page.locator("li.dropdown");
+        Locator toggle = dropdown.locator("[data-toggle='dropdown']");
+        Locator items = dropdown.locator(".dropdown-menu a");
+        Pattern open = Pattern.compile("\\bopen\\b");
+
+        toggle.focus();
+        page.keyboard().press("ArrowDown");
+        assertThat(dropdown).hasClass(open);
+        assertThat(toggle).hasAttribute("aria-expanded", "true");
+        page.keyboard().press("ArrowDown");
+        assertThat(items.nth(0)).isFocused();
+        page.keyboard().press("ArrowDown");
+        assertThat(items.nth(1)).isFocused();
+        page.keyboard().press("ArrowUp");
+        assertThat(items.nth(0)).isFocused();
+
+        page.keyboard().press("Escape");
+        assertThat(dropdown).not().hasClass(open);
+        assertThat(toggle).hasAttribute("aria-expanded", "false");
+        assertThat(toggle).isFocused();
+
+        page.keyboard().press(" ");
+        assertThat(dropdown).hasClass(open);
+        page.keyboard().press("Escape");
+        assertThat(dropdown).not().hasClass(open);
+
+        // A click focuses the toggle too, which Safari doesn't do for links
+        // by itself, so the arrow keys work after a click.
+        toggle.blur();
+        toggle.click();
+        assertThat(dropdown).hasClass(open);
+        assertThat(toggle).isFocused();
+        page.keyboard().press("ArrowDown");
+        assertThat(items.nth(0)).isFocused();
+        toggle.click();
+        assertThat(dropdown).not().hasClass(open);
     }
 
     private void enableUploads() {

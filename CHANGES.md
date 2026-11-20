@@ -307,6 +307,14 @@
   `js/search-highlight.js`; customized search pages that load `searchhi.js`
   keep working only while their copy of that file remains.
 
+- **The Gaurav theme no longer ships jQuery or Bootstrap's JavaScript.** A
+  small script, `js/navbar.js`, now opens its navbar menu and Categories
+  dropdown, with the same mouse and keyboard behaviour. A weblog that uses the
+  shared theme but has its own templates loading the theme's `js/jquery.js` or
+  `js/bootstrap.js` gets errors for those files until the templates load their
+  own copy. Weblogs already using a customized copy of the theme keep their
+  own copies of the old files.
+
 - **Comments are limited to 10,000 characters.** Longer comments are refused,
   with a message saying so, before they are previewed or checked by the
   comment validators. The commenter's name, e-mail address and URL are limited
@@ -335,7 +343,7 @@
 - The source distribution now extracts to `apache-roller-<version>-source/`,
   matching its file name, instead of `roller-weblogger-<version>-source/`.
 - ROME, the feed library Planet uses, is upgraded from 1.19.0 to 2.1.0.
-- The admin UI now uses jQuery 4.0.0 and jQuery Validation 1.22.1.
+- The admin UI now uses jQuery 4.1.0 and jQuery Validation 1.22.1.
 
 ## 6.1.7
 
