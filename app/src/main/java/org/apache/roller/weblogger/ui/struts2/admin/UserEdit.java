@@ -198,6 +198,9 @@ public class UserEdit extends UIAction {
                     // save new user
                     mgr.addUser(user);
                 } else {
+                    if (isUserEditingSelf()) {
+                        RollerSession.savingPassword(getServletRequest(), user);
+                    }
                     mgr.saveUser(user);
                 }
 

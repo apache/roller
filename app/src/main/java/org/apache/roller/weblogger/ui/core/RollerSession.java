@@ -61,6 +61,9 @@ public class RollerSession
 
     // digest of the user's stored password hash when this session logged in
     private String passwordDigest = null;
+
+    // digest of a password hash this session's own request is saving
+    private volatile String savingPasswordDigest = null;
     
     private static final Log log;
     
@@ -229,6 +232,30 @@ public class RollerSession
     }
 
     /**
+     * Keeps the current session's other requests logged in while it saves a
+     * new password for its own user. Call it before the new password is
+     * saved, and refreshPassword after.
+     */
+    public static void savingPassword(HttpServletRequest request, User user) {
+        HttpSession session = request != null ? request.getSession(false) : null;
+        if (session == null || user == null) {
+            return;
+        }
+        try {
+            Object attribute = session.getAttribute(ROLLER_SESSION);
+            if (attribute instanceof RollerSession rollerSession
+                    && user.getUserName().equals(rollerSession.userName)) {
+                rollerSession.savingPasswordDigest = digest(user);
+            }
+        } catch (IllegalStateException e) {
+            if (!isInvalidated(session)) {
+                throw e;
+            }
+            // another request ended the session, there is no login to keep
+        }
+    }
+
+    /**
      * Keeps the current session logged in after its own user changed their
      * password, or an administrator changed their own. Call it after the new
      * password is saved; the user's other sessions still end.
@@ -243,6 +270,7 @@ public class RollerSession
             if (attribute instanceof RollerSession rollerSession
                     && user.getUserName().equals(rollerSession.userName)) {
                 rollerSession.setAuthenticatedUser(user);
+                rollerSession.savingPasswordDigest = null;
                 rememberLoginPassword(session, rollerSession);
             }
         } catch (IllegalStateException e) {
@@ -298,7 +326,8 @@ public class RollerSession
      * Whether the user this session logged in as is still enabled and still
      * has the password the session logged in with. A failed lookup keeps the
      * session, so a database error does not log everyone out. A session that
-     * saw the password before it was re-encoded takes on the new encoding.
+     * saw the password before it was re-encoded, or is saving a new password
+     * for its user, takes on the new one once it is stored.
      */
     private boolean isCurrent(HttpSession session) {
         User user;
@@ -310,7 +339,13 @@ public class RollerSession
             log.warn("Error looking up authenticated user " + userName, ex);
             return true;
         }
-        if (user == null || !samePassword(user, passwordDigest)) {
+        if (user == null) {
+            return false;
+        }
+        if (digest(user).equals(savingPasswordDigest)) {
+            // the password this session's own request saved
+            savingPasswordDigest = null;
+        } else if (!samePassword(user, passwordDigest)) {
             return false;
         }
         if (!digest(user).equals(passwordDigest)) {
