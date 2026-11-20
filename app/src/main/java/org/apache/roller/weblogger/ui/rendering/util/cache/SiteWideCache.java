@@ -266,7 +266,7 @@ public final class SiteWideCache implements CacheHandler {
      * Generate a cache key from a parsed weblog feed request.
      * This generates a key of the form ...
      *
-     * <handle>/<type>/<format>/[/category][/language][/excerpts]
+     * <handle>/<type>/<format>/[/category][/language][/excerpts][/page=N]
      *
      * examples ...
      *
@@ -286,8 +286,10 @@ public final class SiteWideCache implements CacheHandler {
         key.append('/').append(feedRequest.getType());
         key.append('/').append(feedRequest.getFormat());
         
+        // the search term and tag names are URL-encoded so that a "/" in them
+        // can't be mistaken for the separator before another key part
         if (feedRequest.getTerm() != null) {
-            key.append("/search/").append(feedRequest.getTerm());
+            key.append("/search/").append(URLEncoder.encode(feedRequest.getTerm(), StandardCharsets.UTF_8));
         }
         
         if(feedRequest.getWeblogCategoryName() != null) {
@@ -304,10 +306,16 @@ public final class SiteWideCache implements CacheHandler {
         }
         
         if(feedRequest.getTags() != null && !feedRequest.getTags().isEmpty()) {
-            String[] tags = feedRequest.getTags().toArray(new String[0]);
-            Arrays.sort(tags);
+            String[] tags = feedRequest.getTags().stream()
+                    .map(tag -> URLEncoder.encode(tag, StandardCharsets.UTF_8))
+                    .sorted().toArray(String[]::new);
             key.append("/tags/").append(Utilities.stringArrayToString(tags,"+"));
         }       
+        
+        // add page number when past the first page
+        if(feedRequest.getPage() > 0) {
+            key.append("/page=").append(feedRequest.getPage());
+        }
         
         return key.toString();
     }

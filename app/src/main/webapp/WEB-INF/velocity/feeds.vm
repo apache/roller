@@ -136,7 +136,7 @@
 
 #macro(showFeedHistory $pager)
 <link rel="first" type="application/atom+xml" href="$utils.escapeXML($pager.url)" />
-#if($pager.hasMoreItems())
+#if($pager.nextLink)
     <link rel="next" type="application/atom+xml" href="$utils.escapeXML($pager.nextLink)" />
 #end
 #if($pager.prevLink && $pager.items.size() > 0)
