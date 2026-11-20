@@ -138,9 +138,19 @@ class MemberResignResultTest {
     }
 
     @Test
-    void resigningFromAWeblogThatDoesNotExistIsDenied() {
-        // no weblog of the requested handle
-        assertEquals(UIAction.DENIED, new MemberResign().resign());
+    void resigningFromAWeblogThatDoesNotExistIsDenied() throws Exception {
+        // the access-denied page is a Tiles result, which needs a running
+        // webapp, so only the action's result code is checked
+        assertEquals(UIAction.DENIED, invoke(ownerName, "resignresultnosuchweblog", new HashMap<>(),
+                mock(HttpServletResponse.class), false));
+        TestUtils.endSession(true);
+        assertNotNull(permission(ownerName));
+    }
+
+    @Test
+    void aUserWhoIsNotAMemberCannotResign() throws Exception {
+        assertEquals(UIAction.DENIED, invoke(memberName, handle, new HashMap<>(),
+                mock(HttpServletResponse.class), false));
     }
 
     private static void assertRedirectedToMainMenu(HttpServletResponse response) throws Exception {
@@ -152,6 +162,16 @@ class MemberResignResultTest {
     // posts the resignation form for the weblog as the named user, keeping
     // the HTTP session's attributes in the given map
     private HttpServletResponse resign(String name, Map<String, Object> sessionAttributes) throws Exception {
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(response.encodeRedirectURL(anyString())).thenAnswer(call -> call.getArgument(0));
+        invoke(name, handle, sessionAttributes, response, true);
+        return response;
+    }
+
+    // posts the resignation form for the given weblog handle and returns the
+    // action's result code
+    private String invoke(String name, String weblogHandle, Map<String, Object> sessionAttributes,
+            HttpServletResponse response, boolean executeResult) throws Exception {
         HttpSession session = mock(HttpSession.class);
         when(session.getId()).thenReturn("resign-session");
         when(session.getAttribute(anyString())).thenAnswer(call -> sessionAttributes.get(call.getArgument(0)));
@@ -166,8 +186,8 @@ class MemberResignResultTest {
         when(request.getSession(true)).thenReturn(session);
         Principal principal = () -> name;
         when(request.getUserPrincipal()).thenReturn(principal);
-        when(request.getParameterMap()).thenReturn(Map.of("weblog", new String[] {handle}));
-        when(request.getParameter("weblog")).thenReturn(handle);
+        when(request.getParameterMap()).thenReturn(Map.of("weblog", new String[] {weblogHandle}));
+        when(request.getParameter("weblog")).thenReturn(weblogHandle);
         when(request.getLocale()).thenReturn(Locale.ENGLISH);
         when(request.getAttribute(anyString())).thenAnswer(call -> requestAttributes.get(call.getArgument(0)));
         doAnswer(call -> requestAttributes.put(call.getArgument(0), call.getArgument(1)))
@@ -175,15 +195,11 @@ class MemberResignResultTest {
         when(request.getServletPath()).thenReturn("/roller-ui/authoring/memberResign!resign.rol");
         when(request.getContextPath()).thenReturn("");
 
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        when(response.encodeRedirectURL(anyString())).thenAnswer(call -> call.getArgument(0));
-
         ActionMapping mapping = new ActionMapping("memberResign", "/roller-ui/authoring", "resign", new HashMap<>());
         Map<String, Object> context = dispatcher.createContextMap(request, response, mapping);
         ActionProxy proxy = dispatcher.getContainer().getInstance(ActionProxyFactory.class)
-                .createActionProxy("/roller-ui/authoring", "memberResign", "resign", context, true, false);
-        proxy.execute();
-        return response;
+                .createActionProxy("/roller-ui/authoring", "memberResign", "resign", context, executeResult, false);
+        return proxy.execute();
     }
 
     private WeblogPermission permission(String name) throws Exception {
