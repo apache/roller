@@ -189,7 +189,11 @@
 - **Entries with scripts or embeds open as HTML.** If an entry contains
   scripts, frames, embedded objects, event-handler attributes or
   `javascript:` links, the rich-text editor opens it in the HTML textarea
-  with a notice, and the stored HTML is kept as is (#319).
+  with a notice, and the stored HTML is kept as is. Entries with forms, some
+  Bootstrap data attributes (such as `data-toggle`), a link or URL-like word
+  containing `<`, as in some code samples, or an iframe or other tag that the
+  editor's code view removes, even inside an HTML comment, also open in the
+  textarea (#319).
 - **Names are shown as text.** Screen and full names are HTML-escaped where
   templates print them and written as plain text in feeds; commenter names
   and addresses are escaped in HTML notification emails; HTML comments are
