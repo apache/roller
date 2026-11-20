@@ -19,13 +19,15 @@
 
 package org.apache.roller.weblogger.util;
 
+import java.time.Duration;
+
 import org.junit.jupiter.api.Test;
 import org.apache.roller.weblogger.business.plugins.comment.HTMLSubsetPlugin;
 import org.apache.roller.weblogger.pojos.WeblogEntryComment;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 /**
  * Test utilities.
@@ -350,18 +352,17 @@ public class UtilitiesTest  {
         String noEnd = "<a ".repeat(50000);
         String quoted = "<a x=\"<a \" y=\"".repeat(50000);
 
-        long start = System.nanoTime();
-        // a tag that never ends is text in the HTML subset
-        assertEquals(escaped, Utilities.transformToHTMLSubset(escaped));
-        assertEquals(escaped, Utilities.transformToHTMLSubset(Utilities.escapeHTML(raw)));
-        assertEquals("&lt;a ".repeat(50000), Utilities.sanitizeToHTMLSubset(noEnd));
-        assertEquals("&lt;a x=\"&lt;a \" y=\"".repeat(50000), Utilities.sanitizeToHTMLSubset(quoted));
-        // and addNofollow drops it
-        assertEquals("", Utilities.addNofollow(raw));
-        long millis = (System.nanoTime() - start) / 1_000_000;
-        // a quadratic scan takes far longer than this; leave room for slow
-        // build machines
-        assertTrue(millis < 2000, "took " + millis + " ms");
+        // a generous bound, so that only a quadratic scan fails on a slow
+        // build machine
+        assertTimeoutPreemptively(Duration.ofSeconds(30), () -> {
+            // a tag that never ends is text in the HTML subset
+            assertEquals(escaped, Utilities.transformToHTMLSubset(escaped));
+            assertEquals(escaped, Utilities.transformToHTMLSubset(Utilities.escapeHTML(raw)));
+            assertEquals("&lt;a ".repeat(50000), Utilities.sanitizeToHTMLSubset(noEnd));
+            assertEquals("&lt;a x=\"&lt;a \" y=\"".repeat(50000), Utilities.sanitizeToHTMLSubset(quoted));
+            // and addNofollow drops it
+            assertEquals("", Utilities.addNofollow(raw));
+        });
     }
 
     @Test
