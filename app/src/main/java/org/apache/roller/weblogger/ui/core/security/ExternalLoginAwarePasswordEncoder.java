@@ -44,6 +44,10 @@ public class ExternalLoginAwarePasswordEncoder implements PasswordEncoder {
 
     public ExternalLoginAwarePasswordEncoder(PasswordEncoder delegate) {
         this.delegate = delegate;
+        if (externalLoginMarker().contains(",")) {
+            log.warn("users.passwords.externalAuthValue contains a comma, so it can't be listed in"
+                    + " users.passwords.externalAuthValue.previous if the setting changes later.");
+        }
     }
 
     /**
