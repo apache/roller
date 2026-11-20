@@ -65,7 +65,7 @@ public class CommentDataServlet extends HttpServlet {
                 // need post permission to view comments
                 RollerSession rses = RollerSession.getRollerSession(request);
                 Weblog weblog = c.getWeblogEntry().getWebsite();
-                if (weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST)) {
+                if (hasPostPermission(rses, weblog)) {
                     // HTML-escaped, since the page shows it as HTML
                     String content = Utilities.escapeHTML(c.getContent());
                     String json = "{\"id\":\"" + StringEscapeUtils.escapeJson(c.getId())
@@ -106,7 +106,7 @@ public class CommentDataServlet extends HttpServlet {
                 // need post permission to edit comments
                 RollerSession rses = RollerSession.getRollerSession(request);
                 Weblog weblog = c.getWeblogEntry().getWebsite();
-                if (weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST)) {
+                if (hasPostPermission(rses, weblog)) {
                     String content = Utilities.streamToString(request.getInputStream());
                     c.setContent(content);
                     // don't update the posttime when updating the comment
@@ -136,6 +136,15 @@ public class CommentDataServlet extends HttpServlet {
             throws ServletException, IOException {
         // not all browsers support PUT
         doPut(request, response);
+    }
+
+    /**
+     * Whether the session's user may post to the weblog. A request with no
+     * user, such as one whose session was just ended, may not.
+     */
+    private static boolean hasPostPermission(RollerSession rses, Weblog weblog) {
+        return rses != null && rses.getAuthenticatedUser() != null
+                && weblog.hasUserPermission(rses.getAuthenticatedUser(), WeblogPermission.POST);
     }
 
     private void writeSaveResponse(HttpServletRequest request,
