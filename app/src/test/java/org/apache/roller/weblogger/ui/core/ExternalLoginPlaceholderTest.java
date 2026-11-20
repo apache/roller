@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
+import org.apache.roller.weblogger.ui.core.security.ExternalLoginAwarePasswordEncoder;
 import org.apache.roller.weblogger.ui.core.security.RollerRememberMeServices;
 import org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService;
 import org.junit.jupiter.api.AfterEach;
@@ -43,6 +44,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -140,6 +142,51 @@ class ExternalLoginPlaceholderTest {
 
         assertThrows(AuthenticationException.class, () -> provider.authenticate(
                 new UsernamePasswordAuthenticationToken(userName, "<externalAuth>")));
+    }
+
+    @Test
+    void aPreviousEncodedPlaceholderIsNotAPasswordAfterTheSettingChanges() throws Exception {
+        setProperty("authentication.method", "cma");
+        setProperty("users.passwords.externalAuthValue", "<old>");
+        DaoAuthenticationProvider provider = provider();
+        // as Register stored it for container-managed sign-ups
+        User user = TestUtils.setupUser("oldcmauser");
+        userName = user.getUserName();
+        user.resetPassword("<old>");
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        setProperty("users.passwords.externalAuthValue", "<new>");
+        setProperty("users.passwords.externalAuthValue.previous", "<older>,<old>");
+
+        assertThrows(AuthenticationException.class, () -> provider.authenticate(
+                new UsernamePasswordAuthenticationToken(userName, "<old>")));
+    }
+
+    @Test
+    void aPreviousUnencodedPlaceholderIsNotAPasswordAfterTheSettingChanges() throws Exception {
+        setProperty("authentication.method", "ldap");
+        setProperty("users.passwords.externalAuthValue", "<new>");
+        setProperty("users.passwords.externalAuthValue.previous", "{noop}secret");
+        DaoAuthenticationProvider provider = provider();
+        // as CustomUserRegistry stored it before the setting changed
+        User user = TestUtils.setupUser("oldldapuser");
+        userName = user.getUserName();
+        user.setPassword("{noop}secret");
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        assertThrows(AuthenticationException.class, () -> provider.authenticate(
+                new UsernamePasswordAuthenticationToken(userName, "secret")));
+    }
+
+    @Test
+    void emptyEntriesInThePreviousPlaceholdersAreIgnored() throws Exception {
+        setProperty("users.passwords.externalAuthValue.previous", "<old>,, ,");
+
+        assertTrue(ExternalLoginAwarePasswordEncoder.isExternalLoginMarker("<old>"));
+        assertFalse(ExternalLoginAwarePasswordEncoder.isExternalLoginMarker(""));
+        assertFalse(ExternalLoginAwarePasswordEncoder.isExternalLoginMarker(" "));
     }
 
     @Test
