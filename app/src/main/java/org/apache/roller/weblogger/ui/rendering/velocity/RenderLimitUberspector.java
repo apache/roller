@@ -130,6 +130,10 @@ public class RenderLimitUberspector extends AbstractChainableUberspector {
             ValueLimits.checkResult(result);
             if (container) {
                 RenderSession.chargeItems(ValueLimits.size(o) - sizeBefore);
+                if (ValueLimits.isCopy(name)) {
+                    RenderSession.chargeItems(result instanceof Object[]
+                            ? ((Object[]) result).length : ValueLimits.size(result));
+                }
             } else if (builder) {
                 RenderSession.chargeBuilt(((CharSequence) o).length() - lengthBefore);
             } else if (o instanceof String || o instanceof UtilitiesModel) {

@@ -495,6 +495,8 @@ public class RenderLimitsTest {
             "#set($s = 'x')$s.valueOf($r)",
             "#if($r == 'x')yes#end",
             "#set($m = {'k': $r})$m",
+            "#set($m = {'k': $r})$m.entrySet()",
+            "#set($m = {'k': $r})#foreach($e in $m.entrySet())$e#end",
         };
         for (int i = 0; i < uses.length; i++) {
             Outcome outcome = renderWithLimit("limits-list-text-" + i + ".vm",
@@ -522,13 +524,23 @@ public class RenderLimitsTest {
     @Test
     public void aTemplateThatBuildsAHugeListStopsAtTheLimit() throws Exception {
         Outcome doubled = render("limits-list-doubling.vm",
-                "#set($l = [1])#foreach($i in [1..24])#set($x = $l.addAll($l))#end$l.size()");
+                "#set($l = [1])#foreach($i in [1..21])#set($x = $l.addAll($l))#end$l.size()");
         assertLimit(doubled, "rendering added more than 1000000 items");
 
         // the range is refused before any of it is copied
         Outcome copied = render("limits-list-copy.vm",
-                "#set($l = [])#set($x = $l.addAll([1..30000000]))$l.size()");
+                "#set($l = [])#set($x = $l.addAll([1..1000001]))$l.size()");
         assertLimit(copied, "rendering added more than 1000000 items");
+
+        Outcome array = render("limits-list-array.vm",
+                "#set($r = [1..1000001])#set($a = $r.toArray())$a.size()");
+        assertLimit(array, "rendering added more than 1000000 items");
+
+        // adding a large list as one item is one item
+        Outcome one = render("limits-list-one.vm",
+                "#set($l = [])#set($x = $l.add([1..2000000]))$l.size() ${l.get(0).size()}");
+        assertEquals(null, one.failure);
+        assertEquals("1 2000000", one.out.getHead());
 
         Outcome map = render("limits-map.vm",
                 "#set($m = {})#foreach($i in [1..1000])#foreach($j in [1..1001])"

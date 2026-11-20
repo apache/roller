@@ -46,6 +46,7 @@ class DeadlineRegexTest {
         String[] refused = {
             "(?:a?|b?)c", "(|)z", "(?:)*", "x(?:(?:)?){3}", "\\b*", "(?=)+", "^?a",
             "()\\1*", "(?:(?:a|){2})", "(?<n>a*|b*)", "(?i:x?|y?)", "((a)|(b)?|c*)d",
+            "(?:(?<=k)|(?<!k))w", "(?:\\b|\\B)v", "(?x)(?:\t|\t)u", "(?:$|^)t",
         };
         for (String regex : refused) {
             assertThrows(RenderLimitException.class, () -> DeadlineRegex.checkPattern(regex),

@@ -69,6 +69,11 @@ final class ValueLimits {
      *         check.
      */
     static long textLength(Object value, long limit) {
+        if (value instanceof Map.Entry) {
+            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) value;
+            long key = textLength(entry.getKey(), limit);
+            return key > limit ? key : 1 + key + textLength(entry.getValue(), limit - key);
+        }
         if (!isContainer(value)) {
             return leafLength(value);
         }
@@ -110,11 +115,21 @@ final class ValueLimits {
             walks.push(new Frame(item));
             return 2;
         }
+        if (item instanceof Map.Entry) {
+            // key=value, as a map's entries print
+            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) item;
+            return 1 + visit(entry.getKey(), walk, walks) + visit(entry.getValue(), walk, walks);
+        }
         return leafLength(item);
     }
 
     private static boolean isContainer(Object value) {
         return value instanceof Collection || value instanceof Map;
+    }
+
+    /** @return true if the value's text is built from a list or map it holds */
+    static boolean holdsValues(Object value) {
+        return isContainer(value) || value instanceof Map.Entry;
     }
 
     private static long leafLength(Object value) {
@@ -131,18 +146,21 @@ final class ValueLimits {
     }
 
     /**
-     * Checks a call on a list or map before it runs: the items it may add
-     * from the lists and maps passed to it have to fit the render's budget,
-     * a comparison of every element with every other has to stay small, and
-     * the text of toString has to fit the output limit.
+     * Checks a call on a list or map before it runs: the items addAll or
+     * putAll may add, or toArray or clone may copy, have to fit the render's
+     * budget, a comparison of every element with every other has to stay
+     * small, and the text of toString has to fit the output limit.
      */
     static void checkContainerCall(Object receiver, String methodName, Object[] args,
             long maxChars) {
         long receiverSize = size(receiver);
+        boolean adds = "addAll".equals(methodName) || "putAll".equals(methodName);
         long added = 0;
         for (Object arg : args) {
             long argSize = size(arg);
-            added += argSize;
+            if (adds) {
+                added += argSize;
+            }
             boolean compares = "containsAll".equals(methodName) && !(receiver instanceof Set)
                     || ("removeAll".equals(methodName) || "retainAll".equals(methodName))
                     && !(arg instanceof Set);
@@ -151,10 +169,18 @@ final class ValueLimits {
                         + MAX_COMPARISONS + " pairs of elements");
             }
         }
+        if (isCopy(methodName)) {
+            added += receiverSize;
+        }
         RenderSession.checkItems(added);
         if ("toString".equals(methodName) && args.length == 0) {
             RenderSession.checkLength(textLength(receiver, maxChars));
         }
+    }
+
+    /** @return true for the calls that return a copy of a list or map's items */
+    static boolean isCopy(String methodName) {
+        return "toArray".equals(methodName) || "clone".equals(methodName);
     }
 
     /**
