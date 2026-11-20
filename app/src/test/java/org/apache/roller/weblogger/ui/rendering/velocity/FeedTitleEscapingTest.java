@@ -48,6 +48,8 @@ public class FeedTitleEscapingTest {
         {"Tom & Jerry", "Tom & Jerry"},
         {HTMLSanitizer.sanitize("Tom & \"Jerry\""), "Tom & \"Jerry\""},
         {"AT&amp;T &lt;b&gt;", "AT&T <b>"},
+        // markup in a title is removed, not shown
+        {"<em>Hello</em>World", "Hello World"},
     };
 
     public static class TitledEntry extends FeedAuthorEscapingTest.StubEntry {

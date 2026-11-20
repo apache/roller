@@ -106,7 +106,7 @@
     #foreach($comment in $comments)
     <item>
         <guid isPermaLink="true">${comment.weblogEntry.permalink}#comment-${comment.timestamp}</guid>
-        <title>Re: $utils.escapeXML($utils.unescapeHTML($comment.weblogEntry.title))</title>
+        <title>Re: $utils.escapeXML($utils.unescapeHTML($utils.removeHTML($comment.weblogEntry.title)))</title>
         <dc:creator>$utils.escapeXML($utils.unescapeHTML($comment.name))</dc:creator>
         <pubDate>$utils.formatRfc822Date($comment.postTime)</pubDate>
         <description>$utils.escapeXML($comment.content)</description>
