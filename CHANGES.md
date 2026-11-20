@@ -83,8 +83,9 @@
 - **Tags of a scheduled entry are counted once, when it goes live.** Entries
   posted through AtomPub with a future date showed their tags in tag counts
   early and counted them twice (#316).
-- **A weblog's only administrator can't resign from it**, and declining an
-  invitation only removes a pending invitation (#322).
+- **A weblog's only administrator can't resign from it**, and the main menu
+  says why. After resigning, the main menu now shows whether it worked.
+  Declining an invitation only removes a pending invitation (#322).
 - **Passwords stored with an older encoding are upgraded at login.** With
   `passwds.encryption.lazyUpgradeFrom` set (`SHA` by default), passwords from
   older Roller versions could be used to log in, but they stayed stored in the
