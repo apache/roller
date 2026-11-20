@@ -166,7 +166,11 @@ public final class RollerPasswordEncoders {
             Set<String> markers = externalLoginMarkers();
             // a stored marker is checked before the delegate sees it, since a
             // marker such as {noop}secret would otherwise match its own suffix
-            if (markers.contains(encodedPassword) || markers.contains(rawPassword.toString())) {
+            if (markers.contains(encodedPassword)) {
+                return false;
+            }
+            if (markers.contains(rawPassword.toString())) {
+                logRefusal();
                 return false;
             }
             if (!delegate.matches(rawPassword, encodedPassword)) {
@@ -177,10 +181,18 @@ public final class RollerPasswordEncoders {
             // matches too
             for (String marker : markers) {
                 if (delegate.matches(marker, encodedPassword)) {
+                    logRefusal();
                     return false;
                 }
             }
             return true;
+        }
+
+        private static void logRefusal() {
+            // the password itself is never logged
+            log.info("Refused a password that Roller treats as an external-login marker"
+                    + " (users.passwords.externalAuthValue or its .previous list). An"
+                    + " administrator can set a new password for an account that uses one.");
         }
 
         @Override
