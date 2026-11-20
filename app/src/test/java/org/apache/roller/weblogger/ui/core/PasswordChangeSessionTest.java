@@ -37,6 +37,7 @@ import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.security.RollerLoginSuccessHandler;
 import org.apache.roller.weblogger.ui.core.security.RollerPasswordEncoders;
 import org.apache.roller.weblogger.ui.core.security.RollerRememberMeServices;
+import org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService;
 import org.apache.roller.weblogger.ui.struts2.admin.CreateUserBean;
 import org.apache.roller.weblogger.ui.struts2.admin.UserEdit;
 import org.apache.roller.weblogger.ui.struts2.core.Profile;
@@ -48,6 +49,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
@@ -385,6 +387,95 @@ class PasswordChangeSessionTest {
         saveAsAdmin(admin, bean -> bean.setPassword("reset-password"));
 
         b.assertLoggedOut();
+    }
+
+    @Test
+    void disablingAUserEndsALoginThatHasNotOpenedTheUiYet() throws Exception {
+        Browser admin = new Browser(adminName);
+        Browser b = new Browser(userName);
+        admin.request();
+        TestUtils.endSession(true);
+
+        saveAsAdmin(admin, bean -> bean.setEnabled(false));
+
+        b.assertLoggedOut();
+        admin.assertLoggedIn(adminName);
+    }
+
+    @Test
+    void disablingAUserEndsASessionThatWasPassivated() throws Exception {
+        Browser admin = new Browser(adminName);
+        Browser b = new Browser(userName);
+        admin.request();
+        b.request();
+        TestUtils.endSession(true);
+        b.passivate();
+
+        saveAsAdmin(admin, bean -> bean.setEnabled(false));
+
+        b.assertLoggedOut();
+    }
+
+    @Test
+    void removingAUserEndsALoginThatHasNotOpenedTheUiYet() throws Exception {
+        String goneName = TestUtils.setupUser("sessiongone").getUserName();
+        TestUtils.endSession(true);
+        Browser b = new Browser(goneName);
+
+        TestUtils.teardownUser(goneName);
+        TestUtils.endSession(true);
+
+        b.assertLoggedOut();
+    }
+
+    @Test
+    void reencodingThePasswordAtLoginKeepsTheUsersOtherSessions() throws Exception {
+        Browser opened = new Browser(userName);
+        Browser notOpened = new Browser(userName);
+        Browser passivated = new Browser(userName);
+        opened.request();
+        passivated.request();
+        TestUtils.endSession(true);
+        passivated.passivate();
+
+        reencodePasswordAtLogin();
+        // the login whose password check led to the re-encoding
+        Browser upgrading = new Browser(userName);
+
+        opened.assertLoggedIn(userName);
+        notOpened.assertLoggedIn(userName);
+        passivated.assertLoggedIn(userName);
+        upgrading.assertLoggedIn(userName);
+    }
+
+    @Test
+    void passwordChangeAfterAReencodingEndsTheUsersOtherSessions() throws Exception {
+        Browser opened = new Browser(userName);
+        Browser notOpened = new Browser(userName);
+        opened.request();
+        TestUtils.endSession(true);
+
+        reencodePasswordAtLogin();
+        Browser upgrading = new Browser(userName);
+        changeOwnPassword(upgrading);
+
+        opened.assertLoggedOut();
+        notOpened.assertLoggedOut();
+        upgrading.assertLoggedIn(userName);
+    }
+
+    /**
+     * Spring Security stores a new encoding of the user's unchanged password
+     * after a login checked it against an older one.
+     */
+    private void reencodePasswordAtLogin() throws Exception {
+        String stored = user(userName).getPassword();
+        UserDetails details = org.springframework.security.core.userdetails.User
+                .withUsername(userName).password(stored).authorities(List.of()).build();
+        String reencoded = "{bcrypt}" + new BCryptPasswordEncoder(4).encode("unchanged");
+        new RollerUserDetailsService().updatePassword(details, reencoded);
+        TestUtils.endSession(true);
+        assertEquals(reencoded, user(userName).getPassword(), "the re-encoding should be stored");
     }
 
     @Test

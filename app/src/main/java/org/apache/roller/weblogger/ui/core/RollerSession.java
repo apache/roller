@@ -24,7 +24,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HexFormat;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -67,6 +70,23 @@ public class RollerSession
     // session so they outlive it when the container passivates the session
     private static final String LOGIN_PASSWORD = ROLLER_SESSION + ".login";
 
+    // the longest chain of re-encodings a session is carried across, and how
+    // many re-encodings are remembered
+    private static final int MAX_REENCODINGS = 8;
+    private static final int MAX_REENCODED = 1000;
+
+    // digests of password hashes that a login stored as a new encoding of an
+    // unchanged password, by user, each with the digest of the hash it
+    // replaced. A session that saw the older hash stays logged in. Entries
+    // that are dropped end those sessions instead.
+    private static final Map<String, String> REENCODED = Collections.synchronizedMap(
+            new LinkedHashMap<>(16, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+                    return size() > MAX_REENCODED;
+                }
+            });
+
     static{
         WebloggerConfig.init(); // must be called before calls to logging APIs
         log = LogFactory.getLog(RollerSession.class);
@@ -104,7 +124,7 @@ public class RollerSession
                 // password also logs out the user's other browsers. This runs
                 // before the cache check below, which rebuilds the session
                 // from the login and would take on the new password.
-                if (!rollerSession.isCurrent()) {
+                if (!rollerSession.isCurrent(session)) {
                     return endSession(request, session);
                 }
                 // Check if session is still valid in cache
@@ -150,6 +170,10 @@ public class RollerSession
                         }
                         rollerSession.setAuthenticatedUser(user);
                         rememberLoginPassword(session, rollerSession);
+                    } else if (session.getAttribute(LOGIN_PASSWORD) != null) {
+                        // the account this login was recorded for has been
+                        // disabled or removed since
+                        return endSession(request, session);
                     }
                     
                 } catch (WebloggerException e) {
@@ -236,7 +260,31 @@ public class RollerSession
         if (!(recorded instanceof String login) || !login.startsWith(prefix)) {
             return true;
         }
-        return login.equals(prefix + digest(user));
+        return samePassword(user, login.substring(prefix.length()));
+    }
+
+    /**
+     * Records that a login stored a new encoding of the user's unchanged
+     * password, so that the user's sessions which saw the old one stay
+     * logged in. Call it before the new encoding is saved.
+     */
+    public static void passwordReencoded(String userName, String oldPassword, String newPassword) {
+        REENCODED.put(userName + "\n" + digest(newPassword), digest(oldPassword));
+    }
+
+    /**
+     * Whether the user's password is the one a session saw, given as
+     * passwordDigest, or a re-encoding of it.
+     */
+    private static boolean samePassword(User user, String passwordDigest) {
+        String current = digest(user);
+        for (int i = 0; current != null && i <= MAX_REENCODINGS; i++) {
+            if (current.equals(passwordDigest)) {
+                return true;
+            }
+            current = REENCODED.get(user.getUserName() + "\n" + current);
+        }
+        return false;
     }
 
     private static void rememberLoginPassword(HttpSession session, RollerSession rollerSession) {
@@ -246,9 +294,10 @@ public class RollerSession
     /**
      * Whether the user this session logged in as is still enabled and still
      * has the password the session logged in with. A failed lookup keeps the
-     * session, so a database error does not log everyone out.
+     * session, so a database error does not log everyone out. A session that
+     * saw the password before it was re-encoded takes on the new encoding.
      */
-    private boolean isCurrent() {
+    private boolean isCurrent(HttpSession session) {
         User user;
         try {
             UserManager mgr = WebloggerFactory.getWeblogger().getUserManager();
@@ -258,7 +307,14 @@ public class RollerSession
             log.warn("Error looking up authenticated user " + userName, ex);
             return true;
         }
-        return user != null && digest(user).equals(passwordDigest);
+        if (user == null || !samePassword(user, passwordDigest)) {
+            return false;
+        }
+        if (!digest(user).equals(passwordDigest)) {
+            passwordDigest = digest(user);
+            rememberLoginPassword(session, this);
+        }
+        return true;
     }
 
     private static boolean isInvalidated(HttpSession session) {
@@ -295,7 +351,11 @@ public class RollerSession
 
     /** Digest of the stored password hash, so the session does not hold it. */
     private static String digest(User user) {
-        String password = user.getPassword() != null ? user.getPassword() : "";
+        return digest(user.getPassword());
+    }
+
+    private static String digest(String storedPassword) {
+        String password = storedPassword != null ? storedPassword : "";
         try {
             MessageDigest sha = MessageDigest.getInstance("SHA-256");
             return HexFormat.of().formatHex(sha.digest(password.getBytes(StandardCharsets.UTF_8)));
