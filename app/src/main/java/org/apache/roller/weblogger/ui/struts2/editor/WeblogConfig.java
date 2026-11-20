@@ -207,6 +207,9 @@ public class WeblogConfig extends UIAction {
         List<String> stringRules = new ArrayList<>();
         try {
             // just for testing/counting, this does not persist rules in any way
+            if (!weblogAdminsUntrusted) {
+                Bannedwordslist.validateRules(getBean().getBannedwordslist());
+            }
             Bannedwordslist.populateSpamRules(getBean().getBannedwordslist(), stringRules, regexRules, null,
                     weblogAdminsUntrusted);
             if (weblogAdminsUntrusted) {

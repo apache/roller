@@ -457,34 +457,78 @@ public final class Bannedwordslist {
      * plain words (case-insensitive, at word boundaries) rather than as
      * regular expressions, so an untrusted weblog admin can't write a rule
      * that backtracks; the addendum's rules are still regular expressions.
+     * A regex rule that doesn't compile is logged and matched as a plain
+     * word; use validateRules() to refuse it when the list is saved.
      */
     public static void populateSpamRules(String bannedwordslist, List<String> stringRules,
             List<Pattern> regexRules, String addendum, boolean weblogRulesAsWords) {
         if (weblogRulesAsWords) {
-            readRules(addendum, stringRules, regexRules);
-            StringTokenizer toker = new StringTokenizer(bannedwordslist == null ? "" : bannedwordslist, "\n");
-            while (toker.hasMoreTokens()) {
-                String token = toker.nextToken().trim();
-                if (!token.isEmpty() && !token.startsWith("#")) {
-                    regexRules.add(wordPattern(token));
-                }
+            readRules(addendum, stringRules, regexRules, false);
+            for (String rule : ruleLines(bannedwordslist)) {
+                regexRules.add(wordPattern(rule));
             }
         } else {
             String weblogWords = (bannedwordslist == null) ? "" : bannedwordslist;
             String siteWords = (addendum != null) ? addendum : "";
-            readRules(siteWords + "\n" + weblogWords, stringRules, regexRules);
+            readRules(siteWords + "\n" + weblogWords, stringRules, regexRules, false);
         }
     }
 
-    private static void readRules(String rules, List<String> stringRules, List<Pattern> regexRules) {
+    /**
+     * Checks that each regex rule in a banned words list compiles.
+     * @throws PatternSyntaxException for the first one that doesn't
+     */
+    public static void validateRules(String bannedwordslist) {
+        readRules(bannedwordslist, new ArrayList<>(), new ArrayList<>(), true);
+    }
+
+    /** The lines of a list that are rules, without comments or blank lines. */
+    private static List<String> ruleLines(String rules) {
+        List<String> lines = new ArrayList<>();
         StringTokenizer toker = new StringTokenizer(rules == null ? "" : rules, "\n");
         while (toker.hasMoreTokens()) {
-            String token = toker.nextToken().trim();
-            if (token.startsWith("#")) {
-                continue;
+            String token = stripSpaces(toker.nextToken());
+            if (!token.isEmpty() && !token.startsWith("#")) {
+                lines.add(token);
             }
+        }
+        return lines;
+    }
+
+    /**
+     * Removes white space from both ends, including spaces such as U+00A0
+     * and U+3000 that trim() keeps and that look blank in a text box.
+     */
+    private static String stripSpaces(String str) {
+        int start = 0;
+        int end = str.length();
+        while (start < end && isSpace(str.charAt(start))) {
+            start++;
+        }
+        while (end > start && isSpace(str.charAt(end - 1))) {
+            end--;
+        }
+        return str.substring(start, end);
+    }
+
+    private static boolean isSpace(char c) {
+        return Character.isWhitespace(c) || Character.isSpaceChar(c);
+    }
+
+    private static void readRules(String rules, List<String> stringRules, List<Pattern> regexRules,
+            boolean strict) {
+        for (String token : ruleLines(rules)) {
             if (token.startsWith("(")) {
-                regexRules.add(Pattern.compile(token));
+                try {
+                    regexRules.add(Pattern.compile(token));
+                } catch (PatternSyntaxException e) {
+                    if (strict) {
+                        throw e;
+                    }
+                    mLogger.warn("Banned words rule is not a valid regex and is matched as plain text: "
+                            + token);
+                    regexRules.add(wordPattern(token));
+                }
             } else {
                 stringRules.add(token);
             }

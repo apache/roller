@@ -30,8 +30,11 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -164,6 +167,37 @@ public class BannedwordslistTest  {
         assertFalse(Bannedwordslist.matchesRulesOnly("too much caféine", stringRules, regexRules));
         assertTrue(Bannedwordslist.matchesRulesOnly("with ÉLAN", stringRules, regexRules));
         assertFalse(Bannedwordslist.matchesRulesOnly("réélan", stringRules, regexRules));
+    }
+
+    // a line that looks blank, such as one non-breaking space, is not a rule
+    @Test
+    public void testBlankLinesAreNotRules() {
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules("foo\n\u00A0\n\u3000\nbar", stringRules, regexRules, null, true);
+        assertEquals(2, regexRules.size());
+        assertFalse(Bannedwordslist.matchesRulesOnly("price:\u00A010 EUR", stringRules, regexRules));
+
+        // a browser ends lines with \r\n, so an empty line leaves "\r"
+        stringRules.clear();
+        regexRules.clear();
+        Bannedwordslist.populateSpamRules("foo\r\n\r\nbar", stringRules, regexRules, null, false);
+        assertEquals(List.of("foo", "bar"), stringRules);
+        assertFalse(Bannedwordslist.matchesRulesOnly("a perfectly ordinary comment", stringRules, regexRules));
+    }
+
+    // a line saved as a plain word while weblog admins were untrusted isn't
+    // always a valid regex once they are trusted; it is then matched as text
+    @Test
+    public void testInvalidRegexRuleIsMatchedAsText() {
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules("(18+", stringRules, regexRules, null, false);
+        assertTrue(Bannedwordslist.matchesRulesOnly("only (18+ here", stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly("only 18 here", stringRules, regexRules));
+        // saving the list as regexes still refuses it
+        assertThrows(PatternSyntaxException.class, () -> Bannedwordslist.validateRules("(18+"));
+        Bannedwordslist.validateRules("(casino)\nviagra");
     }
 
     // each rule has its own time limit, so a long list of plain words
