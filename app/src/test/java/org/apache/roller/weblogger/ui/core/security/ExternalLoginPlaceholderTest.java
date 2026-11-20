@@ -140,6 +140,48 @@ class ExternalLoginPlaceholderTest {
     }
 
     @Test
+    void aPreviousEncodedPlaceholderIsNotAPasswordAfterTheSettingChanges() throws Exception {
+        setProperty("authentication.method", "cma");
+        // as Register stored it for container-managed sign-ups
+        User user = TestUtils.setupUser("oldcmauser");
+        userName = user.getUserName();
+        user.setPassword(RollerPasswordEncoders.create().encode("<old>"));
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        setProperty("users.passwords.externalAuthValue", "<new>");
+        setProperty("users.passwords.externalAuthValue.previous", "<older>,<old>");
+
+        assertThrows(AuthenticationException.class, () -> provider().authenticate(
+                UsernamePasswordAuthenticationToken.unauthenticated(userName, "<old>")));
+    }
+
+    @Test
+    void aPreviousUnencodedPlaceholderIsNotAPasswordAfterTheSettingChanges() throws Exception {
+        setProperty("authentication.method", "ldap");
+        setProperty("users.passwords.externalAuthValue", "<new>");
+        setProperty("users.passwords.externalAuthValue.previous", "{noop}secret");
+        // as CustomUserRegistry stored it before the setting changed
+        User user = TestUtils.setupUser("oldldapuser");
+        userName = user.getUserName();
+        user.setPassword("{noop}secret");
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        assertThrows(AuthenticationException.class, () -> provider().authenticate(
+                UsernamePasswordAuthenticationToken.unauthenticated(userName, "secret")));
+    }
+
+    @Test
+    void emptyEntriesInThePreviousPlaceholdersAreIgnored() throws Exception {
+        setProperty("users.passwords.externalAuthValue.previous", "<old>,, ,");
+
+        assertTrue(RollerPasswordEncoders.isExternalLoginMarker("<old>"));
+        assertFalse(RollerPasswordEncoders.isExternalLoginMarker(""));
+        assertFalse(RollerPasswordEncoders.isExternalLoginMarker(" "));
+    }
+
+    @Test
     void anEmptyConfiguredPlaceholderIsNotAPassword() throws Exception {
         setProperty("authentication.method", "db");
         setProperty("passwds.encryption.lazyUpgradeFrom", "plaintext");
