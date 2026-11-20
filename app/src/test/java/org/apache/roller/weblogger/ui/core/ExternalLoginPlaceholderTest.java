@@ -41,6 +41,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -274,6 +276,24 @@ class ExternalLoginPlaceholderTest {
         String sign() {
             return makeTokenSignature(1L, "ldapuser", "unused");
         }
+    }
+
+    @Test
+    void aPasswordThatBcryptTreatsAsEqualToThePlaceholderNeverMatches() throws Exception {
+        setProperty("users.passwords.externalAuthValue", "<new>");
+        setProperty("users.passwords.externalAuthValue.previous", "<old>");
+        provider();
+        PasswordEncoder encoder = RollerContext.getPasswordEncoder();
+        for (String marker : new String[] {"<new>", "<old>", "<externalAuth>"}) {
+            String stored = encoder.encode(marker);
+            // BCrypt repeats its key, a NUL byte after each copy, so this
+            // password gives the same hash as the placeholder
+            String sameKey = marker + '\0' + marker;
+            assertTrue(new BCryptPasswordEncoder().matches(sameKey, stored.substring("{bcrypt}".length())));
+            assertFalse(encoder.matches(sameKey, stored), marker);
+        }
+        // a password that only starts like a placeholder still matches
+        assertTrue(encoder.matches("<old>x", encoder.encode("<old>x")));
     }
 
     /** The login form's provider, given its encoder the way RollerContext does at startup. */
