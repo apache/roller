@@ -170,6 +170,35 @@ public class MediaFileThumbnailTest {
         assertEquals(50000, reloaded.getHeight());
     }
 
+    /**
+     * Replacing an image with a file that is not an image removes the old
+     * image's thumbnail and size.
+     */
+    @Test
+    public void testReplacingWithNonImageRemovesOldThumbnail() throws Exception {
+        MediaFile saved = upload("hawk.jpg", "image/jpeg",
+                getClass().getResourceAsStream(MediaFileTest.TEST_IMAGE), 2000);
+        try (InputStream in = saved.getThumbnailInputStream()) {
+            assertNotNull(in);
+        }
+
+        byte[] text = "notes".getBytes(StandardCharsets.US_ASCII);
+        MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+        MediaFile replaced = mgr.getMediaFile(saved.getId());
+        replaced.setName("notes.txt");
+        replaced.setContentType("text/plain");
+        replaced.setLength(text.length);
+        mgr.updateMediaFile(TestUtils.getManagedWebsite(weblog), replaced,
+                new ByteArrayInputStream(text));
+        TestUtils.endSession(true);
+
+        MediaFile reloaded = mgr.getMediaFile(saved.getId(), true);
+        assertNull(reloaded.getThumbnailInputStream(),
+                "the previous image's thumbnail must not be kept");
+        assertEquals(-1, reloaded.getWidth());
+        assertEquals(-1, reloaded.getHeight());
+    }
+
     /** The pixel limit comes from uploads.thumbnail.maxPixels. */
     @Test
     public void testThumbnailIsSkippedOverConfiguredLimit() throws Exception {

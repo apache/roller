@@ -486,6 +486,11 @@ public class JPAMediaFileManagerImpl implements MediaFileManager {
 
         if (mediaFile.isImageFile()) {
             updateThumbnail(mediaFile);
+        } else {
+            // content that isn't an image keeps no thumbnail or size from
+            // the image it replaced
+            removeThumbnail(mediaFile);
+            forgetSize(mediaFile);
         }
     }
 
