@@ -141,6 +141,11 @@ public final class RollerPasswordEncoders {
 
         log.info("Password Encryption Algorithm set to '" + algorithm + "'");
 
+        if (externalLoginMarker().contains(",")) {
+            log.warn("users.passwords.externalAuthValue contains a comma, so it can't be listed in"
+                    + " users.passwords.externalAuthValue.previous if the setting changes later.");
+        }
+
         return new ExternalLoginAware(new DelegatingPasswordEncoder(algorithm, encoders));
     }
 
