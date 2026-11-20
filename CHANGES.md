@@ -245,14 +245,16 @@
   words on Weblog Settings matches as literal text, in any case, as a whole
   word, including lines that begin with `(`. A word in Chinese, Japanese,
   Thai or another script written without spaces matches anywhere in the
-  text. Rules written as regular expressions, such as `(casino)` or
-  `viagra|cialis`, no longer match what they used to; Weblog Settings lists
-  them so the weblog admin can rewrite them as words. The built-in list, the
-  site-wide list in Server Admin, and weblog rules on sites with
-  `weblogAdminsUntrusted=false` are still regular expressions.
-  A regular expression rule that takes over a second on one value, or runs
-  out of stack, is logged; a comment is then treated as spam, and a referrer
-  is let through.
+  text. A line that is only letters, digits and spaces in parentheses, such
+  as `(casino)`, matches that text anywhere, in any case, so such rules from
+  earlier versions keep working. Other rules written as regular expressions,
+  such as `(casino|poker)` or `viagra|cialis`, no longer match what they used
+  to; Weblog Settings lists them so the weblog admin can rewrite them as
+  words. The built-in list, the site-wide list in Server Admin, and weblog
+  rules on sites with `weblogAdminsUntrusted=false` are still regular
+  expressions. A regular expression rule that takes over a second on one
+  value, or runs out of stack, is logged; a comment is then treated as spam,
+  and a referrer is let through.
 
 ### Build and packaging
 

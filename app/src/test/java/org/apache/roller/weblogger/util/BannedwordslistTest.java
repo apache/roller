@@ -218,9 +218,28 @@ public class BannedwordslistTest  {
     // lines that only mean something as a regex are listed for the weblog admin
     @Test
     public void testRegexStyleRules() {
-        assertEquals(List.of("(casino)", "viagra|cialis", "poker-?online"), Bannedwordslist.regexStyleRules(
-                "casino\n(casino)\nviagra|cialis\n# (comment)\nexample.com\npoker-?online\n"));
+        assertEquals(List.of("(casino|poker)", "viagra|cialis", "poker-?online", "(18+"),
+                Bannedwordslist.regexStyleRules("casino\n(casino)\n(casino|poker)\nviagra|cialis\n"
+                        + "# (comment)\nexample.com\npoker-?online\n(online poker)\n(18+\n"));
         assertEquals(List.of(), Bannedwordslist.regexStyleRules(null));
+    }
+
+    // a weblog line that is only letters, digits and spaces in parentheses,
+    // as written for earlier versions, matches that text anywhere, in any case
+    @Test
+    public void testWeblogRuleInParenthesesMatchesTextAnywhere() {
+        List<String> stringRules = new ArrayList<>();
+        List<Pattern> regexRules = new ArrayList<>();
+        Bannedwordslist.populateSpamRules("(casino)\n(Online Poker 24)\n(casino|poker)\n( )",
+                stringRules, regexRules, null, true);
+        assertTrue(Bannedwordslist.matchesRulesOnly("http://onlinecasino.example", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("BEST CASINOS", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("play online poker 24/7", stringRules, regexRules));
+        // a line with other regex syntax is still literal text
+        assertFalse(Bannedwordslist.matchesRulesOnly("poker night", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("see (casino|poker)", stringRules, regexRules));
+        // parentheses around spaces only are not unwrapped
+        assertFalse(Bannedwordslist.matchesRulesOnly("an ordinary comment", stringRules, regexRules));
     }
 
     // each rule has its own time limit, so a long list of plain words

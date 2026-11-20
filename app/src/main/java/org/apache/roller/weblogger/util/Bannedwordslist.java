@@ -459,6 +459,9 @@ public final class Bannedwordslist {
      * plain words (case-insensitive, at word boundaries) rather than as
      * regular expressions, so an untrusted weblog admin can't write a rule
      * that backtracks; the addendum's rules are still regular expressions.
+     * A weblog line such as (casino), written for earlier versions, that is
+     * only letters, digits and spaces in parentheses is matched as that text
+     * anywhere, case-insensitive, without word edges.
      * A regex rule that doesn't compile is logged and matched as a plain
      * word; use validateRules() to refuse it when the list is saved.
      */
@@ -467,7 +470,8 @@ public final class Bannedwordslist {
         if (weblogRulesAsWords) {
             readRules(addendum, stringRules, regexRules, false);
             for (String rule : ruleLines(bannedwordslist)) {
-                regexRules.add(wordPattern(rule));
+                String text = textInParentheses(rule);
+                regexRules.add(text != null ? textPattern(text) : wordPattern(rule));
             }
         } else {
             String weblogWords = (bannedwordslist == null) ? "" : bannedwordslist;
@@ -487,12 +491,14 @@ public final class Bannedwordslist {
     /**
      * The lines of a weblog's banned words that only mean something as a
      * regular expression, so that a weblog admin can be told they are
-     * matched as plain words.
+     * matched as plain words. A line that is text in parentheses isn't
+     * listed, since it still matches that text.
      */
     public static List<String> regexStyleRules(String bannedwordslist) {
         List<String> rules = new ArrayList<>();
         for (String rule : ruleLines(bannedwordslist)) {
-            if (rule.startsWith("(") || StringUtils.containsAny(rule, "|\\[*+?{^$")) {
+            if (textInParentheses(rule) == null
+                    && (rule.startsWith("(") || StringUtils.containsAny(rule, "|\\[*+?{^$"))) {
                 rules.add(rule);
             }
         }
@@ -550,6 +556,25 @@ public final class Bannedwordslist {
                 stringRules.add(token);
             }
         }
+    }
+
+    /** Letters, combining marks, digits and spaces in parentheses. */
+    private static final Pattern TEXT_IN_PARENTHESES =
+            Pattern.compile("\\(([\\p{L}\\p{M}\\p{N} ]+)\\)");
+
+    /**
+     * The text inside a line such as (casino), which earlier versions
+     * matched as a regular expression, or null if the line isn't only
+     * letters, combining marks, digits and spaces in parentheses.
+     */
+    private static String textInParentheses(String rule) {
+        Matcher matcher = TEXT_IN_PARENTHESES.matcher(rule);
+        return matcher.matches() && !matcher.group(1).isBlank() ? matcher.group(1) : null;
+    }
+
+    /** The literal text anywhere, case-insensitive in any script. */
+    private static Pattern textPattern(String text) {
+        return Pattern.compile(Pattern.quote(text), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
     }
 
     /** A letter, combining mark, digit or underscore, in any script. */
