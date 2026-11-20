@@ -88,7 +88,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
                                 ? mediaFile.getDescription().trim() : mediaFile.getName();
                         // an image too large for a thumbnail is shown at
                         // thumbnail size from its own URL
-                        String src = mediaFile.isOverThumbnailPixelLimit()
+                        String src = mediaFile.isThumbnailSkipped()
                                 ? mediaFile.getPermalink() : mediaFile.getThumbnailURL();
                         link = "<p>" + name + "</p>"
                                 + "<a href=\"" + StringEscapeUtils.escapeHtml4(mediaFile.getPermalink()) + "\">"

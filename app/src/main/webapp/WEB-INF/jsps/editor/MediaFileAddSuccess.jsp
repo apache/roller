@@ -67,7 +67,7 @@
 
                         <div class="col-md-2">
                             <%-- an image too large for a thumbnail shows its file type icon --%>
-                            <s:if test="#newImage.overThumbnailPixelLimit">
+                            <s:if test="#newImage.thumbnailSkipped">
                                 <span class="bi <s:property value='typeIcon(#newImage.contentType)'/> fs-1" aria-hidden="true"></span>
                             </s:if>
                             <s:else>

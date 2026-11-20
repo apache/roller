@@ -111,11 +111,10 @@ public class MediaResourceServlet extends HttpServlet {
             return;
         }
 
-        // An image too large for a thumbnail has none. Answer 404 rather than
-        // sending the full image, so previews show the file type icon.
-        if (resourceRequest.isThumbnail()
-                && mediaFile.isOverThumbnailPixelLimit()
-                && !hasThumbnail(mediaFile)) {
+        // An image stored without a thumbnail, because it was too large for
+        // one, has none. Answer 404 rather than sending the full image, so
+        // previews show the file type icon.
+        if (resourceRequest.isThumbnail() && mediaFile.isThumbnailSkipped()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -177,14 +176,6 @@ public class MediaResourceServlet extends HttpServlet {
             resourceStream.close();
         }
 
-    }
-
-    private static boolean hasThumbnail(MediaFile mediaFile) {
-        try (InputStream thumbnail = mediaFile.getThumbnailInputStream()) {
-            return thumbnail != null;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     private static boolean belongsTo(MediaFile mediaFile, Weblog weblog) {
