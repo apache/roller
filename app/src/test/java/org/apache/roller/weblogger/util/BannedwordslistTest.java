@@ -139,15 +139,16 @@ public class BannedwordslistTest  {
         List<String> stringRules = new ArrayList<>();
         List<Pattern> regexRules = new ArrayList<>();
         Bannedwordslist.populateSpamRules("(a|b)\nViagra\n(foo)\nexample.com/", stringRules, regexRules,
-                "(c|d)", true);
+                "(qq|zz)", true);
         assertFalse(Bannedwordslist.matchesRulesOnly("a", stringRules, regexRules));
         assertTrue(Bannedwordslist.matchesRulesOnly("spam (a|b) here", stringRules, regexRules));
         assertTrue(Bannedwordslist.matchesRulesOnly("buy VIAGRA now", stringRules, regexRules));
         assertFalse(Bannedwordslist.matchesRulesOnly("viagraphone", stringRules, regexRules));
         assertTrue(Bannedwordslist.matchesRulesOnly("see (foo) now", stringRules, regexRules));
         assertTrue(Bannedwordslist.matchesRulesOnly("http://example.com/x", stringRules, regexRules));
+        assertFalse(Bannedwordslist.matchesRulesOnly("http://example.org/x", stringRules, regexRules));
         // the site-wide rule is still a regex
-        assertTrue(Bannedwordslist.matchesRulesOnly("d", stringRules, regexRules));
+        assertTrue(Bannedwordslist.matchesRulesOnly("zz", stringRules, regexRules));
 
         // with the setting off, the weblog's rules are regexes as before
         stringRules.clear();
