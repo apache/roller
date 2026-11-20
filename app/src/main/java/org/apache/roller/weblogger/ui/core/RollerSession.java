@@ -146,8 +146,12 @@ public class RollerSession
                         }
                         rollerSession.setAuthenticatedUser(user);
                         rememberLoginPassword(session, rollerSession);
+                    } else if (session.getAttribute(LOGIN_PASSWORD) != null) {
+                        // the account this login was recorded for has been
+                        // disabled or removed since
+                        return endSession(request, session);
                     }
-                    
+
                 } catch (WebloggerException e) {
                     log.error("ERROR: getting user object",e);
                 }

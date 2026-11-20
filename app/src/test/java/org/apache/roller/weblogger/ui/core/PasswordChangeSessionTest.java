@@ -387,6 +387,45 @@ class PasswordChangeSessionTest {
     }
 
     @Test
+    void disablingAUserEndsALoginThatHasNotOpenedTheUiYet() throws Exception {
+        Browser admin = new Browser(adminName);
+        Browser b = new Browser(userName);
+        admin.request();
+        TestUtils.endSession(true);
+
+        saveAsAdmin(admin, bean -> bean.setEnabled(false));
+
+        b.assertLoggedOut();
+        admin.assertLoggedIn(adminName);
+    }
+
+    @Test
+    void disablingAUserEndsASessionThatWasPassivated() throws Exception {
+        Browser admin = new Browser(adminName);
+        Browser b = new Browser(userName);
+        admin.request();
+        b.request();
+        TestUtils.endSession(true);
+        b.passivate();
+
+        saveAsAdmin(admin, bean -> bean.setEnabled(false));
+
+        b.assertLoggedOut();
+    }
+
+    @Test
+    void removingAUserEndsALoginThatHasNotOpenedTheUiYet() throws Exception {
+        String goneName = TestUtils.setupUser("sessiongone").getUserName();
+        TestUtils.endSession(true);
+        Browser b = new Browser(goneName);
+
+        TestUtils.teardownUser(goneName);
+        TestUtils.endSession(true);
+
+        b.assertLoggedOut();
+    }
+
+    @Test
     void loggingInAgainInAStaleSessionStaysLoggedIn() throws Exception {
         Browser a = new Browser(userName);
         Browser b = new Browser(userName);
