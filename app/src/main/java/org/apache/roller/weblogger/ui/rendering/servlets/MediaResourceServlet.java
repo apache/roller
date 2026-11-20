@@ -111,8 +111,8 @@ public class MediaResourceServlet extends HttpServlet {
             return;
         }
 
-        // An image stored without a thumbnail, because it was too large for
-        // one, has none. Answer 404 rather than sending the full image, so
+        // An image over the thumbnail pixel limit and stored without a
+        // thumbnail has none. Answer 404 rather than sending the full image, so
         // previews show the file type icon.
         if (resourceRequest.isThumbnail() && mediaFile.isThumbnailSkipped()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

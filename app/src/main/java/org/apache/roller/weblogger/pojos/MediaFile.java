@@ -372,12 +372,16 @@ public class MediaFile implements Serializable {
     }
 
     /**
-     * True for an image whose size was read on upload but which has no
-     * thumbnail stored, as when it was over uploads.thumbnail.maxPixels at
-     * the time. This depends on what was stored, not on the current limit.
+     * True for an image that has no thumbnail stored and whose recorded size
+     * is over uploads.thumbnail.maxPixels. An image with a thumbnail, or one
+     * without a thumbnail but under the limit (such as a file carried over
+     * from an older version), is not skipped and is previewed as before.
      */
     public boolean isThumbnailSkipped() {
         if (!isImageFile() || getWidth() <= 0 || getHeight() <= 0) {
+            return false;
+        }
+        if ((long) getWidth() * getHeight() <= thumbnailMaxPixels()) {
             return false;
         }
         return !thumbnailStored();

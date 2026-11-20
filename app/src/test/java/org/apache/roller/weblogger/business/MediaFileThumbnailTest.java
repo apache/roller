@@ -186,11 +186,12 @@ public class MediaFileThumbnailTest {
     }
 
     /**
-     * An image stored without a thumbnail keeps showing as having none after
-     * uploads.thumbnail.maxPixels is raised above its size.
+     * An image stored without a thumbnail because it was over the limit is
+     * served in full once uploads.thumbnail.maxPixels is raised above its
+     * size, like any other image without a thumbnail under the limit.
      */
     @Test
-    public void testRaisingLimitAfterUploadKeepsThumbnailSkipped() throws Exception {
+    public void testRaisingLimitAfterUploadServesOriginal() throws Exception {
         WebloggerConfig.init();
         MediaFile saved;
         try (MockedStatic<WebloggerConfig> config =
@@ -205,8 +206,30 @@ public class MediaFileThumbnailTest {
         // back at the default limit, which 500 x 373 is well under
         TestUtils.endSession(true);
         MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
-        assertTrue(loadedWithoutContent(saved.getId()).isThumbnailSkipped());
-        assertTrue(mgr.getMediaFile(saved.getId(), true).isThumbnailSkipped());
+        assertFalse(loadedWithoutContent(saved.getId()).isThumbnailSkipped());
+        assertFalse(mgr.getMediaFile(saved.getId(), true).isThumbnailSkipped());
+    }
+
+    /**
+     * An image under the limit that has no thumbnail file, as for files
+     * carried over from older versions or by migrations, is served in full.
+     */
+    @Test
+    public void testSmallImageWithoutThumbnailFileIsNotSkipped() throws Exception {
+        MediaFile saved = upload("hawk.jpg", "image/jpeg",
+                getClass().getResourceAsStream(MediaFileTest.TEST_IMAGE), 2000);
+        WebloggerFactory.getWeblogger().getFileContentManager().deleteFile(
+                saved.getWeblog(), saved.getId() + "_sm");
+        TestUtils.endSession(true);
+
+        MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+        MediaFile reloaded = mgr.getMediaFile(saved.getId(), true);
+        assertNull(reloaded.getThumbnailInputStream());
+        assertEquals(500, reloaded.getWidth());
+        assertEquals(373, reloaded.getHeight());
+        assertFalse(reloaded.isThumbnailSkipped());
+        TestUtils.endSession(true);
+        assertFalse(loadedWithoutContent(saved.getId()).isThumbnailSkipped());
     }
 
     /**
