@@ -77,6 +77,30 @@ class SearchQueryLengthTest {
         assertEquals(query.substring(0, 256), new WeblogSearchRequest(request).getQuery());
     }
 
+    @Test
+    void capIgnoresAnEscapedQuote() throws Exception {
+        // the escaped quote is part of a term, so the phrase after it is the
+        // one the cap cuts off
+        String query = "\\\"x " + "x".repeat(240) + " \"roller weblog\"";
+        HttpServletRequest request = request(WeblogSearchRequest.SEARCH_SERVLET, "/team", query);
+        String capped = new WeblogSearchRequest(request).getQuery();
+        assertEquals("\\\"x " + "x".repeat(240) + " roller web", capped);
+    }
+
+    @Test
+    void capDropsAnEscapeCharacterItCutsOff() throws Exception {
+        String query = "x".repeat(255) + "\\:tail";
+        HttpServletRequest request = request(WeblogSearchRequest.SEARCH_SERVLET, "/team", query);
+        assertEquals("x".repeat(255), new WeblogSearchRequest(request).getQuery());
+    }
+
+    @Test
+    void capIgnoresLeadingWhitespace() throws Exception {
+        String query = " ".repeat(300) + "roller";
+        HttpServletRequest request = request(WeblogSearchRequest.SEARCH_SERVLET, "/team", query);
+        assertEquals("roller", new WeblogSearchRequest(request).getQuery());
+    }
+
     private static HttpServletRequest request(String servlet, String pathInfo, String query) {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getServletPath()).thenReturn(servlet);
