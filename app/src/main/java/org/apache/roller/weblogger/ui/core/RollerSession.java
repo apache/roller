@@ -87,7 +87,7 @@ public class RollerSession
             }
             // another request of the same browser ended the session while
             // this one was using it, so this one is logged out too
-            return endSession(request, session);
+            return endSession(request, session, null);
         }
     }
 
@@ -107,7 +107,7 @@ public class RollerSession
                 // before the cache check below, which rebuilds the session
                 // from the login and would take on the new password.
                 if (!rollerSession.isCurrent(session)) {
-                    return endSession(request, session);
+                    return endSession(request, session, rollerSession.userName);
                 }
                 // Check if session is still valid in cache
                 RollerLoginSessionManager manager = RollerLoginSessionManager.getInstance();
@@ -148,14 +148,14 @@ public class RollerSession
                         // a login whose password changed since it was first
                         // seen ends here too, even with no Roller session left
                         if (!sameLoginPassword(session, user)) {
-                            return endSession(request, session);
+                            return endSession(request, session, user.getUserName());
                         }
                         rollerSession.setAuthenticatedUser(user);
                         rememberLoginPassword(session, rollerSession);
                     } else if (session.getAttribute(LOGIN_PASSWORD) != null) {
                         // the account this login was recorded for has been
                         // disabled or removed since
-                        return endSession(request, session);
+                        return endSession(request, session, principal.getName());
                     }
 
                 } catch (WebloggerException e) {
@@ -310,10 +310,16 @@ public class RollerSession
     /**
      * Ends a session whose login no longer holds: invalidates it, clears the
      * login from this request, and gives the rest of the request a new
-     * session with no user, as any visitor who is not logged in gets.
+     * session with no user, as any visitor who is not logged in gets. The
+     * user name is null when another request already ended the session.
      */
-    private static RollerSession endSession(HttpServletRequest request, HttpSession session) {
-        log.info("Ending session of a user whose password or account changed");
+    private static RollerSession endSession(HttpServletRequest request, HttpSession session, String userName) {
+        if (userName != null) {
+            log.info("Ending a session of user " + userName
+                    + ", whose password changed or whose account was disabled or removed");
+        } else {
+            log.debug("Logging out a request whose session another request ended");
+        }
         // The session's other requests share this security context, so clear
         // the login from it before the session ends; otherwise one of them
         // could carry the login into a new session.
