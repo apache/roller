@@ -232,10 +232,10 @@ public class PageServlet extends HttpServlet {
             }
         }
 
-        // cached content checking
+        // cached content checking. skipCache is a request attribute set by
+        // the server (see doPost), never a parameter visitors can send
         if ((!this.excludeOwnerPages || !pageRequest.isLoggedIn())
-                && request.getAttribute("skipCache") == null
-                && request.getParameter("skipCache") == null) {
+                && request.getAttribute("skipCache") == null) {
 
             CachedContent cachedContent;
             if (isSiteWide) {

@@ -33,11 +33,19 @@ import org.apache.roller.weblogger.ui.rendering.util.cache.SaltCache;
  */
 public class LoadSaltFilter implements Filter {
 
+    /** Roller UI static files, which never hold a form. */
+    static final String[] STATIC_PATHS = {"/roller-ui/styles/", "/roller-ui/scripts/", "/roller-ui/images/",
+        "/roller-ui/theme/"};
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
 
         HttpServletRequest httpReq = (HttpServletRequest) request;
+        if (isStaticFile(httpReq)) {
+            chain.doFilter(request, response);
+            return;
+        }
         httpReq.getSession(true);
         RollerSession rollerSession = RollerSession.getRollerSession(httpReq);
         if (redirectEndedSession(httpReq, (HttpServletResponse) response)) {
@@ -79,6 +87,20 @@ public class LoadSaltFilter implements Filter {
         }
         response.sendRedirect(target);
         return true;
+    }
+
+    /** Stylesheets, scripts and images get no session and no salt. */
+    static boolean isStaticFile(HttpServletRequest request) {
+        String path = request.getServletPath();
+        if (path == null) {
+            return false;
+        }
+        for (String prefix : STATIC_PATHS) {
+            if (path.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

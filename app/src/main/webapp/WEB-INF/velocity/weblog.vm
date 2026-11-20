@@ -759,11 +759,8 @@ Show search form for a weblog.
     <script>
         function validateSearch(form) {
             if (form.q.value == "") {
-                $("#searchDialog").popup('open').focus();
-                $("#searchDialog").popup({ afterclose: function( event, ui ) {
-                    form.q.focus();
-                    }
-                });
+                // the alert below is shown by the theme's :target style rule
+                location.hash = "searchDialog";
                 return false;
             }
             return true;

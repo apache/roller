@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +49,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.roller.util.RollerConstants;
 import org.apache.roller.weblogger.util.MediaTypePolicy;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.FileIOException;
@@ -107,6 +109,7 @@ public class MediaCollection {
             
             // authenticated client posted a weblog entry
             File tempFile = null;
+            FileInputStream fis = null;
             String handle = pathInfo[0];
             MediaFileManager fileMgr = roller.getMediaFileManager();
             Weblog website = WebloggerFactory.getWeblogger().getWeblogManager().getWeblogByHandle(handle);
@@ -123,10 +126,8 @@ public class MediaCollection {
                 String fileName = createFileName(website, baseName, contentType);
                 try {
                     tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
-                    FileOutputStream fos = new FileOutputStream(tempFile);
-                    Utilities.copyInputToOutput(is, fos);
-                    fos.close();
-                                        
+                    copyUpToUploadLimit(is, tempFile);
+
                     // Parse pathinfo to determine file path
                     String path = filePathFromPathInfo(pathInfo);
                     String justPath = path;
@@ -146,7 +147,7 @@ public class MediaCollection {
                         throw new AtomException("Duplicate file name");
                     }
 
-                    FileInputStream fis = new FileInputStream(tempFile);
+                    fis = new FileInputStream(tempFile);
 
                     MediaFile mf = new MediaFile();
                     mf.setDirectory(mdir);
@@ -171,7 +172,6 @@ public class MediaCollection {
 
                     roller.flush();
                     
-                    fis.close();
                                       
                     MediaFile stored = fileMgr.getMediaFile(mf.getId());
                     Entry mediaEntry = createAtomResourceEntry(website, stored);
@@ -188,6 +188,7 @@ public class MediaCollection {
                     throw new AtomException(
                         "File upload disabled, over-quota or other error", fie);
                 } finally {
+                    closeQuietly(fis);
                     if (tempFile != null) {
                         tempFile.delete();
                     }
@@ -201,8 +202,56 @@ public class MediaCollection {
             throw new AtomException("Posting media", ioe);
         }
     }
-    
-    
+
+
+    private static void closeQuietly(InputStream in) {
+        if (in != null) {
+            try {
+                in.close();
+            } catch (IOException e) {
+                log.debug("Could not close temporary upload file", e);
+            }
+        }
+    }
+
+    /**
+     * Copies an upload to a file, refusing it as soon as it is larger than
+     * the uploads.file.maxsize setting, so an oversized body is not stored.
+     */
+    static void copyUpToUploadLimit(InputStream in, File file)
+            throws IOException, AtomException {
+        long maxBytes = (long) (RollerConstants.ONE_MB_IN_BYTES * Double.parseDouble(
+                WebloggerRuntimeConfig.getProperty("uploads.file.maxsize")));
+        try (OutputStream out = new FileOutputStream(file)) {
+            byte[] buffer = new byte[RollerConstants.EIGHT_KB_IN_BYTES];
+            long total = 0;
+            int count;
+            while ((count = in.read(buffer)) != -1) {
+                total += count;
+                if (total > maxBytes) {
+                    throw new UploadTooLargeException();
+                }
+                out.write(buffer, 0, count);
+            }
+        }
+    }
+
+
+    /** Answers 413, which Propono's AtomServlet sends as the response status. */
+    static final class UploadTooLargeException extends AtomException {
+        private static final long serialVersionUID = 1L;
+
+        UploadTooLargeException() {
+            super("File is larger than the upload limit");
+        }
+
+        @Override
+        public int getStatus() {
+            return HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE;
+        }
+    }
+
+
     public Entry getEntry(AtomRequest areq) throws AtomException {
         try {
             String[] pathInfo = Utilities.stringToStringArray(areq.getPathInfo(), "/");
@@ -387,10 +436,9 @@ public class MediaCollection {
        String[] pathInfo = StringUtils.split(areq.getPathInfo(),"/");
        String contentType = areq.getContentType();
        try {
-            InputStream is = areq.getInputStream();
-     
             // authenticated client posted a weblog entry
             File tempFile = null;
+            FileInputStream fis = null;
             String handle = pathInfo[0];
             MediaFileManager fmgr = roller.getMediaFileManager();
             WeblogManager wmgr = roller.getWeblogManager();
@@ -401,18 +449,21 @@ public class MediaCollection {
             if (pathInfo.length > 1) {
                 // Save to temp file
                 try {
-                    tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
-                    FileOutputStream fos = new FileOutputStream(tempFile);
-                    Utilities.copyInputToOutput(is, fos);
-                    fos.close();
-                                        
-                    FileInputStream fis = new FileInputStream(tempFile);
-
                     // Parse pathinfo to determine file path
                     String path = filePathFromPathInfo(pathInfo);
-                    
+
                     // Attempt to load file, to ensure it exists
                     MediaFile mf = fmgr.getMediaFileByPath(website, path);
+                    if (mf == null) {
+                        throw new AtomNotFoundException("Cannot find media file: " + path);
+                    }
+
+                    tempFile = File.createTempFile(UUID.randomUUID().toString(), "tmp");
+                    try (InputStream is = areq.getInputStream()) {
+                        copyUpToUploadLimit(is, tempFile);
+                    }
+
+                    fis = new FileInputStream(tempFile);
                     String replacementName = pathInfo[pathInfo.length - 1];
                     String declaredType = MediaTypePolicy.normalizeType(contentType);
                     RollerMessages errors = new RollerMessages();
@@ -430,11 +481,12 @@ public class MediaCollection {
 
                     roller.flush();
 
-                    fis.close();
                     
                     log.debug("Exiting");
                     return;
 
+                } catch (AtomException ae) {
+                    throw ae;
                 } catch (FileIOException fie) {
                     throw new AtomException(
                         "File upload disabled, over-quota or other error", fie);
@@ -442,6 +494,7 @@ public class MediaCollection {
                     throw new AtomException(
                         "Unexpected error during file upload", e);
                 } finally {
+                    closeQuietly(fis);
                     if (tempFile != null) {
                         tempFile.delete();
                     }
@@ -451,8 +504,6 @@ public class MediaCollection {
         
         } catch (WebloggerException re) {
             throw new AtomException("Posting media");
-        } catch (IOException ioe) {
-            throw new AtomException("Posting media", ioe);
         }
     }
     

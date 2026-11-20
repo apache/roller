@@ -8,7 +8,7 @@ You can override it with your own file via WEB-INF/tiles-def.xml
 <%-- salt issued with this response, read by refreshSalt() after an AJAX post --%>
 <meta name="roller-salt" content="<s:property value="salt"/>" />
 
-<script src="<s:url value='/webjars/jquery/3.7.1/jquery.min.js' />"></script>
+<script src="<s:url value='/webjars/jquery/3.8.0/jquery.min.js' />"></script>
 
 <%-- jquery-ui webjar is 1.14.2+1 in pom.xml, but its resources are served
      under the plus-free path: the +N is a webjar build suffix, not part of

@@ -30,6 +30,7 @@ import org.apache.roller.weblogger.business.WebloggerFactory;
 import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.pojos.User;
 import org.apache.roller.weblogger.ui.core.security.CustomUserRegistry;
+import org.apache.roller.weblogger.ui.core.security.ExternalLoginAwarePasswordEncoder;
 import org.apache.roller.weblogger.ui.core.security.RollerRememberMeServices;
 import org.apache.roller.weblogger.ui.core.security.RollerUserDetailsService;
 import org.junit.jupiter.api.AfterEach;
@@ -40,9 +41,12 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -143,6 +147,54 @@ class ExternalLoginPlaceholderTest {
     }
 
     @Test
+    void aPreviousEncodedPlaceholderIsNotAPasswordAfterTheSettingChanges() throws Exception {
+        setProperty("authentication.method", "cma");
+        setProperty("users.passwords.externalAuthValue", "<old>");
+        DaoAuthenticationProvider provider = provider();
+        // as Register stored it for container-managed sign-ups
+        User user = TestUtils.setupUser("oldcmauser");
+        userName = user.getUserName();
+        user.resetPassword("<old>");
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        setProperty("users.passwords.externalAuthValue", "<new>");
+        setProperty("users.passwords.externalAuthValue.previous", "<older>,<old>");
+
+        assertThrows(AuthenticationException.class, () -> provider.authenticate(
+                new UsernamePasswordAuthenticationToken(userName, "<old>")));
+        assertFalse(RollerContext.getPasswordEncoder().matches("<old>", user.getPassword()));
+    }
+
+    @Test
+    void aPreviousUnencodedPlaceholderIsNotAPasswordAfterTheSettingChanges() throws Exception {
+        setProperty("authentication.method", "ldap");
+        setProperty("users.passwords.externalAuthValue", "<new>");
+        setProperty("users.passwords.externalAuthValue.previous", "{noop}secret");
+        DaoAuthenticationProvider provider = provider();
+        // as CustomUserRegistry stored it before the setting changed
+        User user = TestUtils.setupUser("oldldapuser");
+        userName = user.getUserName();
+        user.setPassword("{noop}secret");
+        WebloggerFactory.getWeblogger().getUserManager().saveUser(user);
+        TestUtils.endSession(true);
+
+        assertThrows(AuthenticationException.class, () -> provider.authenticate(
+                new UsernamePasswordAuthenticationToken(userName, "secret")));
+        assertFalse(RollerContext.getPasswordEncoder().matches("secret", "{noop}secret"));
+    }
+
+    @Test
+    void emptyEntriesInThePreviousPlaceholdersAreIgnored() throws Exception {
+        setProperty("users.passwords.externalAuthValue.previous", "<older>, <old>,, ,");
+
+        assertTrue(ExternalLoginAwarePasswordEncoder.isExternalLoginMarker("<older>"));
+        assertTrue(ExternalLoginAwarePasswordEncoder.isExternalLoginMarker("<old>"));
+        assertFalse(ExternalLoginAwarePasswordEncoder.isExternalLoginMarker(""));
+        assertFalse(ExternalLoginAwarePasswordEncoder.isExternalLoginMarker(" "));
+    }
+
+    @Test
     void anEmptyConfiguredPlaceholderIsNotAPassword() throws Exception {
         setProperty("authentication.method", "db");
         setProperty("passwds.encryption.lazyUpgradeFrom", "plaintext");
@@ -227,6 +279,33 @@ class ExternalLoginPlaceholderTest {
         String sign() {
             return makeTokenSignature(1L, "ldapuser", "unused");
         }
+    }
+
+    @Test
+    void aPasswordThatBcryptTreatsAsEqualToThePlaceholderNeverMatches() throws Exception {
+        setProperty("users.passwords.externalAuthValue", "<new>");
+        setProperty("users.passwords.externalAuthValue.previous", "<old>");
+        provider();
+        PasswordEncoder encoder = RollerContext.getPasswordEncoder();
+        for (String marker : new String[] {"<new>", "<old>", "<externalAuth>"}) {
+            String stored = encoder.encode(marker);
+            // BCrypt repeats its key, a NUL byte after each copy, so this
+            // password gives the same hash as the placeholder
+            String sameKey = marker + '\0' + marker;
+            assertTrue(new BCryptPasswordEncoder().matches(sameKey, stored.substring("{bcrypt}".length())));
+            assertFalse(encoder.matches(sameKey, stored), marker);
+        }
+        // a password that only starts like a placeholder still matches
+        assertTrue(encoder.matches("<old>x", encoder.encode("<old>x")));
+    }
+
+    @Test
+    void anEmptyOrMissingStoredPasswordDoesNotMatch() throws Exception {
+        setProperty("passwds.encryption.lazyUpgradeFrom", "");
+        provider();
+        PasswordEncoder encoder = RollerContext.getPasswordEncoder();
+        assertFalse(encoder.matches("secret", ""));
+        assertFalse(encoder.matches("secret", null));
     }
 
     /** The login form's provider, given its encoder the way RollerContext does at startup. */
