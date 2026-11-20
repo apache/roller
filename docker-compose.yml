@@ -30,8 +30,9 @@ services:
          - type: bind
            # A major version can't start on a data directory initialized by
            # an earlier one, so each gets its own directory and old data is
-           # left alone (pg_dump from the old container to migrate it). The
-           # postgres:18 image keeps its data under /var/lib/postgresql.
+           # left alone. To migrate it, run the old image on the old
+           # directory and pg_dump from that. The postgres:18 image keeps
+           # its data in a versioned directory under /var/lib/postgresql.
            source: ./docker/postgresql-18-data
            target: /var/lib/postgresql
       environment:

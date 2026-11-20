@@ -18,5 +18,6 @@
 .git
 docker/postgresql-data
 docker/postgresql-16-data
+docker/postgresql-18-data
 docker/roller-data
 it-playwright
