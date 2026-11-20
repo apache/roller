@@ -85,7 +85,8 @@
   early and counted them twice (#316).
 - **A weblog's only administrator can't resign from it**, and the main menu
   says why. After resigning, the main menu now shows whether it worked.
-  Declining an invitation only removes a pending invitation (#322).
+  Declining an invitation only removes a pending invitation, and declining
+  one you already accepted says you're already a member (#322).
 - **Passwords stored with an older encoding are upgraded at login.** With
   `passwds.encryption.lazyUpgradeFrom` set (`SHA` by default), passwords from
   older Roller versions could be used to log in, but they stayed stored in the
@@ -204,8 +205,8 @@
   permission to publish, media uploads over `uploads.file.maxsize` are
   refused with 413 before they're stored, and entries show the creator's
   email address only to the creator (also in MetaWeblog responses) (#316).
-- **Search queries are limited to 256 characters**, and a query the search
-  engine can't run finds nothing (#322).
+- **Search queries are limited to 256 characters**, after spaces around them
+  are dropped, and a query the search engine can't run finds nothing (#322).
 - **The OpenID Connect identity can't be changed from the profile or
   registration forms**; only Roller's OpenID Connect login sets it (#322).
 - **Weblog pages ignore a `skipCache` query parameter** (#313).
