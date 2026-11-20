@@ -21,11 +21,15 @@
 // Bootstrap 3's CSS styles, so the theme doesn't need jQuery or Bootstrap's
 // JavaScript.
 (function () {
+    function toggleOf(dropdown) {
+        return dropdown.querySelector('[data-toggle="dropdown"]');
+    }
+
     function closeDropdowns(except) {
         document.querySelectorAll('.dropdown.open').forEach(function (dropdown) {
             if (dropdown !== except) {
                 dropdown.classList.remove('open');
-                var toggle = dropdown.querySelector('[data-toggle="dropdown"]');
+                var toggle = toggleOf(dropdown);
                 if (toggle) {
                     toggle.setAttribute('aria-expanded', 'false');
                 }
@@ -33,43 +37,71 @@
         });
     }
 
+    // As Bootstrap 3 did, the toggle gets focus when the menu opens, so the
+    // keys below work after a click in browsers that don't focus a clicked
+    // link.
+    function openDropdown(dropdown, toggle) {
+        closeDropdowns(dropdown);
+        dropdown.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.focus();
+    }
+
+    // The element a collapse button names in data-target, or in its href.
+    function collapseTarget(toggle) {
+        var selector = toggle.getAttribute('data-target') || toggle.getAttribute('href');
+        if (!selector || selector === '#') {
+            return null;
+        }
+        try {
+            return document.querySelector(selector);
+        } catch (e) {
+            return null;
+        }
+    }
+
     document.addEventListener('click', function (event) {
-        var toggle = event.target.closest('[data-toggle]');
+        var toggle = event.target.closest ? event.target.closest('[data-toggle]') : null;
         var kind = toggle ? toggle.getAttribute('data-toggle') : null;
+        var dropdown = kind === 'dropdown' ? toggle.closest('.dropdown') : null;
+        if (dropdown) {
+            event.preventDefault();
+            if (dropdown.classList.contains('open')) {
+                closeDropdowns(null);
+            } else {
+                openDropdown(dropdown, toggle);
+            }
+            return;
+        }
+        closeDropdowns(null);
         if (kind === 'collapse') {
-            var target = document.querySelector(toggle.getAttribute('data-target'));
+            if (!toggle.getAttribute('data-target')) {
+                event.preventDefault();
+            }
+            var target = collapseTarget(toggle);
             if (target) {
                 var shown = target.classList.toggle('in');
                 toggle.classList.toggle('collapsed', !shown);
                 toggle.setAttribute('aria-expanded', String(shown));
             }
-        } else if (kind === 'dropdown') {
-            event.preventDefault();
-            var dropdown = toggle.parentNode;
-            closeDropdowns(dropdown);
-            var open = dropdown.classList.toggle('open');
-            toggle.setAttribute('aria-expanded', String(open));
-        } else {
-            closeDropdowns(null);
         }
     });
 
-    function openDropdown(dropdown, toggle) {
-        closeDropdowns(dropdown);
-        dropdown.classList.add('open');
-        toggle.setAttribute('aria-expanded', 'true');
-    }
-
-    // As Bootstrap 3's dropdown did: Arrow Up/Down on the toggle opens the
-    // menu, then moves between its items, and Escape closes it and returns
-    // focus to the toggle so it isn't left on a hidden link.
+    // As Bootstrap 3's dropdown did: Arrow Up/Down or Space on the toggle
+    // opens the menu, then Arrow Up/Down moves between its items, and Escape
+    // closes it and returns focus to the toggle so it isn't left on a hidden
+    // link. Keys typed in a form field are left alone.
     document.addEventListener('keydown', function (event) {
         var key = event.key;
-        if (key !== 'Escape' && key !== 'ArrowUp' && key !== 'ArrowDown') {
+        if (key !== 'Escape' && key !== 'ArrowUp' && key !== 'ArrowDown' && key !== ' ') {
             return;
         }
-        var dropdown = event.target.closest ? event.target.closest('.dropdown') : null;
-        var toggle = dropdown ? dropdown.querySelector('[data-toggle="dropdown"]') : null;
+        var target = event.target;
+        if (/^(input|textarea|select)$/i.test(target.tagName) || target.isContentEditable) {
+            return;
+        }
+        var dropdown = target.closest ? target.closest('.dropdown') : null;
+        var toggle = dropdown ? toggleOf(dropdown) : null;
         if (!toggle) {
             if (key === 'Escape') {
                 closeDropdowns(null);

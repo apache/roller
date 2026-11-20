@@ -259,10 +259,11 @@ class NewUserJourneyIT extends BaseIT {
 
     /**
      * The Gaurav theme's Categories menu, now plain JavaScript, keeps the
-     * keyboard behaviour of Bootstrap's dropdown: Arrow Down opens it and moves
-     * through its links, Arrow Up moves back, and Escape closes it and returns
-     * focus to the toggle. A new weblog has several categories, so the menu is
-     * there.
+     * keyboard behaviour of Bootstrap's dropdown: Arrow Down or Space opens it,
+     * Arrow Down moves through its links, Arrow Up moves back, and Escape
+     * closes it and returns focus to the toggle. Opening it with a click
+     * focuses the toggle, so the arrow keys work then too. A new weblog has
+     * several categories, so the menu is there.
      */
     private void useGauravCategoriesMenuFromKeyboard() {
         goTo("roller-ui/authoring/preview/" + BLOG_HANDLE + "/?theme=gaurav");
@@ -286,6 +287,22 @@ class NewUserJourneyIT extends BaseIT {
         assertThat(dropdown).not().hasClass(open);
         assertThat(toggle).hasAttribute("aria-expanded", "false");
         assertThat(toggle).isFocused();
+
+        page.keyboard().press(" ");
+        assertThat(dropdown).hasClass(open);
+        page.keyboard().press("Escape");
+        assertThat(dropdown).not().hasClass(open);
+
+        // A click focuses the toggle too, which Safari doesn't do for links
+        // by itself, so the arrow keys work after a click.
+        toggle.blur();
+        toggle.click();
+        assertThat(dropdown).hasClass(open);
+        assertThat(toggle).isFocused();
+        page.keyboard().press("ArrowDown");
+        assertThat(items.nth(0)).isFocused();
+        toggle.click();
+        assertThat(dropdown).not().hasClass(open);
     }
 
     private void enableUploads() {
