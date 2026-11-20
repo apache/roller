@@ -84,7 +84,7 @@ public class EntryAddWithMediaFile extends MediaFileBase {
                         link = link.replace("<url>", mediaFile.getPermalink())
                                    // an image too large for a thumbnail is shown
                                    // at thumbnail size from its own URL
-                                   .replace("<urlt>", mediaFile.isOverThumbnailPixelLimit()
+                                   .replace("<urlt>", mediaFile.isThumbnailSkipped()
                                            ? mediaFile.getPermalink() : mediaFile.getThumbnailURL())
                                    .replace("<name>", mediaFile.getName())
                                    .replace("<width>", ""+mediaFile.getThumbnailWidth())

@@ -102,9 +102,9 @@ class MediaResourceThumbnailTest {
     }
 
     @Test
-    void thumbnailOfImageOverPixelLimitIsTheFileIcon() throws Exception {
+    void thumbnailOfImageStoredWithoutOneIsTheFileIcon() throws Exception {
         when(file.getThumbnailInputStream()).thenReturn(null);
-        when(file.isOverThumbnailPixelLimit()).thenReturn(true);
+        when(file.isThumbnailSkipped()).thenReturn(true);
 
         ByteArrayOutputStream written = new ByteArrayOutputStream();
         HttpServletResponse response = serve(true, written);
@@ -116,8 +116,8 @@ class MediaResourceThumbnailTest {
     }
 
     @Test
-    void imageOverPixelLimitIsStillServedInFull() throws Exception {
-        when(file.isOverThumbnailPixelLimit()).thenReturn(true);
+    void imageStoredWithoutThumbnailIsStillServedInFull() throws Exception {
+        when(file.isThumbnailSkipped()).thenReturn(true);
 
         ByteArrayOutputStream written = new ByteArrayOutputStream();
         HttpServletResponse response = serve(false, written);
@@ -139,9 +139,9 @@ class MediaResourceThumbnailTest {
 
     /** An image that simply has no thumbnail, e.g. one ImageIO can't read. */
     @Test
-    void missingThumbnailUnderPixelLimitFallsBackToOriginal() throws Exception {
+    void missingThumbnailOfUnreadImageFallsBackToOriginal() throws Exception {
         when(file.getThumbnailInputStream()).thenReturn(null);
-        when(file.isOverThumbnailPixelLimit()).thenReturn(false);
+        when(file.isThumbnailSkipped()).thenReturn(false);
 
         ByteArrayOutputStream written = new ByteArrayOutputStream();
         HttpServletResponse response = serve(true, written);

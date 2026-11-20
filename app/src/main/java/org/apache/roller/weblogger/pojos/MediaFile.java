@@ -371,14 +371,28 @@ public class MediaFile implements Serializable {
     }
 
     /**
-     * True for an image whose recorded size is over uploads.thumbnail.maxPixels.
-     * Such images are stored without a thumbnail.
+     * True for an image whose size was read on upload but which has no
+     * thumbnail stored, as when it was over uploads.thumbnail.maxPixels at
+     * the time. This depends on what was stored, not on the current limit.
      */
-    public boolean isOverThumbnailPixelLimit() {
+    public boolean isThumbnailSkipped() {
         if (!isImageFile() || getWidth() <= 0 || getHeight() <= 0) {
             return false;
         }
-        return (long) getWidth() * getHeight() > thumbnailMaxPixels();
+        return !thumbnailStored();
+    }
+
+    private boolean thumbnailStored() {
+        if (thumbnail != null) {
+            return true;
+        }
+        try {
+            WebloggerFactory.getWeblogger().getFileContentManager()
+                    .getFileContent(getWeblog(), getId() + "_sm");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**

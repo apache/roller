@@ -76,10 +76,10 @@
                                      data-mediafile-name="<s:property value="#mediaFile.name"/>"
                                      data-mediafile-url="<s:property value="%{mediaFileURL}"/>"
                                      data-mediafile-is-image="<s:property value="#mediaFile.isImageFile()"/>"
-                                     data-mediafile-has-thumbnail="<s:property value="!#mediaFile.overThumbnailPixelLimit"/>">
+                                     data-mediafile-has-thumbnail="<s:property value="!#mediaFile.thumbnailSkipped"/>">
 
                                     <%-- an image too large for a thumbnail shows the file icon --%>
-                                    <s:if test="#mediaFile.imageFile && !#mediaFile.overThumbnailPixelLimit">
+                                    <s:if test="#mediaFile.imageFile && !#mediaFile.thumbnailSkipped">
                                         <img border="0" src="<s:property value='%{mediaFileThumbnailURL}' />"
                                              width="<s:property value='#mediaFile.thumbnailWidth'/>"
                                              height="<s:property value='#mediaFile.thumbnailHeight'/>"

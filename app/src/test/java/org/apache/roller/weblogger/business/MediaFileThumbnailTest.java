@@ -135,7 +135,7 @@ public class MediaFileThumbnailTest {
         // the size still comes from the header, for the upload result page
         assertEquals(50000, saved.getWidth());
         assertEquals(50000, saved.getHeight());
-        assertTrue(saved.isOverThumbnailPixelLimit());
+        assertTrue(saved.isThumbnailSkipped());
     }
 
     /**
@@ -148,7 +148,7 @@ public class MediaFileThumbnailTest {
                 getClass().getResourceAsStream(MediaFileTest.TEST_IMAGE), 2000);
         assertNotNull(saved.getThumbnailInputStream());
         saved.getThumbnailInputStream().close();
-        assertFalse(saved.isOverThumbnailPixelLimit());
+        assertFalse(saved.isThumbnailSkipped());
 
         byte[] png = pngHeaderOnly(50000, 50000);
         MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
@@ -186,8 +186,54 @@ public class MediaFileThumbnailTest {
     }
 
     /**
-     * A limit that is not a positive int is ignored in favour of the default,
-     * both when deciding whether an image is over the limit and on upload.
+     * An image stored without a thumbnail keeps showing as having none after
+     * uploads.thumbnail.maxPixels is raised above its size.
+     */
+    @Test
+    public void testRaisingLimitAfterUploadKeepsThumbnailSkipped() throws Exception {
+        WebloggerConfig.init();
+        MediaFile saved;
+        try (MockedStatic<WebloggerConfig> config =
+                mockStatic(WebloggerConfig.class, CALLS_REAL_METHODS)) {
+            config.when(() -> WebloggerConfig.getIntProperty(
+                    eq("uploads.thumbnail.maxPixels"), anyInt())).thenReturn(100000);
+            saved = upload("hawk.jpg", "image/jpeg",
+                    getClass().getResourceAsStream(MediaFileTest.TEST_IMAGE), 2000);
+        }
+        assertNull(saved.getThumbnailInputStream());
+
+        // back at the default limit, which 500 x 373 is well under
+        MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+        assertTrue(mgr.getMediaFile(saved.getId()).isThumbnailSkipped());
+        assertTrue(mgr.getMediaFile(saved.getId(), true).isThumbnailSkipped());
+    }
+
+    /**
+     * An image stored with a thumbnail keeps showing as having one after
+     * uploads.thumbnail.maxPixels is lowered below its size.
+     */
+    @Test
+    public void testLoweringLimitAfterUploadKeepsThumbnail() throws Exception {
+        MediaFile saved = upload("hawk.jpg", "image/jpeg",
+                getClass().getResourceAsStream(MediaFileTest.TEST_IMAGE), 2000);
+        try (InputStream in = saved.getThumbnailInputStream()) {
+            assertNotNull(in);
+        }
+
+        WebloggerConfig.init();
+        MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
+        try (MockedStatic<WebloggerConfig> config =
+                mockStatic(WebloggerConfig.class, CALLS_REAL_METHODS)) {
+            config.when(() -> WebloggerConfig.getIntProperty(
+                    eq("uploads.thumbnail.maxPixels"), anyInt())).thenReturn(100000);
+            assertFalse(mgr.getMediaFile(saved.getId()).isThumbnailSkipped());
+            assertFalse(mgr.getMediaFile(saved.getId(), true)
+                    .isThumbnailSkipped());
+        }
+    }
+
+    /**
+     * A limit that is not a positive int is ignored in favour of the default.
      */
     @Test
     public void testInvalidLimitFallsBackToDefault() throws Exception {
@@ -199,17 +245,8 @@ public class MediaFileThumbnailTest {
                 config.when(() -> WebloggerConfig.getProperty(
                         "uploads.thumbnail.maxPixels")).thenReturn(value);
 
-                MediaFile small = new MediaFile();
-                small.setContentType("image/png");
-                small.setWidth(500);
-                small.setHeight(373);
-                assertFalse(small.isOverThumbnailPixelLimit(), "limit '" + value + "'");
-
-                MediaFile huge = new MediaFile();
-                huge.setContentType("image/png");
-                huge.setWidth(50000);
-                huge.setHeight(50000);
-                assertTrue(huge.isOverThumbnailPixelLimit(), "limit '" + value + "'");
+                assertEquals(MediaFileManager.DEFAULT_THUMBNAIL_MAX_PIXELS,
+                        MediaFile.thumbnailMaxPixels(), "limit '" + value + "'");
 
                 saved = upload("hawk" + value.length() + ".jpg", "image/jpeg",
                         getClass().getResourceAsStream(MediaFileTest.TEST_IMAGE), 2000);
@@ -246,7 +283,7 @@ public class MediaFileThumbnailTest {
         byte[] png = pngHeaderOnly(50000, 50000);
         MediaFile saved = upload(name, "image/png",
                 new ByteArrayInputStream(png), png.length);
-        assertTrue(saved.isOverThumbnailPixelLimit());
+        assertTrue(saved.isThumbnailSkipped());
 
         MediaFileManager mgr = WebloggerFactory.getWeblogger().getMediaFileManager();
         MediaFile replaced = mgr.getMediaFile(saved.getId());
@@ -259,7 +296,7 @@ public class MediaFileThumbnailTest {
         assertNull(reloaded.getThumbnailInputStream());
         assertEquals(-1, reloaded.getWidth());
         assertEquals(-1, reloaded.getHeight());
-        assertFalse(reloaded.isOverThumbnailPixelLimit(),
+        assertFalse(reloaded.isThumbnailSkipped(),
                 "the previous image's size must not count against the new content");
     }
 
