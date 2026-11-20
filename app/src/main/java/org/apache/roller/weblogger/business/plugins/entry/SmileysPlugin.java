@@ -39,6 +39,8 @@ public class SmileysPlugin implements WeblogEntryPlugin {
 
     // public for tests
     public static Pattern[] smileyPatterns = new Pattern[0];
+    // each img tag after its src's site URL, which comes from the request
+    // being rendered
     static String[] imageTags = new String[0];
     private static final Properties smileyDefs = new Properties();
     
@@ -75,15 +77,14 @@ public class SmileysPlugin implements WeblogEntryPlugin {
     
     /*
      * Convert the SmileyDefs into RegEx patterns and img tags for
-     * later use.  Need an HttpServletRequest though so that we can
-     * get the ServletContext Path.  But only do it once.
+     * later use.  But only do it once.  The site URL in each tag is added
+     * when rendering, since while site.absoluteurl is unset it depends on
+     * the request.
      */
     @Override
     public synchronized void init(Weblog website) throws WebloggerException {
         // don't do this work if Smileys already loaded
         if (SmileysPlugin.smileyPatterns.length < 1) {
-            String baseURL = WebloggerRuntimeConfig.getAbsoluteContextURL();
-            
             Pattern[] tempP = new Pattern[SmileysPlugin.smileyDefs.size()];
             String[] tempS = new String[SmileysPlugin.smileyDefs.size()];
             log.debug("# smileys: " + smileyDefs.size());
@@ -93,8 +94,7 @@ public class SmileysPlugin implements WeblogEntryPlugin {
                 String smiley = (String)enum1.nextElement();
                 String smileyAlt = htmlEscape(smiley);
                 tempP[count] = Pattern.compile(regexEscape(smiley));
-                tempS[count] = "<img src=\"" +
-                        baseURL + "/images/smileys/" +
+                tempS[count] = "/images/smileys/" +
                         smileyDefs.getProperty(smiley, "smile.gif") +
                         "\" class=\"smiley\"" +
                         " alt=\"" + smileyAlt + "\"" +
@@ -113,10 +113,19 @@ public class SmileysPlugin implements WeblogEntryPlugin {
      */
     @Override
     public String render(WeblogEntry entry, String text) {
+        String baseURL = WebloggerRuntimeConfig.getAbsoluteContextURL();
+        if (baseURL == null) {
+            // no request to take it from, so link relative to the server
+            baseURL = WebloggerRuntimeConfig.getRelativeContextURL();
+        }
+        if (baseURL == null) {
+            baseURL = "";
+        }
         Matcher matcher;
         for (int i=0; i<smileyPatterns.length; i++) {
             matcher = smileyPatterns[i].matcher(text);
-            text = matcher.replaceAll(imageTags[i]);
+            text = matcher.replaceAll(Matcher.quoteReplacement(
+                    "<img src=\"" + baseURL + imageTags[i]));
         }
         return text;
     }

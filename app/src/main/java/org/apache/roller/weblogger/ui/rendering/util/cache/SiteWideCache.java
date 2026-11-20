@@ -103,8 +103,9 @@ public final class SiteWideCache implements CacheHandler {
     
     
     public Object get(String key) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return null;
         }
         
@@ -121,8 +122,9 @@ public final class SiteWideCache implements CacheHandler {
     
     
     public void put(String key, Object value) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return;
         }
         
@@ -132,8 +134,9 @@ public final class SiteWideCache implements CacheHandler {
 
     
     public void remove(String key) {
+        key = WebloggerRuntimeConfig.cacheKey(key);
         
-        if (!cacheEnabled) {
+        if (!cacheEnabled || key == null) {
             return;
         }
         
