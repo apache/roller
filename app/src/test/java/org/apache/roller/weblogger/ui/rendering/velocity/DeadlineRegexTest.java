@@ -36,13 +36,69 @@ class DeadlineRegexTest {
     private static final String[] PATTERNS = {"", ",", "\\s+", "l+", "(?=(.*))", "(.)", "\\b", "$"};
     private static final String[] REPLACEMENTS = {"", "x", "$0", "[$1]", "\\$"};
 
+    /**
+     * Expressions in which part can match an empty string in more than one
+     * way at the same place are refused; the rest, including ones with
+     * optional parts, lookarounds and alternatives, still run.
+     */
     @Test
-    void convertsArgumentsAsVelocityWould() {
-        assertArrayEquals("a,b,c".split(",", 2),
-                (String[]) DeadlineRegex.invoke("a,b,c", "split", new Object[] {",", "2"}));
-        assertArrayEquals("a,b,c".split(",", 2),
-                (String[]) DeadlineRegex.invoke("a,b,c", "split", new Object[] {",", 2L}));
-        assertEquals("a1b1c", DeadlineRegex.invoke("a,b,c", "replaceAll", new Object[] {",", 1}));
+    void refusesExpressionsThatRepeatAnEmptyMatch() {
+        String[] refused = {
+            "(?:a?|b?)c", "(|)z", "(?:)*", "x(?:(?:)?){3}", "\\b*", "(?=)+", "^?a",
+            "()\\1*", "(?:(?:a|){2})", "(?<n>a*|b*)", "(?i:x?|y?)", "((a)|(b)?|c*)d",
+        };
+        for (String regex : refused) {
+            assertThrows(RenderLimitException.class, () -> DeadlineRegex.checkPattern(regex),
+                    regex);
+        }
+        String[] allowed = {
+            "", "a", "(\\d+)-(\\d+)", "(?i)foo|bar", "(ab)+", "^\\s+|\\s+$",
+            "(https?://)?(www\\.)?", "foo(?=\\s|$)", "[()|?*]+", "\\Q(|)*\\E",
+            "(?<year>\\d{4})-(\\d{2})", "a|", "(a|b|)c", "(?:\\.\\d+)?", "(\\w)\\1",
+            "(.*a){12}b", "[^\\]()]*",
+        };
+        for (String regex : allowed) {
+            DeadlineRegex.checkPattern(regex);
+        }
+        for (String p : PATTERNS) {
+            DeadlineRegex.checkPattern(p);
+        }
+    }
+
+    /** As String does: replaceFirst refuses null, and replaceAll does once it matches. */
+    @Test
+    void aNullReplacementIsRefusedAsByString() {
+        assertThrows(NullPointerException.class,
+                () -> DeadlineRegex.invoke("abc", "replaceAll", new Object[] {"b", null}));
+        assertThrows(NullPointerException.class,
+                () -> DeadlineRegex.invoke("abc", "replaceFirst", new Object[] {"x", null}));
+        assertEquals("abc", DeadlineRegex.invoke("abc", "replaceAll", new Object[] {"x", null}));
+    }
+
+    /**
+     * A replacement is counted by the groups it refers to, so moving text
+     * around in a string near the limit still works.
+     */
+    @Test
+    void replacementsCountOnlyTheGroupsTheyUse() {
+        RenderSession session = RenderSession.begin(null);
+        try {
+            int length = (int) (session.getMaxOutputChars() * 3 / 5);
+            String s = "abc" + "0".repeat(length - 3);
+            String swapped = (String) DeadlineRegex.invoke(s, "replaceAll",
+                    new Object[] {"(?s)^(.)(.)(.)(.*)$", "$3$2$1$4"});
+            assertEquals(length, swapped.length());
+            assertEquals("cba0", swapped.substring(0, 4));
+            assertEquals("<b>", DeadlineRegex.invoke("b", "replaceAll",
+                    new Object[] {"(?<x>b)", "<${x}>"}));
+            assertEquals("b1", DeadlineRegex.invoke("b", "replaceAll",
+                    new Object[] {"(b)", "$11"}));
+            // a group used twice is counted twice
+            assertThrows(RenderLimitException.class, () -> DeadlineRegex.invoke(s, "replaceAll",
+                    new Object[] {"(?s)^(.*)$", "$1$1"}));
+        } finally {
+            session.end();
+        }
     }
 
     @Test
