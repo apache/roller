@@ -155,6 +155,7 @@ class ExternalLoginPlaceholderTest {
 
         assertThrows(AuthenticationException.class, () -> provider().authenticate(
                 UsernamePasswordAuthenticationToken.unauthenticated(userName, "<old>")));
+        assertFalse(RollerPasswordEncoders.create().matches("<old>", user.getPassword()));
     }
 
     @Test
@@ -171,12 +172,14 @@ class ExternalLoginPlaceholderTest {
 
         assertThrows(AuthenticationException.class, () -> provider().authenticate(
                 UsernamePasswordAuthenticationToken.unauthenticated(userName, "secret")));
+        assertFalse(RollerPasswordEncoders.create().matches("secret", "{noop}secret"));
     }
 
     @Test
     void emptyEntriesInThePreviousPlaceholdersAreIgnored() throws Exception {
-        setProperty("users.passwords.externalAuthValue.previous", "<old>,, ,");
+        setProperty("users.passwords.externalAuthValue.previous", "<older>, <old>,, ,");
 
+        assertTrue(RollerPasswordEncoders.isExternalLoginMarker("<older>"));
         assertTrue(RollerPasswordEncoders.isExternalLoginMarker("<old>"));
         assertFalse(RollerPasswordEncoders.isExternalLoginMarker(""));
         assertFalse(RollerPasswordEncoders.isExternalLoginMarker(" "));
