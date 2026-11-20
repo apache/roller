@@ -241,8 +241,8 @@ var RollerRichEditor = (function () {
         // jQuery 3 adds the wrappers' tags around the HTML, then takes the
         // last child at each level
         var asText = doc.createElement("div");
-        asText.innerHTML = "<" + wrappers.join("><") + ">" + html
-            + "</" + wrappers.slice().reverse().join("></") + ">";
+        asText.innerHTML = wrappers.length ? "<" + wrappers.join("><") + ">" + html
+            + "</" + wrappers.slice().reverse().join("></") + ">" : html;
         var content = asText;
         for (var i = 0; i < wrappers.length && content; i++) {
             content = lastChildOf.call(content);

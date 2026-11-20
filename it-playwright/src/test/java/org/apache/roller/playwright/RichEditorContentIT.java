@@ -202,6 +202,8 @@ class RichEditorContentIT {
         // an SVG tooltip, and microdata
         "<svg width=\"10\" height=\"10\"><title>Chart</title><rect width=\"10\" height=\"10\"></rect></svg>",
         "<div itemscope itemtype=\"https://schema.org/Book\"><meta itemprop=\"isbn\" content=\"123\"></div>",
+        // jQuery parses HTML with a link tag in it outside the page
+        "<!-- <link rel=\"stylesheet\" href=\"a.css\"> --><p>text</p>",
     })
     void staysInTheRichEditor(String html) {
         assertFalse(hasActiveHtml(html), html);
