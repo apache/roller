@@ -81,6 +81,42 @@ class StringGrowthTest {
         }
     }
 
+    /** Each character's case change, in the locales whose rules differ, fits its bound. */
+    @Test
+    void caseChangesOfEveryCharAreBounded() {
+        List<String> texts = everyChar();
+        texts.add("I\u0300J\u0301\u012e\u0303");
+        for (String s : texts) {
+            long bound = StringGrowth.maxResultLength(s, "toUpperCase", new Object[0]);
+            for (Locale l : new Locale[] {Locale.ROOT, new Locale("tr"), new Locale("az"),
+                    new Locale("lt"), Locale.GERMAN}) {
+                assertBounds("toUpperCase", s.toUpperCase(l), bound);
+                assertBounds("toLowerCase", s.toLowerCase(l), bound);
+            }
+        }
+    }
+
+    /** Most letters outside ASCII keep their length, so large text in them still fits. */
+    @Test
+    void caseChangesOfTextOutsideAsciiAreNotOverestimated() {
+        String text = "\u041f\u0440\u0438\u0432\u0435\u0442 \u4f60\u597d \u3053\u3093";
+        assertEquals(text.length(), StringGrowth.maxResultLength(text, "toUpperCase",
+                new Object[0]));
+        assertEquals(text.length(), StringGrowth.maxResultLength(new UtilitiesModel(),
+                "toUpperCase", new Object[] {text}));
+    }
+
+    /** Escaping counts what each character becomes, so the bound is the result's length. */
+    @Test
+    void escapingIsExact() {
+        UtilitiesModel utils = new UtilitiesModel();
+        String html = "<p>a&amp;b \"c\" d'e \u00e9</p>";
+        assertEquals(utils.escapeHTML(html).length(),
+                StringGrowth.maxResultLength(utils, "escapeHTML", new Object[] {html}));
+        assertEquals(utils.escapeXML(html).length(),
+                StringGrowth.maxResultLength(utils, "escapeXML", new Object[] {html}));
+    }
+
     /** A case change only adds characters for characters outside ASCII. */
     @Test
     void caseChangesOfAsciiAreNotOverestimated() {
@@ -177,24 +213,20 @@ class StringGrowthTest {
     @Test
     void dateFormatsAreBounded() {
         Date date = new Date(1_700_000_000_000L);
+        // every pattern letter SimpleDateFormat knows, each at its longest form
         StringBuilder all = new StringBuilder();
-        for (char c = 'A'; c <= 'z'; c++) {
-            if (Character.isLetter(c)) {
-                all.append(c).append(' ');
-            }
+        for (char c : "GyYMLwWDdFEuaHkKhmsSzZX".toCharArray()) {
+            all.append(String.valueOf(c).repeat(c == 'X' ? 3 : 4)).append(' ');
         }
+        int checked = 0;
         for (Locale l : Locale.getAvailableLocales()) {
-            java.text.SimpleDateFormat f;
-            try {
-                f = new java.text.SimpleDateFormat(all.toString(), l);
-            } catch (IllegalArgumentException ex) {
-                continue;
-            }
-            String actual = f.format(date);
+            String actual = new java.text.SimpleDateFormat(all.toString(), l).format(date);
             long bound = StringGrowth.maxResultLength(new UtilitiesModel(), "formatDate",
                     new Object[] {date, all.toString(), null});
             assertTrue(bound >= actual.length(), l + ": " + actual.length() + " > " + bound);
+            checked++;
         }
+        assertTrue(checked > 100, "only " + checked + " locales were checked");
     }
 
     /** Plain text gives a bound equal to its length, so large plain text still fits. */
