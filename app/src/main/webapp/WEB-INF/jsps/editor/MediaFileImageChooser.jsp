@@ -75,9 +75,11 @@
                                 <div class="mediaObject mediafile-select-target"
                                      data-mediafile-name="<s:property value="#mediaFile.name"/>"
                                      data-mediafile-url="<s:property value="%{mediaFileURL}"/>"
-                                     data-mediafile-is-image="<s:property value="#mediaFile.isImageFile()"/>">
+                                     data-mediafile-is-image="<s:property value="#mediaFile.isImageFile()"/>"
+                                     data-mediafile-has-thumbnail="<s:property value="!#mediaFile.thumbnailSkipped"/>">
 
-                                    <s:if test="#mediaFile.imageFile">
+                                    <%-- an image too large for a thumbnail shows the file icon --%>
+                                    <s:if test="#mediaFile.imageFile && !#mediaFile.thumbnailSkipped">
                                         <img border="0" src="<s:property value='%{mediaFileThumbnailURL}' />"
                                              width="<s:property value='#mediaFile.thumbnailWidth'/>"
                                              height="<s:property value='#mediaFile.thumbnailHeight'/>"
@@ -114,15 +116,16 @@
 
 <script>
 
-    function onSelectMediaFile(name, url, isImage) {
-        window.parent.onSelectMediaFile(name, url, isImage);
+    function onSelectMediaFile(name, url, isImage, hasThumbnail) {
+        window.parent.onSelectMediaFile(name, url, isImage, hasThumbnail);
     }
 
     // Values come from data-* attributes and are bound via delegated listeners.
     $(document).on('click', '.mediafile-select-target', function () {
         onSelectMediaFile($(this).attr('data-mediafile-name'),
                 $(this).attr('data-mediafile-url'),
-                $(this).attr('data-mediafile-is-image'));
+                $(this).attr('data-mediafile-is-image'),
+                $(this).attr('data-mediafile-has-thumbnail'));
     });
 
     function highlight(el, flag) {

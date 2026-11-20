@@ -33,6 +33,7 @@ import org.apache.roller.util.UUIDGenerator;
 import org.apache.roller.weblogger.WebloggerException;
 import org.apache.roller.weblogger.business.MediaFileManager;
 import org.apache.roller.weblogger.business.WebloggerFactory;
+import org.apache.roller.weblogger.config.WebloggerConfig;
 import org.apache.roller.weblogger.util.Utilities;
 
 /**
@@ -44,6 +45,9 @@ public class MediaFile implements Serializable {
     private static final long serialVersionUID = -6704258422169734004L;
 
     private static final Log log = LogFactory.getFactory().getInstance(MediaFile.class);
+
+    // the last invalid uploads.thumbnail.maxPixels value warned about
+    private static volatile String invalidMaxPixelsLogged;
 
     private String id = UUIDGenerator.generateUUID();
 
@@ -366,6 +370,64 @@ public class MediaFile implements Serializable {
                 .getMediaFileThumbnailURL(getWeblog(), this.getId(), true);
     }
 
+    /**
+     * True for an image that has no thumbnail stored and whose recorded size
+     * is over uploads.thumbnail.maxPixels. An image with a thumbnail, or one
+     * without a thumbnail but under the limit (such as a file carried over
+     * from an older version), is not skipped and is previewed as before.
+     */
+    public boolean isThumbnailSkipped() {
+        if (!isImageFile() || getWidth() <= 0 || getHeight() <= 0) {
+            return false;
+        }
+        if ((long) getWidth() * getHeight() <= thumbnailMaxPixels()) {
+            return false;
+        }
+        return !thumbnailStored();
+    }
+
+    private boolean thumbnailStored() {
+        if (thumbnail != null) {
+            return true;
+        }
+        try {
+            WebloggerFactory.getWeblogger().getFileContentManager()
+                    .getFileContent(getWeblog(), getId() + "_sm");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * The value of uploads.thumbnail.maxPixels. A value that is not a
+     * positive whole number is ignored in favour of the default, with a
+     * warning logged once for each such value.
+     */
+    public static int thumbnailMaxPixels() {
+        int maxPixels;
+        try {
+            maxPixels = WebloggerConfig.getIntProperty(
+                    MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY,
+                    MediaFileManager.DEFAULT_THUMBNAIL_MAX_PIXELS);
+        } catch (NumberFormatException e) {
+            maxPixels = 0;
+        }
+        if (maxPixels > 0) {
+            return maxPixels;
+        }
+        String value = WebloggerConfig.getProperty(
+                MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY);
+        if (!String.valueOf(value).equals(invalidMaxPixelsLogged)) {
+            invalidMaxPixelsLogged = String.valueOf(value);
+            log.warn(MediaFileManager.THUMBNAIL_MAX_PIXELS_PROPERTY + "=" + value
+                    + " is not a whole number between 1 and " + Integer.MAX_VALUE
+                    + ", using the default of "
+                    + MediaFileManager.DEFAULT_THUMBNAIL_MAX_PIXELS);
+        }
+        return MediaFileManager.DEFAULT_THUMBNAIL_MAX_PIXELS;
+    }
+
     public String getCreatorUserName() {
         return creatorUserName;
     }
@@ -434,6 +496,9 @@ public class MediaFile implements Serializable {
      */
     public void setWidth(int width) {
         this.width = width;
+        // the thumbnail size is worked out again from the new size
+        thumbnailWidth = -1;
+        thumbnailHeight = -1;
     }
 
     /**
@@ -449,6 +514,9 @@ public class MediaFile implements Serializable {
      */
     public void setHeight(int height) {
         this.height = height;
+        // the thumbnail size is worked out again from the new size
+        thumbnailWidth = -1;
+        thumbnailHeight = -1;
     }
 
     /**
