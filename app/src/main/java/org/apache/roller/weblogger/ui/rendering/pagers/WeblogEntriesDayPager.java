@@ -174,7 +174,7 @@ public class WeblogEntriesDayPager extends AbstractWeblogEntriesPager {
     
     @Override
     public String getNextLink() {
-        if (more) {
+        if (hasNextPage(more)) {
             return createURL(page, 1, weblog, locale, pageLink, null, dateString, catName, tags);
         }
         return null;
